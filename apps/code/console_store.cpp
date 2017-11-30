@@ -14,6 +14,23 @@ void ConsoleStore::clear() {
   m_history[0] = 0;
 }
 
+void ConsoleStore::startNewSession() {
+  if (k_historySize < 1) {
+    return;
+  }
+
+  m_history[0] = makePrevious(m_history[0]);
+
+  for (int i = 0; i < k_historySize - 1; i++) {
+    if (m_history[i] == 0) {
+      if (m_history[i+1] == 0) {
+        return ;
+      }
+      m_history[i+1] = makePrevious(m_history[i+1]);
+    }
+  }
+}
+
 ConsoleLine ConsoleStore::lineAtIndex(int i) const {
   assert(i >= 0 && i < numberOfLines());
   int currentLineIndex = 0;
@@ -48,11 +65,11 @@ int ConsoleStore::numberOfLines() const {
 }
 
 void ConsoleStore::pushCommand(const char * text, size_t length) {
-  push(CommandMarker, text, length);
+  push(CurrentSessionCommandMarker, text, length);
 }
 
 void ConsoleStore::pushResult(const char * text, size_t length) {
-  push(ResultMarker, text, length);
+  push(CurrentSessionResultMarker, text, length);
 }
 
 void ConsoleStore::deleteLastLineIfEmpty() {
@@ -80,7 +97,7 @@ void ConsoleStore::push(const char marker, const char * text, size_t length) {
 }
 
 ConsoleLine::Type ConsoleStore::lineTypeForMarker(char marker) const {
-  assert(marker == 0x01 || marker == 0x02);
+  assert(marker == CurrentSessionCommandMarker || marker == CurrentSessionResultMarker || marker == PreviousSessionCommandMarker || marker == PreviousSessionResultMarker);
   return static_cast<ConsoleLine::Type>(marker-1);
 }
 

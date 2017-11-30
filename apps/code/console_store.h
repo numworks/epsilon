@@ -10,15 +10,24 @@ class ConsoleStore {
 public:
   ConsoleStore();
   void clear();
+  void startNewSession();
   ConsoleLine lineAtIndex(int i) const;
   int numberOfLines() const;
   void pushCommand(const char * text, size_t length);
   void pushResult(const char * text, size_t length);
   void deleteLastLineIfEmpty();
 private:
-  static constexpr char CommandMarker = 0x01;
-  static constexpr char ResultMarker = 0x02;
+  static constexpr char CurrentSessionCommandMarker = 0x01;
+  static constexpr char CurrentSessionResultMarker = 0x02;
+  static constexpr char PreviousSessionCommandMarker = 0x03;
+  static constexpr char PreviousSessionResultMarker = 0x04;
   static constexpr int k_historySize = 1024;
+  static char makePrevious(char marker) {
+    if (marker == CurrentSessionCommandMarker || marker == CurrentSessionResultMarker) {
+      return marker + 0x02;
+    }
+    return marker;
+  }
   void push(const char marker, const char * text, size_t length);
   ConsoleLine::Type lineTypeForMarker(char marker) const;
   int indexOfNullMarker() const;

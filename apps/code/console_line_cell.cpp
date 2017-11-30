@@ -3,7 +3,6 @@
 #include <kandinsky/point.h>
 #include <kandinsky/coordinate.h>
 #include <apps/i18n.h>
-#include <escher/palette.h>
 
 namespace Code {
 
@@ -19,7 +18,7 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(Consol
 
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
-  ctx->drawString(m_line->text(), KDPointZero, ConsoleController::k_fontSize, KDColorBlack, isHighlighted()? Palette::Select : KDColorWhite);
+  ctx->drawString(m_line->text(), KDPointZero, ConsoleController::k_fontSize, textColor(m_line), isHighlighted()? Palette::Select : KDColorWhite);
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeForOptimalDisplay() const {
@@ -48,6 +47,7 @@ ConsoleLineCell::ConsoleLineCell(Responder * parentResponder) :
 void ConsoleLineCell::setLine(ConsoleLine line) {
   m_line = line;
   m_scrollableView.consoleLineView()->setLine(&m_line);
+  m_promptView.setTextColor(textColor(&m_line));
   reloadCell();
 }
 
@@ -63,32 +63,32 @@ void ConsoleLineCell::reloadCell() {
 }
 
 int ConsoleLineCell::numberOfSubviews() const {
-  if (m_line.type() == ConsoleLine::Type::Command) {
+  if (m_line.isCommand()) {
     return 2;
   }
-  assert(m_line.type() == ConsoleLine::Type::Result);
+  assert(m_line.isResult());
   return 1;
 }
 
 View * ConsoleLineCell::subviewAtIndex(int index) {
-  if (m_line.type() == ConsoleLine::Type::Command) {
+  if (m_line.isCommand()) {
     assert(index >= 0 && index < 2);
     View * views[] = {&m_promptView, &m_scrollableView};
     return views[index];
   }
-  assert(m_line.type() == ConsoleLine::Type::Result);
+  assert(m_line.isResult());
   assert(index == 0);
   return &m_scrollableView;
 }
 
 void ConsoleLineCell::layoutSubviews() {
-  if (m_line.type() == ConsoleLine::Type::Command) {
+  if (m_line.isCommand()) {
     KDSize promptSize = KDText::stringSize(I18n::translate(I18n::Message::ConsolePrompt), ConsoleController::k_fontSize);
     m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()));
     m_scrollableView.setFrame(KDRect(KDPoint(promptSize.width(), 0), bounds().width() - promptSize.width(), bounds().height()));
     return;
   }
-  assert(m_line.type() == ConsoleLine::Type::Result);
+  assert(m_line.isResult());
   m_promptView.setFrame(KDRectZero);
   m_scrollableView.setFrame(bounds());
 }

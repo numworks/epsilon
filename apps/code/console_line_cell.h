@@ -4,6 +4,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/responder.h>
+#include <escher/palette.h>
 #include <escher/scrollable_view.h>
 #include <escher/scroll_view_data_source.h>
 #include <assert.h>
@@ -47,6 +48,9 @@ private:
   private:
     ConsoleLineView m_consoleLineView;
   };
+  static KDColor textColor(ConsoleLine * line) {
+    return line->isFromCurrentSession() ? KDColorBlack : Palette::GreyDark;
+  }
   MessageTextView m_promptView;
   ScrollableConsoleLineView m_scrollableView;
   ConsoleLine m_line;

@@ -515,13 +515,15 @@ T Integer::approximate() const {
   /* Shift the most significant int to the left of the mantissa. The most
    * significant 1 will be ignore at the end when inserting the mantissa in
    * the resulting uint64_t (as required by IEEE754). */
+  assert(totalNumberOfBits-numberOfBitsInLastDigit > 0 && totalNumberOfBits-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
   mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBitsInLastDigit));
   int digitIndex = 2;
   int numberOfBits = numberOfBitsInLastDigit;
   /* Complete the mantissa by inserting, from left to right, every digit of the
    * Integer from the most significant one to the last from. We break when
-   * the mantissa is complete to avoid undefined right shifting (when the shift
-   * width is wider than the length of the digit in bits). */
+   * the mantissa is complete to avoid undefined right shifting (Shift operator
+   * behavior is undefined if the right operand is negative, or greater than or
+   * equal to the length in bits of the promoted left operand). */
   while (m_numberOfDigits >= digitIndex) {
     lastDigit = digit(m_numberOfDigits-digitIndex);
     numberOfBits += 32;
@@ -529,6 +531,7 @@ T Integer::approximate() const {
       break;
     }
     if (totalNumberOfBits > numberOfBits) {
+      assert(totalNumberOfBits-numberOfBits > 0 && totalNumberOfBits-numberOfBits < 64);
       mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBits));
     } else {
       mantissa |= ((uint64_t)lastDigit >> (numberOfBits-totalNumberOfBits));

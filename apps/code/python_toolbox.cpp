@@ -1,4 +1,4 @@
-#include "toolbox.h"
+#include "python_toolbox.h"
 #include "../shared/toolbox_helpers.h"
 #include <assert.h>
 extern "C" {
@@ -226,17 +226,17 @@ const ToolboxMessageTree menu[menuChildrenCount] = {
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbox, I18n::Message::Default, I18n::Message::Default, menu, menuChildrenCount);
 
 
-Toolbox::Toolbox() :
-  ::Toolbox(nullptr, I18n::translate(rootModel()->label()))
+PythonToolbox::PythonToolbox() :
+  Toolbox(nullptr, I18n::translate(rootModel()->label()))
 {
 }
 
-void Toolbox::setAction(Action action) {
+void PythonToolbox::setAction(Action action) {
   m_action = action;
 }
 
-bool Toolbox::handleEvent(Ion::Events::Event event) {
-  if (::Toolbox::handleEvent(event)) {
+bool PythonToolbox::handleEvent(Ion::Events::Event event) {
+  if (Toolbox::handleEvent(event)) {
     return true;
   }
   if (event.hasText() && strlen(event.text()) == 1) {
@@ -246,8 +246,8 @@ bool Toolbox::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-KDCoordinate Toolbox::rowHeight(int j) {
-  if (typeAtLocation(0, j) == ::Toolbox::LeafCellType && m_messageTreeModel->label() == I18n::Message::IfStatementMenu) {
+KDCoordinate PythonToolbox::rowHeight(int j) {
+  if (typeAtLocation(0, j) == Toolbox::LeafCellType && m_messageTreeModel->label() == I18n::Message::IfStatementMenu) {
       /* To get the exact height needed for each cell, we have to compute its
        * text size, which means scan the text char by char to look for '\n'
        * chars. This is very costly and ruins the speed performance when
@@ -258,12 +258,12 @@ KDCoordinate Toolbox::rowHeight(int j) {
        * children of the toolbox, which is the only menu that has special height
        * rows. */
     const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->children(j));
-    return KDText::stringSize(I18n::translate(messageTree->label()), k_fontSize).height() + 2*Metric::TableCellLabelTopMargin + (messageTree->text() == I18n::Message::Default ? 0 : ::Toolbox::rowHeight(j));
+    return KDText::stringSize(I18n::translate(messageTree->label()), k_fontSize).height() + 2*Metric::TableCellLabelTopMargin + (messageTree->text() == I18n::Message::Default ? 0 : Toolbox::rowHeight(j));
   }
-  return ::Toolbox::rowHeight(j);
+  return Toolbox::rowHeight(j);
 }
 
-bool Toolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
+bool PythonToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   m_selectableTableView.deselectTable();
   ToolboxMessageTree * node = selectedMessageTree;
   const char * editedText = I18n::translate(node->insertedText());
@@ -274,25 +274,25 @@ bool Toolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   return true;
 }
 
-const ToolboxMessageTree * Toolbox::rootModel() {
+const ToolboxMessageTree * PythonToolbox::rootModel() {
   return &toolboxModel;
 }
 
-MessageTableCellWithMessage * Toolbox::leafCellAtIndex(int index) {
+MessageTableCellWithMessage * PythonToolbox::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron* Toolbox::nodeCellAtIndex(int index) {
+MessageTableCellWithChevron* PythonToolbox::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }
 
-int Toolbox::maxNumberOfDisplayedRows() {
+int PythonToolbox::maxNumberOfDisplayedRows() {
  return k_maxNumberOfDisplayedRows;
 }
 
-void Toolbox::scrollToLetter(char letter) {
+void PythonToolbox::scrollToLetter(char letter) {
   char lowerLetter = tolower(letter);
   // We look for a child MessageTree that starts with the wanted letter.
   for (int i = 0; i < m_messageTreeModel->numberOfChildren(); i++) {
@@ -314,7 +314,7 @@ void Toolbox::scrollToLetter(char letter) {
   }
 }
 
-void Toolbox::scrollToAndSelectChild(int i) {
+void PythonToolbox::scrollToAndSelectChild(int i) {
   assert(i >=0 && i<m_messageTreeModel->numberOfChildren());
   m_selectableTableView.deselectTable();
   m_selectableTableView.scrollToCell(0, i);

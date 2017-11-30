@@ -473,6 +473,15 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
 
 template<typename T>
 T Integer::approximate() const {
+  if (isZero()) {
+    /* This special case for 0 is needed, because the current algorithm assumes
+     * that the big integer is non zero, thus puts the exponent to 126 (integer
+     * area), the issue is that when the mantissa is 0, a "shadow bit" is
+     * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
+     */
+    T result = m_negative ? -0.0 : 0.0;
+    return result;
+  }
   union {
     uint64_t uint_result;
     T float_result;
@@ -543,16 +552,6 @@ T Integer::approximate() const {
   // at the end of the mantissa and add it to the mantissa; do not forget to
   // shift the mantissa if the rounding increase the length in bits of the
   // mantissa.
-
-  if (isZero()) {
-    /* This special case for 0 is needed, because the current algorithm assumes
-     * that the big integer is non zero, thus puts the exponent to 126 (integer
-     * area), the issue is that when the mantissa is 0, a "shadow bit" is
-     * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
-     */
-    T result = m_negative ? -0.0 : 0.0;
-    return result;
-  }
 
   u.uint_result = 0;
   u.uint_result |= ((uint64_t)sign << (totalNumberOfBits-1));

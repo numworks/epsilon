@@ -80,6 +80,26 @@ void ConsoleStore::deleteLastLineIfEmpty() {
   }
 }
 
+int ConsoleStore::deleteCommandAndResultsAtIndex(int index) {
+  int numberOfLinesAtStart = numberOfLines();
+  assert(index >= 0 && index < numberOfLinesAtStart);
+  int indexOfLineToDelete = index;
+  while (indexOfLineToDelete < numberOfLinesAtStart - 1) {
+   if (lineAtIndex(indexOfLineToDelete + 1).isCommand()) {
+     break;
+   }
+   indexOfLineToDelete++;
+  }
+  ConsoleLine lineToDelete = lineAtIndex(indexOfLineToDelete);
+  while (indexOfLineToDelete > 0 && !lineAtIndex(indexOfLineToDelete).isCommand()) {
+    deleteLineAtIndex(indexOfLineToDelete);
+    indexOfLineToDelete--;
+    lineToDelete = lineAtIndex(indexOfLineToDelete);
+  }
+  deleteLineAtIndex(indexOfLineToDelete);
+  return indexOfLineToDelete;
+}
+
 void ConsoleStore::push(const char marker, const char * text, size_t length) {
   // TODO: Verify that the text field does not accept texts that are bigger than
   // k_historySize, or put an alert message if the command is too big.
@@ -112,6 +132,26 @@ int ConsoleStore::indexOfNullMarker() const {
   }
   assert(false);
   return 0;
+}
+
+void ConsoleStore::deleteLineAtIndex(int index) {
+  assert(index >=0 && index < numberOfLines());
+  int currentLineIndex = 0;
+  for (int i = 0; i < k_historySize - 1; i++) {
+    if (m_history[i] == 0) {
+      currentLineIndex++;
+      continue;
+    }
+    if (currentLineIndex == index) {
+      int nextLineStart = i;
+      while (m_history[nextLineStart] != 0 && nextLineStart < k_historySize - 2) {
+        nextLineStart++;
+      }
+      nextLineStart++;
+      memcpy(&m_history[i], &m_history[nextLineStart], (k_historySize - 1) - nextLineStart + 1);
+      return;
+    }
+  }
 }
 
 void ConsoleStore::deleteFirstLine() {

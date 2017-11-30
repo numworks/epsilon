@@ -126,6 +126,14 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.reloadData();
     m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
     return true;
+  } else if (event == Ion::Events::Backspace) {
+    int selectedRow = m_selectableTableView.selectedRow();
+    assert(selectedRow >= 0 && selectedRow < m_consoleStore.numberOfLines());
+    m_selectableTableView.deselectTable();
+    int firstDeletedLineIndex = m_consoleStore.deleteCommandAndResultsAtIndex(selectedRow);
+    m_selectableTableView.reloadData();
+    m_selectableTableView.selectCellAtLocation(0, firstDeletedLineIndex);
+    return true;
   }
   return false;
 }

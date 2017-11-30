@@ -622,7 +622,11 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
         Expression * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
         Reduce((Expression **)&sub, context, angleUnit);
         if (sub->sign() == Sign::Negative) { // index[0] < index[1]
-          factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
+          if (factor->type() == Type::Power) {
+            factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
+          } else {
+            factor = new Power(factor, new Opposite(sub, true), false);
+          }
           factor->editableOperand(1)->shallowReduce(context, angleUnit);
           factorizeBase(editableOperand(i), factor, context, angleUnit);
           editableOperand(i)->shallowReduce(context, angleUnit);

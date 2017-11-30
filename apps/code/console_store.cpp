@@ -35,7 +35,7 @@ int ConsoleStore::numberOfLines() const {
     return 0;
   }
   int result = 0;
-  for (int i=0; i<k_historySize; i++) {
+  for (int i = 0; i < k_historySize - 1; i++) {
     if (m_history[i] == 0) {
       result++;
       if (m_history[i+1] == 0) {

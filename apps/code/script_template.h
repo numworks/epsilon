@@ -10,6 +10,7 @@ public:
   static const ScriptTemplate * Factorial();
   static const ScriptTemplate * Fibonacci();
   static const ScriptTemplate * Mandelbrot();
+  static const ScriptTemplate * Polynomial();
   const char * name() const { return m_name; }
   const char * content() const { return m_content; }
 private:

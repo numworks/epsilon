@@ -2,8 +2,9 @@
 #define CODE_VARIABLE_BOX_CONTROLLER_H
 
 #include <escher.h>
-#include "double_buffer_text_cell.h"
 #include "menu_controller.h"
+#include "script_node.h"
+#include "script_node_cell.h"
 #include "script_store.h"
 
 namespace Code {
@@ -47,31 +48,6 @@ private:
     int indexFromCumulatedHeight(KDCoordinate offsetY) override;
     int typeAtLocation(int i, int j) override;
   private:
-    class ScriptNode {
-      public:
-        enum class Type {
-          Function = 0,
-          Variable = 1
-        };
-        ScriptNode() :
-          m_type(Type::Function), m_name(nullptr), m_scriptIndex(0) {}
-        static ScriptNode FunctionNode(const char * name, uint16_t scriptIndex) {
-          return ScriptNode(Type::Function, name, scriptIndex);
-        }
-        static ScriptNode VariableNode(const char * name, uint16_t scriptIndex) {
-          return ScriptNode(Type::Variable, name, scriptIndex);
-        }
-        Type type() const { return m_type; }
-        const char * name() const { return m_name; }
-        uint16_t scriptIndex() const { return m_scriptIndex; }
-      private:
-        ScriptNode(Type type, const char * name, uint16_t scriptIndex) :
-          m_type(type), m_name(name), m_scriptIndex(scriptIndex) {}
-        Type m_type;
-        const char * m_name;
-        uint16_t m_scriptIndex;
-    };
-
     constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
     constexpr static int k_leafType = 0;
     constexpr static int k_maxScriptNodesCount = 32;
@@ -82,7 +58,7 @@ private:
     ScriptStore * m_scriptStore;
     TextField * m_textFieldCaller;
     TextArea * m_textAreaCaller;
-    DoubleBufferTextCell m_leafCells[k_maxNumberOfDisplayedRows];
+    ScriptNodeCell m_leafCells[k_maxNumberOfDisplayedRows];
     SelectableTableView m_selectableTableView;
   };
   ContentViewController m_contentViewController;

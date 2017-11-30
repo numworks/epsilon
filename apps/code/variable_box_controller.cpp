@@ -20,8 +20,7 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setFirstTextColor(KDColorBlack);
-    m_leafCells[i].setSecondTextColor(Palette::GreyDark);
+    m_leafCells[i].setScriptStore(scriptStore);
   }
 }
 
@@ -87,8 +86,11 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    DoubleBufferTextCell * selectedTextCell = static_cast<DoubleBufferTextCell *>(m_selectableTableView.selectedCell());
-    insertTextInCaller(selectedTextCell->firstText());
+    ScriptNode selectedScriptNode = m_scriptNodes[m_selectableTableView.selectedRow()];
+    insertTextInCaller(selectedScriptNode.name());
+    if (selectedScriptNode.type() == ScriptNode::Type::Function) {
+      insertTextInCaller(ScriptNodeCell::k_parentheses);
+    }
     m_selectableTableView.deselectTable();
     app()->dismissModalViewController();
     return true;
@@ -112,9 +114,8 @@ int VariableBoxController::ContentViewController::reusableCellCount(int type) {
 }
 
 void VariableBoxController::ContentViewController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  DoubleBufferTextCell * myCell = static_cast<DoubleBufferTextCell *>(cell);
-  myCell->setFirstText(m_scriptNodes[index].name());
-  myCell->setSecondText(m_scriptStore->scriptAtIndex(m_scriptNodes[index].scriptIndex()).name());
+  ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
+  myCell->setScriptNode(&m_scriptNodes[index]);
 }
 
 KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) {

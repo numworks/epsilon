@@ -16,6 +16,7 @@ public:
   void pushCommand(const char * text, size_t length);
   void pushResult(const char * text, size_t length);
   void deleteLastLineIfEmpty();
+  int deleteCommandAndResultsAtIndex(int index);
 private:
   static constexpr char CurrentSessionCommandMarker = 0x01;
   static constexpr char CurrentSessionResultMarker = 0x02;
@@ -31,6 +32,7 @@ private:
   void push(const char marker, const char * text, size_t length);
   ConsoleLine::Type lineTypeForMarker(char marker) const;
   int indexOfNullMarker() const;
+  void deleteLineAtIndex(int index);
   void deleteFirstLine();
   /* When there is no room left to store a new ConsoleLine, we have to delete
    * old ConsoleLines. deleteFirstLine() deletes the first ConsoleLine of

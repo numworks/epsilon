@@ -91,6 +91,7 @@ QUIZ_CASE(assert_float_prints_to) {
   assert_float_prints_to(123.421, "1.2E2", DecimalDisplay, 5, 6);
   assert_float_prints_to(9.999999f, "10", DecimalDisplay, 6);
   assert_float_prints_to(-9.99999904, "-10", DecimalDisplay, 6);
+  assert_float_prints_to(-0.017452, "-0.01745", DecimalDisplay, 6);
   assert_float_prints_to(1E50, "1E50", DecimalDisplay, 9);
 }
 
@@ -164,29 +165,27 @@ QUIZ_CASE(poincare_decimal_to_text) {
 QUIZ_CASE(poincare_complex_to_text) {
   Complex<double> c0 = Complex<double>::Cartesian(1.0, 2.0);
   assert_expression_prints_to(&c0, "1+2*I", DecimalDisplay, Cartesian);
-  Complex<float> c1 = Complex<float>::Cartesian(1.0f, 2.0f);
-  assert_expression_prints_to(&c1, "2.236068*X^(1.107149*I)", DecimalDisplay, Polar);
-  Complex<float> c2 = Complex<float>::Cartesian(-1.3f, 2.444f);
+  Complex<double> c1 = Complex<double>::Cartesian(1.0, 2.0);
+  assert_expression_prints_to(&c1, "2.2360679774998*X^(1.1071487177941*I)", DecimalDisplay, Polar);
+  Complex<double> c2 = Complex<double>::Cartesian(-1.3, 2.444);
   assert_expression_prints_to(&c2, "-1.3+2.444*I", DecimalDisplay, Cartesian);
   Complex<double> c3 = Complex<double>::Cartesian(-1.3, 2.444);
-  assert_expression_prints_to(&c3, "2.768237*X^(2.059649*I)", DecimalDisplay, Polar);
-  Complex<float> c4 = Complex<float>::Cartesian(-1.3f, -2.444f);
+  assert_expression_prints_to(&c3, "2.7682369840749*X^(2.0596486811226*I)", DecimalDisplay, Polar);
+  Complex<double> c4 = Complex<double>::Cartesian(-1.3, -2.444);
   assert_expression_prints_to(&c4, "-1.3-2.444*I", DecimalDisplay, Cartesian);
   Complex<double> c5 = Complex<double>::Cartesian(64078208.0, 119229408.0);
-  assert_expression_prints_to(&c5, "6.407821E7+1.192294E8*I", DecimalDisplay, Cartesian);
-  Complex<float> c6 = Complex<float>::Cartesian(64078208.0f, 119229408.0f);
-  assert_expression_prints_to(&c6, "1.353576E8*X^(1.07765*I)", DecimalDisplay, Polar);
-  Complex<float> c7 = Complex<float>::Cartesian(64078208.0f, 119229408.0f);
-  assert_expression_prints_to(&c7, "1.353576E8*X^(1.07765*I)", DecimalDisplay, Polar);
-  Complex<float> c8 = Complex<float>::Cartesian(INFINITY, 119229408.0f);
-  assert_expression_prints_to(&c8, "undef", DecimalDisplay, Polar);
-  Complex<float> c9 = Complex<float>::Cartesian(0.0f, 0.0f);
-  assert_expression_prints_to(&c9, "0", DecimalDisplay, Polar);
-  Complex<float> c10 = Complex<float>::Cartesian(NAN, 0.0f);
+  assert_expression_prints_to(&c5, "64078208+119229408*I", DecimalDisplay, Cartesian);
+  Complex<double> c6 = Complex<double>::Cartesian(64078208.0, 119229408.0);
+  assert_expression_prints_to(&c6, "135357557.86997*X^(1.0776501182461*I)", DecimalDisplay, Polar);
+  Complex<double> c7 = Complex<double>::Cartesian(INFINITY, 119229408.0);
+  assert_expression_prints_to(&c7, "undef", DecimalDisplay, Polar);
+  Complex<float> c8 = Complex<float>::Cartesian(0.0f, 0.0f);
+  assert_expression_prints_to(&c8, "0", DecimalDisplay, Polar);
+  Complex<float> c9 = Complex<float>::Cartesian(NAN, 0.0f);
+  assert_expression_prints_to(&c9, "undef", DecimalDisplay, Polar);
+  Complex<float> c10 = Complex<float>::Cartesian(0.0f, NAN);
   assert_expression_prints_to(&c10, "undef", DecimalDisplay, Polar);
-  Complex<float> c11 = Complex<float>::Cartesian(0.0f, NAN);
+  Complex<double> c11 = Complex<double>::Cartesian(NAN, NAN);
   assert_expression_prints_to(&c11, "undef", DecimalDisplay, Polar);
-  Complex<double> c12 = Complex<double>::Cartesian(NAN, NAN);
-  assert_expression_prints_to(&c12, "undef", DecimalDisplay, Polar);
 
 }

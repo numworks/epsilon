@@ -3,6 +3,7 @@
 
 #include <poincare/preferences.h>
 #include <poincare/static_hierarchy.h>
+#include <poincare/integer.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -12,14 +13,29 @@ namespace PrintFloat {
     // The wors case is -1.234E-38
     return numberOfSignificantDigits + 7;
   }
-  /* This function prints the int i in the buffer with a '.' at the position
+  /* This function prints the integer i in the buffer with a '.' at the position
    * specified by the decimalMarkerPosition. It starts printing at the end of the
    * buffer and print from right to left. The integer given should be of the right
    * length to be written in bufferLength chars. If the integer is to small, the
    * empty chars on the left side are completed with '0'. If the integer is too
    * big, the printing stops when no more empty chars are available without
-   * returning any warning. */
-  void printBase10IntegerWithDecimalMarker(char * buffer, int bufferSize,  int i, int decimalMarkerPosition);
+   * returning any warning.
+   * Warning: the buffer is not null terminated but is ensured to hold
+   * bufferLength chars. */
+  void printBase10IntegerWithDecimalMarker(char * buffer, int bufferLength, Integer i, int decimalMarkerPosition);
+
+  constexpr static int k_numberOfPrintedSignificantDigits = 7;
+  constexpr static int k_numberOfStoredSignificantDigits = 14;
+
+  /* We here define the buffer size to write the lengthest float possible.
+   * At maximum, the number has 15 significant digits so, in the worst case it
+   * has the form -1.99999999999999e-308 (15+7+1 char) (the auto mode is always
+   * shorter. */
+  constexpr static int k_maxFloatBufferLength = k_numberOfStoredSignificantDigits+7+1;
+  /* We here define the buffer size to write the lengthest complex possible.
+   * The worst case has the form
+   * -1.99999999999999e-308*e^(-1.99999999999999e-308*i) (14+14+7+1 char) */
+  constexpr static int k_maxComplexBufferLength = k_maxFloatBufferLength-1+k_maxFloatBufferLength-1+7+1;
 }
 
 template<typename T>
@@ -65,23 +81,13 @@ public:
   static int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Expression::FloatDisplayMode mode = Expression::FloatDisplayMode::Default);
 private:
   Complex(T a, T b);
-  constexpr static int k_numberOfSignificantDigits = 7;
   ExpressionLayout * privateCreateLayout(Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const override;
   Expression * privateApproximate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Expression * privateApproximate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
  template<typename U> Complex<U> * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const;
-  /* We here define the buffer size to write the lengthest float possible.
-   * At maximum, the number has 7 significant digits so, in the worst case it
-   * has the form -1.999999e-308 (7+7+1 char) (the auto mode is always
-   * shorter. */
-  constexpr static int k_maxFloatBufferLength = 7+7+1;
-  /* We here define the buffer size to write the lengthest complex possible.
-   * The worst case has the form -1.999999E-308*e^(-1.999999E-308*i) (14+14+7+1
-   * char) */
-  constexpr static int k_maxComplexBufferLength = 14+14+7+1;
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
-  int convertComplexToText(char * buffer, int bufferSize, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat, char multiplicationSign) const;
+  int convertComplexToText(char * buffer, int bufferSize, int numberOfSignificantDigits, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat, char multiplicationSign) const;
   static int convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Expression::FloatDisplayMode mode);
   ExpressionLayout * createPolarLayout(Expression::FloatDisplayMode floatDisplayMode) const;
   ExpressionLayout * createCartesianLayout(Expression::FloatDisplayMode floatDisplayMode) const;

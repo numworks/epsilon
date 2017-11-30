@@ -8,13 +8,13 @@ app_objs += $(addprefix apps/code/,\
   console_edit_cell.o\
   console_line_cell.o\
   console_store.o\
-  double_buffer_text_cell.o\
   editor_controller.o\
   helpers.o\
   menu_controller.o\
   python_toolbox.o\
   sandbox_controller.o\
   script.o\
+  script_node_cell.o\
   script_parameter_controller.o\
   script_store.o\
   script_template.o\

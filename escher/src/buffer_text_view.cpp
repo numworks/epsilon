@@ -18,3 +18,11 @@ void BufferTextView::setText(const char * text) {
   strlcpy(m_buffer, text, sizeof(m_buffer));
   markRectAsDirty(bounds());
 }
+
+void BufferTextView::appendText(const char * text) {
+  size_t previousTextLength = strlen(m_buffer);
+  size_t argTextLength = strlen(text);
+  if (previousTextLength + argTextLength + 1 < k_maxNumberOfChar) {
+    strlcpy(&m_buffer[previousTextLength], text, argTextLength + 1);
+  }
+}

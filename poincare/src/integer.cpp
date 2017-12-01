@@ -524,7 +524,7 @@ T Integer::approximate() const {
   /* Shift the most significant int to the left of the mantissa. The most
    * significant 1 will be ignore at the end when inserting the mantissa in
    * the resulting uint64_t (as required by IEEE754). */
-  assert(totalNumberOfBits-numberOfBitsInLastDigit > 0 && totalNumberOfBits-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
+  assert(totalNumberOfBits-numberOfBitsInLastDigit >= 0 && totalNumberOfBits-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
   mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBitsInLastDigit));
   int digitIndex = 2;
   int numberOfBits = numberOfBitsInLastDigit;

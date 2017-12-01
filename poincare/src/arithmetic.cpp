@@ -73,7 +73,7 @@ void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, 
     k++;
     testedPrimeFactor = k < k_numberOfPrimeFactors ? Integer(primeFactors[k]) : Integer::Addition(testedPrimeFactor, Integer(1));
     outputFactors[t] = testedPrimeFactor;
-  } while (stopCondition);
+  } while (stopCondition && testedPrimeFactor.isLowerThan(Integer(k_biggestPrimeFactor)));
   outputFactors[t] = std::move(m);
   outputCoefficients[t] = Integer::Addition(outputCoefficients[t], Integer(1));
 }

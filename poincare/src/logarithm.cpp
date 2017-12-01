@@ -8,7 +8,7 @@
 #include <poincare/arithmetic.h>
 #include <poincare/power.h>
 #include <poincare/naperian_logarithm.h>
-#include <poincare/evaluation_engine.h>
+#include <poincare/approximation_engine.h>
 #include <poincare/simplification_engine.h>
 #include <cmath>
 #include <ion.h>
@@ -149,9 +149,10 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
   }
   assert(!i.isOne());
   if (Arithmetic::k_primorial32.isLowerThan(i)) {
-    // We do not want to break i in prime factor because it might be take too many factors... More than k_maxNumberOfPrimeFactors.
+    /* We do not want to break i in prime factor because it might be take too
+     * many factors... More than k_maxNumberOfPrimeFactors. */
     Expression * e = clone();
-    e->replaceOperand(operand(0), new Rational(i), true);
+    e->replaceOperand(e->operand(0), new Rational(i), true);
     if (!isDenominator) {
       return e;
     }
@@ -190,12 +191,12 @@ Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) 
 }
 
 template<typename T>
-Expression * Logarithm::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Logarithm::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   if (numberOfOperands() == 1) {
-    return EvaluationEngine::map(this, context, angleUnit, computeOnComplex<T>);
+    return ApproximationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }
-  Expression * x = operand(0)->evaluate<T>(context, angleUnit);
-  Expression * n = operand(1)->evaluate<T>(context, angleUnit);
+  Expression * x = operand(0)->approximate<T>(context, angleUnit);
+  Expression * n = operand(1)->approximate<T>(context, angleUnit);
   Complex<T> result = Complex<T>::Float(NAN);
   if (x->type() == Type::Complex && n->type() == Type::Complex) {
     Complex<T> * xc = static_cast<Complex<T> *>(x);

@@ -2,7 +2,7 @@
 #define POINCARE_ABSOLUTE_VALUE_H
 
 #include <poincare/static_hierarchy.h>
-#include <poincare/evaluation_engine.h>
+#include <poincare/approximation_engine.h>
 #include <poincare/layout_engine.h>
 
 namespace Poincare {
@@ -24,11 +24,11 @@ private:
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
-  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::map<float>(this, context, angleUnit, computeOnComplex<float>);
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::map<float>(this, context, angleUnit, computeOnComplex<float>);
   }
-  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-  return EvaluationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  return ApproximationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
 };
 

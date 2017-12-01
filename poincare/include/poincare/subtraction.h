@@ -3,7 +3,7 @@
 
 #include <poincare/static_hierarchy.h>
 #include <poincare/layout_engine.h>
-#include <poincare/evaluation_engine.h>
+#include <poincare/approximation_engine.h>
 
 namespace Poincare {
 
@@ -26,18 +26,18 @@ private:
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
   template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * c) {
-    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+    return ApproximationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
   template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * n);
   template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n) {
-    return EvaluationEngine::elementWiseOnComplexMatrices(m, n, compute<T>);
+    return ApproximationEngine::elementWiseOnComplexMatrices(m, n, compute<T>);
   }
 
-  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };
 

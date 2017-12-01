@@ -13,7 +13,7 @@ SequenceLayout::SequenceLayout(ExpressionLayout * lowerBoundLayout, ExpressionLa
   m_lowerBoundLayout->setParent(this);
   m_upperBoundLayout->setParent(this);
   m_argumentLayout->setParent(this);
-  m_baseline = max(m_upperBoundLayout->size().height()+k_boundHeightMargin+k_symbolHeight, m_argumentLayout->baseline());
+  m_baseline = max(m_upperBoundLayout->size().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, m_argumentLayout->baseline());
 }
 
 SequenceLayout::~SequenceLayout() {
@@ -28,7 +28,7 @@ KDSize SequenceLayout::computeSize() {
   KDSize upperBoundSize = m_upperBoundLayout->size();
   return KDSize(
     max(max(k_symbolWidth, lowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSize.width(),
-    m_baseline + max(k_boundHeightMargin+lowerBoundSize.height(), argumentSize.height() - m_argumentLayout->baseline())
+    m_baseline + max(k_symbolHeight/2+k_boundHeightMargin+lowerBoundSize.height(), argumentSize.height() - m_argumentLayout->baseline())
   );
 }
 
@@ -52,10 +52,10 @@ KDPoint SequenceLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate y = 0;
   if (child == m_lowerBoundLayout) {
     x = max(max(0, (k_symbolWidth-lowerBoundSize.width())/2), (upperBoundSize.width()-lowerBoundSize.width())/2);
-    y = m_baseline + k_boundHeightMargin;
+    y = m_baseline + k_symbolHeight/2 + k_boundHeightMargin;
   } else if (child == m_upperBoundLayout) {
     x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSize.width()-upperBoundSize.width())/2);
-    y = m_baseline - k_symbolHeight- k_boundHeightMargin-upperBoundSize.height();
+    y = m_baseline - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
   } else if (child == m_argumentLayout) {
     x = max(max(k_symbolWidth, lowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin;
     y = m_baseline - m_argumentLayout->baseline();

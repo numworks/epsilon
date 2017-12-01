@@ -25,7 +25,7 @@ objs += $(addprefix poincare/src/,\
   division_quotient.o\
   division_remainder.o\
   dynamic_hierarchy.o\
-  evaluation_engine.o\
+  approximation_engine.o\
   expression.o\
   expression_lexer.o\
   expression_parser.o\
@@ -34,7 +34,6 @@ objs += $(addprefix poincare/src/,\
   frac_part.o\
   global_context.o\
   great_common_divisor.o\
-  hierarchy.o\
   hyperbolic_arc_cosine.o\
   hyperbolic_arc_sine.o\
   hyperbolic_arc_tangent.o\
@@ -101,33 +100,31 @@ objs += $(addprefix poincare/src/layout/,\
 )
 
 tests += $(addprefix poincare/test/,\
-  arithmetic.cpp\
-  convert_expression_to_text.cpp\
-  helper.cpp\
-  integer.cpp\
-  simplify_easy.cpp\
-)
-
-testsi += $(addprefix poincare/test/,\
   addition.cpp\
   arithmetic.cpp\
   complex.cpp\
+  convert_expression_to_text.cpp\
   division.cpp\
+  factorial.cpp\
   function.cpp\
   helper.cpp\
   integer.cpp\
+  logarithm.cpp\
   matrix.cpp\
+  multiplication.cpp\
   parser.cpp\
-  product.cpp\
   power.cpp\
+  rational.cpp\
+  simplify_mix.cpp\
   subtraction.cpp\
-  simplify_utils.cpp\
   symbol.cpp\
   trigo.cpp\
 )
+#  simplify_utils.cpp\
 
 ifdef POINCARE_TESTS_PRINT_EXPRESSIONS
 tests += poincare/src/expression_debug.o
+objs += poincare/src/expression_debug.o
 SFLAGS += -DPOINCARE_TESTS_PRINT_EXPRESSIONS=1
 endif
 

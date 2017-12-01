@@ -37,11 +37,11 @@ private:
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
-  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
-  template<typename T> Expression * templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const;
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> Expression * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const;
 
-  constexpr static int k_maxLength = 10;
+  constexpr static int k_maxLength = 15;
   Integer m_mantissa;
   int m_exponent;
 };

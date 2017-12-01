@@ -72,7 +72,7 @@ class Expression {
   friend class SimplificationRoot;
   friend class Sequence;
   friend class Trigonometry;
-  friend class EvaluationEngine;
+  friend class ApproximationEngine;
   friend class SimplificationEngine;
 
 public:
@@ -167,15 +167,20 @@ public:
   static bool shouldStopProcessing();
 
   /* Hierarchy */
-  virtual const Expression * operand(int i) const = 0;
+  virtual const Expression * const * operands() const = 0;
+  const Expression * operand(int i) const;
   Expression * editableOperand(int i) { return const_cast<Expression *>(operand(i)); }
   virtual int numberOfOperands() const = 0;
+
+  Expression * replaceWith(Expression * newOperand, bool deleteAfterReplace = true);
+  void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true);
+  void detachOperand(const Expression * e); // Removes an operand WITHOUT deleting it
+  void detachOperands(); // Removes all operands WITHOUT deleting them
+  void swapOperands(int i, int j);
+
   Expression * parent() const { return m_parent; }
   void setParent(Expression * parent) { m_parent = parent; }
   bool hasAncestor(const Expression * e) const;
-  virtual void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true) = 0;
-  Expression * replaceWith(Expression * newOperand, bool deleteAfterReplace = true);
-  virtual void swapOperands(int i, int j) = 0;
 
   /* Properties */
   enum class Sign {
@@ -208,12 +213,15 @@ public:
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
-  template<typename T> Expression * evaluate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  template<typename T> T approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  template<typename T> static T approximate(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
+  template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
+  template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
+  template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}
+  static const Expression * const * ExpressionArray(const Expression * e1, const Expression * e2);
+  /* Hierarchy */
+  void detachOperandAtIndex(int i);
   /* Evaluation Engine */
   typedef float SinglePrecision;
   typedef double DoublePrecision;
@@ -259,8 +267,8 @@ private:
     return nullptr;
   }
   /* Evaluation Engine */
-  virtual Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  virtual Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 
   Expression * m_parent;
 };

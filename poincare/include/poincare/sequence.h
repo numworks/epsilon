@@ -3,7 +3,7 @@
 
 #include <poincare/layout_engine.h>
 #include <poincare/static_hierarchy.h>
-#include <poincare/evaluation_engine.h>
+#include <poincare/approximation_engine.h>
 
 namespace Poincare {
 
@@ -17,9 +17,9 @@ private:
   virtual ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const = 0;
   virtual const char * name() const = 0;
   /* Evaluation */
-  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename T> Expression * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
   virtual int emptySequenceValue() const = 0;
   virtual Expression * evaluateWithNextTerm(SinglePrecision p, Expression * a, Expression * b) const = 0;
   virtual Expression * evaluateWithNextTerm(DoublePrecision p, Expression * a, Expression * b) const = 0;

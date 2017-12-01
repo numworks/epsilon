@@ -2,6 +2,7 @@
 #define REGS_REGISTER_H
 
 #include <stdint.h>
+#include <assert.h>
 
 template <typename T>
 class Register {
@@ -21,13 +22,19 @@ public:
     m_value = bit_range_set_value(high, low, m_value, value);
   }
   T getBitRange(uint8_t high, uint8_t low) volatile {
+    /* "Shift behavior is undefined if the right operand is negative, or greater
+     * than or equal to the length in bits of the promoted left operand" according
+     * to C++ spec. */
+    assert(low < 8*sizeof(T));
     return (m_value & bit_range_mask(high,low)) >> low;
   }
 protected:
   static constexpr T bit_range_mask(uint8_t high, uint8_t low) {
+    // Same comment as for getBitRange: we should assert (high-low+1) < 8*sizeof(T)
     return ((((T)1)<<(high-low+1))-1)<<low;
   }
   static constexpr T bit_range_value(T value, uint8_t high, uint8_t low) {
+    // Same comment as for getBitRange: we should assert low < 8*sizeof(T))
     return (value<<low) & bit_range_mask(high,low);
   }
   static constexpr T bit_range_set_value(uint8_t high, uint8_t low, T originalValue, T targetValue) {

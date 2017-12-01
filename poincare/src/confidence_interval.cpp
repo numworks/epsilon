@@ -59,9 +59,9 @@ Expression * ConfidenceInterval::shallowReduce(Context& context, AngleUnit angle
 }
 
 template<typename T>
-Expression * ConfidenceInterval::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * fInput = operand(0)->evaluate<T>(context, angleUnit);
-  Expression * nInput = operand(1)->evaluate<T>(context, angleUnit);
+Expression * ConfidenceInterval::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * fInput = operand(0)->approximate<T>(context, angleUnit);
+  Expression * nInput = operand(1)->approximate<T>(context, angleUnit);
   if (fInput->type() != Type::Complex || nInput->type() != Type::Complex) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }

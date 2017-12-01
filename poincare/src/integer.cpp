@@ -34,17 +34,22 @@ static inline int8_t sign(bool negative) {
 
 // Constructors
 
+static_assert(sizeof(Integer::double_native_int_t) == 2*sizeof(Integer::native_int_t), "double_native_int_t type has not the right size compared to native_int_t");
+static_assert(sizeof(Integer::native_int_t) == sizeof(Integer::native_uint_t), "native_int_t type has not the right size compared to native_uint_t");
+
 Integer::Integer(double_native_int_t i) {
   double_native_uint_t j = i < 0 ? -i : i;
-  if (j <= 0xFFFFFFFF) {
-    m_digit = j;
-    m_numberOfDigits = 1;
+  native_uint_t * digits = (native_uint_t *)&j;
+  native_uint_t leastSignificantDigit = *digits;
+  native_uint_t mostSignificantDigit = *(digits+1);
+  m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
+  if (m_numberOfDigits == 1) {
+    m_digit = leastSignificantDigit;
   } else {
     native_uint_t * digits = new native_uint_t [2];
-    digits[0] = j & 0xFFFFFFFF;
-    digits[1] = (j >> 32) & 0xFFFFFFFF;
+    digits[0] = leastSignificantDigit;
+    digits[1] = mostSignificantDigit;
     m_digits = digits;
-    m_numberOfDigits = 2;
   }
   m_negative = i < 0;
 }
@@ -468,6 +473,15 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
 
 template<typename T>
 T Integer::approximate() const {
+  if (isZero()) {
+    /* This special case for 0 is needed, because the current algorithm assumes
+     * that the big integer is non zero, thus puts the exponent to 126 (integer
+     * area), the issue is that when the mantissa is 0, a "shadow bit" is
+     * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
+     */
+    T result = m_negative ? -0.0 : 0.0;
+    return result;
+  }
   union {
     uint64_t uint_result;
     T float_result;
@@ -507,29 +521,37 @@ T Integer::approximate() const {
   exponent += numberOfBitsInLastDigit;
 
   uint64_t mantissa = 0;
+  /* Shift the most significant int to the left of the mantissa. The most
+   * significant 1 will be ignore at the end when inserting the mantissa in
+   * the resulting uint64_t (as required by IEEE754). */
+  assert(totalNumberOfBits-numberOfBitsInLastDigit > 0 && totalNumberOfBits-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
   mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBitsInLastDigit));
   int digitIndex = 2;
-  int numberOfBits = log2(lastDigit);
+  int numberOfBits = numberOfBitsInLastDigit;
+  /* Complete the mantissa by inserting, from left to right, every digit of the
+   * Integer from the most significant one to the last from. We break when
+   * the mantissa is complete to avoid undefined right shifting (Shift operator
+   * behavior is undefined if the right operand is negative, or greater than or
+   * equal to the length in bits of the promoted left operand). */
   while (m_numberOfDigits >= digitIndex) {
     lastDigit = digit(m_numberOfDigits-digitIndex);
     numberOfBits += 32;
+    if (numberOfBits-totalNumberOfBits >= 64) {
+      break;
+    }
     if (totalNumberOfBits > numberOfBits) {
+      assert(totalNumberOfBits-numberOfBits > 0 && totalNumberOfBits-numberOfBits < 64);
       mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBits));
     } else {
       mantissa |= ((uint64_t)lastDigit >> (numberOfBits-totalNumberOfBits));
     }
     digitIndex++;
   }
-
-  if (isZero()) {
-    /* This special case for 0 is needed, because the current algorithm assumes
-     * that the big integer is non zero, thus puts the exponent to 126 (integer
-     * area), the issue is that when the mantissa is 0, a "shadow bit" is
-     * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
-     */
-    T result = m_negative ? -0.0 : 0.0;
-    return result;
-  }
+  // TODO: Here, we just cast the Integer in float(double). We should round it
+  // to the closest float(double). To do so, we should keep a additional bit
+  // at the end of the mantissa and add it to the mantissa; do not forget to
+  // shift the mantissa if the rounding increase the length in bits of the
+  // mantissa.
 
   u.uint_result = 0;
   u.uint_result |= ((uint64_t)sign << (totalNumberOfBits-1));
@@ -550,13 +572,12 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  /* If the integer is too long, this method may overflow the stack.
+  /* If the integer is too long, this method may be too slow.
    * Experimentally, we can display at most integer whose number of digits is
-   * around 7. However, to avoid crashing when the stack is already half full,
-   * we decide not to display integers whose number of digits > 5. */
-  /*if (m_numberOfDigits > 12) {
+   * around 25. */
+  if (m_numberOfDigits > 25) {
     return strlcpy(buffer, "inf", 4);
-  }*/
+  }
 
   Integer base = Integer(10);
   Integer abs = *this;
@@ -583,8 +604,7 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
   buffer[size] = 0;
 
   // Flip the string
-  int startChar = isNegative() ? 1 : 0;
-  for (int i=startChar, j=size-1 ; i < j ; i++, j--) {
+  for (int i=m_negative, j=size-1 ; i < j ; i++, j--) {
     char c = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = c;

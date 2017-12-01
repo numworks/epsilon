@@ -31,7 +31,7 @@ ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLa
 }
 
 template<typename T>
-Expression * Product::templatedEvaluateWithNextTerm(Expression * a, Expression * b) const {
+Expression * Product::templatedApproximateWithNextTerm(Expression * a, Expression * b) const {
   if (a->type() == Type::Complex && b->type() == Type::Complex) {
     Complex<T> * c = static_cast<Complex<T> *>(a);
     Complex<T> * d = static_cast<Complex<T> *>(b);

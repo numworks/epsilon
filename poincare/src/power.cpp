@@ -34,6 +34,9 @@ Expression * Power::clone() const {
 }
 
 Expression::Sign Power::sign() const {
+  if (shouldStopProcessing()) {
+    return Sign::Unknown;
+  }
   if (operand(0)->sign() == Sign::Positive && operand(1)->sign() != Sign::Unknown) {
     return Sign::Positive;
   }
@@ -103,7 +106,9 @@ template<typename T> Matrix * Power::computeOnMatrixAndComplex(const Matrix * m,
       delete result;
       return nullptr;
     }
-    result = Multiplication::computeOnMatrices<T>(result, m);
+    Matrix * mult = Multiplication::computeOnMatrices<T>(result, m);
+    delete result;
+    result = mult;
   }
   return result;
 }
@@ -181,30 +186,39 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
   }
 #endif
 
-  /* Step 0: We look for square root and sum of square roots (two terms maximum
-   * so far) at the denominator and move them to the numerator. */
-  Expression * r = removeSquareRootsFromDenominator(context, angleUnit);
-  if (r) {
-    return r;
+  /* Step 0: if both operands are true complexes, the result is undefined.
+   * We can assert that evaluations is a complex as matrix are not simplified */
+  Complex<float> * op0 = static_cast<Complex<float> *>(operand(0)->approximate<float>(context, angleUnit));
+  Complex<float> * op1 = static_cast<Complex<float> *>(operand(1)->approximate<float>(context, angleUnit));
+  bool bothOperandsComplexes = op0->b() != 0 && op1->b() != 0;
+  delete op0;
+  delete op1;
+  if (bothOperandsComplexes) {
+    return replaceWith(new Undefined(), true);
   }
 
+  /* Step 1: We handle simple cases as x^0, x^1, 0^x and 1^x first for 2 reasons:
+   * - we can assert this step that there is no division by 0:
+   *   for instance, 0^(-2)->undefined
+   * - we save computational time by early escaping for these cases. */
   if (operand(1)->type() == Type::Rational) {
     const Rational * b = static_cast<const Rational *>(operand(1));
     // x^0
     if (b->isZero()) {
+      // 0^0 = undef
+      if (operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isZero()) {
+        return replaceWith(new Undefined(), true);
+      }
+      /* Warning: in all other case but 0^0, we replace x^0 by one. This is
+       * almost always true except when x = 0. However, not substituting x^0 by
+       * one would prevent from simplifying many expressions like x/x->1. */
       return replaceWith(new Rational(1), true);
     }
     // x^1
     if (b->isOne()) {
       return replaceWith(editableOperand(0), true);
     }
-    // i^(p/q)
-    if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == Ion::Charset::IComplex) {
-      Rational r = Rational::Multiplication(*b, Rational(1, 2));
-      return replaceWith(CreateNthRootOfUnity(r))->shallowReduce(context, angleUnit);
-    }
   }
-  bool letPowerAtRoot = parentIsALogarithmOfSameBase();
   if (operand(0)->type() == Type::Rational) {
     Rational * a = static_cast<Rational *>(editableOperand(0));
     // 0^x
@@ -220,15 +234,35 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     if (a->isOne()) {
       return replaceWith(new Rational(1), true);
     }
+  }
+
+  /* Step 2: We look for square root and sum of square roots (two terms maximum
+   * so far) at the denominator and move them to the numerator. */
+  Expression * r = removeSquareRootsFromDenominator(context, angleUnit);
+  if (r) {
+    return r;
+  }
+
+  if (operand(1)->type() == Type::Rational) {
+    const Rational * b = static_cast<const Rational *>(operand(1));
+    // i^(p/q)
+    if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == Ion::Charset::IComplex) {
+      Rational r = Rational::Multiplication(*b, Rational(1, 2));
+      return replaceWith(CreateNthRootOfUnity(r))->shallowReduce(context, angleUnit);
+    }
+  }
+  bool letPowerAtRoot = parentIsALogarithmOfSameBase();
+  if (operand(0)->type() == Type::Rational) {
+    Rational * a = static_cast<Rational *>(editableOperand(0));
     // p^q with p, q rationals
     if (!letPowerAtRoot && operand(1)->type() == Type::Rational) {
-      double p = a->approximate<double>(context, angleUnit);
-      double q = operand(1)->approximate<double>(context, angleUnit);
-      double approx = std::pow(std::fabs(p), q);
-      if (std::isinf(approx) || std::isnan(approx) || std::fabs(approx)> 1E100) {
+      Rational * exp = static_cast<Rational *>(editableOperand(1));
+      /* First, we check that the simplification does not involve too complex power
+       * of integers (ie 3^999) that would take too much time to compute. */
+      if (RationalExponentShouldNotBeReduced(exp)) {
         return this;
       }
-      return simplifyRationalRationalPower(this, a, static_cast<Rational *>(editableOperand(1)), context, angleUnit);
+      return simplifyRationalRationalPower(this, a, exp, context, angleUnit);
     }
   }
   // e^(i*Pi*r) with r rational
@@ -264,7 +298,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       return replaceWith(editableOperand(1)->editableOperand(0), true);
     }
   }
-  // (a^b)^c -> a^(b+c) if a > 0 or c is integer
+  // (a^b)^c -> a^(b*c) if a > 0 or c is integer
   if (operand(0)->type() == Type::Power) {
     Power * p = static_cast<Power *>(editableOperand(0));
     // Check is a > 0 or c is Integer
@@ -309,6 +343,11 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     Addition * a = static_cast<Addition *>(editableOperand(1));
     // Check is b is rational
     if (a->operand(0)->type() == Type::Rational) {
+      /* First, we check that the simplification does not involve too complex power
+       * of integers (ie 3^999) that would take too much time to compute. */
+      if (RationalExponentShouldNotBeReduced(static_cast<const Rational *>(a->operand(0)))) {
+        return this;
+      }
       Power * p1 = static_cast<Power *>(clone());
       replaceOperand(a, a->editableOperand(1), true);
       Power * p2 = static_cast<Power *>(clone());
@@ -390,9 +429,12 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   if (i.isOne()) {
     return new Rational(1);
   }
-  if (Arithmetic::k_primorial32.isLowerThan(i)) {
+  Integer absI = i;
+  absI.setNegative(false);
+  if (Arithmetic::k_primorial32.isLowerThan(absI)) {
     r->setSign(isDenominator ? Sign::Negative : Sign::Positive);
-    // We do not want to break i in prime factor because it might be take too many factors... More than k_maxNumberOfPrimeFactors.
+    /* We do not want to break i in prime factor because it might be take too
+     * many factors... More than k_maxNumberOfPrimeFactors. */
     return new Power(new Rational(i), r->clone(), false);
   }
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
@@ -544,6 +586,7 @@ Expression * Power::removeSquareRootsFromDenominator(Context & context, AngleUni
        * p and q integers.
        * We'll turn those into sqrt(p*q)/q (or sqrt(p*q)/p) . */
       Integer p = static_cast<const Rational *>(operand(0))->numerator();
+      assert(!p.isZero()); // We eliminated case of form 0^(-1/2) at first step of shallowReduce
       Integer q = static_cast<const Rational *>(operand(0))->denominator();
       // We do nothing for terms of the form sqrt(p)
       if (!q.isOne() || static_cast<const Rational *>(operand(1))->isMinusHalf()) {
@@ -551,7 +594,7 @@ Expression * Power::removeSquareRootsFromDenominator(Context & context, AngleUni
         if (static_cast<const Rational *>(operand(1))->isHalf()) {
           result = new Multiplication(new Rational(Integer(1), q), sqrt, false);
         } else {
-          result = new Multiplication(new Rational(Integer(1), p), sqrt, false);
+          result = new Multiplication(new Rational(Integer(1), p), sqrt, false); // We use here the assertion that p != 0
         }
         sqrt->shallowReduce(context, angleUnit);
       }
@@ -644,6 +687,15 @@ bool Power::isNthRootOfUnity() const {
     return true;
   }
   if (operand(1)->operand(0)->type() == Type::Rational) {
+    return true;
+  }
+  return false;
+}
+
+bool Power::RationalExponentShouldNotBeReduced(const Rational * r) {
+  Integer maxIntegerExponent = r->numerator();
+  maxIntegerExponent.setNegative(false);
+  if (Integer::NaturalOrder(maxIntegerExponent, Integer(k_maxIntegerPower)) > 0) {
     return true;
   }
   return false;

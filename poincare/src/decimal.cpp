@@ -107,7 +107,7 @@ Expression * Decimal::clone() const {
   return new Decimal(m_mantissa, m_exponent);
 }
 
-template<typename T> Expression * Decimal::templatedEvaluate(Context& context, Expression::AngleUnit angleUnit) const {
+template<typename T> Expression * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
   int numberOfDigits = numberOfDigitsInMantissaWithoutSign();
   return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));
@@ -169,8 +169,8 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
   /* If mantissa is negative, m_mantissa.writeTextInBuffer is going to add an
    * unwanted '-' in place of the temp char. We store it to replace it back
    * after calling m_mantissa.writeTextInBuffer. */
-  char tempChar;
-  int tempCharPosition;
+  char tempChar = 0;
+  int tempCharPosition = 0;
   if (m_mantissa.isNegative()) {
     currentChar--;
     tempChar = buffer[currentChar];

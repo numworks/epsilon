@@ -126,16 +126,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
   }
   /* Step 1: Multiplication is associative, so let's start by merging children
    * which also are multiplications themselves. */
-  int i = 0;
-  int initialNumberOfOperands = numberOfOperands();
-  while (i < initialNumberOfOperands) {
-    Expression * o = editableOperand(i);
-    if (o->type() == Type::Multiplication) {
-      mergeOperands(static_cast<Multiplication *>(o)); // TODO: ensure that matrix operands are not swapped to implement MATRIX_EXACT_REDUCING
-      continue;
-    }
-    i++;
-  }
+  mergeMultiplicationOperands();
 
   /* Step 2: If any of the operand is zero, the multiplication result is zero */
   for (int i = 0; i < numberOfOperands(); i++) {
@@ -225,23 +216,18 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
   /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
-  i = 0;
+  int i = 0;
   while (i < numberOfOperands()-1) {
     Expression * oi = editableOperand(i);
     Expression * oi1 = editableOperand(i+1);
-    if (oi->type() == Type::Rational && oi1->type() == Type::Rational) {
-      Rational a = Rational::Multiplication(*(static_cast<Rational *>(oi)), *(static_cast<Rational *>(oi1)));
-      replaceOperand(oi, new Rational(a), true);
-      removeOperand(oi1, true);
-      continue;
-    } else if (TermsHaveIdenticalBase(oi, oi1)) {
+    if (TermsHaveIdenticalBase(oi, oi1)) {
       bool shouldFactorizeBase = true;
       if (TermHasRationalBase(oi)) {
         /* Combining powers of a given rational isn't straightforward. Indeed,
          * there are two cases we want to deal with:
          *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
          *  - 2^(1/2)*2^(3/2) we want to combine. */
-        shouldFactorizeBase = !TermHasIntegerExponent(oi) && !TermHasIntegerExponent(oi1);
+        shouldFactorizeBase = oi->type() == Type::Power && oi1->type() == Type::Power;
       }
       if (shouldFactorizeBase) {
         factorizeBase(oi, oi1, context, angleUnit);
@@ -268,6 +254,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
         Expression * o2 = editableOperand(j);
         if (Base(o2)->type() == Type::Cosine && TermHasRationalExponent(o2) && Base(o2)->operand(0)->isIdenticalTo(x)) {
           factorizeSineAndCosine(o1, o2, context, angleUnit);
+          break;
         }
       }
     }
@@ -277,30 +264,40 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
    * shallowReduce */
   sortOperands(SimplificationOrder);
 
-  /* Step 6: Let's remove ones if there's any. It's important to do this after
-   * having factorized because factorization can lead to new ones. For example
-   * pi^(-1)*pi. We don't remove the last one if it's the only operand left
-   * though.
-   * Same comment for -1 that can appear when reducing i*i. */
-  i = 0;
+  /* Step 6: We remove rational operands that appeared in the middle of sorted
+   * operands. It's important to do this after having factorized because
+   * factorization can lead to new ones. Indeed:
+   * pi^(-1)*pi-> 1
+   * i*i -> -1
+   * 2^(1/2)*2^(1/2) -> 2
+   * sin(x)*cos(x) -> 1*tan(x)
+   * Last, we remove the only rational operand if it is one and not the only
+   * operand. */
+  i = 1;
   while (i < numberOfOperands()) {
     Expression * o = editableOperand(i);
-    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isOne() && numberOfOperands() > 1) {
+    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isOne()) {
       removeOperand(o, true);
       continue;
     }
-    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isMinusOne() && numberOfOperands() > 1 && i > 0) {
-      removeOperand(o, operand(0)->type() == Type::Rational);
+    if (o->type() == Type::Rational) {
       if (operand(0)->type() == Type::Rational) {
-        Rational * r = static_cast<Rational *>(editableOperand(0));
-        r->setSign(r->sign() == Sign::Positive ? Sign::Negative : Sign::Positive);
+        Rational * o0 = static_cast<Rational *>(editableOperand(0));
+        Rational m = Rational::Multiplication(*o0, *(static_cast<Rational *>(o)));
+        replaceOperand(o0, new Rational(m), true);
+        removeOperand(o, true);
       } else {
+        removeOperand(o, false);
         addOperandAtIndex(o, 0);
       }
       continue;
     }
     i++;
   }
+  if (operand(0)->type() == Type::Rational && static_cast<Rational *>(editableOperand(0))->isOne() && numberOfOperands() > 1) {
+    removeOperand(editableOperand(0), true);
+  }
+
 
   /* Step 7: Expand multiplication over addition operands if any. For example,
    * turn (a+b)*c into a*c + b*c. We do not want to do this step right now if
@@ -320,6 +317,20 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
   Expression * result = squashUnaryHierarchy();
 
   return result;
+}
+
+void Multiplication::mergeMultiplicationOperands() {
+  // Multiplication is associative: a*(b*c)->a*b*c
+  int i = 0;
+  int initialNumberOfOperands = numberOfOperands();
+  while (i < initialNumberOfOperands) {
+    Expression * o = editableOperand(i);
+    if (o->type() == Type::Multiplication) {
+      mergeOperands(static_cast<Multiplication *>(o)); // TODO: ensure that matrix operands are not swapped to implement MATRIX_EXACT_REDUCING
+      continue;
+    }
+    i++;
+  }
 }
 
 void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Context & context, AngleUnit angleUnit) {
@@ -413,8 +424,7 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context
 
   const Expression * base1 = e1->operand(0)->clone();
   const Expression * base2 = e2->operand(0);
-  // TODO: remove cast, everything is a hierarchy
-  static_cast<Hierarchy *>(e2)->detachOperand(base2);
+  e2->detachOperand(base2);
   Expression * m = new Multiplication(base1, base2, false);
   removeOperand(e2, true);
   e1->replaceOperand(e1->operand(0), m, true);
@@ -427,11 +437,12 @@ Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context
   // This function turns a*(b+c) into a*b + a*c
   // We avoid deleting and creating a new addition
   Addition * a = static_cast<Addition *>(editableOperand(i));
+  removeOperand(a, false);
   for (int j = 0; j < a->numberOfOperands(); j++) {
+    Multiplication * m = static_cast<Multiplication *>(clone());
     Expression * termJ = a->editableOperand(j);
-    replaceOperand(operand(i), termJ->clone(), false);
-    Expression * m = clone();
-    a->replaceOperand(termJ, m, true);
+    a->replaceOperand(termJ, m, false);
+    m->addOperand(termJ);
     m->shallowReduce(context, angleUnit); // pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
   }
   replaceWith(a, true);
@@ -454,17 +465,6 @@ bool Multiplication::TermsHaveIdenticalExponent(const Expression * e1, const Exp
 
 bool Multiplication::TermHasRationalBase(const Expression * e) {
   return Base(e)->type() == Type::Rational;
-}
-
-bool Multiplication::TermHasIntegerExponent(const Expression * e) {
-  if (e->type() != Type::Power) {
-    return true;
-  }
-  if (e->operand(1)->type() == Type::Rational) {
-    const Rational * r = static_cast<const Rational *>(e->operand(1));
-    return r->denominator().isOne();
-  }
-  return false;
 }
 
 bool Multiplication::TermHasRationalExponent(const Expression * e) {
@@ -628,13 +628,23 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
         Expression * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
         Reduce((Expression **)&sub, context, angleUnit);
         if (sub->sign() == Sign::Negative) { // index[0] < index[1]
-          factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
+          if (factor->type() == Type::Power) {
+            factor->replaceOperand(factor->editableOperand(1), new Opposite(sub, true), true);
+          } else {
+            factor = new Power(factor, new Opposite(sub, true), false);
+          }
+          factor->editableOperand(1)->shallowReduce(context, angleUnit);
           factorizeBase(editableOperand(i), factor, context, angleUnit);
           editableOperand(i)->shallowReduce(context, angleUnit);
         } else if (sub->sign() == Sign::Unknown) {
           factorizeBase(editableOperand(i), factor, context, angleUnit);
+          editableOperand(i)->shallowReduce(context, angleUnit);
         } else {}
         delete sub;
+        /* Reducing the new operand i can lead to creating a new multiplication
+         * (ie 2^(1+2*3^(1/2)) -> 2*2^(2*3^(1/2)). We thus have to get rid of
+         * nested multiplication: */
+        mergeMultiplicationOperands();
         return;
       }
     }

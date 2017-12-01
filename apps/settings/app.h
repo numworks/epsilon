@@ -1,12 +1,12 @@
 #ifndef SETTINGS_APP_H
 #define SETTINGS_APP_H
 
-#include <escher.h>
 #include "main_controller.h"
+#include "../shared/text_field_delegate_app.h"
 
 namespace Settings {
 
-class App : public ::App {
+class App : public Shared::TextFieldDelegateApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:

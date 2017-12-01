@@ -3,7 +3,7 @@
 
 #include <poincare/dynamic_hierarchy.h>
 #include <poincare/layout_engine.h>
-#include <poincare/evaluation_engine.h>
+#include <poincare/approximation_engine.h>
 
 namespace Poincare {
 
@@ -22,7 +22,7 @@ public:
   /* Evaluation */
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * m) {
-    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+    return ApproximationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
   template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n);
 private:
@@ -34,6 +34,7 @@ private:
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   Expression * privateShallowReduce(Context& context, AngleUnit angleUnit, bool expand);
+  void mergeMultiplicationOperands();
   void factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   void factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
   Expression * distributeOnOperandAtIndex(int index, Context & context, AngleUnit angleUnit);
@@ -44,7 +45,6 @@ private:
   static bool TermsHaveIdenticalBase(const Expression * e1, const Expression * e2);
   static bool TermsHaveIdenticalExponent(const Expression * e1, const Expression * e2);
   static bool TermHasRationalBase(const Expression * e);
-  static bool TermHasIntegerExponent(const Expression * e);
   static bool TermHasRationalExponent(const Expression * e);
   static const Expression * CreateExponent(Expression * e);
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
@@ -53,13 +53,13 @@ private:
   /* Evaluation */
 
   template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * c) {
-    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+    return ApproximationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
-  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };
 

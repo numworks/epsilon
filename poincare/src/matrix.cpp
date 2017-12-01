@@ -312,10 +312,10 @@ Matrix * Matrix::createApproximateIdentity(int dim) {
 }
 
 template<typename T>
-Expression * Matrix::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Matrix::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   Expression ** operands = new Expression * [numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
-    Expression * operandEvaluation = operand(i)->evaluate<T>(context, angleUnit);
+    Expression * operandEvaluation = operand(i)->approximate<T>(context, angleUnit);
     if (operandEvaluation->type() != Type::Complex) {
       operands[i] = new Complex<T>(Complex<T>::Float(NAN));
       delete operandEvaluation;

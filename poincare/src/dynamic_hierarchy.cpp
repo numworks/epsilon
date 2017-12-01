@@ -7,14 +7,14 @@ extern "C" {
 namespace Poincare {
 
 DynamicHierarchy::DynamicHierarchy() :
-  Hierarchy(),
+  Expression(),
   m_operands(nullptr),
   m_numberOfOperands(0)
 {
 }
 
 DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands) :
-  Hierarchy(),
+  Expression(),
   m_numberOfOperands(numberOfOperands)
 {
   assert(operands != nullptr);
@@ -102,7 +102,11 @@ void DynamicHierarchy::sortOperands(ExpressionOrder order) {
     for (int j = 0; j < numberOfOperands()-1; j++) {
       /* Warning: Matrix operations are not always commutative (ie,
        * multiplication) so we never swap 2 matrices. */
+#if MATRIX_EXACT_REDUCING
       if (order(operand(j), operand(j+1)) > 0 && (!operand(j)->recursivelyMatches(Expression::IsMatrix) || !operand(j+1)->recursivelyMatches(Expression::IsMatrix))) {
+#else
+      if (order(operand(j), operand(j+1)) > 0) {
+#endif
         swapOperands(j, j+1);
         isSorted = false;
       }

@@ -11,7 +11,7 @@ using namespace Poincare;
 namespace Settings {
 
 const SettingsMessageTree angleChildren[2] = {SettingsMessageTree(I18n::Message::Degres), SettingsMessageTree(I18n::Message::Radian)};
-const SettingsMessageTree FloatDisplayModeChildren[2] = {SettingsMessageTree(I18n::Message::Auto), SettingsMessageTree(I18n::Message::Scientific)};
+const SettingsMessageTree FloatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Auto), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
 const SettingsMessageTree complexFormatChildren[2] = {SettingsMessageTree(I18n::Message::Default), SettingsMessageTree(I18n::Message::Default)};
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
 const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
@@ -21,7 +21,7 @@ const SettingsMessageTree menu[8] =
 #else
 const SettingsMessageTree menu[7] =
 #endif
-  {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2), SettingsMessageTree(I18n::Message::DisplayMode, FloatDisplayModeChildren, 2), SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 2),
+  {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2), SettingsMessageTree(I18n::Message::DisplayMode, FloatDisplayModeChildren, 3), SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 2),
   SettingsMessageTree(I18n::Message::Brightness), SettingsMessageTree(I18n::Message::Language), SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
   SettingsMessageTree(I18n::Message::UpdatePopUp),

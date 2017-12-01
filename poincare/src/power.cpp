@@ -106,7 +106,9 @@ template<typename T> Matrix * Power::computeOnMatrixAndComplex(const Matrix * m,
       delete result;
       return nullptr;
     }
-    result = Multiplication::computeOnMatrices<T>(result, m);
+    Matrix * mult = Multiplication::computeOnMatrices<T>(result, m);
+    delete result;
+    result = mult;
   }
   return result;
 }

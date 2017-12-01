@@ -168,9 +168,15 @@ bool Expression::IsMatrix(const Expression * e) {
 int Expression::SimplificationOrder(const Expression * e1, const Expression * e2) {
   if (e1->type() > e2->type()) {
     return -(e2->simplificationOrderGreaterType(e1));
+    if (shouldStopProcessing()) {
+      return 1;
+    }
   } else if (e1->type() == e2->type()) {
     return e1->simplificationOrderSameType(e2);
   } else {
+    if (shouldStopProcessing()) {
+      return -1;
+    }
     return e1->simplificationOrderGreaterType(e2);
   }
 }

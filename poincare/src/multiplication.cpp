@@ -437,11 +437,12 @@ Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context
   // This function turns a*(b+c) into a*b + a*c
   // We avoid deleting and creating a new addition
   Addition * a = static_cast<Addition *>(editableOperand(i));
+  removeOperand(a, false);
   for (int j = 0; j < a->numberOfOperands(); j++) {
+    Multiplication * m = static_cast<Multiplication *>(clone());
     Expression * termJ = a->editableOperand(j);
-    replaceOperand(operand(i), termJ->clone(), false);
-    Expression * m = clone();
-    a->replaceOperand(termJ, m, true);
+    a->replaceOperand(termJ, m, false);
+    m->addOperand(termJ);
     m->shallowReduce(context, angleUnit); // pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
   }
   replaceWith(a, true);

@@ -144,7 +144,7 @@ lstData:
 /* MATRICES_ARE_DEFINED */
  mtxData:
   LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, false); $2->detachOperands(); delete $2; }
-  | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { $$ = $1; $$->pushListData($3, false); $3->detachOperands(); delete $3; }
+  | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3->numberOfOperands() != $1->numberOfColumns()) { delete $1; delete $3; YYERROR; } ; $$ = $1; $$->pushListData($3, false); $3->detachOperands(); delete $3; }
 
 number:
   DIGITS { $$ = new Poincare::Rational(Poincare::Integer($1.address, false)); }

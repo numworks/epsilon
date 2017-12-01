@@ -31,6 +31,9 @@ void ScriptNodeCell::ScriptNodeView::drawRect(KDContext * ctx, KDRect rect) cons
 }
 
 KDSize ScriptNodeCell::ScriptNodeView::minimalSizeForOptimalDisplay() const {
+  if (m_scriptNode->name() == nullptr) {
+    return KDSizeZero;
+  }
   KDSize size1 = KDText::stringSize(m_scriptNode->name(), k_fontSize);
   KDSize size2 = KDText::stringSize(m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).name(), k_fontSize);
   KDSize size3 = KDSizeZero;

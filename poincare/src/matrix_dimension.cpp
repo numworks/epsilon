@@ -40,8 +40,8 @@ Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUni
 }
 
 template<typename T>
-Expression * MatrixDimension::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * input = operand(0)->evaluate<T>(context, angleUnit);
+Expression * MatrixDimension::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->approximate<T>(context, angleUnit);
   Expression * operands[2];
   if (input->type() == Type::Matrix) {
     operands[0] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfRows()));

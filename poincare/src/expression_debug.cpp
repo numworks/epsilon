@@ -60,7 +60,7 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case Expression::Type::Decimal:
       std::cout << "Decimal(";
-      std::cout << e->approximate<double>(context, Expression::AngleUnit::Radian);
+      std::cout << e->approximateToScalar<double>(context, Expression::AngleUnit::Radian);
       std::cout << ")";
       break;
     case Expression::Type::Derivative:
@@ -235,7 +235,7 @@ void print_prime_factorization(Integer * outputFactors, Integer * outputCoeffici
     std::cout << outputFactors[index].approximate<double>();
     std::cout << "^";
     std::cout << outputCoefficients[index].approximate<double>();
-    std::cout << "+";
+    std::cout << "*";
   }
   std::cout <<"  "<< std::endl;
 }

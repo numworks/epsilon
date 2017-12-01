@@ -1,12 +1,12 @@
 #ifndef POINCARE_DYNAMIC_HIERARCHY_H
 #define POINCARE_DYNAMIC_HIERARCHY_H
 
-#include <poincare/hierarchy.h>
+#include <poincare/expression.h>
 #include <poincare/rational.h>
 
 namespace Poincare {
 
-class DynamicHierarchy : public Hierarchy {
+class DynamicHierarchy : public Expression {
 public:
   DynamicHierarchy();
   DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands = true);

@@ -102,7 +102,7 @@ double BinomialLaw::rightIntegralInverseForProbability(double * probability) {
 }
 
 template<typename T>
-T BinomialLaw::templatedEvaluateAtAbscissa(T x) const {
+T BinomialLaw::templatedApproximateAtAbscissa(T x) const {
   if (m_parameter1 == 0) {
     if (m_parameter2 == 0 || m_parameter2 == 1) {
       return NAN;
@@ -134,5 +134,5 @@ T BinomialLaw::templatedEvaluateAtAbscissa(T x) const {
 
 }
 
-template float Probability::BinomialLaw::templatedEvaluateAtAbscissa(float x) const;
-template double Probability::BinomialLaw::templatedEvaluateAtAbscissa(double x) const;
+template float Probability::BinomialLaw::templatedApproximateAtAbscissa(float x) const;
+template double Probability::BinomialLaw::templatedApproximateAtAbscissa(double x) const;

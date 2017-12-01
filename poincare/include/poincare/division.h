@@ -2,7 +2,7 @@
 #define POINCARE_DIVISION_H
 
 #include <poincare/static_hierarchy.h>
-#include <poincare/evaluation_engine.h>
+#include <poincare/approximation_engine.h>
 #include <poincare/layout_engine.h>
 
 namespace Poincare {
@@ -20,23 +20,23 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
   return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "/", [](const Expression * e) {
-      return e->type() == Type::Multiplication || e->type() == Type::Addition || e->type() == Type::Subtraction || e->type() == Type::Opposite;
+      return e->type() == Type::Division || e->type() == Type::Multiplication || e->type() == Type::Addition || e->type() == Type::Subtraction || e->type() == Type::Opposite || (e->type() == Type::Rational && !static_cast<const Rational *>(e)->denominator().isOne());
     });
   }
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
   template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * c) {
-    return EvaluationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+    return ApproximationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
   template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * n);
   template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n);
 
-  virtual Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+  virtual Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  virtual Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
-    return EvaluationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+  virtual Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };
 

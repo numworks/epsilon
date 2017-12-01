@@ -111,9 +111,9 @@ Expression::Sign Symbol::sign() const {
 }
 
 template<typename T>
-Expression * Symbol::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Symbol::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->evaluate<T>(context, angleUnit);
+    return context.expressionForSymbol(this)->approximate<T>(context, angleUnit);
   }
   return new Complex<T>(Complex<T>::Float(NAN));
 }
@@ -181,12 +181,19 @@ bool Symbol::isMatrixSymbol() const {
   return false;
 }
 
+bool Symbol::isScalarSymbol() const {
+  if (m_name >= 'A' && m_name <= 'Z') {
+    return true;
+  }
+  return false;
+}
+
 int Symbol::simplificationOrderSameType(const Expression * e) const {
   assert(e->type() == Expression::Type::Symbol);
-  if (m_name == ((Symbol *)e)->m_name) {
+  if ((uint8_t)m_name == ((uint8_t)static_cast<const Symbol *>(e)->name())) {
     return 0;
   }
-  if ((m_name > ((Symbol *)e)->m_name)) {
+  if ((uint8_t)m_name > ((uint8_t)static_cast<const Symbol *>(e)->name())) {
     return 1;
   }
   return -1;

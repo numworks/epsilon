@@ -66,11 +66,13 @@ void Calculation::reset() {
 void Calculation::setContent(const char * c, Context * context) {
   reset();
   m_input = Expression::parse(c);
+  /* We do not store directly the text enter by the user but its serialization
+   * to be able to compare it to the exact ouput text. */
   m_input->writeTextInBuffer(m_inputText, sizeof(m_inputText));
   m_exactOutput = input()->clone();
   Expression::Simplify(&m_exactOutput, *context);
   m_exactOutput->writeTextInBuffer(m_exactOutputText, sizeof(m_exactOutputText));
-  m_approximateOutput = m_exactOutput->evaluate<double>(*context);
+  m_approximateOutput = m_exactOutput->approximate<double>(*context);
   m_approximateOutput->writeTextInBuffer(m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
@@ -189,7 +191,7 @@ Expression * Calculation::approximateOutput(Context * context) {
      * call 'evaluate'. */
     Expression * exp = Expression::parse(m_approximateOutputText);
     if (exp != nullptr) {
-      m_approximateOutput = exp->evaluate<double>(*context);
+      m_approximateOutput = exp->approximate<double>(*context);
       delete exp;
     } else {
       m_approximateOutput = new Complex<double>(Complex<double>::Float(NAN));
@@ -213,7 +215,7 @@ bool Calculation::shouldApproximateOutput() {
     return true;
   }
   return input()->recursivelyMatches([](const Expression * e) {
-        return e->type() == Expression::Type::Decimal || Expression::IsMatrix(e);
+        return e->type() == Expression::Type::Decimal || Expression::IsMatrix(e) || (e->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e)->isScalarSymbol());
       });
 }
 

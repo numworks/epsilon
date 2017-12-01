@@ -16,7 +16,7 @@ public:
   AppsContainer * container();
   virtual const char * XNT();
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   Toolbox * toolboxForTextField(TextField * textField) override;
 protected:
   TextFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);

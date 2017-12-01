@@ -23,11 +23,11 @@ public:
     return nullptr;
   }
   int writeTextInBuffer(char * buffer, int bufferSize) const override { return 0; }
-  Expression * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }
-  Expression * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }

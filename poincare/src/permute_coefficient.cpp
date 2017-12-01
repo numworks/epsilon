@@ -68,9 +68,9 @@ Expression * PermuteCoefficient::shallowReduce(Context& context, AngleUnit angle
 }
 
 template<typename T>
-Complex<T> * PermuteCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * nInput = operand(0)->evaluate<T>(context, angleUnit);
-  Expression * kInput = operand(1)->evaluate<T>(context, angleUnit);
+Complex<T> * PermuteCoefficient::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * nInput = operand(0)->approximate<T>(context, angleUnit);
+  Expression * kInput = operand(1)->approximate<T>(context, angleUnit);
   if (nInput->type() != Type::Complex || kInput->type() != Type::Complex) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }

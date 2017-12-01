@@ -40,6 +40,13 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
+const Expression * const * Expression::ExpressionArray(const Expression * e1, const Expression * e2) {
+  static const Expression * result[2] = {nullptr, nullptr};
+  result[0] = e1;
+  result[1] = e2;
+  return result;
+}
+
 /* Circuit breaker */
 
 static Expression::CircuitBreaker sCircuitBreaker = nullptr;
@@ -57,6 +64,76 @@ bool Expression::shouldStopProcessing() {
 
 /* Hierarchy */
 
+const Expression * Expression::operand(int i) const {
+  assert(i >= 0);
+  assert(i < numberOfOperands());
+  assert(operands()[i]->parent() == nullptr || operands()[i]->parent() == this);
+  return operands()[i];
+}
+
+Expression * Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
+  assert(m_parent != nullptr);
+  m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
+  return newOperand;
+}
+
+void Expression::replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) {
+  assert(newOperand != nullptr);
+  // Caution: handle the case where we replace an operand with a descendant of ours.
+  if (newOperand->hasAncestor(this)) {
+    newOperand->parent()->detachOperand(newOperand);
+  }
+  Expression ** op = const_cast<Expression **>(operands());
+  for (int i=0; i<numberOfOperands(); i++) {
+    if (op[i] == oldOperand) {
+      if (oldOperand != nullptr && oldOperand->parent() == this) {
+        const_cast<Expression *>(oldOperand)->setParent(nullptr);
+      }
+      if (deleteOldOperand) {
+        delete oldOperand;
+      }
+      if (newOperand != nullptr) {
+        const_cast<Expression *>(newOperand)->setParent(this);
+      }
+      op[i] = newOperand;
+      break;
+    }
+  }
+}
+
+void Expression::detachOperand(const Expression * e) {
+  Expression ** op = const_cast<Expression **>(operands());
+  for (int i=0; i<numberOfOperands(); i++) {
+    if (op[i] == e) {
+      detachOperandAtIndex(i);
+    }
+  }
+}
+
+void Expression::detachOperands() {
+  for (int i=0; i<numberOfOperands(); i++) {
+    detachOperandAtIndex(i);
+  }
+}
+
+void Expression::detachOperandAtIndex(int i) {
+  Expression ** op = const_cast<Expression **>(operands());
+  // When detachOperands is called, it's very likely that said operands have been stolen
+  if (op[i] != nullptr && op[i]->parent() == this) {
+    const_cast<Expression *>(op[i])->setParent(nullptr);
+  }
+  op[i] = nullptr;
+}
+
+void Expression::swapOperands(int i, int j) {
+  assert(i >= 0 && i < numberOfOperands());
+  assert(j >= 0 && j < numberOfOperands());
+  Expression ** op = const_cast<Expression **>(operands());
+  Expression * temp = op[i];
+  op[i] = op[j];
+  op[j] = temp;
+}
+
 bool Expression::hasAncestor(const Expression * e) const {
   assert(m_parent != this);
   if (m_parent == e) {
@@ -66,12 +143,6 @@ bool Expression::hasAncestor(const Expression * e) const {
     return false;
   }
   return m_parent->hasAncestor(e);
-}
-
-Expression * Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
-  assert(m_parent != nullptr);
-  m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
-  return newOperand;
 }
 
 /* Properties */
@@ -89,7 +160,7 @@ bool Expression::recursivelyMatches(ExpressionTest test) const {
 }
 
 bool Expression::IsMatrix(const Expression * e) {
-  return e->type() == Type::Matrix || e->type() == Type::ConfidenceInterval || e->type() == Type::MatrixDimension || e->type() == Type::PredictionInterval || e->type() == Type::MatrixInverse || e->type() == Type::MatrixTranspose;
+  return e->type() == Type::Matrix || e->type() == Type::ConfidenceInterval || e->type() == Type::MatrixDimension || e->type() == Type::PredictionInterval || e->type() == Type::MatrixInverse || e->type() == Type::MatrixTranspose || (e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isMatrixSymbol());
 }
 
 /* Comparison */
@@ -97,9 +168,15 @@ bool Expression::IsMatrix(const Expression * e) {
 int Expression::SimplificationOrder(const Expression * e1, const Expression * e2) {
   if (e1->type() > e2->type()) {
     return -(e2->simplificationOrderGreaterType(e1));
+    if (shouldStopProcessing()) {
+      return 1;
+    }
   } else if (e1->type() == e2->type()) {
     return e1->simplificationOrderSameType(e2);
   } else {
+    if (shouldStopProcessing()) {
+      return -1;
+    }
     return e1->simplificationOrderGreaterType(e2);
   }
 }
@@ -182,17 +259,17 @@ Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {
 
 /* Evaluation */
 
-template<typename T> Expression * Expression::evaluate(Context& context, AngleUnit angleUnit) const {
+template<typename T> Expression * Expression::approximate(Context& context, AngleUnit angleUnit) const {
   switch (angleUnit) {
     case AngleUnit::Default:
-      return privateEvaluate(T(), context, Preferences::sharedPreferences()->angleUnit());
+      return privateApproximate(T(), context, Preferences::sharedPreferences()->angleUnit());
     default:
-      return privateEvaluate(T(), context, angleUnit);
+      return privateApproximate(T(), context, angleUnit);
   }
 }
 
-template<typename T> T Expression::approximate(Context& context, AngleUnit angleUnit) const {
-  Expression * evaluation = evaluate<T>(context, angleUnit);
+template<typename T> T Expression::approximateToScalar(Context& context, AngleUnit angleUnit) const {
+  Expression * evaluation = approximate<T>(context, angleUnit);
   assert(evaluation->type() == Type::Complex || evaluation->type() == Type::Matrix);
   T result = NAN;
   if (evaluation->type() == Type::Complex) {
@@ -207,9 +284,10 @@ template<typename T> T Expression::approximate(Context& context, AngleUnit angle
   return result;
 }
 
-template<typename T> T Expression::approximate(const char * text, Context& context, AngleUnit angleUnit) {
+template<typename T> T Expression::approximateToScalar(const char * text, Context& context, AngleUnit angleUnit) {
   Expression * exp = parse(text);
-  T result = exp->approximate<T>(context, angleUnit);
+  Simplify(&exp, context, angleUnit);
+  T result = exp->approximateToScalar<T>(context, angleUnit);
   delete exp;
   return result;
 }
@@ -221,11 +299,11 @@ template<typename T> T Expression::epsilon() {
 
 }
 
-template Poincare::Expression * Poincare::Expression::evaluate<double>(Context& context, AngleUnit angleUnit) const;
-template Poincare::Expression * Poincare::Expression::evaluate<float>(Context& context, AngleUnit angleUnit) const;
-template double Poincare::Expression::approximate<double>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
-template float Poincare::Expression::approximate<float>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
-template double Poincare::Expression::approximate<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
-template float Poincare::Expression::approximate<float>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
+template Poincare::Expression * Poincare::Expression::approximate<double>(Context& context, AngleUnit angleUnit) const;
+template Poincare::Expression * Poincare::Expression::approximate<float>(Context& context, AngleUnit angleUnit) const;
+template double Poincare::Expression::approximateToScalar<double>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
+template float Poincare::Expression::approximateToScalar<float>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
+template double Poincare::Expression::approximateToScalar<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
+template float Poincare::Expression::approximateToScalar<float>(Poincare::Context&, Poincare::Expression::AngleUnit) const;
 template double Poincare::Expression::epsilon<double>();
 template float Poincare::Expression::epsilon<float>();

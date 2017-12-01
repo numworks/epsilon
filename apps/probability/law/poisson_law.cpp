@@ -63,7 +63,7 @@ bool PoissonLaw::authorizedValueAtIndex(float x, int index) const {
 }
 
 template<typename T>
-T PoissonLaw::templatedEvaluateAtAbscissa(T x) const {
+T PoissonLaw::templatedApproximateAtAbscissa(T x) const {
   if (x < 0) {
     return NAN;
   }
@@ -73,5 +73,5 @@ T PoissonLaw::templatedEvaluateAtAbscissa(T x) const {
 
 }
 
-template float Probability::PoissonLaw::templatedEvaluateAtAbscissa(float x) const;
-template double Probability::PoissonLaw::templatedEvaluateAtAbscissa(double x) const;
+template float Probability::PoissonLaw::templatedApproximateAtAbscissa(float x) const;
+template double Probability::PoissonLaw::templatedApproximateAtAbscissa(double x) const;

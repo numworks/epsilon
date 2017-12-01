@@ -31,7 +31,7 @@ ExpressionLayout * Sum::createSequenceLayoutWithArgumentLayouts(ExpressionLayout
 }
 
 template<typename T>
-Expression * Sum::templatedEvaluateWithNextTerm(Expression * a, Expression * b) const {
+Expression * Sum::templatedApproximateWithNextTerm(Expression * a, Expression * b) const {
   if (a->type() == Type::Complex && b->type() == Type::Complex) {
     Complex<T> * c = static_cast<Complex<T> *>(a);
     Complex<T> * d = static_cast<Complex<T> *>(b);

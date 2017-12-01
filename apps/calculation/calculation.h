@@ -31,11 +31,15 @@ public:
   bool isEmpty();
   void tidy();
   bool shouldApproximateOutput();
+  constexpr static int k_printedExpressionSize = 2*::TextField::maxBufferSize();
 private:
   Poincare::Expression * exactOutput(Poincare::Context * context);
-  char m_inputText[::TextField::maxBufferSize()];
-  char m_exactOutputText[2*::TextField::maxBufferSize()];
-  char m_approximateOutputText[2*::TextField::maxBufferSize()];
+  /* Buffers holding text expressions have to be longer than the text written
+   * by user (of maximum length TextField::maxBufferSize()) because when we
+   * print an expression we add omitted signs (multiplications, parenthesis...) */
+  char m_inputText[k_printedExpressionSize];
+  char m_exactOutputText[k_printedExpressionSize];
+  char m_approximateOutputText[k_printedExpressionSize];
   Poincare::Expression * m_input;
   Poincare::ExpressionLayout * m_inputLayout;
   Poincare::Expression * m_exactOutput;

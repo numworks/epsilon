@@ -25,7 +25,6 @@ private:
   int m_numberOfRows;
   int m_numberOfColumns;
   const Expression ** m_operands;
-  static Complex<double> * defaultExpression();
 };
 
 }

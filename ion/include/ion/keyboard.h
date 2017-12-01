@@ -3,6 +3,7 @@
 
 extern "C" {
 #include <stdint.h>
+#include <assert.h>
 }
 
 namespace Ion {
@@ -37,10 +38,14 @@ public:
   constexpr State(uint64_t s = 0) :
     m_bitField(s)
   {}
+  /* "Shift behavior is undefined if the right operand is negative, or greater
+   * than or equal to the length in bits of the promoted left operand" according
+   * to C++ spec but k is always in [0:52]. */
   explicit constexpr State(Key k) :
     m_bitField((uint64_t)1 << (uint8_t)k)
   {}
   inline bool keyDown(Key k) const {
+    assert((uint8_t)k < 64);
     return (m_bitField>>(uint8_t)k) & 1;
   }
   operator uint64_t() const { return m_bitField; }

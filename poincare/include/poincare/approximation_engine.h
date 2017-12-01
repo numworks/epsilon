@@ -1,5 +1,5 @@
-#ifndef POINCARE_EVALUATION_ENGINE_H
-#define POINCARE_EVALUATION_ENGINE_H
+#ifndef POINCARE_APPROXIMATION_ENGINE_H
+#define POINCARE_APPROXIMATION_ENGINE_H
 
 #include <poincare/expression.h>
 #include <poincare/complex.h>
@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class EvaluationEngine {
+class ApproximationEngine {
 public:
   template <typename T> using ComplexCompute = Complex<T>(*)(const Complex<T>, Expression::AngleUnit angleUnit);
   template<typename T> static Expression * map(const Expression * expression, Context& context, Expression::AngleUnit angleUnit, ComplexCompute<T> compute);

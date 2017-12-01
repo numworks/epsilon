@@ -83,9 +83,9 @@ ExpressionLayout * BinomialCoefficient::privateCreateLayout(FloatDisplayMode flo
 }
 
 template<typename T>
-Expression * BinomialCoefficient::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Expression * nInput = operand(0)->evaluate<T>(context, angleUnit);
-  Expression * kInput = operand(1)->evaluate<T>(context, angleUnit);
+Expression * BinomialCoefficient::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * nInput = operand(0)->approximate<T>(context, angleUnit);
+  Expression * kInput = operand(1)->approximate<T>(context, angleUnit);
   if (nInput->type() != Type::Complex || kInput->type() != Type::Complex) {
     return new Complex<T>(Complex<T>::Float(NAN));
   }

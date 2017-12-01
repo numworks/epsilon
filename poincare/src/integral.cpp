@@ -174,6 +174,9 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, VariableC
 
 template<typename T>
 T Integral::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, VariableContext<T> xContext, AngleUnit angleUnit) const {
+  if (shouldStopProcessing()) {
+    return NAN;
+  }
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, xContext, angleUnit);
   T result = quadKG.integral;
   if (quadKG.absoluteError <= eps) {

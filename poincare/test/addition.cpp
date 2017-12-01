@@ -54,4 +54,5 @@ QUIZ_CASE(poincare_addition_simplify) {
   assert_parsed_expression_simplify_to("4x/x^2+3P/(x^3*P)", "(3+4*x^2)/x^3");
   assert_parsed_expression_simplify_to("A+B-A-B", "0");
   assert_parsed_expression_simplify_to("A+B+(-1)*A+(-1)*B", "0");
+  assert_parsed_expression_simplify_to("3^(1/2)+2^(-2*3^(1/2)*X^P)/2", "(1+2*2^(2*R(3)*X^P)*R(3))/(2*2^(2*R(3)*X^P))");
 }

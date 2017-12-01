@@ -126,16 +126,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
   }
   /* Step 1: Multiplication is associative, so let's start by merging children
    * which also are multiplications themselves. */
-  int i = 0;
-  int initialNumberOfOperands = numberOfOperands();
-  while (i < initialNumberOfOperands) {
-    Expression * o = editableOperand(i);
-    if (o->type() == Type::Multiplication) {
-      mergeOperands(static_cast<Multiplication *>(o)); // TODO: ensure that matrix operands are not swapped to implement MATRIX_EXACT_REDUCING
-      continue;
-    }
-    i++;
-  }
+  mergeMultiplicationOperands();
 
   /* Step 2: If any of the operand is zero, the multiplication result is zero */
   for (int i = 0; i < numberOfOperands(); i++) {
@@ -225,7 +216,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
   /* Step 4: Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
-  i = 0;
+  int i = 0;
   while (i < numberOfOperands()-1) {
     Expression * oi = editableOperand(i);
     Expression * oi1 = editableOperand(i+1);
@@ -326,6 +317,20 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
   Expression * result = squashUnaryHierarchy();
 
   return result;
+}
+
+void Multiplication::mergeMultiplicationOperands() {
+  // Multiplication is associative: a*(b*c)->a*b*c
+  int i = 0;
+  int initialNumberOfOperands = numberOfOperands();
+  while (i < initialNumberOfOperands) {
+    Expression * o = editableOperand(i);
+    if (o->type() == Type::Multiplication) {
+      mergeOperands(static_cast<Multiplication *>(o)); // TODO: ensure that matrix operands are not swapped to implement MATRIX_EXACT_REDUCING
+      continue;
+    }
+    i++;
+  }
 }
 
 void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Context & context, AngleUnit angleUnit) {
@@ -632,8 +637,13 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
           editableOperand(i)->shallowReduce(context, angleUnit);
         } else if (sub->sign() == Sign::Unknown) {
           factorizeBase(editableOperand(i), factor, context, angleUnit);
+          editableOperand(i)->shallowReduce(context, angleUnit);
         } else {}
         delete sub;
+        /* Reducing the new operand i can lead to creating a new multiplication
+         * (ie 2^(1+2*3^(1/2)) -> 2*2^(2*3^(1/2)). We thus have to get rid of
+         * nested multiplication: */
+        mergeMultiplicationOperands();
         return;
       }
     }

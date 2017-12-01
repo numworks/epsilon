@@ -23,10 +23,6 @@ MatrixData::MatrixData(ListData * listData, bool clone) :
   }
 }
 
-Complex<double> * MatrixData::defaultExpression() {
-  return new Complex<double>(Complex<double>::Float(0.0));
-}
-
 MatrixData::~MatrixData() {
   if (m_operands != nullptr) {
     for (int i=0; i<m_numberOfRows*m_numberOfColumns; i++) {
@@ -38,15 +34,15 @@ MatrixData::~MatrixData() {
 
 void MatrixData::pushListData(ListData * listData, bool clone) {
   const Expression ** newOperands = new const Expression * [(m_numberOfRows+1)*m_numberOfColumns];
+  assert(listData->numberOfOperands() == m_numberOfColumns);
   for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
     newOperands[i] = m_operands[i];
   }
   for (int i = 0; i < m_numberOfColumns; i++) {
-    int max = listData->numberOfOperands();
     if (clone) {
-      newOperands[m_numberOfRows*m_numberOfColumns+i] = i < max ? listData->operand(i)->clone() : defaultExpression();
+      newOperands[m_numberOfRows*m_numberOfColumns+i] = listData->operand(i)->clone();
     } else {
-      newOperands[m_numberOfRows*m_numberOfColumns+i] = i < max ? listData->operand(i) : defaultExpression();
+      newOperands[m_numberOfRows*m_numberOfColumns+i] = listData->operand(i);
     }
   }
   delete[] m_operands;

@@ -55,7 +55,7 @@ Context * App::localContext() {
 }
 
 bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (TextFieldDelegateApp::textFieldDidReceiveEvent(textField, event)) {
+  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && TextFieldDelegateApp::textFieldDidReceiveEvent(textField, event)) {
     return true;
   }
   /* Here, we check that the expression entered by the user can be printed with
@@ -63,7 +63,10 @@ bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event e
    * user from adding this expression to the calculation store. */
   if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
     Expression * exp = Expression::parse(textField->text());
-    assert(exp != nullptr);
+    if (exp == nullptr) {
+      textField->app()->displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
     char buffer[Calculation::k_printedExpressionSize];
     int length = exp->writeTextInBuffer(buffer, sizeof(buffer));
     delete exp;

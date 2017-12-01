@@ -18,7 +18,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
-  class ContentViewController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+  class ContentViewController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
   public:
     ContentViewController(Responder * parentResponder, MenuController * menuController, ScriptStore * scriptStore);
     void setTextFieldCaller(TextField * textField);
@@ -38,18 +38,14 @@ private:
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event event) override;
 
-    /* ListViewDataSource */
+    /* SimpleListViewDataSource */
+    KDCoordinate cellHeight() override { return Metric::ToolboxRowHeight; }
     int numberOfRows() override;
-    HighlightCell * reusableCell(int index, int type) override;
-    int reusableCellCount(int type) override;
+    HighlightCell * reusableCell(int index) override;
+    int reusableCellCount() override;
     void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-    KDCoordinate rowHeight(int j) override;
-    KDCoordinate cumulatedHeightFromIndex(int j) override;
-    int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-    int typeAtLocation(int i, int j) override;
   private:
     constexpr static int k_maxNumberOfDisplayedRows = 6; //240/40
-    constexpr static int k_leafType = 0;
     constexpr static int k_maxScriptNodesCount = 32;
     void insertTextInCaller(const char * text);
     int m_scriptNodesCount;

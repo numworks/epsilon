@@ -4,7 +4,6 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/buffer_text_view.h>
-#include <escher/metric.h>
 #include <escher/palette.h>
 #include <string.h>
 
@@ -102,45 +101,18 @@ int VariableBoxController::ContentViewController::numberOfRows() {
   return m_scriptNodesCount < k_maxScriptNodesCount ? m_scriptNodesCount : k_maxScriptNodesCount;
 }
 
-HighlightCell * VariableBoxController::ContentViewController::reusableCell(int index, int type) {
-  assert(type == k_leafType);
+HighlightCell * VariableBoxController::ContentViewController::reusableCell(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-int VariableBoxController::ContentViewController::reusableCellCount(int type) {
-  assert(type == k_leafType);
+int VariableBoxController::ContentViewController::reusableCellCount() {
   return k_maxNumberOfDisplayedRows;
 }
 
 void VariableBoxController::ContentViewController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   ScriptNodeCell * myCell = static_cast<ScriptNodeCell *>(cell);
   myCell->setScriptNode(&m_scriptNodes[index]);
-}
-
-KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) {
-  return Metric::ToolboxRowHeight;
-}
-
-KDCoordinate VariableBoxController::ContentViewController::cumulatedHeightFromIndex(int j) {
-  int result = 0;
-  for (int k = 0; k < j; k++) {
-    result += rowHeight(k);
-  }
-  return result;
-}
-
-int VariableBoxController::ContentViewController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  int result = 0;
-  int j = 0;
-  while (result < offsetY && j < numberOfRows()) {
-    result += rowHeight(j++);
-  }
-  return (result < offsetY || offsetY == 0) ? j : j - 1;
-}
-
-int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
-  return k_leafType;
 }
 
 void VariableBoxController::ContentViewController::insertTextInCaller(const char * text) {

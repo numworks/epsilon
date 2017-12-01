@@ -34,6 +34,9 @@ Expression * Power::clone() const {
 }
 
 Expression::Sign Power::sign() const {
+  if (shouldStopProcessing()) {
+    return Sign::Unknown;
+  }
   if (operand(0)->sign() == Sign::Positive && operand(1)->sign() != Sign::Unknown) {
     return Sign::Positive;
   }

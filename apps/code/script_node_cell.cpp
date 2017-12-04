@@ -56,7 +56,6 @@ void ScriptNodeCell::setScriptNode(ScriptNode * scriptNode) {
 
 void ScriptNodeCell::setScriptStore(ScriptStore * scriptStore) {
   m_scriptNodeView.setScriptStore(scriptStore);
-  reloadCell();
 }
 
 void ScriptNodeCell::setHighlighted(bool highlight) {

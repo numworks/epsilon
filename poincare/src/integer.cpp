@@ -381,7 +381,7 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
     native_uint_t bDigit = (i >= b.m_numberOfDigits ? 0 : b.digit(i));
     native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
     digits[i] = result;
-    carry = (subtract ? (aDigit<result) : ((aDigit>result)||(bDigit>result))); // There's been an underflow or overflow
+    carry = (subtract ? (aDigit<result+carry) : ((aDigit>result)||(bDigit>result))); // There's been an underflow or overflow
   }
   while (digits[size-1] == 0 && size>1) {
     size--;

@@ -165,19 +165,19 @@ bool Expression::IsMatrix(const Expression * e) {
 
 /* Comparison */
 
-int Expression::SimplificationOrder(const Expression * e1, const Expression * e2) {
+int Expression::SimplificationOrder(const Expression * e1, const Expression * e2, bool canBeInterrupted) {
   if (e1->type() > e2->type()) {
-    return -(e2->simplificationOrderGreaterType(e1));
-    if (shouldStopProcessing()) {
+    if (canBeInterrupted && shouldStopProcessing()) {
       return 1;
     }
+    return -(e2->simplificationOrderGreaterType(e1, canBeInterrupted));
   } else if (e1->type() == e2->type()) {
-    return e1->simplificationOrderSameType(e2);
+    return e1->simplificationOrderSameType(e2, canBeInterrupted);
   } else {
-    if (shouldStopProcessing()) {
+    if (canBeInterrupted && shouldStopProcessing()) {
       return -1;
     }
-    return e1->simplificationOrderGreaterType(e2);
+    return e1->simplificationOrderGreaterType(e2, canBeInterrupted);
   }
 }
 

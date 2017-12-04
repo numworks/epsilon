@@ -132,7 +132,7 @@ int Rational::NaturalOrder(const Rational & i, const Rational & j) {
 
 // Comparison
 
-int Rational::simplificationOrderSameType(const Expression * e) const {
+int Rational::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
   assert(e->type() == Expression::Type::Rational);
   const Rational * other = static_cast<const Rational *>(e);
   return NaturalOrder(*this, *other);

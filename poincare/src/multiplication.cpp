@@ -116,10 +116,10 @@ static inline const Expression * Base(const Expression * e) {
 }
 
 Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit) {
-  return privateShallowReduce(context, angleUnit, true);
+  return privateShallowReduce(context, angleUnit, true, true);
 }
 
-Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit angleUnit, bool shouldExpand) {
+Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit angleUnit, bool shouldExpand, bool canBeInterrupted) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -137,7 +137,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
   }
 
   // Step 3: Sort the operands
-  sortOperands(SimplificationOrder);
+  sortOperands(SimplificationOrder, canBeInterrupted);
 
 #if MATRIX_EXACT_REDUCING
   /* Step 3bis: get rid of matrix */
@@ -262,7 +262,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit a
   /* Replacing sin/cos by tan factors may have mixed factors and factors are
    * guaranteed to be sorted (according ot SimplificationOrder) at the end of
    * shallowReduce */
-  sortOperands(SimplificationOrder);
+  sortOperands(SimplificationOrder, true);
 
   /* Step 6: We remove rational operands that appeared in the middle of sorted
    * operands. It's important to do this after having factorized because
@@ -594,10 +594,10 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
     return this;
   }
   Power * p = new Power(m, new Rational(-1), false);
-  m->sortOperands(SimplificationOrder);
+  m->sortOperands(SimplificationOrder, true);
   m->squashUnaryHierarchy();
   addOperand(p);
-  sortOperands(SimplificationOrder);
+  sortOperands(SimplificationOrder, true);
   return squashUnaryHierarchy();
 }
 
@@ -650,7 +650,7 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
     }
   }
   addOperand(factor->clone());
-  sortOperands(SimplificationOrder);
+  sortOperands(SimplificationOrder, false);
 }
 
 template Matrix * Multiplication::computeOnComplexAndMatrix<float>(Complex<float> const*, const Matrix*);

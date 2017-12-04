@@ -272,18 +272,6 @@ bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
 }
 
 bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Right && textField->isEditing()) {
-    int scriptExtensionLength = strlen(ScriptStore::k_scriptExtension);
-    if (textField->cursorLocation() > textField->draftTextLength() - scriptExtensionLength - 1) {
-      return true;
-    }
-  }
-  if (event.hasText() && textField->isEditing()) {
-    size_t eventTextLength = strlen(event.text());
-    if (textField->draftTextLength() + eventTextLength >= TextField::maxBufferSize()) {
-      return true;
-    }
-  }
   if (event == Ion::Events::Left && textField->isEditing() && textField->cursorLocation() == 0) {
     return true;
   }
@@ -332,6 +320,14 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField, const char 
   app()->setFirstResponder(&m_selectableTableView);
   static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
+}
+
+bool MenuController::textFieldDidHandleEvent(TextField * textField, Ion::Events::Event event, bool returnValue) {
+  int scriptExtensionLength = strlen(ScriptStore::k_scriptExtension);
+  if (textField->isEditing() && textField->cursorLocation() > textField->draftTextLength() - scriptExtensionLength) {
+    textField->setCursorLocation(textField->draftTextLength() - scriptExtensionLength);
+  }
+  return returnValue;
 }
 
 void MenuController::addScript() {

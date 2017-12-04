@@ -107,7 +107,7 @@ const ToolboxMessageTree KandinskyModuleChildren[KandinskyModuleChildrenCount] =
   ToolboxMessageTree(I18n::Message::PythonCommandGetPixel, I18n::Message::PythonGetPixel, I18n::Message::PythonCommandGetPixel),
   ToolboxMessageTree(I18n::Message::PythonCommandSetPixel, I18n::Message::PythonSetPixel, I18n::Message::PythonCommandSetPixel),
   ToolboxMessageTree(I18n::Message::PythonCommandColor, I18n::Message::PythonColor, I18n::Message::PythonCommandColor),
-  ToolboxMessageTree(I18n::Message::PythonCommandDrawString, I18n::Message::PythonCommandDrawString, I18n::Message::PythonCommandDrawString)};
+  ToolboxMessageTree(I18n::Message::PythonCommandDrawString, I18n::Message::PythonDrawString, I18n::Message::PythonCommandDrawString)};
 
 const ToolboxMessageTree CMathModuleChildren[CMathModuleChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandImportCmath, I18n::Message::PythonImportCmath, I18n::Message::PythonCommandImportCmath),

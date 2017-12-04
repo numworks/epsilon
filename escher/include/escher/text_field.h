@@ -90,6 +90,7 @@ protected:
   };
   ContentView m_contentView;
 private:
+  bool privateHandleEvent(Ion::Events::Event event);
   void deleteCharPrecedingCursor();
   bool deleteEndOfLine();
   void scrollToCursor();

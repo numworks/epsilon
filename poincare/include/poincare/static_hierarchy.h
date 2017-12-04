@@ -25,7 +25,7 @@ public:
   virtual bool hasValidNumberOfOperands(int numberOfOperands) const;
 protected:
   void build(const Expression * const * operands, int numberOfOperands, bool cloneOperands);
-  int simplificationOrderSameType(const Expression * e) const override;
+  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   const Expression * m_operands[T];
 };
 

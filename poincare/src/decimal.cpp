@@ -236,7 +236,7 @@ Expression * Decimal::shallowBeautify(Context & context, AngleUnit angleUnit) {
   return this;
 }
 
-int Decimal::simplificationOrderSameType(const Expression * e) const {
+int Decimal::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
   assert(e->type() == Type::Decimal);
   const Decimal * other = static_cast<const Decimal *>(e);
   if (sign() == Sign::Negative && other->sign() == Sign::Positive) {

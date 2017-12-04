@@ -26,16 +26,16 @@ public:
   void addOperand(Expression * operand);
   void addOperandAtIndex(Expression * operand, int index);
   void mergeOperands(DynamicHierarchy * d);
-  typedef int (*ExpressionOrder)(const Expression * e1, const Expression * e2);
-  void sortOperands(ExpressionOrder order);
+  typedef int (*ExpressionOrder)(const Expression * e1, const Expression * e2, bool canBeInterrupted);
+  void sortOperands(ExpressionOrder order, bool canBeInterrupted);
   Expression * squashUnaryHierarchy();
 protected:
   const Expression ** m_operands;
   int m_numberOfOperands;
 private:
   void removeOperandAtIndex(int i, bool deleteAfterRemoval);
-  int simplificationOrderSameType(const Expression * e) const override;
-  int simplificationOrderGreaterType(const Expression * e) const override;
+  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
+  int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const override;
 };
 
 }

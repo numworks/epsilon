@@ -200,7 +200,7 @@ public:
   bool isIdenticalTo(const Expression * e) const {
     /* We use the simplification order only because it is a already-coded total
      * order on expresssions. */
-    return SimplificationOrder(this, e) == 0;
+    return SimplificationOrder(this, e, true) == 0;
   }
 
   /* Layout Engine */
@@ -237,8 +237,10 @@ protected:
    * Joel S. Cohen (section 3.1). The order groups like terms together to avoid
    * quadratic complexity when factorizing addition or multiplication. For
    * example, it groups terms with same bases together (ie Pi, Pi^3)  and with
-   * same non-rational factors together (ie Pi, 2*Pi). */
-  static int SimplificationOrder(const Expression * e1, const Expression * e2);
+   * same non-rational factors together (ie Pi, 2*Pi).
+   * Because SimplificationOrder is a recursive call, we sometimes enable its
+   * interruption to avoid freezing in the simplification process. */
+  static int SimplificationOrder(const Expression * e1, const Expression * e2, bool canBeInterrupted = false);
 private:
   /* Properties */
   virtual Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
@@ -249,9 +251,9 @@ private:
    * simplificationOrderSameType. Besides, operations that can be simplified
    * (ie +, *, ^, !) have specific rules to group like terms together and thus
    * reimplement simplificationOrderGreaterType. */
-  virtual int simplificationOrderGreaterType(const Expression * e) const { return -1; }
+  virtual int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const { return -1; }
   //TODO: What should be the implementation for complex?
-  virtual int simplificationOrderSameType(const Expression * e) const { return 0; }
+  virtual int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const { return 0; }
   /* Layout Engine */
   virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Simplification */

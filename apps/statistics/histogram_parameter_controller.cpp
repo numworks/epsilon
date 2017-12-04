@@ -50,7 +50,8 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
     }
     m_store->setBarWidth(f);
   } else {
-    if (f > m_store->maxValue()+m_store->barWidth()) {
+    double newNumberOfBars = ceilf((m_store->maxValue() - f)/m_store->barWidth());
+    if (newNumberOfBars > Store::k_maxNumberOfBars || f > m_store->maxValue()+m_store->barWidth()) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }

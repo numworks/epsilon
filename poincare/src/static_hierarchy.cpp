@@ -66,14 +66,14 @@ void StaticHierarchy<T>::build(const Expression * const * operands, int numberOf
 }
 
 template<int T>
-int StaticHierarchy<T>::simplificationOrderSameType(const Expression * e) const {
+int StaticHierarchy<T>::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
   for (int i = 0; i < this->numberOfOperands(); i++) {
     // The NULL node is the least node type.
     if (e->numberOfOperands() <= i) {
       return 1;
     }
-    if (SimplificationOrder(this->operand(i), e->operand(i)) != 0) {
-      return SimplificationOrder(this->operand(i), e->operand(i));
+    if (SimplificationOrder(this->operand(i), e->operand(i), canBeInterrupted) != 0) {
+      return SimplificationOrder(this->operand(i), e->operand(i), canBeInterrupted);
     }
   }
   // The NULL node is the least node type.

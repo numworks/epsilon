@@ -36,8 +36,8 @@ private:
   /* Simplify */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
-  int simplificationOrderGreaterType(const Expression * e) const override;
-  int simplificationOrderSameType(const Expression * e) const override;
+  int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, AngleUnit angleUnit);
   Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const override;
   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, AngleUnit angleUnit);

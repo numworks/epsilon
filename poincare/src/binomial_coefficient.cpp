@@ -100,7 +100,7 @@ Expression * BinomialCoefficient::templatedApproximate(Context& context, AngleUn
   T result = 1;
   for (int i = 0; i < k; i++) {
     result *= (n-(T)i)/(k-(T)i);
-    if (std::isinf(result)) {
+    if (std::isinf(result) || std::isnan(result)) {
       return new Complex<T>(Complex<T>::Float(result));
     }
   }

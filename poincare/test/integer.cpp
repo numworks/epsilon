@@ -33,6 +33,7 @@ QUIZ_CASE(poincare_integer_addition) {
   assert(Integer::Addition(Integer("123456789123456789"), Integer(1)).isEqualTo(Integer("123456789123456790")));
   assert(Integer::Addition(Integer("-123456789123456789"), Integer("123456789123456789")).isEqualTo(Integer("0")));
   assert(Integer::Addition(Integer("234"), Integer(-234)).isEqualTo(Integer(0)));
+  assert(Integer::Addition(Integer("18446744073709551616"), Integer("18446744073709551368")).isEqualTo(Integer("36893488147419102984")));
 }
 
 QUIZ_CASE(poincare_integer_subtraction) {
@@ -43,6 +44,7 @@ QUIZ_CASE(poincare_integer_subtraction) {
   assert(Integer::Subtraction(Integer(-23), Integer(-23)).isEqualTo(Integer(0)));
   assert(Integer::Subtraction(Integer("-123456789123456789"), Integer("-123456789123456789")).isEqualTo(Integer(0)));
   assert(Integer::Subtraction(Integer("123456789123456789"), Integer("123456789123456789")).isEqualTo(Integer(0)));
+  assert(Integer::Subtraction(Integer("18446744073709551616"), Integer("18446744073709551368")).isEqualTo(Integer(248)));
 }
 
 QUIZ_CASE(poincare_integer_multiplication) {
@@ -76,6 +78,7 @@ QUIZ_CASE(poincare_integer_divide) {
   assert(Integer::Division(Integer("12345678910111213141516171819202122"), Integer("10")).quotient.isEqualTo(Integer("1234567891011121314151617181920212")) && Integer::Division(Integer("12345678910111213141516171819202122"), Integer("10")).remainder.isEqualTo(Integer("2")));
   assert(Integer::Division(Integer("0"), Integer("-10")).quotient.isEqualTo(Integer("0")) && Integer::Division(Integer("0"), Integer("-10")).remainder.isEqualTo(Integer("0")));
   assert(Integer::Division(Integer("0"), Integer("-123456789098760")).quotient.isEqualTo(Integer("0")) && Integer::Division(Integer("0"), Integer("-123456789098760")).remainder.isEqualTo(Integer("0")));
+  assert(Integer::Division(Integer("2305843009213693952"), Integer("2305843009213693921")).quotient.isEqualTo(Integer("1")) && Integer::Division(Integer("2305843009213693952"), Integer("2305843009213693921")).remainder.isEqualTo(Integer("31")));
 }
 
 template<typename T>

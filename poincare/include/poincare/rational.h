@@ -54,7 +54,7 @@ private:
   }
 
   /* Sorting */
-  int simplificationOrderSameType(const Expression * e) const override;
+  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
 
   Integer m_numerator;
   Integer m_denominator;

@@ -96,16 +96,16 @@ void DynamicHierarchy::removeOperand(const Expression * e, bool deleteAfterRemov
 
 
 
-void DynamicHierarchy::sortOperands(ExpressionOrder order) {
+void DynamicHierarchy::sortOperands(ExpressionOrder order, bool canBeInterrupted) {
   for (int i = numberOfOperands()-1; i > 0; i--) {
     bool isSorted = true;
     for (int j = 0; j < numberOfOperands()-1; j++) {
       /* Warning: Matrix operations are not always commutative (ie,
        * multiplication) so we never swap 2 matrices. */
 #if MATRIX_EXACT_REDUCING
-      if (order(operand(j), operand(j+1)) > 0 && (!operand(j)->recursivelyMatches(Expression::IsMatrix) || !operand(j+1)->recursivelyMatches(Expression::IsMatrix))) {
+      if (order(operand(j), operand(j+1), canBeInterrupted) > 0 && (!operand(j)->recursivelyMatches(Expression::IsMatrix) || !operand(j+1)->recursivelyMatches(Expression::IsMatrix))) {
 #else
-      if (order(operand(j), operand(j+1)) > 0) {
+      if (order(operand(j), operand(j+1), canBeInterrupted) > 0) {
 #endif
         swapOperands(j, j+1);
         isSorted = false;
@@ -141,7 +141,7 @@ void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
   }
 }
 
-int DynamicHierarchy::simplificationOrderSameType(const Expression * e) const {
+int DynamicHierarchy::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
   int m = this->numberOfOperands();
   int n = e->numberOfOperands();
   for (int i = 1; i <= m; i++) {
@@ -149,8 +149,9 @@ int DynamicHierarchy::simplificationOrderSameType(const Expression * e) const {
     if (n < i) {
       return 1;
     }
-    if (SimplificationOrder(this->operand(m-i), e->operand(n-i)) != 0) {
-      return SimplificationOrder(this->operand(m-i), e->operand(n-i));
+    int order = SimplificationOrder(this->operand(m-i), e->operand(n-i), canBeInterrupted);
+    if (order != 0) {
+      return order;
     }
   }
   // The NULL node is the least node type.
@@ -160,14 +161,15 @@ int DynamicHierarchy::simplificationOrderSameType(const Expression * e) const {
   return 0;
 }
 
-int DynamicHierarchy::simplificationOrderGreaterType(const Expression * e) const {
+int DynamicHierarchy::simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const {
   int m = numberOfOperands();
   if (m == 0) {
     return -1;
   }
   /* Compare e to last term of hierarchy. */
-  if (SimplificationOrder(operand(m-1), e) != 0) {
-    return SimplificationOrder(operand(m-1), e);
+  int order = SimplificationOrder(operand(m-1), e, canBeInterrupted);
+  if (order != 0) {
+    return order;
   }
   if (m > 1) {
     return 1;

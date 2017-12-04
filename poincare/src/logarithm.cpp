@@ -125,8 +125,19 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 bool Logarithm::parentIsAPowerOfSameBase() const {
-  if (parent()->type() == Type::Power && parent()->operand(1) == this) {
-    const Expression * powerOperand0 = parent()->operand(0);
+  // We look for expressions of types e^ln(x) or e^(ln(x)) where ln is this
+  const Expression * parentExpression = parent();
+  bool thisIsPowerExponent = parentExpression->type() == Type::Power ? parentExpression->operand(1) == this : false;
+  if (parentExpression->type() == Type::Parenthesis) {
+    const Expression * parentParentExpression = parentExpression->parent();
+    if (parentExpression == nullptr) {
+      return false;
+    }
+    thisIsPowerExponent = parentParentExpression->type() == Type::Power ? parentParentExpression->operand(1) == parentExpression : false;
+    parentExpression = parentParentExpression;
+  }
+  if (thisIsPowerExponent) {
+    const Expression * powerOperand0 = parentExpression->operand(0);
     if (numberOfOperands() == 1) {
       if (powerOperand0->type() == Type::Rational && static_cast<const Rational *>(powerOperand0)->isTen()) {
         return true;

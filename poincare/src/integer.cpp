@@ -429,7 +429,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
 
   Integer A = numerator;
   Integer B = denominator;
-  native_int_t base = (double_native_uint_t)1 << 16;
+  native_int_t base = 1 << 16;
   // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
   native_int_t d = base/(native_int_t)(B.halfDigit(B.numberOfHalfDigits()-1)+1);
   A = Multiplication(Integer(d), A);
@@ -446,7 +446,6 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
     A = Subtraction(A, betaMB);
   }
   for (int j = m-1; j >= 0; j--) {
-    native_uint_t base = 1 << 16;
     native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/(native_uint_t)B.halfDigit(n-1);
     half_native_uint_t baseMinus1 = (1 << 16) -1;
     qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1;

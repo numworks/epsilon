@@ -77,7 +77,6 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   runCode(command);
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
-
 }
 
 void ConsoleController::removeExtensionIfAny(char * name) {
@@ -317,6 +316,12 @@ void ConsoleController::autoImportScriptAtIndex(int index, bool force) {
     memcpy(&command[lenImportCommand1], scriptNewName, scriptNewNameLength);
     memcpy(&command[lenImportCommand1 + scriptNewNameLength], importCommand2, lenImportCommand2 + 1);
     runAndPrintForCommand(command);
+  }
+  if (force) {
+    m_selectableTableView.reloadData();
+    m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+    m_editCell.setEditing(true);
+    m_editCell.setText("");
   }
 }
 

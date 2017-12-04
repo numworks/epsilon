@@ -232,6 +232,7 @@ int TextField::cursorLocation() const{
 void TextField::setCursorLocation(int location) {
   m_contentView.setCursorLocation(location);
   scrollToCursor();
+  layoutSubviews();
 }
 
 void TextField::setText(const char * text) {

@@ -376,6 +376,11 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
     newLogBase10 = std::log10(std::fabs((T)mantissa)) - (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal);
   }
   exponentInBase10 = std::floor(newLogBase10);
+  // Update the display mode if the exponent changed
+  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Expression::FloatDisplayMode::Decimal) {
+    displayMode = Expression::FloatDisplayMode::Scientific;
+  }
+
   int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == Expression::FloatDisplayMode::Scientific ?
     1 : exponentInBase10+1;
   decimalMarkerPosition = f < 0 ? decimalMarkerPosition+1 : decimalMarkerPosition;

@@ -85,6 +85,9 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    if (m_selectableTableView.selectedRow() < 0 || m_selectableTableView.selectedRow() >= m_scriptNodesCount) {
+      return false;
+    }
     ScriptNode selectedScriptNode = m_scriptNodes[m_selectableTableView.selectedRow()];
     insertTextInCaller(selectedScriptNode.name());
     if (selectedScriptNode.type() == ScriptNode::Type::Function) {

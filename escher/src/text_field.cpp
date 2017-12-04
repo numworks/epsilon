@@ -275,31 +275,8 @@ bool TextField::insertTextAtLocation(const char * text, int location) {
   return false;
 }
 
-void TextField::deleteCharPrecedingCursor() {
-  m_contentView.deleteCharPrecedingCursor();
-  scrollToCursor();
-  layoutSubviews();
-}
-
-bool TextField::deleteEndOfLine() {
-  if (m_contentView.deleteEndOfLine()) {
-    scrollToCursor();
-    layoutSubviews();
-    return true;
-  }
-  return false;
-}
-
-KDSize TextField::minimalSizeForOptimalDisplay() const {
-  return KDSize(0, m_contentView.textHeight());
-}
-
-bool TextField::textFieldShouldFinishEditing(Ion::Events::Event event) {
-  return m_delegate->textFieldShouldFinishEditing(this, event);
-}
-
-bool TextField::handleEvent(Ion::Events::Event event) {
-  assert(m_delegate != nullptr);
+bool TextField::privateHandleEvent(Ion::Events::Event event) {
+    assert(m_delegate != nullptr);
   if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
   }
@@ -410,6 +387,35 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   }
 
   return false;
+}
+
+void TextField::deleteCharPrecedingCursor() {
+  m_contentView.deleteCharPrecedingCursor();
+  scrollToCursor();
+  layoutSubviews();
+}
+
+bool TextField::deleteEndOfLine() {
+  if (m_contentView.deleteEndOfLine()) {
+    scrollToCursor();
+    layoutSubviews();
+    return true;
+  }
+  return false;
+}
+
+KDSize TextField::minimalSizeForOptimalDisplay() const {
+  return KDSize(0, m_contentView.textHeight());
+}
+
+bool TextField::textFieldShouldFinishEditing(Ion::Events::Event event) {
+  return m_delegate->textFieldShouldFinishEditing(this, event);
+}
+
+bool TextField::handleEvent(Ion::Events::Event event) {
+  assert(m_delegate != nullptr);
+  bool didHandleEvent = privateHandleEvent(event);
+  return m_delegate->textFieldDidHandleEvent(this, event, didHandleEvent);
 }
 
 void TextField::scrollToCursor() {

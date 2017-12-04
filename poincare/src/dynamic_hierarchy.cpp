@@ -149,8 +149,9 @@ int DynamicHierarchy::simplificationOrderSameType(const Expression * e) const {
     if (n < i) {
       return 1;
     }
-    if (SimplificationOrder(this->operand(m-i), e->operand(n-i)) != 0) {
-      return SimplificationOrder(this->operand(m-i), e->operand(n-i));
+    int order = SimplificationOrder(this->operand(m-i), e->operand(n-i));
+    if (order != 0) {
+      return order;
     }
   }
   // The NULL node is the least node type.
@@ -166,8 +167,9 @@ int DynamicHierarchy::simplificationOrderGreaterType(const Expression * e) const
     return -1;
   }
   /* Compare e to last term of hierarchy. */
-  if (SimplificationOrder(operand(m-1), e) != 0) {
-    return SimplificationOrder(operand(m-1), e);
+  int order = SimplificationOrder(operand(m-1), e);
+  if (order != 0) {
+    return order;
   }
   if (m > 1) {
     return 1;

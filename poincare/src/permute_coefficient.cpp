@@ -87,7 +87,7 @@ Complex<T> * PermuteCoefficient::templatedApproximate(Context& context, AngleUni
   T result = 1;
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
     result *= i;
-    if (std::isinf(result)) {
+    if (std::isinf(result) || std::isnan(result)) {
       return new Complex<T>(Complex<T>::Float(result));
     }
   }

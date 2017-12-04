@@ -381,7 +381,7 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
     native_uint_t bDigit = (i >= b.m_numberOfDigits ? 0 : b.digit(i));
     native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
     digits[i] = result;
-    carry = (subtract ? (aDigit<result) : ((aDigit>result)||(bDigit>result))); // There's been an underflow or overflow
+    carry = (subtract ? (aDigit<result+carry) : ((aDigit>result)||(bDigit>result))); // There's been an underflow or overflow
   }
   while (digits[size-1] == 0 && size>1) {
     size--;
@@ -429,7 +429,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
 
   Integer A = numerator;
   Integer B = denominator;
-  native_int_t base = (double_native_uint_t)1 << 16;
+  native_int_t base = 1 << 16;
   // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
   native_int_t d = base/(native_int_t)(B.halfDigit(B.numberOfHalfDigits()-1)+1);
   A = Multiplication(Integer(d), A);
@@ -446,7 +446,6 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
     A = Subtraction(A, betaMB);
   }
   for (int j = m-1; j >= 0; j--) {
-    native_uint_t base = 1 << 16;
     native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/(native_uint_t)B.halfDigit(n-1);
     half_native_uint_t baseMinus1 = (1 << 16) -1;
     qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1;
@@ -524,7 +523,7 @@ T Integer::approximate() const {
   /* Shift the most significant int to the left of the mantissa. The most
    * significant 1 will be ignore at the end when inserting the mantissa in
    * the resulting uint64_t (as required by IEEE754). */
-  assert(totalNumberOfBits-numberOfBitsInLastDigit > 0 && totalNumberOfBits-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
+  assert(totalNumberOfBits-numberOfBitsInLastDigit >= 0 && totalNumberOfBits-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
   mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBitsInLastDigit));
   int digitIndex = 2;
   int numberOfBits = numberOfBitsInLastDigit;

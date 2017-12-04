@@ -124,21 +124,21 @@ ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
 }
 
-int Power::simplificationOrderSameType(const Expression * e) const {
-  int baseComparison = SimplificationOrder(operand(0), e->operand(0));
+int Power::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
+  int baseComparison = SimplificationOrder(operand(0), e->operand(0), canBeInterrupted);
   if (baseComparison != 0) {
     return baseComparison;
   }
-  return SimplificationOrder(operand(1), e->operand(1));
+  return SimplificationOrder(operand(1), e->operand(1), canBeInterrupted);
 }
 
-int Power::simplificationOrderGreaterType(const Expression * e) const {
-  int baseComparison = SimplificationOrder(operand(0), e);
+int Power::simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const {
+  int baseComparison = SimplificationOrder(operand(0), e, canBeInterrupted);
   if (baseComparison != 0) {
     return baseComparison;
   }
   Rational one(1);
-  return SimplificationOrder(operand(1), &one);
+  return SimplificationOrder(operand(1), &one, canBeInterrupted);
 }
 
 Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
@@ -469,7 +469,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
     nthRootOfUnity->shallowReduce(context, angleUnit);
 
   }
-  m->sortOperands(SimplificationOrder);
+  m->sortOperands(SimplificationOrder, false);
   return m;
 }
 
@@ -479,7 +479,7 @@ Expression * Power::CreateNthRootOfUnity(const Rational r) {
   const Symbol * pi = new Symbol(Ion::Charset::SmallPi);
   const Expression * multExpOperands[3] = {iComplex, pi, new Rational(r)};
   Multiplication * mExp = new Multiplication(multExpOperands, 3, false);
-  mExp->sortOperands(SimplificationOrder);
+  mExp->sortOperands(SimplificationOrder, false);
   return new Power(exp, mExp, false);
 #if 0
   const Symbol * iComplex = new Symbol(Ion::Charset::IComplex);

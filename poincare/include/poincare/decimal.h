@@ -30,7 +30,7 @@ private:
   constexpr static int k_maxDoubleExponent = 308;
   int numberOfDigitsInMantissaWithoutSign() const;
   /* Comparison */
-  int simplificationOrderSameType(const Expression * e) const override;
+  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   /* Simplification */

@@ -188,7 +188,7 @@ bool Symbol::isScalarSymbol() const {
   return false;
 }
 
-int Symbol::simplificationOrderSameType(const Expression * e) const {
+int Symbol::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
   assert(e->type() == Expression::Type::Symbol);
   if ((uint8_t)m_name == ((uint8_t)static_cast<const Symbol *>(e)->name())) {
     return 0;

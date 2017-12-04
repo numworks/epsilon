@@ -44,7 +44,7 @@ Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {
   }
 
   // Step 2: Sort the operands
-  sortOperands(Expression::SimplificationOrder);
+  sortOperands(Expression::SimplificationOrder, true);
 
 #if MATRIX_EXACT_REDUCING
   /* Step 2bis: get rid of matrix */
@@ -165,9 +165,9 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
   // want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d
   Addition * numerator = new Addition();
   for (int i=0; i < numberOfOperands(); i++) {
-    Expression * m = new Multiplication(operand(i), commonDenominator, true);
+    Multiplication * m = new Multiplication(operand(i), commonDenominator, true);
     numerator->addOperand(m);
-    m->shallowReduce(context, angleUnit);
+    m->privateShallowReduce(context, angleUnit, true, false);
   }
   // Step 3: Add the denominator
   Power * inverseDenominator = new Power(commonDenominator, new Rational(-1), false);
@@ -182,7 +182,7 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
 
   /* Step 6: We simplify the resulting multiplication forbidding any
    * distribution of multiplication on additions (to avoid an infinite loop). */
-  return static_cast<Multiplication *>(replaceWith(result, true))->privateShallowReduce(context, angleUnit, false);
+  return static_cast<Multiplication *>(replaceWith(result, true))->privateShallowReduce(context, angleUnit, false, true);
 }
 
 void Addition::factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {

@@ -76,6 +76,7 @@ private:
   StackViewController * stackViewController();
   bool copyCurrentLineToClipboard();
   int m_rowHeight;
+  bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;
   SelectableTableView m_selectableTableView;
   ConsoleLineCell m_cells[k_numberOfLineCells];

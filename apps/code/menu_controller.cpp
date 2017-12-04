@@ -130,8 +130,8 @@ void MenuController::loadPythonIfNeeded() {
 void MenuController::openConsoleWithScriptAtIndex(int scriptIndex) {
   reloadConsole();
   if (m_consoleController.loadPythonEnvironment(false)) {
-    m_consoleController.autoImportScriptAtIndex(scriptIndex, true);
     stackViewController()->push(&m_consoleController);
+    m_consoleController.autoImportScriptAtIndex(scriptIndex, true);
   }
   m_reloadConsoleWhenBecomingFirstResponder = true;
 }

@@ -19,6 +19,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   TextFieldDelegate(),
   MicroPython::ExecutionEnvironment(),
   m_rowHeight(KDText::charSize(k_fontSize).height()),
+  m_importScriptsWhenViewAppears(false),
   m_selectableTableView(this, this, 0, 1, 0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin, this, this, true, true, KDColorWhite),
   m_editCell(this, this),
   m_pythonHeap(nullptr),
@@ -47,9 +48,7 @@ bool ConsoleController::loadPythonEnvironment(bool autoImportScripts) {
   }
   MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
   MicroPython::registerScriptProvider(m_scriptStore);
-  if (autoImportScripts) {
-    autoImport();
-  }
+  m_importScriptsWhenViewAppears = autoImportScripts;
   return true;
 }
 
@@ -94,6 +93,10 @@ void ConsoleController::removeExtensionIfAny(char * name) {
 void ConsoleController::viewWillAppear() {
   assert(pythonEnvironmentIsLoaded());
   m_sandboxIsDisplayed = false;
+  if (m_importScriptsWhenViewAppears) {
+    m_importScriptsWhenViewAppears = false;
+    autoImport();
+  }
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
   m_editCell.setEditing(true);

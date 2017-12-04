@@ -278,6 +278,12 @@ bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
       return true;
     }
   }
+  if (event.hasText() && textField->isEditing()) {
+    size_t eventTextLength = strlen(event.text());
+    if (textField->draftTextLength() + eventTextLength >= TextField::maxBufferSize()) {
+      return true;
+    }
+  }
   if (event == Ion::Events::Left && textField->isEditing() && textField->cursorLocation() == 0) {
     return true;
   }

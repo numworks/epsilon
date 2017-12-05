@@ -1,4 +1,6 @@
 #include "uniform_law.h"
+#include <cmath>
+#include <float.h>
 #include <assert.h>
 
 namespace Probability {
@@ -40,14 +42,14 @@ I18n::Message UniformLaw::parameterDefinitionAtIndex(int index) {
 
 float UniformLaw::xMin() {
   assert(m_parameter2 >= m_parameter1);
-  if (m_parameter1 == m_parameter2) {
+  if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
     return m_parameter1 - 1.0f;
   }
   return m_parameter1 - 0.6f*(m_parameter2 - m_parameter1);
 }
 
 float UniformLaw::xMax() {
-  if (m_parameter1 == m_parameter2) {
+  if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
     return m_parameter1 + 1.0f;
   }
   return m_parameter2 + 0.6f*(m_parameter2 - m_parameter1);
@@ -58,15 +60,15 @@ float UniformLaw::yMin() {
 }
 
 float UniformLaw::yMax() {
-  float result = m_parameter1 == m_parameter2 ? k_diracMaximum : 1.0f/(m_parameter2-m_parameter1);
-  if (result <= 0.0f) {
+  float result = m_parameter2 - m_parameter1 < FLT_EPSILON ? k_diracMaximum : 1.0f/(m_parameter2-m_parameter1);
+  if (result <= 0.0f || std::isnan(result) || std::isinf(result)) {
     result = 1.0f;
   }
   return result*(1.0f+ k_displayTopMarginRatio);
 }
 
 float UniformLaw::evaluateAtAbscissa(float t) const {
-  if (m_parameter1 == m_parameter2) {
+  if (m_parameter2 - m_parameter1 < FLT_EPSILON) {
     if (m_parameter1 - k_diracWidth<= t && t <= m_parameter2 + k_diracWidth) {
       return 2.0f*k_diracMaximum;
     }

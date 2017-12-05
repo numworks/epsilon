@@ -1,6 +1,7 @@
 # No objects files.
 *.o
 *.elf
+*.exe
 
 # No dependency files
 *.d

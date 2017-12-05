@@ -24,7 +24,7 @@ public:
   double cumulativeDistributiveInverseForProbability(double * probability) override;
 private:
   constexpr static float k_diracMaximum = 10.0f;
-  constexpr static float k_diracWidth = 0.001f;
+  constexpr static float k_diracWidth = 0.005f;
 };
 
 }

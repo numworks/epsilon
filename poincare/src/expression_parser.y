@@ -146,16 +146,25 @@ lstData:
   LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, false); $2->detachOperands(); delete $2; }
   | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3->numberOfOperands() != $1->numberOfColumns()) { delete $1; delete $3; YYERROR; } ; $$ = $1; $$->pushListData($3, false); $3->detachOperands(); delete $3; }
 
+/* When approximating expressions to double, results are bounded by 1E308 (and
+ * 1E-308 for small numbers). We thus accept decimals whose exponents are in
+ * {-1000, 1000}. However, we have to compute the exponent first to decide
+ * wether to accept the decimal. The exponent of a Decimal is stored as an
+ * int32_t. We thus have to throw an error when the exponent computation might
+ * overflow. Finally, we escape computation by throwing an error when the length
+ * of the exponent digits is above 4 (0.00...-256 times-...01E1256=1E1000 is
+ * accepted and 1000-...256times...-0E10000 = 1E10256, 10256 does not overflow
+ * an int32_t). */
 number:
   DIGITS { $$ = new Poincare::Rational(Poincare::Integer($1.address, false)); }
   | DOT DIGITS { $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, nullptr, 0, false)); }
   | DIGITS DOT DIGITS { $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, nullptr, 0, false)); }
-  | DOT DIGITS EE DIGITS { if ($4.length > 9) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $4.address, $4.length, false)); }
-  | DIGITS DOT DIGITS EE DIGITS { if ($5.length > 9) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $5.address, $5.length, false)); }
-  | DIGITS EE DIGITS { if ($3.length > 9) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $3.address, $3.length, false)); }
-  | DOT DIGITS EE MINUS DIGITS { if ($5.length > 9) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $5.address, $5.length, true)); }
-  | DIGITS DOT DIGITS EE MINUS DIGITS { if ($6.length > 9) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $6.address, $6.length, true)); }
-  | DIGITS EE MINUS DIGITS { if ($4.length > 9) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $4.address, $4.length, true)); }
+  | DOT DIGITS EE DIGITS { if ($4.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $4.address, $4.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
+  | DIGITS DOT DIGITS EE DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $5.address, $5.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
+  | DIGITS EE DIGITS { if ($3.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $3.address, $3.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
+  | DOT DIGITS EE MINUS DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $5.address, $5.length, true);  if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
+  | DIGITS DOT DIGITS EE MINUS DIGITS { if ($6.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $6.address, $6.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
+  | DIGITS EE MINUS DIGITS { if ($4.length > 4) { YYERROR; }; int exponent =  Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $4.address, $4.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
 
 symb:
   SYMBOL           { $$ = new Poincare::Symbol($1); }

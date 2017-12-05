@@ -34,7 +34,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     return;
   }
   EvenOddExpressionCell * mytitleCell = (EvenOddExpressionCell *)cell;
-  mytitleCell->setExpression(m_titleLayout[i]);
+  mytitleCell->setExpressionLayout(m_titleLayout[i]);
 }
 
 HighlightCell * StoreController::titleCells(int index) {

@@ -122,7 +122,7 @@ void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, in
   }
   m_expressionLayouts[j] = new BaselineRelativeLayout(new StringLayout(nextName, 1, size), new StringLayout(subscripts[j], strlen(subscripts[j]), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
-  myCell->setExpression(m_expressionLayouts[j]);
+  myCell->setExpressionLayout(m_expressionLayouts[j]);
 }
 
 void TypeParameterController::setSequence(Sequence * sequence) {

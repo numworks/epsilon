@@ -28,7 +28,7 @@ SubController::SubController(Responder * parentResponder) :
   const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
   m_complexFormatLayout[1] = new BaselineRelativeLayout(new StringLayout(base, sizeof(base)), new StringLayout(superscript, sizeof(superscript)), BaselineRelativeLayout::Type::Superscript);
   for (int i = 0; i < 2; i++) {
-    m_complexFormatCells[i].setExpression(m_complexFormatLayout[i]);
+    m_complexFormatCells[i].setExpressionLayout(m_complexFormatLayout[i]);
   }
   m_editableCell.setMessage(I18n::Message::SignificantFigures);
   m_editableCell.setMessageFontSize(KDText::FontSize::Large);

@@ -15,7 +15,7 @@ ExpressionLayout * ExpressionView::expressionLayout() const {
   return m_expressionLayout;
 }
 
-void ExpressionView::setExpression(ExpressionLayout * expressionLayout) {
+void ExpressionView::setExpressionLayout(ExpressionLayout * expressionLayout) {
   m_expressionLayout = expressionLayout;
   markRectAsDirty(bounds());
 }

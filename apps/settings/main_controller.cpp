@@ -183,7 +183,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       m_complexFormatLayout = new BaselineRelativeLayout(new StringLayout(base, sizeof(base), KDText::FontSize::Small), new StringLayout(superscript, sizeof(superscript), KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
     }
     MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
-    myExpCell->setExpression(m_complexFormatLayout);
+    myExpCell->setExpressionLayout(m_complexFormatLayout);
     return;
   }
   if (index == 3) {

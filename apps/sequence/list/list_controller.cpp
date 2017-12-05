@@ -169,13 +169,13 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
   Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setExpression(sequence->definitionName());
+    myCell->setExpressionLayout(sequence->definitionName());
   }
   if (sequenceDefinitionForRow(j) == 1) {
-    myCell->setExpression(sequence->firstInitialConditionName());
+    myCell->setExpressionLayout(sequence->firstInitialConditionName());
   }
   if (sequenceDefinitionForRow(j) == 2) {
-    myCell->setExpression(sequence->secondInitialConditionName());
+    myCell->setExpressionLayout(sequence->secondInitialConditionName());
   }
   KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::GreyDark;
   myCell->setColor(nameColor);
@@ -185,13 +185,13 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setExpression(sequence->layout());
+    myCell->setExpressionLayout(sequence->layout());
   }
   if (sequenceDefinitionForRow(j) == 1) {
-    myCell->setExpression(sequence->firstInitialConditionLayout());
+    myCell->setExpressionLayout(sequence->firstInitialConditionLayout());
   }
   if (sequenceDefinitionForRow(j) == 2) {
-    myCell->setExpression(sequence->secondInitialConditionLayout());
+    myCell->setExpressionLayout(sequence->secondInitialConditionLayout());
   }
   bool active = sequence->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;

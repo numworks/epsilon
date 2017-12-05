@@ -16,8 +16,8 @@ OutputExpressionsView::OutputExpressionsView(Responder * parentResponder) :
 }
 
 void OutputExpressionsView::setExpressions(ExpressionLayout ** expressionsLayout) {
-  m_approximateExpressionView.setExpression(expressionsLayout[0]);
-  m_exactExpressionView.setExpression(expressionsLayout[1]);
+  m_approximateExpressionView.setExpressionLayout(expressionsLayout[0]);
+  m_exactExpressionView.setExpressionLayout(expressionsLayout[1]);
   layoutSubviews();
 }
 

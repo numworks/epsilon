@@ -31,6 +31,7 @@ public:
   static SpecialSymbols matrixSymbol(char index);
   Symbol(char name);
   Symbol(Symbol&& other); // C++11 move constructor
+  Symbol(const Symbol& other); // C++11 copy constructor
   char name() const;
   Type type() const override;
   Expression * clone() const override;

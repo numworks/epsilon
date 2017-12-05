@@ -155,10 +155,8 @@ void HistogramController::reloadBannerView() {
 
   // Add Interval Data
   const char * legend = " [";
-  int legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
-
+  strcpy(buffer, legend);
+  numberOfChar += sizeof(legend) - 1;
   // Add lower bound
   double lowerBound = m_store->startOfBarAtIndex(*m_selectedBarIndex);
   numberOfChar += PrintFloat::convertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
@@ -181,9 +179,8 @@ void HistogramController::reloadBannerView() {
   // Add Size Data
   numberOfChar = 0;
   legend = ": ";
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
+  strcpy(buffer, legend);
+  numberOfChar += sizeof(": ") - 1;
   double size = m_store->heightOfBarAtIndex(*m_selectedBarIndex);
   numberOfChar += PrintFloat::convertFloatToText<double>(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   // Padding
@@ -195,10 +192,9 @@ void HistogramController::reloadBannerView() {
 
   // Add Frequency Data
   numberOfChar = 0;
-  legend = ": ";
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
+  //legend = ": ";
+  //strcpy(buffer, legend);
+  numberOfChar += sizeof(": ") - 1;
   double frequency = size/m_store->sumOfColumn(1);
   numberOfChar += PrintFloat::convertFloatToText<double>(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   // Padding

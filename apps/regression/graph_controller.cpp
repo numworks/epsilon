@@ -66,31 +66,29 @@ void GraphController::reloadBannerView() {
   m_bannerView.setMessageAtIndex(I18n::Message::RegressionFormula, 3);
 
   char buffer[k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  int numberOfChar = 0;
   const char * legend = " P(";
-  int legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
+  int legendLength = sizeof(" P(") - 1;
+  strcpy(buffer, legend);
+  int numberOfChar = legendLength;
   if (*m_selectedDotIndex == m_store->numberOfPairs()) {
     legend = I18n::translate(I18n::Message::MeanDot);
     legendLength = strlen(legend);
-    strlcpy(buffer+numberOfChar, legend, legendLength+1);
+    strcpy(buffer+numberOfChar, legend);
     numberOfChar += legendLength;
   } else if (*m_selectedDotIndex < 0) {
     legend = I18n::translate(I18n::Message::Reg);
     legendLength = strlen(legend);
-    strlcpy(buffer+numberOfChar, legend, legendLength+1);
+    strcpy(buffer+numberOfChar, legend);
     numberOfChar += legendLength;
   } else {
     numberOfChar += PrintFloat::convertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
   }
   legend = ")  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  legendLength = sizeof(")  ") - 1;
+  strcpy(buffer+numberOfChar, legend);
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 0);
 
-  numberOfChar = 0;
   legend = "x=";
   double x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
@@ -100,16 +98,16 @@ void GraphController::reloadBannerView() {
     x = m_store->meanOfColumn(0);
   }
   legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
+  /*strcpy(buffer, legend);
   numberOfChar += legendLength;
   numberOfChar += PrintFloat::convertFloatToText<double>(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  legendLength = sizeof("                  ") - 1;
+  strcpy(buffer+numberOfChar, legend);*/
+  convertFloatToText(x, buffer, legend, legendLength, "                  ", Constant::MediumNumberOfSignificantDigits);
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 1);
 
-  numberOfChar = 0;
   legend = "y=";
   double y = m_cursor->y();
   if (*m_selectedDotIndex == m_store->numberOfPairs()) {
@@ -118,64 +116,69 @@ void GraphController::reloadBannerView() {
     y = m_store->meanOfColumn(1);
   }
   legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
+  /*strcpy(buffer, legend);
   numberOfChar += legendLength;
   numberOfChar += PrintFloat::convertFloatToText<double>(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  legendLength = sizeof("                  ") - 1;
+  strcpy(buffer+numberOfChar, legend);*/
+  convertFloatToText(y, buffer, legend, legendLength, "                  ", Constant::MediumNumberOfSignificantDigits);
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 2);
 
-  numberOfChar = 0;
+  /*numberOfChar = 0;
   legend = " a=";
   double slope = m_store->slope();
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
+  legendLength = sizeof(" a=") - 1;
+  strcpy(buffer, legend);
   numberOfChar += legendLength;
   numberOfChar += PrintFloat::convertFloatToText<double>(slope, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  legendLength = sizeof("                  ") - 1;
+  strcpy(buffer+numberOfChar, legend);*/
+  convertFloatToText(m_store->slope(), buffer, " a=", sizeof(" a=") - 1, "                  ", Constant::LargeNumberOfSignificantDigits);
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 4);
 
-  numberOfChar = 0;
+  /*numberOfChar = 0;
   legend = " b=";
   double yIntercept = m_store->yIntercept();
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
+  legendLength = sizeof(" b=") - 1;
+  strcpy(buffer, legend);
   numberOfChar += legendLength;
   numberOfChar += PrintFloat::convertFloatToText<double>(yIntercept, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  legendLength = sizeof("                  ") - 1;
+  strcpy(buffer+numberOfChar, legend);*/
+  convertFloatToText(m_store->yIntercept(), buffer, " b=", sizeof(" b=") - 1, "                  ", Constant::LargeNumberOfSignificantDigits);
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 5);
 
-  numberOfChar = 0;
+  /*numberOfChar = 0;
   legend = "           r=";
   double r = m_store->correlationCoefficient();
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
+  legendLength = sizeof("           r=") - 1;
+  strcpy(buffer, legend);
   numberOfChar += legendLength;
   numberOfChar += PrintFloat::convertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  legendLength = sizeof("                  ") - 1;
+  strcpy(buffer+numberOfChar, legend);*/
+  convertFloatToText(m_store->correlationCoefficient(), buffer, "           r=", sizeof("           r=") - 1, "                  ", Constant::LargeNumberOfSignificantDigits);
   buffer[k_maxLegendLength+10] = 0;
   m_bannerView.setLegendAtIndex(buffer, 6);
 
-  numberOfChar = 0;
+  /*numberOfChar = 0;
   legend = " r2=";
   double r2 = m_store->squaredCorrelationCoefficient();
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
+  legendLength = sizeof(" r2=") - 1;
+  strcpy(buffer, legend);
   numberOfChar += legendLength;
   numberOfChar += PrintFloat::convertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  legendLength = sizeof("                  ") - 1;
+  strcpy(buffer+numberOfChar, legend);*/
+  convertFloatToText(m_store->squaredCorrelationCoefficient(), buffer, " r2=", sizeof(" r2=") - 1, "                  ", Constant::LargeNumberOfSignificantDigits);
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 7);
 }

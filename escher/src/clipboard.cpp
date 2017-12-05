@@ -15,5 +15,5 @@ const char * Clipboard::storedText() {
 }
 
 void Clipboard::reset() {
-  strlcpy(m_textBuffer, "", 1);
+  m_textBuffer[0] = 0;
 }

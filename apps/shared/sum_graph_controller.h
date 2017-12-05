@@ -49,7 +49,10 @@ private:
   class LegendView : public View {
   public:
     LegendView(SumGraphController * controller, char sumSymbol);
-    ~LegendView();
+    ~LegendView() {
+      delete m_sumLayout;
+      m_sumLayout = nullptr;
+    }
     LegendView(const LegendView& other) = delete;
     LegendView(LegendView&& other) = delete;
     LegendView& operator=(const LegendView& other) = delete;

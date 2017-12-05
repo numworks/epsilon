@@ -76,7 +76,6 @@ ExpressionLayout * Opposite::privateCreateLayout(PrintFloat::Mode floatDisplayMo
     result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 1, false);
   }
   return result;
-
 }
 
 int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

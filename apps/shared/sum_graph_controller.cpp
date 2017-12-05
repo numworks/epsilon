@@ -210,13 +210,6 @@ SumGraphController::LegendView::LegendView(SumGraphController * controller, char
   m_draftText[0] = 0;
 }
 
-SumGraphController::LegendView::~LegendView() {
-  if (m_sumLayout != nullptr) {
-    delete m_sumLayout;
-    m_sumLayout = nullptr;
-  }
-}
-
 void SumGraphController::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::GreyMiddle);
 }
@@ -238,11 +231,9 @@ void SumGraphController::LegendView::setEditableZone(double d) {
 
 void SumGraphController::LegendView::setSumSymbol(Step step, double start, double end, double result, ExpressionLayout * functionLayout) {
   assert(step == Step::Result || functionLayout == nullptr);
-  if (m_sumLayout) {
-    delete m_sumLayout;
-    m_sumLayout = nullptr;
-  }
-  const char sigma[] = {' ', m_sumSymbol};
+  delete m_sumLayout;
+  m_sumLayout = nullptr;
+  static const char sigma[] = {' ', m_sumSymbol};
   if (step == Step::FirstParameter) {
     m_sumLayout = LayoutEngine::createStringLayout(sigma, sizeof(sigma));
   } else if (step == Step::SecondParameter) {

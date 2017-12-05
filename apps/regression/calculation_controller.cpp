@@ -129,7 +129,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   if (i == 0) {
     if (j == numberOfRows()-1) {
       EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
-      myCell->setExpression(m_r2Layout);
+      myCell->setExpressionLayout(m_r2Layout);
       return;
     }
     EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;

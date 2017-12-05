@@ -6,7 +6,7 @@ Controller::ContentView::ContentView(ExpressionAndLayout * expressionAndLayout) 
   SolidColorView(KDColorWhite),
   m_expressionView()
 {
-  m_expressionView.setExpression(expressionAndLayout->expressionLayout());
+  m_expressionView.setExpressionLayout(expressionAndLayout->expressionLayout());
 }
 
 void Controller::ContentView::layoutSubviews() {

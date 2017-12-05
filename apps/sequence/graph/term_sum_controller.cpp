@@ -201,7 +201,7 @@ void TermSumController::LegendView::setSumSubscript(float start) {
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex<float>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, sizeof(sigma)), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
- m_sum.setExpression(m_sumLayout);
+ m_sum.setExpressionLayout(m_sumLayout);
  m_sum.setAlignment(0.0f, 0.5f);
 }
 
@@ -216,7 +216,7 @@ void TermSumController::LegendView::setSumSuperscript(float start, float end) {
   char bufferEnd[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   Complex<float>::convertFloatToText(end, bufferEnd, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, sizeof(sigma)), new StringLayout(bufferStart, strlen(bufferStart), KDText::FontSize::Small), new StringLayout(bufferEnd, strlen(bufferEnd), KDText::FontSize::Small));
-  m_sum.setExpression(m_sumLayout);
+  m_sum.setExpressionLayout(m_sumLayout);
   m_sum.setAlignment(0.0f, 0.5f);
 }
 
@@ -229,7 +229,7 @@ void TermSumController::LegendView::setSumResult(const char * sequenceName, doub
   childrenLayouts[1] = new BaselineRelativeLayout(new StringLayout(sequenceName, 1, KDText::FontSize::Small), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   childrenLayouts[0] = m_sumLayout;
   m_sumLayout = new HorizontalLayout(childrenLayouts, 3);
-  m_sum.setExpression(m_sumLayout);
+  m_sum.setExpressionLayout(m_sumLayout);
   m_sum.setAlignment(0.5f, 0.5f);
 }
 

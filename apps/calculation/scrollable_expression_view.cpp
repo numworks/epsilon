@@ -10,8 +10,8 @@ ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) 
 {
 }
 
-void ScrollableExpressionView::setExpression(ExpressionLayout * expressionLayout) {
-  m_expressionView.setExpression(expressionLayout);
+void ScrollableExpressionView::setExpressionLayout(ExpressionLayout * expressionLayout) {
+  m_expressionView.setExpressionLayout(expressionLayout);
   layoutSubviews();
 }
 

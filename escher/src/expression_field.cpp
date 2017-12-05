@@ -1,4 +1,5 @@
 #include <escher/expression_field.h>
+#include <ion/display.h>
 #include <poincare/preferences.h>
 #include <assert.h>
 

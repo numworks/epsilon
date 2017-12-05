@@ -44,15 +44,21 @@ public:
   };
   virtual ~App() = default;
   constexpr static uint8_t Magic = 0xA8;
-  Snapshot * snapshot();
+  Snapshot * snapshot() {
+    return m_snapshot;
+  }
   void setFirstResponder(Responder * responder);
-  Responder * firstResponder();
+  Responder * firstResponder() {
+    return m_firstResponder;
+  }
   virtual bool processEvent(Ion::Events::Event event);
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void dismissModalViewController();
   void displayWarning(I18n::Message warningMessage);
-  const Container * container() const;
+  const Container * container() const {
+    return m_container;
+  }
   uint8_t m_magic; // Poor man's RTTI
 
   virtual void didBecomeActive(Window * window);

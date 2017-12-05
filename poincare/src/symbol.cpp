@@ -92,16 +92,6 @@ Symbol::Symbol(char name) :
 {
 }
 
-Symbol::Symbol(Symbol&& other) :
-  m_name(other.m_name)
-{
-}
-
-Symbol::Symbol(const Symbol& other) :
-  m_name(other.m_name)
-{
-}
-
 Expression * Symbol::clone() const {
   return new Symbol(m_name);
 }
@@ -182,14 +172,6 @@ Expression * Symbol::templatedApproximate(Context& context, AngleUnit angleUnit)
   return new Complex<T>(Complex<T>::Float(NAN));
 }
 
-Expression::Type Symbol::type() const {
-  return Expression::Type::Symbol;
-}
-
-char Symbol::name() const {
-  return m_name;
-}
-
 ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
@@ -254,20 +236,6 @@ int Symbol::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignifi
   buffer[0] = m_name;
   buffer[1] = 0;
   return 1;
-}
-
-bool Symbol::isMatrixSymbol() const {
-  if (m_name >= (char)SpecialSymbols::M0 && m_name <= (char)SpecialSymbols::M9) {
-    return true;
-  }
-  return false;
-}
-
-bool Symbol::isScalarSymbol() const {
-  if (m_name >= 'A' && m_name <= 'Z') {
-    return true;
-  }
-  return false;
 }
 
 int Symbol::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {

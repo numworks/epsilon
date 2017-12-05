@@ -3,7 +3,6 @@
 
 #include <poincare/preferences.h>
 #include <poincare/static_hierarchy.h>
-#include <poincare/integer.h>
 #include <assert.h>
 
 namespace Poincare {

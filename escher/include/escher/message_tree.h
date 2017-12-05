@@ -11,9 +11,15 @@ public:
   {
   };
   virtual const MessageTree * children(int index) const = 0;
-  I18n::Message label() const;
-  int numberOfChildren() const;
-  bool isNull() const;
+  I18n::Message label() const {
+    return m_label;
+  }
+  int numberOfChildren() const {
+    return m_numberOfChildren;
+  }
+  bool isNull() const {
+    return (m_label == (I18n::Message)0);
+  }
 protected:
   I18n::Message m_label;
   int m_numberOfChildren;

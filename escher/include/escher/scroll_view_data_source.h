@@ -14,7 +14,16 @@ class ScrollViewDataSource {
 public:
   ScrollViewDataSource() : m_delegate(nullptr), m_offset(KDPointZero) {}
   KDPoint offset() const { return m_offset; }
-  bool setOffset(KDPoint offset);
+  bool setOffset(KDPoint offset) {
+    if (offset != m_offset) {
+      m_offset = offset;
+      if (m_delegate) {
+        m_delegate->scrollViewDidChangeOffset(this);
+      }
+      return true;
+    }
+    return false;
+  }
   void setScrollViewDelegate(ScrollViewDelegate * delegate) {
     m_delegate = delegate;
   }

@@ -38,10 +38,6 @@ App::App(Container * container, Snapshot * snapshot, ViewController * rootViewCo
 {
 }
 
-App::Snapshot * App::snapshot() {
-  return m_snapshot;
-}
-
 bool App::processEvent(Ion::Events::Event event) {
   Responder * responder = m_firstResponder;
   bool didHandleEvent = false;
@@ -53,10 +49,6 @@ bool App::processEvent(Ion::Events::Event event) {
     responder = responder->parentResponder();
   }
   return false;
-}
-
-Responder * App::firstResponder() {
-  return m_firstResponder;
 }
 
 void App::setFirstResponder(Responder * responder) {
@@ -97,10 +89,6 @@ void App::dismissModalViewController() {
 void App::displayWarning(I18n::Message warningMessage) {
   m_warningController.setLabel(warningMessage);
   m_modalViewController.displayModalViewController(&m_warningController, 0.5f, 0.5f);
-}
-
-const Container * App::container() const {
-  return m_container;
 }
 
 void App::didBecomeActive(Window * window) {

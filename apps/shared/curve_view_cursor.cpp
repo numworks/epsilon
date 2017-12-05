@@ -9,14 +9,6 @@ CurveViewCursor::CurveViewCursor() :
 {
 }
 
-double CurveViewCursor::x() {
-  return m_x;
-}
-
-double CurveViewCursor::y() {
-  return m_y;
-}
-
 void CurveViewCursor::moveTo(double x, double y) {
   m_x = clipped(x, false);
   m_y = clipped(y, true);

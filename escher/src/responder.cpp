@@ -4,19 +4,6 @@
 #include <escher/metric.h>
 #include <assert.h>
 
-Responder::Responder(Responder * parentResponder) :
-  m_parentResponder(parentResponder)
-{
-}
-
-Responder * Responder::parentResponder() const {
-  return m_parentResponder;
-}
-
-void Responder::setParentResponder(Responder * responder) {
-  m_parentResponder = responder;
-}
-
 bool Responder::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Toolbox && toolbox() != nullptr) {
     toolbox()->setSender(this);

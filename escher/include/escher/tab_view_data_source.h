@@ -7,11 +7,19 @@ extern "C" {
 
 class TabViewDataSource {
 public:
-  TabViewDataSource();
-  int activeTab() const;
-  int selectedTab() const;
-  void setSelectedTab(int index);
-  void setActiveTab(int index);
+  TabViewDataSource() : m_activeChildIndex(-1), m_selectedChildIndex(-1) {}
+  int activeTab() const {
+    return m_activeChildIndex;
+  }
+  int selectedTab() const {
+    return m_selectedChildIndex;
+  }
+  void setSelectedTab(int index) {
+    m_selectedChildIndex = index;
+  }
+  void setActiveTab(int index) {
+    m_activeChildIndex = index;
+  }
 private:
   int8_t m_activeChildIndex;
   int8_t m_selectedChildIndex;

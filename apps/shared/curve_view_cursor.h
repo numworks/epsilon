@@ -3,11 +3,15 @@
 
 namespace Shared {
 
-class CurveViewCursor {
+class CurveViewCursor final {
 public:
   CurveViewCursor();
-  double x();
-  double y();
+  double x() {
+    return m_x;
+  }
+  double y() {
+    return m_y;
+  }
   void moveTo(double x, double y);
 private:
   static double clipped(double f, bool canBeInfinite);

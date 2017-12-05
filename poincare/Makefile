@@ -6,6 +6,7 @@ SFLAGS += -Ipoincare/include
 objs += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
+  approximation_engine.o\
   arc_cosine.o\
   arc_sine.o\
   arc_tangent.o\
@@ -21,14 +22,13 @@ objs += $(addprefix poincare/src/,\
   decimal.o\
   derivative.o\
   determinant.o\
-  division.o\
   division_quotient.o\
   division_remainder.o\
+  division.o\
   dynamic_hierarchy.o\
-  approximation_engine.o\
-  expression.o\
   expression_lexer.o\
   expression_parser.o\
+  expression.o\
   factorial.o\
   floor.o\
   frac_part.o\
@@ -47,12 +47,12 @@ objs += $(addprefix poincare/src/,\
   list_data.o\
   least_common_multiple.o\
   logarithm.o\
-  matrix.o\
   matrix_data.o\
   matrix_dimension.o\
   matrix_inverse.o\
   matrix_trace.o\
   matrix_transpose.o\
+  matrix.o\
   multiplication.o\
   naperian_logarithm.o\
   nth_root.o\

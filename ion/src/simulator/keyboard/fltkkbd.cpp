@@ -38,6 +38,9 @@ FltkKbd::FltkKbd(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
                                  key_width,
                                  key_height,
                                  kCharForKey[k]);
+#if defined(_WIN32) || defined(_WIN64)
+	m_buttons[k]->labelfont(FL_SYMBOL);
+#endif
     if (kCharForKey[k][0] == '\0') {
       m_buttons[k]->deactivate();
     }

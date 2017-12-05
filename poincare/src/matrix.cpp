@@ -156,9 +156,9 @@ Complex<T> * Matrix::createDeterminant() const {
     /* if the pivot is null, det = 0. */
     if (std::fabs(valuePivot) <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
       for (int i = 0; i < dim; i++) {
-        free(tempMat[i]);
+        delete[] tempMat[i];
       }
-      free(tempMat);
+      delete[] tempMat;
       return new Complex<T>(Complex<T>::Float(0.0));
     }
     /* Switch rows to have the pivot row as first row */
@@ -221,9 +221,9 @@ Matrix * Matrix::createInverse() const {
     /* if the pivot is null, the matrix in not invertible. */
     if (std::fabs(valuePivot) <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
       for (int i = 0; i < dim; i++) {
-        free(inv[i]);
+        delete[] inv[i];
       }
-      free(inv);
+      delete[] inv;
       return nullptr;
     }
     /* Switch rows to have the pivot row as first row */

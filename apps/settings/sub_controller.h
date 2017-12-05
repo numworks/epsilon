@@ -19,6 +19,7 @@ public:
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
   KDCoordinate rowHeight(int j) override;

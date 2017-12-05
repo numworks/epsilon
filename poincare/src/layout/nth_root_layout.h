@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class NthRootLayout : public BoundedStaticLayoutHierarchy<2> {
+class NthRootLayout final : public BoundedStaticLayoutHierarchy<2> {
 public:
   constexpr static KDCoordinate k_leftRadixHeight = 8;
   constexpr static KDCoordinate k_leftRadixWidth = 5;

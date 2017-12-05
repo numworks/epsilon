@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class BinomialCoefficient : public StaticHierarchy<2> {
+class BinomialCoefficient final : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;

@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class MatrixLayout : public GridLayout {
+class MatrixLayout final : public GridLayout {
 public:
   using GridLayout::GridLayout;
   ExpressionLayout * clone() const override;

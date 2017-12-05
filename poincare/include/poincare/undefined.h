@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class Undefined : public StaticHierarchy<0> {
+class Undefined final : public StaticHierarchy<0> {
 public:
   Type type() const override;
   Expression * clone() const override;

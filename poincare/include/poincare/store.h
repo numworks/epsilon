@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class Store : public StaticHierarchy<2> {
+class Store final : public StaticHierarchy<2> {
 public:
   using StaticHierarchy<2>::StaticHierarchy;
   Type type() const override;

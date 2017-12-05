@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class CharLayout : public StaticLayoutHierarchy<0> {
+class CharLayout final : public StaticLayoutHierarchy<0> {
 public:
   CharLayout(char c, KDText::FontSize fontSize = KDText::FontSize::Large);
   ExpressionLayout * clone() const override;

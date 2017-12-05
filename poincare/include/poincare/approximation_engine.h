@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class ApproximationEngine {
+class ApproximationEngine final {
 public:
   template <typename T> using ComplexCompute = Complex<T>(*)(const Complex<T>, Expression::AngleUnit angleUnit);
   template<typename T> static Expression * map(const Expression * expression, Context& context, Expression::AngleUnit angleUnit, ComplexCompute<T> compute);

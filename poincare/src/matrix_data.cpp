@@ -50,14 +50,6 @@ void MatrixData::pushListData(ListData * listData, bool clone) {
   m_numberOfRows++;
 }
 
-int MatrixData::numberOfRows() {
-  return m_numberOfRows;
-}
-
-int MatrixData::numberOfColumns() {
-  return m_numberOfColumns;
-}
-
 void MatrixData::pilferOperands(const Expression *** newStorage) {
   *newStorage = m_operands;
   m_operands = nullptr;

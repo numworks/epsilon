@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Floor : public StaticHierarchy<1>  {
+class Floor final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

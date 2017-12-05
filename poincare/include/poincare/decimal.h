@@ -11,7 +11,7 @@ namespace Poincare {
  *  - m_exponent = -2
  */
 
-class Decimal : public StaticHierarchy<0> {
+class Decimal final : public StaticHierarchy<0> {
 public:
   static int exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
   static Integer mantissa(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative);

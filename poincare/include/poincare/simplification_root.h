@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class SimplificationRoot : public StaticHierarchy<1> {
+class SimplificationRoot final : public StaticHierarchy<1> {
 public:
   SimplificationRoot(Expression * e) : StaticHierarchy<1>(&e, false) {
     e->setParent(this);

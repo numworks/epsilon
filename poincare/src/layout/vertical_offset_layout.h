@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class VerticalOffsetLayout : public StaticLayoutHierarchy<1> {
+class VerticalOffsetLayout final : public StaticLayoutHierarchy<1> {
 public:
   enum class Type {
     Subscript,

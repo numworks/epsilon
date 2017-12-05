@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class SimplificationEngine {
+class SimplificationEngine final {
 public:
   static Expression * map(Expression * e, Context & context, Expression::AngleUnit angleUnit);
 

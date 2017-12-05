@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class MatrixTrace : public StaticHierarchy<1>  {
+class MatrixTrace final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

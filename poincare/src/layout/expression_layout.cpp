@@ -291,14 +291,6 @@ ExpressionLayout * ExpressionLayout::layoutToPointWhenInserting() {
   return this;
 }
 
-bool ExpressionLayout::addGreySquaresToAllMatrixAncestors() {
-  return changeGreySquaresOfAllMatrixAncestors(true);
-}
-
-bool ExpressionLayout::removeGreySquaresFromAllMatrixAncestors() {
-  return changeGreySquaresOfAllMatrixAncestors(false);
-}
-
 bool ExpressionLayout::hasText() const {
   /* A layout has text if it is not empty and it is not an horizontal layout
    * with no child or with one child with no text. */

@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class Sine : public StaticHierarchy<1> {
+class Sine final : public StaticHierarchy<1> {
   using StaticHierarchy<1>::StaticHierarchy;
   friend class Tangent;
   float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;

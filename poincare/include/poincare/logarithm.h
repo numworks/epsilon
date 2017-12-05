@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Logarithm : public BoundedStaticHierarchy<2>  {
+class Logarithm final : public BoundedStaticHierarchy<2>  {
   using BoundedStaticHierarchy<2>::BoundedStaticHierarchy;
   friend class NaperianLogarithm;
 public:

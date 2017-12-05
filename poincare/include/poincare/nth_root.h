@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class NthRoot : public StaticHierarchy<2>  {
+class NthRoot final : public StaticHierarchy<2>  {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;

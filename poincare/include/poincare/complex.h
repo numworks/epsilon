@@ -8,7 +8,7 @@
 namespace Poincare {
 
 template<typename T>
-class Complex : public StaticHierarchy<0> {
+class Complex final : public StaticHierarchy<0> {
 public:
   Complex() : m_a(0), m_b(0) {}
   static Complex<T> Float(T x);

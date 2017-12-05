@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class LeftSquareBracketLayout : public SquareBracketLayout {
+class LeftSquareBracketLayout final : public SquareBracketLayout {
 public:
   using SquareBracketLayout::SquareBracketLayout;
   ExpressionLayout * clone() const override;

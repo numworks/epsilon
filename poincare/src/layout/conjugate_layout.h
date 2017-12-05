@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ConjugateLayout : public StaticLayoutHierarchy<1> {
+class ConjugateLayout final : public StaticLayoutHierarchy<1> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;

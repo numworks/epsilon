@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class FractionLayout : public StaticLayoutHierarchy<2> {
+class FractionLayout final : public StaticLayoutHierarchy<2> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;

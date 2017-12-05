@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Derivative : public StaticHierarchy<2> {
+class Derivative final : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;

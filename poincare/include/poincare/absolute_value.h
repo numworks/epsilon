@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class AbsoluteValue : public StaticHierarchy<1> {
+class AbsoluteValue final : public StaticHierarchy<1> {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

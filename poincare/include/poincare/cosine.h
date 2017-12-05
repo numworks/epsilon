@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-class Cosine : public StaticHierarchy<1>::StaticHierarchy  {
+class Cosine final : public StaticHierarchy<1>::StaticHierarchy  {
   using StaticHierarchy<1>::StaticHierarchy;
   friend class Tangent;
 public:

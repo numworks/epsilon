@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class ArcTangent : public StaticHierarchy<1>  {
+class ArcTangent final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

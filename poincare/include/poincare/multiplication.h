@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Multiplication : public DynamicHierarchy {
+class Multiplication final : public DynamicHierarchy {
   using DynamicHierarchy::DynamicHierarchy;
   friend class Addition;
   friend class Division;

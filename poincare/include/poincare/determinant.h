@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Determinant : public StaticHierarchy<1> {
+class Determinant final : public StaticHierarchy<1> {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

@@ -11,7 +11,7 @@ class Integer;
 
 /* The global context only stores symbols A-Z, L1-L9 and M1-M9 */
 
-class GlobalContext : public Context {
+class GlobalContext final : public Context {
 public:
   GlobalContext();
   ~GlobalContext();

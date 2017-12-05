@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class DivisionRemainder : public StaticHierarchy<2> {
+class DivisionRemainder final : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;

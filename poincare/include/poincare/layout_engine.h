@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class LayoutEngine {
+class LayoutEngine final {
 
 public:
   /* Expression to ExpressionLayout */

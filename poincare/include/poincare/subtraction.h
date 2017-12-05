@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Subtraction : public StaticHierarchy<2> {
+class Subtraction final : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;

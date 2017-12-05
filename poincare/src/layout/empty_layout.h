@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class EmptyLayout : public StaticLayoutHierarchy<0> {
+class EmptyLayout final : public StaticLayoutHierarchy<0> {
 public:
   enum class Color {
     Yellow,

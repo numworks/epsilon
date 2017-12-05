@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Rational : public StaticHierarchy<0> {
+class Rational final : public StaticHierarchy<0> {
   friend class Power;
   friend class Multiplication;
 public:

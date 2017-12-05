@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Ceiling : public StaticHierarchy<1>  {
+class Ceiling final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

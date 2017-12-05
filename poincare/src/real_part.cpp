@@ -34,11 +34,6 @@ Expression * RealPart::shallowReduce(Context& context, AngleUnit angleUnit) {
   return this;
 }
 
-template<typename T>
-Complex<T> RealPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  return Complex<T>::Float(c.a());
-}
-
 }
 
 

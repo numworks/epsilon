@@ -9,7 +9,7 @@ namespace Poincare {
 template<class T>
 class Complex;
 
-class MatrixData {
+class MatrixData final {
 public:
   MatrixData(ListData * listData, bool clone);
   ~MatrixData();
@@ -18,8 +18,12 @@ public:
   MatrixData& operator=(const MatrixData& other) = delete;
   MatrixData& operator=(MatrixData&& other) = delete;
   void pushListData(ListData * listData, bool clone);
-  int numberOfRows();
-  int numberOfColumns();
+  int numberOfRows() {
+    return m_numberOfRows;
+  }
+  int numberOfColumns() {
+    return m_numberOfColumns;
+  }
   void pilferOperands(const Expression *** newStorageAddress);
 private:
   int m_numberOfRows;

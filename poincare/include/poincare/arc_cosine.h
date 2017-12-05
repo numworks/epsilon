@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class ArcCosine : public StaticHierarchy<1> {
+class ArcCosine final : public StaticHierarchy<1> {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

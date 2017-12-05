@@ -10,7 +10,7 @@ namespace Poincare {
 /* WARNING: A Horizontal Layout should never have a Horizontal Layout child.
  * For instance, use addOrMergeChildAtIndex to add an ExpressionLayout safely. */
 
-class HorizontalLayout : public DynamicLayoutHierarchy {
+class HorizontalLayout final : public DynamicLayoutHierarchy {
   friend class BinomialCoefficientLayout;
   friend class IntegralLayout;
   friend class MatrixLayout;

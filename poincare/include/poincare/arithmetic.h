@@ -4,7 +4,7 @@
 #include <poincare/integer.h>
 namespace Poincare {
 
-class Arithmetic {
+class Arithmetic final {
 public:
   static Integer LCM(const Integer * i, const Integer * j);
   static Integer GCD(const Integer * i, const Integer * j);

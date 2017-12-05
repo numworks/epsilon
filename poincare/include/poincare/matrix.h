@@ -6,11 +6,13 @@
 
 namespace Poincare {
 
-class Matrix : public DynamicHierarchy {
+class Matrix final : public DynamicHierarchy {
 public:
   Matrix(MatrixData * matrixData); // pilfer the operands of matrixData
   Matrix(const Expression * const * operands, int numberOfRows, int numberOfColumns, bool cloneOperands = true);
-  int numberOfRows() const;
+  int numberOfRows() const {
+    return m_numberOfRows;
+  }
   int numberOfColumns() const;
 
   /* Expression */

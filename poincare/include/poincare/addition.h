@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class Addition : public DynamicHierarchy {
+class Addition final : public DynamicHierarchy {
   using DynamicHierarchy::DynamicHierarchy;
   friend class Logarithm;
   friend class Multiplication;

@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Opposite : public StaticHierarchy<1> {
+class Opposite final : public StaticHierarchy<1> {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Expression * clone() const override;

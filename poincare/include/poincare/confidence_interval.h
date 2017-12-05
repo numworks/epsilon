@@ -29,7 +29,7 @@ private:
   template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
 };
 
-class SimplePredictionInterval : public ConfidenceInterval {
+class SimplePredictionInterval final : public ConfidenceInterval {
 private:
   const char * name() const { return "prediction"; }
 };

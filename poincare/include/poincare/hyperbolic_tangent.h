@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class HyperbolicTangent : public StaticHierarchy<1>  {
+class HyperbolicTangent final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

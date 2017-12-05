@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class IntegralLayout : public StaticLayoutHierarchy<3> {
+class IntegralLayout final : public StaticLayoutHierarchy<3> {
 public:
   constexpr static KDCoordinate k_symbolHeight = 4;
   constexpr static KDCoordinate k_symbolWidth = 4;

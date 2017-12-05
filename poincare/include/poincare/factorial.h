@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class Factorial : public StaticHierarchy<1> {
+class Factorial final : public StaticHierarchy<1> {
 public:
   Factorial(const Expression * argument, bool clone = true);
   Type type() const override;

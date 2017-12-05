@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class Integral : public StaticHierarchy<3> {
+class Integral final : public StaticHierarchy<3> {
   using StaticHierarchy<3>::StaticHierarchy;
 public:
   Type type() const override;

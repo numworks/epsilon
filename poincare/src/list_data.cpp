@@ -39,14 +39,6 @@ void ListData::pushExpression(Expression * operand) {
   m_numberOfOperands++;
 }
 
-int ListData::numberOfOperands() const {
-  return m_numberOfOperands;
-}
-
-Expression ** ListData::operands() const {
-  return m_operands;
-}
-
 const Expression * ListData::operand(int i) const {
   assert(i >= 0);
   assert(i < m_numberOfOperands);

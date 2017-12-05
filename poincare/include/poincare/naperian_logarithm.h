@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class NaperianLogarithm : public StaticHierarchy<1>  {
+class NaperianLogarithm final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

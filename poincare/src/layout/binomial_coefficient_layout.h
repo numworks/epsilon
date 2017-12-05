@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class BinomialCoefficientLayout : public StaticLayoutHierarchy<2> {
+class BinomialCoefficientLayout final : public StaticLayoutHierarchy<2> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;

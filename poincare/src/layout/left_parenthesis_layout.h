@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class LeftParenthesisLayout : public ParenthesisLayout {
+class LeftParenthesisLayout final : public ParenthesisLayout {
   friend class BinomialCoefficientLayout;
   friend class SequenceLayout;
 public:

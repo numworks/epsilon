@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ProductLayout : public SequenceLayout {
+class ProductLayout final : public SequenceLayout {
 public:
   using SequenceLayout::SequenceLayout;
   ExpressionLayout * clone() const override;

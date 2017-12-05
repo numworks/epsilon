@@ -169,7 +169,9 @@ public:
 
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();
-  static void setCircuitBreaker(CircuitBreaker cb);
+  static void setCircuitBreaker(CircuitBreaker cb) {
+    sCircuitBreaker = cb;
+  }
   static bool shouldStopProcessing();
 
   /* Hierarchy */
@@ -246,7 +248,9 @@ protected:
   /* Evaluation Engine */
   typedef float SinglePrecision;
   typedef double DoublePrecision;
-  template<typename T> static T epsilon();
+  template<typename T> static constexpr T epsilon() {
+    return (T)(sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f);
+  }
   constexpr static int k_maxNumberOfSteps = 10000;
 
   /* Simplification */
@@ -296,6 +300,7 @@ private:
   virtual Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 
   Expression * m_parent;
+  static CircuitBreaker sCircuitBreaker;
 };
 
 }

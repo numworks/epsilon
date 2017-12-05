@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class MatrixInverse : public StaticHierarchy<1>  {
+class MatrixInverse final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;

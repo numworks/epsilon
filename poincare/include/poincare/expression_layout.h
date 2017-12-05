@@ -99,8 +99,12 @@ public:
 
   /* Other */
   virtual ExpressionLayout * layoutToPointWhenInserting();
-  bool addGreySquaresToAllMatrixAncestors();
-  bool removeGreySquaresFromAllMatrixAncestors();
+  bool addGreySquaresToAllMatrixAncestors() {
+    return changeGreySquaresOfAllMatrixAncestors(true);
+  }
+  bool removeGreySquaresFromAllMatrixAncestors() {
+    return changeGreySquaresOfAllMatrixAncestors(false);
+  }
   bool hasText() const;
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a sibling fraction: should the layout be

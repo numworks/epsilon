@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class Parenthesis : public StaticHierarchy<1> {
+class Parenthesis final : public StaticHierarchy<1> {
 public:
   using StaticHierarchy<1>::StaticHierarchy;
 public:

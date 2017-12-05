@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class PermuteCoefficient : public StaticHierarchy<2>  {
+class PermuteCoefficient final : public StaticHierarchy<2>  {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;

@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class ListData {
+class ListData final {
 public:
   ListData();
   ListData(Expression * operand);
@@ -14,8 +14,12 @@ public:
   ListData(ListData&& other) = delete;
   ListData& operator=(const ListData& other) = delete;
   ListData& operator=(ListData&& other) = delete;
-  int numberOfOperands() const;
-  Expression ** operands() const;
+  int numberOfOperands() const {
+    return m_numberOfOperands;
+  }
+  Expression ** operands() const {
+    return m_operands;
+  }
   const Expression * operand(int i) const;
   void pushExpression(Expression * operand);
   void detachOperands();

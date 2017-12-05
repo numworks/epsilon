@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class Division : public StaticHierarchy<2> {
+class Division final : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
   friend class Multiplication;
   friend class Symbol;

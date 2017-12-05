@@ -55,12 +55,8 @@ Expression * Expression::replaceSymbolWithExpression(char symbol, Expression * e
 
 /* Circuit breaker */
 
-static Expression::CircuitBreaker sCircuitBreaker = nullptr;
+Expression::CircuitBreaker Expression::sCircuitBreaker = nullptr;
 static bool sSimplificationHasBeenInterrupted = false;
-
-void Expression::setCircuitBreaker(CircuitBreaker cb) {
-  sCircuitBreaker = cb;
-}
 
 bool Expression::shouldStopProcessing() {
   if (sCircuitBreaker == nullptr) {
@@ -364,11 +360,6 @@ template<typename T> T Expression::approximateToScalar(const char * text, Contex
   T result = exp->approximateToScalar<T>(context, angleUnit);
   delete exp;
   return result;
-}
-
-template<typename T> T Expression::epsilon() {
-  static T epsilon = sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f;
-  return epsilon;
 }
 
 }

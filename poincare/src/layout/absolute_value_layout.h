@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class AbsoluteValueLayout : public BracketPairLayout {
+class AbsoluteValueLayout final : public BracketPairLayout {
 public:
   using BracketPairLayout::BracketPairLayout;
   ExpressionLayout * clone() const override;

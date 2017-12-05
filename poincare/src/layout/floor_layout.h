@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class FloorLayout : public BracketPairLayout {
+class FloorLayout final : public BracketPairLayout {
 public:
   using BracketPairLayout::BracketPairLayout;
   ExpressionLayout * clone() const override;

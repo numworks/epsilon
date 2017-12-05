@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class LeastCommonMultiple : public StaticHierarchy<2>  {
+class LeastCommonMultiple final : public StaticHierarchy<2>  {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;

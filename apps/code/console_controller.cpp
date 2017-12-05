@@ -124,6 +124,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Copy) {
     return copyCurrentLineToClipboard();
   } else if (event == Ion::Events::Clear) {
+    m_selectableTableView.deselectTable();
     m_consoleStore.clear();
     m_selectableTableView.reloadData();
     m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());

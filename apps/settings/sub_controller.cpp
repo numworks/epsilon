@@ -54,11 +54,14 @@ View * SubController::view() {
   return &m_selectableTableView;
 }
 
-void SubController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
+void SubController::didEnterResponderChain(Responder * previousFirstResponder) {
   if (m_messageTreeModel->label() == I18n::Message::ExamMode) {
     m_selectableTableView.reloadData();
   }
+}
+
+void SubController::didBecomeFirstResponder() {
+  selectCellAtLocation(0, valueIndexForPreference(m_messageTreeModel->label()));
   app()->setFirstResponder(&m_selectableTableView);
 }
 

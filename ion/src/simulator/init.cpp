@@ -29,6 +29,10 @@ void init_platform() {
 
   Fl_Window * window = new Fl_Window(screen_width+2*margin, margin+screen_height+margin+keyboard_height+margin);
 
+#if defined(_WIN32) || defined(_WIN64)
+  Fl::set_font(FL_SYMBOL, "Arial Unicode MS");
+#endif
+
   KDColor * pixels = (KDColor *)malloc(Ion::Display::Width*Ion::Display::Height*sizeof(KDColor));
   sFrameBuffer = new KDFrameBuffer(pixels, KDSize(Ion::Display::Width, Ion::Display::Height));
   /*

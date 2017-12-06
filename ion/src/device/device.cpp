@@ -164,6 +164,11 @@ void initClocks() {
    * The spec tells us that at 2.8V and over 90MHz the flash expects 3 WS. */
   FLASH.ACR()->setLATENCY(3);
 
+  /* Enable prefetching flash instructions */
+  /* Fetching instructions increases slightly the power consumption but the
+   * increase is negligible compared to the screen consumption. */
+  FLASH.ACR()->setPRFTEN(true);
+
   /* Set flash instruction and data cache */
   FLASH.ACR()->setDCEN(true);
   FLASH.ACR()->setICEN(true);

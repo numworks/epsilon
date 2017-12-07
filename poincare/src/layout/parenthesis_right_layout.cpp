@@ -1,0 +1,59 @@
+#include "parenthesis_right_layout.h"
+extern "C" {
+#include <assert.h>
+#include <stdlib.h>
+}
+
+namespace Poincare {
+
+const uint8_t topRightCurve[ParenthesisLeftRightLayout::k_parenthesisCurveHeight][ParenthesisLeftRightLayout::k_parenthesisCurveWidth] = {
+  {0x66, 0xF9, 0xFF, 0xFF, 0xFF},
+  {0x9A, 0x40, 0xEB, 0xFF, 0xFF},
+  {0xFF, 0xBF, 0x40, 0xF2, 0xFF},
+  {0xFF, 0xFF, 0xB6, 0x49, 0xFF},
+  {0xFF, 0xFF, 0xFF, 0x5A, 0xA9},
+  {0xFF, 0xFF, 0xFF, 0xBE, 0x45},
+  {0xFF, 0xFF, 0xFF, 0xEE, 0x11},
+};
+
+const uint8_t bottomRightCurve[ParenthesisLeftRightLayout::k_parenthesisCurveHeight][ParenthesisLeftRightLayout::k_parenthesisCurveWidth] = {
+  {0xFF, 0xFF, 0xFF, 0xEE, 0x11},
+  {0xFF, 0xFF, 0xFF, 0xBE, 0x45},
+  {0xFF, 0xFF, 0xFF, 0x5A, 0xA9},
+  {0xFF, 0xFF, 0xB6, 0x49, 0xFF},
+  {0xFF, 0xBF, 0x40, 0xF2, 0xFF},
+  {0x9A, 0x40, 0xEB, 0xFF, 0xFF},
+  {0x66, 0xF9, 0xFF, 0xFF, 0xFF},
+};
+
+void ParenthesisRightLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  //TODO Make sure m_operandHeight is up-to-date.
+  KDRect frame = KDRect(p.x() + ParenthesisLeftRightLayout::k_widthMargin + ParenthesisLeftRightLayout::k_lineThickness - ParenthesisLeftRightLayout::k_parenthesisCurveWidth,
+      p.y() + ParenthesisLeftRightLayout::k_externHeightMargin,
+      ParenthesisLeftRightLayout::k_parenthesisCurveWidth,
+      ParenthesisLeftRightLayout::k_parenthesisCurveHeight);
+
+  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topRightCurve, (KDColor *)(ParenthesisLeftRightLayout::s_parenthesisWorkingBuffer));
+
+  frame = KDRect(p.x() + ParenthesisLeftRightLayout::k_widthMargin + ParenthesisLeftRightLayout::k_lineThickness - ParenthesisLeftRightLayout::k_parenthesisCurveWidth,
+    p.y() + m_operandHeight - ParenthesisLeftRightLayout::k_parenthesisCurveHeight - ParenthesisLeftRightLayout::k_externHeightMargin,
+    ParenthesisLeftRightLayout::k_parenthesisCurveWidth,
+    ParenthesisLeftRightLayout::k_parenthesisCurveHeight);
+
+  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomRightCurve, (KDColor *)(ParenthesisLeftRightLayout::s_parenthesisWorkingBuffer));
+
+  ctx->fillRect(KDRect(p.x()+ParenthesisLeftRightLayout::k_widthMargin,
+        p.y()+ParenthesisLeftRightLayout::k_parenthesisCurveHeight+2,
+        ParenthesisLeftRightLayout::k_lineThickness,
+        m_operandHeight - 2*(ParenthesisLeftRightLayout::k_parenthesisCurveHeight+ParenthesisLeftRightLayout::k_externHeightMargin)),
+      expressionColor);
+}
+
+}
+
+
+
+
+
+
+

@@ -1,5 +1,7 @@
 #include "parenthesis_layout.h"
 #include <poincare/expression_layout_cursor.h>
+#include "parenthesis_left_layout.h"
+#include "parenthesis_right_layout.h"
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -7,70 +9,57 @@ extern "C" {
 
 namespace Poincare {
 
-const uint8_t topLeftCurve[ParenthesisLayout::k_parenthesisCurveHeight][ParenthesisLayout::k_parenthesisCurveWidth] = {
-  {0xFF, 0xFF, 0xFF, 0xF9, 0x66},
-  {0xFF, 0xFF, 0xEB, 0x40, 0x9A},
-  {0xFF, 0xF2, 0x40, 0xBF, 0xFF},
-  {0xFF, 0x49, 0xB6, 0xFF, 0xFF},
-  {0xA9, 0x5A, 0xFF, 0xFF, 0xFF},
-  {0x45, 0xBE, 0xFF, 0xFF, 0xFF},
-  {0x11, 0xEE, 0xFF, 0xFF, 0xFF},
-
-};
-
-const uint8_t bottomLeftCurve[ParenthesisLayout::k_parenthesisCurveHeight][ParenthesisLayout::k_parenthesisCurveWidth] = {
-  {0x11, 0xEE, 0xFF, 0xFF, 0xFF},
-  {0x45, 0xBE, 0xFF, 0xFF, 0xFF},
-  {0xA9, 0x5A, 0xFF, 0xFF, 0xFF},
-  {0xFF, 0x49, 0xB6, 0xFF, 0xFF},
-  {0xFF, 0xF2, 0x40, 0xBF, 0xFF},
-  {0xFF, 0xFF, 0xEB, 0x40, 0x9A},
-  {0xFF, 0xFF, 0xFF, 0xF9, 0x66},
-
-};
-
-const uint8_t topRightCurve[ParenthesisLayout::k_parenthesisCurveHeight][ParenthesisLayout::k_parenthesisCurveWidth] = {
-  {0x66, 0xF9, 0xFF, 0xFF, 0xFF},
-  {0x9A, 0x40, 0xEB, 0xFF, 0xFF},
-  {0xFF, 0xBF, 0x40, 0xF2, 0xFF},
-  {0xFF, 0xFF, 0xB6, 0x49, 0xFF},
-  {0xFF, 0xFF, 0xFF, 0x5A, 0xA9},
-  {0xFF, 0xFF, 0xFF, 0xBE, 0x45},
-  {0xFF, 0xFF, 0xFF, 0xEE, 0x11},
-};
-
-const uint8_t bottomRightCurve[ParenthesisLayout::k_parenthesisCurveHeight][ParenthesisLayout::k_parenthesisCurveWidth] = {
-  {0xFF, 0xFF, 0xFF, 0xEE, 0x11},
-  {0xFF, 0xFF, 0xFF, 0xBE, 0x45},
-  {0xFF, 0xFF, 0xFF, 0x5A, 0xA9},
-  {0xFF, 0xFF, 0xB6, 0x49, 0xFF},
-  {0xFF, 0xBF, 0x40, 0xF2, 0xFF},
-  {0x9A, 0x40, 0xEB, 0xFF, 0xFF},
-  {0x66, 0xF9, 0xFF, 0xFF, 0xFF},
-
-};
-
 ParenthesisLayout::ParenthesisLayout(ExpressionLayout * operandLayout) :
   ExpressionLayout(),
   m_operandLayout(operandLayout)
 {
+  m_leftParenthesisLayout = new ParenthesisLeftLayout();
+  m_rightParenthesisLayout = new ParenthesisRightLayout();
   m_operandLayout->setParent(this);
+  m_leftParenthesisLayout->setParent(this);
+  m_rightParenthesisLayout->setParent(this);
   m_baseline = m_operandLayout->baseline();
 }
 
 ParenthesisLayout::~ParenthesisLayout() {
   delete m_operandLayout;
+  delete m_rightParenthesisLayout;
+  delete m_leftParenthesisLayout;
 }
 
 bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the Right parenthesis.
+  // Go to the operand and move left.
+  if (m_rightParenthesisLayout
+    && cursor->pointedExpressionLayout() == m_rightParenthesisLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    assert(m_operandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_operandLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
   // Case: Left of the operand.
-  // Go Left of the brackets.
+  // Go Left.
   if (m_operandLayout
     && cursor->pointedExpressionLayout() == m_operandLayout
     && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
     cursor->setPointedExpressionLayout(this);
     return true;
+  }
+  // Case: Left of the Left parenthesis.
+  // Aske the parent.
+  if (m_leftParenthesisLayout
+    && cursor->pointedExpressionLayout() == m_leftParenthesisLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(this);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    if (m_parent) {
+      return m_parent->moveLeft(cursor);
+    }
+    return false;
   }
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right of the parentheses.
@@ -89,40 +78,36 @@ bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
-KDColor s_parenthesisWorkingBuffer[ParenthesisLayout::k_parenthesisCurveHeight*ParenthesisLayout::k_parenthesisCurveWidth];
-
-void ParenthesisLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  KDSize operandSize = m_operandLayout->size();
-  KDRect frame(p.x()+k_externWidthMargin, p.y()+k_externHeightMargin, k_parenthesisCurveWidth, k_parenthesisCurveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topLeftCurve, (KDColor *)s_parenthesisWorkingBuffer);
-  frame = KDRect(p.x()+k_externWidthMargin, p.y() + operandSize.height() - k_parenthesisCurveHeight - k_externHeightMargin,
-    k_parenthesisCurveWidth, k_parenthesisCurveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomLeftCurve, (KDColor *)s_parenthesisWorkingBuffer);
-  frame = KDRect(p.x()+k_externWidthMargin + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + k_externHeightMargin,
-    k_parenthesisCurveWidth, k_parenthesisCurveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topRightCurve, (KDColor *)s_parenthesisWorkingBuffer);
-  frame = KDRect(p.x() +k_externWidthMargin + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + operandSize.height() - k_parenthesisCurveHeight - k_externHeightMargin,
-    k_parenthesisCurveWidth, k_parenthesisCurveHeight);
-  ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomRightCurve, (KDColor *)s_parenthesisWorkingBuffer);
-
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_parenthesisCurveHeight+k_externHeightMargin, k_lineThickness, m_operandLayout->size().height() - 2*(k_parenthesisCurveHeight+k_externHeightMargin)), expressionColor);
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y()+k_parenthesisCurveHeight+2, k_lineThickness, m_operandLayout->size().height()- 2*(k_parenthesisCurveHeight+k_externHeightMargin)), expressionColor);
-}
-
 KDSize ParenthesisLayout::computeSize() {
   KDSize operandSize = m_operandLayout->size();
-  return KDSize(operandSize.width() + 2*k_widthMargin + 2*k_lineThickness+2*k_externWidthMargin, operandSize.height());
+  return KDSize(operandSize.width() + 2*m_leftParenthesisLayout->size().width(), operandSize.height());
 }
 
 ExpressionLayout * ParenthesisLayout::child(uint16_t index) {
   if (index == 0) {
+    return m_leftParenthesisLayout;
+  }
+  if (index == 1) {
     return m_operandLayout;
+  }
+  if (index == 2) {
+    return m_rightParenthesisLayout;
   }
   return nullptr;
 }
 
 KDPoint ParenthesisLayout::positionOfChild(ExpressionLayout * child) {
-  return KDPoint(k_widthMargin+k_lineThickness+k_externWidthMargin, 0);
+  if (child == m_leftParenthesisLayout) {
+    return KDPoint(0, 0);
+  }
+  if (child == m_operandLayout) {
+    return KDPoint(m_leftParenthesisLayout->size().width(), 0);
+  }
+  if (child == m_rightParenthesisLayout) {
+    return KDPoint(m_operandLayout->origin().x() + m_operandLayout->size().width(), 0);
+  }
+  assert(false);
+  return KDPointZero;
 }
 
 }

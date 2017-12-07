@@ -2,7 +2,7 @@
 
 void TextCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
-  ctx->fillRect(KDRect(0, 0, 1, height), KDColorBlack);
+  ctx->fillRect(KDRect(0, 0, 1, height), KDColorRed);
 }
 
 KDSize TextCursorView::minimalSizeForOptimalDisplay() const {

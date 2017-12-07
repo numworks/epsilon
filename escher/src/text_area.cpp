@@ -347,9 +347,9 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     m_contentView.moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {
     m_contentView.moveCursorGeo(0, 1);
-  } else if (event == Ion::Events::Origin) {
+  } else if (event == Ion::Events::ShiftLeft) {
      m_contentView.moveCursorGeo(-INT_MAX/2, 0);
-  } else if (event == Ion::Events::End) {
+  } else if (event == Ion::Events::ShiftRight) {
      m_contentView.moveCursorGeo(INT_MAX/2, 0);
   } else if (event == Ion::Events::Backspace) {
     removeChar();

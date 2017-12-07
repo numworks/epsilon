@@ -114,8 +114,8 @@ constexpr Event EXE = Event::PlainKey(Keyboard::Key::I5);
 
 // Shift
 
-constexpr Event Origin  = Event::ShiftKey(Keyboard::Key::A1);
-constexpr Event End = Event::ShiftKey(Keyboard::Key::A4);
+constexpr Event ShiftLeft  = Event::ShiftKey(Keyboard::Key::A1);
+constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::A4);
 
 constexpr Event AlphaLock = Event::ShiftKey(Keyboard::Key::C2);
 constexpr Event Cut = Event::ShiftKey(Keyboard::Key::C3);

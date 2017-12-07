@@ -18,7 +18,8 @@ public:
   constexpr static KDCoordinate k_parenthesisCurveHeight = 7;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
 protected:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {
+  };
   KDSize computeSize() override;
   ExpressionLayout * child(uint16_t index) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
@@ -28,6 +29,8 @@ private:
   constexpr static KDCoordinate k_widthMargin = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
   ExpressionLayout * m_operandLayout;
+  ExpressionLayout * m_leftParenthesisLayout;
+  ExpressionLayout * m_rightParenthesisLayout;
 };
 
 }

@@ -292,7 +292,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     setCursorLocation(cursorLocation()-1);
     return true;
   }
-  if (event == Ion::Events::Origin && isEditing()) {
+  if (event == Ion::Events::ShiftLeft && isEditing()) {
     setCursorLocation(0);
     return true;
   }
@@ -300,7 +300,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     setCursorLocation(cursorLocation()+1);
     return true;
   }
-  if (event == Ion::Events::End && isEditing()) {
+  if (event == Ion::Events::ShiftRight && isEditing()) {
     setCursorLocation(draftTextLength());
     return true;
   }

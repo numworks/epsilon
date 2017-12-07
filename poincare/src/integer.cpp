@@ -25,8 +25,12 @@ uint8_t log2(Integer::native_uint_t v) {
   return 32;
 }
 
+static inline int digit_from_char(char digit) {
+  return (digit >= '0' && digit <= '9') ? digit-'0' : digit-'a'+10;
+}
+
 static inline char char_from_digit(Integer::native_uint_t digit) {
-  return '0'+digit;
+  return (digit < 10) ? '0'+digit : 'a'+digit-10;
 }
 
 static inline int8_t sign(bool negative) {
@@ -38,7 +42,7 @@ static inline int8_t sign(bool negative) {
 static_assert(sizeof(Integer::double_native_int_t) == 2*sizeof(Integer::native_int_t), "double_native_int_t type has not the right size compared to native_int_t");
 static_assert(sizeof(Integer::native_int_t) == sizeof(Integer::native_uint_t), "native_int_t type has not the right size compared to native_uint_t");
 
-Integer::Integer(double_native_int_t i) {
+Integer::Integer(double_native_int_t i, int base) {
   double_native_uint_t j = i < 0 ? -i : i;
   native_uint_t * digits = (native_uint_t *)&j;
   native_uint_t leastSignificantDigit = *digits;
@@ -53,10 +57,11 @@ Integer::Integer(double_native_int_t i) {
     m_digits = digits;
   }
   m_negative = i < 0;
+  m_base = base;
 }
 
 /* Caution: string is NOT guaranteed to be NULL-terminated! */
-Integer::Integer(const char * digits, bool negative) :
+Integer::Integer(const char * digits, bool negative, int input_base) :
   Integer(0)
 {
   if (digits != nullptr && digits[0] == '-') {
@@ -67,10 +72,14 @@ Integer::Integer(const char * digits, bool negative) :
   Integer result = Integer(0);
 
   if (digits != nullptr) {
-    Integer base = Integer(10);
-    while (*digits >= '0' && *digits <= '9') {
+    Integer base = Integer(input_base);
+    while ((*digits >= '0' && *digits <= '9') || (*digits >= 'a' && *digits <= 'z')) {
+      int digit = digit_from_char(*digits);
+      if (digit >= input_base) {
+        break;
+      }
       result = Multiplication(result, base);
-      result = Addition(result, Integer(*digits-'0'));
+      result = Addition(result, Integer(digit_from_char(*digits)));
       digits++;
     }
   }
@@ -81,6 +90,7 @@ Integer::Integer(const char * digits, bool negative) :
     negative = false;
   }
   m_negative = negative;
+  m_base = input_base;
 }
 
 Integer Integer::exponent(int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
@@ -88,7 +98,7 @@ Integer Integer::exponent(int fractionalPartLength, const char * exponent, int e
   Integer power = Integer(0);
   for (int i = 0; i < exponentLength; i++) {
     power = Multiplication(power, base);
-    power = Addition(power, Integer(*exponent-'0'));
+    power = Addition(power, Integer(digit_from_char(*exponent)));
     exponent++;
   }
   if (exponentNegative) {
@@ -102,7 +112,7 @@ Integer Integer::numerator(const char * integralPart, int integralPartLength, co
   Integer numerator = Integer(integralPart, negative);
   for (int i = 0; i < fractionalPartLength; i++) {
     numerator = Multiplication(numerator, base);
-    numerator = Addition(numerator, Integer(*fractionalPart-'0'));
+    numerator = Addition(numerator, Integer(digit_from_char(*fractionalPart)));
     fractionalPart++;
   }
   if (exponent->isNegative()) {
@@ -139,11 +149,13 @@ Integer::Integer(Integer && other) {
   }
   m_numberOfDigits = other.m_numberOfDigits;
   m_negative = other.m_negative;
+  m_base = other.m_base;
 
   // Reset other
   other.m_digit = 0;
   other.m_numberOfDigits = 1;
   other.m_negative = 0;
+  other.m_base = 10;
 }
 
 Integer::Integer(const Integer& other) {
@@ -159,6 +171,7 @@ Integer::Integer(const Integer& other) {
   }
   m_numberOfDigits = other.m_numberOfDigits;
   m_negative = other.m_negative;
+  m_base = other.m_base;
 }
 
 Integer& Integer::operator=(Integer && other) {
@@ -172,11 +185,13 @@ Integer& Integer::operator=(Integer && other) {
     }
     m_numberOfDigits = other.m_numberOfDigits;
     m_negative = other.m_negative;
+    m_base = other.m_base;
 
     // Reset other
     other.m_digit = 0;
     other.m_numberOfDigits = 1;
     other.m_negative = 0;
+    other.m_base = 10;
   }
   return *this;
 }
@@ -196,6 +211,7 @@ Integer& Integer::operator=(const Integer& other) {
     }
     m_numberOfDigits = other.m_numberOfDigits;
     m_negative = other.m_negative;
+    m_base = other.m_base;
   }
   return *this;
 }
@@ -205,6 +221,10 @@ void Integer::setNegative(bool negative) {
     return;
   }
   m_negative = negative;
+}
+
+void Integer::setBase(int base) {
+  m_base = base;
 }
 
 // Comparison
@@ -354,6 +374,7 @@ Integer::Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool neg
     assert(numberOfDigits > 1);
     m_digits = digits;
   }
+  m_base = 10;
 }
 
 void Integer::releaseDynamicIvars() {
@@ -567,7 +588,7 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
     return strlcpy(buffer, "undef", bufferSize);
   }
 
-  Integer base = Integer(10);
+  Integer base = Integer(m_base);
   Integer abs = *this;
   abs.setNegative(false);
   IntegerDivision d = udiv(abs, base);
@@ -596,6 +617,12 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
     char c = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = c;
+  }
+
+  if (m_base != 10) {
+    Integer base(m_base);
+    buffer[size++] = ':';
+    size += base.writeTextInBuffer(buffer+size, bufferSize-size);
   }
   return size;
 }

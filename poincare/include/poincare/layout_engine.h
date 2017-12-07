@@ -16,6 +16,7 @@ public:
   static ExpressionLayout * createParenthesedLayout(ExpressionLayout * layout, bool cloneLayout);
   static ExpressionLayout * createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize = KDText::FontSize::Large);
   static ExpressionLayout * createLogLayout(ExpressionLayout * argument, ExpressionLayout * index);
+  static ExpressionLayout * createBaseLayout(ExpressionLayout * argument, ExpressionLayout * index);
 
   /* Expression to Text */
   static int writeInfixExpressionTextInBuffer(

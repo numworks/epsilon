@@ -10,8 +10,12 @@ QUIZ_CASE(poincare_integer) {
   assert(!Integer("-123").isEqualTo(Integer(123)));
   assert(Integer("-123").isEqualTo(Integer(-123)));
   assert(Integer((int64_t)1234567891011121314).isEqualTo(Integer((int64_t)1234567891011121314)));
-  //FIXME: assert(Integer("0x2BABE") == Integer(178878));
-  //FIXME: assert(Integer("0b1011") == Integer(11));
+  // Bases
+  assert(Integer("2babe", false, 16).isEqualTo(Integer(178878)));
+  assert(Integer("1011", false, 2).isEqualTo(Integer(11)));
+  assert(Integer(123).isEqualTo(Integer("123", false, 10)));
+  assert(Integer(123).isEqualTo(Integer("7b", false, 16)));
+  assert(Integer(123).isEqualTo(Integer("1111011", false, 2)));
 }
 
 QUIZ_CASE(poincare_integer_compare) {

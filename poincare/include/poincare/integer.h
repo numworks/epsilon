@@ -22,14 +22,15 @@ public:
   typedef uint64_t double_native_uint_t;
 
   // FIXME: This constructor should be constexpr
-  Integer(native_int_t i = 0) :
+  Integer(native_int_t i = 0, int base = 10) :
     m_digit(i>0 ? i : -i),
     m_numberOfDigits(1),
-    m_negative(i<0)
+    m_negative(i<0),
+    m_base(base)
   {
   }
-  Integer(double_native_int_t i);
-  Integer(const char * digits, bool negative = false); // Digits are NOT NULL-terminated
+  Integer(double_native_int_t i, int base = 10);
+  Integer(const char * digits, bool negative = false, int input_base = 10); // Digits are NOT NULL-terminated
   static Integer exponent(int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
   static Integer numerator(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, Integer * exponent);
   static Integer denominator(Integer * exponent);
@@ -43,12 +44,14 @@ public:
   // Getter & Setter
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative);
+  void setBase(int base);
   int extractedInt() const { assert(m_numberOfDigits == 1 && m_digit <= k_maxExtractableInteger); return m_negative ? -m_digit : m_digit; }
 
   // Comparison
   static int NaturalOrder(const Integer & i, const Integer & j);
   bool isEqualTo(const Integer & other) const;
   bool isLowerThan(const Integer & other) const;
+  uint16_t numberOfDigits() const { return m_numberOfDigits; }
 
   // Layout
   int writeTextInBuffer(char * buffer, int bufferSize) const;
@@ -106,6 +109,7 @@ private:
   };
   uint16_t m_numberOfDigits; // In base native_uint_max
   bool m_negative; // Make sure zero cannot be negative
+  uint8_t m_base; // For display purposes
 
   static_assert(sizeof(native_int_t) <= sizeof(native_uint_t), "native_uint_t should be able to contain native_int_t data");
   static_assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t), "double_native_uint_t should be twice the size of native_uint_t");

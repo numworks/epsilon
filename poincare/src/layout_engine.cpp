@@ -80,6 +80,13 @@ ExpressionLayout * LayoutEngine::createLogLayout(ExpressionLayout * argument, Ex
   return resultLayout;
 }
 
+ExpressionLayout * LayoutEngine::createBaseLayout(ExpressionLayout * argument, ExpressionLayout * index) {
+  HorizontalLayout * resultLayout = static_cast<HorizontalLayout *>(argument);
+  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(index, VerticalOffsetLayout::Type::Subscript, false);
+  resultLayout->addChildAtIndex(offsetLayout, resultLayout->numberOfChildren());
+  return resultLayout;
+}
+
 int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName) {
   return writeInfixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize, numberOfDigits, operatorName, 0, -1, [](const char * operatorName) { return true; });
 }

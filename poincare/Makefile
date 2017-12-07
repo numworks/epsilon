@@ -58,6 +58,7 @@ objs += $(addprefix poincare/src/,\
   matrix.o\
   multiplication.o\
   naperian_logarithm.o\
+  to_base.o\
   nth_root.o\
   opposite.o\
   parenthesis.o\
@@ -142,6 +143,7 @@ tests += $(addprefix poincare/test/,\
   subtraction.cpp\
   symbol.cpp\
   store.cpp\
+  to_base.cpp\
   trigo.cpp\
   vertical_offset_layout.cpp\
 )

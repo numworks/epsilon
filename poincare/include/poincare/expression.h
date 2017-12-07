@@ -58,6 +58,7 @@ class Expression {
   friend class MatrixTrace;
   friend class MatrixTranspose;
   friend class NaperianLogarithm;
+  friend class ToBase;
   friend class NthRoot;
   friend class Opposite;
   friend class Parenthesis;
@@ -123,6 +124,7 @@ public:
     Logarithm,
     MatrixTrace,
     NaperianLogarithm,
+    ToBase,
     NthRoot,
     Opposite,
     Parenthesis,

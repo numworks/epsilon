@@ -52,6 +52,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/nth_root.h>
+#include <poincare/to_base.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/permute_coefficient.h>

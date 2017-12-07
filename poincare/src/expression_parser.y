@@ -48,6 +48,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 
 /* The INTEGER token uses the "string" part of the union to store its value */
 %token <string> DIGITS
+%token <string> RADIX_DIGITS
 %token <character> SYMBOL
 %token <function> FUNCTION
 %token <expression> UNDEFINED
@@ -66,6 +67,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token RIGHT_BRACE
 %token LEFT_BRACKET
 %token RIGHT_BRACKET
+%token COLON
 %token COMMA
 %token UNDERSCORE
 %token DOT
@@ -109,6 +111,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %left COMMA
 %nonassoc UNDERSCORE
 %nonassoc DIGITS
+%nonassoc RADIX_DIGITS
 %nonassoc DOT
 %nonassoc EE
 %nonassoc UNDEFINED
@@ -174,6 +177,21 @@ number : DIGITS { $$ = new Poincare::Rational(Poincare::Integer($1.address, fals
        | DOT DIGITS EE MINUS DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $5.address, $5.length, true);  if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
        | DIGITS DOT DIGITS EE MINUS DIGITS { if ($6.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $6.address, $6.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
        | DIGITS EE MINUS DIGITS { if ($4.length > 4) { YYERROR; }; int exponent =  Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $4.address, $4.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
+       | RADIX_DIGITS {
+          Poincare::Integer baseDigits(strchr($1.address, ':')+1, false);
+          if (baseDigits.isLowerThan(Poincare::Integer(2)) || Poincare::Integer(36).isLowerThan(baseDigits)) {
+            YYERROR;
+          }
+          int base;
+          for (base = 2; !baseDigits.isEqualTo(Poincare::Integer(base)); base++);
+          for (int i = 0; $1.address[i] != ':'; i++) {
+            int digit = ($1.address[i] >= '0' && $1.address[i] <= '9') ? $1.address[i] - '0' : $1.address[i] - 'a' + 10;
+            if (digit >= base) {
+              YYERROR;
+            }
+          }
+          $$ = new Poincare::Rational(Poincare::Integer($1.address, false, base));
+        }
        ;
 
 symb   : SYMBOL         { $$ = new Poincare::Symbol($1); }
@@ -220,6 +238,7 @@ exp    : pow                { $$ = $1; }
 
 final_exp : exp             { $$ = $1; }
           | exp STO symb   { if ($3->name() == Poincare::Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Store(terms, false); }
+          | exp STO COLON DIGITS { Poincare::Expression * terms[2] = {$1,new Poincare::Rational(Poincare::Integer($4.address, false))}; $$ = new Poincare::ToBase(terms, false); }
           ;
 %%
 

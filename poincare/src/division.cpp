@@ -38,31 +38,35 @@ Expression * Division::shallowReduce(Context& context, AngleUnit angleUnit) {
 
 template<typename T>
 Complex<T> Division::compute(const Complex<T> c, const Complex<T> d) {
-  // We want to avoid multiplies in the middle of the calculation that could overflow.
-  // aa, ab, ba, bb, min, max = |d.a| <= |d.b| ? (c.a, c.b, -c.a, c.b, d.a, d.b) : (c.b, c.a, c.b, -c.a, d.b, d.a)
-  // c    c.a+c.b*i   d.a-d.b*i   1/max    (c.a+c.b*i) * (d.a-d.b*i) / max
-  // - == --------- * --------- * ----- == -------------------------------
-  // d    d.a+d.b*i   d.a-d.b*i   1/max    (d.a+d.b*i) * (d.a-d.b*i) / max
-  //      (c.a*d.a - c.a*d.b*i + c.b*i*d.a - c.b*i*d.b*i) / max
-  //   == -----------------------------------------------------
-  //      (d.a*d.a - d.a*d.b*i + d.b*i*d.a - d.b*i*d.b*i) / max
-  //      (c.a*d.a - c.b*d.b*i^2 + c.b*d.b*i - c.a*d.a*i) / max
-  //   == -----------------------------------------------------
-  //                  (d.a*d.a - d.b*d.b*i^2) / max
-  //      (c.a*d.a/max + c.b*d.b/max) + (c.b*d.b/max - c.a*d.a/max)*i
-  //   == -----------------------------------------------------------
-  //                         d.a^2/max + d.b^2/max
-  //      aa*min/max + ab*max/max   bb*min/max + ba*max/max
-  //   == ----------------------- + -----------------------*i
-  //       min^2/max + max^2/max     min^2/max + max^2/max
-  //       min/max*aa + ab     min/max*bb + ba
-  //   == ----------------- + -----------------*i
-  //      min/max*min + max   min/max*min + max
-  // |min| <= |max| => |min/max| <= 1
-  //                => |min/max*x| <= |x|
-  //                => |min/max*x+y| <= |x|+|y|
-  // So the calculation is guaranteed to not overflow until the last divides as
-  // long as none of the input values have the representation's maximum exponent.
+  /* We want to avoid multiplies in the middle of the calculation that could
+   * overflow.
+   * aa, ab, ba, bb, min, max = |d.a| <= |d.b| ? (c.a, c.b, -c.a, c.b, d.a, d.b)
+   *    : (c.b, c.a, c.b, -c.a, d.b, d.a)
+   * c    c.a+c.b*i   d.a-d.b*i   1/max    (c.a+c.b*i) * (d.a-d.b*i) / max
+   * - == --------- * --------- * ----- == -------------------------------
+   * d    d.a+d.b*i   d.a-d.b*i   1/max    (d.a+d.b*i) * (d.a-d.b*i) / max
+   *      (c.a*d.a - c.a*d.b*i + c.b*i*d.a - c.b*i*d.b*i) / max
+   *   == -----------------------------------------------------
+   *      (d.a*d.a - d.a*d.b*i + d.b*i*d.a - d.b*i*d.b*i) / max
+   *      (c.a*d.a - c.b*d.b*i^2 + c.b*d.b*i - c.a*d.a*i) / max
+   *   == -----------------------------------------------------
+   *                  (d.a*d.a - d.b*d.b*i^2) / max
+   *      (c.a*d.a/max + c.b*d.b/max) + (c.b*d.b/max - c.a*d.a/max)*i
+   *   == -----------------------------------------------------------
+   *                         d.a^2/max + d.b^2/max
+   *      aa*min/max + ab*max/max   bb*min/max + ba*max/max
+   *   == ----------------------- + -----------------------*i
+   *       min^2/max + max^2/max     min^2/max + max^2/max
+   *       min/max*aa + ab     min/max*bb + ba
+   *   == ----------------- + -----------------*i
+   *      min/max*min + max   min/max*min + max
+   * |min| <= |max| => |min/max| <= 1
+   *                => |min/max*x| <= |x|
+   *                => |min/max*x+y| <= |x|+|y|
+   * So the calculation is guaranteed to not overflow until the last divides as
+   * long as none of the input values have the representation's maximum exponent.
+   * Plus, the method does not propagate any error on real inputs: temp = 0,
+   * norm = d.a and then result = c.a/d.a. */
   T aa = c.a(), ab = c.b(), ba = -aa, bb = ab;
   T min = d.a(), max = d.b();
   if (std::fabs(max) < std::fabs(min)) {

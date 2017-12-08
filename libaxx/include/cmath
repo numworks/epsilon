@@ -3,11 +3,13 @@
 
 #include <math.h>
 
+#undef finite
 #undef fpclassify
 #undef isfinite
 #undef isnormal
 #undef isnan
 #undef isinf
+#undef signbit
 
 #undef acosf
 #undef acoshf
@@ -26,12 +28,15 @@
 #undef fmaxf
 #undef floorf
 #undef fmodf
+#undef frexpf
 #undef hypotf
+#undef ldexpf
 #undef lgammaf
 #undef lgammaf_r
 #undef log1pf
 #undef log10f
 #undef logf
+#undef modff
 #undef nanf
 #undef nearbyintf
 #undef powf
@@ -42,12 +47,14 @@
 #undef sqrtf
 #undef tanf
 #undef tanhf
+#undef truncf
 
 #undef acos
 #undef acosh
 #undef asin
 #undef asinh
 #undef atan
+#undef atan2
 #undef atanh
 #undef ceil
 #undef copysign
@@ -61,88 +68,129 @@
 #undef fmax
 #undef floor
 #undef fmod
+#undef frexp
 #undef hypot
+#undef ldexp
 #undef lgamma
 #undef lgamma_r
+#undef log
 #undef log1p
 #undef log10
-#undef log
+#undef log2
+#undef logb
+#undef modf
+#undef nan
+#undef nearbyint
 #undef pow
+#undef rint
 #undef round
+#undef scalb
 #undef scalbn
 #undef sin
 #undef sinh
 #undef sqrt
 #undef tan
 #undef tanh
+#undef tgamma
+#undef trunc
 
 namespace std {
 
+inline constexpr int fpclassify(float x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
+inline constexpr bool isfinite(float x) { return __builtin_isfinite(x); }
+inline constexpr bool isinf(float x) { return __builtin_isinf(x); }
+inline constexpr bool isnan(float x) { return __builtin_isnan(x); }
+inline constexpr bool isnormal(float x) { return __builtin_isnormal(x); }
+inline constexpr bool signbit(float x) { return __builtin_signbit(x); }
 
-static inline double acos(double x) { return __builtin_acos(x); }
-static inline float acos(float x) { return __builtin_acosf(x); }
-static inline double acosh(double x) { return __builtin_acosh(x); }
-static inline float acosh(float x) { return __builtin_acoshf(x); }
-static inline double asin(double x) { return __builtin_asin(x); }
-static inline float asin(float x) { return __builtin_asinf(x); }
-static inline double asinh(double x) { return __builtin_asinh(x); }
-static inline float asinh(float x) { return __builtin_asinhf(x); }
-static inline double atan(double x) { return __builtin_atan(x); }
-static inline float atan(float x) { return __builtin_atanf(x); }
-static inline double atanh(double x) { return __builtin_atanh(x); }
-static inline float atanh(float x) { return __builtin_atanhf(x); }
-static inline double ceil(double x) { return __builtin_ceil(x); }
-static inline float ceil(float x) { return __builtin_ceilf(x); }
-static inline double copysign(double x, double y) { return __builtin_copysign(x, y); }
-static inline float copysign(float x, float y) { return __builtin_copysignf(x, y); }
-static inline double cos(double x) { return __builtin_cos(x); }
-static inline float cos(float x) { return __builtin_cosf(x); }
-static inline double cosh(double x) { return __builtin_cosh(x); }
-static inline float cosh(float x) { return __builtin_coshf(x); }
-static inline double erf(double x) { return __builtin_erf(x); }
-static inline double erfc(double x) { return __builtin_erfc(x); }
-static inline double exp(double x) { return __builtin_exp(x); }
-static inline float exp(float x) { return __builtin_expf(x); }
-static inline double fabs(double x) { return __builtin_fabs(x); }
-static inline float fabs(float x) { return __builtin_fabsf(x); }
-static inline double fmax(double x, double y) { return __builtin_fmax(x, y); }
-static inline float fmax(float x, float y) { return __builtin_fmaxf(x, y); }
-static inline double floor(double x) { return __builtin_floor(x); }
-static inline float floor(float x) { return __builtin_floorf(x); }
-static inline double fmod(double x, double y) { return __builtin_fmod(x, y); }
-static inline float fmod(float x, float y) { return __builtin_fmodf(x, y); }
-static inline int fpclassify(double x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
-static inline int fpclassify(float x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
-static inline double hypot(double x, double y) { return __builtin_hypot(x, y); }
-static inline float hypotf(float x, float y) { return __builtin_hypotf(x, y); }
-static inline bool isfinite(double x) { return __builtin_isfinite(x); }
-static inline bool isfinite(float x) { return __builtin_isfinite(x); }
-static inline bool isinf(double x) { return __builtin_isinf(x); }
-static inline bool isinf(float x) { return __builtin_isinf(x); }
-static inline bool isnan(double x) { return __builtin_isnan(x); }
-static inline bool isnan(float x) { return __builtin_isnan(x); }
-static inline bool isnormal(double x) { return __builtin_isnormal(x); }
-static inline bool isnormal(float x) { return __builtin_isnormal(x); }
-static inline double lgamma(double x) { return __builtin_lgamma(x); }
-static inline float lgamma(float x) { return __builtin_lgammaf(x); }
-static inline double log10(double x) { return __builtin_log10(x); }
-static inline float log10(float x) { return __builtin_log10f(x); }
-static inline double log(double x) { return __builtin_log(x); }
-static inline float log(float x) { return __builtin_logf(x); }
-static inline double pow(double x, double y) { return __builtin_pow(x, y); }
-static inline float pow(float x, float y) { return __builtin_powf(x, y); }
-static inline double round(double x) { return __builtin_round(x); }
-static inline float round(float x) { return __builtin_roundf(x); }
-static inline double sin(double x) { return __builtin_sin(x); }
-static inline float sin(float x) { return __builtin_sinf(x); }
-static inline double sinh(double x) { return __builtin_sinh(x); }
-static inline float sinh(float x) { return __builtin_sinhf(x); }
-static inline double sqrt(double x) { return __builtin_sqrt(x); }
-static inline float sqrt(float x) { return __builtin_sqrtf(x); }
-static inline double tan(double x) { return __builtin_tan(x); }
-static inline float tan(float x) { return __builtin_tanf(x); }
-static inline double tanh(double x) { return __builtin_tanh(x); }
-static inline float tanh(float x) { return __builtin_tanhf(x); }
+inline constexpr float acos(float x) { return __builtin_acosf(x); }
+inline constexpr float acosh(float x) { return __builtin_acoshf(x); }
+inline constexpr float asin(float x) { return __builtin_asinf(x); }
+inline constexpr float asinh(float x) { return __builtin_asinhf(x); }
+inline constexpr float atan(float x) { return __builtin_atanf(x); }
+inline constexpr float atan2(float y, float x) { return __builtin_atan2f(y, x); }
+inline constexpr float atanh(float x) { return __builtin_atanhf(x); }
+inline constexpr float ceil(float x) { return __builtin_ceilf(x); }
+inline constexpr float copysign(float x, float y) { return __builtin_copysignf(x, y); }
+inline constexpr float cos(float x) { return __builtin_cosf(x); }
+inline constexpr float cosh(float x) { return __builtin_coshf(x); }
+inline constexpr float exp(float x) { return __builtin_expf(x); }
+inline constexpr float expm1(float x) { return __builtin_expm1f(x); }
+inline constexpr float fabs(float x) { return __builtin_fabsf(x); }
+inline constexpr float floor(float x) { return __builtin_floorf(x); }
+inline constexpr float fmax(float x, float y) { return __builtin_fmaxf(x, y); }
+inline constexpr float fmod(float x, float y) { return __builtin_fmodf(x, y); }
+inline constexpr float frexp(float x, int *exp) { return __builtin_frexpf(x, exp); }
+inline constexpr float ldexp(float x, int exp) { return __builtin_ldexpf(x, exp); }
+inline constexpr float lgamma(float x) { return __builtin_lgammaf(x); }
+inline constexpr float lgamma_r(float x, int *signgamp) { return __builtin_lgammaf_r(x, signgamp); }
+inline constexpr float log1p(float x) { return __builtin_log1pf(x); }
+inline constexpr float log10(float x) { return __builtin_log10f(x); }
+inline constexpr float log(float x) { return __builtin_logf(x); }
+inline constexpr float modf(float x, float *iptr) { return __builtin_modff(x, iptr); }
+inline constexpr float nanf(const char *tagp) { return __builtin_nanf(tagp); }
+inline constexpr float nearbyint(float x) { return __builtin_nearbyintf(x); }
+inline constexpr float pow(float x, float y) { return __builtin_powf(x, y); }
+inline constexpr float round(float x) { return __builtin_roundf(x); }
+inline constexpr float scalbn(float x, int exp) { return __builtin_scalbnf(x, exp); }
+inline constexpr float sin(float x) { return __builtin_sinf(x); }
+inline constexpr float sinh(float x) { return __builtin_sinhf(x); }
+inline constexpr float sqrt(float x) { return __builtin_sqrtf(x); }
+inline constexpr float tan(float x) { return __builtin_tanf(x); }
+inline constexpr float tanh(float x) { return __builtin_tanhf(x); }
+inline constexpr float trunc(float x) { return __builtin_truncf(x); }
+
+inline constexpr int fpclassify(double x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
+inline constexpr bool isfinite(double x) { return __builtin_isfinite(x); }
+inline constexpr bool isinf(double x) { return __builtin_isinf(x); }
+inline constexpr bool isnan(double x) { return __builtin_isnan(x); }
+inline constexpr bool isnormal(double x) { return __builtin_isnormal(x); }
+inline constexpr bool signbit(double x) { return __builtin_signbit(x); }
+
+inline constexpr double acos(double x) { return __builtin_acos(x); }
+inline constexpr double acosh(double x) { return __builtin_acosh(x); }
+inline constexpr double asin(double x) { return __builtin_asin(x); }
+inline constexpr double asinh(double x) { return __builtin_asinh(x); }
+inline constexpr double atan(double x) { return __builtin_atan(x); }
+inline constexpr double atan2(double y, double x) { return __builtin_atan2(y, x); }
+inline constexpr double atanh(double x) { return __builtin_atanh(x); }
+inline constexpr double ceil(double x) { return __builtin_ceil(x); }
+inline constexpr double copysign(double x, double y) { return __builtin_copysign(x, y); }
+inline constexpr double cos(double x) { return __builtin_cos(x); }
+inline constexpr double cosh(double x) { return __builtin_cosh(x); }
+inline constexpr double erf(double x) { return __builtin_erf(x); }
+inline constexpr double erfc(double x) { return __builtin_erfc(x); }
+inline constexpr double exp(double x) { return __builtin_exp(x); }
+inline constexpr double expm1(double x) { return __builtin_expm1(x); }
+inline constexpr double fabs(double x) { return __builtin_fabs(x); }
+inline constexpr double floor(double x) { return __builtin_floor(x); }
+inline constexpr double fmax(double x, double y) { return __builtin_fmax(x, y); }
+inline constexpr double fmod(double x, double y) { return __builtin_fmod(x, y); }
+inline constexpr double frexp(double x, int *exp) { return __builtin_frexp(x, exp); }
+inline constexpr double hypot(double x, double y) { return __builtin_hypot(x, y); }
+inline constexpr double ldexp(double x, int exp) { return __builtin_scalbn(x, exp); }
+inline constexpr double lgamma(double x) { return __builtin_lgamma(x); }
+inline constexpr double lgamma_r(double x, int *signgamp) { return __builtin_lgamma_r(x, signgamp); }
+inline constexpr double log(double x) { return __builtin_log(x); }
+inline constexpr double log1p(double x) { return __builtin_log1p(x); }
+inline constexpr double log10(double x) { return __builtin_log10(x); }
+inline constexpr double log2(double x) { return __builtin_log2(x); }
+inline constexpr double logb(double x) { return __builtin_logb(x); }
+inline constexpr double modf(double x, double *iptr) { return __builtin_modf(x, iptr); }
+inline constexpr double nan(const char *tagp) { return __builtin_nan(tagp); }
+inline constexpr double nearbyint(double x) { return __builtin_nearbyint(x); }
+inline constexpr double pow(double x, double y) { return __builtin_pow(x, y); }
+inline constexpr double rint(double x) { return __builtin_rint(x); }
+inline constexpr double round(double x) { return __builtin_round(x); }
+inline constexpr double scalb(double x, double exp) { return __builtin_scalb(x, exp); }
+inline constexpr double scalbn(double x, int exp) { return __builtin_scalbn(x, exp); }
+inline constexpr double sin(double x) { return __builtin_sin(x); }
+inline constexpr double sinh(double x) { return __builtin_sinh(x); }
+inline constexpr double sqrt(double x) { return __builtin_sqrt(x); }
+inline constexpr double tan(double x) { return __builtin_tan(x); }
+inline constexpr double tanh(double x) { return __builtin_tanh(x); }
+inline constexpr double tgamma(double x) { return __builtin_tgamma(x); }
+inline constexpr double trunc(double x) { return __builtin_trunc(x); }
 
 }
 

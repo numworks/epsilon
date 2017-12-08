@@ -34,6 +34,20 @@ QUIZ_CASE(poincare_integer_addition) {
   assert(Integer::Addition(Integer("-123456789123456789"), Integer("123456789123456789")).isEqualTo(Integer("0")));
   assert(Integer::Addition(Integer("234"), Integer(-234)).isEqualTo(Integer(0)));
   assert(Integer::Addition(Integer("18446744073709551616"), Integer("18446744073709551368")).isEqualTo(Integer("36893488147419102984")));
+  //2^64+2^64
+  assert(Integer::Addition(Integer("18446744073709551616"), Integer("18446744073709551616")).isEqualTo(Integer("36893488147419103232")));
+  //2^64+2^32
+  assert(Integer::Addition(Integer("18446744073709551616"), Integer("4294967296")).isEqualTo(Integer("18446744078004518912")));
+  //2^64+1
+  assert(Integer::Addition(Integer("18446744073709551616"), Integer("1")).isEqualTo(Integer("18446744073709551617")));
+  //2^32+2^32
+  assert(Integer::Addition(Integer("4294967296"), Integer("4294967296")).isEqualTo(Integer("8589934592")));
+  //2^32+1
+  assert(Integer::Addition(Integer("4294967296"), Integer("1")).isEqualTo(Integer("4294967297")));
+  //2^16+1
+  assert(Integer::Addition(Integer("65537"), Integer("1")).isEqualTo(Integer("65538")));
+  //2^16+2^16
+  assert(Integer::Addition(Integer("65537"), Integer("65537")).isEqualTo(Integer("131074")));
 }
 
 QUIZ_CASE(poincare_integer_subtraction) {
@@ -45,6 +59,25 @@ QUIZ_CASE(poincare_integer_subtraction) {
   assert(Integer::Subtraction(Integer("-123456789123456789"), Integer("-123456789123456789")).isEqualTo(Integer(0)));
   assert(Integer::Subtraction(Integer("123456789123456789"), Integer("123456789123456789")).isEqualTo(Integer(0)));
   assert(Integer::Subtraction(Integer("18446744073709551616"), Integer("18446744073709551368")).isEqualTo(Integer(248)));
+
+  //2^64-2^64
+  assert(Integer::Subtraction(Integer("18446744073709551616"), Integer("18446744073709551616")).isEqualTo(Integer("0")));
+  //2^64-2^32
+  assert(Integer::Subtraction(Integer("18446744073709551616"), Integer("4294967296")).isEqualTo(Integer("18446744069414584320")));
+  //2^32-2^64
+  assert(Integer::Subtraction(Integer("4294967296"), Integer("18446744073709551616")).isEqualTo(Integer("-18446744069414584320")));
+  //2^64-1
+  assert(Integer::Subtraction(Integer("18446744073709551616"), Integer("1")).isEqualTo(Integer("18446744073709551615")));
+  //1-2^64
+  assert(Integer::Subtraction(Integer("1"), Integer("18446744073709551616")).isEqualTo(Integer("-18446744073709551615")));
+  //2^32-2^32
+  assert(Integer::Subtraction(Integer("4294967296"), Integer("4294967296")).isEqualTo(Integer("0")));
+  //2^32-1
+  assert(Integer::Subtraction(Integer("4294967296"), Integer("1")).isEqualTo(Integer("4294967295")));
+  //2^16-1
+  assert(Integer::Subtraction(Integer("65537"), Integer("1")).isEqualTo(Integer("65536")));
+  //2^16-2^16
+  assert(Integer::Subtraction(Integer("65537"), Integer("65537")).isEqualTo(Integer("0")));
 }
 
 QUIZ_CASE(poincare_integer_multiplication) {

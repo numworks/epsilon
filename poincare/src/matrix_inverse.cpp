@@ -51,7 +51,7 @@ Expression * MatrixInverse::templatedApproximate(Context& context, AngleUnit ang
   Expression * result = nullptr;
   if (input->type() == Type::Complex) {
     Complex<T> * c = static_cast<Complex<T> *>(input);
-    result = new Complex<T>(Complex<T>::Cartesian(1/c->a(), -1/c->b()));
+    result = new Complex<T>(Division::compute(Complex<T>::Cartesian(1, 0), *c));
   } else {
     assert(input->type() == Type::Matrix);
     result = static_cast<Matrix *>(input)->createInverse<T>();

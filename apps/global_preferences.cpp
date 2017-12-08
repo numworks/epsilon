@@ -1,9 +1,5 @@
 #include "global_preferences.h"
 
-#if !defined(_WIN32) && !defined(_WIN64)
-static GlobalPreferences s_globalPreferences;
-#endif
-
 GlobalPreferences::GlobalPreferences() :
   m_language(I18n::Language::EN),
   m_examMode(ExamMode::Desactivate),
@@ -13,9 +9,7 @@ GlobalPreferences::GlobalPreferences() :
 }
 
 GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
-#if defined(_WIN32) || defined(_WIN64)
   static GlobalPreferences s_globalPreferences;
-#endif
   return &s_globalPreferences;
 }
 

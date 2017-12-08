@@ -253,7 +253,7 @@ template <class T>
 int Complex<T>::convertComplexToText(char * buffer, int bufferSize, int numberOfSignificantDigits, Expression::FloatDisplayMode displayMode, Expression::ComplexFormat complexFormat, char multiplicationSpecialChar) const {
   assert(displayMode != Expression::FloatDisplayMode::Default);
   int numberOfChars = 0;
-  if (std::isnan(m_a) || std::isnan(m_b)) {
+  if (std::isnan(m_a) || std::isnan(m_b) || std::isinf(m_a) || std::isinf(m_b)) {
     return convertFloatToText(NAN, buffer, bufferSize, numberOfSignificantDigits, displayMode);
   }
   if (complexFormat == Expression::ComplexFormat::Polar) {

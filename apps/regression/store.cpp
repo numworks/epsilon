@@ -8,12 +8,6 @@ using namespace Shared;
 
 namespace Regression {
 
-Store::Store() :
-  InteractiveCurveViewRange(nullptr, this),
-  FloatPairStore()
-{
-}
-
 /* Dots */
 
 int Store::closestVerticalDot(int direction, float x) {
@@ -118,10 +112,6 @@ void Store::setDefault() {
 }
 
 /* Calculations */
-
-double Store::numberOfPairs() {
-  return m_numberOfPairs;
-}
 
 float Store::maxValueOfColumn(int i) {
   float max = -FLT_MAX;

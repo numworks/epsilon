@@ -17,7 +17,7 @@ BoxView::BoxView(Store * store, BannerView * bannerView, Quantile * selectedQuan
 
 void BoxView::reload() {
   CurveView::reload();
-  CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
+  static const CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   float calculation = (m_store->*calculationMethods[(int)*m_selectedQuantile])();
   float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
@@ -25,10 +25,6 @@ void BoxView::reload() {
   float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculation)-1;
   KDRect dirtyZone(KDRect(selectedValueInPixels, pixelLowerBound, 4, pixelUpperBound - pixelLowerBound));
   markRectAsDirty(dirtyZone);
-}
-
-BoxView::Quantile BoxView::selectedQuantile() {
-  return *m_selectedQuantile;
 }
 
 bool BoxView::selectQuantile(int selectedQuantile) {

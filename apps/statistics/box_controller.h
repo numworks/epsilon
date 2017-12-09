@@ -8,11 +8,15 @@
 
 namespace Statistics {
 
-class BoxController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
+class BoxController final : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 public:
   BoxController(Responder * parentResponder, ButtonRowController * header, Store * store, BoxView::Quantile * selectedQuantile);
-  const char * title() override;
-  View * view() override;
+  const char * title() override {
+    return I18n::translate(I18n::Message::BoxTab);
+  }
+  View * view() override {
+    return &m_view;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   bool isEmpty() const override;

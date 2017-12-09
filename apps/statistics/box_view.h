@@ -9,7 +9,7 @@
 
 namespace Statistics {
 
-class BoxView : public Shared::CurveView {
+class BoxView final : public Shared::CurveView {
 public:
   enum class Quantile : int {
     None = -1,
@@ -21,7 +21,9 @@ public:
   };
   BoxView(Store * store, Shared::BannerView * bannerView, Quantile * selectedQuantile);
   void reload() override;
-  Quantile selectedQuantile();
+  Quantile selectedQuantile() {
+    return *m_selectedQuantile;
+  }
   bool selectQuantile(int selectedQuantile);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:

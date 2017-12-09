@@ -9,10 +9,12 @@
 
 namespace Probability {
 
-class LawController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class LawController final : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   LawController(Responder * parentResponder, Law * m_law, ParametersController * parametersController);
-  View * view() override;
+  View * view() override {
+    return &m_contentView;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -22,9 +24,11 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
 private:
-  class ContentView : public View {
+  class ContentView final : public View {
   public:
-    ContentView(SelectableTableView * selectableTableView);
+    ContentView(SelectableTableView * selectableTableView) :
+      m_titleView(KDText::FontSize::Small, I18n::Message::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
+      m_selectableTableView(selectableTableView) {}
     constexpr static KDCoordinate k_titleMargin = 8;
   private:
     int numberOfSubviews() const override;

@@ -5,7 +5,7 @@
 
 namespace Settings {
 
-class SettingsMessageTree : public MessageTree {
+class SettingsMessageTree final : public MessageTree {
 public:
   constexpr SettingsMessageTree(I18n::Message label = I18n::Message::Default, const SettingsMessageTree * children = nullptr, int numberOfChildren = 0) :
     MessageTree(label, numberOfChildren),

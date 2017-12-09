@@ -5,11 +5,6 @@
 
 namespace Probability {
 
-PoissonLaw::PoissonLaw() :
-  OneParameterLaw(4.0f)
-{
-}
-
 I18n::Message PoissonLaw::title() {
   return I18n::Message::PoissonLaw;
 }

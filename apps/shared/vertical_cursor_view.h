@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-class VerticalCursorView : public View {
+class VerticalCursorView final : public View {
 public:
   using View::View;
   void drawRect(KDContext * ctx, KDRect rect) const override;

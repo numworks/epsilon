@@ -6,15 +6,21 @@
 
 namespace Statistics {
 
-class Store : public Shared::MemoizedCurveViewRange, public Shared::FloatPairStore {
+class Store final : public Shared::MemoizedCurveViewRange, public Shared::FloatPairStore {
 public:
   Store();
   uint32_t barChecksum();
   // Histogram bars
-  double barWidth();
+  double barWidth() {
+    return m_barWidth;
+  }
   void setBarWidth(double barWidth);
-  double firstDrawnBarAbscissa();
-  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa);
+  double firstDrawnBarAbscissa() {
+    return m_firstDrawnBarAbscissa;
+  }
+  void setFirstDrawnBarAbscissa(double firstBarAbscissa) {
+    m_firstDrawnBarAbscissa = firstBarAbscissa;
+  }
   double heightOfBarAtIndex(int index);
   double heightOfBarAtValue(double value);
   double startOfBarAtIndex(int index);
@@ -24,7 +30,9 @@ public:
   bool scrollToSelectedBarIndex(int index);
 
   // Calculation
-  double sumOfOccurrences();
+  double sumOfOccurrences() {
+    return sumOfColumn(1);
+  }
   double maxValue();
   double minValue();
   double range();

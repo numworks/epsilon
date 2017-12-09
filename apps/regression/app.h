@@ -2,6 +2,7 @@
 #define REGRESSION_APP_H
 
 #include <escher.h>
+#include "regression_icon.h"
 #include "../shared/text_field_delegate_app.h"
 #include "store.h"
 #include "store_controller.h"
@@ -10,31 +11,52 @@
 
 namespace Regression {
 
-class App : public Shared::TextFieldDelegateApp {
+class App final : public Shared::TextFieldDelegateApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor final : public ::App::Descriptor {
   public:
-    I18n::Message name() override;
-    I18n::Message upperName() override;
-    const Image * icon() override;
+    I18n::Message name() override {
+      return I18n::Message::RegressionApp;
+    }
+    I18n::Message upperName() override {
+      return I18n::Message::RegressionAppCapital;
+    }
+    const Image * icon() override {
+      return ImageStore::RegressionIcon;
+    }
   };
-  class Snapshot : public ::App::Snapshot, public TabViewDataSource {
+  class Snapshot final : public ::App::Snapshot, public TabViewDataSource {
   public:
-    Snapshot();
-    App * unpack(Container * container) override;
+    Snapshot() : m_store(), m_cursor(), m_graphSelectedDotIndex(-1), m_modelVersion(0), m_rangeVersion(0) {}
+    App * unpack(Container * container) override {
+      return new App(container, this);
+    }
     void reset() override;
-    Descriptor * descriptor() override;
-    Store * store();
-    Shared::CurveViewCursor * cursor();
-    int * graphSelectedDotIndex();
-    uint32_t * modelVersion();
-    uint32_t * rangeVersion();
+    Descriptor * descriptor() override {
+      return &s_descriptor;
+    }
+    Store * store() {
+      return &m_store;
+    }
+    Shared::CurveViewCursor * cursor() {
+      return &m_cursor;
+    }
+    int * graphSelectedDotIndex() {
+      return &m_graphSelectedDotIndex;
+    }
+    uint32_t * modelVersion() {
+      return &m_modelVersion;
+    }
+    uint32_t * rangeVersion() {
+      return &m_rangeVersion;
+    }
   private:
     Store m_store;
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
     uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
+    static Descriptor s_descriptor;
  };
 private:
   App(Container * container, Snapshot * snapshot);

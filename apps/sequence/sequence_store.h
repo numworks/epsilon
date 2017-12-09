@@ -8,7 +8,7 @@
 
 namespace Sequence {
 
-class SequenceStore : public Shared::FunctionStore {
+class SequenceStore final : public Shared::FunctionStore {
 public:
   using Shared::FunctionStore::FunctionStore;
   uint32_t storeChecksum() override;

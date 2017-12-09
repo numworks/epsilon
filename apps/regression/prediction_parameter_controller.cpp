@@ -5,21 +5,6 @@ using namespace Shared;
 
 namespace Regression {
 
-PredictionParameterController::PredictionParameterController(Responder * parentResponder, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
-  ViewController(parentResponder),
-  m_selectableTableView(this),
-  m_goToParameterController(this, store, cursor, graphController)
-{
-}
-
-const char * PredictionParameterController::title() {
-  return I18n::translate(I18n::Message::RegressionSlope);
-}
-
-View * PredictionParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void PredictionParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
@@ -57,7 +42,7 @@ KDCoordinate PredictionParameterController::cellHeight() {
 
 void PredictionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCellWithChevron * myCell = (MessageTableCellWithChevron *)cell;
-  I18n::Message  titles[2] = {I18n::Message::XPrediction, I18n::Message::YPrediction};
+  static const I18n::Message  titles[2] = {I18n::Message::XPrediction, I18n::Message::YPrediction};
   myCell->setMessage(titles[index]);
 }
 

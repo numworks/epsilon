@@ -10,11 +10,18 @@ namespace Regression {
 
 class GraphController;
 
-class PredictionParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class PredictionParameterController final : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  PredictionParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
-  View * view() override;
-  const char * title() override;
+  PredictionParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController) :
+    ViewController(parentResponder),
+    m_selectableTableView(this),
+    m_goToParameterController(this, store, cursor, graphController) {}
+  View * view() override {
+    return &m_selectableTableView;
+  }
+  const char * title() override {
+    return I18n::translate(I18n::Message::RegressionSlope);
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

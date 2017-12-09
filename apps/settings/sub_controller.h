@@ -8,7 +8,7 @@
 
 namespace Settings {
 
-class SubController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
+class SubController final : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
 public:
   SubController(Responder * parentResponder);
   ~SubController();
@@ -16,7 +16,9 @@ public:
   SubController(SubController&& other) = delete;
   SubController& operator=(const SubController& other) = delete;
   SubController& operator=(SubController&& other) = delete;
-  View * view() override;
+  View * view() override {
+    return &m_selectableTableView;
+  }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
@@ -29,7 +31,7 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  void setMessageTreeModel(const MessageTree * messageTreeModel);
+  void setMessageTreeModel(const MessageTree * messageTreeModel) { m_messageTreeModel = (MessageTree *)messageTreeModel; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;

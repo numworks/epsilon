@@ -7,17 +7,6 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramParameterController::HistogramParameterController(Responder * parentResponder, Store * store) :
-  FloatParameterController(parentResponder),
-  m_cells{},
-  m_store(store)
-{
-}
-
-const char * HistogramParameterController::title() {
-  return I18n::translate(I18n::Message::HistogramSet);
-}
-
 int HistogramParameterController::numberOfRows() {
   return 1+k_numberOfCells;
 }
@@ -27,7 +16,7 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_numberOfCells] = {I18n::Message::RectangleWidth, I18n::Message::BarStart};
+  static const I18n::Message labels[k_numberOfCells] = {I18n::Message::RectangleWidth, I18n::Message::BarStart};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }

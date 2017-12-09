@@ -7,11 +7,6 @@
 
 namespace Probability {
 
-NormalLaw::NormalLaw() :
-  TwoParameterLaw(0.0f, 1.0f)
-{
-}
-
 I18n::Message NormalLaw::title() {
   return I18n::Message::NormalLaw;
 }

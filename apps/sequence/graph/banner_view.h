@@ -6,9 +6,11 @@
 
 namespace Sequence {
 
-class BannerView : public Shared::BannerView {
+class BannerView final : public Shared::BannerView {
 public:
-  BannerView();
+  BannerView() :
+    m_abscissaView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+    m_sequenceView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle) {}
 private:
   int numberOfSubviews() const override;
   TextView * textViewAtIndex(int i) const override;

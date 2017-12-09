@@ -5,21 +5,6 @@ using namespace Shared;
 
 namespace Regression {
 
-InitialisationParameterController::InitialisationParameterController(Responder * parentResponder, Store * store) :
-  ViewController(parentResponder),
-  m_selectableTableView(this),
-  m_store(store)
-{
-}
-
-const char * InitialisationParameterController::title() {
-  return I18n::translate(I18n::Message::Initialization);
-}
-
-View * InitialisationParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void InitialisationParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
@@ -27,7 +12,7 @@ void InitialisationParameterController::didBecomeFirstResponder() {
 
 bool InitialisationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    RangeMethodPointer rangeMethods[k_totalNumberOfCells] = {&InteractiveCurveViewRange::roundAbscissa,
+    static const RangeMethodPointer rangeMethods[k_totalNumberOfCells] = {&InteractiveCurveViewRange::roundAbscissa,
       &InteractiveCurveViewRange::normalize, &InteractiveCurveViewRange::setDefault};
     (m_store->*rangeMethods[selectedRow()])();
     StackViewController * stack = (StackViewController *)parentResponder();
@@ -58,7 +43,7 @@ KDCoordinate InitialisationParameterController::cellHeight() {
 
 void InitialisationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
-  I18n::Message titles[3] = {I18n::Message::RoundAbscissa, I18n::Message::Orthonormal, I18n::Message::DefaultSetting};
+  static const I18n::Message titles[3] = {I18n::Message::RoundAbscissa, I18n::Message::Orthonormal, I18n::Message::DefaultSetting};
   myCell->setMessage(titles[index]);
 }
 

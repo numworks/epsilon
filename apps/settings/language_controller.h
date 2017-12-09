@@ -6,7 +6,7 @@
 
 namespace Settings {
 
-class LanguageController : public Shared::LanguageController {
+class LanguageController final : public Shared::LanguageController {
 public:
   using Shared::LanguageController::LanguageController;
   bool handleEvent(Ion::Events::Event event) override;

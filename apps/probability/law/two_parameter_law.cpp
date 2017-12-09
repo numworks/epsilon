@@ -3,12 +3,6 @@
 
 namespace Probability {
 
-TwoParameterLaw::TwoParameterLaw(float parameterValue1, float parameterValue2) :
-  m_parameter1(parameterValue1),
-  m_parameter2(parameterValue2)
-{
-}
-
 int TwoParameterLaw::numberOfParameter() {
   return 2;
 }

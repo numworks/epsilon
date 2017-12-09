@@ -105,10 +105,6 @@ I18n::Message CalculationController::emptyMessage() {
   return I18n::Message::NoValueToCompute;
 }
 
-Responder * CalculationController::defaultController() {
-  return tabController();
-}
-
 int CalculationController::numberOfRows() {
   return k_totalNumberOfRows;
 }
@@ -139,12 +135,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       return;
     }
     myCell->setAlignment(1.0f, 0.5f);
-    I18n::Message titles[k_totalNumberOfRows-1] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression, I18n::Message::A, I18n::Message::B, I18n::Message::R, I18n::Message::Default};
+    static const I18n::Message titles[k_totalNumberOfRows-1] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression, I18n::Message::A, I18n::Message::B, I18n::Message::R, I18n::Message::Default};
     myCell->setMessage(titles[j-1]);
     return;
   }
   if (i == 1 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
-    ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn,
+    static const ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn,
       &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
     double calculation1 = (m_store->*calculationMethods[j-1])(0);
     double calculation2 = (m_store->*calculationMethods[j-1])(1);

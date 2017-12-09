@@ -26,23 +26,11 @@ uint32_t Store::barChecksum() {
 
 /* Histogram bars */
 
-double Store::barWidth() {
-  return m_barWidth;
-}
-
 void Store::setBarWidth(double barWidth) {
   if (barWidth <= 0.0) {
     return;
   }
   m_barWidth = barWidth;
-}
-
-double Store::firstDrawnBarAbscissa() {
-  return m_firstDrawnBarAbscissa;
-}
-
-void Store::setFirstDrawnBarAbscissa(double firstBarAbscissa) {
-  m_firstDrawnBarAbscissa = firstBarAbscissa;
 }
 
 double Store::heightOfBarAtIndex(int index) {
@@ -90,10 +78,6 @@ bool Store::scrollToSelectedBarIndex(int index) {
 }
 
 /* Calculation */
-
-double Store::sumOfOccurrences() {
-  return sumOfColumn(1);
-}
 
 double Store::maxValue() {
   double max = -DBL_MAX;

@@ -5,7 +5,7 @@
 
 namespace Probability {
 
-class ImageCell : public HighlightCell {
+class ImageCell final : public HighlightCell {
 public:
   ImageCell();
   void setHighlighted(bool highlight) override;

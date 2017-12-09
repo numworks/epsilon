@@ -7,7 +7,7 @@
 
 namespace Sequence {
 
-class Sequence : public Shared::Function {
+class Sequence final : public Shared::Function {
 public:
   enum class Type {
     Explicit = 0,
@@ -21,12 +21,14 @@ public:
   Sequence(const Sequence& other) = delete;
   Sequence(Sequence&& other) = delete;
   uint32_t checksum() override;
-  Type type();
+  Type type() {
+    return m_type;
+  }
   int initialRank() const {
     return m_initialRank;
   }
-  const char * firstInitialConditionText();
-  const char * secondInitialConditionText();
+  const char * firstInitialConditionText() { return m_firstInitialConditionText; }
+  const char * secondInitialConditionText() { return m_secondInitialConditionText; }
   Poincare::Expression * firstInitialConditionExpression(Poincare::Context * context) const;
   Poincare::Expression * secondInitialConditionExpression(Poincare::Context * context) const;
   Poincare::ExpressionLayout * firstInitialConditionLayout();

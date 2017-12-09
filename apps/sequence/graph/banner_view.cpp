@@ -2,12 +2,6 @@
 
 namespace Sequence {
 
-BannerView::BannerView() :
-  m_abscissaView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_sequenceView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle)
-{
-}
-
 int BannerView::numberOfSubviews() const {
   return 2;
 }

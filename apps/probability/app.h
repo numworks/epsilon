@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include <poincare.h>
+#include "probability_icon.h"
 #include "law_controller.h"
 #include "calculation_controller.h"
 #include "parameters_controller.h"
@@ -22,15 +23,21 @@ constexpr static size_t max(const int * data, int seed = 0) {
 
 namespace Probability {
 
-class App : public Shared::TextFieldDelegateApp {
+class App final : public Shared::TextFieldDelegateApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor final : public ::App::Descriptor {
     public:
-      I18n::Message name() override;
-      I18n::Message upperName() override;
-      const Image * icon() override;
+      I18n::Message name() override {
+        return I18n::Message::ProbaApp;
+      }
+      I18n::Message upperName() override {
+        return I18n::Message::ProbaAppCapital;
+      }
+      const Image * icon() override {
+        return ImageStore::ProbabilityIcon;
+      }
   };
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot final : public ::App::Snapshot {
   public:
     enum class Page {
       Law,
@@ -39,13 +46,25 @@ public:
     };
     Snapshot();
     ~Snapshot();
-    App * unpack(Container * container) override;
-    Descriptor * descriptor() override;
+    App * unpack(Container * container) override {
+      return new App(container, this);
+    }
+    Descriptor * descriptor() override {
+      return &s_descriptor;
+    }
     void reset() override;
-    Law * law();
-    Calculation * calculation();
-    Page activePage();
-    void setActivePage(Page activePage);
+    Law * law() {
+      return (Law *)m_law;
+    }
+    Calculation * calculation() {
+      return (Calculation *)m_calculation;
+    }
+    Page activePage() {
+      return m_activePage;
+    }
+    void setActivePage(Page activePage) {
+      m_activePage = activePage;
+    }
   private:
     constexpr static int k_lawSizes[] = {sizeof(BinomialLaw),sizeof(ExponentialLaw), sizeof(NormalLaw), sizeof(PoissonLaw), sizeof(UniformLaw), 0};
     constexpr static size_t k_lawSize = max(k_lawSizes);
@@ -54,6 +73,7 @@ public:
     constexpr static size_t k_calculationSize = max(k_calculationSizes);
     char m_calculation[k_calculationSize];
     Page m_activePage;
+    static Descriptor s_descriptor;
   };
 private:
   App(Container * container, Snapshot * snapshot);

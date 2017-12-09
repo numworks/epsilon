@@ -5,10 +5,15 @@
 
 namespace Sequence {
 
-class SequenceToolbox : public MathToolbox {
+class SequenceToolbox final : public MathToolbox {
 public:
-  SequenceToolbox();
-  ~SequenceToolbox();
+  SequenceToolbox() : MathToolbox(), m_addedCellLayout{}, m_numberOfAddedCells(0) {}
+  ~SequenceToolbox() {
+    for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+      delete m_addedCellLayout[i];
+      m_addedCellLayout[i] = nullptr;
+    }
+  }
   SequenceToolbox(const SequenceToolbox& other) = delete;
   SequenceToolbox(SequenceToolbox&& other) = delete;
   SequenceToolbox& operator=(const SequenceToolbox& other) = delete;

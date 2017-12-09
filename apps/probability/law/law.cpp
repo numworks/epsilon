@@ -4,11 +4,6 @@
 
 namespace Probability {
 
-Law::Law() :
- Shared::CurveViewRange()
-{
-}
-
 float Law::xGridUnit() {
   return computeGridUnit(Axis::X, xMin(), xMax());
 }

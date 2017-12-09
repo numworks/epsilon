@@ -2,11 +2,6 @@
 
 namespace Statistics {
 
-BoxRange::BoxRange(Store * store) :
-  m_store(store)
-{
-}
-
 float BoxRange::xMin() {
   float min = m_store->minValue();
   float max = m_store->maxValue();

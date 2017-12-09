@@ -8,7 +8,7 @@
 
 namespace Settings {
 
-class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+class MainController final : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   MainController(Responder * parentResponder);
   ~MainController();
@@ -16,7 +16,7 @@ public:
   MainController(MainController&& other) = delete;
   MainController& operator=(const MainController& other) = delete;
   MainController& operator=(MainController&& other) = delete;
-  View * view() override;
+  View * view() override { return &m_selectableTableView; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

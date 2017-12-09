@@ -5,7 +5,7 @@
 
 namespace Sequence {
 
-class GoToParameterController : public Shared::FunctionGoToParameterController {
+class GoToParameterController final : public Shared::FunctionGoToParameterController {
 public:
   using Shared::FunctionGoToParameterController::FunctionGoToParameterController;
 private:

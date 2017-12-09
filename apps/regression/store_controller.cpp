@@ -22,10 +22,8 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
 
 StoreController::~StoreController() {
   for (int i = 0; i < 2; i++) {
-    if (m_titleLayout[i]) {
-      delete m_titleLayout[i];
-      m_titleLayout[i] = nullptr;
-    }
+    delete m_titleLayout[i];
+    m_titleLayout[i] = nullptr;
   }
 }
 

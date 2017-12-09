@@ -5,7 +5,7 @@
 
 namespace Probability {
 
-class FiniteIntegralCalculation : public Calculation {
+class FiniteIntegralCalculation final : public Calculation {
 public:
   FiniteIntegralCalculation();
   Type type() override;

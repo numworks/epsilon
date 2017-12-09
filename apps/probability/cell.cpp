@@ -3,14 +3,6 @@
 
 namespace Probability {
 
-Cell::Cell() :
-  HighlightCell(),
-  m_labelView(KDText::FontSize::Large, (I18n::Message)0, 0, 0.5, KDColorBlack, KDColorWhite),
-  m_icon(nullptr),
-  m_focusedIcon(nullptr)
-{
-}
-
 int Cell::numberOfSubviews() const {
   return 3;
 }
@@ -43,15 +35,6 @@ void Cell::reloadCell() {
   } else {
     m_iconView.setImage(m_icon);
   }
-}
-
-void Cell::setLabel(I18n::Message message) {
-  m_labelView.setMessage(message);
-}
-
-void Cell::setImage(const Image * image, const Image * focusedImage) {
-  m_icon = image;
-  m_focusedIcon = focusedImage;
 }
 
 void Cell::drawRect(KDContext * ctx, KDRect rect) const {

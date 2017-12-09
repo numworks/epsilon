@@ -5,7 +5,7 @@
 
 namespace Sequence {
 
-class CurveViewRange : public Shared::InteractiveCurveViewRange {
+class CurveViewRange final : public Shared::InteractiveCurveViewRange {
 public:
   CurveViewRange(Shared::CurveViewCursor * cursor, Shared::InteractiveCurveViewRangeDelegate * delegate = nullptr);
   void roundAbscissa() override;

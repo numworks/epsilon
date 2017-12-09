@@ -6,15 +6,6 @@
 
 namespace Probability {
 
-ParametersController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
-  m_numberOfParameters(1),
-  m_titleView(KDText::FontSize::Small, I18n::Message::ChooseParameters, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
-  m_firstParameterDefinition(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
-  m_secondParameterDefinition(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
-  m_selectableTableView(selectableTableView)
-{
-}
-
 void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   int tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height()+ Metric::CommonTopMargin + Metric::CommonBottomMargin;
   ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
@@ -26,10 +17,6 @@ MessageTextView * ParametersController::ContentView::parameterDefinitionAtIndex(
     return &m_firstParameterDefinition;
   }
   return &m_secondParameterDefinition;
-}
-
-void ParametersController::ContentView::setNumberOfParameters(int numberOfParameters) {
-  m_numberOfParameters = numberOfParameters;
 }
 
 int ParametersController::ContentView::numberOfSubviews() const {
@@ -88,6 +75,7 @@ bool ParametersController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
+
 void ParametersController::reinitCalculation() {
   m_calculationController->setCalculationAccordingToIndex(0, true);
 }
@@ -181,14 +169,6 @@ void ParametersController::unloadView(View * view) {
     m_menuListCell[i] = nullptr;
   }
   FloatParameterController::unloadView(view);
-}
-
-SelectableTableView * ParametersController::selectableTableView() {
-  return m_selectableTableView;
-}
-
-ParametersController::ContentView * ParametersController::contentView() {
-  return (ContentView *)view();
 }
 
 }

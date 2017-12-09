@@ -97,14 +97,6 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-View * CalculationController::view() {
-  return &m_contentView;
-}
-
-const char * CalculationController::title() {
-  return m_titleBuffer;
-}
-
 void CalculationController::viewWillAppear() {
   ViewController::viewWillAppear();
   selectCellAtLocation(1, 0);

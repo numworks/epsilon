@@ -6,9 +6,9 @@
 
 namespace Regression {
 
-class Store : public Shared::InteractiveCurveViewRange, public Shared::FloatPairStore, public Shared::InteractiveCurveViewRangeDelegate {
+class Store final : public Shared::InteractiveCurveViewRange, public Shared::FloatPairStore, public Shared::InteractiveCurveViewRangeDelegate {
 public:
-  Store();
+  Store() : InteractiveCurveViewRange(nullptr, this), FloatPairStore() {}
   // Dots
   /* Return the closest dot to x above the regression curve if direction > 0,
    * below otherwise*/
@@ -21,7 +21,9 @@ public:
   void setDefault() override;
 
   // Calculation
-  double numberOfPairs();
+  double numberOfPairs() {
+    return m_numberOfPairs;
+  }
   double squaredValueSumOfColumn(int i);
   double columnProductSum();
   double meanOfColumn(int i);

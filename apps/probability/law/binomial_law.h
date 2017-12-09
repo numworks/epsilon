@@ -5,7 +5,7 @@
 
 namespace Probability {
 
-class BinomialLaw : public TwoParameterLaw {
+class BinomialLaw final : public TwoParameterLaw {
 public:
   BinomialLaw();
   I18n::Message title() override;

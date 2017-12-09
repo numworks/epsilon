@@ -5,10 +5,12 @@
 
 namespace Sequence {
 
-class SequenceTitleCell : public Shared::FunctionTitleCell {
+class SequenceTitleCell final : public Shared::FunctionTitleCell {
 public:
   SequenceTitleCell(Orientation orientation);
-  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
+  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout) {
+    m_titleTextView.setExpressionLayout(expressionLayout);
+  }
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;

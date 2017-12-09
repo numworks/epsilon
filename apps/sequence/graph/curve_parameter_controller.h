@@ -9,7 +9,7 @@ namespace Sequence {
 
 class GraphController;
 
-class CurveParameterController : public Shared::FunctionCurveParameterController {
+class CurveParameterController final : public Shared::FunctionCurveParameterController {
 public:
   CurveParameterController(GraphController * graphController, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
@@ -19,7 +19,9 @@ public:
   int reusableCellCount() override;
 private:
   constexpr static int k_totalNumberOfCells = 2;
-  GoToParameterController * goToParameterController() override;
+  GoToParameterController * goToParameterController() override {
+    return &m_goToParameterController;
+  }
   GoToParameterController m_goToParameterController;
   MessageTableCell m_sumCell;
   GraphController * m_graphController;

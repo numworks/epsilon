@@ -49,14 +49,6 @@ void GraphController::selectRegressionCurve() {
   m_view.setCursorView(&m_roundCursorView);
 }
 
-CurveView * GraphController::curveView() {
-  return &m_view;
-}
-
-InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
-  return m_store;
-}
-
 bool GraphController::handleEnter() {
   stackController()->push(&m_predictionParameterController);
   return true;
@@ -248,14 +240,6 @@ bool GraphController::moveCursorVertically(int direction) {
     }
     return false;
   }
-}
-
-uint32_t GraphController::modelVersion() {
-  return m_store->storeChecksum();
-}
-
-uint32_t GraphController::rangeVersion() {
-  return m_store->rangeChecksum();
 }
 
 bool GraphController::isCursorVisible() {

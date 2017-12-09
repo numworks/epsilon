@@ -2,6 +2,7 @@
 #define STATISTICS_HISTOGRAM_CONTROLLER_H
 
 #include <escher.h>
+#include "../i18n.h"
 #include "store.h"
 #include "histogram_view.h"
 #include "histogram_banner_view.h"
@@ -10,14 +11,20 @@
 
 namespace Statistics {
 
-class HistogramController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
+class HistogramController final : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 
 public:
   HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, uint32_t * m_storeVersion, uint32_t * m_barVersion, uint32_t * m_rangeVersion, int * m_selectedBarIndex);
-  const char * title() override;
-  View * view() override;
+  const char * title() override {
+    return I18n::translate(I18n::Message::HistogramTab);
+  }
+  View * view() override {
+    return &m_view;
+  }
   StackViewController * stackController();
-  HistogramParameterController * histogramParameterController();
+  HistogramParameterController * histogramParameterController() {
+    return &m_histogramParameterController;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 

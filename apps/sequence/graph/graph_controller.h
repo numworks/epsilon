@@ -12,23 +12,35 @@
 
 namespace Sequence {
 
-class GraphController : public Shared::FunctionGraphController {
+class GraphController final : public Shared::FunctionGraphController {
 public:
   GraphController(Responder * parentResponder, SequenceStore * sequenceStore, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Expression::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
-  TermSumController * termSumController();
+  TermSumController * termSumController() {
+    return &m_termSumController;
+  }
 private:
-  BannerView * bannerView() override;
+  BannerView * bannerView() override {
+    return &m_bannerView;
+  }
   bool handleEnter() override;
   bool moveCursorHorizontally(int direction) override;
   void initCursorParameters() override;
-  CurveViewRange * interactiveCurveViewRange() override;
-  SequenceStore * functionStore() const override;
-  GraphView * functionGraphView() override;
+  CurveViewRange * interactiveCurveViewRange() override {
+    return m_graphRange;
+  }
+  SequenceStore * functionStore() const override {
+    return m_sequenceStore;
+  }
+  GraphView * functionGraphView() override {
+    return &m_view;
+  }
   View * cursorView() override {
     return &m_cursorView;
   }
-  CurveParameterController * curveParameterController() override;
+  CurveParameterController * curveParameterController() override {
+    return &m_curveParameterController;
+  }
   Shared::CursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;

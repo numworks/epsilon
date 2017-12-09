@@ -25,14 +25,6 @@ I18n::Message GraphController::emptyMessage() {
   return I18n::Message::NoActivatedSequence;
 }
 
-TermSumController * GraphController::termSumController() {
-  return &m_termSumController;
-}
-
-BannerView * GraphController::bannerView() {
-  return &m_bannerView;
-}
-
 bool GraphController::handleEnter() {
   m_termSumController.setFunction(m_sequenceStore->activeFunctionAtIndex(indexFunctionSelectedByCursor()));
   return FunctionGraphController::handleEnter();
@@ -73,22 +65,6 @@ void GraphController::initCursorParameters() {
   } while (std::isnan(y) && functionIndex < m_sequenceStore->numberOfActiveFunctions());
   m_cursor->moveTo(x, y);
   m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
-}
-
-CurveViewRange * GraphController::interactiveCurveViewRange() {
-  return m_graphRange;
-}
-
-SequenceStore * GraphController::functionStore() const {
-  return m_sequenceStore;
-}
-
-GraphView * GraphController::functionGraphView() {
-  return &m_view;
-}
-
-CurveParameterController * GraphController::curveParameterController() {
-  return &m_curveParameterController;
 }
 
 }

@@ -5,12 +5,17 @@
 
 namespace Probability {
 
-class Cell : public HighlightCell {
+class Cell final : public HighlightCell {
 public:
-  Cell();
+  Cell() :   HighlightCell(), m_labelView(KDText::FontSize::Large, (I18n::Message)0, 0, 0.5, KDColorBlack, KDColorWhite), m_icon(nullptr), m_focusedIcon(nullptr) {}
   void reloadCell() override;
-  void setLabel(I18n::Message message);
-  void setImage(const Image * image, const Image * focusedImage);
+  void setLabel(I18n::Message message) {
+    m_labelView.setMessage(message);
+  }
+  void setImage(const Image * image, const Image * focusedImage) {
+    m_icon = image;
+    m_focusedIcon = focusedImage;
+  }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_iconWidth = 35;

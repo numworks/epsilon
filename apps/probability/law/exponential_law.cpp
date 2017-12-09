@@ -6,11 +6,6 @@
 
 namespace Probability {
 
-ExponentialLaw::ExponentialLaw() :
-  OneParameterLaw(1.0f)
-{
-}
-
 I18n::Message ExponentialLaw::title() {
   return I18n::Message::ExponentialLaw;
 }

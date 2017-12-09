@@ -6,9 +6,9 @@
 
 namespace Statistics {
 
-class BoxRange : public Shared::CurveViewRange {
+class BoxRange final : public Shared::CurveViewRange {
 public:
-  BoxRange(Store * store);
+  BoxRange(Store * store) : m_store(store) {}
   float xMin() override;
   float xMax() override;
   float yMin() override;

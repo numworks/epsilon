@@ -78,7 +78,7 @@ int ListParameterController::numberOfRows() {
     return k_totalNumberOfCell;
   }
   return k_totalNumberOfCell-1;
-};
+}
 
 HighlightCell * ListParameterController::reusableCell(int index) {
   switch (index) {

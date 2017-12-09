@@ -2,16 +2,18 @@
 #define STATISTICS_CALCULATION_CONTROLLER_H
 
 #include <escher.h>
+#include "../i18n.h"
 #include "store.h"
 #include "../shared/tab_table_controller.h"
 
 namespace Statistics {
 
-class CalculationController : public Shared::TabTableController, public ButtonRowDelegate, public TableViewDataSource, public AlternateEmptyViewDelegate {
-
+class CalculationController final : public Shared::TabTableController, public ButtonRowDelegate, public TableViewDataSource, public AlternateEmptyViewDelegate {
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
-  const char * title() override;
+  const char * title() override {
+    return I18n::translate(I18n::Message::StatTab);
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 

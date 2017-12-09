@@ -4,6 +4,7 @@
 #include <escher.h>
 #include <poincare.h>
 #include "sequence_context.h"
+#include "sequence_icon.h"
 #include "sequence_store.h"
 #include "graph/graph_controller.h"
 #include "graph/curve_view_range.h"
@@ -13,28 +14,45 @@
 
 namespace Sequence {
 
-class App : public Shared::FunctionApp {
+class App final : public Shared::FunctionApp {
 public:
-  class Descriptor : public ::App::Descriptor {
+  class Descriptor final : public ::App::Descriptor {
   public:
-    I18n::Message name() override;
-    I18n::Message upperName() override;
-    const Image * icon() override;
+    I18n::Message name() override {
+      return I18n::Message::SequenceApp;
+    }
+    I18n::Message upperName() override {
+      return I18n::Message::SequenceAppCapital;
+    }
+    const Image * icon() override {
+      return ImageStore::SequenceIcon;
+    }
   };
-  class Snapshot : public Shared::FunctionApp::Snapshot {
+  class Snapshot final : public Shared::FunctionApp::Snapshot {
   public:
     Snapshot();
-    App * unpack(Container * container) override;
+    App * unpack(Container * container) override {
+      return new App(container, this);
+    }
     void reset() override;
-    Descriptor * descriptor() override;
-    SequenceStore * sequenceStore();
-    CurveViewRange * graphRange();
+    Descriptor * descriptor() override {
+      return &s_descriptor;
+    }
+    SequenceStore * sequenceStore() {
+      return &m_sequenceStore;
+    }
+    CurveViewRange * graphRange() {
+      return &m_graphRange;
+    }
   private:
     void tidy() override;
     SequenceStore m_sequenceStore;
     CurveViewRange m_graphRange;
+    static Descriptor s_descriptor;
   };
-  InputViewController * inputViewController() override;
+  InputViewController * inputViewController() override {
+    return &m_inputViewController;
+  }
   SequenceContext * localContext() override;
   const char * XNT() override;
 private:

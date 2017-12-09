@@ -10,18 +10,6 @@ EvenOddDoubleBufferTextCell::EvenOddDoubleBufferTextCell(Responder * parentRespo
 {
 }
 
-const char * EvenOddDoubleBufferTextCell::firstText() {
-  return m_firstBufferTextView.text();
-}
-
-const char * EvenOddDoubleBufferTextCell::secondText() {
-  return m_secondBufferTextView.text();
-}
-
-bool EvenOddDoubleBufferTextCell::firstTextSelected() {
-  return m_firstTextSelected;
-}
-
 void EvenOddDoubleBufferTextCell::selectFirstText(bool selectFirstText) {
   m_firstTextSelected = selectFirstText;
   m_firstBufferTextView.setHighlighted(selectFirstText);
@@ -52,14 +40,6 @@ void EvenOddDoubleBufferTextCell::setEven(bool even) {
   m_firstBufferTextView.setEven(even);
   m_secondBufferTextView.setEven(even);
   reloadCell();
-}
-
-void EvenOddDoubleBufferTextCell::setFirstText(const char * textContent) {
-  m_firstBufferTextView.setText(textContent);
-}
-
-void EvenOddDoubleBufferTextCell::setSecondText(const char * textContent) {
-  m_secondBufferTextView.setText(textContent);
 }
 
 void EvenOddDoubleBufferTextCell::setTextColor(KDColor textColor) {

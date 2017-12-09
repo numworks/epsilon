@@ -5,9 +5,9 @@
 
 namespace Probability {
 
-class NormalLaw : public TwoParameterLaw {
+class NormalLaw final : public TwoParameterLaw {
 public:
-  NormalLaw();
+  NormalLaw() : TwoParameterLaw(0.0f, 1.0f) {}
   I18n::Message title() override;
   Type type() const override;
   bool isContinuous() const override;

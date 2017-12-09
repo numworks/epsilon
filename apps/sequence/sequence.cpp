@@ -31,38 +31,22 @@ Sequence::Sequence(const char * text, KDColor color) :
 }
 
 Sequence::~Sequence() {
-  if (m_firstInitialConditionLayout != nullptr) {
-    delete m_firstInitialConditionLayout;
-    m_firstInitialConditionLayout = nullptr;
-  }
-  if (m_secondInitialConditionLayout != nullptr) {
-    delete m_secondInitialConditionLayout;
-    m_secondInitialConditionLayout = nullptr;
-  }
-  if (m_firstInitialConditionExpression != nullptr) {
-    delete m_firstInitialConditionExpression;
-    m_firstInitialConditionExpression = nullptr;
-  }
-  if (m_secondInitialConditionExpression != nullptr) {
-    delete m_secondInitialConditionExpression;
-    m_secondInitialConditionExpression = nullptr;
-  }
-  if (m_nameLayout != nullptr) {
-    delete m_nameLayout;
-    m_nameLayout = nullptr;
-  }
-  if (m_definitionName != nullptr) {
-    delete m_definitionName;
-    m_definitionName = nullptr;
-  }
-  if (m_firstInitialConditionName != nullptr) {
-    delete m_firstInitialConditionName;
-    m_firstInitialConditionName = nullptr;
-  }
-  if (m_secondInitialConditionName != nullptr) {
-    delete m_secondInitialConditionName;
-    m_secondInitialConditionName = nullptr;
-  }
+  delete m_firstInitialConditionLayout;
+  m_firstInitialConditionLayout = nullptr;
+  delete m_secondInitialConditionLayout;
+  m_secondInitialConditionLayout = nullptr;
+  delete m_firstInitialConditionExpression;
+  m_firstInitialConditionExpression = nullptr;
+  delete m_secondInitialConditionExpression;
+  m_secondInitialConditionExpression = nullptr;
+  delete m_nameLayout;
+  m_nameLayout = nullptr;
+  delete m_definitionName;
+  m_definitionName = nullptr;
+  delete m_firstInitialConditionName;
+  m_firstInitialConditionName = nullptr;
+  delete m_secondInitialConditionName;
+  m_secondInitialConditionName = nullptr;
 }
 
 Sequence& Sequence::operator=(const Sequence& other) {
@@ -92,18 +76,6 @@ uint32_t Sequence::checksum() {
   data[k_dataLengthInBytes-2] = name()!= nullptr ? name()[0] : 0;
   data[k_dataLengthInBytes-1] = (char)(isActive() ? 1 : 0);
   return Ion::crc32((uint32_t *)data, k_dataLengthInBytes/sizeof(uint32_t));
-}
-
-const char * Sequence::firstInitialConditionText() {
-  return m_firstInitialConditionText;
-}
-
-const char * Sequence::secondInitialConditionText() {
-  return m_secondInitialConditionText;
-}
-
-Sequence::Type Sequence::type() {
-  return m_type;
 }
 
 void Sequence::setType(Type type) {
@@ -191,26 +163,18 @@ void Sequence::setContent(const char * c) {
 
 void Sequence::setFirstInitialConditionContent(const char * c) {
   strlcpy(m_firstInitialConditionText, c, sizeof(m_firstInitialConditionText));
-  if (m_firstInitialConditionExpression != nullptr) {
-    delete m_firstInitialConditionExpression;
-    m_firstInitialConditionExpression = nullptr;
-  }
-  if (m_firstInitialConditionLayout != nullptr) {
-    delete m_firstInitialConditionLayout;
-    m_firstInitialConditionLayout = nullptr;
-  }
+  delete m_firstInitialConditionExpression;
+  m_firstInitialConditionExpression = nullptr;
+  delete m_firstInitialConditionLayout;
+  m_firstInitialConditionLayout = nullptr;
 }
 
 void Sequence::setSecondInitialConditionContent(const char * c) {
   strlcpy(m_secondInitialConditionText, c, sizeof(m_secondInitialConditionText));
-  if (m_secondInitialConditionExpression != nullptr) {
-    delete m_secondInitialConditionExpression;
-    m_secondInitialConditionExpression = nullptr;
-  }
-  if (m_secondInitialConditionLayout != nullptr) {
-    delete m_secondInitialConditionLayout;
-    m_secondInitialConditionLayout = nullptr;
-  }
+  delete m_secondInitialConditionExpression;
+  m_secondInitialConditionExpression = nullptr;
+  delete m_secondInitialConditionLayout;
+  m_secondInitialConditionLayout = nullptr;
 }
 
 char Sequence::symbol() const {
@@ -394,38 +358,22 @@ double Sequence::sumBetweenBounds(double start, double end, Context * context) c
 
 void Sequence::tidy() {
   Function::tidy();
-  if (m_firstInitialConditionLayout != nullptr) {
-    delete m_firstInitialConditionLayout;
-    m_firstInitialConditionLayout = nullptr;
-  }
-  if (m_secondInitialConditionLayout != nullptr) {
-    delete m_secondInitialConditionLayout;
-    m_secondInitialConditionLayout = nullptr;
-  }
-  if (m_firstInitialConditionExpression != nullptr) {
-    delete m_firstInitialConditionExpression;
-    m_firstInitialConditionExpression = nullptr;
-  }
-  if (m_secondInitialConditionExpression != nullptr) {
-    delete m_secondInitialConditionExpression;
-    m_secondInitialConditionExpression = nullptr;
-  }
-  if (m_nameLayout != nullptr) {
-    delete m_nameLayout;
-    m_nameLayout = nullptr;
-  }
-  if (m_definitionName != nullptr) {
-    delete m_definitionName;
-    m_definitionName = nullptr;
-  }
-  if (m_firstInitialConditionName != nullptr) {
-    delete m_firstInitialConditionName;
-    m_firstInitialConditionName = nullptr;
-  }
-  if (m_secondInitialConditionName != nullptr) {
-    delete m_secondInitialConditionName;
-    m_secondInitialConditionName = nullptr;
-  }
+  delete m_firstInitialConditionLayout;
+  m_firstInitialConditionLayout = nullptr;
+  delete m_secondInitialConditionLayout;
+  m_secondInitialConditionLayout = nullptr;
+  delete m_firstInitialConditionExpression;
+  m_firstInitialConditionExpression = nullptr;
+  delete m_secondInitialConditionExpression;
+  m_secondInitialConditionExpression = nullptr;
+  delete m_nameLayout;
+  m_nameLayout = nullptr;
+  delete m_definitionName;
+  m_definitionName = nullptr;
+  delete m_firstInitialConditionName;
+  m_firstInitialConditionName = nullptr;
+  delete m_secondInitialConditionName;
+  m_secondInitialConditionName = nullptr;
 }
 
 template double Sequence::templatedApproximateAtAbscissa<double>(double, SequenceContext*) const;

@@ -5,7 +5,7 @@
 
 namespace Probability {
 
-class RightIntegralCalculation : public Calculation {
+class RightIntegralCalculation final : public Calculation {
 public:
   RightIntegralCalculation();
   Type type() override;

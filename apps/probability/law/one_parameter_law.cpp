@@ -3,11 +3,6 @@
 
 namespace Probability {
 
-OneParameterLaw::OneParameterLaw(float parameterValue) :
-  m_parameter1(parameterValue)
-{
-}
-
 int OneParameterLaw::numberOfParameter() {
   return 1;
 }

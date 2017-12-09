@@ -7,11 +7,18 @@
 
 namespace Regression {
 
-class InitialisationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class InitialisationParameterController final : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  InitialisationParameterController(Responder * parentResponder, Store * store);
-  View * view() override;
-  const char * title() override;
+  InitialisationParameterController(Responder * parentResponder, Store * store) :
+    ViewController(parentResponder),
+    m_selectableTableView(this),
+    m_store(store) {}
+  View * view() override {
+    return &m_selectableTableView;
+  }
+  const char * title() override {
+    return I18n::translate(I18n::Message::Initialization);
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

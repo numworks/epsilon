@@ -10,22 +10,6 @@ using namespace Poincare;
 
 namespace Sequence {
 
-SequenceToolbox::SequenceToolbox() :
-  MathToolbox(),
-  m_addedCellLayout{},
-  m_numberOfAddedCells(0)
-{
-}
-
-SequenceToolbox::~SequenceToolbox() {
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    if (m_addedCellLayout[i]) {
-      delete m_addedCellLayout[i];
-      m_addedCellLayout[i] = nullptr;
-    }
-  }
-}
-
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
   if (selectedRow() < m_numberOfAddedCells && stackDepth() == 0) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {

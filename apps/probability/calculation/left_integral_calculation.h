@@ -5,7 +5,7 @@
 
 namespace Probability {
 
-class LeftIntegralCalculation : public Calculation {
+class LeftIntegralCalculation final : public Calculation {
 public:
   LeftIntegralCalculation();
   Type type() override;

@@ -29,21 +29,9 @@ HistogramController::HistogramController(Responder * parentResponder, ButtonRowC
 {
 }
 
-const char * HistogramController::title() {
-  return I18n::translate(I18n::Message::HistogramTab);
-}
-
-View * HistogramController::view() {
-  return &m_view;
-}
-
 StackViewController * HistogramController::stackController() {
   StackViewController * stack = (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
   return stack;
-}
-
-HistogramParameterController * HistogramController::histogramParameterController() {
-  return &m_histogramParameterController;
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {

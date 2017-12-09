@@ -7,7 +7,7 @@
 
 namespace Regression {
 
-class StoreController : public Shared::StoreController {
+class StoreController final : public Shared::StoreController {
 public:
   StoreController(Responder * parentResponder, Store * store, ButtonRowController * header);
   ~StoreController();

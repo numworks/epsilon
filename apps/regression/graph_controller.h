@@ -14,7 +14,7 @@
 
 namespace Regression {
 
-class GraphController : public Shared::InteractiveCurveViewController {
+class GraphController final : public Shared::InteractiveCurveViewController {
 
 public:
   GraphController(Responder * parentResponder, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex);
@@ -28,16 +28,24 @@ private:
   constexpr static float k_cursorBottomMarginRatio = 0.3f;  // (cursorHeight/2+bannerHeigh)/graphViewHeight
   constexpr static int k_maxLegendLength = 16;
   constexpr static int k_maxNumberOfCharacters = 50;
-  Shared::CurveView * curveView() override;
-  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
+  Shared::CurveView * curveView() override {
+    return &m_view;
+  }
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override {
+    return m_store;
+  }
   bool handleEnter() override;
   void reloadBannerView() override;
   void initRangeParameters() override;
   void initCursorParameters() override;
   bool moveCursorHorizontally(int direction) override;
   bool moveCursorVertically(int direction) override;
-  uint32_t modelVersion() override;
-  uint32_t rangeVersion() override;
+  uint32_t modelVersion() override {
+    return m_store->storeChecksum();
+  }
+  uint32_t rangeVersion() override {
+    return m_store->rangeChecksum();
+  }
   bool isCursorVisible() override;
   Shared::CursorView m_crossCursorView;
   Shared::RoundCursorView m_roundCursorView;
@@ -52,6 +60,5 @@ private:
 };
 
 }
-
 
 #endif

@@ -19,10 +19,6 @@ CalculationController::CalculationController(Responder * parentResponder, Button
 {
 }
 
-const char * CalculationController::title() {
-  return I18n::translate(I18n::Message::StatTab);
-}
-
 bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
@@ -74,11 +70,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
   if (i == 0) {
-    I18n::Message titles[k_totalNumberOfRows] = {I18n::Message::TotalSize, I18n::Message::Minimum, I18n::Message::Maximum, I18n::Message::Range, I18n::Message::Mean, I18n::Message::StandardDeviationSigma, I18n::Message::Deviation, I18n::Message::FirstQuartile, I18n::Message::ThirdQuartile, I18n::Message::Median, I18n::Message::InterquartileRange, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::SampleStandardDeviationS};
+    static const I18n::Message titles[k_totalNumberOfRows] = {I18n::Message::TotalSize, I18n::Message::Minimum, I18n::Message::Maximum, I18n::Message::Range, I18n::Message::Mean, I18n::Message::StandardDeviationSigma, I18n::Message::Deviation, I18n::Message::FirstQuartile, I18n::Message::ThirdQuartile, I18n::Message::Median, I18n::Message::InterquartileRange, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::SampleStandardDeviationS};
     EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;
     myCell->setMessage(titles[j]);
   } else {
-    CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
+    static const CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
       &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
       &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
     double calculation = (m_store->*calculationMethods[j])();

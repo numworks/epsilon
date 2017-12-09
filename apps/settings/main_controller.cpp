@@ -56,14 +56,8 @@ MainController::MainController(Responder * parentResponder) :
 }
 
 MainController::~MainController() {
-  if (m_complexFormatLayout) {
-    delete m_complexFormatLayout;
-    m_complexFormatLayout = nullptr;
-  }
-}
-
-View * MainController::view() {
-  return &m_selectableTableView;
+  delete m_complexFormatLayout;
+  m_complexFormatLayout = nullptr;
 }
 
 void MainController::didBecomeFirstResponder() {

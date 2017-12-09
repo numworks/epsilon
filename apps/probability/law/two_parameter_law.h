@@ -7,7 +7,7 @@ namespace Probability {
 
 class TwoParameterLaw : public Law {
 public:
-  TwoParameterLaw(float parameterValue1, float parameterValue2);
+  TwoParameterLaw(float parameterValue1, float parameterValue2) : m_parameter1(parameterValue1), m_parameter2(parameterValue2) {}
   int numberOfParameter() override;
   float parameterValueAtIndex(int index) override;
   void setParameterAtIndex(float f, int index) override;

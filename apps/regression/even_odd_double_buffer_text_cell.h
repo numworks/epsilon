@@ -3,21 +3,31 @@
 
 #include <escher.h>
 
-class EvenOddDoubleBufferTextCell : public EvenOddCell, public Responder{
+class EvenOddDoubleBufferTextCell final : public EvenOddCell, public Responder{
 public:
   EvenOddDoubleBufferTextCell(Responder * parentResponder = nullptr);
-  const char * firstText();
-  const char * secondText();
+  const char * firstText() {
+    return m_firstBufferTextView.text();
+  }
+  const char * secondText() {
+    return m_secondBufferTextView.text();
+  }
   void reloadCell() override;
   void setHighlighted(bool highlight) override;
   Responder * responder() override {
     return this;
   }
   void setEven(bool even) override;
-  bool firstTextSelected();
+  bool firstTextSelected() {
+    return m_firstTextSelected;
+  }
   void selectFirstText(bool selectFirstText);
-  void setFirstText(const char * textContent);
-  void setSecondText(const char * textContent);
+  void setFirstText(const char * textContent) {
+    m_firstBufferTextView.setText(textContent);
+  }
+  void setSecondText(const char * textContent) {
+    m_secondBufferTextView.setText(textContent);
+  }
   void setTextColor(KDColor textColor);
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

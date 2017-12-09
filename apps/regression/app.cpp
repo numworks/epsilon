@@ -1,35 +1,11 @@
 #include "app.h"
-#include "regression_icon.h"
 #include "../i18n.h"
 
 using namespace Shared;
 
 namespace Regression {
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::RegressionApp;
-}
-
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::RegressionAppCapital;
-}
-
-const Image * App::Descriptor::icon() {
-  return ImageStore::RegressionIcon;
-}
-
-App::Snapshot::Snapshot() :
-  m_store(),
-  m_cursor(),
-  m_graphSelectedDotIndex(-1),
-  m_modelVersion(0),
-  m_rangeVersion(0)
-{
-}
-
-App * App::Snapshot::unpack(Container * container) {
-  return new App(container, this);
-}
+App::Descriptor App::Snapshot::s_descriptor;
 
 void App::Snapshot::reset() {
   m_store.deleteAllPairs();
@@ -37,31 +13,6 @@ void App::Snapshot::reset() {
   m_modelVersion = 0;
   m_rangeVersion = 0;
   setActiveTab(0);
-}
-
-App::Descriptor * App::Snapshot::descriptor() {
-  static Descriptor descriptor;
-  return &descriptor;
-}
-
-Store * App::Snapshot::store() {
-  return &m_store;
-}
-
-CurveViewCursor * App::Snapshot::cursor() {
-  return &m_cursor;
-}
-
-int * App::Snapshot::graphSelectedDotIndex() {
-  return &m_graphSelectedDotIndex;
-}
-
-uint32_t * App::Snapshot::modelVersion() {
-  return &m_modelVersion;
-}
-
-uint32_t * App::Snapshot::rangeVersion() {
-  return &m_rangeVersion;
 }
 
 App::App(Container * container, Snapshot * snapshot) :

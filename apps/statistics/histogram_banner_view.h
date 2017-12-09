@@ -7,7 +7,7 @@
 
 namespace Statistics {
 
-class HistogramBannerView : public Shared::BannerView {
+class HistogramBannerView final : public Shared::BannerView {
 public:
   HistogramBannerView();
 private:

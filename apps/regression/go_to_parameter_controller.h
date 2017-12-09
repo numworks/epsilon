@@ -9,10 +9,16 @@ namespace Regression {
 
 class GraphController;
 
-class GoToParameterController : public Shared::GoToParameterController {
+class GoToParameterController final : public Shared::GoToParameterController {
 public:
-  GoToParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
-  void setXPrediction(bool xPrediction);
+  GoToParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController) :
+    Shared::GoToParameterController(parentResponder, store, cursor, I18n::Message::X),
+    m_store(store),
+    m_xPrediction(true),
+    m_graphController(graphController) {}
+  void setXPrediction(bool xPrediction) {
+    m_xPrediction = xPrediction;
+  }
   const char * title() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:

@@ -20,8 +20,12 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   /* ViewController */
-  View * view() override;
-  const char * title() override;
+  View * view() override {
+    return &m_contentView;
+  }
+  const char * title() override {
+    return m_titleBuffer;
+  }
   void viewWillAppear() override;
   void viewDidDisappear() override;
 
@@ -52,7 +56,7 @@ private:
   constexpr static KDCoordinate k_tableMargin = 3;
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   void updateTitle();
-  class ContentView : public View {
+  class ContentView final : public View {
   public:
     ContentView(SelectableTableView * selectableTableView, Law * law, Calculation * calculation);
     LawCurveView * lawCurveView() {

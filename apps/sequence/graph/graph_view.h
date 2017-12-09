@@ -6,7 +6,7 @@
 
 namespace Sequence {
 
-class GraphView : public Shared::FunctionGraphView {
+class GraphView final : public Shared::FunctionGraphView {
 public:
   GraphView(SequenceStore * sequenceStore, Shared::InteractiveCurveViewRange * graphRange,
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);

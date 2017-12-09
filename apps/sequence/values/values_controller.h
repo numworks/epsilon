@@ -8,7 +8,7 @@
 
 namespace Sequence {
 
-class ValuesController : public Shared::ValuesController {
+class ValuesController final : public Shared::ValuesController {
 public:
   ValuesController(Responder * parentResponder, SequenceStore * sequenceStore, Shared::Interval * interval, ButtonRowController * header);
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;

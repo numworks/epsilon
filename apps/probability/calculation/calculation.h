@@ -7,13 +7,13 @@ namespace Probability {
 
 class Calculation {
 public:
-  enum class Type : uint8_t{
+  enum class Type : uint8_t {
     LeftIntegral,
     FiniteIntegral,
     RightIntegral,
     Discrete,
   };
-  Calculation();
+  Calculation() : m_law(nullptr) {}
   virtual ~Calculation() = default;
   virtual Type type() = 0;
   void setLaw(Law * law);

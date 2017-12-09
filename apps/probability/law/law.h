@@ -11,14 +11,14 @@ namespace Probability {
 
 class Law : public Shared::CurveViewRange {
 public:
-  Law();
-  enum class Type : uint8_t{
+  enum class Type : uint8_t {
     Binomial,
     Uniform,
     Exponential,
     Normal,
     Poisson
   };
+  Law() : Shared::CurveViewRange() {}
   virtual ~Law() = default;
   virtual I18n::Message title() = 0;
   virtual Type type() const = 0;

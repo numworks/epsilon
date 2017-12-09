@@ -20,12 +20,6 @@
 
 namespace Probability {
 
-LawController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_titleView(KDText::FontSize::Small, I18n::Message::ChooseLaw, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
-  m_selectableTableView(selectableTableView)
-{
-}
-
 int LawController::ContentView::numberOfSubviews() const {
   return 2;
 }
@@ -62,10 +56,6 @@ LawController::LawController(Responder * parentResponder, Law * law, ParametersC
   assert(m_law != nullptr);
   m_messages = sMessages;
   m_selectableTableView.setTopMargin(Metric::CommonTopMargin-ContentView::k_titleMargin);
-}
-
-View * LawController::view() {
-  return &m_contentView;
 }
 
 void Probability::LawController::viewWillAppear() {

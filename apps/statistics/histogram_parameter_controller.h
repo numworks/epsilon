@@ -7,10 +7,15 @@
 
 namespace Statistics {
 
-class HistogramParameterController : public Shared::FloatParameterController {
+class HistogramParameterController final : public Shared::FloatParameterController {
 public:
-  HistogramParameterController(Responder * parentResponder, Store * store);
-  const char * title() override;
+  HistogramParameterController(Responder * parentResponder, Store * store) :
+    FloatParameterController(parentResponder),
+    m_cells{},
+    m_store(store) {}
+  const char * title() override {
+    return I18n::translate(I18n::Message::HistogramSet);
+  }
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:

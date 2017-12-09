@@ -8,7 +8,7 @@
 
 namespace Statistics {
 
-class HistogramView : public Shared::CurveView {
+class HistogramView final : public Shared::CurveView {
 public:
   HistogramView(Store * store, Shared::BannerView * bannerView);
   void reload() override;

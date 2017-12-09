@@ -5,11 +5,6 @@
 
 namespace Probability {
 
-UniformLaw::UniformLaw() :
-  TwoParameterLaw(-1.0f, 1.0f)
-{
-}
-
 I18n::Message UniformLaw::title() {
   return I18n::Message::UniformLaw;
 }

@@ -15,14 +15,6 @@ BoxController::BoxController(Responder * parentResponder, ButtonRowController * 
 {
 }
 
-const char * BoxController::title() {
-  return I18n::translate(I18n::Message::BoxTab);
-}
-
-View * BoxController::view() {
-  return &m_view;
-}
-
 bool BoxController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     m_view.selectMainView(false);
@@ -65,10 +57,10 @@ Responder * BoxController::tabController() const {
 }
 
 void BoxController::reloadBannerView() {
-  I18n::Message calculationName[5] = {I18n::Message::Minimum, I18n::Message::FirstQuartile, I18n::Message::Median, I18n::Message::ThirdQuartile, I18n::Message::Maximum};
+  static const I18n::Message calculationName[5] = {I18n::Message::Minimum, I18n::Message::FirstQuartile, I18n::Message::Median, I18n::Message::ThirdQuartile, I18n::Message::Maximum};
   m_boxBannerView.setMessageAtIndex(calculationName[(int)m_view.selectedQuantile()], 0);
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
+  static const CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   double calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])();
   PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);

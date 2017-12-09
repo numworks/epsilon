@@ -15,7 +15,7 @@
 
 namespace Sequence {
 
-class ListController : public Shared::ListController, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
+class ListController final : public Shared::ListController, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
 public:
   ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
@@ -30,7 +30,9 @@ private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
-  ListParameterController * parameterController() override;
+  ListParameterController * parameterController() override {
+    return &m_parameterController;
+  }
   int maxNumberOfRows() override;
   HighlightCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;

@@ -8,7 +8,7 @@
 
 namespace Regression {
 
-class GraphView : public Shared::CurveView {
+class GraphView final : public Shared::CurveView {
 public:
   GraphView(Store * store, Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;

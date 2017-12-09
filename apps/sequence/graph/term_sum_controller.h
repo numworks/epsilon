@@ -8,7 +8,7 @@
 
 namespace Sequence {
 
-class TermSumController : public Shared::SumGraphController {
+class TermSumController final : public Shared::SumGraphController {
 public:
   TermSumController(Responder * parentResponder, GraphView * graphView, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;

@@ -52,8 +52,4 @@ int CurveParameterController::reusableCellCount() {
   return k_totalNumberOfCells;
 }
 
-GoToParameterController * CurveParameterController::goToParameterController() {
-  return &m_goToParameterController;
-}
-
 }

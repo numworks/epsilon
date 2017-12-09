@@ -5,9 +5,9 @@
 
 namespace Probability {
 
-class PoissonLaw : public OneParameterLaw {
+class PoissonLaw final : public OneParameterLaw {
 public:
-  PoissonLaw();
+  PoissonLaw() : OneParameterLaw(4.0f) {}
   I18n::Message title() override;
   Type type() const override;
   bool isContinuous() const override;

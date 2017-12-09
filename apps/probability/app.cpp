@@ -1,23 +1,12 @@
 #include "app.h"
 #include "../i18n.h"
-#include "probability_icon.h"
 #include <new>
 
 using namespace Shared;
 
 namespace Probability {
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::ProbaApp;
-}
-
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::ProbaAppCapital;
-}
-
-const Image * App::Descriptor::icon() {
-  return ImageStore::ProbabilityIcon;
-}
+App::Descriptor App::Snapshot::s_descriptor;
 
 App::Snapshot::Snapshot() :
   m_law{},
@@ -34,37 +23,12 @@ App::Snapshot::~Snapshot() {
   calculation()->~Calculation();
 }
 
-App * App::Snapshot::unpack(Container * container) {
-  return new App(container, this);
-}
-
-App::Descriptor * App::Snapshot::descriptor() {
-  static Descriptor descriptor;
-  return &descriptor;
-}
-
 void App::Snapshot::reset() {
   law()->~Law();
   new(m_law) BinomialLaw();
   calculation()->~Calculation();
   new(m_calculation) LeftIntegralCalculation();
   m_activePage = Page::Law;
-}
-
-Law * App::Snapshot::law() {
-  return (Law *)m_law;
-}
-
-Calculation * App::Snapshot::calculation() {
-  return (Calculation *)m_calculation;
-}
-
-void App::Snapshot::setActivePage(Page activePage) {
-  m_activePage = activePage;
-}
-
-App::Snapshot::Page App::Snapshot::activePage() {
-  return m_activePage;
 }
 
 App::App(Container * container, Snapshot * snapshot) :

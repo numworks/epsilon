@@ -9,10 +9,10 @@ namespace Calculation {
 class ScrollableOutputExpressionsView : public ScrollableView, public ScrollViewDataSource {
 public:
   ScrollableOutputExpressionsView(Responder * parentResponder);
-  OutputExpressionsView * outputView();
+  OutputExpressionsView * outputView() { return &m_outputView; }
   void didBecomeFirstResponder() override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  KDPoint manualScrollingOffset() const;
+  KDPoint manualScrollingOffset() const { return m_manualScrollingOffset; }
 private:
   OutputExpressionsView m_outputView;
 };

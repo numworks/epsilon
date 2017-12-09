@@ -9,7 +9,7 @@ namespace Graph {
 
 class GraphController;
 
-class CurveParameterController : public Shared::FunctionCurveParameterController {
+class CurveParameterController final : public Shared::FunctionCurveParameterController {
 public:
   CurveParameterController(Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController, CartesianFunctionStore * functionStore);
   const char * title() override;
@@ -19,7 +19,7 @@ public:
   int reusableCellCount() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  Shared::FunctionGoToParameterController * goToParameterController() override;
+  Shared::FunctionGoToParameterController * goToParameterController() override { return &m_goToParameterController; }
   Shared::FunctionGoToParameterController m_goToParameterController;
   GraphController * m_graphController;
   constexpr static int k_totalNumberOfCells = 3;

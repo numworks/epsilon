@@ -19,18 +19,12 @@ Calculation::Calculation() :
 }
 
 Calculation::~Calculation() {
-  if (m_input != nullptr) {
-    delete m_input;
-    m_input = nullptr;
-  }
-  if (m_exactOutput != nullptr) {
-    delete m_exactOutput;
-    m_exactOutput = nullptr;
-  }
-  if (m_approximateOutput != nullptr) {
-    delete m_approximateOutput;
-    m_approximateOutput = nullptr;
-  }
+  delete m_input;
+  m_input = nullptr;
+  delete m_exactOutput;
+  m_exactOutput = nullptr;
+  delete m_approximateOutput;
+  m_approximateOutput = nullptr;
 }
 
 Calculation& Calculation::operator=(const Calculation& other) {
@@ -85,18 +79,6 @@ KDCoordinate Calculation::height(Context * context) {
   return m_height;
 }
 
-const char * Calculation::inputText() {
-  return m_inputText;
-}
-
-const char * Calculation::exactOutputText() {
-  return m_exactOutputText;
-}
-
-const char * Calculation::approximateOutputText() {
-  return m_approximateOutputText;
-}
-
 Expression * Calculation::input() {
   if (m_input == nullptr) {
     m_input = Expression::parse(m_inputText);
@@ -126,17 +108,11 @@ bool Calculation::isEmpty() {
 }
 
 void Calculation::tidy() {
-  if (m_input != nullptr) {
-    delete m_input;
-  }
+  delete m_input;
   m_input = nullptr;
-  if (m_exactOutput != nullptr) {
-    delete m_exactOutput;
-  }
+  delete m_exactOutput;
   m_exactOutput = nullptr;
-  if (m_approximateOutput != nullptr) {
-    delete m_approximateOutput;
-  }
+  delete m_approximateOutput;
   m_approximateOutput = nullptr;
   m_height = -1;
   m_equalSign = EqualSign::Unknown;

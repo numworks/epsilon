@@ -5,7 +5,7 @@
 
 namespace Code {
 
-class ConsoleLine {
+class ConsoleLine final {
 public:
   enum class Type {
     CurrentSessionCommand = 0,

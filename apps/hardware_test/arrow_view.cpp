@@ -28,12 +28,6 @@ const uint8_t arrowDownMask[10][9] = {
   {0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
-ArrowView::ArrowView() :
-  m_directionIsUp(true),
-  m_color(KDColorBlack)
-{
-}
-
 void ArrowView::setDirection(bool isUp) {
   if (m_directionIsUp!= isUp) {
     m_directionIsUp = isUp;

@@ -12,7 +12,7 @@
 
 namespace Code {
 
-class ConsoleController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
+class ConsoleController final : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public MicroPython::ExecutionEnvironment {
 public:
   static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
 
@@ -29,7 +29,7 @@ public:
 
   bool loadPythonEnvironment(bool autoImportScripts = true);
   void unloadPythonEnvironment();
-  bool pythonEnvironmentIsLoaded();
+  bool pythonEnvironmentIsLoaded() { return (m_pythonHeap != nullptr); }
 
   void autoImport();
   void autoImportScript(Script script, bool force = false);

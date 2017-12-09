@@ -10,16 +10,6 @@ using namespace Poincare;
 
 namespace HardwareTest {
 
-BatteryTestController::BatteryTestController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_view()
-{
-}
-
-View * BatteryTestController::view() {
-  return &m_view;
-}
-
 bool BatteryTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (strcmp(m_view.batteryStateTextView()->text(), k_batteryOKText) == 0) {
@@ -70,18 +60,6 @@ BatteryTestController::ContentView::ContentView() :
   m_batteryLevelView(KDText::FontSize::Small),
   m_batteryChargingView(KDText::FontSize::Small)
 {
-}
-
-BufferTextView * BatteryTestController::ContentView::batteryStateTextView() {
-  return &m_batteryStateView;
-}
-
-BufferTextView * BatteryTestController::ContentView::batteryLevelTextView() {
-  return &m_batteryLevelView;
-}
-
-BufferTextView * BatteryTestController::ContentView::batteryChargingTextView() {
-  return &m_batteryChargingView;
 }
 
 void BatteryTestController::ContentView::setColor(KDColor color) {

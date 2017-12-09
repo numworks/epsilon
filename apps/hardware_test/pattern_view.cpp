@@ -2,11 +2,6 @@
 
 namespace HardwareTest {
 
-PatternView::PatternView() :
-  m_pattern(Pattern::patternAtIndex(0))
-{
-}
-
 void PatternView::setPattern(Pattern p) {
   m_pattern = p;
   markRectAsDirty(bounds());

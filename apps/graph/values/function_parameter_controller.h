@@ -8,7 +8,7 @@ namespace Graph {
 
 class ValuesController;
 
-class FunctionParameterController : public Shared::ValuesFunctionParameterController {
+class FunctionParameterController final : public Shared::ValuesFunctionParameterController {
 public:
   FunctionParameterController(ValuesController * valuesController);
   bool handleEvent(Ion::Events::Event event) override;

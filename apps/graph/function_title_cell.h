@@ -5,13 +5,15 @@
 
 namespace Graph {
 
-class FunctionTitleCell : public Shared::FunctionTitleCell {
+class FunctionTitleCell final : public Shared::FunctionTitleCell {
 public:
   FunctionTitleCell(Orientation orientation, KDText::FontSize size = KDText::FontSize::Large);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
-  void setText(const char * textContent);
+  void setText(const char * textContent) {
+    m_bufferTextView.setText(textContent);
+  }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

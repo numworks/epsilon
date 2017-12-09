@@ -8,7 +8,7 @@
 
 namespace Graph {
 
-class CartesianFunctionStore : public Shared::FunctionStore {
+class CartesianFunctionStore final : public Shared::FunctionStore {
 public:
   CartesianFunctionStore();
   uint32_t storeChecksum() override;
@@ -18,7 +18,7 @@ public:
   CartesianFunction * addEmptyFunction() override;
   void removeFunction(Shared::Function * f) override;
   int maxNumberOfFunctions() override;
-  char symbol() const override;
+  char symbol() const override { return 'x'; }
   void removeAll() override;
   static constexpr int k_maxNumberOfFunctions = 4;
 private:

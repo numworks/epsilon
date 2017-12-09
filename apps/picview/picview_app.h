@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "picview_controller.h"
 
-class PicViewApp : public App {
+class PicViewApp final : public App {
 public:
   PicViewApp(Container * container);
 private:

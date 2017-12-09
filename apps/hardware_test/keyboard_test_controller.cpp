@@ -14,10 +14,6 @@ KeyboardTestController::KeyboardTestController(Responder * parentResponder) :
 {
 }
 
-View * KeyboardTestController::view() {
-  return &m_keyboardView;
-}
-
 bool KeyboardTestController::handleEvent(Ion::Events::Event event) {
   Ion::Keyboard::State state = Ion::Keyboard::scan();
   Ion::Keyboard::State onlyKeyDown = Ion::Keyboard::State(Ion::Keyboard::ValidKeys[m_keyboardView.testedKeyIndex()]);

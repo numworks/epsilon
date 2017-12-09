@@ -6,15 +6,6 @@ using namespace Poincare;
 
 namespace HardwareTest {
 
-KeyboardView::KeyboardView() :
-  m_testedKeyIndex(0)
-{
-}
-
-int KeyboardView::testedKeyIndex() const {
-  return m_testedKeyIndex;
-}
-
 void KeyboardView::setTestedKeyIndex(int i) {
   m_testedKeyIndex = i;
   markRectAsDirty(bounds());

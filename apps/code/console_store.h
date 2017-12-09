@@ -6,7 +6,7 @@
 
 namespace Code {
 
-class ConsoleStore {
+class ConsoleStore final {
 public:
   ConsoleStore();
   void clear();

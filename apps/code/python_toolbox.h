@@ -8,7 +8,7 @@
 
 namespace Code {
 
-class PythonToolbox : public Toolbox {
+class PythonToolbox final : public Toolbox {
 public:
   PythonToolbox();
   bool handleEvent(Ion::Events::Event event) override;

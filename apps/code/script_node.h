@@ -5,7 +5,7 @@
 
 namespace Code {
 
-class ScriptNode {
+class ScriptNode final {
 public:
   enum class Type {
     Function = 0,

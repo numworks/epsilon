@@ -9,7 +9,7 @@ namespace Code {
 
 class MenuController;
 
-class ScriptParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class ScriptParameterController final : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   ScriptParameterController(Responder * parentResponder, I18n::Message title, MenuController * menuController);
   void setScript(Script script);

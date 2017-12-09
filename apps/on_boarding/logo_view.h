@@ -5,7 +5,7 @@
 
 namespace OnBoarding {
 
-class LogoView : public View {
+class LogoView final : public View {
 public:
   LogoView();
   void drawRect(KDContext * ctx, KDRect rect) const override;

@@ -7,17 +7,6 @@ namespace HardwareTest {
 
 constexpr KDColor LEDTestController::k_LEDColors[k_numberOfColors];
 
-LEDTestController::LEDTestController(Responder * parentResponder) :
-  ViewController(parentResponder),
-  m_view(),
-  m_LEDColorIndex(0)
-{
-}
-
-View * LEDTestController::view() {
-  return &m_view;
-}
-
 bool LEDTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     setLEDColor(LEDColorAtIndex(m_LEDColorIndex++));
@@ -42,20 +31,6 @@ void LEDTestController::setLEDColor(KDColor color) {
 KDColor LEDTestController::LEDColorAtIndex(int i) {
   assert(i >= 0 && i < k_numberOfColors);
   return k_LEDColors[i];
-}
-
-LEDTestController::ContentView::ContentView() :
-  SolidColorView(KDColorWhite),
-  m_ledColorIndicatorView(KDColorBlack),
-  m_ledColorOutlineView(KDColorBlack),
-  m_ledView(KDText::FontSize::Large),
-  m_arrowView()
-{
-  m_ledView.setText("LED");
-}
-
-SolidColorView * LEDTestController::ContentView::LEDColorIndicatorView() {
-  return &m_ledColorIndicatorView;
 }
 
 void LEDTestController::ContentView::layoutSubviews() {
@@ -84,4 +59,3 @@ View * LEDTestController::ContentView::subviewAtIndex(int index) {
 }
 
 }
-

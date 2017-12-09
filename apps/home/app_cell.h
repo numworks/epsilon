@@ -5,9 +5,12 @@
 
 namespace Home {
 
-class AppCell : public HighlightCell {
+class AppCell final : public HighlightCell {
 public:
-  AppCell();
+  AppCell():
+    HighlightCell(),
+    m_nameView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, KDColorWhite),
+    m_visible(true) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
   int numberOfSubviews() const override;

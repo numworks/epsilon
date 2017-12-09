@@ -5,10 +5,12 @@
 
 namespace HardwareTest {
 
-class KeyboardView : public View {
+class KeyboardView final : public View {
 public:
-  KeyboardView();
-  int testedKeyIndex() const;
+  KeyboardView() : m_testedKeyIndex(0) {}
+  int testedKeyIndex() const {
+    return m_testedKeyIndex;
+  }
   void setTestedKeyIndex(int i);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:

@@ -14,14 +14,6 @@ BannerView::BannerView() :
 {
 }
 
-void BannerView::setNumberOfSubviews(int numberOfSubviews) {
-  m_numberOfSubviews = numberOfSubviews;
-}
-
-int BannerView::numberOfSubviews() const {
-  return m_numberOfSubviews;
-}
-
 TextView * BannerView::textViewAtIndex(int i) const {
   const TextView * textViews[6] = {&m_abscissaView, &m_functionView, &m_derivativeView, &m_tangentEquationView, &m_aView, &m_bView};
   return (TextView *)textViews[i];

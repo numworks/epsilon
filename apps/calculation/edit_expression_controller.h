@@ -13,7 +13,7 @@ namespace Calculation {
 class HistoryController;
 
 /* TODO: implement a split view */
-class EditExpressionController : public DynamicViewController, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
+class EditExpressionController final : public DynamicViewController, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
 public:
   EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
   void didBecomeFirstResponder() override;
@@ -33,10 +33,18 @@ public:
   void expressionLayoutFieldDidChangeSize(::ExpressionLayoutField * expressionLayoutField) override;
 
 private:
-  class ContentView : public View {
+  class ContentView final : public View {
   public:
-    ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
-    ~ContentView();
+    ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+      View(),
+      m_mainView(subview),
+      m_layout(new Poincare::HorizontalLayout()),
+      m_expressionField(parentResponder, m_textBody, k_bufferLength, m_layout, textFieldDelegate, expressionLayoutFieldDelegate) {
+      m_textBody[0] = 0;
+    }
+    ~ContentView() {
+      delete m_layout;
+    }
     ContentView(const ContentView& other) = delete;
     ContentView(ContentView&& other) = delete;
     ContentView& operator=(const ContentView& other) = delete;
@@ -56,7 +64,9 @@ private:
     ExpressionField m_expressionField;
   };
   View * loadView() override;
-  void unloadView(View * view) override;
+  void unloadView(View * view) override {
+    delete view;
+  }
   void reloadView();
   bool inputViewDidReceiveEvent(Ion::Events::Event event);
   bool inputViewDidFinishEditing(const char * text, Poincare::ExpressionLayout * layout);

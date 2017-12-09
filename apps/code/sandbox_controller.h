@@ -8,7 +8,7 @@
 
 namespace Code {
 
-class SandboxController : public ViewController {
+class SandboxController final : public ViewController {
 public:
   SandboxController(Responder * parentResponder);
   StackViewController * stackViewController();

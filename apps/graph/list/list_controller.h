@@ -11,7 +11,7 @@
 
 namespace Graph {
 
-class ListController : public Shared::ListController {
+class ListController final : public Shared::ListController {
 public:
   ListController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;

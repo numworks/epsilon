@@ -1,22 +1,10 @@
 #include "app.h"
 #include "../apps_container.h"
-#include "code_icon.h"
-#include "../i18n.h"
 #include "helpers.h"
 
 namespace Code {
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::CodeApp;
-}
-
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::CodeAppCapital;
-}
-
-const Image * App::Descriptor::icon() {
-  return ImageStore::CodeIcon;
-}
+App::Descriptor App::Snapshot::s_descriptor;
 
 App::Snapshot::Snapshot() :
 #if EPSILON_GETOPT
@@ -24,23 +12,6 @@ App::Snapshot::Snapshot() :
 #endif
   m_scriptStore()
 {
-}
-
-App * App::Snapshot::unpack(Container * container) {
-  return new App(container, this);
-}
-
-void App::Snapshot::reset() {
-  m_scriptStore.deleteAllScripts();
-}
-
-App::Descriptor * App::Snapshot::descriptor() {
-  static Descriptor descriptor;
-  return &descriptor;
-}
-
-ScriptStore * App::Snapshot::scriptStore() {
-  return &m_scriptStore;
 }
 
 #if EPSILON_GETOPT

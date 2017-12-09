@@ -5,7 +5,7 @@
 
 namespace Calculation {
 
-class CalculationStore {
+class CalculationStore final {
 public:
   CalculationStore();
   Calculation * calculationAtIndex(int i);

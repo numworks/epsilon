@@ -10,20 +10,12 @@ ScrollableOutputExpressionsView::ScrollableOutputExpressionsView(Responder * par
 {
 }
 
-OutputExpressionsView * ScrollableOutputExpressionsView::outputView() {
-  return &m_outputView;
-}
-
 void ScrollableOutputExpressionsView::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_outputView);
 }
 
 KDSize ScrollableOutputExpressionsView::minimalSizeForOptimalDisplay() const {
   return m_outputView.minimalSizeForOptimalDisplay();
-}
-
-KDPoint ScrollableOutputExpressionsView::manualScrollingOffset() const {
-  return m_manualScrollingOffset;
 }
 
 }

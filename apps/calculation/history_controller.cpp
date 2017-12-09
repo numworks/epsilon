@@ -12,10 +12,6 @@ HistoryController::HistoryController(Responder * parentResponder, CalculationSto
 {
 }
 
-void HistoryController::reload() {
-  selectableTableView()->reloadData();
-}
-
 void HistoryController::didBecomeFirstResponder() {
   selectCellAtLocation(0, numberOfRows()-1);
   app()->setFirstResponder(selectableTableView());
@@ -179,21 +175,13 @@ int HistoryController::indexFromCumulatedHeight(KDCoordinate offsetY) {
   return (result < offsetY || offsetY == 0) ? j : j - 1;
 }
 
-int HistoryController::typeAtLocation(int i, int j) {
-  return 0;
-}
-
 void HistoryController::scrollToCell(int i, int j) {
   selectableTableView()->scrollToCell(i, j);
 }
 
-CalculationSelectableTableView * HistoryController::selectableTableView() {
-  return (CalculationSelectableTableView *)view();
-}
-
 View * HistoryController::loadView() {
   CalculationSelectableTableView * tableView = new CalculationSelectableTableView(this, this, this, this);
-for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i] = new HistoryViewCell(tableView);
   }
   return tableView;

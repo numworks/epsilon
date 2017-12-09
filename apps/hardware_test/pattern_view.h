@@ -6,9 +6,9 @@
 
 namespace HardwareTest {
 
-class PatternView : public View {
+class PatternView final : public View {
 public:
-  PatternView();
+  PatternView() : m_pattern(Pattern::patternAtIndex(0)) {}
   void setPattern(Pattern p);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:

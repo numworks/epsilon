@@ -12,11 +12,6 @@ using namespace Poincare;
 
 namespace Graph {
 
-IntegralGraphController::IntegralGraphController(Responder * parentResponder, GraphView * graphView, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  SumGraphController(parentResponder, graphView, graphRange, cursor, Ion::Charset::Integral)
-{
-}
-
 const char * IntegralGraphController::title() {
   return I18n::translate(I18n::Message::Integral);
 }

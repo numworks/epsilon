@@ -7,9 +7,10 @@
 
 namespace Graph {
 
-class IntegralGraphController : public Shared::SumGraphController {
+class IntegralGraphController final : public Shared::SumGraphController {
 public:
-  IntegralGraphController(Responder * parentResponder, GraphView * graphView, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
+  IntegralGraphController(Responder * parentResponder, GraphView * graphView, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor) :
+    SumGraphController(parentResponder, graphView, graphRange, cursor, Ion::Charset::Integral) {}
   const char * title() override;
 private:
   I18n::Message legendMessageAtStep(Step step) override;

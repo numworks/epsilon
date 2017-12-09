@@ -18,11 +18,6 @@ EditorController::EditorController(MenuController * menuController) :
   m_editorView.setTextAreaDelegate(this);
 }
 
-EditorController::~EditorController() {
-  delete m_areaBuffer;
-  m_areaBuffer = nullptr;
-}
-
 void EditorController::setScript(Script script) {
   m_script = script;
   const char * scriptBody = m_script.readContent();
@@ -140,10 +135,6 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 Toolbox * EditorController::toolboxForTextInput(TextInput * textInput) {
   Code::App * codeApp = static_cast<Code::App *>(app());
   return codeApp->pythonToolbox();
-}
-
-StackViewController * EditorController::stackController() {
-  return static_cast<StackViewController *>(parentResponder());
 }
 
 }

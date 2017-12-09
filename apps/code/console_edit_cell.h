@@ -9,7 +9,7 @@
 
 namespace Code {
 
-class ConsoleEditCell : public HighlightCell, public Responder {
+class ConsoleEditCell final : public HighlightCell, public Responder {
 public:
   ConsoleEditCell(Responder * parentResponder = nullptr, TextFieldDelegate * delegate = nullptr);
 

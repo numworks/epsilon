@@ -132,14 +132,6 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   return m_floatCells[j];
 }
 
-CartesianFunctionStore * ValuesController::functionStore() const {
-  return m_functionStore;
-}
-
-FunctionParameterController * ValuesController::functionParameterController() {
-  return &m_functionParameterController;
-}
-
 double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) {
   CartesianFunction * function = functionAtColumn(columnIndex);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();

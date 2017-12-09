@@ -8,30 +8,46 @@ class AppsContainer;
 
 namespace Home {
 
-class Controller : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {
+class Controller final : public ViewController, public SimpleTableViewDataSource, public SelectableTableViewDelegate {
 public:
-  Controller(Responder * parentResponder, ::AppsContainer * container, SelectableTableViewDataSource * selectionDataSource);
-
-  View * view() override;
-
+  Controller(Responder * parentResponder, ::AppsContainer * container, SelectableTableViewDataSource * selectionDataSource) :
+    ViewController(parentResponder),
+    m_container(container),
+    m_view(this, selectionDataSource),
+    m_selectionDataSource(selectionDataSource) {}
+  View * view() override {
+    return &m_view;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
-  virtual int numberOfRows() override;
-  virtual int numberOfColumns() override;
-  virtual KDCoordinate cellHeight() override;
-  virtual KDCoordinate cellWidth() override;
-  virtual HighlightCell * reusableCell(int index) override;
-  virtual int reusableCellCount() override;
+  int numberOfRows() override;
+  int numberOfColumns() override;
+  KDCoordinate cellHeight() override;
+  KDCoordinate cellWidth() override;
+  HighlightCell * reusableCell(int index) override {
+    return &m_cells[index];
+  }
+  int reusableCellCount() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 private:
   int numberOfIcons();
-  class ContentView : public View {
+  class ContentView final : public View {
   public:
-    ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource);
-    SelectableTableView * selectableTableView();
+    ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource) :
+      m_selectableTableView(controller, controller, selectionDataSource, controller) {
+      m_selectableTableView.setVerticalCellOverlap(0);
+      m_selectableTableView.setMargins(0, k_sideMargin, 0, k_sideMargin);
+      m_selectableTableView.setColorsBackground(false);
+      m_selectableTableView.setIndicatorThickness(k_indicatorThickness);
+      m_selectableTableView.horizontalScrollIndicator()->setMargin(k_indicatorMargin);
+      m_selectableTableView.verticalScrollIndicator()->setMargin(k_indicatorMargin);
+    }
+    SelectableTableView * selectableTableView() {
+      return &m_selectableTableView;
+    }
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void reloadBottomRightCorner(SimpleTableViewDataSource * dataSource);
   private:

@@ -11,9 +11,7 @@ public:
     m_displayExpression = displayExpression;
   }
   void reloadCell() override;
-  void setLabel(const char * text) {
-    m_labelView.setText(text);
-  }
+  void setLabel(const char * text) { m_labelView.setText(text); }
   void setSubtitle(const char * text);
   void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout) {
     m_expressionView.setExpressionLayout(expressionLayout);

@@ -4,10 +4,6 @@
 
 namespace OnBoarding {
 
-App * App::Snapshot::unpack(Container * container) {
-  return new App(container, this);
-}
-
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;

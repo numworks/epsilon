@@ -5,16 +5,6 @@
 
 namespace HardwareTest {
 
-PopUpController::PopUpController() :
-  ViewController(nullptr),
-  m_contentView(this)
-{
-}
-
-View * PopUpController::view() {
-  return &m_contentView;
-}
-
 void PopUpController::didBecomeFirstResponder() {
   m_contentView.setSelectedButton(0);
 }

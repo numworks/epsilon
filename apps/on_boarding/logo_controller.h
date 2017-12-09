@@ -6,10 +6,12 @@
 
 namespace OnBoarding {
 
-class LogoController : public ViewController, public Timer {
+class LogoController final : public ViewController, public Timer {
 public:
-  LogoController();
-  View * view() override;
+  LogoController() : ViewController(nullptr), Timer(10), m_logoView() {}
+  View * view() override {
+    return &m_logoView;
+  }
 private:
   bool fire() override;
   LogoView m_logoView;

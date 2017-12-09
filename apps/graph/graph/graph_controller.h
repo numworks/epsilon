@@ -13,27 +13,41 @@
 
 namespace Graph {
 
-class GraphController : public Shared::FunctionGraphController, public GraphControllerHelper {
+class GraphController final : public Shared::FunctionGraphController, public GraphControllerHelper {
 public:
   GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Expression::AngleUnit * angleUnitVersion, ButtonRowController * header);
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
-  bool displayDerivativeInBanner() const;
-  void setDisplayDerivativeInBanner(bool displayDerivative);
+  bool displayDerivativeInBanner() const {
+    return m_displayDerivativeInBanner;
+  }
+  void setDisplayDerivativeInBanner(bool displayDerivative) {
+    m_displayDerivativeInBanner = displayDerivative;
+  }
   float interestingXRange() override;
 private:
   void selectFunctionWithCursor(int functionIndex) override;
-  BannerView * bannerView() override;
+  BannerView * bannerView() override {
+    return &m_bannerView;
+  }
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction) override;
   void initCursorParameters() override;
-  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
-  CartesianFunctionStore * functionStore() const override;
-  GraphView * functionGraphView() override;
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override {
+    return m_graphRange;
+  }
+  CartesianFunctionStore * functionStore() const override {
+    return m_functionStore;
+  }
+  GraphView * functionGraphView() override {
+    return &m_view;
+  }
   View * cursorView() override {
     return &m_cursorView;
   }
-  CurveParameterController * curveParameterController() override;
+  CurveParameterController * curveParameterController() override {
+    return &m_curveParameterController;
+  }
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;

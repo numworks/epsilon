@@ -3,14 +3,6 @@
 
 namespace Home {
 
-AppCell::AppCell() :
-  HighlightCell(),
-  m_nameView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorBlack, KDColorWhite),
-  m_visible(true)
-{
-}
-
-
 void AppCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
   ctx->fillRect(KDRect(0,  bounds().height()-nameSize.height() - 2*k_nameHeightMargin, bounds().width(), nameSize.height()+2*k_nameHeightMargin), KDColorWhite);

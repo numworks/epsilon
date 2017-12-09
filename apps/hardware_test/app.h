@@ -12,18 +12,28 @@ class AppsContainer;
 
 namespace HardwareTest {
 
-class App : public ::App {
+class App final : public ::App {
 public:
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot final : public ::App::Snapshot {
   public:
     App * unpack(Container * container) override;
-    Descriptor * descriptor() override;
+    Descriptor * descriptor() override {
+      return &s_descriptor;
+    }
+  private:
+    static App::Descriptor s_descriptor;
   };
 private:
-  class WizardViewController : public BankViewController {
+  class WizardViewController final : public BankViewController {
   public:
-    WizardViewController(Responder * parentResponder);
-    int numberOfChildren() override;
+    WizardViewController(Responder * parentResponder) :
+      BankViewController(parentResponder),
+      m_keyboardController(this),
+      m_screenTestController(this),
+      m_ledTestController(this),
+      m_batteryTestController(this),
+      m_serialNumberController(this) {}
+    int numberOfChildren() override { return 5; }
     ViewController * childAtIndex(int i) override;
     bool handleEvent(Ion::Events::Event event) override;
   private:
@@ -34,7 +44,9 @@ private:
     SerialNumberController m_serialNumberController;
   };
 
-  App(Container * container, Snapshot * snapshot);
+  App(Container * container, Snapshot * snapshot) :
+    ::App(container, snapshot, &m_wizardViewController),
+    m_wizardViewController(&m_modalViewController) {}
   WizardViewController m_wizardViewController;
 };
 

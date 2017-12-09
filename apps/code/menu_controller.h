@@ -12,7 +12,7 @@ namespace Code {
 
 class ScriptParameterController;
 
-class MenuController : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public ButtonRowDelegate {
+class MenuController final : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public ButtonRowDelegate {
 public:
   MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer
 #if EPSILON_GETOPT
@@ -25,9 +25,9 @@ public:
   void renameSelectedScript();
   void deleteScript(Script script);
   void reloadConsole();
-  void loadPythonIfNeeded();
+  void loadPythonIfNeeded() { m_consoleController.loadPythonEnvironment(false); }
   void openConsoleWithScript(Script script);
-  void scriptContentEditionDidFinish();
+  void scriptContentEditionDidFinish() { reloadConsole(); }
 
   /* ViewController */
   View * view() override { return &m_selectableTableView; }

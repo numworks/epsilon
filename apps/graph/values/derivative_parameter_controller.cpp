@@ -27,14 +27,6 @@ const char * DerivativeParameterController::title() {
   return m_pageTitle;
 }
 
-View * DerivativeParameterController::view() {
-  return &m_selectableTableView;
-}
-
-void DerivativeParameterController::setFunction(CartesianFunction * function) {
-  m_function = function;
-}
-
 void DerivativeParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);

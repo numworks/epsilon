@@ -9,25 +9,37 @@
 
 namespace Code {
 
-class VariableBoxController : public StackViewController {
+class VariableBoxController final : public StackViewController {
 public:
   VariableBoxController(MenuController * menuController, ScriptStore * scriptStore);
   void didBecomeFirstResponder() override;
-  void setTextInputCaller(TextInput * textInput);
+  void setTextInputCaller(TextInput * textInput) {
+    m_contentViewController.setTextInputCaller(textInput);
+  }
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
   class ContentViewController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
   public:
     ContentViewController(Responder * parentResponder, MenuController * menuController, ScriptStore * scriptStore);
-    void setTextInputCaller(TextInput * textInput);
-    void reloadData();
+    void setTextInputCaller(TextInput * textInput) {
+      m_textInputCaller = textInput;
+    }
+    void reloadData() {
+      m_selectableTableView.reloadData();
+    }
 
-    void addFunctionAtIndex(const char * functionName, int scriptIndex);
-    void addVariableAtIndex(const char * variableName, int scriptIndex);
+    void addFunctionAtIndex(const char * functionName, int scriptIndex) {
+      m_scriptNodes[m_scriptNodesCount] = ScriptNode::FunctionNode(functionName, scriptIndex);
+      m_scriptNodesCount++;
+    }
+    void addVariableAtIndex(const char * variableName, int scriptIndex) {
+      m_scriptNodes[m_scriptNodesCount] = ScriptNode::VariableNode(variableName, scriptIndex);
+      m_scriptNodesCount++;
+    }
 
     /* ViewController */
-    const char * title() override;
+    const char * title() override { return I18n::translate(I18n::Message::FunctionsAndVariables); }
     View * view() override { return &m_selectableTableView; }
     void viewWillAppear() override;
     void viewDidDisappear() override;

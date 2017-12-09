@@ -10,19 +10,6 @@ using namespace Poincare;
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
-  View(),
-  m_mainView(subview),
-  m_layout(new Poincare::HorizontalLayout()),
-  m_expressionField(parentResponder, m_textBody, k_bufferLength, m_layout, textFieldDelegate, expressionLayoutFieldDelegate)
-{
-  m_textBody[0] = 0;
-}
-
-EditExpressionController::ContentView::~ContentView() {
-  delete m_layout;
-}
-
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
   if (index == 0) {
@@ -129,10 +116,6 @@ ExpressionFieldDelegateApp * EditExpressionController::expressionFieldDelegateAp
 
 View * EditExpressionController::loadView() {
   return new ContentView(this, (TableView *)m_historyController->view(), this, this);
-}
-
-void EditExpressionController::unloadView(View * view) {
-  delete view;
 }
 
 void EditExpressionController::reloadView() {

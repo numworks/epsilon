@@ -4,10 +4,12 @@
 #include <escher.h>
 #include "pic_view.h"
 
-class PicViewController : public ViewController {
+class PicViewController final : public ViewController {
 public:
-  PicViewController(Responder * parentResponder);
-  View * view() override;
+  PicViewController(Responder * parentResponder) : ViewController(parentResponder), m_view(PicView()) {}
+  View * view() override {
+    return &m_view;
+  }
 private:
   PicView m_view;
 };

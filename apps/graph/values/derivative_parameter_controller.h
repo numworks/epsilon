@@ -8,11 +8,13 @@ namespace Graph {
 
 class ValuesController;
 
-class DerivativeParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class DerivativeParameterController final : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   DerivativeParameterController(ValuesController * valuesController);
 
-  View * view() override;
+  View * view() override {
+    return &m_selectableTableView;
+  }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -21,7 +23,7 @@ public:
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
 
-  void setFunction(CartesianFunction * function);
+  void setFunction(CartesianFunction * function) { m_function = function; }
 private:
 #if COPY_COLUMN
   constexpr static int k_totalNumberOfCell = 2;

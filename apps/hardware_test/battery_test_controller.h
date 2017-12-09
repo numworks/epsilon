@@ -5,19 +5,27 @@
 
 namespace HardwareTest {
 
-class BatteryTestController : public ViewController {
+class BatteryTestController final : public ViewController {
 public:
-  BatteryTestController(Responder * parentResponder);
-  View * view() override;
+  BatteryTestController(Responder * parentResponder) : ViewController(parentResponder), m_view() {}
+  View * view() override {
+    return &m_view;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
-  class ContentView : public SolidColorView {
+  class ContentView final : public SolidColorView {
   public:
     ContentView();
-    BufferTextView * batteryStateTextView();
-    BufferTextView * batteryLevelTextView();
-    BufferTextView * batteryChargingTextView();
+    BufferTextView * batteryStateTextView() {
+      return &m_batteryStateView;
+    }
+    BufferTextView * batteryLevelTextView() {
+      return &m_batteryLevelView;
+    }
+    BufferTextView * batteryChargingTextView() {
+      return &m_batteryChargingView;
+    }
     constexpr static int k_maxNumberOfCharacters = 20;
     void setColor(KDColor color) override;
   private:

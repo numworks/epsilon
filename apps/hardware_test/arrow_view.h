@@ -5,9 +5,11 @@
 
 namespace HardwareTest {
 
-class ArrowView : public TransparentView {
+class ArrowView final : public TransparentView {
 public:
-  ArrowView();
+  ArrowView() :
+    m_directionIsUp(true),
+    m_color(KDColorBlack) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setDirection(bool up);
   void setColor(KDColor color);

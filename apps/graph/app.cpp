@@ -1,6 +1,5 @@
 #include "app.h"
 #include "../apps_container.h"
-#include "graph_icon.h"
 #include "../i18n.h"
 
 using namespace Poincare;
@@ -8,46 +7,12 @@ using namespace Shared;
 
 namespace Graph {
 
-I18n::Message App::Descriptor::name() {
-  return I18n::Message::FunctionApp;
-}
-
-I18n::Message App::Descriptor::upperName() {
-  return I18n::Message::FunctionAppCapital;
-}
-
-const Image * App::Descriptor::icon() {
-  return ImageStore::GraphIcon;
-}
-
-App::Snapshot::Snapshot() :
-  Shared::FunctionApp::Snapshot::Snapshot(),
-  m_functionStore(),
-  m_graphRange(&m_cursor)
-{
-}
-
-App * App::Snapshot::unpack(Container * container) {
-  return new App(container, this);
-}
+App::Descriptor App::Snapshot::s_descriptor;
 
 void App::Snapshot::reset() {
   FunctionApp::Snapshot::reset();
   m_functionStore.removeAll();
   m_graphRange.setDefault();
-}
-
-App::Descriptor * App::Snapshot::descriptor() {
-  static Descriptor descriptor;
-  return &descriptor;
-}
-
-CartesianFunctionStore * App::Snapshot::functionStore() {
-  return &m_functionStore;
-}
-
-InteractiveCurveViewRange * App::Snapshot::graphRange() {
-  return &m_graphRange;
 }
 
 void App::Snapshot::tidy() {
@@ -72,14 +37,6 @@ App::App(Container * container, Snapshot * snapshot) :
   m_tabViewController(&m_inputViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
   m_inputViewController(&m_modalViewController, &m_tabViewController, this, this)
 {
-}
-
-InputViewController * App::inputViewController() {
-  return &m_inputViewController;
-}
-
-const char * App::XNT() {
-  return "x";
 }
 
 }

@@ -8,7 +8,7 @@
 
 namespace OnBoarding {
 
-class UpdateController : public ViewController {
+class UpdateController final : public ViewController {
 public:
   UpdateController();
   View * view() override { return &m_messageViewWithSkip; }

@@ -4,7 +4,7 @@
 namespace Code {
 namespace Helpers {
 
-class EventTextPair {
+class EventTextPair final {
 public:
   constexpr EventTextPair(Ion::Events::Event event, const char * text) : m_event(event), m_text(text) {}
   Ion::Events::Event event() const { return m_event; }

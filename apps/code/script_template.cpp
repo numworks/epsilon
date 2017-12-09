@@ -2,16 +2,16 @@
 
 namespace Code {
 
-constexpr ScriptTemplate emptyScriptTemplate(".py", R"(from math import *
+const ScriptTemplate ScriptTemplate::emptyScriptTemplate(".py", R"(from math import *
 )");
 
-constexpr ScriptTemplate factorialScriptTemplate("factorial.py", R"(def factorial(n):
+const ScriptTemplate ScriptTemplate::factorialScriptTemplate("factorial.py", R"(def factorial(n):
   if n == 0:
     return 1
   else:
     return n * factorial(n-1))");
 
-constexpr ScriptTemplate fibonacciScriptTemplate("fibonacci.py", R"(def fibo(n):
+const ScriptTemplate ScriptTemplate::fibonacciScriptTemplate("fibonacci.py", R"(def fibo(n):
   a=0
   b=1
   for i in range(1,n+1):
@@ -27,7 +27,7 @@ def fibo2(n):
     return 1
   return fibo2(n-1)+fibo2(n-2))");
 
-constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", R"(# This script draws a Mandelbrot fractal set
+const ScriptTemplate ScriptTemplate::mandelbrotScriptTemplate("mandelbrot.py", R"(# This script draws a Mandelbrot fractal set
 # N_iteration: degree of precision
 import kandinsky
 def mandelbrot(N_iteration):
@@ -47,7 +47,7 @@ def mandelbrot(N_iteration):
 # Draw a pixel colored in 'col' at position (x,y)
       kandinsky.set_pixel(x,y,col))");
 
-constexpr ScriptTemplate polynomialScriptTemplate("polynomial.py", R"(from math import *
+const ScriptTemplate ScriptTemplate::polynomialScriptTemplate("polynomial.py", R"(from math import *
 # roots(a,b,c) computes the solutions of the equation a*x**2+b*x+c=0
 def roots(a,b,c):
   delta = b*b-4*a*c
@@ -60,26 +60,4 @@ def roots(a,b,c):
   else:
     return None)");
 
-const ScriptTemplate * ScriptTemplate::Empty() {
-  return &emptyScriptTemplate;
 }
-
-const ScriptTemplate * ScriptTemplate::Factorial() {
-  return &factorialScriptTemplate;
-}
-
-const ScriptTemplate * ScriptTemplate::Fibonacci() {
-  return &fibonacciScriptTemplate;
-}
-
-const ScriptTemplate * ScriptTemplate::Mandelbrot() {
-  return &mandelbrotScriptTemplate;
-}
-
-const ScriptTemplate * ScriptTemplate::Polynomial() {
-  return &polynomialScriptTemplate;
-}
-
-}
-
-

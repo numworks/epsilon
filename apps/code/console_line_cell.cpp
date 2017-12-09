@@ -12,10 +12,6 @@ ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::ConsoleLineView() :
 {
 }
 
-void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(ConsoleLine * line) {
-  m_line = line;
-}
-
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   ctx->drawString(m_line->text(), KDPointZero, ConsoleController::k_fontSize, textColor(m_line), isHighlighted()? Palette::Select : KDColorWhite);

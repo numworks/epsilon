@@ -25,28 +25,6 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   }
 }
 
-void VariableBoxController::ContentViewController::setTextInputCaller(TextInput * textInput) {
-  m_textInputCaller = textInput;
-}
-
-void VariableBoxController::ContentViewController::reloadData() {
-  m_selectableTableView.reloadData();
-}
-
-void VariableBoxController::ContentViewController::addFunctionAtIndex(const char * functionName, int scriptIndex) {
-  m_scriptNodes[m_scriptNodesCount] = ScriptNode::FunctionNode(functionName, scriptIndex);
-  m_scriptNodesCount++;
-}
-
-void VariableBoxController::ContentViewController::addVariableAtIndex(const char * variableName, int scriptIndex) {
-  m_scriptNodes[m_scriptNodesCount] = ScriptNode::VariableNode(variableName, scriptIndex);
-  m_scriptNodesCount++;
-}
-
-const char * VariableBoxController::ContentViewController::title() {
-  return  I18n::translate(I18n::Message::FunctionsAndVariables);
-}
-
 void VariableBoxController::ContentViewController::viewWillAppear() {
   m_menuController->loadPythonIfNeeded();
   m_scriptNodesCount = 0;
@@ -132,10 +110,6 @@ VariableBoxController::VariableBoxController(MenuController * menuController, Sc
 
 void VariableBoxController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_contentViewController);
-}
-
-void VariableBoxController::setTextInputCaller(TextInput * textInput) {
-  m_contentViewController.setTextInputCaller(textInput);
 }
 
 void VariableBoxController::viewWillAppear() {

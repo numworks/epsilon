@@ -12,14 +12,6 @@ CartesianFunction::CartesianFunction(const char * text, KDColor color) :
 {
 }
 
-bool CartesianFunction::displayDerivative() {
-  return m_displayDerivative;
-}
-
-void CartesianFunction::setDisplayDerivative(bool display) {
-  m_displayDerivative = display;
-}
-
 double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
   Poincare::Complex<double> abscissa = Poincare::Complex<double>::Float(x);
   Poincare::Expression * args[2] = {expression(context), &abscissa};
@@ -122,10 +114,6 @@ void CartesianFunction::bracketMinimum(double start, double step, double max, do
   result[0] = NAN;
   result[1] = NAN;
   result[2] = NAN;
-}
-
-char CartesianFunction::symbol() const {
-  return 'x';
 }
 
 CartesianFunction::Point CartesianFunction::brentMinimum(double ax, double bx, Evaluation evaluate, Context * context, const Shared::Function * function) const {

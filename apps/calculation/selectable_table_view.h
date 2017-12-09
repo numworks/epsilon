@@ -5,7 +5,7 @@
 #include "history_view_cell.h"
 namespace Calculation {
 
-class CalculationSelectableTableView : public ::SelectableTableView {
+class CalculationSelectableTableView final : public ::SelectableTableView {
 public:
   CalculationSelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
     SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate = nullptr);

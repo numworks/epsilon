@@ -6,17 +6,31 @@
 
 namespace HardwareTest {
 
-class LEDTestController : public ViewController {
+class LEDTestController final : public ViewController {
 public:
-  LEDTestController(Responder * parentResponder);
-  View * view() override;
+  LEDTestController(Responder * parentResponder) :
+    ViewController(parentResponder),
+    m_view(),
+    m_LEDColorIndex(0) {}
+  View * view() override {
+    return &m_view;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
-  class ContentView : public SolidColorView {
+  class ContentView final : public SolidColorView {
   public:
-    ContentView();
-    SolidColorView * LEDColorIndicatorView();
+    ContentView() :
+      SolidColorView(KDColorWhite),
+      m_ledColorIndicatorView(KDColorBlack),
+      m_ledColorOutlineView(KDColorBlack),
+      m_ledView(KDText::FontSize::Large),
+      m_arrowView() {
+      m_ledView.setText("LED");
+    }
+    SolidColorView * LEDColorIndicatorView() {
+      return &m_ledColorIndicatorView;
+    }
   private:
     void layoutSubviews() override;
     int numberOfSubviews() const override;

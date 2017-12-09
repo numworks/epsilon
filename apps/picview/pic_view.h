@@ -3,7 +3,7 @@
 
 #include <escher.h>
 
-class PicView : public View {
+class PicView final : public View {
 public:
   PicView();
   void drawRect(KDContext * ctx, KDRect rect) const override;

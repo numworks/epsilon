@@ -8,7 +8,7 @@
 
 namespace OnBoarding {
 
-class LanguageController : public Shared::LanguageController {
+class LanguageController final : public Shared::LanguageController {
 public:
   LanguageController(Responder * parentResponder, LogoController * logoController, UpdateController * updateController);
   void reinitOnBoarding();

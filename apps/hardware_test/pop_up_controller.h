@@ -5,14 +5,16 @@
 
 namespace HardwareTest {
 
-class PopUpController : public ViewController {
+class PopUpController final : public ViewController {
 public:
-  PopUpController();
-  View * view() override;
+  PopUpController() : ViewController(nullptr), m_contentView(this) {}
+  View * view() override {
+    return &m_contentView;
+  }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 private:
-  class ContentView : public View, public Responder {
+  class ContentView final : public View, public Responder {
   public:
     ContentView(Responder * parentResponder);
     void drawRect(KDContext * ctx, KDRect rect) const override;

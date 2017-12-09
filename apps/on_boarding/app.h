@@ -8,11 +8,13 @@
 
 namespace OnBoarding {
 
-class App : public ::App {
+class App final : public ::App {
 public:
-  class Snapshot : public ::App::Snapshot {
+  class Snapshot final : public ::App::Snapshot {
   public:
-    App * unpack(Container * container) override;
+    App * unpack(Container * container) override {
+      return new App(container, this);
+    }
     Descriptor * descriptor() override;
   };
   int numberOfTimers() override;

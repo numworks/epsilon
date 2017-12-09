@@ -7,10 +7,15 @@
 
 namespace HardwareTest {
 
-class ScreenTestController : public ViewController {
+class ScreenTestController final : public ViewController {
 public:
-  ScreenTestController(Responder * parentResponder);
-  View * view() override;
+  ScreenTestController(Responder * parentResponder) :
+    ViewController(parentResponder),
+    m_patternIndex(0),
+    m_view() {}
+  View * view() override {
+    return &m_view;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:

@@ -6,10 +6,12 @@
 
 namespace HardwareTest {
 
-class KeyboardTestController : public ViewController {
+class KeyboardTestController final : public ViewController {
 public:
   KeyboardTestController(Responder * parentResponder);
-  View * view() override;
+  View * view() override {
+    return &m_keyboardView;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:

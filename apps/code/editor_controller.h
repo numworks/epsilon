@@ -10,10 +10,13 @@ namespace Code {
 class MenuController;
 class ScriptParameterController;
 
-class EditorController : public ViewController, public TextAreaDelegate {
+class EditorController final : public ViewController, public TextAreaDelegate {
 public:
   EditorController(MenuController * menuController);
-  ~EditorController();
+  ~EditorController() {
+    delete m_areaBuffer;
+    m_areaBuffer = nullptr;
+  }
   void setScript(Script script);
 
   /* ViewController */
@@ -30,7 +33,9 @@ public:
 
 private:
   static constexpr int k_indentationSpacesNumber = 2;
-  StackViewController * stackController();
+  StackViewController * stackController() {
+    return static_cast<StackViewController *>(parentResponder());
+  }
   EditorView m_editorView;
   char * m_areaBuffer;
   Script m_script;

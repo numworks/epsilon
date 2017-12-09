@@ -26,10 +26,6 @@ void FunctionTitleCell::setColor(KDColor color) {
   m_bufferTextView.setTextColor(color);
 }
 
-void FunctionTitleCell::setText(const char * title) {
-  m_bufferTextView.setText(title);
-}
-
 int FunctionTitleCell::numberOfSubviews() const {
   return 1;
 }

@@ -135,10 +135,6 @@ void HistoryViewCell::didBecomeFirstResponder() {
   }
 }
 
-HistoryViewCell::SubviewType HistoryViewCell::selectedSubviewType() {
-  return m_selectedSubviewType;
-}
-
 void HistoryViewCell::setSelectedSubviewType(HistoryViewCell::SubviewType subviewType) {
   m_selectedSubviewType = subviewType;
   setHighlighted(isHighlighted());

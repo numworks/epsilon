@@ -5,7 +5,7 @@
 
 class SolidColorView : public View {
 public:
-  SolidColorView(KDColor color);
+  SolidColorView(KDColor color) : View(), m_color(color) {}
   virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:

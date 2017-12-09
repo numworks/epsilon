@@ -14,20 +14,8 @@ View * MessageTableCellWithEditableText::accessoryView() const {
   return (View *)&m_textField;
 }
 
-const char * MessageTableCellWithEditableText::editedText() const {
-  return m_textField.text();
-}
-
 void MessageTableCellWithEditableText::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_textField);
-}
-
-bool MessageTableCellWithEditableText::isEditing() {
-  return m_textField.isEditing();
-}
-
-void MessageTableCellWithEditableText::setEditing(bool isEditing) {
-  m_textField.setEditing(isEditing);
 }
 
 void MessageTableCellWithEditableText::setHighlighted(bool highlight) {

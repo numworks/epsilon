@@ -3,7 +3,7 @@
 
 #include <escher/transparent_view.h>
 
-class ChevronView : public TransparentView {
+class ChevronView final : public TransparentView {
 public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

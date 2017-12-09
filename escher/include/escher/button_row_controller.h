@@ -11,7 +11,7 @@
 
 class ButtonRowDelegate;
 
-class ButtonRowController : public ViewController {
+class ButtonRowController final : public ViewController {
 public:
   enum class Position {
     Top,
@@ -69,7 +69,7 @@ private:
 
 class ButtonRowDelegate {
 public:
-  ButtonRowDelegate(ButtonRowController * header, ButtonRowController * footer);
+  ButtonRowDelegate(ButtonRowController * header, ButtonRowController * footer) : m_header(header), m_footer(footer) {}
   virtual int numberOfButtons(ButtonRowController::Position position) const { return 0; }
   virtual Button * buttonAtIndex(int index, ButtonRowController::Position position) const {
     assert(false);

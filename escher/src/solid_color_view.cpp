@@ -1,11 +1,5 @@
 #include <escher/solid_color_view.h>
 
-SolidColorView::SolidColorView(KDColor color) :
-  View(),
-  m_color(color)
-{
-}
-
 void SolidColorView::setColor(KDColor color) {
   if (m_color != color) {
     m_color = color;

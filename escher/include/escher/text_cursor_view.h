@@ -3,7 +3,7 @@
 
 #include <escher/view.h>
 
-class TextCursorView : public View {
+class TextCursorView final : public View {
 public:
   using View::View;
   KDRect frame() const { return m_frame; }

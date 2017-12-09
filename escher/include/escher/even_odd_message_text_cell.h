@@ -5,7 +5,7 @@
 #include <escher/i18n.h>
 #include <escher/message_text_view.h>
 
-class EvenOddMessageTextCell : public EvenOddCell {
+class EvenOddMessageTextCell final : public EvenOddCell {
 public:
   EvenOddMessageTextCell(KDText::FontSize size = KDText::FontSize::Large);
   void setEven(bool even) override;

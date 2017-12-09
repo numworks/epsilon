@@ -33,14 +33,6 @@ void AlternateEmptyViewController::ContentView::layoutSubviews() {
   }
 }
 
-ViewController * AlternateEmptyViewController::ContentView::mainViewController() const {
-  return m_mainViewController;
-}
-
-AlternateEmptyViewDelegate * AlternateEmptyViewController::ContentView::alternateEmptyViewDelegate() const {
-  return m_delegate;
-}
-
 /* AlternateEmptyViewController */
 
 AlternateEmptyViewController::AlternateEmptyViewController(Responder * parentResponder, ViewController * mainViewController, AlternateEmptyViewDelegate * delegate) :

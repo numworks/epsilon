@@ -3,7 +3,7 @@
 
 #include <kandinsky.h>
 
-class Image {
+class Image final {
 public:
   constexpr Image(KDCoordinate width, KDCoordinate height, const KDColor * pixels) :
     m_width(width), m_height(height), m_pixels(pixels) {}

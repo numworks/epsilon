@@ -8,10 +8,6 @@ MessageTableCell::MessageTableCell(I18n::Message label, KDText::FontSize size, L
 {
 }
 
-View * MessageTableCell::labelView() const {
-  return (View *)&m_messageTextView;
-}
-
 void MessageTableCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
@@ -22,10 +18,6 @@ void MessageTableCell::setMessage(I18n::Message text) {
   m_messageTextView.setMessage(text);
   layoutSubviews();
   markRectAsDirty(bounds());
-}
-
-void MessageTableCell::setTextColor(KDColor color) {
-  m_messageTextView.setTextColor(color);
 }
 
 void MessageTableCell::setMessageFontSize(KDText::FontSize fontSize) {

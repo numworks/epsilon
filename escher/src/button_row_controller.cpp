@@ -2,12 +2,6 @@
 #include <escher/palette.h>
 #include <cmath>
 
-ButtonRowDelegate::ButtonRowDelegate(ButtonRowController * header, ButtonRowController * footer) :
-  m_header(header),
-  m_footer(footer)
-{
-}
-
 ButtonRowController::ContentView::ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style, Size size) :
   View(),
   m_mainViewController(mainViewController),

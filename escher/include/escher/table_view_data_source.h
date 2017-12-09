@@ -2,7 +2,8 @@
 #define ESCHER_TABLE_VIEW_DATA_SOURCE_H
 
 #include <escher/view.h>
-#include <escher/highlight_cell.h>
+
+class HighlightCell;
 
 class TableViewDataSource {
 public:

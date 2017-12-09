@@ -7,7 +7,9 @@
 class ModalViewController : public ViewController {
 public:
   ModalViewController(Responder * parentResponder, ViewController * child);
-  View * view() override;
+  View * view() override {
+    return &m_contentView;
+  }
 
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -15,7 +17,9 @@ public:
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0,  KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
   void reloadModalViewController();
   void dismissModalViewController();
-  bool isDisplayingModal();
+  bool isDisplayingModal() {
+    return m_contentView.isDisplayingModal();
+  }
   void viewWillAppear() override;
   void viewDidDisappear() override;
 protected:
@@ -23,15 +27,29 @@ protected:
 private:
   class ContentView : public View {
   public:
-    ContentView();
-    void setMainView(View * regularView);
+    ContentView() :
+      View(),
+      m_regularView(nullptr),
+      m_currentModalView(nullptr),
+      m_isDisplayingModal(false),
+      m_verticalAlignment(0.0f),
+      m_horizontalAlignment(0.0f),
+      m_topMargin(0),
+      m_leftMargin(0),
+      m_bottomMargin(0),
+      m_rightMargin(0) {}
+    void setMainView(View * regularView) {
+      m_regularView = regularView;
+    }
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
     void presentModalView(View * modalView, float verticalAlignment, float horizontalAlignment,
       KDCoordinate topMargin, KDCoordinate leftMargin,  KDCoordinate bottomMargin, KDCoordinate rightMargin);
     void dismissModalView();
-    bool isDisplayingModal() const;
+    bool isDisplayingModal() const {
+      return m_isDisplayingModal;
+    }
     void reload();
   private:
     KDRect modalViewFrame() const;

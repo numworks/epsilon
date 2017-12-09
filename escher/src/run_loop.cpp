@@ -4,10 +4,6 @@
 #include <emscripten.h>
 #endif
 
-RunLoop::RunLoop() :
-  m_time(0) {
-}
-
 int RunLoop::numberOfTimers() {
   return 0;
 }

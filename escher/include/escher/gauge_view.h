@@ -3,10 +3,12 @@
 
 #include <escher/transparent_view.h>
 
-class GaugeView : public TransparentView {
+class GaugeView final : public TransparentView {
 public:
-  GaugeView();
-  float level();
+  GaugeView() :
+    m_level(1),
+    m_backgroundColor(KDColorWhite) {}
+  float level() { return m_level; }
   void setLevel(float level);
   void setBackgroundColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;

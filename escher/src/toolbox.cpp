@@ -1,5 +1,4 @@
 #include <escher/toolbox.h>
-#include <escher/metric.h>
 #include <assert.h>
 #include <string.h>
 
@@ -117,10 +116,6 @@ void Toolbox::viewDidDisappear() {
   m_selectableTableView.deselectTable();
 }
 
-KDCoordinate Toolbox::rowHeight(int j) {
-  return Metric::ToolboxRowHeight;
-}
-
 int Toolbox::numberOfRows() {
   if (m_messageTreeModel == nullptr) {
     m_messageTreeModel = (ToolboxMessageTree *)rootModel();
@@ -136,10 +131,6 @@ HighlightCell * Toolbox::reusableCell(int index, int type) {
     return leafCellAtIndex(index);
   }
   return nodeCellAtIndex(index);
-}
-
-int Toolbox::reusableCellCount(int type) {
-  return maxNumberOfDisplayedRows();
 }
 
 void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {

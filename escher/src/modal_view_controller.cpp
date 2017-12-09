@@ -2,26 +2,6 @@
 #include <escher/app.h>
 #include <assert.h>
 
-ModalViewController::ContentView::ContentView() :
-  View(),
-  m_regularView(nullptr),
-  m_currentModalView(nullptr),
-  m_isDisplayingModal(false),
-  m_verticalAlignment(0.0f),
-  m_horizontalAlignment(0.0f),
-  m_topMargin(0),
-  m_leftMargin(0),
-  m_bottomMargin(0),
-  m_rightMargin(0)
-{
-}
-
-void ModalViewController::ContentView::setMainView(View * regularView) {
-  if (m_regularView != regularView) {
-    m_regularView = regularView;
-  }
-}
-
 int ModalViewController::ContentView::numberOfSubviews() const {
   return 1 + m_isDisplayingModal;
 }
@@ -87,10 +67,6 @@ void ModalViewController::ContentView::dismissModalView() {
   m_currentModalView = nullptr;
 }
 
-bool ModalViewController::ContentView::isDisplayingModal() const {
-  return m_isDisplayingModal;
-}
-
 void ModalViewController::ContentView::reload() {
   markRectAsDirty(bounds());
   layoutSubviews();
@@ -103,14 +79,6 @@ ModalViewController::ModalViewController(Responder * parentResponder, ViewContro
   m_currentModalViewController(nullptr),
   m_regularViewController(child)
 {
-}
-
-View * ModalViewController::view() {
-  return &m_contentView;
-}
-
-bool ModalViewController::isDisplayingModal() {
-  return m_contentView.isDisplayingModal();
 }
 
 void ModalViewController::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,

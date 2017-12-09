@@ -3,7 +3,7 @@
 
 #include <escher/text_view.h>
 
-class BufferTextView : public TextView {
+class BufferTextView final : public TextView {
 public:
   BufferTextView(KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.5f, float verticalAlignment = 0.5f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);

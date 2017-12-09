@@ -11,25 +11,33 @@ public:
     TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, KDText::FontSize size = KDText::FontSize::Large,
     float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setDelegate(TextFieldDelegate * delegate) { m_delegate = delegate; }
-  void setDraftTextBuffer(char * draftTextBuffer);
-  bool isEditing() const;
+  void setDraftTextBuffer(char * draftTextBuffer) {
+    m_contentView.setDraftTextBuffer(draftTextBuffer);
+  }
+  bool isEditing() const {
+    return m_contentView.isEditing();
+  }
   size_t draftTextLength() const;
   void setText(const char * text);
-  void setAlignment(float horizontalAlignment, float verticalAlignment);
+  void setAlignment(float horizontalAlignment, float verticalAlignment) {
+    m_contentView.setAlignment(horizontalAlignment, verticalAlignment);
+  }
   virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   KDSize minimalSizeForOptimalDisplay() const override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   constexpr static int maxBufferSize() {
-     return ContentView::k_maxBufferSize;
+    return ContentView::k_maxBufferSize;
   }
   void scrollToCursor() override;
   bool textFieldShouldFinishEditing(Ion::Events::Event event) { return m_delegate->textFieldShouldFinishEditing(this, event); }
 protected:
-  class ContentView : public TextInput::ContentView {
+  class ContentView final : public TextInput::ContentView {
   public:
     ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, KDText::FontSize size, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
-    void setDraftTextBuffer(char * draftTextBuffer);
+    void setDraftTextBuffer(char * draftTextBuffer) {
+      m_draftTextBuffer = draftTextBuffer;
+    }
     void drawRect(KDContext * ctx, KDRect rect) const override;
     bool isEditing() const { return m_isEditing; }
     const char * text() const override;

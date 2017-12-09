@@ -9,10 +9,10 @@ class MessageTableCellWithEditableText : public Responder, public MessageTableCe
 public:
   MessageTableCellWithEditableText(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, char * draftTextBuffer, I18n::Message message = (I18n::Message)0);
   View * accessoryView() const override;
-  const char * editedText() const;
+  const char * editedText() const { return m_textField.text(); }
   void didBecomeFirstResponder() override;
-  bool isEditing();
-  void setEditing(bool isEditing);
+  bool isEditing() { return m_textField.isEditing(); }
+  void setEditing(bool isEditing) { m_textField.setEditing(isEditing); }
   void setHighlighted(bool highlight) override;
   Responder * responder() override {
     return this;

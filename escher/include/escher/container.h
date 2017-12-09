@@ -17,14 +17,14 @@
 
 class Container : public RunLoop {
 public:
-  Container();
+  Container(): RunLoop(), m_activeApp(nullptr) {}
   virtual ~Container();
   Container(const Container& other) = delete;
   Container(Container&& other) = delete;
   Container& operator=(const Container& other) = delete;
   Container& operator=(Container&& other) = delete;
   virtual void run();
-  App * activeApp();
+  App * activeApp() { return m_activeApp; }
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   virtual void switchTo(App::Snapshot * snapshot);
 protected:

@@ -6,12 +6,17 @@
 #include <escher/text_field_delegate.h>
 #include <escher/text_field.h>
 
-class EditableTextCell : public HighlightCell, public Responder {
+class EditableTextCell final : public HighlightCell, public Responder {
 public:
   EditableTextCell(Responder * parentResponder = nullptr, TextFieldDelegate * delegate = nullptr, char * draftTextBuffer = nullptr, KDText::FontSize size = KDText::FontSize::Large,
      float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
-  TextField * textField();
-  void setMargins(KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
+  TextField * textField() { return &m_textField; }
+  void setMargins(KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0) {
+    m_topMargin = topMargin;
+    m_rightMargin = rightMargin;
+    m_bottomMargin = bottomMargin;
+    m_leftMargin = leftMargin;
+  }
   void setHighlighted(bool highlight) override;
   Responder * responder() override {
     return this;

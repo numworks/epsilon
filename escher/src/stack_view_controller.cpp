@@ -121,10 +121,6 @@ void StackViewController::pop() {
   vc->viewDidDisappear();
 }
 
-int StackViewController::depth() {
-  return m_numberOfChildren;
-}
-
 void StackViewController::pushModel(Frame frame) {
   m_childrenFrame[m_numberOfChildren++] = frame;
 }

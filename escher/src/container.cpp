@@ -1,16 +1,9 @@
 #include <escher/container.h>
 #include <assert.h>
 
-Container::Container() :
-  RunLoop(),
-  m_activeApp(nullptr)
-{
-}
-
 Container::~Container() {
-  if (m_activeApp) {
-    delete m_activeApp;
-  }
+  delete m_activeApp;
+  m_activeApp = nullptr;
 }
 
 void Container::switchTo(App::Snapshot * snapshot) {
@@ -29,10 +22,6 @@ void Container::switchTo(App::Snapshot * snapshot) {
     m_activeApp->didBecomeActive(window());
     window()->redraw();
   }
-}
-
-App * Container::activeApp() {
-  return m_activeApp;
 }
 
 bool Container::dispatchEvent(Ion::Events::Event event) {

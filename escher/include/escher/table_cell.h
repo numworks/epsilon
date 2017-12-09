@@ -9,7 +9,7 @@ public:
     Vertical,
     Horizontal
   };
-  TableCell(Layout layout = Layout::Horizontal);
+  TableCell(Layout layout = Layout::Horizontal) : HighlightCell(), m_layout(layout) {}
   virtual View * labelView() const;
   virtual View * accessoryView() const;
   virtual View * subAccessoryView() const;

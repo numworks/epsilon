@@ -3,7 +3,7 @@
 
 #include <escher/view.h>
 
-class ScrollViewIndicator : public View {
+class ScrollViewIndicator final : public View {
 public:
   enum class Direction {
     Horizontal,
@@ -19,11 +19,11 @@ public:
   void setMargin(KDCoordinate m) { m_margin = m; }
   KDCoordinate margin() const { return m_margin; }
 
-  float start() const;
+  float start() const { return m_start; }
   void setStart(float start);
-  float end() const;
+  float end() const { return m_end; }
   void setEnd(float end);
-  KDRect frame();
+  KDRect frame() { return m_frame; }
 protected:
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;

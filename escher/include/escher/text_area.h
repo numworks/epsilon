@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <string.h>
 
-class TextArea : public TextInput {
+class TextArea final : public TextInput {
 public:
   TextArea(Responder * parentResponder, char * textBuffer = nullptr, size_t textBufferSize = 0, TextAreaDelegate * delegate = nullptr, KDText::FontSize fontSize = KDText::FontSize::Large,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
@@ -20,7 +20,7 @@ private:
   TextInputDelegate * delegate() override {
     return m_delegate;
   }
-  class Text {
+  class Text final {
   public:
     Text(char * buffer, size_t bufferSize);
     void setText(char * buffer, size_t bufferSize);
@@ -82,10 +82,11 @@ private:
     size_t m_bufferSize;
   };
 
-  class ContentView : public TextInput::ContentView {
+  class ContentView final : public TextInput::ContentView {
   public:
-    ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize size,
-      KDColor textColor, KDColor backgroundColor);
+    ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
+      TextInput::ContentView(fontSize, textColor, backgroundColor),
+      m_text(textBuffer, textBufferSize) {}
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);

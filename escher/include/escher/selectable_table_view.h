@@ -20,10 +20,10 @@ public:
   SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
       SelectableTableViewDataSource * selectionDataSource = nullptr, SelectableTableViewDelegate * delegate = nullptr);
   template <typename T> SelectableTableView(T * p) : SelectableTableView(p, p, p) {};
-  int selectedRow();
-  int selectedColumn();
-  void selectRow(int j);
-  void selectColumn(int i);
+  int selectedRow() { return m_selectionDataSource->selectedRow(); }
+  int selectedColumn() { return m_selectionDataSource->selectedColumn(); }
+  void selectRow(int j) { m_selectionDataSource->selectRow(j); }
+  void selectColumn(int i) { m_selectionDataSource->selectColumn(i); }
   void reloadData(bool setFirstResponder = true);
   virtual bool handleEvent(Ion::Events::Event event) override;
   virtual void didEnterResponderChain(Responder * previousFirstResponder) override;

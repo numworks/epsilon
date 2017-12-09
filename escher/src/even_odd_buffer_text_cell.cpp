@@ -7,10 +7,6 @@ EvenOddBufferTextCell::EvenOddBufferTextCell(KDText::FontSize size, float horizo
 {
 }
 
-const char * EvenOddBufferTextCell::text() {
-  return m_bufferTextView.text();
-}
-
 void EvenOddBufferTextCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
   m_bufferTextView.setBackgroundColor(backgroundColor());
@@ -23,10 +19,6 @@ void EvenOddBufferTextCell::setEven(bool even) {
 
 void EvenOddBufferTextCell::setText(const char * textContent) {
   m_bufferTextView.setText(textContent);
-}
-
-void EvenOddBufferTextCell::setTextColor(KDColor textColor) {
-  m_bufferTextView.setTextColor(textColor);
 }
 
 int EvenOddBufferTextCell::numberOfSubviews() const {

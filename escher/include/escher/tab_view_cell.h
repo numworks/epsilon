@@ -6,7 +6,7 @@
 #include <escher/text_view.h>
 #include <escher/view_controller.h>
 
-class TabViewCell : public View {
+class TabViewCell final : public View {
 public:
   TabViewCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;

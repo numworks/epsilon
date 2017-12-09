@@ -3,7 +3,7 @@
 
 #include <escher/transparent_view.h>
 
-class KeyView : public TransparentView {
+class KeyView final : public TransparentView {
 public:
   enum class Type {
     Up,
@@ -13,7 +13,7 @@ public:
     Plus,
     Minus
   };
-  KeyView(Type type = Type::Up);
+  KeyView(Type type = Type::Up) : m_type(type) {}
   void setType(Type type);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

@@ -15,9 +15,9 @@
 class Timer {
 public:
   static constexpr int TickDuration = 300; // In Miliseconds
-  Timer(uint32_t period); // Period is in ticks
+  constexpr Timer(uint32_t period) : m_period(period), m_numberOfTicksBeforeFire(period) {} // Period is in ticks
   bool tick();
-  void reset();
+  void reset() { m_numberOfTicksBeforeFire = m_period; }
 protected:
   virtual bool fire() = 0;
 private:

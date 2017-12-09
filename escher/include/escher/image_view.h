@@ -4,7 +4,7 @@
 #include <escher/view.h>
 #include <escher/image.h>
 
-class ImageView : public View {
+class ImageView final : public View {
 public:
   ImageView();
   void setImage(const Image * image);

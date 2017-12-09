@@ -12,10 +12,6 @@ void MessageTableCellWithBuffer::setAccessoryText(const char * textBody) {
   layoutSubviews();
 }
 
-const char * MessageTableCellWithBuffer::accessoryText() {
-  return m_accessoryView.text();
-}
-
 View * MessageTableCellWithBuffer::accessoryView() const {
   return (View *)&m_accessoryView;
 }
@@ -29,12 +25,4 @@ void MessageTableCellWithBuffer::setHighlighted(bool highlight) {
 void MessageTableCellWithBuffer::setTextColor(KDColor color) {
   m_accessoryView.setTextColor(color);
   MessageTableCell::setTextColor(color);
-}
-
-void MessageTableCellWithBuffer::setAccessoryTextColor(KDColor color) {
-  m_accessoryView.setTextColor(color);
-}
-
-void MessageTableCellWithBuffer::setAccessoryFontSize(KDText::FontSize fontSize) {
-  m_accessoryView.setFontSize(fontSize);
 }

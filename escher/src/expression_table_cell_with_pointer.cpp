@@ -20,7 +20,3 @@ void ExpressionTableCellWithPointer::setHighlighted(bool highlight) {
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
   m_accessoryView.setBackgroundColor(backgroundColor);
 }
-
-void ExpressionTableCellWithPointer::setAccessoryMessage(I18n::Message text) {
-  m_accessoryView.setMessage(text);
-}

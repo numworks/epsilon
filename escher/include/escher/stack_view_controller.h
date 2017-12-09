@@ -16,7 +16,9 @@ public:
   void push(ViewController * vc, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GreyBright);
   void pop();
 
-  int depth();
+  int depth() {
+    return m_numberOfChildren;
+  }
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -24,7 +26,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
-  class Frame {
+  class Frame final {
   public:
     Frame(ViewController * viewController = nullptr, KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GreyBright) :
       m_viewController(viewController),
@@ -41,7 +43,7 @@ private:
     KDColor m_backgroundColor;
     KDColor m_separatorColor;
   };
-  class ControllerView : public View {
+  class ControllerView final : public View {
   public:
     ControllerView();
     void shouldDisplayStackHearders(bool shouldDisplay);

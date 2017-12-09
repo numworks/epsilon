@@ -4,7 +4,7 @@
 #include <escher/text_view.h>
 #include <escher/i18n.h>
 
-class MessageTextView : public TextView {
+class MessageTextView final : public TextView {
 public:
   MessageTextView(KDText::FontSize size = KDText::FontSize::Large, I18n::Message message = (I18n::Message)0, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);

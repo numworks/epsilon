@@ -12,7 +12,7 @@
 /* TODO Implement a split view. Because we use a modal view, the main view is
  * redrawn underneath the modal view, which is visible and ugly. */
 
-class InputViewController : public ModalViewController, TextFieldDelegate, ExpressionLayoutFieldDelegate {
+class InputViewController final : public ModalViewController, TextFieldDelegate, ExpressionLayoutFieldDelegate {
 public:
   InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
   void edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction);

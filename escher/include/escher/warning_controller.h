@@ -6,18 +6,18 @@
 #include <escher/solid_color_view.h>
 #include <escher/i18n.h>
 
-class WarningController : public ViewController {
+class WarningController final : public ViewController {
 public:
   WarningController(Responder * parentResponder, I18n::Message warningMessage);
-  void setLabel(I18n::Message message);
+  void setLabel(I18n::Message message) { m_contentView.setLabel(message); }
   const char * title() override;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
 private:
   class ContentView : public SolidColorView {
   public:
-    ContentView();
-    void setLabel(I18n::Message message);
+    ContentView() : SolidColorView(KDColorBlack), m_textView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorWhite, KDColorBlack) {}
+    void setLabel(I18n::Message message) { m_textView.setMessage(message); }
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;

@@ -1,16 +1,6 @@
 #include <escher/warning_controller.h>
 #include <escher/app.h>
 
-WarningController::ContentView::ContentView() :
-  SolidColorView(KDColorBlack),
-  m_textView(KDText::FontSize::Small, (I18n::Message)0, 0.5f, 0.5f, KDColorWhite, KDColorBlack)
-{
-}
-
-void WarningController::ContentView::setLabel(I18n::Message label) {
-  m_textView.setMessage(label);
-}
-
 int WarningController::ContentView::numberOfSubviews() const {
   return 1;
 }
@@ -33,10 +23,6 @@ WarningController::WarningController(Responder * parentResponder, I18n::Message 
   m_contentView(),
   m_warningMessage(warningMessage)
 {
-}
-
-void WarningController::setLabel(I18n::Message label) {
-  m_contentView.setLabel(label);
 }
 
 const char * WarningController::title() {

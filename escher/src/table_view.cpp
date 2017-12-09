@@ -13,22 +13,10 @@ TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * sc
 {
 }
 
-KDSize TableView::minimalSizeForOptimalDisplay() const {
-  return m_contentView.minimalSizeForOptimalDisplay();
-}
-
-TableViewDataSource * TableView::dataSource() {
-  return m_contentView.dataSource();
-}
-
 // This method computes the minimal scrolling needed to properly display the
 // requested cell.
 void TableView::scrollToCell(int i, int j) {
   m_contentView.scrollToCell(i, j);
-}
-
-HighlightCell * TableView::cellAtLocation(int i, int j) {
-  return m_contentView.cellAtLocation(i, j);
 }
 
 #if ESCHER_VIEW_LOGGING
@@ -46,27 +34,10 @@ void TableView::layoutSubviews() {
   ScrollView::layoutSubviews();
 }
 
-void TableView::reloadCellAtLocation(int i, int j) {
-  m_contentView.reloadCellAtLocation(i, j);
-}
-
 /* TableView::ContentView */
-
-TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlap, KDCoordinate verticalCellOverlap) :
-  View(),
-  m_tableView(tableView),
-  m_dataSource(dataSource),
-  m_horizontalCellOverlap(horizontalCellOverlap),
-  m_verticalCellOverlap(verticalCellOverlap)
-{
-}
 
 KDSize TableView::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(width(), height());
-}
-
-TableViewDataSource * TableView::ContentView::dataSource() {
-  return m_dataSource;
 }
 
 KDCoordinate TableView::ContentView::columnWidth(int i) const {

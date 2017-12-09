@@ -11,22 +11,6 @@ SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewD
   assert(m_selectionDataSource != nullptr);
 }
 
-int SelectableTableView::selectedRow() {
-  return m_selectionDataSource->selectedRow();
-}
-
-int SelectableTableView::selectedColumn() {
-  return m_selectionDataSource->selectedColumn();
-}
-
-void SelectableTableView::selectRow(int j) {
-  m_selectionDataSource->selectRow(j);
-}
-
-void SelectableTableView::selectColumn(int i) {
-  m_selectionDataSource->selectColumn(i);
-}
-
 void SelectableTableView::reloadData(bool setFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();

@@ -8,10 +8,10 @@
 
 class TabViewController;
 
-class TabView : public View {
+class TabView final : public View {
 public:
   TabView();
-  int numberOfTabs() const;
+  int numberOfTabs() const { return m_numberOfTabs; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
   void addTab(ViewController * controller);

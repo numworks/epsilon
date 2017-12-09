@@ -41,11 +41,11 @@ public:
     /* With WantsMaximumSpace, no stack headers are displayed. */
   };
 
-  ViewController(Responder * parentResponder);
-  virtual const char * title();
+  ViewController(Responder * parentResponder) : Responder(parentResponder) {}
+  virtual const char * title() { return nullptr; }
   virtual View * view() = 0;
-  virtual void viewWillAppear();
-  virtual void viewDidDisappear();
+  virtual void viewWillAppear() {}
+  virtual void viewDidDisappear() {}
   virtual DisplayParameter displayParameter() { return DisplayParameter::Default; }
   static void convertFloatToText(double value, char * buffer, const char * header, size_t headerLength, const char * trailer, int precision);
 };

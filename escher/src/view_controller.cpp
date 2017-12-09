@@ -2,21 +2,6 @@
 #include <poincare/complex.h>
 #include <string.h>
 
-ViewController::ViewController(Responder * parentResponder) :
-  Responder(parentResponder)
-{
-}
-
-const char * ViewController::title() {
-  return nullptr;
-}
-
-void ViewController::viewWillAppear() {
-}
-
-void ViewController::viewDidDisappear() {
-}
-
 void ViewController::convertFloatToText(double value, char * buffer, const char * header, size_t headerLength, const char * trailer, int precision) {
   strcpy(buffer, header);
   int numberOfChar = headerLength;

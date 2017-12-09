@@ -5,12 +5,6 @@ extern "C" {
 #include <escher/metric.h>
 #include <escher/app.h>
 
-TabViewController::ContentView::ContentView() :
-  View(),
-  m_activeView(nullptr)
-{
-};
-
 void TabViewController::ContentView::setActiveView(View * view) {
   m_activeView = view;
   layoutSubviews();
@@ -68,10 +62,6 @@ TabViewController::TabViewController(Responder * parentResponder, TabViewDataSou
   while (m_numberOfChildren < k_maxNumberOfChildren && m_children[m_numberOfChildren] != nullptr) {
     m_numberOfChildren++;
   }
-}
-
-int TabViewController::activeTab() const {
-  return m_dataSource->activeTab();
 }
 
 bool TabViewController::handleEvent(Ion::Events::Event event) {

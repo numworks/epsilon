@@ -3,10 +3,10 @@
 
 #include <escher/transparent_view.h>
 
-class SwitchView : public TransparentView {
+class SwitchView final : public TransparentView {
 public:
-  SwitchView();
-  bool state();
+  SwitchView() : m_state(true) {}
+  bool state() { return m_state; }
   void setState(bool state);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

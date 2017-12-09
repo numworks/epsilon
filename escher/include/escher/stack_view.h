@@ -4,9 +4,9 @@
 #include <escher/view.h>
 #include <escher/view_controller.h>
 
-class StackView : public View {
+class StackView final : public View {
 public:
-  StackView();
+  StackView() : View(), m_controller(nullptr) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setNamedController(ViewController * controller);
   void setTextColor(KDColor textColor);

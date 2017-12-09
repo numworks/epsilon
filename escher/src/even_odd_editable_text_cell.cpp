@@ -9,10 +9,6 @@ EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, Te
 {
 }
 
-EditableTextCell * EvenOddEditableTextCell::editableTextCell() {
-  return &m_editableCell;
-}
-
 void EvenOddEditableTextCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
   m_editableCell.textField()->setBackgroundColor(backgroundColor());

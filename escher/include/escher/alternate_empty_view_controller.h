@@ -6,7 +6,7 @@
 #include <escher/message_text_view.h>
 #include <escher/view_controller.h>
 
-class AlternateEmptyViewController : public ViewController {
+class AlternateEmptyViewController final : public ViewController {
 public:
   AlternateEmptyViewController(Responder * parentResponder, ViewController * mainViewController, AlternateEmptyViewDelegate * delegate);
   View * view() override;
@@ -19,8 +19,8 @@ private:
   class ContentView : public View {
   public:
     ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate);
-    ViewController * mainViewController() const;
-    AlternateEmptyViewDelegate * alternateEmptyViewDelegate() const;
+    ViewController * mainViewController() const { return m_mainViewController; }
+    AlternateEmptyViewDelegate * alternateEmptyViewDelegate() const { return m_delegate; }
     void layoutSubviews() override;
   private:
     int numberOfSubviews() const override;

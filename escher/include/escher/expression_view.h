@@ -11,7 +11,7 @@
  * view, we cannot use minimalSizeForOptimalDisplay to assess the required
  * size. */
 
-class ExpressionView : public View {
+class ExpressionView final : public View {
 public:
   ExpressionView(float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);

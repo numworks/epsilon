@@ -48,7 +48,7 @@ protected:
   KDRect visibleContentRect();
   void layoutSubviews() override;
   void updateScrollIndicator();
-  KDSize contentSize();
+  KDSize contentSize() { return m_contentView->minimalSizeForOptimalDisplay(); }
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const override;
   virtual void logAttributes(std::ostream &os) const override;

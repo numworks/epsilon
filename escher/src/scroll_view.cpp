@@ -192,10 +192,6 @@ void ScrollView::updateScrollIndicator() {
   }
 }
 
-KDSize ScrollView::contentSize() {
-  return m_contentView->minimalSizeForOptimalDisplay();
-}
-
 void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {
   if (m_dataSource->setOffset(offset) || forceRelayout) {
     layoutSubviews();

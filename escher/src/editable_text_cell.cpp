@@ -16,17 +16,6 @@ EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegat
   m_textBody[0] = 0;
 }
 
-void EditableTextCell::setMargins(KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) {
-  m_topMargin = topMargin;
-  m_rightMargin = rightMargin;
-  m_bottomMargin = bottomMargin;
-  m_leftMargin = leftMargin;
-}
-
-TextField * EditableTextCell::textField() {
-  return &m_textField;
-}
-
 void EditableTextCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;

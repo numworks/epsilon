@@ -8,6 +8,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/toolbox_message_tree.h>
+#include <escher/metric.h>
 
 class Toolbox : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
@@ -21,10 +22,10 @@ public:
   void viewDidDisappear() override;
 
   //ListViewDataSource
-  virtual KDCoordinate rowHeight(int j) override;
+  virtual KDCoordinate rowHeight(int j) override { return Metric::ToolboxRowHeight; }
   int numberOfRows() override;
   HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) override { return maxNumberOfDisplayedRows(); }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;

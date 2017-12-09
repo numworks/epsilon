@@ -151,12 +151,6 @@ TextArea::Text::Position TextArea::Text::span() const {
 
 /* TextArea::ContentView */
 
-TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
-  TextInput::ContentView(fontSize, textColor, backgroundColor),
-  m_text(textBuffer, textBufferSize)
-{
-}
-
 KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize charSize = KDText::charSize(m_fontSize);
   Text::Position span = m_text.span();

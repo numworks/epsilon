@@ -6,7 +6,7 @@
 
 class RunLoop {
 public:
-  RunLoop();
+  RunLoop() : m_time(0) {}
   void run();
   void runWhile(bool (*callback)(void * ctx), void * ctx);
 protected:

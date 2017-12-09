@@ -4,7 +4,7 @@
 #include <escher/text_view.h>
 #include <escher/i18n.h>
 
-class PointerTextView : public TextView {
+class PointerTextView final : public TextView {
 public:
   PointerTextView(KDText::FontSize size = KDText::FontSize::Large, const char * text = nullptr, float horizontalAlignment = 0.0f, float verticalAlignment = 0.0f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);

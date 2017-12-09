@@ -5,11 +5,11 @@
 #include <escher/tab_view_data_source.h>
 #include <escher/tab_view.h>
 
-class TabViewController : public ViewController {
+class TabViewController final : public ViewController {
 public:
   TabViewController(Responder * parentResponder, TabViewDataSource * dataSource, ViewController * one, ViewController * two, ViewController * three, ViewController * four = nullptr);
   View * view() override;
-  int activeTab() const;
+  int activeTab() const { return m_dataSource->activeTab(); }
   void setSelectedTab(int8_t index);
   void setActiveTab(int8_t index);
   uint8_t numberOfTabs();
@@ -25,8 +25,7 @@ private:
   ViewController * activeViewController();
   class ContentView : public View {
   public:
-    ContentView();
-
+    ContentView(): View(), m_activeView(nullptr) {}
     void setActiveView(View * view);
     TabView m_tabView;
   protected:

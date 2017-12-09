@@ -6,7 +6,7 @@
 
 class HighlightCell : public View {
 public:
-  HighlightCell();
+  HighlightCell() : View(), m_highlighted(false) {}
   virtual void setHighlighted(bool highlight);
   bool isHighlighted() const { return m_highlighted; }
   virtual void reloadCell();

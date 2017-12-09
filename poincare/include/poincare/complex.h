@@ -12,7 +12,9 @@ class Complex final : public StaticHierarchy<0> {
 public:
   Complex() : m_a(0), m_b(0) {}
   static Complex<T> Float(T x);
-  static Complex<T> Cartesian(T a, T b);
+  static Complex<T> Cartesian(T a, T b);/* {
+    return Complex(a,b);
+  }*/
   static Complex<T> Polar(T r, T theta);
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
@@ -20,16 +22,18 @@ public:
   Complex(const Complex & other);
   Complex& operator=(const Complex& other);
 
-  T a() const;
-  T b() const;
+  T a() const { return m_a; }
+  T b() const { return m_b; }
   T r() const;
   T th() const;
-  Complex<T> conjugate() const;
+  Complex<T> conjugate() const { return Cartesian(m_a, -m_b); }
   T toScalar() const;
 
   /* Expression */
   Expression::Type type() const override;
-  Complex<T> * clone() const override;
+  Complex<T> * clone() const override {
+    return new Complex<T>(*this);
+  }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
   /* Properties */
@@ -40,7 +44,9 @@ public:
    * Decimal and I symbol before compared with another Expression. */
 
 private:
-  Complex(T a, T b);
+  Complex(T a, T b);/* : m_a(a), m_b(b)
+  {
+  }*/
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat) const override;
   /* Simplification */
@@ -49,7 +55,9 @@ private:
   /* Evaluation */
   Expression * privateApproximate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Expression * privateApproximate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename U> Complex<U> * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const;
+  template<typename U> Complex<U> * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
+    return new Complex<U>(Complex<U>::Cartesian((U)m_a, (U)m_b));
+  }
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
   int convertComplexToText(char * buffer, int bufferSize, int numberOfSignificantDigits, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, char multiplicationSign) const;

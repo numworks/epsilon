@@ -99,16 +99,6 @@ Complex<T>::Complex(const char * integralPart, int integralPartLength, bool inte
 }
 
 template <class T>
-T Complex<T>::a() const {
-  return m_a;
-}
-
-template <class T>
-T Complex<T>::b() const {
-  return m_b;
-}
-
-template <class T>
 T Complex<T>::r() const {
   // We want to avoid a^2 and b^2 which could both easily overflow.
   // min, max = minmax(abs(a), abs(b)) (*minmax returns both arguments sorted*)
@@ -157,19 +147,9 @@ T Complex<T>::th() const {
   return result;
 }
 
-template <class T>
-Complex<T> Complex<T>::conjugate() const {
-  return Cartesian(m_a, -m_b);
-}
-
 template<typename T>
 Expression::Type Complex<T>::type() const {
   return Expression::Type::Complex;
-}
-
-template <class T>
-Complex<T> * Complex<T>::clone() const {
-  return new Complex<T>(*this);
 }
 
 template<typename T>
@@ -241,12 +221,6 @@ Expression * Complex<T>::shallowReduce(Context & context, AngleUnit angleUnit) {
   b->shallowReduce(context, angleUnit);
   m->shallowReduce(context, angleUnit);
   return replaceWith(add, true)->shallowReduce(context, angleUnit);
-}
-
-template<typename T>
-template<typename U>
-Complex<U> * Complex<T>::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
-  return new Complex<U>(Complex<U>::Cartesian((U)m_a, (U)m_b));
 }
 
 template <class T>

@@ -34,7 +34,9 @@ public:
   static Integer numerator(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, Integer * exponent);
   static Integer denominator(Integer * exponent);
 
-  ~Integer();
+  ~Integer() {
+    releaseDynamicIvars();
+  }
   Integer(Integer&& other); // C++11 move constructor
   Integer& operator=(Integer&& other); // C++11 move assignment operator
   Integer(const Integer& other); // C++11 copy constructor

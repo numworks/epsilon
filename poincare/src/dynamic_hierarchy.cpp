@@ -6,13 +6,6 @@ extern "C" {
 
 namespace Poincare {
 
-DynamicHierarchy::DynamicHierarchy() :
-  Expression(),
-  m_operands(nullptr),
-  m_numberOfOperands(0)
-{
-}
-
 DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands) :
   Expression(),
   m_numberOfOperands(numberOfOperands)

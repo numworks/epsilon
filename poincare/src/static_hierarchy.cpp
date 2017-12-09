@@ -7,48 +7,15 @@ extern "C" {
 namespace Poincare {
 
 template<int T>
-StaticHierarchy<T>::StaticHierarchy() :
-  Expression(),
-  m_operands{}
-{
-}
-
-template<int T>
 StaticHierarchy<T>::StaticHierarchy(const Expression * const * operands, bool cloneOperands) :
   Expression()
 {
   build(operands, T, cloneOperands);
 }
 
-template<>
-StaticHierarchy<1>::StaticHierarchy(const Expression * e, bool cloneOperands) :
-  StaticHierarchy((Expression **)&e, cloneOperands)
-{
-}
-
-template<>
-StaticHierarchy<2>::StaticHierarchy(const Expression * e1, const Expression * e2, bool cloneOperands) :
-  StaticHierarchy(ExpressionArray(e1, e2).array(), cloneOperands)
-{
-}
-
-template<int T>
-StaticHierarchy<T>::~StaticHierarchy() {
-  for (int i = 0; i < T; i++) {
-    if (m_operands[i] != nullptr) {
-      delete m_operands[i];
-    }
-  }
-}
-
 template<int T>
 void StaticHierarchy<T>::setArgument(ListData * listData, int numberOfOperands, bool clone) {
   build(listData->operands(), listData->numberOfOperands(), clone);
-}
-
-template<int T>
-bool StaticHierarchy<T>::hasValidNumberOfOperands(int numberOfOperands) const {
-  return numberOfOperands == T;
 }
 
 template<int T>

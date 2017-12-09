@@ -23,10 +23,6 @@ bool FunctionGraphController::isEmpty() const {
   return false;
 }
 
-ViewController * FunctionGraphController::initialisationParameterController() {
-  return &m_initialisationParameterController;
-}
-
 void FunctionGraphController::viewWillAppear() {
   functionGraphView()->setCursorView(cursorView());
   functionGraphView()->setBannerView(bannerView());
@@ -127,18 +123,6 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   m_cursor->moveTo(m_cursor->x(), nextY);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
-}
-
-CurveView * FunctionGraphController::curveView() {
-  return functionGraphView();
-}
-
-uint32_t FunctionGraphController::modelVersion() {
-  return functionStore()->storeChecksum();
-}
-
-uint32_t FunctionGraphController::rangeVersion() {
-  return interactiveCurveViewRange()->rangeChecksum();
 }
 
 bool FunctionGraphController::isCursorVisible() {

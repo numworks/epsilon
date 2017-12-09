@@ -18,7 +18,3 @@ void LockView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect frame((bounds().width() - k_lockWidth)/2,  (bounds().height()-k_lockHeight)/2, k_lockWidth, k_lockHeight);
   ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)lockMask, s_lockWorkingBuffer);
 }
-
-KDSize LockView::minimalSizeForOptimalDisplay() const {
-  return KDSize(k_lockWidth, k_lockHeight);
-}

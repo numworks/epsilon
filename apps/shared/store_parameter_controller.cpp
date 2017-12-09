@@ -16,18 +16,6 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 {
 }
 
-void StoreParameterController::selectXColumn(bool xColumnSelected) {
-  m_xColumnSelected = xColumnSelected;
-}
-
-const char * StoreParameterController::title() {
-  return I18n::translate(I18n::Message::ColumnOptions);
-}
-
-View * StoreParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void StoreParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);

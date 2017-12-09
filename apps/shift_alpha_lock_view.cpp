@@ -1,12 +1,5 @@
 #include "shift_alpha_lock_view.h"
 
-ShiftAlphaLockView::ShiftAlphaLockView() :
-  View(),
-  m_shiftAlphaView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
-  m_status(Ion::Events::ShiftAlphaStatus::Default)
-{
-}
-
 void ShiftAlphaLockView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), Palette::YellowDark);
 }

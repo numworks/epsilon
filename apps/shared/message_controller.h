@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "message_view_with_skip.h"
 
-class MessageController : public ViewController {
+class MessageController final : public ViewController {
 public:
   MessageController(I18n::Message * messages, KDColor * colors, uint8_t numberOfMessages);
   View * view() override { return &m_messageViewWithSkip; }

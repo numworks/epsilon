@@ -16,10 +16,6 @@ StoreController::StoreController(Responder * parentResponder, FloatPairStore * s
 {
 }
 
-const char * StoreController::title() {
-  return I18n::translate(I18n::Message::DataTab);
-}
-
 int StoreController::numberOfColumns() {
   return 2;
 };

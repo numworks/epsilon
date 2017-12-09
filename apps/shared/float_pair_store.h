@@ -7,12 +7,14 @@ namespace Shared {
 
 class FloatPairStore {
 public:
-  FloatPairStore();
+  FloatPairStore() : m_numberOfPairs(0), m_data{} {}
   // Delete the implicit copy constructor: the object is heavy
   FloatPairStore(const FloatPairStore&) = delete;
   double get(int i, int j);
   void set(double f, int i, int j);
-  int numberOfPairs();
+  int numberOfPairs() {
+    return m_numberOfPairs;
+  }
   void deletePairAtIndex(int j);
   void deleteAllPairs();
   void resetColumn(int i);

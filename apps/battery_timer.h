@@ -5,9 +5,9 @@
 
 class AppsContainer;
 
-class BatteryTimer : public Timer {
+class BatteryTimer final : public Timer {
 public:
-  BatteryTimer(AppsContainer * container);
+  constexpr BatteryTimer(AppsContainer * container) : Timer(1), m_container(container) {}
 private:
   bool fire() override;
   AppsContainer * m_container;

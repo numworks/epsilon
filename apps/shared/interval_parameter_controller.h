@@ -10,8 +10,12 @@ namespace Shared {
 class IntervalParameterController : public Shared::FloatParameterController {
 public:
   IntervalParameterController(Responder * parentResponder, Interval * interval);
-  Interval * interval();
-  const char * title() override;
+  Interval * interval() {
+    return m_interval;
+  }
+  const char * title() override {
+    return I18n::translate(I18n::Message::IntervalSet);
+  }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int numberOfRows() override;
 protected:

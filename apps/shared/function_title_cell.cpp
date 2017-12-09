@@ -3,12 +3,6 @@
 
 namespace Shared {
 
-FunctionTitleCell::FunctionTitleCell(Orientation orientation) :
-  EvenOddCell(),
-  m_orientation(orientation)
-{
-}
-
 void FunctionTitleCell::setColor(KDColor color) {
   m_functionColor = color;
   reloadCell();

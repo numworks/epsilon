@@ -6,12 +6,6 @@
 
 namespace Shared {
 
-FloatPairStore::FloatPairStore() :
-  m_numberOfPairs(0),
-  m_data{}
-{
-}
-
 double FloatPairStore::get(int i, int j) {
   assert(j < m_numberOfPairs);
   return m_data[i][j];
@@ -27,10 +21,6 @@ void FloatPairStore::set(double f, int i, int j) {
     m_data[otherI][j] = defaultValue(otherI, j);
     m_numberOfPairs++;
   }
-}
-
-int FloatPairStore::numberOfPairs() {
-  return m_numberOfPairs;
 }
 
 void FloatPairStore::deletePairAtIndex(int i) {

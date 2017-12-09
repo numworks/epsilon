@@ -1,10 +1,5 @@
 #include "button_with_separator.h"
 
-ButtonWithSeparator::ButtonWithSeparator(Responder * parentResponder, I18n::Message message, Invocation invocation) :
-  Button(parentResponder, message, invocation, KDText::FontSize::Large, KDColorBlack)
-{
-}
-
 void ButtonWithSeparator::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();

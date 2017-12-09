@@ -3,11 +3,6 @@
 
 namespace Shared {
 
-FunctionStore::FunctionStore() :
-  m_numberOfFunctions(0)
-{
-}
-
 Function * FunctionStore::activeFunctionAtIndex(int i) {
   assert(i>=0 && i<m_numberOfFunctions);
   int index = 0;
@@ -37,10 +32,6 @@ Function * FunctionStore::definedFunctionAtIndex(int i) {
   }
   assert(false);
   return nullptr;
-}
-
-int FunctionStore::numberOfFunctions() {
-  return m_numberOfFunctions;
 }
 
 int FunctionStore::numberOfActiveFunctions() {

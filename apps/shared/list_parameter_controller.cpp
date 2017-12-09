@@ -16,14 +16,6 @@ ListParameterController::ListParameterController(Responder * parentResponder, Fu
 {
 }
 
-const char * ListParameterController::title() {
-  return I18n::translate(I18n::Message::FunctionOptions);
-}
-
-View * ListParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void ListParameterController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }

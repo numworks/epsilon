@@ -4,13 +4,15 @@
 #include <escher.h>
 #include "exam_pop_up_controller_delegate.h"
 
-class ExamPopUpController : public ViewController {
+class ExamPopUpController final : public ViewController {
 public:
   ExamPopUpController(ExamPopUpControllerDelegate * delegate);
   void setActivatingExamMode(bool activingExamMode);
   bool isActivatingExamMode() const { return m_isActivatingExamMode; }
   // View Controller
-  View * view() override;
+  View * view() override {
+    return &m_contentView;
+  }
   void viewDidDisappear() override;
   // Responder
   void didBecomeFirstResponder() override;

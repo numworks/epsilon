@@ -30,30 +30,44 @@ public:
   static bool poincareCircuitBreaker();
   virtual int numberOfApps() = 0;
   virtual App::Snapshot * appSnapshotAtIndex(int index) = 0;
-  App::Snapshot * hardwareTestAppSnapshot();
-  App::Snapshot * onBoardingAppSnapshot();
-  App::Snapshot * usbConnectedAppSnapshot();
+  App::Snapshot * hardwareTestAppSnapshot() {
+    return &m_hardwareTestSnapshot;
+  }
+  App::Snapshot * onBoardingAppSnapshot() {
+    return &m_onBoardingSnapshot;
+  }
+  App::Snapshot * usbConnectedAppSnapshot() {
+    return &m_usbConnectedSnapshot;
+  }
   void reset();
-  Poincare::Context * globalContext();
-  MathToolbox * mathToolbox();
-  VariableBoxController * variableBoxController();
+  Poincare::Context * globalContext() {
+    return &m_globalContext;
+  }
+  MathToolbox * mathToolbox() {
+    return &m_mathToolbox;
+  }
+  VariableBoxController * variableBoxController() {
+    return &m_variableBoxController;
+  }
   void suspend(bool checkIfPowerKeyReleased = false);
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   void switchTo(App::Snapshot * snapshot) override;
   void run() override;
   bool updateBatteryState();
-  void refreshPreferences();
+  void refreshPreferences() {
+    m_window.refreshPreferences();
+  }
   void displayExamModePopUp(bool activate);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
-  OnBoarding::UpdateController * updatePopUpController();
+  OnBoarding::UpdateController * updatePopUpController() { return &m_updateController; }
   void redrawWindow();
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
 private:
-  Window * window() override;
+  Window * window() override { return &m_window; }
   int numberOfContainerTimers() override;
   Timer * containerTimerAtIndex(int i) override;
   bool processEvent(Ion::Events::Event event);

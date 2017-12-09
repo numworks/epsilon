@@ -13,8 +13,12 @@ namespace Shared {
 
 class SimpleInteractiveCurveViewController : public ViewController {
 public:
-  SimpleInteractiveCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor);
-  View * view() override;
+  SimpleInteractiveCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor) :
+    ViewController(parentResponder),
+    m_cursor(cursor) {}
+  View * view() override {
+    return curveView();
+  }
   bool handleEvent(Ion::Events::Event event) override;
   constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
   constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth

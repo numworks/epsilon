@@ -11,12 +11,18 @@ namespace Shared {
 class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 public:
   InteractiveCurveViewRange(CurveViewCursor * cursor, InteractiveCurveViewRangeDelegate * delegate = nullptr);
-  void setDelegate(InteractiveCurveViewRangeDelegate * delegate);
-  void setCursor(CurveViewCursor * cursor);
+  void setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
+    m_delegate = delegate;
+  }
+  void setCursor(CurveViewCursor * cursor) {
+    m_cursor = cursor;
+  }
   uint32_t rangeChecksum() override;
 
   //CurveViewWindow
-  bool yAuto();
+  bool yAuto() {
+    return m_yAuto;
+  }
   void setXMin(float f) override;
   void setXMax(float f) override;
   void setYMin(float f) override;

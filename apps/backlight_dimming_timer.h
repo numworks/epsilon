@@ -3,9 +3,9 @@
 
 #include <escher.h>
 
-class BacklightDimmingTimer : public Timer {
+class BacklightDimmingTimer final : public Timer {
 public:
-  BacklightDimmingTimer();
+  constexpr BacklightDimmingTimer() : Timer(k_idleBeforeDimmingDuration/Timer::TickDuration) {}
 private:
   constexpr static int k_idleBeforeDimmingDuration = 30*1000; // In miliseconds
   constexpr static int k_dimBacklightBrightness = 0;

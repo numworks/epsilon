@@ -7,7 +7,7 @@
 #error Missing snapshot declarations
 #endif
 
-class AppsContainerStorage : public AppsContainer {
+class AppsContainerStorage final : public AppsContainer {
 public:
   static AppsContainerStorage * sharedContainer();
   AppsContainerStorage();

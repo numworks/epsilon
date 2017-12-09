@@ -7,12 +7,18 @@
 
 namespace Shared {
 
-class StoreParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class StoreParameterController final : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   StoreParameterController(Responder * parentResponder, FloatPairStore * store);
-  void selectXColumn(bool xColumnSelected);
-  View * view() override;
-  const char * title() override;
+  void selectXColumn(bool xColumnSelected) {
+    m_xColumnSelected = xColumnSelected;
+  }
+  View * view() override {
+    return &m_selectableTableView;
+  }
+  const char * title() override {
+    return I18n::translate(I18n::Message::ColumnOptions);
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

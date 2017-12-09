@@ -28,10 +28,16 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 protected:
-  int activeCell();
-  StackViewController * stackController();
+  int activeCell() {
+    return selectedRow();
+  }
+  StackViewController * stackController() {
+    return (StackViewController *)parentResponder();
+  }
   virtual double parameterAtIndex(int index) = 0;
-  virtual SelectableTableView * selectableTableView();
+  virtual SelectableTableView * selectableTableView() {
+    return (SelectableTableView *)view();
+  }
   View * loadView() override;
   void unloadView(View * view) override;
 private:

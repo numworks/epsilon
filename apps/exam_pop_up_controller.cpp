@@ -19,10 +19,6 @@ void ExamPopUpController::setActivatingExamMode(bool activatingExamMode) {
   }
 }
 
-View * ExamPopUpController::view() {
-  return &m_contentView;
-}
-
 void ExamPopUpController::viewDidDisappear() {
   if (m_isActivatingExamMode == false) {
     m_delegate->examDeactivatingPopUpIsDismissed();

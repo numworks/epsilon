@@ -12,8 +12,12 @@ class ListParameterController : public ViewController, public SimpleListViewData
 public:
   ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr);
 
-  View * view() override;
-  const char * title() override;
+  View * view() override {
+    return &m_selectableTableView;
+  }
+  const char * title() override {
+    return I18n::translate(I18n::Message::FunctionOptions);
+  }
   bool handleEvent(Ion::Events::Event event) override;
   virtual void setFunction(Function * function);
   void didBecomeFirstResponder() override;

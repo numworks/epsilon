@@ -9,11 +9,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
-  TabTableController(parentResponder, this)
-{
-}
-
 bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
      || (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)

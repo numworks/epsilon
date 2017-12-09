@@ -12,10 +12,6 @@ VariableBoxLeafCell::VariableBoxLeafCell() :
 {
 }
 
-void VariableBoxLeafCell::displayExpression(bool displayExpression) {
-  m_displayExpression = displayExpression;
-}
-
 int VariableBoxLeafCell::numberOfSubviews() const {
   if (m_displayExpression) {
     return 3;
@@ -67,17 +63,9 @@ void VariableBoxLeafCell::reloadCell() {
   m_expressionView.setBackgroundColor(backgroundColor);
 }
 
-void VariableBoxLeafCell::setLabel(const char * text) {
-  m_labelView.setText(text);
-}
-
 void VariableBoxLeafCell::setSubtitle(const char * text) {
   m_subtitleView.setText(text);
   layoutSubviews();
-}
-
-void VariableBoxLeafCell::setExpressionLayout(ExpressionLayout * expressionLayout) {
-  m_expressionView.setExpressionLayout(expressionLayout);
 }
 
 void VariableBoxLeafCell::drawRect(KDContext * ctx, KDRect rect) const {

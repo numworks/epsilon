@@ -5,9 +5,12 @@
 #include "lock_view.h"
 #include "i18n.h"
 
-class ShiftAlphaLockView : public View {
+class ShiftAlphaLockView final : public View {
 public:
-  ShiftAlphaLockView();
+  ShiftAlphaLockView() :
+    View(),
+    m_shiftAlphaView(KDText::FontSize::Small, I18n::Message::Default, 1.0f, 0.5f, KDColorWhite, Palette::YellowDark),
+    m_status(Ion::Events::ShiftAlphaStatus::Default) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
   bool setStatus(Ion::Events::ShiftAlphaStatus status);
   KDSize minimalSizeForOptimalDisplay() const override;

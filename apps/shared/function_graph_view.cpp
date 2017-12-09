@@ -28,14 +28,6 @@ void FunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabels(ctx, rect, Axis::Vertical, true);
 }
 
-void FunctionGraphView::setContext(Context * context) {
-  m_context = context;
-}
-
-Context * FunctionGraphView::context() const {
-  return m_context;
-}
-
 void FunctionGraphView::selectFunction(Function * function) {
   if (m_selectedFunction != function) {
     m_selectedFunction = function;

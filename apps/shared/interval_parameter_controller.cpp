@@ -10,10 +10,6 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
 {
 }
 
-const char * IntervalParameterController::title() {
-  return I18n::translate(I18n::Message::IntervalSet);
-}
-
 int IntervalParameterController::numberOfRows() {
   return k_totalNumberOfCell+1;
 }
@@ -23,17 +19,13 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell * cell, 
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XStart, I18n::Message::XEnd, I18n::Message::Step};
+  static const I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XStart, I18n::Message::XEnd, I18n::Message::Step};
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-Interval * IntervalParameterController::interval() {
-  return m_interval;
-}
-
 double IntervalParameterController::parameterAtIndex(int index) {
-  GetterPointer getters[k_totalNumberOfCell] = {&Interval::start, &Interval::end, &Interval::step};
+  static const GetterPointer getters[k_totalNumberOfCell] = {&Interval::start, &Interval::end, &Interval::step};
   return (m_interval->*getters[index])();
 }
 
@@ -52,7 +44,7 @@ bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double
     double g = f+1.0;
     m_interval->setEnd(g);
   }
-  SetterPointer setters[k_totalNumberOfCell] = {&Interval::setStart, &Interval::setEnd, &Interval::setStep};
+  static const SetterPointer setters[k_totalNumberOfCell] = {&Interval::setStart, &Interval::setEnd, &Interval::setStep};
   (m_interval->*setters[parameterIndex])(f);
   return true;
 }

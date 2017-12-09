@@ -14,8 +14,12 @@ public:
   FunctionGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor,
     BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setContext(Poincare::Context * context);
-  Poincare::Context * context() const;
+  void setContext(Poincare::Context * context) {
+    m_context = context;
+  }
+  Poincare::Context * context() const {
+    return m_context;
+  }
   void selectFunction(Function * function);
   void setAreaHighlight(float start, float end);
   virtual void setAreaHighlightColor(bool highlightColor);

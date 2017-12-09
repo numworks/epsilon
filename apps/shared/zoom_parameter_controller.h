@@ -8,20 +8,26 @@
 
 namespace Shared {
 
-class ZoomParameterController : public ViewController {
+class ZoomParameterController final : public ViewController {
 public:
   ZoomParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, CurveView * curveView);
-  const char * title() override;
-  View * view() override;
+  const char * title() override {
+    return I18n::translate(I18n::Message::Zoom);
+  }
+  View * view() override {
+    return &m_contentView;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
 private:
   class ContentView : public View {
   public:
-    ContentView(CurveView * curveView);
+    ContentView(CurveView * curveView) : m_curveView(curveView) {}
     void layoutSubviews() override;
-    CurveView * curveView();
+    CurveView * curveView() {
+      return m_curveView;
+    }
   private:
     class LegendView : public View {
     public:

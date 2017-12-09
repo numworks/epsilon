@@ -4,15 +4,27 @@
 #include <escher.h>
 #include "title_bar_view.h"
 
-class AppsWindow : public Window {
+class AppsWindow final : public Window {
 public:
-  AppsWindow();
-  void setTitle(I18n::Message title);
-  bool updateBatteryLevel();
-  bool updateIsChargingState();
-  bool updatePluggedState();
-  void refreshPreferences();
-  bool updateAlphaLock();
+  AppsWindow() : Window(), m_titleBarView(), m_hideTitleBarView(false) {}
+  void setTitle(I18n::Message title) {
+    m_titleBarView.setTitle(title);
+  }
+  bool updateBatteryLevel() {
+    return m_titleBarView.setChargeState(Ion::Battery::level());
+  }
+  bool updateIsChargingState() {
+    return m_titleBarView.setIsCharging(Ion::Battery::isCharging());
+  }
+  bool updatePluggedState() {
+    return m_titleBarView.setIsPlugged(Ion::USB::isPlugged());
+  }
+  void refreshPreferences() {
+    m_titleBarView.refreshPreferences();
+  }
+  bool updateAlphaLock() {
+    return m_titleBarView.setShiftAlphaLockStatus(Ion::Events::shiftAlphaStatus());
+  }
   void hideTitleBarView(bool hide);
 private:
   int numberOfSubviews() const override;

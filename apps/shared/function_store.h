@@ -11,7 +11,7 @@ namespace Shared {
 
 class FunctionStore {
 public:
-  FunctionStore();
+  FunctionStore() : m_numberOfFunctions(0) {}
   virtual uint32_t storeChecksum() = 0;
   virtual Function * functionAtIndex(int i) = 0;
   virtual Function * activeFunctionAtIndex(int i);
@@ -19,7 +19,9 @@ public:
   virtual Function * addEmptyFunction() = 0;
   virtual void removeFunction(Function * f) = 0;
   virtual void removeAll() = 0;
-  int numberOfFunctions();
+  int numberOfFunctions() {
+    return m_numberOfFunctions;
+  }
   // Functions can be undefined when they have a color and a name but no content
   int numberOfDefinedFunctions();
   // An active function must be defined to be counted

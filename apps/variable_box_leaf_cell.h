@@ -4,14 +4,20 @@
 #include <escher.h>
 #include <poincare.h>
 
-class VariableBoxLeafCell : public HighlightCell {
+class VariableBoxLeafCell final : public HighlightCell {
 public:
   VariableBoxLeafCell();
-  void displayExpression(bool displayExpression);
+  void displayExpression(bool displayExpression) {
+    m_displayExpression = displayExpression;
+  }
   void reloadCell() override;
-  void setLabel(const char * text);
+  void setLabel(const char * text) {
+    m_labelView.setText(text);
+  }
   void setSubtitle(const char * text);
-  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
+  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout) {
+    m_expressionView.setExpressionLayout(expressionLayout);
+  }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;

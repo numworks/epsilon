@@ -18,16 +18,7 @@ const uint8_t tickMask[BatteryView::k_tickHeight][BatteryView::k_tickWidth] = {
   {0xDB, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0xFF},
   {0xFF, 0xB7, 0x00, 0x24, 0x00, 0xB7, 0xFF, 0xFF},
   {0xFF, 0xFF, 0x24, 0x00, 0x24, 0xFF, 0xFF, 0xFF},
-
 };
-
-
-BatteryView::BatteryView() :
-  m_chargeState(Ion::Battery::Charge::SOMEWHERE_INBETWEEN),
-  m_isCharging(false),
-  m_isPlugged(false)
-{
-}
 
 bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
   if (chargeState != m_chargeState) {

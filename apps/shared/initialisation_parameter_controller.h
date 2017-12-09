@@ -7,11 +7,18 @@
 
 namespace Shared {
 
-class InitialisationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class InitialisationParameterController final : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  InitialisationParameterController(Responder * parentResponder, Shared::InteractiveCurveViewRange * graphRange);
-  View * view() override;
-  const char * title() override;
+  InitialisationParameterController(Responder * parentResponder, Shared::InteractiveCurveViewRange * graphRange) :
+    ViewController(parentResponder),
+    m_selectableTableView(this, this, this),
+    m_graphRange(graphRange) {}
+  View * view() override {
+    return &m_selectableTableView;
+  }
+  const char * title() override {
+    return I18n::translate(I18n::Message::Initialization);
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;

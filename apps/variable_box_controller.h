@@ -8,18 +8,32 @@
 #include "variable_box_leaf_cell.h"
 #include "i18n.h"
 
-class VariableBoxController : public StackViewController {
+class VariableBoxController final : public StackViewController {
 public:
   VariableBoxController(Poincare::GlobalContext * context);
   void didBecomeFirstResponder() override;
-  void setSender(Responder * sender);
+  void setSender(Responder * sender) {
+    m_contentViewController.setSender(sender);
+  }
   void viewWillAppear() override;
-  void viewDidDisappear() override;
+  using StackViewController::viewDidDisappear;
 private:
-  class ContentViewController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
+  class ContentViewController final : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
   public:
-    ContentViewController(Responder * parentResponder, Poincare::GlobalContext * context);
-    View * view() override;
+    ContentViewController(Responder * parentResponder, Poincare::GlobalContext * context) :
+      ViewController(parentResponder),
+      m_context(context),
+      m_sender(nullptr),
+      m_firstSelectedRow(0),
+      m_previousSelectedRow(0),
+      m_currentPage(Page::RootMenu),
+      m_selectableTableView(this) {
+      m_selectableTableView.setMargins(0);
+      m_selectableTableView.setShowsIndicators(false);
+    }
+    View * view() override {
+      return &m_selectableTableView;
+    }
     const char * title() override;
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event event) override;
@@ -32,8 +46,14 @@ private:
     int indexFromCumulatedHeight(KDCoordinate offsetY) override;
     int typeAtLocation(int i, int j) override;
     void setSender(Responder * responder) { m_sender = responder; }
-    void reloadData();
-    void resetPage();
+    void reloadData() { m_selectableTableView.reloadData(); }
+    void resetPage() {
+#if MATRIX_VARIABLES
+      m_currentPage = Page::RootMenu;
+#else
+      m_currentPage = Page::Scalar;
+#endif
+    }
     void viewDidDisappear() override;
   private:
     enum class Page {

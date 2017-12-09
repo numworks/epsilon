@@ -25,20 +25,12 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
 {
 }
 
-const char * ValuesController::title() {
-  return I18n::translate(I18n::Message::ValuesTab);
-}
-
 int ValuesController::numberOfColumns() {
   if (m_numberOfColumnsNeedUpdate) {
     updateNumberOfColumns();
     m_numberOfColumnsNeedUpdate = false;
   }
   return m_numberOfColumns;
-}
-
-Interval * ValuesController::interval() {
-  return m_interval;
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {

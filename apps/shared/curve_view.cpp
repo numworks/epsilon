@@ -39,19 +39,11 @@ void CurveView::reload() {
   layoutSubviews();
 }
 
-bool CurveView::isMainViewSelected() const {
-  return m_mainViewSelected;
-}
-
 void CurveView::selectMainView(bool mainViewSelected) {
   if (m_mainViewSelected != mainViewSelected) {
     m_mainViewSelected = mainViewSelected;
     reload();
   }
-}
-
-void CurveView::setCurveViewRange(CurveViewRange * curveViewRange) {
-  m_curveViewRange = curveViewRange;
 }
 
 /* When setting cursor, banner or ok view we first dirty the former element
@@ -82,10 +74,6 @@ void CurveView::setOkView(View * okView) {
 
 float CurveView::resolution() const {
   return bounds().width()*samplingRatio();
-}
-
-float CurveView::samplingRatio() const {
-  return 1.1f;
 }
 
 float CurveView::min(Axis axis) const {

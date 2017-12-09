@@ -3,17 +3,17 @@
 
 namespace Shared {
 
-class Interval {
+class Interval final {
 public:
-  Interval();
+  Interval() : m_numberOfElements(0), m_start(0), m_end(0), m_step(0), m_needCompute(false) {}
   // Delete the implicit copy constructor: the object is heavy
   Interval(const Interval&) = delete;
   int numberOfElements();
   void deleteElementAtIndex(int index);
   double element(int i);
-  double start();
-  double end();
-  double step();
+  double start() { return m_start; }
+  double end() { return m_end; }
+  double step() { return m_step; }
   void setStart(double f);
   void setEnd(double f);
   void setStep(double f);

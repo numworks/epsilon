@@ -3,15 +3,6 @@
 
 namespace Shared {
 
-Interval::Interval() :
-  m_numberOfElements(0),
-  m_start(0),
-  m_end(0),
-  m_step(0),
-  m_needCompute(false)
-{
-}
-
 int Interval::numberOfElements() {
   computeElements();
   return m_numberOfElements;
@@ -22,25 +13,13 @@ void Interval::deleteElementAtIndex(int index) {
   for (int k = index; k < m_numberOfElements; k++) {
     m_intervalBuffer[k] = m_intervalBuffer[k+1];
   }
-  m_intervalBuffer[m_numberOfElements] = 0.0f;
+  m_intervalBuffer[m_numberOfElements] = 0.0;
 }
 
 double Interval::element(int i) {
   assert(i >= 0 && i < numberOfElements());
   computeElements();
   return m_intervalBuffer[i];
-}
-
-double Interval::start() {
-  return m_start;
-}
-
-double Interval::end() {
-  return m_end;
-}
-
-double Interval::step() {
-  return m_step;
 }
 
 void Interval::setStart(double f) {

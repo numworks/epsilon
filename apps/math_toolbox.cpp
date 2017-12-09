@@ -107,11 +107,6 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbo
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbox, I18n::Message::Default, I18n::Message::Default, menu, 10);
 #endif
 
-MathToolbox::MathToolbox() :
-  Toolbox(nullptr, I18n::translate(rootModel()->label()))
-{
-}
-
 bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   ToolboxMessageTree * messageTree = selectedMessageTree;
   m_selectableTableView.deselectTable();

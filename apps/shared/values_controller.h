@@ -16,8 +16,12 @@ namespace Shared {
 class ValuesController : public EditableCellTableViewController, public ButtonRowDelegate,  public AlternateEmptyViewDelegate {
 public:
   ValuesController(Responder * parentResponder, ButtonRowController * header, I18n::Message parameterTitle, IntervalParameterController * intervalParameterController, Interval * interval);
-  const char * title() override;
-  Interval * interval();
+  const char * title() override {
+    return I18n::translate(I18n::Message::ValuesTab);
+  }
+  Interval * interval() {
+    return m_interval;
+  }
   int numberOfColumns() override;
   virtual bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

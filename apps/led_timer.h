@@ -3,9 +3,9 @@
 
 #include <escher.h>
 
-class LedTimer : public Timer {
+class LedTimer final : public Timer {
 public:
-  LedTimer();
+  constexpr LedTimer() : Timer(1), m_on(false) {}
 private:
   bool fire() override;
   bool m_on;

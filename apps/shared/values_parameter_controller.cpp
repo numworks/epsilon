@@ -16,20 +16,12 @@ ValuesParameterController::ValuesParameterController(Responder * parentResponder
 {
 }
 
-const char * ValuesParameterController::title() {
-  return I18n::translate(m_pageTitle);
-}
-
-View * ValuesParameterController::view() {
-  return &m_selectableTableView;
-}
-
 void ValuesParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
 #if COPY_COLUMN
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::CopyColumnInList, I18n::Message::IntervalSet};
+  static const I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::CopyColumnInList, I18n::Message::IntervalSet};
 #else
-  I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::IntervalSet};
+  static const I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ClearColumn, I18n::Message::IntervalSet};
 #endif
   myCell->setMessage(labels[index]);
 }

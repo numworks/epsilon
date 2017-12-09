@@ -5,16 +5,6 @@
 
 namespace Shared {
 
-FunctionGoToParameterController::FunctionGoToParameterController(Responder * parentResponder, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, I18n::Message symbol) :
-  GoToParameterController(parentResponder, graphRange, cursor, symbol),
-  m_function(nullptr)
-{
-}
-
-const char * FunctionGoToParameterController::title() {
-  return I18n::translate(I18n::Message::Goto);
-}
-
 double FunctionGoToParameterController::parameterAtIndex(int index) {
   assert(index == 0);
   return m_cursor->x();
@@ -36,10 +26,6 @@ bool FunctionGoToParameterController::setParameterAtIndex(int parameterIndex, do
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   return true;
-}
-
-void FunctionGoToParameterController::setFunction(Function * function) {
-  m_function = function;
 }
 
 }

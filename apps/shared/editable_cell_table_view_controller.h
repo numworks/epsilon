@@ -11,7 +11,7 @@ namespace Shared {
 
 class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource , public TextFieldDelegate {
 public:
-  EditableCellTableViewController(Responder * parentResponder);
+  EditableCellTableViewController(Responder * parentResponder) : TabTableController(parentResponder, this) {}
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 

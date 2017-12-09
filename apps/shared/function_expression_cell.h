@@ -6,7 +6,7 @@
 
 namespace Shared {
 
-class FunctionExpressionCell : public EvenOddCell {
+class FunctionExpressionCell final : public EvenOddCell {
 public:
   FunctionExpressionCell();
   void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);

@@ -5,12 +5,16 @@
 #include "interval_parameter_controller.h"
 
 namespace Shared {
-class ValuesParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class ValuesParameterController final : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   ValuesParameterController(Responder * parentResponder, IntervalParameterController * intervalParameterController, I18n::Message title);
 
-  View * view() override;
-  const char * title() override;
+  View * view() override {
+    return &m_selectableTableView;
+  }
+  const char * title() override {
+    return I18n::translate(m_pageTitle);
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   void didBecomeFirstResponder() override;

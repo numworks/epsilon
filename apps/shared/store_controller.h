@@ -11,7 +11,9 @@ namespace Shared {
 class StoreController : public EditableCellTableViewController, public ButtonRowDelegate  {
 public:
   StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header);
-  const char * title() override;
+  const char * title() override {
+    return I18n::translate(I18n::Message::DataTab);
+  }
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;

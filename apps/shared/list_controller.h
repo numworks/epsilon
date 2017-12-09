@@ -33,7 +33,9 @@ protected:
   StackViewController * stackController() const;
   void configureFunction(Function * function);
   virtual void reinitExpression(Function * function);
-  SelectableTableView * selectableTableView();
+  SelectableTableView * selectableTableView() {
+    return (SelectableTableView *)view();
+  }
   View * loadView() override;
   void unloadView(View * view) override;
   FunctionStore * m_functionStore;

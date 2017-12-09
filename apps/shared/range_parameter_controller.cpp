@@ -16,10 +16,6 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
 {
 }
 
-const char * RangeParameterController::title() {
-  return I18n::translate(I18n::Message::Axis);
-}
-
 int RangeParameterController::numberOfRows() {
   return k_numberOfTextCell+2;
 }
@@ -47,10 +43,10 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
     return;
   }
   MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
-  I18n::Message labels[k_numberOfTextCell+1] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::Default, I18n::Message::YMin, I18n::Message::YMax};
+  static const I18n::Message labels[k_numberOfTextCell+1] = {I18n::Message::XMin, I18n::Message::XMax, I18n::Message::Default, I18n::Message::YMin, I18n::Message::YMax};
   myCell->setMessage(labels[index]);
   KDColor yColor = m_interactiveRange->yAuto() ? Palette::GreyDark : KDColorBlack;
-  KDColor colors[k_numberOfTextCell+1] = {KDColorBlack, KDColorBlack, KDColorBlack, yColor, yColor};
+  static const KDColor colors[k_numberOfTextCell+1] = {KDColorBlack, KDColorBlack, KDColorBlack, yColor, yColor};
   myCell->setTextColor(colors[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
@@ -73,14 +69,14 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 double RangeParameterController::parameterAtIndex(int parameterIndex) {
-  ParameterGetterPointer getters[k_numberOfTextCell] = {&InteractiveCurveViewRange::xMin,
+  static const ParameterGetterPointer getters[k_numberOfTextCell] = {&InteractiveCurveViewRange::xMin,
     &InteractiveCurveViewRange::xMax, &InteractiveCurveViewRange::yMin, &InteractiveCurveViewRange::yMax};
   int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
   return (m_interactiveRange->*getters[index])();
 }
 
 bool RangeParameterController::setParameterAtIndex(int parameterIndex, double f) {
-  ParameterSetterPointer setters[k_numberOfTextCell] = {&InteractiveCurveViewRange::setXMin,
+  static const ParameterSetterPointer setters[k_numberOfTextCell] = {&InteractiveCurveViewRange::setXMin,
     &InteractiveCurveViewRange::setXMax, &InteractiveCurveViewRange::setYMin, &InteractiveCurveViewRange::setYMax};
   int index = parameterIndex > 2 ? parameterIndex - 1 : parameterIndex;
   (m_interactiveRange->*setters[index])(f);

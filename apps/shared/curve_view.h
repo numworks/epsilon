@@ -21,16 +21,22 @@ public:
     BannerView * bannerView = nullptr, View * cursorView = nullptr, View * okView = nullptr);
   virtual void reload();
   // When the main view is selected, the banner view is visible
-  bool isMainViewSelected() const;
+  bool isMainViewSelected() const {
+    return m_mainViewSelected;
+  }
   void selectMainView(bool mainViewSelected);
   void setCursorView(View * cursorView);
   void setBannerView(View * bannerView);
   void setOkView(View * okView);
   float resolution() const;
 protected:
-  void setCurveViewRange(CurveViewRange * curveViewRange);
+  void setCurveViewRange(CurveViewRange * curveViewRange) {
+    m_curveViewRange = curveViewRange;
+  }
   // Drawing methods
-  virtual float samplingRatio() const;
+  virtual float samplingRatio() const {
+    return 1.1f;
+  }
   constexpr static KDCoordinate k_labelMargin =  4;
   constexpr static KDCoordinate k_okMargin =  10;
   constexpr static KDCoordinate k_labelGraduationLength =  6;

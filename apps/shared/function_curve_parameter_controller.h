@@ -12,10 +12,14 @@ namespace Shared {
 class FunctionCurveParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
   FunctionCurveParameterController(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
-  View * view() override;
+  View * view() override {
+    return &m_selectableTableView;
+  }
   void didBecomeFirstResponder() override;
   KDCoordinate cellHeight() override;
-  void setFunction(Function * function);
+  void setFunction(Function * function) {
+    m_function = function;
+  }
 protected:
   bool handleGotoSelection();
   MessageTableCellWithChevron m_goToCell;

@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-class NewFunctionCell : public EvenOddCell {
+class NewFunctionCell final : public EvenOddCell {
 public:
   NewFunctionCell(I18n::Message text);
   void setEven(bool even) override;

@@ -6,16 +6,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-SimpleInteractiveCurveViewController::SimpleInteractiveCurveViewController(Responder * parentResponder,InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor) :
-  ViewController(parentResponder),
-  m_cursor(cursor)
-{
-}
-
-View * SimpleInteractiveCurveViewController::view() {
-  return curveView();
-}
-
 bool SimpleInteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Plus || event == Ion::Events::Minus) {
     return handleZoom(event);

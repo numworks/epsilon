@@ -5,11 +5,6 @@ extern "C" {
 #include <assert.h>
 }
 
-EmptyBatteryWindow::EmptyBatteryWindow() :
-  Window()
-{
-}
-
 void EmptyBatteryWindow::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   const char * warningMessage = I18n::translate(I18n::Message::LowBattery, GlobalPreferences::sharedGlobalPreferences()->language());

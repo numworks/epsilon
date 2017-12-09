@@ -10,7 +10,7 @@ namespace Shared {
 
 class TabTableController : public DynamicViewController, public SelectableTableViewDataSource {
 public:
-  TabTableController(Responder * parentResponder, TableViewDataSource * dataSource);
+  TabTableController(Responder * parentResponder, TableViewDataSource * dataSource) : DynamicViewController(parentResponder), m_dataSource(dataSource) {}
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;

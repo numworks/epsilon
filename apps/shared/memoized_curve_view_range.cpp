@@ -15,30 +15,6 @@ MemoizedCurveViewRange::MemoizedCurveViewRange() :
 {
 }
 
-float MemoizedCurveViewRange::xMin() {
-  return m_xMin;
-}
-
-float MemoizedCurveViewRange::xMax() {
-  return m_xMax;
-}
-
-float MemoizedCurveViewRange::yMin() {
-  return m_yMin;
-}
-
-float MemoizedCurveViewRange::yMax() {
-  return m_yMax;
-}
-
-float MemoizedCurveViewRange::xGridUnit() {
-  return m_xGridUnit;
-}
-
-float MemoizedCurveViewRange::yGridUnit() {
-  return m_yGridUnit;
-}
-
 void MemoizedCurveViewRange::setXMin(float xMin) {
   if (std::isnan(xMin)) {
     return;

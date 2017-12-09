@@ -10,23 +10,39 @@ namespace Shared {
 class Function {
 public:
   Function(const char * name = nullptr, KDColor color = KDColorBlack);
-  virtual ~Function(); // Delete expression and layout, if needed
+  virtual ~Function() { // Delete expression and layout, if needed
+    tidy();
+  }
   Function& operator=(const Function& other);
   Function& operator=(Function&& other) = delete;
   Function(const Function& other) = delete;
   Function(Function&& other) = delete;
   virtual uint32_t checksum();
-  const char * text() const;
-  const char * name() const;
+  const char * text() const {
+    return m_text;
+  }
+  const char * name() const {
+    return m_name;
+  }
   KDColor color() const { return m_color; }
   Poincare::Expression * expression(Poincare::Context * context) const;
   Poincare::ExpressionLayout * layout();
-  virtual bool isDefined();
-  bool isActive();
-  void setActive(bool active);
-  virtual bool isEmpty();
+  virtual bool isDefined() {
+    return m_text[0] != 0;
+  }
+  bool isActive() {
+    return m_active;
+  }
+  void setActive(bool active) {
+    m_active = active;
+  }
+  virtual bool isEmpty() {
+    return m_text[0] == 0;
+  }
   virtual void setContent(const char * c);
-  void setColor(KDColor m_color);
+  void setColor(KDColor color) {
+    m_color = color;
+  }
   virtual float evaluateAtAbscissa(float x, Poincare::Context * context) const {
     return templatedApproximateAtAbscissa(x, context);
   }

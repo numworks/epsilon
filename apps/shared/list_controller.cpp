@@ -255,7 +255,7 @@ void ListController::tableViewDidChangeSelection(SelectableTableView * t, int pr
   }
 }
 
-StackViewController * ListController::stackController() const{
+StackViewController * ListController::stackController() const {
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
@@ -270,11 +270,7 @@ void ListController::reinitExpression(Function * function) {
   selectableTableView()->reloadData();
 }
 
-SelectableTableView * ListController::selectableTableView() {
-  return (SelectableTableView *)view();
-}
-
-TabViewController * ListController::tabController() const{
+TabViewController * ListController::tabController() const {
   return (TabViewController *)(parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 

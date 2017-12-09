@@ -2,12 +2,6 @@
 
 namespace Shared {
 
-TabTableController::TabTableController(Responder * parentResponder, TableViewDataSource * dataSource) :
-  DynamicViewController(parentResponder),
-  m_dataSource(dataSource)
-{
-}
-
 void TabTableController::didBecomeFirstResponder() {
   app()->setFirstResponder(selectableTableView());
 }

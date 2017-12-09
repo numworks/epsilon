@@ -36,37 +36,7 @@ uint32_t Function::checksum() {
 
 void Function::setContent(const char * c) {
   strlcpy(m_text, c, sizeof(m_text));
-  if (m_layout != nullptr) {
-    delete m_layout;
-    m_layout = nullptr;
-  }
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
-}
-
-void Function::setColor(KDColor color) {
-  m_color = color;
-}
-
-Function::~Function() {
-  if (m_layout != nullptr) {
-    delete m_layout;
-    m_layout = nullptr;
-  }
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
-}
-
-const char * Function::text() const {
-  return m_text;
-}
-
-const char * Function::name() const {
-  return m_name;
+  tidy();
 }
 
 Poincare::Expression * Function::expression(Poincare::Context * context) const {
@@ -87,22 +57,6 @@ Poincare::ExpressionLayout * Function::layout() {
   return m_layout;
 }
 
-bool Function::isDefined() {
-  return m_text[0] != 0;
-}
-
-bool Function::isActive() {
-  return m_active;
-}
-
-void Function::setActive(bool active) {
-  m_active = active;
-}
-
-bool Function::isEmpty() {
-  return m_text[0] == 0;
-}
-
 template<typename T>
 T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
   Poincare::VariableContext<T> variableContext = Poincare::VariableContext<T>(symbol(), context);
@@ -113,14 +67,10 @@ T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) con
 }
 
 void Function::tidy() {
-  if (m_layout != nullptr) {
-    delete m_layout;
-    m_layout = nullptr;
-  }
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
+  delete m_layout;
+  m_layout = nullptr;
+  delete m_expression;
+  m_expression = nullptr;
 }
 
 }

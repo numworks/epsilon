@@ -7,10 +7,12 @@
 
 namespace Shared {
 
-class RangeParameterController : public FloatParameterController {
+class RangeParameterController final : public FloatParameterController {
 public:
   RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange);
-  const char * title() override;
+  const char * title() override {
+    return I18n::translate(I18n::Message::Axis);
+  }
   int numberOfRows() override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;

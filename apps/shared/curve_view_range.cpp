@@ -28,7 +28,7 @@ float CurveViewRange::computeGridUnit(Axis axis, float min, float max) {
     maxNumberOfUnits = k_maxNumberOfYGridUnits;
     minNumberOfUnits = k_minNumberOfYGridUnits;
   }
-  float units[3] = {k_smallGridUnitMantissa, k_mediumGridUnitMantissa, k_largeGridUnitMantissa};
+  static const float units[3] = {k_smallGridUnitMantissa, k_mediumGridUnitMantissa, k_largeGridUnitMantissa};
   for (int k = 0; k < 3; k++) {
     float unit = units[k];
     if (std::floor(std::log10(d/(unit*maxNumberOfUnits))) != std::floor(std::log10(d/(unit*minNumberOfUnits)))) {

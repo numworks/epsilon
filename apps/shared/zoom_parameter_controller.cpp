@@ -11,14 +11,6 @@ ZoomParameterController::ZoomParameterController(Responder * parentResponder, In
 {
 }
 
-const char * ZoomParameterController::title() {
-  return I18n::translate(I18n::Message::Zoom);
-}
-
-View * ZoomParameterController::view() {
-  return &m_contentView;
-}
-
 bool ZoomParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Plus) {
     float meanX = (m_interactiveRange->xMin()+m_interactiveRange->xMax())/2.0f;
@@ -68,11 +60,6 @@ void ZoomParameterController::didBecomeFirstResponder() {
 
 /* Content View */
 
-ZoomParameterController::ContentView::ContentView(CurveView * curveView) :
-  m_curveView(curveView)
-{
-}
-
 int ZoomParameterController::ContentView::numberOfSubviews() const {
   return 2;
 }
@@ -90,23 +77,19 @@ void ZoomParameterController::ContentView::layoutSubviews() {
   m_legendView.setFrame(KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight));
 }
 
-CurveView * ZoomParameterController::ContentView::curveView() {
-  return m_curveView;
-}
-
 /* Legend View */
 
 ZoomParameterController::ContentView::LegendView::LegendView()
 {
-  I18n::Message messages[k_numberOfLegends] = {I18n::Message::Move, I18n::Message::ToZoom, I18n::Message::Or};
-  float horizontalAlignments[k_numberOfLegends] = {1.0f, 1.0f, 0.5f};
+  static const I18n::Message messages[k_numberOfLegends] = {I18n::Message::Move, I18n::Message::ToZoom, I18n::Message::Or};
+  static const float horizontalAlignments[k_numberOfLegends] = {1.0f, 1.0f, 0.5f};
   for (int i = 0; i < k_numberOfLegends; i++) {
     m_legends[i].setFontSize(KDText::FontSize::Small);
     m_legends[i].setMessage(messages[i]);
     m_legends[i].setBackgroundColor(Palette::GreyBright);
     m_legends[i].setAlignment(horizontalAlignments[i], 0.5f);
   }
-  KeyView::Type tokenTypes[k_numberOfTokens] = {KeyView::Type::Up, KeyView::Type::Down, KeyView::Type::Left, KeyView::Type::Right, KeyView::Type::Plus, KeyView::Type::Minus};
+  static const KeyView::Type tokenTypes[k_numberOfTokens] = {KeyView::Type::Up, KeyView::Type::Down, KeyView::Type::Left, KeyView::Type::Right, KeyView::Type::Plus, KeyView::Type::Minus};
   for (int i = 0; i < k_numberOfTokens ; i++) {
     m_legendPictograms[i].setType(tokenTypes[i]);
   }

@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-class OkView : public TransparentView {
+class OkView final : public TransparentView {
 public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

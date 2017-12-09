@@ -5,9 +5,9 @@
 
 class AppsContainer;
 
-class SuspendTimer : public Timer {
+class SuspendTimer final : public Timer {
 public:
-  SuspendTimer(AppsContainer * container);
+  constexpr SuspendTimer(AppsContainer * container) : Timer(k_idleBeforeSuspendDuration/Timer::TickDuration), m_container(container) {}
 private:
   constexpr static int k_idleBeforeSuspendDuration = 5*60*1000; // In miliseconds
   bool fire() override;

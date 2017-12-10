@@ -1,6 +1,5 @@
 #include "law_controller.h"
 #include <assert.h>
-#include <new>
 #include "app.h"
 #include "law/binomial_law.h"
 #include "law/exponential_law.h"

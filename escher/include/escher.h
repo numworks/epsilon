@@ -1,6 +1,7 @@
 #ifndef ESCHER_H
 #define ESCHER_H
 
+#include <new>
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/app.h>

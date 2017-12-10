@@ -1,6 +1,7 @@
 #ifndef ION_ION_H
 #define ION_ION_H
 
+#include <new>
 #include <ion/backlight.h>
 #include <ion/battery.h>
 #include <ion/charset.h>

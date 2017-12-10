@@ -5,7 +5,6 @@
 #include "cell.h"
 #include "law/law.h"
 #include "parameters_controller.h"
-#include <new>
 
 namespace Probability {
 

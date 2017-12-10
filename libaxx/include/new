@@ -2,9 +2,26 @@
 #define LIBAXX_NEW
 
 #include <stddef.h>
+#include <stdlib.h>
 
 inline void * operator new(size_t size, void * ptr) noexcept {
   return ptr;
+}
+
+inline void * operator new(size_t size) {
+  return malloc(size);
+}
+
+inline void operator delete(void * ptr) noexcept {
+  free(ptr);
+}
+
+inline void * operator new[](size_t size) {
+  return ::operator new(size);
+}
+
+inline void operator delete[](void * ptr) noexcept {
+  ::operator delete(ptr);
 }
 
 #endif

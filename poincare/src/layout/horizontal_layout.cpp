@@ -1,8 +1,8 @@
 #include "horizontal_layout.h"
 #include "empty_layout.h"
+#include <kandinsky.h>
 extern "C" {
 #include <assert.h>
-#include <kandinsky.h>
 #include <stdlib.h>
 }
 

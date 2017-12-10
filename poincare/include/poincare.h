@@ -3,6 +3,7 @@
 
 #define MATRICES_ARE_DEFINED 1
 
+#include <new>
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/arc_cosine.h>

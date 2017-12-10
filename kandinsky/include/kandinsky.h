@@ -1,6 +1,7 @@
 #ifndef KANDINSKY_KANDINSKY_H
 #define KANDINSKY_KANDINSKY_H
 
+#include <new>
 #include <kandinsky/color.h>
 #include <kandinsky/coordinate.h>
 #include <kandinsky/context.h>

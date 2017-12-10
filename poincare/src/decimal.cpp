@@ -85,10 +85,6 @@ Expression::Type Decimal::type() const {
   return Type::Decimal;
 }
 
-Expression * Decimal::clone() const {
-  return new Decimal(m_mantissa, m_exponent);
-}
-
 template<typename T> Expression * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
   int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);

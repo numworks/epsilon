@@ -16,11 +16,6 @@ Expression::Type HyperbolicSine::type() const {
   return Type::HyperbolicSine;
 }
 
-Expression * HyperbolicSine::clone() const {
-  HyperbolicSine * a = new HyperbolicSine(m_operands, true);
-  return a;
-}
-
 Expression * HyperbolicSine::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -36,7 +31,7 @@ Expression * HyperbolicSine::shallowReduce(Context& context, AngleUnit angleUnit
 }
 
 template<typename T>
-Complex<T> HyperbolicSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> HyperbolicSine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     return Complex<T>::Float(std::sinh(c.a()));
   }

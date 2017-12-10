@@ -11,11 +11,6 @@ Expression::Type HyperbolicArcTangent::type() const {
   return Type::HyperbolicArcTangent;
 }
 
-Expression * HyperbolicArcTangent::clone() const {
-  HyperbolicArcTangent * a = new HyperbolicArcTangent(m_operands, true);
-  return a;
-}
-
 Expression * HyperbolicArcTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -31,7 +26,7 @@ Expression * HyperbolicArcTangent::shallowReduce(Context& context, AngleUnit ang
 }
 
 template<typename T>
-Complex<T> HyperbolicArcTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> HyperbolicArcTangent::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

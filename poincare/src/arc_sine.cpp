@@ -12,11 +12,6 @@ Expression::Type ArcSine::type() const {
   return Type::ArcSine;
 }
 
-Expression * ArcSine::clone() const {
-  ArcSine * a = new ArcSine(m_operands, true);
-  return a;
-}
-
 Expression * ArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -31,7 +26,7 @@ Expression * ArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> ArcSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> ArcSine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);

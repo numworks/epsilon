@@ -14,8 +14,10 @@ class Division final : public StaticHierarchy<2> {
   friend class Power;
 public:
   Type type() const override;
-  Expression * clone() const override;
-  template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
+  Expression * clone() const override {
+    return new Division(m_operands, true);
+  }
+  template<typename T> static Complex<T> compute(const Complex<T> & c, const Complex<T> & d);
   int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */

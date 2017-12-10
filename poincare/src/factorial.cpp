@@ -23,11 +23,6 @@ Expression::Type Factorial::type() const {
   return Type::Factorial;
 }
 
-Expression * Factorial::clone() const {
-  Factorial * a = new Factorial(m_operands[0], true);
-  return a;
-}
-
 /* Layout */
 
 bool Factorial::needParenthesisWithParent(const Expression * e) const {
@@ -77,7 +72,7 @@ Expression * Factorial::shallowBeautify(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Factorial::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   T n = c.a();
   if (c.b() != 0 || std::isnan(n) || n != (int)n || n < 0) {
     return Complex<T>::Float(NAN);

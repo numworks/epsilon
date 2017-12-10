@@ -17,11 +17,6 @@ Expression::Type Cosine::type() const {
   return Type::Cosine;
 }
 
-Expression * Cosine::clone() const {
-  Cosine * a = new Cosine(m_operands, true);
-  return a;
-}
-
 float Cosine::characteristicXRange(Context & context, AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(this, context, angleUnit);
 }
@@ -41,7 +36,7 @@ Expression * Cosine::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Cosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Cosine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() == 0) {
     T input = c.a();

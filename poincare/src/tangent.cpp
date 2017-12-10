@@ -18,11 +18,6 @@ Expression::Type Tangent::type() const {
   return Expression::Type::Tangent;
 }
 
-Expression * Tangent::clone() const {
-  Tangent * a = new Tangent(m_operands, true);
-  return a;
-}
-
 float Tangent::characteristicXRange(Context & context, AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(this, context, angleUnit);
 }
@@ -51,7 +46,7 @@ Expression * Tangent::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Tangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Tangent::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   Complex<T> result = Division::compute(Sine::computeOnComplex(c, angleUnit), Cosine::computeOnComplex(c, angleUnit));
   if (!std::isnan(result.a()) && !std::isnan(result.b())) {
     return result;

@@ -17,11 +17,6 @@ Expression::Type PredictionInterval::type() const {
   return Type::PredictionInterval;
 }
 
-Expression * PredictionInterval::clone() const {
-  PredictionInterval * a = new PredictionInterval(m_operands, true);
-  return a;
-}
-
 int PredictionInterval::polynomialDegree(char symbolName) const {
   return -1;
 }

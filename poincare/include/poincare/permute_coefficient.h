@@ -11,7 +11,9 @@ class PermuteCoefficient final : public StaticHierarchy<2>  {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new PermuteCoefficient(m_operands, true);
+  }
 private:
   constexpr static int k_maxNValue = 100;
   /* Layout */

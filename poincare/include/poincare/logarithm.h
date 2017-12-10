@@ -12,7 +12,9 @@ class Logarithm final : public BoundedStaticHierarchy<2>  {
   friend class NaperianLogarithm;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new Logarithm(operands(), numberOfOperands(), true);
+  }
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
@@ -26,7 +28,7 @@ private:
   bool parentIsAPowerOfSameBase() const;
   Expression * splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit);
   /* Evaluation */
-  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> & c, AngleUnit angleUnit);
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;

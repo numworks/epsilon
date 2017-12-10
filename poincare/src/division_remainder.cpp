@@ -13,11 +13,6 @@ Expression::Type DivisionRemainder::type() const {
   return Type::DivisionRemainder;
 }
 
-Expression * DivisionRemainder::clone() const {
-  DivisionRemainder * a = new DivisionRemainder(m_operands, true);
-  return a;
-}
-
 Expression * DivisionRemainder::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

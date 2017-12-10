@@ -269,7 +269,7 @@ private:
   virtual Expression * replaceSymbolWithExpression(char symbol, Expression * expression);
   /* Properties */
   virtual Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
-  bool isOfType(Type * types, int length) const;
+  bool isOfType(const Type * types, int length) const;
   virtual bool needParenthesisWithParent(const Expression * e) const;
   /* Comparison */
   /* In the simplification order, most expressions are compared by only

@@ -15,11 +15,6 @@ Expression::Type Ceiling::type() const {
   return Type::Ceiling;
 }
 
-Expression * Ceiling::clone() const {
-  Ceiling * c = new Ceiling(m_operands, true);
-  return c;
-}
-
 Expression * Ceiling::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -52,7 +47,7 @@ Expression * Ceiling::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Ceiling::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Ceiling::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

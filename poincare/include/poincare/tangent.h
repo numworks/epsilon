@@ -12,7 +12,9 @@ class Tangent final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new Tangent(m_operands, true);
+  }
   float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
 private:
   /* Layout */
@@ -26,7 +28,7 @@ private:
   /* Simplication */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
-  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> & c, AngleUnit angleUnit = AngleUnit::Radian);
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
   }

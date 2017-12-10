@@ -15,11 +15,6 @@ Expression::Type GreatCommonDivisor::type() const {
   return Type::GreatCommonDivisor;
 }
 
-Expression * GreatCommonDivisor::clone() const {
-  GreatCommonDivisor * a = new GreatCommonDivisor(m_operands, true);
-  return a;
-}
-
 Expression * GreatCommonDivisor::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

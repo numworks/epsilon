@@ -18,10 +18,15 @@ class Addition final : public DynamicHierarchy {
   friend class Complex<double>;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override   {
+    if (numberOfOperands() == 0) {
+      return new Addition();
+    }
+    return new Addition(operands(), numberOfOperands(), true);
+  }
   int polynomialDegree(char symbolName) const override;
   /* Evaluation */
-  template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
+  template<typename T> static Complex<T> compute(const Complex<T> & c, const Complex<T> & d);
   template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n) {
     return ApproximationEngine::elementWiseOnComplexMatrices(m, n, compute<T>);
   }

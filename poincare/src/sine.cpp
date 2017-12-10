@@ -17,11 +17,6 @@ Expression::Type Sine::type() const {
   return Expression::Type::Sine;
 }
 
-Expression * Sine::clone() const {
-  Sine * a = new Sine(m_operands, true);
-  return a;
-}
-
 float Sine::characteristicXRange(Context & context, AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(this, context, angleUnit);
 }
@@ -41,7 +36,7 @@ Expression * Sine::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Sine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Sine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     T input = c.a();
     if (angleUnit == AngleUnit::Degree) {

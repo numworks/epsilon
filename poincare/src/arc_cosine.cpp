@@ -12,11 +12,6 @@ Expression::Type ArcCosine::type() const {
   return Type::ArcCosine;
 }
 
-Expression * ArcCosine::clone() const {
-  ArcCosine * a = new ArcCosine(m_operands, true);
-  return a;
-}
-
 Expression * ArcCosine::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -31,7 +26,7 @@ Expression * ArcCosine::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> ArcCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> ArcCosine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);

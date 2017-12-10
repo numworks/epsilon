@@ -92,10 +92,6 @@ Symbol::Symbol(char name) :
 {
 }
 
-Expression * Symbol::clone() const {
-  return new Symbol(m_name);
-}
-
 int Symbol::polynomialDegree(char symbol) const {
   if (m_name == symbol) {
     return 1;

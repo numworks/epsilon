@@ -40,10 +40,6 @@ Expression::Type Matrix::type() const {
   return Type::Matrix;
 }
 
-Expression * Matrix::clone() const {
-  return new Matrix(m_operands, numberOfRows(), numberOfColumns(), true);
-}
-
 int Matrix::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;

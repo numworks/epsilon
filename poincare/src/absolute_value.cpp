@@ -14,11 +14,6 @@ Expression::Type AbsoluteValue::type() const {
   return Type::AbsoluteValue;
 }
 
-Expression * AbsoluteValue::clone() const {
-  AbsoluteValue * a = new AbsoluteValue(m_operands, true);
-  return a;
-}
-
 Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUnit) {
   assert(s == Sign::Positive);
   return this;
@@ -52,7 +47,7 @@ Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit)
 }
 
 template<typename T>
-Complex<T> AbsoluteValue::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> AbsoluteValue::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   return Complex<T>::Float(c.r());
 }
 

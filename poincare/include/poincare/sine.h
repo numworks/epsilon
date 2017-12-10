@@ -14,8 +14,10 @@ class Sine final : public StaticHierarchy<1> {
   float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
 public:
   Type type() const override;
-  Expression * clone() const override;
-  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
+  Expression * clone() const override {
+    return new Sine(m_operands, true);
+  }
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> & c, AngleUnit angleUnit = AngleUnit::Radian);
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {

@@ -11,7 +11,9 @@ class Determinant final : public StaticHierarchy<1> {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new Determinant(m_operands, true);
+  }
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {

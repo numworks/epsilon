@@ -13,7 +13,7 @@ namespace Poincare {
 
 // Constructors
 
-Rational::Rational(const Integer numerator, const Integer denominator) {
+Rational::Rational(const Integer & numerator, const Integer & denominator) {
   assert(!denominator.isZero());
   if (numerator.isOne() || denominator.isOne()) {
     // Avoid computing GCD if possible
@@ -33,7 +33,7 @@ Rational::Rational(const Integer numerator, const Integer denominator) {
   }
 }
 
-Rational::Rational(const Integer numerator) {
+Rational::Rational(const Integer & numerator) {
   m_numerator = numerator;
   m_denominator = Integer(1);
 }

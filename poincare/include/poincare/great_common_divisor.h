@@ -11,7 +11,9 @@ class GreatCommonDivisor final : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new GreatCommonDivisor(m_operands, true);
+  }
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {

@@ -12,11 +12,6 @@ Expression::Type ArcTangent::type() const {
   return Type::ArcTangent;
 }
 
-Expression * ArcTangent::clone() const {
-  ArcTangent * a = new ArcTangent(m_operands, true);
-  return a;
-}
-
 Expression * ArcTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -31,7 +26,7 @@ Expression * ArcTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> ArcTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> ArcTangent::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);

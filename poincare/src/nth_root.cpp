@@ -16,10 +16,6 @@ Expression::Type NthRoot::type() const {
   return Type::NthRoot;
 }
 
-Expression * NthRoot::clone() const {
-  NthRoot * a = new NthRoot(m_operands, true);  return a;
-}
-
 Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -45,7 +41,7 @@ ExpressionLayout * NthRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMod
 }
 
 template<typename T>
-Complex<T> NthRoot::compute(const Complex<T> c, const Complex<T> d) {
+Complex<T> NthRoot::compute(const Complex<T> & c, const Complex<T> & d) {
   if (c.a() >= 0 && c.b() == 0 && d.b() == 0) {
     return Complex<T>::Float(std::pow(c.a(), 1/d.a()));
   }

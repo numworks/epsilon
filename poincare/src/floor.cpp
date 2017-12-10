@@ -15,11 +15,6 @@ Expression::Type Floor::type() const {
   return Type::Floor;
 }
 
-Expression * Floor::clone() const {
-  Floor * c = new Floor(m_operands, true);
-  return c;
-}
-
 Expression * Floor::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -49,7 +44,7 @@ Expression * Floor::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Floor::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Floor::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

@@ -12,11 +12,6 @@ Expression::Type RealPart::type() const {
   return Type::RealPart;
 }
 
-Expression * RealPart::clone() const {
-  RealPart * a = new RealPart(m_operands, true);
-  return a;
-}
-
 Expression * RealPart::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

@@ -15,11 +15,6 @@ Expression::Type MatrixInverse::type() const {
   return Type::MatrixInverse;
 }
 
-Expression * MatrixInverse::clone() const {
-  MatrixInverse * a = new MatrixInverse(m_operands, true);
-  return a;
-}
-
 Expression * MatrixInverse::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

@@ -11,7 +11,9 @@ class HyperbolicArcSine final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new HyperbolicArcSine(m_operands, true);
+  }
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
@@ -24,7 +26,7 @@ private:
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
-  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> & c, AngleUnit angleUnit);
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
   }

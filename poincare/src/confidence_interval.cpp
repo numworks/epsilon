@@ -16,11 +16,6 @@ Expression::Type ConfidenceInterval::type() const {
   return Type::ConfidenceInterval;
 }
 
-Expression * ConfidenceInterval::clone() const {
-  ConfidenceInterval * a = new ConfidenceInterval(m_operands, true);
-  return a;
-}
-
 int ConfidenceInterval::polynomialDegree(char symbolName) const {
   return -1;
 }

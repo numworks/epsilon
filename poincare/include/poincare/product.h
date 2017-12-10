@@ -9,10 +9,12 @@ class Product final : public Sequence {
   using Sequence::Sequence;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new Product(m_operands, true);
+  }
 private:
-  const char * name() const override;
-  int emptySequenceValue() const override;
+  const char * name() const override { return "product"; }
+  int emptySequenceValue() const override { return 1; }
   ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * argumentLayout, ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout) const override;
   Expression * evaluateWithNextTerm(DoublePrecision p, Expression * a, Expression * b) const override {
     return templatedApproximateWithNextTerm<double>(a, b);

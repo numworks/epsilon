@@ -11,11 +11,6 @@ Expression::Type MatrixDimension::type() const {
   return Type::MatrixDimension;
 }
 
-Expression * MatrixDimension::clone() const {
-  MatrixDimension * a = new MatrixDimension(m_operands, true);
-  return a;
-}
-
 Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

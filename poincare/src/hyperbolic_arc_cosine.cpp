@@ -11,11 +11,6 @@ Expression::Type HyperbolicArcCosine::type() const {
   return Type::HyperbolicArcCosine;
 }
 
-Expression * HyperbolicArcCosine::clone() const {
-  HyperbolicArcCosine * a = new HyperbolicArcCosine(m_operands, true);
-  return a;
-}
-
 Expression * HyperbolicArcCosine::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -31,7 +26,7 @@ Expression * HyperbolicArcCosine::shallowReduce(Context& context, AngleUnit angl
 }
 
 template<typename T>
-Complex<T> HyperbolicArcCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> HyperbolicArcCosine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

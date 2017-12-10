@@ -15,11 +15,6 @@ Expression::Type Derivative::type() const {
   return Type::Derivative;
 }
 
-Expression * Derivative::clone() const {
-  Derivative * a = new Derivative(m_operands, true);
-  return a;
-}
-
 int Derivative::polynomialDegree(char symbolName) const {
   if (symbolName == 'x') {
     if (operand(1)->polynomialDegree(symbolName) != 0) {

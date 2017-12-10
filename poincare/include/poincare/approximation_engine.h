@@ -9,10 +9,10 @@ namespace Poincare {
 
 class ApproximationEngine final {
 public:
-  template <typename T> using ComplexCompute = Complex<T>(*)(const Complex<T>, Expression::AngleUnit angleUnit);
+  template <typename T> using ComplexCompute = Complex<T>(*)(const Complex<T> & c, Expression::AngleUnit angleUnit);
   template<typename T> static Expression * map(const Expression * expression, Context& context, Expression::AngleUnit angleUnit, ComplexCompute<T> compute);
 
-  template <typename T> using ComplexAndComplexReduction = Complex<T>(*)(const Complex<T>, const Complex<T>);
+  template <typename T> using ComplexAndComplexReduction = Complex<T>(*)(const Complex<T> & c, const Complex<T> & d);
   template <typename T> using ComplexAndMatrixReduction = Matrix * (*)(const Complex<T> * c, const Matrix * m);
   template <typename T> using MatrixAndComplexReduction = Matrix * (*)(const Matrix * m, const Complex<T> * c);
   template <typename T> using MatrixAndMatrixReduction = Matrix * (*)(const Matrix * m, const Matrix * n);

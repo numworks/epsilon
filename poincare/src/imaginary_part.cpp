@@ -13,12 +13,6 @@ Expression::Type ImaginaryPart::type() const {
   return Type::ImaginaryPart;
 }
 
-Expression * ImaginaryPart::clone() const {
-  ImaginaryPart * a = new ImaginaryPart(m_operands, true);
-  return a;
-}
-
-
 Expression * ImaginaryPart::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

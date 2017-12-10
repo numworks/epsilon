@@ -16,11 +16,6 @@ Expression::Type BinomialCoefficient::type() const {
   return Type::BinomialCoefficient;
 }
 
-Expression * BinomialCoefficient::clone() const {
-  BinomialCoefficient * b = new BinomialCoefficient(m_operands, true);
-  return b;
-}
-
 Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

@@ -13,11 +13,6 @@ Expression::Type MatrixTranspose::type() const {
   return Type::MatrixTranspose;
 }
 
-Expression * MatrixTranspose::clone() const {
-  MatrixTranspose * a = new MatrixTranspose(m_operands, true);
-  return a;
-}
-
 Expression * MatrixTranspose::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

@@ -11,7 +11,9 @@ class Derivative final : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new Derivative(m_operands, true);
+  }
   int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */

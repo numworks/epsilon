@@ -17,11 +17,6 @@ Expression::Type Integral::type() const {
   return Type::Integral;
 }
 
-Expression * Integral::clone() const {
-  Integral * a = new Integral(m_operands, true);
-  return a;
-}
-
 int Integral::polynomialDegree(char symbolName) const {
   if (symbolName == 'x') {
     int da = operand(1)->polynomialDegree(symbolName);

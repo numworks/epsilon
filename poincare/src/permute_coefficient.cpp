@@ -13,11 +13,6 @@ Expression::Type PermuteCoefficient::type() const {
   return Type::PermuteCoefficient;
 }
 
-Expression * PermuteCoefficient::clone() const {
-  PermuteCoefficient * b = new PermuteCoefficient(m_operands, true);
-  return b;
-}
-
 Expression * PermuteCoefficient::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

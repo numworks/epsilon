@@ -15,11 +15,6 @@ Expression::Type NaperianLogarithm::type() const {
   return Type::NaperianLogarithm;
 }
 
-Expression * NaperianLogarithm::clone() const {
-  NaperianLogarithm * a = new NaperianLogarithm(m_operands, true);
-  return a;
-}
-
 Expression * NaperianLogarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -37,7 +32,7 @@ Expression * NaperianLogarithm::shallowReduce(Context& context, AngleUnit angleU
 }
 
 template<typename T>
-Complex<T> NaperianLogarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> NaperianLogarithm::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

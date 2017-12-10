@@ -11,8 +11,10 @@ class Subtraction final : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
-  template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
+  Expression * clone() const override {
+    return new Subtraction(m_operands, true);
+  }
+  template<typename T> static Complex<T> compute(const Complex<T> & c, const Complex<T> & d);
   int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */

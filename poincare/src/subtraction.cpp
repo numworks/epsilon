@@ -15,10 +15,6 @@ Expression::Type Subtraction::type() const {
   return Expression::Type::Subtraction;
 }
 
-Expression * Subtraction::clone() const {
-  return new Subtraction(m_operands, true);
-}
-
 int Subtraction::polynomialDegree(char symbolName) const {
   int degree = 0;
   for (int i = 0; i < numberOfOperands(); i++) {
@@ -34,12 +30,12 @@ int Subtraction::polynomialDegree(char symbolName) const {
 /* Layout */
 
 bool Subtraction::needParenthesisWithParent(const Expression * e) const {
-  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
+  static const Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 6);
 }
 
 template<typename T>
-Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
+Complex<T> Subtraction::compute(const Complex<T> & c, const Complex<T> & d) {
   return Complex<T>::Cartesian(c.a()-d.a(), c.b() - d.b());
 }
 

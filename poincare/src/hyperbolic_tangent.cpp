@@ -15,11 +15,6 @@ Expression::Type HyperbolicTangent::type() const {
   return Type::HyperbolicTangent;
 }
 
-Expression * HyperbolicTangent::clone() const {
-  HyperbolicTangent * a = new HyperbolicTangent(m_operands, true);
-  return a;
-}
-
 Expression * HyperbolicTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -35,7 +30,7 @@ Expression * HyperbolicTangent::shallowReduce(Context& context, AngleUnit angleU
 }
 
 template<typename T>
-Complex<T> HyperbolicTangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> HyperbolicTangent::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     return Complex<T>::Float(std::tanh(c.a()));
   }

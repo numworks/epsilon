@@ -12,11 +12,6 @@ Expression::Type Parenthesis::type() const {
   return Type::Parenthesis;
 }
 
-Expression * Parenthesis::clone() const {
-  Parenthesis * o = new Parenthesis(m_operands, true);
-  return o;
-}
-
 int Parenthesis::polynomialDegree(char symbolName) const {
   return operand(0)->polynomialDegree(symbolName);
 }

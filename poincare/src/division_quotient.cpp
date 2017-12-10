@@ -13,11 +13,6 @@ Expression::Type DivisionQuotient::type() const {
   return Type::DivisionQuotient;
 }
 
-Expression * DivisionQuotient::clone() const {
-  DivisionQuotient * a = new DivisionQuotient(m_operands, true);
-  return a;
-}
-
 Expression * DivisionQuotient::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

@@ -11,11 +11,6 @@ Expression::Type Determinant::type() const {
   return Type::Determinant;
 }
 
-Expression * Determinant::clone() const {
-  Determinant * a = new Determinant(m_operands, true);
-  return a;
-}
-
 Expression * Determinant::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

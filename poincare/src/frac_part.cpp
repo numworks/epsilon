@@ -12,11 +12,6 @@ Expression::Type FracPart::type() const {
   return Type::FracPart;
 }
 
-Expression * FracPart::clone() const {
-  FracPart * c = new FracPart(m_operands, true);
-  return c;
-}
-
 Expression * FracPart::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -37,7 +32,7 @@ Expression * FracPart::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> FracPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> FracPart::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

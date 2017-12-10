@@ -13,11 +13,6 @@ Expression::Type MatrixTrace::type() const {
   return Type::MatrixTrace;
 }
 
-Expression * MatrixTrace::clone() const {
-  MatrixTrace * a = new MatrixTrace(m_operands, true);
-  return a;
-}
-
 Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

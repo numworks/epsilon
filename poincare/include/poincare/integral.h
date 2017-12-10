@@ -12,7 +12,9 @@ class Integral final : public StaticHierarchy<3> {
   using StaticHierarchy<3>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new Integral(m_operands, true);
+  }
   int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */

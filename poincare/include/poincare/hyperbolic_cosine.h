@@ -11,8 +11,10 @@ class HyperbolicCosine final : public StaticHierarchy<1>  {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
-  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
+  Expression * clone() const override {
+    return new HyperbolicCosine(m_operands, true);
+  }
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> & c, AngleUnit angleUnit);
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {

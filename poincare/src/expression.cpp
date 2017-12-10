@@ -203,7 +203,7 @@ int Expression::polynomialDegree(char symbolName) const {
   return 0;
 }
 
-bool Expression::isOfType(Type * types, int length) const {
+bool Expression::isOfType(const Type * types, int length) const {
   for (int i = 0; i < length; i++) {
     if (type() == types[i]) {
       return true;

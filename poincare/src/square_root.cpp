@@ -26,7 +26,7 @@ int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSig
 }
 
 template<typename T>
-Complex<T> SquareRoot::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> SquareRoot::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() == 0 && c.a() >= 0) {
     return Complex<T>::Float(std::sqrt(c.a()));
   }

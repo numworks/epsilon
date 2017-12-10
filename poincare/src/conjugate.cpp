@@ -14,11 +14,6 @@ Expression::Type Conjugate::type() const {
   return Type::Conjugate;
 }
 
-Expression * Conjugate::clone() const {
-  Conjugate * a = new Conjugate(m_operands, true);
-  return a;
-}
-
 ExpressionLayout * Conjugate::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
@@ -43,7 +38,7 @@ Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Conjugate::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Conjugate::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   return c.conjugate();
 }
 

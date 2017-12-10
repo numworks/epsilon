@@ -11,7 +11,9 @@ class AbsoluteValue final : public StaticHierarchy<1> {
   using StaticHierarchy<1>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new AbsoluteValue(m_operands, true);
+  }
   Sign sign() const override { return Sign::Positive; }
 private:
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
@@ -23,7 +25,7 @@ private:
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
-  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> & c, AngleUnit angleUnit);
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return ApproximationEngine::map<float>(this, context, angleUnit, computeOnComplex<float>);
   }

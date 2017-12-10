@@ -14,11 +14,6 @@ Expression::Type Round::type() const {
   return Type::Round;
 }
 
-Expression * Round::clone() const {
-  Round * c = new Round(m_operands, true);
-  return c;
-}
-
 Expression * Round::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

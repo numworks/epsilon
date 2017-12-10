@@ -18,11 +18,6 @@ Expression::Type Opposite::type() const {
   return Type::Opposite;
 }
 
-Expression * Opposite::clone() const {
-  Opposite * o = new Opposite(m_operands, true);
-  return o;
-}
-
 int Opposite::polynomialDegree(char symbolName) const {
   return operand(0)->polynomialDegree(symbolName);
 }
@@ -40,12 +35,12 @@ Expression::Sign Opposite::sign() const {
 /* Layout */
 
 bool Opposite::needParenthesisWithParent(const Expression * e) const {
-  Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
+  static const Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 7);
 }
 
 template<typename T>
-Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Opposite::compute(const Complex<T> & c, AngleUnit angleUnit) {
   return Complex<T>::Cartesian(-c.a(), -c.b());
 }
 
@@ -93,5 +88,5 @@ int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSigni
 
 }
 
-template Poincare::Complex<float> Poincare::Opposite::compute<float>(Poincare::Complex<float>, AngleUnit angleUnit);
-template Poincare::Complex<double> Poincare::Opposite::compute<double>(Poincare::Complex<double>, AngleUnit angleUnit);
+template Poincare::Complex<float> Poincare::Opposite::compute<float>(const Poincare::Complex<float> &, AngleUnit angleUnit);
+template Poincare::Complex<double> Poincare::Opposite::compute<double>(const Poincare::Complex<double> &, AngleUnit angleUnit);

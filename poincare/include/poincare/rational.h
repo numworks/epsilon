@@ -12,8 +12,8 @@ class Rational final : public StaticHierarchy<0> {
   friend class Multiplication;
 public:
   /* The constructor build a irreductible fraction whose sign is on numerator */
-  Rational(const Integer numerator, const Integer denominator);
-  Rational(const Integer numerator);
+  Rational(const Integer & numerator, const Integer & denominator);
+  Rational(const Integer & numerator);
   Rational(Integer::native_int_t i) : Rational(Integer(i)) {}
   Rational(Integer::native_int_t i, Integer::native_int_t j) : Rational(Integer(i), Integer(j)) {}
 

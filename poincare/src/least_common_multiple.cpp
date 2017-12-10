@@ -15,11 +15,6 @@ Expression::Type LeastCommonMultiple::type() const {
   return Type::LeastCommonMultiple;
 }
 
-Expression * LeastCommonMultiple::clone() const {
-  LeastCommonMultiple * a = new LeastCommonMultiple(m_operands, true);
-  return a;
-}
-
 Expression * LeastCommonMultiple::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

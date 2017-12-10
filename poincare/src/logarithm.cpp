@@ -25,12 +25,8 @@ Expression::Type Logarithm::type() const {
   return Type::Logarithm;
 }
 
-Expression * Logarithm::clone() const {
-  return new Logarithm(operands(), numberOfOperands(), true);
-}
-
 template<typename T>
-Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Logarithm::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
     return Complex<T>::Float(NAN);
   }

@@ -38,7 +38,9 @@ public:
   Type type() const override {
     return Expression::Type::Symbol;
   }
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new Symbol(m_name);
+  }
   int polynomialDegree(char symbolName) const override;
   Sign sign() const override;
   bool isMatrixSymbol() const {

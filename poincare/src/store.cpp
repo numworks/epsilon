@@ -16,10 +16,6 @@ Expression::Type Store::type() const {
   return Type::Store;
 }
 
-Expression * Store::clone() const {
-  return new Store(operands(), true);
-}
-
 int Store::polynomialDegree(char symbolName) const {
   return -1;
 }

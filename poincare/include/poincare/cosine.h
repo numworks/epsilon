@@ -14,9 +14,11 @@ class Cosine final : public StaticHierarchy<1>::StaticHierarchy  {
   friend class Tangent;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    return new Cosine(m_operands, true);
+  }
   float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
-  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> & c, AngleUnit angleUnit = AngleUnit::Radian);
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {

@@ -20,11 +20,16 @@ class Multiplication final : public DynamicHierarchy {
   friend class Complex<double>;
 public:
   Type type() const override;
-  Expression * clone() const override;
+  Expression * clone() const override {
+    if (numberOfOperands() == 0) {
+      return new Multiplication();
+    }
+    return new Multiplication(operands(), numberOfOperands(), true);
+  }
   Sign sign() const override;
   int polynomialDegree(char symbolName) const override;
   /* Evaluation */
-  template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
+  template<typename T> static Complex<T> compute(const Complex<T> & c, const Complex<T> & d);
   template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * m) {
     return ApproximationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }

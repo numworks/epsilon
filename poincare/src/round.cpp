@@ -56,10 +56,10 @@ Complex<T> * Round::templatedApproximate(Context& context, AngleUnit angleUnit) 
   delete f1Input;
   delete f2Input;
   if (std::isnan(f2) || f2 != std::round(f2)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   T err = std::pow(10, std::floor(f2));
-  return new Complex<T>(Complex<T>::Float(std::round(f1*err)/err));
+  return Complex<T>::NewFloat(std::round(f1*err)/err);
 }
 
 }

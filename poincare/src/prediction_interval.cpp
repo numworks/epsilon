@@ -71,18 +71,18 @@ Expression * PredictionInterval::templatedApproximate(Context& context, AngleUni
   Expression * pInput = operand(0)->approximate<T>(context, angleUnit);
   Expression * nInput = operand(1)->approximate<T>(context, angleUnit);
   if (pInput->type() != Type::Complex || nInput->type() != Type::Complex) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   T p = static_cast<Complex<T> *>(pInput)->toScalar();
   T n = static_cast<Complex<T> *>(nInput)->toScalar();
   delete pInput;
   delete nInput;
   if (std::isnan(p) || std::isnan(n) || n != (int)n || n < 0 || p < 0 || p > 1) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   Expression * operands[2];
-  operands[0] = new Complex<T>(Complex<T>::Float(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n)));
-  operands[1] = new Complex<T>(Complex<T>::Float(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n)));
+  operands[0] = Complex<T>::NewFloat(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
+  operands[1] = Complex<T>::NewFloat(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
   return new Matrix(operands, 1, 2, false);
 }
 

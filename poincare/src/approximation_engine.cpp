@@ -59,7 +59,7 @@ template<typename T> Expression * ApproximationEngine::mapReduce(const Expressio
     delete nextOperandEvaluation;
     result = intermediateResult;
     if (result == nullptr) {
-      return new Complex<T>(Complex<T>::Float(NAN));
+      return Complex<T>::NewFNAN();
     }
   }
   return result;

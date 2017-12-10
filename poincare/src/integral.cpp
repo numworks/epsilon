@@ -52,14 +52,14 @@ Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUn
   T b = bInput->type() == Type::Complex ? static_cast<Complex<T> *>(bInput)->toScalar() : NAN;
   delete bInput;
   if (std::isnan(a) || std::isnan(b)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
 #ifdef LAGRANGE_METHOD
   T result = lagrangeGaussQuadrature<T>(a, b, xContext, angleUnit);
 #else
   T result = adaptiveQuadrature<T>(a, b, 0.1, k_maxNumberOfIterations, xContext, angleUnit);
 #endif
-  return new Complex<T>(Complex<T>::Float(result));
+  return Complex<T>::NewFloat(result);
 }
 
 ExpressionLayout * Integral::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {

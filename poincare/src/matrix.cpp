@@ -105,7 +105,7 @@ ExpressionLayout * Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode
 template<typename T>
 Complex<T> * Matrix::createTrace() const {
   if (numberOfRows() != numberOfColumns()) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   int dim = numberOfRows();
   Complex<T> c = Complex<T>::Float(0);
@@ -121,7 +121,7 @@ Complex<T> * Matrix::createTrace() const {
 template<typename T>
 Complex<T> * Matrix::createDeterminant() const {
   if (numberOfRows() != numberOfColumns()) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   int dim = numberOfRows();
   T ** tempMat = new T*[dim];
@@ -154,7 +154,7 @@ Complex<T> * Matrix::createDeterminant() const {
         delete[] tempMat[i];
       }
       delete[] tempMat;
-      return new Complex<T>(Complex<T>::Float(0.0));
+      return Complex<T>::NewFloat(0.0);
     }
     /* Switch rows to have the pivot row as first row */
     if (rowWithPivot != i) {
@@ -179,7 +179,7 @@ Complex<T> * Matrix::createDeterminant() const {
     delete[] tempMat[i];
   }
   delete[] tempMat;
-  return new Complex<T>(Complex<T>::Float(det));
+  return Complex<T>::NewFloat(det);
 }
 
 template<typename T>
@@ -247,7 +247,7 @@ Matrix * Matrix::createInverse() const {
   const Expression ** operands = new const Expression * [numberOfOperands()];
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      operands[i*dim+j] = new Complex<T>(Complex<T>::Float(inv[i][j+dim]));
+      operands[i*dim+j] = Complex<T>::NewFloat(inv[i][j+dim]);
     }
   }
   for (int i = 0; i < dim; i++) {
@@ -295,9 +295,9 @@ Matrix * Matrix::createApproximateIdentity(int dim) {
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       if (i == j) {
-        operands[i*dim+j] = new Complex<T>(Complex<T>::Float(1));
+        operands[i*dim+j] = Complex<T>::NewFloat(1);
       } else {
-        operands[i*dim+j] = new Complex<T>(Complex<T>::Float(0));
+        operands[i*dim+j] = Complex<T>::NewFloat(0);
       }
     }
   }
@@ -312,7 +312,7 @@ Expression * Matrix::templatedApproximate(Context& context, AngleUnit angleUnit)
   for (int i = 0; i < numberOfOperands(); i++) {
     Expression * operandEvaluation = operand(i)->approximate<T>(context, angleUnit);
     if (operandEvaluation->type() != Type::Complex) {
-      operands[i] = new Complex<T>(Complex<T>::Float(NAN));
+      operands[i] = Complex<T>::NewFNAN();
       delete operandEvaluation;
     } else {
       operands[i] = operandEvaluation;

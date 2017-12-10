@@ -29,7 +29,7 @@ template<typename T>
 Complex<T> ArcCosine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
   if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+    return Complex<T>::FNAN();
   }
   T result = std::acos(c.a());
   if (angleUnit == AngleUnit::Degree) {

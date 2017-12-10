@@ -53,7 +53,7 @@ template<typename T>
 Expression * NthRoot::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   Expression * base = operand(0)->approximate<T>(context, angleUnit);
   Expression * index = operand(1)->approximate<T>(context, angleUnit);
-  Complex<T> result = Complex<T>::Float(NAN);
+  Complex<T> result = Complex<T>::FNAN();
   if (base->type() == Type::Complex && index->type() == Type::Complex) {
     Complex<T> * basec = static_cast<Complex<T> *>(base);
     Complex<T> * indexc = static_cast<Complex<T> *>(index);

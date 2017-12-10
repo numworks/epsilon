@@ -46,7 +46,7 @@ Expression * Store::templatedApproximate(Context& context, AngleUnit angleUnit) 
   if (context.expressionForSymbol(symbol()) != nullptr) {
     return context.expressionForSymbol(symbol())->approximate<T>(context, angleUnit);
   }
-  return new Complex<T>(Complex<T>::Float(NAN));
+  return Complex<T>::NewFNAN();
 }
 
 }

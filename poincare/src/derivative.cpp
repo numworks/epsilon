@@ -56,7 +56,7 @@ Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleU
 
   // No complex/matrix version of Derivative
   if (std::isnan(x) || std::isnan(functionValue)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
 
   T error, result;
@@ -68,13 +68,13 @@ Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleU
 
   /* if the error is too big regarding the value, do not return the answer */
   if (std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   if (std::fabs(error) < min) {
-    return new Complex<T>(Complex<T>::Float(result));
+    return Complex<T>::NewFloat(result);
   }
   error = std::pow((T)10, std::floor(std::log10(std::fabs(error)))+2);
-  return new Complex<T>(Complex<T>::Float(std::round(result/error)*error));
+  return Complex<T>::NewFloat(std::round(result/error)*error);
 }
 
 template<typename T>

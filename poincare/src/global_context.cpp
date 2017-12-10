@@ -2,39 +2,9 @@
 #include <poincare/matrix.h>
 #include <poincare/matrix.h>
 #include <assert.h>
-#include <cmath>
 #include <ion.h>
 
 namespace Poincare {
-
-GlobalContext::GlobalContext() :
-  m_pi(Complex<double>::Float(M_PI)),
-  m_e(Complex<double>::Float(M_E)),
-  m_i(Complex<double>::Cartesian(0.0, 1.0))
-{
-  for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
-    m_expressions[i] = nullptr;
-  }
-  for (int i = 0; i < k_maxNumberOfMatrixExpressions ; i++) {
-    m_matrixExpressions[i] = nullptr;
-    m_matrixLayout[i] = nullptr;
-  }
-}
-
-GlobalContext::~GlobalContext() {
-  for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
-    delete m_expressions[i];
-    m_expressions[i] = nullptr;
-  }
-  for (int i = 0; i < k_maxNumberOfMatrixExpressions; i++) {
-    delete m_matrixExpressions[i];
-    m_matrixExpressions[i] = nullptr;
-    if (m_matrixLayout[i] != nullptr) {
-      delete m_matrixLayout[i];
-    }
-    m_matrixLayout[i] = nullptr;
-  }
-}
 
 Complex<double> * GlobalContext::defaultExpression() {
   static Complex<double> defaultExpression(Complex<double>::Float(0.0));
@@ -120,7 +90,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   if (evaluation->type() == Expression::Type::Complex) {
     m_expressions[index] = static_cast<Complex<double> *>(evaluation);
   } else {
-    m_expressions[index] = new Complex<double>(Complex<double>::Float(NAN));
+    m_expressions[index] = Complex<double>::NewFNAN();
     delete evaluation;
   }
 }

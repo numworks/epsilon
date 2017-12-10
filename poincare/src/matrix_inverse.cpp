@@ -52,7 +52,7 @@ Expression * MatrixInverse::templatedApproximate(Context& context, AngleUnit ang
     result = static_cast<Matrix *>(input)->createInverse<T>();
   }
   if (result == nullptr) {
-    result = new Complex<T>(Complex<T>::Float(NAN));
+    result = Complex<T>::NewFNAN();
   }
   delete input;
   return result;

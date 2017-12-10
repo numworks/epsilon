@@ -39,11 +39,11 @@ Expression * MatrixDimension::templatedApproximate(Context& context, AngleUnit a
   Expression * input = operand(0)->approximate<T>(context, angleUnit);
   Expression * operands[2];
   if (input->type() == Type::Matrix) {
-    operands[0] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfRows()));
-    operands[1] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfColumns()));
+    operands[0] = Complex<T>::NewFloat((T)static_cast<Matrix *>(input)->numberOfRows());
+    operands[1] = Complex<T>::NewFloat((T)static_cast<Matrix *>(input)->numberOfColumns());
   } else {
-    operands[0] = new Complex<T>(Complex<T>::Float(1.0));
-    operands[1] = new Complex<T>(Complex<T>::Float(1.0));
+    operands[0] = Complex<T>::NewFloat(1.0);
+    operands[1] = Complex<T>::NewFloat(1.0);
   }
   delete input;
   return new Matrix(operands, 1, 2, false);

@@ -28,6 +28,11 @@ Complex<T> Complex<T>::Float(T x) {
 }
 
 template<typename T>
+Complex<T> * Complex<T>::NewFloat(T x) {
+  return new Complex<T>(x,0);
+}
+
+template<typename T>
 Complex<T> Complex<T>::Cartesian(T a, T b) {
   return Complex(a,b);
 }
@@ -48,6 +53,26 @@ Complex<T> Complex<T>::Polar(T r, T th)  {
   c = th != 0 && std::fabs(c/th) <= Expression::epsilon<T>() ? 0 : c;
   s = th != 0 && std::fabs(s/th) <= Expression::epsilon<T>() ? 0 : s;
   return Complex(r*c,r*s);
+}
+
+template<typename T>
+Complex<T> Complex<T>::FNAN() {
+  return Complex(NAN, 0);
+}
+
+template<typename T>
+Complex<T> * Complex<T>::NewFNAN() {
+  return new Complex(NAN, 0);
+}
+
+template<typename T>
+Complex<T> Complex<T>::FINF() {
+  return Complex(INFINITY, 0);
+}
+
+template<typename T>
+Complex<T> * Complex<T>::NewFINF() {
+  return new Complex(INFINITY, 0);
 }
 
 template<typename T>

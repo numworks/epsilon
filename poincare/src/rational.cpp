@@ -140,7 +140,7 @@ int Rational::simplificationOrderSameType(const Expression * e, bool canBeInterr
 template<typename T> Complex<T> * Rational::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   T n = m_numerator.approximate<T>();
   T d = m_denominator.approximate<T>();
-  return new Complex<T>(Complex<T>::Float(n/d));
+  return Complex<T>::NewFloat(n/d);
 }
 
 bool Rational::needParenthesisWithParent(const Expression * e) const {

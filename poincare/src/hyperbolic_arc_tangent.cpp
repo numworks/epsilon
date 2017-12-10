@@ -28,7 +28,7 @@ Expression * HyperbolicArcTangent::shallowReduce(Context& context, AngleUnit ang
 template<typename T>
 Complex<T> HyperbolicArcTangent::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+    return Complex<T>::FNAN();
   }
   return Complex<T>::Float(std::atanh(c.a()));
 }

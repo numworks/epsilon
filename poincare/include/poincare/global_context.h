@@ -4,6 +4,7 @@
 #include <poincare/context.h>
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
+#include <cmath>
 
 namespace Poincare {
 
@@ -13,8 +14,30 @@ class Integer;
 
 class GlobalContext final : public Context {
 public:
-  GlobalContext();
-  ~GlobalContext();
+  GlobalContext() :
+    m_pi(Complex<double>::Float(M_PI)),
+    m_e(Complex<double>::Float(M_E)),
+    m_i(Complex<double>::Cartesian(0.0, 1.0)) {
+    for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
+      m_expressions[i] = nullptr;
+    }
+    for (int i = 0; i < k_maxNumberOfMatrixExpressions ; i++) {
+      m_matrixExpressions[i] = nullptr;
+      m_matrixLayout[i] = nullptr;
+    }
+  }
+  ~GlobalContext() {
+    for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
+      delete m_expressions[i];
+      m_expressions[i] = nullptr;
+    }
+    for (int i = 0; i < k_maxNumberOfMatrixExpressions; i++) {
+      delete m_matrixExpressions[i];
+      m_matrixExpressions[i] = nullptr;
+      delete m_matrixLayout[i];
+      m_matrixLayout[i] = nullptr;
+    }
+  }
   GlobalContext(const GlobalContext& other) = delete;
   GlobalContext(GlobalContext&& other) = delete;
   GlobalContext& operator=(const GlobalContext& other) = delete;

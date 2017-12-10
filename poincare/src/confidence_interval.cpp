@@ -62,18 +62,18 @@ Expression * ConfidenceInterval::templatedApproximate(Context& context, AngleUni
   Expression * fInput = operand(0)->approximate<T>(context, angleUnit);
   Expression * nInput = operand(1)->approximate<T>(context, angleUnit);
   if (fInput->type() != Type::Complex || nInput->type() != Type::Complex) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   T f = static_cast<Complex<T> *>(fInput)->toScalar();
   T n = static_cast<Complex<T> *>(nInput)->toScalar();
   delete fInput;
   delete nInput;
   if (std::isnan(f) || std::isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   Expression * operands[2];
-  operands[0] = new Complex<T>(Complex<T>::Float(f - 1/std::sqrt(n)));
-  operands[1] = new Complex<T>(Complex<T>::Float(f + 1/std::sqrt(n)));
+  operands[0] = Complex<T>::NewFloat(f - 1/std::sqrt(n));
+  operands[1] = Complex<T>::NewFloat(f + 1/std::sqrt(n));
   return new Matrix(operands, 1, 2, false);
 }
 

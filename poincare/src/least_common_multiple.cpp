@@ -60,10 +60,10 @@ Complex<T> * LeastCommonMultiple::templatedApproximate(Context& context, AngleUn
   delete f1Input;
   delete f2Input;
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   if (f1 == 0.0f || f2 == 0.0f) {
-    return new Complex<T>(Complex<T>::Float(0));
+    return Complex<T>::NewFloat(0);
   }
   int a = (int)f2;
   int b = (int)f1;
@@ -78,7 +78,7 @@ Complex<T> * LeastCommonMultiple::templatedApproximate(Context& context, AngleUn
     a = b;
     b = r;
   }
-  return new Complex<T>(Complex<T>::Float(product/a));
+  return Complex<T>::NewFloat(product/a);
 }
 
 }

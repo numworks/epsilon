@@ -49,7 +49,7 @@ Expression * Ceiling::shallowReduce(Context& context, AngleUnit angleUnit) {
 template<typename T>
 Complex<T> Ceiling::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+    return Complex<T>::FNAN();
   }
   return Complex<T>::Float(std::ceil(c.a()));
 }

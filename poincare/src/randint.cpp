@@ -22,18 +22,18 @@ template <typename T> Expression * Randint::templateApproximate(Context & contex
   Expression * aInput = operand(0)->approximate<T>(context, angleUnit);
   Expression * bInput = operand(1)->approximate<T>(context, angleUnit);
   if (aInput->type() != Type::Complex || bInput->type() != Type::Complex) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   T a = static_cast<Complex<T> *>(aInput)->toScalar();
   T b = static_cast<Complex<T> *>(bInput)->toScalar();
   delete aInput;
   delete bInput;
   if (std::isnan(a) || std::isnan(b) || a != std::round(a) || b != std::round(b) || a > b) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
 
   }
   T result = std::floor(Random::random<T>()*(b+1.0-a)+a);
-  return new Complex<T>(Complex<T>::Float(result));
+  return Complex<T>::NewFloat(result);
 }
 
 }

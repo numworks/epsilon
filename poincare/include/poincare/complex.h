@@ -12,10 +12,15 @@ class Complex final : public StaticHierarchy<0> {
 public:
   Complex() : m_a(0), m_b(0) {}
   static Complex<T> Float(T x);
+  static Complex<T> * NewFloat(T x);
   static Complex<T> Cartesian(T a, T b);/* {
     return Complex(a,b);
   }*/
   static Complex<T> Polar(T r, T theta);
+  static Complex<T> FNAN();
+  static Complex<T> * NewFNAN();
+  static Complex<T> FINF();
+  static Complex<T> * NewFINF();
   Complex(const char * integralPart, int integralPartLength, bool integralNegative,
         const char * fractionalPart, int fractionalPartLength,
         const char * exponent, int exponentLength, bool exponentNegative);

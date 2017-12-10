@@ -75,7 +75,7 @@ template<typename T>
 Complex<T> Factorial::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   T n = c.a();
   if (c.b() != 0 || std::isnan(n) || n != (int)n || n < 0) {
-    return Complex<T>::Float(NAN);
+    return Complex<T>::FNAN();
   }
   T result = 1;
   for (int i = 1; i <= (int)n; i++) {

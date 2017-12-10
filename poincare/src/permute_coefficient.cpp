@@ -67,26 +67,26 @@ Complex<T> * PermuteCoefficient::templatedApproximate(Context& context, AngleUni
   Expression * nInput = operand(0)->approximate<T>(context, angleUnit);
   Expression * kInput = operand(1)->approximate<T>(context, angleUnit);
   if (nInput->type() != Type::Complex || kInput->type() != Type::Complex) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   T n = static_cast<Complex<T> *>(nInput)->toScalar();
   T k = static_cast<Complex<T> *>(kInput)->toScalar();
   delete nInput;
   delete kInput;
   if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return Complex<T>::NewFNAN();
   }
   if (k > n) {
-    return new Complex<T>(Complex<T>::Float(0));
+    return Complex<T>::NewFloat(0);
   }
   T result = 1;
   for (int i = (int)n-(int)k+1; i <= (int)n; i++) {
     result *= i;
     if (std::isinf(result) || std::isnan(result)) {
-      return new Complex<T>(Complex<T>::Float(result));
+      return Complex<T>::NewFloat(result);
     }
   }
-  return new Complex<T>(Complex<T>::Float(std::round(result)));
+  return Complex<T>::NewFloat(std::round(result));
 }
 
 }

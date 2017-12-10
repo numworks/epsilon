@@ -28,7 +28,7 @@ Expression::Type Logarithm::type() const {
 template<typename T>
 Complex<T> Logarithm::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+    return Complex<T>::FNAN();
   }
   return Complex<T>::Float(std::log10(c.a()));
 }
@@ -213,7 +213,7 @@ Expression * Logarithm::templatedApproximate(Context& context, AngleUnit angleUn
   }
   Expression * x = operand(0)->approximate<T>(context, angleUnit);
   Expression * n = operand(1)->approximate<T>(context, angleUnit);
-  Complex<T> result = Complex<T>::Float(NAN);
+  Complex<T> result = Complex<T>::FNAN();
   if (x->type() == Type::Complex && n->type() == Type::Complex) {
     Complex<T> * xc = static_cast<Complex<T> *>(x);
     Complex<T> * nc = static_cast<Complex<T> *>(n);

@@ -53,12 +53,8 @@ Expression * GreatCommonDivisor::shallowReduce(Context& context, AngleUnit angle
 
 template<typename T>
 Complex<T> * GreatCommonDivisor::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * f1Input = operand(0)->approximate<T>(context, angleUnit);
-  Expression * f2Input = operand(1)->approximate<T>(context, angleUnit);
-  T f1 = f1Input->type() == Type::Complex ? static_cast<Complex<T> *>(f1Input)->toScalar() : NAN;
-  T f2 = f2Input->type() == Type::Complex ? static_cast<Complex<T> *>(f2Input)->toScalar() : NAN;
-  delete f1Input;
-  delete f2Input;
+  T f1 = operand(0)->approximateToScalar<T>(context, angleUnit);
+  T f2 = operand(1)->approximateToScalar<T>(context, angleUnit);
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
     return Complex<T>::NewFNAN();
   }

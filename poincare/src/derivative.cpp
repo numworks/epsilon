@@ -45,14 +45,10 @@ Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleU
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   VariableContext<T> xContext = VariableContext<T>('x', &context);
   Symbol xSymbol('x');
-  Expression * xInput = operand(1)->approximate<T>(context, angleUnit);
-  T x = xInput->type() == Type::Complex ? static_cast<Complex<T> *>(xInput)->toScalar() : NAN;
-  delete xInput;
+  T x = operand(1)->approximateToScalar<T>(context, angleUnit);
   Complex<T> e = Complex<T>::Float(x);
   xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  Expression * fInput = operand(0)->approximate<T>(xContext, angleUnit);
-  T functionValue = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
-  delete fInput;
+  T functionValue = operand(0)->approximateToScalar<T>(xContext, angleUnit);
 
   // No complex/matrix version of Derivative
   if (std::isnan(x) || std::isnan(functionValue)) {
@@ -82,14 +78,10 @@ T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext<T> xContext, An
   Symbol xSymbol('x');
   Complex<T> e = Complex<T>::Float(x + h);
   xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  Expression * fInput = operand(0)->approximate<T>(xContext, angleUnit);
-  T expressionPlus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
-  delete fInput;
+  T expressionPlus = operand(0)->approximateToScalar<T>(xContext, angleUnit);
   e = Complex<T>::Float(x-h);
   xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  fInput = operand(0)->approximate<T>(xContext, angleUnit);
-  T expressionMinus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
-  delete fInput;
+  T expressionMinus = operand(0)->approximateToScalar<T>(xContext, angleUnit);
   return (expressionPlus - expressionMinus)/(2*h);
 }
 

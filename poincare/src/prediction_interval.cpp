@@ -68,21 +68,16 @@ Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angle
 
 template<typename T>
 Expression * PredictionInterval::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * pInput = operand(0)->approximate<T>(context, angleUnit);
-  Expression * nInput = operand(1)->approximate<T>(context, angleUnit);
-  if (pInput->type() != Type::Complex || nInput->type() != Type::Complex) {
-    return Complex<T>::NewFNAN();
-  }
-  T p = static_cast<Complex<T> *>(pInput)->toScalar();
-  T n = static_cast<Complex<T> *>(nInput)->toScalar();
-  delete pInput;
-  delete nInput;
+  T p = operand(0)->approximateToScalar<T>(context, angleUnit);
+  T n = operand(1)->approximateToScalar<T>(context, angleUnit);
   if (std::isnan(p) || std::isnan(n) || n != (int)n || n < 0 || p < 0 || p > 1) {
     return Complex<T>::NewFNAN();
   }
-  Expression * operands[2];
-  operands[0] = Complex<T>::NewFloat(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
-  operands[1] = Complex<T>::NewFloat(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
+  T val = 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n);
+  Expression * operands[2] = {
+    Complex<T>::NewFloat(p - val),
+    Complex<T>::NewFloat(p + val)
+  };
   return new Matrix(operands, 1, 2, false);
 }
 

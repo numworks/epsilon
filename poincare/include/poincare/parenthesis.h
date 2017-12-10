@@ -26,7 +26,9 @@ private:
   /* Evaluation */
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const {
+    return operand(0)->approximate<T>(context, angleUnit);
+  }
 
 };
 

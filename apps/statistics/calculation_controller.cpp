@@ -76,7 +76,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   } else {
     static const CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
       &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
-      &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
+      &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::columnProductSum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
     double calculation = (m_store->*calculationMethods[j])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];

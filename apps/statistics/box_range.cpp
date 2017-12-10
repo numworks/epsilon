@@ -3,15 +3,15 @@
 namespace Statistics {
 
 float BoxRange::xMin() {
-  float min = m_store->minValue();
-  float max = m_store->maxValue();
+  float min = m_store->minValueOfColumn(0);
+  float max = m_store->maxValueOfColumn(0);
   max = min >= max ? min + 1 : max;
   return min - k_displayLeftMarginRatio*(max-min);
 }
 
 float BoxRange::xMax() {
-  float min = m_store->minValue();
-  float max = m_store->maxValue();
+  float min = m_store->minValueOfColumn(0);
+  float max = m_store->maxValueOfColumn(0);
   max = min >= max ? min + 1 : max;
   return max + k_displayRightMarginRatio*(max - min);
 }

@@ -53,10 +53,10 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
     upBoundPixel-lowBoundPixel), Palette::GreyWhite);
   // Draw the horizontal lines linking the box to the extreme bounds
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), Palette::GreyDark);
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->thirdQuartile(), m_store->maxValue(), Palette::GreyDark);
+  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValueOfColumn(0), m_store->firstQuartile(), Palette::GreyDark);
+  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->thirdQuartile(), m_store->maxValueOfColumn(0), Palette::GreyDark);
 
-  double calculations[5] = {m_store->minValue(), m_store->firstQuartile(), m_store->median(), m_store->thirdQuartile(), m_store->maxValue()};
+  double calculations[5] = {m_store->minValueOfColumn(0), m_store->firstQuartile(), m_store->median(), m_store->thirdQuartile(), m_store->maxValueOfColumn(0)};
   /* We then draw all the vertical lines of the box and then recolor the
    * the selected quantile (if there is one). As two quantiles can have the same
    * value, we cannot choose line colors and then color only once the vertical

@@ -33,9 +33,9 @@ private:
   template<typename T> T growthRateAroundAbscissa(T x, T h, VariableContext<T> variableContext, AngleUnit angleUnit) const;
   template<typename T> T riddersApproximation(VariableContext<T> variableContext, AngleUnit angleUnit, T x, T h, T * error) const;
   // TODO: Change coefficients?
-  constexpr static double k_maxErrorRateOnApproximation = 0.001;
-  constexpr static double k_minInitialRate = 0.01;
-  constexpr static double k_rateStepSize = 1.4;
+  constexpr static float k_maxErrorRateOnApproximation = 0.001;
+  constexpr static float k_minInitialRate = 0.01;
+  constexpr static float k_rateStepSize = 1.4;
 };
 
 }

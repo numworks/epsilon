@@ -25,7 +25,6 @@ public:
     return m_numberOfPairs;
   }
   double squaredValueSumOfColumn(int i);
-  double columnProductSum();
   double meanOfColumn(int i);
   double varianceOfColumn(int i);
   double standardDeviationOfColumn(int i);
@@ -43,8 +42,6 @@ private:
   constexpr static float k_displayLeftMarginRatio = 0.05f;
   InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
   float addMargin(float x, float range, bool isMin) override;
-  float maxValueOfColumn(int i);
-  float minValueOfColumn(int i);
 };
 
 typedef double (Store::*ArgCalculPointer)(int);

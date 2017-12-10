@@ -41,7 +41,7 @@ Complex<T> Cosine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     T input = c.a();
     if (angleUnit == AngleUnit::Degree) {
-      input *= M_PI/180.0f;
+      input *= (T)M_PI/(T)180;
     }
     T result = std::cos(input);
     /* Cheat: openbsd trigonometric functions (cos, sin & tan) are numerical

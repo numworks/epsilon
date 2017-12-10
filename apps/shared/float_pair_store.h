@@ -19,6 +19,10 @@ public:
   void deleteAllPairs();
   void resetColumn(int i);
   double sumOfColumn(int i);
+  double range();
+  double maxValueOfColumn(int i);
+  double minValueOfColumn(int i);
+  double columnProductSum();
   uint32_t storeChecksum();
   constexpr static int k_maxNumberOfPairs = 100;
 protected:

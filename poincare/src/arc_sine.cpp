@@ -33,7 +33,7 @@ Complex<T> ArcSine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) 
   }
   T result = std::asin(c.a());
   if (angleUnit == AngleUnit::Degree) {
-    return Complex<T>::Float(result*180/M_PI);
+    return Complex<T>::Float(result*(T)180/(T)M_PI);
   }
   return Complex<T>::Float(result);
 }

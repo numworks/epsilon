@@ -33,7 +33,7 @@ Complex<T> ArcTangent::computeOnComplex(const Complex<T> & c, AngleUnit angleUni
   }
   T result = std::atan(c.a());
   if (angleUnit == AngleUnit::Degree) {
-    return Complex<T>::Float(result*180/M_PI);
+    return Complex<T>::Float(result*(T)180/(T)M_PI);
   }
   return Complex<T>::Float(result);
 }

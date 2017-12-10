@@ -1,5 +1,6 @@
 #include "float_pair_store.h"
 #include <cmath>
+#include <float.h>
 #include <assert.h>
 #include <stddef.h>
 #include <ion.h>
@@ -54,6 +55,38 @@ double FloatPairStore::sumOfColumn(int i) {
   double result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     result += m_data[i][k];
+  }
+  return result;
+}
+
+double FloatPairStore::range() {
+  return maxValueOfColumn(0)-minValueOfColumn(0);
+}
+
+double FloatPairStore::maxValueOfColumn(int i) {
+  double max = -DBL_MAX;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_data[0][k] > max && m_data[1][k] > 0) {
+      max = m_data[0][k];
+    }
+  }
+  return max;
+}
+
+double FloatPairStore::minValueOfColumn(int i) {
+  double min = DBL_MAX;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    if (m_data[0][k] < min && m_data[1][k] > 0) {
+      min = m_data[0][k];
+    }
+  }
+  return min;
+}
+
+double FloatPairStore::columnProductSum() {
+  double result = 0;
+  for (int k = 0; k < m_numberOfPairs; k++) {
+    result += m_data[0][k]*m_data[1][k];
   }
   return result;
 }

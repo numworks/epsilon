@@ -32,8 +32,8 @@ double HistogramParameterController::parameterAtIndex(int index) {
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex >= 0 && parameterIndex < k_numberOfCells);
   if (parameterIndex == 0) {
-    double newNumberOfBars = std::ceil((m_store->maxValue() - m_store->minValue())/f);
-    if (f <= 0.0f || newNumberOfBars > Store::k_maxNumberOfBars || m_store->firstDrawnBarAbscissa() > m_store->maxValue()+f) {
+    double newNumberOfBars = std::ceil((m_store->maxValueOfColumn(0) - m_store->minValueOfColumn(0))/f);
+    if (f <= 0.0f || newNumberOfBars > Store::k_maxNumberOfBars || m_store->firstDrawnBarAbscissa() > m_store->maxValueOfColumn(0)+f) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }

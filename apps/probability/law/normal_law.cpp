@@ -68,7 +68,7 @@ float NormalLaw::evaluateAtAbscissa(float x) const {
   if (m_parameter2 == 0.0f) {
     return NAN;
   }
-  return (1.0f/(std::fabs(m_parameter2)*std::sqrt(2.0f*M_PI)))*std::exp(-0.5f*std::pow((x-m_parameter1)/m_parameter2,2));
+  return (1.0f/(std::fabs(m_parameter2)*std::sqrt(2.0f*(float)M_PI)))*std::exp(-0.5f*std::pow((x-m_parameter1)/m_parameter2,2));
 }
 
 bool NormalLaw::authorizedValueAtIndex(float x, int index) const {

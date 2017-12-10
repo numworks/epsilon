@@ -162,9 +162,9 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, VariableC
   resasc = resasc*dhlgth;
   T abserr = std::fabs((resk-resg)*hlgth);
   if (resasc != 0 && abserr != 0) {
-    abserr = 1 > std::pow((T)(200*abserr/resasc), (T)1.5)? resasc*std::pow((T)(200*abserr/resasc), (T)1.5) : resasc;
+    abserr = 1 > std::pow((T)200*abserr/resasc, (T)1.5) ? resasc * std::pow((T)200*abserr/resasc, (T)1.5) : resasc;
   }
-  if (resabs > max/(50.0*epsilon)) {
+  if (resabs > max/((T)50*epsilon)) {
     abserr = abserr > epsilon*50*resabs ? abserr : epsilon*50*resabs;
   }
   DetailedResult<T> result;

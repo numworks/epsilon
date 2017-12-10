@@ -161,13 +161,13 @@ T Complex<T>::r() const {
 
 template <class T>
 T Complex<T>::th() const {
-  T result = std::atan(m_b/m_a) + M_PI;
+  T result = std::atan(m_b/m_a) + (T)M_PI;
   if (m_a >= 0) {
     T a = m_a == 0 ? 0 : m_a;
     result = std::atan(m_b/a);
   }
-  if (result > M_PI + FLT_EPSILON) {
-    result = result - 2*M_PI;
+  if (result > (T)M_PI + FLT_EPSILON) {
+    result = result - 2*(T)M_PI;
   }
   return result;
 }

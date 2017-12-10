@@ -14,7 +14,12 @@ public:
   double barWidth() {
     return m_barWidth;
   }
-  void setBarWidth(double barWidth);
+  void setBarWidth(double barWidth) {
+    if (barWidth <= 0.0) {
+      return;
+    }
+    m_barWidth = barWidth;
+  }
   double firstDrawnBarAbscissa() {
     return m_firstDrawnBarAbscissa;
   }
@@ -24,7 +29,9 @@ public:
   double heightOfBarAtIndex(int index);
   double heightOfBarAtValue(double value);
   double startOfBarAtIndex(int index);
-  double endOfBarAtIndex(int index);
+  double endOfBarAtIndex(int index)  {
+    return startOfBarAtIndex(index+1);
+  }
   double numberOfBars();
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int index);
@@ -33,18 +40,22 @@ public:
   double sumOfOccurrences() {
     return sumOfColumn(1);
   }
-  double maxValue();
-  double minValue();
-  double range();
+  double maxValue() {
+    return maxValueOfColumn(0);
+  }
+  double minValue() {
+    return minValueOfColumn(0);
+  }
   double mean();
   double variance();
   double standardDeviation();
   double sampleStandardDeviation();
   double firstQuartile();
   double thirdQuartile();
-  double quartileRange();
+  double quartileRange() {
+    return thirdQuartile()-firstQuartile();
+  }
   double median();
-  double sum();
   double squaredValueSum();
   constexpr static double k_maxNumberOfBars = 10000.0;
   constexpr static float k_displayTopMarginRatio = 0.1f;

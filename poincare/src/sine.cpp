@@ -40,7 +40,7 @@ Complex<T> Sine::computeOnComplex(const Complex<T> & c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     T input = c.a();
     if (angleUnit == AngleUnit::Degree) {
-      input *= M_PI/180;
+      input *= (T)M_PI/(T)180;
     }
     T result = std::sin(input);
     /* Cheat: see comment in cosine.cpp

@@ -26,13 +26,6 @@ uint32_t Store::barChecksum() {
 
 /* Histogram bars */
 
-void Store::setBarWidth(double barWidth) {
-  if (barWidth <= 0.0) {
-    return;
-  }
-  m_barWidth = barWidth;
-}
-
 double Store::heightOfBarAtIndex(int index) {
   return sumOfValuesBetween(startOfBarAtIndex(index), endOfBarAtIndex(index));
 }
@@ -46,17 +39,13 @@ double Store::heightOfBarAtValue(double value) {
 }
 
 double Store::startOfBarAtIndex(int index) {
-  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
+  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValueOfColumn(0)- m_firstDrawnBarAbscissa)/m_barWidth);
   return firstBarAbscissa + index * m_barWidth;
 }
 
-double Store::endOfBarAtIndex(int index) {
-  return startOfBarAtIndex(index+1);
-}
-
 double Store::numberOfBars() {
-  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue()- m_firstDrawnBarAbscissa)/m_barWidth);
-  return std::ceil((maxValue() - firstBarAbscissa)/m_barWidth)+1;
+  double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValueOfColumn(0)- m_firstDrawnBarAbscissa)/m_barWidth);
+  return std::ceil((maxValueOfColumn(0) - firstBarAbscissa)/m_barWidth)+1;
 }
 
 bool Store::scrollToSelectedBarIndex(int index) {
@@ -79,32 +68,8 @@ bool Store::scrollToSelectedBarIndex(int index) {
 
 /* Calculation */
 
-double Store::maxValue() {
-  double max = -DBL_MAX;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_data[0][k] > max && m_data[1][k] > 0) {
-      max = m_data[0][k];
-    }
-  }
-  return max;
-}
-
-double Store::minValue() {
-  double min = DBL_MAX;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_data[0][k] < min && m_data[1][k] > 0) {
-      min = m_data[0][k];
-    }
-  }
-  return min;
-}
-
-double Store::range() {
-  return maxValue()-minValue();
-}
-
 double Store::mean() {
-  return sum()/sumOfColumn(1);
+  return columnProductSum()/sumOfColumn(1);
 }
 
 double Store::variance() {
@@ -132,10 +97,6 @@ double Store::thirdQuartile() {
   return sortedElementNumber(thirdQuartileIndex);
 }
 
-double Store::quartileRange() {
-  return thirdQuartile()-firstQuartile();
-}
-
 double Store::median() {
   int total = sumOfColumn(1);
   int halfTotal = total/2;
@@ -147,14 +108,6 @@ double Store::median() {
   } else {
     return sortedElementNumber(halfTotal+1);
   }
-}
-
-double Store::sum() {
-  double result = 0;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    result += m_data[0][k]*m_data[1][k];
-  }
-  return result;
 }
 
 double Store::squaredValueSum() {

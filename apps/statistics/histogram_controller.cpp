@@ -215,7 +215,7 @@ bool HistogramController::moveSelection(int deltaIndex) {
 
 void HistogramController::initRangeParameters() {
   float min = m_store->firstDrawnBarAbscissa();
-  float max = m_store->maxValue();
+  float max = m_store->maxValueOfColumn(0);
   float barWidth = m_store->barWidth();
   float xMin = min;
   float xMax = max + barWidth;
@@ -243,8 +243,8 @@ void HistogramController::initRangeParameters() {
 }
 
 void HistogramController::initBarParameters() {
-  float min = m_store->minValue();
-  float max = m_store->maxValue();
+  float min = m_store->minValueOfColumn(0);
+  float max = m_store->maxValueOfColumn(0);
   max = min >= max ? min + std::pow(10.0f, std::floor(std::log10(std::fabs(min)))-1.0f) : max;
   m_store->setFirstDrawnBarAbscissa(min);
   float barWidth = m_store->computeGridUnit(CurveViewRange::Axis::X, min, max);

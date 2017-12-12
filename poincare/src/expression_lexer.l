@@ -84,7 +84,6 @@ using namespace Poincare;
 
 [0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
 [A-Zxn] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-[a-z;:"_=<>?] { return UNDEFINED_SYMBOL; }
 M[0-9] { poincare_expression_yylval.character = Symbol::matrixSymbol(yytext[1]); return SYMBOL; }
 u\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un; return SYMBOL; }
 u\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un1; return SYMBOL; }
@@ -158,5 +157,6 @@ inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED;
 \] { return RIGHT_BRACKET; }
 \, { return COMMA; }
 \. { return DOT; }
+. { return UNDEFINED_SYMBOL; }
 
 %%

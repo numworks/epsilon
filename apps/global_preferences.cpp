@@ -9,8 +9,8 @@ GlobalPreferences::GlobalPreferences() :
 }
 
 GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
-  static GlobalPreferences s_globalPreferences;
-  return &s_globalPreferences;
+  static GlobalPreferences globalPreferences;
+  return &globalPreferences;
 }
 
 I18n::Language GlobalPreferences::language() const {

@@ -1,7 +1,5 @@
 #include "global_preferences.h"
 
-static GlobalPreferences s_globalPreferences;
-
 GlobalPreferences::GlobalPreferences() :
   m_language(I18n::Language::EN),
   m_examMode(ExamMode::Desactivate),
@@ -11,6 +9,7 @@ GlobalPreferences::GlobalPreferences() :
 }
 
 GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
+  static GlobalPreferences s_globalPreferences;
   return &s_globalPreferences;
 }
 

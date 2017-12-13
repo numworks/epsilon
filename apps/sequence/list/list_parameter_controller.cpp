@@ -1,5 +1,6 @@
 #include "list_parameter_controller.h"
 #include "list_controller.h"
+#include "../app.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -52,6 +53,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 #endif
       if (m_functionStore->numberOfFunctions() > 0) {
         m_functionStore->removeFunction(m_function);
+        static_cast<App *>(app())->localContext()->resetCache();
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;

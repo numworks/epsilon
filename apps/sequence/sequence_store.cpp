@@ -56,7 +56,6 @@ void SequenceStore::removeFunction(Shared::Function * f) {
   }
   Sequence emptySequence("", KDColorBlack);
   m_sequences[m_numberOfFunctions] = emptySequence;
-  //sqctx->resetCache();
 }
 
 int SequenceStore::maxNumberOfFunctions() {
@@ -105,7 +104,6 @@ void SequenceStore::removeAll() {
     m_sequences[i] = emptySequence;
   }
   m_numberOfFunctions = 0;
-  //sqctx->resetCache();
 }
 
 }

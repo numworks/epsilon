@@ -126,7 +126,6 @@ void Sequence::setType(Type type) {
   }
   setFirstInitialConditionContent("");
   setSecondInitialConditionContent("");
-  //sqctx->resetCache();
 }
 
 Poincare::Expression * Sequence::firstInitialConditionExpression(Context * context) const {
@@ -173,7 +172,6 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionLayout() {
 
 void Sequence::setContent(const char * c) {
   Function::setContent(c);
-  //sqctx->resetCache();
 }
 
 void Sequence::setFirstInitialConditionContent(const char * c) {
@@ -186,7 +184,6 @@ void Sequence::setFirstInitialConditionContent(const char * c) {
     delete m_firstInitialConditionLayout;
     m_firstInitialConditionLayout = nullptr;
   }
-  //sqctx->resetCache();
 }
 
 void Sequence::setSecondInitialConditionContent(const char * c) {
@@ -199,7 +196,6 @@ void Sequence::setSecondInitialConditionContent(const char * c) {
     delete m_secondInitialConditionLayout;
     m_secondInitialConditionLayout = nullptr;
   }
-  //sqctx->resetCache();
 }
 
 char Sequence::symbol() const {

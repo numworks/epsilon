@@ -101,6 +101,8 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
+  // Invalidate the sequences context cache
+  static_cast<App *>(app())->localContext()->resetCache();
   switch (sequenceDefinition) {
     case 0:
       inputController->edit(this, event, sequence, initialText,
@@ -135,6 +137,13 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
       [](void * context, void * sender){
     });
   }
+}
+
+bool ListController::removeFunctionRow(Function * function) {
+  m_functionStore->removeFunction(function);
+  // Invalidate the sequences context cache
+  static_cast<App *>(app())->localContext()->resetCache();
+  return true;
 }
 
 ListParameterController * ListController::parameterController() {
@@ -251,6 +260,8 @@ void ListController::editExpression(Shared::Function * function, Ion::Events::Ev
 }
 
 void ListController::reinitExpression(Shared::Function * function) {
+  // Invalidate the sequences context cache
+  static_cast<App *>(app())->localContext()->resetCache();
   Sequence * sequence = (Sequence *)function;
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:

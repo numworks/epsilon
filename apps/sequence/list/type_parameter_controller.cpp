@@ -1,5 +1,6 @@
 #include "type_parameter_controller.h"
 #include "list_controller.h"
+#include "../app.h"
 #include <assert.h>
 #include "../../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../../poincare/src/layout/string_layout.h"
@@ -54,6 +55,8 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
       if (m_sequence->type() != sequenceType) {
         m_listController->selectPreviousNewSequenceCell();
         m_sequence->setType((Sequence::Type)selectedRow());
+        // Invalidate sequence context cache when changing sequence type
+        static_cast<App *>(app())->localContext()->resetCache();
       }
       StackViewController * stack = stackController();
       assert(stack->depth()>2);

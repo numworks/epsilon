@@ -16,8 +16,7 @@ LocalContext<T>::LocalContext(Context * parentContext) :
 template<typename T>
 const Expression * LocalContext<T>::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Symbol::SpecialSymbols::un || symbol->name() == Symbol::SpecialSymbols::un1 ||
-      symbol->name() == Symbol::SpecialSymbols::vn || symbol->name() == Symbol::SpecialSymbols::vn1 ||
-symbol->name() == Symbol::SpecialSymbols::wn || symbol->name() == Symbol::SpecialSymbols::wn1) {
+      symbol->name() == Symbol::SpecialSymbols::vn || symbol->name() == Symbol::SpecialSymbols::vn1) {
     return &m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)];
   }
   return VariableContext<T>::expressionForSymbol(symbol);
@@ -43,10 +42,6 @@ int LocalContext<T>::nameIndexForSymbol(const Poincare::Symbol * symbol) {
       return 1;
     case Symbol::SpecialSymbols::vn1:
       return 1;
-    case Symbol::SpecialSymbols::wn:
-      return 2;
-    case Symbol::SpecialSymbols::wn1:
-      return 2;
     default:
       return 0;
   }
@@ -62,10 +57,6 @@ int LocalContext<T>::rankIndexForSymbol(const Poincare::Symbol * symbol) {
     case Symbol::SpecialSymbols::vn:
       return 0;
     case Symbol::SpecialSymbols::vn1:
-      return 1;
-    case Symbol::SpecialSymbols::wn:
-      return 0;
-    case Symbol::SpecialSymbols::wn1:
       return 1;
     default:
       return 0;

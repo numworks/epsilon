@@ -17,8 +17,9 @@ app_objs += $(addprefix apps/sequence/,\
   list/type_parameter_controller.o\
   values/interval_parameter_controller.o\
   values/values_controller.o\
-  local_context.o\
+  cache_context.o\
   sequence.o\
+  sequence_context.o\
   sequence_store.o\
   sequence_title_cell.o\
 )

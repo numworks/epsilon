@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include <poincare.h>
-#include "local_context.h"
+#include "sequence_context.h"
 #include "sequence_store.h"
 #include "graph/graph_controller.h"
 #include "graph/curve_view_range.h"
@@ -39,7 +39,7 @@ public:
   const char * XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
-  LocalContext<float> m_nContext;
+  SequenceContext m_sequenceContext;
   ListController m_listController;
   ButtonRowController m_listFooter;
   ButtonRowController m_listHeader;

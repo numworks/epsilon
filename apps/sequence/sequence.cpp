@@ -1,5 +1,6 @@
 #include "sequence.h"
-#include "local_context.h"
+#include "sequence_store.h"
+#include "cache_context.h"
 #include "../../poincare/src/layout/string_layout.h"
 #include "../../poincare/src/layout/baseline_relative_layout.h"
 #include <string.h>
@@ -22,11 +23,7 @@ Sequence::Sequence(const char * text, KDColor color) :
   m_nameLayout(nullptr),
   m_definitionName(nullptr),
   m_firstInitialConditionName(nullptr),
-  m_secondInitialConditionName(nullptr),
-  m_indexBufferFloat{-1, -1},
-  m_indexBufferDouble{-1, -1},
-  m_bufferFloat{NAN, NAN},
-  m_bufferDouble{NAN, NAN}
+  m_secondInitialConditionName(nullptr)
 {
 }
 
@@ -77,7 +74,6 @@ Sequence& Sequence::operator=(const Sequence& other) {
   setContent(contentText);
   setFirstInitialConditionContent(firstInitialText);
   setSecondInitialConditionContent(secondInitialText);
-  resetBuffer();
   return *this;
 }
 
@@ -130,7 +126,7 @@ void Sequence::setType(Type type) {
   }
   setFirstInitialConditionContent("");
   setSecondInitialConditionContent("");
-  resetBuffer();
+  //sqctx->resetCache();
 }
 
 Poincare::Expression * Sequence::firstInitialConditionExpression(Context * context) const {
@@ -177,7 +173,7 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionLayout() {
 
 void Sequence::setContent(const char * c) {
   Function::setContent(c);
-  resetBuffer();
+  //sqctx->resetCache();
 }
 
 void Sequence::setFirstInitialConditionContent(const char * c) {
@@ -190,7 +186,7 @@ void Sequence::setFirstInitialConditionContent(const char * c) {
     delete m_firstInitialConditionLayout;
     m_firstInitialConditionLayout = nullptr;
   }
-  resetBuffer();
+  //sqctx->resetCache();
 }
 
 void Sequence::setSecondInitialConditionContent(const char * c) {
@@ -203,7 +199,7 @@ void Sequence::setSecondInitialConditionContent(const char * c) {
     delete m_secondInitialConditionLayout;
     m_secondInitialConditionLayout = nullptr;
   }
-  resetBuffer();
+  //sqctx->resetCache();
 }
 
 char Sequence::symbol() const {
@@ -281,71 +277,66 @@ bool Sequence::isEmpty() {
 }
 
 template<typename T>
-T Sequence::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
+T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
   T n = std::round(x);
+  int sequenceIndex = name() == SequenceStore::k_sequenceNames[0] ? 0 : 1;
+  if (sqctx->iterateUntilRank<T>(n)) {
+    return sqctx->valueOfSequenceAtPreviousRank<T>(sequenceIndex, 0);
+  }
+  return NAN;
+}
+
+template<typename T>
+T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
+  CacheContext<T> ctx = CacheContext<T>(sqctx);
+  T un = sqctx->valueOfSequenceAtPreviousRank<T>(0, 0);
+  T unm1 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 1);
+  T unm2 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 2);
+  T vn = sqctx->valueOfSequenceAtPreviousRank<T>(1, 0);
+  T vnm1 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 1);
+  T vnm2 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 2);
+  Poincare::Symbol nSymbol(symbol());
+  Poincare::Symbol vnSymbol(Symbol::SpecialSymbols::vn);
+  Poincare::Symbol vn1Symbol(Symbol::SpecialSymbols::vn1);
+  Poincare::Symbol unSymbol(Symbol::SpecialSymbols::un);
+  Poincare::Symbol un1Symbol(Symbol::SpecialSymbols::un1);
   switch (m_type) {
     case Type::Explicite:
-      if (n < 0) {
-        return NAN;
-      }
-      return Shared::Function::evaluateAtAbscissa(n, context);
+    {
+      ctx.setValueForSymbol(un, &unSymbol);
+      ctx.setValueForSymbol(vn, &vnSymbol);
+      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n);
+      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
+      return expression(sqctx)->template approximateToScalar<T>(ctx);
+    }
     case Type::SingleRecurrence:
     {
-      if (n < 0 || n > k_maxRecurrentRank) {
-        return NAN;
-      }
       if (n == 0) {
-        setBufferIndexValue<T>(0,0);
-        setBufferValue(firstInitialConditionExpression(context)->approximateToScalar<T>(*context), 0);
-        return bufferValue<T>(0);
+        return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
-      LocalContext<T> subContext = LocalContext<T>(context);
-      Poincare::Symbol nSymbol(symbol());
-      int start = indexBuffer<T>(0) < 0 || indexBuffer<T>(0) > n ? 0 : indexBuffer<T>(0);
-      T un = indexBuffer<T>(0) < 0 || indexBuffer<T>(0) > n ? firstInitialConditionExpression(context)->approximateToScalar<T>(*context) : bufferValue<T>(0);
-      for (int i = start; i < n; i++) {
-        subContext.setValueForSequenceRank(un, name(), 0);
-        Poincare::Complex<T> e = Poincare::Complex<T>::Float(i);
-        subContext.setExpressionForSymbolName(&e, &nSymbol, subContext);
-        un = expression(&subContext)-> template approximateToScalar<T>(subContext);
-      }
-      setBufferValue(un, 0);
-      setBufferIndexValue<T>(n, 0);
-      return un;
+      ctx.setValueForSymbol(un, &un1Symbol);
+      ctx.setValueForSymbol(unm1, &unSymbol);
+      ctx.setValueForSymbol(vn, &vn1Symbol);
+      ctx.setValueForSymbol(vnm1, &vnSymbol);
+      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-1);
+      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
+      return expression(sqctx)->template approximateToScalar<T>(ctx);
     }
     default:
     {
-      if (n < 0 || n > k_maxRecurrentRank) {
-        return NAN;
-      }
       if (n == 0) {
-        return firstInitialConditionExpression(context)->approximateToScalar<T>(*context);
+        return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
       if (n == 1) {
-        setBufferIndexValue<T>(0, 0);
-        setBufferValue(firstInitialConditionExpression(context)->approximateToScalar<T>(*context), 0);
-        setBufferIndexValue<T>(1, 1);
-        setBufferValue(secondInitialConditionExpression(context)->approximateToScalar<T>(*context), 1);
-        return bufferValue<T>(1);
+        return secondInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
-      LocalContext<T> subContext = LocalContext<T>(context);
-      Poincare::Symbol nSymbol(symbol());
-      int start = indexBuffer<T>(0) >= 0 && indexBuffer<T>(0) < n && indexBuffer<T>(1) > 0 && indexBuffer<T>(1) <= n && indexBuffer<T>(0) + 1 == indexBuffer<T>(1) ? indexBuffer<T>(0) : 0;
-      T un = indexBuffer<T>(0) >= 0 && indexBuffer<T>(0) < n && indexBuffer<T>(1) > 0 && indexBuffer<T>(1) <= n && indexBuffer<T>(0) + 1 == indexBuffer<T>(1) ? bufferValue<T>(0) : firstInitialConditionExpression(context)->approximateToScalar<T>(*context);
-      T un1 = indexBuffer<T>(0) >= 0 && indexBuffer<T>(0) < n && indexBuffer<T>(1) > 0 && indexBuffer<T>(1) <= n && indexBuffer<T>(0) + 1 == indexBuffer<T>(1) ? bufferValue<T>(1) : secondInitialConditionExpression(context)->approximateToScalar<T>(*context);
-      for (int i = start; i < n-1; i++) {
-        subContext.setValueForSequenceRank(un, name(), 0);
-        subContext.setValueForSequenceRank(un1, name(), 1);
-        Poincare::Complex<T> e = Poincare::Complex<T>::Float(i);
-        subContext.setExpressionForSymbolName(&e, &nSymbol, subContext);
-        un = un1;
-        un1 = expression(&subContext)->template approximateToScalar<T>(subContext);
-      }
-      setBufferValue(un, 0);
-      setBufferIndexValue<T>(n-1, 0);
-      setBufferValue(un1, 1);
-      setBufferIndexValue<T>(n, 1);
-      return un1;
+      ctx.setValueForSymbol(unm1, &un1Symbol);
+      ctx.setValueForSymbol(unm2, &unSymbol);
+      ctx.setValueForSymbol(vnm1, &vn1Symbol);
+      ctx.setValueForSymbol(vnm2, &vnSymbol);
+      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-2);
+      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
+      return expression(sqctx)->template approximateToScalar<T>(ctx);
     }
   }
 }
@@ -402,11 +393,6 @@ void Sequence::tidy() {
   }
 }
 
-void Sequence::resetBuffer() const {
-  m_indexBufferFloat[0] = -1;
-  m_indexBufferFloat[1] = -1;
-  m_indexBufferDouble[0] = -1;
-  m_indexBufferDouble[1] = -1;
-}
-
+template double Sequence::approximateToNextRank<double>(int, SequenceContext*) const;
+template float Sequence::approximateToNextRank<float>(int, SequenceContext*) const;
 }

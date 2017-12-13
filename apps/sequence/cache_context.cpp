@@ -1,4 +1,4 @@
-#include "local_context.h"
+#include "cache_context.h"
 #include <cmath>
 
 using namespace Poincare;
@@ -6,7 +6,7 @@ using namespace Poincare;
 namespace Sequence {
 
 template<typename T>
-LocalContext<T>::LocalContext(Context * parentContext) :
+CacheContext<T>::CacheContext(Context * parentContext) :
   VariableContext<T>('n', parentContext),
   m_values{{Complex<T>::Float(NAN), Complex<T>::Float(NAN)},
     {Complex<T>::Float(NAN), Complex<T>::Float(NAN)}}
@@ -14,7 +14,7 @@ LocalContext<T>::LocalContext(Context * parentContext) :
 }
 
 template<typename T>
-const Expression * LocalContext<T>::expressionForSymbol(const Symbol * symbol) {
+const Expression * CacheContext<T>::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Symbol::SpecialSymbols::un || symbol->name() == Symbol::SpecialSymbols::un1 ||
       symbol->name() == Symbol::SpecialSymbols::vn || symbol->name() == Symbol::SpecialSymbols::vn1) {
     return &m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)];
@@ -23,16 +23,12 @@ const Expression * LocalContext<T>::expressionForSymbol(const Symbol * symbol) {
 }
 
 template<typename T>
-void LocalContext<T>::setValueForSequenceRank(T value, const char * sequenceName, int rank) {
-  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    if (strcmp(sequenceName, SequenceStore::k_sequenceNames[i]) == 0) {
-      m_values[i][rank] = Complex<T>::Float(value);
-    }
-  }
+void CacheContext<T>::setValueForSymbol(T value, const Poincare::Symbol * symbol) {
+  m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = Complex<T>::Float(value);
 }
 
 template<typename T>
-int LocalContext<T>::nameIndexForSymbol(const Poincare::Symbol * symbol) {
+int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol * symbol) {
   switch (symbol->name()) {
     case Symbol::SpecialSymbols::un:
       return 0;
@@ -48,7 +44,7 @@ int LocalContext<T>::nameIndexForSymbol(const Poincare::Symbol * symbol) {
 }
 
 template<typename T>
-int LocalContext<T>::rankIndexForSymbol(const Poincare::Symbol * symbol) {
+int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol * symbol) {
   switch (symbol->name()) {
     case Symbol::SpecialSymbols::un:
       return 0;
@@ -63,7 +59,7 @@ int LocalContext<T>::rankIndexForSymbol(const Poincare::Symbol * symbol) {
   }
 }
 
-template class LocalContext<float>;
-template class LocalContext<double>;
+template class CacheContext<float>;
+template class CacheContext<double>;
 
 }

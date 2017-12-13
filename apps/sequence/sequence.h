@@ -22,13 +22,16 @@ public:
   Sequence(Sequence&& other) = delete;
   uint32_t checksum() override;
   Type type();
-  void setType(Type type);
   const char * firstInitialConditionText();
   const char * secondInitialConditionText();
   Poincare::Expression * firstInitialConditionExpression(Poincare::Context * context) const;
   Poincare::Expression * secondInitialConditionExpression(Poincare::Context * context) const;
   Poincare::ExpressionLayout * firstInitialConditionLayout();
   Poincare::ExpressionLayout * secondInitialConditionLayout();
+  /* WARNING: after calling setType, setContent, setFirstInitialConditionContent
+   * or setSecondInitialConditionContent, the sequence context needs to
+   * invalidate the cache because the sequences evaluations might have changed. */
+  void setType(Type type);
   void setContent(const char * c) override;
   void setFirstInitialConditionContent(const char * c);
   void setSecondInitialConditionContent(const char * c);

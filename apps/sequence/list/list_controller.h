@@ -37,6 +37,7 @@ private:
   int sequenceDefinitionForRow(int j);
   void addEmptyFunction() override;
   void editExpression(Shared::Function * function, Ion::Events::Event event) override;
+  bool removeFunctionRow(Shared::Function * function) override;
   void reinitExpression(Shared::Function * function) override;
   View * loadView() override;
   void unloadView(View * view) override;

@@ -23,10 +23,6 @@ const char * Symbol::textForSpecialSymbols(char name) const {
       return "v(n)";
     case SpecialSymbols::vn1:
       return "v(n+1)";
-    case SpecialSymbols::wn:
-      return "w(n)";
-    case SpecialSymbols::wn1:
-      return "w(n+1)";
     case SpecialSymbols::M0:
       return "M0";
     case SpecialSymbols::M1:
@@ -148,12 +144,6 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
   }
   if (m_name == SpecialSymbols::vn1) {
     return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  }
-  if (m_name == SpecialSymbols::wn) {
-    return new BaselineRelativeLayout(new StringLayout("w", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  }
-  if (m_name == SpecialSymbols::wn1) {
-    return new BaselineRelativeLayout(new StringLayout("w", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
   }
   if (isMatrixSymbol()) {
     const char mi[] = { 'M', (char)(m_name-(char)SpecialSymbols::M0+'0') };

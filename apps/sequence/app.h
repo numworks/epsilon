@@ -35,7 +35,7 @@ public:
     CurveViewRange m_graphRange;
   };
   InputViewController * inputViewController() override;
-  Poincare::Context * localContext() override;
+  SequenceContext * localContext() override;
   const char * XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);

@@ -16,11 +16,14 @@ public:
   Sequence * activeFunctionAtIndex(int i) override;
   Sequence * definedFunctionAtIndex(int i) override;
   Sequence * addEmptyFunction() override;
+  /* WARNING: after calling removeFunction or removeAll, the sequence context
+   * need to invalidate its cache as the sequences evaluations might have
+   * changed */
   void removeFunction(Shared::Function * f) override;
+  void removeAll() override;
   int maxNumberOfFunctions() override;
   const char * firstAvailableName() override;
   char symbol() const override;
-  void removeAll() override;
   static constexpr const char * k_sequenceNames[MaxNumberOfSequences] = {
     "u", "v"//, "w"
   };

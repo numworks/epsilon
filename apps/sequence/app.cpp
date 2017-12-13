@@ -32,6 +32,9 @@ App * App::Snapshot::unpack(Container * container) {
 void App::Snapshot::reset() {
   FunctionApp::Snapshot::reset();
   m_graphRange.setDefault();
+  /* We do not need to invalidate the sequence context cache here as the
+   * context is not allocated yet when reset is call (from the application
+   * settings). */
   m_sequenceStore.removeAll();
 }
 
@@ -77,7 +80,7 @@ InputViewController * App::inputViewController() {
   return &m_inputViewController;
 }
 
-Context * App::localContext() {
+SequenceContext * App::localContext() {
   return &m_sequenceContext;
 }
 

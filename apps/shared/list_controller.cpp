@@ -292,11 +292,6 @@ void ListController::addEmptyFunction() {
   selectableTableView()->reloadData();
 }
 
-bool ListController::removeFunctionRow(Function * function) {
-  m_functionStore->removeFunction(function);
-  return true;
-}
-
 View * ListController::loadView() {
   m_emptyCell = new EvenOddCell();
   m_addNewFunction = new NewFunctionCell(m_addNewMessage);

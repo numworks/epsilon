@@ -57,7 +57,6 @@ void App::Snapshot::tidy() {
 
 App::App(Container * container, Snapshot * snapshot) :
   FunctionApp(container, snapshot, &m_inputViewController),
-  m_xContext('x',((AppsContainer *)container)->globalContext()),
   m_listController(&m_listFooter, snapshot->functionStore(), &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(&m_listStackViewController, &m_listFooter, &m_listController),
@@ -77,13 +76,6 @@ App::App(Container * container, Snapshot * snapshot) :
 
 InputViewController * App::inputViewController() {
   return &m_inputViewController;
-}
-
-Context * App::localContext() {
-  if (m_tabViewController.activeTab() == 0) {
-    return &m_xContext;
-  }
-  return TextFieldDelegateApp::localContext();
 }
 
 const char * App::XNT() {

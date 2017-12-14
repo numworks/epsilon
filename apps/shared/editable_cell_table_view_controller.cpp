@@ -30,11 +30,18 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
+  int nbOfRows = numberOfRows();
+  int nbOfColumns = numberOfColumns();
   if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  selectableTableView()->reloadData();
+  for (int j = 0; j < numberOfColumns(); j++) {
+    selectableTableView()->reloadCellAtLocation(j, selectedRow());
+  }
+  if (nbOfRows != numberOfRows() || nbOfColumns != numberOfColumns()) {
+    selectableTableView()->reloadData();
+  }
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
     selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
   } else {

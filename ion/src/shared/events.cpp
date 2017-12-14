@@ -67,7 +67,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 // Shift+Alpha
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
-  U(), U(), U(), U(), U(), U(),
+  U(), U(), U(), U(), T("'"), U(),
   T("A"), T("B"), T("C"), T("D"), T("E"), T("F"),
   T("G"), T("H"), T("I"), T("J"), T("K"), T("L"),
   T("M"), T("N"), T("O"), T("P"), T("Q"), U(),
@@ -167,7 +167,7 @@ static constexpr const char * s_nameForEvent[255] = {
   //Shift+Alpha,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  nullptr, nullptr, nullptr, nullptr, "SingleQuote", nullptr,
   "UpperA", "UpperB", "UpperC", "UpperD", "UpperE", "UpperF",
   "UpperG", "UpperH", "UpperI", "UpperJ", "UpperK", "UpperL",
   "UpperM", "UpperN", "UpperO", "UpperP", "UpperQ", nullptr,

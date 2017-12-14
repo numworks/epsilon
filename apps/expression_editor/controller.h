@@ -2,7 +2,7 @@
 #define EXPRESSION_EDITOR_CONTROLLER_H
 
 #include <escher.h>
-#include <poincare.h>
+#include <poincare/expression_layout_cursor.h>
 #include "expression_and_layout.h"
 extern "C" {
 #include <assert.h>
@@ -32,6 +32,7 @@ private:
     ExpressionView m_expressionView;
   };
   ContentView m_view;
+  Poincare::ExpressionLayoutCursor m_cursor;
 };
 
 }

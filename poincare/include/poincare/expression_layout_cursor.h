@@ -15,7 +15,7 @@ public:
 
   ExpressionLayoutCursor() :
     m_pointedExpressionLayout(nullptr),
-    m_position(Position::Left),
+    m_position(Position::Right),
     m_positionInside(0)
   {};
 

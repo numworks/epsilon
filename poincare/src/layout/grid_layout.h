@@ -7,6 +7,7 @@
 namespace Poincare {
 
 class GridLayout : public ExpressionLayout {
+  //TODO Split it in MatrixLayout and BinomialCoefficientayout.
 public:
   GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns);
   ~GridLayout();
@@ -14,6 +15,7 @@ public:
   GridLayout(GridLayout&& other) = delete;
   GridLayout& operator=(const GridLayout& other) = delete;
   GridLayout& operator=(GridLayout&& other) = delete;
+  bool moveLeft(ExpressionLayoutCursor * cursor) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
@@ -26,6 +28,8 @@ private:
   KDCoordinate height();
   KDCoordinate columnWidth(int j);
   KDCoordinate width();
+  int indexOfChild(ExpressionLayout * eL) const;
+  bool childIsLeftOfGrid(int index) const;
   ExpressionLayout ** m_entryLayouts;
   int m_numberOfRows;
   int m_numberOfColumns;

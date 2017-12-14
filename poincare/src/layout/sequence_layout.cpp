@@ -1,4 +1,6 @@
 #include "sequence_layout.h"
+#include "string_layout.h"
+#include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
 
@@ -20,6 +22,46 @@ SequenceLayout::~SequenceLayout() {
   delete m_lowerBoundLayout;
   delete m_upperBoundLayout;
   delete m_argumentLayout;
+}
+
+bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the bounds.
+  // Go Left of the sequence.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left
+      && ((m_lowerBoundLayout
+          && cursor->pointedExpressionLayout() == m_lowerBoundLayout)
+        || (m_upperBoundLayout
+          && cursor->pointedExpressionLayout() == m_upperBoundLayout)))
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  // Case: Left of the argument.
+  // Go Right of the lower bound.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left
+      && m_argumentLayout
+      && cursor->pointedExpressionLayout() == m_argumentLayout)
+  {
+    assert(m_lowerBoundLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_lowerBoundLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right.
+  // Go to the argument and move Left.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    assert(m_argumentLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_argumentLayout);
+    return m_argumentLayout->moveLeft(cursor);
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  // Case: Left.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveLeft(cursor);
+  }
+  return false;
 }
 
 KDSize SequenceLayout::computeSize() {

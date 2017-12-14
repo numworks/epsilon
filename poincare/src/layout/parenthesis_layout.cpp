@@ -1,4 +1,5 @@
 #include "parenthesis_layout.h"
+#include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -59,6 +60,33 @@ ParenthesisLayout::ParenthesisLayout(ExpressionLayout * operandLayout) :
 
 ParenthesisLayout::~ParenthesisLayout() {
   delete m_operandLayout;
+}
+
+bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the operand.
+  // Go Left of the brackets.
+  if (m_operandLayout
+    && cursor->pointedExpressionLayout() == m_operandLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right of the parentheses.
+  // Go Right of the operand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    assert(m_operandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_operandLayout);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  // Case: Left of the parentheses.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveLeft(cursor);
+  }
+  return false;
 }
 
 KDColor s_parenthesisWorkingBuffer[ParenthesisLayout::k_parenthesisCurveHeight*ParenthesisLayout::k_parenthesisCurveWidth];

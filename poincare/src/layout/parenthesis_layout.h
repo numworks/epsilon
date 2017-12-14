@@ -16,6 +16,7 @@ public:
   ParenthesisLayout& operator=(ParenthesisLayout&& other) = delete;
   constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
   constexpr static KDCoordinate k_parenthesisCurveHeight = 7;
+  bool moveLeft(ExpressionLayoutCursor * cursor) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

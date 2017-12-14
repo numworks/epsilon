@@ -1,6 +1,7 @@
+#include "nth_root_layout.h"
+#include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
-#include "nth_root_layout.h"
 
 namespace Poincare {
 
@@ -35,6 +36,47 @@ NthRootLayout::~NthRootLayout() {
   if (m_indexLayout != nullptr) {
     delete m_indexLayout;
   }
+}
+
+bool NthRootLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the radicand.
+  // Go the index if there is one, else go Left of the root.
+  if (m_radicandLayout
+    && cursor->pointedExpressionLayout() == m_radicandLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    if (m_indexLayout) {
+      cursor->setPointedExpressionLayout(m_indexLayout);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return true;
+    }
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  // Case: Left of the index.
+  // Go Left of the root.
+  if (m_indexLayout
+    && cursor->pointedExpressionLayout() == m_indexLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right.
+  // Go Right of the radicand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    assert(m_radicandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_radicandLayout);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  // Case: Left.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveLeft(cursor);
+  }
+  return false;
 }
 
 void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

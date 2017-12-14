@@ -3,7 +3,7 @@
 namespace Poincare {
 
 bool ExpressionLayoutCursor::moveLeft() {
-  return false; //TODO
+  return m_pointedExpressionLayout->moveLeft(this);
 }
 
 bool ExpressionLayoutCursor::moveRight() {

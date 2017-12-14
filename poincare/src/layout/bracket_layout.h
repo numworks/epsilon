@@ -14,6 +14,7 @@ public:
   BracketLayout(BracketLayout&& other) = delete;
   BracketLayout& operator=(const BracketLayout& other) = delete;
   BracketLayout& operator=(BracketLayout&& other) = delete;
+  bool moveLeft(ExpressionLayoutCursor * cursor) override;
 protected:
   virtual KDCoordinate widthMargin() const { return 5; }
   virtual bool renderTopBar() const { return true; }

@@ -31,8 +31,9 @@ ExpressionAndLayout::ExpressionAndLayout() {
   //const char * expression = "abs(5)+int(5/46*7/8,3,4544444)+conj(4)+int(333,4,5)";
   //const char * expression = "conj(int(5/46*7/8,3,45))+conj(4)";
   //const char * expression = "abs(1+conj(conj(4))+(23)+conj(42))+abs(1+2)";
-  const char * expression = "13+(23)";
+  //const char * expression = "13+(23)";
   //const char * expression = "1+sum(12,3,4)+product(12,3,4)+2";
+  const char * expression = "(1+2^3)-385658/(7/78+int(5/46*7/8,3,45))+sum(12,3,4)+[[1+5,2,3][4/2,5,6]]/123+ln(36)+root(542,52)+sum(12,3,4)+int(22,3,4)+conj(988+2)+abs(conj(345))+conj(conj(conj(3)))+floor(48)+binomial(6,88)+product(23,46,123)";
 
   m_expression = Poincare::Expression::parse(expression);
   m_expressionLayout = m_expression->createLayout();

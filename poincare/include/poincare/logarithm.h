@@ -21,6 +21,7 @@ private:
   }
   /* Simplification */
   Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
+  Expression * simpleShallowReduce(Context & context, AngleUnit angleUnit);
   Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
   bool parentIsAPowerOfSameBase() const;
   Expression * splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit);

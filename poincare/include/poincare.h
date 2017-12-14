@@ -24,6 +24,7 @@
 #include <poincare/division_remainder.h>
 #include <poincare/expression.h>
 #include <poincare/expression_layout.h>
+#include <poincare/expression_layout_cursor.h>
 #include <poincare/factorial.h>
 #include <poincare/floor.h>
 #include <poincare/frac_part.h>

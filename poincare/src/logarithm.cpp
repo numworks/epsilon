@@ -212,7 +212,7 @@ Expression * Logarithm::templatedApproximate(Context& context, AngleUnit angleUn
   if (x->type() == Type::Complex && n->type() == Type::Complex) {
     Complex<T> * xc = static_cast<Complex<T> *>(x);
     Complex<T> * nc = static_cast<Complex<T> *>(n);
-    result = Division::compute<T>(computeOnComplex(*nc, angleUnit), computeOnComplex(*xc, angleUnit));
+    result = Division::compute<T>(computeOnComplex(*xc, angleUnit), computeOnComplex(*nc, angleUnit));
   }
   delete x;
   delete n;

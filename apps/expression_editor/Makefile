@@ -5,6 +5,9 @@ app_objs += $(addprefix apps/expression_editor/,\
   app.o\
   controller.o\
   expression_and_layout.o\
+  expression_editor_view.o\
+  expression_view_with_cursor.o\
+  scrollable_expression_view_with_cursor.o\
 )
 
 i18n_files += $(addprefix apps/expression_editor/,\

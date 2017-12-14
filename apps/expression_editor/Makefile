@@ -18,4 +18,9 @@ tests += $(addprefix apps/expression_editor/test/,\
   dummy_test.cpp\
 )
 
-test_objs += $(addprefix apps/expression_editor/, controller.o)
+test_objs += $(addprefix apps/expression_editor/,\
+  controller.o\
+  expression_editor_view.o\
+  expression_view_with_cursor.o\
+  scrollable_expression_view_with_cursor.o\
+)

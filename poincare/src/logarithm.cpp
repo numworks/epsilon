@@ -39,6 +39,33 @@ Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) 
   return Complex<T>::Float(std::log10(c.a()));
 }
 
+Expression * Logarithm::simpleShallowReduce(Context & context, AngleUnit angleUnit) {
+  Expression * op = editableOperand(0);
+  if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
+    return replaceWith(new Undefined(), true);
+  }
+  // log(x,x)->1
+  if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
+    return replaceWith(new Rational(1), true);
+  }
+  if (op->type() == Type::Rational) {
+    const Rational * r = static_cast<const Rational *>(operand(0));
+    // log(0) = undef
+    if (r->isZero()) {
+      return replaceWith(new Undefined(), true);
+    }
+    // log(1) = 0;
+    if (r->isOne()) {
+      return replaceWith(new Rational(0), true);
+    }
+    // log(10) ->1
+    if (numberOfOperands() == 1 && r->isTen()) {
+      return replaceWith(new Rational(1), true);
+    }
+  }
+  return this;
+}
+
 Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -53,13 +80,11 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
     return replaceWith(new Undefined(), true);
   }
 #endif
-  if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
-    return replaceWith(new Undefined(), true);
+  Expression * f = simpleShallowReduce(context, angleUnit);
+  if (f != this) {
+    return f;
   }
-  // log(x,x)->1
-  if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
-    return replaceWith(new Rational(1), true);
-  }
+
   /* We do not apply some rules if the parent node is a power of b. In this
    * case there is a simplication of form e^ln(3^(1/2))->3^(1/2) */
   bool letLogAtRoot = parentIsAPowerOfSameBase();
@@ -97,29 +122,14 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
       delete a;
     }
   }
-
-  if (op->type() == Type::Rational) {
+  // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
+  if (!letLogAtRoot && op->type() == Type::Rational) {
     const Rational * r = static_cast<const Rational *>(operand(0));
-    // log(0) = undef
-    if (r->isZero()) {
-      return replaceWith(new Undefined(), true);
-    }
-    // log(1) = 0;
-    if (r->isOne()) {
-      return replaceWith(new Rational(0), true);
-    }
-    // log(10) ->1
-    if (numberOfOperands() == 1 && r->isTen()) {
-      return replaceWith(new Rational(1), true);
-    }
-    // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
-    if (!letLogAtRoot) {
-      Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
-      Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
-      Addition * a = new Addition(n, d, false);
-      replaceWith(a, true);
-      return a->shallowReduce(context, angleUnit);
-    }
+    Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
+    Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
+    Addition * a = new Addition(n, d, false);
+    replaceWith(a, true);
+    return a->shallowReduce(context, angleUnit);
   }
   return this;
 }
@@ -182,6 +192,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     Expression * e = clone();
     e->replaceOperand(e->operand(0), new Rational(factors[index]), true);
     Multiplication * m = new Multiplication(new Rational(coefficients[index]), e, false);
+    static_cast<Logarithm *>(e)->simpleShallowReduce(context, angleUnit);
     a->addOperand(m);
     m->shallowReduce(context, angleUnit);
     index++;

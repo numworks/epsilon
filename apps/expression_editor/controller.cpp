@@ -25,7 +25,16 @@ void Controller::didBecomeFirstResponder() {
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
-  return false;
+  bool returnValue = false;
+  if ((event == Ion::Events::Left && m_cursor.moveLeft())
+    || (event == Ion::Events::Right && m_cursor.moveRight())
+    || (event == Ion::Events::Up && m_cursor.moveUp())
+    || (event == Ion::Events::Down && m_cursor.moveDown()))
+  {
+    returnValue = true;
+  }
+  m_view.cursorPositionChanged();
+  return returnValue;
 }
 
 }

@@ -1,4 +1,5 @@
 #include "bracket_layout.h"
+#include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -16,6 +17,33 @@ BracketLayout::BracketLayout(ExpressionLayout * operandLayout) :
 
 BracketLayout::~BracketLayout() {
   delete m_operandLayout;
+}
+
+bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the operand.
+  // Go Left of the brackets.
+  if (m_operandLayout
+    && cursor->pointedExpressionLayout() == m_operandLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right of the brackets.
+  // Go Right of the operand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    assert(m_operandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_operandLayout);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  // Case: Left of the brackets.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveLeft(cursor);
+  }
+  return false;
 }
 
 void BracketLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

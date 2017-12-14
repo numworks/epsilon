@@ -1,4 +1,5 @@
 #include "conjugate_layout.h"
+#include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -16,6 +17,36 @@ ConjugateLayout::ConjugateLayout(ExpressionLayout * operandLayout) :
 
 ConjugateLayout::~ConjugateLayout() {
   delete m_operandLayout;
+}
+
+bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the operand.
+  // Ask the parent.
+  if (m_operandLayout
+      && cursor->pointedExpressionLayout() == m_operandLayout
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(this);
+    if (m_parent) {
+      return m_parent->moveLeft(cursor);
+    }
+    return false;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right.
+  // Go to the operand and move Left.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    assert(m_operandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_operandLayout);
+    return m_operandLayout->moveLeft(cursor);
+  }
+  // Case: Left.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  if (m_parent) {
+    return m_parent->moveLeft(cursor);
+  }
+  return false;
 }
 
 void ConjugateLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

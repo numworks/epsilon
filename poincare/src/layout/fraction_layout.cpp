@@ -1,6 +1,7 @@
+#include "fraction_layout.h"
+#include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
-#include "fraction_layout.h"
 
 namespace Poincare {
 
@@ -15,6 +16,33 @@ ExpressionLayout(), m_numerator_layout(numerator_layout), m_denominator_layout(d
 FractionLayout::~FractionLayout() {
   delete m_denominator_layout;
   delete m_numerator_layout;
+}
+
+bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the numerator or the denominator.
+  // Go Left of the fraction.
+   if (((m_numerator_layout && cursor->pointedExpressionLayout() == m_numerator_layout)
+        || (m_denominator_layout && cursor->pointedExpressionLayout() == m_denominator_layout))
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right.
+  // Go to the denominator.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    assert(m_denominator_layout != nullptr);
+    cursor->setPointedExpressionLayout(m_denominator_layout);
+    return true;
+  }
+  // Case: Left.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  if (m_parent) {
+    return m_parent->moveLeft(cursor);
+  }
+  return false;
 }
 
 void FractionLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

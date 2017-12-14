@@ -1,4 +1,5 @@
 #include "integral_layout.h"
+#include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
 
@@ -34,6 +35,46 @@ IntegralLayout::~IntegralLayout() {
   delete m_lowerBoundLayout;
   delete m_upperBoundLayout;
   delete m_integrandLayout;
+}
+
+bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Left the upper or lower bound.
+  // Go Left of the integral.
+  if (((m_upperBoundLayout
+        && cursor->pointedExpressionLayout() == m_upperBoundLayout)
+      || (m_lowerBoundLayout
+        && cursor->pointedExpressionLayout() == m_lowerBoundLayout))
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  // Case: Left the integrand.
+  // Go Right of the lower bound.
+ if (m_integrandLayout
+     && cursor->pointedExpressionLayout() == m_integrandLayout
+     && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    assert(m_lowerBoundLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_lowerBoundLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right of the integral.
+  // Go Right of the integrand, Left of "dx".
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    assert(m_integrandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_integrandLayout->child(0));
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  // Case: Left of the brackets.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveLeft(cursor);
+  }
+  return false;
 }
 
 void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

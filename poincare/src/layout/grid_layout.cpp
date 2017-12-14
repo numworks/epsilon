@@ -1,4 +1,5 @@
 #include "grid_layout.h"
+#include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -26,6 +27,42 @@ GridLayout::~GridLayout() {
   delete[] m_entryLayouts;
 }
 
+bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Right.
+  // Go to the last entry.
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    ExpressionLayout * lastChild = m_entryLayouts[m_numberOfColumns*m_numberOfRows-1];
+    assert(lastChild != nullptr);
+    cursor->setPointedExpressionLayout(lastChild);
+    return true;
+  }
+  // Case: The cursor points to a grid's child.
+  int childIndex = indexOfChild(cursor->pointedExpressionLayout());
+  if (childIndex >- 1 && cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    if (childIsLeftOfGrid(childIndex)) {
+      // Case: Left of a child on the left of the grid.
+      // Go Left of the grid
+      cursor->setPointedExpressionLayout(this);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      return true;
+    }
+    // Case: Left of another child.
+    // Go Right of its brother on the left.
+    cursor->setPointedExpressionLayout(m_entryLayouts[childIndex-1]);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveLeft(cursor);
+  }
+  return false;
+}
+
 KDCoordinate GridLayout::rowBaseline(int i) {
   KDCoordinate rowBaseline = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
@@ -33,7 +70,6 @@ KDCoordinate GridLayout::rowBaseline(int i) {
   }
   return rowBaseline;
 }
-
 
 KDCoordinate GridLayout::rowHeight(int i) {
   KDCoordinate rowHeight = 0;
@@ -108,6 +144,20 @@ KDPoint GridLayout::positionOfChild(ExpressionLayout * child) {
   }
   y += rowBaseline(rowIndex) - child->baseline() + rowIndex * k_gridEntryMargin;
   return KDPoint(x, y);
+}
+
+int GridLayout::indexOfChild(ExpressionLayout * eL) const {
+  for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
+    if (eL == m_entryLayouts[i]) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+bool GridLayout::childIsLeftOfGrid(int index) const {
+  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  return (index - m_numberOfColumns * (int)(index / m_numberOfColumns)) == 0;
 }
 
 }

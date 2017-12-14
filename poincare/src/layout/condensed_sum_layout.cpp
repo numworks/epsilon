@@ -1,4 +1,5 @@
 #include "condensed_sum_layout.h"
+#include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
 
@@ -25,6 +26,44 @@ CondensedSumLayout::~CondensedSumLayout() {
   if (m_superscriptLayout) {
     delete m_superscriptLayout;
   }
+}
+
+bool CondensedSumLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the bounds.
+  // Go Left of the sum.
+  if (((m_subscriptLayout && cursor->pointedExpressionLayout() == m_subscriptLayout)
+        || (m_superscriptLayout && cursor->pointedExpressionLayout() == m_superscriptLayout))
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(this);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return true;
+  }
+  // Case: Left of the base.
+  // Go Right of the lower bound.
+  if (m_baseLayout
+      && cursor->pointedExpressionLayout() == m_baseLayout
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(m_subscriptLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right.
+  // Go to the base and move Left.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    assert(m_baseLayout);
+    cursor->setPointedExpressionLayout(m_baseLayout);
+    return m_baseLayout->moveLeft(cursor);
+  }
+  // Case: Left.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  if (m_parent) {
+    return m_parent->moveLeft(cursor);
+  }
+  return false;
 }
 
 void CondensedSumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

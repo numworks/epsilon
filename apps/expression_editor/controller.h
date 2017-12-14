@@ -4,6 +4,7 @@
 #include <escher.h>
 #include <poincare/expression_layout_cursor.h>
 #include "expression_and_layout.h"
+#include "expression_editor_view.h"
 extern "C" {
 #include <assert.h>
 }
@@ -12,26 +13,12 @@ namespace ExpressionEditor {
 
 class Controller : public ViewController {
 public:
-  Controller(Responder * parentResponder, ExpressionAndLayout * expressionAndLayout);
+  Controller(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout);
   View * view() override { return &m_view; }
+  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-
 private:
-  class ContentView : public SolidColorView {
-  public:
-    ContentView(ExpressionAndLayout * expressionAndLayout);
-    int numberOfSubviews() const override { return 1; }
-    View * subviewAtIndex(int index) override {
-      assert(index == 0);
-      return &m_expressionView;
-    }
-    void layoutSubviews() override;
-    KDSize minimalSizeForOptimalDisplay() const override;
-  private:
-    constexpr static KDCoordinate k_margin = 10;
-    ExpressionView m_expressionView;
-  };
-  ContentView m_view;
+  ExpressionEditorView m_view;
   Poincare::ExpressionLayoutCursor m_cursor;
 };
 

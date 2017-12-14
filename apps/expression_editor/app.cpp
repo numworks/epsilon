@@ -22,7 +22,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_controller),
-  m_controller(&m_modalViewController, snapshot->expressionAndLayout())
+  m_controller(&m_modalViewController, snapshot->expressionAndLayout()->expressionLayout())
 {
 }
 

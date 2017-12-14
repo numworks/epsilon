@@ -20,7 +20,8 @@ KDRect ExpressionViewWithCursor::cursorRect() {
 }
 
 KDSize ExpressionViewWithCursor::minimalSizeForOptimalDisplay() const {
-  return m_expressionView.minimalSizeForOptimalDisplay();
+  KDSize expressionViewSize = m_expressionView.minimalSizeForOptimalDisplay();
+  return KDSize(expressionViewSize.width()+1, m_expressionView.minimalSizeForOptimalDisplay().height()); // +1 for the cursor
 }
 
 View * ExpressionViewWithCursor::subviewAtIndex(int index) {

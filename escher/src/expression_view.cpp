@@ -47,13 +47,15 @@ KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
   return m_expressionLayout->size();
 }
 
+KDPoint ExpressionView::drawingOrigin() const {
+  KDSize expressionSize = m_expressionLayout->size();
+  return KDPoint(m_horizontalAlignment*(m_frame.width() - expressionSize.width()),
+      0.5f*(m_frame.height() - expressionSize.height()));
+}
+
 void ExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
   if (m_expressionLayout != nullptr) {
-    //Position the origin of expression
-    KDSize expressionSize = m_expressionLayout->size();
-    KDPoint origin(m_horizontalAlignment*(m_frame.width() - expressionSize.width()),
-      0.5f*(m_frame.height() - expressionSize.height()));
-    m_expressionLayout->draw(ctx, origin, m_textColor, m_backgroundColor);
+    m_expressionLayout->draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor);
   }
 }

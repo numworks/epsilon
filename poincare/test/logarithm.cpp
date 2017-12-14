@@ -6,6 +6,17 @@
 
 using namespace Poincare;
 
+QUIZ_CASE(poincare_logarithm_evaluate) {
+  Complex<float> a0[1] = {Complex<float>::Float(0.1666666666666666)};
+  assert_parsed_expression_evaluates_to("log(2,64)", a0);
+  Complex<double> a1[1] = {Complex<double>::Float(0.9207822211616017903187272451)};
+  assert_parsed_expression_evaluates_to("log(6,7)", a1);
+  Complex<float> a2[1] = {Complex<float>::Float(0.698970004336018804786261105275506973231810118537891458689)};
+  assert_parsed_expression_evaluates_to("log(5)", a2);
+  Complex<double> a3[1] = {Complex<double>::Float(1.609437912434100374600759333226187639525601354268517721912)};
+  assert_parsed_expression_evaluates_to("ln(5)", a3);
+}
+
 QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log(12925)", "2*log(5)+log(11)+log(47)");
   assert_parsed_expression_simplify_to("ln(12925)", "2*ln(5)+ln(11)+ln(47)");
@@ -25,4 +36,7 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("ln(1881676377434183981909562699940347954480361860897069)", "ln(1881676377434183981909562699940347954480361860897069)");
   assert_parsed_expression_simplify_to("log(26061622162116)", "2*log(2)+log(3)+log(2171801846843)");
   assert_parsed_expression_simplify_to("log(26061622162116/5)", "2*log(2)+log(3)-log(5)+log(2171801846843)");
+  assert_parsed_expression_simplify_to("log(64,2)", "6");
+  assert_parsed_expression_simplify_to("log(2,64)", "log(2,64)");
+  assert_parsed_expression_simplify_to("log(1476225,5)", "2+10*log(3,5)");
 }

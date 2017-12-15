@@ -15,6 +15,7 @@ public:
   CondensedSumLayout& operator=(const CondensedSumLayout& other) = delete;
   CondensedSumLayout& operator=(CondensedSumLayout&& other) = delete;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

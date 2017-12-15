@@ -78,6 +78,57 @@ bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool ParenthesisLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Right of the Left parenthesis.
+  // Go to the operand and move Right.
+  if (m_leftParenthesisLayout
+    && cursor->pointedExpressionLayout() == m_leftParenthesisLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    assert(m_operandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_operandLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return m_operandLayout->moveRight(cursor);
+  }
+  // Case: Right of the operand.
+  // Go Right.
+  if (m_operandLayout
+    && cursor->pointedExpressionLayout() == m_operandLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  // Case: Right of the Right parenthesis.
+  // Ask the parent.
+  if (m_rightParenthesisLayout
+    && cursor->pointedExpressionLayout() == m_rightParenthesisLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(this);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    if (m_parent) {
+      return m_parent->moveRight(cursor);
+    }
+    return false;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left of the parentheses.
+  // Go Left of the operand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    assert(m_operandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_operandLayout);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  // Case: Right of the parentheses.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 KDSize ParenthesisLayout::computeSize() {
   KDSize operandSize = m_operandLayout->size();
   return KDSize(operandSize.width() + 2*m_leftParenthesisLayout->size().width(), operandSize.height());

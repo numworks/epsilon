@@ -46,6 +46,34 @@ bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Right of the operand.
+  // Go Right of the brackets.
+  if (m_operandLayout
+    && cursor->pointedExpressionLayout() == m_operandLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left of the brackets.
+  // Go Left of the operand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    assert(m_operandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_operandLayout);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  // Case: Right of the brackets.
+  // Ask the parent.
+  cursor->setPointedExpressionLayout(this);
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 void BracketLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   const KDCoordinate k_widthMargin = widthMargin();
   const KDCoordinate k_externWidthMargin = externWidthMargin();

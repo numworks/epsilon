@@ -30,6 +30,24 @@ bool BracketLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool BracketLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go Right.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  // Case: Right.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
+
 KDSize BracketLeftRightLayout::computeSize() {
   //TODO: compute the operandHeight according to the brothers
   return KDSize(k_externWidthMargin + k_lineThickness + k_bracketWidth + k_widthMargin, m_operandHeight);

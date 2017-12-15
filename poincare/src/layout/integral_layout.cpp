@@ -77,6 +77,46 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Right the upper or lower bound.
+  // Go Left of the integrand.
+  if (((m_upperBoundLayout
+        && cursor->pointedExpressionLayout() == m_upperBoundLayout)
+      || (m_lowerBoundLayout
+        && cursor->pointedExpressionLayout() == m_lowerBoundLayout))
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    assert(m_integrandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_integrandLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return true;
+  }
+  // Case: Right the integrand.
+  // Go Right and move Right.
+ if (m_integrandLayout
+     && cursor->pointedExpressionLayout() == m_integrandLayout
+     && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return m_parent->moveRight(cursor);
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left of the integral.
+  // Go ti the upper bound.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    assert(m_upperBoundLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_upperBoundLayout);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  // Case: Right.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize integrandSize = m_integrandLayout->size();
   KDSize upperBoundSize = m_upperBoundLayout->size();

@@ -15,6 +15,7 @@ public:
   ConjugateLayout& operator=(const ConjugateLayout& other) = delete;
   ConjugateLayout& operator=(ConjugateLayout&& other) = delete;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

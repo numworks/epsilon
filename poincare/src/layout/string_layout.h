@@ -19,6 +19,7 @@ public:
   StringLayout& operator=(StringLayout&& other) = delete;
   char * text();
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

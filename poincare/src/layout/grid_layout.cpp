@@ -63,6 +63,43 @@ bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool GridLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Left.
+  // Go to the first entry.
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    assert(m_numberOfColumns*m_numberOfRows >= 1);
+    ExpressionLayout * firstChild = m_entryLayouts[0];
+    assert(firstChild != nullptr);
+    cursor->setPointedExpressionLayout(firstChild);
+    return true;
+  }
+  // Case: The cursor points to a grid's child.
+  int childIndex = indexOfChild(cursor->pointedExpressionLayout());
+  if (childIndex >- 1 && cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    if (childIsRightOfGrid(childIndex)) {
+      // Case: Right of a child on the right of the grid.
+      // Go Right of the grid.
+      cursor->setPointedExpressionLayout(this);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return true;
+    }
+    // Case: Right of another child.
+    // Go Left of its brother on the right.
+    cursor->setPointedExpressionLayout(m_entryLayouts[childIndex+1]);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 KDCoordinate GridLayout::rowBaseline(int i) {
   KDCoordinate rowBaseline = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
@@ -159,5 +196,10 @@ bool GridLayout::childIsLeftOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
   return (index - m_numberOfColumns * (int)(index / m_numberOfColumns)) == 0;
 }
+bool GridLayout::childIsRightOfGrid(int index) const {
+  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  return (index - m_numberOfColumns * (int)(index / m_numberOfColumns)) == m_numberOfColumns - 1;
+}
+
 
 }

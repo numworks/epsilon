@@ -9,6 +9,7 @@ class EditableBaselineRelativeLayout : public BaselineRelativeLayout {
 public:
   using BaselineRelativeLayout::BaselineRelativeLayout;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
 };
 
 }

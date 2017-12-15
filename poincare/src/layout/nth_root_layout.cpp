@@ -79,6 +79,48 @@ bool NthRootLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool NthRootLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Right of the radicand.
+  // Go the Right of the root.
+  if (m_radicandLayout
+    && cursor->pointedExpressionLayout() == m_radicandLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  // Case: Right of the index.
+  // Go Left of the integrand.
+  if (m_indexLayout
+    && cursor->pointedExpressionLayout() == m_indexLayout
+    && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    assert(m_radicandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_radicandLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go index if there is one, else go to the radicand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    if (m_indexLayout) {
+      cursor->setPointedExpressionLayout(m_indexLayout);
+      return true;
+    }
+    assert(m_radicandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_radicandLayout);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  // Case: Right.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize radicandSize = m_radicandLayout->size();
   KDSize indexSize = m_indexLayout != nullptr ? m_indexLayout->size() : KDSize(k_leftRadixWidth,0);

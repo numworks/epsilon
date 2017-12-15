@@ -29,9 +29,9 @@ protected:
   KDPoint positionOfChild(ExpressionLayout * child) override;
   ExpressionLayout * m_baseLayout;
   ExpressionLayout * m_indiceLayout;
+  Type m_type;
 private:
   constexpr static KDCoordinate k_indiceHeight = 5;
-  Type m_type;
 };
 
 }

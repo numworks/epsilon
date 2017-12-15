@@ -85,6 +85,52 @@ bool EditableBaselineRelativeLayout::moveRight(ExpressionLayoutCursor * cursor) 
   return false;
 }
 
+bool EditableBaselineRelativeLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // If the baseline is a superscript:
+  if (m_type == BaselineRelativeLayout::Type::Superscript) {
+    // If the cursor is Right of the base layout, move it to the indice.
+    if (m_baseLayout
+        && previousLayout == m_baseLayout
+        && cursor->positionIsEquivalentTo(m_baseLayout, ExpressionLayoutCursor::Position::Right))
+    {
+      assert(m_indiceLayout != nullptr);
+      cursor->setPointedExpressionLayout(m_indiceLayout);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      cursor->setPositionInside(0);
+      return true;
+    }
+    // If the cursor is Right, move it to the indice.
+    if (cursor->positionIsEquivalentTo(this, ExpressionLayoutCursor::Position::Right)) {
+      assert(m_indiceLayout != nullptr);
+      cursor->setPointedExpressionLayout(m_indiceLayout);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      cursor->setPositionInside(0);
+      return true;
+    }
+  }
+  // If the baseline is a subscript:
+  if (m_type == BaselineRelativeLayout::Type::Subscript
+    && m_indiceLayout
+    && previousLayout == m_indiceLayout)
+  {
+    // If the cursor is Left of the indice layout, move it to the base.
+    if (cursor->positionIsEquivalentTo(m_indiceLayout, ExpressionLayoutCursor::Position::Left)) {
+      assert(m_baseLayout != nullptr);
+      cursor->setPointedExpressionLayout(m_baseLayout);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      cursor->setPositionInside(0);
+      return true;
+    }
+    // If the cursor is Right of the indice layout, move it Right.
+    if (cursor->positionIsEquivalentTo(m_indiceLayout, ExpressionLayoutCursor::Position::Right)) {
+      cursor->setPointedExpressionLayout(this);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      cursor->setPositionInside(0);
+      return true;
+    }
+  }
+  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+}
 
 }
 

@@ -124,6 +124,39 @@ bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return m_children_layouts[childIndex+1]->moveRight(cursor);
 }
 
+bool HorizontalLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // Prevent looping fom child to parent
+  if (previousPreviousLayout == this) {
+    return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+  }
+  // If the cursor Left or Right of a child, try moving it up from its brother.
+  int previousLayoutIndex = indexOfChild(previousLayout);
+  if (previousLayoutIndex > -1) {
+    ExpressionLayout * brother = nullptr;
+    ExpressionLayoutCursor::Position newPosition = ExpressionLayoutCursor::Position::Right;
+    if (cursor->position() == ExpressionLayoutCursor::Position::Left && previousLayoutIndex > 0) {
+      brother = m_children_layouts[previousLayoutIndex - 1];
+      newPosition = ExpressionLayoutCursor::Position::Right;
+    }
+    if (cursor->position() == ExpressionLayoutCursor::Position::Right && previousLayoutIndex < m_number_of_children - 1) {
+      brother = m_children_layouts[previousLayoutIndex + 1];
+      newPosition = ExpressionLayoutCursor::Position::Left;
+    }
+    if (brother && cursor->positionIsEquivalentTo(brother, newPosition)) {
+      ExpressionLayout * previousPointedLayout = cursor->pointedExpressionLayout();
+      ExpressionLayoutCursor::Position previousPosition = cursor->position();
+      cursor->setPointedExpressionLayout(brother);
+      cursor->setPosition(newPosition);
+      if (brother->moveUp(cursor, this, previousLayout)) {
+        return true;
+      }
+      cursor->setPointedExpressionLayout(previousPointedLayout);
+      cursor->setPosition(previousPosition);
+    }
+  }
+  return ExpressionLayout::moveUp(cursor, previousLayout);
+}
+
 void HorizontalLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
 }
 
@@ -168,6 +201,9 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
 }
 
 int HorizontalLayout::indexOfChild(ExpressionLayout * eL) const {
+  if (eL == nullptr) {
+    return -1;
+  }
   for (int i = 0; i < m_number_of_children; i++) {
     if (m_children_layouts[i] == eL) {
       return i;

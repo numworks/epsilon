@@ -100,6 +100,16 @@ bool GridLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // If the cursor is child that is not on the top row, move it inside the upper
+  // neighbourg.
+  int childIndex = indexOfChild(previousLayout);
+  if (childIndex >- 1 && !childIsTopOfGrid(childIndex)) {
+    return m_entryLayouts[childIndex - m_numberOfColumns]->moveUpInside(cursor);
+  }
+  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+}
+
 KDCoordinate GridLayout::rowBaseline(int i) {
   KDCoordinate rowBaseline = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
@@ -196,10 +206,15 @@ bool GridLayout::childIsLeftOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
   return (index - m_numberOfColumns * (int)(index / m_numberOfColumns)) == 0;
 }
+
 bool GridLayout::childIsRightOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
   return (index - m_numberOfColumns * (int)(index / m_numberOfColumns)) == m_numberOfColumns - 1;
 }
 
+bool GridLayout::childIsTopOfGrid(int index) const {
+  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  return index < m_numberOfColumns;
+}
 
 }

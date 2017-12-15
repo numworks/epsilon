@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_LAYOUT_CURSOR_H
 
 #include <poincare/expression_layout.h>
+#include <kandinsky/point.h>
 
 namespace Poincare {
 
@@ -26,6 +27,7 @@ public:
   void setPosition(Position position) { m_position = position; }
   int positionInside() const { return m_positionInside; }
   void setPositionInside(int positionInside) { m_positionInside = positionInside; }
+  KDCoordinate cursorHeight() const { return k_cursorHeight; }
 
   /* Move */
   bool moveLeft();
@@ -33,7 +35,14 @@ public:
   bool moveUp();
   bool moveDown();
 
+  /* Comparison */
+  bool positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position, int positionIndex = 0);
+
+  /* Position */
+  KDPoint middleLeftPoint();
+  KDPoint middleLeftPointOfCursor(ExpressionLayout * expressionLayout, Position position, int positionInside = 0);
 private:
+  constexpr static KDCoordinate k_cursorHeight = 18;
   ExpressionLayout * m_pointedExpressionLayout;
   Position m_position;
   int m_positionInside;

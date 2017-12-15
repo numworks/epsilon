@@ -37,7 +37,7 @@ bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor) {
     assert(m_operandLayout != nullptr);
     cursor->setPointedExpressionLayout(m_operandLayout);
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    return true;
+    return m_operandLayout->moveLeft(cursor);
   }
   // Case: Left of the operand.
   // Go Left.
@@ -49,7 +49,7 @@ bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor) {
     return true;
   }
   // Case: Left of the Left parenthesis.
-  // Aske the parent.
+  // Ask the parent.
   if (m_leftParenthesisLayout
     && cursor->pointedExpressionLayout() == m_leftParenthesisLayout
     && cursor->position() == ExpressionLayoutCursor::Position::Left)

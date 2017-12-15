@@ -24,7 +24,7 @@ const char * ListController::title() {
 }
 
 Toolbox * ListController::toolboxForTextField(TextField * textField) {
-  int recurrenceDepth = 0;
+  int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
   Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
   if (sequenceDefinition == 0) {

@@ -24,8 +24,8 @@ protected:
   KDSize computeSize() override;
   ExpressionLayout * child(uint16_t index) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
-private:
   char * m_string;
+private:
   KDText::FontSize m_fontSize;
 };
 

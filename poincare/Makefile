@@ -87,6 +87,7 @@ objs += $(addprefix poincare/src/layout/,\
   bracket_layout.o\
   condensed_sum_layout.o\
   conjugate_layout.o\
+  editable_string_layout.o\
   expression_layout.o\
   fraction_layout.o\
   grid_layout.o\

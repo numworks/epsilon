@@ -32,4 +32,10 @@ i18n_files += $(addprefix apps/sequence/,\
   base.pt.i18n\
 )
 
+tests += $(addprefix apps/sequence/test/,\
+  sequence.cpp\
+)
+test_objs += $(addprefix apps/sequence/, sequence.o sequence_store.o sequence_context.o cache_context.o)
+test_objs += $(addprefix apps/shared/, function.o function_store.o)
+
 app_images += apps/sequence/sequence_icon.png

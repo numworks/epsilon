@@ -16,6 +16,7 @@ public:
   GridLayout& operator=(const GridLayout& other) = delete;
   GridLayout& operator=(GridLayout&& other) = delete;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
@@ -30,6 +31,7 @@ private:
   KDCoordinate width();
   int indexOfChild(ExpressionLayout * eL) const;
   bool childIsLeftOfGrid(int index) const;
+  bool childIsRightOfGrid(int index) const;
   ExpressionLayout ** m_entryLayouts;
   int m_numberOfRows;
   int m_numberOfColumns;

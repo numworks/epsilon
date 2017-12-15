@@ -77,6 +77,53 @@ bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return m_children_layouts[childIndex-1]->moveLeft(cursor);
 }
 
+bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Right.
+  // Ask the parent.
+  if (cursor->pointedExpressionLayout() == this) {
+    if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+      if (m_parent) {
+        return m_parent->moveRight(cursor);
+      }
+      return false;
+    }
+    assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+    // Case: Left.
+    // Go to the first child if there is one, and move Right.
+    // Else go Right and ask the parent.
+    if (m_number_of_children < 1) {
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      if (m_parent) {
+        return m_parent->moveRight(cursor);
+      }
+      return false;
+    }
+    ExpressionLayout * firstChild = m_children_layouts[0];
+    assert(firstChild != nullptr);
+    cursor->setPointedExpressionLayout(firstChild);
+    return firstChild->moveRight(cursor);
+  }
+
+  // Case: The cursor is Right of a child.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  int childIndex = indexOfChild(cursor->pointedExpressionLayout());
+  assert(childIndex >= 0);
+  if (childIndex == m_number_of_children - 1) {
+    // Case: the child is the rightmost.
+    // Ask the parent.
+    cursor->setPointedExpressionLayout(this);
+    if (m_parent) {
+      return m_parent->moveRight(cursor);
+    }
+    return false;
+  }
+  // Case: the child is not the rightmost.
+  // Go to its right brother and move Right.
+  cursor->setPointedExpressionLayout(m_children_layouts[childIndex+1]);
+  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+  return m_children_layouts[childIndex+1]->moveRight(cursor);
+}
+
 void HorizontalLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
 }
 

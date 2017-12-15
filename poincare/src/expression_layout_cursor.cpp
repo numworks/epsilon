@@ -7,7 +7,7 @@ bool ExpressionLayoutCursor::moveLeft() {
 }
 
 bool ExpressionLayoutCursor::moveRight() {
-  return false; //TODO
+  return m_pointedExpressionLayout->moveRight(this);
 }
 
 bool ExpressionLayoutCursor::moveUp() {

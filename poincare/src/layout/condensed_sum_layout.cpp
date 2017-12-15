@@ -66,6 +66,48 @@ bool CondensedSumLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Right of the bounds.
+  // Go Left of the operand.
+  if (((m_subscriptLayout && cursor->pointedExpressionLayout() == m_subscriptLayout)
+        || (m_superscriptLayout && cursor->pointedExpressionLayout() == m_superscriptLayout))
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    assert(m_baseLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_baseLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return true;
+  }
+  // Case: Right of the base.
+  // Ask the parent.
+  if (m_baseLayout
+      && cursor->pointedExpressionLayout() == m_baseLayout
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(this);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    if (m_parent) {
+      return m_parent->moveLeft(cursor);
+    }
+    return false;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go to the upper bound.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    assert(m_superscriptLayout);
+    cursor->setPointedExpressionLayout(m_superscriptLayout);
+    return true;
+  }
+  // Case: Right.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 void CondensedSumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Nothing to draw
 }

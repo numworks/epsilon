@@ -45,6 +45,33 @@ bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Right of the numerator or the denominator.
+  // Go Right of the fraction.
+   if (((m_numerator_layout && cursor->pointedExpressionLayout() == m_numerator_layout)
+        || (m_denominator_layout && cursor->pointedExpressionLayout() == m_denominator_layout))
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go to the numerator.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    assert(m_numerator_layout != nullptr);
+    cursor->setPointedExpressionLayout(m_numerator_layout);
+    return true;
+  }
+  // Case: Right.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 void FractionLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDCoordinate fractionLineY = p.y() + m_numerator_layout->size().height() + k_fractionLineMargin;
   ctx->fillRect(KDRect(p.x()+k_fractionBorderMargin, fractionLineY, size().width()-2*k_fractionBorderMargin, 1), expressionColor);

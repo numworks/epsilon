@@ -49,6 +49,36 @@ bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Right of the operand.
+  // Ask the parent.
+  if (m_operandLayout
+      && cursor->pointedExpressionLayout() == m_operandLayout
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(this);
+    if (m_parent) {
+      return m_parent->moveRight(cursor);
+    }
+    return false;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go to the operand and move Right.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    assert(m_operandLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_operandLayout);
+    return m_operandLayout->moveRight(cursor);
+  }
+  // Case: Right.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 void ConjugateLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   ctx->fillRect(KDRect(p.x(), p.y(), m_operandLayout->size().width(), k_overlineWidth), expressionColor);
 }

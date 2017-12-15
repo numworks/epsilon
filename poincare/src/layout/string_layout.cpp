@@ -42,6 +42,23 @@ bool StringLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool StringLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // A StringLayout is not editable, and the cursor cannot go inside it.
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go Right.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
+  // Case: Right.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 ExpressionLayout * StringLayout::child(uint16_t index) {
   return nullptr;
 }

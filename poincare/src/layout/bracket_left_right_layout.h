@@ -15,6 +15,7 @@ public:
   BracketLeftRightLayout& operator=(const BracketLeftRightLayout& other) = delete;
   BracketLeftRightLayout& operator=(BracketLeftRightLayout&& other) = delete;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
   constexpr static KDCoordinate k_bracketWidth = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
   constexpr static KDCoordinate k_widthMargin = 5;

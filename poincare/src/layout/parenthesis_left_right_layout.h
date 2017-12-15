@@ -15,6 +15,7 @@ public:
   ParenthesisLeftRightLayout& operator=(const ParenthesisLeftRightLayout& other) = delete;
   ParenthesisLeftRightLayout& operator=(ParenthesisLeftRightLayout&& other) = delete;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
   constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
   constexpr static KDCoordinate k_parenthesisCurveHeight = 7;
   constexpr static KDCoordinate k_externWidthMargin = 1;

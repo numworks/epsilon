@@ -47,6 +47,23 @@ bool BaselineRelativeLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool BaselineRelativeLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go Right.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
+  // Case: Right.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 void BaselineRelativeLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // There is nothing to draw for a subscript/superscript, only the position of the children matters
 }

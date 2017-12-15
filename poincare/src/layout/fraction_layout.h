@@ -15,6 +15,7 @@ public:
   FractionLayout& operator=(const FractionLayout& other) = delete;
   FractionLayout& operator=(FractionLayout&& other) = delete;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

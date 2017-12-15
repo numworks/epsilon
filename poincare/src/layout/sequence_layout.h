@@ -17,6 +17,7 @@ public:
   constexpr static KDCoordinate k_symbolHeight = 15;
   constexpr static KDCoordinate k_symbolWidth = 9;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   ExpressionLayout * m_lowerBoundLayout;

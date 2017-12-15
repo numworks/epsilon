@@ -64,6 +64,49 @@ bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool SequenceLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Right of the bounds.
+  // Go Left of the argument.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right
+      && ((m_lowerBoundLayout
+          && cursor->pointedExpressionLayout() == m_lowerBoundLayout)
+        || (m_upperBoundLayout
+          && cursor->pointedExpressionLayout() == m_upperBoundLayout)))
+  {
+    assert(m_argumentLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_argumentLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return true;
+  }
+  // Case: Right of the argument.
+  // Ask the parent.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right
+      && m_argumentLayout
+      && cursor->pointedExpressionLayout() == m_argumentLayout)
+  {
+    cursor->setPointedExpressionLayout(this);
+    if (m_parent) {
+      return m_parent->moveRight(cursor);
+    }
+    return false;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go to the upper bound.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    assert(m_upperBoundLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_upperBoundLayout);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  // Case: Right.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 KDSize SequenceLayout::computeSize() {
   KDSize argumentSize = m_argumentLayout->size();
   KDSize lowerBoundSize = m_lowerBoundLayout->size();

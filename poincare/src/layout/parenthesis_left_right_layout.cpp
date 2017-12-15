@@ -30,6 +30,23 @@ bool ParenthesisLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool ParenthesisLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go Right.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  // Case: Right.
+  // Ask the parent.
+  if (m_parent) {
+    return m_parent->moveRight(cursor);
+  }
+  return false;
+}
+
 KDSize ParenthesisLeftRightLayout::computeSize() {
   //TODO: compute the operandHeight according to the brothers
   return KDSize(k_widthMargin + k_lineThickness + k_externWidthMargin, m_operandHeight);

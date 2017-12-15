@@ -2,7 +2,7 @@
 #define SHARED_FLOAT_PARAMETER_CONTROLLER_H
 
 #include <escher.h>
-#include "text_field_delegate.h"
+#include "parameter_text_field_delegate.h"
 #include "button_with_separator.h"
 
 namespace Shared {
@@ -10,7 +10,7 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-class FloatParameterController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDataSource, public TextFieldDelegate {
+class FloatParameterController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDataSource, public ParameterTextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
   void didBecomeFirstResponder() override;
@@ -27,7 +27,6 @@ public:
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 protected:
   int activeCell();
   StackViewController * stackController();

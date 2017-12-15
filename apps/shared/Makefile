@@ -31,6 +31,7 @@ app_objs += $(addprefix apps/shared/,\
   message_controller.o\
   new_function_cell.o\
   ok_view.o\
+  parameter_text_field_delegate.o\
   range_parameter_controller.o\
   regular_table_view_data_source.o\
   store_controller.o\

@@ -247,14 +247,6 @@ bool SubController::textFieldDidFinishEditing(TextField * textField, const char 
   return true;
 }
 
-bool SubController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Backspace && !textField->isEditing()) {
-    textField->setEditing(true);
-    return true;
-  }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
-}
-
 StackViewController * SubController::stackController() const {
   return (StackViewController *)parentResponder();
 }

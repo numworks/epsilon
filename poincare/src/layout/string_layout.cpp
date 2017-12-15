@@ -25,7 +25,6 @@ char * StringLayout::text() {
 }
 
 bool StringLayout::moveLeft(ExpressionLayoutCursor * cursor) {
-  assert(cursor->pointedExpressionLayout() == this);
   // A StringLayout is not editable, and the cursor cannot go inside it.
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right.

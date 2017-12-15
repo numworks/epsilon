@@ -9,7 +9,7 @@ extern "C" {
 #include <assert.h>
 }
 
-#include "layout/string_layout.h"
+#include "layout/editable_string_layout.h"
 
 namespace Poincare {
 
@@ -204,7 +204,7 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
 ExpressionLayout * Decimal::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   char buffer[255];
   int numberOfChars = writeTextInBuffer(buffer, 255);
-  return new StringLayout(buffer, numberOfChars);
+  return new EditableStringLayout(buffer, numberOfChars);
 }
 
 Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {

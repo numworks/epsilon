@@ -21,7 +21,7 @@ extern "C" {
 #include <poincare/subtraction.h>
 #include <poincare/cosine.h>
 #include <poincare/sine.h>
-#include "layout/baseline_relative_layout.h"
+#include "layout/editable_baseline_relative_layout.h"
 
 namespace Poincare {
 
@@ -121,7 +121,7 @@ ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = m_operands[1]->operand(0);
   }
-  return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
+  return new EditableBaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
 }
 
 int Power::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {

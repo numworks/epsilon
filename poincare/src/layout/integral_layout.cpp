@@ -65,8 +65,8 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Go Right of the integrand, Left of "dx".
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(m_integrandLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_integrandLayout->child(0));
-    return true;
+    cursor->setPointedExpressionLayout(m_integrandLayout);
+    return m_integrandLayout->moveLeft(cursor);
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   // Case: Left of the brackets.

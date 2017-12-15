@@ -8,7 +8,7 @@ extern "C" {
 #include <poincare/complex.h>
 #include <poincare/context.h>
 #include "layout/horizontal_layout.h"
-#include "layout/string_layout.h"
+#include "layout/editable_string_layout.h"
 
 namespace Poincare {
 
@@ -31,7 +31,7 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   ExpressionLayout * childrenLayouts[3];
   childrenLayouts[0] = value()->createLayout(floatDisplayMode, complexFormat);
   const char stoSymbol[2] = {Ion::Charset::Sto, 0};
-  childrenLayouts[1] = new StringLayout(stoSymbol, 1);
+  childrenLayouts[1] = new EditableStringLayout(stoSymbol, 1);
   childrenLayouts[2] = symbol()->createLayout(floatDisplayMode, complexFormat);
   return new HorizontalLayout(childrenLayouts, 3);
 }

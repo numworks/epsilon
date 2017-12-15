@@ -21,13 +21,13 @@ public:
 
   /* Hierarchy */
   void setParent(ExpressionLayout* parent);
-  virtual ExpressionLayout * child(uint16_t index) = 0;
 
   /* Tree navigation */
   virtual bool moveLeft(ExpressionLayoutCursor * cursor) { return false; } //TODO should be virtual pure?
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
   virtual KDSize computeSize() = 0;
+  virtual ExpressionLayout * child(uint16_t index) = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
   KDCoordinate m_baseline;
   ExpressionLayout * m_parent;

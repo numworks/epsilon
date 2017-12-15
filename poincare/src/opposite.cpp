@@ -10,7 +10,7 @@ extern "C" {
 #include <cmath>
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
-#include "layout/string_layout.h"
+#include "layout/editable_string_layout.h"
 
 namespace Poincare {
 
@@ -50,7 +50,7 @@ ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMo
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * children_layouts[2];
   char string[2] = {'-', '\0'};
-  children_layouts[0] = new StringLayout(string, 1);
+  children_layouts[0] = new EditableStringLayout(string, 1);
   children_layouts[1] = operand(0)->type() == Type::Opposite ? new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat)) : operand(0)->createLayout(floatDisplayMode, complexFormat);
   return new HorizontalLayout(children_layouts, 2);
 }

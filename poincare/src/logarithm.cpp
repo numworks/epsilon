@@ -16,10 +16,10 @@ extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-#include "layout/baseline_relative_layout.h"
+#include "layout/editable_baseline_relative_layout.h"
+#include "layout/editable_string_layout.h"
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_layout.h"
-#include "layout/string_layout.h"
 
 namespace Poincare {
 
@@ -237,7 +237,7 @@ ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayM
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
   }
   ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout("log", strlen("log")), operand(1)->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Subscript);
+  childrenLayouts[0] = new EditableBaselineRelativeLayout(new EditableStringLayout("log", strlen("log")), operand(1)->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Subscript);
   childrenLayouts[1] = new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
   return new HorizontalLayout(childrenLayouts, 2);
 }

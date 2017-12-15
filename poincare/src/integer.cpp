@@ -6,7 +6,7 @@ extern "C" {
 }
 #include <cmath>
 #include <poincare/complex.h>
-#include "layout/string_layout.h"
+#include "layout/editable_string_layout.h"
 #include <utility>
 
 namespace Poincare {
@@ -618,7 +618,7 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
 ExpressionLayout * Integer::createLayout() const {
   char buffer[255];
   int numberOfChars = writeTextInBuffer(buffer, 255);
-  return new StringLayout(buffer, numberOfChars);
+  return new EditableStringLayout(buffer, numberOfChars);
 }
 
 template float Poincare::Integer::approximate<float>() const;

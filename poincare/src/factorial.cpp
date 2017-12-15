@@ -1,5 +1,5 @@
 #include <poincare/factorial.h>
-#include "layout/string_layout.h"
+#include "layout/editable_string_layout.h"
 #include "layout/horizontal_layout.h"
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
@@ -78,7 +78,7 @@ ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayM
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
-  childrenLayouts[1] = new StringLayout("!", 1);
+  childrenLayouts[1] = new EditableStringLayout("!", 1);
   return new HorizontalLayout(childrenLayouts, 2);
 }
 

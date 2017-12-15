@@ -43,6 +43,16 @@ View * TypeParameterController::view() {
   return &m_selectableTableView;
 }
 
+void TypeParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
+  m_selectableTableView.reloadData();
+}
+
+void TypeParameterController::viewDidDisappear() {
+  m_selectableTableView.deselectTable();
+  ViewController::viewDidDisappear();
+}
+
 void TypeParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);

@@ -4,11 +4,11 @@
 #include <escher.h>
 #include "settings_message_tree.h"
 #include "../hardware_test/pop_up_controller.h"
-#include "../shared/text_field_delegate.h"
+#include "../shared/parameter_text_field_delegate.h"
 
 namespace Settings {
 
-class SubController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public Shared::TextFieldDelegate {
+class SubController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
 public:
   SubController(Responder * parentResponder);
   ~SubController();
@@ -34,7 +34,6 @@ public:
   void viewDidDisappear() override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:
   StackViewController * stackController() const;
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);

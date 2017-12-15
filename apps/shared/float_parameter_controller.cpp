@@ -137,14 +137,6 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
   return true;
 }
 
-bool FloatParameterController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Backspace && !textField->isEditing()) {
-    textField->setEditing(true);
-    return true;
-  }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
-}
-
 TextFieldDelegateApp * FloatParameterController::textFieldDelegateApp() {
   return (TextFieldDelegateApp *)app();
 }

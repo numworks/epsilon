@@ -6,11 +6,11 @@
 #include "law_curve_view.h"
 #include "image_table_view.h"
 #include "calculation/calculation.h"
-#include "../shared/text_field_delegate.h"
+#include "../shared/parameter_text_field_delegate.h"
 
 namespace Probability {
 
-class CalculationController : public ViewController, public Shared::TextFieldDelegate {
+class CalculationController : public ViewController, public Shared::ParameterTextFieldDelegate {
 public:
   CalculationController(Responder * parentResponder, Law * law, Calculation * calculation);
   View * view() override;
@@ -23,7 +23,6 @@ public:
   void selectSubview(int subviewIndex);
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:
   void updateTitle();
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;

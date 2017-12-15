@@ -23,7 +23,8 @@ Sequence::Sequence(const char * text, KDColor color) :
   m_nameLayout(nullptr),
   m_definitionName(nullptr),
   m_firstInitialConditionName(nullptr),
-  m_secondInitialConditionName(nullptr)
+  m_secondInitialConditionName(nullptr),
+  m_initialRank(0)
 {
 }
 
@@ -71,6 +72,7 @@ Sequence& Sequence::operator=(const Sequence& other) {
   const char * secondInitialText = other.m_secondInitialConditionText;
   Function::operator=(other);
   setType(other.m_type);
+  setInitialRank(other.m_initialRank);
   setContent(contentText);
   setFirstInitialConditionContent(firstInitialText);
   setSecondInitialConditionContent(secondInitialText);
@@ -82,9 +84,11 @@ uint32_t Sequence::checksum() {
   strlcpy(data, text(), TextField::maxBufferSize());
   strlcpy(data+TextField::maxBufferSize(), firstInitialConditionText(), TextField::maxBufferSize());
   strlcpy(data+2*TextField::maxBufferSize(), secondInitialConditionText(), TextField::maxBufferSize());
+  int * intAdress = (int *)(&data[3*TextField::maxBufferSize()]);
+  *intAdress = m_initialRank;
   data[k_dataLengthInBytes-3] = (char)m_type;
   data[k_dataLengthInBytes-2] = name()!= nullptr ? name()[0] : 0;
-  data[k_dataLengthInBytes-1] = isActive() ? 1 : 0;
+  data[k_dataLengthInBytes-1] = (char)(isActive() ? 1 : 0);
   return Ion::crc32((uint32_t *)data, k_dataLengthInBytes/sizeof(uint32_t));
 }
 
@@ -101,6 +105,9 @@ Sequence::Type Sequence::type() {
 }
 
 void Sequence::setType(Type type) {
+  if (m_type == Type::Explicite) {
+    setInitialRank(0);
+  }
   m_type = type;
   tidy();
   /* Reset all contents */
@@ -126,6 +133,18 @@ void Sequence::setType(Type type) {
   }
   setFirstInitialConditionContent("");
   setSecondInitialConditionContent("");
+}
+
+void Sequence::setInitialRank(int rank) {
+  m_initialRank = rank;
+  if (m_firstInitialConditionName != nullptr) {
+    delete m_firstInitialConditionName;
+    m_firstInitialConditionName = nullptr;
+  }
+  if (m_secondInitialConditionName != nullptr) {
+    delete m_secondInitialConditionName;
+    m_secondInitialConditionName = nullptr;
+  }
 }
 
 Poincare::Expression * Sequence::firstInitialConditionExpression(Context * context) const {
@@ -229,21 +248,25 @@ Poincare::ExpressionLayout * Sequence::definitionName() {
 }
 
 Poincare::ExpressionLayout * Sequence::firstInitialConditionName() {
+  char buffer[k_initialRankNumberOfDigits+1];
+  Integer(m_initialRank).writeTextInBuffer(buffer, k_initialRankNumberOfDigits+1);
   if (m_firstInitialConditionName == nullptr) {
     if (m_type == Type::SingleRecurrence) {
-      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
     }
     if (m_type == Type::DoubleRecurrence) {
-      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
     }
   }
   return m_firstInitialConditionName;
 }
 
 Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
+  char buffer[k_initialRankNumberOfDigits+1];
+  Integer(m_initialRank+1).writeTextInBuffer(buffer, k_initialRankNumberOfDigits+1);
   if (m_secondInitialConditionName == nullptr) {
     if (m_type == Type::DoubleRecurrence) {
-      m_secondInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("1", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_secondInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
 
     }
   }
@@ -284,6 +307,9 @@ T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
 
 template<typename T>
 T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
+  if (n < m_initialRank || n < 0) {
+    return NAN;
+  }
   CacheContext<T> ctx = CacheContext<T>(sqctx);
   T un = sqctx->valueOfSequenceAtPreviousRank<T>(0, 0);
   T unm1 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 1);
@@ -307,7 +333,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     }
     case Type::SingleRecurrence:
     {
-      if (n == 0) {
+      if (n == m_initialRank) {
         return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
       ctx.setValueForSymbol(un, &un1Symbol);
@@ -320,10 +346,10 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     }
     default:
     {
-      if (n == 0) {
+      if (n == m_initialRank) {
         return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
-      if (n == 1) {
+      if (n == m_initialRank+1) {
         return secondInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
       ctx.setValueForSymbol(unm1, &un1Symbol);

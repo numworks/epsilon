@@ -3,10 +3,10 @@
 
 namespace Shared {
 
-ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage) :
+ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, tableDelegate),
   m_functionStore(functionStore),
   m_function(nullptr),
 #if FUNCTION_COLOR_CHOICE

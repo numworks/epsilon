@@ -26,10 +26,10 @@ protected:
   KDSize computeSize() override;
   ExpressionLayout * child(uint16_t index) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
-private:
-  constexpr static KDCoordinate k_indiceHeight = 5;
   ExpressionLayout * m_baseLayout;
   ExpressionLayout * m_indiceLayout;
+private:
+  constexpr static KDCoordinate k_indiceHeight = 5;
   Type m_type;
 };
 

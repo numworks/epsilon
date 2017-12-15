@@ -89,4 +89,29 @@ bool EditableStringLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+void EditableStringLayout::moveCursorInsideAtDirection (
+    VerticalDirection direction,
+    ExpressionLayoutCursor * cursor,
+    ExpressionLayout ** childResult,
+    void * resultPosition,
+    int * resultPositionInside,
+    int * resultScore)
+{
+  ExpressionLayout::moveCursorInsideAtDirection(direction, cursor, childResult, resultPosition, resultPositionInside, resultScore);
+  ExpressionLayoutCursor::Position * castedResultPosition = static_cast<ExpressionLayoutCursor::Position *>(resultPosition);
+  // Check the distance to Inside cursors.
+  size_t stringLength = strlen(m_string);
+  int currentDistance = 0;
+  KDPoint cursorMiddleLeft = cursor->middleLeftPoint();
+  for (int i = 1; i < stringLength; i++) {
+    currentDistance = cursor->middleLeftPointOfCursor(this, ExpressionLayoutCursor::Position::Inside, i).squareDistanceTo(cursorMiddleLeft);
+    if (currentDistance < *resultScore) {
+      *childResult = this;
+      *castedResultPosition = ExpressionLayoutCursor::Position::Inside;
+      *resultPositionInside = i;
+      *resultScore = currentDistance;
+    }
+  }
+}
+
 }

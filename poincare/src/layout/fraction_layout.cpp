@@ -72,6 +72,20 @@ bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // If the cursor is inside denominator, move it to the numerator.
+  if (m_denominator_layout && previousLayout == m_denominator_layout) {
+    assert(m_numerator_layout != nullptr);
+    return m_numerator_layout->moveUpInside(cursor);
+  }
+  // If the cursor is Left or Right, move it to the numerator.
+  if (cursor->pointedExpressionLayout() == this){
+    assert(m_numerator_layout != nullptr);
+    return m_numerator_layout->moveUpInside(cursor);
+  }
+  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+}
+
 void FractionLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDCoordinate fractionLineY = p.y() + m_numerator_layout->size().height() + k_fractionLineMargin;
   ctx->fillRect(KDRect(p.x()+k_fractionBorderMargin, fractionLineY, size().width()-2*k_fractionBorderMargin, 1), expressionColor);

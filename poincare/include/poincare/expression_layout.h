@@ -9,6 +9,11 @@ class ExpressionLayoutCursor;
 
 class ExpressionLayout {
 public:
+  enum class VerticalDirection {
+    Up,
+    Down
+  };
+
   ExpressionLayout();
   virtual  ~ExpressionLayout() = default;
 
@@ -25,6 +30,8 @@ public:
   /* Tree navigation */
   virtual bool moveLeft(ExpressionLayoutCursor * cursor) { return false; } //TODO should be virtual pure?
   virtual bool moveRight(ExpressionLayoutCursor * cursor) { return false; } //TODO should be virtual pure?
+  virtual bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr);
+  bool moveUpInside(ExpressionLayoutCursor * cursor);
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
   virtual KDSize computeSize() = 0;
@@ -32,7 +39,15 @@ protected:
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
   KDCoordinate m_baseline;
   ExpressionLayout * m_parent;
+  virtual void moveCursorInsideAtDirection (
+    VerticalDirection direction,
+    ExpressionLayoutCursor * cursor,
+    ExpressionLayout ** childResult,
+    void * resultPosition,
+    int * resultPositionInside,
+    int * resultScore);
 private:
+  bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor);
   bool m_sized, m_positioned;
   KDRect m_frame;
 };

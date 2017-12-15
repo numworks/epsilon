@@ -11,6 +11,14 @@ public:
   using StringLayout::StringLayout;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+private:
+  void moveCursorInsideAtDirection (
+    VerticalDirection direction,
+    ExpressionLayoutCursor * cursor,
+    ExpressionLayout ** childResult,
+    void * resultPosition,
+    int * resultPositionInside,
+    int * resultScore) override;
 };
 
 }

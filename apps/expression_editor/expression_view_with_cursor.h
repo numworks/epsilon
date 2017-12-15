@@ -21,7 +21,6 @@ private:
     Top,
     Bottom
   };
-  constexpr static KDCoordinate k_cursorHeight = 18;
   int numberOfSubviews() const override { return 2; }
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

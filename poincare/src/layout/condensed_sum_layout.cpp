@@ -108,6 +108,23 @@ bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool CondensedSumLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // If the cursor is inside the subscript layout, move it to the superscript.
+  if (m_subscriptLayout && previousLayout == m_subscriptLayout) {
+    assert(m_superscriptLayout != nullptr);
+    return m_superscriptLayout->moveUpInside(cursor);
+  }
+  // If the cursor is Left of the base layout, move it to the superscript.
+  if (m_baseLayout
+      && previousLayout == m_baseLayout
+      && cursor->positionIsEquivalentTo(m_baseLayout, ExpressionLayoutCursor::Position::Left))
+  {
+    assert(m_superscriptLayout != nullptr);
+    return m_superscriptLayout->moveUpInside(cursor);
+  }
+  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+}
+
 void CondensedSumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Nothing to draw
 }

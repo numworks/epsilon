@@ -121,6 +121,31 @@ bool NthRootLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // If the cursor is Left of the radicand, move it to the index.
+  if (m_radicandLayout
+      && previousLayout == m_radicandLayout
+      && cursor->positionIsEquivalentTo(m_radicandLayout, ExpressionLayoutCursor::Position::Left))
+  {
+    assert(m_indexLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_indexLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    cursor->setPositionInside(0);
+    return true;
+  }
+  // If the cursor is Left, move it to the index.
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    assert(m_indexLayout != nullptr);
+    cursor->setPointedExpressionLayout(m_indexLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    cursor->setPositionInside(0);
+    return true;
+  }
+  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+}
+
 void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize radicandSize = m_radicandLayout->size();
   KDSize indexSize = m_indexLayout != nullptr ? m_indexLayout->size() : KDSize(k_leftRadixWidth,0);

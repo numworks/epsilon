@@ -17,6 +17,7 @@ public:
   bool operator !=(const KDPoint &other) const {
     return !(operator ==(other));
   }
+  uint16_t squareDistanceTo(KDPoint other) const;
 private:
   KDCoordinate m_x;
   KDCoordinate m_y;

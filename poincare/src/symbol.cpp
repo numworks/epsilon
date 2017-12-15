@@ -3,6 +3,7 @@
 #include <poincare/complex.h>
 #include "layout/baseline_relative_layout.h"
 #include "layout/string_layout.h"
+#include "layout/editable_string_layout.h"
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -131,7 +132,7 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   if (m_name == SpecialSymbols::Ans) {
-    return new StringLayout("ans", 3);
+    return new EditableStringLayout("ans", 3);
   }
   if (m_name == SpecialSymbols::un) {
     return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
@@ -147,9 +148,9 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
   }
   if (isMatrixSymbol()) {
     const char mi[] = { 'M', (char)(m_name-(char)SpecialSymbols::M0+'0') };
-    return new StringLayout(mi, sizeof(mi));
+    return new EditableStringLayout(mi, sizeof(mi));
   }
-  return new StringLayout(&m_name, 1);
+  return new EditableStringLayout(&m_name, 1);
 }
 
 int Symbol::writeTextInBuffer(char * buffer, int bufferSize) const {

@@ -2,7 +2,7 @@
 extern "C" {
 #include <math.h>
 }
-#include "layout/string_layout.h"
+#include "layout/editable_string_layout.h"
 
 namespace Poincare {
 
@@ -21,7 +21,7 @@ template<typename T> Complex<T> * Undefined::templatedApproximate(Context& conte
 ExpressionLayout * Undefined::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   char buffer[16];
   int numberOfChars = Complex<float>::convertFloatToText(NAN, buffer, 16, 1, floatDisplayMode);
-  return new StringLayout(buffer, numberOfChars);
+  return new EditableStringLayout(buffer, numberOfChars);
 }
 
 int Undefined::writeTextInBuffer(char * buffer, int bufferSize) const {

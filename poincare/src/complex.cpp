@@ -6,8 +6,8 @@ extern "C" {
 #include <float.h>
 }
 #include <cmath>
-#include "layout/string_layout.h"
-#include "layout/baseline_relative_layout.h"
+#include "layout/editable_string_layout.h"
+#include "layout/editable_baseline_relative_layout.h"
 #include <ion.h>
 
 namespace Poincare {
@@ -443,7 +443,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
 
   if (std::isnan(r()) || (std::isnan(th()) && r() != 0)) {
     numberOfCharInBase = convertFloatToText(NAN, bufferBase, PrintFloat::k_maxComplexBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
-    return new StringLayout(bufferBase, numberOfCharInBase);
+    return new EditableStringLayout(bufferBase, numberOfCharInBase);
   }
   if (r() != 1 || th() == 0) {
     numberOfCharInBase = convertFloatToText(r(), bufferBase, PrintFloat::k_maxFloatBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
@@ -463,16 +463,16 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
     bufferSuperscript[numberOfCharInSuperscript] = 0;
   }
   if (numberOfCharInSuperscript == 0) {
-    return new StringLayout(bufferBase, numberOfCharInBase);
+    return new EditableStringLayout(bufferBase, numberOfCharInBase);
   }
-  return new BaselineRelativeLayout(new StringLayout(bufferBase, numberOfCharInBase), new StringLayout(bufferSuperscript, numberOfCharInSuperscript), BaselineRelativeLayout::Type::Superscript);
+  return new EditableBaselineRelativeLayout(new EditableStringLayout(bufferBase, numberOfCharInBase), new EditableStringLayout(bufferSuperscript, numberOfCharInSuperscript), BaselineRelativeLayout::Type::Superscript);
 }
 
 template <class T>
 ExpressionLayout * Complex<T>::createCartesianLayout(Expression::FloatDisplayMode floatDisplayMode) const {
   char buffer[PrintFloat::k_maxComplexBufferLength];
   int numberOfChars = convertComplexToText(buffer, PrintFloat::k_maxComplexBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode, Expression::ComplexFormat::Cartesian, Ion::Charset::MiddleDot);
-  return new StringLayout(buffer, numberOfChars);
+  return new EditableStringLayout(buffer, numberOfChars);
 }
 
 template class Complex<float>;

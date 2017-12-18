@@ -10,7 +10,7 @@ namespace Sequence {
 class Sequence : public Shared::Function {
 public:
   enum class Type {
-    Explicite = 0,
+    Explicit = 0,
     SingleRecurrence = 1,
     DoubleRecurrence = 2
   };

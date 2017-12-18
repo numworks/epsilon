@@ -171,7 +171,7 @@ TextFieldDelegateApp * ListParameterController::textFieldDelegateApp() {
 }
 
 bool ListParameterController::hasInitialRankRow() {
-  return m_sequence && m_sequence->type() != Sequence::Type::Explicite;
+  return m_sequence && m_sequence->type() != Sequence::Type::Explicit;
 }
 
 }

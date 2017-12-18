@@ -415,6 +415,8 @@ void Sequence::tidy() {
   }
 }
 
+template double Sequence::templatedApproximateAtAbscissa<double>(double, SequenceContext*) const;
+template float Sequence::templatedApproximateAtAbscissa<float>(float, SequenceContext*) const;
 template double Sequence::approximateToNextRank<double>(int, SequenceContext*) const;
 template float Sequence::approximateToNextRank<float>(int, SequenceContext*) const;
 }

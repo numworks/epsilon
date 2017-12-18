@@ -32,6 +32,8 @@ public:
   virtual bool moveRight(ExpressionLayoutCursor * cursor) { return false; } //TODO should be virtual pure?
   virtual bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr);
   bool moveUpInside(ExpressionLayoutCursor * cursor);
+  virtual bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr);
+  bool moveDownInside(ExpressionLayoutCursor * cursor);
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
   virtual KDSize computeSize() = 0;

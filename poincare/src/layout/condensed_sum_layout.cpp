@@ -125,6 +125,23 @@ bool CondensedSumLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayou
   return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
 }
 
+bool CondensedSumLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // If the cursor is inside the superscript layout, move it to the subscript.
+  if (m_superscriptLayout && previousLayout == m_superscriptLayout) {
+    assert(m_subscriptLayout != nullptr);
+    return m_subscriptLayout->moveUpInside(cursor);
+  }
+  // If the cursor is Left of the base layout, move it to the subscript.
+  if (m_baseLayout
+      && previousLayout == m_baseLayout
+      && cursor->positionIsEquivalentTo(m_baseLayout, ExpressionLayoutCursor::Position::Left))
+  {
+    assert(m_subscriptLayout != nullptr);
+    return m_subscriptLayout->moveUpInside(cursor);
+  }
+  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+}
+
 void CondensedSumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Nothing to draw
 }

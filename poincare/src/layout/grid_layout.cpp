@@ -110,6 +110,16 @@ bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * prev
   return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
 }
 
+bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // If the cursor is child that is not on the bottom row, move it inside the
+  // lower neighbourg.
+  int childIndex = indexOfChild(previousLayout);
+  if (childIndex >- 1 && !childIsBottomOfGrid(childIndex)) {
+    return m_entryLayouts[childIndex + m_numberOfColumns]->moveDownInside(cursor);
+  }
+  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+}
+
 KDCoordinate GridLayout::rowBaseline(int i) {
   KDCoordinate rowBaseline = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
@@ -215,6 +225,11 @@ bool GridLayout::childIsRightOfGrid(int index) const {
 bool GridLayout::childIsTopOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
   return index < m_numberOfColumns;
+}
+
+bool GridLayout::childIsBottomOfGrid(int index) const {
+  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  return index > (m_numberOfRows - 1) * m_numberOfColumns - 1;
 }
 
 }

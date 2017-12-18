@@ -17,12 +17,14 @@ public:
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+  bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
   ExpressionLayout * child(uint16_t index) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
+  bool moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout);
   int indexOfChild(ExpressionLayout * eL) const;
   int m_number_of_children;
   ExpressionLayout ** m_children_layouts;

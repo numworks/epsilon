@@ -70,6 +70,17 @@ bool ExpressionLayout::moveUpInside(ExpressionLayoutCursor * cursor) {
   return moveInside(VerticalDirection::Up, cursor);
 }
 
+bool ExpressionLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  if (m_parent) {
+    return m_parent->moveDown(cursor, this, previousLayout);
+  }
+  return false;
+}
+
+bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor) {
+  return moveInside(VerticalDirection::Down, cursor);
+}
+
 bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor) {
   ExpressionLayout *  chilResult = nullptr;
   ExpressionLayout ** childResultPtr = &chilResult;

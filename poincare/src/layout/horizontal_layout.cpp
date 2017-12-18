@@ -125,36 +125,11 @@ bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor) {
 }
 
 bool HorizontalLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
-  // Prevent looping fom child to parent
-  if (previousPreviousLayout == this) {
-    return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
-  }
-  // If the cursor Left or Right of a child, try moving it up from its brother.
-  int previousLayoutIndex = indexOfChild(previousLayout);
-  if (previousLayoutIndex > -1) {
-    ExpressionLayout * brother = nullptr;
-    ExpressionLayoutCursor::Position newPosition = ExpressionLayoutCursor::Position::Right;
-    if (cursor->position() == ExpressionLayoutCursor::Position::Left && previousLayoutIndex > 0) {
-      brother = m_children_layouts[previousLayoutIndex - 1];
-      newPosition = ExpressionLayoutCursor::Position::Right;
-    }
-    if (cursor->position() == ExpressionLayoutCursor::Position::Right && previousLayoutIndex < m_number_of_children - 1) {
-      brother = m_children_layouts[previousLayoutIndex + 1];
-      newPosition = ExpressionLayoutCursor::Position::Left;
-    }
-    if (brother && cursor->positionIsEquivalentTo(brother, newPosition)) {
-      ExpressionLayout * previousPointedLayout = cursor->pointedExpressionLayout();
-      ExpressionLayoutCursor::Position previousPosition = cursor->position();
-      cursor->setPointedExpressionLayout(brother);
-      cursor->setPosition(newPosition);
-      if (brother->moveUp(cursor, this, previousLayout)) {
-        return true;
-      }
-      cursor->setPointedExpressionLayout(previousPointedLayout);
-      cursor->setPosition(previousPosition);
-    }
-  }
-  return ExpressionLayout::moveUp(cursor, previousLayout);
+  return moveVertically(ExpressionLayout::VerticalDirection::Up, cursor, previousLayout, previousPreviousLayout);
+}
+
+bool HorizontalLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  return moveVertically(ExpressionLayout::VerticalDirection::Down, cursor, previousLayout, previousPreviousLayout);
 }
 
 void HorizontalLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
@@ -198,6 +173,50 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
   }
   y = m_baseline - child->baseline();
   return KDPoint(x, y);
+}
+
+bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // Prevent looping fom child to parent
+  if (previousPreviousLayout == this) {
+    if (direction == ExpressionLayout::VerticalDirection::Up) {
+      return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+    }
+    assert(direction == ExpressionLayout::VerticalDirection::Down);
+    return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+  }
+  // If the cursor Left or Right of a child, try moving it up from its brother.
+  int previousLayoutIndex = indexOfChild(previousLayout);
+  if (previousLayoutIndex > -1) {
+    ExpressionLayout * brother = nullptr;
+    ExpressionLayoutCursor::Position newPosition = ExpressionLayoutCursor::Position::Right;
+    if (cursor->position() == ExpressionLayoutCursor::Position::Left && previousLayoutIndex > 0) {
+      brother = m_children_layouts[previousLayoutIndex - 1];
+      newPosition = ExpressionLayoutCursor::Position::Right;
+    }
+    if (cursor->position() == ExpressionLayoutCursor::Position::Right && previousLayoutIndex < m_number_of_children - 1) {
+      brother = m_children_layouts[previousLayoutIndex + 1];
+      newPosition = ExpressionLayoutCursor::Position::Left;
+    }
+    if (brother && cursor->positionIsEquivalentTo(brother, newPosition)) {
+      ExpressionLayout * previousPointedLayout = cursor->pointedExpressionLayout();
+      ExpressionLayoutCursor::Position previousPosition = cursor->position();
+      cursor->setPointedExpressionLayout(brother);
+      cursor->setPosition(newPosition);
+      if (direction == ExpressionLayout::VerticalDirection::Up && brother->moveUp(cursor, this, previousLayout)) {
+        return true;
+      }
+      if (direction == ExpressionLayout::VerticalDirection::Down && brother->moveDown(cursor, this, previousLayout)) {
+        return true;
+      }
+      cursor->setPointedExpressionLayout(previousPointedLayout);
+      cursor->setPosition(previousPosition);
+    }
+  }
+  if (direction == ExpressionLayout::VerticalDirection::Up) {
+    return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+  }
+  assert(direction == ExpressionLayout::VerticalDirection::Down);
+  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
 
 int HorizontalLayout::indexOfChild(ExpressionLayout * eL) const {

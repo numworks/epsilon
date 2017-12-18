@@ -13,7 +13,7 @@ namespace Sequence {
 
 Sequence::Sequence(const char * text, KDColor color) :
   Function(text, color),
-  m_type(Type::Explicite),
+  m_type(Type::Explicit),
   m_firstInitialConditionText(),
   m_secondInitialConditionText(),
   m_firstInitialConditionExpression(nullptr),
@@ -105,14 +105,14 @@ Sequence::Type Sequence::type() {
 }
 
 void Sequence::setType(Type type) {
-  if (m_type == Type::Explicite) {
+  if (m_type == Type::Explicit) {
     setInitialRank(0);
   }
   m_type = type;
   tidy();
   /* Reset all contents */
   switch (m_type) {
-    case Type::Explicite:
+    case Type::Explicit:
       setContent("");
       break;
     case Type::SingleRecurrence:
@@ -234,7 +234,7 @@ Poincare::ExpressionLayout * Sequence::nameLayout() {
 
 Poincare::ExpressionLayout * Sequence::definitionName() {
   if (m_definitionName == nullptr) {
-    if (m_type == Type::Explicite) {
+    if (m_type == Type::Explicit) {
       m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n ", 2, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
     }
     if (m_type == Type::SingleRecurrence) {
@@ -275,7 +275,7 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
 
 bool Sequence::isDefined() {
   switch (m_type) {
-    case Type::Explicite:
+    case Type::Explicit:
       return strlen(text()) != 0;
     case Type::SingleRecurrence:
       return strlen(text()) != 0 && strlen(firstInitialConditionText()) != 0;
@@ -286,7 +286,7 @@ bool Sequence::isDefined() {
 
 bool Sequence::isEmpty() {
   switch (m_type) {
-    case Type::Explicite:
+    case Type::Explicit:
       return Function::isEmpty();
     case Type::SingleRecurrence:
       return Function::isEmpty() && strlen(m_firstInitialConditionText) == 0;
@@ -323,7 +323,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   Poincare::Symbol unSymbol(Symbol::SpecialSymbols::un);
   Poincare::Symbol un1Symbol(Symbol::SpecialSymbols::un1);
   switch (m_type) {
-    case Type::Explicite:
+    case Type::Explicit:
     {
       ctx.setValueForSymbol(un, &unSymbol);
       ctx.setValueForSymbol(vn, &vnSymbol);

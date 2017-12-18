@@ -338,8 +338,8 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       }
     }
   }
-  // a^(b+c) -> Rational(a^b)*a^c with a and b rational
-  if (!letPowerAtRoot && operand(0)->type() == Type::Rational && operand(1)->type() == Type::Addition) {
+  // a^(b+c) -> Rational(a^b)*a^c with a and b rational and a != 0
+  if (!letPowerAtRoot && operand(0)->type() == Type::Rational && !static_cast<const Rational *>(operand(0))->isZero() && operand(1)->type() == Type::Addition) {
     Addition * a = static_cast<Addition *>(editableOperand(1));
     // Check is b is rational
     if (a->operand(0)->type() == Type::Rational) {

@@ -123,6 +123,22 @@ bool SequenceLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * 
   }
   return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
 }
+bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // If the cursor is inside the upper bound, move it to the lower bound.
+  if (m_upperBoundLayout && previousLayout == m_upperBoundLayout) {
+    assert(m_lowerBoundLayout != nullptr);
+    return m_lowerBoundLayout->moveDownInside(cursor);
+  }
+  // If the cursor is Left of the argument, move it to the lower bound.
+  if (m_argumentLayout
+      && previousLayout == m_argumentLayout
+      && cursor->positionIsEquivalentTo(m_argumentLayout, ExpressionLayoutCursor::Position::Left))
+  {
+    assert(m_lowerBoundLayout != nullptr);
+    return m_lowerBoundLayout->moveDownInside(cursor);
+  }
+  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+}
 
 KDSize SequenceLayout::computeSize() {
   KDSize argumentSize = m_argumentLayout->size();

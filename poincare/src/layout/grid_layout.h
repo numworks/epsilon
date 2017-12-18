@@ -18,6 +18,7 @@ public:
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+  bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
@@ -34,6 +35,7 @@ private:
   bool childIsLeftOfGrid(int index) const;
   bool childIsRightOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
+  bool childIsBottomOfGrid(int index) const;
   ExpressionLayout ** m_entryLayouts;
   int m_numberOfRows;
   int m_numberOfColumns;

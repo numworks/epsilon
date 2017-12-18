@@ -134,6 +134,23 @@ bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * 
   return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
 }
 
+bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+  // If the cursor is inside the upper bound, move it to the lower bound.
+  if (m_upperBoundLayout && previousLayout == m_upperBoundLayout) {
+    assert(m_lowerBoundLayout != nullptr);
+    return m_lowerBoundLayout->moveDownInside(cursor);
+  }
+  // If the cursor is Left of the integrand, move it to the lower bound.
+  if (m_integrandLayout
+      && previousLayout == m_integrandLayout
+      && cursor->positionIsEquivalentTo(m_integrandLayout, ExpressionLayoutCursor::Position::Left))
+  {
+    assert(m_lowerBoundLayout != nullptr);
+    return m_lowerBoundLayout->moveDownInside(cursor);
+  }
+  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+}
+
 void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize integrandSize = m_integrandLayout->size();
   KDSize upperBoundSize = m_upperBoundLayout->size();

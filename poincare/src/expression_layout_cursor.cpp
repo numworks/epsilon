@@ -17,7 +17,7 @@ bool ExpressionLayoutCursor::moveUp() {
 }
 
 bool ExpressionLayoutCursor::moveDown() {
-  return false; //TODO
+  return m_pointedExpressionLayout->moveDown(this);
 }
 
 bool ExpressionLayoutCursor::positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position, int positionIndex) {

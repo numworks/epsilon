@@ -265,6 +265,8 @@ void SubController::tableViewDidChangeSelection(SelectableTableView * t, int pre
   if (previousSelectedCellY == numberOfRows()-1) {
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
     myCell->setEditing(false);
+  }
+  if (t->selectedRow() >= 0 && t->selectedRow() < numberOfRows()-1) {
     app()->setFirstResponder(&m_selectableTableView);
   }
   if (t->selectedRow() == numberOfRows() -1) {

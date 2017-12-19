@@ -14,6 +14,9 @@ public:
   bool isEditing();
   void setEditing(bool isEditing);
   void setHighlighted(bool highlight) override;
+  Responder * responder() override {
+    return this;
+  }
   void setAccessoryText(const char * text);
   void setTextColor(KDColor color) override;
   constexpr static int k_bufferLength = TextField::maxBufferSize();

@@ -44,10 +44,11 @@ void SelectableTableView::reloadData() {
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
-  selectCellAtLocation(selectedColumn(), selectedRow());
-  if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, 0, -1);
-  }
+  int col = selectedColumn();
+  int row = selectedRow();
+  selectColumn(0);
+  selectRow(-1);
+  selectCellAtLocation(col, row);
 }
 
 void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
@@ -79,8 +80,18 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   selectRow(j);
   if (selectedRow() >= 0) {
     scrollToCell(i, j);
-    HighlightCell * cell = cellAtLocation(i, j);
+  }
+  HighlightCell * cell = selectedCell();
+  if (cell) {
     cell->setHighlighted(true);
+    // Update first responder
+    if (i != previousX || j != previousY) {
+      if (cell->responder()) {
+        app()->setFirstResponder(cell->responder());
+      } else {
+        app()->setFirstResponder(this);
+      }
+    }
   }
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, previousX, previousY);

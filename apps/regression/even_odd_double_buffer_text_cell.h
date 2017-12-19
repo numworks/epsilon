@@ -10,6 +10,9 @@ public:
   const char * secondText();
   void reloadCell() override;
   void setHighlighted(bool highlight) override;
+  Responder * responder() override {
+    return this;
+  }
   void setEven(bool even) override;
   bool firstTextSelected();
   void selectFirstText(bool selectFirstText);

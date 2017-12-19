@@ -12,6 +12,9 @@ public:
   Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDText::FontSize size = KDText::FontSize::Small, KDColor textColor = KDColorBlack);
   bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;
+  Responder * responder() override {
+    return this;
+  }
   KDSize minimalSizeForOptimalDisplay() const override;
 protected:
   MessageTextView m_messageTextView;

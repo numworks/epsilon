@@ -13,6 +13,9 @@ public:
   TextField * textField();
   void setMargins(KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   void setHighlighted(bool highlight) override;
+  Responder * responder() override {
+    return this;
+  }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

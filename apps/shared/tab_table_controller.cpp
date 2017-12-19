@@ -29,7 +29,7 @@ SelectableTableView * TabTableController::selectableTableView() {
 }
 
 View * TabTableController::loadView() {
-  return new SelectableTableView(this, m_dataSource, 0, 0,  Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, this, true, true, Palette::WallScreenDark);
+  return new SelectableTableView(this, m_dataSource, 0, 0,  Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, nullptr, true, true, Palette::WallScreenDark);
 }
 
 void TabTableController::unloadView(View * view) {

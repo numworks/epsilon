@@ -10,7 +10,8 @@ namespace Shared {
 RangeParameterController::RangeParameterController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange) :
   FloatParameterController(parentResponder),
   m_interactiveRange(interactiveRange),
-  m_rangeCells{},
+  m_xRangeCells{},
+  m_yRangeCells{},
   m_yAutoCell(nullptr)
 {
 }
@@ -27,10 +28,13 @@ int RangeParameterController::typeAtLocation(int i, int j) {
   if (j == numberOfRows()-1) {
     return 0;
   }
+  if (j >= 0 && j < 2) {
+    return 1;
+  }
   if (j == 2) {
     return 2;
   }
-  return 1;
+  return 3;
 }
 
 void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -59,30 +63,6 @@ bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, 
   return false;
 }
 
-void RangeParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
-    return;
-  }
-  if (previousSelectedCellY < numberOfRows()-1 && previousSelectedCellY >= 0 && previousSelectedCellY !=2) {
-    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->setEditing(false);
-    if (t->selectedRow() >= 0) {
-      app()->setFirstResponder(t);
-    }
-  }
-  if (t->selectedRow() == numberOfRows()-1) {
-    Button * myNewCell = (Button *)t->selectedCell();
-    app()->setFirstResponder(myNewCell);
-    return;
-  }
-  if (t->selectedRow() >= 0 && t->selectedRow() !=2) {
-    MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->cellAtLocation(t->selectedColumn(), t->selectedRow());
-    if ((t->selectedRow() == 0 || t->selectedRow() == 1) || !m_interactiveRange->yAuto()) {
-      app()->setFirstResponder(myNewCell);
-    }
-  }
-}
-
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (activeCell() == 2 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     m_interactiveRange->setYAuto(!m_interactiveRange->yAuto());
@@ -109,25 +89,37 @@ bool RangeParameterController::setParameterAtIndex(int parameterIndex, double f)
 
 HighlightCell * RangeParameterController::reusableParameterCell(int index, int type) {
   if (type == 2) {
+    assert(index == 0);
     return m_yAutoCell;
   }
+  if (type == 1) {
+    assert(index >= 0);
+    assert(index < k_numberOfEditableTextCell);
+    return m_xRangeCells[index];
+  }
   assert(index >= 0);
-  assert(index < k_numberOfTextCell);
-  return m_rangeCells[index];
+  assert(index < k_numberOfConvertibleTextCell);
+  return m_yRangeCells[index];
 }
 
 int RangeParameterController::reusableParameterCellCount(int type) {
   if (type == 2) {
     return 1;
   }
-  return k_numberOfTextCell;
+  if (type == 1) {
+    return k_numberOfEditableTextCell;
+  }
+  return k_numberOfConvertibleTextCell;
 }
 
 View * RangeParameterController::loadView() {
   SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
   m_yAutoCell = new MessageTableCellWithSwitch(I18n::Message::YAuto);
-  for (int i = 0; i < k_numberOfTextCell; i++) {
-    m_rangeCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
+  for (int i = 0; i < k_numberOfEditableTextCell; i++) {
+    m_xRangeCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
+  }
+  for (int i = 0; i < k_numberOfConvertibleTextCell; i++) {
+    m_yRangeCells[i] = new MessageTableCellWithConvertibleEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default, m_interactiveRange);
   }
   return tableView;
 }
@@ -135,9 +127,13 @@ View * RangeParameterController::loadView() {
 void RangeParameterController::unloadView(View * view) {
   delete m_yAutoCell;
   m_yAutoCell = nullptr;
-  for (int i = 0; i < k_numberOfTextCell; i++) {
-    delete m_rangeCells[i];
-    m_rangeCells[i] = nullptr;
+  for (int i = 0; i < k_numberOfEditableTextCell; i++) {
+    delete m_xRangeCells[i];
+    m_xRangeCells[i] = nullptr;
+  }
+  for (int i = 0; i < k_numberOfConvertibleTextCell; i++) {
+    delete m_yRangeCells[i];
+    m_yRangeCells[i] = nullptr;
   }
   FloatParameterController::unloadView(view);
 }

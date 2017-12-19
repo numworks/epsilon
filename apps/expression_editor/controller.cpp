@@ -6,7 +6,7 @@ Controller::Controller(Responder * parentResponder, Poincare::ExpressionLayout *
   ViewController(parentResponder),
   m_view(parentResponder, expressionLayout, &m_cursor)
 {
-  m_cursor.setPointedExpressionLayout(expressionLayout);
+  m_cursor.setPointedExpressionLayout(expressionLayout->editableChild(0));
 }
 
 void Controller::didBecomeFirstResponder() {

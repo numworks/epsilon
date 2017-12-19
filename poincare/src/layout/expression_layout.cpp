@@ -120,15 +120,10 @@ void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLay
     return;
   }
   replaceWithJuxtapositionOf(this, brother, false);
-  //TODO Inside position
 }
 
-bool ExpressionLayout::insertLayoutForTextAtCursor(const char * text, ExpressionLayoutCursor * cursor) {
-  EditableStringLayout * newChild = new EditableStringLayout(text, strlen(text));
+bool ExpressionLayout::insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor) {
   cursor->pointedExpressionLayout()->addBrother(cursor, newChild);
-  cursor->setPointedExpressionLayout(newChild);
-  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-  cursor->setPositionInside(0);
   return true;
 }
 

@@ -121,7 +121,7 @@ ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = m_operands[1]->operand(0);
   }
-  return new EditableBaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
+  return new EditableBaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript, false);
 }
 
 int Power::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {

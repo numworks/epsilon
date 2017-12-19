@@ -237,9 +237,9 @@ ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayM
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
   }
   ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = new EditableBaselineRelativeLayout(new EditableStringLayout("log", strlen("log")), operand(1)->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Subscript);
-  childrenLayouts[1] = new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
-  return new HorizontalLayout(childrenLayouts, 2);
+  childrenLayouts[0] = new EditableBaselineRelativeLayout(new EditableStringLayout("log", strlen("log")), operand(1)->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Subscript, false);
+  childrenLayouts[1] = new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
+  return new HorizontalLayout(childrenLayouts, 2, false);
 }
 
 }

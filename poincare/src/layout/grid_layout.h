@@ -1,28 +1,24 @@
 #ifndef POINCARE_GRID_LAYOUT_H
 #define POINCARE_GRID_LAYOUT_H
 
-#include <poincare/expression.h>
-#include <poincare/expression_layout.h>
+#include <poincare/dynamic_layout_hierarchy.h>
 
 namespace Poincare {
 
-class GridLayout : public ExpressionLayout {
-  //TODO Split it in MatrixLayout and BinomialCoefficientayout.
+class GridLayout : public DynamicLayoutHierarchy {
 public:
-  GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns);
-  ~GridLayout();
-  GridLayout(const GridLayout& other) = delete;
-  GridLayout(GridLayout&& other) = delete;
-  GridLayout& operator=(const GridLayout& other) = delete;
-  GridLayout& operator=(GridLayout&& other) = delete;
+  GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands);
+  ExpressionLayout * clone() const override;
+
+  /* Navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
-  ExpressionLayout * child(uint16_t index) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
   constexpr static KDCoordinate k_gridEntryMargin = 6;
@@ -36,7 +32,6 @@ private:
   bool childIsRightOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
   bool childIsBottomOfGrid(int index) const;
-  ExpressionLayout ** m_entryLayouts;
   int m_numberOfRows;
   int m_numberOfColumns;
 };

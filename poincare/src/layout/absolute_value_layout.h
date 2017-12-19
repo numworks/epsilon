@@ -7,16 +7,12 @@ namespace Poincare {
 
 class AbsoluteValueLayout : public BracketLayout {
 public:
-  AbsoluteValueLayout(ExpressionLayout * operandLayout) : BracketLayout(operandLayout) {}
-  ~AbsoluteValueLayout() {}
-  AbsoluteValueLayout(const AbsoluteValueLayout& other) = delete;
-  AbsoluteValueLayout(AbsoluteValueLayout&& other) = delete;
-  AbsoluteValueLayout& operator=(const AbsoluteValueLayout& other) = delete;
-  AbsoluteValueLayout& operator=(AbsoluteValueLayout&& other) = delete;
+  using BracketLayout::BracketLayout;
+  ExpressionLayout * clone() const override;
 protected:
-  KDCoordinate widthMargin() const { return 2; }
-  bool renderTopBar() const { return false; }
-  bool renderBottomBar() const { return false; }
+  KDCoordinate widthMargin() const override { return 2; }
+  bool renderTopBar() const override { return false; }
+  bool renderBottomBar() const override { return false; }
 };
 
 }

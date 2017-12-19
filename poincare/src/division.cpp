@@ -90,7 +90,7 @@ ExpressionLayout * Division::privateCreateLayout(FloatDisplayMode floatDisplayMo
   assert(complexFormat != ComplexFormat::Default);
   const Expression * numerator = operand(0)->type() == Type::Parenthesis ? operand(0)->operand(0) : operand(0);
   const Expression * denominator = operand(1)->type() == Type::Parenthesis ? operand(1)->operand(0) : operand(1);
-  return new FractionLayout(numerator->createLayout(floatDisplayMode, complexFormat), denominator->createLayout(floatDisplayMode, complexFormat));
+  return new FractionLayout(numerator->createLayout(floatDisplayMode, complexFormat), denominator->createLayout(floatDisplayMode, complexFormat), false);
 }
 
 template<typename T> Matrix * Division::computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * n) {

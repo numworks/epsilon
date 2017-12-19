@@ -7,12 +7,8 @@ namespace Poincare {
 
 class CeilingLayout : public BracketLayout {
 public:
-  CeilingLayout(ExpressionLayout * operandLayout) : BracketLayout(operandLayout) {}
-  ~CeilingLayout() {}
-  CeilingLayout(const CeilingLayout& other) = delete;
-  CeilingLayout(CeilingLayout&& other) = delete;
-  CeilingLayout& operator=(const CeilingLayout& other) = delete;
-  CeilingLayout& operator=(CeilingLayout&& other) = delete;
+  using BracketLayout::BracketLayout;
+  ExpressionLayout * clone() const override;
 protected:
   bool renderBottomBar() const override { return false; }
 };

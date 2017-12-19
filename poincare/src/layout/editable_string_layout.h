@@ -9,6 +9,7 @@ namespace Poincare {
 class EditableStringLayout : public StringLayout {
 public:
   using StringLayout::StringLayout;
+  ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
 private:

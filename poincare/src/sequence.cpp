@@ -19,7 +19,7 @@ ExpressionLayout * Sequence::privateCreateLayout(FloatDisplayMode floatDisplayMo
   ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = new StringLayout("n=", 2);
   childrenLayouts[1] = operand(1)->createLayout(floatDisplayMode, complexFormat);
-  return createSequenceLayoutWithArgumentLayouts(new HorizontalLayout(childrenLayouts, 2), operand(2)->createLayout(floatDisplayMode, complexFormat), operand(0)->createLayout(floatDisplayMode, complexFormat));
+  return createSequenceLayoutWithArgumentLayouts(new HorizontalLayout(childrenLayouts, 2, false), operand(2)->createLayout(floatDisplayMode, complexFormat), operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
 template<typename T>

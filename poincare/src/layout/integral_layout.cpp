@@ -19,31 +19,24 @@ const uint8_t bottomSymbolPixel[IntegralLayout::k_symbolHeight][IntegralLayout::
   {0xFF, 0xFF, 0x00, 0x00},
 };
 
-IntegralLayout::IntegralLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * integrandLayout) :
-  ExpressionLayout(),
-  m_lowerBoundLayout(lowerBoundLayout),
-  m_upperBoundLayout(upperBoundLayout),
-  m_integrandLayout(integrandLayout)
+IntegralLayout::IntegralLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * integrand, bool cloneOperands) :
+  StaticLayoutHierarchy<3>(upperBound, lowerBound, integrand, cloneOperands)
 {
-  m_lowerBoundLayout->setParent(this);
-  m_upperBoundLayout->setParent(this);
-  m_integrandLayout->setParent(this);
-  m_baseline = m_upperBoundLayout->size().height() + k_integrandHeigthMargin + m_integrandLayout->baseline();
+  m_baseline = upperBoundLayout()->size().height() + k_integrandHeigthMargin + integrandLayout()->baseline();
 }
 
-IntegralLayout::~IntegralLayout() {
-  delete m_lowerBoundLayout;
-  delete m_upperBoundLayout;
-  delete m_integrandLayout;
+ExpressionLayout * IntegralLayout::clone() const {
+  IntegralLayout * layout = new IntegralLayout(const_cast<IntegralLayout *>(this)->lowerBoundLayout(), const_cast<IntegralLayout *>(this)->upperBoundLayout(), const_cast<IntegralLayout *>(this)->integrandLayout(), true);
+  return layout;
 }
 
 bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left the upper or lower bound.
   // Go Left of the integral.
-  if (((m_upperBoundLayout
-        && cursor->pointedExpressionLayout() == m_upperBoundLayout)
-      || (m_lowerBoundLayout
-        && cursor->pointedExpressionLayout() == m_lowerBoundLayout))
+  if (((upperBoundLayout()
+        && cursor->pointedExpressionLayout() == upperBoundLayout())
+      || (lowerBoundLayout()
+        && cursor->pointedExpressionLayout() == lowerBoundLayout()))
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
     cursor->setPointedExpressionLayout(this);
@@ -51,12 +44,12 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   }
   // Case: Left the integrand.
   // Go Right of the lower bound.
- if (m_integrandLayout
-     && cursor->pointedExpressionLayout() == m_integrandLayout
+ if (integrandLayout()
+     && cursor->pointedExpressionLayout() == integrandLayout()
      && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
-    assert(m_lowerBoundLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_lowerBoundLayout);
+    assert(lowerBoundLayout() != nullptr);
+    cursor->setPointedExpressionLayout(lowerBoundLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return true;
   }
@@ -64,9 +57,9 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Right of the integral.
   // Go Right of the integrand, Left of "dx".
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    assert(m_integrandLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_integrandLayout);
-    return m_integrandLayout->moveLeft(cursor);
+    assert(integrandLayout() != nullptr);
+    cursor->setPointedExpressionLayout(integrandLayout());
+    return integrandLayout()->moveLeft(cursor);
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   // Case: Left of the brackets.
@@ -80,21 +73,21 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
 bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right the upper or lower bound.
   // Go Left of the integrand.
-  if (((m_upperBoundLayout
-        && cursor->pointedExpressionLayout() == m_upperBoundLayout)
-      || (m_lowerBoundLayout
-        && cursor->pointedExpressionLayout() == m_lowerBoundLayout))
+  if (((upperBoundLayout()
+        && cursor->pointedExpressionLayout() == upperBoundLayout())
+      || (lowerBoundLayout()
+        && cursor->pointedExpressionLayout() == lowerBoundLayout()))
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
-    assert(m_integrandLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_integrandLayout);
+    assert(integrandLayout() != nullptr);
+    cursor->setPointedExpressionLayout(integrandLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
   }
   // Case: Right the integrand.
   // Go Right and move Right.
- if (m_integrandLayout
-     && cursor->pointedExpressionLayout() == m_integrandLayout
+ if (integrandLayout()
+     && cursor->pointedExpressionLayout() == integrandLayout()
      && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     cursor->setPointedExpressionLayout(this);
@@ -104,8 +97,8 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Left of the integral.
   // Go ti the upper bound.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    assert(m_upperBoundLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_upperBoundLayout);
+    assert(upperBoundLayout() != nullptr);
+    cursor->setPointedExpressionLayout(upperBoundLayout());
     return true;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
@@ -119,41 +112,41 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
 
 bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside the lower bound, move it to the upper bound.
-  if (m_lowerBoundLayout && previousLayout == m_lowerBoundLayout) {
-    assert(m_upperBoundLayout != nullptr);
-    return m_upperBoundLayout->moveUpInside(cursor);
+  if (lowerBoundLayout() && previousLayout == lowerBoundLayout()) {
+    assert(upperBoundLayout() != nullptr);
+    return upperBoundLayout()->moveUpInside(cursor);
   }
   // If the cursor is Left of the integrand, move it to the upper bound.
-  if (m_integrandLayout
-      && previousLayout == m_integrandLayout
-      && cursor->positionIsEquivalentTo(m_integrandLayout, ExpressionLayoutCursor::Position::Left))
+  if (integrandLayout()
+      && previousLayout == integrandLayout()
+      && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
   {
-    assert(m_upperBoundLayout != nullptr);
-    return m_upperBoundLayout->moveUpInside(cursor);
+    assert(upperBoundLayout() != nullptr);
+    return upperBoundLayout()->moveUpInside(cursor);
   }
   return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
 }
 
 bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside the upper bound, move it to the lower bound.
-  if (m_upperBoundLayout && previousLayout == m_upperBoundLayout) {
-    assert(m_lowerBoundLayout != nullptr);
-    return m_lowerBoundLayout->moveDownInside(cursor);
+  if (upperBoundLayout() && previousLayout == upperBoundLayout()) {
+    assert(lowerBoundLayout() != nullptr);
+    return lowerBoundLayout()->moveDownInside(cursor);
   }
   // If the cursor is Left of the integrand, move it to the lower bound.
-  if (m_integrandLayout
-      && previousLayout == m_integrandLayout
-      && cursor->positionIsEquivalentTo(m_integrandLayout, ExpressionLayoutCursor::Position::Left))
+  if (integrandLayout()
+      && previousLayout == integrandLayout()
+      && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
   {
-    assert(m_lowerBoundLayout != nullptr);
-    return m_lowerBoundLayout->moveDownInside(cursor);
+    assert(lowerBoundLayout() != nullptr);
+    return lowerBoundLayout()->moveDownInside(cursor);
   }
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
 
 void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  KDSize integrandSize = m_integrandLayout->size();
-  KDSize upperBoundSize = m_upperBoundLayout->size();
+  KDSize integrandSize = integrandLayout()->size();
+  KDSize upperBoundSize = upperBoundLayout()->size();
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
   KDRect topSymbolFrame(p.x() + k_symbolWidth + k_lineThickness, p.y() + upperBoundSize.height() - k_boundHeightMargin,
     k_symbolWidth, k_symbolHeight);
@@ -167,46 +160,45 @@ void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor,
 }
 
 KDSize IntegralLayout::computeSize() {
-  KDSize integrandSize = m_integrandLayout->size();
-  KDSize lowerBoundSize = m_lowerBoundLayout->size();
-  KDSize upperBoundSize = m_upperBoundLayout->size();
+  KDSize integrandSize = integrandLayout()->size();
+  KDSize lowerBoundSize = lowerBoundLayout()->size();
+  KDSize upperBoundSize = upperBoundLayout()->size();
   return KDSize(
     k_symbolWidth+k_lineThickness+k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width(),
     upperBoundSize.height()+ 2*k_integrandHeigthMargin+integrandSize.height()+lowerBoundSize.height());
 }
 
-ExpressionLayout * IntegralLayout::child(uint16_t index) {
-  switch (index) {
-    case 0:
-      return m_upperBoundLayout;
-    case 1:
-      return m_lowerBoundLayout;
-    case 2:
-      return m_integrandLayout;
-    default:
-      return nullptr;
-  }
-}
-
 KDPoint IntegralLayout::positionOfChild(ExpressionLayout * child) {
-  KDSize integrandSize = m_integrandLayout->size();
-  KDSize lowerBoundSize = m_lowerBoundLayout->size();
-  KDSize upperBoundSize = m_upperBoundLayout->size();
+  KDSize integrandSize = integrandLayout()->size();
+  KDSize lowerBoundSize = lowerBoundLayout()->size();
+  KDSize upperBoundSize = upperBoundLayout()->size();
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  if (child == m_lowerBoundLayout) {
+  if (child == lowerBoundLayout()) {
     x = k_symbolWidth+k_lineThickness+k_boundWidthMargin;
     y = upperBoundSize.height()+2*k_integrandHeigthMargin+integrandSize.height();
-  } else if (child == m_upperBoundLayout) {
+  } else if (child == upperBoundLayout()) {
     x = k_symbolWidth+k_lineThickness+k_boundWidthMargin;;
     y = 0;
-  } else if (child == m_integrandLayout) {
+  } else if (child == integrandLayout()) {
     x = k_symbolWidth +k_lineThickness+ k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin;
     y = upperBoundSize.height()+k_integrandHeigthMargin;
   } else {
     assert(false);
   }
   return KDPoint(x,y);
+}
+
+ExpressionLayout * IntegralLayout::upperBoundLayout() {
+  return editableChild(0);
+}
+
+ExpressionLayout * IntegralLayout::lowerBoundLayout() {
+  return editableChild(1);
+}
+
+ExpressionLayout * IntegralLayout::integrandLayout() {
+  return editableChild(2);
 }
 
 }

@@ -33,7 +33,7 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   const char stoSymbol[2] = {Ion::Charset::Sto, 0};
   childrenLayouts[1] = new EditableStringLayout(stoSymbol, 1);
   childrenLayouts[2] = symbol()->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(childrenLayouts, 3);
+  return new HorizontalLayout(childrenLayouts, 3, false);
 }
 
 template<typename T>

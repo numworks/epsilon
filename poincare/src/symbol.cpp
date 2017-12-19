@@ -135,16 +135,16 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
     return new EditableStringLayout("ans", 3);
   }
   if (m_name == SpecialSymbols::un) {
-    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript, false);
   }
   if (m_name == SpecialSymbols::un1) {
-    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript, false);
   }
   if (m_name == SpecialSymbols::vn) {
-    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript, false);
   }
   if (m_name == SpecialSymbols::vn1) {
-    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript, false);
   }
   if (isMatrixSymbol()) {
     const char mi[] = { 'M', (char)(m_name-(char)SpecialSymbols::M0+'0') };

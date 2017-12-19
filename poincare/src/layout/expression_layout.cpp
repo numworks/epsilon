@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <stdlib.h>
-#include "string_layout.h"
+#include <poincare/src/layout/editable_string_layout.h>
 #include <poincare/expression_layout_cursor.h>
 #include <ion/display.h>
 
@@ -14,8 +14,19 @@ ExpressionLayout::ExpressionLayout() :
   m_frame(KDRectZero) {
 }
 
-KDCoordinate ExpressionLayout::baseline() {
-  return m_baseline;
+const ExpressionLayout * const * ExpressionLayout::ExpressionLayoutArray2(const ExpressionLayout * e1, const ExpressionLayout * e2) {
+  static const ExpressionLayout * result[2] = {nullptr, nullptr};
+  result[0] = e1;
+  result[1] = e2;
+  return result;
+}
+
+const ExpressionLayout * const * ExpressionLayout::ExpressionLayoutArray3(const ExpressionLayout * e1, const ExpressionLayout * e2, const ExpressionLayout * e3) {
+  static const ExpressionLayout * result[3] = {nullptr, nullptr, nullptr};
+  result[0] = e1;
+  result[1] = e2;
+  result[2] = e3;
+  return result;
 }
 
 KDPoint ExpressionLayout::origin() {
@@ -29,7 +40,7 @@ KDPoint ExpressionLayout::origin() {
 
 void ExpressionLayout::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   int i = 0;
-  while (ExpressionLayout * c = child(i++)) {
+  while (ExpressionLayout * c = editableChild(i++)) {
     c->draw(ctx, p, expressionColor, backgroundColor);
   }
   render(ctx, absoluteOrigin().translatedBy(p), expressionColor, backgroundColor);
@@ -55,8 +66,35 @@ KDSize ExpressionLayout::size() {
   return m_frame.size();
 }
 
+const ExpressionLayout * ExpressionLayout::child(int i) const {
+  assert(i >= 0);
+  assert(i < numberOfChildren());
+  assert(children()[i]->parent() == nullptr || children()[i]->parent() == this);
+  return children()[i];
+}
+
+int ExpressionLayout::indexOfChild(ExpressionLayout * child) const {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (children()[i] == child) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 void ExpressionLayout::setParent(ExpressionLayout* parent) {
   m_parent = parent;
+}
+
+bool ExpressionLayout::hasAncestor(const ExpressionLayout * e) const {
+  assert(m_parent != this);
+  if (m_parent == e) {
+    return true;
+  }
+  if (m_parent == nullptr) {
+    return false;
+  }
+  return m_parent->hasAncestor(e);
 }
 
 bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
@@ -137,7 +175,7 @@ void ExpressionLayout::moveCursorInsideAtDirection (
   if (layoutIsUnderOrAbove || layoutContains) {
     int childIndex = 0;
     while (child(childIndex++)) {
-      child(childIndex-1)->moveCursorInsideAtDirection(direction, cursor, childResult, castedResultPosition, resultPositionInside, resultScore);
+      editableChild(childIndex-1)->moveCursorInsideAtDirection(direction, cursor, childResult, castedResultPosition, resultPositionInside, resultScore);
     }
   }
 }

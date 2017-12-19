@@ -102,7 +102,7 @@ ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode
   for (int i = 0; i < numberOfOperands(); i++) {
     childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, complexFormat);
   }
-  ExpressionLayout * layout = new BracketLayout(new GridLayout(childrenLayouts, numberOfRows(), numberOfColumns()));
+  ExpressionLayout * layout = new BracketLayout(new GridLayout(childrenLayouts, numberOfRows(), numberOfColumns(), false), false);
   delete [] childrenLayouts;
   return layout;
 }

@@ -8,7 +8,7 @@ extern "C" {
 namespace Poincare {
 
 ParenthesisLeftRightLayout::ParenthesisLeftRightLayout() :
-  ExpressionLayout(),
+  StaticLayoutHierarchy<0>(),
   m_operandHeight(36) //TODO
 {
 }

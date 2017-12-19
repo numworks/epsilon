@@ -17,11 +17,11 @@ ExpressionLayout * LayoutEngine::createInfixLayout(const Expression * expression
   children_layouts[0] = expression->operand(0)->createLayout();
   for (int i=1; i<numberOfOperands; i++) {
     children_layouts[2*i-1] = new EditableStringLayout(operatorName, 1);
-    children_layouts[2*i] = expression->operand(i)->type() == Expression::Type::Opposite ? new ParenthesisLayout(expression->operand(i)->createLayout(floatDisplayMode, complexFormat)) : expression->operand(i)->createLayout(floatDisplayMode, complexFormat);
+    children_layouts[2*i] = expression->operand(i)->type() == Expression::Type::Opposite ? new ParenthesisLayout(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), false) : expression->operand(i)->createLayout(floatDisplayMode, complexFormat);
   }
   /* HorizontalLayout holds the children layouts so they do not need to be
    * deleted here. */
-  ExpressionLayout * layout = new HorizontalLayout(children_layouts, 2*numberOfOperands-1);
+  ExpressionLayout * layout = new HorizontalLayout(children_layouts, 2*numberOfOperands-1, false);
   delete[] children_layouts;
   return layout;
 }
@@ -39,13 +39,13 @@ ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expressio
   }
   /* HorizontalLayout holds the grand children layouts so they do not need to
    * be deleted */
-  ExpressionLayout * argumentLayouts = new HorizontalLayout(grandChildrenLayouts, 2*numberOfOperands-1);
+  ExpressionLayout * argumentLayouts = new HorizontalLayout(grandChildrenLayouts, 2*numberOfOperands-1, false);
   delete [] grandChildrenLayouts;
   ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = new EditableStringLayout(operatorName, strlen(operatorName));
-  childrenLayouts[1] = new ParenthesisLayout(argumentLayouts);
+  childrenLayouts[1] = new ParenthesisLayout(argumentLayouts, false);
   /* Same comment as above */
-  return new HorizontalLayout(childrenLayouts, 2);
+  return new HorizontalLayout(childrenLayouts, 2, false);
 }
 
 int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, const char * operatorName, OperandNeedParenthesis operandNeedParenthesis) {

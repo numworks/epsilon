@@ -8,6 +8,7 @@ namespace Poincare {
 class SumLayout : public SequenceLayout {
 public:
   using SequenceLayout::SequenceLayout;
+  ExpressionLayout * clone() const override;
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };

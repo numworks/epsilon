@@ -79,7 +79,7 @@ ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayM
   ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
   childrenLayouts[1] = new EditableStringLayout("!", 1);
-  return new HorizontalLayout(childrenLayouts, 2);
+  return new HorizontalLayout(childrenLayouts, 2, false);
 }
 
 int Factorial::writeTextInBuffer(char * buffer, int bufferSize) const {

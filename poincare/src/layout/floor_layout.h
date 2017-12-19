@@ -7,12 +7,8 @@ namespace Poincare {
 
 class FloorLayout : public BracketLayout {
 public:
-  FloorLayout(ExpressionLayout * operandLayout) : BracketLayout(operandLayout) {}
-  ~FloorLayout() {}
-  FloorLayout(const FloorLayout& other) = delete;
-  FloorLayout(FloorLayout&& other) = delete;
-  FloorLayout& operator=(const FloorLayout& other) = delete;
-  FloorLayout& operator=(FloorLayout&& other) = delete;
+  using BracketLayout::BracketLayout;
+  ExpressionLayout * clone() const override;
 protected:
   bool renderTopBar() const override { return false; }
 };

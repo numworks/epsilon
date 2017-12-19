@@ -2,6 +2,11 @@
 
 namespace Poincare {
 
+ExpressionLayout * BracketRightLayout::clone() const {
+  BracketRightLayout * layout = new BracketRightLayout();
+  return layout;
+}
+
 void BracketRightLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   //TODO Make sure m_operandHeight is up-to-date.
   ctx->fillRect(KDRect(p.x()+k_widthMargin, p.y(), k_lineThickness, m_operandHeight), expressionColor);

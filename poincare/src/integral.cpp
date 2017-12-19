@@ -62,7 +62,7 @@ ExpressionLayout * Integral::privateCreateLayout(FloatDisplayMode floatDisplayMo
   ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
   childrenLayouts[1] = new StringLayout("dx", 2);
-  return new IntegralLayout(operand(1)->createLayout(floatDisplayMode, complexFormat), operand(2)->createLayout(floatDisplayMode, complexFormat), new HorizontalLayout(childrenLayouts, 2));
+  return new IntegralLayout(operand(1)->createLayout(floatDisplayMode, complexFormat), operand(2)->createLayout(floatDisplayMode, complexFormat), new HorizontalLayout(childrenLayouts, 2, false), false);
 }
 
 template<typename T>

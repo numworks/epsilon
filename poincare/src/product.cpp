@@ -27,7 +27,7 @@ int Product::emptySequenceValue() const {
 }
 
 ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const {
-  return new ProductLayout(subscriptLayout, superscriptLayout, argumentLayout);
+  return new ProductLayout(subscriptLayout, superscriptLayout, argumentLayout, false);
 }
 
 template<typename T>

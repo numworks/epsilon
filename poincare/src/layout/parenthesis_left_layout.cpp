@@ -26,6 +26,11 @@ const uint8_t bottomLeftCurve[ParenthesisLeftRightLayout::k_parenthesisCurveHeig
   {0xFF, 0xFF, 0xFF, 0xF9, 0x66},
 };
 
+ExpressionLayout * ParenthesisLeftLayout::clone() const {
+  ParenthesisLeftLayout * layout = new ParenthesisLeftLayout();
+  return layout;
+}
+
 void ParenthesisLeftLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   //TODO Make sure m_operandHeight is up-to-date.
   KDRect frame(p.x()+ParenthesisLeftRightLayout::k_externWidthMargin,

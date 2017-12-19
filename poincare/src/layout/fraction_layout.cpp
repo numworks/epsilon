@@ -5,24 +5,23 @@
 
 namespace Poincare {
 
-FractionLayout::FractionLayout(ExpressionLayout * numerator_layout, ExpressionLayout * denominator_layout) :
-ExpressionLayout(), m_numerator_layout(numerator_layout), m_denominator_layout(denominator_layout) {
-  m_numerator_layout->setParent(this);
-  m_denominator_layout->setParent(this);
-  m_baseline = m_numerator_layout->size().height()
+FractionLayout::FractionLayout(ExpressionLayout * numerator, ExpressionLayout * denominator, bool cloneOperands) :
+  StaticLayoutHierarchy<2>(numerator, denominator, cloneOperands)
+{
+  m_baseline = numeratorLayout()->size().height()
     + k_fractionLineMargin + k_fractionLineHeight;
 }
 
-FractionLayout::~FractionLayout() {
-  delete m_denominator_layout;
-  delete m_numerator_layout;
+ExpressionLayout * FractionLayout::clone() const {
+  FractionLayout * layout = new FractionLayout(const_cast<FractionLayout *>(this)->numeratorLayout(), const_cast<FractionLayout *>(this)->denominatorLayout(), true);
+  return layout;
 }
 
 bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the numerator or the denominator.
   // Go Left of the fraction.
-   if (((m_numerator_layout && cursor->pointedExpressionLayout() == m_numerator_layout)
-        || (m_denominator_layout && cursor->pointedExpressionLayout() == m_denominator_layout))
+   if (((numeratorLayout() && cursor->pointedExpressionLayout() == numeratorLayout())
+        || (denominatorLayout() && cursor->pointedExpressionLayout() == denominatorLayout()))
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
     cursor->setPointedExpressionLayout(this);
@@ -32,8 +31,8 @@ bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Go to the denominator.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    assert(m_denominator_layout != nullptr);
-    cursor->setPointedExpressionLayout(m_denominator_layout);
+    assert(denominatorLayout() != nullptr);
+    cursor->setPointedExpressionLayout(denominatorLayout());
     return true;
   }
   // Case: Left.
@@ -48,8 +47,8 @@ bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor) {
 bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right of the numerator or the denominator.
   // Go Right of the fraction.
-   if (((m_numerator_layout && cursor->pointedExpressionLayout() == m_numerator_layout)
-        || (m_denominator_layout && cursor->pointedExpressionLayout() == m_denominator_layout))
+   if (((numeratorLayout() && cursor->pointedExpressionLayout() == numeratorLayout())
+        || (denominatorLayout() && cursor->pointedExpressionLayout() == denominatorLayout()))
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     cursor->setPointedExpressionLayout(this);
@@ -59,8 +58,8 @@ bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Left.
   // Go to the numerator.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    assert(m_numerator_layout != nullptr);
-    cursor->setPointedExpressionLayout(m_numerator_layout);
+    assert(numeratorLayout() != nullptr);
+    cursor->setPointedExpressionLayout(numeratorLayout());
     return true;
   }
   // Case: Right.
@@ -74,69 +73,66 @@ bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor) {
 
 bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside denominator, move it to the numerator.
-  if (m_denominator_layout && previousLayout == m_denominator_layout) {
-    assert(m_numerator_layout != nullptr);
-    return m_numerator_layout->moveUpInside(cursor);
+  if (denominatorLayout() && previousLayout == denominatorLayout()) {
+    assert(numeratorLayout() != nullptr);
+    return numeratorLayout()->moveUpInside(cursor);
   }
   // If the cursor is Left or Right, move it to the numerator.
   if (cursor->pointedExpressionLayout() == this){
-    assert(m_numerator_layout != nullptr);
-    return m_numerator_layout->moveUpInside(cursor);
+    assert(numeratorLayout() != nullptr);
+    return numeratorLayout()->moveUpInside(cursor);
   }
   return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
 }
 
 bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside numerator, move it to the denominator.
-  if (m_numerator_layout && previousLayout == m_numerator_layout) {
-    assert(m_denominator_layout != nullptr);
-    return m_denominator_layout->moveDownInside(cursor);
+  if (numeratorLayout() && previousLayout == numeratorLayout()) {
+    assert(denominatorLayout() != nullptr);
+    return denominatorLayout()->moveDownInside(cursor);
   }
   // If the cursor is Left or Right, move it to the denominator.
   if (cursor->pointedExpressionLayout() == this){
-    assert(m_denominator_layout != nullptr);
-    return m_denominator_layout->moveDownInside(cursor);
+    assert(denominatorLayout() != nullptr);
+    return denominatorLayout()->moveDownInside(cursor);
   }
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
 
 void FractionLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  KDCoordinate fractionLineY = p.y() + m_numerator_layout->size().height() + k_fractionLineMargin;
+  KDCoordinate fractionLineY = p.y() + numeratorLayout()->size().height() + k_fractionLineMargin;
   ctx->fillRect(KDRect(p.x()+k_fractionBorderMargin, fractionLineY, size().width()-2*k_fractionBorderMargin, 1), expressionColor);
 }
 
 KDSize FractionLayout::computeSize() {
-  KDCoordinate width = max(m_numerator_layout->size().width(), m_denominator_layout->size().width())
+  KDCoordinate width = max(numeratorLayout()->size().width(), denominatorLayout()->size().width())
     + 2*k_fractionBorderLength+2*k_fractionBorderMargin;
-  KDCoordinate height = m_numerator_layout->size().height()
+  KDCoordinate height = numeratorLayout()->size().height()
     + k_fractionLineMargin + k_fractionLineHeight + k_fractionLineMargin
-    + m_denominator_layout->size().height();
+    + denominatorLayout()->size().height();
   return KDSize(width, height);
-}
-
-ExpressionLayout * FractionLayout::child(uint16_t index) {
-  switch (index) {
-    case 0:
-      return m_numerator_layout;
-    case 1:
-      return m_denominator_layout;
-    default:
-      return nullptr;
-  }
 }
 
 KDPoint FractionLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  if (child == m_numerator_layout) {
-    x = (KDCoordinate)((size().width() - m_numerator_layout->size().width())/2);
-  } else if (child == m_denominator_layout) {
-    x = (KDCoordinate)((size().width() - m_denominator_layout->size().width())/2);
-    y = (KDCoordinate)(m_numerator_layout->size().height() + 2*k_fractionLineMargin + k_fractionLineHeight);
+  if (child == numeratorLayout()) {
+    x = (KDCoordinate)((size().width() - numeratorLayout()->size().width())/2);
+  } else if (child == denominatorLayout()) {
+    x = (KDCoordinate)((size().width() - denominatorLayout()->size().width())/2);
+    y = (KDCoordinate)(numeratorLayout()->size().height() + 2*k_fractionLineMargin + k_fractionLineHeight);
   } else {
     assert(false); // Should not happen
   }
   return KDPoint(x, y);
+}
+
+ExpressionLayout * FractionLayout::numeratorLayout() {
+  return editableChild(0);
+}
+
+ExpressionLayout * FractionLayout::denominatorLayout() {
+  return editableChild(1);
 }
 
 }

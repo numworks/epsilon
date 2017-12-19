@@ -150,7 +150,7 @@ ExpressionLayout * Rational::privateCreateLayout(FloatDisplayMode floatDisplayMo
     return numeratorLayout;
   }
   ExpressionLayout * denominatorLayout = m_denominator.createLayout();
-  return new FractionLayout(numeratorLayout, denominatorLayout);
+  return new FractionLayout(numeratorLayout, denominatorLayout, false);
 }
 
 int Rational::writeTextInBuffer(char * buffer, int bufferSize) const {

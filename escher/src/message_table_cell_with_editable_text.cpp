@@ -44,3 +44,13 @@ void MessageTableCellWithEditableText::setTextColor(KDColor color) {
   m_textField.setTextColor(color);
   MessageTableCell::setTextColor(color);
 }
+
+void MessageTableCellWithEditableText::layoutSubviews() {
+  TableCell::layoutSubviews();
+  KDSize textFieldSize = m_textField.minimalSizeForOptimalDisplay();
+  KDSize labelSize = labelView()->minimalSizeForOptimalDisplay();
+  /* Handle textfield that has no defined width (as their width evolves with
+   * the length of edited text */
+  textFieldSize = KDSize(bounds().width() - 2*k_separatorThickness - labelSize.width()-2*k_labelMargin-k_accessoryMargin, textFieldSize.height());
+  m_textField.setFrame(KDRect(bounds().width() - textFieldSize.width() - k_separatorThickness-k_accessoryMargin, (bounds().height()-textFieldSize.height()-k_accessoryMargin)/2, textFieldSize.width(), textFieldSize.height()+k_accessoryMargin));
+}

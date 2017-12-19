@@ -130,10 +130,9 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, int locatio
 
 KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
   if (m_isEditing) {
-    KDSize textSize = KDText::stringSize(m_draftTextBuffer, m_fontSize);
-    return KDSize(textSize.width()+m_cursorView.minimalSizeForOptimalDisplay().width(), textSize.height());
+    return KDSize(textWidth()+m_cursorView.minimalSizeForOptimalDisplay().width(), textHeight());
   }
-  return KDSize(0, textHeight());
+  return KDSize(textWidth(), textHeight());
 }
 
 KDCoordinate TextField::ContentView::textHeight() const {
@@ -141,11 +140,17 @@ KDCoordinate TextField::ContentView::textHeight() const {
   return textSize.height();
 }
 
-KDCoordinate TextField::ContentView::charWidth() {
+KDCoordinate TextField::ContentView::charWidth() const {
   KDSize textSize = KDText::charSize(m_fontSize);
   return textSize.width();
 }
 
+KDCoordinate TextField::ContentView::textWidth() const {
+  if (m_isEditing) {
+    return (strlen(text())+1)*charWidth();
+  }
+  return strlen(text())*charWidth();
+}
 
 void TextField::ContentView::deleteCharPrecedingCursor() {
   if (cursorLocation() <= 0) {
@@ -405,7 +410,7 @@ bool TextField::deleteEndOfLine() {
 }
 
 KDSize TextField::minimalSizeForOptimalDisplay() const {
-  return KDSize(0, m_contentView.textHeight());
+  return m_contentView.minimalSizeForOptimalDisplay();
 }
 
 bool TextField::textFieldShouldFinishEditing(Ion::Events::Event event) {

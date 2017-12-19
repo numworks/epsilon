@@ -90,6 +90,7 @@ objs += $(addprefix poincare/src/layout/,\
   bracket_left_right_layout.o\
   bracket_right_layout.o\
   ceiling_layout.o\
+  char_layout.o\
   condensed_sum_layout.o\
   conjugate_layout.o\
   dynamic_layout_hierarchy.o\

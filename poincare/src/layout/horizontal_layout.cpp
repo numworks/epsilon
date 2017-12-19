@@ -10,6 +10,11 @@ extern "C" {
 
 namespace Poincare {
 
+HorizontalLayout::HorizontalLayout() :
+  DynamicLayoutHierarchy()
+{
+}
+
 HorizontalLayout::HorizontalLayout(ExpressionLayout ** childrenLayouts, int childrenCount, bool cloneOperands) :
   DynamicLayoutHierarchy(childrenLayouts, childrenCount, cloneOperands)
 {

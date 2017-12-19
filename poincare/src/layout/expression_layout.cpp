@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <poincare/src/layout/editable_string_layout.h>
+#include <poincare/src/layout/horizontal_layout.h>
 #include <poincare/expression_layout_cursor.h>
 #include <ion/display.h>
 
@@ -66,11 +67,21 @@ KDSize ExpressionLayout::size() {
   return m_frame.size();
 }
 
+void ExpressionLayout::invalidAllSizesAndPositions() {
+  m_sized = false;
+  m_positioned = false;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    editableChild(i)->invalidAllSizesAndPositions();
+  }
+}
+
 const ExpressionLayout * ExpressionLayout::child(int i) const {
   assert(i >= 0);
-  assert(i < numberOfChildren());
-  assert(children()[i]->parent() == nullptr || children()[i]->parent() == this);
-  return children()[i];
+  if (i < numberOfChildren()) {
+    assert(children()[i]->parent() == nullptr || children()[i]->parent() == this);
+    return children()[i];
+  }
+  return nullptr;
 }
 
 int ExpressionLayout::indexOfChild(ExpressionLayout * child) const {
@@ -95,6 +106,87 @@ bool ExpressionLayout::hasAncestor(const ExpressionLayout * e) const {
     return false;
   }
   return m_parent->hasAncestor(e);
+}
+
+void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
+  if (m_parent) {
+    int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? m_parent->indexOfChild(this) : m_parent->indexOfChild(this) + 1;
+    if (m_parent->addChildAtIndex(brother, brotherIndex)) {
+      return;
+    }
+  }
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    replaceWithJuxtapositionOf(brother, this, false);
+    return;
+  }
+  replaceWithJuxtapositionOf(this, brother, false);
+  //TODO Inside position
+}
+
+bool ExpressionLayout::insertLayoutForTextAtCursor(const char * text, ExpressionLayoutCursor * cursor) {
+  EditableStringLayout * newChild = new EditableStringLayout(text, strlen(text));
+  cursor->pointedExpressionLayout()->addBrother(cursor, newChild);
+  return true;
+}
+
+ExpressionLayout * ExpressionLayout::replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace) {
+  assert(m_parent != nullptr);
+  m_parent->replaceChild(this, newChild, deleteAfterReplace);
+  return newChild;
+}
+
+ExpressionLayout * ExpressionLayout::replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace) {
+  assert(m_parent != nullptr);
+  /* One of the children to juxtapose might be "this", so we first have to
+   * replace "this" with an horizontal layout, then add "this" to the layout. */
+  ExpressionLayout * layout = new HorizontalLayout();
+  m_parent->replaceChild(this, layout, deleteAfterReplace);
+  layout->addChildAtIndex(leftChild, 0);
+  layout->addChildAtIndex(rightChild, 1);
+  return layout;
+}
+
+void ExpressionLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
+  assert(newChild != nullptr);
+  // Caution: handle the case where we replace an operand with a descendant of ours.
+  if (newChild->hasAncestor(this)) {
+    newChild->editableParent()->detachChild(newChild);
+  }
+  ExpressionLayout ** op = const_cast<ExpressionLayout **>(children());
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (op[i] == oldChild) {
+      if (oldChild != nullptr && oldChild->parent() == this) {
+        const_cast<ExpressionLayout *>(oldChild)->setParent(nullptr);
+      }
+      if (deleteOldChild) {
+        delete oldChild;
+      }
+      if (newChild != nullptr) {
+        const_cast<ExpressionLayout *>(newChild)->setParent(this);
+      }
+      op[i] = newChild;
+      break;
+    }
+  }
+  m_sized = false;
+}
+
+void ExpressionLayout::detachChild(const ExpressionLayout * e) {
+  ExpressionLayout ** op = const_cast<ExpressionLayout **>(children());
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (op[i] == e) {
+      detachChildAtIndex(i);
+    }
+  }
+}
+
+void ExpressionLayout::detachChildAtIndex(int i) {
+  ExpressionLayout ** op = const_cast<ExpressionLayout **>(children());
+  if (op[i] != nullptr && op[i]->parent() == this) {
+    const_cast<ExpressionLayout *>(op[i])->setParent(nullptr);
+  }
+  op[i] = nullptr;
+  m_sized = false;
 }
 
 bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {

@@ -20,7 +20,7 @@ public:
   int numberOfChildren() const override { return m_numberOfChildren; }
   const ExpressionLayout * const * children() const override { return m_children; };
 
-  //bool addChildAtIndex(ExpressionLayout * operand, int index) override; TODO
+  bool addChildAtIndex(ExpressionLayout * operand, int index) override;
 protected:
   const ExpressionLayout ** m_children;
   int m_numberOfChildren;

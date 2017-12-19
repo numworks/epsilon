@@ -31,6 +31,7 @@ public:
   KDPoint absoluteOrigin();
   KDSize size();
   KDCoordinate baseline() const { return m_baseline; }
+  void invalidAllSizesAndPositions();
 
   /* Hierarchy */
   virtual const ExpressionLayout * const * children() const = 0;
@@ -43,6 +44,14 @@ public:
   const ExpressionLayout * parent() const { return m_parent; }
   ExpressionLayout * editableParent() { return m_parent; }
   bool hasAncestor(const ExpressionLayout * e) const;
+
+  bool insertLayoutForTextAtCursor(const char * text, ExpressionLayoutCursor * cursor);
+
+  void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
+  ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace = true);
+  ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
+  void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true);
+  void detachChild(const ExpressionLayout * e); // Removes a child WITHOUT deleting it
 
   /* Dynamic Layout*/
   virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
@@ -58,18 +67,21 @@ protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
   virtual KDSize computeSize() = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
-  KDCoordinate m_baseline;
-  ExpressionLayout * m_parent;
-  virtual void moveCursorInsideAtDirection (
+  void detachChildAtIndex(int i);
+    virtual void moveCursorInsideAtDirection (
     VerticalDirection direction,
     ExpressionLayoutCursor * cursor,
     ExpressionLayout ** childResult,
     void * resultPosition,
     int * resultPositionInside,
     int * resultScore);
+  KDCoordinate m_baseline;
+  ExpressionLayout * m_parent;
+  bool m_sized;
 private:
   bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor);
-  bool m_sized, m_positioned;
+  void replaceWithJuxtapositionOf(ExpressionLayout * firstLayout, ExpressionLayout * secondLayout);
+  bool m_positioned;
   KDRect m_frame;
 };
 

@@ -17,7 +17,7 @@ protected:
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
   constexpr static KDCoordinate k_overlineWidth = 1;
-  constexpr static KDCoordinate k_overlineMargin = 3;
+  constexpr static KDCoordinate k_overlineVerticalMargin = 1;
   ExpressionLayout * operandLayout();
 };
 

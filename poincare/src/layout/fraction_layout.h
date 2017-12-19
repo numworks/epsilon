@@ -18,8 +18,6 @@ protected:
   KDSize computeSize() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
-  constexpr static KDCoordinate k_fractionBorderLength = 2;
-  constexpr static KDCoordinate k_fractionBorderMargin = 2;
   constexpr static KDCoordinate k_fractionLineMargin = 2;
   constexpr static KDCoordinate k_fractionLineHeight = 2;
   ExpressionLayout * numeratorLayout();

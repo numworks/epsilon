@@ -1,4 +1,5 @@
 #include "fraction_layout.h"
+#include <escher/metric.h>
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
@@ -101,12 +102,12 @@ bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout 
 
 void FractionLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDCoordinate fractionLineY = p.y() + numeratorLayout()->size().height() + k_fractionLineMargin;
-  ctx->fillRect(KDRect(p.x()+k_fractionBorderMargin, fractionLineY, size().width()-2*k_fractionBorderMargin, 1), expressionColor);
+  ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, fractionLineY, size().width()-2*Metric::FractionAndConjugateHorizontalMargin, 1), expressionColor);
 }
 
 KDSize FractionLayout::computeSize() {
   KDCoordinate width = max(numeratorLayout()->size().width(), denominatorLayout()->size().width())
-    + 2*k_fractionBorderLength+2*k_fractionBorderMargin;
+    + 2*Metric::FractionAndConjugateHorizontalOverflow+2*Metric::FractionAndConjugateHorizontalMargin;
   KDCoordinate height = numeratorLayout()->size().height()
     + k_fractionLineMargin + k_fractionLineHeight + k_fractionLineMargin
     + denominatorLayout()->size().height();

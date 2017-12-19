@@ -1,4 +1,5 @@
 #include "conjugate_layout.h"
+#include <escher/metric.h>
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
@@ -10,7 +11,7 @@ namespace Poincare {
 ConjugateLayout::ConjugateLayout(ExpressionLayout * operand, bool cloneOperands) :
   StaticLayoutHierarchy<1>(operand, cloneOperands)
 {
-  m_baseline = operandLayout()->baseline()+k_overlineWidth+k_overlineMargin;
+  m_baseline = operandLayout()->baseline()+k_overlineWidth+k_overlineVerticalMargin;
 }
 
 ExpressionLayout * ConjugateLayout::clone() const {
@@ -79,16 +80,16 @@ bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor) {
 }
 
 void ConjugateLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->fillRect(KDRect(p.x(), p.y(), operandLayout()->size().width(), k_overlineWidth), expressionColor);
+  ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, p.y(), operandLayout()->size().width()+2*Metric::FractionAndConjugateHorizontalOverflow, k_overlineWidth), expressionColor);
 }
 
 KDSize ConjugateLayout::computeSize() {
   KDSize operandSize = operandLayout()->size();
-  return KDSize(operandSize.width(), operandSize.height()+k_overlineWidth+k_overlineMargin);
+  return KDSize(Metric::FractionAndConjugateHorizontalMargin+Metric::FractionAndConjugateHorizontalOverflow+operandSize.width()+Metric::FractionAndConjugateHorizontalOverflow+Metric::FractionAndConjugateHorizontalMargin, operandSize.height()+k_overlineWidth+k_overlineVerticalMargin);
 }
 
 KDPoint ConjugateLayout::positionOfChild(ExpressionLayout * child) {
-  return KDPoint(0, k_overlineWidth+k_overlineMargin);
+  return KDPoint(Metric::FractionAndConjugateHorizontalMargin+Metric::FractionAndConjugateHorizontalOverflow, k_overlineWidth+k_overlineVerticalMargin);
 }
 
 ExpressionLayout * ConjugateLayout::operandLayout() {

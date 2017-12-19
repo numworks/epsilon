@@ -52,15 +52,6 @@ void TableCell::layoutSubviews() {
   View * accessory = accessoryView();
   if (accessory) {
     KDSize accessorySize = accessory->minimalSizeForOptimalDisplay();
-    /* Handle textfield that has no defined width (as their width evolves with
-     * the length of edited text */
-    if (accessorySize.width() == 0 && m_layout != Layout::Vertical) {
-      accessorySize = KDSize(width - 2*k_separatorThickness, accessorySize.height());
-      if (label) {
-        KDSize labelSize = label->minimalSizeForOptimalDisplay();
-        accessorySize = KDSize(width - 2*k_separatorThickness - labelSize.width()-k_labelMargin-k_accessoryMargin, accessorySize.height());
-      }
-    }
     switch (m_layout) {
       case Layout::Vertical:
         accessory->setFrame(KDRect(k_separatorThickness+k_accessoryMargin, height-k_separatorThickness-accessorySize.height()-k_accessoryBottomMargin,

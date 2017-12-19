@@ -61,7 +61,8 @@ protected:
     bool insertTextAtLocation(const char * text, int location);
     KDSize minimalSizeForOptimalDisplay() const override;
     KDCoordinate textHeight() const;
-    KDCoordinate charWidth();
+    KDCoordinate textWidth() const;
+    KDCoordinate charWidth() const;
     void deleteCharPrecedingCursor();
     bool deleteEndOfLine();
     KDRect cursorRect();

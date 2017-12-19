@@ -20,9 +20,14 @@ double Law::cumulativeDistributiveFunctionAtAbscissa(double x) const {
     for (int k = 0; k <=end; k++) {
       result += evaluateAtDiscreteAbscissa(k);
       /* Avoid too long loop */
-      if (result > k_maxProbability || k > k_maxNumberOfOperations) {
+      if (k > k_maxNumberOfOperations) {
         break;
       }
+      if (result >= k_maxProbability) {
+        result = 1.0;
+        break;
+      }
+
     }
     return result;
   }
@@ -49,7 +54,11 @@ double Law::finiteIntegralBetweenAbscissas(double a, double b) const {
   for (int k = start; k <=end; k++) {
     result += evaluateAtDiscreteAbscissa(k);
     /* Avoid too long loop */
-    if (result > k_maxProbability || k-start > k_maxNumberOfOperations) {
+    if (k-start > k_maxNumberOfOperations) {
+      break;
+    }
+    if (result >= k_maxProbability) {
+      result = 1.0;
       break;
     }
   }

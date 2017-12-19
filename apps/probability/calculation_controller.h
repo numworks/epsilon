@@ -21,6 +21,7 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   void selectSubview(int subviewIndex);
+  bool textFieldDidHandleEvent(TextField * textField, Ion::Events::Event event, bool returnValue) override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 private:
@@ -32,6 +33,7 @@ private:
     ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * Calculation, Law * law);
     void setCalculation(Calculation * calculation, int index);
     void layoutSubviews() override;
+    void updateCalculationLayout();
     void drawRect(KDContext * ctx, KDRect rect) const override;
     LawCurveView * lawCurveView();
     ImageTableView * imageTableView();
@@ -39,12 +41,13 @@ private:
     void willDisplayEditableCellAtIndex(int index);
     constexpr static int k_maxNumberOfEditableFields = 3;
   private:
-    constexpr static KDCoordinate k_largeTextFieldWidth = 60;
-    constexpr static KDCoordinate k_textFieldWidth = 50;
+    constexpr static KDCoordinate k_minTextFieldWidth = 4*KDText::charSize().width();
+    constexpr static KDCoordinate k_maxTextFieldWidth = 10*KDText::charSize().width();
     constexpr static KDCoordinate k_textWidthMargin = 5;
     constexpr static KDCoordinate k_titleHeightMargin = 5;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
+    KDCoordinate calculationCellWidth(int index) const;
     MessageTextView m_titleView;
     LawCurveView m_lawCurveView;
     ImageTableView m_imageTableView;

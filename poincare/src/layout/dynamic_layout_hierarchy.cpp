@@ -41,7 +41,7 @@ DynamicLayoutHierarchy::~DynamicLayoutHierarchy() {
   delete[] m_children;
 }
 
-/*bool DynamicLayoutHierarchy::addChildAtIndex(ExpressionLayout * child, int index) {
+bool DynamicLayoutHierarchy::addChildAtIndex(ExpressionLayout * child, int index) {
   assert(index >= 0 && index <= m_numberOfChildren);
   const ExpressionLayout ** newChildren = new const ExpressionLayout * [m_numberOfChildren+1];
   int j = 0;
@@ -56,7 +56,8 @@ DynamicLayoutHierarchy::~DynamicLayoutHierarchy() {
   delete[] m_children;
   m_children = newChildren;
   m_numberOfChildren += 1;
+  m_sized = false;
   return true;
-}*/ //TODO
+}
 
 }

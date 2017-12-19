@@ -25,10 +25,6 @@ public:
   virtual double lowerBound();
   virtual double upperBound();
 protected:
-  /* Parameters in probability application are rounded to 3 decimals. This is
-   * due to the limited precision of some calculation (e. g. standard normal
-   * cumulative distributive function or inverse). */
-  constexpr static double k_precision = 0.001;
   virtual void compute(int indexKnownElement) = 0;
   Law * m_law;
 };

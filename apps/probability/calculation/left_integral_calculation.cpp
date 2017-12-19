@@ -31,12 +31,11 @@ I18n::Message LeftIntegralCalculation::legendForParameterAtIndex(int index) {
 
 void LeftIntegralCalculation::setParameterAtIndex(double f, int index) {
   assert(index >= 0 && index < 2);
-  double rf = std::round(f/k_precision)*k_precision;
   if (index == 0) {
-    m_upperBound = rf;
+    m_upperBound = f;
   }
   if (index == 1) {
-    m_result = rf;
+    m_result = f;
   }
   compute(index);
 }
@@ -59,11 +58,8 @@ void LeftIntegralCalculation::compute(int indexKnownElement) {
   }
   if (indexKnownElement == 0) {
     m_result = m_law->cumulativeDistributiveFunctionAtAbscissa(m_upperBound);
-    /* Results in probability application are rounder to 3 decimals */
-    m_result = std::round(m_result/k_precision)*k_precision;
   } else {
     m_upperBound = m_law->cumulativeDistributiveInverseForProbability(&m_result);
-    m_upperBound = std::round(m_upperBound/k_precision)*k_precision;
   }
 }
 

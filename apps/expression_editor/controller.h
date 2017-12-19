@@ -18,6 +18,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 private:
+  void insertTextAtCursor(const char * text);
   ExpressionEditorView m_view;
   Poincare::ExpressionLayout * m_expressionLayout;
   Poincare::ExpressionLayoutCursor m_cursor;

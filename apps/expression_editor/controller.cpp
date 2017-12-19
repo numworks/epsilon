@@ -1,4 +1,5 @@
 #include "controller.h"
+#include <poincare/src/layout/char_layout.h> //TODO move from there.
 
 namespace ExpressionEditor {
 
@@ -34,13 +35,30 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   {
     returnValue = true;
   }
-  else if (event.hasText() && m_expressionLayout->insertLayoutForTextAtCursor(event.text(), &m_cursor)) {
+  else if (event.hasText()) {
+    insertTextAtCursor(event.text());
     returnValue = true;
     m_expressionLayout->invalidAllSizesAndPositions();
     m_view.layoutSubviews();
   }
   m_view.cursorPositionChanged();
   return returnValue;
+}
+
+void Controller::insertTextAtCursor(const char * text) {
+  int textLength = strlen(text);
+  if (textLength <= 0) {
+    return;
+  }
+  Poincare::CharLayout * newChild = nullptr;
+  for (int i = 0; i < textLength; i++) {
+    newChild = new Poincare::CharLayout(text[i]);
+    m_cursor.pointedExpressionLayout()->addBrother(&m_cursor, newChild);
+  }
+  assert(newChild != nullptr);
+  m_cursor.setPointedExpressionLayout(newChild);
+  m_cursor.setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
+  m_cursor.setPositionInside(0);
 }
 
 }

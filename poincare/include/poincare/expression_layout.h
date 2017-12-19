@@ -45,7 +45,7 @@ public:
   ExpressionLayout * editableParent() { return m_parent; }
   bool hasAncestor(const ExpressionLayout * e) const;
 
-  bool insertLayoutForTextAtCursor(const char * text, ExpressionLayoutCursor * cursor);
+  bool insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor);
 
   void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
   ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace = true);

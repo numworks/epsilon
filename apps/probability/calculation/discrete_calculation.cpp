@@ -62,8 +62,6 @@ void DiscreteCalculation::compute(int indexKnownElement) {
     return;
   }
   m_result = m_law->evaluateAtDiscreteAbscissa(m_abscissa);
-  /* Results in probability application are rounder to 3 decimals */
-  m_result = std::round(m_result/k_precision)*k_precision;
 }
 
 }

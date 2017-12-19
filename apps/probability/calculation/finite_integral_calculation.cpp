@@ -43,15 +43,14 @@ I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
 
 void FiniteIntegralCalculation::setParameterAtIndex(double f, int index) {
   assert(index >= 0 && index < 3);
-  double rf = std::round(f/k_precision)*k_precision;
   if (index == 0) {
-    m_lowerBound = rf;
+    m_lowerBound = f;
   }
   if (index == 1) {
-    m_upperBound = rf;
+    m_upperBound = f;
   }
   if (index == 2) {
-    m_result = rf;
+    m_result = f;
   }
   compute(index);
 }
@@ -83,13 +82,10 @@ void FiniteIntegralCalculation::compute(int indexKnownElement) {
   if (indexKnownElement == 2) {
     assert(m_law->type() == Law::Type::Normal);
     double p = (1.0+m_result)/2.0;
-    double a = ((NormalLaw *)m_law)->cumulativeDistributiveInverseForProbability(&p);
-    m_lowerBound = std::round((2.0*m_law->parameterValueAtIndex(0)-a)/k_precision)*k_precision;
-    m_upperBound = std::round(a/k_precision)*k_precision;
+    m_upperBound = ((NormalLaw *)m_law)->cumulativeDistributiveInverseForProbability(&p);
+    m_lowerBound = 2.0*m_law->parameterValueAtIndex(0)-m_upperBound;
   }
   m_result = m_law->finiteIntegralBetweenAbscissas(m_lowerBound, m_upperBound);
-  /* Results in probability application are rounder to 3 decimals */
-  m_result = std::round(m_result/k_precision)*k_precision;
 }
 
 }

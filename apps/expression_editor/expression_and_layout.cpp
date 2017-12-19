@@ -1,9 +1,11 @@
 #include "expression_and_layout.h"
+#include <poincare/src/layout/horizontal_layout.h>
+#include <poincare/src/layout/editable_string_layout.h>
 
 namespace ExpressionEditor {
 
 ExpressionAndLayout::ExpressionAndLayout() {
-  //const char * expression = "2/3";
+  const char * expression = "1";
   //const char * expression = "1+2/(3+4)";
   //const char * expression = "1+2/3+5+8";
   //const char * expression = "[[1+5,2,3][4,5,6]]";
@@ -33,10 +35,11 @@ ExpressionAndLayout::ExpressionAndLayout() {
   //const char * expression = "abs(1+conj(conj(4))+(23)+conj(42))+abs(1+2)";
   //const char * expression = "13+(23)";
   //const char * expression = "1+sum(12,3,4)+product(12,3,4)+2";
-  const char * expression = "(1+2^3)-385658/(7/78+int(5/46*7/8,3,45))+sum(12,3,4)+[[1+5,2,3][4/2,5,6]]/123+ln(36)+root(542,52)+sum(12,3,4)+int(22,3,4)+conj(988+2)+abs(conj(345))+conj(conj(conj(3)))+floor(48)+binomial(6,88)+product(23,46,123)";
+  //const char * expression = "(1+2^3)-385658/(7/78+int(5/46*7/8,3,45))+sum(12,3,4)+[[1+5,2,3][4/2,5,6]]/123+ln(36)+root(542,52)+sum(12,3,4)+int(22,3,4)+conj(988+2)+abs(conj(345))+conj(conj(conj(3)))+floor(48)+binomial(6,88)+product(23,46,123)+log(10,565)-0.03";
 
   m_expression = Poincare::Expression::parse(expression);
-  m_expressionLayout = m_expression->createLayout();
+  m_expressionLayout = new Poincare::HorizontalLayout();
+  m_expressionLayout->addChildAtIndex(new Poincare::EditableStringLayout("1", 1), 0);
 }
 ExpressionAndLayout::~ExpressionAndLayout() {
   if (m_expressionLayout) {

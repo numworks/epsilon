@@ -21,24 +21,21 @@ ExpressionLayout * ConjugateLayout::clone() const {
 
 bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the operand.
-  // Ask the parent.
+  // Move Left.
   if (operandLayout()
       && cursor->pointedExpressionLayout() == operandLayout()
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
     cursor->setPointedExpressionLayout(this);
-    if (m_parent) {
-      return m_parent->moveLeft(cursor);
-    }
-    return false;
+    return true;
   }
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right.
-  // Go to the operand and move Left.
+  // Go to the operand.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(operandLayout() != nullptr);
     cursor->setPointedExpressionLayout(operandLayout());
-    return operandLayout()->moveLeft(cursor);
+    return true;
   }
   // Case: Left.
   // Ask the parent.
@@ -51,24 +48,21 @@ bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
 
 bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right of the operand.
-  // Ask the parent.
+  // Move Right.
   if (operandLayout()
       && cursor->pointedExpressionLayout() == operandLayout()
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     cursor->setPointedExpressionLayout(this);
-    if (m_parent) {
-      return m_parent->moveRight(cursor);
-    }
-    return false;
+    return true;
   }
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left.
-  // Go to the operand and move Right.
+  // Go to the operand.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     assert(operandLayout() != nullptr);
     cursor->setPointedExpressionLayout(operandLayout());
-    return operandLayout()->moveRight(cursor);
+    return true;
   }
   // Case: Right.
   // Ask the parent.

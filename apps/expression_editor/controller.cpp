@@ -4,7 +4,8 @@ namespace ExpressionEditor {
 
 Controller::Controller(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout) :
   ViewController(parentResponder),
-  m_view(parentResponder, expressionLayout, &m_cursor)
+  m_view(parentResponder, expressionLayout, &m_cursor),
+  m_expressionLayout(expressionLayout)
 {
   m_cursor.setPointedExpressionLayout(expressionLayout->editableChild(0));
 }
@@ -32,6 +33,11 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     || (event == Ion::Events::Down && m_cursor.moveDown()))
   {
     returnValue = true;
+  }
+  else if (event.hasText() && m_expressionLayout->insertLayoutForTextAtCursor(event.text(), &m_cursor)) {
+    returnValue = true;
+    m_expressionLayout->invalidAllSizesAndPositions();
+    m_view.layoutSubviews();
   }
   m_view.cursorPositionChanged();
   return returnValue;

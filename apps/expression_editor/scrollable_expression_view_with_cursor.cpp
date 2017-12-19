@@ -14,7 +14,7 @@ KDSize ScrollableExpressionViewWithCursor::minimalSizeForOptimalDisplay() const 
 }
 
 void ScrollableExpressionViewWithCursor::scrollToCursor() {
-  scrollToContentRect(m_expressionViewWithCursor.cursorRect());
+  scrollToContentRect(m_expressionViewWithCursor.cursorRect(), true);
 }
 
 }

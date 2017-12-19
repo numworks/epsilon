@@ -126,6 +126,9 @@ void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLay
 bool ExpressionLayout::insertLayoutForTextAtCursor(const char * text, ExpressionLayoutCursor * cursor) {
   EditableStringLayout * newChild = new EditableStringLayout(text, strlen(text));
   cursor->pointedExpressionLayout()->addBrother(cursor, newChild);
+  cursor->setPointedExpressionLayout(newChild);
+  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+  cursor->setPositionInside(0);
   return true;
 }
 

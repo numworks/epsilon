@@ -19,6 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 private:
   ExpressionEditorView m_view;
+  Poincare::ExpressionLayout * m_expressionLayout;
   Poincare::ExpressionLayoutCursor m_cursor;
 };
 

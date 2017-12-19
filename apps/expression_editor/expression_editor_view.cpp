@@ -20,6 +20,7 @@ void ExpressionEditorView::layoutSubviews() {
     k_margin,
     bounds().width() - 2 * k_margin,
     bounds().height() - 2 * k_margin));
+  markRectAsDirty(bounds());
 }
 
 KDSize ExpressionEditorView::minimalSizeForOptimalDisplay() const {

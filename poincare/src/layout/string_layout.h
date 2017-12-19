@@ -8,9 +8,6 @@ namespace Poincare {
 
 class StringLayout : public StaticLayoutHierarchy<0> {
 public:
-  // Here the inverse is a uint8_t instead of a bool, because the size of a bool is
-  // not standardized, thus since we call a foreign C function with this value we want to be
-  // sure about compatibility.
   StringLayout(const char * string, size_t length, KDText::FontSize fontSize = KDText::FontSize::Large);
   ~StringLayout();
   StringLayout(const StringLayout& other) = delete;

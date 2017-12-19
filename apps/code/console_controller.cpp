@@ -198,7 +198,6 @@ void ConsoleController::willDisplayCellAtLocation(HighlightCell * cell, int i, i
 void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
   if (t->selectedRow() == m_consoleStore.numberOfLines()) {
     m_editCell.setEditing(true);
-    app()->setFirstResponder(&m_editCell);
     return;
   }
   if (t->selectedRow()>-1) {
@@ -208,7 +207,6 @@ void ConsoleController::tableViewDidChangeSelection(SelectableTableView * t, int
       previousCell->reloadCell();
     }
     ConsoleLineCell * selectedCell = (ConsoleLineCell *)(t->selectedCell());
-    app()->setFirstResponder(selectedCell);
     selectedCell->reloadCell();
   }
 }

@@ -10,7 +10,7 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-class FloatParameterController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate {
+class FloatParameterController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDataSource, public TextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
   void didBecomeFirstResponder() override;
@@ -28,7 +28,6 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 protected:
   int activeCell();
   StackViewController * stackController();

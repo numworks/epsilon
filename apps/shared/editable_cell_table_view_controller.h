@@ -14,7 +14,6 @@ public:
   EditableCellTableViewController(Responder * parentResponder);
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 
   int numberOfRows() override;
   void willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Poincare::Expression::FloatDisplayMode FloatDisplayMode);

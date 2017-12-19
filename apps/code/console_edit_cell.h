@@ -21,6 +21,11 @@ public:
   // Responder
   void didBecomeFirstResponder() override;
 
+  /* HighlightCell */
+  Responder * responder() override {
+    return this;
+  }
+
   // Edit cell
   void setEditing(bool isEditing, bool reinitDraftBuffer = false);
   void setText(const char * text);

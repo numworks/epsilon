@@ -64,8 +64,11 @@ bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   if (childIndex == 0) {
     // Case: the child is the leftmost.
     // Ask the parent.
-    cursor->setPointedExpressionLayout(this);
     if (m_parent) {
+      // Only move the cursor if the layout has a parent: If not, the cursor
+      // would go on the extrema of the main HorizontalLayout, which prevents
+      // the user from adding more text.
+      cursor->setPointedExpressionLayout(this);
       return m_parent->moveLeft(cursor);
     }
     return false;
@@ -111,8 +114,11 @@ bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor) {
   if (childIndex == numberOfChildren() - 1) {
     // Case: the child is the rightmost.
     // Ask the parent.
-    cursor->setPointedExpressionLayout(this);
     if (m_parent) {
+      // Only move the cursor if the layout has a parent: If not, the cursor
+      // would go on the extrema of the main HorizontalLayout, which prevents
+      // the user from adding more text.
+      cursor->setPointedExpressionLayout(this);
       return m_parent->moveRight(cursor);
     }
     return false;

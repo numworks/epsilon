@@ -70,6 +70,36 @@ void CalculationController::ContentView::willDisplayEditableCellAtIndex(int inde
   m_calculationCell[index].textField()->setText(buffer);
 }
 
+KDCoordinate CalculationController::ContentView::calculationCellWidth(int index) const {
+  KDCoordinate calculationCellWidth = m_calculationCell[index].minimalSizeForOptimalDisplay().width();
+  return min(k_maxTextFieldWidth, max(k_minTextFieldWidth, calculationCellWidth));
+}
+
+void CalculationController::ContentView::updateCalculationLayout() {
+  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleHeightMargin;
+  KDSize charSize = KDText::charSize();
+  KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
+  KDCoordinate xCoordinate = m_imageTableView.minimalSizeForOptimalDisplay().width() + 2*k_textWidthMargin+numberOfCharacters*charSize.width();
+  markRectAsDirty(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin-1, bounds().width() - xCoordinate, ImageCell::k_height+2));
+
+  KDCoordinate calculationWidth = calculationCellWidth(0);
+  m_calculationCell[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, calculationWidth, ImageCell::k_height));
+  xCoordinate += calculationWidth + k_textWidthMargin;
+  numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
+  m_text[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
+  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
+  calculationWidth = calculationCellWidth(1);
+  m_calculationCell[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, calculationWidth, ImageCell::k_height));
+  xCoordinate += calculationWidth + k_textWidthMargin;
+  if (m_calculation->numberOfParameters() > 2) {
+    numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(2)));;
+    m_text[2].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
+    xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
+    calculationWidth = calculationCellWidth(2);
+    m_calculationCell[2].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, calculationWidth, ImageCell::k_height));
+  }
+}
+
 void CalculationController::ContentView::layoutSubviews() {
   markRectAsDirty(bounds());
   KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleHeightMargin;
@@ -82,23 +112,11 @@ void CalculationController::ContentView::layoutSubviews() {
   xCoordinate += tableSize.width() + k_textWidthMargin;
   KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
   m_text[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
-  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-  m_calculationCell[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_largeTextFieldWidth, ImageCell::k_height));
-  xCoordinate += k_largeTextFieldWidth + k_textWidthMargin;
-  numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
-  m_text[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
-  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-  m_calculationCell[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_largeTextFieldWidth, ImageCell::k_height));
-  xCoordinate += k_largeTextFieldWidth + k_textWidthMargin;
-  if (m_calculation->numberOfParameters() > 2) {
-    numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(2)));;
-    m_text[2].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
-    xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-    m_calculationCell[2].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_textFieldWidth, ImageCell::k_height));
-  }
+
   for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
     willDisplayEditableCellAtIndex(k);
   }
+  updateCalculationLayout();
 }
 
 void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -107,19 +125,15 @@ void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) 
   KDSize charSize = KDText::charSize();
   int numberOfCharacters;
   KDCoordinate xCoordinate = ImageTableView::k_oneCellWidth + k_textWidthMargin;
-  KDCoordinate textFieldWidth = k_largeTextFieldWidth;
   for (int i = 0; i < k_maxNumberOfEditableFields; i++) {
     if (m_calculation->numberOfEditableParameters() == i) {
       return;
     }
-    if (i == 2) {
-      textFieldWidth = k_textFieldWidth;
-    }
     numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(i)));
     xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
 
-    ctx->strokeRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, textFieldWidth+2*ImageTableView::k_outline, ImageCell::k_height+2*ImageTableView::k_outline), Palette::GreyMiddle);
-    xCoordinate += textFieldWidth + k_textWidthMargin;
+    ctx->strokeRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, calculationCellWidth(i)+2*ImageTableView::k_outline, ImageCell::k_height+2*ImageTableView::k_outline), Palette::GreyMiddle);
+    xCoordinate += calculationCellWidth(i) + k_textWidthMargin;
   }
 }
 
@@ -209,6 +223,12 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+
+bool CalculationController::textFieldDidHandleEvent(::TextField * textField, Ion::Events::Event event, bool returnValue) {
+  m_contentView.updateCalculationLayout();
+  return returnValue;
 }
 
 bool CalculationController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {

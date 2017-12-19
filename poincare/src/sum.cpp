@@ -27,7 +27,7 @@ int Sum::emptySequenceValue() const {
 }
 
 ExpressionLayout * Sum::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const {
-  return new SumLayout(subscriptLayout, superscriptLayout, argumentLayout);
+  return new SumLayout(subscriptLayout, superscriptLayout, argumentLayout, false);
 }
 
 template<typename T>

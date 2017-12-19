@@ -10,24 +10,19 @@ extern "C" {
 
 namespace Poincare {
 
-HorizontalLayout::HorizontalLayout(ExpressionLayout ** children_layouts, int number_of_children) :
-  ExpressionLayout(), m_number_of_children(number_of_children) {
-  assert(number_of_children > 0);
-  m_children_layouts = new ExpressionLayout *[number_of_children];
-  for (int i=0; i<m_number_of_children; i++) {
-    m_children_layouts[i] = children_layouts[i];
-    m_children_layouts[i]->setParent(this);
-    if (m_children_layouts[i]->baseline() > m_baseline) {
-      m_baseline = m_children_layouts[i]->baseline();
+HorizontalLayout::HorizontalLayout(ExpressionLayout ** childrenLayouts, int childrenCount, bool cloneOperands) :
+  DynamicLayoutHierarchy(childrenLayouts, childrenCount, cloneOperands)
+{
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (child(i)->baseline() > m_baseline) {
+      m_baseline = child(i)->baseline();
     }
   }
 }
 
-HorizontalLayout::~HorizontalLayout() {
-  for (int i=0; i<m_number_of_children; i++) {
-    delete m_children_layouts[i];
-  }
-  delete[] m_children_layouts;
+ExpressionLayout * HorizontalLayout::clone() const {
+  HorizontalLayout * layout = new HorizontalLayout(const_cast<ExpressionLayout **>(children()), numberOfChildren(), true);
+  return layout;
 }
 
 bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor) {
@@ -44,14 +39,14 @@ bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor) {
     // Case: Right.
     // Go to the last child if there is one, and move Left.
     // Else go Left and ask the parent.
-    if (m_number_of_children < 1) {
+    if (numberOfChildren() < 1) {
       cursor->setPosition(ExpressionLayoutCursor::Position::Left);
       if (m_parent) {
         return m_parent->moveLeft(cursor);
       }
       return false;
     }
-    ExpressionLayout * lastChild = m_children_layouts[m_number_of_children-1];
+    ExpressionLayout * lastChild = editableChild(numberOfChildren()-1);
     assert(lastChild != nullptr);
     cursor->setPointedExpressionLayout(lastChild);
     return lastChild->moveLeft(cursor);
@@ -72,9 +67,9 @@ bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   }
   // Case: the child is not the leftmost.
   // Go to its left brother and move Left.
-  cursor->setPointedExpressionLayout(m_children_layouts[childIndex-1]);
+  cursor->setPointedExpressionLayout(editableChild(childIndex-1));
   cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-  return m_children_layouts[childIndex-1]->moveLeft(cursor);
+  return editableChild(childIndex-1)->moveLeft(cursor);
 }
 
 bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor) {
@@ -91,14 +86,14 @@ bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor) {
     // Case: Left.
     // Go to the first child if there is one, and move Right.
     // Else go Right and ask the parent.
-    if (m_number_of_children < 1) {
+    if (numberOfChildren() < 1) {
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       if (m_parent) {
         return m_parent->moveRight(cursor);
       }
       return false;
     }
-    ExpressionLayout * firstChild = m_children_layouts[0];
+    ExpressionLayout * firstChild = editableChild(0);
     assert(firstChild != nullptr);
     cursor->setPointedExpressionLayout(firstChild);
     return firstChild->moveRight(cursor);
@@ -108,7 +103,7 @@ bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor) {
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
   int childIndex = indexOfChild(cursor->pointedExpressionLayout());
   assert(childIndex >= 0);
-  if (childIndex == m_number_of_children - 1) {
+  if (childIndex == numberOfChildren() - 1) {
     // Case: the child is the rightmost.
     // Ask the parent.
     cursor->setPointedExpressionLayout(this);
@@ -119,9 +114,9 @@ bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor) {
   }
   // Case: the child is not the rightmost.
   // Go to its right brother and move Right.
-  cursor->setPointedExpressionLayout(m_children_layouts[childIndex+1]);
+  cursor->setPointedExpressionLayout(editableChild(childIndex+1));
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-  return m_children_layouts[childIndex+1]->moveRight(cursor);
+  return editableChild(childIndex+1)->moveRight(cursor);
 }
 
 bool HorizontalLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
@@ -140,7 +135,7 @@ KDSize HorizontalLayout::computeSize() {
   int i = 0;
   KDCoordinate max_under_baseline = 0;
   KDCoordinate max_above_baseline = 0;
-  while (ExpressionLayout * c = child(i++)) {
+  while (ExpressionLayout * c = editableChild(i++)) {
     KDSize childSize = c->size();
     totalWidth += childSize.width();
     if (childSize.height() - c->baseline() > max_under_baseline) {
@@ -153,21 +148,12 @@ KDSize HorizontalLayout::computeSize() {
   return KDSize(totalWidth, max_under_baseline + max_above_baseline);
 }
 
-ExpressionLayout * HorizontalLayout::child(uint16_t index) {
-  assert(index <= (unsigned int) m_number_of_children);
-  if (index < (unsigned int) m_number_of_children) {
-    return m_children_layouts[index];
-  } else {
-    return nullptr;
-  }
-}
-
 KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   int index = indexOfChild(child);
   if (index > 0) {
-    ExpressionLayout * previousChild = m_children_layouts[index-1];
+    ExpressionLayout * previousChild = editableChild(index-1);
     assert(previousChild != nullptr);
     x = previousChild->origin().x() + previousChild->size().width();
   }
@@ -190,11 +176,11 @@ bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direct
     ExpressionLayout * brother = nullptr;
     ExpressionLayoutCursor::Position newPosition = ExpressionLayoutCursor::Position::Right;
     if (cursor->position() == ExpressionLayoutCursor::Position::Left && previousLayoutIndex > 0) {
-      brother = m_children_layouts[previousLayoutIndex - 1];
+      brother = editableChild(previousLayoutIndex - 1);
       newPosition = ExpressionLayoutCursor::Position::Right;
     }
-    if (cursor->position() == ExpressionLayoutCursor::Position::Right && previousLayoutIndex < m_number_of_children - 1) {
-      brother = m_children_layouts[previousLayoutIndex + 1];
+    if (cursor->position() == ExpressionLayoutCursor::Position::Right && previousLayoutIndex < numberOfChildren() - 1) {
+      brother = editableChild(previousLayoutIndex + 1);
       newPosition = ExpressionLayoutCursor::Position::Left;
     }
     if (brother && cursor->positionIsEquivalentTo(brother, newPosition)) {
@@ -223,8 +209,8 @@ int HorizontalLayout::indexOfChild(ExpressionLayout * eL) const {
   if (eL == nullptr) {
     return -1;
   }
-  for (int i = 0; i < m_number_of_children; i++) {
-    if (m_children_layouts[i] == eL) {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (child(i) == eL) {
       return i;
     }
   }

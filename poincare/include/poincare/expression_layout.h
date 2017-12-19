@@ -13,19 +13,39 @@ public:
     Up,
     Down
   };
+  enum class HorizontalDirection {
+    Left,
+    Right
+  };
 
+  /* Constructor & Destructor */
   ExpressionLayout();
   virtual  ~ExpressionLayout() = default;
+  static const ExpressionLayout * const * ExpressionLayoutArray2(const ExpressionLayout * e1, const ExpressionLayout * e2);
+  static const ExpressionLayout * const * ExpressionLayoutArray3(const ExpressionLayout * e1, const ExpressionLayout * e2, const ExpressionLayout * e3);
+  virtual ExpressionLayout * clone() const = 0;
 
   /* Rendering */
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   KDPoint origin();
   KDPoint absoluteOrigin();
   KDSize size();
-  KDCoordinate baseline();
+  KDCoordinate baseline() const { return m_baseline; }
 
   /* Hierarchy */
-  void setParent(ExpressionLayout* parent);
+  virtual const ExpressionLayout * const * children() const = 0;
+  const ExpressionLayout * child(int i) const;
+  ExpressionLayout * editableChild(int i) { return const_cast<ExpressionLayout *>(child(i)); }
+  virtual int numberOfChildren() const = 0;
+  int indexOfChild(ExpressionLayout * child) const;
+
+  void setParent(ExpressionLayout * parent);
+  const ExpressionLayout * parent() const { return m_parent; }
+  ExpressionLayout * editableParent() { return m_parent; }
+  bool hasAncestor(const ExpressionLayout * e) const;
+
+  /* Dynamic Layout*/
+  virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
 
   /* Tree navigation */
   virtual bool moveLeft(ExpressionLayoutCursor * cursor) { return false; } //TODO should be virtual pure?
@@ -37,7 +57,6 @@ public:
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
   virtual KDSize computeSize() = 0;
-  virtual ExpressionLayout * child(uint16_t index) = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
   KDCoordinate m_baseline;
   ExpressionLayout * m_parent;

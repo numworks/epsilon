@@ -465,7 +465,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
   if (numberOfCharInSuperscript == 0) {
     return new EditableStringLayout(bufferBase, numberOfCharInBase);
   }
-  return new EditableBaselineRelativeLayout(new EditableStringLayout(bufferBase, numberOfCharInBase), new EditableStringLayout(bufferSuperscript, numberOfCharInSuperscript), BaselineRelativeLayout::Type::Superscript);
+  return new EditableBaselineRelativeLayout(new EditableStringLayout(bufferBase, numberOfCharInBase), new EditableStringLayout(bufferSuperscript, numberOfCharInSuperscript), BaselineRelativeLayout::Type::Superscript, false);
 }
 
 template <class T>

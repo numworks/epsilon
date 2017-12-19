@@ -7,23 +7,22 @@ extern "C" {
 
 namespace Poincare {
 
-ConjugateLayout::ConjugateLayout(ExpressionLayout * operandLayout) :
-  ExpressionLayout(),
-  m_operandLayout(operandLayout)
+ConjugateLayout::ConjugateLayout(ExpressionLayout * operand, bool cloneOperands) :
+  StaticLayoutHierarchy<1>(operand, cloneOperands)
 {
-  m_operandLayout->setParent(this);
-  m_baseline = m_operandLayout->baseline()+k_overlineWidth+k_overlineMargin;
+  m_baseline = operandLayout()->baseline()+k_overlineWidth+k_overlineMargin;
 }
 
-ConjugateLayout::~ConjugateLayout() {
-  delete m_operandLayout;
+ExpressionLayout * ConjugateLayout::clone() const {
+  ConjugateLayout * layout = new ConjugateLayout(const_cast<ConjugateLayout *>(this)->operandLayout(), true);
+  return layout;
 }
 
 bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the operand.
   // Ask the parent.
-  if (m_operandLayout
-      && cursor->pointedExpressionLayout() == m_operandLayout
+  if (operandLayout()
+      && cursor->pointedExpressionLayout() == operandLayout()
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
     cursor->setPointedExpressionLayout(this);
@@ -36,9 +35,9 @@ bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Go to the operand and move Left.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    assert(m_operandLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_operandLayout);
-    return m_operandLayout->moveLeft(cursor);
+    assert(operandLayout() != nullptr);
+    cursor->setPointedExpressionLayout(operandLayout());
+    return operandLayout()->moveLeft(cursor);
   }
   // Case: Left.
   // Ask the parent.
@@ -52,8 +51,8 @@ bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
 bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right of the operand.
   // Ask the parent.
-  if (m_operandLayout
-      && cursor->pointedExpressionLayout() == m_operandLayout
+  if (operandLayout()
+      && cursor->pointedExpressionLayout() == operandLayout()
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     cursor->setPointedExpressionLayout(this);
@@ -66,9 +65,9 @@ bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Left.
   // Go to the operand and move Right.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    assert(m_operandLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_operandLayout);
-    return m_operandLayout->moveRight(cursor);
+    assert(operandLayout() != nullptr);
+    cursor->setPointedExpressionLayout(operandLayout());
+    return operandLayout()->moveRight(cursor);
   }
   // Case: Right.
   // Ask the parent.
@@ -80,23 +79,20 @@ bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor) {
 }
 
 void ConjugateLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->fillRect(KDRect(p.x(), p.y(), m_operandLayout->size().width(), k_overlineWidth), expressionColor);
+  ctx->fillRect(KDRect(p.x(), p.y(), operandLayout()->size().width(), k_overlineWidth), expressionColor);
 }
 
 KDSize ConjugateLayout::computeSize() {
-  KDSize operandSize = m_operandLayout->size();
+  KDSize operandSize = operandLayout()->size();
   return KDSize(operandSize.width(), operandSize.height()+k_overlineWidth+k_overlineMargin);
-}
-
-ExpressionLayout * ConjugateLayout::child(uint16_t index) {
-  if (index == 0) {
-    return m_operandLayout;
-  }
-  return nullptr;
 }
 
 KDPoint ConjugateLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(0, k_overlineWidth+k_overlineMargin);
+}
+
+ExpressionLayout * ConjugateLayout::operandLayout() {
+  return editableChild(0);
 }
 
 }

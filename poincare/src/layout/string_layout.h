@@ -1,12 +1,12 @@
 #ifndef POINCARE_STRING_LAYOUT_H
 #define POINCARE_STRING_LAYOUT_H
 
-#include <poincare/expression_layout.h>
+#include <poincare/static_layout_hierarchy.h>
 #include <string.h>
 
 namespace Poincare {
 
-class StringLayout : public ExpressionLayout {
+class StringLayout : public StaticLayoutHierarchy<0> {
 public:
   // Here the inverse is a uint8_t instead of a bool, because the size of a bool is
   // not standardized, thus since we call a foreign C function with this value we want to be
@@ -17,16 +17,16 @@ public:
   StringLayout(StringLayout&& other) = delete;
   StringLayout& operator=(const StringLayout& other) = delete;
   StringLayout& operator=(StringLayout&& other) = delete;
-  char * text();
+  ExpressionLayout * clone() const override;
+
+  char * text() { return m_string; }
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  KDSize computeSize() override;
-  ExpressionLayout * child(uint16_t index) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
+  KDSize computeSize() override;
   char * m_string;
-private:
   KDText::FontSize m_fontSize;
 };
 

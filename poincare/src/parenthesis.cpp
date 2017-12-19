@@ -20,7 +20,7 @@ Expression * Parenthesis::clone() const {
 ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
+  return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
 }
 
 Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {

@@ -1,21 +1,16 @@
 #ifndef POINCARE_INTEGRAL_LAYOUT_H
 #define POINCARE_INTEGRAL_LAYOUT_H
 
-#include <poincare/expression.h>
-#include <poincare/expression_layout.h>
+#include <poincare/static_layout_hierarchy.h>
 
 namespace Poincare {
 
-class IntegralLayout : public ExpressionLayout {
+class IntegralLayout : public StaticLayoutHierarchy<3> {
 public:
-  IntegralLayout(ExpressionLayout * lowerBoundLayout, ExpressionLayout * upperBoundLayout, ExpressionLayout * integrandLayout);
-  ~IntegralLayout();
-  IntegralLayout(const IntegralLayout& other) = delete;
-  IntegralLayout(IntegralLayout&& other) = delete;
-  IntegralLayout& operator=(const IntegralLayout& other) = delete;
-  IntegralLayout& operator=(IntegralLayout&& other) = delete;
   constexpr static KDCoordinate k_symbolHeight = 4;
   constexpr static KDCoordinate k_symbolWidth = 4;
+  IntegralLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * integrand, bool cloneOperands);
+  ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
@@ -23,7 +18,6 @@ public:
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
-  ExpressionLayout * child(uint16_t index) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
   constexpr static KDCoordinate k_boundHeightMargin = 8;
@@ -31,9 +25,9 @@ private:
   constexpr static KDCoordinate k_integrandWidthMargin = 2;
   constexpr static KDCoordinate k_integrandHeigthMargin = 2;
   constexpr static KDCoordinate k_lineThickness = 1;
-  ExpressionLayout * m_lowerBoundLayout;
-  ExpressionLayout * m_upperBoundLayout;
-  ExpressionLayout * m_integrandLayout;
+  ExpressionLayout * lowerBoundLayout();
+  ExpressionLayout * upperBoundLayout();
+  ExpressionLayout * integrandLayout();
 };
 
 }

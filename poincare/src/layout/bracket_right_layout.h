@@ -8,6 +8,7 @@ namespace Poincare {
 class BracketRightLayout : public BracketLeftRightLayout {
 public:
   using BracketLeftRightLayout::BracketLeftRightLayout;
+  ExpressionLayout * clone() const override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };

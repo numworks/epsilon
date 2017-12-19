@@ -8,6 +8,7 @@ namespace Poincare {
 class ProductLayout : public SequenceLayout {
 public:
   using SequenceLayout::SequenceLayout;
+  ExpressionLayout * clone() const override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 private:

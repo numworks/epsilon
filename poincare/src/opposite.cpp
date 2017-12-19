@@ -51,8 +51,8 @@ ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMo
   ExpressionLayout * children_layouts[2];
   char string[2] = {'-', '\0'};
   children_layouts[0] = new EditableStringLayout(string, 1);
-  children_layouts[1] = operand(0)->type() == Type::Opposite ? new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat)) : operand(0)->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(children_layouts, 2);
+  children_layouts[1] = operand(0)->type() == Type::Opposite ? new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false) : operand(0)->createLayout(floatDisplayMode, complexFormat);
+  return new HorizontalLayout(children_layouts, 2, false);
 }
 
 int Opposite::writeTextInBuffer(char * buffer, int bufferSize) const {

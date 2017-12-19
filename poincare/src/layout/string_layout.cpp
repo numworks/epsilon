@@ -6,7 +6,7 @@
 namespace Poincare {
 
 StringLayout::StringLayout(const char * string, size_t length, KDText::FontSize fontSize) :
-  ExpressionLayout(),
+  StaticLayoutHierarchy<0>(),
   m_fontSize(fontSize)
 {
   m_string = new char[length+1];
@@ -20,8 +20,9 @@ StringLayout::~StringLayout() {
   delete[] m_string;
 }
 
-char * StringLayout::text() {
-  return m_string;
+ExpressionLayout * StringLayout::clone() const {
+  StringLayout * layout = new StringLayout(m_string, strlen(m_string), m_fontSize);
+  return layout;
 }
 
 bool StringLayout::moveLeft(ExpressionLayoutCursor * cursor) {
@@ -56,10 +57,6 @@ bool StringLayout::moveRight(ExpressionLayoutCursor * cursor) {
     return m_parent->moveRight(cursor);
   }
   return false;
-}
-
-ExpressionLayout * StringLayout::child(uint16_t index) {
-  return nullptr;
 }
 
 void StringLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

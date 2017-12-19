@@ -7,23 +7,22 @@ extern "C" {
 
 namespace Poincare {
 
-BracketLayout::BracketLayout(ExpressionLayout * operandLayout) :
-  ExpressionLayout(),
-  m_operandLayout(operandLayout)
+BracketLayout::BracketLayout(ExpressionLayout * operandLayout, bool cloneOperands) :
+  StaticLayoutHierarchy<1>(operandLayout, cloneOperands)
 {
-  m_operandLayout->setParent(this);
-  m_baseline = m_operandLayout->baseline();
+  m_baseline = operandLayout->baseline();
 }
 
-BracketLayout::~BracketLayout() {
-  delete m_operandLayout;
+ExpressionLayout * BracketLayout::clone() const {
+  BracketLayout * layout = new BracketLayout(const_cast<BracketLayout *>(this)->operandLayout(), true);
+  return layout;
 }
 
 bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the operand.
   // Go Left of the brackets.
-  if (m_operandLayout
-    && cursor->pointedExpressionLayout() == m_operandLayout
+  if (operandLayout()
+    && cursor->pointedExpressionLayout() == operandLayout()
     && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
     cursor->setPointedExpressionLayout(this);
@@ -33,8 +32,8 @@ bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Right of the brackets.
   // Go Right of the operand.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    assert(m_operandLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_operandLayout);
+    assert(operandLayout() != nullptr);
+    cursor->setPointedExpressionLayout(operandLayout());
     return true;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
@@ -49,8 +48,8 @@ bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor) {
 bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right of the operand.
   // Go Right of the brackets.
-  if (m_operandLayout
-    && cursor->pointedExpressionLayout() == m_operandLayout
+  if (operandLayout()
+    && cursor->pointedExpressionLayout() == operandLayout()
     && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     cursor->setPointedExpressionLayout(this);
@@ -60,8 +59,8 @@ bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Left of the brackets.
   // Go Left of the operand.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    assert(m_operandLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_operandLayout);
+    assert(operandLayout() != nullptr);
+    cursor->setPointedExpressionLayout(operandLayout());
     return true;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
@@ -74,12 +73,16 @@ bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+ExpressionLayout * BracketLayout::operandLayout()  {
+  return editableChild(0);
+}
+
 void BracketLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   const KDCoordinate k_widthMargin = widthMargin();
   const KDCoordinate k_externWidthMargin = externWidthMargin();
-  KDSize operandSize = m_operandLayout->size();
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y(), k_lineThickness, m_operandLayout->size().height()), expressionColor);
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y(), k_lineThickness, m_operandLayout->size().height()), expressionColor);
+  KDSize operandSize = operandLayout()->size();
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y(), k_lineThickness, operandLayout()->size().height()), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y(), k_lineThickness, operandLayout()->size().height()), expressionColor);
   if (renderTopBar()) {
     ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y(), k_bracketWidth, k_lineThickness), expressionColor);
     ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+operandSize.width()+2*k_widthMargin-k_bracketWidth, p.y(), k_bracketWidth, k_lineThickness), expressionColor);
@@ -93,15 +96,8 @@ void BracketLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
 KDSize BracketLayout::computeSize() {
   const KDCoordinate k_widthMargin = widthMargin();
   const KDCoordinate k_externWidthMargin = externWidthMargin();
-  KDSize operandSize = m_operandLayout->size();
+  KDSize operandSize = operandLayout()->size();
   return KDSize(operandSize.width() + 2*k_externWidthMargin + 2*k_widthMargin + 2*k_lineThickness, operandSize.height());
-}
-
-ExpressionLayout * BracketLayout::child(uint16_t index) {
-  if (index == 0) {
-    return m_operandLayout;
-  }
-  return nullptr;
 }
 
 KDPoint BracketLayout::positionOfChild(ExpressionLayout * child) {

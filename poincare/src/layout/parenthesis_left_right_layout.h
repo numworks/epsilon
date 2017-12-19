@@ -1,19 +1,13 @@
 #ifndef POINCARE_PARENTHESIS_LEFT_RIGHT_LAYOUT_H
 #define POINCARE_PARENTHESIS_LEFT_RIGHT_LAYOUT_H
 
-#include <poincare/expression.h>
-#include <poincare/expression_layout.h>
+#include <poincare/static_layout_hierarchy.h>
 
 namespace Poincare {
 
-class ParenthesisLeftRightLayout : public ExpressionLayout {
+class ParenthesisLeftRightLayout : public StaticLayoutHierarchy<0> {
 public:
   ParenthesisLeftRightLayout();
-  ~ParenthesisLeftRightLayout() {}
-  ParenthesisLeftRightLayout(const ParenthesisLeftRightLayout& other) = delete;
-  ParenthesisLeftRightLayout(ParenthesisLeftRightLayout&& other) = delete;
-  ParenthesisLeftRightLayout& operator=(const ParenthesisLeftRightLayout& other) = delete;
-  ParenthesisLeftRightLayout& operator=(ParenthesisLeftRightLayout&& other) = delete;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
@@ -25,7 +19,6 @@ public:
 protected:
   KDColor s_parenthesisWorkingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
   KDSize computeSize() override;
-  ExpressionLayout * child(uint16_t index) override { return nullptr; }
   KDPoint positionOfChild(ExpressionLayout * child) override;
   uint16_t m_operandHeight;
 };

@@ -5,6 +5,11 @@
 
 namespace Poincare {
 
+ExpressionLayout * EditableStringLayout::clone() const {
+  EditableStringLayout * layout = new EditableStringLayout(m_string, strlen(m_string), m_fontSize);
+  return layout;
+}
+
 bool EditableStringLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right.

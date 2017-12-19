@@ -5,34 +5,23 @@
 
 namespace Poincare {
 
-CondensedSumLayout::CondensedSumLayout(ExpressionLayout * baseLayout, ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout) :
-  ExpressionLayout(),
-  m_baseLayout(baseLayout),
-  m_subscriptLayout(subscriptLayout),
-  m_superscriptLayout(superscriptLayout)
+CondensedSumLayout::CondensedSumLayout(ExpressionLayout * base, ExpressionLayout * subscript, ExpressionLayout * superscript, bool cloneOperands) :
+  StaticLayoutHierarchy<3>(base, subscript, superscript, cloneOperands)
 {
-  m_baseLayout->setParent(this);
-  m_subscriptLayout->setParent(this);
-  if (m_superscriptLayout) {
-    m_superscriptLayout->setParent(this);
-  }
-  KDSize superscriptSize = m_superscriptLayout == nullptr ? KDSizeZero : m_superscriptLayout->size();
-  m_baseline = m_baseLayout->baseline() + max(0, superscriptSize.height() - m_baseLayout->size().height()/2);
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->size();
+  m_baseline = baseLayout()->baseline() + max(0, superscriptSize.height() - baseLayout()->size().height()/2);
 }
 
-CondensedSumLayout::~CondensedSumLayout() {
-  delete m_baseLayout;
-  delete m_subscriptLayout;
-  if (m_superscriptLayout) {
-    delete m_superscriptLayout;
-  }
+ExpressionLayout * CondensedSumLayout::clone() const {
+  CondensedSumLayout * layout = new CondensedSumLayout(const_cast<CondensedSumLayout *>(this)->baseLayout(), const_cast<CondensedSumLayout *>(this)->subscriptLayout(), const_cast<CondensedSumLayout *>(this)->superscriptLayout(), true);
+  return layout;
 }
 
 bool CondensedSumLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the bounds.
   // Go Left of the sum.
-  if (((m_subscriptLayout && cursor->pointedExpressionLayout() == m_subscriptLayout)
-        || (m_superscriptLayout && cursor->pointedExpressionLayout() == m_superscriptLayout))
+  if (((subscriptLayout() && cursor->pointedExpressionLayout() == subscriptLayout())
+        || (superscriptLayout() && cursor->pointedExpressionLayout() == superscriptLayout()))
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
     cursor->setPointedExpressionLayout(this);
@@ -41,11 +30,11 @@ bool CondensedSumLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   }
   // Case: Left of the base.
   // Go Right of the lower bound.
-  if (m_baseLayout
-      && cursor->pointedExpressionLayout() == m_baseLayout
+  if (baseLayout()
+      && cursor->pointedExpressionLayout() == baseLayout()
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
-    cursor->setPointedExpressionLayout(m_subscriptLayout);
+    cursor->setPointedExpressionLayout(subscriptLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return true;
   }
@@ -53,9 +42,9 @@ bool CondensedSumLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Go to the base and move Left.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    assert(m_baseLayout);
-    cursor->setPointedExpressionLayout(m_baseLayout);
-    return m_baseLayout->moveLeft(cursor);
+    assert(baseLayout());
+    cursor->setPointedExpressionLayout(baseLayout());
+    return baseLayout()->moveLeft(cursor);
   }
   // Case: Left.
   // Ask the parent.
@@ -69,19 +58,19 @@ bool CondensedSumLayout::moveLeft(ExpressionLayoutCursor * cursor) {
 bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right of the bounds.
   // Go Left of the operand.
-  if (((m_subscriptLayout && cursor->pointedExpressionLayout() == m_subscriptLayout)
-        || (m_superscriptLayout && cursor->pointedExpressionLayout() == m_superscriptLayout))
+  if (((subscriptLayout() && cursor->pointedExpressionLayout() == subscriptLayout())
+        || (superscriptLayout() && cursor->pointedExpressionLayout() == superscriptLayout()))
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
-    assert(m_baseLayout != nullptr);
-    cursor->setPointedExpressionLayout(m_baseLayout);
+    assert(baseLayout() != nullptr);
+    cursor->setPointedExpressionLayout(baseLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
   }
   // Case: Right of the base.
   // Ask the parent.
-  if (m_baseLayout
-      && cursor->pointedExpressionLayout() == m_baseLayout
+  if (baseLayout()
+      && cursor->pointedExpressionLayout() == baseLayout()
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     cursor->setPointedExpressionLayout(this);
@@ -95,8 +84,8 @@ bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Left.
   // Go to the upper bound.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    assert(m_superscriptLayout);
-    cursor->setPointedExpressionLayout(m_superscriptLayout);
+    assert(superscriptLayout());
+    cursor->setPointedExpressionLayout(superscriptLayout());
     return true;
   }
   // Case: Right.
@@ -110,34 +99,34 @@ bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor) {
 
 bool CondensedSumLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside the subscript layout, move it to the superscript.
-  if (m_subscriptLayout && previousLayout == m_subscriptLayout) {
-    assert(m_superscriptLayout != nullptr);
-    return m_superscriptLayout->moveUpInside(cursor);
+  if (subscriptLayout() && previousLayout == subscriptLayout()) {
+    assert(superscriptLayout() != nullptr);
+    return superscriptLayout()->moveUpInside(cursor);
   }
   // If the cursor is Left of the base layout, move it to the superscript.
-  if (m_baseLayout
-      && previousLayout == m_baseLayout
-      && cursor->positionIsEquivalentTo(m_baseLayout, ExpressionLayoutCursor::Position::Left))
+  if (baseLayout()
+      && previousLayout == baseLayout()
+      && cursor->positionIsEquivalentTo(baseLayout(), ExpressionLayoutCursor::Position::Left))
   {
-    assert(m_superscriptLayout != nullptr);
-    return m_superscriptLayout->moveUpInside(cursor);
+    assert(superscriptLayout() != nullptr);
+    return superscriptLayout()->moveUpInside(cursor);
   }
   return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
 }
 
 bool CondensedSumLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside the superscript layout, move it to the subscript.
-  if (m_superscriptLayout && previousLayout == m_superscriptLayout) {
-    assert(m_subscriptLayout != nullptr);
-    return m_subscriptLayout->moveUpInside(cursor);
+  if (superscriptLayout() && previousLayout == superscriptLayout()) {
+    assert(subscriptLayout() != nullptr);
+    return subscriptLayout()->moveUpInside(cursor);
   }
   // If the cursor is Left of the base layout, move it to the subscript.
-  if (m_baseLayout
-      && previousLayout == m_baseLayout
-      && cursor->positionIsEquivalentTo(m_baseLayout, ExpressionLayoutCursor::Position::Left))
+  if (baseLayout()
+      && previousLayout == baseLayout()
+      && cursor->positionIsEquivalentTo(baseLayout(), ExpressionLayoutCursor::Position::Left))
   {
-    assert(m_subscriptLayout != nullptr);
-    return m_subscriptLayout->moveUpInside(cursor);
+    assert(subscriptLayout() != nullptr);
+    return subscriptLayout()->moveUpInside(cursor);
   }
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
@@ -147,41 +136,40 @@ void CondensedSumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionCo
 }
 
 KDSize CondensedSumLayout::computeSize() {
-  KDSize baseSize = m_baseLayout->size();
-  KDSize subscriptSize = m_subscriptLayout->size();
-  KDSize superscriptSize = m_superscriptLayout == nullptr ? KDSizeZero : m_superscriptLayout->size();
+  KDSize baseSize = baseLayout()->size();
+  KDSize subscriptSize = subscriptLayout()->size();
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->size();
   return KDSize(baseSize.width() + max(subscriptSize.width(), superscriptSize.width()), max(baseSize.height()/2, subscriptSize.height()) + max(baseSize.height()/2, superscriptSize.height()));
-}
-
-ExpressionLayout * CondensedSumLayout::child(uint16_t index) {
-  switch (index) {
-    case 0:
-      return m_baseLayout;
-    case 1:
-      return m_subscriptLayout;
-    case 2:
-      return m_superscriptLayout;
-    default:
-      return nullptr;
-  }
 }
 
 KDPoint CondensedSumLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  KDSize baseSize = m_baseLayout->size();
-  KDSize superscriptSize = m_superscriptLayout == nullptr ? KDSizeZero : m_superscriptLayout->size();
-  if (child == m_baseLayout) {
+  KDSize baseSize = baseLayout()->size();
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->size();
+  if (child == baseLayout()) {
     y = max(0, superscriptSize.height() - baseSize.height()/2);
   }
-  if (child == m_subscriptLayout) {
+  if (child == subscriptLayout()) {
     x = baseSize.width();
     y = max(baseSize.height()/2, superscriptSize.height());
   }
-  if (child == m_superscriptLayout) {
+  if (child == superscriptLayout()) {
     x = baseSize.width();
   }
   return KDPoint(x,y);
+}
+
+ExpressionLayout * CondensedSumLayout::baseLayout() {
+  return editableChild(0);
+}
+
+ExpressionLayout * CondensedSumLayout::subscriptLayout() {
+  return editableChild(1);
+}
+
+ExpressionLayout * CondensedSumLayout::superscriptLayout() {
+  return editableChild(2);
 }
 
 }

@@ -1,37 +1,31 @@
 #ifndef POINCARE_PARENTHESIS_LAYOUT_H
 #define POINCARE_PARENTHESIS_LAYOUT_H
 
-#include <poincare/expression.h>
-#include <poincare/expression_layout.h>
+#include <poincare/static_layout_hierarchy.h>
 
 namespace Poincare {
 
-class ParenthesisLayout : public ExpressionLayout {
+class ParenthesisLayout : public StaticLayoutHierarchy<3> {
 public:
-  ParenthesisLayout(ExpressionLayout * operandLayout);
-  ~ParenthesisLayout();
-  ParenthesisLayout(const ParenthesisLayout& other) = delete;
-  ParenthesisLayout(ParenthesisLayout&& other) = delete;
-  ParenthesisLayout& operator=(const ParenthesisLayout& other) = delete;
-  ParenthesisLayout& operator=(ParenthesisLayout&& other) = delete;
   constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
   constexpr static KDCoordinate k_parenthesisCurveHeight = 7;
+  ParenthesisLayout(ExpressionLayout * operand, bool cloneOperands);
+  ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {
   };
   KDSize computeSize() override;
-  ExpressionLayout * child(uint16_t index) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
   constexpr static KDCoordinate k_externWidthMargin = 1;
   constexpr static KDCoordinate k_externHeightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
-  ExpressionLayout * m_operandLayout;
-  ExpressionLayout * m_leftParenthesisLayout;
-  ExpressionLayout * m_rightParenthesisLayout;
+  ExpressionLayout * operandLayout();
+  ExpressionLayout * leftParenthesisLayout();
+  ExpressionLayout * rightParenthesisLayout();
 };
 
 }

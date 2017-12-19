@@ -7,24 +7,17 @@ extern "C" {
 
 namespace Poincare {
 
-GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns) :
-  ExpressionLayout(),
+GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands) :
+  DynamicLayoutHierarchy(entryLayouts, numberOfRows*numberOfColumns, cloneOperands),
   m_numberOfRows(numberOfRows),
   m_numberOfColumns(numberOfColumns)
 {
-  m_entryLayouts = new ExpressionLayout *[numberOfColumns*numberOfRows];
-  for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
-    m_entryLayouts[i] = entryLayouts[i];
-    m_entryLayouts[i]->setParent(this);
-  }
   m_baseline = (height()+1)/2;
 }
 
-GridLayout::~GridLayout() {
-  for (int i=0; i<m_numberOfColumns*m_numberOfRows; i++) {
-    delete m_entryLayouts[i];
-  }
-  delete[] m_entryLayouts;
+ExpressionLayout * GridLayout::clone() const {
+  GridLayout * layout = new GridLayout(const_cast<ExpressionLayout **>(children()), m_numberOfRows, m_numberOfColumns, true);
+  return layout;
 }
 
 bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
@@ -33,7 +26,7 @@ bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   if (cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
-    ExpressionLayout * lastChild = m_entryLayouts[m_numberOfColumns*m_numberOfRows-1];
+    ExpressionLayout * lastChild = editableChild(m_numberOfColumns*m_numberOfRows-1);
     assert(lastChild != nullptr);
     cursor->setPointedExpressionLayout(lastChild);
     return true;
@@ -50,7 +43,7 @@ bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
     }
     // Case: Left of another child.
     // Go Right of its brother on the left.
-    cursor->setPointedExpressionLayout(m_entryLayouts[childIndex-1]);
+    cursor->setPointedExpressionLayout(editableChild(childIndex-1));
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return true;
   }
@@ -70,7 +63,7 @@ bool GridLayout::moveRight(ExpressionLayoutCursor * cursor) {
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
     assert(m_numberOfColumns*m_numberOfRows >= 1);
-    ExpressionLayout * firstChild = m_entryLayouts[0];
+    ExpressionLayout * firstChild = editableChild(0);
     assert(firstChild != nullptr);
     cursor->setPointedExpressionLayout(firstChild);
     return true;
@@ -87,7 +80,7 @@ bool GridLayout::moveRight(ExpressionLayoutCursor * cursor) {
     }
     // Case: Right of another child.
     // Go Left of its brother on the right.
-    cursor->setPointedExpressionLayout(m_entryLayouts[childIndex+1]);
+    cursor->setPointedExpressionLayout(editableChild(childIndex+1));
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
   }
@@ -105,7 +98,7 @@ bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * prev
   // neighbourg.
   int childIndex = indexOfChild(previousLayout);
   if (childIndex >- 1 && !childIsTopOfGrid(childIndex)) {
-    return m_entryLayouts[childIndex - m_numberOfColumns]->moveUpInside(cursor);
+    return editableChild(childIndex - m_numberOfColumns)->moveUpInside(cursor);
   }
   return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
 }
@@ -115,7 +108,7 @@ bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * pr
   // lower neighbourg.
   int childIndex = indexOfChild(previousLayout);
   if (childIndex >- 1 && !childIsBottomOfGrid(childIndex)) {
-    return m_entryLayouts[childIndex + m_numberOfColumns]->moveDownInside(cursor);
+    return editableChild(childIndex + m_numberOfColumns)->moveDownInside(cursor);
   }
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
@@ -123,7 +116,7 @@ bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * pr
 KDCoordinate GridLayout::rowBaseline(int i) {
   KDCoordinate rowBaseline = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
-    rowBaseline = max(rowBaseline, m_entryLayouts[i*m_numberOfColumns+j]->baseline());
+    rowBaseline = max(rowBaseline, child(i*m_numberOfColumns+j)->baseline());
   }
   return rowBaseline;
 }
@@ -132,7 +125,7 @@ KDCoordinate GridLayout::rowHeight(int i) {
   KDCoordinate rowHeight = 0;
   KDCoordinate baseline = rowBaseline(i);
   for (int j = 0; j < m_numberOfColumns; j++) {
-    rowHeight = max(rowHeight, m_entryLayouts[i*m_numberOfColumns+j]->size().height() - m_entryLayouts[i*m_numberOfColumns+j]->baseline());
+    rowHeight = max(rowHeight, editableChild(i*m_numberOfColumns+j)->size().height() - child(i*m_numberOfColumns+j)->baseline());
   }
   return baseline+rowHeight;
 }
@@ -149,7 +142,7 @@ KDCoordinate GridLayout::height() {
 KDCoordinate GridLayout::columnWidth(int j) {
   KDCoordinate columnWidth = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
-    columnWidth = max(columnWidth, m_entryLayouts[i*m_numberOfColumns+j]->size().width());
+    columnWidth = max(columnWidth, editableChild(i*m_numberOfColumns+j)->size().width());
   }
   return columnWidth;
 }
@@ -171,19 +164,12 @@ KDSize GridLayout::computeSize() {
   return KDSize(width(), height());
 }
 
-ExpressionLayout * GridLayout::child(uint16_t index) {
-  if (index < m_numberOfColumns*m_numberOfRows) {
-    return m_entryLayouts[index];
-  }
-  return nullptr;
-}
-
 KDPoint GridLayout::positionOfChild(ExpressionLayout * child) {
   int rowIndex = 0;
   int columnIndex = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
     for (int j = 0; j < m_numberOfColumns; j++) {
-      if (child == m_entryLayouts[i*m_numberOfColumns+j]) {
+      if (child == editableChild(i*m_numberOfColumns+j)) {
         rowIndex = i;
         columnIndex = j;
         break;
@@ -205,7 +191,7 @@ KDPoint GridLayout::positionOfChild(ExpressionLayout * child) {
 
 int GridLayout::indexOfChild(ExpressionLayout * eL) const {
   for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
-    if (eL == m_entryLayouts[i]) {
+    if (eL == child(i)) {
       return i;
     }
   }

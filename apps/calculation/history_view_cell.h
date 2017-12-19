@@ -19,6 +19,9 @@ public:
   void reloadScroll();
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
+  Responder * responder() override {
+    return this;
+  }
   KDColor backgroundColor() const override;
   void setCalculation(Calculation * calculation);
   int numberOfSubviews() const override;

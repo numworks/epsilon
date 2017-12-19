@@ -90,14 +90,6 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
       firstSubCellSelected = myPreviousCell->firstTextSelected();
     }
     myCell->selectFirstText(firstSubCellSelected);
-    app()->setFirstResponder(myCell);
-  } else {
-    if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
-      EvenOddDoubleBufferTextCell * myPreviousCell = (EvenOddDoubleBufferTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-      if (app()->firstResponder()->commonAncestorWith(myPreviousCell) == myPreviousCell) {
-        app()->setFirstResponder(t);
-      }
-    }
   }
 }
 
@@ -250,7 +242,8 @@ Responder * CalculationController::tabController() const {
 }
 
 View * CalculationController::loadView() {
-  SelectableTableView * tableView = (SelectableTableView *)TabTableController::loadView();
+  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 0,  Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, this, true, true, Palette::WallScreenDark);
+;
   m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
   m_columnTitleCell = new EvenOddDoubleBufferTextCell(tableView);
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {

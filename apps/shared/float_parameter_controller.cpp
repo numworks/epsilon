@@ -145,25 +145,6 @@ bool FloatParameterController::textFieldDidReceiveEvent(::TextField * textField,
   return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
 }
 
-void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
-    return;
-  }
-  if (previousSelectedCellY >= 0 && previousSelectedCellY < numberOfRows()-1) {
-    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->setEditing(false);
-  }
-  if (t->selectedRow() == numberOfRows()-1) {
-    Button * myNewCell = (Button *)t->selectedCell();
-    app()->setFirstResponder(myNewCell);
-    return;
-  }
-  if (t->selectedRow() >= 0) {
-    MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
-    app()->setFirstResponder(myNewCell);
-  }
-}
-
 TextFieldDelegateApp * FloatParameterController::textFieldDelegateApp() {
   return (TextFieldDelegateApp *)app();
 }
@@ -190,7 +171,7 @@ I18n::Message FloatParameterController::okButtonText() {
 }
 
 View * FloatParameterController::loadView() {
-  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, this);
+  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this);
   m_okButton = new ButtonWithSeparator(tableView, okButtonText(), Invocation([](void * context, void * sender) {
     FloatParameterController * parameterController = (FloatParameterController *) context;
     parameterController->buttonAction();

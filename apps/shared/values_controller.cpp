@@ -304,7 +304,7 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
 }
 
 View * ValuesController::loadView() {
-  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 0, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin, this, this, true, true, Palette::WallScreenDark, 13, Palette::GreyDark, Palette::GreyMiddle);
+  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 0, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin, this, nullptr, true, true, Palette::WallScreenDark, 13, Palette::GreyDark, Palette::GreyMiddle);
   m_abscissaTitleCell = new EvenOddMessageTextCell(KDText::FontSize::Small);
   for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
     m_abscissaCells[i] = new EvenOddEditableTextCell(tableView, this, m_draftTextBuffer, KDText::FontSize::Small);

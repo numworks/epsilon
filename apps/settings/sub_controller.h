@@ -8,7 +8,7 @@
 
 namespace Settings {
 
-class SubController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public Shared::TextFieldDelegate {
+class SubController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public Shared::TextFieldDelegate {
 public:
   SubController(Responder * parentResponder);
   ~SubController();
@@ -35,7 +35,6 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 private:
   StackViewController * stackController() const;
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);

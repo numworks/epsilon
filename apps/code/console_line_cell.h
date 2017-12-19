@@ -21,6 +21,9 @@ public:
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
   void reloadCell() override;
+  Responder * responder() override {
+    return this;
+  }
 
   /* View */
   int numberOfSubviews() const override;

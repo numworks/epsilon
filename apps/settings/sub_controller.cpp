@@ -14,7 +14,7 @@ SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_editableCell(&m_selectableTableView, this, m_draftTextBuffer),
   m_selectableTableView(this, this, 0, 1, k_topBottomMargin, Metric::CommonRightMargin,
-    k_topBottomMargin, Metric::CommonLeftMargin, this, this),
+    k_topBottomMargin, Metric::CommonLeftMargin, this),
   m_messageTreeModel(nullptr)
 {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
@@ -253,26 +253,6 @@ bool SubController::textFieldDidReceiveEvent(::TextField * textField, Ion::Event
     return true;
   }
   return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
-}
-
-void SubController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (m_messageTreeModel->label() != I18n::Message::DisplayMode) {
-    return;
-  }
-  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
-    return;
-  }
-  if (previousSelectedCellY == numberOfRows()-1) {
-    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->setEditing(false);
-  }
-  if (t->selectedRow() >= 0 && t->selectedRow() < numberOfRows()-1) {
-    app()->setFirstResponder(&m_selectableTableView);
-  }
-  if (t->selectedRow() == numberOfRows() -1) {
-    MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
-    app()->setFirstResponder(myNewCell);
-  }
 }
 
 StackViewController * SubController::stackController() const {

@@ -19,7 +19,8 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * t
      || (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
      || (event == Ion::Events::Up && selectedRow() > 0)
      || (event == Ion::Events::Right && textField->cursorLocation() == textField->draftTextLength() && selectedColumn() < numberOfColumns()-1)
-     || (event == Ion::Events::Left && textField->cursorLocation() == 0 && selectedColumn() > 0);  }
+     || (event == Ion::Events::Left && textField->cursorLocation() == 0 && selectedColumn() > 0);
+}
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
@@ -40,23 +41,6 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * text
     selectableTableView()->handleEvent(event);
   }
   return true;
-}
-
-void EditableCellTableViewController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
-    return;
-  }
-  if (cellAtLocationIsEditable(previousSelectedCellX, previousSelectedCellY)) {
-    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->editableTextCell()->textField()->setEditing(false);
-    if (app()->firstResponder() == myCell->editableTextCell()->textField()) {
-      app()->setFirstResponder(t);
-    }
-  }
-  if (cellAtLocationIsEditable(t->selectedColumn(), t->selectedRow())) {
-    EvenOddEditableTextCell * myCell = (EvenOddEditableTextCell *)t->selectedCell();
-    app()->setFirstResponder(myCell);
-  }
 }
 
 int EditableCellTableViewController::numberOfRows() {

@@ -125,12 +125,23 @@ void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLay
     if (m_parent->addChildAtIndex(brother, brotherIndex)) {
       return;
     }
-  }
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    replaceWithJuxtapositionOf(brother, this, false);
+    if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+      replaceWithJuxtapositionOf(brother, this, false);
+      return;
+    }
+    assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+    replaceWithJuxtapositionOf(this, brother, false);
     return;
   }
-  replaceWithJuxtapositionOf(this, brother, false);
+  // If there is no parent, the pointed layout is the main horizontal layout.
+  // Add the "brother" as a child.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    addChildAtIndex(brother, 0);
+    return;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  addChildAtIndex(brother, numberOfChildren());
+  return;
 }
 
 bool ExpressionLayout::insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor) {

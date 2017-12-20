@@ -29,18 +29,23 @@ public:
   void setPositionInside(int positionInside) { m_positionInside = positionInside; }
   KDCoordinate cursorHeight() const { return k_cursorHeight; }
 
-  /* Move */
-  bool moveLeft();
-  bool moveRight();
-  bool moveUp();
-  bool moveDown();
-
   /* Comparison */
   bool positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position, int positionIndex = 0);
 
   /* Position */
   KDPoint middleLeftPoint();
   KDPoint middleLeftPointOfCursor(ExpressionLayout * expressionLayout, Position position, int positionInside = 0);
+
+  /* Move */
+  bool moveLeft();
+  bool moveRight();
+  bool moveUp();
+  bool moveDown();
+
+  /* Edition */
+  ExpressionLayout * addEmptyFractionLayout();
+  ExpressionLayout * insertText(const char * text);
+
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   ExpressionLayout * m_pointedExpressionLayout;

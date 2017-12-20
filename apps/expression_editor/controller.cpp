@@ -1,9 +1,13 @@
 #include "controller.h"
 #include <poincare/src/layout/char_layout.h> //TODO move from there.
+#include <poincare/src/layout/fraction_layout.h> //TODO move from there.
+#include <poincare/src/layout/empty_visible_layout.h> //TODO move from there.
+
+using namespace Poincare;
 
 namespace ExpressionEditor {
 
-Controller::Controller(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout) :
+Controller::Controller(Responder * parentResponder, ExpressionLayout * expressionLayout) :
   ViewController(parentResponder),
   m_view(parentResponder, expressionLayout, &m_cursor),
   m_expressionLayout(expressionLayout)
@@ -34,8 +38,19 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     || (event == Ion::Events::Down && m_cursor.moveDown()))
   {
     returnValue = true;
-  }
-  else if (event.hasText()) {
+  } else if (event == Ion::Events::Division) {
+    EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
+    EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
+
+    FractionLayout * newChild = new FractionLayout(child1, child2, false);
+    m_cursor.pointedExpressionLayout()->addBrother(&m_cursor, newChild);
+    m_cursor.setPointedExpressionLayout(newChild);
+    m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
+    m_cursor.setPositionInside(0);
+    returnValue = true;
+    m_expressionLayout->invalidAllSizesPositionsAndBaselines();
+    m_view.layoutSubviews();
+  } else if (event.hasText()) {
     insertTextAtCursor(event.text());
     returnValue = true;
     m_expressionLayout->invalidAllSizesPositionsAndBaselines();
@@ -50,14 +65,14 @@ void Controller::insertTextAtCursor(const char * text) {
   if (textLength <= 0) {
     return;
   }
-  Poincare::CharLayout * newChild = nullptr;
+  CharLayout * newChild = nullptr;
   for (int i = 0; i < textLength; i++) {
-    newChild = new Poincare::CharLayout(text[i]);
+    newChild = new CharLayout(text[i]);
     m_cursor.pointedExpressionLayout()->addBrother(&m_cursor, newChild);
   }
   assert(newChild != nullptr);
   m_cursor.setPointedExpressionLayout(newChild);
-  m_cursor.setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
+  m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
   m_cursor.setPositionInside(0);
 }
 

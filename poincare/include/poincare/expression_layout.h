@@ -63,13 +63,17 @@ public:
   bool moveUpInside(ExpressionLayoutCursor * cursor);
   virtual bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr);
   bool moveDownInside(ExpressionLayoutCursor * cursor);
+
+  /* Other */
+  virtual char XNTChar() const;
+
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
   virtual KDSize computeSize() = 0;
   virtual void computeBaseline() = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
   void detachChildAtIndex(int i);
-    virtual void moveCursorInsideAtDirection (
+  virtual void moveCursorInsideAtDirection (
     VerticalDirection direction,
     ExpressionLayoutCursor * cursor,
     ExpressionLayout ** childResult,

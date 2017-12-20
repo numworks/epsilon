@@ -102,6 +102,12 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptySquarePowerLayout() {
   return child1;
 }
 
+ExpressionLayout * ExpressionLayoutCursor::addXNTCharLayout() {
+  CharLayout * newChild = new CharLayout(m_pointedExpressionLayout->XNTChar());
+  m_pointedExpressionLayout->addBrother(this, newChild);
+  return newChild;
+}
+
 ExpressionLayout * ExpressionLayoutCursor::insertText(const char * text) {
   int textLength = strlen(text);
   if (textLength <= 0) {

@@ -14,6 +14,7 @@ public:
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+  char XNTChar() const override;
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   ExpressionLayout * lowerBoundLayout();

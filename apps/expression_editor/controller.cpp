@@ -1,4 +1,5 @@
 #include "controller.h"
+#include <apps/expression_editor/app.h>
 
 using namespace Poincare;
 
@@ -32,7 +33,23 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     m_view.cursorPositionChanged();
     return true;
   }
-  return false;
+  return Responder::handleEvent(event);
+}
+
+Toolbox * Controller::toolbox() {
+  ExpressionEditor::App * expressionEditorApp = static_cast<ExpressionEditor::App *>(app());
+  return expressionEditorApp->mathToolbox();
+}
+
+void Controller::insertLayoutAtCursor(ExpressionLayout * layout, ExpressionLayout * pointedLayout) {
+  if (layout == nullptr) {
+    return;
+  }
+  m_cursor.addLayout(layout);
+  m_cursor.setPointedExpressionLayout(pointedLayout);
+  m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
+  m_cursor.setPositionInside(0);
+  m_view.cursorPositionChanged();
 }
 
 bool Controller::privateHandleEvent(Ion::Events::Event event) {

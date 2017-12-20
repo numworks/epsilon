@@ -43,6 +43,7 @@ public:
   bool moveDown();
 
   /* Edition */
+  void addLayout(ExpressionLayout * layout);
   ExpressionLayout * addEmptyExponentialLayout();
   ExpressionLayout * addEmptyFractionLayout();
   ExpressionLayout * addEmptyLogarithmLayout();

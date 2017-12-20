@@ -17,6 +17,13 @@ public:
   View * view() override { return &m_view; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+
+  /* Responder */
+  Toolbox * toolbox() override;
+
+  /* Callback for Toolbox */
+  void insertLayoutAtCursor(ExpressionLayout * layout, ExpressionLayout * pointedLayout);
+
 private:
   bool privateHandleEvent(Ion::Events::Event event);
   bool handleMoveEvent(Ion::Events::Event event);

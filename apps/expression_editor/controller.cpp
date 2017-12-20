@@ -65,12 +65,17 @@ bool Controller::handleMoveEvent(Ion::Events::Event event) {
     return m_cursor.moveDown();
   }
   if (event == Ion::Events::ShiftLeft) {
-    //TODO
-    return false;
+    // The cursor should never point to the main HorizontalLayout.
+    m_cursor.setPointedExpressionLayout(m_expressionLayout);
+    m_cursor.setPosition(ExpressionLayoutCursor::Position::Left);
+    m_cursor.setPositionInside(0);
+    return true;
   }
   if (event == Ion::Events::ShiftRight) {
-    //TODO
-    return false;
+    m_cursor.setPointedExpressionLayout(m_expressionLayout);
+    m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
+    m_cursor.setPositionInside(0);
+    return true;
   }
   return false;
 }

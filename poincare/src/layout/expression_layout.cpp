@@ -13,7 +13,8 @@ ExpressionLayout::ExpressionLayout() :
   m_sized(false),
   m_baselined(false),
   m_positioned(false),
-  m_frame(KDRectZero) {
+  m_frame(KDRectZero)
+{
 }
 
 const ExpressionLayout * const * ExpressionLayout::ExpressionLayoutArray2(const ExpressionLayout * e1, const ExpressionLayout * e2) {

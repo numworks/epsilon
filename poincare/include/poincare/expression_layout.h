@@ -31,7 +31,7 @@ public:
   KDPoint absoluteOrigin();
   KDSize size();
   KDCoordinate baseline();
-  void invalidAllSizesPositionsAndBaselines();
+  virtual void invalidAllSizesPositionsAndBaselines();
 
   /* Hierarchy */
   virtual const ExpressionLayout * const * children() const = 0;
@@ -65,6 +65,8 @@ public:
   bool moveDownInside(ExpressionLayoutCursor * cursor);
 
   /* Other */
+  virtual bool isLeftParenthesis() const { return false; }
+  virtual bool isRightParenthesis() const { return false; }
   virtual char XNTChar() const;
 
 protected:

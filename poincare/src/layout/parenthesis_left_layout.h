@@ -9,8 +9,11 @@ class ParenthesisLeftLayout : public ParenthesisLeftRightLayout {
 public:
   using ParenthesisLeftRightLayout::ParenthesisLeftRightLayout;
   ExpressionLayout * clone() const override;
+  bool isLeftParenthesis() const override { return true; }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void computeOperandHeight() override;
+  void computeBaseline() override;
 };
 
 }

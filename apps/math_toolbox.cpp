@@ -8,10 +8,29 @@
  * and the text which would be edited by clicking on the row. When the node is a
  * subtree, the edited text is set at I18n::Message::Default. */
 
+const int pointedLayoutPathIntegral[] = {2, 0};
+const int pointedLayoutPathSum[] = {2};
 const ToolboxMessageTree calculChildren[4] = {
   ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg, nullptr, 0),
-  ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg, nullptr, 0, new IntegralLayout(new EmptyVisibleLayout(), new EmptyVisibleLayout, new HorizontalLayout(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray2(new EmptyVisibleLayout(), new StringLayout("dx",2))), 2, false), false)),
-  ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommandWithArg),
+  ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg, nullptr, 0,
+      new IntegralLayout(
+        new EmptyVisibleLayout(),
+        new EmptyVisibleLayout(),
+        new HorizontalLayout(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray2(
+              new EmptyVisibleLayout(),
+              new StringLayout("dx",2))), 2, false), false),
+      const_cast<int *>(&pointedLayoutPathIntegral[0]),
+      2),
+  ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommandWithArg, nullptr, 0,
+      new SumLayout(
+        new HorizontalLayout(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray2(
+              new StringLayout("n=",2),
+              new EmptyVisibleLayout())), 2, false),
+        new EmptyVisibleLayout(),
+        new EmptyVisibleLayout(),
+        false),
+      const_cast<int *>(&pointedLayoutPathSum[0]),
+      1),
   ToolboxMessageTree(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommandWithArg)};
 
 const ToolboxMessageTree complexChildren[5] = {
@@ -129,7 +148,11 @@ bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   // Deal with ExpressionEditor::Controller for now.
   m_selectableTableView.deselectTable();
   ExpressionLayout * newLayout = selectedMessageTree->layout()->clone();
-  expressionEditorControllerSender()->insertLayoutAtCursor(newLayout, newLayout->editableChild(2)->editableChild(0));
+  ExpressionLayout * pointedLayout = newLayout;
+  for (int i = 0; i < selectedMessageTree->pointedPathLength(); i++) {
+    pointedLayout = pointedLayout->editableChild(selectedMessageTree->pointedPath()[i]);
+  }
+  expressionEditorControllerSender()->insertLayoutAtCursor(newLayout, pointedLayout);
   app()->dismissModalViewController();
   return true;
 }

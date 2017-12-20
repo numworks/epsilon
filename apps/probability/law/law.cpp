@@ -77,9 +77,12 @@ double Law::cumulativeDistributiveInverseForProbability(double * probability) {
   }
   double p = 0.0;
   int k = 0;
-  while (p < *probability && k < k_maxNumberOfOperations) {
+  double delta = 0.0;
+  do {
+    delta = std::fabs(*probability-p);
     p += evaluateAtDiscreteAbscissa(k++);
-  }
+  } while (std::fabs(*probability-p) <= delta && k < k_maxNumberOfOperations);
+  p -= evaluateAtDiscreteAbscissa(--k);
   if (k == k_maxNumberOfOperations) {
     *probability = 1.0;
     return INFINITY;
@@ -104,9 +107,11 @@ double Law::rightIntegralInverseForProbability(double * probability) {
   }
   double p = 0.0;
   int k = 0;
-  while (p < 1.0 - *probability && k < k_maxNumberOfOperations) {
+  double delta = 0.0;
+  do {
+    delta = std::fabs(1.0-*probability-p);
     p += evaluateAtDiscreteAbscissa(k++);
-  }
+  } while (std::fabs(1.0-*probability-p) <= delta && k < k_maxNumberOfOperations);
   if (k == k_maxNumberOfOperations) {
     *probability = 1.0;
     return INFINITY;

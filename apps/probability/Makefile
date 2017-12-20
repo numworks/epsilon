@@ -9,6 +9,7 @@ app_objs += $(addprefix apps/probability/,\
   calculation/right_integral_calculation.o\
   calculation/finite_integral_calculation.o\
   calculation_controller.o\
+  calculation_view.o\
   cell.o\
   image_table_view.o\
   law/binomial_law.o\

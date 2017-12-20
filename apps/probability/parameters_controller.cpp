@@ -155,7 +155,6 @@ bool ParametersController::textFieldDidFinishEditing(TextField * textField, cons
 }
 
 void ParametersController::buttonAction() {
-  m_calculationController->selectSubview(1);
   StackViewController * stack = stackController();
   stack->push(m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
 }

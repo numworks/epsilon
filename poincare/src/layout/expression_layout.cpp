@@ -189,6 +189,13 @@ void ExpressionLayout::detachChild(const ExpressionLayout * e) {
   }
 }
 
+char ExpressionLayout::XNTChar() const {
+  if (m_parent == nullptr) {
+    return 'x';
+  }
+  return m_parent->XNTChar();
+}
+
 void ExpressionLayout::detachChildAtIndex(int i) {
   ExpressionLayout ** op = const_cast<ExpressionLayout **>(children());
   if (op[i] != nullptr && op[i]->parent() == this) {

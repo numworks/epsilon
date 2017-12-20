@@ -128,6 +128,10 @@ bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout 
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
 
+char SequenceLayout::XNTChar() const {
+  return 'n';
+}
+
 ExpressionLayout * SequenceLayout::upperBoundLayout() {
   return editableChild(0);
 }

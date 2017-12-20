@@ -80,8 +80,7 @@ ExpressionLayout * Controller::handleAddEvent(Ion::Events::Event event) {
     return m_cursor.addEmptyFractionLayout();
   }
   if (event == Ion::Events::XNT) {
-    //TODO
-    return nullptr;
+    return m_cursor.addXNTCharLayout();
   }
   if (event == Ion::Events::Exp) {
     return m_cursor.addEmptyExponentialLayout();

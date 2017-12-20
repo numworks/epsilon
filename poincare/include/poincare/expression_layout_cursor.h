@@ -49,6 +49,7 @@ public:
   ExpressionLayout * addEmptyPowerLayout();
   ExpressionLayout * addEmptyRootLayout();
   ExpressionLayout * addEmptySquarePowerLayout();
+  ExpressionLayout * addXNTCharLayout();
   ExpressionLayout * insertText(const char * text);
 
 private:

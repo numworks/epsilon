@@ -49,6 +49,7 @@ void Controller::insertLayoutAtCursor(ExpressionLayout * layout, ExpressionLayou
   m_cursor.setPointedExpressionLayout(pointedLayout);
   m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
   m_cursor.setPositionInside(0);
+  m_expressionLayout->invalidAllSizesPositionsAndBaselines();
   m_view.cursorPositionChanged();
 }
 

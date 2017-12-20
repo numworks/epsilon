@@ -9,9 +9,13 @@ namespace Poincare {
 
 ParenthesisLeftRightLayout::ParenthesisLeftRightLayout() :
   StaticLayoutHierarchy<0>(),
-  m_operandHeight(18) //TODO
+  m_operandHeightComputed(false)
 {
-  computeBaseline();
+}
+
+void ParenthesisLeftRightLayout::invalidAllSizesPositionsAndBaselines() {
+  m_operandHeightComputed = false;
+  ExpressionLayout::invalidAllSizesPositionsAndBaselines();
 }
 
 bool ParenthesisLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor) {
@@ -49,13 +53,15 @@ bool ParenthesisLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor) {
 }
 
 KDSize ParenthesisLeftRightLayout::computeSize() {
-  //TODO: compute the operandHeight according to the brothers
-  return KDSize(k_widthMargin + k_lineThickness + k_externWidthMargin, m_operandHeight);
+  return KDSize(k_widthMargin + k_lineThickness + k_externWidthMargin, operandHeight());
 }
 
-void ParenthesisLeftRightLayout::computeBaseline() {
-  m_baseline = m_operandHeight/2; //TODO
-  m_baselined = true;
+KDCoordinate ParenthesisLeftRightLayout::operandHeight() {
+  if (!m_operandHeightComputed) {
+    computeOperandHeight();
+    m_operandHeightComputed = true;
+  }
+  return m_operandHeight;
 }
 
 KDPoint ParenthesisLeftRightLayout::positionOfChild(ExpressionLayout * child) {

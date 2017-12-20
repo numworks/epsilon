@@ -96,6 +96,8 @@ objs += $(addprefix poincare/src/layout/,\
   dynamic_layout_hierarchy.o\
   editable_baseline_relative_layout.o\
   editable_string_layout.o\
+  empty_layout.o\
+  empty_visible_layout.o\
   expression_layout.o\
   floor_layout.o\
   fraction_layout.o\

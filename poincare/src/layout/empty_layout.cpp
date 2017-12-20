@@ -15,6 +15,10 @@ ExpressionLayout * EmptyLayout::clone() const {
   return layout;
 }
 
+void EmptyLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
+  replaceWith(brother, true);
+}
+
 bool EmptyLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   assert(cursor->pointedExpressionLayout() == this);
   // Ask the parent.

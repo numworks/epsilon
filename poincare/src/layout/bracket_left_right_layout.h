@@ -16,6 +16,7 @@ public:
   constexpr static KDCoordinate k_externWidthMargin = 2;
 protected:
   KDSize computeSize() override;
+  void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
   uint16_t m_operandHeight;
 };

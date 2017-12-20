@@ -38,7 +38,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   else if (event.hasText()) {
     insertTextAtCursor(event.text());
     returnValue = true;
-    m_expressionLayout->invalidAllSizesAndPositions();
+    m_expressionLayout->invalidAllSizesPositionsAndBaselines();
     m_view.layoutSubviews();
   }
   m_view.cursorPositionChanged();

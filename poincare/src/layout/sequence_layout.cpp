@@ -9,7 +9,7 @@ namespace Poincare {
 SequenceLayout::SequenceLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * argument, bool cloneOperands) :
   StaticLayoutHierarchy<3>(upperBound, lowerBound, argument, cloneOperands)
 {
-  m_baseline = max(upperBoundLayout()->size().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
+  computeBaseline();
 }
 
 bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
@@ -148,6 +148,11 @@ KDSize SequenceLayout::computeSize() {
     max(max(k_symbolWidth, lowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSize.width(),
     m_baseline + max(k_symbolHeight/2+k_boundHeightMargin+lowerBoundSize.height(), argumentSize.height() - argumentLayout()->baseline())
   );
+}
+
+void SequenceLayout::computeBaseline() {
+  m_baseline = max(upperBoundLayout()->size().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
+  m_baselined = true;
 }
 
 KDPoint SequenceLayout::positionOfChild(ExpressionLayout * child) {

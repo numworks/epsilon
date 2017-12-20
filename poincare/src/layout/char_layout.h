@@ -18,6 +18,7 @@ protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
   KDSize computeSize() override;
+  void computeBaseline() override;
   char m_char;
   KDText::FontSize m_fontSize;
 };

@@ -11,7 +11,7 @@ namespace Poincare {
 ConjugateLayout::ConjugateLayout(ExpressionLayout * operand, bool cloneOperands) :
   StaticLayoutHierarchy<1>(operand, cloneOperands)
 {
-  m_baseline = operandLayout()->baseline()+k_overlineWidth+k_overlineVerticalMargin;
+  computeBaseline();
 }
 
 ExpressionLayout * ConjugateLayout::clone() const {
@@ -80,6 +80,11 @@ void ConjugateLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor
 KDSize ConjugateLayout::computeSize() {
   KDSize operandSize = operandLayout()->size();
   return KDSize(Metric::FractionAndConjugateHorizontalMargin+Metric::FractionAndConjugateHorizontalOverflow+operandSize.width()+Metric::FractionAndConjugateHorizontalOverflow+Metric::FractionAndConjugateHorizontalMargin, operandSize.height()+k_overlineWidth+k_overlineVerticalMargin);
+}
+
+void ConjugateLayout::computeBaseline() {
+  m_baseline = operandLayout()->baseline()+k_overlineWidth+k_overlineVerticalMargin;
+  m_baselined = true;
 }
 
 KDPoint ConjugateLayout::positionOfChild(ExpressionLayout * child) {

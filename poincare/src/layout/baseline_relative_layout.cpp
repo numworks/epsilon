@@ -9,8 +9,7 @@ BaselineRelativeLayout::BaselineRelativeLayout(ExpressionLayout * base, Expressi
   StaticLayoutHierarchy(base, indice, cloneOperands),
   m_type(type)
 {
-  m_baseline = type == Type::Subscript ? baseLayout()->baseline() :
-    indiceLayout()->size().height() + baseLayout()->baseline() - k_indiceHeight;
+  computeBaseline();
 }
 
 ExpressionLayout * BaselineRelativeLayout::clone() const {
@@ -68,6 +67,12 @@ KDSize BaselineRelativeLayout::computeSize() {
   KDSize baseSize = baseLayout()->size();
   KDSize indiceSize = indiceLayout()->size();
   return KDSize(baseSize.width() + indiceSize.width(), baseSize.height() + indiceSize.height() - k_indiceHeight);
+}
+
+void BaselineRelativeLayout::computeBaseline() {
+  m_baseline = m_type == Type::Subscript ? baseLayout()->baseline() :
+    indiceLayout()->size().height() + baseLayout()->baseline() - k_indiceHeight;
+  m_baselined = true;
 }
 
 KDPoint BaselineRelativeLayout::positionOfChild(ExpressionLayout * child) {

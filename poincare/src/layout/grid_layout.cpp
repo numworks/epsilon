@@ -12,7 +12,7 @@ GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int n
   m_numberOfRows(numberOfRows),
   m_numberOfColumns(numberOfColumns)
 {
-  m_baseline = (height()+1)/2;
+  computeBaseline();
 }
 
 ExpressionLayout * GridLayout::clone() const {
@@ -116,7 +116,7 @@ bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * pr
 KDCoordinate GridLayout::rowBaseline(int i) {
   KDCoordinate rowBaseline = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
-    rowBaseline = max(rowBaseline, child(i*m_numberOfColumns+j)->baseline());
+    rowBaseline = max(rowBaseline, editableChild(i*m_numberOfColumns+j)->baseline());
   }
   return rowBaseline;
 }
@@ -125,7 +125,7 @@ KDCoordinate GridLayout::rowHeight(int i) {
   KDCoordinate rowHeight = 0;
   KDCoordinate baseline = rowBaseline(i);
   for (int j = 0; j < m_numberOfColumns; j++) {
-    rowHeight = max(rowHeight, editableChild(i*m_numberOfColumns+j)->size().height() - child(i*m_numberOfColumns+j)->baseline());
+    rowHeight = max(rowHeight, editableChild(i*m_numberOfColumns+j)->size().height() - editableChild(i*m_numberOfColumns+j)->baseline());
   }
   return baseline+rowHeight;
 }
@@ -162,6 +162,11 @@ void GridLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDC
 
 KDSize GridLayout::computeSize() {
   return KDSize(width(), height());
+}
+
+void GridLayout::computeBaseline() {
+  m_baseline = (height()+1)/2;
+  m_baselined = true;
 }
 
 KDPoint GridLayout::positionOfChild(ExpressionLayout * child) {

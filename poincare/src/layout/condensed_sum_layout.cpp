@@ -8,8 +8,7 @@ namespace Poincare {
 CondensedSumLayout::CondensedSumLayout(ExpressionLayout * base, ExpressionLayout * subscript, ExpressionLayout * superscript, bool cloneOperands) :
   StaticLayoutHierarchy<3>(base, subscript, superscript, cloneOperands)
 {
-  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->size();
-  m_baseline = baseLayout()->baseline() + max(0, superscriptSize.height() - baseLayout()->size().height()/2);
+  computeBaseline();
 }
 
 ExpressionLayout * CondensedSumLayout::clone() const {
@@ -140,6 +139,12 @@ KDSize CondensedSumLayout::computeSize() {
   KDSize subscriptSize = subscriptLayout()->size();
   KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->size();
   return KDSize(baseSize.width() + max(subscriptSize.width(), superscriptSize.width()), max(baseSize.height()/2, subscriptSize.height()) + max(baseSize.height()/2, superscriptSize.height()));
+}
+
+void CondensedSumLayout::computeBaseline() {
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->size();
+  m_baseline = baseLayout()->baseline() + max(0, superscriptSize.height() - baseLayout()->size().height()/2);
+  m_baselined = true;
 }
 
 KDPoint CondensedSumLayout::positionOfChild(ExpressionLayout * child) {

@@ -21,6 +21,7 @@ protected:
   ExpressionLayout * argumentLayout();
 private:
   KDSize computeSize() override;
+  void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
 };

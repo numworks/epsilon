@@ -19,6 +19,7 @@ public:
 protected:
   KDColor s_parenthesisWorkingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
   KDSize computeSize() override;
+  void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
   uint16_t m_operandHeight;
 };

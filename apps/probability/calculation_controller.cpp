@@ -212,7 +212,9 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 bool CalculationController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return (event == Ion::Events::Right && m_highlightedSubviewIndex < m_calculation->numberOfEditableParameters()) || event == Ion::Events::Left || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
+      || (event == Ion::Events::Right && textField->cursorLocation() == textField->draftTextLength() && m_highlightedSubviewIndex < m_calculation->numberOfEditableParameters())
+      || (event == Ion::Events::Left && textField->cursorLocation() == 0);
 }
 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

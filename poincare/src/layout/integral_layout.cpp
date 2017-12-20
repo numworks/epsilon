@@ -101,7 +101,7 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
     cursor->setPointedExpressionLayout(upperBoundLayout());
     return true;
   }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
   // Case: Right.
   // Ask the parent.
   if (m_parent) {

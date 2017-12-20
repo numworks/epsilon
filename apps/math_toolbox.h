@@ -4,12 +4,14 @@
 #define MATRICES_ARE_DEFINED 1
 #include <escher.h>
 #include <apps/i18n.h>
+#include <apps/expression_editor/controller.h>
 
 class MathToolbox : public Toolbox {
 public:
   MathToolbox();
 protected:
-  TextField * sender() override;
+  TextField * textFieldSender();
+  ExpressionEditor::Controller * expressionEditorControllerSender();
   bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;
   const ToolboxMessageTree * rootModel() override;
   MessageTableCellWithMessage * leafCellAtIndex(int index) override;

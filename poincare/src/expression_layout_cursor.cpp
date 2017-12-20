@@ -52,6 +52,10 @@ bool ExpressionLayoutCursor::moveDown() {
   return m_pointedExpressionLayout->moveDown(this);
 }
 
+void ExpressionLayoutCursor::addLayout(ExpressionLayout * layout) {
+  pointedExpressionLayout()->addBrother(this, layout);
+}
+
 ExpressionLayout * ExpressionLayoutCursor::addEmptyExponentialLayout() {
   CharLayout * child1 = new CharLayout(Ion::Charset::Exponential);
   EmptyVisibleLayout * child2 = new EmptyVisibleLayout();

@@ -2,6 +2,7 @@
 #define EXPRESSION_EDITOR_APP_H
 
 #include <escher.h>
+#include <apps/math_toolbox.h>
 #include "controller.h"
 #include "expression_and_layout.h"
 
@@ -25,9 +26,11 @@ public:
   private:
     ExpressionAndLayout m_expressionAndLayout;
   };
+  MathToolbox * mathToolbox() { return &m_toolbox; }
 private:
   App(Container * container, Snapshot * snapshot);
   Controller m_controller;
+  MathToolbox m_toolbox;
 };
 
 }

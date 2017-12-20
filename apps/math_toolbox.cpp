@@ -9,8 +9,8 @@
  * subtree, the edited text is set at I18n::Message::Default. */
 
 const ToolboxMessageTree calculChildren[4] = {
-  ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg),
-  ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg),
+  ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg, nullptr, 0),
+  ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg, nullptr, 0, new IntegralLayout(new EmptyVisibleLayout(), new EmptyVisibleLayout, new HorizontalLayout(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray2(new EmptyVisibleLayout(), new StringLayout("dx",2))), 2, false), false)),
   ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommandWithArg),
   ToolboxMessageTree(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommandWithArg)};
 
@@ -102,22 +102,34 @@ MathToolbox::MathToolbox() : Toolbox(nullptr, I18n::translate(rootModel()->label
 {
 }
 
-TextField * MathToolbox::sender() {
-  return (TextField *)Toolbox::sender();
+TextField * MathToolbox::textFieldSender() {
+  return static_cast<TextField *>(Toolbox::sender());
+}
+
+ExpressionEditor::Controller * MathToolbox::expressionEditorControllerSender() {
+  return static_cast<ExpressionEditor::Controller *>(Toolbox::sender());
 }
 
 bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
-  m_selectableTableView.deselectTable();
-  ToolboxMessageTree * messageTree = selectedMessageTree;
-  const char * editedText = I18n::translate(messageTree->insertedText());
-  if (!sender()->isEditing()) {
-    sender()->setEditing(true);
+  if (0) {
+    m_selectableTableView.deselectTable();
+    ToolboxMessageTree * messageTree = selectedMessageTree;
+    const char * editedText = I18n::translate(messageTree->insertedText());
+    if (!textFieldSender()->isEditing()) {
+      textFieldSender()->setEditing(true);
+    }
+    char strippedEditedText[strlen(editedText)];
+    Shared::ToolboxHelpers::TextToInsertForCommandMessage(messageTree->insertedText(), strippedEditedText);
+    textFieldSender()->insertTextAtLocation(strippedEditedText, textFieldSender()->cursorLocation());
+    int newCursorLocation = textFieldSender()->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(strippedEditedText);
+    textFieldSender()->setCursorLocation(newCursorLocation);
+    app()->dismissModalViewController();
+    return true;
   }
-  char strippedEditedText[strlen(editedText)];
-  Shared::ToolboxHelpers::TextToInsertForCommandMessage(messageTree->insertedText(), strippedEditedText);
-  sender()->insertTextAtLocation(strippedEditedText, sender()->cursorLocation());
-  int newCursorLocation = sender()->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(strippedEditedText);
-  sender()->setCursorLocation(newCursorLocation);
+  // Deal with ExpressionEditor::Controller for now.
+  m_selectableTableView.deselectTable();
+  ExpressionLayout * newLayout = selectedMessageTree->layout()->clone();
+  expressionEditorControllerSender()->insertLayoutAtCursor(newLayout, newLayout->editableChild(2)->editableChild(0));
   app()->dismissModalViewController();
   return true;
 }

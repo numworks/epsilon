@@ -9,7 +9,7 @@ namespace Poincare {
 
 BracketLeftRightLayout::BracketLeftRightLayout() :
   StaticLayoutHierarchy<0>(),
-  m_operandHeight(36) //TODO
+  m_operandHeight(18) //TODO
 {
 }
 
@@ -50,12 +50,12 @@ bool BracketLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor) {
 
 KDSize BracketLeftRightLayout::computeSize() {
   //TODO: compute the operandHeight according to the brothers
-  return KDSize(k_externWidthMargin + k_lineThickness + k_bracketWidth + k_widthMargin, m_operandHeight);
+  return KDSize(k_externWidthMargin + k_lineThickness + k_widthMargin, m_operandHeight);
 }
 
 void BracketLeftRightLayout::computeBaseline() {
   //TODO: compute the operandHeight according to the brothers
-  m_baseline = m_operandHeight;
+  m_baseline = m_operandHeight/2;
   m_baselined = true;
 }
 

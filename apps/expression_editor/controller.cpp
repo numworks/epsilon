@@ -64,12 +64,39 @@ bool Controller::handleMoveEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     return m_cursor.moveDown();
   }
+  if (event == Ion::Events::ShiftLeft) {
+    //TODO
+    return false;
+  }
+  if (event == Ion::Events::ShiftRight) {
+    //TODO
+    return false;
+  }
   return false;
 }
 
 ExpressionLayout * Controller::handleAddEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Division) {
     return m_cursor.addEmptyFractionLayout();
+  }
+  if (event == Ion::Events::XNT) {
+    //TODO
+    return nullptr;
+  }
+  if (event == Ion::Events::Exp) {
+    return m_cursor.addEmptyExponentialLayout();
+  }
+  if (event == Ion::Events::Log) {
+    return m_cursor.addEmptyLogarithmLayout();
+  }
+  if (event == Ion::Events::Power) {
+    return m_cursor.addEmptyPowerLayout();
+  }
+  if (event == Ion::Events::Sqrt) {
+    return m_cursor.addEmptyRootLayout();
+  }
+  if (event == Ion::Events::Square) {
+    return m_cursor.addEmptySquarePowerLayout();
   }
   if (event.hasText()) {
     return m_cursor.insertText(event.text());

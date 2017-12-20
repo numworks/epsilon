@@ -9,7 +9,7 @@ namespace Poincare {
 
 ParenthesisLeftRightLayout::ParenthesisLeftRightLayout() :
   StaticLayoutHierarchy<0>(),
-  m_operandHeight(36) //TODO
+  m_operandHeight(18) //TODO
 {
   computeBaseline();
 }

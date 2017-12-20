@@ -43,7 +43,12 @@ public:
   bool moveDown();
 
   /* Edition */
+  ExpressionLayout * addEmptyExponentialLayout();
   ExpressionLayout * addEmptyFractionLayout();
+  ExpressionLayout * addEmptyLogarithmLayout();
+  ExpressionLayout * addEmptyPowerLayout();
+  ExpressionLayout * addEmptyRootLayout();
+  ExpressionLayout * addEmptySquarePowerLayout();
   ExpressionLayout * insertText(const char * text);
 
 private:

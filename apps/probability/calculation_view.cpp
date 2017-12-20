@@ -22,6 +22,7 @@ CalculationView::CalculationView(Responder * parentResponder, CalculationControl
     m_calculationCell[i].setParentResponder(this);
     m_calculationCell[i].textField()->setDelegate(this);
     m_calculationCell[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
+    m_text[i].setAlignment(0.5f, 0.5f);
   }
 }
 
@@ -57,7 +58,9 @@ void CalculationView::selectSubview(int subviewIndex) {
 }
 
 bool CalculationView::textFieldDidHandleEvent(::TextField * textField, Ion::Events::Event event, bool returnValue) {
-  updateCalculationLayout();
+  if (returnValue) {
+    updateCalculationLayoutFromIndex(m_highlightedSubviewIndex-1);
+  }
   return returnValue;
 }
 
@@ -91,7 +94,7 @@ bool CalculationView::textFieldDidFinishEditing(TextField * textField, const cha
     handleEvent(event);
   }
   reloadData();
-  updateCalculationLayout(); // TODO: updateCalculationLayout(0);
+  updateCalculationLayoutFromIndex(0);
   m_calculationController->reloadLawCurveView();
   return true;
 }
@@ -134,27 +137,34 @@ TextFieldDelegateApp * CalculationView::textFieldDelegateApp() {
   return (App *)app();
 }
 
-// TODO: add an index to reload only the right cells
-void CalculationView::updateCalculationLayout() {
+void CalculationView::updateCalculationLayoutFromIndex(int index) {
   KDSize charSize = KDText::charSize();
   KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
   KDCoordinate xCoordinate = m_imageTableView.minimalSizeForOptimalDisplay().width() + 2*k_textWidthMargin+numberOfCharacters*charSize.width();
-  markRectAsDirty(KDRect(xCoordinate, ImageTableView::k_totalMargin-1, bounds().width() - xCoordinate, ImageCell::k_height+2));
-
   KDCoordinate calculationWidth = calculationCellWidth(0);
-  m_calculationCell[0].setFrame(KDRect(xCoordinate, ImageTableView::k_totalMargin, calculationWidth, ImageCell::k_height));
+  if (index == 0) {
+    markRectAsDirty(KDRect(xCoordinate, ImageTableView::k_totalMargin-1, bounds().width() - xCoordinate, ImageCell::k_height+2));
+    m_calculationCell[0].setFrame(KDRect(xCoordinate, ImageTableView::k_totalMargin, calculationWidth, ImageCell::k_height));
+  }
+
   xCoordinate += calculationWidth + k_textWidthMargin;
   numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
+  if (index == 0) {
   m_text[1].setFrame(KDRect(xCoordinate, ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
+  }
   xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
   calculationWidth = calculationCellWidth(1);
-  m_calculationCell[1].setFrame(KDRect(xCoordinate, ImageTableView::k_totalMargin, calculationWidth, ImageCell::k_height));
+  if (index <= 1) {
+    markRectAsDirty(KDRect(xCoordinate, ImageTableView::k_totalMargin-1, bounds().width() - xCoordinate, ImageCell::k_height+2));
+    m_calculationCell[1].setFrame(KDRect(xCoordinate, ImageTableView::k_totalMargin, calculationWidth, ImageCell::k_height));
+  }
   xCoordinate += calculationWidth + k_textWidthMargin;
   if (m_calculation->numberOfParameters() > 2) {
     numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(2)));;
     m_text[2].setFrame(KDRect(xCoordinate, ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
     xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
     calculationWidth = calculationCellWidth(2);
+    markRectAsDirty(KDRect(xCoordinate, ImageTableView::k_totalMargin-1, bounds().width() - xCoordinate, ImageCell::k_height+2));
     m_calculationCell[2].setFrame(KDRect(xCoordinate, ImageTableView::k_totalMargin, calculationWidth, ImageCell::k_height));
   }
 }
@@ -196,8 +206,15 @@ View * CalculationView::subviewAtIndex(int index) {
 }
 
 void CalculationView::layoutSubviews() {
+  // Reload values in textFields
   reloadData();
-
+  // Reload messages
+  m_text[0].setMessage(m_calculation->legendForParameterAtIndex(0));
+  m_text[1].setMessage(m_calculation->legendForParameterAtIndex(1));
+  if (m_calculation->numberOfParameters() == 3) {
+    m_text[2].setMessage(m_calculation->legendForParameterAtIndex(2));
+  }
+  // Layout
   KDSize charSize = KDText::charSize();
   KDCoordinate xCoordinate = 0;
   KDSize tableSize = m_imageTableView.minimalSizeForOptimalDisplay();
@@ -206,7 +223,7 @@ void CalculationView::layoutSubviews() {
   KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
   m_text[0].setFrame(KDRect(xCoordinate, ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
 
-  updateCalculationLayout();
+  updateCalculationLayoutFromIndex(0);
 }
 
 KDCoordinate CalculationView::calculationCellWidth(int index) const {

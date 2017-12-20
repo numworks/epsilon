@@ -53,6 +53,12 @@ KDSize BracketLeftRightLayout::computeSize() {
   return KDSize(k_externWidthMargin + k_lineThickness + k_bracketWidth + k_widthMargin, m_operandHeight);
 }
 
+void BracketLeftRightLayout::computeBaseline() {
+  //TODO: compute the operandHeight according to the brothers
+  m_baseline = m_operandHeight;
+  m_baselined = true;
+}
+
 KDPoint BracketLeftRightLayout::positionOfChild(ExpressionLayout * child) {
   assert(false);
   return KDPointZero;

@@ -20,6 +20,7 @@ protected:
   ExpressionLayout * indiceLayout();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
+  void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
   Type m_type;
 private:

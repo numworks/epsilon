@@ -22,7 +22,7 @@ const uint8_t bottomSymbolPixel[IntegralLayout::k_symbolHeight][IntegralLayout::
 IntegralLayout::IntegralLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * integrand, bool cloneOperands) :
   StaticLayoutHierarchy<3>(upperBound, lowerBound, integrand, cloneOperands)
 {
-  m_baseline = upperBoundLayout()->size().height() + k_integrandHeigthMargin + integrandLayout()->baseline();
+  computeBaseline();
 }
 
 ExpressionLayout * IntegralLayout::clone() const {
@@ -166,6 +166,11 @@ KDSize IntegralLayout::computeSize() {
   return KDSize(
     k_symbolWidth+k_lineThickness+k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width(),
     upperBoundSize.height()+ 2*k_integrandHeigthMargin+integrandSize.height()+lowerBoundSize.height());
+}
+
+void IntegralLayout::computeBaseline() {
+  m_baseline = upperBoundLayout()->size().height() + k_integrandHeigthMargin + integrandLayout()->baseline();
+  m_baselined = true;
 }
 
 KDPoint IntegralLayout::positionOfChild(ExpressionLayout * child) {

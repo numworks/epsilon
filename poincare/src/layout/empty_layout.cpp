@@ -35,4 +35,9 @@ bool EmptyLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+void EmptyLayout::computeBaseline() {
+  m_baseline = 0;
+  m_baselined = true;
+}
+
 }

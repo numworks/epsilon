@@ -9,8 +9,7 @@ namespace Poincare {
 FractionLayout::FractionLayout(ExpressionLayout * numerator, ExpressionLayout * denominator, bool cloneOperands) :
   StaticLayoutHierarchy<2>(numerator, denominator, cloneOperands)
 {
-  m_baseline = numeratorLayout()->size().height()
-    + k_fractionLineMargin + k_fractionLineHeight;
+  computeBaseline();
 }
 
 ExpressionLayout * FractionLayout::clone() const {
@@ -112,6 +111,12 @@ KDSize FractionLayout::computeSize() {
     + k_fractionLineMargin + k_fractionLineHeight + k_fractionLineMargin
     + denominatorLayout()->size().height();
   return KDSize(width, height);
+}
+
+void FractionLayout::computeBaseline() {
+  m_baseline = numeratorLayout()->size().height()
+    + k_fractionLineMargin + k_fractionLineHeight;
+  m_baselined = true;
 }
 
 KDPoint FractionLayout::positionOfChild(ExpressionLayout * child) {

@@ -30,8 +30,8 @@ public:
   KDPoint origin();
   KDPoint absoluteOrigin();
   KDSize size();
-  KDCoordinate baseline() const { return m_baseline; }
-  void invalidAllSizesAndPositions();
+  KDCoordinate baseline();
+  void invalidAllSizesPositionsAndBaselines();
 
   /* Hierarchy */
   virtual const ExpressionLayout * const * children() const = 0;
@@ -66,6 +66,7 @@ public:
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
   virtual KDSize computeSize() = 0;
+  virtual void computeBaseline() = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
   void detachChildAtIndex(int i);
     virtual void moveCursorInsideAtDirection (
@@ -78,6 +79,7 @@ protected:
   KDCoordinate m_baseline;
   ExpressionLayout * m_parent;
   bool m_sized;
+  bool m_baselined;
 private:
   bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor);
   void replaceWithJuxtapositionOf(ExpressionLayout * firstLayout, ExpressionLayout * secondLayout);

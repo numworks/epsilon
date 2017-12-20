@@ -11,6 +11,7 @@ ExpressionLayout::ExpressionLayout() :
   m_baseline(0),
   m_parent(nullptr),
   m_sized(false),
+  m_baselined(false),
   m_positioned(false),
   m_frame(KDRectZero) {
 }
@@ -67,11 +68,21 @@ KDSize ExpressionLayout::size() {
   return m_frame.size();
 }
 
-void ExpressionLayout::invalidAllSizesAndPositions() {
+KDCoordinate ExpressionLayout::baseline() {
+  if (!m_baselined) {
+    computeBaseline();
+    m_baselined = true;
+  }
+  return m_baseline;
+}
+
+
+void ExpressionLayout::invalidAllSizesPositionsAndBaselines() {
   m_sized = false;
   m_positioned = false;
+  m_baselined = false;
   for (int i = 0; i < numberOfChildren(); i++) {
-    editableChild(i)->invalidAllSizesAndPositions();
+    editableChild(i)->invalidAllSizesPositionsAndBaselines();
   }
 }
 

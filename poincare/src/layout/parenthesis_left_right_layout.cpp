@@ -11,6 +11,7 @@ ParenthesisLeftRightLayout::ParenthesisLeftRightLayout() :
   StaticLayoutHierarchy<0>(),
   m_operandHeight(36) //TODO
 {
+  computeBaseline();
 }
 
 bool ParenthesisLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor) {
@@ -50,6 +51,11 @@ bool ParenthesisLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor) {
 KDSize ParenthesisLeftRightLayout::computeSize() {
   //TODO: compute the operandHeight according to the brothers
   return KDSize(k_widthMargin + k_lineThickness + k_externWidthMargin, m_operandHeight);
+}
+
+void ParenthesisLeftRightLayout::computeBaseline() {
+  m_baseline = m_operandHeight/2; //TODO
+  m_baselined = true;
 }
 
 KDPoint ParenthesisLeftRightLayout::positionOfChild(ExpressionLayout * child) {

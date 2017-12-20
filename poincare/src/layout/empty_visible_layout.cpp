@@ -8,7 +8,7 @@ EmptyVisibleLayout::EmptyVisibleLayout() :
   EmptyLayout(),
   m_fillRectColor(KDColor::RGB24(0xffd370)) //TODO make static or in Palette?
 {
-  m_baseline = k_height + 2*k_marginHeight;
+  computeBaseline();
 }
 
 ExpressionLayout * EmptyVisibleLayout::clone() const {
@@ -55,6 +55,11 @@ void EmptyVisibleLayout::render(KDContext * ctx, KDPoint p, KDColor expressionCo
 
 KDSize EmptyVisibleLayout::computeSize() {
   return KDSize(k_width + 2*k_marginWidth, k_height + 2*k_marginHeight);
+}
+
+void EmptyVisibleLayout::computeBaseline() {
+  m_baseline = k_marginHeight + k_height/2;
+  m_baselined = true;
 }
 
 }

@@ -15,7 +15,7 @@ ParenthesisLayout::ParenthesisLayout(ExpressionLayout * operand, bool cloneOpera
   ExpressionLayout * leftParenthesis = new ParenthesisLeftLayout();
   ExpressionLayout * rightParenthesis = new ParenthesisRightLayout();
   build(ExpressionLayout::ExpressionLayoutArray3(leftParenthesis, operand, rightParenthesis), 3, cloneOperands);
-  m_baseline = operandLayout()->baseline();
+  computeBaseline();
 }
 
 ExpressionLayout * ParenthesisLayout::clone() const {
@@ -128,6 +128,11 @@ bool ParenthesisLayout::moveRight(ExpressionLayoutCursor * cursor) {
 KDSize ParenthesisLayout::computeSize() {
   KDSize operandSize = operandLayout()->size();
   return KDSize(operandSize.width() + 2*leftParenthesisLayout()->size().width(), operandSize.height());
+}
+
+void ParenthesisLayout::computeBaseline() {
+  m_baseline = operandLayout()->baseline();
+  m_baselined = true;
 }
 
 KDPoint ParenthesisLayout::positionOfChild(ExpressionLayout * child) {

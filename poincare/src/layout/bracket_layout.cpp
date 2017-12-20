@@ -10,7 +10,7 @@ namespace Poincare {
 BracketLayout::BracketLayout(ExpressionLayout * operandLayout, bool cloneOperands) :
   StaticLayoutHierarchy<1>(operandLayout, cloneOperands)
 {
-  m_baseline = operandLayout->baseline();
+  computeBaseline();
 }
 
 ExpressionLayout * BracketLayout::clone() const {
@@ -98,6 +98,11 @@ KDSize BracketLayout::computeSize() {
   const KDCoordinate k_externWidthMargin = externWidthMargin();
   KDSize operandSize = operandLayout()->size();
   return KDSize(operandSize.width() + 2*k_externWidthMargin + 2*k_widthMargin + 2*k_lineThickness, operandSize.height());
+}
+
+void BracketLayout::computeBaseline() {
+  m_baseline = operandLayout()->baseline();
+  m_baselined = true;
 }
 
 KDPoint BracketLayout::positionOfChild(ExpressionLayout * child) {

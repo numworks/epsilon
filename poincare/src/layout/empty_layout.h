@@ -15,6 +15,7 @@ public:
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override { return; }
   virtual KDSize computeSize() override { return KDSizeZero; }
+  void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override {
     assert(false);
     return KDPointZero;

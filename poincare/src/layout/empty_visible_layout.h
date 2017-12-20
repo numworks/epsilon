@@ -15,6 +15,7 @@ public:
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   virtual KDSize computeSize() override;
+  void computeBaseline() override;
 private:
   constexpr static KDCoordinate k_width = 7;
   constexpr static KDCoordinate k_height = 13;

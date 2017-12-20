@@ -10,8 +10,7 @@ CharLayout::CharLayout(char c, KDText::FontSize fontSize) :
   m_char(c),
   m_fontSize(fontSize)
 {
-  // Half height of the font.
-  m_baseline = (KDText::charSize(m_fontSize).height()+1)/2;
+  computeBaseline();
 }
 
 ExpressionLayout * CharLayout::clone() const {
@@ -63,6 +62,12 @@ KDPoint CharLayout::positionOfChild(ExpressionLayout * child) {
 
 KDSize CharLayout::computeSize() {
   return KDText::charSize(m_fontSize);
+}
+
+void CharLayout::computeBaseline() {
+  // Half height of the font.
+  m_baseline = (KDText::charSize(m_fontSize).height()+1)/2;
+  m_baselined = true;
 }
 
 }

@@ -18,11 +18,7 @@ HorizontalLayout::HorizontalLayout() :
 HorizontalLayout::HorizontalLayout(ExpressionLayout ** childrenLayouts, int childrenCount, bool cloneOperands) :
   DynamicLayoutHierarchy(childrenLayouts, childrenCount, cloneOperands)
 {
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (child(i)->baseline() > m_baseline) {
-      m_baseline = child(i)->baseline();
-    }
-  }
+  computeBaseline();
 }
 
 ExpressionLayout * HorizontalLayout::clone() const {
@@ -159,6 +155,16 @@ KDSize HorizontalLayout::computeSize() {
   return KDSize(totalWidth, max_under_baseline + max_above_baseline);
 }
 
+void HorizontalLayout::computeBaseline() {
+  m_baseline = 0;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (editableChild(i)->baseline() > m_baseline) {
+      m_baseline = editableChild(i)->baseline();
+    }
+  }
+  m_baselined = true;
+}
+
 KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
@@ -168,7 +174,7 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
     assert(previousChild != nullptr);
     x = previousChild->origin().x() + previousChild->size().width();
   }
-  y = m_baseline - child->baseline();
+  y = baseline() - child->baseline();
   return KDPoint(x, y);
 }
 

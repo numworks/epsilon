@@ -19,12 +19,7 @@ const uint8_t radixPixel[NthRootLayout::k_leftRadixHeight][NthRootLayout::k_left
 NthRootLayout::NthRootLayout(ExpressionLayout * radicand, ExpressionLayout * index, bool cloneOperands) :
   StaticLayoutHierarchy<2>(radicand, index, cloneOperands)
 {
-  if (indexLayout() != nullptr) {
-    m_baseline = max(radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
-      indexLayout()->size().height() + k_indexHeight);
-  } else {
-    m_baseline = radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin;
-  }
+  computeBaseline();
 }
 
 ExpressionLayout * NthRootLayout::clone() const {
@@ -206,6 +201,16 @@ KDSize NthRootLayout::computeSize() {
       indexSize.width() + 3*k_widthMargin + 2*k_radixLineThickness + radicandSize.width(),
       m_baseline + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin
       );
+}
+
+void NthRootLayout::computeBaseline() {
+  if (indexLayout() != nullptr) {
+    m_baseline = max(radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
+      indexLayout()->size().height() + k_indexHeight);
+  } else {
+    m_baseline = radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin;
+  }
+  m_baselined = true;
 }
 
 KDPoint NthRootLayout::positionOfChild(ExpressionLayout * child) {

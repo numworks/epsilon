@@ -1,7 +1,4 @@
 #include "controller.h"
-#include <poincare/src/layout/char_layout.h> //TODO move from there.
-#include <poincare/src/layout/fraction_layout.h> //TODO move from there.
-#include <poincare/src/layout/empty_visible_layout.h> //TODO move from there.
 
 using namespace Poincare;
 
@@ -31,49 +28,53 @@ void Controller::didBecomeFirstResponder() {
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
-  bool returnValue = false;
-  if ((event == Ion::Events::Left && m_cursor.moveLeft())
-    || (event == Ion::Events::Right && m_cursor.moveRight())
-    || (event == Ion::Events::Up && m_cursor.moveUp())
-    || (event == Ion::Events::Down && m_cursor.moveDown()))
-  {
-    returnValue = true;
-  } else if (event == Ion::Events::Division) {
-    EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
-    EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
-
-    FractionLayout * newChild = new FractionLayout(child1, child2, false);
-    m_cursor.pointedExpressionLayout()->addBrother(&m_cursor, newChild);
-    m_cursor.setPointedExpressionLayout(newChild);
-    m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
-    m_cursor.setPositionInside(0);
-    returnValue = true;
-    m_expressionLayout->invalidAllSizesPositionsAndBaselines();
-    m_view.layoutSubviews();
-  } else if (event.hasText()) {
-    insertTextAtCursor(event.text());
-    returnValue = true;
-    m_expressionLayout->invalidAllSizesPositionsAndBaselines();
-    m_view.layoutSubviews();
+  if (privateHandleEvent(event)) {
+    m_view.cursorPositionChanged();
+    return true;
   }
-  m_view.cursorPositionChanged();
-  return returnValue;
+  return false;
 }
 
-void Controller::insertTextAtCursor(const char * text) {
-  int textLength = strlen(text);
-  if (textLength <= 0) {
-    return;
+bool Controller::privateHandleEvent(Ion::Events::Event event) {
+  if (handleMoveEvent(event)) {
+    return true;
   }
-  CharLayout * newChild = nullptr;
-  for (int i = 0; i < textLength; i++) {
-    newChild = new CharLayout(text[i]);
-    m_cursor.pointedExpressionLayout()->addBrother(&m_cursor, newChild);
+  ExpressionLayout * newPointedLayout = handleAddEvent(event);
+  if (newPointedLayout != nullptr) {
+    m_cursor.setPointedExpressionLayout(newPointedLayout);
+    m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
+    m_cursor.setPositionInside(0);
+    m_expressionLayout->invalidAllSizesPositionsAndBaselines();
+    m_view.layoutSubviews();
+    return true;
   }
-  assert(newChild != nullptr);
-  m_cursor.setPointedExpressionLayout(newChild);
-  m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
-  m_cursor.setPositionInside(0);
+  return false;
+}
+
+bool Controller::handleMoveEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Left) {
+    return m_cursor.moveLeft();
+  }
+  if (event == Ion::Events::Right) {
+    return m_cursor.moveRight();
+  }
+  if (event == Ion::Events::Up) {
+    return m_cursor.moveUp();
+  }
+  if (event == Ion::Events::Down) {
+    return m_cursor.moveDown();
+  }
+  return false;
+}
+
+ExpressionLayout * Controller::handleAddEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Division) {
+    return m_cursor.addEmptyFractionLayout();
+  }
+  if (event.hasText()) {
+    return m_cursor.insertText(event.text());
+  }
+  return nullptr;
 }
 
 }

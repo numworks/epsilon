@@ -43,18 +43,27 @@ bool StringLayout::moveLeft(ExpressionLayoutCursor * cursor) {
 bool StringLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // A StringLayout is not editable, and the cursor cannot go inside it.
   assert(cursor->pointedExpressionLayout() == this);
+  assert(m_parent != nullptr);
   // Case: Left.
   // Go Right.
+  // If there is a Right brother, go Left of it. Else go Right of the grandparent.
+  // //TODO explain that it is because of integrals and baselayouts.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    return true;
+    int indexOfThis = m_parent->indexOfChild(this);
+    if (m_parent->editableChild(indexOfThis+1) != nullptr) {
+      cursor->setPointedExpressionLayout(m_parent->editableChild(indexOfThis+1));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      return true;
+    }
+    if (m_parent->parent()) {
+      cursor->setPointedExpressionLayout(const_cast<ExpressionLayout *>(m_parent->parent()));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return true;
+    }
   }
   // Case: Right.
   // Ask the parent.
-  if (m_parent) {
-    return m_parent->moveRight(cursor);
-  }
-  return false;
+  return m_parent->moveRight(cursor);
 }
 
 void StringLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

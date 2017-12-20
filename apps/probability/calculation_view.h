@@ -35,7 +35,7 @@ private:
   constexpr static KDCoordinate k_maxTextFieldWidth = 10*KDText::charSize().width();
   constexpr static KDCoordinate k_textWidthMargin = 5;
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  void updateCalculationLayout();
+  void updateCalculationLayoutFromIndex(int index);
   void reloadData();
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

@@ -68,27 +68,29 @@ KDSize ImageTableView::minimalSizeForOptimalDisplay() const {
 
 void ImageTableView::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
-  m_isSelected = true;
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
   app()->setFirstResponder(&m_selectableTableView);
 }
 
+void ImageTableView::didEnterResponderChain(Responder * previousFirstResponder) {
+  selectCellAtLocation(0, 0);
+}
+
 void ImageTableView::willExitResponderChain(Responder * nextFirstResponder) {
-  m_calculationController->reload();
+  m_selectableTableView.deselectTable();
 }
 
 bool ImageTableView::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Down) && !m_isSelected) {
+    select(true);
+    return true;
+  }
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && m_isSelected) {
     m_calculationController->setCalculationAccordingToIndex(selectedRow());
-    hideDropdown();
+    select(false);
     return true;
   }
   if (event == Ion::Events::Back) {
-    hideDropdown();
+    select(false);
     return true;
   }
   return false;
@@ -98,18 +100,15 @@ void ImageTableView::select(bool select) {
   if (!select) {
     m_selectableTableView.deselectTable();
     m_isSelected = select;
-    m_selectableTableView.reloadCellAtLocation(0, 0);
+    m_selectableTableView.reloadData();
+    /* The dropdown menu is drawn on the law curve view, so when we deselect
+     * the dropdown menu, we need to redraw the law curve view */
+    m_calculationController->reload();
+    m_selectableTableView.selectCellAtLocation(0, 0);
   } else {
     m_isSelected = select;
+    m_selectableTableView.reloadData();
     m_selectableTableView.selectCellAtLocation(0, (int)m_calculation->type());
-  }
-}
-
-void ImageTableView::setHighlight(bool highlight) {
-  if (highlight) {
-    m_selectableTableView.selectCellAtLocation(0,0);
-  } else {
-    m_selectableTableView.deselectTable();
   }
 }
 
@@ -121,6 +120,10 @@ int ImageTableView::numberOfRows() {
     return k_numberOfImages;
   }
   return 1;
+}
+
+KDCoordinate ImageTableView::cellHeight() {
+  return ImageCell::k_height;
 }
 
 HighlightCell * ImageTableView::reusableCell(int index) {
@@ -145,10 +148,6 @@ void ImageTableView::willDisplayCellForIndex(HighlightCell * cell, int index) {
   myCell->reloadCell();
 }
 
-KDCoordinate ImageTableView::cellHeight() {
-  return ImageCell::k_height;
-}
-
 int ImageTableView::numberOfSubviews() const {
   return 1;
 }
@@ -160,14 +159,6 @@ View * ImageTableView::subviewAtIndex(int index) {
 
 void ImageTableView::layoutSubviews() {
   m_selectableTableView.setFrame(KDRect(k_totalMargin, k_totalMargin, bounds().width()-2*k_totalMargin, bounds().height()-k_totalMargin));
-}
-
-void ImageTableView::hideDropdown() {
-  select(false);
-  setHighlight(true);
-  m_selectableTableView.reloadData();
-  m_calculationController->reload();
-  app()->setFirstResponder(parentResponder());
 }
 
 }

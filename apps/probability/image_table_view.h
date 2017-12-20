@@ -29,16 +29,16 @@ public:
   ImageTableView(Responder * parentResponder, Law * law, Calculation * calculation, CalculationController * calculationController);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void select(bool select);
-  void setHighlight(bool highlight);
   int numberOfRows() override;
-  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;
   int reusableCellCount() override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   constexpr static KDCoordinate k_outline = 1;
   constexpr static KDCoordinate k_margin = 3;
   constexpr static KDCoordinate k_totalMargin = k_outline+k_margin;
@@ -48,8 +48,6 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-  void setCalculationAccordingToIndex(int index);
-  void hideDropdown();
   constexpr static int k_numberOfImages = 4;
   ImageCell m_imageCells[k_numberOfImages];
   SelectableTableView m_selectableTableView;

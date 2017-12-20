@@ -15,6 +15,11 @@ LawCurveView::LawCurveView(Law * law, Calculation * calculation) :
   assert(calculation != nullptr);
 }
 
+void LawCurveView::reload() {
+  CurveView::reload();
+  markRectAsDirty(bounds());
+}
+
 void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   float lowerBound = m_calculation->lowerBound();
   float upperBound = m_calculation->upperBound();

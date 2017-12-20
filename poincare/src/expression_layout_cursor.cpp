@@ -1,8 +1,15 @@
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/src/layout/string_layout.h>
 #include <poincare/src/layout/char_layout.h> //TODO move from there.
-#include <poincare/src/layout/fraction_layout.h> //TODO move from there.
+#include <poincare/src/layout/editable_baseline_relative_layout.h> //TODO move from there.
 #include <poincare/src/layout/empty_visible_layout.h> //TODO move from there.
+#include <poincare/src/layout/fraction_layout.h> //TODO move from there.
+#include <poincare/src/layout/nth_root_layout.h> //TODO move from there.
+#include <poincare/src/layout/parenthesis_left_layout.h> //TODO move from there.
+#include <poincare/src/layout/parenthesis_right_layout.h> //TODO move from there.
+#include <poincare/src/layout/bracket_left_layout.h> //TODO move from there.
+#include <poincare/src/layout/bracket_right_layout.h> //TODO move from there.
+#include <ion/charset.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -45,6 +52,14 @@ bool ExpressionLayoutCursor::moveDown() {
   return m_pointedExpressionLayout->moveDown(this);
 }
 
+ExpressionLayout * ExpressionLayoutCursor::addEmptyExponentialLayout() {
+  CharLayout * child1 = new CharLayout(Ion::Charset::Exponential);
+  EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
+  EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Superscript, false);
+  pointedExpressionLayout()->addBrother(this, newChild);
+  return child2;
+}
+
 ExpressionLayout * ExpressionLayoutCursor::addEmptyFractionLayout() {
   EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
   EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
@@ -53,15 +68,61 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyFractionLayout() {
   return child1;
 }
 
+ExpressionLayout * ExpressionLayoutCursor::addEmptyLogarithmLayout() {
+  StringLayout * child1 = new StringLayout("log", 3);
+  EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
+  EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Subscript, false);
+  m_pointedExpressionLayout->addBrother(this, newChild);
+  m_pointedExpressionLayout = newChild;
+  m_position = Position::Right;
+  return insertText("()");
+}
+
+ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {
+  EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
+  EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
+  EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Superscript, false);
+  m_pointedExpressionLayout->addBrother(this, newChild);
+  return child1;
+}
+
+ExpressionLayout * ExpressionLayoutCursor::addEmptyRootLayout() {
+  EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
+  EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
+  NthRootLayout * newChild = new NthRootLayout(child1, child2, false);
+  m_pointedExpressionLayout->addBrother(this, newChild);
+  return child1;
+}
+
+ExpressionLayout * ExpressionLayoutCursor::addEmptySquarePowerLayout() {
+  EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
+  CharLayout * child2 = new CharLayout('2');
+  EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Superscript, false);
+  m_pointedExpressionLayout->addBrother(this, newChild);
+  return child1;
+}
+
 ExpressionLayout * ExpressionLayoutCursor::insertText(const char * text) {
   int textLength = strlen(text);
   if (textLength <= 0) {
     return nullptr;
   }
-  CharLayout * newChild = nullptr;
+  ExpressionLayout * newChild = nullptr;
   for (int i = 0; i < textLength; i++) {
-    newChild = new CharLayout(text[i]);
-    pointedExpressionLayout()->addBrother(this, newChild);
+    if (text[i] == '(') {
+      newChild = new ParenthesisLeftLayout();
+    } else if (text[i] == ')') {
+      newChild = new ParenthesisRightLayout();
+    } else if (text[i] == '[') {
+      newChild = new BracketLeftLayout();
+    } else if (text[i] == ']') {
+      newChild = new BracketRightLayout();
+    } else {
+      newChild = new CharLayout(text[i]);
+    }
+    m_pointedExpressionLayout->addBrother(this, newChild);
+    m_pointedExpressionLayout = newChild;
+    m_position = Position::Right;
   }
   assert(newChild != nullptr);
   return newChild;

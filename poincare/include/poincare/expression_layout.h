@@ -47,7 +47,7 @@ public:
 
   bool insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor);
 
-  void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
+  virtual void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
   ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace = true);
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
   void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true);

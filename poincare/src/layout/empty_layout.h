@@ -10,6 +10,7 @@ class EmptyLayout : public StaticLayoutHierarchy<0> {
 public:
   EmptyLayout();
   ExpressionLayout * clone() const override;
+  void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:

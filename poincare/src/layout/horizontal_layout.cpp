@@ -18,14 +18,23 @@ ExpressionLayout * HorizontalLayout::clone() const {
 void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
   if (newChild->isEmpty()) {
     if (numberOfChildren() > 1) {
+      if (!newChild->hasAncestor(oldChild)) {
+        delete newChild;
+      }
       removeChildAtIndex(indexOfChild(const_cast<ExpressionLayout *>(oldChild)), deleteOldChild);
-      delete newChild;
       return;
     }
     if (m_parent) {
       replaceWith(newChild);
       return;
     }
+  }
+  if (newChild->isHorizontal()) {
+    // Steal the children of the new layout then destroy it.
+    int indexForInsertion = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
+    mergeChildrenAtIndex(newChild, indexForInsertion + 1);
+    removeChildAtIndex(indexForInsertion, deleteOldChild);
+    return;
   }
   ExpressionLayout::replaceChild(oldChild, newChild, deleteOldChild);
 }
@@ -174,6 +183,19 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
   }
   y = baseline() - child->baseline();
   return KDPoint(x, y);
+}
+
+void HorizontalLayout::mergeChildrenAtIndex(ExpressionLayout * eL, int index) {
+  int indexOfEL = indexOfChild(eL);
+  if (indexOfEL >= 0) {
+    removeChildAtIndex(indexOfEL, false);
+  }
+  int numChildren = eL->numberOfChildren();
+  for (int i = 0; i < numChildren; i++) {
+    ExpressionLayout * currentChild = eL->editableChild(0);
+    eL->removeChildAtIndex(0, false);
+    addChildAtIndex(currentChild, index+i);
+  }
 }
 
 bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {

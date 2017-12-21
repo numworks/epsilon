@@ -9,7 +9,7 @@ class IntegralLayout : public StaticLayoutHierarchy<3> {
 public:
   constexpr static KDCoordinate k_symbolHeight = 4;
   constexpr static KDCoordinate k_symbolWidth = 4;
-  IntegralLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * integrand, bool cloneOperands);
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;

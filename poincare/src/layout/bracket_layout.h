@@ -7,7 +7,7 @@ namespace Poincare {
 
 class BracketLayout : public StaticLayoutHierarchy<1> {
 public:
-  BracketLayout(ExpressionLayout * operandLayout, bool cloneOperands);
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;

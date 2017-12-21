@@ -7,7 +7,7 @@ namespace Poincare {
 
 class CondensedSumLayout : public StaticLayoutHierarchy<3> {
 public:
-  CondensedSumLayout(ExpressionLayout * base, ExpressionLayout * subscript, ExpressionLayout * superscript, bool cloneOperands);
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;

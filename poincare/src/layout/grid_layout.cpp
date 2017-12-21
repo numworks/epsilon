@@ -12,7 +12,6 @@ GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int n
   m_numberOfRows(numberOfRows),
   m_numberOfColumns(numberOfColumns)
 {
-  computeBaseline();
 }
 
 ExpressionLayout * GridLayout::clone() const {

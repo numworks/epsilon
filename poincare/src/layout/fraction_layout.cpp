@@ -6,12 +6,6 @@
 
 namespace Poincare {
 
-FractionLayout::FractionLayout(ExpressionLayout * numerator, ExpressionLayout * denominator, bool cloneOperands) :
-  StaticLayoutHierarchy<2>(numerator, denominator, cloneOperands)
-{
-  computeBaseline();
-}
-
 ExpressionLayout * FractionLayout::clone() const {
   FractionLayout * layout = new FractionLayout(const_cast<FractionLayout *>(this)->numeratorLayout(), const_cast<FractionLayout *>(this)->denominatorLayout(), true);
   return layout;

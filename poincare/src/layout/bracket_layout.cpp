@@ -7,12 +7,6 @@ extern "C" {
 
 namespace Poincare {
 
-BracketLayout::BracketLayout(ExpressionLayout * operandLayout, bool cloneOperands) :
-  StaticLayoutHierarchy<1>(operandLayout, cloneOperands)
-{
-  computeBaseline();
-}
-
 ExpressionLayout * BracketLayout::clone() const {
   BracketLayout * layout = new BracketLayout(const_cast<BracketLayout *>(this)->operandLayout(), true);
   return layout;

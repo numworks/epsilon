@@ -19,12 +19,6 @@ const uint8_t bottomSymbolPixel[IntegralLayout::k_symbolHeight][IntegralLayout::
   {0xFF, 0xFF, 0x00, 0x00},
 };
 
-IntegralLayout::IntegralLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * integrand, bool cloneOperands) :
-  StaticLayoutHierarchy<3>(upperBound, lowerBound, integrand, cloneOperands)
-{
-  computeBaseline();
-}
-
 ExpressionLayout * IntegralLayout::clone() const {
   IntegralLayout * layout = new IntegralLayout(const_cast<IntegralLayout *>(this)->lowerBoundLayout(), const_cast<IntegralLayout *>(this)->upperBoundLayout(), const_cast<IntegralLayout *>(this)->integrandLayout(), true);
   return layout;

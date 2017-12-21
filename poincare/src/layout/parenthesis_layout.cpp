@@ -15,7 +15,6 @@ ParenthesisLayout::ParenthesisLayout(ExpressionLayout * operand, bool cloneOpera
   ExpressionLayout * leftParenthesis = new ParenthesisLeftLayout();
   ExpressionLayout * rightParenthesis = new ParenthesisRightLayout();
   build(ExpressionLayout::ExpressionLayoutArray3(leftParenthesis, operand, rightParenthesis), 3, cloneOperands);
-  computeBaseline();
 }
 
 ExpressionLayout * ParenthesisLayout::clone() const {

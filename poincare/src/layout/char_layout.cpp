@@ -10,7 +10,6 @@ CharLayout::CharLayout(char c, KDText::FontSize fontSize) :
   m_char(c),
   m_fontSize(fontSize)
 {
-  computeBaseline();
 }
 
 ExpressionLayout * CharLayout::clone() const {

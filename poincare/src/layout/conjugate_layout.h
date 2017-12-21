@@ -7,7 +7,7 @@ namespace Poincare {
 
 class ConjugateLayout : public StaticLayoutHierarchy<1> {
 public:
-  ConjugateLayout(ExpressionLayout * operand, bool cloneOperands);
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;

@@ -7,8 +7,7 @@ namespace Poincare {
 
 class HorizontalLayout : public DynamicLayoutHierarchy {
 public:
-  HorizontalLayout();
-  HorizontalLayout(ExpressionLayout ** layouts, int childrenCount, bool cloneOperands);
+  using DynamicLayoutHierarchy::DynamicLayoutHierarchy;
   ExpressionLayout * clone() const override;
 
   /* Navigation */

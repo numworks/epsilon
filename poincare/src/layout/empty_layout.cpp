@@ -4,12 +4,6 @@
 
 namespace Poincare {
 
-EmptyLayout::EmptyLayout() :
-  StaticLayoutHierarchy<0>()
-{
-  m_baseline = 0;
-}
-
 ExpressionLayout * EmptyLayout::clone() const {
   EmptyLayout * layout = new EmptyLayout();
   return layout;

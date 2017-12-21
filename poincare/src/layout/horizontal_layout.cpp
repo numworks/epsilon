@@ -10,17 +10,6 @@ extern "C" {
 
 namespace Poincare {
 
-HorizontalLayout::HorizontalLayout() :
-  DynamicLayoutHierarchy()
-{
-}
-
-HorizontalLayout::HorizontalLayout(ExpressionLayout ** childrenLayouts, int childrenCount, bool cloneOperands) :
-  DynamicLayoutHierarchy(childrenLayouts, childrenCount, cloneOperands)
-{
-  computeBaseline();
-}
-
 ExpressionLayout * HorizontalLayout::clone() const {
   HorizontalLayout * layout = new HorizontalLayout(const_cast<ExpressionLayout **>(children()), numberOfChildren(), true);
   return layout;

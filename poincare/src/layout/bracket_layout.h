@@ -9,6 +9,7 @@ class BracketLayout : public StaticLayoutHierarchy<1> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
+  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
 protected:

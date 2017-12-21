@@ -27,10 +27,21 @@ bool StringLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // A StringLayout is not editable, and the cursor cannot go inside it.
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right.
-  // Go Left.
+  // If there is a Left brother, go Right of it. Else go Left of the
+  // grandparent. We need to do this to avoid adding text left or right of a
+  // string layout, for instance left of "n=" in a Sum layout.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return true;
+    int indexOfThis = m_parent->indexOfChild(this);
+    if (m_parent->editableChild(indexOfThis-1) != nullptr) {
+      cursor->setPointedExpressionLayout(m_parent->editableChild(indexOfThis-1));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return true;
+    }
+    if (m_parent->parent()) {
+      cursor->setPointedExpressionLayout(const_cast<ExpressionLayout *>(m_parent->parent()));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      return true;
+    }
   }
   // Case: Left.
   // Ask the parent.
@@ -45,9 +56,9 @@ bool StringLayout::moveRight(ExpressionLayoutCursor * cursor) {
   assert(cursor->pointedExpressionLayout() == this);
   assert(m_parent != nullptr);
   // Case: Left.
-  // Go Right.
-  // If there is a Right brother, go Left of it. Else go Right of the grandparent.
-  // //TODO explain that it is because of integrals and baselayouts.
+  // If there is a Right brother, go Left of it. Else go Right of the
+  // grandparent. We need to do this to avoid adding text left or right of a
+  // string layout, for instance right of "dx" in an integral layout.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     int indexOfThis = m_parent->indexOfChild(this);
     if (m_parent->editableChild(indexOfThis+1) != nullptr) {

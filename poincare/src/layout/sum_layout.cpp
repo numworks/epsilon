@@ -69,7 +69,7 @@ bool SumLayout::moveLeft(ExpressionLayoutCursor * cursor) {
       && cursor->pointedExpressionLayout() == editableChild(2))
   {
     assert(lowerBoundLayout() != nullptr);
-    cursor->setPointedExpressionLayout(lowerBoundLayout());
+    cursor->setPointedExpressionLayout(lowerBoundLayout()->editableChild(1));
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return true;
   }

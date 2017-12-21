@@ -54,6 +54,7 @@ public:
 
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();
+  View * modalView();
   virtual int numberOfTimers();
   virtual Timer * timerAtIndex(int i);
 protected:

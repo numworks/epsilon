@@ -9,8 +9,11 @@ class BracketRightLayout : public BracketLeftRightLayout {
 public:
   using BracketLeftRightLayout::BracketLeftRightLayout;
   ExpressionLayout * clone() const override;
+  bool isRightBracket() const override { return true; }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void computeOperandHeight() override;
+  void computeBaseline() override;
 };
 
 }

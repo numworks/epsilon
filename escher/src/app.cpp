@@ -119,6 +119,10 @@ void App::willBecomeInactive() {
   m_modalViewController.viewDidDisappear();
 }
 
+View * App::modalView() {
+  return m_modalViewController.view();
+}
+
 int App::numberOfTimers() {
   return 0;
 }

@@ -53,7 +53,7 @@ public:
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
-  bool textFieldDidHandleEvent(TextField * textField, Ion::Events::Event event, bool returnValue) override;
+  bool textFieldDidHandleEvent(TextField * textField, Ion::Events::Event event, bool returnValue, bool textHasChanged) override;
   Toolbox * toolboxForTextField(TextField * textField) override { return nullptr; }
 
   /* ButtonRowDelegate */

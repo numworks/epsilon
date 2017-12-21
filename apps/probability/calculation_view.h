@@ -20,7 +20,7 @@ public:
   void selectSubview(int subviewIndex);
 
   /* TextField delegate */
-  bool textFieldDidHandleEvent(TextField * textField, Ion::Events::Event event, bool returnValue) override;
+  bool textFieldDidHandleEvent(TextField * textField, Ion::Events::Event event, bool returnValue, bool textHasChanged) override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 

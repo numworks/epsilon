@@ -9,9 +9,10 @@ app_objs += $(addprefix apps/probability/,\
   calculation/right_integral_calculation.o\
   calculation/finite_integral_calculation.o\
   calculation_controller.o\
-  calculation_view.o\
+  calculation_cell.o\
+  calculation_type_controller.o\
   cell.o\
-  image_table_view.o\
+  image_cell.o\
   law/binomial_law.o\
   law/exponential_law.o\
   law/law.o\
@@ -23,6 +24,7 @@ app_objs += $(addprefix apps/probability/,\
   law_controller.o\
   law_curve_view.o\
   parameters_controller.o\
+  responder_image_cell.o\
 )
 
 i18n_files += $(addprefix apps/probability/,\

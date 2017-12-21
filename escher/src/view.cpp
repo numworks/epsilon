@@ -150,6 +150,10 @@ void View::setFrame(KDRect frame) {
   layoutSubviews();
 }
 
+KDPoint View::pointFromPointInView(View * view, KDPoint point) {
+  return point.translatedBy(view->absoluteOrigin().translatedBy(absoluteOrigin().opposite()));
+}
+
 KDRect View::bounds() const {
   return m_frame.movedTo(KDPointZero);
 }

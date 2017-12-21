@@ -58,8 +58,8 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Go Right of the integrand, Left of "dx".
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(integrandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(integrandLayout());
-    return integrandLayout()->moveLeft(cursor);
+    cursor->setPointedExpressionLayout(integrandLayout()->editableChild(integrandLayout()->numberOfChildren()-2));
+    return true;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   // Case: Left of the brackets.
@@ -80,7 +80,7 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     assert(integrandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(integrandLayout());
+    cursor->setPointedExpressionLayout(integrandLayout()->editableChild(0));
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
   }
@@ -95,7 +95,7 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
   }
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left of the integral.
-  // Go ti the upper bound.
+  // Go to the upper bound.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     assert(upperBoundLayout() != nullptr);
     cursor->setPointedExpressionLayout(upperBoundLayout());

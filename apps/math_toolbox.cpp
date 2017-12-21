@@ -35,12 +35,17 @@ const ToolboxMessageTree calculChildren[4] = {
       2),
   ToolboxMessageTree(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommandWithArg)};
 
+const int pointedLayoutPathConj[] = {0};
 const ToolboxMessageTree complexChildren[5] = {
   ToolboxMessageTree(I18n::Message::AbsCommandWithArg,I18n::Message::ComplexAbsoluteValue, I18n::Message::AbsCommandWithArg),
   ToolboxMessageTree(I18n::Message::ArgCommandWithArg, I18n::Message::Agument, I18n::Message::ArgCommandWithArg),
   ToolboxMessageTree(I18n::Message::ReCommandWithArg, I18n::Message::RealPart, I18n::Message::ReCommandWithArg),
   ToolboxMessageTree(I18n::Message::ImCommandWithArg, I18n::Message::ImaginaryPart, I18n::Message::ImCommandWithArg),
-  ToolboxMessageTree(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate, I18n::Message::ConjCommandWithArg)};
+  ToolboxMessageTree(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate, I18n::Message::ConjCommandWithArg, nullptr, 0,
+      new ConjugateLayout(
+        new EmptyVisibleLayout()),
+      const_cast<int *>(&pointedLayoutPathConj[0]),
+      1)};
 
 const ToolboxMessageTree probabilityChildren[2] = {
   ToolboxMessageTree(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination, I18n::Message::BinomialCommandWithArg),

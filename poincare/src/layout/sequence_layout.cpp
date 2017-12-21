@@ -103,7 +103,6 @@ bool SequenceLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * 
   }
   // If the cursor is Left of the argument, move it to the upper bound.
   if (argumentLayout()
-      && previousLayout == argumentLayout()
       && cursor->positionIsEquivalentTo(argumentLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(upperBoundLayout() != nullptr);
@@ -119,7 +118,6 @@ bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout 
   }
   // If the cursor is Left of the argument, move it to the lower bound.
   if (argumentLayout()
-      && previousLayout == argumentLayout()
       && cursor->positionIsEquivalentTo(argumentLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(lowerBoundLayout() != nullptr);

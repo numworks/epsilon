@@ -17,14 +17,14 @@ public:
   char XNTChar() const override;
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
+  constexpr static KDCoordinate k_argumentWidthMargin = 2;
   ExpressionLayout * lowerBoundLayout();
   ExpressionLayout * upperBoundLayout();
-  ExpressionLayout * argumentLayout();
-private:
+  virtual ExpressionLayout * argumentLayout();
   KDSize computeSize() override;
-  void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
-  constexpr static KDCoordinate k_argumentWidthMargin = 2;
+private:
+  void computeBaseline() override;
 };
 
 }

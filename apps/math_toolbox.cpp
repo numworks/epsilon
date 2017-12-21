@@ -9,7 +9,7 @@
  * subtree, the edited text is set at I18n::Message::Default. */
 
 const int pointedLayoutPathIntegral[] = {2, 0};
-const int pointedLayoutPathSum[] = {2};
+const int pointedLayoutPathSum[] = {2, 1};
 const ToolboxMessageTree calculChildren[4] = {
   ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg, nullptr, 0),
   ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg, nullptr, 0,
@@ -30,7 +30,7 @@ const ToolboxMessageTree calculChildren[4] = {
         new EmptyVisibleLayout(),
         false),
       const_cast<int *>(&pointedLayoutPathSum[0]),
-      1),
+      2),
   ToolboxMessageTree(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommandWithArg)};
 
 const ToolboxMessageTree complexChildren[5] = {

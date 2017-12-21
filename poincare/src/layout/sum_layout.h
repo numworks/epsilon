@@ -7,10 +7,15 @@ namespace Poincare {
 
 class SumLayout : public SequenceLayout {
 public:
-  using SequenceLayout::SequenceLayout;
+  SumLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * argument, bool cloneOperands);
   ExpressionLayout * clone() const override;
+  ExpressionLayout * argumentLayout() override;
+  bool moveLeft(ExpressionLayoutCursor * cursor) override;
+  bool moveRight(ExpressionLayoutCursor * cursor) override;
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  KDSize computeSize() override;
+  KDPoint positionOfChild(ExpressionLayout * child) override;
 };
 
 }

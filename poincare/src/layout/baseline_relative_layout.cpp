@@ -9,7 +9,6 @@ BaselineRelativeLayout::BaselineRelativeLayout(ExpressionLayout * base, Expressi
   StaticLayoutHierarchy(base, indice, cloneOperands),
   m_type(type)
 {
-  computeBaseline();
 }
 
 ExpressionLayout * BaselineRelativeLayout::clone() const {

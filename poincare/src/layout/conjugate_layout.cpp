@@ -8,12 +8,6 @@ extern "C" {
 
 namespace Poincare {
 
-ConjugateLayout::ConjugateLayout(ExpressionLayout * operand, bool cloneOperands) :
-  StaticLayoutHierarchy<1>(operand, cloneOperands)
-{
-  computeBaseline();
-}
-
 ExpressionLayout * ConjugateLayout::clone() const {
   ConjugateLayout * layout = new ConjugateLayout(const_cast<ConjugateLayout *>(this)->operandLayout(), true);
   return layout;

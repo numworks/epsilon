@@ -6,12 +6,6 @@
 
 namespace Poincare {
 
-SequenceLayout::SequenceLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * argument, bool cloneOperands) :
-  StaticLayoutHierarchy<3>(upperBound, lowerBound, argument, cloneOperands)
-{
-  computeBaseline();
-}
-
 bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the bounds.
   // Go Left of the sequence.

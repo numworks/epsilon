@@ -5,12 +5,6 @@
 
 namespace Poincare {
 
-CondensedSumLayout::CondensedSumLayout(ExpressionLayout * base, ExpressionLayout * subscript, ExpressionLayout * superscript, bool cloneOperands) :
-  StaticLayoutHierarchy<3>(base, subscript, superscript, cloneOperands)
-{
-  computeBaseline();
-}
-
 ExpressionLayout * CondensedSumLayout::clone() const {
   CondensedSumLayout * layout = new CondensedSumLayout(const_cast<CondensedSumLayout *>(this)->baseLayout(), const_cast<CondensedSumLayout *>(this)->subscriptLayout(), const_cast<CondensedSumLayout *>(this)->superscriptLayout(), true);
   return layout;

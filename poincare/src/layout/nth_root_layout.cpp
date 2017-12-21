@@ -16,12 +16,6 @@ const uint8_t radixPixel[NthRootLayout::k_leftRadixHeight][NthRootLayout::k_left
   {0xFF, 0xFF, 0xFF, 0xFF, 0x00},
 };
 
-NthRootLayout::NthRootLayout(ExpressionLayout * radicand, ExpressionLayout * index, bool cloneOperands) :
-  StaticLayoutHierarchy<2>(radicand, index, cloneOperands)
-{
-  computeBaseline();
-}
-
 ExpressionLayout * NthRootLayout::clone() const {
   NthRootLayout * layout = new NthRootLayout(const_cast<NthRootLayout *>(this)->radicandLayout(), const_cast<NthRootLayout *>(this)->indexLayout(), true);
   return layout;

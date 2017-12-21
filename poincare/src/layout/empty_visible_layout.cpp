@@ -8,7 +8,6 @@ EmptyVisibleLayout::EmptyVisibleLayout() :
   EmptyLayout(),
   m_fillRectColor(KDColor::RGB24(0xffd370)) //TODO make static or in Palette?
 {
-  computeBaseline();
 }
 
 ExpressionLayout * EmptyVisibleLayout::clone() const {

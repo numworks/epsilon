@@ -7,7 +7,7 @@ namespace Poincare {
 
 class FractionLayout : public StaticLayoutHierarchy<2> {
 public:
-  FractionLayout(ExpressionLayout * numerator, ExpressionLayout * denominator, bool cloneOperands);
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;

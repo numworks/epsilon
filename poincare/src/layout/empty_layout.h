@@ -8,7 +8,7 @@ namespace Poincare {
 
 class EmptyLayout : public StaticLayoutHierarchy<0> {
 public:
-  EmptyLayout();
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
   void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;

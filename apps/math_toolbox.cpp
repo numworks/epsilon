@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <string.h>
 
+using namespace Poincare;
+
 /* TODO: find a shorter way to initialize tree models
  * We create one model tree: each node keeps the label of the row it refers to
  * and the text which would be edited by clicking on the row. When the node is a
@@ -87,13 +89,19 @@ const ToolboxMessageTree predictionChildren[3] = {
   ToolboxMessageTree(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction, I18n::Message::PredictionCommandWithArg),
   ToolboxMessageTree(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence, I18n::Message::ConfidenceCommandWithArg)};
 
+const int pointedLayoutPathAbs[] = {0};
 #if LIST_ARE_DEFINED
-const ToolboxMessageTree menu[12] = {ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg),
+const ToolboxMessageTree menu[12] = {
 #elif MATRICES_ARE_DEFINED
-const ToolboxMessageTree menu[11] = {ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg),
+const ToolboxMessageTree menu[11] = {
 #else
-const ToolboxMessageTree menu[10] = {ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg),
+const ToolboxMessageTree menu[10] = {
 #endif
+  ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg, nullptr, 0,
+      new AbsoluteValueLayout(
+        new EmptyVisibleLayout()),
+      const_cast<int *>(&pointedLayoutPathAbs[0]),
+      1),
   ToolboxMessageTree(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot, I18n::Message::RootCommandWithArg),
   ToolboxMessageTree(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm, I18n::Message::LogCommandWithArg),
   ToolboxMessageTree(I18n::Message::Calculation, I18n::Message::Default, I18n::Message::Default, calculChildren, 4),

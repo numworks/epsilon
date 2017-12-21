@@ -22,7 +22,7 @@ public:
   Toolbox * toolbox() override;
 
   /* Callback for Toolbox */
-  void insertLayoutAtCursor(ExpressionLayout * layout, ExpressionLayout * pointedLayout);
+  void insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout);
 
 private:
   bool privateHandleEvent(Ion::Events::Event event);

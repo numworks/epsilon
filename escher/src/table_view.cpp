@@ -84,8 +84,8 @@ KDCoordinate TableView::ContentView::columnWidth(int i) const {
 }
 
 void TableView::ContentView::resizeToFitContent() {
-  setSize(KDSize(width(), height()));
   layoutSubviews();
+  setSize(KDSize(width(), height()));
 }
 
 KDCoordinate TableView::ContentView::height() const {
@@ -172,6 +172,7 @@ void TableView::ContentView::layoutSubviews() {
     View * cell = subview(index);
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
+    m_dataSource->willDisplayCellAtLocation((HighlightCell *)cell, i, j);
 
     KDCoordinate rowHeight = m_dataSource->rowHeight(j);
     KDCoordinate columnWidth = this->columnWidth(i);
@@ -179,7 +180,6 @@ void TableView::ContentView::layoutSubviews() {
     KDCoordinate horizontalOffset = m_dataSource->cumulatedWidthFromIndex(i);
     KDRect cellFrame(horizontalOffset, verticalOffset,
       columnWidth+m_horizontalCellOverlapping, rowHeight+m_verticalCellOverlapping);
-    m_dataSource->willDisplayCellAtLocation((HighlightCell *)cell, i, j);
     cell->setFrame(cellFrame);
   }
 }

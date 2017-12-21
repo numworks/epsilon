@@ -13,6 +13,23 @@ ExpressionLayout * ConjugateLayout::clone() const {
   return layout;
 }
 
+void ConjugateLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  if (cursor->pointedExpressionLayout() == operandLayout()) {
+    assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+    ExpressionLayout * previousParent = m_parent;
+    int indexInParent = previousParent->indexOfChild(this);
+    replaceWith(operandLayout(), true);
+    if (indexInParent == 0) {
+      cursor->setPointedExpressionLayout(previousParent);
+      return;
+    }
+    cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return;
+  }
+  ExpressionLayout::backspaceAtCursor(cursor);
+}
+
 bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the operand.
   // Move Left.

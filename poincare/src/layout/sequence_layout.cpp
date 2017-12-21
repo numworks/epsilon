@@ -31,7 +31,7 @@ bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
       && cursor->pointedExpressionLayout() == argumentLayout())
   {
     assert(lowerBoundLayout() != nullptr);
-    cursor->setPointedExpressionLayout(lowerBoundLayout());
+    cursor->setPointedExpressionLayout(lowerBoundLayout()->editableChild(1));
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return true;
   }
@@ -114,7 +114,7 @@ bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout 
   // If the cursor is inside the upper bound, move it to the lower bound.
   if (upperBoundLayout() && previousLayout == upperBoundLayout()) {
     assert(lowerBoundLayout() != nullptr);
-    return lowerBoundLayout()->moveDownInside(cursor);
+    return lowerBoundLayout()->editableChild(1)->moveDownInside(cursor);
   }
   // If the cursor is Left of the argument, move it to the lower bound.
   if (argumentLayout()

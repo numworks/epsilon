@@ -55,6 +55,8 @@ public:
 
   /* Dynamic Layout*/
   virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
+  virtual void removeChildAtIndex(int index, bool deleteAfterRemoval);
+  virtual void backspaceAtCursor(ExpressionLayoutCursor * cursor);
 
   /* Tree navigation */
   virtual bool moveLeft(ExpressionLayoutCursor * cursor) { return false; } //TODO should be virtual pure?

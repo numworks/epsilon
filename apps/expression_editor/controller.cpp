@@ -66,6 +66,11 @@ bool Controller::privateHandleEvent(Ion::Events::Event event) {
     m_view.layoutSubviews();
     return true;
   }
+  if (handleDeleteEvent(event)) {
+    m_expressionLayout->invalidAllSizesPositionsAndBaselines();
+    m_view.layoutSubviews();
+    return true;
+  }
   return false;
 }
 
@@ -124,6 +129,14 @@ ExpressionLayout * Controller::handleAddEvent(Ion::Events::Event event) {
     return m_cursor.insertText(event.text());
   }
   return nullptr;
+}
+
+bool Controller::handleDeleteEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Backspace) {
+    m_cursor.performBackspace();
+    return true;
+  }
+  return false;
 }
 
 }

@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <poincare/src/layout/editable_string_layout.h>
+#include <poincare/src/layout/empty_visible_layout.h>
 #include <poincare/src/layout/horizontal_layout.h>
 #include <poincare/expression_layout_cursor.h>
 #include <ion/display.h>
@@ -199,6 +200,39 @@ void ExpressionLayout::detachChild(const ExpressionLayout * e) {
       detachChildAtIndex(i);
     }
   }
+}
+
+void ExpressionLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
+  assert(index >= 0 && index < numberOfChildren());
+  replaceChild(editableChild(index), new EmptyVisibleLayout(), deleteAfterRemoval);
+}
+
+void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  if (cursor->pointedExpressionLayout() != this || m_parent == nullptr) {
+    return;
+  }
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    m_parent->backspaceAtCursor(cursor);
+    return;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  if (numberOfChildren() > 0) {
+    cursor->setPointedExpressionLayout(editableChild(numberOfChildren()-1));
+    cursor->performBackspace();
+    return;
+  }
+  int indexInParent = m_parent->indexOfChild(this);
+  ExpressionLayout * previousParent = m_parent;
+  previousParent->removeChildAtIndex(indexInParent, true);
+  if (indexInParent < previousParent->numberOfChildren()) {
+    cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent));
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return;
+  }
+  int indexOfNewPointedLayout = indexInParent - 1;
+  assert(indexOfNewPointedLayout >= 0);
+  assert(indexOfNewPointedLayout < previousParent->numberOfChildren());
+  cursor->setPointedExpressionLayout(previousParent->editableChild(indexOfNewPointedLayout));
 }
 
 char ExpressionLayout::XNTChar() const {

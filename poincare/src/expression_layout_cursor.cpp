@@ -138,5 +138,9 @@ ExpressionLayout * ExpressionLayoutCursor::insertText(const char * text) {
   return newChild;
 }
 
+void ExpressionLayoutCursor::performBackspace() {
+  m_pointedExpressionLayout->backspaceAtCursor(this);
+}
+
 }
 

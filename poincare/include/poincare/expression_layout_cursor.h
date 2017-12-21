@@ -52,6 +52,7 @@ public:
   ExpressionLayout * addEmptySquarePowerLayout();
   ExpressionLayout * addXNTCharLayout();
   ExpressionLayout * insertText(const char * text);
+  void performBackspace();
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;

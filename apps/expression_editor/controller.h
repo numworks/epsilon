@@ -28,6 +28,7 @@ private:
   bool privateHandleEvent(Ion::Events::Event event);
   bool handleMoveEvent(Ion::Events::Event event);
   Poincare::ExpressionLayout * handleAddEvent(Ion::Events::Event event);
+  bool handleDeleteEvent(Ion::Events::Event event);
   ExpressionEditorView m_view;
   Poincare::ExpressionLayout * m_expressionLayout;
   Poincare::ExpressionLayoutCursor m_cursor;

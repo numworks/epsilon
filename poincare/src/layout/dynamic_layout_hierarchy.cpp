@@ -68,11 +68,11 @@ void DynamicLayoutHierarchy::removeChildAtIndex(int index, bool deleteAfterRemov
     const_cast<ExpressionLayout *>(m_children[index])->setParent(nullptr);
   }
   m_numberOfChildren--;
-  if (m_numberOfChildren == 0) {
+  /*if (m_numberOfChildren == 0) {
     ExpressionLayout * emptyVisibleLayout = new EmptyVisibleLayout();
     replaceWith(emptyVisibleLayout);
     return;
-  }
+  }*/
   for (int j=index; j<m_numberOfChildren; j++) {
     m_children[j] = m_children[j+1];
   }

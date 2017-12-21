@@ -1,4 +1,5 @@
 #include "baseline_relative_layout.h"
+#include "empty_visible_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
@@ -14,6 +15,36 @@ BaselineRelativeLayout::BaselineRelativeLayout(ExpressionLayout * base, Expressi
 ExpressionLayout * BaselineRelativeLayout::clone() const {
   BaselineRelativeLayout * layout = new BaselineRelativeLayout(const_cast<BaselineRelativeLayout *>(this)->baseLayout(), const_cast<BaselineRelativeLayout *>(this)->indiceLayout(), m_type, true);
   return layout;
+}
+
+void BaselineRelativeLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  if (cursor->pointedExpressionLayout() == indiceLayout()) {
+    if (m_type == Type::Superscript) {
+      ExpressionLayout * base = baseLayout();
+      ExpressionLayout * pointedLayout = base;
+      if (base->isHorizontal()) {
+        pointedLayout = base->editableChild(base->numberOfChildren()-1);
+      }
+      if (indiceLayout()->isEmpty()) {
+        replaceWith(base, true);
+      }
+      cursor->setPointedExpressionLayout(pointedLayout);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return;
+    }
+    assert(m_type == Type::Subscript);
+    ExpressionLayout * previousParent = m_parent;
+    int indexInParent = previousParent->indexOfChild(this);
+    replaceWith(new EmptyVisibleLayout(), true);
+    if (indexInParent == 0) {
+      cursor->setPointedExpressionLayout(previousParent);
+      return;
+    }
+    cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return;
+  }
+  ExpressionLayout::backspaceAtCursor(cursor);
 }
 
 bool BaselineRelativeLayout::moveLeft(ExpressionLayoutCursor * cursor) {

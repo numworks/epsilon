@@ -67,6 +67,7 @@ public:
   bool moveDownInside(ExpressionLayoutCursor * cursor);
 
   /* Other */
+  virtual bool isHorizontal() const { return false; }
   virtual bool isLeftParenthesis() const { return false; }
   virtual bool isRightParenthesis() const { return false; }
   virtual bool isLeftBracket() const { return false; }

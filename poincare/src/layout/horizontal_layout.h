@@ -10,6 +10,9 @@ public:
   using DynamicLayoutHierarchy::DynamicLayoutHierarchy;
   ExpressionLayout * clone() const override;
 
+  /* Hierarchy */
+  void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true) override;
+
   /* Navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;

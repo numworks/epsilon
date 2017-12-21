@@ -13,6 +13,7 @@ public:
   void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+  bool isEmpty() const override { return true; }
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override { return; }
   virtual KDSize computeSize() override { return KDSizeZero; }

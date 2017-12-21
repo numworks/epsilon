@@ -15,6 +15,21 @@ ExpressionLayout * HorizontalLayout::clone() const {
   return layout;
 }
 
+void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
+  if (newChild->isEmpty()) {
+    if (numberOfChildren() > 1) {
+      removeChildAtIndex(indexOfChild(const_cast<ExpressionLayout *>(oldChild)), deleteOldChild);
+      delete newChild;
+      return;
+    }
+    if (m_parent) {
+      replaceWith(newChild);
+      return;
+    }
+  }
+  ExpressionLayout::replaceChild(oldChild, newChild, deleteOldChild);
+}
+
 bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left.
   // Ask the parent.

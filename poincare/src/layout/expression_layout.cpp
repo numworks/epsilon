@@ -208,7 +208,21 @@ void ExpressionLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
 }
 
 void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  if (cursor->pointedExpressionLayout() != this || m_parent == nullptr) {
+
+  int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
+  if (indexOfPointedExpression >= 0) {
+    assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+    if (indexOfPointedExpression == 0) {
+      cursor->setPointedExpressionLayout(this);
+    } else {
+      cursor->setPointedExpressionLayout(editableChild(indexOfPointedExpression - 1));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    }
+    cursor->performBackspace();
+    return;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  if (m_parent == nullptr) {
     return;
   }
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
@@ -223,6 +237,13 @@ void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   }
   int indexInParent = m_parent->indexOfChild(this);
   ExpressionLayout * previousParent = m_parent;
+  if (previousParent->numberOfChildren() == 1) {
+    ExpressionLayout * newLayout = new EmptyVisibleLayout();
+    replaceWith(newLayout, true);
+    cursor->setPointedExpressionLayout(newLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return;
+  }
   previousParent->removeChildAtIndex(indexInParent, true);
   if (indexInParent < previousParent->numberOfChildren()) {
     cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent));

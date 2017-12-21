@@ -1,4 +1,5 @@
 #include "parenthesis_left_layout.h"
+#include <escher/metric.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -55,7 +56,7 @@ void ParenthesisLeftLayout::render(KDContext * ctx, KDPoint p, KDColor expressio
 
 void ParenthesisLeftLayout::computeOperandHeight() {
   assert(m_parent != nullptr);
-  m_operandHeight = 18;
+  m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
   int currentNumberOfOpenParentheses = 1;
   int numberOfBrothers = m_parent->numberOfChildren();
   for (int i = m_parent->indexOfChild(this) + 1; i < numberOfBrothers; i++) {

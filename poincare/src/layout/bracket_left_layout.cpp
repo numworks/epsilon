@@ -1,4 +1,5 @@
 #include "bracket_left_layout.h"
+#include <escher/metric.h>
 extern "C" {
 #include <assert.h>
 }
@@ -18,7 +19,7 @@ void BracketLeftLayout::render(KDContext * ctx, KDPoint p, KDColor expressionCol
 
 void BracketLeftLayout::computeOperandHeight() {
   assert(m_parent != nullptr);
-  m_operandHeight = BracketLeftRightLayout::k_minimalOperandHeight;
+  m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
   int currentNumberOfOpenBrackets = 1;
   int numberOfBrothers = m_parent->numberOfChildren();
   for (int i = m_parent->indexOfChild(this) + 1; i < numberOfBrothers; i++) {

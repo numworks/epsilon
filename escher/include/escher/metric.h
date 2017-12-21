@@ -27,6 +27,7 @@ public:
   constexpr static KDCoordinate ToolboxRowHeight = 40;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
+  constexpr static KDCoordinate MinimalBracketAndParenthesisHeight = 18;
 };
 
 #endif

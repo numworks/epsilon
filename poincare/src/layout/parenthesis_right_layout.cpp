@@ -54,14 +54,19 @@ void ParenthesisRightLayout::render(KDContext * ctx, KDPoint p, KDColor expressi
 }
 
 void ParenthesisRightLayout::computeOperandHeight() {
-  m_operandHeight = 18;
   assert(m_parent != nullptr);
+  m_operandHeight = 18;
+  int currentNumberOfOpenParentheses = 1;
   for (int i = m_parent->indexOfChild(this) - 1; i >= 0; i--) {
     ExpressionLayout * brother = m_parent->editableChild(i);
     if (brother->isLeftParenthesis()) {
-      return;
-    }
-    KDCoordinate brotherHeight = brother->size().height();
+      currentNumberOfOpenParentheses--;
+      if (currentNumberOfOpenParentheses == 0) {
+        return;
+      }
+    } else if (brother->isRightParenthesis()) {
+      currentNumberOfOpenParentheses++;
+    }    KDCoordinate brotherHeight = brother->size().height();
     if (brotherHeight > m_operandHeight) {
       m_operandHeight = brotherHeight;
     }
@@ -71,10 +76,16 @@ void ParenthesisRightLayout::computeOperandHeight() {
 void ParenthesisRightLayout::computeBaseline() {
   assert(m_parent != nullptr);
   m_baseline = operandHeight()/2;
+  int currentNumberOfOpenParentheses = 1;
   for (int i = m_parent->indexOfChild(this) - 1; i >= 0; i--) {
     ExpressionLayout * brother = m_parent->editableChild(i);
     if (brother->isLeftParenthesis()) {
-      break;
+      currentNumberOfOpenParentheses--;
+      if (currentNumberOfOpenParentheses == 0) {
+        break;
+      }
+    } else if (brother->isRightParenthesis()) {
+      currentNumberOfOpenParentheses++;
     }
     if (brother->baseline() > m_baseline) {
       m_baseline = brother->baseline();

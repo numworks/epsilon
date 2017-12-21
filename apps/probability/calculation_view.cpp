@@ -57,8 +57,8 @@ void CalculationView::selectSubview(int subviewIndex) {
   m_highlightedSubviewIndex = subviewIndex;
 }
 
-bool CalculationView::textFieldDidHandleEvent(::TextField * textField, Ion::Events::Event event, bool returnValue) {
-  if (returnValue) {
+bool CalculationView::textFieldDidHandleEvent(::TextField * textField, Ion::Events::Event event, bool returnValue, bool textHasChanged) {
+  if (returnValue && textHasChanged) {
     updateCalculationLayoutFromIndex(m_highlightedSubviewIndex-1);
   }
   return returnValue;

@@ -419,8 +419,9 @@ bool TextField::textFieldShouldFinishEditing(Ion::Events::Event event) {
 
 bool TextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
+  size_t previousTextLength = strlen(text());
   bool didHandleEvent = privateHandleEvent(event);
-  return m_delegate->textFieldDidHandleEvent(this, event, didHandleEvent);
+  return m_delegate->textFieldDidHandleEvent(this, event, didHandleEvent, strlen(text()) != previousTextLength);
 }
 
 void TextField::scrollToCursor() {

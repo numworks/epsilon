@@ -1,4 +1,5 @@
 #include <poincare/dynamic_layout_hierarchy.h>
+#include "empty_visible_layout.h"
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -58,6 +59,24 @@ bool DynamicLayoutHierarchy::addChildAtIndex(ExpressionLayout * child, int index
   m_numberOfChildren += 1;
   m_sized = false;
   return true;
+}
+
+void DynamicLayoutHierarchy::removeChildAtIndex(int index, bool deleteAfterRemoval) {
+  if (deleteAfterRemoval) {
+    delete m_children[index];
+  } else {
+    const_cast<ExpressionLayout *>(m_children[index])->setParent(nullptr);
+  }
+  m_numberOfChildren--;
+  if (m_numberOfChildren == 0) {
+    ExpressionLayout * emptyVisibleLayout = new EmptyVisibleLayout();
+    replaceWith(emptyVisibleLayout);
+    return;
+  }
+  for (int j=index; j<m_numberOfChildren; j++) {
+    m_children[j] = m_children[j+1];
+  }
+
 }
 
 }

@@ -50,7 +50,7 @@ public:
   virtual void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
   ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace = true);
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
-  void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true);
+  virtual void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true);
   void detachChild(const ExpressionLayout * e); // Removes a child WITHOUT deleting it
 
   /* Dynamic Layout*/
@@ -71,6 +71,7 @@ public:
   virtual bool isRightParenthesis() const { return false; }
   virtual bool isLeftBracket() const { return false; }
   virtual bool isRightBracket() const { return false; }
+  virtual bool isEmpty() const { return false; }
   virtual char XNTChar() const;
 
 protected:

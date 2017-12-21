@@ -22,6 +22,7 @@ protected:
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
   constexpr static KDCoordinate k_rightRadixHeight = 2;
+  constexpr static KDCoordinate k_radixHorizontalOverflow = 2;
   constexpr static KDCoordinate k_indexHeight = 5;
   constexpr static KDCoordinate k_heightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 1;

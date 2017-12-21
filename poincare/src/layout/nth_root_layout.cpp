@@ -164,16 +164,20 @@ void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
     p.y() + m_baseline + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin - k_leftRadixHeight,
     k_leftRadixWidth, k_leftRadixHeight);
   ctx->blendRectWithMask(leftRadixFrame, expressionColor, (const uint8_t *)radixPixel, (KDColor *)workingBuffer);
+  // If the indice is higher than the root.
   if (indexSize.height() + k_indexHeight > radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin) {
+    // Vertical radix bar
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
                          p.y() + indexSize.height() + k_indexHeight - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
                          k_radixLineThickness,
                          radicandSize.height() + 2*k_heightMargin + k_radixLineThickness), expressionColor);
+    // Horizontal radix bar
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
                          p.y() + indexSize.height() + k_indexHeight - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
-                         radicandSize.width() + 2*k_widthMargin,
+                         radicandSize.width() + 2*k_widthMargin + k_radixHorizontalOverflow,
                          k_radixLineThickness), expressionColor);
-    ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin + radicandSize.width() + 2*k_widthMargin,
+    // Right radix bar
+    ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin + radicandSize.width() + 2*k_widthMargin + k_radixHorizontalOverflow,
                          p.y() + indexSize.height() + k_indexHeight - radicandLayout()->baseline() - k_radixLineThickness - k_heightMargin,
                          k_radixLineThickness,
                          k_rightRadixHeight + k_radixLineThickness), expressionColor);
@@ -184,9 +188,9 @@ void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
                          radicandSize.height() + 2*k_heightMargin + k_radixLineThickness), expressionColor);
     ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
                          p.y(),
-                         radicandSize.width() + 2*k_widthMargin,
+                         radicandSize.width() + 2*k_widthMargin + k_radixHorizontalOverflow,
                          k_radixLineThickness), expressionColor);
-    ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin + radicandSize.width() + 2*k_widthMargin,
+    ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin + radicandSize.width() + 2*k_widthMargin + k_radixHorizontalOverflow,
                          p.y(),
                          k_radixLineThickness,
                          k_rightRadixHeight + k_radixLineThickness), expressionColor);
@@ -198,7 +202,7 @@ KDSize NthRootLayout::computeSize() {
   KDSize radicandSize = radicandLayout()->size();
   KDSize indexSize = indexLayout() != nullptr ? indexLayout()->size() : KDSize(k_leftRadixWidth,0);
   return KDSize(
-      indexSize.width() + 3*k_widthMargin + 2*k_radixLineThickness + radicandSize.width(),
+      indexSize.width() + 3*k_widthMargin + 2*k_radixLineThickness + radicandSize.width() + k_radixHorizontalOverflow,
       m_baseline + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin
       );
 }

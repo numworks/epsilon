@@ -16,7 +16,6 @@ public:
   constexpr static KDCoordinate k_widthMargin = 5;
   constexpr static KDCoordinate k_externWidthMargin = 2;
 protected:
-  constexpr static KDCoordinate k_minimalOperandHeight = 18;
   KDSize computeSize() override;
   KDCoordinate operandHeight();
   virtual void computeOperandHeight() = 0;

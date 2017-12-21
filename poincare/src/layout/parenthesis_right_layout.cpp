@@ -66,7 +66,8 @@ void ParenthesisRightLayout::computeOperandHeight() {
       }
     } else if (brother->isRightParenthesis()) {
       currentNumberOfOpenParentheses++;
-    }    KDCoordinate brotherHeight = brother->size().height();
+    }
+    KDCoordinate brotherHeight = brother->size().height();
     if (brotherHeight > m_operandHeight) {
       m_operandHeight = brotherHeight;
     }

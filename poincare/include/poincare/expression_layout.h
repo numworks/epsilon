@@ -67,6 +67,8 @@ public:
   /* Other */
   virtual bool isLeftParenthesis() const { return false; }
   virtual bool isRightParenthesis() const { return false; }
+  virtual bool isLeftBracket() const { return false; }
+  virtual bool isRightBracket() const { return false; }
   virtual char XNTChar() const;
 
 protected:

@@ -39,9 +39,9 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
     return &m_titleView;
   }
   if (index == 1) {
-    return &m_lawCurveView;
+    return m_selectableTableView;
   }
-  return m_selectableTableView;
+  return &m_lawCurveView;
 }
 
 void CalculationController::ContentView::layoutSubviews() {

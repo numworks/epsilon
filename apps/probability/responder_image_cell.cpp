@@ -12,16 +12,16 @@ ResponderImageCell::ResponderImageCell(Responder * parentResponder, Law * law, C
 
 void ResponderImageCell::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
-  ctx->strokeRect(KDRect(k_margin, k_margin, ImageCell::k_width+2*k_outline, ImageCell::k_height+2*k_outline), Palette::GreyMiddle);
+  ctx->strokeRect(KDRect(0, 0, ImageCell::k_width+2*k_outline, ImageCell::k_height+2*k_outline), Palette::GreyMiddle);
 }
 
 KDSize ResponderImageCell::minimalSizeForOptimalDisplay() const {
-  return KDSize(2*k_totalMargin+ImageCell::k_width, 2*k_totalMargin*ImageCell::k_height);
+  return KDSize(2*k_outline+ImageCell::k_width, 2*k_outline*ImageCell::k_height);
 }
 
 bool ResponderImageCell::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Down) {
-    KDPoint topLeftAngle = app()->modalView()->pointFromPointInView(this, KDPoint(k_totalMargin, k_totalMargin));
+    KDPoint topLeftAngle = app()->modalView()->pointFromPointInView(this, KDPoint(k_outline, k_outline));
     app()->displayModalViewController(&m_calculationTypeController, 0.0f, 0.0f, topLeftAngle.y(), topLeftAngle.x());
     return true;
   }
@@ -47,7 +47,7 @@ View * ResponderImageCell::subviewAtIndex(int index) {
 }
 
 void ResponderImageCell::layoutSubviews() {
-  m_imageCell.setFrame(KDRect(k_totalMargin, k_totalMargin, bounds().width()-2*k_totalMargin, bounds().height()-2*k_totalMargin));
+  m_imageCell.setFrame(KDRect(k_outline, k_outline, bounds().width()-2*k_outline, bounds().height()-2*k_outline));
 }
 
 }

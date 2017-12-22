@@ -20,6 +20,9 @@ void ListViewDataSource::willDisplayCellForIndex(HighlightCell * cell, int index
 }
 
 KDCoordinate ListViewDataSource::cumulatedWidthFromIndex(int i) {
+  if (i == 1) {
+    return cellWidth();
+  }
   return 0;
 }
 

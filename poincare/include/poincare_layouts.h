@@ -28,5 +28,6 @@
 #include <poincare/src/layout/sequence_layout.h>
 #include <poincare/src/layout/string_layout.h>
 #include <poincare/src/layout/sum_layout.h>
+#include <poincare/src/layout/uneditable_horizontal_trio_layout.h>
 
 #endif

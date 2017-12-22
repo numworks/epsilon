@@ -250,16 +250,4 @@ bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direct
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
 
-int HorizontalLayout::indexOfChild(ExpressionLayout * eL) const {
-  if (eL == nullptr) {
-    return -1;
-  }
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (child(i) == eL) {
-      return i;
-    }
-  }
-  return -1;
-}
-
 }

@@ -11,6 +11,7 @@ addons:
 matrix:
   include:
     - env: PLATFORM=device EXT=elf
+    - env: PLATFORM=device EXT=elf USE_LIBGCC=1
     - env: PLATFORM=simulator EXT=elf
     - env: PLATFORM=simulator EXT=elf TOOLCHAIN=host-clang
     - env: PLATFORM=blackbox EXT=bin QUIZ_USE_CONSOLE=1

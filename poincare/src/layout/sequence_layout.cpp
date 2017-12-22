@@ -1,10 +1,59 @@
 #include "sequence_layout.h"
-#include "string_layout.h"
+#include "parenthesis_left_layout.h"
+#include "parenthesis_right_layout.h"
+#include "uneditable_horizontal_trio_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
 
 namespace Poincare {
+
+SequenceLayout::SequenceLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * argument, bool cloneOperands) :
+  StaticLayoutHierarchy()
+{
+  ParenthesisLeftLayout * parLeft = new ParenthesisLeftLayout();
+  ParenthesisRightLayout * parRight = new ParenthesisRightLayout();
+  UneditableHorizontalTrioLayout * horLayout = new UneditableHorizontalTrioLayout(parLeft, argument, parRight, cloneOperands);
+  build(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray3(lowerBound, upperBound, horLayout)), 3, cloneOperands);
+}
+
+void SequenceLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the bounds or of the argument.
+  // Delete the sequence, keep the argument.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left
+      && ((lowerBoundLayout()
+          && cursor->pointedExpressionLayout() == lowerBoundLayout())
+        || (upperBoundLayout()
+          && cursor->pointedExpressionLayout() == upperBoundLayout())
+        || cursor->pointedExpressionLayout() == argumentLayout()))
+  {
+    ExpressionLayout * previousParent = m_parent;
+    int indexInParent = previousParent->indexOfChild(this);
+    replaceWith(argumentLayout(), true);
+    // Place the cursor on the right of the left brother of the sequence if
+    // there is one.
+    if (indexInParent > 0) {
+      cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return;
+    }
+    // Else place the cursor on the Left of the parent.
+    cursor->setPointedExpressionLayout(previousParent);
+    return;
+  }
+  // Case: Right.
+  // Move inside the argument.
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(argumentLayout());
+    return;
+  }
+  // Case: Left.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  m_parent->backspaceAtCursor(cursor);
+}
 
 bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the bounds.
@@ -22,7 +71,7 @@ bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Go Right of the lower bound.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left
       && argumentLayout()
-      && cursor->pointedExpressionLayout() == argumentLayout())
+      && cursor->pointedExpressionLayout() == editableChild(2))
   {
     assert(lowerBoundLayout() != nullptr);
     cursor->setPointedExpressionLayout(lowerBoundLayout()->editableChild(1));
@@ -35,7 +84,7 @@ bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(argumentLayout() != nullptr);
     cursor->setPointedExpressionLayout(argumentLayout());
-    return argumentLayout()->moveLeft(cursor);
+    return true;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   // Case: Left.
@@ -64,13 +113,11 @@ bool SequenceLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right
       && argumentLayout()
-      && cursor->pointedExpressionLayout() == argumentLayout())
+      && cursor->pointedExpressionLayout() == editableChild(2))
   {
     cursor->setPointedExpressionLayout(this);
-    if (m_parent) {
-      return m_parent->moveRight(cursor);
-    }
-    return false;
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return true;
   }
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left.
@@ -133,11 +180,11 @@ ExpressionLayout * SequenceLayout::lowerBoundLayout() {
 }
 
 ExpressionLayout * SequenceLayout::argumentLayout() {
-  return editableChild(2);
+  return editableChild(2)->editableChild(1);
 }
 
 KDSize SequenceLayout::computeSize() {
-  KDSize argumentSize = argumentLayout()->size();
+  KDSize argumentSize = editableChild(2)->size();
   KDSize lowerBoundSize = lowerBoundLayout()->size();
   KDSize upperBoundSize = upperBoundLayout()->size();
   return KDSize(
@@ -162,7 +209,7 @@ KDPoint SequenceLayout::positionOfChild(ExpressionLayout * child) {
   } else if (child == upperBoundLayout()) {
     x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSize.width()-upperBoundSize.width())/2);
     y = m_baseline - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
-  } else if (child == argumentLayout()) {
+  } else if (child == editableChild(2)) {
     x = max(max(k_symbolWidth, lowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin;
     y = m_baseline - argumentLayout()->baseline();
   } else {

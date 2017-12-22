@@ -21,6 +21,49 @@ ExpressionLayout * NthRootLayout::clone() const {
   return layout;
 }
 
+void NthRootLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  // Case: Left the index.
+  // Move Left.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left
+      && cursor->pointedExpressionLayout() == indexLayout())
+  {
+    cursor->setPointedExpressionLayout(this);
+    return;
+  }
+  // Case: Left the radicand.
+  // Delete the root, keep the radicand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left
+      && cursor->pointedExpressionLayout() == radicandLayout())
+  {
+    ExpressionLayout * previousParent = m_parent;
+    int indexInParent = previousParent->indexOfChild(this);
+    replaceWith(radicandLayout());
+    // Place the cursor on the right of the left brother of the root if there is
+    // one.
+    if (indexInParent > 0) {
+      cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return;
+    }
+    // Else place the cursor on the Left of the parent.
+    cursor->setPointedExpressionLayout(previousParent);
+    return;
+  }
+  // Case: Right.
+  // Move to the radicand.
+  assert(cursor->pointedExpressionLayout() == this);
+  if (cursor->position() ==ExpressionLayoutCursor::Position::Right) {
+    cursor->setPointedExpressionLayout(radicandLayout());
+    return;
+  }
+  // Case: Left.
+  // Ask the parent.
+  assert(cursor->position() ==ExpressionLayoutCursor::Position::Left);
+  if (m_parent) {
+    return m_parent->backspaceAtCursor(cursor);
+  }
+}
+
 bool NthRootLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the radicand.
   // Go the index if there is one, else go Left of the root.

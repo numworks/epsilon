@@ -9,6 +9,7 @@ class EditableBaselineRelativeLayout : public BaselineRelativeLayout {
 public:
   using BaselineRelativeLayout::BaselineRelativeLayout;
   ExpressionLayout * clone() const override;
+  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;

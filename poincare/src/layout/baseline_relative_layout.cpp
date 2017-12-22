@@ -18,21 +18,10 @@ ExpressionLayout * BaselineRelativeLayout::clone() const {
 }
 
 void BaselineRelativeLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  if (cursor->pointedExpressionLayout() == indiceLayout()) {
-    if (m_type == Type::Superscript) {
-      ExpressionLayout * base = baseLayout();
-      ExpressionLayout * pointedLayout = base;
-      if (base->isHorizontal()) {
-        pointedLayout = base->editableChild(base->numberOfChildren()-1);
-      }
-      if (indiceLayout()->isEmpty()) {
-        replaceWith(base, true);
-      }
-      cursor->setPointedExpressionLayout(pointedLayout);
-      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-      return;
-    }
-    assert(m_type == Type::Subscript);
+  if (cursor->pointedExpressionLayout() == indiceLayout()
+      || (cursor->pointedExpressionLayout() == this
+        && cursor->position() == ExpressionLayoutCursor::Position::Right))
+  {
     ExpressionLayout * previousParent = m_parent;
     int indexInParent = previousParent->indexOfChild(this);
     replaceWith(new EmptyVisibleLayout(), true);

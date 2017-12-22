@@ -23,7 +23,7 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
 %.map: %.elf
 	@echo "LDMAP   $@"
-	$(Q) $(LD) $^ $(LDFLAGS) -M -Map $@ -o /dev/null
+	$(Q) $(LD) $^ $(LDFLAGS) -Wl,-M -Wl,-Map=$@ -o /dev/null
 
 .PHONY: %_memory_map
 %_memory_map: %.map

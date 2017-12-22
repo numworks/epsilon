@@ -1,7 +1,8 @@
 #include "sum_layout.h"
 #include "horizontal_layout.h"
-#include "uneditable_parenthesis_left_layout.h"
-#include "uneditable_parenthesis_right_layout.h"
+#include "parenthesis_left_layout.h"
+#include "parenthesis_right_layout.h"
+#include "uneditable_horizontal_trio_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
@@ -27,18 +28,12 @@ const uint8_t symbolPixel[SumLayout::k_symbolHeight][SumLayout::k_symbolWidth] =
 };
 
 SumLayout::SumLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * argument, bool cloneOperands) :
-  SequenceLayout(lowerBound, upperBound, argument, cloneOperands)
+  SequenceLayout()
 {
-  UneditableParenthesisLeftLayout * parLeft = new UneditableParenthesisLeftLayout();
-  UneditableParenthesisRightLayout * parRight = new UneditableParenthesisRightLayout();
-  HorizontalLayout * horLayout = new HorizontalLayout();
-  ExpressionLayout * argLayout = editableChild(2);
-  // We cannot call argument() because it is overrided to handle completely
-  // built SumLayouts, not SumLayouts in construction.
-  argLayout->replaceWith(horLayout, false);
-  horLayout->addChildAtIndex(parLeft, 0);
-  horLayout->addChildAtIndex(argLayout, 1);
-  horLayout->addChildAtIndex(parRight, 2);
+  ParenthesisLeftLayout * parLeft = new ParenthesisLeftLayout();
+  ParenthesisRightLayout * parRight = new ParenthesisRightLayout();
+  UneditableHorizontalTrioLayout * horLayout = new UneditableHorizontalTrioLayout(parLeft, argument, parRight, false);
+  build(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray3(lowerBound, upperBound, horLayout)), 3, false);
 }
 
 ExpressionLayout * SumLayout::clone() const {

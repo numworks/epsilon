@@ -31,7 +31,6 @@ protected:
   void mergeChildrenAtIndex(ExpressionLayout * eL, int index); // WITHOUT delete.
 private:
   bool moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout);
-  int indexOfChild(ExpressionLayout * eL) const;
 };
 
 }

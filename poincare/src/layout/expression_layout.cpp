@@ -98,6 +98,9 @@ const ExpressionLayout * ExpressionLayout::child(int i) const {
 }
 
 int ExpressionLayout::indexOfChild(ExpressionLayout * child) const {
+  if (child == nullptr) {
+    return -1;
+  }
   for (int i = 0; i < numberOfChildren(); i++) {
     if (children()[i] == child) {
       return i;

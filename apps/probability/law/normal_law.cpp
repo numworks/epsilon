@@ -116,8 +116,7 @@ double NormalLaw::standardNormalCumulativeDistributiveFunctionAtAbscissa(double 
   if (abscissa > k_boundStandardNormalDistribution) {
     return 1.0;
   }
-  /* Waissi & Rossin's formula (error less than 0.0001) */
-  return 1.0/(1.0+std::exp(-std::sqrt(M_PI)*(k_beta1*std::pow(abscissa,5.0)+k_beta2*std::pow(abscissa,3.0)+k_beta3*abscissa)));
+  return 0.5+0.5*std::erf(abscissa/std::sqrt(2.0));
 }
 
 double NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(double probability) {

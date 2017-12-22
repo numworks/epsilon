@@ -32,7 +32,7 @@ bool StringLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // string layout, for instance left of "n=" in a Sum layout.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     int indexOfThis = m_parent->indexOfChild(this);
-    if (m_parent->editableChild(indexOfThis-1) != nullptr) {
+    if (indexOfThis > 1) {
       cursor->setPointedExpressionLayout(m_parent->editableChild(indexOfThis-1));
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       return true;

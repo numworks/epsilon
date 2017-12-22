@@ -56,7 +56,7 @@ const ToolboxMessageTree probabilityChildren[2] = {
               new EmptyVisibleLayout(),
               new EmptyVisibleLayout())),
               2, 1, false),
-        new ParenthesisRightLayout()),
+        new ParenthesisRightLayout(), false, true),
       const_cast<int *>(&pointedLayoutPathBinomial[0]),
       2),
   ToolboxMessageTree(I18n::Message::PermuteCommandWithArg, I18n::Message::Permutation, I18n::Message::PermuteCommandWithArg)};

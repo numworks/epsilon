@@ -141,6 +141,10 @@ void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLay
   }
   // If there is no parent, the pointed layout is the main horizontal layout.
   // Add the "brother" as a child.
+  // If there is only one empty child, remove it before adding the layout.
+  if (numberOfChildren() == 1 && editableChild(0)->isEmpty()) {
+    removeChildAtIndex(0, true);
+  }
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     addChildAtIndex(brother, 0);
     return;

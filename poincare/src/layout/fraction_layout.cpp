@@ -1,4 +1,6 @@
 #include "fraction_layout.h"
+#include "empty_visible_layout.h"
+#include "horizontal_layout.h"
 #include <escher/metric.h>
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
@@ -9,6 +11,76 @@ namespace Poincare {
 ExpressionLayout * FractionLayout::clone() const {
   FractionLayout * layout = new FractionLayout(const_cast<FractionLayout *>(this)->numeratorLayout(), const_cast<FractionLayout *>(this)->denominatorLayout(), true);
   return layout;
+}
+
+void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  // If the cursor is on the left of the denominator, replace the fraction with
+  // a horizontal juxtaposition of the numerator and the denominator.
+  if (cursor->pointedExpressionLayout() == denominatorLayout()) {
+    assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+    if (numeratorLayout()->isEmpty()) {
+      if (denominatorLayout()->isEmpty()) {
+        // If the numerator and the denominator are empty, replace the fraction
+        // with an empty layout.
+        ExpressionLayout * previousParent = m_parent;
+        int indexInParent = previousParent->indexOfChild(this);
+        replaceWith(new EmptyVisibleLayout(), true);
+        // Place the cursor on the right of the left brother ofthe fraction if
+        // there is one.
+        if (indexInParent > 0) {
+          cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
+          cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+          return;
+        }
+        // Else place the cursor on the Left of the parent.
+        cursor->setPointedExpressionLayout(previousParent);
+        return;
+      }
+      // If the numerator is empty but not the denominator, replace the fraction
+      // with its denominator. Place the cursor on the left of the denominator.
+      ExpressionLayout * nextPointedLayout = denominatorLayout();
+      if (denominatorLayout()->isHorizontal()) {
+        nextPointedLayout = denominatorLayout()->editableChild(0);
+      }
+      replaceWith(denominatorLayout(), true);
+      cursor->setPointedExpressionLayout(nextPointedLayout);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      return;
+    }
+    // If the denominator is empty but not the numerator, replace the fraction
+    // with the numerator and place the cursor on its right.
+    if (denominatorLayout()->isEmpty()) {
+      ExpressionLayout * nextPointedLayout = numeratorLayout();
+      if (numeratorLayout()->isHorizontal()) {
+        nextPointedLayout = numeratorLayout()->editableChild(numeratorLayout()->numberOfChildren() - 1);
+      }
+      replaceWith(numeratorLayout(), true);
+      cursor->setPointedExpressionLayout(nextPointedLayout);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return;
+    }
+    // If neither the numerator nor the denominator are empty, replace the
+    // fraction with a juxtaposition of the numerator and denominator. Place the
+    // cursor in the middle of the juxtaposition, which is right of the
+    // numerator.
+    ExpressionLayout * nextPointedLayout = numeratorLayout();
+    if (numeratorLayout()->isHorizontal()) {
+      nextPointedLayout = numeratorLayout()->editableChild(numeratorLayout()->numberOfChildren() - 1);
+    }
+    ExpressionLayout * numerator = numeratorLayout();
+    ExpressionLayout * denominator = denominatorLayout();
+    detachChild(numerator);
+    detachChild(denominator);
+    HorizontalLayout * newLayout = new HorizontalLayout();
+    newLayout->addOrMergeChildAtIndex(denominator, 0);
+    newLayout->addOrMergeChildAtIndex(numerator, 0);
+    // Add the denominator before the numerator to have the right order.
+    replaceWith(newLayout, true);
+    cursor->setPointedExpressionLayout(nextPointedLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return;
+  }
+  ExpressionLayout::backspaceAtCursor(cursor);
 }
 
 bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor) {

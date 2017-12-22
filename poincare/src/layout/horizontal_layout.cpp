@@ -39,6 +39,14 @@ void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
   ExpressionLayout::replaceChild(oldChild, newChild, deleteOldChild);
 }
 
+void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index) {
+  if (eL->isHorizontal()) {
+    mergeChildrenAtIndex(eL, index);
+    return;
+  }
+  addChildAtIndex(eL, index);
+}
+
 bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left.
   // Ask the parent.

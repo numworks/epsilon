@@ -12,6 +12,7 @@ public:
 
   /* Hierarchy */
   void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true) override;
+  void addOrMergeChildAtIndex(ExpressionLayout * eL, int index);
 
   /* Navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor) override;

@@ -29,9 +29,6 @@ private:
    * only 7 decimal values! */
   static_assert(Constant::LargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
   constexpr static double k_boundStandardNormalDistribution = 4.892;
-  constexpr static double k_alpha1 = 22.0;
-  constexpr static double k_alpha2 = 41.0;
-  constexpr static double k_alpha3 = 10.0;
   double standardNormalCumulativeDistributiveFunctionAtAbscissa(double abscissa) const;
   double standardNormalCumulativeDistributiveInverseForProbability(double probability);
 };

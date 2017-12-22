@@ -23,6 +23,16 @@ ExpressionLayout * StringLayout::clone() const {
   return layout;
 }
 
+void StringLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  assert(cursor->pointedExpressionLayout() == this);
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  m_parent->backspaceAtCursor(cursor);
+}
+
 bool StringLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // A StringLayout is not editable, and the cursor cannot go inside it.
   assert(cursor->pointedExpressionLayout() == this);

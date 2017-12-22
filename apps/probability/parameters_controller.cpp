@@ -16,7 +16,7 @@ ParametersController::ContentView::ContentView(Responder * parentResponder, Sele
 }
 
 void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  int tableHeight = m_selectableTableView->size().height()+ Metric::CommonTopMargin + Metric::CommonBottomMargin;
+  int tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height()+ Metric::CommonTopMargin + Metric::CommonBottomMargin;
   ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight), Palette::WallScreen);
 }
 
@@ -53,7 +53,7 @@ View * ParametersController::ContentView::subviewAtIndex(int index) {
 void ParametersController::ContentView::layoutSubviews() {
   KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
-  KDCoordinate tableHeight = m_selectableTableView->size().height() + Metric::CommonTopMargin + Metric::CommonBottomMargin;
+  KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height() + Metric::CommonTopMargin + Metric::CommonBottomMargin;
   m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(),  tableHeight));
   KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
   KDCoordinate defOrigin = (titleHeight+tableHeight)/2+(bounds().height()-textHeight)/2;

@@ -18,7 +18,7 @@ public:
   HighlightCell * cellAtLocation(int i, int j);
   virtual void reloadData();
   void reloadCellAtLocation(int i, int j);
-  KDSize size() const;
+  KDSize minimalSizeForOptimalDisplay() const override;
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

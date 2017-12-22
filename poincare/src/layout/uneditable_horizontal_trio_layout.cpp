@@ -17,18 +17,38 @@ ExpressionLayout * UneditableHorizontalTrioLayout::clone() const {
 }
 
 void UneditableHorizontalTrioLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the center layout (for sequence layouts).
+  if (cursor->pointedExpressionLayout() == centerLayout()
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    ExpressionLayout * grandParent = const_cast<ExpressionLayout *>(m_parent->parent());
+    assert(grandParent != nullptr);
+    ExpressionLayout * parent = m_parent;
+    int indexInGrandParent = grandParent->indexOfChild(parent);
+    parent->replaceWith(centerLayout(), true);
+    // Place the cursor on the right of the left brother of the integral if
+    // there is one.
+    if (indexInGrandParent > 0) {
+      cursor->setPointedExpressionLayout(grandParent->editableChild(indexInGrandParent - 1));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return;
+    }
+    // Else place the cursor on the Left of the parent.
+    cursor->setPointedExpressionLayout(grandParent);
+    return;
+  }
+  // Case: Right.
+  // Move to the argument.
   if (cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
-    ExpressionLayout * previousParent = m_parent;
-    int indexInParent = previousParent->indexOfChild(this);
-    replaceWith(new EmptyVisibleLayout(), true);
-    if (indexInParent == 0) {
-      cursor->setPointedExpressionLayout(previousParent);
+    // Go Right of the center layout's last child if it has one, else go Right
+    // of the center layout.
+    if (centerLayout()->numberOfChildren() > 1) {
+      cursor->setPointedExpressionLayout(centerLayout()->editableChild(centerLayout()->numberOfChildren()-1));
       return;
     }
-    cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    cursor->setPointedExpressionLayout(centerLayout());
     return;
   }
   ExpressionLayout::backspaceAtCursor(cursor);
@@ -47,9 +67,8 @@ bool UneditableHorizontalTrioLayout::moveLeft(ExpressionLayoutCursor * cursor) {
     // Case: Right.
     // Go Right of the center layout's last child if it has one, else go Right
     // of the center layout.
-    ExpressionLayout * grandChild = centerLayout()->editableChild(centerLayout()->numberOfChildren()-1);
-    if (grandChild != nullptr) {
-      cursor->setPointedExpressionLayout(grandChild);
+    if (centerLayout()->numberOfChildren() > 1) {
+      cursor->setPointedExpressionLayout(centerLayout()->editableChild(centerLayout()->numberOfChildren()-1));
       return true;
     }
     cursor->setPointedExpressionLayout(centerLayout());

@@ -80,6 +80,12 @@ void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return;
   }
+  // If the cursor is on the left of the numerator, move Left of the fraction.
+  if (cursor->pointedExpressionLayout() == numeratorLayout()) {
+    assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+    cursor->setPointedExpressionLayout(this);
+    return;
+  }
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 

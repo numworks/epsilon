@@ -51,6 +51,8 @@
 #undef copysign
 #undef cos
 #undef cosh
+#undef erf
+#undef erfc
 #undef exp
 #undef expm1
 #undef fabs
@@ -92,6 +94,8 @@ static inline double cos(double x) { return __builtin_cos(x); }
 static inline float cos(float x) { return __builtin_cosf(x); }
 static inline double cosh(double x) { return __builtin_cosh(x); }
 static inline float cosh(float x) { return __builtin_coshf(x); }
+static inline double erf(double x) { return __builtin_erf(x); }
+static inline double erfc(double x) { return __builtin_erfc(x); }
 static inline double exp(double x) { return __builtin_exp(x); }
 static inline float exp(float x) { return __builtin_expf(x); }
 static inline double fabs(double x) { return __builtin_fabs(x); }

@@ -1,7 +1,7 @@
 objs += $(addprefix ion/src/device/boot/, isr.o rt0.o)
 LDFLAGS += -T ion/src/device/boot/flash.ld
 
-LDFLAGS += -M -Map output.map
+LDFLAGS += -Wl,-M -Wl,-Map=output.map
 products += output.map
 
 .PHONY: %_memory_map

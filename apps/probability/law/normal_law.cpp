@@ -1,4 +1,5 @@
 #include "normal_law.h"
+#include "erf_inv.h"
 #include <assert.h>
 #include <cmath>
 #include <float.h>
@@ -129,9 +130,7 @@ double NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(doub
   if (probability < 0.5) {
     return -standardNormalCumulativeDistributiveInverseForProbability(1-probability);
   }
-  /* Soranzo & Epure (error less than 0.001) */
-  return (k_alpha3/std::log(k_alpha2))*std::log(1.0 - std::log(-std::log(probability)/std::log(2.0))/std::log(k_alpha1));
+  return std::sqrt(2.0)*erfInv(2.0*probability-1.0);
 }
-
 
 }

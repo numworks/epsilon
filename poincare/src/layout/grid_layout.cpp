@@ -1,4 +1,5 @@
 #include "grid_layout.h"
+#include "empty_visible_layout.h"
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
@@ -17,6 +18,30 @@ GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int n
 ExpressionLayout * GridLayout::clone() const {
   GridLayout * layout = new GridLayout(const_cast<ExpressionLayout **>(children()), m_numberOfRows, m_numberOfColumns, true);
   return layout;
+}
+
+void GridLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  // If the cursor is on the left of the grid, delete the grid and its parent: A
+  // grid only exists for now in binomial coefficient and in matrices, and we
+  // want to delete their parentheses or brackets too.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
+    if (indexOfPointedExpression >= 0 && childIsLeftOfGrid(indexOfPointedExpression)) {
+      assert(m_parent != nullptr);
+      assert(m_parent->parent() != nullptr);
+      ExpressionLayout * grandParent = const_cast<ExpressionLayout *>(m_parent->parent());
+      int indexInGrandParent = grandParent->indexOfChild(m_parent);
+      m_parent->replaceWith(new EmptyVisibleLayout(), true);
+      if (indexInGrandParent == 0) {
+        cursor->setPointedExpressionLayout(grandParent);
+        return;
+      }
+      cursor->setPointedExpressionLayout(grandParent->editableChild(indexInGrandParent-1));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return;
+    }
+  }
+  ExpressionLayout::backspaceAtCursor(cursor);
 }
 
 bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
@@ -38,7 +63,7 @@ bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
       // Go Left of the grid
       cursor->setPointedExpressionLayout(this);
       cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-      return true;
+      return m_parent->moveLeft(cursor);
     }
     // Case: Left of another child.
     // Go Right of its brother on the left.
@@ -72,10 +97,10 @@ bool GridLayout::moveRight(ExpressionLayoutCursor * cursor) {
   if (childIndex >- 1 && cursor->position() == ExpressionLayoutCursor::Position::Right) {
     if (childIsRightOfGrid(childIndex)) {
       // Case: Right of a child on the right of the grid.
-      // Go Right of the grid.
+      // Go Right of the grid and move Right.
       cursor->setPointedExpressionLayout(this);
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-      return true;
+      return m_parent->moveRight(cursor);
     }
     // Case: Right of another child.
     // Go Left of its brother on the right.

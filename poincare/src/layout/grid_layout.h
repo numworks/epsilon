@@ -9,6 +9,7 @@ class GridLayout : public DynamicLayoutHierarchy {
 public:
   GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands);
   ExpressionLayout * clone() const override;
+  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
 
   /* Navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor) override;

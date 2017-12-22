@@ -15,6 +15,18 @@ ExpressionLayout * HorizontalLayout::clone() const {
   return layout;
 }
 
+void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  // If the cursor was pointing left of the first child of the horizontal
+  // layout, make it point at the horizontal layout itself.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
+    if (indexOfPointedExpression == 0) {
+      cursor->setPointedExpressionLayout(this);
+    }
+  }
+  ExpressionLayout::backspaceAtCursor(cursor);
+}
+
 void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
   if (newChild->isEmpty()) {
     if (numberOfChildren() > 1) {

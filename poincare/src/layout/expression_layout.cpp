@@ -127,7 +127,8 @@ bool ExpressionLayout::hasAncestor(const ExpressionLayout * e) const {
 void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
   if (m_parent) {
     int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? m_parent->indexOfChild(this) : m_parent->indexOfChild(this) + 1;
-    if (m_parent->addChildAtIndex(brother, brotherIndex)) {
+    if (m_parent->isHorizontal()) {
+      m_parent->addChildAtIndex(brother, brotherIndex);
       return;
     }
     if (cursor->position() == ExpressionLayoutCursor::Position::Left) {

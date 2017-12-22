@@ -49,6 +49,7 @@ public:
   void setCalculationAccordingToIndex(int index, bool forceReinitialisation = false);
 private:
   constexpr static int k_numberOfCalculationCells = 3;
+  constexpr static KDCoordinate k_tableMargin = 3;
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   void updateTitle();
   class ContentView : public View {

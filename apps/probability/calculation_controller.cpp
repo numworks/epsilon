@@ -47,7 +47,7 @@ View * CalculationController::ContentView::subviewAtIndex(int index) {
 void CalculationController::ContentView::layoutSubviews() {
   KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleHeightMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
-  KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight;
+  KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight+2*k_tableMargin;
   m_selectableTableView->setFrame(KDRect(0,  titleHeight, bounds().width(), calculationHeight));
   m_lawCurveView.setFrame(KDRect(0,  titleHeight+calculationHeight, bounds().width(), bounds().height() - calculationHeight - titleHeight));
 }
@@ -55,7 +55,7 @@ void CalculationController::ContentView::layoutSubviews() {
 CalculationController::CalculationController(Responder * parentResponder, Law * law, Calculation * calculation) :
   ViewController(parentResponder),
   m_contentView(&m_selectableTableView, law, calculation),
-  m_selectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, nullptr, false, true, KDColorWhite),
+  m_selectableTableView(this, this, 0, 0, k_tableMargin, k_tableMargin, k_tableMargin, k_tableMargin, this, nullptr, false, true, KDColorWhite),
   m_imageCell(&m_selectableTableView, law, calculation, this),
   m_draftTextBuffer{},
   m_calculation(calculation),

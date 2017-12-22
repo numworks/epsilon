@@ -96,8 +96,7 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(integrandLayout() != nullptr);
     cursor->setPointedExpressionLayout(integrandLayout()->editableChild(integrandLayout()->numberOfChildren() - 1));
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return true;
+    return cursor->moveLeft();
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   // Case: Left of the brackets.

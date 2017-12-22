@@ -7,12 +7,18 @@ extern "C" {
 
 namespace Poincare {
 
+UneditableHorizontalTrioLayout::UneditableHorizontalTrioLayout(ExpressionLayout * left, ExpressionLayout * central, ExpressionLayout * right, bool cloneOperands, bool cursorAllowedLeftAndRight) :
+  StaticLayoutHierarchy(left, central, right, cloneOperands),
+  m_cursorCanBeLeftOrRight(cursorAllowedLeftAndRight)
+{
+}
+
 ExpressionLayout * UneditableHorizontalTrioLayout::clone() const {
   UneditableHorizontalTrioLayout * layout = new UneditableHorizontalTrioLayout(
       const_cast<UneditableHorizontalTrioLayout *>(this)->leftLayout(),
       const_cast<UneditableHorizontalTrioLayout *>(this)->centerLayout(),
       const_cast<UneditableHorizontalTrioLayout *>(this)->rightLayout(),
-      true);
+      true, m_cursorCanBeLeftOrRight);
   return layout;
 }
 
@@ -60,7 +66,13 @@ bool UneditableHorizontalTrioLayout::moveLeft(ExpressionLayoutCursor * cursor) {
     // Go Left.
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
     cursor->setPointedExpressionLayout(this);
-    return true;
+    if (m_cursorCanBeLeftOrRight) {
+      return true;
+    }
+    if (m_parent) {
+      return m_parent->moveLeft(cursor);
+    }
+    return false;
   }
   assert(cursor->pointedExpressionLayout() == this);
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
@@ -89,7 +101,13 @@ bool UneditableHorizontalTrioLayout::moveRight(ExpressionLayoutCursor * cursor) 
     // Go Right.
     assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
     cursor->setPointedExpressionLayout(this);
-    return true;
+    if (m_cursorCanBeLeftOrRight) {
+      return true;
+    }
+    if (m_parent) {
+      return m_parent->moveRight(cursor);
+    }
+    return false;
   }
   assert(cursor->pointedExpressionLayout() == this);
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {

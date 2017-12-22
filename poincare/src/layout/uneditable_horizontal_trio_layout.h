@@ -18,7 +18,7 @@ namespace Poincare {
 
 class UneditableHorizontalTrioLayout : public StaticLayoutHierarchy<3> {
 public:
-  using StaticLayoutHierarchy::StaticLayoutHierarchy;
+  UneditableHorizontalTrioLayout(ExpressionLayout * left, ExpressionLayout * central, ExpressionLayout * right, bool cloneOperands, bool cursorAllowedLeftAndRight);
   ExpressionLayout * clone() const override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
 
@@ -35,6 +35,7 @@ private:
   ExpressionLayout * leftLayout();
   ExpressionLayout * centerLayout();
   ExpressionLayout * rightLayout();
+  bool m_cursorCanBeLeftOrRight;
 };
 
 }

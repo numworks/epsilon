@@ -13,7 +13,7 @@ SequenceLayout::SequenceLayout(ExpressionLayout * lowerBound, ExpressionLayout *
 {
   ParenthesisLeftLayout * parLeft = new ParenthesisLeftLayout();
   ParenthesisRightLayout * parRight = new ParenthesisRightLayout();
-  UneditableHorizontalTrioLayout * horLayout = new UneditableHorizontalTrioLayout(parLeft, argument, parRight, cloneOperands);
+  UneditableHorizontalTrioLayout * horLayout = new UneditableHorizontalTrioLayout(parLeft, argument, parRight, cloneOperands, false);
   build(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray3(lowerBound, upperBound, horLayout)), 3, cloneOperands);
 }
 

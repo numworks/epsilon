@@ -15,6 +15,7 @@ public:
   StringLayout& operator=(const StringLayout& other) = delete;
   StringLayout& operator=(StringLayout&& other) = delete;
   ExpressionLayout * clone() const override;
+  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
 
   char * text() { return m_string; }
   bool moveLeft(ExpressionLayoutCursor * cursor) override;

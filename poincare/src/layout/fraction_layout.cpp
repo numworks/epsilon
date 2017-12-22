@@ -86,6 +86,13 @@ void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     cursor->setPointedExpressionLayout(this);
     return;
   }
+  // If the cursor is on the Right, move Left of the denominator.
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(denominatorLayout());
+    return;
+  }
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 

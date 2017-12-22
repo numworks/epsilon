@@ -17,6 +17,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   virtual void setFunction(Function * function);
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;

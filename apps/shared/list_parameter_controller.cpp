@@ -26,13 +26,17 @@ View * ListParameterController::view() {
 }
 
 void ListParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
+  app()->setFirstResponder(&m_selectableTableView);
+}
+
+void ListParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  m_selectableTableView.reloadData();
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

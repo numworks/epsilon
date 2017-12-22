@@ -37,11 +37,9 @@ bool StringLayout::moveLeft(ExpressionLayoutCursor * cursor) {
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       return true;
     }
-    if (m_parent->parent()) {
-      cursor->setPointedExpressionLayout(const_cast<ExpressionLayout *>(m_parent->parent()));
-      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-      return true;
-    }
+    cursor->setPointedExpressionLayout(m_parent);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return true;
   }
   // Case: Left.
   // Ask the parent.

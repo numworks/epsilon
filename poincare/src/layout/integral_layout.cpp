@@ -24,6 +24,49 @@ ExpressionLayout * IntegralLayout::clone() const {
   return layout;
 }
 
+void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  // Case: Left the upper bound, lower bound or argument.
+  // Delete the integral, keep the integrand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left
+      && ((upperBoundLayout()
+          && cursor->pointedExpressionLayout() == upperBoundLayout())
+        || (lowerBoundLayout()
+          && cursor->pointedExpressionLayout() == lowerBoundLayout())
+        || cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left)))
+  {
+    ExpressionLayout * previousParent = m_parent;
+    int indexInParent = previousParent->indexOfChild(this);
+    ExpressionLayout * dxLayout = integrandLayout()->editableChild(integrandLayout()->numberOfChildren()-1);
+    replaceWith(integrandLayout(), true);
+    // Remove "dx"
+    int indexOfdx = previousParent->indexOfChild(dxLayout);
+    if (indexOfdx >= 0) {
+      previousParent->removeChildAtIndex(indexOfdx, true);
+    }
+    // Place the cursor on the right of the left brother of the integral if
+    // there is one.
+    if (indexInParent > 0) {
+      cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      return;
+    }
+    // Else place the cursor on the Left of the parent.
+    cursor->setPointedExpressionLayout(previousParent);
+    return;
+  }
+  // If the cursor is on the right, move to the integrand.
+  if (cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Right)) {
+    assert(integrandLayout()->numberOfChildren() > 1);
+    ExpressionLayout * layoutLeftOfdx = integrandLayout()->editableChild(integrandLayout()->numberOfChildren()-2);
+    cursor->setPointedExpressionLayout(layoutLeftOfdx);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return;
+  }
+  if (m_parent) {
+    return m_parent->backspaceAtCursor(cursor);
+  }
+}
+
 bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left the upper or lower bound.
   // Go Left of the integral.
@@ -49,10 +92,11 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   }
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right of the integral.
-  // Go Right of the integrand, Left of "dx".
+  // Go Left of "dx".
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(integrandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(integrandLayout()->editableChild(integrandLayout()->numberOfChildren()-2));
+    cursor->setPointedExpressionLayout(integrandLayout()->editableChild(integrandLayout()->numberOfChildren() - 1));
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);

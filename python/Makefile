@@ -138,6 +138,11 @@ py_objs = $(addprefix python/src/py/,\
 py_objs += python/src/py/emitnative.o
 python/src/py/emitnative.o: CFLAGS += -DN_THUMB
 
+
+extmod_objs += $(addprefix python/src/extmod/,\
+  modurandom.o \
+) 
+
 #extmod_objs += $(addprefix python/src/extmod/,\
   moductypes.o \
   modujson.o \
@@ -205,4 +210,4 @@ $(py_objs) $(extmod_objs) $(port_objs): python/port/genhdr/qstrdefs.generated.h
 
 # List all objects needed
 
-objs += $(py_objs) $(port_objs)
+objs += $(extmod_objs) $(py_objs) $(port_objs)

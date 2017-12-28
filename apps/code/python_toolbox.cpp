@@ -8,17 +8,18 @@ extern "C" {
 
 namespace Code {
 
-static constexpr int catalogChildrenCount = 83;
+static constexpr int catalogChildrenCount = 91;
 static constexpr int MathModuleChildrenCount = 43;
 static constexpr int KandinskyModuleChildrenCount = 7;
 static constexpr int CMathModuleChildrenCount = 13;
+static constexpr int UrandomModuleChildrenCount = 8;
 static constexpr int conditionsChildrenCount = 9;
 static constexpr int forLoopChildrenCount = 4;
 static constexpr int functionsChildrenCount = 2;
 static constexpr int ifStatementChildrenCount = 5;
 static constexpr int loopsAndTestsChildrenCount = 4;
 static constexpr int menuChildrenCount = 4;
-static constexpr int modulesChildrenCount = 3;
+static constexpr int modulesChildrenCount = 4;
 static constexpr int whileLoopChildrenCount = 1;
 
 
@@ -109,6 +110,17 @@ const ToolboxMessageTree KandinskyModuleChildren[KandinskyModuleChildrenCount] =
   ToolboxMessageTree(I18n::Message::PythonCommandColor, I18n::Message::PythonColor, I18n::Message::PythonCommandColor),
   ToolboxMessageTree(I18n::Message::PythonCommandDrawString, I18n::Message::PythonDrawString, I18n::Message::PythonCommandDrawString)};
 
+const ToolboxMessageTree UrandomModuleChildren[UrandomModuleChildrenCount] = {
+  ToolboxMessageTree(I18n::Message::PythonCommandImportUrandom, I18n::Message::PythonImportUrandom, I18n::Message::PythonCommandImportUrandom),
+  ToolboxMessageTree(I18n::Message::PythonCommandImportFromUrandom, I18n::Message::PythonImportFromUrandom, I18n::Message::PythonCommandImportFromUrandom),
+  ToolboxMessageTree(I18n::Message::PythonCommandUrandomFunction, I18n::Message::PythonUrandomFunction, I18n::Message::PythonCommandUrandomFunctionWithoutArg),
+  ToolboxMessageTree(I18n::Message::PythonCommandRandom, I18n::Message::PythonRandom, I18n::Message::PythonCommandRandom),
+  ToolboxMessageTree(I18n::Message::PythonCommandRandint, I18n::Message::PythonRandint, I18n::Message::PythonCommandRandint),
+  ToolboxMessageTree(I18n::Message::PythonCommandRandrange, I18n::Message::PythonRandrange, I18n::Message::PythonCommandRandrange),
+  ToolboxMessageTree(I18n::Message::PythonCommandSeed, I18n::Message::PythonSeed, I18n::Message::PythonCommandSeed),
+  ToolboxMessageTree(I18n::Message::PythonCommandChoice, I18n::Message::PythonChoice, I18n::Message::PythonCommandChoice)};
+      
+
 const ToolboxMessageTree CMathModuleChildren[CMathModuleChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandImportCmath, I18n::Message::PythonImportCmath, I18n::Message::PythonCommandImportCmath),
   ToolboxMessageTree(I18n::Message::PythonCommandImportFromCmath, I18n::Message::PythonImportFromCmath, I18n::Message::PythonCommandImportFromCmath),
@@ -127,7 +139,8 @@ const ToolboxMessageTree CMathModuleChildren[CMathModuleChildrenCount] = {
 const ToolboxMessageTree modulesChildren[modulesChildrenCount] = {
   ToolboxMessageTree(I18n::Message::MathModule, I18n::Message::Default, I18n::Message::Default, MathModuleChildren, MathModuleChildrenCount),
   ToolboxMessageTree(I18n::Message::CmathModule, I18n::Message::Default, I18n::Message::Default, CMathModuleChildren, CMathModuleChildrenCount),
-  ToolboxMessageTree(I18n::Message::KandinskyModule, I18n::Message::Default, I18n::Message::Default, KandinskyModuleChildren, KandinskyModuleChildrenCount)};
+  ToolboxMessageTree(I18n::Message::KandinskyModule, I18n::Message::Default, I18n::Message::Default, KandinskyModuleChildren, KandinskyModuleChildrenCount),
+  ToolboxMessageTree(I18n::Message::UrandomModule, I18n::Message::Default, I18n::Message::Default, UrandomModuleChildren, UrandomModuleChildrenCount)};
 
 const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandPound, I18n::Message::PythonPound, I18n::Message::PythonCommandPound),
@@ -149,6 +162,7 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandAtanh, I18n::Message::PythonAtanh, I18n::Message::PythonCommandAtanh),
   ToolboxMessageTree(I18n::Message::PythonCommandBin, I18n::Message::PythonBin, I18n::Message::PythonCommandBin),
   ToolboxMessageTree(I18n::Message::PythonCommandCeil, I18n::Message::PythonCeil, I18n::Message::PythonCommandCeil),
+  ToolboxMessageTree(I18n::Message::PythonCommandChoice, I18n::Message::PythonChoice, I18n::Message::PythonCommandChoice),
   ToolboxMessageTree(I18n::Message::PythonCommandCmathFunction, I18n::Message::PythonCmathFunction, I18n::Message::PythonCommandCmathFunctionWithoutArg),
   ToolboxMessageTree(I18n::Message::PythonCommandColor, I18n::Message::PythonColor, I18n::Message::PythonCommandColor),
   ToolboxMessageTree(I18n::Message::PythonCommandComplex, I18n::Message::PythonComplex, I18n::Message::PythonCommandComplex),
@@ -170,12 +184,14 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandImportFromCmath, I18n::Message::PythonImportFromCmath, I18n::Message::PythonCommandImportFromCmath),
   ToolboxMessageTree(I18n::Message::PythonCommandImportFromKandinsky, I18n::Message::PythonImportFromKandinsky, I18n::Message::PythonCommandImportFromKandinsky),
   ToolboxMessageTree(I18n::Message::PythonCommandImportFromMath, I18n::Message::PythonImportFromMath, I18n::Message::PythonCommandImportFromMath),
+  ToolboxMessageTree(I18n::Message::PythonCommandImportFromUrandom, I18n::Message::PythonImportFromUrandom, I18n::Message::PythonCommandImportFromUrandom),
   ToolboxMessageTree(I18n::Message::PythonCommandGamma, I18n::Message::PythonGamma, I18n::Message::PythonCommandGamma),
   ToolboxMessageTree(I18n::Message::PythonCommandGetPixel, I18n::Message::PythonGetPixel, I18n::Message::PythonCommandGetPixel),
   ToolboxMessageTree(I18n::Message::PythonCommandHex, I18n::Message::PythonHex, I18n::Message::PythonCommandHex),
   ToolboxMessageTree(I18n::Message::PythonCommandImportCmath, I18n::Message::PythonImportCmath, I18n::Message::PythonCommandImportCmath),
   ToolboxMessageTree(I18n::Message::PythonCommandImportKandinsky, I18n::Message::PythonImportKandinsky, I18n::Message::PythonCommandImportKandinsky),
   ToolboxMessageTree(I18n::Message::PythonCommandImportMath, I18n::Message::PythonImportMath, I18n::Message::PythonCommandImportMath),
+  ToolboxMessageTree(I18n::Message::PythonCommandImportUrandom, I18n::Message::PythonImportUrandom, I18n::Message::PythonCommandImportUrandom),
   ToolboxMessageTree(I18n::Message::PythonCommandInt, I18n::Message::PythonInt, I18n::Message::PythonCommandInt),
   ToolboxMessageTree(I18n::Message::PythonCommandIsFinite, I18n::Message::PythonIsFinite, I18n::Message::PythonCommandIsFinite),
   ToolboxMessageTree(I18n::Message::PythonCommandIsInfinite, I18n::Message::PythonIsInfinite, I18n::Message::PythonCommandIsInfinite),
@@ -198,11 +214,15 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandPower, I18n::Message::PythonPower, I18n::Message::PythonCommandPower),
   ToolboxMessageTree(I18n::Message::PythonCommandPrint, I18n::Message::PythonPrint, I18n::Message::PythonCommandPrint),
   ToolboxMessageTree(I18n::Message::PythonCommandRadians, I18n::Message::PythonRadians, I18n::Message::PythonCommandRadians),
+  ToolboxMessageTree(I18n::Message::PythonCommandRandom, I18n::Message::PythonRandom, I18n::Message::PythonCommandRandom),
+  ToolboxMessageTree(I18n::Message::PythonCommandRandint, I18n::Message::PythonRandint, I18n::Message::PythonCommandRandint),
+  ToolboxMessageTree(I18n::Message::PythonCommandRandrange, I18n::Message::PythonRandrange, I18n::Message::PythonCommandRandrange),
   ToolboxMessageTree(I18n::Message::PythonCommandRangeStartStop, I18n::Message::PythonRangeStartStop, I18n::Message::PythonCommandRangeStartStop),
   ToolboxMessageTree(I18n::Message::PythonCommandRangeStop, I18n::Message::PythonRangeStop, I18n::Message::PythonCommandRangeStop),
   ToolboxMessageTree(I18n::Message::PythonCommandRect, I18n::Message::PythonRect, I18n::Message::PythonCommandRect),
   ToolboxMessageTree(I18n::Message::PythonCommandRound, I18n::Message::PythonRound, I18n::Message::PythonCommandRound),
   ToolboxMessageTree(I18n::Message::PythonCommandSetPixel, I18n::Message::PythonSetPixel, I18n::Message::PythonCommandSetPixel),
+  ToolboxMessageTree(I18n::Message::PythonCommandSeed, I18n::Message::PythonSeed, I18n::Message::PythonCommandSeed),
   ToolboxMessageTree(I18n::Message::PythonCommandSin, I18n::Message::PythonSin, I18n::Message::PythonCommandSin),
   ToolboxMessageTree(I18n::Message::PythonCommandSinh, I18n::Message::PythonSinh, I18n::Message::PythonCommandSinh),
   ToolboxMessageTree(I18n::Message::PythonCommandSorted, I18n::Message::PythonSorted, I18n::Message::PythonCommandSorted),
@@ -212,7 +232,8 @@ const ToolboxMessageTree catalogChildren[catalogChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandTanh, I18n::Message::PythonTanh, I18n::Message::PythonCommandTanh),
   ToolboxMessageTree(I18n::Message::PythonCommandTrunc, I18n::Message::PythonTrunc, I18n::Message::PythonCommandTrunc),
   ToolboxMessageTree(I18n::Message::PythonCommandImag, I18n::Message::PythonImag, I18n::Message::PythonCommandImagWithoutArg),
-  ToolboxMessageTree(I18n::Message::PythonCommandReal, I18n::Message::PythonReal, I18n::Message::PythonCommandRealWithoutArg)};
+  ToolboxMessageTree(I18n::Message::PythonCommandReal, I18n::Message::PythonReal, I18n::Message::PythonCommandRealWithoutArg),
+  ToolboxMessageTree(I18n::Message::PythonCommandUrandomFunction, I18n::Message::PythonUrandomFunction, I18n::Message::PythonCommandUrandomFunctionWithoutArg),};
 
 const ToolboxMessageTree functionsChildren[functionsChildrenCount] = {
   ToolboxMessageTree(I18n::Message::PythonCommandDefWithArg, I18n::Message::Default, I18n::Message::PythonCommandDef),

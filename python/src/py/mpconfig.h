@@ -1044,12 +1044,12 @@ typedef double mp_float_t;
 #endif
 
 #ifndef MICROPY_PY_URANDOM
-#define MICROPY_PY_URANDOM (0)
+#define MICROPY_PY_URANDOM (1)
 #endif
 
 // Whether to include: randrange, randint, choice, random, uniform
 #ifndef MICROPY_PY_URANDOM_EXTRA_FUNCS
-#define MICROPY_PY_URANDOM_EXTRA_FUNCS (0)
+#define MICROPY_PY_URANDOM_EXTRA_FUNCS (1)
 #endif
 
 #ifndef MICROPY_PY_MACHINE

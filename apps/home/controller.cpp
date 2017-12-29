@@ -51,6 +51,11 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
     return true;
   }
+
+  if (event == Ion::Events::Home || event == Ion::Events::Back) {
+    return m_view.selectableTableView()->selectCellAtLocation(0,0);
+  } 
+
   return false;
 }
 

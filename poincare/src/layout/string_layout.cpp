@@ -85,6 +85,20 @@ bool StringLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return m_parent->moveRight(cursor);
 }
 
+int StringLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  int numberOfChar = strlcpy(buffer, m_string, bufferSize);
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
+}
+
 void StringLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   ctx->drawString(m_string, p, m_fontSize, expressionColor, backgroundColor);
 }

@@ -2,6 +2,7 @@
 #define POINCARE_CHAR_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
 #include <string.h>
 
 namespace Poincare {
@@ -10,6 +11,9 @@ class CharLayout : public StaticLayoutHierarchy<0> {
 public:
   CharLayout(char c, KDText::FontSize fontSize = KDText::FontSize::Large);
   ExpressionLayout * clone() const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, m_char);
+  }
 
   char character() { return m_char; }
   bool moveLeft(ExpressionLayoutCursor * cursor) override;

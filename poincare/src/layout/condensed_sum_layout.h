@@ -2,6 +2,7 @@
 #define POINCARE_CONDENSED_SUM_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
@@ -13,6 +14,9 @@ public:
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "sum");
+  }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

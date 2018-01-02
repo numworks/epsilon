@@ -2,6 +2,7 @@
 #define POINCARE_EMPTY_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -13,6 +14,7 @@ public:
   void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
   bool isEmpty() const override { return true; }
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override { return; }

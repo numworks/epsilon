@@ -9,6 +9,14 @@ ExpressionLayout * EmptyLayout::clone() const {
   return layout;
 }
 
+int EmptyLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[0] = 0;
+  return 0;
+}
+
 void EmptyLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
   replaceWith(brother, true);
 }

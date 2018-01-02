@@ -1,6 +1,7 @@
 #include "grid_layout.h"
 #include "empty_visible_layout.h"
 #include <poincare/expression_layout_cursor.h>
+#include <poincare/layout_engine.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -135,6 +136,43 @@ bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * pr
     return editableChild(childIndex + m_numberOfColumns)->moveDownInside(cursor);
   }
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+}
+
+int GridLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  const ExpressionLayout * editableParent = const_cast<GridLayout *>(this)->parent();
+  assert(editableParent != nullptr);
+
+  // If the grid is a binomial coefficient:
+  if (editableParent->child(0)->isLeftParenthesis()) {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "binomial");
+  }
+
+  assert(editableParent->child(0)->isLeftBracket());
+  // The grid is a matrix.
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  int numberOfChar = 0;
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+
+  for (int i = 0; i < m_numberOfRows; i++) {
+    buffer[numberOfChar++] = '[';
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+
+    numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, ",", i*m_numberOfColumns, (i+1) * m_numberOfColumns - 1);
+
+    buffer[numberOfChar++] = ']';
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+    if (i < m_numberOfRows - 1) {
+      buffer[numberOfChar++] = ',';
+      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+    }
+  }
+
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
 }
 
 KDCoordinate GridLayout::rowBaseline(int i) {

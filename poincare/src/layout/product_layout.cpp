@@ -5,8 +5,12 @@
 namespace Poincare {
 
 ExpressionLayout * ProductLayout::clone() const {
-  ProductLayout * layout = new ProductLayout(const_cast<ProductLayout *>(this)->lowerBoundLayout(), const_cast<ProductLayout *>(this)->upperBoundLayout(), const_cast<ProductLayout *>(this)->argumentLayout(), true);
+  ProductLayout * layout = new ProductLayout(const_cast<ProductLayout *>(this)->argumentLayout(), const_cast<ProductLayout *>(this)->lowerBoundLayout(), const_cast<ProductLayout *>(this)->upperBoundLayout(), true);
   return layout;
+}
+
+int ProductLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  return SequenceLayout::writeDerivedClassInBuffer("product", buffer, bufferSize);
 }
 
 void ProductLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

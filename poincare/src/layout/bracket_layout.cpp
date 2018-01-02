@@ -1,5 +1,6 @@
 #include "bracket_layout.h"
 #include <poincare/expression_layout_cursor.h>
+#include <poincare/layout_engine.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -88,6 +89,27 @@ bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor) {
     return m_parent->moveRight(cursor);
   }
   return false;
+}
+
+int BracketLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+
+  // Write the opening bracket
+  int numberOfChar = 0;
+  buffer[numberOfChar++] = '[';
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+
+  // Write the argument
+  numberOfChar += const_cast<Poincare::BracketLayout *>(this)->operandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the closing bracket
+  buffer[numberOfChar++] = ']';
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
 }
 
 ExpressionLayout * BracketLayout::operandLayout()  {

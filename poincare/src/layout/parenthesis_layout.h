@@ -2,6 +2,7 @@
 #define POINCARE_PARENTHESIS_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
@@ -13,6 +14,9 @@ public:
   ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "");
+  }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {
   };

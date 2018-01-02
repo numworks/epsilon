@@ -66,6 +66,9 @@ public:
   virtual bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr);
   bool moveDownInside(ExpressionLayoutCursor * cursor);
 
+  /* Expression Engine */
+  virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
+
   /* Other */
   virtual bool isHorizontal() const { return false; }
   virtual bool isLeftParenthesis() const { return false; }

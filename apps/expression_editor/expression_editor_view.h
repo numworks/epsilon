@@ -11,17 +11,16 @@ class ExpressionEditorView : public SolidColorView {
 public:
   ExpressionEditorView(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, Poincare::ExpressionLayoutCursor * cursor);
   void cursorPositionChanged();
-  int numberOfSubviews() const override { return 1; }
+  void setText(const char * text);
+  int numberOfSubviews() const override { return 2; }
   ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor() { return &m_scrollableExpressionViewWithCursor; }
-  View * subviewAtIndex(int index) override {
-    assert(index == 0);
-    return &m_scrollableExpressionViewWithCursor;
-  }
+  View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
   constexpr static KDCoordinate k_margin = 10;
   ScrollableExpressionViewWithCursor m_scrollableExpressionViewWithCursor;
+  BufferTextView m_serializerTextView;
 };
 
 }

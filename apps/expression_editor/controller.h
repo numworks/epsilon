@@ -29,9 +29,12 @@ private:
   bool handleMoveEvent(Ion::Events::Event event);
   Poincare::ExpressionLayout * handleAddEvent(Ion::Events::Event event);
   bool handleDeleteEvent(Ion::Events::Event event);
+  void serializeLayout();
   ExpressionEditorView m_view;
   Poincare::ExpressionLayout * m_expressionLayout;
   Poincare::ExpressionLayoutCursor m_cursor;
+  static constexpr int k_bufferSize = 256;
+  char m_buffer[k_bufferSize];
 };
 
 }

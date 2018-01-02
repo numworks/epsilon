@@ -29,6 +29,10 @@ void Controller::didBecomeFirstResponder() {
 }
 
 bool Controller::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::EXE) {
+    serializeLayout();
+    return true;
+  }
   if (privateHandleEvent(event)) {
     m_view.cursorPositionChanged();
     return true;
@@ -137,6 +141,11 @@ bool Controller::handleDeleteEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+void Controller::serializeLayout() {
+  m_expressionLayout->writeTextInBuffer(m_buffer, k_bufferSize);
+  m_view.setText(const_cast<const char *>(m_buffer));
 }
 
 }

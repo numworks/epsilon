@@ -14,6 +14,7 @@ app_objs += $(addprefix apps/probability/,\
   cell.o\
   image_cell.o\
   law/binomial_law.o\
+  law/erf_inv.o\
   law/exponential_law.o\
   law/law.o\
   law/normal_law.o\
@@ -34,6 +35,11 @@ i18n_files += $(addprefix apps/probability/,\
   base.fr.i18n\
   base.pt.i18n\
 )
+
+tests += $(addprefix apps/probability/test/,\
+  erf_inv.cpp\
+)
+test_objs += $(addprefix apps/probability/law/, erf_inv.o)
 
 app_images += apps/probability/probability_icon.png
 

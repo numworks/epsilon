@@ -37,8 +37,8 @@ public:
   virtual double cumulativeDistributiveInverseForProbability(double * probability);
   virtual double rightIntegralInverseForProbability(double * probability);
   virtual double evaluateAtDiscreteAbscissa(int k) const;
-protected:
   constexpr static int k_maxNumberOfOperations = 1000000;
+protected:
   static_assert(Constant::LargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static float k_displayTopMarginRatio = 0.05f;

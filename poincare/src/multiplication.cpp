@@ -414,7 +414,13 @@ void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & c
 
   // Step 4: Reduce the new power
   s->shallowReduce(context, angleUnit); // pi^2*pi^3 -> pi^(2+3) -> pi^5
-  p->shallowReduce(context, angleUnit); // pi^2*pi^-2 -> pi^0 -> 1
+  Expression * reducedP = p->shallowReduce(context, angleUnit); // pi^2*pi^-2 -> pi^0 -> 1
+  /* Step 5: Reducing the new power might have turned it into a multiplication,
+   * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
+   * node with this. */
+  if (reducedP->type() == Type::Multiplication) {
+    mergeMultiplicationOperands();
+  }
 }
 
 void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
@@ -430,7 +436,13 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context
   e1->replaceOperand(e1->operand(0), m, true);
 
   m->shallowReduce(context, angleUnit); // 2^x*3^x -> (2*3)^x -> 6^x
-  e1->shallowReduce(context, angleUnit); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
+  Expression * reducedE1 = e1->shallowReduce(context, angleUnit); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
+  /* Reducing the new power might have turned it into a multiplication,
+   * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
+   * node with this. */
+  if (reducedE1->type() == Type::Multiplication) {
+    mergeMultiplicationOperands();
+  }
 }
 
 Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context, AngleUnit angleUnit) {

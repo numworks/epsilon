@@ -81,4 +81,6 @@ QUIZ_CASE(poincare_multiplication_simplify) {
   assert_parsed_expression_simplify_to("x-x-n+n", "0");
   assert_parsed_expression_simplify_to("x+n-x-n", "0");
   assert_parsed_expression_simplify_to("x-x", "0");
+  assert_parsed_expression_simplify_to("P*3^(1/2)*(5P)^(1/2)*(4/5)^(1/2)", "2*R(3)*P^(3/2)");
+  assert_parsed_expression_simplify_to("12^(1/4)*(P/6)*(12*P)^(1/4)", "(R(3)*P^(5/4))/3");
 }

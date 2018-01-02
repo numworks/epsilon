@@ -93,18 +93,27 @@ Expression * BinomialCoefficient::templatedApproximate(Context& context, AngleUn
   T k = static_cast<Complex<T> *>(kInput)->toScalar();
   delete nInput;
   delete kInput;
+  return new Complex<T>(Complex<T>::Float(compute(k, n)));
+}
+
+
+template<typename T>
+T BinomialCoefficient::compute(T k, T n) {
   k = k > (n-k) ? n-k : k;
   if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || k > n || k < 0 || n < 0) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return NAN;
   }
   T result = 1;
   for (int i = 0; i < k; i++) {
     result *= (n-(T)i)/(k-(T)i);
     if (std::isinf(result) || std::isnan(result)) {
-      return new Complex<T>(Complex<T>::Float(result));
+      return result;
     }
   }
-  return new Complex<T>(Complex<T>::Float(std::round(result)));
+  return std::round(result);
 }
+
+template double BinomialCoefficient::compute(double k, double n);
+template float BinomialCoefficient::compute(float k, float n);
 
 }

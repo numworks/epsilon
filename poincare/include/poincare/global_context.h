@@ -26,8 +26,8 @@ public:
   static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
   static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
-  static Complex<double> * defaultExpression();
 private:
+  static Complex<double> * defaultExpression();
   int symbolIndex(const Symbol * symbol) const;
   Complex<double> * m_expressions[k_maxNumberOfScalarExpressions];
   Matrix * m_matrixExpressions[k_maxNumberOfMatrixExpressions];

@@ -298,7 +298,7 @@ bool Sequence::isEmpty() {
 template<typename T>
 T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
   T n = std::round(x);
-  int sequenceIndex = name() == SequenceStore::k_sequenceNames[0] ? 0 : 1;
+  int sequenceIndex = name()[0] == SequenceStore::k_sequenceNames[0][0] ? 0 : 1;
   if (sqctx->iterateUntilRank<T>(n)) {
     return sqctx->valueOfSequenceAtPreviousRank<T>(sequenceIndex, 0);
   }

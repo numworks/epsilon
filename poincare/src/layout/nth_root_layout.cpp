@@ -198,7 +198,7 @@ void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
   KDSize indexSize = indexLayout() != nullptr ? indexLayout()->size() : KDSize(k_leftRadixWidth,0);
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];
   KDRect leftRadixFrame(p.x() + indexSize.width() + k_widthMargin - k_leftRadixWidth,
-    p.y() + m_baseline + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin - k_leftRadixHeight,
+    p.y() + baseline() + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin - k_leftRadixHeight,
     k_leftRadixWidth, k_leftRadixHeight);
   ctx->blendRectWithMask(leftRadixFrame, expressionColor, (const uint8_t *)radixPixel, (KDColor *)workingBuffer);
   // If the indice is higher than the root.
@@ -240,7 +240,7 @@ KDSize NthRootLayout::computeSize() {
   KDSize indexSize = indexLayout() != nullptr ? indexLayout()->size() : KDSize(k_leftRadixWidth,0);
   return KDSize(
       indexSize.width() + 3*k_widthMargin + 2*k_radixLineThickness + radicandSize.width() + k_radixHorizontalOverflow,
-      m_baseline + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin
+      baseline() + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin
       );
 }
 
@@ -260,10 +260,10 @@ KDPoint NthRootLayout::positionOfChild(ExpressionLayout * child) {
   KDSize indexSize = indexLayout() != nullptr ? indexLayout()->size() : KDSize(k_leftRadixWidth,0);
   if (child == indexLayout()) {
     x = 0;
-    y = m_baseline - indexSize.height() -  k_indexHeight;
+    y = baseline() - indexSize.height() -  k_indexHeight;
   } else if (child == radicandLayout()) {
     x = indexSize.width() + 2*k_widthMargin + k_radixLineThickness;
-    y = m_baseline - radicandLayout()->baseline();
+    y = baseline() - radicandLayout()->baseline();
   } else {
     assert(false);
   }

@@ -22,6 +22,7 @@ void translate_in_special_chars(char * expression) {
       case 'R': *c = Ion::Charset::Root; break;
       case 'P': *c = Ion::Charset::SmallPi; break;
       case '*': *c = Ion::Charset::MultiplicationSign; break;
+      case '>': *c = Ion::Charset::Sto; break;
     }
   }
 }
@@ -35,6 +36,7 @@ void translate_in_ASCII_chars(char * expression) {
       case Ion::Charset::Root: *c = 'R'; break;
       case Ion::Charset::SmallPi: *c = 'P'; break;
       case Ion::Charset::MultiplicationSign: *c = '*'; break;
+      case Ion::Charset::Sto: *c = '>'; break;
     }
   }
 }

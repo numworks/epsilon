@@ -14,6 +14,8 @@ public:
   Type type() const override;
   Expression * clone() const override;
 private:
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;

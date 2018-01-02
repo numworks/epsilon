@@ -111,6 +111,26 @@ Expression::Sign Symbol::sign() const {
   return Sign::Unknown;
 }
 
+bool Symbol::hasAnExactRepresentation() const {
+  if (m_name == SpecialSymbols::Ans) {
+    return true;
+  }
+  return false;
+}
+
+Expression * Symbol::shallowReduce(Context& context, AngleUnit angleUnit) {
+  // Do not replace symbols in expression of type: 3->A
+  if (parent()->type() == Type::Store && parent()->operand(1) == this) {
+    return this;
+  }
+  const Expression * e = context.expressionForSymbol(this);
+  if (e != nullptr && hasAnExactRepresentation()) {
+    /* The stored expression had been beautified which forces to call deepReduce. */
+    return replaceWith(e->clone(), true)->deepReduce(context, angleUnit);
+  }
+  return this;
+}
+
 template<typename T>
 Expression * Symbol::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   if (context.expressionForSymbol(this) != nullptr) {

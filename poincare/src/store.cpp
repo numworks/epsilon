@@ -25,6 +25,11 @@ int Store::writeTextInBuffer(char * buffer, int bufferSize) const {
   return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "\x8F");
 }
 
+Expression * Store::shallowReduce(Context& context, AngleUnit angleUnit) {
+  context.setExpressionForSymbolName(value(), symbol(), context);
+  return replaceWith(editableOperand(1), true)->shallowReduce(context, angleUnit);
+}
+
 ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);

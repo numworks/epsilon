@@ -13,6 +13,7 @@ public:
   const Poincare::Expression * expressionForSymbol(const Poincare::Symbol * symbol) override;
 private:
   Poincare::Expression * ansValue();
+  static Poincare::Expression * defaultExpression();
   CalculationStore * m_calculationStore;
   Poincare::GlobalContext * m_parentContext;
 };

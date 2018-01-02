@@ -40,6 +40,9 @@ public:
   bool isScalarSymbol() const;
 private:
   const char * textForSpecialSymbols(char name) const;
+  /* Simplification */
+  bool hasAnExactRepresentation() const;
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Comparison */
   int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   /* Layout */

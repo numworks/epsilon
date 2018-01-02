@@ -76,4 +76,7 @@ QUIZ_CASE(poincare_power_simplify) {
    * k_maxNumberOfPrimeFactors and thus it prime decomposition might overflow
    * 32 factors. */
   assert_parsed_expression_simplify_to("1881676377434183981909562699940347954480361860897069^(1/3)", "root(1881676377434183981909562699940347954480361860897069,3)");
+  assert_parsed_expression_simplify_to("(x+P)^(3)", "x^3+3*x^2*P+3*x*P^2+P^3");
+  assert_parsed_expression_simplify_to("(5+R(2))^(-8)", "(1446241-1003320*R(2))/78310985281");
+  assert_parsed_expression_simplify_to("(5*P+R(2))^(-5)", "1/(4*R(2)+100*P+500*R(2)*P^2+2500*P^3+3125*R(2)*P^4+3125*P^5)");
 }

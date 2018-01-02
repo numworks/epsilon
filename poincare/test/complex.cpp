@@ -65,7 +65,7 @@ QUIZ_CASE(poincare_complex_simplify) {
   assert_parsed_expression_simplify_to("IIII", "1");
   assert_parsed_expression_simplify_to("R(-I)", "R(-I)");
   assert_parsed_expression_simplify_to("Acos(9)IIln(2)", "-cos(9)*ln(2)*A");
-  assert_parsed_expression_simplify_to("(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2", "(R(2)+R(2)*I)/(2*(2*R(2)+2*R(2)*I)^2)");
+  assert_parsed_expression_simplify_to("(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2", "(R(2)-R(2)*I)/32");
   assert_parsed_expression_simplify_to("root(5^(-I)3^9,I)", "undef");
   assert_parsed_expression_simplify_to("I^I", "undef");
 }

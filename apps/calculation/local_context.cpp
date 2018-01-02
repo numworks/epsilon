@@ -12,10 +12,15 @@ LocalContext::LocalContext(GlobalContext * parentContext, CalculationStore * cal
 
 Expression * LocalContext::ansValue() {
   if (m_calculationStore->numberOfCalculations() == 0) {
-    return m_parentContext->defaultExpression();
+    return defaultExpression();
   }
   Calculation * lastCalculation = m_calculationStore->calculationAtIndex(m_calculationStore->numberOfCalculations()-1);
-  return lastCalculation->approximateOutput(m_parentContext);
+  return lastCalculation->exactOutput(m_parentContext);
+}
+
+Expression * LocalContext::defaultExpression() {
+  static Rational defaultExpression(0);
+  return &defaultExpression;
 }
 
 void LocalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {

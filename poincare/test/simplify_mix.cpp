@@ -36,13 +36,13 @@ QUIZ_CASE(poincare_simplify_mix) {
   assert_parsed_expression_simplify_to("A^2^2*A+4*A^3", "4*A^3+A^5");
   assert_parsed_expression_simplify_to("0.5+4*A*B-2.3+2*A*B-2*B*A^C-cos(4)+2*A^C*B+A*B*C*D", "((-9)-5*cos(4)+30*A*B+5*A*B*C*D)/5");
   assert_parsed_expression_simplify_to("(1+R(2))/5", "(1+R(2))/5");
-  assert_parsed_expression_simplify_to("(2+R(6))^2", "(2+R(6))^2");
+  assert_parsed_expression_simplify_to("(2+R(6))^2", "10+4*R(6)");
   assert_parsed_expression_simplify_to("tan(3)ln(2)+P", "tan(3)*ln(2)+P");
 
 
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), cos(9))", "ln(2)+ln(3)"); // TODO: for this to work, we must know the sign of cos(9)
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)*log(cos(9), 9)"); // TODO: for this to work, we must know the sign of cos(9)
-  //assert_parsed_expression_simplify_to("(((R(6)-R(2))/4)/((R(6)+R(2))/4))+1", "((1/2)*R(6))/((R(6)+R(2))/4)"); // TODO: Newton binome
+  assert_parsed_expression_simplify_to("(((R(6)-R(2))/4)/((R(6)+R(2))/4))+1", "3-R(3)");
   //assert_parsed_expression_simplify_to("1/R(I) * (R(2)-I*R(2))", "-2I"); // TODO: get rid of complex at denominator?
 
 }

@@ -22,6 +22,7 @@ public:
   Sign sign() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
+  constexpr static int k_maxExpandedBinome = 10;
   constexpr static int k_maxIntegerPower = 100;
   /* Property */
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;

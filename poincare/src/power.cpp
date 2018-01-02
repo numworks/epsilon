@@ -5,6 +5,7 @@ extern "C" {
 #include <cmath>
 #include <math.h>
 #include <ion.h>
+#include <poincare/binomial_coefficient.h>
 #include <poincare/matrix_inverse.h>
 #include <poincare/matrix.h>
 #include <poincare/power.h>
@@ -355,6 +356,38 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       simplifyRationalRationalPower(p1, static_cast<Rational *>(p1->editableOperand(0)), static_cast<Rational *>(p1->editableOperand(1)->editableOperand(0)), context, angleUnit);
       replaceWith(m, true);
       return m->shallowReduce(context, angleUnit);
+    }
+  }
+
+  // (a+b)^n with n integer -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Newton)
+  if (!letPowerAtRoot && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->denominator().isOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfOperands() == 2) {
+    Rational * nr = static_cast<Rational *>(editableOperand(1));
+    Integer n = nr->numerator();
+    n.setNegative(false);
+    if (Integer(k_maxExpandedBinome).isLowerThan(n) || n.isOne()) {
+      return this;
+    }
+    int clippedN = n.extractedInt(); // Authorized because n < k_maxExpandedBinome < k_maxNValue
+    Expression * x0 = editableOperand(0)->editableOperand(0);
+    Expression * x1 = editableOperand(0)->editableOperand(1);
+    Addition * a = new Addition();
+    for (int i = 0; i <= clippedN; i++) {
+      Rational * r = new Rational(static_cast<int>(BinomialCoefficient::compute(static_cast<double>(i), static_cast<double>(clippedN))));
+      Power * p0 = new Power(x0->clone(), new Rational(i), false);
+      Power * p1 = new Power(x1->clone(), new Rational(clippedN-i), false);
+      const Expression * operands[3] = {r, p0, p1};
+      Multiplication * m = new Multiplication(operands, 3, false);
+      p0->shallowReduce(context, angleUnit);
+      p1->shallowReduce(context, angleUnit);
+      a->addOperand(m);
+      m->shallowReduce(context, angleUnit);
+    }
+    if (nr->sign() == Sign::Negative) {
+      nr->replaceWith(new Rational(-1), true);
+      editableOperand(0)->replaceWith(a, true)->shallowReduce(context, angleUnit);
+      return shallowReduce(context, angleUnit);
+    } else {
+      return replaceWith(a, true)->shallowReduce(context, angleUnit);
     }
   }
   return this;

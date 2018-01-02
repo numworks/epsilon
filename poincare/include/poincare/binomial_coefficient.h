@@ -11,6 +11,7 @@ class BinomialCoefficient : public StaticHierarchy<2> {
 public:
   Type type() const override;
   Expression * clone() const override;
+  template<typename T> static T compute(T k, T n);
 private:
   constexpr static int k_maxNValue = 300;
   /* Layout */

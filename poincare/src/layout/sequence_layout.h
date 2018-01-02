@@ -19,9 +19,11 @@ public:
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
+  int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize) const;
   ExpressionLayout * lowerBoundLayout();
   ExpressionLayout * upperBoundLayout();
-  virtual ExpressionLayout * argumentLayout();
+  ExpressionLayout * argumentLayout();
+  ExpressionLayout * argumentWithParenthesesLayout();
   KDSize computeSize() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:

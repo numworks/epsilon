@@ -2,6 +2,7 @@
 #define POINCARE_CONJUGATE_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
@@ -12,6 +13,9 @@ public:
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "conj");
+  }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

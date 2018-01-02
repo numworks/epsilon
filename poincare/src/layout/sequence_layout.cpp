@@ -14,7 +14,7 @@ SequenceLayout::SequenceLayout(ExpressionLayout * lowerBound, ExpressionLayout *
   ParenthesisLeftLayout * parLeft = new ParenthesisLeftLayout();
   ParenthesisRightLayout * parRight = new ParenthesisRightLayout();
   UneditableHorizontalTrioLayout * horLayout = new UneditableHorizontalTrioLayout(parLeft, argument, parRight, cloneOperands, false);
-  build(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray3(lowerBound, upperBound, horLayout)), 3, cloneOperands);
+  build(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray3(horLayout, lowerBound, upperBound)), 3, cloneOperands);
 }
 
 void SequenceLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
@@ -71,7 +71,7 @@ bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Go Right of the lower bound.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left
       && argumentLayout()
-      && cursor->pointedExpressionLayout() == editableChild(2))
+      && cursor->pointedExpressionLayout() == argumentWithParenthesesLayout())
   {
     assert(lowerBoundLayout() != nullptr);
     cursor->setPointedExpressionLayout(lowerBoundLayout()->editableChild(1));
@@ -113,7 +113,7 @@ bool SequenceLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right
       && argumentLayout()
-      && cursor->pointedExpressionLayout() == editableChild(2))
+      && cursor->pointedExpressionLayout() == argumentWithParenthesesLayout())
   {
     cursor->setPointedExpressionLayout(this);
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
@@ -171,8 +171,51 @@ char SequenceLayout::XNTChar() const {
   return 'n';
 }
 
+int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize) const {
+  assert(operatorName != nullptr);
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+
+  // Write the operator name
+  int numberOfChar = strlcpy(buffer, operatorName, bufferSize);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the opening parenthesis
+  buffer[numberOfChar++] = '(';
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the argument
+  numberOfChar += const_cast<SequenceLayout *>(this)->argumentLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the comma
+  buffer[numberOfChar++] = ',';
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the lower bound without the "n="
+  numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(const_cast<SequenceLayout *>(this)->lowerBoundLayout(), buffer+numberOfChar, bufferSize-numberOfChar, "", 1);
+  // TODO This works because the lower bound layout should always be an
+  // horizontal layout.
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the comma
+  buffer[numberOfChar++] = ',';
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the upper bound
+  numberOfChar += const_cast<SequenceLayout *>(this)->upperBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the closing parenthesis
+  buffer[numberOfChar++] = ')';
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
+}
+
 ExpressionLayout * SequenceLayout::upperBoundLayout() {
-  return editableChild(0);
+  return editableChild(2);
 }
 
 ExpressionLayout * SequenceLayout::lowerBoundLayout() {
@@ -180,11 +223,15 @@ ExpressionLayout * SequenceLayout::lowerBoundLayout() {
 }
 
 ExpressionLayout * SequenceLayout::argumentLayout() {
-  return editableChild(2)->editableChild(1);
+  return argumentWithParenthesesLayout()->editableChild(1);
+}
+
+ExpressionLayout * SequenceLayout::argumentWithParenthesesLayout() {
+  return editableChild(0);
 }
 
 KDSize SequenceLayout::computeSize() {
-  KDSize argumentSize = editableChild(2)->size();
+  KDSize argumentSize = argumentWithParenthesesLayout()->size();
   KDSize lowerBoundSize = lowerBoundLayout()->size();
   KDSize upperBoundSize = upperBoundLayout()->size();
   return KDSize(
@@ -209,7 +256,7 @@ KDPoint SequenceLayout::positionOfChild(ExpressionLayout * child) {
   } else if (child == upperBoundLayout()) {
     x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSize.width()-upperBoundSize.width())/2);
     y = baseline() - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
-  } else if (child == editableChild(2)) {
+  } else if (child == argumentWithParenthesesLayout()) {
     x = max(max(k_symbolWidth, lowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin;
     y = baseline() - argumentLayout()->baseline();
   } else {

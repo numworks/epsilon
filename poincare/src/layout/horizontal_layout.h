@@ -2,6 +2,7 @@
 #define POINCARE_HORIZONTAL_LAYOUT_H
 
 #include <poincare/dynamic_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
@@ -20,6 +21,11 @@ public:
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+
+  /* Expression Engine */
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "");
+  }
 
   /* Other */
   bool isHorizontal() const override { return true; }

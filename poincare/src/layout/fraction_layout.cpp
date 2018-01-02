@@ -178,6 +178,28 @@ bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout 
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
 
+int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  int numberOfChar = 0;
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+
+  // Write the first enclosing parenthesis.
+  buffer[numberOfChar++] = '(';
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+
+  // Write the content of the fraction
+  numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, "/");
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the second enclosing parenthesis.
+  buffer[numberOfChar++] = ')';
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
+}
+
 void FractionLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDCoordinate fractionLineY = p.y() + numeratorLayout()->size().height() + k_fractionLineMargin;
   ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, fractionLineY, size().width()-2*Metric::FractionAndConjugateHorizontalMargin, 1), expressionColor);

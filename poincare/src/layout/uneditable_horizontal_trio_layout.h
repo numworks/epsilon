@@ -2,6 +2,7 @@
 #define POINCARE_UNEDITABLE_HORIZONTAL_TRIO_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
@@ -26,6 +27,10 @@ public:
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
 
+  /* Expression Engine */
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "");
+  }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

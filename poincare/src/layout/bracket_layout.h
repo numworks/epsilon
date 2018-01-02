@@ -12,6 +12,7 @@ public:
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
 protected:
   ExpressionLayout * operandLayout();
   KDCoordinate externWidthMargin() const { return 2; }

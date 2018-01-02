@@ -1,6 +1,7 @@
 #include "baseline_relative_layout.h"
 #include "empty_visible_layout.h"
 #include <poincare/expression_layout_cursor.h>
+#include <poincare/layout_engine.h>
 #include <string.h>
 #include <assert.h>
 
@@ -68,6 +69,27 @@ bool BaselineRelativeLayout::moveRight(ExpressionLayoutCursor * cursor) {
     return m_parent->moveRight(cursor);
   }
   return false;
+}
+
+int BaselineRelativeLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (m_type == Type::Subscript) {
+    if (bufferSize == 0) {
+      return -1;
+    }
+    buffer[bufferSize-1] = 0;
+    if (bufferSize == 1) {
+      return 0;
+    }
+    int numberOfChars = LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "_{");
+    if (numberOfChars < bufferSize - 1) {
+      //FIXME what if the buffer is not big enough?
+      buffer[numberOfChars++] = '}';
+      buffer[numberOfChars] = 0;
+    }
+    return numberOfChars;
+  }
+  assert(m_type == Type::Superscript);
+  return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "^");
 }
 
 ExpressionLayout * BaselineRelativeLayout::baseLayout() {

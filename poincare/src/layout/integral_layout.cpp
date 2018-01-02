@@ -20,7 +20,7 @@ const uint8_t bottomSymbolPixel[IntegralLayout::k_symbolHeight][IntegralLayout::
 };
 
 ExpressionLayout * IntegralLayout::clone() const {
-  IntegralLayout * layout = new IntegralLayout(const_cast<IntegralLayout *>(this)->lowerBoundLayout(), const_cast<IntegralLayout *>(this)->upperBoundLayout(), const_cast<IntegralLayout *>(this)->integrandLayout(), true);
+  IntegralLayout * layout = new IntegralLayout(const_cast<IntegralLayout *>(this)->integrandLayout(), const_cast<IntegralLayout *>(this)->lowerBoundLayout(), const_cast<IntegralLayout *>(this)->upperBoundLayout(), true);
   return layout;
 }
 
@@ -181,6 +181,53 @@ bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout 
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
 
+int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+
+  // Write the operator name
+  int numberOfChar = strlcpy(buffer, "int", bufferSize);
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+
+  // Write the opening parenthesis
+  buffer[numberOfChar++] = '(';
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+
+  // Write the argument without the "dx"
+  ExpressionLayout * intLayout = const_cast<IntegralLayout *>(this)->integrandLayout();
+  numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(intLayout, buffer+numberOfChar, bufferSize-numberOfChar, "", 0, intLayout->numberOfChildren()-2);
+  // TODO This works because the argument layout should always be an horizontal
+  // layout.
+
+  // Write the comma
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  buffer[numberOfChar++] = ',';
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the lower bound
+  numberOfChar += const_cast<IntegralLayout *>(this)->lowerBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+
+  // Write the comma
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  buffer[numberOfChar++] = ',';
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Write the upper bound
+  numberOfChar += const_cast<IntegralLayout *>(this)->upperBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+
+  // Write the closing parenthesis
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  buffer[numberOfChar++] = ')';
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
+}
+
 void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize integrandSize = integrandLayout()->size();
   KDSize upperBoundSize = upperBoundLayout()->size();
@@ -232,7 +279,7 @@ KDPoint IntegralLayout::positionOfChild(ExpressionLayout * child) {
 }
 
 ExpressionLayout * IntegralLayout::upperBoundLayout() {
-  return editableChild(0);
+  return editableChild(2);
 }
 
 ExpressionLayout * IntegralLayout::lowerBoundLayout() {
@@ -240,7 +287,7 @@ ExpressionLayout * IntegralLayout::lowerBoundLayout() {
 }
 
 ExpressionLayout * IntegralLayout::integrandLayout() {
-  return editableChild(2);
+  return editableChild(0);
 }
 
 }

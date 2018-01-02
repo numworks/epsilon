@@ -24,8 +24,12 @@ const uint8_t symbolPixel[SumLayout::k_symbolHeight][SumLayout::k_symbolWidth] =
 };
 
 ExpressionLayout * SumLayout::clone() const {
-  SumLayout * layout = new SumLayout(const_cast<SumLayout *>(this)->lowerBoundLayout(), const_cast<SumLayout *>(this)->upperBoundLayout(), const_cast<SumLayout *>(this)->argumentLayout(), true);
+  SumLayout * layout = new SumLayout(const_cast<SumLayout *>(this)->argumentLayout(), const_cast<SumLayout *>(this)->lowerBoundLayout(), const_cast<SumLayout *>(this)->upperBoundLayout(), true);
   return layout;
+}
+
+int SumLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  return SequenceLayout::writeDerivedClassInBuffer("sum", buffer, bufferSize);
 }
 
 void SumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

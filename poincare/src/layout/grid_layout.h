@@ -7,7 +7,7 @@ namespace Poincare {
 
 class GridLayout : public DynamicLayoutHierarchy {
 public:
-  GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands);
+  GridLayout(const ExpressionLayout * const * entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands);
   ExpressionLayout * clone() const override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
 

@@ -2,6 +2,7 @@
 #define POINCARE_DYNAMIC_LAYOUT_HIERARCHY_H
 
 #include <poincare/expression_layout.h>
+#include <poincare/expression_layout_array.h>
 
 namespace Poincare {
 
@@ -10,7 +11,7 @@ public:
   DynamicLayoutHierarchy();
   DynamicLayoutHierarchy(const ExpressionLayout * const * operands, int numberOfOperands, bool cloneOperands = true);
   DynamicLayoutHierarchy(const ExpressionLayout * operand1, const ExpressionLayout * operand2, bool cloneOperands = true) :
-  DynamicLayoutHierarchy(ExpressionLayoutArray2(operand1, operand2), 2, cloneOperands) {}
+    DynamicLayoutHierarchy(ExpressionLayoutArray(operand1, operand2).array(), 2, cloneOperands) {}
   ~DynamicLayoutHierarchy();
   DynamicLayoutHierarchy(const DynamicLayoutHierarchy & other) = delete;
   DynamicLayoutHierarchy(DynamicLayoutHierarchy && other) = delete;

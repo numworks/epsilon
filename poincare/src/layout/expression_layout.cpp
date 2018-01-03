@@ -18,21 +18,6 @@ ExpressionLayout::ExpressionLayout() :
 {
 }
 
-const ExpressionLayout * const * ExpressionLayout::ExpressionLayoutArray2(const ExpressionLayout * e1, const ExpressionLayout * e2) {
-  static const ExpressionLayout * result[2] = {nullptr, nullptr};
-  result[0] = e1;
-  result[1] = e2;
-  return result;
-}
-
-const ExpressionLayout * const * ExpressionLayout::ExpressionLayoutArray3(const ExpressionLayout * e1, const ExpressionLayout * e2, const ExpressionLayout * e3) {
-  static const ExpressionLayout * result[3] = {nullptr, nullptr, nullptr};
-  result[0] = e1;
-  result[1] = e2;
-  result[2] = e3;
-  return result;
-}
-
 KDPoint ExpressionLayout::origin() {
   if (m_parent == nullptr) {
     return absoluteOrigin();

@@ -1,7 +1,8 @@
 #include "parenthesis_layout.h"
-#include <poincare/expression_layout_cursor.h>
 #include "parenthesis_left_layout.h"
 #include "parenthesis_right_layout.h"
+#include <poincare/expression_layout_cursor.h>
+#include <poincare/expression_layout_array.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -14,7 +15,7 @@ ParenthesisLayout::ParenthesisLayout(ExpressionLayout * operand, bool cloneOpera
 {
   ExpressionLayout * leftParenthesis = new ParenthesisLeftLayout();
   ExpressionLayout * rightParenthesis = new ParenthesisRightLayout();
-  build(ExpressionLayout::ExpressionLayoutArray3(leftParenthesis, operand, rightParenthesis), 3, cloneOperands);
+  build(ExpressionLayoutArray(leftParenthesis, operand, rightParenthesis).array(), 3, cloneOperands);
 }
 
 ExpressionLayout * ParenthesisLayout::clone() const {

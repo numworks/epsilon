@@ -1,4 +1,5 @@
 #include <poincare/static_layout_hierarchy.h>
+#include <poincare/expression_layout_array.h>
 extern "C" {
 #include <assert.h>
 }
@@ -27,13 +28,13 @@ StaticLayoutHierarchy<1>::StaticLayoutHierarchy(const ExpressionLayout * e, bool
 
 template<>
 StaticLayoutHierarchy<2>::StaticLayoutHierarchy(const ExpressionLayout * e1, const ExpressionLayout * e2, bool cloneChildren) :
-  StaticLayoutHierarchy(ExpressionLayoutArray2(e1, e2), cloneChildren)
+  StaticLayoutHierarchy(ExpressionLayoutArray(e1, e2).array(), cloneChildren)
 {
 }
 
 template<>
 StaticLayoutHierarchy<3>::StaticLayoutHierarchy(const ExpressionLayout * e1, const ExpressionLayout * e2, const ExpressionLayout * e3, bool cloneChildren) :
-  StaticLayoutHierarchy(ExpressionLayoutArray3(e1, e2, e3), cloneChildren)
+  StaticLayoutHierarchy(ExpressionLayoutArray(e1, e2, e3).array(), cloneChildren)
 {
 }
 

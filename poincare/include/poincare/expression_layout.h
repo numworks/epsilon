@@ -93,10 +93,10 @@ protected:
   ExpressionLayout * m_parent;
   bool m_sized;
   bool m_baselined;
+  bool m_positioned;
 private:
   bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor);
   void replaceWithJuxtapositionOf(ExpressionLayout * firstLayout, ExpressionLayout * secondLayout);
-  bool m_positioned;
   KDRect m_frame;
 };
 

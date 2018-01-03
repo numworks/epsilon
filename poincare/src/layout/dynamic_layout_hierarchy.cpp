@@ -58,6 +58,8 @@ bool DynamicLayoutHierarchy::addChildAtIndex(ExpressionLayout * child, int index
   m_children = newChildren;
   m_numberOfChildren += 1;
   m_sized = false;
+  m_positioned = false;
+  m_baselined = false;
   return true;
 }
 

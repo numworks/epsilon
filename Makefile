@@ -85,6 +85,8 @@ dependencies = $(all_objs:.o=.d)
 -include $(dependencies)
 products += $(dependencies)
 
+$(all_objs): $(generated_headers)
+
 .SECONDARY: $(objs)
 %.$(EXE): $(objs)
 	@echo "LD      $@"

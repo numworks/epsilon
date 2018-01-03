@@ -32,6 +32,11 @@ ExpressionLayout * ParenthesisRightLayout::clone() const {
   return layout;
 }
 
+bool ParenthesisRightLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
+  *numberOfOpenParenthesis = goingLeft ? *numberOfOpenParenthesis + 1 : *numberOfOpenParenthesis - 1;
+  return true;
+}
+
 void ParenthesisRightLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDRect frame = KDRect(p.x() + ParenthesisLeftRightLayout::k_widthMargin + ParenthesisLeftRightLayout::k_lineThickness - ParenthesisLeftRightLayout::k_parenthesisCurveWidth,
       p.y() + ParenthesisLeftRightLayout::k_externHeightMargin,

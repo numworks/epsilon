@@ -1,5 +1,6 @@
 #include "char_layout.h"
 #include <poincare/expression_layout_cursor.h>
+#include <ion/charset.h>
 #include <assert.h>
 #include <stdlib.h>
 
@@ -47,6 +48,19 @@ bool CharLayout::moveRight(ExpressionLayoutCursor * cursor) {
     return m_parent->moveRight(cursor);
   }
   return false;
+}
+
+bool CharLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
+  if (*numberOfOpenParenthesis <= 0
+      && (m_char == '+'
+        || m_char == '-'
+        || m_char == '*'
+        || m_char == Ion::Charset::MultiplicationSign
+        || m_char == Ion::Charset::MiddleDot))
+  {
+    return false;
+  }
+  return true;
 }
 
 void CharLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

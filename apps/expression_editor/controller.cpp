@@ -106,7 +106,7 @@ bool Controller::handleMoveEvent(Ion::Events::Event event) {
 
 ExpressionLayout * Controller::handleAddEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Division) {
-    return m_cursor.addEmptyFractionLayout();
+    return m_cursor.addFractionLayoutAndCollapseBrothers();
   }
   if (event == Ion::Events::XNT) {
     return m_cursor.addXNTCharLayout();

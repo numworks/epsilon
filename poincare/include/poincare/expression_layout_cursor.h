@@ -45,7 +45,7 @@ public:
   /* Edition */
   void addLayout(ExpressionLayout * layout);
   ExpressionLayout * addEmptyExponentialLayout();
-  ExpressionLayout * addEmptyFractionLayout();
+  ExpressionLayout * addFractionLayoutAndCollapseBrothers();
   ExpressionLayout * addEmptyLogarithmLayout();
   ExpressionLayout * addEmptyPowerLayout();
   ExpressionLayout * addEmptyRootLayout();

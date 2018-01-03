@@ -1,4 +1,5 @@
 #include <poincare/bounded_static_hierarchy.h>
+#include <poincare/expression_array.h>
 extern "C" {
 #include <assert.h>
 }
@@ -21,7 +22,7 @@ BoundedStaticHierarchy<T>::BoundedStaticHierarchy(const Expression * const * ope
 
 template<>
 BoundedStaticHierarchy<2>::BoundedStaticHierarchy(const Expression * e1, const Expression * e2, bool cloneOperands) :
-  BoundedStaticHierarchy(ExpressionArray(e1, e2), 2, cloneOperands)
+  BoundedStaticHierarchy(ExpressionArray(e1, e2).array(), 2, cloneOperands)
 {
 }
 

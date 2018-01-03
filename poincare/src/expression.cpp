@@ -40,13 +40,6 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
-const Expression * const * Expression::ExpressionArray(const Expression * e1, const Expression * e2) {
-  static const Expression * result[2] = {nullptr, nullptr};
-  result[0] = e1;
-  result[1] = e2;
-  return result;
-}
-
 /* Circuit breaker */
 
 static Expression::CircuitBreaker sCircuitBreaker = nullptr;

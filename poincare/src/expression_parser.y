@@ -66,6 +66,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token LEFT_BRACKET
 %token RIGHT_BRACKET
 %token COMMA
+%token UNDERSCORE
 %token DOT
 %token EE
 %token ICOMPLEX
@@ -102,8 +103,11 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %nonassoc RIGHT_PARENTHESIS
 %nonassoc LEFT_BRACKET
 %nonassoc RIGHT_BRACKET
+%nonassoc LEFT_BRACE
+%nonassoc RIGHT_BRACE
 %nonassoc FUNCTION
 %left COMMA
+%nonassoc UNDERSCORE
 %nonassoc DIGITS
 %nonassoc DOT
 %nonassoc EE
@@ -149,7 +153,7 @@ lstData:
 /* When approximating expressions to double, results are bounded by 1E308 (and
  * 1E-308 for small numbers). We thus accept decimals whose exponents are in
  * {-1000, 1000}. However, we have to compute the exponent first to decide
- * wether to accept the decimal. The exponent of a Decimal is stored as an
+ * whether to accept the decimal. The exponent of a Decimal is stored as an
  * int32_t. We thus have to throw an error when the exponent computation might
  * overflow. Finally, we escape computation by throwing an error when the length
  * of the exponent digits is above 4 (0.00...-256 times-...01E1256=1E1000 is
@@ -189,6 +193,13 @@ exp:
   | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Parenthesis(terms, false); }
 /* MATRICES_ARE_DEFINED */
   | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); delete $2; }
+  | FUNCTION UNDERSCORE LEFT_BRACE lstData RIGHT_BRACE LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; int totalNumberOfArguments = $4->numberOfOperands()+$7->numberOfOperands();
+if (!$1->hasValidNumberOfOperands(totalNumberOfArguments)) { delete $1; delete $4; delete $7; YYERROR; };
+Poincare::ListData * arguments = new Poincare::ListData();
+for (int i = 0; i < $4->numberOfOperands(); i++) { arguments->pushExpression($4->operands()[i]); }
+for (int i = 0; i < $7->numberOfOperands(); i++) { arguments->pushExpression($7->operands()[i]); }
+$1->setArgument(arguments, totalNumberOfArguments, false);
+$4->detachOperands(); delete $4; $7->detachOperands(); delete $7; arguments->detachOperands(); delete arguments;}
   | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfOperands())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfOperands(), false); $3->detachOperands(); delete $3; }
 
 final_exp:

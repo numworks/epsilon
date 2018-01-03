@@ -52,11 +52,17 @@ void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
 }
 
 void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index) {
+  int newIndex = index;
+  if (numberOfChildren() > 0 && child(0)->isEmpty()) {
+    removeChildAtIndex(0, true);
+    newIndex = index == 0 ? 0 : index - 1;
+  }
   if (eL->isHorizontal()) {
-    mergeChildrenAtIndex(eL, index);
+    mergeChildrenAtIndex(eL, newIndex);
     return;
   }
-  addChildAtIndex(eL, index);
+  addChildAtIndex(eL, newIndex);
+
 }
 
 bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor) {

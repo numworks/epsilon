@@ -1,14 +1,5 @@
 #include <poincare/expression_layout_cursor.h>
-#include <poincare/src/layout/string_layout.h>
-#include <poincare/src/layout/char_layout.h> //TODO move from there.
-#include <poincare/src/layout/editable_baseline_relative_layout.h> //TODO move from there.
-#include <poincare/src/layout/empty_visible_layout.h> //TODO move from there.
-#include <poincare/src/layout/fraction_layout.h> //TODO move from there.
-#include <poincare/src/layout/nth_root_layout.h> //TODO move from there.
-#include <poincare/src/layout/parenthesis_left_layout.h> //TODO move from there.
-#include <poincare/src/layout/parenthesis_right_layout.h> //TODO move from there.
-#include <poincare/src/layout/bracket_left_layout.h> //TODO move from there.
-#include <poincare/src/layout/bracket_right_layout.h> //TODO move from there.
+#include <poincare_layouts.h> //TODO: finer include?
 #include <ion/charset.h>
 #include <assert.h>
 
@@ -66,12 +57,51 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyExponentialLayout() {
   return child2;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addEmptyFractionLayout() {
-  EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
-  EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
+ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
+  // Add a new FractionLayout
+  HorizontalLayout * child1 = new HorizontalLayout(new EmptyVisibleLayout());
+  HorizontalLayout * child2 = new HorizontalLayout(new EmptyVisibleLayout());
   FractionLayout * newChild = new FractionLayout(child1, child2, false);
   pointedExpressionLayout()->addBrother(this, newChild);
-  return child1;
+
+  if (!newChild->parent()->isHorizontal()) {
+    setPointedExpressionLayout(child2->editableChild(0));
+    setPosition(Position::Left);
+    return child2;
+  }
+
+  int fractionIndexInParent = newChild->parent()->indexOfChild(newChild);
+  int numberOfBrothers = newChild->parent()->numberOfChildren();
+
+  // Collapse the brothers on the right
+  int numberOfOpenParenthesis = 0;
+  while (fractionIndexInParent < numberOfBrothers - 1) {
+    ExpressionLayout * rightBrother = newChild->editableParent()->editableChild(fractionIndexInParent+1);
+    if (rightBrother->isCollapsable(&numberOfOpenParenthesis, false)) {
+      newChild->editableParent()->removeChildAtIndex(fractionIndexInParent+1, false);
+      child2->addOrMergeChildAtIndex(rightBrother, child2->numberOfChildren());
+      numberOfBrothers--;
+    } else {
+      break;
+    }
+  }
+  // Collapse the brothers on the left
+  numberOfOpenParenthesis = 0;
+  while (fractionIndexInParent > 0) {
+    ExpressionLayout * leftBrother = newChild->editableParent()->editableChild(fractionIndexInParent-1);
+    if (leftBrother->isCollapsable(&numberOfOpenParenthesis, true)) {
+      newChild->editableParent()->removeChildAtIndex(fractionIndexInParent-1, false);
+      child1->addOrMergeChildAtIndex(leftBrother, 0);
+      fractionIndexInParent--;
+    } else {
+      break;
+    }
+  }
+  // Set the cursor position
+  setPointedExpressionLayout(child2->editableChild(0));
+  setPosition(Position::Left);
+
+  return child2;
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addEmptyLogarithmLayout() {

@@ -10,6 +10,8 @@ class DynamicLayoutHierarchy : public ExpressionLayout {
 public:
   DynamicLayoutHierarchy();
   DynamicLayoutHierarchy(const ExpressionLayout * const * operands, int numberOfOperands, bool cloneOperands = true);
+  DynamicLayoutHierarchy(const ExpressionLayout * operand, bool cloneOperands = true) :
+    DynamicLayoutHierarchy(ExpressionLayoutArray(operand).array(), 1, cloneOperands) {}
   DynamicLayoutHierarchy(const ExpressionLayout * operand1, const ExpressionLayout * operand2, bool cloneOperands = true) :
     DynamicLayoutHierarchy(ExpressionLayoutArray(operand1, operand2).array(), 2, cloneOperands) {}
   ~DynamicLayoutHierarchy();

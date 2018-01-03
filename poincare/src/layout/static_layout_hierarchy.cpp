@@ -48,15 +48,15 @@ StaticLayoutHierarchy<T>::~StaticLayoutHierarchy() {
 }
 
 template<int T>
-void StaticLayoutHierarchy<T>::build(const ExpressionLayout * const * children, int numberOfChildren, bool cloneChildren) {
-  assert(children != nullptr);
-  assert(numberOfChildren <= T);
-  for (int i=0; i < numberOfChildren; i++) {
-    assert(children[i] != nullptr);
-    if (cloneChildren) {
-      m_children[i] = children[i]->clone();
+void StaticLayoutHierarchy<T>::build(const ExpressionLayout * const * operands, int numberOfOperands, bool cloneOperands) {
+  assert(operands != nullptr);
+  assert(numberOfOperands <= T);
+  for (int i=0; i < numberOfOperands; i++) {
+    assert(operands[i] != nullptr);
+    if (cloneOperands) {
+      m_children[i] = operands[i]->clone();
     } else {
-      m_children[i] = children[i];
+      m_children[i] = operands[i];
     }
     const_cast<ExpressionLayout *>(m_children[i])->setParent(this);
   }

@@ -35,13 +35,9 @@ GlobalContext::~GlobalContext() {
   }
 }
 
-/* TODO: so far, symbols are not replaced in expression at simplification. So,
- * right now, it is not an issue that multiple symbols are replaced by the same
- * objet at evaluation (defaultExpression). However, when we will replace
- * symbols in simplification, we will have to have an expression per symbol!! */
 Complex<double> * GlobalContext::defaultExpression() {
-  static Complex<double> * defaultExpression = new Complex<double>(Complex<double>::Float(0.0));
-  return defaultExpression;
+  static Complex<double> defaultExpression(Complex<double>::Float(0.0));
+  return &defaultExpression;
 }
 
 int GlobalContext::symbolIndex(const Symbol * symbol) const {

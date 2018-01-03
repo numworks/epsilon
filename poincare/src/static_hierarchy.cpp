@@ -1,4 +1,5 @@
 #include <poincare/static_hierarchy.h>
+#include <poincare/expression_array.h>
 extern "C" {
 #include <assert.h>
 }
@@ -27,7 +28,7 @@ StaticHierarchy<1>::StaticHierarchy(const Expression * e, bool cloneOperands) :
 
 template<>
 StaticHierarchy<2>::StaticHierarchy(const Expression * e1, const Expression * e2, bool cloneOperands) :
-  StaticHierarchy(ExpressionArray(e1, e2), cloneOperands)
+  StaticHierarchy(ExpressionArray(e1, e2).array(), cloneOperands)
 {
 }
 

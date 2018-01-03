@@ -18,6 +18,7 @@ public:
   char character() { return m_char; }
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDPoint positionOfChild(ExpressionLayout * child) override;

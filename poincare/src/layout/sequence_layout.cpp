@@ -3,6 +3,7 @@
 #include "parenthesis_right_layout.h"
 #include "uneditable_horizontal_trio_layout.h"
 #include <poincare/expression_layout_cursor.h>
+#include <poincare/expression_layout_array.h>
 #include <string.h>
 #include <assert.h>
 
@@ -14,7 +15,7 @@ SequenceLayout::SequenceLayout(ExpressionLayout * lowerBound, ExpressionLayout *
   ParenthesisLeftLayout * parLeft = new ParenthesisLeftLayout();
   ParenthesisRightLayout * parRight = new ParenthesisRightLayout();
   UneditableHorizontalTrioLayout * horLayout = new UneditableHorizontalTrioLayout(parLeft, argument, parRight, cloneOperands, false);
-  build(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray3(horLayout, lowerBound, upperBound)), 3, cloneOperands);
+  build(ExpressionLayoutArray(horLayout, lowerBound, upperBound).array(), 3, cloneOperands);
 }
 
 void SequenceLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {

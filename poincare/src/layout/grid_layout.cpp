@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands) :
+GridLayout::GridLayout(const ExpressionLayout * const * entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands) :
   DynamicLayoutHierarchy(entryLayouts, numberOfRows*numberOfColumns, cloneOperands),
   m_numberOfRows(numberOfRows),
   m_numberOfColumns(numberOfColumns)

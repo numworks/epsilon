@@ -21,8 +21,6 @@ public:
   /* Constructor & Destructor */
   ExpressionLayout();
   virtual  ~ExpressionLayout() = default;
-  static const ExpressionLayout * const * ExpressionLayoutArray2(const ExpressionLayout * e1, const ExpressionLayout * e2);
-  static const ExpressionLayout * const * ExpressionLayoutArray3(const ExpressionLayout * e1, const ExpressionLayout * e2, const ExpressionLayout * e3);
   virtual ExpressionLayout * clone() const = 0;
 
   /* Rendering */

@@ -1,5 +1,6 @@
 #include "math_toolbox.h"
 #include "./shared/toolbox_helpers.h"
+#include <poincare/expression_layout_array.h>
 #include <assert.h>
 #include <string.h>
 
@@ -17,9 +18,9 @@ const ToolboxMessageTree calculChildren[4] = {
   ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg, nullptr, 0,
       new IntegralLayout(
         new HorizontalLayout(
-          const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray2(
+          Poincare::ExpressionLayoutArray(
               new EmptyVisibleLayout(),
-              new StringLayout("dx",2))), 2, false),
+              new StringLayout("dx",2)).array(), 2, false),
         new EmptyVisibleLayout(),
         new EmptyVisibleLayout(),
         false),
@@ -27,10 +28,10 @@ const ToolboxMessageTree calculChildren[4] = {
       2),
   ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommandWithArg, nullptr, 0,
       new SumLayout(
-        new HorizontalLayout(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray2(
-              new StringLayout("n=",2),
-              new EmptyVisibleLayout())), 2, false),
         new EmptyVisibleLayout(),
+        new HorizontalLayout(Poincare::ExpressionLayoutArray(
+              new StringLayout("n=",2),
+              new EmptyVisibleLayout()).array(), 2, false),
         new EmptyVisibleLayout(),
         false),
       const_cast<int *>(&pointedLayoutPathSum[0]),
@@ -54,9 +55,9 @@ const ToolboxMessageTree probabilityChildren[2] = {
   ToolboxMessageTree(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination, I18n::Message::BinomialCommandWithArg, nullptr, 0,
       new UneditableHorizontalTrioLayout(
         new ParenthesisLeftLayout(),
-        new GridLayout(const_cast<Poincare::ExpressionLayout**>(Poincare::ExpressionLayout::ExpressionLayoutArray2(
+        new GridLayout(Poincare::ExpressionLayoutArray(
               new EmptyVisibleLayout(),
-              new EmptyVisibleLayout())),
+              new EmptyVisibleLayout()).array(),
               2, 1, false),
         new ParenthesisRightLayout(), false, true),
       const_cast<int *>(&pointedLayoutPathBinomial[0]),

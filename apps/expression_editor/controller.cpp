@@ -63,9 +63,6 @@ bool Controller::privateHandleEvent(Ion::Events::Event event) {
   }
   ExpressionLayout * newPointedLayout = handleAddEvent(event);
   if (newPointedLayout != nullptr) {
-    m_cursor.setPointedExpressionLayout(newPointedLayout);
-    m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
-    m_cursor.setPositionInside(0);
     m_expressionLayout->invalidAllSizesPositionsAndBaselines();
     m_view.layoutSubviews();
     return true;

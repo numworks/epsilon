@@ -184,6 +184,8 @@ void ExpressionLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
     }
   }
   m_sized = false;
+  m_positioned = false;
+  m_baselined = false;
 }
 
 void ExpressionLayout::detachChild(const ExpressionLayout * e) {
@@ -263,6 +265,8 @@ void ExpressionLayout::detachChildAtIndex(int i) {
   }
   op[i] = nullptr;
   m_sized = false;
+  m_positioned = false;
+  m_baselined = false;
 }
 
 bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {

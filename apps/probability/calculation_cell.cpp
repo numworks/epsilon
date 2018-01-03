@@ -30,14 +30,14 @@ void CalculationCell::setHighlighted(bool highlight) {
 
 KDSize CalculationCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
-  return KDSize(2*k_margin+textSize.width()+calculationCellWidth()+ResponderImageCell::k_outline, KDText::charSize().height());
+  return KDSize(2*k_margin+textSize.width()+calculationCellWidth()+2*ResponderImageCell::k_outline, KDText::charSize().height());
 }
 
 void CalculationCell::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   if (m_isResponder) {
     KDSize textSize = m_text.minimalSizeForOptimalDisplay();
-    ctx->strokeRect(KDRect(2*k_margin+textSize.width()-ResponderImageCell::k_outline, ResponderImageCell::k_margin, calculationCellWidth()+2*ResponderImageCell::k_outline, ImageCell::k_height+2*ResponderImageCell::k_outline), Palette::GreyMiddle);
+    ctx->strokeRect(KDRect(2*k_margin+textSize.width(), 0, calculationCellWidth()+2*ResponderImageCell::k_outline, ImageCell::k_height+2*ResponderImageCell::k_outline), Palette::GreyMiddle);
   }
 }
 
@@ -64,7 +64,7 @@ View * CalculationCell::subviewAtIndex(int index) {
 void CalculationCell::layoutSubviews() {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
   m_text.setFrame(KDRect(k_margin, 0, textSize.width(), bounds().height()));
-  m_calculation.setFrame(KDRect(2*k_margin+textSize.width(), ResponderImageCell::k_totalMargin, calculationCellWidth(), ImageCell::k_height));
+  m_calculation.setFrame(KDRect(2*k_margin+textSize.width()+ResponderImageCell::k_outline, ResponderImageCell::k_outline, calculationCellWidth(), ImageCell::k_height));
 }
 
 KDCoordinate CalculationCell::calculationCellWidth() const {

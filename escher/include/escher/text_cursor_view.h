@@ -8,6 +8,7 @@ public:
   using View::View;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
+  constexpr static KDCoordinate k_width = 1;
 };
 
 #endif

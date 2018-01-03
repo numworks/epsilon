@@ -6,6 +6,6 @@ void TextCursorView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 KDSize TextCursorView::minimalSizeForOptimalDisplay() const {
-  return KDSize(1, 0);
+  return KDSize(k_width, 0);
 }
 

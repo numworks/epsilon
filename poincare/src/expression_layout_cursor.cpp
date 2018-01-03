@@ -61,6 +61,8 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyExponentialLayout() {
   EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
   EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Superscript, false);
   pointedExpressionLayout()->addBrother(this, newChild);
+  setPointedExpressionLayout(child2);
+  setPosition(ExpressionLayoutCursor::Position::Left);
   return child2;
 }
 
@@ -77,9 +79,11 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyLogarithmLayout() {
   EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
   EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Subscript, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
-  m_pointedExpressionLayout = newChild;
-  m_position = Position::Right;
-  return insertText("()");
+  setPointedExpressionLayout(newChild);
+  setPosition(ExpressionLayoutCursor::Position::Right);
+  insertText("()");
+  moveLeft();
+  return child1;
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {
@@ -87,6 +91,8 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {
   EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
   EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Superscript, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
+  setPointedExpressionLayout(child1);
+  setPosition(ExpressionLayoutCursor::Position::Right);
   return child1;
 }
 
@@ -95,6 +101,8 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyRootLayout() {
   EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
   NthRootLayout * newChild = new NthRootLayout(child1, child2, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
+  setPointedExpressionLayout(child1);
+  setPosition(ExpressionLayoutCursor::Position::Right);
   return child1;
 }
 
@@ -103,12 +111,16 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptySquarePowerLayout() {
   CharLayout * child2 = new CharLayout('2');
   EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Superscript, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
-  return child1;
+  setPointedExpressionLayout(newChild);
+  setPosition(ExpressionLayoutCursor::Position::Right);
+  return newChild;
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addXNTCharLayout() {
   CharLayout * newChild = new CharLayout(m_pointedExpressionLayout->XNTChar());
   m_pointedExpressionLayout->addBrother(this, newChild);
+  setPointedExpressionLayout(newChild);
+  setPosition(ExpressionLayoutCursor::Position::Right);
   return newChild;
 }
 

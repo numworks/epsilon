@@ -17,8 +17,8 @@ public:
   MessageTextView * messageTextView();
 private:
   constexpr static KDCoordinate k_margin = 5;
-  constexpr static KDCoordinate k_minTextFieldWidth = 4*KDText::charSize().width();
-  constexpr static KDCoordinate k_maxTextFieldWidth = 10*KDText::charSize().width();
+  constexpr static KDCoordinate k_minTextFieldWidth = 4*KDText::charSize().width()+TextCursorView::k_width;
+  constexpr static KDCoordinate k_maxTextFieldWidth = 14*KDText::charSize().width()+TextCursorView::k_width;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

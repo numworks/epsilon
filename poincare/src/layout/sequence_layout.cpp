@@ -9,13 +9,17 @@
 
 namespace Poincare {
 
-SequenceLayout::SequenceLayout(ExpressionLayout * lowerBound, ExpressionLayout * upperBound, ExpressionLayout * argument, bool cloneOperands) :
+SequenceLayout::SequenceLayout(ExpressionLayout * argument, ExpressionLayout * lowerBound, ExpressionLayout * upperBound, bool cloneOperands) :
   StaticLayoutHierarchy()
 {
   ParenthesisLeftLayout * parLeft = new ParenthesisLeftLayout();
   ParenthesisRightLayout * parRight = new ParenthesisRightLayout();
   UneditableHorizontalTrioLayout * horLayout = new UneditableHorizontalTrioLayout(parLeft, argument, parRight, cloneOperands, false);
   build(ExpressionLayoutArray(horLayout, lowerBound, upperBound).array(), 3, cloneOperands);
+  if (cloneOperands) {
+    delete parLeft;
+    delete parRight;
+  }
 }
 
 void SequenceLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {

@@ -80,13 +80,6 @@ const char * Calculation::inputText() {
   return m_inputText;
 }
 
-const char * Calculation::outputText() {
-  if (shouldApproximateOutput()) {
-    return m_approximateOutputText;
-  }
-  return m_exactOutputText;
-}
-
 const char * Calculation::exactOutputText() {
   return m_exactOutputText;
 }
@@ -107,20 +100,6 @@ ExpressionLayout * Calculation::inputLayout() {
     m_inputLayout = input()->createLayout(Expression::FloatDisplayMode::Decimal, Expression::ComplexFormat::Cartesian);
   }
   return m_inputLayout;
-}
-
-Expression * Calculation::output(Context * context) {
-  if (shouldApproximateOutput()) {
-    return approximateOutput(context);
-  }
-  return exactOutput(context);
-}
-
-ExpressionLayout * Calculation::outputLayout(Context * context) {
-  if (shouldApproximateOutput()) {
-    return approximateOutputLayout(context);
-  }
-  return exactOutputLayout(context);
 }
 
 bool Calculation::isEmpty() {

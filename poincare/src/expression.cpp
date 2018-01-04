@@ -175,6 +175,19 @@ bool Expression::IsMatrix(const Expression * e, Context & context) {
   return e->type() == Type::Matrix || e->type() == Type::ConfidenceInterval || e->type() == Type::MatrixDimension || e->type() == Type::PredictionInterval || e->type() == Type::MatrixInverse || e->type() == Type::MatrixTranspose || (e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isMatrixSymbol());
 }
 
+bool Expression::isOfType(Type * types, int length) const {
+  for (int i = 0; i < length; i++) {
+    if (type() == types[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Expression::operandNeedParenthesis(const Expression * e) const {
+  return e->type() == Expression::Type::Opposite;
+}
+
 /* Comparison */
 
 int Expression::SimplificationOrder(const Expression * e1, const Expression * e2, bool canBeInterrupted) {

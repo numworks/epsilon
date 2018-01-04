@@ -366,41 +366,52 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     Rational * nr = static_cast<Rational *>(editableOperand(1));
     Integer n = nr->numerator();
     n.setNegative(false);
-    // Number of terms in addition m
-    int m = operand(0)->numberOfOperands();
-    if (Integer(k_maxExpandedMultinome).isLowerThan(Integer::Power(Integer(m), n)) || n.isOne()) {
+    /* if n is above 25, the resulting sum would have more than
+     * k_maxNumberOfTermsInExpandedMultinome terms so we do not expand it. */
+    if (Integer(k_maxNumberOfTermsInExpandedMultinome).isLowerThan(n) || n.isOne()) {
       return this;
     }
-    int clippedN = n.extractedInt(); // Authorized because n < k_maxExpandedMultinome < k_maxNValue
+    int clippedN = n.extractedInt(); // Authorized because n < k_maxNumberOfTermsInExpandedMultinome
+    // Number of terms in addition m
+    int m = operand(0)->numberOfOperands();
+    /* The multinome (a0+a2+...+a(m-1))^n has BinomialCoefficient(n+m-1,n) terms;
+     * we expand the multinome only when the number of terms in the resulting
+     * sum has less than k_maxNumberOfTermsInExpandedMultinome terms. */
+    if (k_maxNumberOfTermsInExpandedMultinome < BinomialCoefficient::compute(static_cast<double>(clippedN), static_cast<double>(clippedN+m-1))) {
+      return this;
+    }
     Expression * result = editableOperand(0);
     Expression * a = result->clone();
     for (int i = 2; i <= clippedN; i++) {
       if (result->type() == Type::Addition) {
-        Addition * a0 = new Addition();
+        Expression * a0 = new Addition();
         for (int j = 0; j < a->numberOfOperands(); j++) {
           Multiplication * m = new Multiplication(result, a->editableOperand(j), true);
-          SimplificationRoot root(m); // m need to have a parent when applying distributeOnOperandAtIndex
-          Expression * a1 = m->distributeOnOperandAtIndex(0, context, angleUnit);
-          root.detachOperands();
-          a0->addOperand(a1);
+          SimplificationRoot rootM(m); // m need to have a parent when applying distributeOnOperandAtIndex
+          Expression * expandM = m->distributeOnOperandAtIndex(0, context, angleUnit);
+          rootM.detachOperands();
+          if (a0->type() == Type::Addition) {
+            static_cast<Addition *>(a0)->addOperand(expandM);
+          } else {
+            a0 = new Addition(a0, expandM, false);
+          }
+          SimplificationRoot rootA0(a0); // a0 need a parent to be reduced.
+          a0 = a0->shallowReduce(context, angleUnit);
         }
-        SimplificationRoot root(a0);
-        Expression * a2 = a0->shallowReduce(context, angleUnit);
-        root.detachOperands();
-        result = result->replaceWith(a2, true);
+        result = result->replaceWith(a0, true);
       } else {
         Multiplication * m = new Multiplication(a, result, true);
         SimplificationRoot root(m);
         result = result->replaceWith(m->distributeOnOperandAtIndex(0, context, angleUnit), true);
+        result = result->shallowReduce(context, angleUnit);
       }
     }
     delete a;
     if (nr->sign() == Sign::Negative) {
       nr->replaceWith(new Rational(-1), true);
-      result->shallowReduce(context, angleUnit);
       return shallowReduce(context, angleUnit);
     } else {
-      return replaceWith(result, true)->shallowReduce(context, angleUnit);
+      return replaceWith(result, true);
     }
   }
 #if 0

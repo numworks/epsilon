@@ -33,6 +33,9 @@ ExpressionLayout * ParenthesisRightLayout::clone() const {
 }
 
 bool ParenthesisRightLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
+  if (*numberOfOpenParenthesis == 0 && !goingLeft) {
+    return false;
+  }
   *numberOfOpenParenthesis = goingLeft ? *numberOfOpenParenthesis + 1 : *numberOfOpenParenthesis - 1;
   return true;
 }

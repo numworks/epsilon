@@ -8,7 +8,6 @@ app_objs += $(addprefix apps/calculation/,\
   edit_expression_controller.o\
   history_view_cell.o\
   history_controller.o\
-  local_context.o\
   output_expressions_view.o\
   scrollable_expression_view.o\
   scrollable_output_expressions_view.o\

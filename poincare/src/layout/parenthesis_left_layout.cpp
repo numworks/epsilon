@@ -65,6 +65,8 @@ void ParenthesisLeftLayout::render(KDContext * ctx, KDPoint p, KDColor expressio
 void ParenthesisLeftLayout::computeOperandHeight() {
   assert(m_parent != nullptr);
   m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
+  KDCoordinate max_under_baseline = 0;
+  KDCoordinate max_above_baseline = 0;
   int currentNumberOfOpenParentheses = 1;
   int numberOfBrothers = m_parent->numberOfChildren();
   for (int i = m_parent->indexOfChild(this) + 1; i < numberOfBrothers; i++) {
@@ -72,15 +74,25 @@ void ParenthesisLeftLayout::computeOperandHeight() {
     if (brother->isRightParenthesis()) {
       currentNumberOfOpenParentheses--;
       if (currentNumberOfOpenParentheses == 0) {
+        if (max_under_baseline + max_above_baseline > m_operandHeight) {
+          m_operandHeight = max_under_baseline + max_above_baseline;
+        }
         return;
       }
     } else if (brother->isLeftParenthesis()) {
       currentNumberOfOpenParentheses++;
     }
     KDCoordinate brotherHeight = brother->size().height();
-    if (brotherHeight > m_operandHeight) {
-      m_operandHeight = brotherHeight;
+    KDCoordinate brotherBaseline = brother->baseline();
+    if (brotherHeight - brotherBaseline > max_under_baseline) {
+      max_under_baseline = brotherHeight - brotherBaseline ;
     }
+    if (brotherBaseline > max_above_baseline) {
+      max_above_baseline = brotherBaseline;
+    }
+  }
+  if (max_under_baseline + max_above_baseline > m_operandHeight) {
+    m_operandHeight = max_under_baseline + max_above_baseline;
   }
 }
 

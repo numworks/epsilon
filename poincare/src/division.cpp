@@ -85,6 +85,14 @@ Complex<T> Division::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian((temp*aa + ab) / norm, (temp*bb + ba) / norm);
 }
 
+bool Division::operandNeedParenthesis(const Expression * e) const {
+  if (e->type() == Type::Rational && !static_cast<const Rational *>(e)->denominator().isOne()) {
+    return true;
+  }
+  Type types[] = {Type::Division, Type::Multiplication, Type::Addition, Type::Subtraction, Type::Opposite};
+  return e->isOfType(types, 5);
+}
+
 ExpressionLayout * Division::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);

@@ -10,6 +10,7 @@ namespace Poincare {
 class Division : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
   friend class Multiplication;
+  friend class Symbol;
   friend class Power;
 public:
   Type type() const override;
@@ -17,11 +18,10 @@ public:
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
   /* Layout */
+  bool operandNeedParenthesis(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
-  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "/", [](const Expression * e) {
-      return e->type() == Type::Division || e->type() == Type::Multiplication || e->type() == Type::Addition || e->type() == Type::Subtraction || e->type() == Type::Opposite || (e->type() == Type::Rational && !static_cast<const Rational *>(e)->denominator().isOne());
-    });
+    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, "/");
   }
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;

@@ -84,7 +84,7 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
   cout << "---- Simplify: " << expression << "----"  << endl;
 #endif
   Expression::Simplify(&e, globalContext, angleUnit);
-  char buffer[200];
+  char buffer[500];
   e->writeTextInBuffer(buffer, sizeof(buffer));
   translate_in_ASCII_chars(buffer);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS

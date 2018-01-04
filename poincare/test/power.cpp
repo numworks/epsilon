@@ -79,4 +79,6 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("(x+P)^(3)", "x^3+3*x^2*P+3*x*P^2+P^3");
   assert_parsed_expression_simplify_to("(5+R(2))^(-8)", "(1446241-1003320*R(2))/78310985281");
   assert_parsed_expression_simplify_to("(5*P+R(2))^(-5)", "1/(4*R(2)+100*P+500*R(2)*P^2+2500*P^3+3125*R(2)*P^4+3125*P^5)");
+  assert_parsed_expression_simplify_to("(1+R(2)+R(3))^6", "1296+880*R(2)+720*R(3)+528*R(6)");
+  assert_parsed_expression_simplify_to("(P+R(2)+R(3)+x)^(-5)", "1/(109*R(2)+89*R(3)+245*x+100*R(6)*x+110*R(2)*x^2+90*R(3)*x^2+50*x^3+20*R(6)*x^3+5*R(2)*x^4+5*R(3)*x^4+x^5+245*P+100*R(6)*P+220*R(2)*x*P+180*R(3)*x*P+150*x^2*P+60*R(6)*x^2*P+20*R(2)*x^3*P+20*R(3)*x^3*P+5*x^4*P+110*R(2)*P^2+90*R(3)*P^2+150*x*P^2+60*R(6)*x*P^2+30*R(2)*x^2*P^2+30*R(3)*x^2*P^2+10*x^3*P^2+50*P^3+20*R(6)*P^3+20*R(2)*x*P^3+20*R(3)*x*P^3+10*x^2*P^3+5*R(2)*P^4+5*R(3)*P^4+5*x*P^4+P^5)");
 }

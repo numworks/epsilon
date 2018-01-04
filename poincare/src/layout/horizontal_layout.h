@@ -38,7 +38,6 @@ protected:
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
-  void mergeChildrenAtIndex(ExpressionLayout * eL, int index); // WITHOUT delete.
 private:
   bool moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout);
 };

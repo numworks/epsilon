@@ -13,6 +13,7 @@ class Addition : public DynamicHierarchy {
   friend class Logarithm;
   friend class Multiplication;
   friend class Subtraction;
+  friend class Power;
 public:
   Type type() const override;
   Expression * clone() const override;

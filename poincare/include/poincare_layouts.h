@@ -29,5 +29,6 @@
 #include <poincare/src/layout/string_layout.h>
 #include <poincare/src/layout/sum_layout.h>
 #include <poincare/src/layout/uneditable_horizontal_trio_layout.h>
+#include <poincare/src/layout/vertical_offset_layout.h>
 
 #endif

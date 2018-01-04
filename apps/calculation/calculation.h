@@ -18,15 +18,12 @@ public:
   void reset();
   void setContent(const char * c, Poincare::Context * context);
   const char * inputText();
-  const char * outputText();
   const char * exactOutputText();
   const char * approximateOutputText();
   Poincare::Expression * input();
   Poincare::ExpressionLayout * inputLayout();
-  Poincare::Expression * output(Poincare::Context * context);
   Poincare::Expression * approximateOutput(Poincare::Context * context);
   Poincare::Expression * exactOutput(Poincare::Context * context);
-  Poincare::ExpressionLayout * outputLayout(Poincare::Context * context);
   Poincare::ExpressionLayout * exactOutputLayout(Poincare::Context * context);
   Poincare::ExpressionLayout * approximateOutputLayout(Poincare::Context * context);
   bool isEmpty();

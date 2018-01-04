@@ -117,6 +117,7 @@ objs += $(addprefix poincare/src/layout/,\
   uneditable_horizontal_trio_layout.o\
   uneditable_parenthesis_left_layout.o\
   uneditable_parenthesis_right_layout.o\
+  vertical_offset_layout.o\
 )
 
 tests += $(addprefix poincare/test/,\

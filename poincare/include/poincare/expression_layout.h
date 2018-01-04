@@ -70,6 +70,7 @@ public:
   /* Other */
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   // isCollapsable is used when adding a brother fraction: should the layout be inserted in the numerator (or denominator)?
+  virtual bool mustHaveLeftBrother() const { return false; }
   virtual bool isHorizontal() const { return false; }
   virtual bool isLeftParenthesis() const { return false; }
   virtual bool isRightParenthesis() const { return false; }

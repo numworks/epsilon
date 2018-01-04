@@ -111,10 +111,8 @@ Expression::Sign Symbol::sign() const {
   return Sign::Unknown;
 }
 
-bool Symbol::hasAnExactRepresentation() const {
-  if (m_name == SpecialSymbols::Ans) {
-    return true;
-  }
+bool Symbol::hasAnExactRepresentation(Context & context) const {
+  // TODO: so far, no symbols can be exact but A, ..Z should be able to hold exact values later.
   return false;
 }
 
@@ -124,7 +122,7 @@ Expression * Symbol::shallowReduce(Context& context, AngleUnit angleUnit) {
     return this;
   }
   const Expression * e = context.expressionForSymbol(this);
-  if (e != nullptr && hasAnExactRepresentation()) {
+  if (e != nullptr && hasAnExactRepresentation(context)) { // TODO: later A...Z should be replaced.
     /* The stored expression had been beautified which forces to call deepReduce. */
     return replaceWith(e->clone(), true)->deepReduce(context, angleUnit);
   }

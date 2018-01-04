@@ -186,16 +186,14 @@ ExpressionLayout * Calculation::approximateOutputLayout(Context * context) {
   return m_approximateOutputLayout;
 }
 
-bool Calculation::shouldApproximateOutput() {
+bool Calculation::shouldDisplayApproximateOutput(Context * context) {
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     return true;
   }
   if (strcmp(m_exactOutputText, m_inputText) == 0) {
     return true;
   }
-  return input()->recursivelyMatches([](const Expression * e) {
-        return e->type() == Expression::Type::Decimal || Expression::IsMatrix(e) || (e->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e)->isScalarSymbol());
-      });
+  return input()->isApproximate(*context);
 }
 
 }

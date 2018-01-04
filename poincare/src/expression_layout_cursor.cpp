@@ -1,4 +1,5 @@
 #include <poincare/expression_layout_cursor.h>
+#include <poincare/expression_layout_array.h>
 #include <poincare_layouts.h> //TODO: finer include?
 #include <ion/charset.h>
 #include <assert.h>
@@ -49,12 +50,12 @@ void ExpressionLayoutCursor::addLayout(ExpressionLayout * layout) {
 
 ExpressionLayout * ExpressionLayoutCursor::addEmptyExponentialLayout() {
   CharLayout * child1 = new CharLayout(Ion::Charset::Exponential);
-  EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
-  EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Superscript, false);
+  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Superscript, false);
+  HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
   pointedExpressionLayout()->addBrother(this, newChild);
-  setPointedExpressionLayout(child2);
-  setPosition(ExpressionLayoutCursor::Position::Left);
-  return child2;
+  setPointedExpressionLayout(offsetLayout->editableChild(0));
+  setPosition(ExpressionLayoutCursor::Position::Right);
+  return offsetLayout;
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
@@ -105,21 +106,37 @@ ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers(
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addEmptyLogarithmLayout() {
-  StringLayout * child1 = new StringLayout("log", 3);
-  EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
-  EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Subscript, false);
+  HorizontalLayout * newChild = new HorizontalLayout(
+      ExpressionLayoutArray(
+        new CharLayout('l'),
+        new CharLayout('o'),
+        new CharLayout('g')).array(),
+      3,
+      false);
+  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Subscript, false);
+  newChild->addChildAtIndex(offsetLayout, 3);
   m_pointedExpressionLayout->addBrother(this, newChild);
-  setPointedExpressionLayout(newChild);
+  setPointedExpressionLayout(offsetLayout);
   setPosition(ExpressionLayoutCursor::Position::Right);
   insertText("()");
-  moveLeft();
-  return child1;
+  setPointedExpressionLayout(offsetLayout->editableChild(0));
+  setPosition(ExpressionLayoutCursor::Position::Right);
+  return offsetLayout;
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {
+  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Superscript, false);
+  // If there is already a base
+  int numberOfOpenParenthesis = 0;
+  if (!m_pointedExpressionLayout->isEmpty() && m_pointedExpressionLayout->isCollapsable(&numberOfOpenParenthesis, true)) {
+    m_pointedExpressionLayout->addBrother(this, offsetLayout);
+    setPointedExpressionLayout(offsetLayout->editableChild(0));
+    setPosition(ExpressionLayoutCursor::Position::Left);
+    return offsetLayout;
+  }
+  // Else, add an empty base
   EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
-  EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
-  EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Superscript, false);
+  HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
   setPointedExpressionLayout(child1);
   setPosition(ExpressionLayoutCursor::Position::Right);
@@ -137,13 +154,23 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyRootLayout() {
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addEmptySquarePowerLayout() {
+  CharLayout * indiceLayout = new CharLayout('2');
+  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(indiceLayout, VerticalOffsetLayout::Type::Superscript, false);
+  // If there is already a base
+  int numberOfOpenParenthesis = 0;
+  if (!m_pointedExpressionLayout->isEmpty() && m_pointedExpressionLayout->isCollapsable(&numberOfOpenParenthesis, true)) {
+    m_pointedExpressionLayout->addBrother(this, offsetLayout);
+    setPointedExpressionLayout(offsetLayout);
+    setPosition(ExpressionLayoutCursor::Position::Right);
+    return offsetLayout;
+  }
+  // Else, add an empty base
   EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
-  CharLayout * child2 = new CharLayout('2');
-  EditableBaselineRelativeLayout * newChild = new EditableBaselineRelativeLayout(child1, child2, BaselineRelativeLayout::Type::Superscript, false);
+  HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
-  setPointedExpressionLayout(newChild);
+  setPointedExpressionLayout(child1);
   setPosition(ExpressionLayoutCursor::Position::Right);
-  return newChild;
+  return child1;
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addXNTCharLayout() {

@@ -1,4 +1,5 @@
 #include "horizontal_layout.h"
+#include "empty_visible_layout.h"
 #include "string_layout.h"
 #include <poincare/expression_layout_cursor.h>
 
@@ -30,24 +31,30 @@ void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
 void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
   if (newChild->isEmpty()) {
     if (numberOfChildren() > 1) {
+      // If the new layout is empty and the horizontal layout has other
+      // children, just delete the old child.
       if (!newChild->hasAncestor(oldChild)) {
         delete newChild;
       }
       removeChildAtIndex(indexOfChild(const_cast<ExpressionLayout *>(oldChild)), deleteOldChild);
       return;
     }
+    // If the new layout is empty and it was the only horizontal layout child,
+    // replace the horizontal layout with this empty layout.
     if (m_parent) {
       replaceWith(newChild);
       return;
     }
   }
+  // If the new child is also an horizontal layout, steal the children of the
+  // new layout then destroy it.
   if (newChild->isHorizontal()) {
-    // Steal the children of the new layout then destroy it.
     int indexForInsertion = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
     mergeChildrenAtIndex(newChild, indexForInsertion + 1);
     removeChildAtIndex(indexForInsertion, deleteOldChild);
     return;
   }
+  // Else, just replace the child.
   ExpressionLayout::replaceChild(oldChild, newChild, deleteOldChild);
 }
 
@@ -167,6 +174,16 @@ bool HorizontalLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayou
   return moveVertically(ExpressionLayout::VerticalDirection::Down, cursor, previousLayout, previousPreviousLayout);
 }
 
+void HorizontalLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
+  // If the child to remove is at index 0 and its right brother must have a left
+  // brother (e.g. it is a VerticalOffsetLayout), replace the child with an
+  // EmptyVisibleLayout instead of removing it.
+  if (index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftBrother()) {
+    addChildAtIndex(new EmptyVisibleLayout(), index + 1);
+  }
+  DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);
+}
+
 void HorizontalLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
 }
 
@@ -217,11 +234,19 @@ void HorizontalLayout::mergeChildrenAtIndex(ExpressionLayout * eL, int index) {
     removeChildAtIndex(indexOfEL, false);
   }
   int numChildren = eL->numberOfChildren();
+  int currentAdditionIndex = index;
   for (int i = 0; i < numChildren; i++) {
-    ExpressionLayout * currentChild = eL->editableChild(0);
-    eL->removeChildAtIndex(0, false);
-    addChildAtIndex(currentChild, index+i);
+    ExpressionLayout * currentChild = eL->editableChild(i);
+    // Do not add empty children if we can
+    if (!currentChild->isEmpty()
+        || i == numChildren - 1
+        || (i < numChildren - 1 && eL->editableChild(i+1)->mustHaveLeftBrother()))
+    {
+      addChildAtIndex(currentChild, currentAdditionIndex++);
+      eL->detachChild(currentChild);
+    }
   }
+  delete eL;
 }
 
 bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {

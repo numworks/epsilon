@@ -22,6 +22,7 @@ extern "C" {
 #include <poincare/subtraction.h>
 #include <poincare/cosine.h>
 #include <poincare/sine.h>
+#include <poincare/simplification_root.h>
 #include "layout/baseline_relative_layout.h"
 
 namespace Poincare {
@@ -359,6 +360,52 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     }
   }
 
+  // (a0+a1+...am)^n with n integer -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Multinome)
+  if (!letPowerAtRoot && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->denominator().isOne() && operand(0)->type() == Type::Addition) {
+    // Exponent n
+    Rational * nr = static_cast<Rational *>(editableOperand(1));
+    Integer n = nr->numerator();
+    n.setNegative(false);
+    // Number of terms in addition m
+    int m = operand(0)->numberOfOperands();
+    if (Integer(k_maxExpandedMultinome).isLowerThan(Integer::Power(Integer(m), n)) || n.isOne()) {
+      return this;
+    }
+    int clippedN = n.extractedInt(); // Authorized because n < k_maxExpandedMultinome < k_maxNValue
+    Expression * result = editableOperand(0);
+    Expression * a = result->clone();
+    for (int i = 2; i <= clippedN; i++) {
+      if (result->type() == Type::Addition) {
+        Addition * a0 = new Addition();
+        for (int j = 0; j < a->numberOfOperands(); j++) {
+          Multiplication * m = new Multiplication(result, a->editableOperand(j), true);
+          SimplificationRoot root(m); // m need to have a parent when applying distributeOnOperandAtIndex
+          Expression * a1 = m->distributeOnOperandAtIndex(0, context, angleUnit);
+          root.detachOperands();
+          a0->addOperand(a1);
+        }
+        SimplificationRoot root(a0);
+        Expression * a2 = a0->shallowReduce(context, angleUnit);
+        root.detachOperands();
+        result = result->replaceWith(a2, true);
+      } else {
+        Multiplication * m = new Multiplication(a, result, true);
+        SimplificationRoot root(m);
+        result = result->replaceWith(m->distributeOnOperandAtIndex(0, context, angleUnit), true);
+      }
+    }
+    delete a;
+    if (nr->sign() == Sign::Negative) {
+      nr->replaceWith(new Rational(-1), true);
+      result->shallowReduce(context, angleUnit);
+      return shallowReduce(context, angleUnit);
+    } else {
+      return replaceWith(result, true)->shallowReduce(context, angleUnit);
+    }
+  }
+#if 0
+  /* We could use the Newton formula instead which is quicker but not immediate
+   * to implement in the general case (Newton multinome). */
   // (a+b)^n with n integer -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Newton)
   if (!letPowerAtRoot && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->denominator().isOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfOperands() == 2) {
     Rational * nr = static_cast<Rational *>(editableOperand(1));
@@ -390,6 +437,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       return replaceWith(a, true)->shallowReduce(context, angleUnit);
     }
   }
+#endif
   return this;
 }
 

@@ -125,7 +125,7 @@ KDPoint BaselineRelativeLayout::positionOfChild(ExpressionLayout * child) {
   }
   if (child == indiceLayout()) {
     x = baseLayout()->size().width();
-    y =  m_type == Type::Superscript ? 0 : baseLayout()->size().height() - k_indiceHeight;
+    y = m_type == Type::Superscript ? 0 : baseLayout()->size().height() - k_indiceHeight;
   }
   return KDPoint(x,y);
 }

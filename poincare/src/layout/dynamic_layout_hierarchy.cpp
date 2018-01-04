@@ -42,6 +42,40 @@ DynamicLayoutHierarchy::~DynamicLayoutHierarchy() {
   delete[] m_children;
 }
 
+void DynamicLayoutHierarchy::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index) {
+  int indexOfEL = indexOfChild(eL);
+  if (indexOfEL >= 0) {
+    removeChildAtIndex(indexOfEL, false);
+  }
+  addNonEmptyChildrenAtIndex(eL->children(), eL->numberOfChildren(), index);
+  eL->detachChildren();
+  delete eL;
+}
+
+void DynamicLayoutHierarchy::addNonEmptyChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion) {
+  assert(numberOfOperands > 0);
+  const ExpressionLayout ** newOperands = new const ExpressionLayout * [m_numberOfChildren+numberOfOperands];
+  int currentIndex = 0;
+  assert(indexForInsertion <= m_numberOfChildren);
+  for (int i=0; i<indexForInsertion; i++) {
+    newOperands[currentIndex++] = m_children[i];
+  }
+  for (int i=0; i<numberOfOperands; i++) {
+    if (!operands[i]->isEmpty()
+        || (i < numberOfOperands-1 && operands[i+1]->mustHaveLeftBrother()))
+    {
+      const_cast<ExpressionLayout *>(operands[i])->setParent(this);
+      newOperands[currentIndex++] = operands[i];
+    }
+  }
+  for (int i=indexForInsertion; i<m_numberOfChildren; i++) {
+    newOperands[currentIndex++] = m_children[i];
+  }
+  delete[] m_children;
+  m_children = newOperands;
+  m_numberOfChildren = currentIndex;
+}
+
 bool DynamicLayoutHierarchy::addChildAtIndex(ExpressionLayout * child, int index) {
   assert(index >= 0 && index <= m_numberOfChildren);
   const ExpressionLayout ** newChildren = new const ExpressionLayout * [m_numberOfChildren+1];

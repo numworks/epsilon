@@ -197,6 +197,12 @@ void ExpressionLayout::detachChild(const ExpressionLayout * e) {
   }
 }
 
+void ExpressionLayout::detachChildren() {
+  for (int i = 0; i  <numberOfChildren(); i++) {
+    detachChildAtIndex(i);
+  }
+}
+
 void ExpressionLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
   assert(index >= 0 && index < numberOfChildren());
   replaceChild(editableChild(index), new EmptyVisibleLayout(), deleteAfterRemoval);

@@ -50,6 +50,8 @@ public:
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
   virtual void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true);
   void detachChild(const ExpressionLayout * e); // Removes a child WITHOUT deleting it
+  void detachChildren(); //Removes all children WITHOUT deleting them
+
 
   /* Dynamic Layout*/
   virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }

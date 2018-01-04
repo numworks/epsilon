@@ -113,7 +113,7 @@ void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLay
   if (m_parent) {
     int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? m_parent->indexOfChild(this) : m_parent->indexOfChild(this) + 1;
     if (m_parent->isHorizontal()) {
-      m_parent->addChildAtIndex(brother, brotherIndex);
+      static_cast<HorizontalLayout *>(m_parent)->addOrMergeChildAtIndex(brother, brotherIndex);
       return;
     }
     if (cursor->position() == ExpressionLayoutCursor::Position::Left) {

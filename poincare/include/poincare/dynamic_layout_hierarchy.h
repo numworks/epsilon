@@ -25,6 +25,8 @@ public:
 
   bool addChildAtIndex(ExpressionLayout * operand, int index) override;
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
+
+  bool isEmpty() const override;
 protected:
   const ExpressionLayout ** m_children;
   int m_numberOfChildren;

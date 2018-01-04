@@ -1,6 +1,11 @@
 #include <poincare/symbol.h>
 #include <poincare/context.h>
 #include <poincare/complex.h>
+#include <poincare/division.h>
+#include <poincare/layout_engine.h>
+#include <poincare/parenthesis.h>
+#include <poincare/power.h>
+#include <poincare/multiplication.h>
 #include "layout/baseline_relative_layout.h"
 #include "layout/string_layout.h"
 #include <ion.h>
@@ -99,7 +104,11 @@ Expression * Symbol::clone() const {
 
 Expression * Symbol::replaceSymbolWithExpression(char symbol, Expression * expression) {
   if (m_name == symbol) {
-    return replaceWith(expression->clone(), true);
+    Expression * value = expression->clone();
+    if (parent() && parent()->operandNeedParenthesis(value)) {
+      value = new Parenthesis(value, false);
+    }
+    return replaceWith(value, true);
   }
   return this;
 }

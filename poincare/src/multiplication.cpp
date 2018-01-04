@@ -35,6 +35,11 @@ Expression * Multiplication::clone() const {
   return new Multiplication(operands(), numberOfOperands(), true);
 }
 
+bool Multiplication::operandNeedParenthesis(const Expression * e) const {
+  Type types[] = {Type::Multiplication, Type::Addition, Type::Addition, Type::Subtraction, Type::Opposite};
+  return e->isOfType(types, 5);
+}
+
 ExpressionLayout * Multiplication::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
   return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, middleDotString);

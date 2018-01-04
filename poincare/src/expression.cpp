@@ -40,6 +40,19 @@ Expression * Expression::parse(char const * string) {
   return expression;
 }
 
+void Expression::ReplaceSymbolWithExpression(Expression ** expressionAddress, char symbol, Expression * expression) {
+  SimplificationRoot root(*expressionAddress);
+  root.editableOperand(0)->replaceSymbolWithExpression(symbol, expression);
+  *expressionAddress = root.editableOperand(0);
+}
+
+Expression * Expression::replaceSymbolWithExpression(char symbol, Expression * expression) {
+  for (int i = 0; i < numberOfOperands(); i++) {
+    editableOperand(i)->replaceSymbolWithExpression(symbol, expression);
+  }
+  return this;
+}
+
 /* Circuit breaker */
 
 static Expression::CircuitBreaker sCircuitBreaker = nullptr;

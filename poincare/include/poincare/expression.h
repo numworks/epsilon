@@ -155,6 +155,7 @@ public:
 
   /* Constructor & Destructor */
   static Expression * parse(char const * string);
+  static void ReplaceSymbolWithExpression(Expression ** expressionAddress, char symbol, Expression * expression);
   virtual ~Expression() = default;
   virtual Expression * clone() const = 0;
 
@@ -242,6 +243,7 @@ protected:
    * interruption to avoid freezing in the simplification process. */
   static int SimplificationOrder(const Expression * e1, const Expression * e2, bool canBeInterrupted = false);
 private:
+  virtual Expression * replaceSymbolWithExpression(char symbol, Expression * expression);
   /* Properties */
   virtual Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
   /* Comparison */

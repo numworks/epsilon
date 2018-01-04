@@ -162,7 +162,7 @@ KDCoordinate HistoryController::rowHeight(int j) {
   App * calculationApp = (App *)app();
   Poincare::ExpressionLayout * approximateLayout = calculation->approximateOutputLayout(calculationApp->localContext());
   KDCoordinate approximateOutputHeight = approximateLayout->size().height();
-  if (calculation->shouldApproximateOutput()) {
+  if (calculation->shouldDisplayApproximateOutput(calculationApp->localContext())) {
     return inputHeight + approximateOutputHeight + 3*HistoryViewCell::k_digitVerticalMargin;
   }
   Poincare::ExpressionLayout * exactLayout = calculation->exactOutputLayout(calculationApp->localContext());

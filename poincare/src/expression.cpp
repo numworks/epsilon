@@ -140,19 +140,25 @@ bool Expression::hasAncestor(const Expression * e) const {
 
 /* Properties */
 
-bool Expression::recursivelyMatches(ExpressionTest test) const {
-  if (test(this)) {
+bool Expression::recursivelyMatches(ExpressionTest test, Context & context) const {
+  if (test(this, context)) {
     return true;
   }
   for (int i = 0; i < numberOfOperands(); i++) {
-    if (operand(i)->recursivelyMatches(test)) {
+    if (operand(i)->recursivelyMatches(test, context)) {
       return true;
     }
   }
   return false;
 }
 
-bool Expression::IsMatrix(const Expression * e) {
+bool Expression::isApproximate(Context & context) const {
+  return recursivelyMatches([](const Expression * e, Context & context) {
+        return e->type() == Expression::Type::Decimal || e->type() == Expression::Type::Complex || Expression::IsMatrix(e, context) || (e->type() == Expression::Type::Symbol && !static_cast<const Symbol *>(e)->hasAnExactRepresentation(context));
+    }, context);
+}
+
+bool Expression::IsMatrix(const Expression * e, Context & context) {
   return e->type() == Type::Matrix || e->type() == Type::ConfidenceInterval || e->type() == Type::MatrixDimension || e->type() == Type::PredictionInterval || e->type() == Type::MatrixInverse || e->type() == Type::MatrixTranspose || (e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isMatrixSymbol());
 }
 
@@ -203,7 +209,7 @@ void Expression::Simplify(Expression ** expressionAddress, Context & context, An
   }
 #if MATRIX_EXACT_REDUCING
 #else
-  if ((*expressionAddress)->recursivelyMatches(IsMatrix)) {
+  if ((*expressionAddress)->recursivelyMatches(IsMatrix, context)) {
     return;
   }
 #endif

@@ -189,9 +189,10 @@ public:
     Positive = 1
   };
   virtual Sign sign() const { return Sign::Unknown; }
-  typedef bool (*ExpressionTest)(const Expression * e);
-  bool recursivelyMatches(ExpressionTest test) const;
-  static bool IsMatrix(const Expression * e);
+  typedef bool (*ExpressionTest)(const Expression * e, Context & context);
+  bool recursivelyMatches(ExpressionTest test, Context & context) const;
+  bool isApproximate(Context & context) const;
+  static bool IsMatrix(const Expression * e, Context & context);
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have

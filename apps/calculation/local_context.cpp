@@ -15,6 +15,9 @@ Expression * LocalContext::ansValue() {
     return defaultExpression();
   }
   Calculation * lastCalculation = m_calculationStore->calculationAtIndex(m_calculationStore->numberOfCalculations()-1);
+  if (lastCalculation->input()->isApproximate(*m_parentContext)) {
+    return lastCalculation->approximateOutput(m_parentContext);
+  }
   return lastCalculation->exactOutput(m_parentContext);
 }
 

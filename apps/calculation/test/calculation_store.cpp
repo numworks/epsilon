@@ -45,4 +45,16 @@ QUIZ_CASE(calculation_store) {
   /* Store is now {0, 2, 4, 6, 8, 5, 6, 7, 8, 9} */
   const char * result3[10] = {"1", "3", "5", "7", "9", "5", "6", "7", "8", "9"};
   assert_store_is(&store, result3);
+
+  store.deleteAll();
+  store.push("1+3/4", &globalContext);
+  store.push("ans+2/3", &globalContext);
+  ::Calculation::Calculation * lastCalculation = store.calculationAtIndex(1);
+  assert(lastCalculation->shouldDisplayApproximateOutput(&globalContext) == false);
+  assert(strcmp(lastCalculation->exactOutputText(),"29/12") == 0);
+
+  store.push("ans+0.22", &globalContext);
+  lastCalculation = store.calculationAtIndex(2);
+  assert(lastCalculation->shouldDisplayApproximateOutput(&globalContext) == true);
+  assert(strcmp(lastCalculation->approximateOutputText(),"2.6366666666667") == 0);
 }

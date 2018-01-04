@@ -39,9 +39,9 @@ void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     ExpressionLayout * dxLayout = integrandLayout()->editableChild(integrandLayout()->numberOfChildren()-1);
     replaceWith(integrandLayout(), true);
     // Remove "dx"
-    int indexOfdx = previousParent->indexOfChild(dxLayout);
+    int indexOfdx = dxLayout->parent()->indexOfChild(dxLayout);
     if (indexOfdx >= 0) {
-      previousParent->removeChildAtIndex(indexOfdx, true);
+      const_cast<ExpressionLayout *>(dxLayout->parent())->removeChildAtIndex(indexOfdx, true);
     }
     // Place the cursor on the right of the left brother of the integral if
     // there is one.

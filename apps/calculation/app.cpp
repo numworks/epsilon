@@ -44,14 +44,9 @@ void App::Snapshot::tidy() {
 
 App::App(Container * container, Snapshot * snapshot) :
   TextFieldDelegateApp(container, snapshot, &m_editExpressionController),
-  m_localContext((GlobalContext *)((AppsContainer *)container)->globalContext(), snapshot->calculationStore()),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),
   m_editExpressionController(&m_modalViewController, &m_historyController, snapshot->calculationStore())
 {
-}
-
-Context * App::localContext() {
-  return &m_localContext;
 }
 
 bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {

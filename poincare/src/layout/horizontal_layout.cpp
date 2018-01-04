@@ -29,6 +29,9 @@ void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
 }
 
 void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
+  if (newChild->hasAncestor(this)) {
+    newChild->editableParent()->detachChild(newChild);
+  }
   if (newChild->isEmpty()) {
     if (numberOfChildren() > 1) {
       // If the new layout is empty and the horizontal layout has other

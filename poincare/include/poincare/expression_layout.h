@@ -93,6 +93,9 @@ protected:
     int * resultPositionInside,
     int * resultScore);
   KDCoordinate m_baseline;
+  /* m_baseline is the signed vertical distance from the top of the layout to
+   * the fraction bar of an hypothetical fraction brother layout. If the top of
+   * the layout is under that bar, the baseline is negative. */
   ExpressionLayout * m_parent;
   bool m_sized;
   bool m_baselined;

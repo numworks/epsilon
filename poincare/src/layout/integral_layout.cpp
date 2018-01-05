@@ -1,4 +1,7 @@
 #include "integral_layout.h"
+#include "char_layout.h"
+#include "horizontal_layout.h"
+#include "string_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
@@ -36,13 +39,7 @@ void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   {
     ExpressionLayout * previousParent = m_parent;
     int indexInParent = previousParent->indexOfChild(this);
-    ExpressionLayout * dxLayout = integrandLayout()->editableChild(integrandLayout()->numberOfChildren()-1);
     replaceWith(integrandLayout(), true);
-    // Remove "dx"
-    int indexOfdx = dxLayout->parent()->indexOfChild(dxLayout);
-    if (indexOfdx >= 0) {
-      const_cast<ExpressionLayout *>(dxLayout->parent())->removeChildAtIndex(indexOfdx, true);
-    }
     // Place the cursor on the right of the left brother of the integral if
     // there is one.
     if (indexInParent > 0) {
@@ -55,10 +52,9 @@ void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     return;
   }
   // If the cursor is on the right, move to the integrand.
-  if (cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Right)) {
-    assert(integrandLayout()->numberOfChildren() > 1);
-    ExpressionLayout * layoutLeftOfdx = integrandLayout()->editableChild(integrandLayout()->numberOfChildren()-2);
-    cursor->setPointedExpressionLayout(layoutLeftOfdx);
+  assert(cursor->pointedExpressionLayout() == this);
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    cursor->setPointedExpressionLayout(integrandLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return;
   }
@@ -92,11 +88,11 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   }
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right of the integral.
-  // Go Left of "dx".
+  // Go to the integrand.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(integrandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(integrandLayout()->editableChild(integrandLayout()->numberOfChildren() - 1));
-    return cursor->moveLeft();
+    cursor->setPointedExpressionLayout(integrandLayout());
+    return true;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   // Case: Left of the brackets.
@@ -117,18 +113,18 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     assert(integrandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(integrandLayout()->editableChild(0));
+    cursor->setPointedExpressionLayout(integrandLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
   }
   // Case: Right the integrand.
-  // Go Right and move Right.
+  // Go Right.
  if (integrandLayout()
      && cursor->pointedExpressionLayout() == integrandLayout()
      && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     cursor->setPointedExpressionLayout(this);
-    return m_parent->moveRight(cursor);
+    return true;
   }
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left of the integral.
@@ -199,11 +195,9 @@ int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
     return bufferSize-1;
   }
 
-  // Write the argument without the "dx"
+  // Write the argument
   ExpressionLayout * intLayout = const_cast<IntegralLayout *>(this)->integrandLayout();
-  numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(intLayout, buffer+numberOfChar, bufferSize-numberOfChar, "", 0, intLayout->numberOfChildren()-2);
-  // TODO This works because the argument layout should always be an horizontal
-  // layout.
+  numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(intLayout, buffer+numberOfChar, bufferSize-numberOfChar, "");
 
   // Write the comma
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
@@ -232,6 +226,8 @@ void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor,
   KDSize integrandSize = integrandLayout()->size();
   KDSize upperBoundSize = upperBoundLayout()->size();
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
+
+  // Render the integral symbol.
   KDRect topSymbolFrame(p.x() + k_symbolWidth + k_lineThickness, p.y() + upperBoundSize.height() - k_boundHeightMargin,
     k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(topSymbolFrame, expressionColor, (const uint8_t *)topSymbolPixel, (KDColor *)workingBuffer);
@@ -241,15 +237,22 @@ void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor,
   ctx->blendRectWithMask(bottomSymbolFrame, expressionColor, (const uint8_t *)bottomSymbolPixel, (KDColor *)workingBuffer);
   ctx->fillRect(KDRect(p.x() + k_symbolWidth, p.y() + upperBoundSize.height() - k_boundHeightMargin, k_lineThickness,
     2*k_boundHeightMargin+2*k_integrandHeigthMargin+integrandSize.height()), expressionColor);
+
+  // Render "dx".
+  CharLayout * dummydx = new CharLayout('d');
+  HorizontalLayout dummyLayout(integrandLayout()->clone(), dummydx, false);
+  KDPoint dxPosition = dummyLayout.positionOfChild(dummydx);
+  ctx->drawString("dx", dxPosition.translatedBy(p).translatedBy(positionOfChild(integrandLayout())), dummydx->fontSize(), expressionColor, backgroundColor);
 }
 
 KDSize IntegralLayout::computeSize() {
+  KDSize dxSize = StringLayout("dx", 2).size();
   KDSize integrandSize = integrandLayout()->size();
   KDSize lowerBoundSize = lowerBoundLayout()->size();
   KDSize upperBoundSize = upperBoundLayout()->size();
   return KDSize(
-    k_symbolWidth+k_lineThickness+k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width(),
-    upperBoundSize.height()+ 2*k_integrandHeigthMargin+integrandSize.height()+lowerBoundSize.height());
+    k_symbolWidth+k_lineThickness+k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+dxSize.width(),
+    upperBoundSize.height()+ 2*k_integrandHeigthMargin+max(integrandSize.height(), dxSize.height())+lowerBoundSize.height());
 }
 
 void IntegralLayout::computeBaseline() {

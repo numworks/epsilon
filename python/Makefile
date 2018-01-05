@@ -141,7 +141,13 @@ python/src/py/emitnative.o: CFLAGS += -DN_THUMB
 
 extmod_objs += $(addprefix python/src/extmod/,\
   modurandom.o \
-) 
+)
+
+# In order to change the name of the micropython module 'urandom' to 'random'
+# (without altering micropython files), we redefined the macro MP_QSTR_urandom
+# by DMP_QSTR_random.
+python/src/py/objmodule.o: SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
+python/src/extmod/modurandom.o: SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
 
 #extmod_objs += $(addprefix python/src/extmod/,\
   moductypes.o \

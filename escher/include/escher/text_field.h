@@ -76,6 +76,7 @@ protected:
   private:
     int numberOfSubviews() const override { return 1; }
     void layoutSubviews() override;
+    KDPoint textOrigin() const;
     TextCursorView m_cursorView;
     bool m_isEditing;
     char * m_textBuffer;

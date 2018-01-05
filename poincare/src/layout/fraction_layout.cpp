@@ -19,20 +19,31 @@ void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->pointedExpressionLayout() == denominatorLayout()) {
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
     if (numeratorLayout()->isEmpty() && denominatorLayout()->isEmpty()) {
-      // If the numerator and the denominator are empty, replace the fraction
-      // with an empty layout.
-      ExpressionLayout * previousParent = m_parent;
-      int indexInParent = previousParent->indexOfChild(this);
-      replaceWith(new EmptyVisibleLayout(), true);
-      // Place the cursor on the right of the left brother of the fraction if
-      // there is one.
-      if (indexInParent > 0) {
-        cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
-        cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-        return;
+      // If the numerator and the denominator are empty, move the cursor then
+      // replace the fraction with an empty layout.
+      // We need to perform these actions in this order because the replacement
+      // might delete the fraction's parent: if the parent is an
+      // HorizontalLayout and the fraction is its only child, the
+      // HorizontalLayout will be replaced by the new EmptyLayout.
+      ExpressionLayout * newEmptyLayout = new EmptyVisibleLayout();
+      if (!m_parent->isHorizontal()
+          || (m_parent->isHorizontal() && m_parent->numberOfChildren() == 1))
+      {
+        cursor->setPointedExpressionLayout(newEmptyLayout);
+        cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      } else {
+        assert(m_parent->isHorizontal());
+        assert(m_parent->numberOfChildren() > 0);
+        int indexInParent = m_parent->indexOfChild(this);
+        if (indexInParent > 0) {
+          cursor->setPointedExpressionLayout(m_parent->editableChild(indexInParent - 1));
+          cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+        } else {
+          cursor->setPointedExpressionLayout(m_parent->editableChild(indexInParent + 1));
+          cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+        }
       }
-      // Else place the cursor on the Left of the parent.
-      cursor->setPointedExpressionLayout(previousParent);
+      replaceWith(newEmptyLayout, true);
       return;
     }
 

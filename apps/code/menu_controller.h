@@ -83,6 +83,12 @@ private:
   void intToText(int i, char * buffer);
   void updateAddScriptRowDisplay();
   ScriptStore * m_scriptStore;
+  class EvenOddEditableTextCell : public ::EvenOddEditableTextCell {
+  public:
+    Responder * responder() override {
+      return nullptr;
+    }
+  };
   EvenOddEditableTextCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   /* In the initializer list of the MenuController constructor, we initialize
    * m_scriptCells by copying k_maxNumberOfDisplayableScriptCells times the

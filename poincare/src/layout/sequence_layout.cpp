@@ -1,4 +1,7 @@
 #include "sequence_layout.h"
+#include "char_layout.h"
+#include "horizontal_layout.h"
+#include "string_layout.h"
 #include "parenthesis_left_layout.h"
 #include "parenthesis_right_layout.h"
 #include "uneditable_horizontal_trio_layout.h"
@@ -79,7 +82,7 @@ bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
       && cursor->pointedExpressionLayout() == argumentWithParenthesesLayout())
   {
     assert(lowerBoundLayout() != nullptr);
-    cursor->setPointedExpressionLayout(lowerBoundLayout()->editableChild(1));
+    cursor->setPointedExpressionLayout(lowerBoundLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return true;
   }
@@ -160,7 +163,7 @@ bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout 
   // If the cursor is inside the upper bound, move it to the lower bound.
   if (upperBoundLayout() && previousLayout == upperBoundLayout()) {
     assert(lowerBoundLayout() != nullptr);
-    return lowerBoundLayout()->editableChild(1)->moveDownInside(cursor);
+    return lowerBoundLayout()->moveDownInside(cursor);
   }
   // If the cursor is Left of the argument, move it to the lower bound.
   if (argumentLayout()
@@ -199,10 +202,8 @@ int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * 
   buffer[numberOfChar++] = ',';
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-  // Write the lower bound without the "n="
-  numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(const_cast<SequenceLayout *>(this)->lowerBoundLayout(), buffer+numberOfChar, bufferSize-numberOfChar, "", 1);
-  // TODO This works because the lower bound layout should always be an
-  // horizontal layout.
+  // Write the lower bound
+  numberOfChar += const_cast<SequenceLayout *>(this)->lowerBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
@@ -237,37 +238,50 @@ ExpressionLayout * SequenceLayout::argumentWithParenthesesLayout() {
 
 KDSize SequenceLayout::computeSize() {
   KDSize argumentSize = argumentWithParenthesesLayout()->size();
-  KDSize lowerBoundSize = lowerBoundLayout()->size();
+  KDSize lowerBoundSizeWithNEquals = HorizontalLayout(ExpressionLayoutArray(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone()).array(), 3, false).size();
   KDSize upperBoundSize = upperBoundLayout()->size();
   return KDSize(
-    max(max(k_symbolWidth, lowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSize.width(),
-    baseline() + max(k_symbolHeight/2+k_boundHeightMargin+lowerBoundSize.height(), argumentSize.height() - argumentLayout()->baseline())
+    max(max(k_symbolWidth, lowerBoundSizeWithNEquals.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSize.width(),
+    baseline() + max(k_symbolHeight/2+k_boundHeightMargin+lowerBoundSizeWithNEquals.height(), argumentSize.height() - argumentLayout()->baseline())
   );
 }
 
-void SequenceLayout::computeBaseline() {
-  m_baseline = max(upperBoundLayout()->size().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
-  m_baselined = true;
-}
-
-KDPoint SequenceLayout::positionOfChild(ExpressionLayout * child) {
-  KDSize lowerBoundSize = lowerBoundLayout()->size();
+KDPoint SequenceLayout::positionOfChild(ExpressionLayout * eL) {
+  ExpressionLayout * lowerBoundClone = lowerBoundLayout()->clone();
+  HorizontalLayout dummyLayout1(ExpressionLayoutArray(new CharLayout('n'), new CharLayout('='), lowerBoundClone).array(), 3, false);
+  KDSize lowerBoundSizeWithNEquals = dummyLayout1.size();
   KDSize upperBoundSize = upperBoundLayout()->size();
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  if (child == lowerBoundLayout()) {
-    x = max(max(0, (k_symbolWidth-lowerBoundSize.width())/2), (upperBoundSize.width()-lowerBoundSize.width())/2);
+  if (eL == lowerBoundLayout()) {
+    x = dummyLayout1.positionOfChild(lowerBoundClone).x()
+      +max(max(0, (k_symbolWidth-lowerBoundSizeWithNEquals.width())/2),
+        (upperBoundSize.width()-lowerBoundSizeWithNEquals.width())/2);
     y = baseline() + k_symbolHeight/2 + k_boundHeightMargin;
-  } else if (child == upperBoundLayout()) {
-    x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSize.width()-upperBoundSize.width())/2);
+  } else if (eL == upperBoundLayout()) {
+    x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSizeWithNEquals.width()-upperBoundSize.width())/2);
     y = baseline() - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
-  } else if (child == argumentWithParenthesesLayout()) {
-    x = max(max(k_symbolWidth, lowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin;
+  } else if (eL == argumentWithParenthesesLayout()) {
+    x = max(max(k_symbolWidth, lowerBoundSizeWithNEquals.width()), upperBoundSize.width())+k_argumentWidthMargin;
     y = baseline() - argumentLayout()->baseline();
   } else {
     assert(false);
   }
   return KDPoint(x,y);
+}
+
+void SequenceLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  // Render the "n=".
+  CharLayout * dummyN = new CharLayout('n');
+  ExpressionLayout * lowerBoundClone = lowerBoundLayout()->clone();
+  HorizontalLayout dummyLayout(ExpressionLayoutArray(dummyN, new CharLayout('='), lowerBoundClone).array(), 3, false);
+  KDPoint nEqualsPosition = positionOfChild(lowerBoundLayout()).translatedBy((dummyLayout.positionOfChild(lowerBoundClone)).opposite()).translatedBy(dummyLayout.positionOfChild(dummyN));
+  ctx->drawString("n=", p.translatedBy(nEqualsPosition), dummyN->fontSize(), expressionColor, backgroundColor);
+}
+
+void SequenceLayout::computeBaseline() {
+  m_baseline = max(upperBoundLayout()->size().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
+  m_baselined = true;
 }
 
 }

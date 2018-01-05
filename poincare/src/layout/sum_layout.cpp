@@ -1,7 +1,7 @@
 #include "sum_layout.h"
-#include <poincare/expression_layout_cursor.h>
-#include <string.h>
-#include <assert.h>
+#include "char_layout.h"
+#include "horizontal_layout.h"
+#include <poincare/expression_layout_array.h>
 
 namespace Poincare {
 
@@ -33,14 +33,19 @@ int SumLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
 }
 
 void SumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  // Computes sizes.
   KDSize upperBoundSize = upperBoundLayout()->size();
-  KDSize lowerBoundSize = lowerBoundLayout()->size();
-  KDCoordinate argBaseline = argumentLayout()->baseline();
+  KDSize lowerBoundSizeWithNEquals = HorizontalLayout(ExpressionLayoutArray(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone()).array(), 3, false).size();
+
+  // Render the Sum symbol.
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];
-  KDRect symbolFrame(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSize.width()-k_symbolWidth)/2),
-      p.y() + max(upperBoundSize.height()+k_boundHeightMargin, argBaseline /*argumentLayout()->baseline()*/-(k_symbolHeight+1)/2),
+  KDRect symbolFrame(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSizeWithNEquals.width()-k_symbolWidth)/2),
+      p.y() + max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline()-(k_symbolHeight+1)/2),
       k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(symbolFrame, expressionColor, (const uint8_t *)symbolPixel, (KDColor *)workingBuffer);
+
+  // Render the "n=".
+  SequenceLayout::render(ctx, p, expressionColor, backgroundColor);
 }
 
 }

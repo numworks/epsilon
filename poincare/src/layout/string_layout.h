@@ -19,6 +19,7 @@ public:
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
 
   char * text() { return m_string; }
+  KDText::FontSize fontSize() { return m_fontSize; }
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;

@@ -31,18 +31,13 @@ void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
     bckCol = KDColorWhite;
   }
   ctx->fillRect(rect, bckCol);
-  KDSize textSize = KDText::stringSize(text(), m_fontSize);
-  KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()-m_cursorView.minimalSizeForOptimalDisplay().width()),
-      m_verticalAlignment*(m_frame.height() - textSize.height()));
-  ctx->drawString(text(), origin, m_fontSize, m_textColor, bckCol);
+  ctx->drawString(text(), textOrigin(), m_fontSize, m_textColor, bckCol);
 }
 
 void TextField::ContentView::reload() {
   KDSize textSize = KDText::stringSize(text(), m_fontSize);
-  KDPoint origin(m_horizontalAlignment*(m_frame.width() - textSize.width()),
-    m_verticalAlignment*(m_frame.height() - textSize.height()));
   KDSize textAndCursorSize = KDSize(textSize.width()+ m_cursorView.minimalSizeForOptimalDisplay().width(), textSize.height());
-  KDRect dirtyZone(origin, textAndCursorSize);
+  KDRect dirtyZone(textOrigin(), textAndCursorSize);
   markRectAsDirty(dirtyZone);
 }
 
@@ -200,6 +195,11 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, char * draf
   m_hasTwoBuffers(hasTwoBuffers),
   m_delegate(delegate)
 {
+}
+
+KDPoint TextField::ContentView::textOrigin() const {
+  KDSize textSize = KDText::stringSize(text(), m_fontSize);
+  return KDPoint(m_horizontalAlignment*(m_frame.width() - textSize.width()-m_cursorView.minimalSizeForOptimalDisplay().width()), m_verticalAlignment*(m_frame.height() - textSize.height()));
 }
 
 void TextField::setDelegate(TextFieldDelegate * delegate) {

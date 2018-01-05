@@ -28,7 +28,7 @@ private:
   Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
   template<typename T> T growthRateAroundAbscissa(T x, T h, VariableContext<T> variableContext, AngleUnit angleUnit) const;
-  template<typename T> T approximateDerivate2(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const;
+  template<typename T> T riddersApproximation(VariableContext<T> variableContext, AngleUnit angleUnit, T x, T h, T * error) const;
   // TODO: Change coefficients?
   constexpr static double k_maxErrorRateOnApproximation = 0.001;
   constexpr static double k_minInitialRate = 0.01;

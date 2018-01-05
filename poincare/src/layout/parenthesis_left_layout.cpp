@@ -98,12 +98,25 @@ void ParenthesisLeftLayout::computeOperandHeight() {
 
 void ParenthesisLeftLayout::computeBaseline() {
   assert(m_parent != nullptr);
-  m_baseline = operandHeight()/2;
   int currentNumberOfOpenParentheses = 1;
+  int indexInParent = m_parent->indexOfChild(this);
   int numberOfBrothers = m_parent->numberOfChildren();
-  for (int i = m_parent->indexOfChild(this) + 1; i < numberOfBrothers; i++) {
+  if (indexInParent == numberOfBrothers - 1) {
+    // The parenthesis is the rightmost child of its parent.
+    m_baseline = operandHeight()/2;
+    m_baselined = true;
+    return;
+  }
+  m_baseline = 0;
+  for (int i = indexInParent + 1; i < numberOfBrothers; i++) {
     ExpressionLayout * brother = m_parent->editableChild(i);
     if (brother->isRightParenthesis()) {
+      if (i == indexInParent + 1) {
+        // If the parenthesis is immediately closed, we set the baseline to half
+        // the parenthesis height.
+        m_baseline = operandHeight()/2;
+        break;
+      }
       currentNumberOfOpenParentheses--;
       if (currentNumberOfOpenParentheses == 0) {
         break;

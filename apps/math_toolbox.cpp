@@ -26,9 +26,7 @@ const ToolboxMessageTree calculChildren[4] = {
   ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommandWithArg, nullptr, 0,
       new SumLayout(
         new EmptyVisibleLayout(),
-        new HorizontalLayout(Poincare::ExpressionLayoutArray(
-              new StringLayout("n=",2),
-              new EmptyVisibleLayout()).array(), 2, false),
+        new EmptyVisibleLayout(),
         new EmptyVisibleLayout(),
         false),
       const_cast<int *>(&pointedLayoutPathSum[0]),

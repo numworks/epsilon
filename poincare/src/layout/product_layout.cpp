@@ -1,6 +1,7 @@
 #include "product_layout.h"
-#include <string.h>
-#include <assert.h>
+#include "char_layout.h"
+#include "horizontal_layout.h"
+#include <poincare/expression_layout_array.h>
 
 namespace Poincare {
 
@@ -14,17 +15,23 @@ int ProductLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
 }
 
 void ProductLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  // Compute sizes.
   KDSize upperBoundSize = upperBoundLayout()->size();
-  KDSize lowerBoundSize = lowerBoundLayout()->size();
-  ctx->fillRect(KDRect(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSize.width()-k_symbolWidth)/2),
+  KDSize lowerBoundSizeWithNEquals = HorizontalLayout(ExpressionLayoutArray(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone()).array(), 3, false).size();
+
+  // Render the Product symbol.
+  ctx->fillRect(KDRect(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSizeWithNEquals.width()-k_symbolWidth)/2),
     p.y() + max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline()-(k_symbolHeight+1)/2),
     k_lineThickness, k_symbolHeight), expressionColor);
-  ctx->fillRect(KDRect(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSize.width()-k_symbolWidth)/2),
+  ctx->fillRect(KDRect(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSizeWithNEquals.width()-k_symbolWidth)/2),
     p.y() + max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline()-(k_symbolHeight+1)/2),
     k_symbolWidth, k_lineThickness), expressionColor);
-  ctx->fillRect(KDRect(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSize.width()-k_symbolWidth)/2)+k_symbolWidth,
+  ctx->fillRect(KDRect(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSizeWithNEquals.width()-k_symbolWidth)/2)+k_symbolWidth,
     p.y() + max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline()-(k_symbolHeight+1)/2),
     k_lineThickness, k_symbolHeight), expressionColor);
+
+  // Render the "n=".
+  SequenceLayout::render(ctx, p, expressionColor, backgroundColor);
 }
 
 }

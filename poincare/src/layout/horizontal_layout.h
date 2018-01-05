@@ -8,6 +8,7 @@ namespace Poincare {
 
 class HorizontalLayout : public DynamicLayoutHierarchy {
   friend class IntegralLayout;
+  friend class SequenceLayout;
 public:
   using DynamicLayoutHierarchy::DynamicLayoutHierarchy;
   ExpressionLayout * clone() const override;

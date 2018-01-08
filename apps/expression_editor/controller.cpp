@@ -1,5 +1,6 @@
 #include "controller.h"
 #include <apps/expression_editor/app.h>
+#include <ion/charset.h>
 
 using namespace Poincare;
 
@@ -124,7 +125,12 @@ ExpressionLayout * Controller::handleAddEvent(Ion::Events::Event event) {
     return m_cursor.addEmptySquarePowerLayout();
   }
   if (event.hasText()) {
-    return m_cursor.insertText(event.text());
+    const char * textToInsert = event.text();
+    if (textToInsert[0] == Ion::Charset::MultiplicationSign  && textToInsert[1] == 0) {
+      const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
+      return m_cursor.insertText(middleDotString);
+    }
+    return m_cursor.insertText(textToInsert);
   }
   return nullptr;
 }

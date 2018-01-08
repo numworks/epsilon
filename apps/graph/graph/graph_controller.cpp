@@ -39,9 +39,10 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
     return FunctionGraphController::handleEvent(event);
   }
   if (type() != GraphView::Type::Default && (event == Ion::Events::Back || event == Ion::Events::OK)) {
-    App * a = static_cast<App *>(app());
-    stackController()->handleEvent(Ion::Events::Back);
+    StackViewController * stack = stackController();
     setType(GraphView::Type::Default);
+    App * a = static_cast<App *>(app());
+    stack->handleEvent(Ion::Events::Back);
     setParentResponder(a->graphControllerParent());
     return true;
   }

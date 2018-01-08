@@ -52,7 +52,6 @@ void Controller::insertLayoutAtCursor(ExpressionLayout * layout, ExpressionLayou
   m_cursor.addLayout(layout);
   m_cursor.setPointedExpressionLayout(pointedLayout);
   m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
-  m_cursor.setPositionInside(0);
   m_expressionLayout->invalidAllSizesPositionsAndBaselines();
   m_view.cursorPositionChanged();
 }
@@ -92,13 +91,11 @@ bool Controller::handleMoveEvent(Ion::Events::Event event) {
     // The cursor should never point to the main HorizontalLayout.
     m_cursor.setPointedExpressionLayout(m_expressionLayout);
     m_cursor.setPosition(ExpressionLayoutCursor::Position::Left);
-    m_cursor.setPositionInside(0);
     return true;
   }
   if (event == Ion::Events::ShiftRight) {
     m_cursor.setPointedExpressionLayout(m_expressionLayout);
     m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
-    m_cursor.setPositionInside(0);
     return true;
   }
   return false;

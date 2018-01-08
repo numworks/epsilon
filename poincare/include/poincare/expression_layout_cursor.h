@@ -10,14 +10,12 @@ class ExpressionLayoutCursor {
 public:
   enum class Position {
     Left,
-    Inside,
     Right
   };
 
   ExpressionLayoutCursor() :
     m_pointedExpressionLayout(nullptr),
-    m_position(Position::Right),
-    m_positionInside(0)
+    m_position(Position::Right)
   {};
 
   /* Getters and setters */
@@ -25,16 +23,14 @@ public:
   void setPointedExpressionLayout(ExpressionLayout * expressionLayout) { m_pointedExpressionLayout = expressionLayout; }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
-  int positionInside() const { return m_positionInside; }
-  void setPositionInside(int positionInside) { m_positionInside = positionInside; }
   KDCoordinate cursorHeight() const { return k_cursorHeight; }
 
   /* Comparison */
-  bool positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position, int positionIndex = 0);
+  bool positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position);
 
   /* Position */
   KDPoint middleLeftPoint();
-  KDPoint middleLeftPointOfCursor(ExpressionLayout * expressionLayout, Position position, int positionInside = 0);
+  KDPoint middleLeftPointOfCursor(ExpressionLayout * expressionLayout, Position position);
 
   /* Move */
   bool moveLeft();
@@ -58,7 +54,6 @@ private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   ExpressionLayout * m_pointedExpressionLayout;
   Position m_position;
-  int m_positionInside;
 };
 
 }

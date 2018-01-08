@@ -1,9 +1,9 @@
+#include <poincare/expression_layout.h>
+#include "empty_visible_layout.h"
+#include "horizontal_layout.h"
+#include <poincare/expression_layout_cursor.h>
 #include <assert.h>
 #include <stdlib.h>
-#include <poincare/src/layout/editable_string_layout.h>
-#include <poincare/src/layout/empty_visible_layout.h>
-#include <poincare/src/layout/horizontal_layout.h>
-#include <poincare/expression_layout_cursor.h>
 #include <ion/display.h>
 
 namespace Poincare {

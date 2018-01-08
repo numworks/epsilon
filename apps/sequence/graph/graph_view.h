@@ -13,7 +13,6 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setVerticalCursor(bool verticalCursor);
   void reload() override;
-  void selectSequence(Sequence * sequence);
   void setHighlight(int start, int end);
   void setHighlightColor(bool highlightColor);
 private:
@@ -24,7 +23,6 @@ private:
   int m_highlightedDotStart;
   int m_highlightedDotEnd;
   bool m_shouldColorHighlighted;
-  Sequence * m_selectedSequence;
 };
 
 }

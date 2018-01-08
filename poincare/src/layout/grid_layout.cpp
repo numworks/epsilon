@@ -138,6 +138,10 @@ bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * pr
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
 }
 
+void GridLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
+  ExpressionLayout::removeChildAtIndex(index, deleteAfterRemoval);
+}
+
 int GridLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   const ExpressionLayout * editableParent = const_cast<GridLayout *>(this)->parent();
   assert(editableParent != nullptr);

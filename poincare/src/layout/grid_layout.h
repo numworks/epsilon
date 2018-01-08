@@ -17,6 +17,12 @@ public:
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
 
+
+  /* Dynamic layout */
+  void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
+  //TODO: is this ok? If we want to delete the grid's children, we have to make
+  //sure no to call this function.
+
   /* Expression engine */
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
 

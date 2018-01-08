@@ -12,7 +12,6 @@ public:
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, View * cursorView);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  float evaluateModelWithParameter(Model * expression, float abscissa) const override;
   CartesianFunctionStore * m_functionStore;
 };
 

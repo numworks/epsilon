@@ -16,14 +16,11 @@ public:
   void setHighlight(float start, float end);
 private:
   char * label(Axis axis, int index) const override;
-  float evaluateModelWithParameter(Model * curve, float t) const override;
   Store * m_store;
   char m_labels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  static float EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context);
   float m_highlightedBarStart;
   float m_highlightedBarEnd;
-  /* We memoize the total size to avoid recomputing it in double precision at
-   * every call to evaluateModelWithParameter() */
-  mutable float m_totalSize;
 };
 
 }

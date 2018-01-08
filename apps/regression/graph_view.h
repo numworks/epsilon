@@ -14,15 +14,9 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   char * label(Axis axis, int index) const override;
-  float evaluateModelWithParameter(Model * curve, float t) const override;
   Store * m_store;
   char m_xLabels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   char m_yLabels[k_maxNumberOfYLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  /* We memoize the a and b of the regression y = ax+b to avoid recomputing them
-   * for each stamp of the curve (since the computation is done with double
-   * precision) */
-  mutable float m_slope;
-  mutable float m_yIntercept;
 };
 
 }

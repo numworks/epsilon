@@ -11,8 +11,7 @@ HistogramView::HistogramView(Store * store, BannerView * bannerView) :
   m_store(store),
   m_labels{},
   m_highlightedBarStart(NAN),
-  m_highlightedBarEnd(NAN),
-  m_totalSize(NAN)
+  m_highlightedBarEnd(NAN)
 {
 }
 
@@ -28,15 +27,16 @@ void HistogramView::reload() {
 }
 
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
-  m_totalSize = m_store->sumOfColumn(1);
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false);
+  /* We memoize the total size to avoid recomputing it in double precision at
+   * every call to EvaluateHistogramAtAbscissa() */
+  float totalSize = m_store->sumOfColumn(1);
   if (isMainViewSelected()) {
-    drawHistogram(ctx, rect, nullptr, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::Select, Palette::YellowDark,
-      m_highlightedBarStart, m_highlightedBarEnd);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, &totalSize, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::Select, Palette::YellowDark, m_highlightedBarStart, m_highlightedBarEnd);
   } else {
-    drawHistogram(ctx, rect, nullptr, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::GreyMiddle, Palette::YellowDark);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, &totalSize, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::GreyMiddle, Palette::YellowDark);
   }
 }
 
@@ -56,8 +56,10 @@ char * HistogramView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-float HistogramView::evaluateModelWithParameter(Model * curve, float t) const {
-  return m_store->heightOfBarAtValue(t)/m_totalSize;
+float HistogramView::EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context) {
+  Store * store = (Store *)model;
+  float * totalSize = (float *)context;
+  return store->heightOfBarAtValue(abscissa)/(*totalSize);
 }
 
 }

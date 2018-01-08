@@ -29,7 +29,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     float windowRange = pixelToFloat(Axis::Horizontal, bounds().width()) - pixelToFloat(Axis::Horizontal, 0);
     int step = std::ceil(windowRange/resolution());
     for (int x = rectXMin; x < rectXMax; x += step) {
-      float y = evaluateModelWithParameter(s, x);
+      float y = s->evaluateAtAbscissa((float)x, context());
       if (std::isnan(y)) {
         continue;
       }
@@ -90,11 +90,6 @@ void GraphView::setHighlightColor(bool highlightColor) {
 
 float GraphView::samplingRatio() const {
   return 5.0f;
-}
-
-float GraphView::evaluateModelWithParameter(Model * curve, float abscissa) const {
-  Sequence * s = (Sequence *)curve;
-  return s->evaluateAtAbscissa(abscissa, context());
 }
 
 KDSize GraphView::cursorSize() {

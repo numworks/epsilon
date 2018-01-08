@@ -34,10 +34,10 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     switch(selectedRow()) {
       case 4:
       {
+        m_graphController->setType(GraphView::Type::Tangent);
         StackViewController * stack = (StackViewController *)parentResponder();
         stack->pop();
         stack->pop();
-        m_graphController->setType(GraphView::Type::Tangent);
         stack->push(m_graphController);
         return true;
       }

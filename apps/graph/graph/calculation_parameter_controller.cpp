@@ -1,4 +1,5 @@
 #include "calculation_parameter_controller.h"
+#include "graph_controller.h"
 #include <assert.h>
 #include <cmath>
 
@@ -6,11 +7,12 @@ using namespace Shared;
 
 namespace Graph {
 
-CalculationParameterController::CalculationParameterController(Responder * parentResponder) :
+CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphController * graphController) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
-  m_function(nullptr)
+  m_function(nullptr),
+  m_graphController(graphController)
 {
 }
 
@@ -29,7 +31,19 @@ void CalculationParameterController::didBecomeFirstResponder() {
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    return true;
+    switch(selectedRow()) {
+      case 4:
+      {
+        StackViewController * stack = (StackViewController *)parentResponder();
+        stack->pop();
+        stack->pop();
+        m_graphController->setType(GraphController::Type::Tangent);
+        stack->push(m_graphController);
+        return true;
+      }
+      default:
+        return false;
+    }
   }
   return false;
 }

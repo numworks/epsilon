@@ -1,4 +1,5 @@
 #include "curve_parameter_controller.h"
+#include "graph_controller.h"
 #include "../../i18n.h"
 #include <assert.h>
 
@@ -6,13 +7,13 @@ using namespace Shared;
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
+CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphController * graphController) :
   FunctionCurveParameterController(graphRange, cursor),
   m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
   m_bannerView(bannerView),
   m_calculationCell(I18n::Message::Compute),
   m_derivativeCell(I18n::Message::DerivateNumber),
-  m_calculationParameterController(this)
+  m_calculationParameterController(this, graphController)
 {
 }
 

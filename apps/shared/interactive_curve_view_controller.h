@@ -39,7 +39,7 @@ protected:
   virtual BannerView * bannerView() = 0;
   virtual bool handleEnter() = 0;
   Responder * tabController() const;
-  StackViewController * stackController() const;
+  virtual StackViewController * stackController() const;
   virtual void reloadBannerView() = 0;
   virtual void initRangeParameters() = 0;
   virtual void initCursorParameters() = 0;

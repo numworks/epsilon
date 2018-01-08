@@ -45,16 +45,14 @@ const ToolboxMessageTree complexChildren[5] = {
       const_cast<int *>(&pointedLayoutPathConj[0]),
       1)};
 
-const int pointedLayoutPathBinomial[] = {1,0};
+const int pointedLayoutPathBinomial[] = {0, 0};
 const ToolboxMessageTree probabilityChildren[2] = {
   ToolboxMessageTree(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination, I18n::Message::BinomialCommandWithArg, nullptr, 0,
-      new HorizontalLayout(
-        new ParenthesisLeftLayout(),
+      new ParenthesisLayout(
         new GridLayout(Poincare::ExpressionLayoutArray(
               new EmptyVisibleLayout(),
               new EmptyVisibleLayout()).array(),
-              2, 1, false),
-        new ParenthesisRightLayout(), false),
+              2, 1, false)),
       const_cast<int *>(&pointedLayoutPathBinomial[0]),
       2),
   ToolboxMessageTree(I18n::Message::PermuteCommandWithArg, I18n::Message::Permutation, I18n::Message::PermuteCommandWithArg)};

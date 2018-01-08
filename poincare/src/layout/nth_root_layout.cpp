@@ -17,14 +17,18 @@ const uint8_t radixPixel[NthRootLayout::k_leftRadixHeight][NthRootLayout::k_left
 };
 
 ExpressionLayout * NthRootLayout::clone() const {
-  NthRootLayout * layout = new NthRootLayout(const_cast<NthRootLayout *>(this)->radicandLayout(), const_cast<NthRootLayout *>(this)->indexLayout(), true);
-  return layout;
+  if (numberOfChildren() == 1) {
+    return new NthRootLayout(const_cast<NthRootLayout *>(this)->radicandLayout(), true);
+  }
+  assert(numberOfChildren() == 2);
+  return new NthRootLayout(const_cast<NthRootLayout *>(this)->radicandLayout(), const_cast<NthRootLayout *>(this)->indexLayout(), true);
 }
 
 void NthRootLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   // Case: Left the index.
   // Move Left.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left
+  if (indexLayout()
+      && cursor->position() == ExpressionLayoutCursor::Position::Left
       && cursor->pointedExpressionLayout() == indexLayout())
   {
     cursor->setPointedExpressionLayout(this);
@@ -64,7 +68,7 @@ void NthRootLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   }
   // Case: Left.
   // Ask the parent.
-  assert(cursor->position() ==ExpressionLayoutCursor::Position::Left);
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
     return m_parent->backspaceAtCursor(cursor);
   }
@@ -155,20 +159,20 @@ bool NthRootLayout::moveRight(ExpressionLayoutCursor * cursor) {
 
 bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is Left of the radicand, move it to the index.
-  if (radicandLayout()
+  if (indexLayout()
+      && radicandLayout()
       && previousLayout == radicandLayout()
       && cursor->positionIsEquivalentTo(radicandLayout(), ExpressionLayoutCursor::Position::Left))
   {
-    assert(indexLayout() != nullptr);
     cursor->setPointedExpressionLayout(indexLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return true;
   }
   // If the cursor is Left, move it to the index.
-  if (cursor->pointedExpressionLayout() == this
+  if (indexLayout()
+      && cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
-    assert(indexLayout() != nullptr);
     cursor->setPointedExpressionLayout(indexLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
@@ -260,12 +264,12 @@ KDPoint NthRootLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   KDSize indexSize = indexLayout() != nullptr ? indexLayout()->size() : KDSize(k_leftRadixWidth,0);
-  if (child == indexLayout()) {
-    x = 0;
-    y = baseline() - indexSize.height() -  k_indexHeight;
-  } else if (child == radicandLayout()) {
+  if (child == radicandLayout()) {
     x = indexSize.width() + 2*k_widthMargin + k_radixLineThickness;
     y = baseline() - radicandLayout()->baseline();
+  } else if (indexLayout() && child == indexLayout()) {
+    x = 0;
+    y = baseline() - indexSize.height() -  k_indexHeight;
   } else {
     assert(false);
   }
@@ -277,7 +281,10 @@ ExpressionLayout * NthRootLayout::radicandLayout() {
 }
 
 ExpressionLayout * NthRootLayout::indexLayout() {
-  return editableChild(1);
+  if (numberOfChildren() > 1) {
+    return editableChild(1);
+  }
+  return nullptr;
 }
 
 }

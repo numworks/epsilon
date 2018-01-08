@@ -127,10 +127,9 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {
   return child1;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addEmptyRootLayout() {
+ExpressionLayout * ExpressionLayoutCursor::addEmptySquareRootLayout() {
   EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
-  EmptyVisibleLayout * child2 = new EmptyVisibleLayout();
-  NthRootLayout * newChild = new NthRootLayout(child1, child2, false);
+  NthRootLayout * newChild = new NthRootLayout(child1, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
   setPointedExpressionLayout(child1);
   setPosition(ExpressionLayoutCursor::Position::Right);

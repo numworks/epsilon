@@ -21,7 +21,8 @@ protected:
   constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
   constexpr static float k_cursorBottomMarginRatio = 0.15f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
-  constexpr static int k_maxNumberOfCharacters = 8;
+  constexpr static int k_maxLegendLength = 14;
+  constexpr static int k_maxNumberOfCharacters = 50;
   void reloadBannerView() override;
   bool handleEnter() override;
   int m_indexFunctionSelectedByCursor;

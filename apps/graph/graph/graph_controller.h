@@ -18,6 +18,8 @@ public:
   I18n::Message emptyMessage() override;
   bool handleEvent(Ion::Events::Event event) override;
   void setType(GraphView::Type type);
+  bool displayDerivativeInBanner() const;
+  void setDisplayDerivativeInBanner(bool displayDerivative);
 private:
   GraphView::Type type() const;
   BannerView * bannerView() override;
@@ -34,6 +36,7 @@ private:
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
   CartesianFunctionStore * m_functionStore;
+  bool m_displayDerivativeInBanner;
 };
 
 }

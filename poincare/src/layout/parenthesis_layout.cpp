@@ -1,5 +1,7 @@
 #include "parenthesis_layout.h"
+#include "horizontal_layout.h"
 #include "parenthesis_left_layout.h"
+#include "parenthesis_left_right_layout.h"
 #include "parenthesis_right_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/expression_layout_array.h>
@@ -10,31 +12,11 @@ extern "C" {
 
 namespace Poincare {
 
-ParenthesisLayout::ParenthesisLayout(ExpressionLayout * operand, bool cloneOperands) :
-  StaticLayoutHierarchy<3>()
-{
-  ExpressionLayout * leftParenthesis = new ParenthesisLeftLayout();
-  ExpressionLayout * rightParenthesis = new ParenthesisRightLayout();
-  build(ExpressionLayoutArray(leftParenthesis, operand, rightParenthesis).array(), 3, cloneOperands);
-}
-
 ExpressionLayout * ParenthesisLayout::clone() const {
-  ParenthesisLayout * layout = new ParenthesisLayout(const_cast<ParenthesisLayout *>(this)->operandLayout(), true);
-  return layout;
+  return new ParenthesisLayout(const_cast<ParenthesisLayout *>(this)->operandLayout(), true);
 }
 
 bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor) {
-  // Case: Left of the Right parenthesis.
-  // Go to the operand and move left.
-  if (rightParenthesisLayout()
-    && cursor->pointedExpressionLayout() == rightParenthesisLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Left)
-  {
-    assert(operandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(operandLayout());
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    return operandLayout()->moveLeft(cursor);
-  }
   // Case: Left of the operand.
   // Go Left.
   if (operandLayout()
@@ -44,30 +26,20 @@ bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor) {
     cursor->setPointedExpressionLayout(this);
     return true;
   }
-  // Case: Left of the Left parenthesis.
-  // Ask the parent.
-  if (leftParenthesisLayout()
-    && cursor->pointedExpressionLayout() == leftParenthesisLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Left)
-  {
-    cursor->setPointedExpressionLayout(this);
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    if (m_parent) {
-      return m_parent->moveLeft(cursor);
-    }
-    return false;
-  }
+
   assert(cursor->pointedExpressionLayout() == this);
-  // Case: Right of the parentheses.
-  // Go Right of the operand.
+  // Case: Right.
+  // Go to the operand and move left.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(operandLayout() != nullptr);
     cursor->setPointedExpressionLayout(operandLayout());
-    return true;
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    return operandLayout()->moveLeft(cursor);
   }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-  // Case: Left of the parentheses.
+
+  // Case: Left.
   // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
     return m_parent->moveLeft(cursor);
   }
@@ -75,17 +47,6 @@ bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor) {
 }
 
 bool ParenthesisLayout::moveRight(ExpressionLayoutCursor * cursor) {
-  // Case: Right of the Left parenthesis.
-  // Go to the operand and move Right.
-  if (leftParenthesisLayout()
-    && cursor->pointedExpressionLayout() == leftParenthesisLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Right)
-  {
-    assert(operandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(operandLayout());
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return operandLayout()->moveRight(cursor);
-  }
   // Case: Right of the operand.
   // Go Right.
   if (operandLayout()
@@ -95,29 +56,17 @@ bool ParenthesisLayout::moveRight(ExpressionLayoutCursor * cursor) {
     cursor->setPointedExpressionLayout(this);
     return true;
   }
-  // Case: Right of the Right parenthesis.
-  // Ask the parent.
-  if (rightParenthesisLayout()
-    && cursor->pointedExpressionLayout() == rightParenthesisLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Right)
-  {
-    cursor->setPointedExpressionLayout(this);
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    if (m_parent) {
-      return m_parent->moveRight(cursor);
-    }
-    return false;
-  }
+
   assert(cursor->pointedExpressionLayout() == this);
-  // Case: Left of the parentheses.
-  // Go Left of the operand.
+  // Case: Left.
+  // Go Left of the operand and moveRight.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     assert(operandLayout() != nullptr);
     cursor->setPointedExpressionLayout(operandLayout());
-    return true;
+    return operandLayout()->moveRight(cursor);;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  // Case: Right of the parentheses.
+  // Case: Right.
   // Ask the parent.
   if (m_parent) {
     return m_parent->moveRight(cursor);
@@ -125,9 +74,20 @@ bool ParenthesisLayout::moveRight(ExpressionLayoutCursor * cursor) {
   return false;
 }
 
+void ParenthesisLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  // Render the parentheses.
+  ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
+  ParenthesisRightLayout * dummyRightParenthesis = new ParenthesisRightLayout();
+  HorizontalLayout dummyLayout(dummyLeftParenthesis, operandLayout()->clone(), dummyRightParenthesis, false);
+  KDPoint leftParenthesisPoint = positionOfChild(operandLayout()).translatedBy(dummyLayout.positionOfChild(dummyLeftParenthesis)).translatedBy(dummyLayout.positionOfChild(dummyLayout.editableChild(1)).opposite());
+  KDPoint rightParenthesisPoint = positionOfChild(operandLayout()).translatedBy(dummyLayout.positionOfChild(dummyRightParenthesis)).translatedBy(dummyLayout.positionOfChild(dummyLayout.editableChild(1)).opposite());
+  dummyLeftParenthesis->render(ctx, p.translatedBy(leftParenthesisPoint), expressionColor, backgroundColor);
+  dummyRightParenthesis->render(ctx, p.translatedBy(rightParenthesisPoint), expressionColor, backgroundColor);
+}
+
 KDSize ParenthesisLayout::computeSize() {
   KDSize operandSize = operandLayout()->size();
-  return KDSize(operandSize.width() + 2*leftParenthesisLayout()->size().width(), operandSize.height());
+  return KDSize(operandSize.width() + 2*ParenthesisLeftRightLayout::parenthesisWidth(), operandSize.height());
 }
 
 void ParenthesisLayout::computeBaseline() {
@@ -136,29 +96,15 @@ void ParenthesisLayout::computeBaseline() {
 }
 
 KDPoint ParenthesisLayout::positionOfChild(ExpressionLayout * child) {
-  if (child == leftParenthesisLayout()) {
-    return KDPoint(0, 0);
-  }
   if (child == operandLayout()) {
-    return KDPoint(leftParenthesisLayout()->size().width(), 0);
-  }
-  if (child == rightParenthesisLayout()) {
-    return KDPoint(operandLayout()->origin().x() + operandLayout()->size().width(), 0);
+    return KDPoint(ParenthesisLeftRightLayout::parenthesisWidth(), 0);
   }
   assert(false);
   return KDPointZero;
 }
 
 ExpressionLayout * ParenthesisLayout::operandLayout() {
-  return editableChild(1);
-}
-
-ExpressionLayout * ParenthesisLayout::leftParenthesisLayout() {
   return editableChild(0);
-}
-
-ExpressionLayout * ParenthesisLayout::rightParenthesisLayout() {
-  return editableChild(2);
 }
 
 }

@@ -20,9 +20,9 @@ protected:
   bool handleGotoSelection();
   MessageTableCellWithChevron m_goToCell;
   SelectableTableView m_selectableTableView;
+  Function * m_function;
 private:
   virtual FunctionGoToParameterController * goToParameterController() = 0;
-  Function * m_function;
 };
 
 }

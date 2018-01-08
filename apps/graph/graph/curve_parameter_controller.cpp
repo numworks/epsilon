@@ -10,10 +10,9 @@ CurveParameterController::CurveParameterController(InteractiveCurveViewRange * g
   FunctionCurveParameterController(graphRange, cursor),
   m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
   m_bannerView(bannerView),
-#if FUNCTION_CALCULATE_MENU
   m_calculationCell(I18n::Message::Compute),
-#endif
-  m_derivativeCell(I18n::Message::DerivateNumber)
+  m_derivativeCell(I18n::Message::DerivateNumber),
+  m_calculationParameterController(this)
 {
 }
 
@@ -35,19 +34,16 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
 #endif
     switch (selectedRow()) {
-#if FUNCTION_CALCULATE_MENU
       case 0:
+      {
+        m_calculationParameterController.setFunction(m_function);
+        StackViewController * stack = (StackViewController *)parentResponder();
+        stack->push(&m_calculationParameterController);
         return true;
+      }
       case 1:
-#else
-      case 0:
-#endif
         return handleGotoSelection();
-#if FUNCTION_CALCULATE_MENU
       case 2:
-#else
-      case 1:
-#endif
       {
         m_bannerView->setDisplayDerivative(!m_bannerView->displayDerivative());
         m_selectableTableView.reloadData();
@@ -67,11 +63,7 @@ int CurveParameterController::numberOfRows() {
 HighlightCell * CurveParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCells);
-#if FUNCTION_CALCULATE_MENU
   HighlightCell * cells[] = {&m_calculationCell, &m_goToCell, &m_derivativeCell};
-#else
-  HighlightCell * cells[] = {&m_goToCell, &m_derivativeCell};
-#endif
   return cells[index];
 }
 

@@ -9,6 +9,7 @@ namespace Shared {
 FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(graphRange, cursor, bannerView, cursorView),
+  m_selectedFunction(nullptr),
   m_xLabels{},
   m_yLabels{},
   m_context(nullptr)
@@ -30,6 +31,14 @@ void FunctionGraphView::setContext(Context * context) {
 
 Context * FunctionGraphView::context() const {
   return m_context;
+}
+
+void FunctionGraphView::selectFunction(Function * function) {
+  if (m_selectedFunction != function) {
+    reload();
+    m_selectedFunction = function;
+    reload();
+  }
 }
 
 char * FunctionGraphView::label(Axis axis, int index) const {

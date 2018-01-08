@@ -21,7 +21,7 @@ public:
 private:
   Shared::FunctionGoToParameterController * goToParameterController() override;
   Shared::FunctionGoToParameterController m_goToParameterController;
-  BannerView * m_bannerView;
+  GraphController * m_graphController;
   constexpr static int k_totalNumberOfCells = 3;
   MessageTableCellWithChevron m_calculationCell;
   MessageTableCellWithSwitch m_derivativeCell;

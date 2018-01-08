@@ -50,6 +50,8 @@ bool FunctionGraphController::handleEnter() {
 
 void FunctionGraphController::reloadBannerView() {
   char buffer[k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  const char * space = "                  ";
+  int spaceLength = strlen(space);
   const char * legend = "0=";
   int legendLength = strlen(legend);
   int numberOfChar = 0;
@@ -57,9 +59,8 @@ void FunctionGraphController::reloadBannerView() {
   numberOfChar += legendLength;
   buffer[0] = functionStore()->symbol();
   numberOfChar += Complex<float>::convertFloatToText(m_cursor->x(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  legend = "   ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  strlcpy(buffer+numberOfChar, space, spaceLength+1);
+  buffer[k_maxLegendLength] = 0;
   bannerView()->setLegendAtIndex(buffer, 0);
 
   numberOfChar = 0;
@@ -75,9 +76,8 @@ void FunctionGraphController::reloadBannerView() {
   Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   buffer[0] = f->name()[0];
   numberOfChar += Complex<float>::convertFloatToText(m_cursor->y(), buffer+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  legend = "   ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  strlcpy(buffer+numberOfChar, space, spaceLength+1);
+  buffer[k_maxLegendLength] = 0;
   bannerView()->setLegendAtIndex(buffer, 1);
 }
 

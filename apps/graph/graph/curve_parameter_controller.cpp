@@ -10,7 +10,7 @@ namespace Graph {
 CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphController * graphController) :
   FunctionCurveParameterController(graphRange, cursor),
   m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
-  m_bannerView(bannerView),
+  m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),
   m_derivativeCell(I18n::Message::DerivateNumber),
   m_calculationParameterController(this, graphController)
@@ -24,7 +24,7 @@ const char * CurveParameterController::title() {
 void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_derivativeCell) {
     SwitchView * switchView = (SwitchView *)m_derivativeCell.accessoryView();
-    switchView->setState(m_bannerView->displayDerivative());
+    switchView->setState(m_graphController->displayDerivativeInBanner());
   }
 }
 
@@ -46,7 +46,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
         return handleGotoSelection();
       case 2:
       {
-        m_bannerView->setDisplayDerivative(!m_bannerView->displayDerivative());
+        m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
         m_selectableTableView.reloadData();
         return true;
       }

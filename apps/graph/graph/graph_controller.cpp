@@ -12,7 +12,8 @@ GraphController::GraphController(Responder * parentResponder, CartesianFunctionS
   m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
   m_curveParameterController(curveViewRange, &m_bannerView, m_cursor, this),
-  m_functionStore(functionStore)
+  m_functionStore(functionStore),
+  m_displayDerivativeInBanner(false)
 {
   m_graphRange->setDelegate(this);
 }
@@ -56,6 +57,14 @@ void GraphController::setType(GraphView::Type t) {
   }
 }
 
+bool GraphController::displayDerivativeInBanner() const {
+  return m_displayDerivativeInBanner;
+}
+
+void GraphController::setDisplayDerivativeInBanner(bool displayDerivative) {
+  m_displayDerivativeInBanner = displayDerivative;
+}
+
 GraphView::Type GraphController::type() const {
   return m_view.type();
 }
@@ -65,25 +74,46 @@ BannerView * GraphController::bannerView() {
 }
 
 void GraphController::reloadBannerView() {
-  // TODO: do something else if type() == GraphView::Type::tangent
   FunctionGraphController::reloadBannerView();
-  if (!m_bannerView.displayDerivative()) {
-    return;
+  m_bannerView.setNumberOfSubviews(2+m_displayDerivativeInBanner);
+  if (type() == GraphView::Type::Tangent) {
+    m_bannerView.setNumberOfSubviews(6);
   }
-  char buffer[k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  const char * legend = "00(x)=";
-  int legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
   if (m_functionStore->numberOfActiveFunctions() == 0) {
     return;
   }
   CartesianFunction * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  buffer[0] = f->name()[0];
-  buffer[1] = '\'';
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  double y = f->approximateDerivative(m_cursor->x(), myApp->localContext());
-  Complex<double>::convertFloatToText(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  m_bannerView.setLegendAtIndex(buffer, 2);
+  char buffer[k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  const char * space = "                  ";
+  int spaceLength = strlen(space);
+  if (m_displayDerivativeInBanner || type() == GraphView::Type::Tangent) {
+    const char * legend = "00(x)=";
+    int legendLength = strlen(legend);
+    int numberOfChar = strlcpy(buffer, legend, legendLength+1);
+    buffer[0] = f->name()[0];
+    buffer[1] = '\'';
+    double y = f->approximateDerivative(m_cursor->x(), myApp->localContext());
+    numberOfChar += Complex<double>::convertFloatToText(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+    strlcpy(buffer+numberOfChar, space, spaceLength+1);
+    buffer[k_maxLegendLength] = 0;
+    m_bannerView.setLegendAtIndex(buffer, 2);
+  }
+  if (type() == GraphView::Type::Tangent) {
+    const char * legend = "a=";
+    int legendLength = strlen(legend);
+    strlcpy(buffer, legend, legendLength+1);
+    double y = f->approximateDerivative(m_cursor->x(), myApp->localContext());
+    Complex<double>::convertFloatToText(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+    m_bannerView.setLegendAtIndex(buffer, 4);
+
+    legend = "b=";
+    legendLength = strlen(legend);
+    strlcpy(buffer, legend, legendLength+1);
+    y = -y*m_cursor->x()+f->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
+    Complex<double>::convertFloatToText(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+    m_bannerView.setLegendAtIndex(buffer, 5);
+  }
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {

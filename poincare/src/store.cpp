@@ -7,8 +7,8 @@ extern "C" {
 #include <ion.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
+#include "layout/char_layout.h"
 #include "layout/horizontal_layout.h"
-#include "layout/editable_string_layout.h"
 
 namespace Poincare {
 
@@ -28,12 +28,11 @@ int Store::writeTextInBuffer(char * buffer, int bufferSize) const {
 ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * childrenLayouts[3];
-  childrenLayouts[0] = value()->createLayout(floatDisplayMode, complexFormat);
-  const char stoSymbol[2] = {Ion::Charset::Sto, 0};
-  childrenLayouts[1] = new EditableStringLayout(stoSymbol, 1);
-  childrenLayouts[2] = symbol()->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(childrenLayouts, 3, false);
+  HorizontalLayout * result = new HorizontalLayout();
+  result->addOrMergeChildAtIndex(value()->createLayout(floatDisplayMode, complexFormat), 0);
+  result->addChildAtIndex(new CharLayout(Ion::Charset::Sto), result->numberOfChildren());
+  result->addOrMergeChildAtIndex(symbol()->createLayout(floatDisplayMode, complexFormat), result->numberOfChildren());
+  return result;
 }
 
 template<typename T>

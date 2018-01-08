@@ -26,8 +26,8 @@ int Product::emptySequenceValue() const {
   return 1;
 }
 
-ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const {
-  return new ProductLayout(subscriptLayout, superscriptLayout, argumentLayout, false);
+ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * argumentLayout, ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout) const {
+  return new ProductLayout(argumentLayout, subscriptLayout, superscriptLayout, false);
 }
 
 template<typename T>

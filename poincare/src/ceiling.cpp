@@ -1,13 +1,13 @@
 #include <poincare/ceiling.h>
 #include "layout/ceiling_layout.h"
+#include <cmath>
+#include <ion.h>
 #include <poincare/symbol.h>
 #include <poincare/simplification_engine.h>
 #include <poincare/rational.h>
-#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
-#include <cmath>
 
 namespace Poincare {
 

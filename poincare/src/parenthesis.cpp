@@ -1,9 +1,9 @@
+#include <poincare/parenthesis.h>
+
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-#include <poincare/parenthesis.h>
-#include "layout/parenthesis_layout.h"
 
 namespace Poincare {
 
@@ -20,7 +20,7 @@ Expression * Parenthesis::clone() const {
 ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
+  return LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
 }
 
 Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {

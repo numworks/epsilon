@@ -18,7 +18,6 @@ public:
   void setHighlightColor(bool highlightColor);
 private:
   float samplingRatio() const override;
-  float evaluateModelWithParameter(Model * expression, float abscissa) const override;
   KDSize cursorSize() override;
   SequenceStore * m_sequenceStore;
   bool m_verticalCursor;

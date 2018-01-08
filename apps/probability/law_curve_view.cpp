@@ -27,9 +27,9 @@ void LawCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false);
   if (m_law->isContinuous()) {
-    drawCurve(ctx, rect, m_law, Palette::YellowDark, true, lowerBound, upperBound, true);
+    drawCurve(ctx, rect, EvaluateAtAbscissa, m_law, nullptr, Palette::YellowDark, true, lowerBound, upperBound, true);
   } else {
-    drawHistogram(ctx, rect, m_law, 0, 1, false, Palette::GreyMiddle, Palette::YellowDark, lowerBound, upperBound+0.5f);
+    drawHistogram(ctx, rect, EvaluateAtAbscissa, m_law, nullptr, 0, 1, false, Palette::GreyMiddle, Palette::YellowDark, lowerBound, upperBound+0.5f);
   }
 }
 
@@ -40,8 +40,9 @@ char * LawCurveView::label(Axis axis, int index) const {
   return (char *)m_labels[index];
 }
 
-float LawCurveView::evaluateModelWithParameter(void * law, float abscissa) const {
-  return m_law->evaluateAtAbscissa(abscissa);
+float LawCurveView::EvaluateAtAbscissa(float abscissa, void * model, void * context) {
+  Law * law = (Law *)model;
+  return law->evaluateAtAbscissa(abscissa);
 }
 
 }

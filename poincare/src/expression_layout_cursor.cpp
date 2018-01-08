@@ -6,26 +6,23 @@
 
 namespace Poincare {
 
-bool ExpressionLayoutCursor::positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position, int positionIndex) {
+bool ExpressionLayoutCursor::positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position) {
   assert(expressionLayout != nullptr);
-  return middleLeftPoint() == middleLeftPointOfCursor(expressionLayout, position, positionIndex);
+  return middleLeftPoint() == middleLeftPointOfCursor(expressionLayout, position);
 }
 
 KDPoint ExpressionLayoutCursor::middleLeftPoint() {
-  return middleLeftPointOfCursor(m_pointedExpressionLayout, m_position, m_positionInside);
+  return middleLeftPointOfCursor(m_pointedExpressionLayout, m_position);
 }
 
-KDPoint ExpressionLayoutCursor::middleLeftPointOfCursor(ExpressionLayout * expressionLayout, Position position, int positionInside) {
+KDPoint ExpressionLayoutCursor::middleLeftPointOfCursor(ExpressionLayout * expressionLayout, Position position) {
   KDPoint layoutOrigin = expressionLayout->absoluteOrigin();
   KDCoordinate y = layoutOrigin.y() + expressionLayout->baseline() - k_cursorHeight/2;
   if (position == Position::Left) {
     return KDPoint(layoutOrigin.x(), y);
   }
-  if (position == Position::Right) {
-    return KDPoint(layoutOrigin.x() + expressionLayout->size().width(), y);
-  }
-  assert(position == Position::Inside);
-  return KDPoint(layoutOrigin.x() + positionInside * KDText::charSize().width(), y);
+  assert(position == Position::Right);
+  return KDPoint(layoutOrigin.x() + expressionLayout->size().width(), y);
 }
 
 bool ExpressionLayoutCursor::moveLeft() {

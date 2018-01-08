@@ -301,12 +301,11 @@ bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutC
   ExpressionLayout *  chilResult = nullptr;
   ExpressionLayout ** childResultPtr = &chilResult;
   ExpressionLayoutCursor::Position resultPosition = ExpressionLayoutCursor::Position::Left;
-  int resultPositionInside = 0;
   // The distance between the cursor and its next position cannot be greater
   // than this initial value of score.
   int resultScore = Ion::Display::Width*Ion::Display::Width + Ion::Display::Height*Ion::Display::Height;
 
-  moveCursorInsideAtDirection(direction, cursor, childResultPtr, &resultPosition, &resultPositionInside, &resultScore);
+  moveCursorInsideAtDirection(direction, cursor, childResultPtr, &resultPosition, &resultScore);
 
   // If there is a valid result
   if (*childResultPtr == nullptr) {
@@ -314,7 +313,6 @@ bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutC
   }
   cursor->setPointedExpressionLayout(*childResultPtr);
   cursor->setPosition(resultPosition);
-  cursor->setPositionInside(resultPositionInside);
   return true;
 }
 
@@ -323,7 +321,6 @@ void ExpressionLayout::moveCursorInsideAtDirection (
     ExpressionLayoutCursor * cursor,
     ExpressionLayout ** childResult,
     void * resultPosition,
-    int * resultPositionInside,
     int * resultScore)
 {
   ExpressionLayoutCursor::Position * castedResultPosition = static_cast<ExpressionLayoutCursor::Position *>(resultPosition);
@@ -333,27 +330,25 @@ void ExpressionLayout::moveCursorInsideAtDirection (
 
   if (layoutIsUnderOrAbove) {
     // Check the distance to a Left cursor.
-    int currentDistance = cursor->middleLeftPointOfCursor(this, ExpressionLayoutCursor::Position::Left, 0).squareDistanceTo(cursorMiddleLeft);
+    int currentDistance = cursor->middleLeftPointOfCursor(this, ExpressionLayoutCursor::Position::Left).squareDistanceTo(cursorMiddleLeft);
     if (currentDistance <= *resultScore ){
       *childResult = this;
       *castedResultPosition = ExpressionLayoutCursor::Position::Left;
-      *resultPositionInside = 0;
       *resultScore = currentDistance;
     }
 
     // Check the distance to a Right cursor.
-    currentDistance = cursor->middleLeftPointOfCursor(this, ExpressionLayoutCursor::Position::Right, 0).squareDistanceTo(cursorMiddleLeft);
+    currentDistance = cursor->middleLeftPointOfCursor(this, ExpressionLayoutCursor::Position::Right).squareDistanceTo(cursorMiddleLeft);
     if (currentDistance < *resultScore) {
       *childResult = this;
       *castedResultPosition = ExpressionLayoutCursor::Position::Right;
-      *resultPositionInside = 0;
       *resultScore = currentDistance;
     }
   }
   if (layoutIsUnderOrAbove || layoutContains) {
     int childIndex = 0;
     while (child(childIndex++)) {
-      editableChild(childIndex-1)->moveCursorInsideAtDirection(direction, cursor, childResult, castedResultPosition, resultPositionInside, resultScore);
+      editableChild(childIndex-1)->moveCursorInsideAtDirection(direction, cursor, childResult, castedResultPosition, resultScore);
     }
   }
 }

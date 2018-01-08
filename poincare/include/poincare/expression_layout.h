@@ -87,12 +87,11 @@ protected:
   virtual void computeBaseline() = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
   void detachChildAtIndex(int i);
-  virtual void moveCursorInsideAtDirection (
+  void moveCursorInsideAtDirection (
     VerticalDirection direction,
     ExpressionLayoutCursor * cursor,
     ExpressionLayout ** childResult,
     void * resultPosition,
-    int * resultPositionInside,
     int * resultScore);
   KDCoordinate m_baseline;
   /* m_baseline is the signed vertical distance from the top of the layout to

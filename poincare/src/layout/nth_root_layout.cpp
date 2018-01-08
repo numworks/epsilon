@@ -162,7 +162,6 @@ bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * p
     assert(indexLayout() != nullptr);
     cursor->setPointedExpressionLayout(indexLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    cursor->setPositionInside(0);
     return true;
   }
   // If the cursor is Left, move it to the index.
@@ -172,7 +171,6 @@ bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * p
     assert(indexLayout() != nullptr);
     cursor->setPointedExpressionLayout(indexLayout());
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    cursor->setPositionInside(0);
     return true;
   }
   return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
@@ -185,14 +183,12 @@ bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout *
       assert(radicandLayout() != nullptr);
       cursor->setPointedExpressionLayout(radicandLayout());
       cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-      cursor->setPositionInside(0);
       return true;
     }
     // If the cursor is Left of the index, move it Left .
     if (cursor->positionIsEquivalentTo(indexLayout(), ExpressionLayoutCursor::Position::Left)) {
       cursor->setPointedExpressionLayout(this);
       cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-      cursor->setPositionInside(0);
       return true;
     }
   }

@@ -1,28 +1,17 @@
 #include "sequence_layout.h"
 #include "char_layout.h"
 #include "horizontal_layout.h"
-#include "string_layout.h"
 #include "parenthesis_left_layout.h"
 #include "parenthesis_right_layout.h"
-#include "uneditable_horizontal_trio_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/expression_layout_array.h>
-#include <string.h>
 #include <assert.h>
 
 namespace Poincare {
 
 SequenceLayout::SequenceLayout(ExpressionLayout * argument, ExpressionLayout * lowerBound, ExpressionLayout * upperBound, bool cloneOperands) :
-  StaticLayoutHierarchy()
+  StaticLayoutHierarchy(argument, lowerBound, upperBound)
 {
-  ParenthesisLeftLayout * parLeft = new ParenthesisLeftLayout();
-  ParenthesisRightLayout * parRight = new ParenthesisRightLayout();
-  UneditableHorizontalTrioLayout * horLayout = new UneditableHorizontalTrioLayout(parLeft, argument, parRight, cloneOperands, false);
-  build(ExpressionLayoutArray(horLayout, lowerBound, upperBound).array(), 3, cloneOperands);
-  if (cloneOperands) {
-    delete parLeft;
-    delete parRight;
-  }
 }
 
 void SequenceLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
@@ -79,7 +68,7 @@ bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Go Right of the lower bound.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left
       && argumentLayout()
-      && cursor->pointedExpressionLayout() == argumentWithParenthesesLayout())
+      && cursor->pointedExpressionLayout() == argumentLayout())
   {
     assert(lowerBoundLayout() != nullptr);
     cursor->setPointedExpressionLayout(lowerBoundLayout());
@@ -121,7 +110,7 @@ bool SequenceLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right
       && argumentLayout()
-      && cursor->pointedExpressionLayout() == argumentWithParenthesesLayout())
+      && cursor->pointedExpressionLayout() == argumentLayout())
   {
     cursor->setPointedExpressionLayout(this);
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
@@ -229,20 +218,19 @@ ExpressionLayout * SequenceLayout::lowerBoundLayout() {
 }
 
 ExpressionLayout * SequenceLayout::argumentLayout() {
-  return argumentWithParenthesesLayout()->editableChild(1);
-}
-
-ExpressionLayout * SequenceLayout::argumentWithParenthesesLayout() {
   return editableChild(0);
 }
 
 KDSize SequenceLayout::computeSize() {
-  KDSize argumentSize = argumentWithParenthesesLayout()->size();
   KDSize lowerBoundSizeWithNEquals = HorizontalLayout(ExpressionLayoutArray(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone()).array(), 3, false).size();
+  ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
+  ParenthesisRightLayout * dummyRightParenthesis = new ParenthesisRightLayout();
+  HorizontalLayout dummyLayout2(ExpressionLayoutArray(dummyLeftParenthesis, argumentLayout()->clone(), dummyRightParenthesis).array(), 3, false);
+  KDSize dummyLayoutSize = dummyLayout2.size();
   KDSize upperBoundSize = upperBoundLayout()->size();
   return KDSize(
-    max(max(k_symbolWidth, lowerBoundSizeWithNEquals.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSize.width(),
-    baseline() + max(k_symbolHeight/2+k_boundHeightMargin+lowerBoundSizeWithNEquals.height(), argumentSize.height() - argumentLayout()->baseline())
+    max(max(k_symbolWidth, lowerBoundSizeWithNEquals.width()), upperBoundSize.width())+k_argumentWidthMargin+dummyLayoutSize.width(),
+    baseline() + max(k_symbolHeight/2+k_boundHeightMargin+lowerBoundSizeWithNEquals.height(), dummyLayoutSize.height() - argumentLayout()->baseline())
   );
 }
 
@@ -251,6 +239,8 @@ KDPoint SequenceLayout::positionOfChild(ExpressionLayout * eL) {
   HorizontalLayout dummyLayout1(ExpressionLayoutArray(new CharLayout('n'), new CharLayout('='), lowerBoundClone).array(), 3, false);
   KDSize lowerBoundSizeWithNEquals = dummyLayout1.size();
   KDSize upperBoundSize = upperBoundLayout()->size();
+  ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
+  HorizontalLayout dummyLayout2(dummyLeftParenthesis, argumentLayout()->clone(), false);
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   if (eL == lowerBoundLayout()) {
@@ -261,8 +251,8 @@ KDPoint SequenceLayout::positionOfChild(ExpressionLayout * eL) {
   } else if (eL == upperBoundLayout()) {
     x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSizeWithNEquals.width()-upperBoundSize.width())/2);
     y = baseline() - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
-  } else if (eL == argumentWithParenthesesLayout()) {
-    x = max(max(k_symbolWidth, lowerBoundSizeWithNEquals.width()), upperBoundSize.width())+k_argumentWidthMargin;
+  } else if (eL == argumentLayout()) {
+    x = max(max(k_symbolWidth, lowerBoundSizeWithNEquals.width()), upperBoundSize.width())+k_argumentWidthMargin+dummyLeftParenthesis->size().width();
     y = baseline() - argumentLayout()->baseline();
   } else {
     assert(false);
@@ -277,6 +267,15 @@ void SequenceLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor,
   HorizontalLayout dummyLayout(ExpressionLayoutArray(dummyN, new CharLayout('='), lowerBoundClone).array(), 3, false);
   KDPoint nEqualsPosition = positionOfChild(lowerBoundLayout()).translatedBy((dummyLayout.positionOfChild(lowerBoundClone)).opposite()).translatedBy(dummyLayout.positionOfChild(dummyN));
   ctx->drawString("n=", p.translatedBy(nEqualsPosition), dummyN->fontSize(), expressionColor, backgroundColor);
+
+  // Render the parentheses.
+  ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
+  ParenthesisRightLayout * dummyRightParenthesis = new ParenthesisRightLayout();
+  HorizontalLayout dummyLayout2(ExpressionLayoutArray(dummyLeftParenthesis, argumentLayout()->clone(), dummyRightParenthesis).array(), 3, false);
+  KDPoint leftParenthesisPoint = positionOfChild(argumentLayout()).translatedBy(dummyLayout2.positionOfChild(dummyLeftParenthesis)).translatedBy(dummyLayout2.positionOfChild(dummyLayout2.editableChild(1)).opposite());
+  KDPoint rightParenthesisPoint = positionOfChild(argumentLayout()).translatedBy(dummyLayout2.positionOfChild(dummyRightParenthesis)).translatedBy(dummyLayout2.positionOfChild(dummyLayout2.editableChild(1)).opposite());
+  dummyLeftParenthesis->render(ctx, p.translatedBy(leftParenthesisPoint), expressionColor, backgroundColor);
+  dummyRightParenthesis->render(ctx, p.translatedBy(rightParenthesisPoint), expressionColor, backgroundColor);
 }
 
 void SequenceLayout::computeBaseline() {

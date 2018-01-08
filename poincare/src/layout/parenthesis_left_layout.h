@@ -7,6 +7,7 @@
 namespace Poincare {
 
 class ParenthesisLeftLayout : public ParenthesisLeftRightLayout {
+  friend class SequenceLayout;
 public:
   using ParenthesisLeftRightLayout::ParenthesisLeftRightLayout;
   ExpressionLayout * clone() const override;

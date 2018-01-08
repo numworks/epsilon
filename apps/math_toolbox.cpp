@@ -12,7 +12,7 @@ using namespace Poincare;
  * subtree, the edited text is set at I18n::Message::Default. */
 
 const int pointedLayoutPathIntegral[] = {0};
-const int pointedLayoutPathSum[] = {0, 1};
+const int pointedLayoutPathSum[] = {0};
 const ToolboxMessageTree calculChildren[4] = {
   ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg, nullptr, 0),
   ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg, nullptr, 0,
@@ -30,7 +30,7 @@ const ToolboxMessageTree calculChildren[4] = {
         new EmptyVisibleLayout(),
         false),
       const_cast<int *>(&pointedLayoutPathSum[0]),
-      2),
+      1),
   ToolboxMessageTree(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommandWithArg)};
 
 const int pointedLayoutPathConj[] = {0};

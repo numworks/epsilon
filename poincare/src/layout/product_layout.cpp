@@ -30,7 +30,7 @@ void ProductLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
     p.y() + max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline()-(k_symbolHeight+1)/2),
     k_lineThickness, k_symbolHeight), expressionColor);
 
-  // Render the "n=".
+  // Render the "n=" and the parentheses.
   SequenceLayout::render(ctx, p, expressionColor, backgroundColor);
 }
 

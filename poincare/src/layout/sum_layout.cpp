@@ -44,7 +44,7 @@ void SumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDCo
       k_symbolWidth, k_symbolHeight);
   ctx->blendRectWithMask(symbolFrame, expressionColor, (const uint8_t *)symbolPixel, (KDColor *)workingBuffer);
 
-  // Render the "n=".
+  // Render the "n=" and the parentheses.
   SequenceLayout::render(ctx, p, expressionColor, backgroundColor);
 }
 

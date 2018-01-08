@@ -4,22 +4,23 @@
 #include <poincare/static_layout_hierarchy.h>
 #include <poincare/layout_engine.h>
 
+/* ParenthesisLayout has one operand and renders the parentheses around it.
+ * This layout should thus be used for uneditable parentheses, e.g. to create
+ * binomial coefficient layouts. */
+
 namespace Poincare {
 
-class ParenthesisLayout : public StaticLayoutHierarchy<3> {
+class ParenthesisLayout : public StaticLayoutHierarchy<1> {
 public:
-  constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
-  constexpr static KDCoordinate k_parenthesisCurveHeight = 7;
-  ParenthesisLayout(ExpressionLayout * operand, bool cloneOperands);
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "");
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "");
   }
 protected:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {
-  };
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
@@ -29,8 +30,6 @@ private:
   constexpr static KDCoordinate k_widthMargin = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
   ExpressionLayout * operandLayout();
-  ExpressionLayout * leftParenthesisLayout();
-  ExpressionLayout * rightParenthesisLayout();
 };
 
 }

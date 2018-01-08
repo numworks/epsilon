@@ -53,7 +53,7 @@ bool ParenthesisLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor) {
 }
 
 KDSize ParenthesisLeftRightLayout::computeSize() {
-  return KDSize(k_widthMargin + k_lineThickness + k_externWidthMargin, operandHeight());
+  return KDSize(parenthesisWidth(), operandHeight());
 }
 
 KDCoordinate ParenthesisLeftRightLayout::operandHeight() {

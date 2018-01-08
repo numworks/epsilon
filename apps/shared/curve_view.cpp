@@ -13,8 +13,8 @@ CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveVie
     View * cursorView, View * okView) :
   View(),
   m_bannerView(bannerView),
-  m_curveViewRange(curveViewRange),
   m_curveViewCursor(curveViewCursor),
+  m_curveViewRange(curveViewRange),
   m_cursorView(cursorView),
   m_okView(okView),
   m_mainViewSelected(false),

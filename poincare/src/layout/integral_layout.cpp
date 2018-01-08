@@ -196,27 +196,26 @@ int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   }
 
   // Write the argument
-  ExpressionLayout * intLayout = const_cast<IntegralLayout *>(this)->integrandLayout();
-  numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(intLayout, buffer+numberOfChar, bufferSize-numberOfChar, "");
+  numberOfChar += const_cast<IntegralLayout *>(this)->integrandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   buffer[numberOfChar++] = ',';
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the lower bound
   numberOfChar += const_cast<IntegralLayout *>(this)->lowerBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   buffer[numberOfChar++] = ',';
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the upper bound
   numberOfChar += const_cast<IntegralLayout *>(this)->upperBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the closing parenthesis
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   buffer[numberOfChar++] = ')';
   buffer[numberOfChar] = 0;
   return numberOfChar;

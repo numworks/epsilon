@@ -12,15 +12,14 @@ GraphController::GraphController(Responder * parentResponder, CartesianFunctionS
   m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
   m_curveParameterController(curveViewRange, &m_bannerView, m_cursor, this),
-  m_functionStore(functionStore),
-  m_type(Type::Default)
+  m_functionStore(functionStore)
 {
   m_graphRange->setDelegate(this);
 }
 
 const char * GraphController::title() {
-  switch(m_type) {
-    case Type::Tangent:
+  switch(type()) {
+    case GraphView::Type::Tangent:
       return I18n::translate(I18n::Message::Tangent);
     default:
       return I18n::translate(I18n::Message::GraphTab);
@@ -35,21 +34,30 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 bool GraphController::handleEvent(Ion::Events::Event event) {
-  if (m_type == Type::Default || event == Ion::Events::Left || event == Ion::Events::Right || event == Ion::Events::Plus || event == Ion::Events::Minus) {
+  if (type() == GraphView::Type::Default || event == Ion::Events::Left || event == Ion::Events::Right || event == Ion::Events::Plus || event == Ion::Events::Minus) {
     return FunctionGraphController::handleEvent(event);
   }
-  // TODO: handle for type != Type::Default
-  if (m_type != Type::Default && event == Ion::Events::Back) {
-    stackController()->handleEvent(event);
-    setType(Type::Default);
-    setParentResponder(static_cast<App *>(app())->graphControllerParent());
+  if (type() != GraphView::Type::Default && (event == Ion::Events::Back || event == Ion::Events::OK)) {
+    App * a = static_cast<App *>(app());
+    stackController()->handleEvent(Ion::Events::Back);
+    setType(GraphView::Type::Default);
+    setParentResponder(a->graphControllerParent());
     return true;
   }
   return false;
 }
 
-void GraphController::setType(Type type) {
-  m_type = type;
+void GraphController::setType(GraphView::Type t) {
+  m_view.setType(t);
+  if (type() != GraphView::Type::Default) {
+    m_view.selectFunction(m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor));
+  } else {
+    m_view.selectFunction(nullptr);
+  }
+}
+
+GraphView::Type GraphController::type() const {
+  return m_view.type();
 }
 
 BannerView * GraphController::bannerView() {
@@ -57,7 +65,7 @@ BannerView * GraphController::bannerView() {
 }
 
 void GraphController::reloadBannerView() {
-  // TODO: do something else if m_type == Type::tangent
+  // TODO: do something else if type() == GraphView::Type::tangent
   FunctionGraphController::reloadBannerView();
   if (!m_bannerView.displayDerivative()) {
     return;
@@ -121,7 +129,7 @@ CurveParameterController * GraphController::curveParameterController() {
 }
 
 StackViewController * GraphController::stackController() const{
-  if (m_type != Type::Default) {
+  if (type() != GraphView::Type::Default) {
     return (StackViewController *)(parentResponder());
   }
   return FunctionGraphController::stackController();

@@ -44,7 +44,7 @@ public:
   ExpressionLayout * addFractionLayoutAndCollapseBrothers();
   ExpressionLayout * addEmptyLogarithmLayout();
   ExpressionLayout * addEmptyPowerLayout();
-  ExpressionLayout * addEmptyRootLayout();
+  ExpressionLayout * addEmptySquareRootLayout();
   ExpressionLayout * addEmptySquarePowerLayout();
   ExpressionLayout * addXNTCharLayout();
   ExpressionLayout * insertText(const char * text);

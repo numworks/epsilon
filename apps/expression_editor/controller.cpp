@@ -118,7 +118,7 @@ ExpressionLayout * Controller::handleAddEvent(Ion::Events::Event event) {
     return m_cursor.addEmptyPowerLayout();
   }
   if (event == Ion::Events::Sqrt) {
-    return m_cursor.addEmptyRootLayout();
+    return m_cursor.addEmptySquareRootLayout();
   }
   if (event == Ion::Events::Square) {
     return m_cursor.addEmptySquarePowerLayout();

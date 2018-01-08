@@ -1,16 +1,16 @@
 #ifndef POINCARE_NTH_ROOT_LAYOUT_H
 #define POINCARE_NTH_ROOT_LAYOUT_H
 
-#include <poincare/static_layout_hierarchy.h>
+#include <poincare/bounded_static_layout_hierarchy.h>
 #include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class NthRootLayout : public StaticLayoutHierarchy<2> {
+class NthRootLayout : public BoundedStaticLayoutHierarchy<2> {
 public:
   constexpr static KDCoordinate k_leftRadixHeight = 8;
   constexpr static KDCoordinate k_leftRadixWidth = 5;
-  using StaticLayoutHierarchy::StaticLayoutHierarchy;
+  using BoundedStaticLayoutHierarchy::BoundedStaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
 
   /* Dynamic Layout*/

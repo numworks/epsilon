@@ -1,5 +1,5 @@
 #include <poincare/factorial.h>
-#include "layout/editable_string_layout.h"
+#include "layout/char_layout.h"
 #include "layout/horizontal_layout.h"
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
@@ -76,10 +76,10 @@ Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) 
 ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
-  childrenLayouts[1] = new EditableStringLayout("!", 1);
-  return new HorizontalLayout(childrenLayouts, 2, false);
+  HorizontalLayout * result = new HorizontalLayout();
+  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0);
+  result->addChildAtIndex(new CharLayout('!'), result->numberOfChildren());
+  return result;
 }
 
 int Factorial::writeTextInBuffer(char * buffer, int bufferSize) const {

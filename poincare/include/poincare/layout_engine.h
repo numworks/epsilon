@@ -11,6 +11,8 @@ public:
   /* Expression to ExpressionLayout */
   static ExpressionLayout * createInfixLayout(const Expression * expression, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
   static ExpressionLayout * createPrefixLayout(const Expression * expression, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
+  static ExpressionLayout * createParenthesedLayout(ExpressionLayout * layout, bool cloneLayout);
+  static ExpressionLayout * createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize = KDText::FontSize::Large);
 
   /* Expression to Text */
   typedef bool (*OperandNeedsParenthesis)(const Expression * e);

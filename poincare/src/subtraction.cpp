@@ -1,17 +1,13 @@
+#include <poincare/subtraction.h>
+#include <poincare/addition.h>
+#include <poincare/matrix.h>
+#include <poincare/multiplication.h>
+#include <poincare/opposite.h>
+#include <poincare/rational.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-
-#include <poincare/subtraction.h>
-#include <poincare/multiplication.h>
-#include <poincare/rational.h>
-#include <poincare/addition.h>
-#include <poincare/opposite.h>
-#include <poincare/matrix.h>
-#include "layout/horizontal_layout.h"
-#include "layout/string_layout.h"
-#include "layout/parenthesis_layout.h"
 
 namespace Poincare {
 

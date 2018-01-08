@@ -8,7 +8,6 @@ extern "C" {
 #include <float.h>
 #include <stdlib.h>
 }
-#include "layout/string_layout.h"
 #include "layout/integral_layout.h"
 #include "layout/horizontal_layout.h"
 
@@ -59,10 +58,11 @@ Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUn
 ExpressionLayout * Integral::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
-  childrenLayouts[1] = new StringLayout("dx", 2);
-  return new IntegralLayout(operand(1)->createLayout(floatDisplayMode, complexFormat), operand(2)->createLayout(floatDisplayMode, complexFormat), new HorizontalLayout(childrenLayouts, 2, false), false);
+  return new IntegralLayout(
+      operand(0)->createLayout(floatDisplayMode, complexFormat),
+      operand(1)->createLayout(floatDisplayMode, complexFormat),
+      operand(2)->createLayout(floatDisplayMode, complexFormat),
+      false);
 }
 
 template<typename T>

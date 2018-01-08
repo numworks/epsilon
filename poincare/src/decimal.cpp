@@ -9,8 +9,6 @@ extern "C" {
 #include <assert.h>
 }
 
-#include "layout/editable_string_layout.h"
-
 namespace Poincare {
 
 int Decimal::exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
@@ -204,7 +202,7 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
 ExpressionLayout * Decimal::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   char buffer[255];
   int numberOfChars = writeTextInBuffer(buffer, 255);
-  return new EditableStringLayout(buffer, numberOfChars);
+  return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
 Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {

@@ -43,7 +43,7 @@ void StackViewController::ControllerView::layoutSubviews() {
     }
   }
   if (m_contentView) {
-    bool separatorHeight = m_numberOfStacks > 1;
+    KDCoordinate separatorHeight = m_numberOfStacks > 0 ? 1 : 0;
     KDRect contentViewFrame = KDRect( 0,
         m_displayStackHeaders * (m_numberOfStacks * k_stackHeight + separatorHeight),
         width,

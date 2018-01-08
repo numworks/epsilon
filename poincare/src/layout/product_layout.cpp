@@ -1,7 +1,6 @@
 #include "product_layout.h"
 #include "char_layout.h"
 #include "horizontal_layout.h"
-#include <poincare/expression_layout_array.h>
 
 namespace Poincare {
 
@@ -17,7 +16,7 @@ int ProductLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
 void ProductLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Compute sizes.
   KDSize upperBoundSize = upperBoundLayout()->size();
-  KDSize lowerBoundSizeWithNEquals = HorizontalLayout(ExpressionLayoutArray(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone()).array(), 3, false).size();
+  KDSize lowerBoundSizeWithNEquals = HorizontalLayout(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone(), false).size();
 
   // Render the Product symbol.
   ctx->fillRect(KDRect(p.x() + max(max(0, (upperBoundSize.width()-k_symbolWidth)/2), (lowerBoundSizeWithNEquals.width()-k_symbolWidth)/2),

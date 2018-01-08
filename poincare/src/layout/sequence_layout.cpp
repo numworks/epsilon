@@ -4,7 +4,6 @@
 #include "parenthesis_left_layout.h"
 #include "parenthesis_right_layout.h"
 #include <poincare/expression_layout_cursor.h>
-#include <poincare/expression_layout_array.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -222,10 +221,10 @@ ExpressionLayout * SequenceLayout::argumentLayout() {
 }
 
 KDSize SequenceLayout::computeSize() {
-  KDSize lowerBoundSizeWithNEquals = HorizontalLayout(ExpressionLayoutArray(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone()).array(), 3, false).size();
+  KDSize lowerBoundSizeWithNEquals = HorizontalLayout(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone(), false).size();
   ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
   ParenthesisRightLayout * dummyRightParenthesis = new ParenthesisRightLayout();
-  HorizontalLayout dummyLayout2(ExpressionLayoutArray(dummyLeftParenthesis, argumentLayout()->clone(), dummyRightParenthesis).array(), 3, false);
+  HorizontalLayout dummyLayout2(dummyLeftParenthesis, argumentLayout()->clone(), dummyRightParenthesis, false);
   KDSize dummyLayoutSize = dummyLayout2.size();
   KDSize upperBoundSize = upperBoundLayout()->size();
   return KDSize(
@@ -236,7 +235,7 @@ KDSize SequenceLayout::computeSize() {
 
 KDPoint SequenceLayout::positionOfChild(ExpressionLayout * eL) {
   ExpressionLayout * lowerBoundClone = lowerBoundLayout()->clone();
-  HorizontalLayout dummyLayout1(ExpressionLayoutArray(new CharLayout('n'), new CharLayout('='), lowerBoundClone).array(), 3, false);
+  HorizontalLayout dummyLayout1(new CharLayout('n'), new CharLayout('='), lowerBoundClone, false);
   KDSize lowerBoundSizeWithNEquals = dummyLayout1.size();
   KDSize upperBoundSize = upperBoundLayout()->size();
   ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
@@ -264,14 +263,14 @@ void SequenceLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor,
   // Render the "n=".
   CharLayout * dummyN = new CharLayout('n');
   ExpressionLayout * lowerBoundClone = lowerBoundLayout()->clone();
-  HorizontalLayout dummyLayout(ExpressionLayoutArray(dummyN, new CharLayout('='), lowerBoundClone).array(), 3, false);
+  HorizontalLayout dummyLayout(dummyN, new CharLayout('='), lowerBoundClone, false);
   KDPoint nEqualsPosition = positionOfChild(lowerBoundLayout()).translatedBy((dummyLayout.positionOfChild(lowerBoundClone)).opposite()).translatedBy(dummyLayout.positionOfChild(dummyN));
   ctx->drawString("n=", p.translatedBy(nEqualsPosition), dummyN->fontSize(), expressionColor, backgroundColor);
 
   // Render the parentheses.
   ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
   ParenthesisRightLayout * dummyRightParenthesis = new ParenthesisRightLayout();
-  HorizontalLayout dummyLayout2(ExpressionLayoutArray(dummyLeftParenthesis, argumentLayout()->clone(), dummyRightParenthesis).array(), 3, false);
+  HorizontalLayout dummyLayout2(dummyLeftParenthesis, argumentLayout()->clone(), dummyRightParenthesis, false);
   KDPoint leftParenthesisPoint = positionOfChild(argumentLayout()).translatedBy(dummyLayout2.positionOfChild(dummyLeftParenthesis)).translatedBy(dummyLayout2.positionOfChild(dummyLayout2.editableChild(1)).opposite());
   KDPoint rightParenthesisPoint = positionOfChild(argumentLayout()).translatedBy(dummyLayout2.positionOfChild(dummyRightParenthesis)).translatedBy(dummyLayout2.positionOfChild(dummyLayout2.editableChild(1)).opposite());
   dummyLeftParenthesis->render(ctx, p.translatedBy(leftParenthesisPoint), expressionColor, backgroundColor);

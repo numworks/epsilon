@@ -201,12 +201,26 @@ void initClocks() {
   FLASH.ACR()->setDCEN(true);
   FLASH.ACR()->setICEN(true);
 
-  /* We're using the high-speed internal oscillator as a clock source. It runs
-   * at a fixed 16 MHz frequency, but by piping it through the PLL we can derive
-   * faster oscillations. Combining default values and a PLLQ of 4 can provide
-   * us with a 96 MHz frequency for SYSCLK. */
+  /* After reset, the device is using the high-speed internal oscillator (HSI)
+   * as a clock source, which runs at a fixed 16 MHz frequency. The HSI is not
+   * accurate enough for reliable USB operation, so we need to use the external
+   * high-speed oscillator (HSE). */
+
+  // Enable the HSE and wait for it to be ready
+  RCC.CR()->setHSEON(true);
+  while(!RCC.CR()->getHSERDY()) {
+  }
+
+  /* Given the crystal used on our device, the HSE will oscillate at 25 MHz. By
+   * piping it through a phase-locked loop (PLL) we can derive other frequencies
+   * for use in different parts of the system. Combining the default PLL values
+   * with a PLLM of 25 and a PLLQ of 4 yields both a 96 MHz frequency for SYSCLK
+   * and the required 48 MHz USB clock. */
+
+  // Configure the PLL ratios and use HSE as a PLL input
+  RCC.PLLCFGR()->setPLLM(25);
   RCC.PLLCFGR()->setPLLQ(4);
-  RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSI);
+  RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
   // 96 MHz is too fast for APB1. Divide it by two to reach 48 MHz
   RCC.CFGR()->setPPRE1(RCC::CFGR::AHBRatio::DivideBy2);
 
@@ -215,10 +229,13 @@ void initClocks() {
   while(!RCC.CR()->getPLLRDY()) {
   }
 
-  // Last but not least, use the PLL output as a SYSCLK source
+  // Use the PLL output as a SYSCLK source
   RCC.CFGR()->setSW(RCC::CFGR::SW::PLL);
   while (RCC.CFGR()->getSWS() != RCC::CFGR::SW::PLL) {
   }
+
+  // Now that we don't need use it anymore, turn the HSI off
+  RCC.CR()->setHSION(false);
 
   // Peripheral clocks
 

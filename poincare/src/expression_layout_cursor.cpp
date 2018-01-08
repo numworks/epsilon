@@ -103,22 +103,9 @@ ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers(
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addEmptyLogarithmLayout() {
-  HorizontalLayout * newChild = new HorizontalLayout(
-      ExpressionLayoutArray(
-        new CharLayout('l'),
-        new CharLayout('o'),
-        new CharLayout('g')).array(),
-      3,
-      false);
-  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Subscript, false);
-  newChild->addChildAtIndex(offsetLayout, 3);
-  m_pointedExpressionLayout->addBrother(this, newChild);
-  setPointedExpressionLayout(offsetLayout);
-  setPosition(ExpressionLayoutCursor::Position::Right);
-  insertText("()");
-  setPointedExpressionLayout(offsetLayout->editableChild(0));
-  setPosition(ExpressionLayoutCursor::Position::Right);
-  return offsetLayout;
+  ExpressionLayout * result =  insertText("log()");
+  setPosition(ExpressionLayoutCursor::Position::Left);
+  return result;
 }
 
 ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {

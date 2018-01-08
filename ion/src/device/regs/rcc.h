@@ -7,8 +7,11 @@ class RCC {
 public:
   class CR : public Register32 {
   public:
-    REGS_BOOL_FIELD(PLLRDY, 25);
+    REGS_BOOL_FIELD(HSION, 0);
+    REGS_BOOL_FIELD(HSEON, 16);
+    REGS_BOOL_FIELD(HSERDY, 17);
     REGS_BOOL_FIELD(PLLON, 24);
+    REGS_BOOL_FIELD(PLLRDY, 25);
   };
 
   class PLLCFGR : public Register32 {

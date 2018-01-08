@@ -23,7 +23,6 @@ protected:
   ExpressionLayout * lowerBoundLayout();
   ExpressionLayout * upperBoundLayout();
   ExpressionLayout * argumentLayout();
-  ExpressionLayout * argumentWithParenthesesLayout();
   KDSize computeSize() override;
   KDPoint positionOfChild(ExpressionLayout * eL) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

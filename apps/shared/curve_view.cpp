@@ -301,7 +301,7 @@ const uint8_t stampMask[stampSize+1][stampSize+1] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, KDColor color, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, bool continuously) const {
   float xMin = min(Axis::Horizontal);
   float xMax = max(Axis::Horizontal);
   float xStep = (xMax-xMin)/resolution();
@@ -313,7 +313,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
     if (x == x-xStep || x == x+xStep) {
       return;
     }
-    float y = evaluateModelWithParameter(curve, x);
+    float y = evaluation(x, model, context);
     if (std::isnan(y)|| std::isinf(y)) {
       continue;
     }
@@ -327,20 +327,20 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, Model * curve, KDColor c
       ctx->fillRect(colorRect, color);
     }
     stampAtLocation(ctx, rect, pxf, pyf, color);
-    if (x <= rectMin || std::isnan(evaluateModelWithParameter(curve, x-xStep))) {
+    if (x <= rectMin || std::isnan(evaluation(x-xStep, model, context))) {
       continue;
     }
     if (continuously) {
       float puf = floatToPixel(Axis::Horizontal, x - xStep);
-      float pvf = floatToPixel(Axis::Vertical, evaluateModelWithParameter(curve, x-xStep));
+      float pvf = floatToPixel(Axis::Vertical, evaluation(x-xStep, model, context));
       straightJoinDots(ctx, rect, puf, pvf, pxf, pyf, color);
     } else {
-      jointDots(ctx, rect, curve, x - xStep, evaluateModelWithParameter(curve, x-xStep), x, y, color, k_maxNumberOfIterations);
+      jointDots(ctx, rect, evaluation, model, context, x - xStep, evaluation(x-xStep, model, context), x, y, color, k_maxNumberOfIterations);
     }
   }
 }
 
-void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float firstBarAbscissa, float barWidth,
+void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound, float highlightUpperBound) const {
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left());
   float rectMinBinNumber = std::floor((rectMin - firstBarAbscissa)/barWidth);
@@ -357,7 +357,7 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, Model * model, float
       return;
     }
     float centerX = fillBar ? x+barWidth/2.0f : x;
-    float y = evaluateModelWithParameter(model, centerX);
+    float y = evaluation(centerX, model, context);
     if (std::isnan(y)) {
       continue;
     }
@@ -385,15 +385,11 @@ int CurveView::numberOfLabels(Axis axis) const {
   return std::ceil((max(axis) - min(axis))/(2*gridUnit(axis)));
 }
 
-float CurveView::evaluateModelWithParameter(Model * curve, float t) const {
-  return 0.0f;
-}
-
 KDSize CurveView::cursorSize() {
   return KDSize(k_cursorSize, k_cursorSize);
 }
 
-void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
+void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
   if (std::isnan(pyf) || std::isnan(pvf)) {
@@ -416,7 +412,7 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, 
   }
   // C is the dot whose abscissa is between x and u
   float cx = (x + u)/2.0f;
-  float cy = evaluateModelWithParameter(curve, cx);
+  float cy = evaluation(cx, model, context);
   if ((y <= cy && cy <= v) || (v <= cy && cy <= y)) {
     /* As the middle dot is vertically between the two dots, we assume that we
      * can draw a 'straight' line between the two */
@@ -432,8 +428,8 @@ void CurveView::jointDots(KDContext * ctx, KDRect rect, Model * curve, float x, 
   float pcyf = floatToPixel(Axis::Vertical, cy);
   if (maxNumberOfRecursion > 0) {
     stampAtLocation(ctx, rect, pcxf, pcyf, color);
-    jointDots(ctx, rect, curve, x, y, cx, cy, color, maxNumberOfRecursion-1);
-    jointDots(ctx, rect, curve, cx, cy, u, v, color, maxNumberOfRecursion-1);
+    jointDots(ctx, rect, evaluation, model, context, x, y, cx, cy, color, maxNumberOfRecursion-1);
+    jointDots(ctx, rect, evaluation, model, context, cx, cy, u, v, color, maxNumberOfRecursion-1);
   }
 }
 

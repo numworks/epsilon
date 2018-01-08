@@ -15,13 +15,12 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     CartesianFunction * f = m_functionStore->activeFunctionAtIndex(i);
-    drawCurve(ctx, rect, f, f->color());
+    drawCurve(ctx, rect, [](float t, void * model, void * context) {
+        CartesianFunction * f = (CartesianFunction *)model;
+        Poincare::Context * c = (Poincare::Context *)context;
+        return f->evaluateAtAbscissa(t, c);
+      }, f, context(), f->color());
   }
-}
-
-float GraphView::evaluateModelWithParameter(Model * curve, float abscissa) const {
-  CartesianFunction * f = (CartesianFunction *)curve;
-  return f->evaluateAtAbscissa(abscissa, context());
 }
 
 }

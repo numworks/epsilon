@@ -84,7 +84,6 @@ objs += $(addprefix poincare/src/,\
 
 objs += $(addprefix poincare/src/layout/,\
   absolute_value_layout.o\
-  baseline_relative_layout.o\
   bracket_layout.o\
   bracket_left_layout.o\
   bracket_left_right_layout.o\
@@ -94,8 +93,6 @@ objs += $(addprefix poincare/src/layout/,\
   condensed_sum_layout.o\
   conjugate_layout.o\
   dynamic_layout_hierarchy.o\
-  editable_baseline_relative_layout.o\
-  editable_string_layout.o\
   empty_layout.o\
   empty_visible_layout.o\
   expression_layout.o\
@@ -112,11 +109,7 @@ objs += $(addprefix poincare/src/layout/,\
   product_layout.o\
   sequence_layout.o\
   static_layout_hierarchy.o\
-  string_layout.o\
   sum_layout.o\
-  uneditable_horizontal_trio_layout.o\
-  uneditable_parenthesis_left_layout.o\
-  uneditable_parenthesis_right_layout.o\
   vertical_offset_layout.o\
 )
 

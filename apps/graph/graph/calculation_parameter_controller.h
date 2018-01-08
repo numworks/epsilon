@@ -7,9 +7,11 @@
 
 namespace Graph {
 
+class GraphController;
+
 class CalculationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  CalculationParameterController(Responder * parentResponder);
+  CalculationParameterController(Responder * parentResponder, GraphController * graphController);
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -25,6 +27,7 @@ private:
   MessageTableCell m_cells[k_totalNumberOfCells];
   SelectableTableView m_selectableTableView;
   Shared::Function * m_function;
+  GraphController * m_graphController;
 };
 
 }

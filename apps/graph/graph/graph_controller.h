@@ -13,8 +13,16 @@ namespace Graph {
 
 class GraphController : public Shared::FunctionGraphController {
 public:
+  enum class Type {
+    Default,
+    Tangent,
+    Integral
+  };
   GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Expression::AngleUnit * angleUnitVersion, ButtonRowController * header);
+  const char * title() override;
   I18n::Message emptyMessage() override;
+  bool handleEvent(Ion::Events::Event event) override;
+  void setType(Type type);
 private:
   BannerView * bannerView() override;
   void reloadBannerView() override;
@@ -24,11 +32,13 @@ private:
   CartesianFunctionStore * functionStore() const override;
   GraphView * functionGraphView() override;
   CurveParameterController * curveParameterController() override;
+  StackViewController * stackController() const override;
   BannerView m_bannerView;
   GraphView m_view;
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
   CartesianFunctionStore * m_functionStore;
+  Type m_type;
 };
 
 }

@@ -171,7 +171,7 @@ void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirs
 }
 
 Responder * InteractiveCurveViewController::tabController() const{
-  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
+  return (stackController()->parentResponder());
 }
 
 StackViewController * InteractiveCurveViewController::stackController() const{

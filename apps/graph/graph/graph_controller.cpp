@@ -1,4 +1,5 @@
 #include "graph_controller.h"
+#include "../app.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -10,10 +11,20 @@ GraphController::GraphController(Responder * parentResponder, CartesianFunctionS
   m_bannerView(),
   m_view(functionStore, curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
-  m_curveParameterController(curveViewRange, &m_bannerView, m_cursor),
-  m_functionStore(functionStore)
+  m_curveParameterController(curveViewRange, &m_bannerView, m_cursor, this),
+  m_functionStore(functionStore),
+  m_type(Type::Default)
 {
   m_graphRange->setDelegate(this);
+}
+
+const char * GraphController::title() {
+  switch(m_type) {
+    case Type::Tangent:
+      return I18n::translate(I18n::Message::Tangent);
+    default:
+      return I18n::translate(I18n::Message::GraphTab);
+  }
 }
 
 I18n::Message GraphController::emptyMessage() {
@@ -23,11 +34,30 @@ I18n::Message GraphController::emptyMessage() {
   return I18n::Message::NoActivatedFunction;
 }
 
+bool GraphController::handleEvent(Ion::Events::Event event) {
+  if (m_type == Type::Default || event == Ion::Events::Left || event == Ion::Events::Right || event == Ion::Events::Plus || event == Ion::Events::Minus) {
+    return FunctionGraphController::handleEvent(event);
+  }
+  // TODO: handle for type != Type::Default
+  if (m_type != Type::Default && event == Ion::Events::Back) {
+    stackController()->handleEvent(event);
+    setType(Type::Default);
+    setParentResponder(static_cast<App *>(app())->graphControllerParent());
+    return true;
+  }
+  return false;
+}
+
+void GraphController::setType(Type type) {
+  m_type = type;
+}
+
 BannerView * GraphController::bannerView() {
   return &m_bannerView;
 }
 
 void GraphController::reloadBannerView() {
+  // TODO: do something else if m_type == Type::tangent
   FunctionGraphController::reloadBannerView();
   if (!m_bannerView.displayDerivative()) {
     return;
@@ -88,6 +118,13 @@ GraphView * GraphController::functionGraphView() {
 
 CurveParameterController * GraphController::curveParameterController() {
   return &m_curveParameterController;
+}
+
+StackViewController * GraphController::stackController() const{
+  if (m_type != Type::Default) {
+    return (StackViewController *)(parentResponder());
+  }
+  return FunctionGraphController::stackController();
 }
 
 }

@@ -159,7 +159,7 @@ bool TermSumController::moveCursorHorizontallyToPosition(int position) {
 }
 
 void TermSumController::setSequence(Sequence * sequence) {
-  m_graphView->selectSequence(sequence);
+  m_graphView->selectFunction(sequence);
   m_sequence = sequence;
 }
 

@@ -12,8 +12,7 @@ GraphView::GraphView(SequenceStore * sequenceStore, InteractiveCurveViewRange * 
   m_verticalCursor(false),
   m_highlightedDotStart(-1),
   m_highlightedDotEnd(-1),
-  m_shouldColorHighlighted(false),
-  m_selectedSequence(nullptr)
+  m_shouldColorHighlighted(false)
 {
 }
 
@@ -34,7 +33,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         continue;
       }
       drawDot(ctx, rect, x, y, s->color());
-      if (x >= m_highlightedDotStart && x <= m_highlightedDotEnd && s == m_selectedSequence) {
+      if (x >= m_highlightedDotStart && x <= m_highlightedDotEnd && s == m_selectedFunction) {
         KDColor color = m_shouldColorHighlighted ? s->color() : KDColorBlack;
         if (y >= 0.0f) {
           drawSegment(ctx, rect, Axis::Vertical, x, 0.0f, y, color, 1);
@@ -60,14 +59,6 @@ void GraphView::reload() {
     KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
     bounds().height()-m_bannerView->bounds().height()));
     markRectAsDirty(dirtyZone);
-  }
-}
-
-void GraphView::selectSequence(Sequence * sequence) {
-  if (m_selectedSequence != sequence) {
-    reload();
-    m_selectedSequence = sequence;
-    reload();
   }
 }
 

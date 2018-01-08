@@ -1,7 +1,6 @@
 #include "integral_layout.h"
 #include "char_layout.h"
 #include "horizontal_layout.h"
-#include "string_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
@@ -245,7 +244,7 @@ void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor,
 }
 
 KDSize IntegralLayout::computeSize() {
-  KDSize dxSize = StringLayout("dx", 2).size();
+  KDSize dxSize = HorizontalLayout(new CharLayout('d'), new CharLayout('x'), false).size();
   KDSize integrandSize = integrandLayout()->size();
   KDSize lowerBoundSize = lowerBoundLayout()->size();
   KDSize upperBoundSize = upperBoundLayout()->size();

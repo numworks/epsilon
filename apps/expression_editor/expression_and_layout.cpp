@@ -1,6 +1,5 @@
 #include "expression_and_layout.h"
 #include <poincare/src/layout/horizontal_layout.h>
-#include <poincare/src/layout/editable_string_layout.h>
 #include <poincare/src/layout/empty_visible_layout.h>
 
 namespace ExpressionEditor {

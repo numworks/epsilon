@@ -1,8 +1,6 @@
 #include "horizontal_layout.h"
 #include "empty_visible_layout.h"
-#include "string_layout.h"
 #include <poincare/expression_layout_cursor.h>
-
 extern "C" {
 #include <assert.h>
 #include <kandinsky.h>

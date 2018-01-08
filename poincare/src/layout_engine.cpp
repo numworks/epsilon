@@ -3,7 +3,6 @@
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_left_layout.h"
 #include "layout/parenthesis_right_layout.h"
-#include "layout/string_layout.h"
 extern "C" {
 #include<assert.h>
 }

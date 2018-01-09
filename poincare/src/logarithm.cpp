@@ -234,12 +234,7 @@ ExpressionLayout * Logarithm::privateCreateLayout(FloatDisplayMode floatDisplayM
   if (numberOfOperands() == 1) {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
   }
-  HorizontalLayout * result = new HorizontalLayout();
-  result->addChildAtIndex(LayoutEngine::createStringLayout("log", strlen("log")), 0);
-  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(operand(1)->createLayout(floatDisplayMode, complexFormat), VerticalOffsetLayout::Type::Subscript, false);
-  result->addChildAtIndex(offsetLayout, 1);
-  result->addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false), 2);
-  return result;
+  return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));
 }
 
 }

@@ -41,10 +41,6 @@ void GraphController::selectRegressionCurve() {
   *m_selectedDotIndex = -1;
 }
 
-BannerView * GraphController::bannerView() {
-  return &m_bannerView;
-}
-
 CurveView * GraphController::curveView() {
   return &m_view;
 }

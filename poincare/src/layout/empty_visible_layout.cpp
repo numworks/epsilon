@@ -5,7 +5,7 @@
 namespace Poincare {
 
 EmptyVisibleLayout::EmptyVisibleLayout() :
-  EmptyLayout(),
+  StaticLayoutHierarchy(),
   m_fillRectColor(KDColor::RGB24(0xffd370)) //TODO make static or in Palette?
 {
 }
@@ -13,6 +13,10 @@ EmptyVisibleLayout::EmptyVisibleLayout() :
 ExpressionLayout * EmptyVisibleLayout::clone() const {
   EmptyVisibleLayout * layout = new EmptyVisibleLayout();
   return layout;
+}
+
+void EmptyVisibleLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
+  replaceWith(brother, true);
 }
 
 void EmptyVisibleLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
@@ -57,6 +61,14 @@ bool EmptyVisibleLayout::moveRight(ExpressionLayoutCursor * cursor) {
     return m_parent->moveRight(cursor);
   }
   return false;
+}
+
+int EmptyVisibleLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[0] = 0;
+  return 0;
 }
 
 void EmptyVisibleLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

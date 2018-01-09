@@ -14,6 +14,8 @@ class Addition : public DynamicHierarchy {
   friend class Multiplication;
   friend class Subtraction;
   friend class Power;
+  friend class Complex<float>;
+  friend class Complex<double>;
 public:
   Type type() const override;
   Expression * clone() const override;

@@ -101,6 +101,8 @@ const ToolboxMessageTree predictionChildren[3] = {
   ToolboxMessageTree(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence, I18n::Message::ConfidenceCommandWithArg)};
 
 const int pointedLayoutPathAbs[] = {0};
+const int pointedLayoutPathRoot[] = {1};
+const int pointedLayoutPathLog[] = {3,0};
 #if LIST_ARE_DEFINED
 const ToolboxMessageTree menu[12] = {
 #elif MATRICES_ARE_DEFINED
@@ -113,8 +115,16 @@ const ToolboxMessageTree menu[10] = {
         new EmptyVisibleLayout()),
       const_cast<int *>(&pointedLayoutPathAbs[0]),
       1),
-  ToolboxMessageTree(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot, I18n::Message::RootCommandWithArg),
-  ToolboxMessageTree(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm, I18n::Message::LogCommandWithArg),
+  ToolboxMessageTree(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot, I18n::Message::RootCommandWithArg, nullptr, 0,
+      new NthRootLayout(
+        new EmptyVisibleLayout(),
+        new EmptyVisibleLayout()),
+      const_cast<int *>(&pointedLayoutPathRoot[0]),
+      1),
+  ToolboxMessageTree(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm, I18n::Message::LogCommandWithArg, nullptr, 0,
+      LayoutEngine::createLogLayout(nullptr, new EmptyVisibleLayout()),
+      const_cast<int *>(&pointedLayoutPathLog[0]),
+      2),
   ToolboxMessageTree(I18n::Message::Calculation, I18n::Message::Default, I18n::Message::Default, calculChildren, 4),
   ToolboxMessageTree(I18n::Message::ComplexNumber, I18n::Message::Default, I18n::Message::Default, complexChildren, 5),
   ToolboxMessageTree(I18n::Message::Probability, I18n::Message::Default, I18n::Message::Default, probabilityChildren, 2),

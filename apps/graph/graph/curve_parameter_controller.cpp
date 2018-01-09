@@ -7,13 +7,13 @@ using namespace Shared;
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphController * graphController) :
+CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
   FunctionCurveParameterController(graphRange, cursor),
   m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
   m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),
   m_derivativeCell(I18n::Message::DerivateNumber),
-  m_calculationParameterController(this, graphController)
+  m_calculationParameterController(this, graphView, bannerView, graphRange, cursor)
 {
 }
 
@@ -37,7 +37,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
     switch (selectedRow()) {
       case 0:
       {
-        m_calculationParameterController.setFunction(m_function);
+        m_calculationParameterController.setFunction(static_cast<CartesianFunction *>(m_function));
         StackViewController * stack = (StackViewController *)parentResponder();
         stack->push(&m_calculationParameterController);
         return true;

@@ -34,7 +34,6 @@ public:
   };
   InputViewController * inputViewController() override;
   const char * XNT() override;
-  Responder * graphControllerParent();
 private:
   App(Container * container, Snapshot * snapshot);
   ListController m_listController;

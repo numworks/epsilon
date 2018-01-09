@@ -42,7 +42,7 @@ public:
       int firstChildIndex = 0,
       int lastChildIndex = -1,
       ChildNeedsParenthesis childNeedsParenthesis = [](const char * operatorName) {
-        return (operatorName[1] == 0 && (operatorName[0] == powerChar || operatorName[0] == divideChar)); }); //TODO
+        return (operatorName[1] == 0 && (operatorName[0] == divideChar)); });
   static int writePrefixExpressionLayoutTextInBuffer(
       const ExpressionLayout * expressionLayout,
       char * buffer,
@@ -54,7 +54,6 @@ public:
   static int writeOneCharInBuffer(char * buffer, int bufferSize, char charToWrite);
 
 private:
-  static constexpr char powerChar = '^';
   static constexpr char divideChar = '/';
   // These two functions return the index of the null-terminating char.
   static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, const char * operatorName, int firstChildIndex, int lastChildIndex, OperandNeedsParenthesis operandNeedsParenthesis, ChildNeedsParenthesis childNeedsParenthesis);

@@ -1,10 +1,7 @@
 #ifndef SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 #define SHARED_INTERACTIVE_CURVE_VIEW_CONTROLLER_H
 
-#include <escher.h>
-#include "interactive_curve_view_range.h"
-#include "curve_view_cursor.h"
-#include "curve_view.h"
+#include "simple_interactive_curve_view_controller.h"
 #include "cursor_view.h"
 #include "ok_view.h"
 #include "banner_view.h"
@@ -13,10 +10,9 @@
 
 namespace Shared {
 
-class InteractiveCurveViewController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
+class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 public:
   InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
-  View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -35,25 +31,16 @@ public:
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
-  constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
   virtual BannerView * bannerView() = 0;
   virtual bool handleEnter() = 0;
   Responder * tabController() const;
   virtual StackViewController * stackController() const;
-  virtual void reloadBannerView() = 0;
   virtual void initRangeParameters() = 0;
   virtual void initCursorParameters() = 0;
-  /* the result of moveCursorVertically/Horizontally means:
-   * false -> the cursor cannot move in this direction
-   * true -> the cursor moved */
-  virtual bool moveCursorHorizontally(int direction) = 0;
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t modelVersion() = 0;
   virtual uint32_t rangeVersion() = 0;
-  virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;
-  virtual CurveView * curveView() = 0;
   virtual bool isCursorVisible() = 0;
-  CurveViewCursor * m_cursor;
   CursorView m_cursorView;
   OkView m_okView;
 private:

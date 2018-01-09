@@ -74,6 +74,7 @@ class Expression {
   friend class Trigonometry;
   friend class ApproximationEngine;
   friend class SimplificationEngine;
+  friend class EmptyExpression;
 
 public:
   enum class Type : uint8_t {
@@ -136,6 +137,7 @@ public:
     MatrixTranspose,
     PredictionInterval,
     SimplificationRoot,
+    EmptyExpression
   };
   enum class FloatDisplayMode {
     Decimal = 0,

@@ -51,6 +51,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token <character> SYMBOL
 %token <function> FUNCTION
 %token <expression> UNDEFINED
+%token <expression> EMPTY
 
 /* Operator tokens */
 %token PLUS
@@ -114,6 +115,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %nonassoc ICOMPLEX
 %nonassoc UNDEFINED
 %nonassoc SYMBOL
+%nonassoc EMPTY
 
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> final_exp;
@@ -129,7 +131,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * have some heap-allocated data that need to be discarded. */
 
 %destructor { delete $$; } FUNCTION
-%destructor { delete $$; } UNDEFINED final_exp exp number
+%destructor { delete $$; } UNDEFINED final_exp exp number EMPTY
 %destructor { delete $$; } lstData
 /* MATRICES_ARE_DEFINED */
 %destructor { delete $$; } mtxData
@@ -180,6 +182,7 @@ symb:
  *  "exp MINUS exp". */
 exp:
   UNDEFINED        { $$ = $1; }
+  | EMPTY          { $$ = $1; }
   | exp BANG       { $$ = new Poincare::Factorial($1, false); }
   | number             { $$ = $1; }
   | symb           { $$ = $1; }

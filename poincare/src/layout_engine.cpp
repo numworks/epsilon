@@ -3,6 +3,7 @@
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_left_layout.h"
 #include "layout/parenthesis_right_layout.h"
+#include "layout/vertical_offset_layout.h"
 extern "C" {
 #include<assert.h>
 }
@@ -49,6 +50,16 @@ ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expressio
   return result;
 }
 
+ExpressionLayout * LayoutEngine::createParenthesedLayout(ExpressionLayout * layout, bool cloneLayout) {
+  HorizontalLayout * result = new HorizontalLayout();
+  result->addChildAtIndex(new ParenthesisLeftLayout(), 0);
+  if (layout != nullptr) {
+    result->addOrMergeChildAtIndex(cloneLayout ? layout->clone() : layout, 1);
+  }
+  result->addChildAtIndex(new ParenthesisRightLayout(), result->numberOfChildren());
+  return result;
+}
+
 ExpressionLayout * LayoutEngine::createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize) {
   assert(bufferSize > 0);
   HorizontalLayout * resultLayout = new HorizontalLayout();
@@ -58,12 +69,12 @@ ExpressionLayout * LayoutEngine::createStringLayout(const char * buffer, int buf
   return resultLayout;
 }
 
-ExpressionLayout * LayoutEngine::createParenthesedLayout(ExpressionLayout * layout, bool cloneLayout) {
-  HorizontalLayout * result = new HorizontalLayout();
-  result->addChildAtIndex(new ParenthesisLeftLayout(), 0);
-  result->addOrMergeChildAtIndex(cloneLayout ? layout->clone() : layout, 1);
-  result->addChildAtIndex(new ParenthesisRightLayout(), result->numberOfChildren());
-  return result;
+ExpressionLayout * LayoutEngine::createLogLayout(ExpressionLayout * argument, ExpressionLayout * index) {
+  HorizontalLayout * resultLayout = static_cast<HorizontalLayout *>(createStringLayout("log", 3));
+  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(index, VerticalOffsetLayout::Type::Subscript, false);
+  resultLayout->addChildAtIndex(offsetLayout, resultLayout->numberOfChildren());
+  resultLayout->addOrMergeChildAtIndex(createParenthesedLayout(argument, false), resultLayout->numberOfChildren());
+  return resultLayout;
 }
 
 int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, const char * operatorName, OperandNeedsParenthesis operandNeedsParenthesis) {

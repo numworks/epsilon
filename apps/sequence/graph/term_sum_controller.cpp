@@ -15,12 +15,11 @@ using namespace Poincare;
 namespace Sequence {
 
 TermSumController::TermSumController(Responder * parentResponder, GraphView * graphView, CurveViewRange * graphRange, CurveViewCursor * cursor) :
-  ViewController(parentResponder),
+  SimpleInteractiveCurveViewController(parentResponder, graphRange, graphView, cursor),
   m_graphView(graphView),
   m_legendView(),
   m_graphRange(graphRange),
   m_sequence(nullptr),
-  m_cursor(cursor),
   m_cursorView(),
   m_bufferCursorPosition(0),
   m_step(0),
@@ -31,10 +30,6 @@ TermSumController::TermSumController(Responder * parentResponder, GraphView * gr
 
 const char * TermSumController::title() {
   return I18n::translate(I18n::Message::TermSum);
-}
-
-View * TermSumController::view() {
-  return m_graphView;
 }
 
 void TermSumController::viewWillAppear() {
@@ -57,6 +52,9 @@ void TermSumController::viewWillAppear() {
 }
 
 bool TermSumController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Plus || event == Ion::Events::Minus) {
+    return handleZoom(event);
+  }
   if (m_step > 1 && event != Ion::Events::OK && event != Ion::Events::EXE && event != Ion::Events::Back) {
     return false;
   }
@@ -161,6 +159,14 @@ bool TermSumController::moveCursorHorizontallyToPosition(int position) {
 void TermSumController::setSequence(Sequence * sequence) {
   m_graphView->selectFunction(sequence);
   m_sequence = sequence;
+}
+
+CurveView * TermSumController::curveView() {
+  return m_graphView;
+}
+
+InteractiveCurveViewRange * TermSumController::interactiveCurveViewRange() {
+  return m_graphRange;
 }
 
 /* Legend View */

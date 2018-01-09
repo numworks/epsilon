@@ -6,14 +6,14 @@
 #include "curve_view_range.h"
 #include "vertical_cursor_view.h"
 #include "../../shared/curve_view_cursor.h"
+#include "../../shared/simple_interactive_curve_view_controller.h"
 
 namespace Sequence {
 
-class TermSumController : public ViewController {
+class TermSumController : public Shared::SimpleInteractiveCurveViewController {
 public:
   TermSumController(Responder * parentResponder, GraphView * graphView, CurveViewRange * graphRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
-  View * view() override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   bool moveCursorHorizontallyToPosition(int position);
@@ -23,6 +23,8 @@ private:
   constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
   constexpr static float k_cursorBottomMarginRatio = 0.28f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
+  Shared::CurveView * curveView() override;
   class LegendView : public View {
   public:
     LegendView();
@@ -50,7 +52,6 @@ private:
   LegendView m_legendView;
   CurveViewRange * m_graphRange;
   Sequence * m_sequence;
-  Shared::CurveViewCursor * m_cursor;
   VerticalCursorView m_cursorView;
   /* The user can move the cursor to an abscissa n by typing the right digits.
    * To be able to go to abscissa represented by more than one digit, we record

@@ -1,22 +1,29 @@
 #ifndef POINCARE_EMPTY_VISIBLE_LAYOUT_H
 #define POINCARE_EMPTY_VISIBLE_LAYOUT_H
 
-#include "empty_layout.h"
+#include <poincare/static_layout_hierarchy.h>
 #include <assert.h>
 
 namespace Poincare {
 
-class EmptyVisibleLayout : public EmptyLayout {
+class EmptyVisibleLayout : public StaticLayoutHierarchy<0> {
 public:
   EmptyVisibleLayout();
   ExpressionLayout * clone() const override;
+  void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  bool isEmpty() const override { return true; }
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   virtual KDSize computeSize() override;
   void computeBaseline() override;
+  KDPoint positionOfChild(ExpressionLayout * child) override {
+    assert(false);
+    return KDPointZero;
+  }
 private:
   constexpr static KDCoordinate k_width = 7;
   constexpr static KDCoordinate k_height = 13;

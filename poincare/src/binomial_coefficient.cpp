@@ -2,8 +2,7 @@
 #include <poincare/undefined.h>
 #include <poincare/complex.h>
 #include <poincare/rational.h>
-#include "layout/parenthesis_layout.h"
-#include "layout/grid_layout.h"
+#include "layout/binomial_coefficient_layout.h"
 
 extern "C" {
 #include <stdlib.h>
@@ -76,10 +75,10 @@ Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angl
 ExpressionLayout * BinomialCoefficient::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);
-  childrenLayouts[1] = operand(1)->createLayout(floatDisplayMode, complexFormat);
-  return new ParenthesisLayout(new GridLayout(childrenLayouts, 2, 1, false), false);
+  return new BinomialCoefficientLayout(
+      operand(0)->createLayout(floatDisplayMode, complexFormat),
+      operand(1)->createLayout(floatDisplayMode, complexFormat),
+      false);
 }
 
 template<typename T>

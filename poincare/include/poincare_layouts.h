@@ -3,6 +3,7 @@
 
 #include <poincare/include/poincare/expression_layout.h>
 #include <poincare/src/layout/absolute_value_layout.h>
+#include <poincare/src/layout/binomial_coefficient_layout.h>
 #include <poincare/src/layout/bracket_layout.h>
 #include <poincare/src/layout/bracket_left_layout.h>
 #include <poincare/src/layout/bracket_right_layout.h>

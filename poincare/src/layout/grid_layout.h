@@ -6,6 +6,7 @@
 namespace Poincare {
 
 class GridLayout : public DynamicLayoutHierarchy {
+  friend class BinomialCoefficientLayout;
 public:
   GridLayout(const ExpressionLayout * const * entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands);
   ExpressionLayout * clone() const override;

@@ -110,32 +110,35 @@ bool ExpressionLayout::hasAncestor(const ExpressionLayout * e) const {
 }
 
 void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
-  if (m_parent) {
-    int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? m_parent->indexOfChild(this) : m_parent->indexOfChild(this) + 1;
-    if (m_parent->isHorizontal()) {
-      static_cast<HorizontalLayout *>(m_parent)->addOrMergeChildAtIndex(brother, brotherIndex);
-      return;
+  // First, assess the special case when the layout is horizontal.
+  // If so, add the "brother" as a child.
+  if (isHorizontal()) {
+    // If there is only one empty child, remove it before adding the layout.
+    if (numberOfChildren() == 1 && editableChild(0)->isEmpty()) {
+      removeChildAtIndex(0, true);
     }
     if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-      replaceWithJuxtapositionOf(brother, this, false);
+      addChildAtIndex(brother, 0);
       return;
     }
     assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-    replaceWithJuxtapositionOf(this, brother, false);
+    addChildAtIndex(brother, numberOfChildren());
     return;
   }
-  // If there is no parent, the pointed layout is the main horizontal layout.
-  // Add the "brother" as a child.
-  // If there is only one empty child, remove it before adding the layout.
-  if (numberOfChildren() == 1 && editableChild(0)->isEmpty()) {
-    removeChildAtIndex(0, true);
+
+  // If the layout is not horizontal, it must have a parent.
+  assert(m_parent);
+  int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? m_parent->indexOfChild(this) : m_parent->indexOfChild(this) + 1;
+  if (m_parent->isHorizontal()) {
+    static_cast<HorizontalLayout *>(m_parent)->addOrMergeChildAtIndex(brother, brotherIndex);
+    return;
   }
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    addChildAtIndex(brother, 0);
+    replaceWithJuxtapositionOf(brother, this, false);
     return;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  addChildAtIndex(brother, numberOfChildren());
+  replaceWithJuxtapositionOf(this, brother, false);
   return;
 }
 

@@ -8,6 +8,7 @@ namespace Poincare {
 
 class ParenthesisRightLayout : public ParenthesisLeftRightLayout {
   friend class ParenthesisLayout;
+  friend class BinomialCoefficientLayout;
   friend class SequenceLayout;
 public:
   using ParenthesisLeftRightLayout::ParenthesisLeftRightLayout;

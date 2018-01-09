@@ -11,50 +11,22 @@ using namespace Poincare;
  * and the text which would be edited by clicking on the row. When the node is a
  * subtree, the edited text is set at I18n::Message::Default. */
 
-const int pointedLayoutPathIntegral[] = {0};
-const int pointedLayoutPathSum[] = {0};
+
 const ToolboxMessageTree calculChildren[4] = {
-  ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg, nullptr, 0),
-  ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg, nullptr, 0,
-      new IntegralLayout(
-        new EmptyVisibleLayout(),
-        new EmptyVisibleLayout(),
-        new EmptyVisibleLayout(),
-        false),
-      const_cast<int *>(&pointedLayoutPathIntegral[0]),
-      1),
-  ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommandWithArg, nullptr, 0,
-      new SumLayout(
-        new EmptyVisibleLayout(),
-        new EmptyVisibleLayout(),
-        new EmptyVisibleLayout(),
-        false),
-      const_cast<int *>(&pointedLayoutPathSum[0]),
-      1),
+  ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg),
+  ToolboxMessageTree(I18n::Message::IntCommandWithArg, I18n::Message::Integral, I18n::Message::IntCommandWithArg),
+  ToolboxMessageTree(I18n::Message::SumCommandWithArg, I18n::Message::Sum, I18n::Message::SumCommandWithArg),
   ToolboxMessageTree(I18n::Message::ProductCommandWithArg, I18n::Message::Product, I18n::Message::ProductCommandWithArg)};
 
-const int pointedLayoutPathConj[] = {0};
 const ToolboxMessageTree complexChildren[5] = {
   ToolboxMessageTree(I18n::Message::AbsCommandWithArg,I18n::Message::ComplexAbsoluteValue, I18n::Message::AbsCommandWithArg),
   ToolboxMessageTree(I18n::Message::ArgCommandWithArg, I18n::Message::Agument, I18n::Message::ArgCommandWithArg),
   ToolboxMessageTree(I18n::Message::ReCommandWithArg, I18n::Message::RealPart, I18n::Message::ReCommandWithArg),
   ToolboxMessageTree(I18n::Message::ImCommandWithArg, I18n::Message::ImaginaryPart, I18n::Message::ImCommandWithArg),
-  ToolboxMessageTree(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate, I18n::Message::ConjCommandWithArg, nullptr, 0,
-      new ConjugateLayout(
-        new EmptyVisibleLayout()),
-      const_cast<int *>(&pointedLayoutPathConj[0]),
-      1)};
+  ToolboxMessageTree(I18n::Message::ConjCommandWithArg, I18n::Message::Conjugate, I18n::Message::ConjCommandWithArg)};
 
-const int pointedLayoutPathBinomial[] = {0, 0};
 const ToolboxMessageTree probabilityChildren[2] = {
-  ToolboxMessageTree(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination, I18n::Message::BinomialCommandWithArg, nullptr, 0,
-      new ParenthesisLayout(
-        new GridLayout(Poincare::ExpressionLayoutArray(
-              new EmptyVisibleLayout(),
-              new EmptyVisibleLayout()).array(),
-              2, 1, false)),
-      const_cast<int *>(&pointedLayoutPathBinomial[0]),
-      2),
+  ToolboxMessageTree(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination, I18n::Message::BinomialCommandWithArg),
   ToolboxMessageTree(I18n::Message::PermuteCommandWithArg, I18n::Message::Permutation, I18n::Message::PermuteCommandWithArg)};
 
 const ToolboxMessageTree arithmeticChildren[4] = {
@@ -100,8 +72,6 @@ const ToolboxMessageTree predictionChildren[3] = {
   ToolboxMessageTree(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction, I18n::Message::PredictionCommandWithArg),
   ToolboxMessageTree(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence, I18n::Message::ConfidenceCommandWithArg)};
 
-const int pointedLayoutPathAbs[] = {0};
-const int pointedLayoutPathRoot[] = {1};
 const int pointedLayoutPathLog[] = {3,0};
 #if LIST_ARE_DEFINED
 const ToolboxMessageTree menu[12] = {
@@ -110,21 +80,9 @@ const ToolboxMessageTree menu[11] = {
 #else
 const ToolboxMessageTree menu[10] = {
 #endif
-  ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg, nullptr, 0,
-      new AbsoluteValueLayout(
-        new EmptyVisibleLayout()),
-      const_cast<int *>(&pointedLayoutPathAbs[0]),
-      1),
-  ToolboxMessageTree(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot, I18n::Message::RootCommandWithArg, nullptr, 0,
-      new NthRootLayout(
-        new EmptyVisibleLayout(),
-        new EmptyVisibleLayout()),
-      const_cast<int *>(&pointedLayoutPathRoot[0]),
-      1),
-  ToolboxMessageTree(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm, I18n::Message::LogCommandWithArg, nullptr, 0,
-      LayoutEngine::createLogLayout(nullptr, new EmptyVisibleLayout()),
-      const_cast<int *>(&pointedLayoutPathLog[0]),
-      2),
+  ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg),
+  ToolboxMessageTree(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot, I18n::Message::RootCommandWithArg),
+  ToolboxMessageTree(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm, I18n::Message::LogCommandWithArg, nullptr, 0, const_cast<int *>(&pointedLayoutPathLog[0]), 2),
   ToolboxMessageTree(I18n::Message::Calculation, I18n::Message::Default, I18n::Message::Default, calculChildren, 4),
   ToolboxMessageTree(I18n::Message::ComplexNumber, I18n::Message::Default, I18n::Message::Default, complexChildren, 5),
   ToolboxMessageTree(I18n::Message::Probability, I18n::Message::Default, I18n::Message::Default, probabilityChildren, 2),
@@ -175,13 +133,38 @@ bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
     return true;
   }
   // Deal with ExpressionEditor::Controller for now.
+  ToolboxMessageTree * messageTree = selectedMessageTree;
   m_selectableTableView.deselectTable();
-  ExpressionLayout * newLayout = selectedMessageTree->layout()->clone();
-  ExpressionLayout * pointedLayout = newLayout;
-  for (int i = 0; i < selectedMessageTree->pointedPathLength(); i++) {
-    pointedLayout = pointedLayout->editableChild(selectedMessageTree->pointedPath()[i]);
+  // Translate the message and replace the arguments with Empty chars.
+  const char * editedText = I18n::translate(messageTree->insertedText());
+  char strippedEditedText[strlen(editedText)];
+  Shared::ToolboxHelpers::TextToParseIntoLayoutForCommandMessage(messageTree->insertedText(), strippedEditedText);
+  // Create the layout
+  Expression * resultExpression = Expression::parse(strippedEditedText);
+  if (resultExpression != nullptr) {
+    ExpressionLayout * resultLayout = resultExpression->createLayout();
+    // Find the pointed layout.
+    ExpressionLayout * pointedLayout = resultLayout;
+    if (messageTree->pointedPath() != nullptr) {
+      for (int i = 0; i < messageTree->pointedPathLength(); i++) {
+      assert(messageTree->pointedPath()[i] < pointedLayout->numberOfChildren());
+        pointedLayout = pointedLayout->editableChild(messageTree->pointedPath()[i]);
+      }
+    } else if (resultLayout->isHorizontal()) {
+      // If the layout is horizontal, pick the first open parenthesis.
+      for (int i = 0; i < resultLayout->numberOfChildren(); i++) {
+        if (resultLayout->editableChild(i)->isLeftParenthesis()) {
+          pointedLayout = resultLayout->editableChild(i);
+          break;
+        }
+      }
+    } else if (resultLayout->numberOfChildren() > 0) {
+      // Else, if the layout has children, pick the first one.
+      pointedLayout = resultLayout->editableChild(0);
+    }
+    // Insert the layout
+    expressionEditorControllerSender()->insertLayoutAtCursor(resultLayout, pointedLayout);
   }
-  expressionEditorControllerSender()->insertLayoutAtCursor(newLayout, pointedLayout);
   app()->dismissModalViewController();
   return true;
 }

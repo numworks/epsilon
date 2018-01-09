@@ -41,7 +41,8 @@ void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
       return;
     }
     // If the new layout is empty and it was the only horizontal layout child,
-    // replace the horizontal layout with this empty layout.
+    // replace the horizontal layout with this empty layout (only if this is not
+    // the main layout, so only if the layout has a parent.
     if (m_parent) {
       replaceWith(newChild);
       return;

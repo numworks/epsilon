@@ -82,8 +82,4 @@ const char * App::XNT() {
   return "x";
 }
 
-Responder * App::graphControllerParent() {
-  return &m_graphAlternateEmptyViewController;
-}
-
 }

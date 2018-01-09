@@ -7,12 +7,12 @@ using namespace Shared;
 
 namespace Graph {
 
-CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphController * graphController) :
+CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_function(nullptr),
-  m_graphController(graphController)
+  m_tangentGraphController(nullptr, graphView, bannerView, range, cursor)
 {
 }
 
@@ -34,11 +34,11 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     switch(selectedRow()) {
       case 4:
       {
-        m_graphController->setType(GraphView::Type::Tangent);
+        m_tangentGraphController.setFunction(m_function);
         StackViewController * stack = (StackViewController *)parentResponder();
         stack->pop();
         stack->pop();
-        stack->push(m_graphController);
+        stack->push(&m_tangentGraphController);
         return true;
       }
       default:
@@ -73,7 +73,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   myCell->setMessage(titles[index]);
 }
 
-void CalculationParameterController::setFunction(Function * function) {
+void CalculationParameterController::setFunction(CartesianFunction * function) {
   m_function = function;
 }
 

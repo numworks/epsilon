@@ -18,7 +18,6 @@
 #include <poincare/src/layout/horizontal_layout.h>
 #include <poincare/src/layout/integral_layout.h>
 #include <poincare/src/layout/nth_root_layout.h>
-#include <poincare/src/layout/parenthesis_layout.h>
 #include <poincare/src/layout/parenthesis_left_layout.h>
 #include <poincare/src/layout/parenthesis_right_layout.h>
 #include <poincare/src/layout/product_layout.h>

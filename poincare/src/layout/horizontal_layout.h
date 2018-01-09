@@ -9,7 +9,6 @@ namespace Poincare {
 class HorizontalLayout : public DynamicLayoutHierarchy {
   friend class BinomialCoefficientLayout;
   friend class IntegralLayout;
-  friend class ParenthesisLayout;
   friend class SequenceLayout;
 public:
   using DynamicLayoutHierarchy::DynamicLayoutHierarchy;

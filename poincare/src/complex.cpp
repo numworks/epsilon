@@ -1,4 +1,9 @@
 #include <poincare/complex.h>
+#include <poincare/undefined.h>
+#include <poincare/decimal.h>
+#include <poincare/addition.h>
+#include <poincare/multiplication.h>
+#include <poincare/symbol.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -12,6 +17,17 @@ extern "C" {
 
 namespace Poincare {
 
+template<typename T>
+int exponent(T f) {
+  T logBase10 = f != 0 ? std::log10(std::fabs(f)) : 0;
+  int exponentInBase10 = std::floor(logBase10);
+  /* Correct the exponent in base 10: sometines the exact log10 of f is 6.999999
+   * but is stored as 7 in hardware. We catch these cases here. */
+  if (f != 0 && logBase10 == (int)logBase10 && std::fabs(f) < std::pow(10, logBase10)) {
+    exponentInBase10--;
+  }
+  return exponentInBase10;
+}
 
 void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferLength, Integer i, int decimalMarkerPosition) {
   /* The decimal marker position is always preceded by a char, thus, it is never
@@ -243,6 +259,28 @@ ExpressionLayout * Complex<T>::privateCreateLayout(Expression::FloatDisplayMode 
   return createCartesianLayout(floatDisplayMode);
 }
 
+template <class T>
+Expression * Complex<T>::CreateDecimal(T f) {
+  if (std::isnan(f) || std::isinf(f)) {
+    return new Undefined();
+  }
+  int e = exponent(f);
+  int64_t mantissaf = f * std::pow((T)10, -e+PrintFloat::k_numberOfStoredSignificantDigits+1);
+  return new Decimal(Integer(mantissaf), e);
+}
+
+template <class T>
+Expression * Complex<T>::shallowReduce(Context & context, AngleUnit angleUnit) {
+  Expression * a = CreateDecimal(m_a);
+  Expression * b = CreateDecimal(m_b);
+  Multiplication * m = new Multiplication(new Symbol(Ion::Charset::IComplex), b, false);
+  Addition * add = new Addition(a, m, false);
+  a->shallowReduce(context, angleUnit);
+  b->shallowReduce(context, angleUnit);
+  m->shallowReduce(context, angleUnit);
+  return replaceWith(add, true)->shallowReduce(context, angleUnit);
+}
+
 template<typename T>
 template<typename U>
 Complex<U> * Complex<T>::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
@@ -333,13 +371,7 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
     return currentChar;
   }
 
-  T logBase10 = f != 0 ? std::log10(std::fabs(f)) : 0;
-  int exponentInBase10 = std::floor(logBase10);
-  /* Correct the exponent in base 10: sometines the exact log10 of f is 6.999999
-   * but is stored as 7 in hardware. We catch these cases here. */
-  if (f != 0 && logBase10 == (int)logBase10 && std::fabs(f) < std::pow(10, logBase10)) {
-    exponentInBase10--;
-  }
+  int exponentInBase10 = exponent(f);
 
   Expression::FloatDisplayMode displayMode = mode;
   if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Expression::FloatDisplayMode::Decimal) {

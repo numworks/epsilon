@@ -16,6 +16,8 @@ class Multiplication : public DynamicHierarchy {
   friend class Power;
   friend class Subtraction;
   friend class Symbol;
+  friend class Complex<float>;
+  friend class Complex<double>;
 public:
   Type type() const override;
   Expression * clone() const override;

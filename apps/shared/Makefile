@@ -34,6 +34,7 @@ app_objs += $(addprefix apps/shared/,\
   parameter_text_field_delegate.o\
   range_parameter_controller.o\
   regular_table_view_data_source.o\
+  simple_interactive_curve_view_controller.o\
   store_controller.o\
   store_parameter_controller.o\
   tab_table_controller.o\

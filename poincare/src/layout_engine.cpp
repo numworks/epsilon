@@ -16,14 +16,14 @@ ExpressionLayout * LayoutEngine::createInfixLayout(const Expression * expression
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 1);
   HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(expression->operand(0)->createLayout(), 0);
+  result->addOrMergeChildAtIndex(expression->operand(0)->createLayout(), 0, true);
   for (int i = 1; i < numberOfOperands; i++) {
-    result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result->numberOfChildren());
+    result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result->numberOfChildren(), true);
     result->addOrMergeChildAtIndex(
         expression->operand(i)->type() == Expression::Type::Opposite ?
           createParenthesedLayout(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), false) :
           expression->operand(i)->createLayout(floatDisplayMode, complexFormat),
-        result->numberOfChildren());
+        result->numberOfChildren(), true);
   }
   return result;
 }
@@ -32,21 +32,22 @@ ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expressio
   assert(floatDisplayMode != Expression::FloatDisplayMode::Default);
   assert(complexFormat != Expression::ComplexFormat::Default);
   int numberOfOperands = expression->numberOfOperands();
+  assert(numberOfOperands > 0);
   HorizontalLayout * result = new HorizontalLayout();
 
   // Add the operator name.
-  result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0);
+  result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, true);
 
   // Create the layout of arguments separated by commas.
   HorizontalLayout * args = new HorizontalLayout();
-  args->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, complexFormat), 0);
+  args->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, complexFormat), 0, true);
   for (int i = 1; i < numberOfOperands; i++) {
     args->addChildAtIndex(new CharLayout(','), args->numberOfChildren());
-    args->addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), args->numberOfChildren());
+    args->addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), args->numberOfChildren(), true);
   }
 
   // Add the parenthesed arguments.
-  result->addOrMergeChildAtIndex(createParenthesedLayout(args, false), result->numberOfChildren());
+  result->addOrMergeChildAtIndex(createParenthesedLayout(args, false), result->numberOfChildren(), true);
   return result;
 }
 
@@ -54,7 +55,7 @@ ExpressionLayout * LayoutEngine::createParenthesedLayout(ExpressionLayout * layo
   HorizontalLayout * result = new HorizontalLayout();
   result->addChildAtIndex(new ParenthesisLeftLayout(), 0);
   if (layout != nullptr) {
-    result->addOrMergeChildAtIndex(cloneLayout ? layout->clone() : layout, 1);
+    result->addOrMergeChildAtIndex(cloneLayout ? layout->clone() : layout, 1, true);
   }
   result->addChildAtIndex(new ParenthesisRightLayout(), result->numberOfChildren());
   return result;
@@ -73,7 +74,7 @@ ExpressionLayout * LayoutEngine::createLogLayout(ExpressionLayout * argument, Ex
   HorizontalLayout * resultLayout = static_cast<HorizontalLayout *>(createStringLayout("log", 3));
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(index, VerticalOffsetLayout::Type::Subscript, false);
   resultLayout->addChildAtIndex(offsetLayout, resultLayout->numberOfChildren());
-  resultLayout->addOrMergeChildAtIndex(createParenthesedLayout(argument, false), resultLayout->numberOfChildren());
+  resultLayout->addOrMergeChildAtIndex(createParenthesedLayout(argument, false), resultLayout->numberOfChildren(), true);
   return resultLayout;
 }
 

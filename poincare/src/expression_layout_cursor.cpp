@@ -77,7 +77,7 @@ ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers(
     ExpressionLayout * rightBrother = newChild->editableParent()->editableChild(fractionIndexInParent+1);
     if (rightBrother->isCollapsable(&numberOfOpenParenthesis, false)) {
       newChild->editableParent()->removeChildAtIndex(fractionIndexInParent+1, false);
-      child2->addOrMergeChildAtIndex(rightBrother, child2->numberOfChildren());
+      child2->addOrMergeChildAtIndex(rightBrother, child2->numberOfChildren(), true);
       numberOfBrothers--;
     } else {
       break;
@@ -89,7 +89,7 @@ ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers(
     ExpressionLayout * leftBrother = newChild->editableParent()->editableChild(fractionIndexInParent-1);
     if (leftBrother->isCollapsable(&numberOfOpenParenthesis, true)) {
       newChild->editableParent()->removeChildAtIndex(fractionIndexInParent-1, false);
-      child1->addOrMergeChildAtIndex(leftBrother, 0);
+      child1->addOrMergeChildAtIndex(leftBrother, 0, true);
       fractionIndexInParent--;
     } else {
       break;

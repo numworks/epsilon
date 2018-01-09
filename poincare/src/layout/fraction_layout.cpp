@@ -72,8 +72,8 @@ void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     detachChild(numerator);
     detachChild(denominator);
     HorizontalLayout * newLayout = new HorizontalLayout();
-    newLayout->addOrMergeChildAtIndex(denominator, 0);
-    newLayout->addOrMergeChildAtIndex(numerator, 0);
+    newLayout->addOrMergeChildAtIndex(denominator, 0, true);
+    newLayout->addOrMergeChildAtIndex(numerator, 0, true);
     // Add the denominator before the numerator to have the right order.
     replaceWith(newLayout, true);
     cursor->setPointedExpressionLayout(nextPointedLayout);

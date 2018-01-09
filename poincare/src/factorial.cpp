@@ -77,7 +77,7 @@ ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayM
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0);
+  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0, false);
   result->addChildAtIndex(new CharLayout('!'), result->numberOfChildren());
   return result;
 }

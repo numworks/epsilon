@@ -50,10 +50,10 @@ ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMo
   assert(complexFormat != ComplexFormat::Default);
   HorizontalLayout * result = new HorizontalLayout(new CharLayout('-'), false);
   if (operand(0)->type() == Type::Opposite) {
-    result->addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false), 1);
+    result->addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false), 1, false);
     return result;
   }
-  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 1);
+  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 1, false);
   return result;
 
 }

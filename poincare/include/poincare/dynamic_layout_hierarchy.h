@@ -25,10 +25,10 @@ public:
   int numberOfChildren() const override { return m_numberOfChildren; }
   const ExpressionLayout * const * children() const override { return m_children; };
 
-  void addNonEmptyChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion);
+  void addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren);
   bool addChildAtIndex(ExpressionLayout * operand, int index) override;
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
-  void mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index); // WITHOUT delete.
+  void mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren); // WITHOUT delete.
 
   bool isEmpty() const override;
 protected:

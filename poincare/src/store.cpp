@@ -29,9 +29,9 @@ ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode,
   assert(floatDisplayMode != FloatDisplayMode::Default);
   assert(complexFormat != ComplexFormat::Default);
   HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(value()->createLayout(floatDisplayMode, complexFormat), 0);
+  result->addOrMergeChildAtIndex(value()->createLayout(floatDisplayMode, complexFormat), 0, false);
   result->addChildAtIndex(new CharLayout(Ion::Charset::Sto), result->numberOfChildren());
-  result->addOrMergeChildAtIndex(symbol()->createLayout(floatDisplayMode, complexFormat), result->numberOfChildren());
+  result->addOrMergeChildAtIndex(symbol()->createLayout(floatDisplayMode, complexFormat), result->numberOfChildren(), false);
   return result;
 }
 

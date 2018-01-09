@@ -52,7 +52,7 @@ void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
   // new layout then destroy it.
   if (newChild->isHorizontal()) {
     int indexForInsertion = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
-    mergeChildrenAtIndex(static_cast<HorizontalLayout *>(newChild), indexForInsertion + 1);
+    mergeChildrenAtIndex(static_cast<HorizontalLayout *>(newChild), indexForInsertion + 1, true);
     removeChildAtIndex(indexForInsertion, deleteOldChild);
     return;
   }
@@ -60,14 +60,14 @@ void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
   ExpressionLayout::replaceChild(oldChild, newChild, deleteOldChild);
 }
 
-void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index) {
+void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren) {
   int newIndex = index;
   if (numberOfChildren() > 0 && child(0)->isEmpty()) {
     removeChildAtIndex(0, true);
     newIndex = index == 0 ? 0 : index - 1;
   }
   if (eL->isHorizontal()) {
-    mergeChildrenAtIndex(static_cast<HorizontalLayout *>(eL), newIndex);
+    mergeChildrenAtIndex(static_cast<HorizontalLayout *>(eL), newIndex, removeEmptyChildren);
     return;
   }
   addChildAtIndex(eL, newIndex);

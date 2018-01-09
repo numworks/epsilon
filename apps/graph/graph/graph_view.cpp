@@ -36,7 +36,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       drawCurve(ctx, rect, [](float t, void * model, void * context) {
           float * tangent = (float *)model;
           return tangent[0]*t+tangent[1];
-        }, tangentParameter, nullptr, KDColorBlack);
+        }, tangentParameter, nullptr, Palette::GreyVeryDark);
     }
   }
 }

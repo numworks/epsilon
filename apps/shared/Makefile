@@ -10,6 +10,7 @@ app_objs += $(addprefix apps/shared/,\
   float_parameter_controller.o\
   function.o\
   function_app.o\
+  function_banner_delegate.o\
   function_curve_parameter_controller.o\
   function_go_to_parameter_controller.o\
   function_graph_view.o\

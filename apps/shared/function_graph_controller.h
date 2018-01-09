@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "initialisation_parameter_controller.h"
+#include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
 #include "function_store.h"
 #include "function_graph_view.h"
@@ -10,7 +11,7 @@
 
 namespace Shared {
 
-class FunctionGraphController : public InteractiveCurveViewController, public InteractiveCurveViewRangeDelegate {
+class FunctionGraphController : public InteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public FunctionBannerDelegate {
 public:
   FunctionGraphController(Responder * parentResponder, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Expression::AngleUnit * angleUnitVersion);
   bool isEmpty() const override;
@@ -21,8 +22,6 @@ protected:
   constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
   constexpr static float k_cursorBottomMarginRatio = 0.15f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
-  constexpr static int k_maxLegendLength = 14;
-  constexpr static int k_maxNumberOfCharacters = 50;
   void reloadBannerView() override;
   bool handleEnter() override;
   int m_indexFunctionSelectedByCursor;
@@ -41,8 +40,8 @@ private:
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
   bool isCursorVisible() override;
-  virtual FunctionStore * functionStore() const = 0;
   virtual FunctionGraphView * functionGraphView() = 0;
+  virtual FunctionStore * functionStore() const = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;
   InitialisationParameterController m_initialisationParameterController;
   Poincare::Expression::AngleUnit * m_angleUnitVersion;

@@ -4,7 +4,6 @@
 #include "simple_interactive_curve_view_controller.h"
 #include "cursor_view.h"
 #include "ok_view.h"
-#include "banner_view.h"
 #include "range_parameter_controller.h"
 #include "zoom_parameter_controller.h"
 
@@ -31,7 +30,6 @@ public:
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
-  virtual BannerView * bannerView() = 0;
   virtual bool handleEnter() = 0;
   Responder * tabController() const;
   virtual StackViewController * stackController() const;

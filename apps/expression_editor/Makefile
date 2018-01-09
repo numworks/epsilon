@@ -19,8 +19,5 @@ tests += $(addprefix apps/expression_editor/test/,\
 )
 
 test_objs += $(addprefix apps/expression_editor/,\
-  controller.o\
-  expression_editor_view.o\
   expression_view_with_cursor.o\
-  scrollable_expression_view_with_cursor.o\
 )

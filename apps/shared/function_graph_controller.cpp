@@ -49,36 +49,11 @@ bool FunctionGraphController::handleEnter() {
 }
 
 void FunctionGraphController::reloadBannerView() {
-  char buffer[k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  const char * space = "                  ";
-  int spaceLength = strlen(space);
-  const char * legend = "0=";
-  int legendLength = strlen(legend);
-  int numberOfChar = 0;
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
-  buffer[0] = functionStore()->symbol();
-  numberOfChar += Complex<float>::convertFloatToText(m_cursor->x(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  strlcpy(buffer+numberOfChar, space, spaceLength+1);
-  buffer[k_maxLegendLength] = 0;
-  bannerView()->setLegendAtIndex(buffer, 0);
-
-  numberOfChar = 0;
-  legend = "0(x)=";
-  legendLength = strlen(legend);
-  numberOfChar += legendLength;
-  strlcpy(buffer, legend, legendLength+1);
-  buffer[2] = functionStore()->symbol();
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return;
   }
-  assert(m_indexFunctionSelectedByCursor < functionStore()->numberOfActiveFunctions());
   Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  buffer[0] = f->name()[0];
-  numberOfChar += Complex<float>::convertFloatToText(m_cursor->y(), buffer+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  strlcpy(buffer+numberOfChar, space, spaceLength+1);
-  buffer[k_maxLegendLength] = 0;
-  bannerView()->setLegendAtIndex(buffer, 1);
+  reloadBannerViewForCursorOnFunction(m_cursor, f, functionStore()->symbol());
 }
 
 InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {

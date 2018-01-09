@@ -8,9 +8,10 @@
 namespace Shared {
 
 class FunctionBannerDelegate  {
-protected:
+public:
   constexpr static int k_maxLegendLength = 14;
   constexpr static int k_maxNumberOfCharacters = 50;
+protected:
   void reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Function * function, char symbol);
   virtual BannerView * bannerView() = 0;
 };

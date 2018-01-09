@@ -10,6 +10,7 @@ app_objs += $(addprefix apps/graph/,\
   graph/calculation_parameter_controller.o\
   graph/curve_parameter_controller.o\
   graph/graph_controller.o\
+  graph/graph_controller_helper.o\
   graph/graph_view.o\
   list/list_controller.o\
   values/derivative_parameter_controller.o\

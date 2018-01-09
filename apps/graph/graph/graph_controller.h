@@ -2,6 +2,7 @@
 #define GRAPH_GRAPH_CONTROLLER_H
 
 #include "graph_view.h"
+#include "graph_controller_helper.h"
 #include "banner_view.h"
 #include "curve_parameter_controller.h"
 #include "../../shared/function_graph_controller.h"
@@ -11,7 +12,7 @@
 
 namespace Graph {
 
-class GraphController : public Shared::FunctionGraphController {
+class GraphController : public Shared::FunctionGraphController, public GraphControllerHelper {
 public:
   GraphController(Responder * parentResponder, CartesianFunctionStore * functionStore, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Expression::AngleUnit * angleUnitVersion, ButtonRowController * header);
   const char * title() override;

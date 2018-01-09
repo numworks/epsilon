@@ -85,21 +85,10 @@ void GraphController::reloadBannerView() {
   }
   CartesianFunction * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  char buffer[k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  const char * space = "                  ";
-  int spaceLength = strlen(space);
-  if (m_displayDerivativeInBanner || type() == GraphView::Type::Tangent) {
-    const char * legend = "00(x)=";
-    int legendLength = strlen(legend);
-    int numberOfChar = strlcpy(buffer, legend, legendLength+1);
-    buffer[0] = f->name()[0];
-    buffer[1] = '\'';
-    double y = f->approximateDerivative(m_cursor->x(), myApp->localContext());
-    numberOfChar += Complex<double>::convertFloatToText(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-    strlcpy(buffer+numberOfChar, space, spaceLength+1);
-    buffer[k_maxLegendLength] = 0;
-    m_bannerView.setLegendAtIndex(buffer, 2);
-  }
+  reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, f, myApp);
+
+
+  char buffer[FunctionBannerDelegate::k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   if (type() == GraphView::Type::Tangent) {
     const char * legend = "a=";
     int legendLength = strlen(legend);
@@ -118,15 +107,9 @@ void GraphController::reloadBannerView() {
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
-  double xCursorPosition = m_cursor->x();
-  double x = direction > 0 ? xCursorPosition + m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit :
-    xCursorPosition -  m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit;
   CartesianFunction * f = m_functionStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  double y = f->evaluateAtAbscissa(x, myApp->localContext());
-  m_cursor->moveTo(x, y);
-  m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
-  return true;
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, f, myApp, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }
 
 void GraphController::initCursorParameters() {

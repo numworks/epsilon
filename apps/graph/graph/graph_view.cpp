@@ -14,7 +14,8 @@ GraphView::GraphView(CartesianFunctionStore * functionStore, InteractiveCurveVie
 
 void GraphView::reload() {
   if (m_type == Type::Tangent) {
-    markRectAsDirty(bounds());
+    KDRect dirtyZone(KDRect(0, 0, bounds().width(), bounds().height()-m_bannerView->bounds().height()));
+    markRectAsDirty(dirtyZone);
   }
   return FunctionGraphView::reload();
 }

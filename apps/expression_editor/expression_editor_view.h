@@ -12,7 +12,8 @@ public:
   ExpressionEditorView(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, Poincare::ExpressionLayoutCursor * cursor);
   void cursorPositionChanged();
   void setText(const char * text);
-  int numberOfSubviews() const override { return 2; }
+  void setResult(Poincare::ExpressionLayout * result);
+  int numberOfSubviews() const override { return 3; }
   ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor() { return &m_scrollableExpressionViewWithCursor; }
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
@@ -20,6 +21,7 @@ public:
 private:
   constexpr static KDCoordinate k_margin = 10;
   ScrollableExpressionViewWithCursor m_scrollableExpressionViewWithCursor;
+  ExpressionView m_resultExpressionView;
   BufferTextView m_serializerTextView;
 };
 

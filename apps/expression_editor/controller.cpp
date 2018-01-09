@@ -1,5 +1,6 @@
 #include "controller.h"
 #include <apps/expression_editor/app.h>
+#include <apps/apps_container.h>
 #include <ion/charset.h>
 
 using namespace Poincare;
@@ -9,7 +10,9 @@ namespace ExpressionEditor {
 Controller::Controller(Responder * parentResponder, ExpressionLayout * expressionLayout) :
   ViewController(parentResponder),
   m_view(parentResponder, expressionLayout, &m_cursor),
-  m_expressionLayout(expressionLayout)
+  m_expressionLayout(expressionLayout),
+  m_resultLayout(nullptr)
+  //m_context((GlobalContext *)((AppsContainer *)(app()->container()))->globalContext())
 {
   m_cursor.setPointedExpressionLayout(expressionLayout->editableChild(0));
 }
@@ -32,6 +35,7 @@ void Controller::didBecomeFirstResponder() {
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::EXE) {
     serializeLayout();
+    computeResult();
     return true;
   }
   if (privateHandleEvent(event)) {
@@ -146,6 +150,27 @@ bool Controller::handleDeleteEvent(Ion::Events::Event event) {
 void Controller::serializeLayout() {
   m_expressionLayout->writeTextInBuffer(m_buffer, k_bufferSize);
   m_view.setText(const_cast<const char *>(m_buffer));
+}
+
+void Controller::computeResult() {
+  m_expressionLayout->writeTextInBuffer(m_buffer, k_bufferSize);
+  Expression * result = Expression::parse(m_buffer);
+  Expression * approxResult = nullptr;
+  if (result != nullptr) {
+    Expression::Simplify(&result,*(((AppsContainer *)(app()->container()))->globalContext()));
+    approxResult = result->approximate<double>(*(((AppsContainer *)(app()->container()))->globalContext()));
+    delete m_resultLayout;
+  } else {
+    approxResult = new Undefined();
+  }
+  m_resultLayout = approxResult->createLayout();
+  m_view.setResult(m_resultLayout);
+  if (result != nullptr) {
+    delete result;
+  }
+  if (approxResult != nullptr) {
+    delete approxResult;
+  }
 }
 
 }

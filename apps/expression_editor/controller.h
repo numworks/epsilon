@@ -30,11 +30,14 @@ private:
   Poincare::ExpressionLayout * handleAddEvent(Ion::Events::Event event);
   bool handleDeleteEvent(Ion::Events::Event event);
   void serializeLayout();
+  void computeResult();
   ExpressionEditorView m_view;
   Poincare::ExpressionLayout * m_expressionLayout;
   Poincare::ExpressionLayoutCursor m_cursor;
   static constexpr int k_bufferSize = 256;
   char m_buffer[k_bufferSize];
+  Poincare::ExpressionLayout * m_resultLayout;
+  //Poincare::Context m_context;
 };
 
 }

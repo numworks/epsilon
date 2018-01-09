@@ -156,6 +156,7 @@ inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED;
 \, { return COMMA; }
 \. { return DOT; }
 \_ { return UNDERSCORE; }
+\x96 { poincare_expression_yylval.expression = new EmptyExpression(); return EMPTY; }
 [ ]+ /* Ignore whitespaces */
 . { return UNDEFINED_SYMBOL; }
 

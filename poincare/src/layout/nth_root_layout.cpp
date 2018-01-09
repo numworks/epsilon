@@ -1,4 +1,5 @@
 #include "nth_root_layout.h"
+#include <ion/charset.h>
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
@@ -197,6 +198,46 @@ bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout *
     }
   }
   return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+}
+
+static_assert('\x90' == Ion::Charset::Root, "Unicode error");
+int NthRootLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  // Case: root(x,n)
+  if (numberOfChildren() == 2
+      && (const_cast<NthRootLayout *>(this))->indexLayout()
+      && !(const_cast<NthRootLayout *>(this))->indexLayout()->isEmpty())
+  {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "root");
+  }
+  // Case: squareRoot(x)
+  if (numberOfChildren() == 1) {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "\x90");
+  }
+  // Case: root(x,empty)
+  // Write "'SquareRootSymbol'('radicandLayout')".
+  assert((const_cast<NthRootLayout *>(this))->indexLayout() && (const_cast<NthRootLayout *>(this))->indexLayout()->isEmpty());
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+  int numberOfChar = 0;
+
+  buffer[numberOfChar++] = '\x90';
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+
+  buffer[numberOfChar++] = '(';
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+
+  numberOfChar += (const_cast<NthRootLayout *>(this))->radicandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  buffer[numberOfChar++] = ')';
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
 }
 
 void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

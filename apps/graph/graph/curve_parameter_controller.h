@@ -11,7 +11,7 @@ class GraphController;
 
 class CurveParameterController : public Shared::FunctionCurveParameterController {
 public:
-  CurveParameterController(Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, GraphController * graphController);
+  CurveParameterController(Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController);
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() override;

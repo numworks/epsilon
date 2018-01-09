@@ -64,8 +64,8 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
 
   /* Simplification: complex does not implement simplificationOrderSameType
-   * because Complex expressions do not appear before evaluation. The sorting
-   * step is part of simplificaiton process which thus handles no complex. */
+   * because Complex expressions are always transformed into an addition of
+   * Decimal and I symbol before compared with another Expression. */
 
   /* The parameter 'DisplayMode' refers to the way to display float 'scientific'
    * or 'auto'. The scientific mode returns float with style -1.2E2 whereas
@@ -81,7 +81,12 @@ public:
   static int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Expression::FloatDisplayMode mode = Expression::FloatDisplayMode::Default);
 private:
   Complex(T a, T b);
+  /* Layout */
   ExpressionLayout * privateCreateLayout(Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const override;
+  /* Simplification */
+  static Expression * CreateDecimal(T f);
+  Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
+  /* Evaluation */
   Expression * privateApproximate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Expression * privateApproximate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
  template<typename U> Complex<U> * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const;

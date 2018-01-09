@@ -75,6 +75,8 @@ class Expression {
   friend class ApproximationEngine;
   friend class SimplificationEngine;
   friend class LayoutEngine;
+  friend class Complex<float>;
+  friend class Complex<double>;
 
 public:
   enum class Type : uint8_t {

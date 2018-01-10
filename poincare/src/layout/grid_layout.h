@@ -18,20 +18,23 @@ public:
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
 
-
   /* Dynamic layout */
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
-  //TODO: is this ok? If we want to delete the grid's children, we have to make
-  //sure no to call this function.
+  // TODO: This function replaces the child with an EmptyVisibleLayout. Is this
+  // ok? If we want to delete the grid's children, we have to make sure no to
+  // call this function.
 
   /* Expression engine */
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override { return 0; }
 
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
+  int indexOfChild(ExpressionLayout * eL) const;
+  int m_numberOfRows;
+  int m_numberOfColumns;
 private:
   constexpr static KDCoordinate k_gridEntryMargin = 6;
   KDCoordinate rowBaseline(int i);
@@ -39,13 +42,10 @@ private:
   KDCoordinate height();
   KDCoordinate columnWidth(int j);
   KDCoordinate width();
-  int indexOfChild(ExpressionLayout * eL) const;
   bool childIsLeftOfGrid(int index) const;
   bool childIsRightOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
   bool childIsBottomOfGrid(int index) const;
-  int m_numberOfRows;
-  int m_numberOfColumns;
 };
 
 }

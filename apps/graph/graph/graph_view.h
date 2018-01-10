@@ -14,6 +14,11 @@ public:
   void reload() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void drawTangent(bool tangent) { m_tangent = tangent; }
+  /* We override setAreaHighlightColor to make it reload nothing as the
+   * highlightColor and the non-highlightColor are identical in the graph view
+   * of the application graph. We thereby avoid to uselessly reload some part
+   * of the graph where the area under the curve is colored. */
+  void setAreaHighlightColor(bool highlightColor) override {};
 private:
   CartesianFunctionStore * m_functionStore;
   bool m_tangent;

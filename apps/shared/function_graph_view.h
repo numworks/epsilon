@@ -13,7 +13,6 @@ class FunctionGraphView : public CurveView {
 public:
   FunctionGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor,
     BannerView * bannerView, View * cursorView);
-  void reload() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setContext(Poincare::Context * context);
   Poincare::Context * context() const;
@@ -29,6 +28,7 @@ protected:
   bool m_shouldColorHighlighted;
 private:
   KDSize cursorSize() override;
+  void reloadBetweenBounds(float start, float end);
   char * label(Axis axis, int index) const override;
   char m_xLabels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   char m_yLabels[k_maxNumberOfYLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];

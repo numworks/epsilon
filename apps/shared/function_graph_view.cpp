@@ -20,19 +20,6 @@ FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
 {
 }
 
-void FunctionGraphView::reload() {
-  CurveView::reload();
-  if (!std::isnan(m_highlightedStart)) {
-    float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedStart)-2.0;
-    float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedEnd)+4.0;
-    /* We exclude the banner frame from the dirty zone to avoid unnecessary
-     * redrawing */
-    KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
-    bounds().height()-m_bannerView->bounds().height()));
-    markRectAsDirty(dirtyZone);
-  }
-}
-
 void FunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
   drawGrid(ctx, rect);
@@ -52,9 +39,8 @@ Context * FunctionGraphView::context() const {
 
 void FunctionGraphView::selectFunction(Function * function) {
   if (m_selectedFunction != function) {
-    reload();
     m_selectedFunction = function;
-    reload();
+    reloadBetweenBounds(m_highlightedStart, m_highlightedEnd);
   }
 }
 
@@ -64,18 +50,27 @@ void FunctionGraphView::setVerticalCursor(bool verticalCursor) {
 
 void FunctionGraphView::setAreaHighlight(float start, float end) {
   if (m_highlightedStart != start || m_highlightedEnd != end) {
-    reload();
+    float dirtyStart = start > m_highlightedStart ? m_highlightedStart : start;
+    float dirtyEnd = start > m_highlightedStart ? start : m_highlightedStart;
+    reloadBetweenBounds(dirtyStart, dirtyEnd);
+    dirtyStart = end > m_highlightedEnd ? m_highlightedEnd : end;
+    dirtyEnd = end > m_highlightedEnd ? end : m_highlightedEnd;
+    reloadBetweenBounds(dirtyStart, dirtyEnd);
+    if (std::isnan(start) || std::isnan(end)) {
+      reloadBetweenBounds(m_highlightedStart, m_highlightedEnd);
+    }
+    if (std::isnan(m_highlightedStart) || std::isnan(m_highlightedEnd)) {
+      reloadBetweenBounds(start, end);
+    }
     m_highlightedStart = start;
     m_highlightedEnd = end;
-    reload();
   }
 }
 
 void FunctionGraphView::setAreaHighlightColor(bool highlightColor) {
   if (m_shouldColorHighlighted != highlightColor) {
-    reload();
+    reloadBetweenBounds(m_highlightedStart, m_highlightedEnd);
     m_shouldColorHighlighted = highlightColor;
-    reload();
   }
 }
 
@@ -89,5 +84,19 @@ KDSize FunctionGraphView::cursorSize() {
 char * FunctionGraphView::label(Axis axis, int index) const {
   return (axis == Axis::Horizontal ? (char *)m_xLabels[index] : (char *)m_yLabels[index]);
 }
+
+void FunctionGraphView::reloadBetweenBounds(float start, float end) {
+  if (start == end) {
+    return;
+  }
+  float pixelLowerBound = floatToPixel(Axis::Horizontal, start)-2.0;
+  float pixelUpperBound = floatToPixel(Axis::Horizontal, end)+4.0;
+  /* We exclude the banner frame from the dirty zone to avoid unnecessary
+   * redrawing */
+  KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
+        bounds().height()-m_bannerView->bounds().height()));
+  markRectAsDirty(dirtyZone);
+}
+
 
 }

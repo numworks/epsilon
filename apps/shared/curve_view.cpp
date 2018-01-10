@@ -307,6 +307,10 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
   float xStep = (xMax-xMin)/resolution();
   float rectMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+
+  float pixelColorLowerBound = std::round(floatToPixel(Axis::Horizontal, colorLowerBound));
+  float pixelColorUpperBound = std::round(floatToPixel(Axis::Horizontal, colorUpperBound));
+
   for (float x = rectMin; x < rectMax; x += xStep) {
     /* When |rectMin| >> xStep, rectMin + xStep = rectMin. In that case, quit
      * the infinite loop. */
@@ -319,7 +323,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     }
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
-    if (colorUnderCurve && x > colorLowerBound && x < colorUpperBound) {
+    if (colorUnderCurve && pxf > pixelColorLowerBound && pxf < pixelColorUpperBound) {
       KDRect colorRect((int)pxf, std::round(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - std::round(pyf));
       if (floatToPixel(Axis::Vertical, 0.0f) < std::round(pyf)) {
         colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 1, std::round(pyf) - floatToPixel(Axis::Vertical, 0.0f));

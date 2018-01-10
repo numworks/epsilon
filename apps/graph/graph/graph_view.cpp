@@ -1,4 +1,5 @@
 #include "graph_view.h"
+#include <float.h>
 
 using namespace Shared;
 

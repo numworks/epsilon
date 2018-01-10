@@ -27,11 +27,6 @@ bool TermSumController::moveCursorHorizontallyToPosition(double position) {
   return SumGraphController::moveCursorHorizontallyToPosition(std::round(position));
 }
 
-double TermSumController::computeSum(double start, double end) {
-  App * myApp = static_cast<App *>(app());
-  return static_cast<Sequence *>(m_function)->sumOfTermsBetweenAbscissa(m_startSum, m_endSum, myApp->localContext());
-}
-
 I18n::Message TermSumController::legendMessageAtStep(Step step) {
   switch(step) {
     case Step::FirstParameter:

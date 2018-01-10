@@ -14,7 +14,6 @@ public:
   const char * title() override;
 private:
   bool moveCursorHorizontallyToPosition(double position) override;
-  double computeSum(double start, double end) override;
   I18n::Message legendMessageAtStep(Step step) override;
   double cursorNextStep(double position, int direction) override;
 };

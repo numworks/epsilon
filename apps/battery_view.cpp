@@ -90,5 +90,5 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 KDSize BatteryView::minimalSizeForOptimalDisplay() const {
-  return KDSize(k_batteryWidth, k_batteryHeight);
+  return KDSize(k_batteryWidth+4, k_batteryHeight);
 }

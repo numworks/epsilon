@@ -1,4 +1,5 @@
 objs += $(addprefix ion/src/simulator/, \
+  clock.o\
   init.o\
   led.o\
   usb.o\

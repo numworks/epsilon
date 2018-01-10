@@ -3,6 +3,7 @@
 extern "C" {
 #include <assert.h>
 }
+#include <ion/clock.h>
 
 AppsWindow::AppsWindow() :
   Window(),
@@ -17,6 +18,12 @@ void AppsWindow::setTitle(I18n::Message title) {
 
 bool AppsWindow::updateBatteryLevel() {
   return m_titleBarView.setChargeState(Ion::Battery::level());
+}
+
+bool AppsWindow::updateClock() {
+  int hours, mins;
+  Ion::Clock::clock(&hours, &mins);
+  return m_titleBarView.setClock(hours, mins);
 }
 
 bool AppsWindow::updateIsChargingState() {

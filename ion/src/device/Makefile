@@ -22,6 +22,7 @@ objs += $(addprefix ion/src/device/, \
   keyboard.o\
   led.o\
   power.o\
+  rtc.o\
   sd_card.o\
   swd.o \
   usb.o \

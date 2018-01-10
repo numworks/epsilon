@@ -11,6 +11,7 @@ public:
   TitleBarView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setTitle(I18n::Message title);
+  bool setClock(int hours, int mins);
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
   bool setIsPlugged(bool isPlugged);
@@ -25,10 +26,13 @@ private:
   void layoutSubviews() override;
   View * subviewAtIndex(int index) override;
   MessageTextView m_titleView;
+  BufferTextView m_clockView;
   BatteryView m_batteryView;
   ShiftAlphaLockView m_shiftAlphaLockView;
   BufferTextView m_preferenceView;
   ImageView m_examModeIconView;
+  int m_hours;
+  int m_mins;
 };
 
 #endif

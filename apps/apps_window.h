@@ -9,6 +9,7 @@ public:
   AppsWindow();
   void setTitle(I18n::Message title);
   bool updateBatteryLevel();
+  bool updateClock();
   bool updateIsChargingState();
   bool updatePluggedState();
   void refreshPreferences();

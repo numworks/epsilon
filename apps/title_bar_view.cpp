@@ -11,8 +11,12 @@ using namespace Poincare;
 TitleBarView::TitleBarView() :
   View(),
   m_titleView(KDText::FontSize::Small, I18n::Message::Default, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark),
-  m_preferenceView(KDText::FontSize::Small, 1.0f, 0.5, KDColorWhite, Palette::YellowDark)
+  m_clockView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorWhite, Palette::YellowDark),
+  m_preferenceView(KDText::FontSize::Small, 1.0f, 0.5, KDColorWhite, Palette::YellowDark),
+  m_hours(-1),
+  m_mins(-1)
 {
+  setClock(0, 0);
   m_examModeIconView.setImage(ImageStore::ExamIcon);
 }
 
@@ -24,6 +28,25 @@ void TitleBarView::drawRect(KDContext * ctx, KDRect rect) const {
 
 void TitleBarView::setTitle(I18n::Message title) {
   m_titleView.setMessage(title);
+}
+
+bool TitleBarView::setClock(int hours, int mins) {
+  if (m_hours != hours || m_mins != mins) {
+    char buf[6], *ptr = buf;
+    *ptr++ = (hours / 10) + '0';
+    *ptr++ = (hours % 10) + '0';
+    *ptr++ = ':';
+    *ptr++ = (mins / 10) + '0';
+    *ptr++ = (mins % 10) + '0';
+    *ptr   = '\0';
+    m_clockView.setText(buf);
+
+    m_hours = hours;
+    m_mins = mins;
+
+    return true;
+  }
+  return false;
 }
 
 bool TitleBarView::setChargeState(Ion::Battery::Charge chargeState) {
@@ -43,7 +66,7 @@ bool TitleBarView::setShiftAlphaLockStatus(Ion::Events::ShiftAlphaStatus status)
 }
 
 int TitleBarView::numberOfSubviews() const {
-  return 5;
+  return 6;
 }
 
 View * TitleBarView::subviewAtIndex(int index) {
@@ -59,6 +82,9 @@ View * TitleBarView::subviewAtIndex(int index) {
   if (index == 3) {
     return &m_shiftAlphaLockView;
   }
+  if (index == 4) {
+    return &m_clockView;
+  }
   return &m_batteryView;
 }
 
@@ -70,15 +96,17 @@ void TitleBarView::layoutSubviews() {
    * translate the frame of the title downwards.*/
   m_titleView.setFrame(KDRect(0, 2, bounds().width(), bounds().height()-2));
   m_preferenceView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()));
+  KDSize clockSize = m_clockView.minimalSizeForOptimalDisplay();
+  m_clockView.setFrame(KDRect(bounds().width() - clockSize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- clockSize.height())/2, clockSize));
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
-  m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize));
+  m_batteryView.setFrame(KDRect(bounds().width() - clockSize.width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize));
   if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
     m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight));
   } else {
     m_examModeIconView.setFrame(KDRectZero);
   }
   KDSize shiftAlphaLockSize = m_shiftAlphaLockView.minimalSizeForOptimalDisplay();
-  m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-Metric::TitleBarExternHorizontalMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize));
+  m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-clockSize.width()-batterySize.width()-Metric::TitleBarExternHorizontalMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize));
 }
 
 void TitleBarView::refreshPreferences() {

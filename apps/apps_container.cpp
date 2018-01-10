@@ -21,6 +21,7 @@ AppsContainer::AppsContainer() :
   m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
   m_backlightDimmingTimer(),
+  m_clockTimer(ClockTimer(this)),
   m_homeSnapshot(),
   m_onBoardingSnapshot(),
   m_hardwareTestSnapshot()
@@ -136,6 +137,10 @@ void AppsContainer::run() {
   switchTo(nullptr);
 }
 
+bool AppsContainer::updateClock() {
+  return m_window.updateClock();
+}
+
 bool AppsContainer::updateBatteryState() {
   if (m_window.updateBatteryLevel() ||
       m_window.updateIsChargingState() ||
@@ -185,11 +190,11 @@ Window * AppsContainer::window() {
 }
 
 int AppsContainer::numberOfContainerTimers() {
-  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
+  return 5+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
 }
 
 Timer * AppsContainer::containerTimerAtIndex(int i) {
-  Timer * timers[5] = {&m_batteryTimer, &m_USBTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer};
+  Timer * timers[6] = {&m_batteryTimer, &m_USBTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_clockTimer, &m_ledTimer};
   return timers[i];
 }
 

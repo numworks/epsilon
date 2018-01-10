@@ -15,6 +15,7 @@
 #include "usb_timer.h"
 #include "suspend_timer.h"
 #include "backlight_dimming_timer.h"
+#include "clock_timer.h"
 
 #define USE_PIC_VIEW_APP 0
 #if USE_PIC_VIEW_APP
@@ -39,6 +40,7 @@ public:
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   void switchTo(App::Snapshot * snapshot) override;
   void run() override;
+  bool updateClock();
   bool updateBatteryState();
   void refreshPreferences();
   void displayExamModePopUp(bool activate);
@@ -70,6 +72,7 @@ private:
   USBTimer m_USBTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
+  ClockTimer m_clockTimer;
   Home::App::Snapshot m_homeSnapshot;
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;

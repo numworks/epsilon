@@ -26,7 +26,7 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
-  m_view.setType(GraphView::Type::Default);
+  m_view.drawTangent(false);
   FunctionGraphController::viewWillAppear();
 }
 

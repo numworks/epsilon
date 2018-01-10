@@ -21,7 +21,7 @@ const char * TangentGraphController::title() {
 
 void TangentGraphController::viewWillAppear() {
   m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
-  m_graphView->setType(GraphView::Type::Tangent);
+  m_graphView->drawTangent(true);
   m_graphView->setOkView(nullptr);
   m_graphView->selectMainView(true);
   reloadBannerView();

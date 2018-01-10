@@ -1,6 +1,7 @@
 #include <poincare/expression_layout.h>
 #include "empty_visible_layout.h"
 #include "horizontal_layout.h"
+#include "matrix_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -230,10 +231,26 @@ void ExpressionLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
   replaceChild(editableChild(index), new EmptyVisibleLayout(), deleteAfterRemoval);
 }
 
-void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void ExpressionLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
+  assert(index >= 0 && index < numberOfChildren());
+  assert(cursor->pointedExpressionLayout() == child(index));
+  removeChildAtIndex(index, deleteAfterRemoval);
+  if (index < numberOfChildren()) {
+    cursor->setPointedExpressionLayout(editableChild(index));
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return;
+  }
+  int indexOfNewPointedLayout = index - 1;
+  assert(indexOfNewPointedLayout >= 0);
+  assert(indexOfNewPointedLayout < numberOfChildren());
+  cursor->setPointedExpressionLayout(editableChild(indexOfNewPointedLayout));
+}
 
+void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
   if (indexOfPointedExpression >= 0) {
+    // Case: The pointed layout is a child.
+    // Point to the previous child, else to this.
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
     if (indexOfPointedExpression == 0) {
       cursor->setPointedExpressionLayout(this);
@@ -245,14 +262,20 @@ void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     return;
   }
   assert(cursor->pointedExpressionLayout() == this);
+  // Case: this is the pointed layout.
   if (m_parent == nullptr) {
+    // If there is no parent, return.
     return;
   }
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    // Case: Left.
+    // Ask the parent.
     m_parent->backspaceAtCursor(cursor);
     return;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  // Case: Right.
+  // If the layout has children, move to the last one.
   if (numberOfChildren() > 0) {
     cursor->setPointedExpressionLayout(editableChild(numberOfChildren()-1));
     cursor->performBackspace();
@@ -260,23 +283,16 @@ void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   }
   int indexInParent = m_parent->indexOfChild(this);
   ExpressionLayout * previousParent = m_parent;
-  if (previousParent->numberOfChildren() == 1) {
+  // Case: Right.
+  // If the layout has no child and is only child, replace it with an empty layout.
+  /*if (previousParent->numberOfChildren() == 1) {
     ExpressionLayout * newLayout = new EmptyVisibleLayout();
     replaceWith(newLayout, true);
     cursor->setPointedExpressionLayout(newLayout);
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return;
-  }
-  previousParent->removeChildAtIndex(indexInParent, true);
-  if (indexInParent < previousParent->numberOfChildren()) {
-    cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent));
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return;
-  }
-  int indexOfNewPointedLayout = indexInParent - 1;
-  assert(indexOfNewPointedLayout >= 0);
-  assert(indexOfNewPointedLayout < previousParent->numberOfChildren());
-  cursor->setPointedExpressionLayout(previousParent->editableChild(indexOfNewPointedLayout));
+  }*/
+  previousParent->removePointedChildAtIndexAndMoveCursor(indexInParent, true, cursor);
 }
 
 char ExpressionLayout::XNTChar() const {

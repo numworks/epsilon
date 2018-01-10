@@ -35,6 +35,8 @@ protected:
   KDPoint positionOfChild(ExpressionLayout * child) override;
   void addEmptyRow(EmptyVisibleLayout::Color color);
   void addEmptyColumn(EmptyVisibleLayout::Color color);
+  void deleteRowAtIndex(int index);
+  void deleteColumnAtIndex(int index);
   bool childIsRightOfGrid(int index) const;
   bool childIsBottomOfGrid(int index) const;
   int rowAtChildIndex(int index) const;

@@ -11,11 +11,11 @@ public:
   void invalidAllSizesPositionsAndBaselines() override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+protected:
   constexpr static KDCoordinate k_bracketWidth = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
   constexpr static KDCoordinate k_widthMargin = 5;
   constexpr static KDCoordinate k_externWidthMargin = 2;
-protected:
   KDSize computeSize() override;
   KDCoordinate operandHeight();
   virtual void computeOperandHeight() = 0;

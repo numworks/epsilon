@@ -17,6 +17,12 @@ ExpressionLayout * MatrixLayout::clone() const {
   return layout;
 }
 
+void MatrixLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
+  int oldChildIndex = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
+  GridLayout::replaceChild(oldChild, newChild, deleteOldChild);
+  childWasReplacedAtIndex(oldChildIndex);
+}
+
 void MatrixLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
   int oldChildIndex = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
   int rowIndex = rowAtChildIndex(oldChildIndex);
@@ -59,6 +65,7 @@ int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
 }
 
 void MatrixLayout::newRowOrColumnAtIndex(int index) {
+  assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
   bool shouldAddNewRow = GridLayout::childIsBottomOfGrid(index);
   int correspondingRow = rowAtChildIndex(index);
   // We need to compute this bool before modifying the layout.:w
@@ -73,7 +80,7 @@ void MatrixLayout::newRowOrColumnAtIndex(int index) {
       }
     }
     // Add a column of grey EmptyVisibleLayouts on the right.
-    GridLayout::addEmptyColumn(EmptyVisibleLayout::Color::Grey);
+    addEmptyColumn(EmptyVisibleLayout::Color::Grey);
   }
   if (shouldAddNewRow) {
     // Color the grey EmptyVisibleLayouts of the row in yellow.
@@ -84,7 +91,30 @@ void MatrixLayout::newRowOrColumnAtIndex(int index) {
       }
     }
     // Add a row of grey EmptyVisibleLayouts at the bottom.
-    GridLayout::addEmptyRow(EmptyVisibleLayout::Color::Grey);
+    addEmptyRow(EmptyVisibleLayout::Color::Grey);
+  }
+}
+
+void MatrixLayout::childWasReplacedAtIndex(int index) {
+  assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
+  int rowIndex = rowAtChildIndex(index);
+  int columnIndex = columnAtChildIndex(index);
+  bool rowIsEmpty = isRowEmpty(rowIndex);
+  bool columnIsEmpty = isColumnEmpty(columnIndex);
+  if (rowIsEmpty && m_numberOfRows > 2) {
+    deleteRowAtIndex(rowIndex);
+  }
+  if (columnIsEmpty && m_numberOfColumns > 2) {
+    deleteColumnAtIndex(columnIndex);
+  }
+  if (!rowIsEmpty && !columnIsEmpty) {
+    ExpressionLayout * newChild = editableChild(index);
+    if (newChild->isEmpty()
+        && (childIsRightOfGrid(index)
+         || childIsBottomOfGrid(index)))
+    {
+      static_cast<EmptyVisibleLayout *>(newChild)->setColor(EmptyVisibleLayout::Color::Grey);
+    }
   }
 }
 
@@ -108,11 +138,32 @@ ExpressionLayout * dummyGridLayout = new GridLayout(children(), m_numberOfRows, 
 }
 
 KDPoint MatrixLayout::positionOfChild(ExpressionLayout * child) {
+  assert(indexOfChild(child) > -1);
   BracketLeftLayout * dummyLeftBracket = new BracketLeftLayout();
   BracketRightLayout * dummyRightBracket = new BracketRightLayout();
 ExpressionLayout * dummyGridLayout = new GridLayout(children(), m_numberOfRows, m_numberOfColumns, true);
   HorizontalLayout dummyLayout(dummyLeftBracket, dummyGridLayout, dummyRightBracket, false);
   return GridLayout::positionOfChild(child).translatedBy(dummyLayout.positionOfChild(dummyGridLayout));
+}
+
+bool MatrixLayout::isRowEmpty(int index) const {
+  assert(index >= 0 && index < m_numberOfRows);
+  for (int i = index * m_numberOfColumns; i < (index+1) * m_numberOfColumns; i++) {
+    if (!child(i)->isEmpty()) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool MatrixLayout::isColumnEmpty(int index) const {
+  assert(index >= 0 && index < m_numberOfColumns);
+  for (int i = index; i < m_numberOfRows * m_numberOfColumns; i+= m_numberOfColumns) {
+    if (!child(i)->isEmpty()) {
+      return false;
+    }
+  }
+  return true;
 }
 
 }

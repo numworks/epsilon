@@ -12,9 +12,8 @@ Controller::Controller(Responder * parentResponder, ExpressionLayout * expressio
   m_view(parentResponder, expressionLayout, &m_cursor),
   m_expressionLayout(expressionLayout),
   m_resultLayout(nullptr)
-  //m_context((GlobalContext *)((AppsContainer *)(app()->container()))->globalContext())
 {
-  m_cursor.setPointedExpressionLayout(expressionLayout->editableChild(0));
+  m_cursor.setPointedExpressionLayout(expressionLayout);
 }
 
 void Controller::didBecomeFirstResponder() {

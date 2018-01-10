@@ -111,10 +111,15 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyLogarithmLayout() {
 ExpressionLayout * ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOfColumns) {
   assert(numberOfRows > 0);
   assert(numberOfColumns > 0);
-  int numberOfchildren = (numberOfRows+1)*(numberOfColumns+1);
-  ExpressionLayout * children[numberOfchildren];
-  for (int i = 0; i < numberOfchildren; i++) {
-    children[i] = new EmptyVisibleLayout();
+  ExpressionLayout * children[(numberOfRows+1)*(numberOfColumns+1)];
+  for (int i = 0; i < numberOfRows + 1; i++) {
+    for (int j = 0; j < numberOfColumns + 1; j++) {
+      if (i < numberOfRows && j < numberOfColumns) {
+        children[i*(numberOfColumns+1)+j] = new EmptyVisibleLayout(EmptyVisibleLayout::Color::Yellow);
+      } else {
+        children[i*(numberOfColumns+1)+j] = new EmptyVisibleLayout(EmptyVisibleLayout::Color::Grey);
+      }
+    }
   }
   ExpressionLayout * matrixLayout = new MatrixLayout(const_cast<const ExpressionLayout * const *>(const_cast<ExpressionLayout * const *>(children)), numberOfRows+1, numberOfColumns+1, false);
   m_pointedExpressionLayout->addBrother(this, matrixLayout);

@@ -206,10 +206,10 @@ bool SumGraphController::handleEnter() {
 /* Legend View */
 
 SumGraphController::LegendView::LegendView(SumGraphController * controller, char sumSymbol) :
-  m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+  m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumLayout(nullptr),
-  m_legend(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
-  m_editableZone(controller, m_draftText, m_draftText, TextField::maxBufferSize(), controller, false, KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyBright),
+  m_legend(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_editableZone(controller, m_draftText, m_draftText, TextField::maxBufferSize(), controller, false, KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumSymbol(sumSymbol)
 {
 }
@@ -222,7 +222,7 @@ SumGraphController::LegendView::~LegendView() {
 }
 
 void SumGraphController::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), Palette::GreyBright);
+  ctx->fillRect(bounds(), Palette::GreyMiddle);
 }
 
 KDSize SumGraphController::LegendView::minimalSizeForOptimalDisplay() const {

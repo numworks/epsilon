@@ -108,6 +108,21 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyLogarithmLayout() {
   return result;
 }
 
+ExpressionLayout * ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOfColumns) {
+  assert(numberOfRows > 0);
+  assert(numberOfColumns > 0);
+  int numberOfchildren = (numberOfRows+1)*(numberOfColumns+1);
+  ExpressionLayout * children[numberOfchildren];
+  for (int i = 0; i < numberOfchildren; i++) {
+    children[i] = new EmptyVisibleLayout();
+  }
+  ExpressionLayout * matrixLayout = new MatrixLayout(const_cast<const ExpressionLayout * const *>(const_cast<ExpressionLayout * const *>(children)), numberOfRows+1, numberOfColumns+1, false);
+  m_pointedExpressionLayout->addBrother(this, matrixLayout);
+  setPointedExpressionLayout(matrixLayout->editableChild(0));
+  setPosition(ExpressionLayoutCursor::Position::Right);
+  return matrixLayout;
+}
+
 ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Superscript, false);
   // If there is already a base

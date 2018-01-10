@@ -1,5 +1,6 @@
 #include "integral_graph_controller.h"
 #include "../../shared/text_field_delegate.h"
+#include "../../../poincare/src/layout/string_layout.h"
 #include "../app.h"
 
 #include <assert.h>
@@ -33,6 +34,12 @@ I18n::Message IntegralGraphController::legendMessageAtStep(Step step) {
 
 double IntegralGraphController::cursorNextStep(double x, int direction) {
   return (direction > 0 ? x + m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit : x - m_graphRange->xGridUnit()/k_numberOfCursorStepsInGradUnit);
+}
+
+ExpressionLayout * IntegralGraphController::createFunctionLayout(const char * functionName) {
+  char buffer[7] = "0(x)dx";
+  buffer[0] = functionName[0];
+  return new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
 }
 
 }

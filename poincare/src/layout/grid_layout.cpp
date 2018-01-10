@@ -22,25 +22,28 @@ ExpressionLayout * GridLayout::clone() const {
 }
 
 void GridLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  // If the cursor is on the left of the grid, delete the grid and its parent: A
-  // grid only exists for now in binomial coefficient and in matrices, and we
-  // want to delete their parentheses or brackets too.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
     if (indexOfPointedExpression >= 0 && childIsLeftOfGrid(indexOfPointedExpression)) {
+      // Case: Left of a left child grid.
+      // Delete the grid.
       assert(m_parent != nullptr);
-      assert(m_parent->parent() != nullptr);
-      ExpressionLayout * grandParent = const_cast<ExpressionLayout *>(m_parent->parent());
-      int indexInGrandParent = grandParent->indexOfChild(m_parent);
-      m_parent->replaceWith(new EmptyVisibleLayout(), true);
-      if (indexInGrandParent == 0) {
-        cursor->setPointedExpressionLayout(grandParent);
+      int indexInParent = m_parent->indexOfChild(this);
+      // Set the new cursor position before deleting.
+      if (indexInParent == 0) {
+        cursor->setPointedExpressionLayout(m_parent);
         return;
       }
-      cursor->setPointedExpressionLayout(grandParent->editableChild(indexInGrandParent-1));
+      cursor->setPointedExpressionLayout(m_parent->editableChild(indexInParent-1));
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      // Delete this.
+      replaceWith(new EmptyVisibleLayout(), true);
       return;
     }
+    // Case: Left of another child of the grid.
+    // Move Left.
+    moveLeft(cursor);
+    return;
   }
   ExpressionLayout::backspaceAtCursor(cursor);
 }
@@ -64,7 +67,7 @@ bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
       // Go Left of the grid
       cursor->setPointedExpressionLayout(this);
       cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-      return m_parent->moveLeft(cursor);
+      return true;
     }
     // Case: Left of another child.
     // Go Right of its brother on the left.
@@ -98,10 +101,10 @@ bool GridLayout::moveRight(ExpressionLayoutCursor * cursor) {
   if (childIndex >- 1 && cursor->position() == ExpressionLayoutCursor::Position::Right) {
     if (childIsRightOfGrid(childIndex)) {
       // Case: Right of a child on the right of the grid.
-      // Go Right of the grid and move Right.
+      // Go Right of the grid.
       cursor->setPointedExpressionLayout(this);
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-      return m_parent->moveRight(cursor);
+      return true;
     }
     // Case: Right of another child.
     // Go Left of its brother on the right.
@@ -140,43 +143,6 @@ bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * pr
 
 void GridLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
   ExpressionLayout::removeChildAtIndex(index, deleteAfterRemoval);
-}
-
-int GridLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
-  const ExpressionLayout * editableParent = const_cast<GridLayout *>(this)->parent();
-  assert(editableParent != nullptr);
-
-  // If the grid is a binomial coefficient:
-  if (editableParent->child(0)->isLeftParenthesis()) {
-    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "binomial");
-  }
-
-  assert(editableParent->child(0)->isLeftBracket());
-  // The grid is a matrix.
-  if (bufferSize == 0) {
-    return -1;
-  }
-  buffer[bufferSize-1] = 0;
-  int numberOfChar = 0;
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
-
-  for (int i = 0; i < m_numberOfRows; i++) {
-    buffer[numberOfChar++] = '[';
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
-
-    numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, ",", i*m_numberOfColumns, (i+1) * m_numberOfColumns - 1);
-
-    buffer[numberOfChar++] = ']';
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-
-    if (i < m_numberOfRows - 1) {
-      buffer[numberOfChar++] = ',';
-      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    }
-  }
-
-  buffer[numberOfChar] = 0;
-  return numberOfChar;
 }
 
 KDCoordinate GridLayout::rowBaseline(int i) {

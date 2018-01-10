@@ -61,7 +61,7 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
     }
     // If the new layout is empty and it was the only horizontal layout child,
     // replace the horizontal layout with this empty layout (only if this is not
-    // the main layout, so only if the layout has a parent.
+    // the main layout, so only if the layout has a parent).
     if (m_parent) {
       if (cursor) {
         replaceWithAndMoveCursor(newChild, deleteOldChild, cursor);

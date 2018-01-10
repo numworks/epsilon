@@ -1,5 +1,6 @@
 #include <poincare/dynamic_layout_hierarchy.h>
 #include "empty_visible_layout.h"
+#include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -113,9 +114,37 @@ void DynamicLayoutHierarchy::removeChildAtIndex(int index, bool deleteAfterRemov
   }
 }
 
+void DynamicLayoutHierarchy::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
+  assert(index >= 0 && index < numberOfChildren());
+  assert(cursor->pointedExpressionLayout() == child(index));
+  if (numberOfChildren() == 1) {
+    if (m_parent) {
+      if (!deleteAfterRemoval) {
+        detachChild(editableChild(0));
+      }
+      m_parent->removePointedChildAtIndexAndMoveCursor(m_parent->indexOfChild(this), true, cursor);
+      return;
+    }
+    removeChildAtIndex(index, deleteAfterRemoval);
+    cursor->setPointedExpressionLayout(this);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return;
+  }
+  removeChildAtIndex(index, deleteAfterRemoval);
+  if (index < numberOfChildren()) {
+    cursor->setPointedExpressionLayout(editableChild(index));
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return;
+  }
+  int indexOfNewPointedLayout = index - 1;
+  assert(indexOfNewPointedLayout >= 0);
+  assert(indexOfNewPointedLayout < numberOfChildren());
+  cursor->setPointedExpressionLayout(editableChild(indexOfNewPointedLayout));
+}
+
 bool DynamicLayoutHierarchy::isEmpty() const {
   if (m_numberOfChildren == 0
-      || (m_numberOfChildren == 1&& child(0)->isEmpty()))
+      || (m_numberOfChildren == 1 && child(0)->isEmpty()))
   {
     return true;
   }

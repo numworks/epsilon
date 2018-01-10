@@ -39,7 +39,6 @@ ExpressionAndLayout::ExpressionAndLayout() {
 
   m_expression = Poincare::Expression::parse(expression);
   m_expressionLayout = new Poincare::HorizontalLayout();
-  m_expressionLayout->addChildAtIndex(new Poincare::EmptyVisibleLayout(), 0);
 }
 ExpressionAndLayout::~ExpressionAndLayout() {
   if (m_expressionLayout) {

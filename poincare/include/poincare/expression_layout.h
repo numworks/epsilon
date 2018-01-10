@@ -55,6 +55,7 @@ public:
   void detachChildren(); //Removes all children WITHOUT deleting them
   virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
   virtual void removeChildAtIndex(int index, bool deleteAfterRemoval);
+  virtual void removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor);
   virtual void backspaceAtCursor(ExpressionLayoutCursor * cursor);
 
   /* Tree navigation */
@@ -78,6 +79,7 @@ public:
   virtual bool isLeftBracket() const { return false; }
   virtual bool isRightBracket() const { return false; }
   virtual bool isEmpty() const { return false; }
+  virtual bool isMatrix() const { return false; }
   virtual char XNTChar() const;
 
 protected:

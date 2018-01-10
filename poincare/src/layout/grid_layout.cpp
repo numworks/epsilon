@@ -247,6 +247,22 @@ void GridLayout::addEmptyColumn(EmptyVisibleLayout::Color color) {
   }
 }
 
+void GridLayout::deleteRowAtIndex(int index) {
+  assert(index >= 0 && index < m_numberOfRows);
+  for (int i = 0; i < m_numberOfColumns; i++) {
+    DynamicLayoutHierarchy::removeChildAtIndex(index * m_numberOfColumns, true);
+  }
+  m_numberOfRows--;
+}
+
+void GridLayout::deleteColumnAtIndex(int index) {
+  assert(index >= 0 && index < m_numberOfColumns);
+  for (int i = (m_numberOfRows - 1) * m_numberOfColumns + index; i > -1; i-= m_numberOfColumns) {
+    DynamicLayoutHierarchy::removeChildAtIndex(i, true);
+  }
+  m_numberOfColumns--;
+}
+
 bool GridLayout::childIsLeftOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
   return columnAtChildIndex(index) == 0;

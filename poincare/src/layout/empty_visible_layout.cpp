@@ -1,4 +1,5 @@
 #include "empty_visible_layout.h"
+#include "matrix_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <escher/palette.h>
 #include <assert.h>
@@ -17,7 +18,14 @@ ExpressionLayout * EmptyVisibleLayout::clone() const {
 }
 
 void EmptyVisibleLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
+  Color currentColor = m_color;
+  int indexInParent = m_parent->indexOfChild(this);
+  ExpressionLayout * parent = m_parent;
   replaceWith(brother, true);
+  if (currentColor == Color::Grey) {
+    // The parent is a MatrixLayout.
+    static_cast<MatrixLayout *>(parent)->newRowOrColumnAtIndex(indexInParent);
+  }
 }
 
 void EmptyVisibleLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {

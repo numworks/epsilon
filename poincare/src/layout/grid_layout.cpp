@@ -226,33 +226,50 @@ KDPoint GridLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(x, y);
 }
 
-int GridLayout::indexOfChild(ExpressionLayout * eL) const {
-  for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
-    if (eL == child(i)) {
-      return i;
-    }
+void GridLayout::addEmptyRow(EmptyVisibleLayout::Color color) {
+  ExpressionLayout * newChildren[m_numberOfColumns];
+  for (int i = 0; i < m_numberOfColumns; i++) {
+    newChildren[i] = new EmptyVisibleLayout(color);
   }
-  return -1;
+  addChildrenAtIndex(const_cast<const ExpressionLayout * const *>(const_cast<ExpressionLayout * const *>(newChildren)), m_numberOfColumns, numberOfChildren(), false);
+  m_numberOfRows++;
+}
+
+void GridLayout::addEmptyColumn(EmptyVisibleLayout::Color color) {
+  m_numberOfColumns++;
+  for (int i = 0; i < m_numberOfRows; i++) {
+    addChildAtIndex(new EmptyVisibleLayout(color), i*m_numberOfColumns + m_numberOfColumns-1);
+  }
 }
 
 bool GridLayout::childIsLeftOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
-  return (index - m_numberOfColumns * (int)(index / m_numberOfColumns)) == 0;
+  return columnAtIndex(index) == 0;
 }
 
 bool GridLayout::childIsRightOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
-  return (index - m_numberOfColumns * (int)(index / m_numberOfColumns)) == m_numberOfColumns - 1;
+  return columnAtIndex(index) == m_numberOfColumns - 1;
 }
 
 bool GridLayout::childIsTopOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
-  return index < m_numberOfColumns;
+  return rowAtIndex(index) == 0;
 }
 
 bool GridLayout::childIsBottomOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
-  return index > (m_numberOfRows - 1) * m_numberOfColumns - 1;
+  return rowAtIndex(index) == m_numberOfRows - 1;
+}
+
+int GridLayout::rowAtIndex(int index) const {
+  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  return (int)(index / m_numberOfColumns);
+}
+
+int GridLayout::columnAtIndex(int index) const {
+  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  return index - m_numberOfColumns * rowAtIndex(index);
 }
 
 }

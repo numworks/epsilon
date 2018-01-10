@@ -2,6 +2,7 @@
 #define POINCARE_GRID_LAYOUT_H
 
 #include <poincare/dynamic_layout_hierarchy.h>
+#include "empty_visible_layout.h"
 
 namespace Poincare {
 
@@ -32,7 +33,11 @@ protected:
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
-  int indexOfChild(ExpressionLayout * eL) const;
+  void addEmptyRow(EmptyVisibleLayout::Color color);
+  void addEmptyColumn(EmptyVisibleLayout::Color color);
+  bool childIsRightOfGrid(int index) const;
+  bool childIsBottomOfGrid(int index) const;
+  int rowAtIndex(int index) const;
   int m_numberOfRows;
   int m_numberOfColumns;
 private:
@@ -43,9 +48,9 @@ private:
   KDCoordinate columnWidth(int j);
   KDCoordinate width();
   bool childIsLeftOfGrid(int index) const;
-  bool childIsRightOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
-  bool childIsBottomOfGrid(int index) const;
+  int columnAtIndex(int index) const;
+
 };
 
 }

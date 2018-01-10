@@ -10,6 +10,7 @@ public:
   using GridLayout::GridLayout;
   ExpressionLayout * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  void newRowOrColumnAtIndex(int index);
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
@@ -19,4 +20,3 @@ protected:
 }
 
 #endif
-

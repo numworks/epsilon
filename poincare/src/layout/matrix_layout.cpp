@@ -1,4 +1,5 @@
 #include "matrix_layout.h"
+#include "empty_visible_layout.h"
 #include "horizontal_layout.h"
 #include "bracket_left_layout.h"
 #include "bracket_right_layout.h"
@@ -28,11 +29,11 @@ int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   buffer[numberOfChar++] = '[';
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-  for (int i = 0; i < m_numberOfRows; i++) {
+  for (int i = 0; i < m_numberOfRows - 1; i++) {
     buffer[numberOfChar++] = '[';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-    numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, ",", i*m_numberOfColumns, (i+1) * m_numberOfColumns - 1);
+    numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, ",", i*m_numberOfColumns, i* m_numberOfColumns + m_numberOfColumns - 2);
 
     buffer[numberOfChar++] = ']';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
@@ -40,6 +41,36 @@ int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   buffer[numberOfChar++] = ']';
   buffer[numberOfChar] = 0;
   return numberOfChar;
+}
+
+void MatrixLayout::newRowOrColumnAtIndex(int index) {
+  bool shouldAddNewRow = GridLayout::childIsBottomOfGrid(index);
+  int correspondingRow = rowAtIndex(index);
+  // We need to compute this bool before modifying the layout.:w
+  //
+  if (GridLayout::childIsRightOfGrid(index)) {
+    // Color the grey EmptyVisibleLayouts of the column in yellow.
+    int correspondingColumn = m_numberOfColumns - 1;
+    for (int i = 0; i < m_numberOfRows - 1; i++) {
+      ExpressionLayout * lastLayoutOfRow = editableChild(i*m_numberOfColumns+correspondingColumn);
+      if (lastLayoutOfRow->isEmpty()) {
+        static_cast<EmptyVisibleLayout *>(lastLayoutOfRow)->setColor(EmptyVisibleLayout::Color::Yellow);
+      }
+    }
+    // Add a column of grey EmptyVisibleLayouts on the right.
+    GridLayout::addEmptyColumn(EmptyVisibleLayout::Color::Grey);
+  }
+  if (shouldAddNewRow) {
+    // Color the grey EmptyVisibleLayouts of the row in yellow.
+    for (int i = 0; i < m_numberOfColumns - 1; i++) {
+      ExpressionLayout * lastLayoutOfColumn = editableChild(correspondingRow*m_numberOfColumns+i);
+      if (lastLayoutOfColumn->isEmpty()) {
+        static_cast<EmptyVisibleLayout *>(lastLayoutOfColumn)->setColor(EmptyVisibleLayout::Color::Yellow);
+      }
+    }
+    // Add a row of grey EmptyVisibleLayouts at the bottom.
+    GridLayout::addEmptyRow(EmptyVisibleLayout::Color::Grey);
+  }
 }
 
 void MatrixLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

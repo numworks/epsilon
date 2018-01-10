@@ -20,7 +20,6 @@ public:
   bool displayDerivativeInBanner() const;
   void setDisplayDerivativeInBanner(bool displayDerivative);
 private:
-  GraphView::Type type() const;
   BannerView * bannerView() override;
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction) override;

@@ -18,14 +18,6 @@ GraphController::GraphController(Responder * parentResponder, SequenceStore * se
   m_graphRange->setDelegate(this);
 }
 
-void GraphController::viewWillAppear() {
-  m_view.setVerticalCursor(false);
-  m_view.setCursorView(&m_cursorView);
-  m_view.setBannerView(&m_bannerView);
-  m_view.setHighlight(-1.0f, -1.0f);
-  FunctionGraphController::viewWillAppear();
-}
-
 I18n::Message GraphController::emptyMessage() {
   if (m_sequenceStore->numberOfDefinedFunctions() == 0) {
     return I18n::Message::NoSequence;
@@ -42,7 +34,7 @@ BannerView * GraphController::bannerView() {
 }
 
 bool GraphController::handleEnter() {
-  m_termSumController.setSequence(m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor));
+  m_termSumController.setFunction(m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor));
   return FunctionGraphController::handleEnter();
 }
 

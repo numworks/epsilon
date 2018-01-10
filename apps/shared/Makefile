@@ -38,6 +38,7 @@ app_objs += $(addprefix apps/shared/,\
   simple_interactive_curve_view_controller.o\
   store_controller.o\
   store_parameter_controller.o\
+  sum_graph_controller.o\
   tab_table_controller.o\
   text_field_delegate.o\
   text_field_delegate_app.o\
@@ -45,5 +46,6 @@ app_objs += $(addprefix apps/shared/,\
   values_function_parameter_controller.o\
   values_parameter_controller.o\
   values_controller.o\
+  vertical_cursor_view.o\
   zoom_parameter_controller.o\
 )

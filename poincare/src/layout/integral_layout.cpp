@@ -36,18 +36,7 @@ void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
           && cursor->pointedExpressionLayout() == lowerBoundLayout())
         || cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left)))
   {
-    ExpressionLayout * previousParent = m_parent;
-    int indexInParent = previousParent->indexOfChild(this);
-    replaceWith(integrandLayout(), true);
-    // Place the cursor on the right of the left brother of the integral if
-    // there is one.
-    if (indexInParent > 0) {
-      cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
-      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-      return;
-    }
-    // Else place the cursor on the Left of the parent.
-    cursor->setPointedExpressionLayout(previousParent);
+    replaceWithAndMoveCursor(integrandLayout(), true, cursor);
     return;
   }
   // If the cursor is on the right, move to the integrand.

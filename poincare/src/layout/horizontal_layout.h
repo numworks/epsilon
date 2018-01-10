@@ -18,6 +18,7 @@ public:
 
   /* Hierarchy */
   void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true) override;
+  void replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) override;
   void addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren);
 
   /* Navigation */
@@ -44,6 +45,7 @@ protected:
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
   bool moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout);
+  void privateReplaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor);
 };
 
 }

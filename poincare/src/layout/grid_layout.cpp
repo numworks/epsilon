@@ -24,28 +24,33 @@ ExpressionLayout * GridLayout::clone() const {
 void GridLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
-    if (indexOfPointedExpression >= 0 && childIsLeftOfGrid(indexOfPointedExpression)) {
-      // Case: Left of a left child grid.
-      // Delete the grid.
-      assert(m_parent != nullptr);
-      int indexInParent = m_parent->indexOfChild(this);
-      // Set the new cursor position before deleting.
-      if (indexInParent == 0) {
-        cursor->setPointedExpressionLayout(m_parent);
+    if (indexOfPointedExpression >= 0) {
+      if (childIsLeftOfGrid(indexOfPointedExpression)) {
+        // Case: Left of a left child grid.
+        // Delete the grid.
+        assert(m_parent != nullptr);
+        replaceWithAndMoveCursor(new EmptyVisibleLayout(), true, cursor);
         return;
       }
-      cursor->setPointedExpressionLayout(m_parent->editableChild(indexInParent-1));
-      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-      // Delete this.
-      replaceWith(new EmptyVisibleLayout(), true);
+      // Case: Left of another child of the grid.
+      // Move Left.
+      moveLeft(cursor);
       return;
     }
-    // Case: Left of another child of the grid.
-    // Move Left.
-    moveLeft(cursor);
-    return;
+    assert(cursor->pointedExpressionLayout() == this);
+    // Case: Left.
+    // Ask the parent.
+    if (m_parent) {
+      return m_parent->backspaceAtCursor(cursor);
+    }
   }
-  ExpressionLayout::backspaceAtCursor(cursor);
+  // Case: Right.
+  // Move to the last child.
+  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  cursor->setPointedExpressionLayout(editableChild((m_numberOfRows-1)*(m_numberOfColumns-1)));
+  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+  return;
 }
 
 bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
@@ -244,32 +249,38 @@ void GridLayout::addEmptyColumn(EmptyVisibleLayout::Color color) {
 
 bool GridLayout::childIsLeftOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
-  return columnAtIndex(index) == 0;
+  return columnAtChildIndex(index) == 0;
 }
 
 bool GridLayout::childIsRightOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
-  return columnAtIndex(index) == m_numberOfColumns - 1;
+  return columnAtChildIndex(index) == m_numberOfColumns - 1;
 }
 
 bool GridLayout::childIsTopOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
-  return rowAtIndex(index) == 0;
+  return rowAtChildIndex(index) == 0;
 }
 
 bool GridLayout::childIsBottomOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
-  return rowAtIndex(index) == m_numberOfRows - 1;
+  return rowAtChildIndex(index) == m_numberOfRows - 1;
 }
 
-int GridLayout::rowAtIndex(int index) const {
+int GridLayout::rowAtChildIndex(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
   return (int)(index / m_numberOfColumns);
 }
 
-int GridLayout::columnAtIndex(int index) const {
+int GridLayout::columnAtChildIndex(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
-  return index - m_numberOfColumns * rowAtIndex(index);
+  return index - m_numberOfColumns * rowAtChildIndex(index);
+}
+
+int GridLayout::indexAtRowColumn(int rowIndex, int columnIndex) const {
+  assert(rowIndex >= 0 && rowIndex < m_numberOfRows);
+  assert(columnIndex >= 0 && columnIndex < m_numberOfColumns);
+  return rowIndex * m_numberOfColumns + columnIndex;
 }
 
 }

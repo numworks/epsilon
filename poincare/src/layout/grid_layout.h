@@ -37,7 +37,9 @@ protected:
   void addEmptyColumn(EmptyVisibleLayout::Color color);
   bool childIsRightOfGrid(int index) const;
   bool childIsBottomOfGrid(int index) const;
-  int rowAtIndex(int index) const;
+  int rowAtChildIndex(int index) const;
+  int columnAtChildIndex(int index) const;
+  int indexAtRowColumn(int rowIndex, int columnIndex) const;
   int m_numberOfRows;
   int m_numberOfColumns;
 private:
@@ -49,8 +51,6 @@ private:
   KDCoordinate width();
   bool childIsLeftOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
-  int columnAtIndex(int index) const;
-
 };
 
 }

@@ -27,14 +27,8 @@ void VerticalOffsetLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
       if (base->isEmpty()) {
         // Case: Empty base and indice.
         // Replace with the empty base layout.
-        if (indexInParent <= 1) {
-          cursor->setPointedExpressionLayout(m_parent);
-        } else {
-          cursor->setPointedExpressionLayout(m_parent->editableChild(indexInParent - 2));
-          cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-        }
         m_parent->removeChildAtIndex(indexInParent - 1, false);
-        replaceWith(base, true);
+        replaceWithAndMoveCursor(base, true, cursor);
         return;
       }
       // Case: Empty indice only.

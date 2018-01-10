@@ -43,17 +43,16 @@ public:
   ExpressionLayout * editableParent() { return m_parent; }
   bool hasAncestor(const ExpressionLayout * e) const;
 
+  /* Dynamic Layout */
   bool insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor);
-
   virtual void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
-  ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace = true);
+  virtual ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace = true);
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
+  ExpressionLayout * replaceWithAndMoveCursor(ExpressionLayout * newChild, bool deleteAfterReplace, ExpressionLayoutCursor * cursor);
   virtual void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true);
+  virtual void replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor);
   void detachChild(const ExpressionLayout * e); // Removes a child WITHOUT deleting it
   void detachChildren(); //Removes all children WITHOUT deleting them
-
-
-  /* Dynamic Layout*/
   virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
   virtual void removeChildAtIndex(int index, bool deleteAfterRemoval);
   virtual void backspaceAtCursor(ExpressionLayoutCursor * cursor);

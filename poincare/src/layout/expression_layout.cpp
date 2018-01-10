@@ -164,6 +164,12 @@ ExpressionLayout * ExpressionLayout::replaceWithJuxtapositionOf(ExpressionLayout
   return layout;
 }
 
+ExpressionLayout * ExpressionLayout::replaceWithAndMoveCursor(ExpressionLayout * newChild, bool deleteAfterReplace, ExpressionLayoutCursor * cursor) {
+  assert(m_parent != nullptr);
+  m_parent->replaceChildAndMoveCursor(this, newChild, deleteAfterReplace, cursor);
+  return newChild;
+}
+
 void ExpressionLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
   assert(newChild != nullptr);
   // Caution: handle the case where we replace an operand with a descendant of ours.
@@ -189,6 +195,19 @@ void ExpressionLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
   m_sized = false;
   m_positioned = false;
   m_baselined = false;
+}
+
+void ExpressionLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
+  int oldChildIndex = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
+  assert(oldChildIndex >= 0);
+  if (oldChildIndex == 0) {
+    cursor->setPointedExpressionLayout(this);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+  } else {
+    cursor->setPointedExpressionLayout(editableChild(oldChildIndex - 1));
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+  }
+  replaceChild(oldChild, newChild, deleteOldChild);
 }
 
 void ExpressionLayout::detachChild(const ExpressionLayout * e) {

@@ -130,9 +130,14 @@ ExpressionLayout * Controller::handleAddEvent(Ion::Events::Event event) {
   }
   if (event.hasText()) {
     const char * textToInsert = event.text();
-    if (textToInsert[0] == Ion::Charset::MultiplicationSign  && textToInsert[1] == 0) {
-      const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
-      return m_cursor.insertText(middleDotString);
+    if (textToInsert[1] == 0) {
+      if (textToInsert[0] == Ion::Charset::MultiplicationSign) {
+        const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
+        return m_cursor.insertText(middleDotString);
+      }
+      if (textToInsert[0] == '[' || textToInsert[0] == ']') {
+        return m_cursor.addEmptyMatrixLayout();
+      }
     }
     return m_cursor.insertText(textToInsert);
   }

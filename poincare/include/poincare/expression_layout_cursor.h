@@ -43,6 +43,7 @@ public:
   ExpressionLayout * addEmptyExponentialLayout();
   ExpressionLayout * addFractionLayoutAndCollapseBrothers();
   ExpressionLayout * addEmptyLogarithmLayout();
+  ExpressionLayout * addEmptyMatrixLayout(int numberOfRows = 1, int numberOfColumns = 1);
   ExpressionLayout * addEmptyPowerLayout();
   ExpressionLayout * addEmptySquareRootLayout();
   ExpressionLayout * addEmptySquarePowerLayout();

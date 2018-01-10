@@ -33,6 +33,7 @@ protected:
   double m_startSum;
   double m_endSum;
   Function * m_function;
+  InteractiveCurveViewRange * m_graphRange;
 private:
   constexpr static float k_cursorTopMarginRatio = 0.07f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
@@ -79,7 +80,6 @@ private:
   };
   FunctionGraphView * m_graphView;
   LegendView m_legendView;
-  InteractiveCurveViewRange * m_graphRange;
   VerticalCursorView m_cursorView;
 };
 

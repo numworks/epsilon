@@ -12,7 +12,8 @@ CalculationParameterController::CalculationParameterController(Responder * paren
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_function(nullptr),
-  m_tangentGraphController(nullptr, graphView, bannerView, range, cursor)
+  m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
+  m_integralGraphController(nullptr, graphView, range, cursor)
 {
 }
 
@@ -31,19 +32,33 @@ void CalculationParameterController::didBecomeFirstResponder() {
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    ViewController * controller = nullptr;
     switch(selectedRow()) {
       case 4:
-      {
         m_tangentGraphController.setFunction(m_function);
-        StackViewController * stack = (StackViewController *)parentResponder();
-        stack->pop();
-        stack->pop();
-        stack->push(&m_tangentGraphController);
-        return true;
-      }
+        controller = &m_tangentGraphController;
+        break;
+      case 5:
+        m_integralGraphController.setFunction(m_function);
+        controller = &m_integralGraphController;
+        break;
       default:
         return false;
     }
+    // This is temporary (until the end of development of calculation menu)
+    if (controller == nullptr) {
+      return false;
+    }
+    StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+    stack->pop();
+    stack->pop();
+    stack->push(controller);
+    return true;
+  }
+  if (event == Ion::Events::Left) {
+    StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+    stack->pop();
+    return true;
   }
   return false;
 }

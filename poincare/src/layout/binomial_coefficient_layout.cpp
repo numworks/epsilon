@@ -26,15 +26,7 @@ void BinomialCoefficientLayout::backspaceAtCursor(ExpressionLayoutCursor * curso
         || cursor->pointedExpressionLayout() == kLayout()))
   {
     assert(m_parent != nullptr);
-    int indexInParent = m_parent->indexOfChild(this);
-    ExpressionLayout * parent = m_parent;
-    replaceWith(new EmptyVisibleLayout(), true);
-    if (indexInParent == 0) {
-      cursor->setPointedExpressionLayout(parent);
-      return;
-    }
-    cursor->setPointedExpressionLayout(parent->editableChild(indexInParent-1));
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    replaceWithAndMoveCursor(new EmptyVisibleLayout(), true, cursor);
     return;
   }
   ExpressionLayout::backspaceAtCursor(cursor);

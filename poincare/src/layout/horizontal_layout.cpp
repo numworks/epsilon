@@ -27,9 +27,18 @@ void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
 }
 
 void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
+  privateReplaceChild(oldChild, newChild, deleteOldChild, nullptr);
+}
+
+void HorizontalLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
+  privateReplaceChild(oldChild, newChild, deleteOldChild, cursor);
+}
+
+void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
   if (newChild->hasAncestor(this)) {
     newChild->editableParent()->detachChild(newChild);
   }
+  int oldChildIndex = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
   if (newChild->isEmpty()) {
     if (numberOfChildren() > 1) {
       // If the new layout is empty and the horizontal layout has other
@@ -38,13 +47,27 @@ void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
         delete newChild;
       }
       removeChildAtIndex(indexOfChild(const_cast<ExpressionLayout *>(oldChild)), deleteOldChild);
+      if (cursor == nullptr) {
+        return;
+      }
+      if (oldChildIndex == 0) {
+        cursor->setPointedExpressionLayout(this);
+        cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+        return;
+      }
+      cursor->setPointedExpressionLayout(editableChild(oldChildIndex -1));
+      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       return;
     }
     // If the new layout is empty and it was the only horizontal layout child,
     // replace the horizontal layout with this empty layout (only if this is not
     // the main layout, so only if the layout has a parent.
     if (m_parent) {
-      replaceWith(newChild);
+      if (cursor) {
+        replaceWithAndMoveCursor(newChild, deleteOldChild, cursor);
+        return;
+      }
+      replaceWith(newChild, deleteOldChild);
       return;
     }
   }
@@ -54,10 +77,26 @@ void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
     int indexForInsertion = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
     mergeChildrenAtIndex(static_cast<HorizontalLayout *>(newChild), indexForInsertion + 1, true);
     removeChildAtIndex(indexForInsertion, deleteOldChild);
+    if (cursor == nullptr) {
+      return;
+    }
+    if (oldChildIndex == 0) {
+      cursor->setPointedExpressionLayout(this);
+      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      return;
+    }
+    cursor->setPointedExpressionLayout(editableChild(oldChildIndex -1));
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return;
   }
   // Else, just replace the child.
   ExpressionLayout::replaceChild(oldChild, newChild, deleteOldChild);
+  if (cursor == nullptr) {
+    return;
+  }
+  cursor->setPointedExpressionLayout(newChild);
+  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+  return;
 }
 
 void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren) {

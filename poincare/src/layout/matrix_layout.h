@@ -9,6 +9,7 @@ class MatrixLayout : public GridLayout {
 public:
   using GridLayout::GridLayout;
   ExpressionLayout * clone() const override;
+  void replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   void newRowOrColumnAtIndex(int index);
 protected:

@@ -14,19 +14,15 @@ ExpressionLayout * BracketLayout::clone() const {
 }
 
 void BracketLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  // Case: Left of the operand.
+  // Delete the brackets, keep the operand.
   if (cursor->pointedExpressionLayout() == operandLayout()) {
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-    ExpressionLayout * previousParent = m_parent;
-    int indexInParent = previousParent->indexOfChild(this);
-    replaceWith(operandLayout(), true);
-    if (indexInParent == 0) {
-      cursor->setPointedExpressionLayout(previousParent);
-      return;
-    }
-    cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    replaceWithAndMoveCursor(operandLayout(), true, cursor);
     return;
   }
+  // Case: Right.
+  // Move Right of the operand.
   assert(cursor->pointedExpressionLayout() == this);
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     cursor->setPointedExpressionLayout(operandLayout());

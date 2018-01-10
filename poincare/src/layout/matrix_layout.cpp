@@ -17,6 +17,21 @@ ExpressionLayout * MatrixLayout::clone() const {
   return layout;
 }
 
+void MatrixLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
+  int oldChildIndex = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
+  int rowIndex = rowAtChildIndex(oldChildIndex);
+  int columnIndex = columnAtChildIndex(oldChildIndex);
+  replaceChild(oldChild, newChild, deleteOldChild);
+  int newIndex = indexAtRowColumn(rowIndex, columnIndex);
+  if (newIndex < numberOfChildren()) {
+    cursor->setPointedExpressionLayout(editableChild(newIndex));
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return;
+  }
+  cursor->setPointedExpressionLayout(editableChild(numberOfChildren()));
+  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+}
+
 int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   // The grid is a matrix.
   if (bufferSize == 0) {
@@ -45,7 +60,7 @@ int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
 
 void MatrixLayout::newRowOrColumnAtIndex(int index) {
   bool shouldAddNewRow = GridLayout::childIsBottomOfGrid(index);
-  int correspondingRow = rowAtIndex(index);
+  int correspondingRow = rowAtChildIndex(index);
   // We need to compute this bool before modifying the layout.:w
   //
   if (GridLayout::childIsRightOfGrid(index)) {

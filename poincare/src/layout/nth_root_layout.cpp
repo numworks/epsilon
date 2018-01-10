@@ -40,24 +40,7 @@ void NthRootLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->position() == ExpressionLayoutCursor::Position::Left
       && cursor->pointedExpressionLayout() == radicandLayout())
   {
-    ExpressionLayout * previousParent = m_parent;
-    int indexInParent = previousParent->indexOfChild(this);
-    replaceWith(radicandLayout());
-    // Place the cursor on the left of what replaced the root if possible.
-    if (indexInParent < previousParent->numberOfChildren()) {
-      cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent));
-      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-      return;
-    }
-    // Else place the cursor on the right of the left brother of the root if
-    // there is one.
-    if (indexInParent > 0) {
-      cursor->setPointedExpressionLayout(previousParent->editableChild(indexInParent - 1));
-      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-      return;
-    }
-    // Else place the cursor on the Left of the parent.
-    cursor->setPointedExpressionLayout(previousParent);
+    replaceWithAndMoveCursor(radicandLayout(), true, cursor);
     return;
   }
   // Case: Right.

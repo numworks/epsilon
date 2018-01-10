@@ -33,6 +33,7 @@ public:
   virtual double evaluateAtAbscissa(double x, Poincare::Context * context) const {
     return templatedApproximateAtAbscissa(x, context);
   }
+  virtual double sumBetweenBounds(double start, double end, Poincare::Context * context) const = 0;
   virtual void tidy();
 private:
   constexpr static size_t k_dataLengthInBytes = (TextField::maxBufferSize()+2)*sizeof(char)+2;

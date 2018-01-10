@@ -192,7 +192,8 @@ bool SumGraphController::handleEnter() {
     return true;
   }
   m_step = (Step)((int)m_step+1);
-  double sum = computeSum(m_startSum, m_endSum);
+  TextFieldDelegateApp * myApp = static_cast<TextFieldDelegateApp *>(app());
+  double sum = m_function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
   m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, sum, m_function->name());
   m_legendView.setLegendMessage(I18n::Message::Default, m_step);
   m_graphView->setAreaHighlightColor(true);

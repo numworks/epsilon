@@ -363,7 +363,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   }
 }
 
-double Sequence::sumOfTermsBetweenAbscissa(double start, double end, Context * context) {
+double Sequence::sumBetweenBounds(double start, double end, Context * context) const {
   double result = 0.0;
   if (end-start > k_maxNumberOfTermsInSum || start + 1.0 == start) {
     return NAN;

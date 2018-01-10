@@ -12,6 +12,7 @@ public:
   bool displayDerivative();
   void setDisplayDerivative(bool display);
   double approximateDerivative(double x, Poincare::Context * context) const;
+  double sumBetweenBounds(double start, double end, Poincare::Context * context) const override;
   char symbol() const override;
 private:
   bool m_displayDerivative;

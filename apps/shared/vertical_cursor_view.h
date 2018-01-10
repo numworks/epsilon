@@ -1,9 +1,9 @@
-#ifndef SEQUENCE_VERTICAL_CURSOR_VIEW_H
-#define SEQUENCE_VERTICAL_CURSOR_VIEW_H
+#ifndef SHARED_VERTICAL_CURSOR_VIEW_H
+#define SHARED_VERTICAL_CURSOR_VIEW_H
 
 #include <escher.h>
 
-namespace Sequence {
+namespace Shared {
 
 class VerticalCursorView : public View {
 public:

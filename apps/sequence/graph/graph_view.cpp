@@ -8,11 +8,7 @@ namespace Sequence {
 GraphView::GraphView(SequenceStore * sequenceStore, InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
-  m_sequenceStore(sequenceStore),
-  m_verticalCursor(false),
-  m_highlightedDotStart(-1),
-  m_highlightedDotEnd(-1),
-  m_shouldColorHighlighted(false)
+  m_sequenceStore(sequenceStore)
 {
 }
 
@@ -33,7 +29,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         continue;
       }
       drawDot(ctx, rect, x, y, s->color());
-      if (x >= m_highlightedDotStart && x <= m_highlightedDotEnd && s == m_selectedFunction) {
+      if (x >= m_highlightedStart && x <= m_highlightedEnd && s == m_selectedFunction) {
         KDColor color = m_shouldColorHighlighted ? s->color() : KDColorBlack;
         if (y >= 0.0f) {
           drawSegment(ctx, rect, Axis::Vertical, x, 0.0f, y, color, 1);
@@ -45,49 +41,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-void GraphView::setVerticalCursor(bool verticalCursor) {
-  m_verticalCursor = verticalCursor;
-}
-
-void GraphView::reload() {
-  FunctionGraphView::reload();
-  if (m_highlightedDotStart >= 0) {
-    float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedDotStart)-1;
-    float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedDotEnd)+2;
-    /* We exclude the banner frame from the dirty zone to avoid unnecessary
-     * redrawing */
-    KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
-    bounds().height()-m_bannerView->bounds().height()));
-    markRectAsDirty(dirtyZone);
-  }
-}
-
-void GraphView::setHighlight(int start, int end) {
-  if (m_highlightedDotStart != start || m_highlightedDotEnd != end) {
-    reload();
-    m_highlightedDotStart = start;
-    m_highlightedDotEnd = end;
-    reload();
-  }
-}
-
-void GraphView::setHighlightColor(bool highlightColor) {
-  if (m_shouldColorHighlighted != highlightColor) {
-    reload();
-    m_shouldColorHighlighted = highlightColor;
-    reload();
-  }
-}
-
 float GraphView::samplingRatio() const {
   return 5.0f;
-}
-
-KDSize GraphView::cursorSize() {
-  if (m_verticalCursor) {
-    return KDSize(1, 0);
-  }
-  return CurveView::cursorSize();
 }
 
 }

@@ -28,6 +28,11 @@ ViewController * FunctionGraphController::initialisationParameterController() {
 }
 
 void FunctionGraphController::viewWillAppear() {
+  functionGraphView()->setVerticalCursor(false);
+  functionGraphView()->setCursorView(&m_cursorView);
+  functionGraphView()->setBannerView(bannerView());
+  functionGraphView()->setAreaHighlight(NAN,NAN);
+
   if (functionGraphView()->context() == nullptr) {
     TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
     functionGraphView()->setContext(myApp->localContext());

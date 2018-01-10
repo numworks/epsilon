@@ -1,6 +1,5 @@
 #include "sum_graph_controller.h"
 #include "../apps_container.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../poincare/src/layout/condensed_sum_layout.h"
 #include "../../poincare/src/layout/string_layout.h"
 #include "../../poincare/src/layout/horizontal_layout.h"
@@ -194,7 +193,7 @@ bool SumGraphController::handleEnter() {
   m_step = (Step)((int)m_step+1);
   TextFieldDelegateApp * myApp = static_cast<TextFieldDelegateApp *>(app());
   double sum = m_function->sumBetweenBounds(m_startSum, m_endSum, myApp->localContext());
-  m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, sum, m_function->name());
+  m_legendView.setSumSymbol(m_step, m_startSum, m_endSum, sum, createFunctionLayout(m_function->name()));
   m_legendView.setLegendMessage(I18n::Message::Default, m_step);
   m_graphView->setAreaHighlightColor(true);
   m_graphView->setCursorView(nullptr);
@@ -240,7 +239,8 @@ void SumGraphController::LegendView::setEditableZone(double d) {
  m_editableZone.setText(buffer);
 }
 
-void SumGraphController::LegendView::setSumSymbol(Step step, double start, double end, double result, const char * sequenceName) {
+void SumGraphController::LegendView::setSumSymbol(Step step, double start, double end, double result, ExpressionLayout * functionLayout) {
+  assert(step == Step::Result || functionLayout == nullptr);
   if (m_sumLayout) {
     delete m_sumLayout;
     m_sumLayout = nullptr;
@@ -263,10 +263,10 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     ExpressionLayout * childrenLayouts[3];
     strlcpy(buffer, "= ", 3);
     Complex<double>::convertFloatToText(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  childrenLayouts[2] = new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
-  childrenLayouts[1] = new BaselineRelativeLayout(new StringLayout(sequenceName, 1, KDText::FontSize::Small), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  childrenLayouts[0] = m_sumLayout;
-  m_sumLayout = new HorizontalLayout(childrenLayouts, 3);
+    childrenLayouts[2] = new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
+    childrenLayouts[1] = functionLayout;
+    childrenLayouts[0] = m_sumLayout;
+    m_sumLayout = new HorizontalLayout(childrenLayouts, 3);
   }
   m_sum.setExpression(m_sumLayout);
   if (step == Step::Result) {

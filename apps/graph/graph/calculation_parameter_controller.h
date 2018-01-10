@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "../cartesian_function.h"
 #include "tangent_graph_controller.h"
+#include "integral_graph_controller.h"
 #include "graph_view.h"
 #include "banner_view.h"
 #include "../../i18n.h"
@@ -29,6 +30,7 @@ private:
   SelectableTableView m_selectableTableView;
   CartesianFunction * m_function;
   TangentGraphController m_tangentGraphController;
+  IntegralGraphController m_integralGraphController;
 };
 
 }

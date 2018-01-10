@@ -19,9 +19,9 @@ SumGraphController::SumGraphController(Responder * parentResponder, FunctionGrap
   m_startSum(NAN),
   m_endSum(NAN),
   m_function(nullptr),
+  m_graphRange(range),
   m_graphView(graphView),
   m_legendView(this, sumSymbol),
-  m_graphRange(range),
   m_cursorView()
 {
 }

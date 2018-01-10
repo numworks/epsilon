@@ -1,12 +1,13 @@
 #include "empty_visible_layout.h"
 #include <poincare/expression_layout_cursor.h>
+#include <escher/palette.h>
 #include <assert.h>
 
 namespace Poincare {
 
-EmptyVisibleLayout::EmptyVisibleLayout() :
+EmptyVisibleLayout::EmptyVisibleLayout(Color color) :
   StaticLayoutHierarchy(),
-  m_fillRectColor(KDColor::RGB24(0xffd370)) //TODO make static or in Palette?
+  m_color(color)
 {
 }
 
@@ -72,8 +73,9 @@ int EmptyVisibleLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
 }
 
 void EmptyVisibleLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->fillRect(KDRect(p.x()+k_marginWidth, p.y()+k_marginHeight, k_width, k_height), m_fillRectColor);
-  ctx->fillRect(KDRect(p.x()+k_marginWidth, p.y()+k_marginHeight, k_width, k_height), m_fillRectColor);
+  KDColor fillColor = m_color == Color::Yellow ? Palette::YellowDark : Palette::GreyBright;
+  ctx->fillRect(KDRect(p.x()+k_marginWidth, p.y()+k_marginHeight, k_width, k_height), fillColor);
+  ctx->fillRect(KDRect(p.x()+k_marginWidth, p.y()+k_marginHeight, k_width, k_height), fillColor);
 }
 
 KDSize EmptyVisibleLayout::computeSize() {

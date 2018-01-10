@@ -8,7 +8,11 @@ namespace Poincare {
 
 class EmptyVisibleLayout : public StaticLayoutHierarchy<0> {
 public:
-  EmptyVisibleLayout();
+  enum class Color {
+    Yellow,
+    Grey
+  };
+  EmptyVisibleLayout(Color color = Color::Yellow);
   ExpressionLayout * clone() const override;
   void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
@@ -16,6 +20,7 @@ public:
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   bool isEmpty() const override { return true; }
+  void setColor(Color color) { m_color = color; }
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   virtual KDSize computeSize() override;
@@ -30,8 +35,7 @@ private:
   constexpr static KDCoordinate k_marginWidth = 1;
   constexpr static KDCoordinate k_marginHeight = 2;
   constexpr static KDCoordinate k_lineThickness = 1;
-
-  KDColor m_fillRectColor;
+  Color m_color;
 };
 
 }

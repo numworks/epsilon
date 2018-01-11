@@ -119,7 +119,6 @@ void MatrixLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, 
 
 void MatrixLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
   assert(index >= 0 && index < numberOfChildren());
-  assert(cursor->pointedExpressionLayout() == child(index));
   replaceChildAndMoveCursor(child(index), new EmptyVisibleLayout(), deleteAfterRemoval, cursor);
 }
 

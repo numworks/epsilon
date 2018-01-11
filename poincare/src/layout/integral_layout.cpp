@@ -27,28 +27,15 @@ ExpressionLayout * IntegralLayout::clone() const {
 }
 
 void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  // Case: Left the upper bound, lower bound or argument.
-  // Delete the integral, keep the integrand.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left
-      && ((upperBoundLayout()
-          && cursor->pointedExpressionLayout() == upperBoundLayout())
-        || (lowerBoundLayout()
-          && cursor->pointedExpressionLayout() == lowerBoundLayout())
-        || cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left)))
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
+    // Case: Right.
+    // Delete the layout, keep the integrand.
     replaceWithAndMoveCursor(integrandLayout(), true, cursor);
     return;
   }
-  // If the cursor is on the right, move to the integrand.
-  assert(cursor->pointedExpressionLayout() == this);
-  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    cursor->setPointedExpressionLayout(integrandLayout());
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    return;
-  }
-  if (m_parent) {
-    return m_parent->backspaceAtCursor(cursor);
-  }
+  ExpressionLayout::backspaceAtCursor(cursor);
 }
 
 bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {

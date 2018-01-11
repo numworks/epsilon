@@ -14,30 +14,15 @@ SequenceLayout::SequenceLayout(ExpressionLayout * argument, ExpressionLayout * l
 }
 
 void SequenceLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  // Case: Left of the bounds or of the argument.
-  // Delete the sequence, keep the argument.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left
-      && ((lowerBoundLayout()
-          && cursor->pointedExpressionLayout() == lowerBoundLayout())
-        || (upperBoundLayout()
-          && cursor->pointedExpressionLayout() == upperBoundLayout())
-        || cursor->pointedExpressionLayout() == argumentLayout()))
-  {
-    replaceWithAndMoveCursor(argumentLayout(), true, cursor);
-    return;
-  }
-  // Case: Right.
-  // Move inside the argument.
   if (cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
-    cursor->setPointedExpressionLayout(argumentLayout());
+    // Case: Right.
+    // Delete the layout, keep the operand.
+    replaceWithAndMoveCursor(argumentLayout(), true, cursor);
     return;
   }
-  // Case: Left.
-  // Ask the parent.
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-  m_parent->backspaceAtCursor(cursor);
+  ExpressionLayout::backspaceAtCursor(cursor);
 }
 
 bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor) {

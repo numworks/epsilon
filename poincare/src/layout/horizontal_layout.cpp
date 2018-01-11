@@ -15,13 +15,46 @@ ExpressionLayout * HorizontalLayout::clone() const {
 }
 
 void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  // If the cursor was pointing left of the first child of the horizontal
-  // layout, make it point at the horizontal layout itself.
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Left
+      && m_parent == nullptr)
+  {
+    // Case: Left and this is the main layout.
+    // Return.
+    return;
+  }
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Right
+      && m_parent == nullptr
+      && numberOfChildren() == 0)
+  {
+    // Case: Right and this is the main layout with no children.
+    // Return.
+    return;
+  }
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
-    if (indexOfPointedExpression == 0) {
-      cursor->setPointedExpressionLayout(this);
+    if (indexOfPointedExpression >= 0) {
+      // Case: Left of a child.
+      // Point Right of the previous child. If there is no previous child, point
+      // Left of this. Perform another backspace.
+      if (indexOfPointedExpression == 0) {
+        cursor->setPointedExpressionLayout(this);
+      } else if (indexOfPointedExpression > 0) {
+        cursor->setPointedExpressionLayout(editableChild(indexOfPointedExpression - 1));
+        cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      }
+      cursor->performBackspace();
+      return;
     }
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    // Case: Right.
+    // Point to the last child and perform backspace.
+    cursor->setPointedExpressionLayout(editableChild(numberOfChildren() - 1));
+    cursor->performBackspace();
+    return;
   }
   ExpressionLayout::backspaceAtCursor(cursor);
 }
@@ -89,18 +122,17 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
   // new layout then destroy it.
   if (newChild->isHorizontal()) {
     int indexForInsertion = indexOfChild(oldChild);
+    if (cursor != nullptr) {
+      if (oldChildIndex == numberOfChildren() - 1) {
+        cursor->setPointedExpressionLayout(this);
+        cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      } else {
+        cursor->setPointedExpressionLayout(editableChild(oldChildIndex + 1));
+        cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      }
+    }
     mergeChildrenAtIndex(static_cast<HorizontalLayout *>(newChild), indexForInsertion + 1, true);
     removeChildAtIndex(indexForInsertion, deleteOldChild);
-    if (cursor == nullptr) {
-      return;
-    }
-    if (oldChildIndex == 0) {
-      cursor->setPointedExpressionLayout(this);
-      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-      return;
-    }
-    cursor->setPointedExpressionLayout(editableChild(oldChildIndex -1));
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return;
   }
   // Else, just replace the child.

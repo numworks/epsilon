@@ -44,6 +44,14 @@ void VerticalOffsetLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return;
   }
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    // Case: Right.
+    // Move to the indice.
+    cursor->setPointedExpressionLayout(indiceLayout());
+    return;
+  }
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 

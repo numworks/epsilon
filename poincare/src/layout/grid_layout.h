@@ -11,7 +11,6 @@ class GridLayout : public DynamicLayoutHierarchy {
 public:
   GridLayout(const ExpressionLayout * const * entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands);
   ExpressionLayout * clone() const override;
-  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
 
   /* Navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
@@ -21,9 +20,8 @@ public:
 
   /* Dynamic layout */
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
-  // TODO: This function replaces the child with an EmptyVisibleLayout. Is this
-  // ok? If we want to delete the grid's children, we have to make sure no to
-  // call this function.
+  // This function replaces the child with an EmptyVisibleLayout. To delete the
+  // grid's children, do not call this function.
 
   /* Expression engine */
   int writeTextInBuffer(char * buffer, int bufferSize) const override { return 0; }

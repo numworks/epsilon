@@ -21,28 +21,6 @@ ExpressionLayout * GridLayout::clone() const {
   return layout;
 }
 
-void GridLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
-    if (indexOfPointedExpression >= 0) {
-      // Case: Left of child of the grid.
-      // Move Left.
-      moveLeft(cursor);
-      return;
-    }
-    assert(cursor->pointedExpressionLayout() == this);
-    // Case: Left.
-    // Ask the parent.
-    if (m_parent) {
-      return m_parent->backspaceAtCursor(cursor);
-    }
-  }
-  // Case: Right.
-  // Delete the grid.
-  assert(m_parent != nullptr);
-  replaceWithAndMoveCursor(new EmptyVisibleLayout(), true, cursor);
-}
-
 bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Go to the last entry.

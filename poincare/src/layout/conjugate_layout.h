@@ -13,6 +13,8 @@ public:
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
+  void replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) override;
+  void removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
     return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "conj");
   }

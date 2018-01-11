@@ -10,7 +10,6 @@ class BinomialCoefficientLayout : public StaticLayoutHierarchy<2> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
-  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr) override;

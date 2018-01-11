@@ -147,7 +147,7 @@ bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const 
 }
 
 bool SumGraphController::textFieldDidAbortEditing(TextField * textField, const char * text) {
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
   double parameter = NAN;
   switch(m_step) {
     case Step::FirstParameter:
@@ -159,7 +159,7 @@ bool SumGraphController::textFieldDidAbortEditing(TextField * textField, const c
     default:
       assert(false);
   }
-  Complex<double>::convertFloatToText(parameter, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  Complex<double>::convertFloatToText(parameter, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
   textField->setText(buffer);
   return true;
 }
@@ -232,8 +232,8 @@ void SumGraphController::LegendView::setLegendMessage(I18n::Message message, Ste
 }
 
 void SumGraphController::LegendView::setEditableZone(double d) {
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  Complex<double>::convertFloatToText(d, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
+  Complex<double>::convertFloatToText(d, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
  m_editableZone.setText(buffer);
 }
 
@@ -247,20 +247,20 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
   if (step == Step::FirstParameter) {
     m_sumLayout = new StringLayout(sigma, sizeof(sigma));
   } else if (step == Step::SecondParameter) {
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
+    Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
     m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, sizeof(sigma)), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
   } else {
-    char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
+    Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
     ExpressionLayout * start =  new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
-    Complex<double>::convertFloatToText(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    Complex<double>::convertFloatToText(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
     ExpressionLayout * end =  new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, sizeof(sigma)), start, end);
 
     ExpressionLayout * childrenLayouts[3];
     strlcpy(buffer, "= ", 3);
-    Complex<double>::convertFloatToText(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    Complex<double>::convertFloatToText(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
     childrenLayouts[2] = new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     childrenLayouts[1] = functionLayout;
     childrenLayouts[0] = m_sumLayout;

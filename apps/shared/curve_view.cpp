@@ -54,16 +54,30 @@ void CurveView::setCurveViewRange(CurveViewRange * curveViewRange) {
   m_curveViewRange = curveViewRange;
 }
 
+/* When setting cursor, banner or ok view we first dirty the former element
+ * frame (in case we set the new element to be nullptr or the new element frame
+ * does not recover the former element frame) and then we dirty the new element
+ * frame (most of the time it is automatically done by the layout but the frame
+ * might be identical to the previous one and in that case layoutSubviews will
+ * do nothing). */
+
 void CurveView::setCursorView(View * cursorView) {
+  markRectAsDirty(cursorFrame());
   m_cursorView = cursorView;
+  markRectAsDirty(cursorFrame());
+  layoutSubviews();
 }
 
 void CurveView::setBannerView(View * bannerView) {
+  markRectAsDirty(bannerFrame());
   m_bannerView = bannerView;
+  layoutSubviews();
 }
 
 void CurveView::setOkView(View * okView) {
+  markRectAsDirty(okFrame());
   m_okView = okView;
+  layoutSubviews();
 }
 
 float CurveView::resolution() const {
@@ -477,39 +491,50 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
 
 void CurveView::layoutSubviews() {
   if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
+    m_cursorView->setFrame(cursorFrame());
+  }
+  if (m_bannerView != nullptr) {
+    m_bannerView->setFrame(bannerFrame());
+  }
+  if (m_okView != nullptr) {
+    m_okView->setFrame(okFrame());
+  }
+}
+
+KDRect CurveView::cursorFrame() {
+  KDRect cursorFrame = KDRectZero;
+  if (m_cursorView && m_mainViewSelected && !std::isnan(m_curveViewCursor->x()) && !std::isnan(m_curveViewCursor->y())) {
     KDCoordinate xCursorPixelPosition = std::round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
     KDCoordinate yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
-    KDRect cursorFrame(xCursorPixelPosition - cursorSize().width()/2, yCursorPixelPosition - cursorSize().height()/2, cursorSize().width(), cursorSize().height());
+    cursorFrame = KDRect(xCursorPixelPosition - cursorSize().width()/2, yCursorPixelPosition - cursorSize().height()/2, cursorSize().width(), cursorSize().height());
     if (cursorSize().height() == 0) {
       KDCoordinate bannerHeight = m_bannerView != nullptr ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;
       cursorFrame = KDRect(xCursorPixelPosition - cursorSize().width()/2, 0, cursorSize().width(),bounds().height()-bannerHeight);
     }
-    if (!m_mainViewSelected || std::isnan(m_curveViewCursor->x()) || std::isnan(m_curveViewCursor->y())
-        || std::isinf(m_curveViewCursor->x()) || std::isinf(m_curveViewCursor->y())) {
-      cursorFrame = KDRectZero;
-    }
-    m_cursorView->setFrame(cursorFrame);
   }
-  if (m_bannerView != nullptr) {
+  return cursorFrame;
+}
+
+KDRect CurveView::bannerFrame() {
+  KDRect bannerFrame = KDRectZero;
+  if (m_bannerView && m_mainViewSelected) {
     KDCoordinate bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
-    KDRect bannerFrame(KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight));
-    if (!m_mainViewSelected) {
-      bannerFrame = KDRectZero;
-    }
-    m_bannerView->setFrame(bannerFrame);
+    bannerFrame = KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight);
   }
-  if (m_okView != nullptr) {
+  return bannerFrame;
+}
+
+KDRect CurveView::okFrame() {
+  KDRect okFrame = KDRectZero;
+  if (m_okView && m_mainViewSelected) {
     KDCoordinate bannerHeight = 0;
     if (m_bannerView != nullptr) {
       bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
     }
     KDSize okSize = m_okView->minimalSizeForOptimalDisplay();
-    KDRect okFrame(KDRect(bounds().width()- okSize.width()-k_okMargin, bounds().height()- bannerHeight-okSize.height()-k_okMargin, okSize));
-    if (!m_mainViewSelected) {
-      okFrame = KDRectZero;
-    }
-    m_okView->setFrame(okFrame);
+    okFrame = KDRect(bounds().width()- okSize.width()-k_okMargin, bounds().height()- bannerHeight-okSize.height()-k_okMargin, okSize);
   }
+  return okFrame;
 }
 
 int CurveView::numberOfSubviews() const {

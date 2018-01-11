@@ -83,7 +83,6 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
       app()->setFirstResponder(m_legendView.textField());
       m_graphView->setAreaHighlightColor(false);
       m_graphView->setCursorView(&m_cursorView);
-      m_graphView->reload();
       m_endSum = m_cursor->x();
       m_legendView.setEditableZone(m_endSum);
       m_legendView.setSumSymbol(m_step, m_startSum);
@@ -197,7 +196,6 @@ bool SumGraphController::handleEnter() {
   m_legendView.setLegendMessage(I18n::Message::Default, m_step);
   m_graphView->setAreaHighlightColor(true);
   m_graphView->setCursorView(nullptr);
-  m_graphView->reload();
   myApp->setFirstResponder(this);
   return true;
 }

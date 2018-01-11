@@ -76,6 +76,9 @@ private:
    * anti alising. */
   void stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float pyf, KDColor color) const;
   void layoutSubviews() override;
+  KDRect cursorFrame();
+  KDRect bannerFrame();
+  KDRect okFrame();
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   /* m_curveViewRange has to be non null but the cursor model, the banner and

@@ -224,6 +224,14 @@ void HorizontalLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
   DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);
 }
 
+bool HorizontalLayout::isEmpty() const {
+  if (m_numberOfChildren == 1 && child(0)->isEmpty())
+  {
+    return true;
+  }
+  return false;
+}
+
 void HorizontalLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
 }
 

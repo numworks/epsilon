@@ -37,6 +37,7 @@ public:
 
   /* Other */
   bool isHorizontal() const override { return true; }
+  bool isEmpty() const override;
 
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

@@ -142,13 +142,4 @@ void DynamicLayoutHierarchy::removePointedChildAtIndexAndMoveCursor(int index, b
   cursor->setPointedExpressionLayout(editableChild(indexOfNewPointedLayout));
 }
 
-bool DynamicLayoutHierarchy::isEmpty() const {
-  if (m_numberOfChildren == 0
-      || (m_numberOfChildren == 1 && child(0)->isEmpty()))
-  {
-    return true;
-  }
-  return false;
-}
-
 }

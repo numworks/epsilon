@@ -31,7 +31,6 @@ public:
   void removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) override;
   void mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren); // WITHOUT delete.
 
-  bool isEmpty() const override;
 protected:
   const ExpressionLayout ** m_children;
   int m_numberOfChildren;

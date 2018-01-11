@@ -18,13 +18,13 @@ ExpressionLayout * MatrixLayout::clone() const {
 }
 
 void MatrixLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
-  int oldChildIndex = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
+  int oldChildIndex = indexOfChild(oldChild);
   GridLayout::replaceChild(oldChild, newChild, deleteOldChild);
   childWasReplacedAtIndex(oldChildIndex);
 }
 
 void MatrixLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
-  int oldChildIndex = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
+  int oldChildIndex = indexOfChild(oldChild);
   int rowIndex = rowAtChildIndex(oldChildIndex);
   int columnIndex = columnAtChildIndex(oldChildIndex);
   replaceChild(oldChild, newChild, deleteOldChild);

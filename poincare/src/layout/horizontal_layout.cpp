@@ -38,7 +38,7 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
   if (newChild->hasAncestor(this)) {
     newChild->editableParent()->detachChild(newChild);
   }
-  int oldChildIndex = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
+  int oldChildIndex = indexOfChild(oldChild);
   if (newChild->isEmpty()) {
     if (numberOfChildren() > 1) {
       // If the new layout is empty and the horizontal layout has other
@@ -46,7 +46,7 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
       if (!newChild->hasAncestor(oldChild)) {
         delete newChild;
       }
-      removeChildAtIndex(indexOfChild(const_cast<ExpressionLayout *>(oldChild)), deleteOldChild);
+      removeChildAtIndex(oldChildIndex, deleteOldChild);
       if (cursor == nullptr) {
         return;
       }
@@ -74,7 +74,7 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
   // If the new child is also an horizontal layout, steal the children of the
   // new layout then destroy it.
   if (newChild->isHorizontal()) {
-    int indexForInsertion = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
+    int indexForInsertion = indexOfChild(oldChild);
     mergeChildrenAtIndex(static_cast<HorizontalLayout *>(newChild), indexForInsertion + 1, true);
     removeChildAtIndex(indexForInsertion, deleteOldChild);
     if (cursor == nullptr) {

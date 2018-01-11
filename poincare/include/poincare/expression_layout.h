@@ -32,38 +32,60 @@ public:
   virtual void invalidAllSizesPositionsAndBaselines();
 
   /* Hierarchy */
+
+  // Children
   virtual const ExpressionLayout * const * children() const = 0;
   const ExpressionLayout * child(int i) const;
   ExpressionLayout * editableChild(int i) { return const_cast<ExpressionLayout *>(child(i)); }
   virtual int numberOfChildren() const = 0;
-  int indexOfChild(ExpressionLayout * child) const;
+  int indexOfChild(const ExpressionLayout * child) const;
 
-  void setParent(ExpressionLayout * parent);
+  // Parent
+  void setParent(ExpressionLayout * parent) { m_parent = parent; }
   const ExpressionLayout * parent() const { return m_parent; }
   ExpressionLayout * editableParent() { return m_parent; }
   bool hasAncestor(const ExpressionLayout * e) const;
 
   /* Dynamic Layout */
-  bool insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor);
+
+  // Add
+  virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
   virtual void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
+
+  // Replace
   virtual ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace = true);
-  ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
   ExpressionLayout * replaceWithAndMoveCursor(ExpressionLayout * newChild, bool deleteAfterReplace, ExpressionLayoutCursor * cursor);
   virtual void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true);
-  virtual void replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor);
-  void detachChild(const ExpressionLayout * e); // Removes a child WITHOUT deleting it
-  void detachChildren(); //Removes all children WITHOUT deleting them
-  virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
+  virtual void replaceChildAndMoveCursor(
+      const ExpressionLayout * oldChild,
+      ExpressionLayout * newChild,
+      bool deleteOldChild,
+      ExpressionLayoutCursor * cursor);
+
+  // Detach
+  void detachChild(const ExpressionLayout * e); // Detach a child WITHOUT deleting it
+  void detachChildren(); // Detach all children WITHOUT deleting them
+
+  // Remove
   virtual void removeChildAtIndex(int index, bool deleteAfterRemoval);
   virtual void removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor);
+
+  // User input
+  bool insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor);
   virtual void backspaceAtCursor(ExpressionLayoutCursor * cursor);
 
   /* Tree navigation */
   virtual bool moveLeft(ExpressionLayoutCursor * cursor) { return false; } //TODO should be virtual pure?
   virtual bool moveRight(ExpressionLayoutCursor * cursor) { return false; } //TODO should be virtual pure?
-  virtual bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr);
+  virtual bool moveUp(
+      ExpressionLayoutCursor * cursor,
+      ExpressionLayout * previousLayout = nullptr,
+      ExpressionLayout * previousPreviousLayout = nullptr);
+  virtual bool moveDown(
+      ExpressionLayoutCursor * cursor,
+      ExpressionLayout * previousLayout = nullptr,
+      ExpressionLayout * previousPreviousLayout = nullptr);
   bool moveUpInside(ExpressionLayoutCursor * cursor);
-  virtual bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr);
   bool moveDownInside(ExpressionLayoutCursor * cursor);
 
   /* Expression Engine */
@@ -71,7 +93,8 @@ public:
 
   /* Other */
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
-  // isCollapsable is used when adding a brother fraction: should the layout be inserted in the numerator (or denominator)?
+  /* isCollapsable is used when adding a brother fraction: should the layout be
+   * inserted in the numerator (or denominator)? */
   virtual bool mustHaveLeftBrother() const { return false; }
   virtual bool isHorizontal() const { return false; }
   virtual bool isLeftParenthesis() const { return false; }
@@ -87,24 +110,24 @@ protected:
   virtual KDSize computeSize() = 0;
   virtual void computeBaseline() = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
+  ExpressionLayout * m_parent;
+  KDCoordinate m_baseline;
+  /* m_baseline is the signed vertical distance from the top of the layout to
+   * the fraction bar of an hypothetical fraction brother layout. If the top of
+   * the layout is under that bar, the baseline is negative. */
+  bool m_sized;
+  bool m_baselined;
+  bool m_positioned;
+private:
   void detachChildAtIndex(int i);
+  bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor);
   void moveCursorInsideAtDirection (
     VerticalDirection direction,
     ExpressionLayoutCursor * cursor,
     ExpressionLayout ** childResult,
     void * resultPosition,
     int * resultScore);
-  KDCoordinate m_baseline;
-  /* m_baseline is the signed vertical distance from the top of the layout to
-   * the fraction bar of an hypothetical fraction brother layout. If the top of
-   * the layout is under that bar, the baseline is negative. */
-  ExpressionLayout * m_parent;
-  bool m_sized;
-  bool m_baselined;
-  bool m_positioned;
-private:
-  bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor);
-  void replaceWithJuxtapositionOf(ExpressionLayout * firstLayout, ExpressionLayout * secondLayout);
+  ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
   KDRect m_frame;
 };
 

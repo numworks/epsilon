@@ -10,13 +10,21 @@
 namespace Poincare {
 
 ExpressionLayout::ExpressionLayout() :
-  m_baseline(0),
   m_parent(nullptr),
+  m_baseline(0),
   m_sized(false),
   m_baselined(false),
   m_positioned(false),
   m_frame(KDRectZero)
 {
+}
+
+void ExpressionLayout::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  int i = 0;
+  while (ExpressionLayout * c = editableChild(i++)) {
+    c->draw(ctx, p, expressionColor, backgroundColor);
+  }
+  render(ctx, absoluteOrigin().translatedBy(p), expressionColor, backgroundColor);
 }
 
 KDPoint ExpressionLayout::origin() {
@@ -26,14 +34,6 @@ KDPoint ExpressionLayout::origin() {
     return KDPoint(absoluteOrigin().x() - m_parent->absoluteOrigin().x(),
         absoluteOrigin().y() - m_parent->absoluteOrigin().y());
   }
-}
-
-void ExpressionLayout::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  int i = 0;
-  while (ExpressionLayout * c = editableChild(i++)) {
-    c->draw(ctx, p, expressionColor, backgroundColor);
-  }
-  render(ctx, absoluteOrigin().translatedBy(p), expressionColor, backgroundColor);
 }
 
 KDPoint ExpressionLayout::absoluteOrigin() {
@@ -83,7 +83,7 @@ const ExpressionLayout * ExpressionLayout::child(int i) const {
   return nullptr;
 }
 
-int ExpressionLayout::indexOfChild(ExpressionLayout * child) const {
+int ExpressionLayout::indexOfChild(const ExpressionLayout * child) const {
   if (child == nullptr) {
     return -1;
   }
@@ -93,10 +93,6 @@ int ExpressionLayout::indexOfChild(ExpressionLayout * child) const {
     }
   }
   return -1;
-}
-
-void ExpressionLayout::setParent(ExpressionLayout* parent) {
-  m_parent = parent;
 }
 
 bool ExpressionLayout::hasAncestor(const ExpressionLayout * e) const {
@@ -143,26 +139,10 @@ void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLay
   return;
 }
 
-bool ExpressionLayout::insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor) {
-  cursor->pointedExpressionLayout()->addBrother(cursor, newChild);
-  return true;
-}
-
 ExpressionLayout * ExpressionLayout::replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace) {
   assert(m_parent != nullptr);
   m_parent->replaceChild(this, newChild, deleteAfterReplace);
   return newChild;
-}
-
-ExpressionLayout * ExpressionLayout::replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace) {
-  assert(m_parent != nullptr);
-  /* One of the children to juxtapose might be "this", so we first have to
-   * replace "this" with an horizontal layout, then add "this" to the layout. */
-  ExpressionLayout * layout = new HorizontalLayout();
-  m_parent->replaceChild(this, layout, deleteAfterReplace);
-  layout->addChildAtIndex(leftChild, 0);
-  layout->addChildAtIndex(rightChild, 1);
-  return layout;
 }
 
 ExpressionLayout * ExpressionLayout::replaceWithAndMoveCursor(ExpressionLayout * newChild, bool deleteAfterReplace, ExpressionLayoutCursor * cursor) {
@@ -199,7 +179,7 @@ void ExpressionLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
 }
 
 void ExpressionLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
-  int oldChildIndex = indexOfChild(const_cast<ExpressionLayout *>(oldChild));
+  int oldChildIndex = indexOfChild(oldChild);
   assert(oldChildIndex >= 0);
   if (oldChildIndex == 0) {
     cursor->setPointedExpressionLayout(this);
@@ -212,16 +192,12 @@ void ExpressionLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChi
 }
 
 void ExpressionLayout::detachChild(const ExpressionLayout * e) {
-  ExpressionLayout ** op = const_cast<ExpressionLayout **>(children());
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (op[i] == e) {
-      detachChildAtIndex(i);
-    }
-  }
+  assert(indexOfChild(e) >= 0);
+  detachChildAtIndex(indexOfChild(e));
 }
 
 void ExpressionLayout::detachChildren() {
-  for (int i = 0; i  <numberOfChildren(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     detachChildAtIndex(i);
   }
 }
@@ -244,6 +220,12 @@ void ExpressionLayout::removePointedChildAtIndexAndMoveCursor(int index, bool de
   assert(indexOfNewPointedLayout >= 0);
   assert(indexOfNewPointedLayout < numberOfChildren());
   cursor->setPointedExpressionLayout(editableChild(indexOfNewPointedLayout));
+}
+
+
+bool ExpressionLayout::insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor) {
+  cursor->pointedExpressionLayout()->addBrother(cursor, newChild);
+  return true;
 }
 
 void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
@@ -302,17 +284,6 @@ char ExpressionLayout::XNTChar() const {
   return m_parent->XNTChar();
 }
 
-void ExpressionLayout::detachChildAtIndex(int i) {
-  ExpressionLayout ** op = const_cast<ExpressionLayout **>(children());
-  if (op[i] != nullptr && op[i]->parent() == this) {
-    const_cast<ExpressionLayout *>(op[i])->setParent(nullptr);
-  }
-  op[i] = nullptr;
-  m_sized = false;
-  m_positioned = false;
-  m_baselined = false;
-}
-
 bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   if (m_parent) {
     return m_parent->moveUp(cursor, this, previousLayout);
@@ -333,6 +304,17 @@ bool ExpressionLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayou
 
 bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor) {
   return moveInside(VerticalDirection::Down, cursor);
+}
+
+void ExpressionLayout::detachChildAtIndex(int i) {
+  ExpressionLayout ** op = const_cast<ExpressionLayout **>(children());
+  if (op[i] != nullptr && op[i]->parent() == this) {
+    const_cast<ExpressionLayout *>(op[i])->setParent(nullptr);
+  }
+  op[i] = nullptr;
+  m_sized = false;
+  m_positioned = false;
+  m_baselined = false;
 }
 
 bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor) {
@@ -389,6 +371,17 @@ void ExpressionLayout::moveCursorInsideAtDirection (
       editableChild(childIndex-1)->moveCursorInsideAtDirection(direction, cursor, childResult, castedResultPosition, resultScore);
     }
   }
+}
+
+ExpressionLayout * ExpressionLayout::replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace) {
+  assert(m_parent != nullptr);
+  /* One of the children to juxtapose might be "this", so we first have to
+   * replace "this" with an horizontal layout, then add "this" to the layout. */
+  ExpressionLayout * layout = new HorizontalLayout();
+  m_parent->replaceChild(this, layout, deleteAfterReplace);
+  layout->addChildAtIndex(leftChild, 0);
+  layout->addChildAtIndex(rightChild, 1);
+  return layout;
 }
 
 }

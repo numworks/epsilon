@@ -25,14 +25,7 @@ void GridLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
     if (indexOfPointedExpression >= 0) {
-      if (childIsLeftOfGrid(indexOfPointedExpression)) {
-        // Case: Left of a left child grid.
-        // Delete the grid.
-        assert(m_parent != nullptr);
-        replaceWithAndMoveCursor(new EmptyVisibleLayout(), true, cursor);
-        return;
-      }
-      // Case: Left of another child of the grid.
+      // Case: Left of child of the grid.
       // Move Left.
       moveLeft(cursor);
       return;
@@ -45,12 +38,9 @@ void GridLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     }
   }
   // Case: Right.
-  // Move to the last child.
-  assert(cursor->pointedExpressionLayout() == this);
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  cursor->setPointedExpressionLayout(editableChild((m_numberOfRows-1)*(m_numberOfColumns-1)));
-  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-  return;
+  // Delete the grid.
+  assert(m_parent != nullptr);
+  replaceWithAndMoveCursor(new EmptyVisibleLayout(), true, cursor);
 }
 
 bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor) {

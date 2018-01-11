@@ -1,8 +1,7 @@
 #include "sub_controller.h"
+#include "helpers.h"
 #include "../global_preferences.h"
 #include "../apps_container.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
 #include <cmath>
 
@@ -22,11 +21,8 @@ SubController::SubController(Responder * parentResponder) :
     m_cells[i].setAccessoryFontSize(KDText::FontSize::Small);
     m_cells[i].setAccessoryTextColor(Palette::GreyDark);
   }
-  const char text[] = {'a','+', Ion::Charset::IComplex, 'b', ' '};
-  m_complexFormatLayout[0] = new StringLayout(text, sizeof(text));
-  const char base[] = {'r', Ion::Charset::Exponential};
-  const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
-  m_complexFormatLayout[1] = new BaselineRelativeLayout(new StringLayout(base, sizeof(base)), new StringLayout(superscript, sizeof(superscript)), BaselineRelativeLayout::Type::Superscript);
+  m_complexFormatLayout[0] = Helpers::CartesianComplexFormat(KDText::FontSize::Large);
+  m_complexFormatLayout[1] = Helpers::PolarComplexFormat(KDText::FontSize::Large);
   for (int i = 0; i < 2; i++) {
     m_complexFormatCells[i].setExpressionLayout(m_complexFormatLayout[i]);
   }

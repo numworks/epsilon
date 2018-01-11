@@ -64,7 +64,7 @@ private:
     void setSumSymbol(Step step, double start = NAN, double end = NAN, double result = NAN, Poincare::ExpressionLayout * sequenceName = nullptr);
   private:
     constexpr static KDCoordinate k_legendHeight = 35;
-    constexpr static KDCoordinate k_editableZoneWidth = 4*KDText::charSize(KDText::FontSize::Small).width();
+    constexpr static KDCoordinate k_editableZoneWidth = 12*KDText::charSize(KDText::FontSize::Small).width();
     constexpr static KDCoordinate k_editableZoneHeight = KDText::charSize(KDText::FontSize::Small).height();
     constexpr static KDCoordinate k_symbolHeightMargin = 8;
     constexpr static KDCoordinate k_sigmaHeight = 18;

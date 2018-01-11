@@ -38,6 +38,8 @@ protected:
   void deleteRowAtIndex(int index);
   void deleteColumnAtIndex(int index);
   bool childIsRightOfGrid(int index) const;
+  bool childIsLeftOfGrid(int index) const;
+  bool childIsTopOfGrid(int index) const;
   bool childIsBottomOfGrid(int index) const;
   int rowAtChildIndex(int index) const;
   int columnAtChildIndex(int index) const;
@@ -51,8 +53,6 @@ private:
   KDCoordinate height();
   KDCoordinate columnWidth(int j);
   KDCoordinate width();
-  bool childIsLeftOfGrid(int index) const;
-  bool childIsTopOfGrid(int index) const;
 };
 
 }

@@ -17,6 +17,85 @@ ExpressionLayout * MatrixLayout::clone() const {
   return layout;
 }
 
+bool MatrixLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+  int childIndex = indexOfChild(cursor->pointedExpressionLayout());
+  if (childIndex >- 1
+      && cursor->position() == ExpressionLayoutCursor::Position::Left
+      && childIsLeftOfGrid(childIndex))
+  {
+    // Case: Left of a child on the left of the grid.
+    // Remove the grey squares of the grid, then go left of the grid.
+    assert(hasGreySquares());
+    removeGreySquares();
+    cursor->setPointedExpressionLayout(this);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return true;
+  }
+  // Case: Right.
+  // Add the grey squares to the matrix, then move to the bottom right non empty
+  // nor grey child.
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    assert(!hasGreySquares());
+    addGreySquares();
+    ExpressionLayout * lastChild = editableChild((m_numberOfColumns-1)*(m_numberOfRows-1));
+    assert(lastChild != nullptr);
+    cursor->setPointedExpressionLayout(lastChild);
+    return true;
+  }
+  return GridLayout::moveLeft(cursor);
+}
+
+bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor) {
+  // Case: Left.
+  // Add the grey squares to the matrix,, then go to the first entry.
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    assert(!hasGreySquares());
+    addGreySquares();
+    assert(m_numberOfColumns*m_numberOfRows >= 1);
+    ExpressionLayout * firstChild = editableChild(0);
+    assert(firstChild != nullptr);
+    cursor->setPointedExpressionLayout(firstChild);
+    return true;
+  }
+  // Case: The cursor points to a grid's child.
+  int childIndex = indexOfChild(cursor->pointedExpressionLayout());
+  if (childIndex >- 1
+      && cursor->position() == ExpressionLayoutCursor::Position::Right
+      && childIsRightOfGrid(childIndex))
+  {
+    // Case: Right of a child on the right of the grid.
+    // Remove the grey squares of the grid, then go left of the grid.
+    cursor->setPointedExpressionLayout(this);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    assert(hasGreySquares());
+    removeGreySquares();
+    return true;
+  }
+  return GridLayout::moveRight(cursor);
+}
+
+bool MatrixLayout::moveUpInside(ExpressionLayoutCursor * cursor)  {
+  bool result = GridLayout::moveUpInside(cursor);
+  if (result) {
+    assert(!hasGreySquares());
+    addGreySquares();
+  }
+  return result;
+}
+
+bool MatrixLayout::moveDownInside(ExpressionLayoutCursor * cursor)  {
+  bool result = GridLayout::moveDownInside(cursor);
+  if (result) {
+    assert(!hasGreySquares());
+    addGreySquares();
+  }
+  return result;
+}
+
 void MatrixLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
   int oldChildIndex = indexOfChild(oldChild);
   GridLayout::replaceChild(oldChild, newChild, deleteOldChild);
@@ -50,11 +129,13 @@ int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   buffer[numberOfChar++] = '[';
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-  for (int i = 0; i < m_numberOfRows - 1; i++) {
+  int maxRowIndex = hasGreySquares() ? m_numberOfRows - 1 : m_numberOfRows;
+  int maxColumnIndex = hasGreySquares() ? m_numberOfColumns - 2 :  m_numberOfColumns - 1;
+  for (int i = 0; i < maxRowIndex; i++) {
     buffer[numberOfChar++] = '[';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-    numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, ",", i*m_numberOfColumns, i* m_numberOfColumns + m_numberOfColumns - 2);
+    numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
 
     buffer[numberOfChar++] = ']';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
@@ -164,6 +245,34 @@ bool MatrixLayout::isColumnEmpty(int index) const {
     }
   }
   return true;
+}
+
+void MatrixLayout::addGreySquares() {
+  if (!hasGreySquares()) {
+    addEmptyRow(EmptyVisibleLayout::Color::Grey);
+    addEmptyColumn(EmptyVisibleLayout::Color::Grey);
+  }
+}
+
+void MatrixLayout::removeGreySquares() {
+  if (hasGreySquares()) {
+    deleteRowAtIndex(m_numberOfRows - 1);
+    deleteColumnAtIndex(m_numberOfColumns - 1);
+  }
+}
+
+bool MatrixLayout::hasGreySquares() const {
+  assert(m_numberOfRows*m_numberOfColumns - 1 >= 0);
+  const ExpressionLayout * lastChild = child(m_numberOfRows * m_numberOfColumns - 1);
+  if (lastChild->isEmpty()
+      && !lastChild->isHorizontal()
+      && (static_cast<const EmptyVisibleLayout *>(lastChild))->color() == EmptyVisibleLayout::Color::Grey)
+  {
+    assert(isRowEmpty(m_numberOfColumns - 1));
+    assert(isColumnEmpty(m_numberOfRows - 1));
+    return true;
+  }
+  return false;
 }
 
 }

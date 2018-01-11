@@ -85,8 +85,8 @@ public:
       ExpressionLayoutCursor * cursor,
       ExpressionLayout * previousLayout = nullptr,
       ExpressionLayout * previousPreviousLayout = nullptr);
-  bool moveUpInside(ExpressionLayoutCursor * cursor);
-  bool moveDownInside(ExpressionLayoutCursor * cursor);
+  virtual bool moveUpInside(ExpressionLayoutCursor * cursor);
+  virtual bool moveDownInside(ExpressionLayoutCursor * cursor);
 
   /* Expression Engine */
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;

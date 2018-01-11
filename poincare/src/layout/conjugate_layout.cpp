@@ -1,4 +1,5 @@
 #include "conjugate_layout.h"
+#include "empty_visible_layout.h"
 #include <escher/metric.h>
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
@@ -14,11 +15,13 @@ ExpressionLayout * ConjugateLayout::clone() const {
 }
 
 void ConjugateLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  // Case: Left of the operand.
-  // Delete the conjugate, keep the operand.
-  if (cursor->pointedExpressionLayout() == operandLayout()) {
-    assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-    replaceWithAndMoveCursor(operandLayout(), true, cursor);
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    // Case: Right.
+    // Move to the operand and delete.
+    cursor->setPointedExpressionLayout(operandLayout());
+    cursor->performBackspace();
     return;
   }
   ExpressionLayout::backspaceAtCursor(cursor);
@@ -76,6 +79,23 @@ bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor) {
     return m_parent->moveRight(cursor);
   }
   return false;
+}
+
+void ConjugateLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
+  assert(oldChild == operandLayout());
+  if (newChild->isEmpty()) {
+    if (!deleteOldChild) {
+      detachChild(oldChild);
+    }
+    replaceWithAndMoveCursor(newChild, true, cursor);
+    return;
+  }
+  ExpressionLayout::replaceChildAndMoveCursor(oldChild, newChild, deleteOldChild, cursor);
+}
+
+void ConjugateLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
+  assert(index >= 0 && index < numberOfChildren());
+  replaceChildAndMoveCursor(child(index), new EmptyVisibleLayout(), deleteAfterRemoval, cursor);
 }
 
 void ConjugateLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

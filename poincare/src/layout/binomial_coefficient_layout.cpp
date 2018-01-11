@@ -18,20 +18,6 @@ ExpressionLayout * BinomialCoefficientLayout::clone() const {
   return new BinomialCoefficientLayout(const_cast<BinomialCoefficientLayout *>(this)->nLayout(), const_cast<BinomialCoefficientLayout *>(this)->kLayout(), true);
 }
 
-void BinomialCoefficientLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  // Case: Left of the children.
-  // Delete the layout.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left
-      && (cursor->pointedExpressionLayout() == nLayout()
-        || cursor->pointedExpressionLayout() == kLayout()))
-  {
-    assert(m_parent != nullptr);
-    replaceWithAndMoveCursor(new EmptyVisibleLayout(), true, cursor);
-    return;
-  }
-  ExpressionLayout::backspaceAtCursor(cursor);
-}
-
 bool BinomialCoefficientLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the children.
   // Go Left.

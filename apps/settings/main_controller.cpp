@@ -1,10 +1,8 @@
 #include "main_controller.h"
+#include "helpers.h"
 #include "../global_preferences.h"
 #include "../i18n.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
-#include <poincare.h>
 
 using namespace Poincare;
 
@@ -175,12 +173,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       m_complexFormatLayout = nullptr;
     }
     if (Preferences::sharedPreferences()->complexFormat() == Expression::ComplexFormat::Cartesian) {
-      const char text[] = {'a','+', Ion::Charset::IComplex, 'b', ' '};
-      m_complexFormatLayout = new StringLayout(text, sizeof(text), KDText::FontSize::Small);
+      m_complexFormatLayout = Helpers::CartesianComplexFormat(KDText::FontSize::Small);
     } else {
-      const char base[] = {'r', Ion::Charset::Exponential};
-      const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
-      m_complexFormatLayout = new BaselineRelativeLayout(new StringLayout(base, sizeof(base), KDText::FontSize::Small), new StringLayout(superscript, sizeof(superscript), KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
+      m_complexFormatLayout = Helpers::PolarComplexFormat(KDText::FontSize::Small);
     }
     MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
     myExpCell->setExpressionLayout(m_complexFormatLayout);

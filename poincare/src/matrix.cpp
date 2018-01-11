@@ -7,8 +7,7 @@ extern "C" {
 #include <poincare/addition.h>
 #include <poincare/decimal.h>
 #include <poincare/undefined.h>
-#include "layout/grid_layout.h"
-#include "layout/bracket_layout.h"
+#include "layout/matrix_layout.h"
 #include <cmath>
 #include <float.h>
 #include <string.h>
@@ -102,7 +101,7 @@ ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode
   for (int i = 0; i < numberOfOperands(); i++) {
     childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, complexFormat);
   }
-  ExpressionLayout * layout = new BracketLayout(new GridLayout(childrenLayouts, numberOfRows(), numberOfColumns(), false), false);
+  ExpressionLayout * layout = new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns(), false);
   delete [] childrenLayouts;
   return layout;
 }

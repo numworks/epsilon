@@ -62,6 +62,8 @@ void Controller::insertLayoutAtCursor(ExpressionLayout * layout, ExpressionLayou
 
 bool Controller::privateHandleEvent(Ion::Events::Event event) {
   if (handleMoveEvent(event)) {
+    m_expressionLayout->invalidAllSizesPositionsAndBaselines();
+    m_view.layoutSubviews();
     return true;
   }
   ExpressionLayout * newPointedLayout = handleAddEvent(event);

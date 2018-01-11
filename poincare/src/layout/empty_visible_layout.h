@@ -20,6 +20,7 @@ public:
   bool moveRight(ExpressionLayoutCursor * cursor) override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   bool isEmpty() const override { return true; }
+  Color color() const { return m_color; }
   void setColor(Color color) { m_color = color; }
 protected:
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

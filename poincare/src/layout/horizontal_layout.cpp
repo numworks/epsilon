@@ -63,13 +63,27 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
     // replace the horizontal layout with this empty layout (only if this is not
     // the main layout, so only if the layout has a parent).
     if (m_parent) {
+      if (!deleteOldChild) {
+        removeChildAtIndex(indexOfChild(oldChild), false);
+      }
       if (cursor) {
-        replaceWithAndMoveCursor(newChild, deleteOldChild, cursor);
+        replaceWithAndMoveCursor(newChild, true, cursor);
         return;
       }
       replaceWith(newChild, deleteOldChild);
       return;
     }
+    // If this is the main horizontal layout, the old child its only child and
+    // the new child is Empty, remove the old child and delete the new child.
+    assert(m_parent == nullptr);
+    removeChildAtIndex(0, deleteOldChild);
+    delete newChild;
+    if (cursor == nullptr) {
+      return;
+    }
+    cursor->setPointedExpressionLayout(this);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    return;
   }
   // If the new child is also an horizontal layout, steal the children of the
   // new layout then destroy it.

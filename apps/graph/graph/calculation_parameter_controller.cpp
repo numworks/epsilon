@@ -13,7 +13,8 @@ CalculationParameterController::CalculationParameterController(Responder * paren
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
   m_function(nullptr),
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
-  m_integralGraphController(nullptr, graphView, range, cursor)
+  m_integralGraphController(nullptr, graphView, range, cursor),
+  m_minimumGraphController(nullptr, graphView, bannerView, range, cursor)
 {
 }
 
@@ -34,6 +35,10 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     ViewController * controller = nullptr;
     switch(selectedRow()) {
+      case 2:
+        m_minimumGraphController.setFunction(m_function);
+        controller = &m_minimumGraphController;
+        break;
       case 4:
         m_tangentGraphController.setFunction(m_function);
         controller = &m_tangentGraphController;

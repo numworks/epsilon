@@ -45,17 +45,16 @@ void ExpressionLayoutCursor::addLayout(ExpressionLayout * layout) {
   pointedExpressionLayout()->addBrother(this, layout);
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addEmptyExponentialLayout() {
+void ExpressionLayoutCursor::addEmptyExponentialLayout() {
   CharLayout * child1 = new CharLayout(Ion::Charset::Exponential);
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Superscript, false);
   HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
   pointedExpressionLayout()->addBrother(this, newChild);
   setPointedExpressionLayout(offsetLayout->editableChild(0));
   setPosition(ExpressionLayoutCursor::Position::Right);
-  return offsetLayout;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
+void ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
   // Add a new FractionLayout
   HorizontalLayout * child1 = new HorizontalLayout(new EmptyVisibleLayout(), false);
   HorizontalLayout * child2 = new HorizontalLayout(new EmptyVisibleLayout(), false);
@@ -65,7 +64,7 @@ ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers(
   if (!newChild->parent()->isHorizontal()) {
     setPointedExpressionLayout(child2->editableChild(0));
     setPosition(Position::Left);
-    return child2;
+    return;
   }
 
   int fractionIndexInParent = newChild->parent()->indexOfChild(newChild);
@@ -98,17 +97,14 @@ ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers(
   // Set the cursor position
   setPointedExpressionLayout(child2->editableChild(0));
   setPosition(Position::Left);
-
-  return child2;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addEmptyLogarithmLayout() {
-  ExpressionLayout * result =  insertText("log()");
+void ExpressionLayoutCursor::addEmptyLogarithmLayout() {
+  insertText("log()");
   setPosition(ExpressionLayoutCursor::Position::Left);
-  return result;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOfColumns) {
+void ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOfColumns) {
   assert(numberOfRows > 0);
   assert(numberOfColumns > 0);
   ExpressionLayout * children[(numberOfRows+1)*(numberOfColumns+1)];
@@ -125,10 +121,9 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows
   m_pointedExpressionLayout->addBrother(this, matrixLayout);
   setPointedExpressionLayout(matrixLayout->editableChild(0));
   setPosition(ExpressionLayoutCursor::Position::Right);
-  return matrixLayout;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {
+void ExpressionLayoutCursor::addEmptyPowerLayout() {
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Superscript, false);
   // If there is already a base
   int numberOfOpenParenthesis = 0;
@@ -136,7 +131,7 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {
     m_pointedExpressionLayout->addBrother(this, offsetLayout);
     setPointedExpressionLayout(offsetLayout->editableChild(0));
     setPosition(ExpressionLayoutCursor::Position::Left);
-    return offsetLayout;
+    return;
   }
   // Else, add an empty base
   EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
@@ -144,19 +139,17 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyPowerLayout() {
   m_pointedExpressionLayout->addBrother(this, newChild);
   setPointedExpressionLayout(child1);
   setPosition(ExpressionLayoutCursor::Position::Right);
-  return child1;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addEmptySquareRootLayout() {
+void ExpressionLayoutCursor::addEmptySquareRootLayout() {
   EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
   NthRootLayout * newChild = new NthRootLayout(child1, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
   setPointedExpressionLayout(child1);
   setPosition(ExpressionLayoutCursor::Position::Right);
-  return child1;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addEmptySquarePowerLayout() {
+void ExpressionLayoutCursor::addEmptySquarePowerLayout() {
   CharLayout * indiceLayout = new CharLayout('2');
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(indiceLayout, VerticalOffsetLayout::Type::Superscript, false);
   // If there is already a base
@@ -165,7 +158,7 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptySquarePowerLayout() {
     m_pointedExpressionLayout->addBrother(this, offsetLayout);
     setPointedExpressionLayout(offsetLayout);
     setPosition(ExpressionLayoutCursor::Position::Right);
-    return offsetLayout;
+    return;
   }
   // Else, add an empty base
   EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
@@ -173,21 +166,19 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptySquarePowerLayout() {
   m_pointedExpressionLayout->addBrother(this, newChild);
   setPointedExpressionLayout(child1);
   setPosition(ExpressionLayoutCursor::Position::Right);
-  return child1;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::addXNTCharLayout() {
+void ExpressionLayoutCursor::addXNTCharLayout() {
   CharLayout * newChild = new CharLayout(m_pointedExpressionLayout->XNTChar());
   m_pointedExpressionLayout->addBrother(this, newChild);
   setPointedExpressionLayout(newChild);
   setPosition(ExpressionLayoutCursor::Position::Right);
-  return newChild;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::insertText(const char * text) {
+void ExpressionLayoutCursor::insertText(const char * text) {
   int textLength = strlen(text);
   if (textLength <= 0) {
-    return nullptr;
+    return;
   }
   ExpressionLayout * newChild = nullptr;
   for (int i = 0; i < textLength; i++) {
@@ -206,8 +197,6 @@ ExpressionLayout * ExpressionLayoutCursor::insertText(const char * text) {
     m_pointedExpressionLayout = newChild;
     m_position = Position::Right;
   }
-  assert(newChild != nullptr);
-  return newChild;
 }
 
 void ExpressionLayoutCursor::performBackspace() {

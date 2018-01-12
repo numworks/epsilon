@@ -27,7 +27,7 @@ public:
 private:
   bool privateHandleEvent(Ion::Events::Event event);
   bool handleMoveEvent(Ion::Events::Event event);
-  Poincare::ExpressionLayout * handleAddEvent(Ion::Events::Event event);
+  bool handleAddEvent(Ion::Events::Event event);
   bool handleDeleteEvent(Ion::Events::Event event);
   void serializeLayout();
   void computeResult();

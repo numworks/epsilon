@@ -66,8 +66,7 @@ bool Controller::privateHandleEvent(Ion::Events::Event event) {
     m_view.layoutSubviews();
     return true;
   }
-  ExpressionLayout * newPointedLayout = handleAddEvent(event);
-  if (newPointedLayout != nullptr) {
+  if (handleAddEvent(event)) {
     m_expressionLayout->invalidAllSizesPositionsAndBaselines();
     m_view.layoutSubviews();
     return true;
@@ -107,42 +106,52 @@ bool Controller::handleMoveEvent(Ion::Events::Event event) {
   return false;
 }
 
-ExpressionLayout * Controller::handleAddEvent(Ion::Events::Event event) {
+bool Controller::handleAddEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Division) {
-    return m_cursor.addFractionLayoutAndCollapseBrothers();
+    m_cursor.addFractionLayoutAndCollapseBrothers();
+    return true;
   }
   if (event == Ion::Events::XNT) {
-    return m_cursor.addXNTCharLayout();
+    m_cursor.addXNTCharLayout();
+    return true;
   }
   if (event == Ion::Events::Exp) {
-    return m_cursor.addEmptyExponentialLayout();
+    m_cursor.addEmptyExponentialLayout();
+    return true;
   }
   if (event == Ion::Events::Log) {
-    return m_cursor.addEmptyLogarithmLayout();
+    m_cursor.addEmptyLogarithmLayout();
+    return true;
   }
   if (event == Ion::Events::Power) {
-    return m_cursor.addEmptyPowerLayout();
+    m_cursor.addEmptyPowerLayout();
+    return true;
   }
   if (event == Ion::Events::Sqrt) {
-    return m_cursor.addEmptySquareRootLayout();
+    m_cursor.addEmptySquareRootLayout();
+    return true;
   }
   if (event == Ion::Events::Square) {
-    return m_cursor.addEmptySquarePowerLayout();
+    m_cursor.addEmptySquarePowerLayout();
+    return true;
   }
   if (event.hasText()) {
     const char * textToInsert = event.text();
     if (textToInsert[1] == 0) {
       if (textToInsert[0] == Ion::Charset::MultiplicationSign) {
         const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
-        return m_cursor.insertText(middleDotString);
+        m_cursor.insertText(middleDotString);
+        return true;
       }
       if (textToInsert[0] == '[' || textToInsert[0] == ']') {
-        return m_cursor.addEmptyMatrixLayout();
+        m_cursor.addEmptyMatrixLayout();
+        return true;
       }
     }
-    return m_cursor.insertText(textToInsert);
+    m_cursor.insertText(textToInsert);
+    return true;
   }
-  return nullptr;
+  return false;
 }
 
 bool Controller::handleDeleteEvent(Ion::Events::Event event) {

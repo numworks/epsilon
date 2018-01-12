@@ -40,15 +40,15 @@ public:
 
   /* Edition */
   void addLayout(ExpressionLayout * layout);
-  ExpressionLayout * addEmptyExponentialLayout();
-  ExpressionLayout * addFractionLayoutAndCollapseBrothers();
-  ExpressionLayout * addEmptyLogarithmLayout();
-  ExpressionLayout * addEmptyMatrixLayout(int numberOfRows = 1, int numberOfColumns = 1);
-  ExpressionLayout * addEmptyPowerLayout();
-  ExpressionLayout * addEmptySquareRootLayout();
-  ExpressionLayout * addEmptySquarePowerLayout();
-  ExpressionLayout * addXNTCharLayout();
-  ExpressionLayout * insertText(const char * text);
+  void addEmptyExponentialLayout();
+  void addFractionLayoutAndCollapseBrothers();
+  void addEmptyLogarithmLayout();
+  void addEmptyMatrixLayout(int numberOfRows = 1, int numberOfColumns = 1);
+  void addEmptyPowerLayout();
+  void addEmptySquareRootLayout();
+  void addEmptySquarePowerLayout();
+  void addXNTCharLayout();
+  void insertText(const char * text);
   void performBackspace();
 
 private:

@@ -17,6 +17,8 @@ public:
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
 protected:
+  constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
+  constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
   virtual bool handleZoom(Ion::Events::Event event);
   virtual bool handleLeftRightEvent(Ion::Events::Event event);

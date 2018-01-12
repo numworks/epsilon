@@ -18,9 +18,7 @@ public:
   void setFunction(CartesianFunction * function);
 private:
   constexpr static float k_cursorTopMarginRatio = 0.07f;   // (cursorHeight/2)/graphViewHeight
-  constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
   constexpr static float k_cursorBottomMarginRatio = 0.22f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
-  constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }
   BannerView * bannerView() override { return m_bannerView; };

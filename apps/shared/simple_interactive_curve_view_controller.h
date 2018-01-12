@@ -29,6 +29,7 @@ protected:
   virtual bool moveCursorHorizontally(int direction) { return false; };
   virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;
   virtual CurveView * curveView() = 0;
+  virtual bool handleEnter() = 0;
   CurveViewCursor * m_cursor;
 };
 

@@ -71,9 +71,6 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     header()->setSelectedButton(0);
     return true;
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    return handleEnter();
-  }
   return false;
 }
 

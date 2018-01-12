@@ -30,7 +30,6 @@ public:
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
-  virtual bool handleEnter() = 0;
   Responder * tabController() const;
   virtual StackViewController * stackController() const;
   virtual void initRangeParameters() = 0;

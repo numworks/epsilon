@@ -17,7 +17,7 @@ public:
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
 
   /* Hierarchy */
-  void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true) override;
+  void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) override;
   void replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) override;
   void addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren);
 

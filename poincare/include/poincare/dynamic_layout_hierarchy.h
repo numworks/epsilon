@@ -9,12 +9,12 @@ namespace Poincare {
 class DynamicLayoutHierarchy : public ExpressionLayout {
 public:
   DynamicLayoutHierarchy();
-  DynamicLayoutHierarchy(const ExpressionLayout * const * operands, int numberOfOperands, bool cloneOperands = true);
-  DynamicLayoutHierarchy(const ExpressionLayout * operand, bool cloneOperands = true) :
+  DynamicLayoutHierarchy(const ExpressionLayout * const * operands, int numberOfOperands, bool cloneOperands);
+  DynamicLayoutHierarchy(const ExpressionLayout * operand, bool cloneOperands) :
     DynamicLayoutHierarchy(ExpressionLayoutArray(operand).array(), 1, cloneOperands) {}
-  DynamicLayoutHierarchy(const ExpressionLayout * operand1, const ExpressionLayout * operand2, bool cloneOperands = true) :
+  DynamicLayoutHierarchy(const ExpressionLayout * operand1, const ExpressionLayout * operand2, bool cloneOperands) :
     DynamicLayoutHierarchy(ExpressionLayoutArray(operand1, operand2).array(), 2, cloneOperands) {}
-  DynamicLayoutHierarchy(const ExpressionLayout * operand1, const ExpressionLayout * operand2, const ExpressionLayout * operand3, bool cloneOperands = true) :
+  DynamicLayoutHierarchy(const ExpressionLayout * operand1, const ExpressionLayout * operand2, const ExpressionLayout * operand3, bool cloneOperands) :
     DynamicLayoutHierarchy(ExpressionLayoutArray(operand1, operand2, operand3).array(), 3, cloneOperands) {}
   ~DynamicLayoutHierarchy();
   DynamicLayoutHierarchy(const DynamicLayoutHierarchy & other) = delete;

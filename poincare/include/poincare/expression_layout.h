@@ -53,9 +53,9 @@ public:
   virtual void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
 
   // Replace
-  virtual ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace = true);
+  virtual ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace);
   ExpressionLayout * replaceWithAndMoveCursor(ExpressionLayout * newChild, bool deleteAfterReplace, ExpressionLayoutCursor * cursor);
-  virtual void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild = true);
+  virtual void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild);
   virtual void replaceChildAndMoveCursor(
       const ExpressionLayout * oldChild,
       ExpressionLayout * newChild,

@@ -9,10 +9,10 @@ template<int T>
 class StaticLayoutHierarchy : public ExpressionLayout {
 public:
   StaticLayoutHierarchy();
-  StaticLayoutHierarchy(const ExpressionLayout * const * operands, bool cloneOperands = true);
-  StaticLayoutHierarchy(const ExpressionLayout * expression, bool cloneOperands = true); // Specialized constructor for StaticLayoutHierarchy<1>
-  StaticLayoutHierarchy(const ExpressionLayout * expression1, const ExpressionLayout * expression2, bool cloneOperands = true); // Specialized constructor for StaticLayoutHierarchy<2>
-  StaticLayoutHierarchy(const ExpressionLayout * expression1, const ExpressionLayout * expression2, const ExpressionLayout * expression3, bool cloneOperands = true); // Specialized constructor for StaticLayoutHierarchy<3>
+  StaticLayoutHierarchy(const ExpressionLayout * const * operands, bool cloneOperands);
+  StaticLayoutHierarchy(const ExpressionLayout * expression, bool cloneOperands); // Specialized constructor for StaticLayoutHierarchy<1>
+  StaticLayoutHierarchy(const ExpressionLayout * expression1, const ExpressionLayout * expression2, bool cloneOperands); // Specialized constructor for StaticLayoutHierarchy<2>
+  StaticLayoutHierarchy(const ExpressionLayout * expression1, const ExpressionLayout * expression2, const ExpressionLayout * expression3, bool cloneOperands); // Specialized constructor for StaticLayoutHierarchy<3>
   ~StaticLayoutHierarchy();
   StaticLayoutHierarchy(const StaticLayoutHierarchy & other) = delete;
   StaticLayoutHierarchy(StaticLayoutHierarchy && other) = delete;

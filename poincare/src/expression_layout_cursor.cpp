@@ -57,8 +57,8 @@ ExpressionLayout * ExpressionLayoutCursor::addEmptyExponentialLayout() {
 
 ExpressionLayout * ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
   // Add a new FractionLayout
-  HorizontalLayout * child1 = new HorizontalLayout(new EmptyVisibleLayout());
-  HorizontalLayout * child2 = new HorizontalLayout(new EmptyVisibleLayout());
+  HorizontalLayout * child1 = new HorizontalLayout(new EmptyVisibleLayout(), false);
+  HorizontalLayout * child2 = new HorizontalLayout(new EmptyVisibleLayout(), false);
   FractionLayout * newChild = new FractionLayout(child1, child2, false);
   pointedExpressionLayout()->addBrother(this, newChild);
 

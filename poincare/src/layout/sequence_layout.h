@@ -7,9 +7,9 @@ namespace Poincare {
 
 class SequenceLayout : public StaticLayoutHierarchy<3> {
 public:
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
   constexpr static KDCoordinate k_symbolHeight = 15;
   constexpr static KDCoordinate k_symbolWidth = 9;
-  SequenceLayout(ExpressionLayout * argument, ExpressionLayout * lowerBound, ExpressionLayout * upperBound, bool cloneOperands);
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor) override;
   bool moveRight(ExpressionLayoutCursor * cursor) override;

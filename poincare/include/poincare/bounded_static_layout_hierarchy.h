@@ -9,9 +9,9 @@ template<int T>
 class BoundedStaticLayoutHierarchy : public StaticLayoutHierarchy<T> {
 public:
   BoundedStaticLayoutHierarchy();
-  BoundedStaticLayoutHierarchy(const ExpressionLayout * expressionLayout, bool cloneOperands = true); // Specialized constructor for StaticLayoutHierarchy<2>
-  BoundedStaticLayoutHierarchy(const ExpressionLayout * expressionLayout1, const ExpressionLayout * expressionLayout2, bool cloneOperands = true); // Specialized constructor for StaticLayoutHierarchy<2>
-  BoundedStaticLayoutHierarchy(const ExpressionLayout * const * operands, int numberOfOperands, bool cloneOperands = true);
+  BoundedStaticLayoutHierarchy(const ExpressionLayout * expressionLayout, bool cloneOperands); // Specialized constructor for StaticLayoutHierarchy<2>
+  BoundedStaticLayoutHierarchy(const ExpressionLayout * expressionLayout1, const ExpressionLayout * expressionLayout2, bool cloneOperands); // Specialized constructor for StaticLayoutHierarchy<2>
+  BoundedStaticLayoutHierarchy(const ExpressionLayout * const * operands, int numberOfOperands, bool cloneOperands);
   int numberOfChildren() const override { return m_numberOfChildren; }
 private:
   int m_numberOfChildren;

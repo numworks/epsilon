@@ -1,5 +1,5 @@
 EPSILON_I18N_LANGUAGES ?= en fr es de pt
-EPSILON_APPS ?= expression_editor
+EPSILON_APPS ?= expression_editor sequence settings statistics probability regression code
 
 include apps/shared/Makefile
 include apps/home/Makefile

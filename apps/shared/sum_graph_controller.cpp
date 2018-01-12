@@ -251,16 +251,16 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
     m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, sizeof(sigma)), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
   } else {
-    char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-    Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
     ExpressionLayout * start =  new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
-    Complex<double>::convertFloatToText(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    Complex<double>::convertFloatToText(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
     ExpressionLayout * end =  new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, sizeof(sigma)), start, end);
 
     ExpressionLayout * childrenLayouts[3];
     strlcpy(buffer, "= ", 3);
-    Complex<double>::convertFloatToText(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+    Complex<double>::convertFloatToText(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     childrenLayouts[2] = new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     childrenLayouts[1] = functionLayout;
     childrenLayouts[0] = m_sumLayout;

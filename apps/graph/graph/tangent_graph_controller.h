@@ -24,6 +24,7 @@ private:
   BannerView * bannerView() override { return m_bannerView; };
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction) override;
+  bool handleEnter() override;
   GraphView * m_graphView;
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;

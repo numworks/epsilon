@@ -62,4 +62,10 @@ bool TangentGraphController::moveCursorHorizontally(int direction) {
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_function, myApp, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }
 
+bool TangentGraphController::handleEnter() {
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  stack->pop();
+  return true;
+}
+
 }

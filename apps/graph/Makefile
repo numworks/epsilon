@@ -9,6 +9,7 @@ app_objs += $(addprefix apps/graph/,\
   graph/banner_view.o\
   graph/calculation_parameter_controller.o\
   graph/curve_parameter_controller.o\
+  graph/extremum_graph_controller.o\
   graph/graph_controller.o\
   graph/graph_controller_helper.o\
   graph/graph_view.o\

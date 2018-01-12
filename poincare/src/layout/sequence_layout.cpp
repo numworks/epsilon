@@ -8,11 +8,6 @@
 
 namespace Poincare {
 
-SequenceLayout::SequenceLayout(ExpressionLayout * argument, ExpressionLayout * lowerBound, ExpressionLayout * upperBound, bool cloneOperands) :
-  StaticLayoutHierarchy(argument, lowerBound, upperBound)
-{
-}
-
 void SequenceLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Right)

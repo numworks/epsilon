@@ -23,6 +23,9 @@ bool SimpleInteractiveCurveViewController::handleEvent(Ion::Events::Event event)
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     return handleLeftRightEvent(event);
   }
+  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
+    return handleEnter();
+  }
   return false;
 }
 

@@ -45,7 +45,7 @@ private:
   TextFieldDelegateApp * textFieldDelegateApp() override {
     return static_cast<TextFieldDelegateApp *>(app());
   }
-  bool handleEnter();
+  bool handleEnter() override;
   class LegendView : public View {
   public:
     LegendView(SumGraphController * controller, char sumSymbol);

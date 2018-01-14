@@ -13,6 +13,7 @@ extern "C" {
 #include "console.h"
 #include "swd.h"
 #include "usb.h"
+#include "rtc.h"
 #include "bench/bench.h"
 
 #define USE_SD_CARD 0
@@ -114,6 +115,10 @@ void init() {
 
   bool consolePeerConnectedOnBoot = Ion::Console::Device::peerConnected();
 
+  // Initialize the RTC.
+  // We initialize it here so that it is initialized only once by us.
+  Ion::RTC::Device::init();
+
   initPeripherals();
 
   if (consolePeerConnectedOnBoot) {
@@ -210,6 +215,7 @@ void initClocks() {
   // We're using TIM3
   RCC.APB1ENR()->setTIM3EN(true);
   RCC.APB1ENR()->setPWREN(true);
+  RCC.APB1ENR()->setRTCAPB(true);
 
   // APB2 bus
   class RCC::APB2ENR apb2enr(0x00008000); // Reset value

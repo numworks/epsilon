@@ -16,6 +16,7 @@ public:
   Toolbox * toolbox() override;
   bool isEditing() const;
   const char * text() const;
+  const char * draftTextBuffer() const;
   int draftTextLength() const;
   int cursorLocation() const;
   void setCursorLocation(int location);
@@ -48,7 +49,7 @@ protected:
     int draftTextLength() const;
     int cursorLocation() const { return m_currentCursorLocation; }
     char * textBuffer() { return m_textBuffer; }
-    char * draftTextBuffer() { return m_draftTextBuffer; }
+    char * draftTextBuffer() const { return m_draftTextBuffer; }
     int bufferSize() { return k_maxBufferSize; }
     void setText(const char * text);
     void setBackgroundColor(KDColor backgroundColor);

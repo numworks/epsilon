@@ -34,6 +34,7 @@ public:
   void viewDidDisappear() override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
 private:
   StackViewController * stackController() const;
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);
@@ -44,8 +45,10 @@ private:
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   ExpressionTableCell m_complexFormatCells[2];
   Poincare::ExpressionLayout * m_complexFormatLayout[2];
-  MessageTableCellWithEditableText m_editableCell;
-  char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
+  MessageTableCellWithEditableText m_editableCellFigures;
+  MessageTableCellWithEditableText m_editableCellTime;
+  char m_draftTextBufferFigures[MessageTableCellWithEditableText::k_bufferLength];
+  char m_draftTextBufferTime[MessageTableCellWithEditableText::k_bufferLength];
   SelectableTableView m_selectableTableView;
   MessageTree * m_messageTreeModel;
   HardwareTest::PopUpController m_hardwareTestPopUpController;

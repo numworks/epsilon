@@ -14,15 +14,16 @@ const SettingsMessageTree angleChildren[2] = {SettingsMessageTree(I18n::Message:
 const SettingsMessageTree FloatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Auto), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
 const SettingsMessageTree complexFormatChildren[2] = {SettingsMessageTree(I18n::Message::Default), SettingsMessageTree(I18n::Message::Default)};
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
+const SettingsMessageTree dateTimeChildren[1] = {SettingsMessageTree(I18n::Message::Time)};
 const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-const SettingsMessageTree menu[8] =
+const SettingsMessageTree menu[9] =
 #else
-const SettingsMessageTree menu[7] =
+const SettingsMessageTree menu[8] =
 #endif
   {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2), SettingsMessageTree(I18n::Message::DisplayMode, FloatDisplayModeChildren, 3), SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 2),
-  SettingsMessageTree(I18n::Message::Brightness), SettingsMessageTree(I18n::Message::Language), SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
+  SettingsMessageTree(I18n::Message::Brightness), SettingsMessageTree(I18n::Message::Language), SettingsMessageTree(I18n::Message::DateTime, dateTimeChildren, 1), SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
   SettingsMessageTree(I18n::Message::UpdatePopUp),
 #endif

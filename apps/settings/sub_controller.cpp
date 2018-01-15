@@ -5,6 +5,7 @@
 #include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
 #include <cmath>
+#include "ion/clock.h"
 
 using namespace Poincare;
 
@@ -12,7 +13,8 @@ namespace Settings {
 
 SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_editableCell(&m_selectableTableView, this, m_draftTextBuffer),
+  m_editableCellFigures(&m_selectableTableView, this, m_draftTextBufferFigures),
+  m_editableCellTime(&m_selectableTableView, this, m_draftTextBufferTime),
   m_selectableTableView(this, this, 0, 1, k_topBottomMargin, Metric::CommonRightMargin,
     k_topBottomMargin, Metric::CommonLeftMargin, this),
   m_messageTreeModel(nullptr)
@@ -30,8 +32,10 @@ SubController::SubController(Responder * parentResponder) :
   for (int i = 0; i < 2; i++) {
     m_complexFormatCells[i].setExpression(m_complexFormatLayout[i]);
   }
-  m_editableCell.setMessage(I18n::Message::SignificantFigures);
-  m_editableCell.setMessageFontSize(KDText::FontSize::Large);
+  m_editableCellFigures.setMessage(I18n::Message::SignificantFigures);
+  m_editableCellFigures.setMessageFontSize(KDText::FontSize::Large);
+  m_editableCellTime.setMessage(I18n::Message::Time);
+  m_editableCellTime.setMessageFontSize(KDText::FontSize::Large);
 }
 
 SubController::~SubController() {
@@ -119,9 +123,12 @@ int SubController::numberOfRows() {
 }
 
 HighlightCell * SubController::reusableCell(int index, int type) {
-  if (type == 2) {
+  if (type == 3) {
     assert(index == 0);
-    return &m_editableCell;
+    return &m_editableCellTime;
+  } else if (type == 2) {
+    assert(index == 0);
+    return &m_editableCellFigures;
   } else if (type == 1) {
     assert(index >= 0 && index < 2);
     return &m_complexFormatCells[index];
@@ -138,6 +145,8 @@ int SubController::reusableCellCount(int type) {
       return 2;
     case 2:
       return 1;
+    case 3:
+      return 1;
     default:
       assert(false);
       return 0;
@@ -150,6 +159,9 @@ int SubController::typeAtLocation(int i, int j) {
   }
   if (m_messageTreeModel->label() == I18n::Message::DisplayMode && j == numberOfRows()-1) {
     return 2;
+  }
+  if (m_messageTreeModel->label() == I18n::Message::DateTime && j == 0) {
+    return 3;
   }
   return 0;
 }
@@ -179,6 +191,22 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
     char buffer[3];
     Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).writeTextInBuffer(buffer, 3);
+    myCell->setAccessoryText(buffer);
+    return;
+  }
+  /* Time row */
+  else if (m_messageTreeModel->label() == I18n::Message::DateTime && index == 0) {
+    int hours, mins;
+    Ion::Clock::clock(&hours, &mins);
+
+    char buffer[6], *ptr = buffer;
+    *ptr++ = (hours / 10) + '0';
+    *ptr++ = (hours % 10) + '0';
+    *ptr++ = ':';
+    *ptr++ = (mins / 10) + '0';
+    *ptr++ = (mins % 10) + '0';
+    *ptr   = '\0';
+    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
     myCell->setAccessoryText(buffer);
     return;
   }
@@ -223,28 +251,82 @@ void SubController::viewDidDisappear() {
 }
 
 bool SubController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return (event == Ion::Events::Up && selectedRow() > 0)
-     || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+  if (textField->draftTextBuffer() == m_draftTextBufferFigures) {
+    return (event == Ion::Events::Up && selectedRow() > 0)
+      || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
+  }
+  else {
+    return event == Ion::Events::OK || event == Ion::Events::EXE;
+  }
 }
 
 bool SubController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   Context * globalContext = textFieldDelegateApp()->localContext();
-  float floatBody = Expression::approximateToScalar<float>(text, *globalContext);
-  if (std::isnan(floatBody) || std::isinf(floatBody)) {
-    floatBody = PrintFloat::k_numberOfPrintedSignificantDigits;
+  if (textField->draftTextBuffer() == m_draftTextBufferFigures) {
+    float floatBody = Expression::approximateToScalar<float>(text, *globalContext);
+    if (std::isnan(floatBody) || std::isinf(floatBody)) {
+      floatBody = PrintFloat::k_numberOfPrintedSignificantDigits;
+    }
+    if (floatBody < 1) {
+    floatBody = 1;
+    }
+    if (floatBody > PrintFloat::k_numberOfStoredSignificantDigits) {
+      floatBody = PrintFloat::k_numberOfStoredSignificantDigits;
+    }
+    Preferences::sharedPreferences()->setNumberOfSignificantDigits((char)std::round(floatBody));
   }
-  if (floatBody < 1) {
-   floatBody = 1;
-  }
-  if (floatBody > PrintFloat::k_numberOfStoredSignificantDigits) {
-    floatBody = PrintFloat::k_numberOfStoredSignificantDigits;
-  }
-  Preferences::sharedPreferences()->setNumberOfSignificantDigits((char)std::round(floatBody));
   m_selectableTableView.reloadCellAtLocation(0, selectedRow());
   if (event == Ion::Events::Up || event == Ion::Events::OK) {
     m_selectableTableView.handleEvent(event);
   }
   return true;
+}
+
+static bool parseTime(const char *str, int *hours, int *mins) {
+  *hours = 0;
+  *mins = 0;
+
+  bool ok = false;
+  // Parse hours
+  while ((*str >= '0') && (*str <= '9')) {
+    ok = true;
+    *hours *= 10;
+    *hours += (*str++ - '0');
+  }
+  if (!ok) { return false; }
+  // Parse colon
+  if (*str++ != ':')  { return false; }
+  // Parse minutes
+  ok = false;
+  while ((*str >= '0') && (*str <= '9')) {
+    ok = true;
+    *mins *= 10;
+    *mins += (*str++ - '0');
+  }
+  if (!ok) { return false; }
+  if (*str) { return false; }
+
+  // Check time validity
+  if (*hours > 23 || *mins > 59) { return false; }
+
+  return true;
+}
+
+bool SubController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if (textField->draftTextBuffer() == m_draftTextBufferFigures) {
+    return Shared::ParameterTextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+  }
+  else {
+    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+      int hours = 0, mins = 0;
+      if (!parseTime(textField->text(), &hours, &mins)) {
+        textField->app()->displayWarning(I18n::Message::SyntaxError);
+        return true;
+      }
+      Ion::Clock::setClock(hours, mins);
+    }
+  }
+  return false;
 }
 
 StackViewController * SubController::stackController() const {

@@ -225,6 +225,10 @@ const char * TextField::text() const {
   return m_contentView.text();
 }
 
+const char * TextField::draftTextBuffer() const {
+  return const_cast<const char *>(m_contentView.draftTextBuffer());
+}
+
 int TextField::draftTextLength() const {
   assert(isEditing());
   return m_contentView.draftTextLength();

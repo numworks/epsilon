@@ -99,7 +99,7 @@ void init() {
   PWR.CR()->setDBP(false);
 
   Ion::Clock::rtcWaitSync();
-  Ion::Clock::setClock(13, 37);
+  Ion::Clock::setClock(0, 0);
 }
 
 }

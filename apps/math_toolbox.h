@@ -8,10 +8,12 @@
 
 class MathToolbox : public Toolbox {
 public:
+  typedef void (*Action)(void * sender, ToolboxMessageTree * messageTree);
   MathToolbox();
+  void setSenderAndAction(Responder * sender, Action action);
+  static void actionForEditableExpressionView(void * sender, ToolboxMessageTree * messageTree);
+  static void actionForTextfield(void * sender, ToolboxMessageTree * messageTree);
 protected:
-  TextField * textFieldSender();
-  ExpressionEditor::Controller * expressionEditorControllerSender();
   bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;
   const ToolboxMessageTree * rootModel() override;
   MessageTableCellWithMessage * leafCellAtIndex(int index) override;
@@ -19,6 +21,7 @@ protected:
   int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // = 240/40
 private:
+  Action m_action;
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
 };

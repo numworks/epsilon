@@ -13,6 +13,7 @@ public:
   VariableBoxController(Poincare::GlobalContext * context);
   void didBecomeFirstResponder() override;
   void setTextFieldCaller(TextField * textField);
+  void setEditableExpressionViewCaller(EditableExpressionView * editableExpressionView);
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:

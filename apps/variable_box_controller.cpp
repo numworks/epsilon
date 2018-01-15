@@ -292,6 +292,10 @@ void VariableBoxController::setTextFieldCaller(TextField * textField) {
   m_contentViewController.setTextFieldCaller(textField);
 }
 
+void VariableBoxController::setEditableExpressionViewCaller(EditableExpressionView * editableExpressionView) {
+  //TODO
+}
+
 void VariableBoxController::viewWillAppear() {
   StackViewController::viewWillAppear();
   m_contentViewController.resetPage();

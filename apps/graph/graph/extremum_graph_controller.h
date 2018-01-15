@@ -23,7 +23,7 @@ protected:
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView();
   bool moveCursor(int direction);
-  virtual CartesianFunction::Point computeExtremumBetweenBounds(float start, float end) = 0;
+  virtual CartesianFunction::Point computeExtremumFrom(double start, int direction) = 0;
   GraphView * m_graphView;
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;
@@ -38,7 +38,7 @@ public:
   MinimumGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
 private:
-  CartesianFunction::Point computeExtremumBetweenBounds(float start, float end) override;
+ CartesianFunction::Point computeExtremumFrom(double start, int direction) override;
 };
 
 }

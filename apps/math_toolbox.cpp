@@ -104,67 +104,70 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbo
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbox, I18n::Message::Default, I18n::Message::Default, menu, 10);
 #endif
 
-MathToolbox::MathToolbox() : Toolbox(nullptr, I18n::translate(rootModel()->label()))
+MathToolbox::MathToolbox() :
+  Toolbox(nullptr, I18n::translate(rootModel()->label())),
+  m_action(actionForTextfield)
 {
 }
 
-TextField * MathToolbox::textFieldSender() {
-  return static_cast<TextField *>(Toolbox::sender());
+void MathToolbox::setSenderAndAction(Responder * sender, Action action) {
+  setSender(sender);
+  m_action = action;
 }
 
-ExpressionEditor::Controller * MathToolbox::expressionEditorControllerSender() {
-  return static_cast<ExpressionEditor::Controller *>(Toolbox::sender());
+void MathToolbox::actionForEditableExpressionView(void * sender, ToolboxMessageTree * messageTree) {
+  EditableExpressionView * expressionLayoutEditorSender = static_cast<EditableExpressionView *>(sender);
+  // Translate the message and replace the arguments with Empty chars.
+  const char * textToInsert = I18n::translate(messageTree->insertedText());
+  char strippedTextToInsert[strlen(textToInsert)];
+  Shared::ToolboxHelpers::TextToParseIntoLayoutForCommandMessage(messageTree->insertedText(), strippedTextToInsert);
+  // Create the layout
+  Expression * resultExpression = Expression::parse(strippedTextToInsert);
+  if (resultExpression == nullptr) {
+    return;
+  }
+  ExpressionLayout * resultLayout = resultExpression->createLayout();
+  // Find the pointed layout.
+  ExpressionLayout * pointedLayout = resultLayout;
+  if (messageTree->pointedPath() != nullptr) {
+    for (int i = 0; i < messageTree->pointedPathLength(); i++) {
+      assert(messageTree->pointedPath()[i] < pointedLayout->numberOfChildren());
+      pointedLayout = pointedLayout->editableChild(messageTree->pointedPath()[i]);
+    }
+  } else if (resultLayout->isHorizontal()) {
+    // If the layout is horizontal, pick the first open parenthesis.
+    for (int i = 0; i < resultLayout->numberOfChildren(); i++) {
+      if (resultLayout->editableChild(i)->isLeftParenthesis()) {
+        pointedLayout = resultLayout->editableChild(i);
+        break;
+      }
+    }
+  } else if (resultLayout->numberOfChildren() > 0) {
+    // Else, if the layout has children, pick the first one.
+    pointedLayout = resultLayout->editableChild(0);
+  }
+  // Insert the layout
+  expressionLayoutEditorSender->insertLayoutAtCursor(resultLayout, pointedLayout);
+}
+
+void MathToolbox::actionForTextfield(void * sender, ToolboxMessageTree * messageTree) {
+  TextField * textFieldSender = static_cast<TextField *>(sender);
+  if (!textFieldSender->isEditing()) {
+    textFieldSender->setEditing(true);
+  }
+  const char * textToInsert = I18n::translate(messageTree->insertedText());
+  char strippedTextToInsert[strlen(textToInsert)];
+  // Translate the message and remove the arguments.
+  Shared::ToolboxHelpers::TextToInsertForCommandMessage(messageTree->insertedText(), strippedTextToInsert);
+  textFieldSender->insertTextAtLocation(strippedTextToInsert, textFieldSender->cursorLocation());
+  int newCursorLocation = textFieldSender->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(strippedTextToInsert);
+  textFieldSender->setCursorLocation(newCursorLocation);
 }
 
 bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
-  if (0) {
-    m_selectableTableView.deselectTable();
-    ToolboxMessageTree * messageTree = selectedMessageTree;
-    const char * editedText = I18n::translate(messageTree->insertedText());
-    if (!textFieldSender()->isEditing()) {
-      textFieldSender()->setEditing(true);
-    }
-    char strippedEditedText[strlen(editedText)];
-    Shared::ToolboxHelpers::TextToInsertForCommandMessage(messageTree->insertedText(), strippedEditedText);
-    textFieldSender()->insertTextAtLocation(strippedEditedText, textFieldSender()->cursorLocation());
-    int newCursorLocation = textFieldSender()->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(strippedEditedText);
-    textFieldSender()->setCursorLocation(newCursorLocation);
-    app()->dismissModalViewController();
-    return true;
-  }
-  // Deal with ExpressionEditor::Controller for now.
   ToolboxMessageTree * messageTree = selectedMessageTree;
   m_selectableTableView.deselectTable();
-  // Translate the message and replace the arguments with Empty chars.
-  const char * editedText = I18n::translate(messageTree->insertedText());
-  char strippedEditedText[strlen(editedText)];
-  Shared::ToolboxHelpers::TextToParseIntoLayoutForCommandMessage(messageTree->insertedText(), strippedEditedText);
-  // Create the layout
-  Expression * resultExpression = Expression::parse(strippedEditedText);
-  if (resultExpression != nullptr) {
-    ExpressionLayout * resultLayout = resultExpression->createLayout();
-    // Find the pointed layout.
-    ExpressionLayout * pointedLayout = resultLayout;
-    if (messageTree->pointedPath() != nullptr) {
-      for (int i = 0; i < messageTree->pointedPathLength(); i++) {
-      assert(messageTree->pointedPath()[i] < pointedLayout->numberOfChildren());
-        pointedLayout = pointedLayout->editableChild(messageTree->pointedPath()[i]);
-      }
-    } else if (resultLayout->isHorizontal()) {
-      // If the layout is horizontal, pick the first open parenthesis.
-      for (int i = 0; i < resultLayout->numberOfChildren(); i++) {
-        if (resultLayout->editableChild(i)->isLeftParenthesis()) {
-          pointedLayout = resultLayout->editableChild(i);
-          break;
-        }
-      }
-    } else if (resultLayout->numberOfChildren() > 0) {
-      // Else, if the layout has children, pick the first one.
-      pointedLayout = resultLayout->editableChild(0);
-    }
-    // Insert the layout
-    expressionEditorControllerSender()->insertLayoutAtCursor(resultLayout, pointedLayout);
-  }
+  m_action(sender(), messageTree);
   app()->dismissModalViewController();
   return true;
 }

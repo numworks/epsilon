@@ -6,6 +6,7 @@ app_objs += $(addprefix apps/shared/,\
   curve_view_cursor.o\
   curve_view_range.o\
   editable_cell_table_view_controller.o\
+  editable_expression_view_delegate.o\
   float_pair_store.o\
   float_parameter_controller.o\
   function.o\
@@ -37,6 +38,7 @@ app_objs += $(addprefix apps/shared/,\
   store_controller.o\
   store_parameter_controller.o\
   tab_table_controller.o\
+  text_field_and_editable_expression_view_delegate_app.o\
   text_field_delegate.o\
   text_field_delegate_app.o\
   toolbox_helpers.o\

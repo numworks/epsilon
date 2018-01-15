@@ -17,12 +17,12 @@ public:
     double abscissa;
     double value;
   };
-  Point mininimumBetweenBounds(double start, double end, Poincare::Context * context) const;
+  Point nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;
   char symbol() const override;
 private:
   constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
   constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
-  double bracketFunction(double x, double z, Poincare::Context * context);
+  void bracketMinimum(double start, double step, double max, Poincare::Context * context, double result[3]) const;
   Point brentAlgorithm(double ax, double bx, Poincare::Context * context) const;
   bool m_displayDerivative;
 };

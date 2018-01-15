@@ -12,6 +12,7 @@ objs += $(addprefix escher/src/,\
   dynamic_view_controller.o\
   editable_text_cell.o\
   ellipsis_view.o\
+  editable_expression_view.o\
   even_odd_cell.o\
   even_odd_cell_with_ellipsis.o\
   even_odd_buffer_text_cell.o\
@@ -21,6 +22,7 @@ objs += $(addprefix escher/src/,\
   expression_table_cell.o\
   expression_table_cell_with_pointer.o\
   expression_view.o\
+  expression_view_with_cursor.o\
   highlight_cell.o\
   gauge_view.o\
   image_view.o\

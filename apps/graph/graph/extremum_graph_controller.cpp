@@ -24,14 +24,14 @@ View * ExtremumGraphController::view() {
 
 void ExtremumGraphController::viewWillAppear() {
   assert(m_function != nullptr);
-  CartesianFunction::Point p = computeExtremumBetweenBounds(m_graphRange->xMin(), m_graphRange->xMax());
-  if (std::isnan(p.abscissa)) {
+  CartesianFunction::Point extremum = computeExtremumFrom(m_graphRange->xMin(), 1);
+  if (std::isnan(extremum.abscissa)) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
     m_graphView->setBannerView(&m_defaultBannerView);
   } else {
     m_isActive = true;
-    m_cursor->moveTo(p.abscissa, p.value);
+    m_cursor->moveTo(extremum.abscissa, extremum.value);
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, SimpleInteractiveCurveViewController::k_cursorRightMarginRatio, k_cursorBottomMarginRatio, SimpleInteractiveCurveViewController::k_cursorLeftMarginRatio);
     reloadBannerView();
   }
@@ -67,11 +67,7 @@ void ExtremumGraphController::reloadBannerView() {
 }
 
 bool ExtremumGraphController::moveCursor(int direction) {
-  double x = m_cursor->x();
-  float step = m_graphRange->xGridUnit()/SimpleInteractiveCurveViewController::k_numberOfCursorStepsInGradUnit;
-  float start = direction > 0 ? x+step : m_graphRange->xMin();
-  float end = direction > 0 ? m_graphRange->xMax() : x-step;
-  CartesianFunction::Point newExtremum = computeExtremumBetweenBounds(start, end);
+  CartesianFunction::Point newExtremum = computeExtremumFrom(m_cursor->x(), direction);
   if (std::isnan(newExtremum.abscissa)) {
     return false;
   }
@@ -89,9 +85,12 @@ const char * MinimumGraphController::title() {
   return I18n::translate(I18n::Message::Minimum);
 }
 
-CartesianFunction::Point MinimumGraphController::computeExtremumBetweenBounds(float start, float end) {
+CartesianFunction::Point MinimumGraphController::computeExtremumFrom(double start, int direction) {
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  return m_function->mininimumBetweenBounds(start, end, myApp->localContext());
+  double step = m_graphRange->xGridUnit()/100.0;
+  step = direction < 0 ? -step : step;
+  double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
+  return m_function->nextMinimumFrom(start, step, max, myApp->localContext());
 }
 
 }

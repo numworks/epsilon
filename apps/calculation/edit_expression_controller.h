@@ -2,6 +2,7 @@
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
 #include <escher.h>
+#include "editable_expression_view.h"
 #include "../shared/text_field_delegate.h"
 #include "../shared/editable_expression_view_delegate.h"
 #include "history_controller.h"
@@ -27,10 +28,10 @@ public:
   bool textFieldDidAbortEditing(::TextField * textField, const char * text) override;
 
   /* EditableExpressionViewDelegate */
-  bool editableExpressionViewDidReceiveEvent(EditableExpressionView * editableExpressionView, Ion::Events::Event event) override;
-  bool editableExpressionViewDidFinishEditing(EditableExpressionView * editableExpressionView, const char * text, Ion::Events::Event event) override;
-  bool editableExpressionViewDidAbortEditing(EditableExpressionView * editableExpressionView, const char * text) override;
-  void editableExpressionViewDidChangeSize(EditableExpressionView * editableExpressionView) override;
+  bool editableExpressionViewDidReceiveEvent(::EditableExpressionView * editableExpressionView, Ion::Events::Event event) override;
+  bool editableExpressionViewDidFinishEditing(::EditableExpressionView * editableExpressionView, const char * text, Ion::Events::Event event) override;
+  bool editableExpressionViewDidAbortEditing(::EditableExpressionView * editableExpressionView, const char * text) override;
+  void editableExpressionViewDidChangeSize(::EditableExpressionView * editableExpressionView) override;
 
 private:
   class ContentView : public View {

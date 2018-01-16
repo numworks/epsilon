@@ -199,6 +199,7 @@ View * EditExpressionController::loadView() {
 }
 
 void EditExpressionController::unloadView(View * view) {
+  delete expressionLayout();
   delete view;
 }
 

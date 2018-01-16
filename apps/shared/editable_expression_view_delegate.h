@@ -10,6 +10,10 @@ class EditableExpressionViewDelegate : public ::EditableExpressionViewDelegate {
 public:
   bool editableExpressionViewShouldFinishEditing(EditableExpressionView * editableExpressionView, Ion::Events::Event event) override;
   bool editableExpressionViewDidReceiveEvent(EditableExpressionView * editableExpressionView, Ion::Events::Event event) override;
+  bool editableExpressionViewDidFinishEditing(EditableExpressionView * editableExpressionView, const char * text, Ion::Events::Event event) override;
+  bool editableExpressionViewDidAbortEditing(EditableExpressionView * editableExpressionView, const char * text) override;
+  bool editableExpressionViewDidHandleEvent(EditableExpressionView * editableExpressionView, Ion::Events::Event event, bool returnValue, bool expressionHasChanged) override;
+  void editableExpressionViewDidChangeSize(EditableExpressionView * editableExpressionView) override;
   Toolbox * toolboxForEditableExpressionView(EditableExpressionView * editableExpressionView) override;
 private:
   virtual TextFieldAndEditableExpressionViewDelegateApp * textFieldAndEditableExpressionViewDelegateApp() = 0;

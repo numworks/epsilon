@@ -25,7 +25,10 @@ KDRect ExpressionViewWithCursor::cursorRect() {
 
 KDSize ExpressionViewWithCursor::minimalSizeForOptimalDisplay() const {
   KDSize expressionViewSize = m_expressionView.minimalSizeForOptimalDisplay();
-  return KDSize(expressionViewSize.width()+1, m_expressionView.minimalSizeForOptimalDisplay().height()); // +1 for the cursor
+  KDSize cursorSize = isEditing() ? m_cursorView.minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDCoordinate resultWidth = expressionViewSize.width() + cursorSize.width();
+  KDCoordinate resultHeight = expressionViewSize.height() + cursorSize.height()/2;
+  return KDSize(resultWidth, resultHeight);
 }
 
 View * ExpressionViewWithCursor::subviewAtIndex(int index) {
@@ -40,7 +43,7 @@ void ExpressionViewWithCursor::layoutSubviews() {
 }
 
 void ExpressionViewWithCursor::layoutCursorSubview() {
-  KDPoint expressionViewOrigin = m_expressionView.drawingOrigin();
+  KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
   KDPoint cursoredExpressionViewOrigin = m_cursor.pointedExpressionLayout()->absoluteOrigin();
   KDCoordinate cursorX = expressionViewOrigin.x() + cursoredExpressionViewOrigin.x();
   if (m_cursor.position() == ExpressionLayoutCursor::Position::Right) {

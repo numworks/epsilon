@@ -23,6 +23,7 @@ public:
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
+  KDPoint absoluteDrawingOrigin() const;
 private:
   /* Warning: we do not need to delete the previous expression layout when
    * deleting object or setting a new expression layout. Indeed, the expression

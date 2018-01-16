@@ -10,12 +10,12 @@
 class ExpressionViewWithCursor : public View {
 public:
   ExpressionViewWithCursor(Poincare::ExpressionLayout * expressionLayout);
-  Poincare::ExpressionLayoutCursor * cursor() { return &m_cursor; }
   bool isEditing() const { return m_isEditing; }
   void setEditing(bool isEditing) { m_isEditing = isEditing; }
   void cursorPositionChanged();
   KDRect cursorRect();
-  const ExpressionView * expressionView() const { return &m_expressionView; }
+  Poincare::ExpressionLayoutCursor * cursor() { return &m_cursor; }
+  ExpressionView * expressionView() { return &m_expressionView; }
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;
 private:

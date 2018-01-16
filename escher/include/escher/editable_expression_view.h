@@ -28,9 +28,10 @@ public:
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;
 
-private:
-  bool privateHandleEvent(Ion::Events::Event event);
+protected:
+  virtual bool privateHandleEvent(Ion::Events::Event event);
   ExpressionViewWithCursor m_expressionViewWithCursor;
+private:
   EditableExpressionViewDelegate * m_delegate;
 };
 

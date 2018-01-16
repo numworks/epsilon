@@ -175,7 +175,7 @@ bool EditExpressionController::editableExpressionViewDidAbortEditing(::EditableE
   return false;
 }
 
-void EditExpressionController::editableExpressionViewDidChangeSize(EditableExpressionView * editableExpressionView) {
+void EditExpressionController::editableExpressionViewDidChangeSize(::EditableExpressionView * editableExpressionView) {
   assert(editableExpressionView == ((ContentView *)view())->editableExpressionView());
   reloadView();
 }

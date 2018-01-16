@@ -6,7 +6,8 @@
 namespace Calculation {
 
 class EditableExpressionView : public ::EditableExpressionView {
-  using ::EditableExpressionView::EditableExpressionView;
+public:
+  EditableExpressionView(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, EditableExpressionViewDelegate * delegate = nullptr);
 protected:
   bool privateHandleEvent(Ion::Events::Event event) override;
 };

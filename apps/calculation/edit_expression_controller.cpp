@@ -85,10 +85,16 @@ const char * EditExpressionController::textBody() {
 }
 
 void EditExpressionController::insertTextBody(const char * text) {
-  TextField * tf = ((ContentView *)view())->textField();
-  tf->setEditing(true, false);
-  tf->insertTextAtLocation(text, tf->cursorLocation());
-  tf->setCursorLocation(tf->cursorLocation() + strlen(text));
+  if (((ContentView *)view())->editionIsInTextField()) {
+    TextField * tf = ((ContentView *)view())->textField();
+    tf->setEditing(true, false);
+    tf->insertTextAtLocation(text, tf->cursorLocation());
+    tf->setCursorLocation(tf->cursorLocation() + strlen(text));
+    return;
+  }
+  EditableExpressionView * editableExpressionView = ((ContentView *)view())->editableExpressionView();
+  editableExpressionView->setEditing(true);
+  editableExpressionView->insertLayoutFromTextAtCursor(text);
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {

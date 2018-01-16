@@ -24,7 +24,7 @@ View * ExtremumGraphController::view() {
 
 void ExtremumGraphController::viewWillAppear() {
   assert(m_function != nullptr);
-  CartesianFunction::Point extremum = computeExtremumFrom(m_graphRange->xMin(), 1);
+  CartesianFunction::Point extremum = computeExtremumFromAbscissa(m_graphRange->xMin(), 1);
   if (std::isnan(extremum.abscissa)) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
@@ -67,13 +67,21 @@ void ExtremumGraphController::reloadBannerView() {
 }
 
 bool ExtremumGraphController::moveCursor(int direction) {
-  CartesianFunction::Point newExtremum = computeExtremumFrom(m_cursor->x(), direction);
+  CartesianFunction::Point newExtremum = computeExtremumFromAbscissa(m_cursor->x(), direction);
   if (std::isnan(newExtremum.abscissa)) {
     return false;
   }
   m_cursor->moveTo(newExtremum.abscissa, newExtremum.value);
   m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, SimpleInteractiveCurveViewController::k_cursorRightMarginRatio, k_cursorBottomMarginRatio, SimpleInteractiveCurveViewController::k_cursorLeftMarginRatio);
   return true;
+}
+
+CartesianFunction::Point ExtremumGraphController::computeExtremumFromAbscissa(double start, int direction) {
+  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  double step = m_graphRange->xGridUnit()/100.0;
+  step = direction < 0 ? -step : step;
+  double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
+  return computeExtremum(start, step, max, myApp->localContext());
 }
 
 MinimumGraphController::MinimumGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor) :
@@ -85,12 +93,8 @@ const char * MinimumGraphController::title() {
   return I18n::translate(I18n::Message::Minimum);
 }
 
-CartesianFunction::Point MinimumGraphController::computeExtremumFrom(double start, int direction) {
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  double step = m_graphRange->xGridUnit()/100.0;
-  step = direction < 0 ? -step : step;
-  double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
-  return m_function->nextMinimumFrom(start, step, max, myApp->localContext());
+CartesianFunction::Point MinimumGraphController::computeExtremum(double start, double step, double max, Context * context) {
+  return m_function->nextMinimumFrom(start, step, max, context);
 }
 
 }

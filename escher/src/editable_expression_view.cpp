@@ -163,7 +163,15 @@ void EditableExpressionView::insertLayoutAtCursor(Poincare::ExpressionLayout * l
   }
 }
 
-void EditableExpressionView::insertTextAtCursor(const char * text) {
+void EditableExpressionView::insertLayoutFromTextAtCursor(const char * text) {
+  Poincare::Expression * expression = Poincare::Expression::parse(text);
+  if (expression != nullptr) {
+    Poincare::ExpressionLayout * layout = expression->createLayout();
+    delete expression;
+    insertLayoutAtCursor(layout, layout);
+    reload();
+    return;
+  }
   m_expressionViewWithCursor.cursor()->insertText(text);
   reload();
 }

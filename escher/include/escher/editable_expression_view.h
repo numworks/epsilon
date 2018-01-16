@@ -22,11 +22,8 @@ public:
 
   bool editableExpressionViewShouldFinishEditing(Ion::Events::Event event);
 
-  /* Callback for MathToolbox */
   void insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout);
-
-  /* Callback for VariableBoxController */
-  void insertTextAtCursor(const char * text);
+  void insertLayoutFromTextAtCursor(const char * text);
 
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;

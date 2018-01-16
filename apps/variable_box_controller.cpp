@@ -293,7 +293,7 @@ void VariableBoxController::ContentViewController::insertTextInEditableExpressio
   if (!editableExpressionView->isEditing()) {
     editableExpressionView->setEditing(true);
   }
-  editableExpressionView->insertTextAtCursor(textToInsert);
+  editableExpressionView->insertLayoutFromTextAtCursor(textToInsert);
 }
 
 VariableBoxController::VariableBoxController(GlobalContext * context) :

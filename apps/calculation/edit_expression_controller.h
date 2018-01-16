@@ -48,9 +48,9 @@ private:
     bool editionIsInTextField() const { return true; } //TODO
     static constexpr int k_bufferLength = TextField::maxBufferSize();
   private:
-    static constexpr KDCoordinate k_textFieldHeight = 32; //37
+    static constexpr KDCoordinate k_textFieldHeight = 32;
     static constexpr KDCoordinate k_leftMargin = 5;
-    static constexpr KDCoordinate k_verticalMargin = 9;
+    static constexpr KDCoordinate k_verticalMargin = 5;
     constexpr static int k_separatorThickness = 1;
     KDCoordinate inputViewHeight() const;
     KDCoordinate editableExpressionViewHeight() const;

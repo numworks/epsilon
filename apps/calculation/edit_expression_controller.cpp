@@ -58,7 +58,7 @@ void EditExpressionController::ContentView::drawRect(KDContext * ctx, KDRect rec
   // Draw the separator
   ctx->fillRect(KDRect(0, bounds().height() -inputViewFrameHeight-k_separatorThickness, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
   // Color the left margin
-  ctx->fillRect(KDRect(0, bounds().height() -inputViewFrameHeight, k_leftMargin, k_textFieldHeight), m_textField.backgroundColor());
+  ctx->fillRect(KDRect(0, bounds().height() -inputViewFrameHeight, k_leftMargin, inputViewFrameHeight), m_textField.backgroundColor());
   if (!editionIsInTextField()) {
     // Color the upper margin
     ctx->fillRect(KDRect(0, bounds().height() -inputViewFrameHeight, bounds().width(), k_verticalMargin), m_textField.backgroundColor());

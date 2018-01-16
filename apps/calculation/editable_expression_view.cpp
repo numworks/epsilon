@@ -2,6 +2,12 @@
 
 namespace Calculation {
 
+EditableExpressionView::EditableExpressionView(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, EditableExpressionViewDelegate * delegate) :
+  ::EditableExpressionView(parentResponder, expressionLayout, delegate)
+{
+  setEditing(true);
+}
+
 bool EditableExpressionView::privateHandleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     return false;

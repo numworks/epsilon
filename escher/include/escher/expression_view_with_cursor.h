@@ -11,7 +11,7 @@ class ExpressionViewWithCursor : public View {
 public:
   ExpressionViewWithCursor(Poincare::ExpressionLayout * expressionLayout);
   bool isEditing() const { return m_isEditing; }
-  void setEditing(bool isEditing) { m_isEditing = isEditing; }
+  void setEditing(bool isEditing);
   void cursorPositionChanged();
   KDRect cursorRect();
   Poincare::ExpressionLayoutCursor * cursor() { return &m_cursor; }

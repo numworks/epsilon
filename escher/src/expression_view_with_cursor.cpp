@@ -15,6 +15,12 @@ ExpressionViewWithCursor::ExpressionViewWithCursor(ExpressionLayout * expression
   m_expressionView.setExpressionLayout(expressionLayout);
 }
 
+void ExpressionViewWithCursor::setEditing(bool isEditing) {
+  m_isEditing = isEditing;
+  markRectAsDirty(bounds());
+  layoutSubviews();
+}
+
 void ExpressionViewWithCursor::cursorPositionChanged() {
   layoutCursorSubview();
 }
@@ -43,6 +49,10 @@ void ExpressionViewWithCursor::layoutSubviews() {
 }
 
 void ExpressionViewWithCursor::layoutCursorSubview() {
+  if (!m_isEditing) {
+    m_cursorView.setFrame(KDRectZero);
+    return;
+  }
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
   KDPoint cursoredExpressionViewOrigin = m_cursor.pointedExpressionLayout()->absoluteOrigin();
   KDCoordinate cursorX = expressionViewOrigin.x() + cursoredExpressionViewOrigin.x();

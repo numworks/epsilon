@@ -99,11 +99,6 @@ void ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
   setPosition(Position::Left);
 }
 
-void ExpressionLayoutCursor::addEmptyLogarithmLayout() {
-  insertText("log()");
-  setPosition(ExpressionLayoutCursor::Position::Left);
-}
-
 void ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOfColumns) {
   assert(numberOfRows > 0);
   assert(numberOfColumns > 0);
@@ -181,9 +176,13 @@ void ExpressionLayoutCursor::insertText(const char * text) {
     return;
   }
   ExpressionLayout * newChild = nullptr;
+  ExpressionLayout * pointedChild = nullptr;
   for (int i = 0; i < textLength; i++) {
     if (text[i] == '(') {
       newChild = new ParenthesisLeftLayout();
+      if (pointedChild == nullptr) {
+        pointedChild = newChild;
+      }
     } else if (text[i] == ')') {
       newChild = new ParenthesisRightLayout();
     } else if (text[i] == '[') {
@@ -196,6 +195,9 @@ void ExpressionLayoutCursor::insertText(const char * text) {
     m_pointedExpressionLayout->addBrother(this, newChild);
     m_pointedExpressionLayout = newChild;
     m_position = Position::Right;
+  }
+  if (pointedChild != nullptr) {
+    m_pointedExpressionLayout = pointedChild;
   }
 }
 

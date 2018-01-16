@@ -42,7 +42,6 @@ public:
   void addLayout(ExpressionLayout * layout);
   void addEmptyExponentialLayout();
   void addFractionLayoutAndCollapseBrothers();
-  void addEmptyLogarithmLayout();
   void addEmptyMatrixLayout(int numberOfRows = 1, int numberOfColumns = 1);
   void addEmptyPowerLayout();
   void addEmptySquareRootLayout();

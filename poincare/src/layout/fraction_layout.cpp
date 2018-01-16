@@ -161,16 +161,10 @@ int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   int numberOfChar = 0;
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-  // Write the first enclosing parenthesis.
-  buffer[numberOfChar++] = '(';
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
-
   // Write the content of the fraction
   numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, "/");
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-  // Write the second enclosing parenthesis.
-  buffer[numberOfChar++] = ')';
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

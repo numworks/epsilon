@@ -180,15 +180,10 @@ void ExpressionLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
 
 void ExpressionLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
   int oldChildIndex = indexOfChild(oldChild);
-  assert(oldChildIndex >= 0);
-  if (oldChildIndex == 0) {
-    cursor->setPointedExpressionLayout(this);
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-  } else {
-    cursor->setPointedExpressionLayout(editableChild(oldChildIndex - 1));
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-  }
+  assert(indexOfChild(oldChild) >= 0);
   replaceChild(oldChild, newChild, deleteOldChild);
+  cursor->setPointedExpressionLayout(newChild);
+  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
 }
 
 void ExpressionLayout::detachChild(const ExpressionLayout * e) {

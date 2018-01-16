@@ -141,7 +141,7 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
     return;
   }
   cursor->setPointedExpressionLayout(newChild);
-  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
   return;
 }
 

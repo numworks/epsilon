@@ -14,6 +14,7 @@ public:
   bool isEditing() const;
   void setEditing(bool isEditing);
   void scrollToCursor();
+  void reload();
 
   /* Responder */
   Toolbox * toolbox() override;
@@ -29,7 +30,6 @@ public:
 
 private:
   bool privateHandleEvent(Ion::Events::Event event);
-  void cursorOrLayoutChanged();
   ExpressionViewWithCursor m_expressionViewWithCursor;
   EditableExpressionViewDelegate * m_delegate;
 };

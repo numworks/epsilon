@@ -1,4 +1,5 @@
 #include <escher/editable_expression_view.h>
+#include <escher/text_field.h>
 #include <assert.h>
 
 EditableExpressionView::EditableExpressionView(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, EditableExpressionViewDelegate * delegate) :
@@ -28,8 +29,13 @@ Toolbox * EditableExpressionView::toolbox() {
 }
 
 bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
+  KDSize previousSize = minimalSizeForOptimalDisplay();
   if (privateHandleEvent(event)) {
-    cursorOrLayoutChanged();
+    reload();
+    KDSize newSize = minimalSizeForOptimalDisplay();
+    if (m_delegate && previousSize.height() != newSize.height()) {
+      m_delegate->editableExpressionViewDidChangeSize(this);
+    }
     return true;
   }
   return false;
@@ -44,6 +50,30 @@ KDSize EditableExpressionView::minimalSizeForOptimalDisplay() const {
 }
 
 bool EditableExpressionView::privateHandleEvent(Ion::Events::Event event) {
+  if (m_delegate && m_delegate->editableExpressionViewDidReceiveEvent(this, event)) {
+    return true;
+  }
+  if (Responder::handleEvent(event)) {
+    /* The only event Responder handles is 'Toolbox' displaying. In that case,
+     * the EditableExpressionView is forced into editing mode. */
+    if (!isEditing()) {
+      setEditing(true);
+    }
+    return true;
+  }
+  if (isEditing() && editableExpressionViewShouldFinishEditing(event)) {
+    setEditing(false);
+    int bufferSize = TextField::maxBufferSize();
+    char buffer[bufferSize];
+    m_expressionViewWithCursor.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferSize);
+    if (m_delegate->editableExpressionViewDidFinishEditing(this, buffer, event)) {
+      delete m_expressionViewWithCursor.expressionView()->expressionLayout();
+      Poincare::ExpressionLayout * newLayout = new Poincare::HorizontalLayout();
+      m_expressionViewWithCursor.expressionView()->setExpressionLayout(newLayout);
+      m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(newLayout);
+    }
+    return true;
+  }
   if (event == Ion::Events::Left) {
     return m_expressionViewWithCursor.cursor()->moveLeft();
   }
@@ -121,14 +151,22 @@ void EditableExpressionView::insertLayoutAtCursor(Poincare::ExpressionLayout * l
   if (layout == nullptr) {
     return;
   }
+  KDSize previousSize = minimalSizeForOptimalDisplay();
   m_expressionViewWithCursor.cursor()->addLayout(layout);
   m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(pointedLayout);
   m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
   m_expressionViewWithCursor.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
-  cursorOrLayoutChanged();
+  KDSize newSize = minimalSizeForOptimalDisplay();
+  reload();
+  if (m_delegate && previousSize.height() != newSize.height()) {
+    m_delegate->editableExpressionViewDidChangeSize(this);
+  }
 }
 
-void EditableExpressionView::cursorOrLayoutChanged() {
+void EditableExpressionView::reload() {
   m_expressionViewWithCursor.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
+  m_expressionViewWithCursor.cursorPositionChanged();
   layoutSubviews();
+  scrollToCursor();
+  markRectAsDirty(bounds());
 }

@@ -108,10 +108,6 @@ bool EditableExpressionView::privateHandleEvent(Ion::Events::Event event) {
     m_expressionViewWithCursor.cursor()->addEmptyExponentialLayout();
     return true;
   }
-  if (event == Ion::Events::Log) {
-    m_expressionViewWithCursor.cursor()->addEmptyLogarithmLayout();
-    return true;
-  }
   if (event == Ion::Events::Power) {
     m_expressionViewWithCursor.cursor()->addEmptyPowerLayout();
     return true;

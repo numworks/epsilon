@@ -54,7 +54,7 @@ bool BracketLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor) {
 
 
 KDSize BracketLeftRightLayout::computeSize() {
-  return KDSize(k_externWidthMargin + k_lineThickness + k_widthMargin, operandHeight());
+  return KDSize(k_externWidthMargin + k_lineThickness + k_widthMargin, operandHeight() + k_lineThickness);
 }
 
 KDCoordinate BracketLeftRightLayout::operandHeight() {

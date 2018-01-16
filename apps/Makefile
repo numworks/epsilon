@@ -1,5 +1,5 @@
 EPSILON_I18N_LANGUAGES ?= en fr es de pt
-EPSILON_APPS ?= expression_editor calculation
+EPSILON_APPS ?= calculation
 
 include apps/shared/Makefile
 include apps/home/Makefile

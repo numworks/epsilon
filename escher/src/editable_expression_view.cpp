@@ -163,6 +163,11 @@ void EditableExpressionView::insertLayoutAtCursor(Poincare::ExpressionLayout * l
   }
 }
 
+void EditableExpressionView::insertTextAtCursor(const char * text) {
+  m_expressionViewWithCursor.cursor()->insertText(text);
+  reload();
+}
+
 void EditableExpressionView::reload() {
   m_expressionViewWithCursor.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
   m_expressionViewWithCursor.cursorPositionChanged();

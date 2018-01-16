@@ -25,6 +25,9 @@ public:
   /* Callback for MathToolbox */
   void insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout);
 
+  /* Callback for VariableBoxController */
+  void insertTextAtCursor(const char * text);
+
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;
 

@@ -36,7 +36,7 @@ bool TextFieldAndEditableExpressionViewDelegateApp::editableExpressionViewDidRec
     }
     AppsContainer * appsContainer = (AppsContainer *)editableExpressionView->app()->container();
     VariableBoxController * variableBoxController = appsContainer->variableBoxController();
-    variableBoxController->setEditableExpressionViewCaller(editableExpressionView);
+    variableBoxController->setEditableExpressionViewSender(editableExpressionView);
     editableExpressionView->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }

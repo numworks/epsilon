@@ -92,8 +92,6 @@ template<typename T>
 T Derivative::riddersApproximation(VariableContext<T> xContext, AngleUnit angleUnit, T x, T h, T * error) const {
   /* Ridders' Algorithm
    * Blibliography:
-   * - Press, W. H., Teukolsky, S. A., Vetterling, W. T., & Flannery, B. P.
-   * (1992). Numerical recipies in C.
    * - Ridders, C.J.F. 1982, Advances in Engineering Software, vol. 4, no. 2,
    * pp. 75–76. */
 

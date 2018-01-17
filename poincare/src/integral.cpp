@@ -81,8 +81,8 @@ T Integral::functionValueAtAbscissa(T x, VariableContext<T> xContext, AngleUnit 
 template<typename T>
 T Integral::lagrangeGaussQuadrature(T a, T b, VariableContext<T> xContext, AngleUnit angleUnit) const {
   /* We here use Gauss-Legendre quadrature with n = 5
-   * Gauss-Legendre abscissae and weights taken from
-   * http://www.holoborodko.com/pavel/numerical-methods/numerical-integration/*/
+   * Gauss-Legendre abscissae and weights can be found in
+   * C/C++ library source code. */
   const static T x[10]={0.0765265211334973337546404, 0.2277858511416450780804962, 0.3737060887154195606725482, 0.5108670019508270980043641,
    0.6360536807265150254528367, 0.7463319064601507926143051, 0.8391169718222188233945291, 0.9122344282513259058677524,
    0.9639719272779137912676661, 0.9931285991850949247861224};

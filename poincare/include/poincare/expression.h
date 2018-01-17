@@ -242,11 +242,10 @@ protected:
    *   1 if e1 > e2
    *   -1 if e1 < e2
    *   0 if e1 == e
-   * Following the order described in Computer Algebra and Symbolic Computation,
-   * Joel S. Cohen (section 3.1). The order groups like terms together to avoid
-   * quadratic complexity when factorizing addition or multiplication. For
-   * example, it groups terms with same bases together (ie Pi, Pi^3)  and with
-   * same non-rational factors together (ie Pi, 2*Pi).
+   * The order groups like terms together to avoid quadratic complexity when
+   * factorizing addition or multiplication. For example, it groups terms with
+   * same bases together (ie Pi, Pi^3)  and with same non-rational factors
+   * together (ie Pi, 2*Pi).
    * Because SimplificationOrder is a recursive call, we sometimes enable its
    * interruption to avoid freezing in the simplification process. */
   static int SimplificationOrder(const Expression * e1, const Expression * e2, bool canBeInterrupted = false);

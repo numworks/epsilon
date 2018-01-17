@@ -1,5 +1,6 @@
 #include "vertical_offset_layout.h"
 #include "empty_visible_layout.h"
+#include <ion/charset.h>
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/layout_engine.h>
 #include <string.h>
@@ -206,7 +207,19 @@ int VerticalOffsetLayout::writeTextInBuffer(char * buffer, int bufferSize) const
   }
   assert(m_type == Type::Superscript);
   // If the layout is a superscript, write "^(indice)"
-  return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "^");
+  int numberOfChar = LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "^");
+
+  // Add a multiplication if omitted.
+  int indexInParent = -1;
+  if (m_parent) {
+    indexInParent = m_parent->indexOfChild(this);
+  }
+  if (indexInParent >= 0 && indexInParent < (m_parent->numberOfChildren() - 1) && m_parent->isHorizontal() && m_parent->child(indexInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
+    buffer[numberOfChar++] = Ion::Charset::MiddleDot;
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+  }
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
 }
 
 ExpressionLayout * VerticalOffsetLayout::indiceLayout() {

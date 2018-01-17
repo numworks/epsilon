@@ -63,6 +63,11 @@ CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, 
     result = brentAlgorithm(bracket[0], bracket[2], evaluate, context);
     x = bracket[1];
   } while (std::isnan(result.abscissa) && (step > 0.0 ? x <= max : x >= max));
+
+  if (std::fabs(result.abscissa) < 1E2*k_sqrtEps) {
+    result.abscissa = 0;
+    result.value = evaluate(this, 0, context);
+  }
   return result;
 }
 

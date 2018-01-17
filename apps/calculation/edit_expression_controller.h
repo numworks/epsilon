@@ -45,7 +45,7 @@ private:
     EditableExpressionView * editableExpressionView() { return &m_editableExpressionView; }
     TableView * mainView()  { return m_mainView; }
     void drawRect(KDContext * ctx, KDRect rect) const override;
-    bool editionIsInTextField() const { return true; } //TODO
+    bool editionIsInTextField() const;
     static constexpr int k_bufferLength = TextField::maxBufferSize();
   private:
     static constexpr KDCoordinate k_textFieldHeight = 32;

@@ -12,7 +12,7 @@ public:
   MathToolbox();
   void setSenderAndAction(Responder * sender, Action action);
   static void actionForEditableExpressionView(void * sender, ToolboxMessageTree * messageTree);
-  static void actionForTextfield(void * sender, ToolboxMessageTree * messageTree);
+  static void actionForTextField(void * sender, ToolboxMessageTree * messageTree);
 protected:
   bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;
   const ToolboxMessageTree * rootModel() override;

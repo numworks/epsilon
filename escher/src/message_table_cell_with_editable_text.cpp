@@ -7,6 +7,7 @@ MessageTableCellWithEditableText::MessageTableCellWithEditableText(Responder * p
   MessageTableCell(message),
   m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), textFieldDelegate, true, KDText::FontSize::Large, 1.0f, 0.5f)
 {
+  m_textBody[0] = '\0';
 }
 
 View * MessageTableCellWithEditableText::accessoryView() const {

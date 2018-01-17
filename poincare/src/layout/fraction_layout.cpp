@@ -2,6 +2,7 @@
 #include "empty_visible_layout.h"
 #include "horizontal_layout.h"
 #include <escher/metric.h>
+#include <ion/charset.h>
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
@@ -161,10 +162,27 @@ int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   int numberOfChar = 0;
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
+  int indexInParent = -1;
+  if (m_parent) {
+    indexInParent = m_parent->indexOfChild(this);
+  }
+
+  // Add a multiplication if omitted.
+  if (indexInParent > 0 && m_parent->isHorizontal() && m_parent->child(indexInParent - 1)->canBeOmittedMultiplicationLeftFactor()) {
+    buffer[numberOfChar++] = Ion::Charset::MiddleDot;
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+  }
+
   // Write the content of the fraction
   numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, "/");
-
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  // Add a multiplication if omitted.
+  if (indexInParent >= 0 && indexInParent < (m_parent->numberOfChildren() - 1) && m_parent->isHorizontal() && m_parent->child(indexInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
+    buffer[numberOfChar++] = Ion::Charset::MiddleDot;
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+  }
+
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

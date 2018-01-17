@@ -31,12 +31,12 @@ public:
 private:
   StackViewController * stackController() const;
 #if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  constexpr static int k_totalNumberOfCell = 8;
+  constexpr static int k_totalNumberOfCell = 9;
   MessageTableCellWithSwitch m_updateCell;
 #else
-  constexpr static int k_totalNumberOfCell = 7;
+  constexpr static int k_totalNumberOfCell = 8;
 #endif
-  constexpr static int k_numberOfSimpleChevronCells = 5;
+  constexpr static int k_numberOfSimpleChevronCells = 6;
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithChevronAndExpression m_complexFormatCell;
   MessageTableCellWithGauge m_brightnessCell;

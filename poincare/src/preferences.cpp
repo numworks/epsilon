@@ -8,6 +8,7 @@ static Preferences s_preferences;
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
   m_displayMode(Expression::FloatDisplayMode::Decimal),
+  m_editionMode(EditionMode::Edition2D),
   m_complexFormat(Expression::ComplexFormat::Cartesian),
   m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits)
 {
@@ -31,6 +32,14 @@ Expression::FloatDisplayMode Preferences::displayMode() const {
 
 void Preferences::setDisplayMode(Expression::FloatDisplayMode FloatDisplayMode) {
   m_displayMode = FloatDisplayMode;
+}
+
+Preferences::EditionMode Preferences::editionMode() const {
+  return m_editionMode;
+}
+
+void Preferences::setEditionMode(Preferences::EditionMode editionMode) {
+  m_editionMode = editionMode;
 }
 
 Expression::ComplexFormat Preferences::complexFormat() const {

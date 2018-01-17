@@ -121,6 +121,7 @@ prediction95 { poincare_expression_yylval.expression = new PredictionInterval();
 prediction { poincare_expression_yylval.expression = new ConfidenceInterval(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
 quo { poincare_expression_yylval.expression = new DivisionQuotient(); return FUNCTION; }
+random { poincare_expression_yylval.expression = new Random(); return FUNCTION; }
 re { poincare_expression_yylval.expression = new RealPart(); return FUNCTION; }
 rem { poincare_expression_yylval.expression = new DivisionRemainder(); return FUNCTION; }
 root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }

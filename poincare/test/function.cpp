@@ -7,6 +7,15 @@
 
 using namespace Poincare;
 
+template<typename T>
+void assert_exp_is_bounded(Expression * exp, T lowBound, T upBound) {
+  GlobalContext globalContext;
+  Expression * result = exp->approximate<T>(globalContext);
+  assert(result->type() == Expression::Type::Complex);
+  assert(static_cast<const Complex<T> *>(result)->a() < upBound && static_cast<const Complex<T> *>(result)->a() >= lowBound);
+  delete result;
+}
+
 QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("abs(-1)", Expression::Type::AbsoluteValue);
   assert_parsed_expression_type("arg(2+I)", Expression::Type::ComplexArgument);
@@ -35,6 +44,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("prediction95(0.1, 100)", Expression::Type::PredictionInterval);
   assert_parsed_expression_type("product(n, 4, 10)", Expression::Type::Product);
   assert_parsed_expression_type("quo(29, 10)", Expression::Type::DivisionQuotient);
+  assert_parsed_expression_type("random()", Expression::Type::Random);
   assert_parsed_expression_type("re(2+I)", Expression::Type::RealPart);
   assert_parsed_expression_type("rem(29, 10)", Expression::Type::DivisionRemainder);
   assert_parsed_expression_type("root(2,3)", Expression::Type::NthRoot);
@@ -262,6 +272,11 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to("root(-1,3)", ak);
   Complex<double> akd[1] = {Complex<double>::Cartesian(0.5, 0.86602540378443864676)};
   assert_parsed_expression_evaluates_to("root(-1,3)", akd);
+
+  Expression * exp = parse_expression("random()");
+  assert_exp_is_bounded(exp, 0.0f, 1.0f);
+  assert_exp_is_bounded(exp, 0.0, 1.0);
+  delete exp;
 }
 
 QUIZ_CASE(poincare_function_simplify) {

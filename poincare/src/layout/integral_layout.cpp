@@ -35,6 +35,14 @@ void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     replaceWithAndMoveCursor(integrandLayout(), true, cursor);
     return;
   }
+  if (cursor->pointedExpressionLayout() == integrandLayout()
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    // Case: Left of the integrand.
+    // Delete the layout, keep the integrand.
+    replaceWithAndMoveCursor(integrandLayout(), true, cursor);
+    return;
+  }
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 

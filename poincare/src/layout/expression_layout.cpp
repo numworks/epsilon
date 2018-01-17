@@ -180,9 +180,11 @@ void ExpressionLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
 
 void ExpressionLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
   assert(indexOfChild(oldChild) >= 0);
+  if (!newChild->hasAncestor(oldChild)) {
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+  }
   replaceChild(oldChild, newChild, deleteOldChild);
   cursor->setPointedExpressionLayout(newChild);
-  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
 }
 
 void ExpressionLayout::detachChild(const ExpressionLayout * e) {

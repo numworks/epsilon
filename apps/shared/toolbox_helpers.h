@@ -13,11 +13,11 @@ int CursorIndexInCommand(const char * text);
  *   - The end of the text */
 
 
-void TextToInsertForCommandMessage(I18n::Message message, char * buffer);
-void TextToInsertForCommandText(const char * command, char * buffer);
+void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int bufferSize);
+void TextToInsertForCommandText(const char * command, char * buffer, int bufferSize);
 /* Removes the arguments from a command:
- *  - Removes text between parentheses, except commas */
-void TextToParseIntoLayoutForCommandMessage(I18n::Message message, char * buffer);
+ *  - Removes text between parentheses or brackets, except commas */
+void TextToParseIntoLayoutForCommandMessage(I18n::Message message, char * buffer, int bufferSize);
 /* Removes the arguments from a command and replaces them with empty chars. */
 
 }

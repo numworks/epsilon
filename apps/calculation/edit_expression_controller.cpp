@@ -39,7 +39,7 @@ void EditExpressionController::ContentView::layoutSubviews() {
   KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - inputViewFrameHeight-k_separatorThickness);
   m_mainView->setFrame(mainViewFrame);
   if (editionIsInTextField()) {
-    KDRect inputViewFrame(k_leftMargin, bounds().height() - inputViewFrameHeight + k_verticalMargin, bounds().width()-k_leftMargin, k_textFieldHeight - k_verticalMargin);
+    KDRect inputViewFrame(k_leftMargin, bounds().height() - inputViewFrameHeight, bounds().width()-k_leftMargin, k_textFieldHeight);
     m_textField.setFrame(inputViewFrame);
     m_editableExpressionView.setFrame(KDRectZero);
     return;
@@ -62,7 +62,7 @@ void EditExpressionController::ContentView::drawRect(KDContext * ctx, KDRect rec
   ctx->fillRect(KDRect(0, bounds().height() -inputViewFrameHeight, k_leftMargin, inputViewFrameHeight), m_textField.backgroundColor());
   if (!editionIsInTextField()) {
     // Color the upper margin
-    ctx->fillRect(KDRect(0, bounds().height() -inputViewFrameHeight, bounds().width(), k_verticalMargin), m_textField.backgroundColor());
+    ctx->fillRect(KDRect(0, bounds().height() -inputViewFrameHeight, bounds().width(), k_verticalEditableExpressionViewMargin), m_textField.backgroundColor());
   }
 }
 
@@ -71,11 +71,11 @@ bool EditExpressionController::ContentView::editionIsInTextField() const {
 }
 
 KDCoordinate EditExpressionController::ContentView::inputViewHeight() const {
-  return  k_verticalMargin + (editionIsInTextField() ? k_textFieldHeight : editableExpressionViewHeight());
+  return editionIsInTextField() ? k_textFieldHeight : k_verticalEditableExpressionViewMargin + editableExpressionViewHeight();
 }
 
 KDCoordinate EditExpressionController::ContentView::editableExpressionViewHeight() const {
-  return KDCoordinate(min(0.6*Ion::Display::Height, max(k_textFieldHeight, m_editableExpressionView.minimalSizeForOptimalDisplay().height()+k_verticalMargin)));
+  return KDCoordinate(min(0.6*Ion::Display::Height, max(k_textFieldHeight, m_editableExpressionView.minimalSizeForOptimalDisplay().height()+k_verticalEditableExpressionViewMargin)));
 }
 
 EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :

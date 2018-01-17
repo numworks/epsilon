@@ -121,8 +121,7 @@ void ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOf
 void ExpressionLayoutCursor::addEmptyPowerLayout() {
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Superscript, false);
   // If there is already a base
-  int numberOfOpenParenthesis = 0;
-  if (!m_pointedExpressionLayout->isEmpty() && m_pointedExpressionLayout->isCollapsable(&numberOfOpenParenthesis, true)) {
+  if (baseForNewPowerLayout()) {
     m_pointedExpressionLayout->addBrother(this, offsetLayout);
     setPointedExpressionLayout(offsetLayout->editableChild(0));
     setPosition(ExpressionLayoutCursor::Position::Left);
@@ -148,8 +147,7 @@ void ExpressionLayoutCursor::addEmptySquarePowerLayout() {
   CharLayout * indiceLayout = new CharLayout('2');
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(indiceLayout, VerticalOffsetLayout::Type::Superscript, false);
   // If there is already a base
-  int numberOfOpenParenthesis = 0;
-  if (!m_pointedExpressionLayout->isEmpty() && m_pointedExpressionLayout->isCollapsable(&numberOfOpenParenthesis, true)) {
+  if (baseForNewPowerLayout()) {
     m_pointedExpressionLayout->addBrother(this, offsetLayout);
     setPointedExpressionLayout(offsetLayout);
     setPosition(ExpressionLayoutCursor::Position::Right);
@@ -203,6 +201,22 @@ void ExpressionLayoutCursor::insertText(const char * text) {
 
 void ExpressionLayoutCursor::performBackspace() {
   m_pointedExpressionLayout->backspaceAtCursor(this);
+}
+
+bool ExpressionLayoutCursor::baseForNewPowerLayout() {
+  // Returns true if the layout on the left of the pointed layout is suitable to
+  // be the base of a new power layout.
+  int numberOfOpenParenthesis = 0;
+  int indexInParent = m_pointedExpressionLayout->parent()->indexOfChild(m_pointedExpressionLayout);
+  return ((m_position == Position::Right
+        && !m_pointedExpressionLayout->isEmpty()
+        && m_pointedExpressionLayout->isCollapsable(&numberOfOpenParenthesis, true))
+     || (m_position == Position::Left
+      && m_pointedExpressionLayout->parent()
+      && m_pointedExpressionLayout->parent()->isHorizontal()
+      && indexInParent > 0
+      && !m_pointedExpressionLayout->editableParent()->editableChild(indexInParent-1)->isEmpty()
+      && !m_pointedExpressionLayout->editableParent()->editableChild(indexInParent-1)->isCollapsable(&numberOfOpenParenthesis, true)));
 }
 
 }

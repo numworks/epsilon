@@ -52,6 +52,7 @@ public:
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
+  bool baseForNewPowerLayout();
   ExpressionLayout * m_pointedExpressionLayout;
   Position m_position;
 };

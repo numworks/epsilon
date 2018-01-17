@@ -1,5 +1,6 @@
 #include <escher/editable_expression_view.h>
 #include <escher/text_field.h>
+#include <poincare/src/layout/matrix_layout.h>
 #include <assert.h>
 
 EditableExpressionView::EditableExpressionView(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, EditableExpressionViewDelegate * delegate) :
@@ -150,6 +151,9 @@ void EditableExpressionView::insertLayoutAtCursor(Poincare::ExpressionLayout * l
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
   m_expressionViewWithCursor.cursor()->addLayout(layout);
+  if (layout->isMatrix() && pointedLayout->hasAncestor(layout)) {
+    static_cast<Poincare::MatrixLayout *>(layout)->addGreySquares();
+  }
   m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(pointedLayout);
   m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
   reload();

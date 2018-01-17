@@ -36,7 +36,8 @@ const ToolboxMessageTree arithmeticChildren[4] = {
   ToolboxMessageTree(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient, I18n::Message::QuoCommandWithArg)};
 
 #if MATRICES_ARE_DEFINED
-const ToolboxMessageTree matricesChildren[5] = {
+const ToolboxMessageTree matricesChildren[6] = {
+  ToolboxMessageTree(I18n::Message::MatrixCommandWithArg, I18n::Message::NewMatrix, I18n::Message::MatrixCommandWithArg),
   ToolboxMessageTree(I18n::Message::InverseCommandWithArg, I18n::Message::Inverse, I18n::Message::InverseCommandWithArg),
   ToolboxMessageTree(I18n::Message::DeterminantCommandWithArg, I18n::Message::Determinant, I18n::Message::DeterminantCommandWithArg),
   ToolboxMessageTree(I18n::Message::TransposeCommandWithArg, I18n::Message::Transpose, I18n::Message::TransposeCommandWithArg),
@@ -88,7 +89,7 @@ const ToolboxMessageTree menu[10] = {
   ToolboxMessageTree(I18n::Message::Probability, I18n::Message::Default, I18n::Message::Default, probabilityChildren, 2),
   ToolboxMessageTree(I18n::Message::Arithmetic, I18n::Message::Default, I18n::Message::Default, arithmeticChildren, 4),
 #if MATRICES_ARE_DEFINED
-  ToolboxMessageTree(I18n::Message::Matrices,  I18n::Message::Default, I18n::Message::Default, matricesChildren, 5),
+  ToolboxMessageTree(I18n::Message::Matrices,  I18n::Message::Default, I18n::Message::Default, matricesChildren, 6),
 #endif
 #if LIST_ARE_DEFINED
   ToolboxMessageTree(I18n::Message::Lists, I18n::Message::Default, I18n::Message::Default, listesChildren, 5),
@@ -119,8 +120,9 @@ void MathToolbox::actionForEditableExpressionView(void * sender, ToolboxMessageT
   EditableExpressionView * expressionLayoutEditorSender = static_cast<EditableExpressionView *>(sender);
   // Translate the message and replace the arguments with Empty chars.
   const char * textToInsert = I18n::translate(messageTree->insertedText());
+  int strippedTextToInsertMaxLength = strlen(textToInsert);
   char strippedTextToInsert[strlen(textToInsert)];
-  Shared::ToolboxHelpers::TextToParseIntoLayoutForCommandMessage(messageTree->insertedText(), strippedTextToInsert);
+  Shared::ToolboxHelpers::TextToParseIntoLayoutForCommandMessage(messageTree->insertedText(), strippedTextToInsert, strippedTextToInsertMaxLength);
   // Create the layout
   Expression * resultExpression = Expression::parse(strippedTextToInsert);
   if (resultExpression == nullptr) {
@@ -156,9 +158,10 @@ void MathToolbox::actionForTextfield(void * sender, ToolboxMessageTree * message
     textFieldSender->setEditing(true);
   }
   const char * textToInsert = I18n::translate(messageTree->insertedText());
-  char strippedTextToInsert[strlen(textToInsert)];
+  int textToInsertLength = strlen(textToInsert);
+  char strippedTextToInsert[textToInsertLength];
   // Translate the message and remove the arguments.
-  Shared::ToolboxHelpers::TextToInsertForCommandMessage(messageTree->insertedText(), strippedTextToInsert);
+  Shared::ToolboxHelpers::TextToInsertForCommandMessage(messageTree->insertedText(), strippedTextToInsert, textToInsertLength);
   textFieldSender->insertTextAtLocation(strippedTextToInsert, textFieldSender->cursorLocation());
   int newCursorLocation = textFieldSender->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(strippedTextToInsert);
   textFieldSender->setCursorLocation(newCursorLocation);

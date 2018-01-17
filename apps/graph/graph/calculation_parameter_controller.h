@@ -33,6 +33,7 @@ private:
   TangentGraphController m_tangentGraphController;
   IntegralGraphController m_integralGraphController;
   MinimumGraphController m_minimumGraphController;
+  MaximumGraphController m_maximumGraphController;
 };
 
 }

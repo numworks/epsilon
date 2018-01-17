@@ -124,6 +124,7 @@ public:
     Parenthesis,
     PermuteCoefficient,
     Product,
+    Random,
     RealPart,
     Round,
     SquareRoot,

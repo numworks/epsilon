@@ -107,7 +107,7 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbo
 
 MathToolbox::MathToolbox() :
   Toolbox(nullptr, I18n::translate(rootModel()->label())),
-  m_action(actionForTextfield)
+  m_action(actionForTextField)
 {
 }
 
@@ -152,7 +152,7 @@ void MathToolbox::actionForEditableExpressionView(void * sender, ToolboxMessageT
   expressionLayoutEditorSender->insertLayoutAtCursor(resultLayout, pointedLayout);
 }
 
-void MathToolbox::actionForTextfield(void * sender, ToolboxMessageTree * messageTree) {
+void MathToolbox::actionForTextField(void * sender, ToolboxMessageTree * messageTree) {
   TextField * textFieldSender = static_cast<TextField *>(sender);
   if (!textFieldSender->isEditing()) {
     textFieldSender->setEditing(true);

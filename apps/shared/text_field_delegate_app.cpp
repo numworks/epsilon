@@ -110,7 +110,9 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
 }
 
 Toolbox * TextFieldDelegateApp::toolboxForTextField(TextField * textField) {
-  return container()->mathToolbox();
+  Toolbox * toolbox = container()->mathToolbox();
+  static_cast<MathToolbox *>(toolbox)->setSenderAndAction(textField, MathToolbox::actionForTextField);
+  return toolbox;
 }
 
 }

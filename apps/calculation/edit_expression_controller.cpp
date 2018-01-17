@@ -1,7 +1,8 @@
 #include "edit_expression_controller.h"
-#include "../apps_container.h"
-#include "ion/display.h"
 #include "app.h"
+#include "../apps_container.h"
+#include <ion/display.h>
+#include <poincare/preferences.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -63,6 +64,10 @@ void EditExpressionController::ContentView::drawRect(KDContext * ctx, KDRect rec
     // Color the upper margin
     ctx->fillRect(KDRect(0, bounds().height() -inputViewFrameHeight, bounds().width(), k_verticalMargin), m_textField.backgroundColor());
   }
+}
+
+bool EditExpressionController::ContentView::editionIsInTextField() const {
+  return Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition1D;
 }
 
 KDCoordinate EditExpressionController::ContentView::inputViewHeight() const {

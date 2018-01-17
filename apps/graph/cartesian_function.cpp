@@ -41,25 +41,38 @@ double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::C
   return integral.approximateToScalar<double>(*context);
 }
 
-CartesianFunction::Point CartesianFunction::nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const {
+CartesianFunction::Point CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
+  return nextMinimumOfFunction(start, step, max, [](const Function * function, double x, Context * context) {
+        return function->evaluateAtAbscissa(x, context);
+      }, context);
+}
+
+CartesianFunction::Point CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
+  Point minimumOfOpposite = nextMinimumOfFunction(start, step, max, [](const Function * function, double x, Context * context) {
+        return -function->evaluateAtAbscissa(x, context);
+      }, context);
+  return {.abscissa = minimumOfOpposite.abscissa, .value = -minimumOfOpposite.value};
+}
+
+CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, double step, double max, Evaluation evaluate, Context * context) const {
   double bracket[3];
   Point result = {.abscissa = NAN, .value = NAN};
   double x = start;
   do {
-    bracketMinimum(x, step, max, context, bracket);
-    result = brentAlgorithm(bracket[0], bracket[2], context);
+    bracketMinimum(x, step, max, bracket, evaluate, context);
+    result = brentAlgorithm(bracket[0], bracket[2], evaluate, context);
     x = bracket[1];
   } while (std::isnan(result.abscissa) && (step > 0.0 ? x <= max : x >= max));
   return result;
 }
 
-void CartesianFunction::bracketMinimum(double start, double step, double max, Poincare::Context * context, double result[3]) const {
+void CartesianFunction::bracketMinimum(double start, double step, double max, double result[3], Evaluation evaluate, Context * context) const {
   Point p[3];
-  p[0] = {.abscissa = start, .value = evaluateAtAbscissa(start, context)};
-  p[1] = {.abscissa = start+step, .value = evaluateAtAbscissa(start+step, context)};
+  p[0] = {.abscissa = start, .value = evaluate(this, start, context)};
+  p[1] = {.abscissa = start+step, .value = evaluate(this, start+step, context)};
   double x = start+2.0*step;
   while (step > 0.0 ? x <= max : x >= max) {
-    p[2] = {.abscissa = x, .value = evaluateAtAbscissa(x, context)};
+    p[2] = {.abscissa = x, .value = evaluate(this, x, context)};
     if (p[0].value > p[1].value && p[2].value > p[1].value) {
       result[0] = p[0].abscissa;
       result[1] = p[1].abscissa;
@@ -82,9 +95,9 @@ char CartesianFunction::symbol() const {
   return 'x';
 }
 
-CartesianFunction::Point CartesianFunction::brentAlgorithm(double ax, double bx, Context * context) const {
+CartesianFunction::Point CartesianFunction::brentAlgorithm(double ax, double bx, Evaluation evaluate, Context * context) const {
   if (ax > bx) {
-    return brentAlgorithm(bx, ax, context);
+    return brentAlgorithm(bx, ax, evaluate, context);
   }
   double e = 0.0;
   double a = ax;
@@ -92,7 +105,7 @@ CartesianFunction::Point CartesianFunction::brentAlgorithm(double ax, double bx,
   double x = a+k_goldenRatio*(b-a);
   double v = x;
   double w = x;
-  double fx = evaluateAtAbscissa(x, context);
+  double fx = evaluate(this, x, context);
   double fw = fx;
   double fv = fw;
 
@@ -104,10 +117,10 @@ CartesianFunction::Point CartesianFunction::brentAlgorithm(double ax, double bx,
     double tol1 = k_sqrtEps*std::fabs(x)+1E-10;
     double tol2 = 2.0*tol1;
     if (std::fabs(x-m) <= tol2-0.5*(b-a))  {
-      double middleFax = evaluateAtAbscissa((x+a)/2.0, context);
-      double middleFbx = evaluateAtAbscissa((x+b)/2.0, context);
-      double fa = evaluateAtAbscissa(a, context);
-      double fb = evaluateAtAbscissa(b, context);
+      double middleFax = evaluate(this, (x+a)/2.0, context);
+      double middleFbx = evaluate(this, (x+b)/2.0, context);
+      double fa = evaluate(this, a, context);
+      double fb = evaluate(this, b, context);
       if (middleFax-fa <= k_sqrtEps && fx-middleFax <= k_sqrtEps && fx-middleFbx <= k_sqrtEps && middleFbx-fb <= k_sqrtEps) {
         Point result = {.abscissa = x, .value = fx};
         return result;
@@ -140,7 +153,7 @@ CartesianFunction::Point CartesianFunction::brentAlgorithm(double ax, double bx,
       d = k_goldenRatio*e;
     }
     u = x + (std::fabs(d) >= tol1 ? d : (d>0 ? tol1 : -tol1));
-    fu = evaluateAtAbscissa(u, context);
+    fu = evaluate(this, u, context);
     if (fu <= fx) {
       if (u<x) {
         b = x;

@@ -42,6 +42,14 @@ private:
   CartesianFunction::Point computeExtremum(double start, double step, double max, Poincare::Context * context) override;
 };
 
+class MaximumGraphController : public ExtremumGraphController {
+public:
+  MaximumGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
+  const char * title() override;
+private:
+  CartesianFunction::Point computeExtremum(double start, double step, double max, Poincare::Context * context) override;
+};
+
 }
 
 #endif

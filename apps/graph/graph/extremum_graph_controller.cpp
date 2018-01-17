@@ -97,4 +97,17 @@ CartesianFunction::Point MinimumGraphController::computeExtremum(double start, d
   return m_function->nextMinimumFrom(start, step, max, context);
 }
 
+MaximumGraphController::MaximumGraphController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor) :
+  ExtremumGraphController(parentResponder, graphView, bannerView, curveViewRange, cursor, I18n::Message::NoMaximumFound)
+{
+}
+
+const char * MaximumGraphController::title() {
+  return I18n::translate(I18n::Message::Maximum);
+}
+
+CartesianFunction::Point MaximumGraphController::computeExtremum(double start, double step, double max, Context * context) {
+  return m_function->nextMaximumFrom(start, step, max, context);
+}
+
 }

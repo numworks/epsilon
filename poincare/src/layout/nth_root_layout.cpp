@@ -30,7 +30,15 @@ void NthRootLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     // Case: Right.
-    // Delete the layout, keep the operand.
+    // Delete the layout, keep the radicand.
+    replaceWithAndMoveCursor(radicandLayout(), true, cursor);
+    return;
+  }
+  if (cursor->pointedExpressionLayout() == radicandLayout()
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    // Case: Left of the radicand.
+    // Delete the layout, keep the radicand.
     replaceWithAndMoveCursor(radicandLayout(), true, cursor);
     return;
   }

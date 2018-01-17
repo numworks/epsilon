@@ -69,7 +69,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    /* Behavious of "Exam mode" menu*/
+    /* Behaviour of "Exam mode" menu*/
     if (m_messageTreeModel->label() == I18n::Message::ExamMode) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         return false;
@@ -254,6 +254,9 @@ void SubController::setPreferenceWithValueIndex(I18n::Message message, int value
   if (message == I18n::Message::DisplayMode) {
     Preferences::sharedPreferences()->setDisplayMode((Expression::FloatDisplayMode)valueIndex);
   }
+  if (message == I18n::Message::EditionMode) {
+    Preferences::sharedPreferences()->setEditionMode((Preferences::EditionMode)valueIndex);
+  }
   if (message == I18n::Message::ComplexFormat) {
     Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
   }
@@ -265,6 +268,9 @@ int SubController::valueIndexForPreference(I18n::Message message) {
   }
   if (message == I18n::Message::DisplayMode) {
     return (int)Preferences::sharedPreferences()->displayMode();
+  }
+  if (message == I18n::Message::EditionMode) {
+    return (int)Preferences::sharedPreferences()->editionMode();
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)Preferences::sharedPreferences()->complexFormat();

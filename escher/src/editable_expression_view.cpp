@@ -35,6 +35,7 @@ bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
     KDSize newSize = minimalSizeForOptimalDisplay();
     if (m_delegate && previousSize.height() != newSize.height()) {
       m_delegate->editableExpressionViewDidChangeSize(this);
+      reload();
     }
     return true;
   }
@@ -151,9 +152,8 @@ void EditableExpressionView::insertLayoutAtCursor(Poincare::ExpressionLayout * l
   m_expressionViewWithCursor.cursor()->addLayout(layout);
   m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(pointedLayout);
   m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
-  m_expressionViewWithCursor.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
-  KDSize newSize = minimalSizeForOptimalDisplay();
   reload();
+  KDSize newSize = minimalSizeForOptimalDisplay();
   if (m_delegate && previousSize.height() != newSize.height()) {
     m_delegate->editableExpressionViewDidChangeSize(this);
   }

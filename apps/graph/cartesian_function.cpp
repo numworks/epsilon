@@ -101,6 +101,8 @@ char CartesianFunction::symbol() const {
 }
 
 CartesianFunction::Point CartesianFunction::brentAlgorithm(double ax, double bx, Evaluation evaluate, Context * context) const {
+  /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
+   * functions without calculating derivatives */
   if (ax > bx) {
     return brentAlgorithm(bx, ax, evaluate, context);
   }

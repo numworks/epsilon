@@ -68,7 +68,7 @@ bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor) {
       && childIsRightOfGrid(childIndex))
   {
     // Case: Right of a child on the right of the grid.
-    // Remove the grey squares of the grid, then go left of the grid.
+    // Remove the grey squares of the grid, then go right of the grid.
     cursor->setPointedExpressionLayout(this);
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     assert(hasGreySquares());
@@ -273,8 +273,8 @@ bool MatrixLayout::hasGreySquares() const {
       && !lastChild->isHorizontal()
       && (static_cast<const EmptyVisibleLayout *>(lastChild))->color() == EmptyVisibleLayout::Color::Grey)
   {
-    assert(isRowEmpty(m_numberOfColumns - 1));
-    assert(isColumnEmpty(m_numberOfRows - 1));
+    assert(isRowEmpty(m_numberOfRows - 1));
+    assert(isColumnEmpty(m_numberOfColumns - 1));
     return true;
   }
   return false;

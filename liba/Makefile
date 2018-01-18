@@ -187,4 +187,5 @@ objs += $(addprefix liba/src/external/softfloat/src/, \
   s_subMagsF64.o \
   softfloat_state.o \
   ui32_to_f64.o \
+  ui64_to_f64.o \
 )

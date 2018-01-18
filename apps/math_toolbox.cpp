@@ -25,9 +25,10 @@ const ToolboxMessageTree probabilityChildren[2] = {
   ToolboxMessageTree(I18n::Message::BinomialCommandWithArg, I18n::Message::Combination, I18n::Message::BinomialCommandWithArg),
   ToolboxMessageTree(I18n::Message::PermuteCommandWithArg, I18n::Message::Permutation, I18n::Message::PermuteCommandWithArg)};
 
-const ToolboxMessageTree arithmeticChildren[4] = {
+const ToolboxMessageTree arithmeticChildren[5] = {
   ToolboxMessageTree(I18n::Message::GcdCommandWithArg, I18n::Message::GreatCommonDivisor, I18n::Message::GcdCommandWithArg),
   ToolboxMessageTree(I18n::Message::LcmCommandWithArg, I18n::Message::LeastCommonMultiple, I18n::Message::LcmCommandWithArg),
+  ToolboxMessageTree(I18n::Message::FactorCommandWithArg, I18n::Message::PrimeFactorDecomposition, I18n::Message::FactorCommandWithArg),
   ToolboxMessageTree(I18n::Message::RemCommandWithArg, I18n::Message::Remainder, I18n::Message::RemCommandWithArg),
   ToolboxMessageTree(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient, I18n::Message::QuoCommandWithArg)};
 
@@ -82,7 +83,7 @@ const ToolboxMessageTree menu[10] = {ToolboxMessageTree(I18n::Message::AbsComman
   ToolboxMessageTree(I18n::Message::Calculation, I18n::Message::Default, I18n::Message::Default, calculChildren, 4),
   ToolboxMessageTree(I18n::Message::ComplexNumber, I18n::Message::Default, I18n::Message::Default, complexChildren, 5),
   ToolboxMessageTree(I18n::Message::Probability, I18n::Message::Default, I18n::Message::Default, probabilityChildren, 2),
-  ToolboxMessageTree(I18n::Message::Arithmetic, I18n::Message::Default, I18n::Message::Default, arithmeticChildren, 4),
+  ToolboxMessageTree(I18n::Message::Arithmetic, I18n::Message::Default, I18n::Message::Default, arithmeticChildren, 5),
 #if MATRICES_ARE_DEFINED
   ToolboxMessageTree(I18n::Message::Matrices,  I18n::Message::Default, I18n::Message::Default, matricesChildren, 5),
 #endif

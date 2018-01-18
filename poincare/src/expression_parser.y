@@ -190,8 +190,8 @@ term   : EMPTY          { $$ = $1; }
        | FUNCTION UNDERSCORE LEFT_BRACE lstData RIGHT_BRACE LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; int totalNumberOfArguments = $4->numberOfOperands()+$7->numberOfOperands();
 if (!$1->hasValidNumberOfOperands(totalNumberOfArguments)) { delete $1; delete $4; delete $7; YYERROR; };
 Poincare::ListData * arguments = new Poincare::ListData();
-for (int i = 0; i < $4->numberOfOperands(); i++) { arguments->pushExpression($4->operands()[i]); }
 for (int i = 0; i < $7->numberOfOperands(); i++) { arguments->pushExpression($7->operands()[i]); }
+for (int i = 0; i < $4->numberOfOperands(); i++) { arguments->pushExpression($4->operands()[i]); }
 $1->setArgument(arguments, totalNumberOfArguments, false);
 $4->detachOperands(); delete $4; $7->detachOperands(); delete $7; arguments->detachOperands(); delete arguments;}
        | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfOperands())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfOperands(), false); $3->detachOperands(); delete $3; }

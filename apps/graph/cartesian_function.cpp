@@ -60,7 +60,7 @@ CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, 
   double x = start;
   do {
     bracketMinimum(x, step, max, bracket, evaluate, context);
-    result = brentAlgorithm(bracket[0], bracket[2], evaluate, context);
+    result = brentMinimum(bracket[0], bracket[2], evaluate, context);
     x = bracket[1];
   } while (std::isnan(result.abscissa) && (step > 0.0 ? x <= max : x >= max));
 
@@ -100,11 +100,11 @@ char CartesianFunction::symbol() const {
   return 'x';
 }
 
-CartesianFunction::Point CartesianFunction::brentAlgorithm(double ax, double bx, Evaluation evaluate, Context * context) const {
+CartesianFunction::Point CartesianFunction::brentMinimum(double ax, double bx, Evaluation evaluate, Context * context) const {
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
    * functions without calculating derivatives */
   if (ax > bx) {
-    return brentAlgorithm(bx, ax, evaluate, context);
+    return brentMinimum(bx, ax, evaluate, context);
   }
   double e = 0.0;
   double a = ax;

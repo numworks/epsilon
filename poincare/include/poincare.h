@@ -55,6 +55,7 @@
 #include <poincare/prediction_interval.h>
 #include <poincare/preferences.h>
 #include <poincare/product.h>
+#include <poincare/randint.h>
 #include <poincare/random.h>
 #include <poincare/rational.h>
 #include <poincare/real_part.h>

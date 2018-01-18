@@ -12,6 +12,10 @@ aeabi_double_t __aeabi_l2d(int64_t i) {
   return d(i64_to_f64(i));
 }
 
+aeabi_float_t __aeabi_ul2d(uint64_t i) {
+  return d(ui64_to_f64(i));
+}
+
 int64_t __aeabi_f2lz(aeabi_float_t x) {
   return f32_to_i64_r_minMag(f32(x), 0);
 }

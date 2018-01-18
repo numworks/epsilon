@@ -169,6 +169,9 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::Random:
       std::cout << "Random";
       break;
+    case Expression::Type::Randint:
+      std::cout << "Randint";
+      break;
     case Expression::Type::Rational:
       std::cout << "Rational(";
       std::cout << static_cast<const Rational * >(e)->numerator().approximate<double>();

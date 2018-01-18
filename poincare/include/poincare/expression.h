@@ -125,6 +125,7 @@ public:
     PermuteCoefficient,
     Product,
     Random,
+    Randint,
     RealPart,
     Round,
     SquareRoot,

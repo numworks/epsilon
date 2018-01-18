@@ -27,7 +27,7 @@ void ConjugateLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 
-bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the operand.
   // Move Left.
   if (operandLayout()
@@ -49,12 +49,12 @@ bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the operand.
   // Move Right.
   if (operandLayout()
@@ -76,7 +76,7 @@ bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }

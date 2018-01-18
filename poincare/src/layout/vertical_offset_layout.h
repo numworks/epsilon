@@ -14,10 +14,10 @@ public:
   VerticalOffsetLayout(ExpressionLayout * indice, Type type, bool cloneOperands);
   ExpressionLayout * clone() const override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
-  bool moveLeft(ExpressionLayoutCursor * cursor) override;
-  bool moveRight(ExpressionLayoutCursor * cursor) override;
-  bool moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
-  bool moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   bool mustHaveLeftBrother() const override { return true; }
 protected:

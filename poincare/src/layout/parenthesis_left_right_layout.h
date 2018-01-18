@@ -9,8 +9,8 @@ class ParenthesisLeftRightLayout : public StaticLayoutHierarchy<0> {
 public:
   ParenthesisLeftRightLayout();
   void invalidAllSizesPositionsAndBaselines() override;
-  bool moveLeft(ExpressionLayoutCursor * cursor) override;
-  bool moveRight(ExpressionLayoutCursor * cursor) override;
+  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
   constexpr static KDCoordinate parenthesisWidth() { return k_widthMargin + k_lineThickness + k_externWidthMargin; }
   constexpr static KDCoordinate k_parenthesisCurveWidth = 5;
   constexpr static KDCoordinate k_parenthesisCurveHeight = 7;

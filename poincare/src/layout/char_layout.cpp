@@ -18,7 +18,7 @@ ExpressionLayout * CharLayout::clone() const {
   return layout;
 }
 
-bool CharLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool CharLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right.
   // Go Left.
@@ -29,12 +29,12 @@ bool CharLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool CharLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool CharLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left.
   // Go Right.
@@ -45,7 +45,7 @@ bool CharLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }

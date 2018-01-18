@@ -17,7 +17,7 @@ ExpressionLayout * MatrixLayout::clone() const {
   return layout;
 }
 
-bool MatrixLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool MatrixLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   int childIndex = indexOfChild(cursor->pointedExpressionLayout());
   if (childIndex >- 1
       && cursor->position() == ExpressionLayoutCursor::Position::Left
@@ -27,6 +27,7 @@ bool MatrixLayout::moveLeft(ExpressionLayoutCursor * cursor) {
     // Remove the grey squares of the grid, then go left of the grid.
     assert(hasGreySquares());
     removeGreySquares();
+    *shouldRecomputeLayout = true;
     cursor->setPointedExpressionLayout(this);
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
@@ -39,15 +40,16 @@ bool MatrixLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   {
     assert(!hasGreySquares());
     addGreySquares();
+    *shouldRecomputeLayout = true;
     ExpressionLayout * lastChild = editableChild((m_numberOfColumns-1)*(m_numberOfRows-1));
     assert(lastChild != nullptr);
     cursor->setPointedExpressionLayout(lastChild);
     return true;
   }
-  return GridLayout::moveLeft(cursor);
+  return GridLayout::moveLeft(cursor, shouldRecomputeLayout);
 }
 
-bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left.
   // Add the grey squares to the matrix,, then go to the first entry.
   if (cursor->pointedExpressionLayout() == this
@@ -55,6 +57,7 @@ bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor) {
   {
     assert(!hasGreySquares());
     addGreySquares();
+    *shouldRecomputeLayout = true;
     assert(m_numberOfColumns*m_numberOfRows >= 1);
     ExpressionLayout * firstChild = editableChild(0);
     assert(firstChild != nullptr);
@@ -73,25 +76,28 @@ bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor) {
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     assert(hasGreySquares());
     removeGreySquares();
+    *shouldRecomputeLayout = true;
     return true;
   }
-  return GridLayout::moveRight(cursor);
+  return GridLayout::moveRight(cursor, shouldRecomputeLayout);
 }
 
-bool MatrixLayout::moveUpInside(ExpressionLayoutCursor * cursor)  {
-  bool result = GridLayout::moveUpInside(cursor);
+bool MatrixLayout::moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout)  {
+  bool result = GridLayout::moveUpInside(cursor, shouldRecomputeLayout);
   if (result) {
     assert(!hasGreySquares());
     addGreySquares();
+    *shouldRecomputeLayout = true;
   }
   return result;
 }
 
-bool MatrixLayout::moveDownInside(ExpressionLayoutCursor * cursor)  {
-  bool result = GridLayout::moveDownInside(cursor);
+bool MatrixLayout::moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout)  {
+  bool result = GridLayout::moveDownInside(cursor, shouldRecomputeLayout);
   if (result) {
     assert(!hasGreySquares());
     addGreySquares();
+    *shouldRecomputeLayout = true;
   }
   return result;
 }

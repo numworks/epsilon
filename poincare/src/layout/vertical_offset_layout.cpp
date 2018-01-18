@@ -57,7 +57,7 @@ void VerticalOffsetLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 
-bool VerticalOffsetLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool VerticalOffsetLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the indice.
   // Go Left.
   if (indiceLayout()
@@ -81,12 +81,12 @@ bool VerticalOffsetLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool VerticalOffsetLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool VerticalOffsetLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the indice.
   // Go Right.
   if (indiceLayout()
@@ -109,12 +109,12 @@ bool VerticalOffsetLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool VerticalOffsetLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool VerticalOffsetLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // Case: Superscript.
   if (m_type == VerticalOffsetLayout::Type::Superscript) {
     // Case: Right.
@@ -145,10 +145,10 @@ bool VerticalOffsetLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLay
     cursor->setPointedExpressionLayout(this);
     return true;
   }
-  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
-bool VerticalOffsetLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool VerticalOffsetLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // Case: Subscript.
   if (m_type == VerticalOffsetLayout::Type::Subscript) {
     // Case: Right.
@@ -178,7 +178,7 @@ bool VerticalOffsetLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionL
     cursor->setPointedExpressionLayout(this);
     return true;
   }
-  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
 int VerticalOffsetLayout::writeTextInBuffer(char * buffer, int bufferSize) const {

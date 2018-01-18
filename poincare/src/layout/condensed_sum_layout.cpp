@@ -10,7 +10,7 @@ ExpressionLayout * CondensedSumLayout::clone() const {
   return layout;
 }
 
-bool CondensedSumLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool CondensedSumLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the bounds.
   // Go Left of the sum.
   if (((subscriptLayout() && cursor->pointedExpressionLayout() == subscriptLayout())
@@ -37,18 +37,18 @@ bool CondensedSumLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(baseLayout());
     cursor->setPointedExpressionLayout(baseLayout());
-    return baseLayout()->moveLeft(cursor);
+    return baseLayout()->moveLeft(cursor, shouldRecomputeLayout);
   }
   // Case: Left.
   // Ask the parent.
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the bounds.
   // Go Left of the operand.
   if (((subscriptLayout() && cursor->pointedExpressionLayout() == subscriptLayout())
@@ -69,7 +69,7 @@ bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor) {
     cursor->setPointedExpressionLayout(this);
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     if (m_parent) {
-      return m_parent->moveLeft(cursor);
+      return m_parent->moveLeft(cursor, shouldRecomputeLayout);
     }
     return false;
   }
@@ -85,16 +85,16 @@ bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool CondensedSumLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool CondensedSumLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside the subscript layout, move it to the superscript.
   if (subscriptLayout() && previousLayout == subscriptLayout()) {
     assert(superscriptLayout() != nullptr);
-    return superscriptLayout()->moveUpInside(cursor);
+    return superscriptLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the base layout, move it to the superscript.
   if (baseLayout()
@@ -102,16 +102,16 @@ bool CondensedSumLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayou
       && cursor->positionIsEquivalentTo(baseLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(superscriptLayout() != nullptr);
-    return superscriptLayout()->moveUpInside(cursor);
+    return superscriptLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
-bool CondensedSumLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool CondensedSumLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside the superscript layout, move it to the subscript.
   if (superscriptLayout() && previousLayout == superscriptLayout()) {
     assert(subscriptLayout() != nullptr);
-    return subscriptLayout()->moveUpInside(cursor);
+    return subscriptLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the base layout, move it to the subscript.
   if (baseLayout()
@@ -119,9 +119,9 @@ bool CondensedSumLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLay
       && cursor->positionIsEquivalentTo(baseLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(subscriptLayout() != nullptr);
-    return subscriptLayout()->moveUpInside(cursor);
+    return subscriptLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
 void CondensedSumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

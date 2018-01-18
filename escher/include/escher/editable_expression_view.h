@@ -30,6 +30,7 @@ public:
 
 protected:
   virtual bool privateHandleEvent(Ion::Events::Event event);
+  bool privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
   ExpressionViewWithCursor m_expressionViewWithCursor;
 private:
   EditableExpressionViewDelegate * m_delegate;

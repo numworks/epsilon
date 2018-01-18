@@ -18,7 +18,7 @@ void BracketLeftRightLayout::invalidAllSizesPositionsAndBaselines() {
   ExpressionLayout::invalidAllSizesPositionsAndBaselines();
 }
 
-bool BracketLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool BracketLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right.
   // Go Left.
@@ -30,12 +30,12 @@ bool BracketLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool BracketLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool BracketLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left.
   // Go Right.
@@ -47,7 +47,7 @@ bool BracketLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }

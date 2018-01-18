@@ -25,7 +25,7 @@ void BracketLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 
-bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the operand.
   // Go Left of the brackets.
   if (operandLayout()
@@ -47,12 +47,12 @@ bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the brackets.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the operand.
   // Go Right of the brackets.
   if (operandLayout()
@@ -75,7 +75,7 @@ bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   cursor->setPointedExpressionLayout(this);
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }

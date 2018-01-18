@@ -31,6 +31,21 @@ Toolbox * EditableExpressionView::toolbox() {
 
 bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
+  bool shouldRecomputeLayout = false;
+  if (privateHandleMoveEvent(event, &shouldRecomputeLayout)) {
+    if (!shouldRecomputeLayout) {
+      m_expressionViewWithCursor.cursorPositionChanged();
+      scrollToCursor();
+      return true;
+    }
+    reload();
+    KDSize newSize = minimalSizeForOptimalDisplay();
+    if (m_delegate && previousSize.height() != newSize.height()) {
+      m_delegate->editableExpressionViewDidChangeSize(this);
+      reload();
+    }
+    return true;
+  }
   if (privateHandleEvent(event)) {
     reload();
     KDSize newSize = minimalSizeForOptimalDisplay();
@@ -49,6 +64,32 @@ bool EditableExpressionView::editableExpressionViewShouldFinishEditing(Ion::Even
 
 KDSize EditableExpressionView::minimalSizeForOptimalDisplay() const {
   return m_expressionViewWithCursor.minimalSizeForOptimalDisplay();
+}
+
+bool EditableExpressionView::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
+  if (event == Ion::Events::Left) {
+    return m_expressionViewWithCursor.cursor()->moveLeft(shouldRecomputeLayout);
+  }
+  if (event == Ion::Events::Right) {
+    return m_expressionViewWithCursor.cursor()->moveRight(shouldRecomputeLayout);
+  }
+  if (event == Ion::Events::Up) {
+    return m_expressionViewWithCursor.cursor()->moveUp(shouldRecomputeLayout);
+  }
+  if (event == Ion::Events::Down) {
+    return m_expressionViewWithCursor.cursor()->moveDown(shouldRecomputeLayout);
+  }
+  if (event == Ion::Events::ShiftLeft) {
+    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
+    m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Left);
+    return true;
+  }
+  if (event == Ion::Events::ShiftRight) {
+    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
+    m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
+    return true;
+  }
+  return false;
 }
 
 bool EditableExpressionView::privateHandleEvent(Ion::Events::Event event) {
@@ -74,28 +115,6 @@ bool EditableExpressionView::privateHandleEvent(Ion::Events::Event event) {
       m_expressionViewWithCursor.expressionView()->setExpressionLayout(newLayout);
       m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(newLayout);
     }
-    return true;
-  }
-  if (event == Ion::Events::Left) {
-    return m_expressionViewWithCursor.cursor()->moveLeft();
-  }
-  if (event == Ion::Events::Right) {
-    return m_expressionViewWithCursor.cursor()->moveRight();
-  }
-  if (event == Ion::Events::Up) {
-    return m_expressionViewWithCursor.cursor()->moveUp();
-  }
-  if (event == Ion::Events::Down) {
-    return m_expressionViewWithCursor.cursor()->moveDown();
-  }
-  if (event == Ion::Events::ShiftLeft) {
-    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
-    m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Left);
-    return true;
-  }
-  if (event == Ion::Events::ShiftRight) {
-    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
-    m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
     return true;
   }
   if (event == Ion::Events::Division) {

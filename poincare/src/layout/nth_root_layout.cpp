@@ -45,7 +45,7 @@ void NthRootLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 
-bool NthRootLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool NthRootLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the radicand.
   // Go the index if there is one, else go Left of the root.
   if (radicandLayout()
@@ -81,12 +81,12 @@ bool NthRootLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool NthRootLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool NthRootLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the radicand.
   // Go the Right of the root.
   if (radicandLayout()
@@ -123,12 +123,12 @@ bool NthRootLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is Left of the radicand, move it to the index.
   if (indexLayout()
       && radicandLayout()
@@ -148,10 +148,10 @@ bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * p
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
   }
-  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
-bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   if (indexLayout() && previousLayout == indexLayout()) {
     // If the cursor is Right of the index, move it to the radicand.
     if (cursor->positionIsEquivalentTo(indexLayout(), ExpressionLayoutCursor::Position::Right)) {
@@ -167,7 +167,7 @@ bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout *
       return true;
     }
   }
-  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
 static_assert('\x90' == Ion::Charset::Root, "Unicode error");

@@ -46,7 +46,7 @@ void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 
-bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left the upper or lower bound.
   // Go Left of the integral.
   if (((upperBoundLayout()
@@ -81,12 +81,12 @@ bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left of the brackets.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right the upper or lower bound.
   // Go Left of the integrand.
   if (((upperBoundLayout()
@@ -121,16 +121,16 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside the lower bound, move it to the upper bound.
   if (lowerBoundLayout() && previousLayout == lowerBoundLayout()) {
     assert(upperBoundLayout() != nullptr);
-    return upperBoundLayout()->moveUpInside(cursor);
+    return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the integrand, move it to the upper bound.
   if (integrandLayout()
@@ -138,16 +138,16 @@ bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * 
       && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(upperBoundLayout() != nullptr);
-    return upperBoundLayout()->moveUpInside(cursor);
+    return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
-bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside the upper bound, move it to the lower bound.
   if (upperBoundLayout() && previousLayout == upperBoundLayout()) {
     assert(lowerBoundLayout() != nullptr);
-    return lowerBoundLayout()->moveDownInside(cursor);
+    return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the integrand, move it to the lower bound.
   if (integrandLayout()
@@ -155,9 +155,9 @@ bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout 
       && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(lowerBoundLayout() != nullptr);
-    return lowerBoundLayout()->moveDownInside(cursor);
+    return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
 int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize) const {

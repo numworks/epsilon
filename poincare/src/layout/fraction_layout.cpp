@@ -72,7 +72,7 @@ void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::backspaceAtCursor(cursor);
 }
 
-bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the numerator or the denominator.
   // Go Left of the fraction.
    if (((numeratorLayout() && cursor->pointedExpressionLayout() == numeratorLayout())
@@ -94,12 +94,12 @@ bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the numerator or the denominator.
   // Go Right of the fraction.
    if (((numeratorLayout() && cursor->pointedExpressionLayout() == numeratorLayout())
@@ -121,37 +121,37 @@ bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside denominator, move it to the numerator.
   if (denominatorLayout() && previousLayout == denominatorLayout()) {
     assert(numeratorLayout() != nullptr);
-    return numeratorLayout()->moveUpInside(cursor);
+    return numeratorLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left or Right, move it to the numerator.
   if (cursor->pointedExpressionLayout() == this){
     assert(numeratorLayout() != nullptr);
-    return numeratorLayout()->moveUpInside(cursor);
+    return numeratorLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
-bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // If the cursor is inside numerator, move it to the denominator.
   if (numeratorLayout() && previousLayout == numeratorLayout()) {
     assert(denominatorLayout() != nullptr);
-    return denominatorLayout()->moveDownInside(cursor);
+    return denominatorLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left or Right, move it to the denominator.
   if (cursor->pointedExpressionLayout() == this){
     assert(denominatorLayout() != nullptr);
-    return denominatorLayout()->moveDownInside(cursor);
+    return denominatorLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
 int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize) const {

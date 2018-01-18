@@ -9,8 +9,8 @@ class BracketLeftRightLayout : public StaticLayoutHierarchy<0> {
 public:
   BracketLeftRightLayout();
   void invalidAllSizesPositionsAndBaselines() override;
-  bool moveLeft(ExpressionLayoutCursor * cursor) override;
-  bool moveRight(ExpressionLayoutCursor * cursor) override;
+  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
 protected:
   constexpr static KDCoordinate k_bracketWidth = 5;
   constexpr static KDCoordinate k_lineThickness = 1;

@@ -16,8 +16,8 @@ public:
   ExpressionLayout * clone() const override;
   void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
-  bool moveLeft(ExpressionLayoutCursor * cursor) override;
-  bool moveRight(ExpressionLayoutCursor * cursor) override;
+  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   bool isEmpty() const override { return true; }
   Color color() const { return m_color; }

@@ -260,26 +260,26 @@ char ExpressionLayout::XNTChar() const {
   return m_parent->XNTChar();
 }
 
-bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   if (m_parent) {
-    return m_parent->moveUp(cursor, this, previousLayout);
+    return m_parent->moveUp(cursor, shouldRecomputeLayout, this, previousLayout);
   }
   return false;
 }
 
-bool ExpressionLayout::moveUpInside(ExpressionLayoutCursor * cursor) {
-  return moveInside(VerticalDirection::Up, cursor);
+bool ExpressionLayout::moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  return moveInside(VerticalDirection::Up, cursor, shouldRecomputeLayout);
 }
 
-bool ExpressionLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool ExpressionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   if (m_parent) {
-    return m_parent->moveDown(cursor, this, previousLayout);
+    return m_parent->moveDown(cursor, shouldRecomputeLayout, this, previousLayout);
   }
   return false;
 }
 
-bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor) {
-  return moveInside(VerticalDirection::Down, cursor);
+bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  return moveInside(VerticalDirection::Down, cursor, shouldRecomputeLayout);
 }
 
 bool ExpressionLayout::canBeOmittedMultiplicationLeftFactor() const {
@@ -310,7 +310,7 @@ void ExpressionLayout::detachChildAtIndex(int i) {
   m_baselined = false;
 }
 
-bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor) {
+bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   ExpressionLayout *  chilResult = nullptr;
   ExpressionLayout ** childResultPtr = &chilResult;
   ExpressionLayoutCursor::Position resultPosition = ExpressionLayoutCursor::Position::Left;
@@ -318,7 +318,7 @@ bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutC
   // than this initial value of score.
   int resultScore = Ion::Display::Width*Ion::Display::Width + Ion::Display::Height*Ion::Display::Height;
 
-  moveCursorInsideAtDirection(direction, cursor, childResultPtr, &resultPosition, &resultScore);
+  moveCursorInsideAtDirection(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore);
 
   // If there is a valid result
   if (*childResultPtr == nullptr) {
@@ -332,6 +332,7 @@ bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutC
 void ExpressionLayout::moveCursorInsideAtDirection (
     VerticalDirection direction,
     ExpressionLayoutCursor * cursor,
+    bool * shouldRecomputeLayout,
     ExpressionLayout ** childResult,
     void * resultPosition,
     int * resultScore)
@@ -361,7 +362,7 @@ void ExpressionLayout::moveCursorInsideAtDirection (
   if (layoutIsUnderOrAbove || layoutContains) {
     int childIndex = 0;
     while (child(childIndex++)) {
-      editableChild(childIndex-1)->moveCursorInsideAtDirection(direction, cursor, childResult, castedResultPosition, resultScore);
+      editableChild(childIndex-1)->moveCursorInsideAtDirection(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore);
     }
   }
 }

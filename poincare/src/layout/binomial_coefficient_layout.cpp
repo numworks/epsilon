@@ -18,7 +18,7 @@ ExpressionLayout * BinomialCoefficientLayout::clone() const {
   return new BinomialCoefficientLayout(const_cast<BinomialCoefficientLayout *>(this)->nLayout(), const_cast<BinomialCoefficientLayout *>(this)->kLayout(), true);
 }
 
-bool BinomialCoefficientLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool BinomialCoefficientLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the children.
   // Go Left.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left
@@ -43,12 +43,12 @@ bool BinomialCoefficientLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Ask the parent.
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool BinomialCoefficientLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool BinomialCoefficientLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the children.
   // Go Right.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right
@@ -71,27 +71,27 @@ bool BinomialCoefficientLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool BinomialCoefficientLayout::moveUp(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool BinomialCoefficientLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // Case: kLayout.
   // Move to nLayout.
   if (previousLayout == kLayout()) {
-    return nLayout()->moveUpInside(cursor);
+    return nLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
-bool BinomialCoefficientLayout::moveDown(ExpressionLayoutCursor * cursor, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool BinomialCoefficientLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // Case: nLayout.
   // Move to kLayout.
   if (previousLayout == nLayout()) {
-    return kLayout()->moveDownInside(cursor);
+    return kLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
 void BinomialCoefficientLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

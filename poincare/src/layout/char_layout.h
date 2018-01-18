@@ -17,8 +17,8 @@ public:
 
   char character() { return m_char; }
   KDText::FontSize fontSize() const { return m_fontSize; }
-  bool moveLeft(ExpressionLayoutCursor * cursor) override;
-  bool moveRight(ExpressionLayoutCursor * cursor) override;
+  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

@@ -40,7 +40,7 @@ void EmptyVisibleLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   }
 }
 
-bool EmptyVisibleLayout::moveLeft(ExpressionLayoutCursor * cursor) {
+bool EmptyVisibleLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right.
   // Go Left.
@@ -51,12 +51,12 @@ bool EmptyVisibleLayout::moveLeft(ExpressionLayoutCursor * cursor) {
   // Case: Left.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveLeft(cursor);
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
   }
   return false;
 }
 
-bool EmptyVisibleLayout::moveRight(ExpressionLayoutCursor * cursor) {
+bool EmptyVisibleLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left.
   // Go Right.
@@ -67,7 +67,7 @@ bool EmptyVisibleLayout::moveRight(ExpressionLayoutCursor * cursor) {
   // Case: Right.
   // Ask the parent.
   if (m_parent) {
-    return m_parent->moveRight(cursor);
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
   }
   return false;
 }

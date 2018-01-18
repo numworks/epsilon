@@ -75,18 +75,20 @@ public:
   virtual void backspaceAtCursor(ExpressionLayoutCursor * cursor);
 
   /* Tree navigation */
-  virtual bool moveLeft(ExpressionLayoutCursor * cursor) = 0;
-  virtual bool moveRight(ExpressionLayoutCursor * cursor) = 0;
+  virtual bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) = 0;
+  virtual bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) = 0;
   virtual bool moveUp(
       ExpressionLayoutCursor * cursor,
+      bool * shouldRecomputeLayout = nullptr,
       ExpressionLayout * previousLayout = nullptr,
       ExpressionLayout * previousPreviousLayout = nullptr);
   virtual bool moveDown(
       ExpressionLayoutCursor * cursor,
+      bool * shouldRecomputeLayout = nullptr,
       ExpressionLayout * previousLayout = nullptr,
       ExpressionLayout * previousPreviousLayout = nullptr);
-  virtual bool moveUpInside(ExpressionLayoutCursor * cursor);
-  virtual bool moveDownInside(ExpressionLayoutCursor * cursor);
+  virtual bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr);
+  virtual bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr);
 
   /* Expression Engine */
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
@@ -119,6 +121,13 @@ protected:
   virtual KDSize computeSize() = 0;
   virtual void computeBaseline() = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
+  virtual void moveCursorInsideAtDirection (
+    VerticalDirection direction,
+    ExpressionLayoutCursor * cursor,
+    bool * shouldRecomputeLayout,
+    ExpressionLayout ** childResult,
+    void * resultPosition,
+    int * resultScore);
   ExpressionLayout * m_parent;
   KDCoordinate m_baseline;
   /* m_baseline is the signed vertical distance from the top of the layout to
@@ -129,13 +138,7 @@ protected:
   bool m_positioned;
 private:
   void detachChildAtIndex(int i);
-  bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor);
-  void moveCursorInsideAtDirection (
-    VerticalDirection direction,
-    ExpressionLayoutCursor * cursor,
-    ExpressionLayout ** childResult,
-    void * resultPosition,
-    int * resultScore);
+  bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
   KDRect m_frame;
 };

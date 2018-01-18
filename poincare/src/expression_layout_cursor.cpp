@@ -25,20 +25,20 @@ KDPoint ExpressionLayoutCursor::middleLeftPointOfCursor(ExpressionLayout * expre
   return KDPoint(layoutOrigin.x() + expressionLayout->size().width(), y);
 }
 
-bool ExpressionLayoutCursor::moveLeft() {
-  return m_pointedExpressionLayout->moveLeft(this);
+bool ExpressionLayoutCursor::moveLeft(bool * shouldRecomputeLayout) {
+  return m_pointedExpressionLayout->moveLeft(this, shouldRecomputeLayout);
 }
 
-bool ExpressionLayoutCursor::moveRight() {
-  return m_pointedExpressionLayout->moveRight(this);
+bool ExpressionLayoutCursor::moveRight(bool * shouldRecomputeLayout) {
+  return m_pointedExpressionLayout->moveRight(this, shouldRecomputeLayout);
 }
 
-bool ExpressionLayoutCursor::moveUp() {
-  return m_pointedExpressionLayout->moveUp(this);
+bool ExpressionLayoutCursor::moveUp(bool * shouldRecomputeLayout) {
+  return m_pointedExpressionLayout->moveUp(this, shouldRecomputeLayout);
 }
 
-bool ExpressionLayoutCursor::moveDown() {
-  return m_pointedExpressionLayout->moveDown(this);
+bool ExpressionLayoutCursor::moveDown(bool * shouldRecomputeLayout) {
+  return m_pointedExpressionLayout->moveDown(this, shouldRecomputeLayout);
 }
 
 void ExpressionLayoutCursor::addLayout(ExpressionLayout * layout) {

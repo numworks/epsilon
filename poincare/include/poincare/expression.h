@@ -20,6 +20,7 @@ class Expression {
   friend class Power;
   friend class Addition;
   friend class Factorial;
+  friend class Factor;
   friend class Division;
   friend class Store;
   friend class Sine;
@@ -104,6 +105,7 @@ public:
     Determinant,
     DivisionQuotient,
     DivisionRemainder,
+    Factor,
     Floor,
     FracPart,
     GreatCommonDivisor,

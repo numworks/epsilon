@@ -30,17 +30,20 @@ ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expressio
   assert(floatDisplayMode != Expression::FloatDisplayMode::Default);
   assert(complexFormat != Expression::ComplexFormat::Default);
   int numberOfOperands = expression->numberOfOperands();
-  ExpressionLayout ** grandChildrenLayouts = new ExpressionLayout *[2*numberOfOperands-1];
-  int layoutIndex = 0;
-  grandChildrenLayouts[layoutIndex++] = expression->operand(0)->createLayout(floatDisplayMode, complexFormat);
-  for (int i = 1; i < numberOfOperands; i++) {
-    grandChildrenLayouts[layoutIndex++] = new StringLayout(",", 1);
-    grandChildrenLayouts[layoutIndex++] = expression->operand(i)->createLayout(floatDisplayMode, complexFormat);
+  ExpressionLayout * argumentLayouts = nullptr;
+  if (numberOfOperands > 0) {
+    ExpressionLayout ** grandChildrenLayouts = new ExpressionLayout *[2*numberOfOperands-1];
+    int layoutIndex = 0;
+    grandChildrenLayouts[layoutIndex++] = expression->operand(0)->createLayout(floatDisplayMode, complexFormat);
+    for (int i = 1; i < numberOfOperands; i++) {
+      grandChildrenLayouts[layoutIndex++] = new StringLayout(",", 1);
+      grandChildrenLayouts[layoutIndex++] = expression->operand(i)->createLayout(floatDisplayMode, complexFormat);
+    }
+    /* HorizontalLayout holds the grand children layouts so they do not need to
+     * be deleted */
+    argumentLayouts = new HorizontalLayout(grandChildrenLayouts, 2*numberOfOperands-1);
+    delete [] grandChildrenLayouts;
   }
-  /* HorizontalLayout holds the grand children layouts so they do not need to
-   * be deleted */
-  ExpressionLayout * argumentLayouts = new HorizontalLayout(grandChildrenLayouts, 2*numberOfOperands-1);
-  delete [] grandChildrenLayouts;
   ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = new StringLayout(operatorName, strlen(operatorName));
   childrenLayouts[1] = new ParenthesisLayout(argumentLayouts);
@@ -95,15 +98,16 @@ int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expressio
   buffer[numberOfChar++] = '(';
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   int numberOfOperands = expression->numberOfOperands();
-  assert(numberOfOperands > 0);
-  numberOfChar += expression->operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
-  for (int i = 1; i < numberOfOperands; i++) {
+  if (numberOfOperands > 0) {
+    numberOfChar += expression->operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+    for (int i = 1; i < numberOfOperands; i++) {
+      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+      buffer[numberOfChar++] = ',';
+      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+      numberOfChar += expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+    }
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    buffer[numberOfChar++] = ',';
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    numberOfChar += expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
   }
-  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   buffer[numberOfChar++] = ')';
   buffer[numberOfChar] = 0;
   return numberOfChar;

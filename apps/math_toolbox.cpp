@@ -49,7 +49,9 @@ const ToolboxMessageTree listesChildren[5] = {
   ToolboxMessageTree(I18n::Message::DimensionCommandWithArg, I18n::Message::Dimension, I18n::Message::DimensionCommandWithArg)};
 #endif
 
-const ToolboxMessageTree approximationChildren[4] = {
+const ToolboxMessageTree randomAndApproximationChildren[6] = {
+  ToolboxMessageTree(I18n::Message::RandomCommandWithArg, I18n::Message::RandomFloat, I18n::Message::RandomCommandWithArg),
+  ToolboxMessageTree(I18n::Message::RandintCommandWithArg, I18n::Message::RandomInteger, I18n::Message::RandintCommandWithArg),
   ToolboxMessageTree(I18n::Message::FloorCommandWithArg, I18n::Message::Floor, I18n::Message::FloorCommandWithArg),
   ToolboxMessageTree(I18n::Message::FracCommandWithArg, I18n::Message::FracPart, I18n::Message::FracCommandWithArg),
   ToolboxMessageTree(I18n::Message::CeilCommandWithArg, I18n::Message::Ceiling, I18n::Message::CeilCommandWithArg),
@@ -87,7 +89,7 @@ const ToolboxMessageTree menu[10] = {ToolboxMessageTree(I18n::Message::AbsComman
 #if LIST_ARE_DEFINED
   ToolboxMessageTree(I18n::Message::Lists, I18n::Message::Default, I18n::Message::Default, listesChildren, 5),
 #endif
-  ToolboxMessageTree(I18n::Message::Approximation, I18n::Message::Default, I18n::Message::Default, approximationChildren, 4),
+  ToolboxMessageTree(I18n::Message::RandomAndApproximation, I18n::Message::Default, I18n::Message::Default, randomAndApproximationChildren, 6),
   ToolboxMessageTree(I18n::Message::HyperbolicTrigonometry, I18n::Message::Default, I18n::Message::Default, trigonometryChildren, 6),
   ToolboxMessageTree(I18n::Message::Fluctuation, I18n::Message::Default, I18n::Message::Default, predictionChildren, 3)};
 #if LIST_ARE_DEFINED

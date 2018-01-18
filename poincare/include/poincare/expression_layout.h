@@ -95,6 +95,13 @@ public:
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a brother fraction: should the layout be
    * inserted in the numerator (or denominator)? */
+  bool canBeOmittedMultiplicationLeftFactor() const;
+  bool canBeOmittedMultiplicationRightFactor() const;
+  /* canBeOmittedMultiplicationLeftFactor and RightFactor return true if the
+   * layout, next to another layout, might be the factor of a multiplication
+   * with an omitted multiplication sign. For instance, an absolute value layout
+   * returns true, because |3|2 means |3|*2. A '+' CharLayout returns false,
+   * because +'something' nevers means +*'something'.  */
   virtual bool mustHaveLeftBrother() const { return false; }
   virtual bool isHorizontal() const { return false; }
   virtual bool isLeftParenthesis() const { return false; }

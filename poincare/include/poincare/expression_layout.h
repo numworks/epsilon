@@ -94,7 +94,9 @@ public:
   /* Other */
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a brother fraction: should the layout be
-   * inserted in the numerator (or denominator)? */
+   * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
+   * become 1+ 2/3 - 4 when pressing "Divide": a CharLayout is collapsable if
+   * its char is not +, -, or *. */
   bool canBeOmittedMultiplicationLeftFactor() const;
   bool canBeOmittedMultiplicationRightFactor() const;
   /* canBeOmittedMultiplicationLeftFactor and RightFactor return true if the

@@ -26,7 +26,7 @@ private:
   typedef double (*Evaluation)(const Shared::Function * function, double abscissa, Poincare::Context * context);
   Point nextMinimumOfFunction(double start, double step, double max, Evaluation evaluation, Poincare::Context * context) const;
   void bracketMinimum(double start, double step, double max, double result[3], Evaluation evaluation, Poincare::Context * context) const;
-  Point brentAlgorithm(double ax, double bx, Evaluation evaluation, Poincare::Context * context) const;
+  Point brentMinimum(double ax, double bx, Evaluation evaluation, Poincare::Context * context) const;
   bool m_displayDerivative;
 };
 

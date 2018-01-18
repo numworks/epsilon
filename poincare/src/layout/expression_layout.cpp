@@ -282,6 +282,23 @@ bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor) {
   return moveInside(VerticalDirection::Down, cursor);
 }
 
+bool ExpressionLayout::canBeOmittedMultiplicationLeftFactor() const {
+  // WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
+  // isCollapsable is true too. If isCollapsable changes, it might not be the
+  // case anymore so make sure to modify this function if needed.
+  int numberOfOpenParentheses = 0;
+  return isCollapsable(&numberOfOpenParentheses, true);
+}
+
+bool ExpressionLayout::canBeOmittedMultiplicationRightFactor() const {
+  // WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
+  // isCollapsable is true and mustHaveLeftBrother is false. If one of these
+  // functions changes, , it might not be the case anymore so make sure to
+  // modify canBeOmittedMultiplicationRightFactor if needed.
+  int numberOfOpenParentheses = 0;
+  return isCollapsable(&numberOfOpenParentheses, false) && !mustHaveLeftBrother();
+}
+
 void ExpressionLayout::detachChildAtIndex(int i) {
   ExpressionLayout ** op = const_cast<ExpressionLayout **>(children());
   if (op[i] != nullptr && op[i]->parent() == this) {

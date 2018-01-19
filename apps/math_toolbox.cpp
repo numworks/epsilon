@@ -115,15 +115,14 @@ void MathToolbox::setSenderAndAction(Responder * sender, Action action) {
   m_action = action;
 }
 
-void MathToolbox::actionForEditableExpressionView(void * sender, ToolboxMessageTree * messageTree) {
+void MathToolbox::actionForEditableExpressionView(void * sender, const char * text) {
   EditableExpressionView * expressionLayoutEditorSender = static_cast<EditableExpressionView *>(sender);
-  // Translate the message and replace the arguments with Empty chars.
-  const char * textToInsert = I18n::translate(messageTree->insertedText());
-  int strippedTextToInsertMaxLength = strlen(textToInsert);
-  char strippedTextToInsert[strlen(textToInsert)];
-  Shared::ToolboxHelpers::TextToParseIntoLayoutForCommandMessage(messageTree->insertedText(), strippedTextToInsert, strippedTextToInsertMaxLength);
+  // Replace the arguments with Empty chars.
+  int textToInsertMaxLength = strlen(text);
+  char textToInsert[textToInsertMaxLength];
+  Shared::ToolboxHelpers::TextToParseIntoLayoutForCommandText(text, textToInsert, textToInsertMaxLength);
   // Create the layout
-  Expression * resultExpression = Expression::parse(strippedTextToInsert);
+  Expression * resultExpression = Expression::parse(textToInsert);
   if (resultExpression == nullptr) {
     return;
   }
@@ -146,25 +145,24 @@ void MathToolbox::actionForEditableExpressionView(void * sender, ToolboxMessageT
   expressionLayoutEditorSender->insertLayoutAtCursor(resultLayout, pointedLayout);
 }
 
-void MathToolbox::actionForTextField(void * sender, ToolboxMessageTree * messageTree) {
+void MathToolbox::actionForTextField(void * sender, const char * text) {
   TextField * textFieldSender = static_cast<TextField *>(sender);
   if (!textFieldSender->isEditing()) {
     textFieldSender->setEditing(true);
   }
-  const char * textToInsert = I18n::translate(messageTree->insertedText());
-  int textToInsertLength = strlen(textToInsert);
-  char strippedTextToInsert[textToInsertLength];
+  int maxTextToInsertLength = strlen(text);
+  char textToInsert[maxTextToInsertLength];
   // Translate the message and remove the arguments.
-  Shared::ToolboxHelpers::TextToInsertForCommandMessage(messageTree->insertedText(), strippedTextToInsert, textToInsertLength);
-  textFieldSender->insertTextAtLocation(strippedTextToInsert, textFieldSender->cursorLocation());
-  int newCursorLocation = textFieldSender->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(strippedTextToInsert);
+  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength);
+  textFieldSender->insertTextAtLocation(textToInsert, textFieldSender->cursorLocation());
+  int newCursorLocation = textFieldSender->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommandText(text);
   textFieldSender->setCursorLocation(newCursorLocation);
 }
 
 bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   ToolboxMessageTree * messageTree = selectedMessageTree;
   m_selectableTableView.deselectTable();
-  m_action(sender(), messageTree);
+  m_action(sender(), I18n::translate(messageTree->insertedText()));
   app()->dismissModalViewController();
   return true;
 }

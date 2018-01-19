@@ -47,7 +47,7 @@ App::App(Container * container, Snapshot * snapshot) :
       // insertText() also moves the cursor. We need to re-move it to the
       // position we want (which is after the first parenthesis or before the
       // first point).
-        int deltaCursorLocation = - textArea->cursorLocation() + previousCursorLocation + Shared::ToolboxHelpers::CursorIndexInCommand(text);
+        int deltaCursorLocation = - textArea->cursorLocation() + previousCursorLocation + Shared::ToolboxHelpers::CursorIndexInCommandText(text);
       // WARNING: This is a dirty and only works because the cursor location we
       // want is always on the first line of the text we insert. Because of the
       // auto indentation, it would be difficult to compute the wanted cursor
@@ -59,7 +59,7 @@ App::App(Container * container, Snapshot * snapshot) :
       if (!textField->isEditing()) {
         textField->setEditing(true);
       }
-      int newCursorLocation = textField->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(text);
+      int newCursorLocation = textField->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommandText(text);
       if (textField->insertTextAtLocation(text, textField->cursorLocation())) {
         textField->setCursorLocation(newCursorLocation);
       }}),

@@ -13,7 +13,7 @@ int CursorIndexInCommandText(const char * text) {
       return i + 1;
     }
     if (text[i] == ']') {
-      return (i - 1) > 0 ? i - 1 : 0;
+      return i;
     }
   }
   return strlen(text);
@@ -61,21 +61,10 @@ void TextToParseIntoLayoutForCommandMessage(I18n::Message message, char * buffer
 }
 
 void TextToParseIntoLayoutForCommandText(const char * command, char * buffer, int bufferSize) {
-  if (command == I18n::translate(I18n::Message::MatrixCommandWithArg)) {
-    assert(bufferSize >= 6);
-    // Handle a new matrix command.
-    buffer[0] = '[';
-    buffer[1] = '[';
-    buffer[2] = Ion::Charset::Empty;
-    buffer[3] = ']';
-    buffer[4] = ']';
-    buffer[5] = 0;
-    return;
-  }
   TextToInsertForCommandText(command, buffer, bufferSize);
   size_t bufferLength = strlen(buffer);
   for (size_t i = 0; i < bufferLength; i++) {
-    if (buffer[i] == '(' || buffer[i] == '[' || buffer[i] == ',') {
+    if (buffer[i] == '(' || buffer[i] == ',' || (i < bufferLength - 1 && buffer[i] == '[' && buffer[i+1] == ']')) {
       // Shift the buffer to make room for the new char. Use memmove to avoid
       // overwritting.
       memmove(&buffer[i+2], &buffer[i+1], bufferLength - (i+1) + 1);

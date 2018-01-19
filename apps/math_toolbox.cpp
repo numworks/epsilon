@@ -37,7 +37,7 @@ const ToolboxMessageTree arithmeticChildren[4] = {
 
 #if MATRICES_ARE_DEFINED
 const ToolboxMessageTree matricesChildren[6] = {
-  ToolboxMessageTree(I18n::Message::MatrixCommandWithArg, I18n::Message::NewMatrix, I18n::Message::MatrixCommandWithArg),
+  ToolboxMessageTree(I18n::Message::MatrixCommandWithArg, I18n::Message::NewMatrix, I18n::Message::MatrixCommand),
   ToolboxMessageTree(I18n::Message::InverseCommandWithArg, I18n::Message::Inverse, I18n::Message::InverseCommandWithArg),
   ToolboxMessageTree(I18n::Message::DeterminantCommandWithArg, I18n::Message::Determinant, I18n::Message::DeterminantCommandWithArg),
   ToolboxMessageTree(I18n::Message::TransposeCommandWithArg, I18n::Message::Transpose, I18n::Message::TransposeCommandWithArg),

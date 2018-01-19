@@ -15,7 +15,8 @@ CalculationParameterController::CalculationParameterController(Responder * paren
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
   m_integralGraphController(nullptr, graphView, range, cursor),
   m_minimumGraphController(nullptr, graphView, bannerView, range, cursor),
-  m_maximumGraphController(nullptr, graphView, bannerView, range, cursor)
+  m_maximumGraphController(nullptr, graphView, bannerView, range, cursor),
+  m_rootGraphController(nullptr, graphView, bannerView, range, cursor)
 {
 }
 
@@ -43,6 +44,10 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
       case 2:
         m_minimumGraphController.setFunction(m_function);
         controller = &m_minimumGraphController;
+        break;
+      case 3:
+        m_rootGraphController.setFunction(m_function);
+        controller = &m_rootGraphController;
         break;
       case 4:
         m_tangentGraphController.setFunction(m_function);

@@ -6,6 +6,7 @@
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
 #include "integral_graph_controller.h"
+#include "root_graph_controller.h"
 #include "graph_view.h"
 #include "banner_view.h"
 #include "../../i18n.h"
@@ -34,6 +35,7 @@ private:
   IntegralGraphController m_integralGraphController;
   MinimumGraphController m_minimumGraphController;
   MaximumGraphController m_maximumGraphController;
+  RootGraphController m_rootGraphController;
 };
 
 }

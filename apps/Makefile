@@ -1,5 +1,5 @@
 EPSILON_I18N_LANGUAGES ?= en fr es de pt
-EPSILON_APPS ?= calculation settings
+EPSILON_APPS ?= calculation graph sequence settings statistics probability regression code
 
 include apps/shared/Makefile
 include apps/home/Makefile

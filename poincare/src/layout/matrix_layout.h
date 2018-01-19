@@ -13,6 +13,8 @@ public:
   /* Navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr) override;
+  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr) override;
   bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
   bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
 
@@ -36,6 +38,13 @@ protected:
   KDSize computeSize() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
+  void moveCursorInsideAtDirection (
+    VerticalDirection direction,
+    ExpressionLayoutCursor * cursor,
+    bool * shouldRecomputeLayout,
+    ExpressionLayout ** childResult,
+    void * resultPosition,
+    int * resultScore) override;
   void childWasReplacedAtIndex(int index);
   bool isRowEmpty(int index) const;
   bool isColumnEmpty(int index) const;

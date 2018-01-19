@@ -8,11 +8,11 @@
 
 class MathToolbox : public Toolbox {
 public:
-  typedef void (*Action)(void * sender, const char * text);
+  typedef void (*Action)(void * sender, const char * text, bool removeArguments);
   MathToolbox();
   void setSenderAndAction(Responder * sender, Action action);
-  static void actionForEditableExpressionView(void * sender, const char * text);
-  static void actionForTextField(void * sender, const char * text);
+  static void actionForEditableExpressionView(void * sender, const char * text, bool removeArguments = true);
+  static void actionForTextField(void * sender, const char * text, bool removeArguments = true);
 protected:
   bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;
   const ToolboxMessageTree * rootModel() override;

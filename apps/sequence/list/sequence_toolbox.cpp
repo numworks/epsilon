@@ -115,7 +115,26 @@ bool SequenceToolbox::selectAddedCell(int selectedRow){
   int bufferSize = 10;
   char buffer[bufferSize];
   m_addedCellLayout[selectedRow]->writeTextInBuffer(buffer, bufferSize);
-  m_action(sender(), buffer);
+  if (m_action == MathToolbox::actionForTextField) {
+    // DIRTY. The symbols are layouted using a Subscript VerticalOffsetLayout,
+    // which serializes into "_{}", but we want parentheses for text fields. We
+    // thus need to remove any underscores, and changes brackets into
+    // parentheses.
+    for (int i = 0; i < bufferSize; i++) {
+      if (buffer[i] == '{') {
+        buffer[i] = '(';
+      }
+      if (buffer[i] == '}') {
+        buffer[i] = ')';
+      }
+      if (buffer[i] == '_') {
+        memmove(&buffer[i], &buffer[i+1], bufferSize - (i+1) + 1);
+        bufferSize--;
+        i--;
+      }
+    }
+  }
+  m_action(sender(), buffer, false);
   app()->dismissModalViewController();
   return true;
 }

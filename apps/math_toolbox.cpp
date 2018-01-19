@@ -73,7 +73,6 @@ const ToolboxMessageTree predictionChildren[3] = {
   ToolboxMessageTree(I18n::Message::PredictionCommandWithArg, I18n::Message::Prediction, I18n::Message::PredictionCommandWithArg),
   ToolboxMessageTree(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence, I18n::Message::ConfidenceCommandWithArg)};
 
-const int pointedLayoutPathLog[] = {3,0};
 #if LIST_ARE_DEFINED
 const ToolboxMessageTree menu[12] = {
 #elif MATRICES_ARE_DEFINED
@@ -83,7 +82,7 @@ const ToolboxMessageTree menu[10] = {
 #endif
   ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg),
   ToolboxMessageTree(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot, I18n::Message::RootCommandWithArg),
-  ToolboxMessageTree(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm, I18n::Message::LogCommandWithArg, nullptr, 0, const_cast<int *>(&pointedLayoutPathLog[0]), 2),
+  ToolboxMessageTree(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm, I18n::Message::LogCommandWithArg),
   ToolboxMessageTree(I18n::Message::Calculation, I18n::Message::Default, I18n::Message::Default, calculChildren, 4),
   ToolboxMessageTree(I18n::Message::ComplexNumber, I18n::Message::Default, I18n::Message::Default, complexChildren, 5),
   ToolboxMessageTree(I18n::Message::Probability, I18n::Message::Default, I18n::Message::Default, probabilityChildren, 2),
@@ -131,12 +130,7 @@ void MathToolbox::actionForEditableExpressionView(void * sender, ToolboxMessageT
   ExpressionLayout * resultLayout = resultExpression->createLayout();
   // Find the pointed layout.
   ExpressionLayout * pointedLayout = resultLayout;
-  if (messageTree->pointedPath() != nullptr) {
-    for (int i = 0; i < messageTree->pointedPathLength(); i++) {
-      assert(messageTree->pointedPath()[i] < pointedLayout->numberOfChildren());
-      pointedLayout = pointedLayout->editableChild(messageTree->pointedPath()[i]);
-    }
-  } else if (resultLayout->isHorizontal()) {
+  if (resultLayout->isHorizontal()) {
     // If the layout is horizontal, pick the first open parenthesis.
     for (int i = 0; i < resultLayout->numberOfChildren(); i++) {
       if (resultLayout->editableChild(i)->isLeftParenthesis()) {

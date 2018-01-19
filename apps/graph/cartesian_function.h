@@ -19,6 +19,7 @@ public:
   };
   Point nextMinimumFrom(double start, double step, double max, Poincare::Context * context) const;
   Point nextMaximumFrom(double start, double step, double max, Poincare::Context * context) const;
+  double nextRootFrom(double start, double step, double max, Poincare::Context * context) const;
   char symbol() const override;
 private:
   constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
@@ -27,6 +28,8 @@ private:
   Point nextMinimumOfFunction(double start, double step, double max, Evaluation evaluation, Poincare::Context * context) const;
   void bracketMinimum(double start, double step, double max, double result[3], Evaluation evaluation, Poincare::Context * context) const;
   Point brentMinimum(double ax, double bx, Evaluation evaluation, Poincare::Context * context) const;
+  void bracketRoot(double start, double step, double max, double result[2], Poincare::Context * context) const;
+  double brentRoot(double ax, double bx, double precision, Poincare::Context * context) const;
   bool m_displayDerivative;
 };
 

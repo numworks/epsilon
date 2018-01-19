@@ -100,12 +100,12 @@ public:
    * become 1+ 2/3 - 4 when pressing "Divide": a CharLayout is collapsable if
    * its char is not +, -, or *. */
   bool canBeOmittedMultiplicationLeftFactor() const;
-  bool canBeOmittedMultiplicationRightFactor() const;
+  virtual bool canBeOmittedMultiplicationRightFactor() const;
   /* canBeOmittedMultiplicationLeftFactor and RightFactor return true if the
    * layout, next to another layout, might be the factor of a multiplication
    * with an omitted multiplication sign. For instance, an absolute value layout
    * returns true, because |3|2 means |3|*2. A '+' CharLayout returns false,
-   * because +'something' nevers means +*'something'.  */
+   * because +'something' nevers means +*'something'. */
   virtual bool mustHaveLeftBrother() const { return false; }
   virtual bool isHorizontal() const { return false; }
   virtual bool isLeftParenthesis() const { return false; }

@@ -7,7 +7,7 @@
 namespace Shared {
 namespace ToolboxHelpers {
 
-int CursorIndexInCommand(const char * text) {
+int CursorIndexInCommandText(const char * text) {
   for (size_t i = 0; i < strlen(text); i++) {
     if (text[i] == '(' || text[i] == '\'') {
       return i + 1;
@@ -20,8 +20,7 @@ int CursorIndexInCommand(const char * text) {
 }
 
 void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int bufferSize) {
-  const char * messageText = I18n::translate(message);
-  TextToInsertForCommandText(messageText, buffer, bufferSize);
+  TextToInsertForCommandText(I18n::translate(message), buffer, bufferSize);
 }
 
 void TextToInsertForCommandText(const char * command, char * buffer, int bufferSize) {
@@ -58,7 +57,11 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
 }
 
 void TextToParseIntoLayoutForCommandMessage(I18n::Message message, char * buffer, int bufferSize) {
-  if (message == I18n::Message::MatrixCommandWithArg) {
+  TextToParseIntoLayoutForCommandText(I18n::translate(message), buffer, bufferSize);
+}
+
+void TextToParseIntoLayoutForCommandText(const char * command, char * buffer, int bufferSize) {
+  if (command == I18n::translate(I18n::Message::MatrixCommandWithArg)) {
     assert(bufferSize >= 6);
     // Handle a new matrix command.
     buffer[0] = '[';
@@ -69,8 +72,7 @@ void TextToParseIntoLayoutForCommandMessage(I18n::Message message, char * buffer
     buffer[5] = 0;
     return;
   }
-  const char * messageText = I18n::translate(message);
-  TextToInsertForCommandText(messageText, buffer, bufferSize);
+  TextToInsertForCommandText(command, buffer, bufferSize);
   size_t bufferLength = strlen(buffer);
   for (size_t i = 0; i < bufferLength; i++) {
     if (buffer[i] == '(' || buffer[i] == '[' || buffer[i] == ',') {

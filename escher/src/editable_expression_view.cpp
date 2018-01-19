@@ -1,4 +1,5 @@
 #include <escher/editable_expression_view.h>
+#include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/src/layout/matrix_layout.h>
 #include <assert.h>
@@ -159,6 +160,13 @@ bool EditableExpressionView::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Backspace) {
     m_expressionViewWithCursor.cursor()->performBackspace();
+    return true;
+  }
+  if (event == Ion::Events::Paste) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
+    insertLayoutFromTextAtCursor(Clipboard::sharedClipboard()->storedText());
     return true;
   }
   return false;

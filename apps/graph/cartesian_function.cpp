@@ -54,6 +54,21 @@ CartesianFunction::Point CartesianFunction::nextMaximumFrom(double start, double
   return {.abscissa = minimumOfOpposite.abscissa, .value = -minimumOfOpposite.value};
 }
 
+double CartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
+  double bracket[2];
+  double result = NAN;
+  double x = start+step;
+  do {
+    bracketRoot(x, step, max, bracket, context);
+    result = brentRoot(bracket[0], bracket[1], step/1E4, context);
+    x = bracket[1];
+  } while (std::isnan(result) && (step > 0.0 ? x <= max : x >= max));
+  if (std::fabs(result) < step/1E3) {
+    result = 0;
+  }
+  return result;
+}
+
 CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, double step, double max, Evaluation evaluate, Context * context) const {
   double bracket[3];
   Point result = {.abscissa = NAN, .value = NAN};
@@ -192,6 +207,98 @@ CartesianFunction::Point CartesianFunction::brentMinimum(double ax, double bx, E
   }
   Point result = {.abscissa = NAN, .value = NAN};
   return result;
+}
+
+void CartesianFunction::bracketRoot(double start, double step, double max, double result[2], Context * context) const {
+  double a = start;
+  double b = start+step;
+  while (step > 0.0 ? b <= max : b >= max) {
+    double fa = evaluateAtAbscissa(a, context);
+    double fb = evaluateAtAbscissa(b, context);
+    if (fa*fb <= 0) {
+      result[0] = a;
+      result[1] = b;
+      return;
+    }
+    a = b;
+    b = b+step;
+  }
+  result[0] = NAN;
+  result[1] = NAN;
+}
+
+
+double CartesianFunction::brentRoot(double ax, double bx, double precision, Poincare::Context * context) const {
+  if (ax > bx) {
+    return brentRoot(bx, ax, precision, context);
+  }
+  double a = ax;
+  double b = bx;
+  double c = bx;
+  double d = b-a;
+  double e = b-a;
+  double fa = evaluateAtAbscissa(a, context);
+  double fb = evaluateAtAbscissa(b, context);
+  double fc = fb;
+  for (int i = 0; i < 100; i++) {
+    if ((fb > 0.0 && fc > 0.0) || (fb < 0.0 && fc < 0.0)) {
+      c = a;
+      fc = fa;
+      e = b-a;
+      d = b-a;
+    }
+    if (std::fabs(fc) < std::fabs(fb)) {
+      a = b;
+      b = c;
+      c = a;
+      fa = fb;
+      fb = fc;
+      fc = fa;
+    }
+    double tol1 = 2.0*DBL_EPSILON*std::fabs(b)+0.5*precision;
+    double xm = 0.5*(c-b);
+    if (std::fabs(xm) <= tol1 || fb == 0.0) {
+      double fbcMiddle = evaluateAtAbscissa(0.5*(b+c), context);
+      double isContinuous = (fb <= fbcMiddle & fbcMiddle <= fc) || (fc <= fbcMiddle & fbcMiddle <= fb);
+      if (isContinuous) {
+        return b;
+      }
+    }
+    if (std::fabs(e) >= tol1 && std::fabs(fa) > std::fabs(b)) {
+      double s = fb/fa;
+      double p = 2.0*xm*s;
+      double q = 1.0-s;
+      if (a != c) {
+        q = fa/fc;
+        double r = fb/fc;
+        p = s*(2.0*xm*q*(q-r)-(b-a)*(r-1.0));
+        q = (q-1.0)*(r-1.0)*(s-1.0);
+      }
+      q = p > 0.0 ? -q : q;
+      p = std::fabs(p);
+      double min1 = 3.0*xm*q-std::fabs(tol1*q);
+      double min2 = std::fabs(e*q);
+      if (2.0*p < (min1 < min2 ? min1 : min2)) {
+        e = d;
+        d = p/q;
+      } else {
+        d = xm;
+        e =d;
+      }
+    } else {
+      d = xm;
+      e = d;
+    }
+    a = b;
+    fa = fb;
+    if (std::fabs(d) > tol1) {
+      b += d;
+    } else {
+      b += xm > 0.0 ? tol1 : tol1;
+    }
+    fb = evaluateAtAbscissa(b, context);
+  }
+  return NAN;
 }
 
 }

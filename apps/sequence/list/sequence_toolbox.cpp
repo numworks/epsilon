@@ -114,9 +114,8 @@ void SequenceToolbox::setExtraCells(const char * sequenceName, int recurrenceDep
 bool SequenceToolbox::selectAddedCell(int selectedRow){
   int bufferSize = 10;
   char buffer[bufferSize];
-  int currentChar = m_addedCellLayout[selectedRow]->writeTextInBuffer(buffer, bufferSize);
-  textFieldSender()->insertTextAtLocation(buffer, textFieldSender()->cursorLocation());
-  textFieldSender()->setCursorLocation(textFieldSender()->cursorLocation()+currentChar);
+  m_addedCellLayout[selectedRow]->writeTextInBuffer(buffer, bufferSize);
+  m_action(sender(), buffer);
   app()->dismissModalViewController();
   return true;
 }

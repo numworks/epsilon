@@ -20,8 +20,8 @@ protected:
   MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // = 240/40
-private:
   Action m_action;
+private:
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
 };

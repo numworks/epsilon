@@ -38,6 +38,7 @@ public:
   Sign sign() const override;
   bool isMatrixSymbol() const;
   bool isScalarSymbol() const;
+  bool isApproximate(Context & context) const;
   bool hasAnExactRepresentation(Context & context) const;
 private:
   const char * textForSpecialSymbols(char name) const;

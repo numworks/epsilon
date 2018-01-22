@@ -12,7 +12,6 @@
 #include <escher/container.h>
 #include <escher/dynamic_view_controller.h>
 #include <escher/editable_expression_view.h>
-#include <escher/editable_expression_view_delegate.h>
 #include <escher/editable_text_cell.h>
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
@@ -53,6 +52,8 @@
 #include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
 #include <escher/scrollable_view.h>
+#include <escher/scrollable_expression_view_with_cursor.h>
+#include <escher/scrollable_expression_view_with_cursor_delegate.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>

@@ -115,8 +115,8 @@ void MathToolbox::setSenderAndAction(Responder * sender, Action action) {
   m_action = action;
 }
 
-void MathToolbox::actionForEditableExpressionView(void * sender, const char * text, bool removeArguments) {
-  EditableExpressionView * expressionLayoutEditorSender = static_cast<EditableExpressionView *>(sender);
+void MathToolbox::actionForScrollableExpressionViewWithCursor(void * sender, const char * text, bool removeArguments) {
+  ScrollableExpressionViewWithCursor * expressionLayoutEditorSender = static_cast<ScrollableExpressionViewWithCursor *>(sender);
   Expression * resultExpression = nullptr;
   if (removeArguments) {
     // Replace the arguments with Empty chars.

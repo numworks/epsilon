@@ -10,7 +10,7 @@
 
 namespace Calculation {
 
-class App : public Shared::TextFieldAndEditableExpressionViewDelegateApp {
+class App : public Shared::EditableExpressionViewDelegateApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:
@@ -30,7 +30,7 @@ public:
   };
   Poincare::Context * localContext() override;
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
-  bool editableExpressionViewDidReceiveEvent(::EditableExpressionView * editableExpressionView, Ion::Events::Event event) override;
+  bool scrollableExpressionViewWithCursorDidReceiveEvent(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) override;
   const char * XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);

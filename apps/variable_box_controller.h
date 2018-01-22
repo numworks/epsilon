@@ -14,7 +14,7 @@ public:
   VariableBoxController(Poincare::GlobalContext * context);
   void didBecomeFirstResponder() override;
   void setTextFieldSender(TextField * textField);
-  void setEditableExpressionViewSender(EditableExpressionView * editableExpressionView);
+  void setScrollableExpressionViewWithCursorSender(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor);
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
@@ -34,7 +34,7 @@ private:
     int indexFromCumulatedHeight(KDCoordinate offsetY) override;
     int typeAtLocation(int i, int j) override;
     void setTextFieldSender(TextField * textField);
-    void setEditableExpressionViewSender(EditableExpressionView * editableExpressionView);
+    void setScrollableExpressionViewWithCursorSender(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor);
     void reloadData();
     void resetPage();
     void viewDidDisappear() override;
@@ -59,7 +59,7 @@ private:
     I18n::Message nodeLabelAtIndex(int index);
     const Poincare::Expression * expressionForIndex(int index);
     static void insertTextInTextField(void * sender, const char * textToInsert);
-    static void insertTextInEditableExpressionView(void * sender, const char * textToInsert);
+    static void insertTextInScrollableExpressionViewWithCursor(void * sender, const char * textToInsert);
     Poincare::GlobalContext * m_context;
     Responder * m_sender;
     Action m_insertTextAction;

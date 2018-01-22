@@ -1,212 +1,137 @@
 #include <escher/editable_expression_view.h>
-#include <escher/clipboard.h>
-#include <escher/text_field.h>
-#include <poincare/src/layout/matrix_layout.h>
+#include <poincare/preferences.h>
 #include <assert.h>
 
-EditableExpressionView::EditableExpressionView(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, EditableExpressionViewDelegate * delegate) :
-  ScrollableView(parentResponder, &m_expressionViewWithCursor, this),
-  m_expressionViewWithCursor(expressionLayout),
-  m_delegate(delegate)
+EditableExpressionView::EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate) :
+  Responder(parentResponder),
+  View(),
+  m_textField(parentResponder, m_textBody, m_textBody, k_bufferLength, textFieldDelegate, false),
+  m_scrollableExpressionViewWithCursor(parentResponder, new Poincare::HorizontalLayout(), scrollableExpressionViewWithCursorDelegate)
 {
+  m_textBody[0] = 0;
+}
+
+void EditableExpressionView::setEditing(bool isEditing, bool reinitDraftBuffer) {
+  if (editionIsInTextField()) {
+    m_textField.setEditing(isEditing, reinitDraftBuffer);
+  }
+  if (reinitDraftBuffer) {
+    m_scrollableExpressionViewWithCursor.clearLayout();
+  }
+  m_scrollableExpressionViewWithCursor.setEditing(isEditing);
 }
 
 bool EditableExpressionView::isEditing() const {
-  return m_expressionViewWithCursor.isEditing();
+  return editionIsInTextField() ? m_textField.isEditing() : m_scrollableExpressionViewWithCursor.isEditing();
 }
 
-void EditableExpressionView::setEditing(bool isEditing) {
-  m_expressionViewWithCursor.setEditing(isEditing);
+const char * EditableExpressionView::text() {
+  if (!editionIsInTextField()) {
+    m_scrollableExpressionViewWithCursor.expressionViewWithCursor()->expressionView()->expressionLayout()->writeTextInBuffer(m_textBody, k_bufferLength);
+  }
+  return m_textBody;
 }
 
-void EditableExpressionView::scrollToCursor() {
-  scrollToContentRect(m_expressionViewWithCursor.cursorRect(), true);
+void EditableExpressionView::setText(const char * text) {
+  if (editionIsInTextField()) {
+    m_textField.setText(text);
+  }
+  m_scrollableExpressionViewWithCursor.clearLayout();
+  if (strlen(text) > 0) {
+    m_scrollableExpressionViewWithCursor.insertLayoutFromTextAtCursor(text);
+  }
 }
 
-Toolbox * EditableExpressionView::toolbox() {
-  if (m_delegate) {
-    return m_delegate->toolboxForEditableExpressionView(this);
-  }
-  return nullptr;
-}
-
-bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
-  KDSize previousSize = minimalSizeForOptimalDisplay();
-  bool shouldRecomputeLayout = false;
-  if (privateHandleMoveEvent(event, &shouldRecomputeLayout)) {
-    if (!shouldRecomputeLayout) {
-      m_expressionViewWithCursor.cursorPositionChanged();
-      scrollToCursor();
-      return true;
-    }
-    reload();
-    KDSize newSize = minimalSizeForOptimalDisplay();
-    if (m_delegate && previousSize.height() != newSize.height()) {
-      m_delegate->editableExpressionViewDidChangeSize(this);
-      reload();
-    }
-    return true;
-  }
-  if (privateHandleEvent(event)) {
-    reload();
-    KDSize newSize = minimalSizeForOptimalDisplay();
-    if (m_delegate && previousSize.height() != newSize.height()) {
-      m_delegate->editableExpressionViewDidChangeSize(this);
-      reload();
-    }
-    return true;
-  }
-  return false;
-}
-
-bool EditableExpressionView::editableExpressionViewShouldFinishEditing(Ion::Events::Event event) {
-  return m_delegate->editableExpressionViewShouldFinishEditing(this, event);
-}
-
-KDSize EditableExpressionView::minimalSizeForOptimalDisplay() const {
-  return m_expressionViewWithCursor.minimalSizeForOptimalDisplay();
-}
-
-bool EditableExpressionView::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
-  if (event == Ion::Events::Left) {
-    return m_expressionViewWithCursor.cursor()->moveLeft(shouldRecomputeLayout);
-  }
-  if (event == Ion::Events::Right) {
-    return m_expressionViewWithCursor.cursor()->moveRight(shouldRecomputeLayout);
-  }
-  if (event == Ion::Events::Up) {
-    return m_expressionViewWithCursor.cursor()->moveUp(shouldRecomputeLayout);
-  }
-  if (event == Ion::Events::Down) {
-    return m_expressionViewWithCursor.cursor()->moveDown(shouldRecomputeLayout);
-  }
-  if (event == Ion::Events::ShiftLeft) {
-    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
-    m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Left);
-    return true;
-  }
-  if (event == Ion::Events::ShiftRight) {
-    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
-    m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
-    return true;
-  }
-  return false;
-}
-
-bool EditableExpressionView::privateHandleEvent(Ion::Events::Event event) {
-  if (m_delegate && m_delegate->editableExpressionViewDidReceiveEvent(this, event)) {
-    return true;
-  }
-  if (Responder::handleEvent(event)) {
-    /* The only event Responder handles is 'Toolbox' displaying. In that case,
-     * the EditableExpressionView is forced into editing mode. */
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    return true;
-  }
-  if (isEditing() && editableExpressionViewShouldFinishEditing(event)) {
-    setEditing(false);
-    int bufferSize = TextField::maxBufferSize();
-    char buffer[bufferSize];
-    m_expressionViewWithCursor.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferSize);
-    if (m_delegate->editableExpressionViewDidFinishEditing(this, buffer, event)) {
-      delete m_expressionViewWithCursor.expressionView()->expressionLayout();
-      Poincare::ExpressionLayout * newLayout = new Poincare::HorizontalLayout();
-      m_expressionViewWithCursor.expressionView()->setExpressionLayout(newLayout);
-      m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(newLayout);
-    }
-    return true;
-  }
-  if (event == Ion::Events::Division) {
-    m_expressionViewWithCursor.cursor()->addFractionLayoutAndCollapseBrothers();
-    return true;
-  }
-  if (event == Ion::Events::XNT) {
-    m_expressionViewWithCursor.cursor()->addXNTCharLayout();
-    return true;
-  }
-  if (event == Ion::Events::Exp) {
-    m_expressionViewWithCursor.cursor()->addEmptyExponentialLayout();
-    return true;
-  }
-  if (event == Ion::Events::Power) {
-    m_expressionViewWithCursor.cursor()->addEmptyPowerLayout();
-    return true;
-  }
-  if (event == Ion::Events::Sqrt) {
-    m_expressionViewWithCursor.cursor()->addEmptySquareRootLayout();
-    return true;
-  }
-  if (event == Ion::Events::Square) {
-    m_expressionViewWithCursor.cursor()->addEmptySquarePowerLayout();
-    return true;
-  }
-  if (event.hasText()) {
-    const char * textToInsert = event.text();
-    if (textToInsert[1] == 0) {
-      if (textToInsert[0] == Ion::Charset::MultiplicationSign) {
-        const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
-        m_expressionViewWithCursor.cursor()->insertText(middleDotString);
-        return true;
-      }
-      if (textToInsert[0] == '[' || textToInsert[0] == ']') {
-        m_expressionViewWithCursor.cursor()->addEmptyMatrixLayout();
-        return true;
-      }
-    }
-    m_expressionViewWithCursor.cursor()->insertText(textToInsert);
-    return true;
-  }
-  if (event == Ion::Events::Backspace) {
-    m_expressionViewWithCursor.cursor()->performBackspace();
-    return true;
-  }
-  if (event == Ion::Events::Paste) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    insertLayoutFromTextAtCursor(Clipboard::sharedClipboard()->storedText());
-    return true;
-  }
-  return false;
-}
-
-void EditableExpressionView::insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout) {
-  if (layout == nullptr) {
+void EditableExpressionView::insertText(const char * text) {
+  if (editionIsInTextField()) {
+    m_textField.setEditing(true, false);
+    m_textField.insertTextAtLocation(text, m_textField.cursorLocation());
+    m_textField.setCursorLocation(m_textField.cursorLocation() + strlen(text));
     return;
   }
-  KDSize previousSize = minimalSizeForOptimalDisplay();
-  m_expressionViewWithCursor.cursor()->addLayout(layout);
-  if (layout->isMatrix() && pointedLayout->hasAncestor(layout)) {
-    static_cast<Poincare::MatrixLayout *>(layout)->addGreySquares();
-  }
-  m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(pointedLayout);
-  m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
-  reload();
-  KDSize newSize = minimalSizeForOptimalDisplay();
-  if (m_delegate && previousSize.height() != newSize.height()) {
-    m_delegate->editableExpressionViewDidChangeSize(this);
-  }
+  m_scrollableExpressionViewWithCursor.setEditing(true);
+  m_scrollableExpressionViewWithCursor.insertLayoutFromTextAtCursor(text);
 }
 
-void EditableExpressionView::insertLayoutFromTextAtCursor(const char * text) {
-  Poincare::Expression * expression = Poincare::Expression::parse(text);
-  if (expression != nullptr) {
-    Poincare::ExpressionLayout * layout = expression->createLayout();
-    delete expression;
-    insertLayoutAtCursor(layout, layout);
-    reload();
+View * EditableExpressionView::subviewAtIndex(int index) {
+  assert(index == 0);
+  if (editionIsInTextField()) {
+    return &m_textField;
+  }
+  return &m_scrollableExpressionViewWithCursor;
+}
+
+void EditableExpressionView::layoutSubviews() {
+  KDRect inputViewFrame(k_leftMargin, k_separatorThickness, bounds().width() - k_leftMargin, bounds().height() - k_separatorThickness);
+  if (editionIsInTextField()) {
+    m_textField.setFrame(inputViewFrame);
+    m_scrollableExpressionViewWithCursor.setFrame(KDRectZero);
     return;
   }
-  m_expressionViewWithCursor.cursor()->insertText(text);
-  reload();
+  m_scrollableExpressionViewWithCursor.setFrame(inputViewFrame);
+  m_textField.setFrame(KDRectZero);
 }
 
 void EditableExpressionView::reload() {
-  m_expressionViewWithCursor.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
-  m_expressionViewWithCursor.cursorPositionChanged();
   layoutSubviews();
-  scrollToCursor();
   markRectAsDirty(bounds());
+}
+
+void EditableExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
+  // Draw the separator
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
+  // Color the left margin
+  ctx->fillRect(KDRect(0, k_separatorThickness, k_leftMargin, bounds().height() - k_separatorThickness), m_textField.backgroundColor());
+  if (!editionIsInTextField()) {
+    // Color the upper margin
+    ctx->fillRect(KDRect(0, k_separatorThickness, bounds().width(), k_verticalExpressionViewMargin), m_textField.backgroundColor());
+  }
+}
+
+void EditableExpressionView::didBecomeFirstResponder() {
+  if (editionIsInTextField()) {
+    app()->setFirstResponder(&m_textField);
+    return;
+  }
+  app()->setFirstResponder(&m_scrollableExpressionViewWithCursor);
+}
+
+bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
+  return editionIsInTextField() ? m_textField.handleEvent(event) : m_scrollableExpressionViewWithCursor.handleEvent(event);
+}
+
+KDSize EditableExpressionView::minimalSizeForOptimalDisplay() const {
+  return KDSize(0, inputViewHeight());
+}
+
+bool EditableExpressionView::editionIsInTextField() const {
+  return Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition1D;
+}
+
+bool EditableExpressionView::isEmpty() const {
+  if (editionIsInTextField()) {
+    return m_textField.draftTextLength() == 0;
+  }
+  Poincare::ExpressionLayout * layout =  const_cast<ScrollableExpressionViewWithCursor *>(&m_scrollableExpressionViewWithCursor)->expressionViewWithCursor()->expressionView()->expressionLayout();
+  return !layout->hasText();
+}
+
+bool EditableExpressionView::heightIsMaximal() const {
+  return inputViewHeight() == k_separatorThickness + k_verticalExpressionViewMargin + maximalHeight();
+}
+
+KDCoordinate EditableExpressionView::inputViewHeight() const {
+  if (editionIsInTextField()) {
+    return k_separatorThickness + k_textFieldHeight;
+  }
+  return k_separatorThickness
+    + k_verticalExpressionViewMargin
+    + min(maximalHeight(),
+        max(k_textFieldHeight,
+          m_scrollableExpressionViewWithCursor.minimalSizeForOptimalDisplay().height()
+          + k_verticalExpressionViewMargin));
+}
+
+KDCoordinate EditableExpressionView::maximalHeight() const {
+  return 0.6*Ion::Display::Height;
 }

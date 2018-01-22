@@ -283,6 +283,12 @@ bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor, bool * sh
   return moveInside(VerticalDirection::Down, cursor, shouldRecomputeLayout);
 }
 
+bool ExpressionLayout::hasText() const {
+  // A layout has text if it is not empty and it is not an horizontal layout
+  // with no child or with one child with no text.
+  return !isEmpty() && !(isHorizontal() && (numberOfChildren() == 0 || (numberOfChildren() == 1 && !child(0)->hasText())));
+}
+
 bool ExpressionLayout::canBeOmittedMultiplicationLeftFactor() const {
   // WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
   // isCollapsable is true too. If isCollapsable changes, it might not be the

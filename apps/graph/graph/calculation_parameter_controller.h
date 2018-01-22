@@ -6,6 +6,7 @@
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
 #include "integral_graph_controller.h"
+#include "intersection_graph_controller.h"
 #include "root_graph_controller.h"
 #include "graph_view.h"
 #include "banner_view.h"
@@ -15,7 +16,7 @@ namespace Graph {
 
 class CalculationParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
+  CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor, CartesianFunctionStore * functionStore);
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -36,6 +37,7 @@ private:
   MinimumGraphController m_minimumGraphController;
   MaximumGraphController m_maximumGraphController;
   RootGraphController m_rootGraphController;
+  IntersectionGraphController m_intersectionGraphController;
 };
 
 }

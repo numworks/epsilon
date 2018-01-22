@@ -127,6 +127,14 @@ Expression::Sign Symbol::sign() const {
   return Sign::Unknown;
 }
 
+bool Symbol::isApproximate(Context & context) const {
+  // TODO: so far, all symbols A to Z, M0->M9 hold an approximate values. But they should be able to hold exact values later.
+  if (m_name == Ion::Charset::SmallPi || m_name == Ion::Charset::Exponential || context.expressionForSymbol(this) == nullptr) {
+    return false;
+  }
+  return true;
+}
+
 bool Symbol::hasAnExactRepresentation(Context & context) const {
   // TODO: so far, no symbols can be exact but A, ..Z should be able to hold exact values later.
   return false;

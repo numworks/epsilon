@@ -167,7 +167,7 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context) cons
 
 bool Expression::isApproximate(Context & context) const {
   return recursivelyMatches([](const Expression * e, Context & context) {
-        return e->type() == Expression::Type::Decimal || e->type() == Expression::Type::Complex || Expression::IsMatrix(e, context) || (e->type() == Expression::Type::Symbol && !static_cast<const Symbol *>(e)->hasAnExactRepresentation(context));
+        return e->type() == Expression::Type::Decimal || e->type() == Expression::Type::Complex || Expression::IsMatrix(e, context) || (e->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e)->isApproximate(context));
     }, context);
 }
 

@@ -25,7 +25,7 @@ private:
   constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
   constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
   typedef double (*Evaluation)(const Shared::Function * function, double abscissa, Poincare::Context * context);
-  Point nextMinimumOfFunction(double start, double step, double max, Evaluation evaluation, Poincare::Context * context) const;
+  Point nextMinimumOfFunction(double start, double step, double max, Evaluation evaluation, Poincare::Context * context, bool lookForRootMinimum) const;
   void bracketMinimum(double start, double step, double max, double result[3], Evaluation evaluation, Poincare::Context * context) const;
   Point brentMinimum(double ax, double bx, Evaluation evaluation, Poincare::Context * context) const;
   void bracketRoot(double start, double step, double max, double result[2], Poincare::Context * context) const;

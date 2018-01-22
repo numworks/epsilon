@@ -7,7 +7,7 @@ using namespace Shared;
 
 namespace Graph {
 
-CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
+CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CartesianFunctionStore * functionStore) :
   ViewController(parentResponder),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
@@ -16,7 +16,8 @@ CalculationParameterController::CalculationParameterController(Responder * paren
   m_integralGraphController(nullptr, graphView, range, cursor),
   m_minimumGraphController(nullptr, graphView, bannerView, range, cursor),
   m_maximumGraphController(nullptr, graphView, bannerView, range, cursor),
-  m_rootGraphController(nullptr, graphView, bannerView, range, cursor)
+  m_rootGraphController(nullptr, graphView, bannerView, range, cursor),
+  m_intersectionGraphController(nullptr, graphView, bannerView, range, cursor, functionStore)
 {
 }
 
@@ -37,6 +38,10 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     ViewController * controller = nullptr;
     switch(selectedRow()) {
+      case 0:
+        m_intersectionGraphController.setFunction(m_function);
+        controller = &m_intersectionGraphController;
+        break;
       case 1:
         m_maximumGraphController.setFunction(m_function);
         controller = &m_maximumGraphController;
@@ -59,10 +64,6 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
         break;
       default:
         return false;
-    }
-    // This is temporary (until the end of development of calculation menu)
-    if (controller == nullptr) {
-      return false;
     }
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->pop();

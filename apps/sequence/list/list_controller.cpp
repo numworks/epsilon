@@ -38,6 +38,10 @@ TextFieldDelegateApp * ListController::textFieldDelegateApp() {
   return (App *)app();
 }
 
+EditableExpressionViewDelegateApp * ListController::editableExpressionViewDelegateApp() {
+  return (App *)app();
+}
+
 int ListController::numberOfRows() {
   int numberOfRows = 0;
   for (int i = 0; i < m_sequenceStore->numberOfFunctions(); i++) {

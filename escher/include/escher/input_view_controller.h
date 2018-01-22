@@ -1,53 +1,53 @@
 #ifndef ESCHER_INPUT_VIEW_CONTROLLER_H
 #define ESCHER_INPUT_VIEW_CONTROLLER_H
 
+#include <escher/editable_expression_view.h>
+#include <escher/scrollable_expression_view_with_cursor_delegate.h>
 #include <escher/modal_view_controller.h>
 #include <escher/invocation.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 
-class InputViewController : public ModalViewController, TextFieldDelegate {
+class InputViewController : public ModalViewController, TextFieldDelegate, ScrollableExpressionViewWithCursorDelegate {
 public:
-  InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate);
+  InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate);
   void edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction);
   const char * textBody();
+  void abortEditionAndDismiss();
+
+  /* TextFieldDelegate */
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  void abortTextFieldEditionAndDismiss();
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
   Toolbox * toolboxForTextField(TextField * textFied) override;
+
+  /* ScrollableExpressionViewWithCursorDelegate */
+  bool scrollableExpressionViewWithCursorShouldFinishEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) override;
+  bool scrollableExpressionViewWithCursorDidReceiveEvent(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) override;
+  bool scrollableExpressionViewWithCursorDidFinishEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text, Ion::Events::Event event) override;
+  bool scrollableExpressionViewWithCursorDidAbortEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text) override;
+  void scrollableExpressionViewWithCursorDidChangeSize(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) override;
+  Toolbox * toolboxForScrollableExpressionViewWithCursor(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) override;
+
 private:
-  class TextFieldController : public ViewController {
+  class EditableExpressionViewController : public ViewController {
   public:
-    TextFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate);
+    EditableExpressionViewController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate);
     void didBecomeFirstResponder() override;
-    View * view() override;
-    TextField * textField();
+    View * view() override { return &m_editableExpressionView; }
+    EditableExpressionView * editableExpressionView() { return &m_editableExpressionView; }
   private:
-    class ContentView : public Responder, public View {
-    public:
-      ContentView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate);
-      void didBecomeFirstResponder() override;
-      TextField * textField();
-      void drawRect(KDContext * ctx, KDRect rect) const override;
-      KDSize minimalSizeForOptimalDisplay() const override;
-    private:
-      View * subviewAtIndex(int index) override;
-      int numberOfSubviews() const override;
-      void layoutSubviews() override;
-      constexpr static KDCoordinate k_inputHeight = 37;
-      constexpr static KDCoordinate k_separatorThickness = 1;
-      constexpr static KDCoordinate k_textMargin = 5;
-      TextField m_textField;
-      char m_textBody[TextField::maxBufferSize()];
-    };
-    ContentView m_view;
+    EditableExpressionView m_editableExpressionView;
   };
-  TextFieldController m_textFieldController;
+  bool inputViewDidFinishEditing();
+  bool inputViewDidAbortEditing();
+  EditableExpressionViewController m_editableExpressionViewController;
   Invocation m_successAction;
   Invocation m_failureAction;
   TextFieldDelegate * m_textFieldDelegate;
+  ScrollableExpressionViewWithCursorDelegate * m_scrollableExpressionViewWithCursorDelegate;
+  bool m_inputViewHeightIsMaximal;
 };
 
 #endif

@@ -202,9 +202,9 @@ void VariableBoxController::ContentViewController::setTextFieldSender(TextField 
   m_insertTextAction = &insertTextInTextField;
 }
 
-void VariableBoxController::ContentViewController::setEditableExpressionViewSender(EditableExpressionView * editableExpressionView) {
-  m_sender = editableExpressionView;
-  m_insertTextAction = &insertTextInEditableExpressionView;
+void VariableBoxController::ContentViewController::setScrollableExpressionViewWithCursorSender(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
+  m_sender = scrollableExpressionViewWithCursor;
+  m_insertTextAction = &insertTextInScrollableExpressionViewWithCursor;
 }
 
 void VariableBoxController::ContentViewController::reloadData() {
@@ -288,12 +288,12 @@ void VariableBoxController::ContentViewController::insertTextInTextField(void * 
   textField->setCursorLocation(textField->cursorLocation() + strlen(textToInsert));
 }
 
-void VariableBoxController::ContentViewController::insertTextInEditableExpressionView(void * sender, const char * textToInsert) {
-  EditableExpressionView * editableExpressionView = static_cast<EditableExpressionView *>(sender);
-  if (!editableExpressionView->isEditing()) {
-    editableExpressionView->setEditing(true);
+void VariableBoxController::ContentViewController::insertTextInScrollableExpressionViewWithCursor(void * sender, const char * textToInsert) {
+  ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor = static_cast<ScrollableExpressionViewWithCursor *>(sender);
+  if (!scrollableExpressionViewWithCursor->isEditing()) {
+    scrollableExpressionViewWithCursor->setEditing(true);
   }
-  editableExpressionView->insertLayoutFromTextAtCursor(textToInsert);
+  scrollableExpressionViewWithCursor->insertLayoutFromTextAtCursor(textToInsert);
 }
 
 VariableBoxController::VariableBoxController(GlobalContext * context) :
@@ -310,8 +310,8 @@ void VariableBoxController::setTextFieldSender(TextField * textField) {
   m_contentViewController.setTextFieldSender(textField);
 }
 
-void VariableBoxController::setEditableExpressionViewSender(EditableExpressionView * editableExpressionView) {
-  m_contentViewController.setEditableExpressionViewSender(editableExpressionView);
+void VariableBoxController::setScrollableExpressionViewWithCursorSender(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
+  m_contentViewController.setScrollableExpressionViewWithCursorSender(scrollableExpressionViewWithCursor);
 }
 
 void VariableBoxController::viewWillAppear() {

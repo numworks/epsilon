@@ -47,7 +47,7 @@ void FunctionApp::Snapshot::reset() {
 }
 
 FunctionApp::FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  TextFieldDelegateApp(container, snapshot, rootViewController)
+  EditableExpressionViewDelegateApp(container, snapshot, rootViewController)
 {
 }
 
@@ -56,7 +56,7 @@ void FunctionApp::willBecomeInactive() {
     m_modalViewController.dismissModalViewController();
   }
   if (inputViewController()->isDisplayingModal()) {
-    inputViewController()->abortTextFieldEditionAndDismiss();
+    inputViewController()->abortEditionAndDismiss();
   }
   ::App::willBecomeInactive();
 }

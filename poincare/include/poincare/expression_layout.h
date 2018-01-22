@@ -94,6 +94,7 @@ public:
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
 
   /* Other */
+  bool hasText() const;
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a brother fraction: should the layout be
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should

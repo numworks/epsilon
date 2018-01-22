@@ -5,8 +5,8 @@ app_objs += $(addprefix apps/calculation/,\
   app.o\
   calculation.o\
   calculation_store.o\
-  editable_expression_view.o\
   edit_expression_controller.o\
+  editable_expression_view.o\
   history_view_cell.o\
   history_controller.o\
   local_context.o\
@@ -14,7 +14,6 @@ app_objs += $(addprefix apps/calculation/,\
   scrollable_expression_view.o\
   scrollable_output_expressions_view.o\
   selectable_table_view.o\
-  text_field.o\
 )
 
 i18n_files += $(addprefix apps/calculation/,\

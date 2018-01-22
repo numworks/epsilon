@@ -4,16 +4,15 @@
 #include <escher.h>
 #include "editable_expression_view.h"
 #include "../shared/text_field_delegate.h"
-#include "../shared/editable_expression_view_delegate.h"
+#include "../shared/scrollable_expression_view_with_cursor_delegate.h"
 #include "history_controller.h"
 #include "calculation_store.h"
-#include "text_field.h"
 
 namespace Calculation {
 class HistoryController;
 
 /* TODO: implement a split view */
-class EditExpressionController : public DynamicViewController, public Shared::TextFieldDelegate, public Shared::EditableExpressionViewDelegate {
+class EditExpressionController : public DynamicViewController, public Shared::TextFieldDelegate, public Shared::ScrollableExpressionViewWithCursorDelegate {
 public:
   EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
   void didBecomeFirstResponder() override;
@@ -27,43 +26,35 @@ public:
   bool textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(::TextField * textField, const char * text) override;
 
-  /* EditableExpressionViewDelegate */
-  bool editableExpressionViewDidReceiveEvent(::EditableExpressionView * editableExpressionView, Ion::Events::Event event) override;
-  bool editableExpressionViewDidFinishEditing(::EditableExpressionView * editableExpressionView, const char * text, Ion::Events::Event event) override;
-  bool editableExpressionViewDidAbortEditing(::EditableExpressionView * editableExpressionView, const char * text) override;
-  void editableExpressionViewDidChangeSize(::EditableExpressionView * editableExpressionView) override;
+  /* ScrollableExpressionViewWithCursorDelegate */
+  bool scrollableExpressionViewWithCursorDidReceiveEvent(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) override;
+  bool scrollableExpressionViewWithCursorDidFinishEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text, Ion::Events::Event event) override;
+  bool scrollableExpressionViewWithCursorDidAbortEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text) override;
+  void scrollableExpressionViewWithCursorDidChangeSize(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) override;
 
 private:
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, EditableExpressionViewDelegate * editableExpressionViewDelegate);
-    int numberOfSubviews() const override;
+    ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate);
+    void reload();
+    TableView * mainView() { return m_mainView; }
+    EditableExpressionView * editableExpressionView() { return &m_editableExpressionView; }
+    /* View */
+    int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
-    void reload();
-    TextField * textField() { return &m_textField; }
-    EditableExpressionView * editableExpressionView() { return &m_editableExpressionView; }
-    TableView * mainView()  { return m_mainView; }
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    bool editionIsInTextField() const;
-    static constexpr int k_bufferLength = TextField::maxBufferSize();
   private:
-    static constexpr KDCoordinate k_textFieldHeight = 37;
-    static constexpr KDCoordinate k_leftMargin = 5;
-    static constexpr KDCoordinate k_verticalEditableExpressionViewMargin = 5;
-    constexpr static int k_separatorThickness = 1;
-    KDCoordinate inputViewHeight() const;
-    KDCoordinate editableExpressionViewHeight() const;
     TableView * m_mainView;
-    TextField m_textField;
     EditableExpressionView m_editableExpressionView;
-    char m_textBody[k_bufferLength];
   };
   View * loadView() override;
   void unloadView(View * view) override;
   void reloadView();
+  bool inputViewDidReceiveEvent(Ion::Events::Event event);
+  bool inputViewDidFinishEditing(const char * text, Ion::Events::Event event);
+  bool inputViewDidAbortEditing(const char * text);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  Shared::TextFieldAndEditableExpressionViewDelegateApp * textFieldAndEditableExpressionViewDelegateApp() override;
+  Shared::EditableExpressionViewDelegateApp * editableExpressionViewDelegateApp() override;
   Poincare::ExpressionLayout * expressionLayout();
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;

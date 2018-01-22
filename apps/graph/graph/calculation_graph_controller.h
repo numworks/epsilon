@@ -21,7 +21,7 @@ protected:
   constexpr static float k_cursorTopMarginRatio = 0.07f;   // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorBottomMarginRatio = 0.15f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   BannerView * bannerView() override { return m_bannerView; }
-  void reloadBannerView();
+  virtual void reloadBannerView();
   bool moveCursor(int direction);
   CartesianFunction::Point computeNewPointOfInteresetFromAbscissa(double start, int direction);
   virtual CartesianFunction::Point computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;

@@ -42,56 +42,39 @@ double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::C
 }
 
 CartesianFunction::Point CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
-  return nextMinimumOfFunction(start, step, max, [](const Function * function, double x, Context * context) {
-        return function->evaluateAtAbscissa(x, context);
-      }, context, false);
+  return nextMinimumOfFunction(start, step, max, [](double x, Context * context, const Shared::Function * function0, const Shared::Function * function1 = nullptr) {
+        return function0->evaluateAtAbscissa(x, context);
+      }, context);
 }
 
 CartesianFunction::Point CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
-  Point minimumOfOpposite = nextMinimumOfFunction(start, step, max, [](const Function * function, double x, Context * context) {
-        return -function->evaluateAtAbscissa(x, context);
-      }, context, false);
+  Point minimumOfOpposite = nextMinimumOfFunction(start, step, max, [](double x, Context * context, const Shared::Function * function0, const Shared::Function * function1 = nullptr) {
+        return -function0->evaluateAtAbscissa(x, context);
+      }, context);
   return {.abscissa = minimumOfOpposite.abscissa, .value = -minimumOfOpposite.value};
 }
 
 double CartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
-  double bracket[2];
-  double result = NAN;
-  static double precisionByGradUnit = 1E6;
-  double x = start+step;
-  do {
-    bracketRoot(x, step, max, bracket, context);
-    result = brentRoot(bracket[0], bracket[1], step/precisionByGradUnit, context);
-    x = bracket[1];
-  } while (std::isnan(result) && (step > 0.0 ? x <= max : x >= max));
-
-  double extremumMax = std::isnan(result) ? max : result;
-  Point resultExtremum[2] = {
-    nextMinimumOfFunction(start, step, extremumMax, [](const Function * function, double x, Context * context) {
-        return function->evaluateAtAbscissa(x, context);
-      }, context, true),
-    nextMinimumOfFunction(start, step, extremumMax, [](const Function * function, double x, Context * context) {
-        return -function->evaluateAtAbscissa(x, context);
-      }, context, true)};
-  for (int i = 0; i < 2; i++) {
-    if (!std::isnan(resultExtremum[i].abscissa) && (std::isnan(result) || std::fabs(result - start) > std::fabs(resultExtremum[i].abscissa - start))) {
-      result = resultExtremum[i].abscissa;
-    }
-  }
-  if (std::fabs(result) < step/1E3) {
-    result = 0;
-  }
-  return result;
+  return nextIntersectionWithFunction(start, step, max, [](double x, Context * context, const Shared::Function * function0, const Shared::Function * function1 = nullptr) {
+        return function0->evaluateAtAbscissa(x, context);
+      }, context, nullptr);
 }
 
-CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, double step, double max, Evaluation evaluate, Context * context, bool lookForRootMinimum) const {
+CartesianFunction::Point CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const Shared::Function * function) const {
+  double resultAbscissa = nextIntersectionWithFunction(start, step, max, [](double x, Context * context, const Shared::Function * function0, const Shared::Function * function1) {
+        return function0->evaluateAtAbscissa(x, context)-function1->evaluateAtAbscissa(x, context);
+      }, context, function);
+  return {.abscissa = resultAbscissa, .value = evaluateAtAbscissa(resultAbscissa, context)};
+}
+
+CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, double step, double max, Evaluation evaluate, Context * context, const Shared::Function * function, bool lookForRootMinimum) const {
   double bracket[3];
   Point result = {.abscissa = NAN, .value = NAN};
   double x = start;
   bool endCondition = false;
   do {
-    bracketMinimum(x, step, max, bracket, evaluate, context);
-    result = brentMinimum(bracket[0], bracket[2], evaluate, context);
+    bracketMinimum(x, step, max, bracket, evaluate, context, function);
+    result = brentMinimum(bracket[0], bracket[2], evaluate, context, function);
     x = bracket[1];
     endCondition = std::isnan(result.abscissa) && (step > 0.0 ? x <= max : x >= max);
     if (lookForRootMinimum) {
@@ -101,7 +84,7 @@ CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, 
 
   if (std::fabs(result.abscissa) < 1E2*k_sqrtEps) {
     result.abscissa = 0;
-    result.value = evaluate(this, 0, context);
+    result.value = evaluate(0, context, this, function);
   }
   if (lookForRootMinimum) {
     result.abscissa = std::fabs(result.value) >= k_sqrtEps ? NAN : result.abscissa;
@@ -109,13 +92,13 @@ CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, 
   return result;
 }
 
-void CartesianFunction::bracketMinimum(double start, double step, double max, double result[3], Evaluation evaluate, Context * context) const {
+void CartesianFunction::bracketMinimum(double start, double step, double max, double result[3], Evaluation evaluate, Context * context, const Shared::Function * function) const {
   Point p[3];
-  p[0] = {.abscissa = start, .value = evaluate(this, start, context)};
-  p[1] = {.abscissa = start+step, .value = evaluate(this, start+step, context)};
+  p[0] = {.abscissa = start, .value = evaluate(start, context, this, function)};
+  p[1] = {.abscissa = start+step, .value = evaluate(start+step, context, this, function)};
   double x = start+2.0*step;
   while (step > 0.0 ? x <= max : x >= max) {
-    p[2] = {.abscissa = x, .value = evaluate(this, x, context)};
+    p[2] = {.abscissa = x, .value = evaluate(x, context, this, function)};
     if (p[0].value > p[1].value && p[2].value > p[1].value) {
       result[0] = p[0].abscissa;
       result[1] = p[1].abscissa;
@@ -138,11 +121,11 @@ char CartesianFunction::symbol() const {
   return 'x';
 }
 
-CartesianFunction::Point CartesianFunction::brentMinimum(double ax, double bx, Evaluation evaluate, Context * context) const {
+CartesianFunction::Point CartesianFunction::brentMinimum(double ax, double bx, Evaluation evaluate, Context * context, const Shared::Function * function) const {
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
    * functions without calculating derivatives */
   if (ax > bx) {
-    return brentMinimum(bx, ax, evaluate, context);
+    return brentMinimum(bx, ax, evaluate, context, function);
   }
   double e = 0.0;
   double a = ax;
@@ -150,7 +133,7 @@ CartesianFunction::Point CartesianFunction::brentMinimum(double ax, double bx, E
   double x = a+k_goldenRatio*(b-a);
   double v = x;
   double w = x;
-  double fx = evaluate(this, x, context);
+  double fx = evaluate(x, context, this, function);
   double fw = fx;
   double fv = fw;
 
@@ -162,10 +145,10 @@ CartesianFunction::Point CartesianFunction::brentMinimum(double ax, double bx, E
     double tol1 = k_sqrtEps*std::fabs(x)+1E-10;
     double tol2 = 2.0*tol1;
     if (std::fabs(x-m) <= tol2-0.5*(b-a))  {
-      double middleFax = evaluate(this, (x+a)/2.0, context);
-      double middleFbx = evaluate(this, (x+b)/2.0, context);
-      double fa = evaluate(this, a, context);
-      double fb = evaluate(this, b, context);
+      double middleFax = evaluate((x+a)/2.0, context, this, function);
+      double middleFbx = evaluate((x+b)/2.0, context, this, function);
+      double fa = evaluate(a, context, this, function);
+      double fb = evaluate(b, context, this, function);
       if (middleFax-fa <= k_sqrtEps && fx-middleFax <= k_sqrtEps && fx-middleFbx <= k_sqrtEps && middleFbx-fb <= k_sqrtEps) {
         Point result = {.abscissa = x, .value = fx};
         return result;
@@ -198,7 +181,7 @@ CartesianFunction::Point CartesianFunction::brentMinimum(double ax, double bx, E
       d = k_goldenRatio*e;
     }
     u = x + (std::fabs(d) >= tol1 ? d : (d>0 ? tol1 : -tol1));
-    fu = evaluate(this, u, context);
+    fu = evaluate(u, context, this, function);
     if (fu <= fx) {
       if (u<x) {
         b = x;
@@ -232,12 +215,50 @@ CartesianFunction::Point CartesianFunction::brentMinimum(double ax, double bx, E
   return result;
 }
 
-void CartesianFunction::bracketRoot(double start, double step, double max, double result[2], Context * context) const {
+double CartesianFunction::nextIntersectionWithFunction(double start, double step, double max, Evaluation evaluation, Context * context, const Shared::Function * function) const {
+  double bracket[2];
+  double result = NAN;
+  static double precisionByGradUnit = 1E6;
+  double x = start+step;
+  do {
+    bracketRoot(x, step, max, bracket, evaluation, context, function);
+    result = brentRoot(bracket[0], bracket[1], std::fabs(step/precisionByGradUnit), evaluation, context, function);
+    x = bracket[1];
+  } while (std::isnan(result) && (step > 0.0 ? x <= max : x >= max));
+
+  double extremumMax = std::isnan(result) ? max : result;
+  Point resultExtremum[2] = {
+    nextMinimumOfFunction(start, step, extremumMax, [](double x, Context * context, const Shared::Function * function0, const Shared::Function * function1) {
+        if (function1) {
+          return function0->evaluateAtAbscissa(x, context)-function1->evaluateAtAbscissa(x, context);
+        } else {
+          return function0->evaluateAtAbscissa(x, context);
+        }
+      }, context, function, true),
+    nextMinimumOfFunction(start, step, extremumMax, [](double x, Context * context, const Shared::Function * function0, const Shared::Function * function1) {
+        if (function1) {
+          return function1->evaluateAtAbscissa(x, context)-function0->evaluateAtAbscissa(x, context);
+        } else {
+          return -function0->evaluateAtAbscissa(x, context);
+        }
+      }, context, function, true)};
+  for (int i = 0; i < 2; i++) {
+    if (!std::isnan(resultExtremum[i].abscissa) && (std::isnan(result) || std::fabs(result - start) > std::fabs(resultExtremum[i].abscissa - start))) {
+      result = resultExtremum[i].abscissa;
+    }
+  }
+  if (std::fabs(result) < step/1E3) {
+    result = 0;
+  }
+  return result;
+}
+
+void CartesianFunction::bracketRoot(double start, double step, double max, double result[2], Evaluation evaluation, Context * context, const Shared::Function * function) const {
   double a = start;
   double b = start+step;
   while (step > 0.0 ? b <= max : b >= max) {
-    double fa = evaluateAtAbscissa(a, context);
-    double fb = evaluateAtAbscissa(b, context);
+    double fa = evaluation(a, context, this, function);
+    double fb = evaluation(b, context, this, function);
     if (fa*fb <= 0) {
       result[0] = a;
       result[1] = b;
@@ -251,17 +272,17 @@ void CartesianFunction::bracketRoot(double start, double step, double max, doubl
 }
 
 
-double CartesianFunction::brentRoot(double ax, double bx, double precision, Poincare::Context * context) const {
+double CartesianFunction::brentRoot(double ax, double bx, double precision, Evaluation evaluation, Poincare::Context * context, const Shared::Function * function) const {
   if (ax > bx) {
-    return brentRoot(bx, ax, precision, context);
+    return brentRoot(bx, ax, precision, evaluation, context, function);
   }
   double a = ax;
   double b = bx;
   double c = bx;
   double d = b-a;
   double e = b-a;
-  double fa = evaluateAtAbscissa(a, context);
-  double fb = evaluateAtAbscissa(b, context);
+  double fa = evaluation(a, context, this, function);
+  double fb = evaluation(b, context, this, function);
   double fc = fb;
   for (int i = 0; i < 100; i++) {
     if ((fb > 0.0 && fc > 0.0) || (fb < 0.0 && fc < 0.0)) {
@@ -281,7 +302,7 @@ double CartesianFunction::brentRoot(double ax, double bx, double precision, Poin
     double tol1 = 2.0*DBL_EPSILON*std::fabs(b)+0.5*precision;
     double xm = 0.5*(c-b);
     if (std::fabs(xm) <= tol1 || fb == 0.0) {
-      double fbcMiddle = evaluateAtAbscissa(0.5*(b+c), context);
+      double fbcMiddle = evaluation(0.5*(b+c), context, this, function);
       double isContinuous = (fb <= fbcMiddle && fbcMiddle <= fc) || (fc <= fbcMiddle && fbcMiddle <= fb);
       if (isContinuous) {
         return b;
@@ -319,7 +340,7 @@ double CartesianFunction::brentRoot(double ax, double bx, double precision, Poin
     } else {
       b += xm > 0.0 ? tol1 : tol1;
     }
-    fb = evaluateAtAbscissa(b, context);
+    fb = evaluation(b, context, this, function);
   }
   return NAN;
 }

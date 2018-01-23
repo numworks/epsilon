@@ -50,10 +50,6 @@ void TableView::layoutSubviews() {
   ScrollView::layoutSubviews();
 }
 
-void TableView::reloadData() {
-  layoutSubviews();
-}
-
 void TableView::reloadCellAtLocation(int i, int j) {
   m_contentView.reloadCellAtLocation(i, j);
 }

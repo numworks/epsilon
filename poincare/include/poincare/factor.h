@@ -31,7 +31,7 @@ private:
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return operand(0)->approximate<T>(context, angleUnit);
   }
 };
 

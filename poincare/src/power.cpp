@@ -405,6 +405,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
           }
           SimplificationRoot rootA0(a0); // a0 need a parent to be reduced.
           a0 = a0->shallowReduce(context, angleUnit);
+          rootA0.detachOperands();
         }
         result = result->replaceWith(a0, true);
       } else {
@@ -412,6 +413,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
         SimplificationRoot root(m);
         result = result->replaceWith(m->distributeOnOperandAtIndex(0, context, angleUnit), true);
         result = result->shallowReduce(context, angleUnit);
+        root.detachOperands();
       }
     }
     delete a;

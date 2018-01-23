@@ -8,6 +8,9 @@
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 
+/* TODO Implement a split view. Because we use a modal view, the main view is
+ * redrawn underneath the modal view, which is visible and ugly. */
+
 class InputViewController : public ModalViewController, TextFieldDelegate, ScrollableExpressionViewWithCursorDelegate {
 public:
   InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate);

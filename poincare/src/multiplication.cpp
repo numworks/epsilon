@@ -36,8 +36,8 @@ Expression * Multiplication::clone() const {
 }
 
 bool Multiplication::operandNeedParenthesis(const Expression * e) const {
-  Type types[] = {Type::Multiplication, Type::Addition, Type::Addition, Type::Subtraction, Type::Opposite};
-  return e->isOfType(types, 5);
+  Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite};
+  return e->isOfType(types, 3);
 }
 
 ExpressionLayout * Multiplication::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

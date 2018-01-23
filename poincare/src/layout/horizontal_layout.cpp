@@ -289,6 +289,17 @@ void HorizontalLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
   DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);
 }
 
+int HorizontalLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (numberOfChildren() == 0) {
+    if (bufferSize == 0) {
+      return -1;
+    }
+    buffer[0] = 0;
+    return 0;
+  }
+  return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "");
+}
+
 bool HorizontalLayout::isEmpty() const {
   if (m_numberOfChildren == 1 && child(0)->isEmpty())
   {

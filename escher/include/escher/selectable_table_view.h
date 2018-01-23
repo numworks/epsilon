@@ -27,12 +27,12 @@ public:
   int selectedColumn();
   void selectRow(int j);
   void selectColumn(int i);
-  void reloadData(bool reloadSelection = true);
+  void reloadData(bool setFirstResponder = true);
   virtual bool handleEvent(Ion::Events::Event event) override;
   virtual void didEnterResponderChain(Responder * previousFirstResponder) override;
   virtual void willExitResponderChain(Responder * nextFirstResponder) override;
   void deselectTable();
-  bool selectCellAtLocation(int i, int j);
+  bool selectCellAtLocation(int i, int j, bool setFirstResponder = true);
   HighlightCell * selectedCell();
 protected:
   SelectableTableViewDataSource * m_selectionDataSource;

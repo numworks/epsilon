@@ -29,22 +29,18 @@ void SelectableTableView::selectColumn(int i) {
   m_selectionDataSource->selectColumn(i);
 }
 
-void SelectableTableView::reloadData(bool reloadSelection) {
+void SelectableTableView::reloadData(bool setFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();
-  if (reloadSelection) {
-    deselectTable();
-    /* FIXME: The problem with calling deselectTable is that at this point in time
-     * the datasource's model is very likely to have changed. Therefore it's
-     * rather complicated to get a pointer to the currently selected cell (in
-     * order to deselect it). */
-    /* As a workaround, datasources can reset the highlighted state in their
-     * willDisplayCell callback. */
-  }
+  deselectTable();
+  /* FIXME: The problem with calling deselectTable is that at this point in time
+   * the datasource's model is very likely to have changed. Therefore it's
+   * rather complicated to get a pointer to the currently selected cell (in
+   * order to deselect it). */
+  /* As a workaround, datasources can reset the highlighted state in their
+   * willDisplayCell callback. */
   TableView::layoutSubviews();
-  if (reloadSelection) {
-    selectCellAtLocation(col, row);
-  }
+  selectCellAtLocation(col, row, setFirstResponder);
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
@@ -70,7 +66,7 @@ void SelectableTableView::deselectTable() {
   }
 }
 
-bool SelectableTableView::selectCellAtLocation(int i, int j) {
+bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder) {
   if (i < 0 || i >= dataSource()->numberOfColumns()) {
     return false;
   }
@@ -89,7 +85,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   if (cell) {
     cell->setHighlighted(true);
     // Update first responder
-    if (i != previousX || j != previousY) {
+    if ((i != previousX || j != previousY) && setFirstResponder) {
       if (cell->responder()) {
         app()->setFirstResponder(cell->responder());
       } else {

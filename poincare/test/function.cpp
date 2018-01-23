@@ -28,6 +28,7 @@ QUIZ_CASE(poincare_parse_function) {
 #endif
   assert_parsed_expression_type("confidence(0.1, 100)", Expression::Type::ConfidenceInterval);
   assert_parsed_expression_type("conj(2)", Expression::Type::Conjugate);
+  assert_parsed_expression_type("factor(23/42)", Expression::Type::Factor);
   assert_parsed_expression_type("floor(2.3)", Expression::Type::Floor);
   assert_parsed_expression_type("frac(2.3)", Expression::Type::FracPart);
   assert_parsed_expression_type("gcd(2,3)", Expression::Type::GreatCommonDivisor);
@@ -274,6 +275,11 @@ QUIZ_CASE(poincare_function_evaluate) {
   Complex<double> akd[1] = {Complex<double>::Cartesian(0.5, 0.86602540378443864676)};
   assert_parsed_expression_evaluates_to("root(-1,3)", akd);
 
+  Complex<float> al[1] = {Complex<float>::Float(-5.75f)};
+  assert_parsed_expression_evaluates_to("factor(-23/4)", al);
+  Complex<double> ald[1] = {Complex<double>::Float(-5.125)};
+  assert_parsed_expression_evaluates_to("factor(-123/24)", ald);
+
   Expression * exp = parse_expression("random()");
   assert_exp_is_bounded(exp, 0.0f, 1.0f);
   assert_exp_is_bounded(exp, 0.0, 1.0);
@@ -299,6 +305,9 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("rem(-19,3)", "2");
   assert_parsed_expression_simplify_to("rem(19,0)", "undef");
   assert_parsed_expression_simplify_to("99!", "933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000");
+  assert_parsed_expression_simplify_to("factor(-10008/6895)", "-(2^3*3^2*139)/(5*7*197)");
+  assert_parsed_expression_simplify_to("factor(1008/6895)", "(2^4*3^2)/(5*197)");
+  assert_parsed_expression_simplify_to("factor(10007)", "undef");
   assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");

@@ -280,7 +280,7 @@ void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {
 }
 
 void CurveView::drawAxes(KDContext * ctx, KDRect rect, Axis axis) const {
-  drawLine(ctx, rect, axis, 0.0f, KDColorBlack, 2);
+  drawLine(ctx, rect, axis, 0.0f, KDColorBlack, 1);
 }
 
 #define LINE_THICKNESS 3

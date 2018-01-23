@@ -206,7 +206,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
 bool CalculationController::textFieldDidHandleEvent(::TextField * textField, Ion::Events::Event event, bool returnValue, bool textHasChanged) {
   if (returnValue && textHasChanged) {
-    m_selectableTableView.reloadData(); //TODO: optimize with reloadCell at index?
+    /* We do not reload the responder because the first responder might be the
+     * toolbox (or the variable  box) and reloading the responder would corrupt
+     * the first responder. */
+    bool shouldUpdateFirstResponder = app()->firstResponder() == textField;
+    m_selectableTableView.reloadData(shouldUpdateFirstResponder);
   }
   return returnValue;
 }

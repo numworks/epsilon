@@ -27,7 +27,7 @@ public:
   int selectedColumn();
   void selectRow(int j);
   void selectColumn(int i);
-  void reloadData() override;
+  void reloadData(bool reloadSelection = true);
   virtual bool handleEvent(Ion::Events::Event event) override;
   virtual void didEnterResponderChain(Responder * previousFirstResponder) override;
   virtual void willExitResponderChain(Responder * nextFirstResponder) override;

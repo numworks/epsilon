@@ -283,9 +283,30 @@ void CurveView::drawAxes(KDContext * ctx, KDRect rect, Axis axis) const {
   drawLine(ctx, rect, axis, 0.0f, KDColorBlack, 1);
 }
 
-#define LINE_THICKNESS 3
+#define LINE_THICKNESS 2
 
-#if LINE_THICKNESS == 3
+#if LINE_THICKNESS == 1
+
+constexpr KDCoordinate circleDiameter = 1;
+constexpr KDCoordinate stampSize = circleDiameter+1;
+const uint8_t stampMask[stampSize+1][stampSize+1] = {
+  {0xFF, 0xE1, 0xFF},
+  {0xE1, 0x00, 0xE1},
+  {0xFF, 0xE1, 0xFF},
+};
+
+#elif LINE_THICKNESS == 2
+
+constexpr KDCoordinate circleDiameter = 2;
+constexpr KDCoordinate stampSize = circleDiameter+1;
+const uint8_t stampMask[stampSize+1][stampSize+1] = {
+  {0xFF, 0xE6, 0xE6, 0xFF},
+  {0xE6, 0x33, 0x33, 0xE6},
+  {0xE6, 0x33, 0x33, 0xE6},
+  {0xFF, 0xE6, 0xE6, 0xFF},
+};
+
+#elif LINE_THICKNESS == 3
 
 constexpr KDCoordinate circleDiameter = 3;
 constexpr KDCoordinate stampSize = circleDiameter+1;

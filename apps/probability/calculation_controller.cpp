@@ -206,7 +206,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
 bool CalculationController::textFieldDidHandleEvent(::TextField * textField, Ion::Events::Event event, bool returnValue, bool textHasChanged) {
   if (returnValue && textHasChanged) {
-    m_selectableTableView.reloadData(); //TODO: optimize with reloadCell at index?
+    /* We do not reload selection because only the size of cells can have been
+     * changed. Plus, the selection might be on the toolbox (or the variable
+     * box) and reloading the selection would corrupt the first responder. */
+    m_selectableTableView.reloadData(false);
   }
   return returnValue;
 }

@@ -34,8 +34,9 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("log((23P)^4,23P)", "4");
   assert_parsed_expression_simplify_to("log(10^(2+P))", "2+P");
   assert_parsed_expression_simplify_to("ln(1881676377434183981909562699940347954480361860897069)", "ln(1881676377434183981909562699940347954480361860897069)");
-  assert_parsed_expression_simplify_to("log(26061622162116)", "2*log(2)+log(3)+log(2171801846843)");
-  assert_parsed_expression_simplify_to("log(26061622162116/5)", "2*log(2)+log(3)-log(5)+log(2171801846843)");
+  /* log(1002101470343) does no reduce to 3*log(10007) because it involves
+   * prime factors above k_biggestPrimeFactor */
+  assert_parsed_expression_simplify_to("log(1002101470343)", "log(1002101470343)");
   assert_parsed_expression_simplify_to("log(64,2)", "6");
   assert_parsed_expression_simplify_to("log(2,64)", "log(2,64)");
   assert_parsed_expression_simplify_to("log(1476225,5)", "2+10*log(3,5)");

@@ -169,9 +169,12 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     return new Rational(0);
   }
   assert(!i.isOne());
-  if (Arithmetic::k_primorial32.isLowerThan(i)) {
-    /* We do not want to break i in prime factor because it might be take too
-     * many factors... More than k_maxNumberOfPrimeFactors. */
+  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
+  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
+  Arithmetic::PrimeFactorization(&i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+  if (coefficients[0].isMinusOne()) {
+    /* We could not break i in prime factor (either it might take too many
+     * factors or too much time). */
     Expression * e = clone();
     e->replaceOperand(e->operand(0), new Rational(i), true);
     if (!isDenominator) {
@@ -180,9 +183,6 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
     Multiplication * m = new Multiplication(new Rational(-1), e, false);
     return m;
   }
-  Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
-  Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  Arithmetic::PrimeFactorization(&i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
   Addition * a = new Addition();
   int index = 0;
   while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {

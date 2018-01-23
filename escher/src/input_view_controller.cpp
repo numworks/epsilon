@@ -53,7 +53,7 @@ bool InputViewController::textFieldDidFinishEditing(TextField * textField, const
   return inputViewDidFinishEditing();
 }
 
-bool InputViewController::textFieldDidAbortEditing(TextField * textField, const char * text) {
+bool InputViewController::textFieldDidAbortEditing(TextField * textField) {
   return inputViewDidAbortEditing();
 }
 
@@ -76,7 +76,7 @@ bool InputViewController::scrollableExpressionViewWithCursorDidFinishEditing(Scr
   return inputViewDidFinishEditing();
 }
 
-bool InputViewController::scrollableExpressionViewWithCursorDidAbortEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text) {
+bool InputViewController::scrollableExpressionViewWithCursorDidAbortEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
   return inputViewDidAbortEditing();
 }
 

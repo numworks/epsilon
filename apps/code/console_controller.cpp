@@ -252,7 +252,7 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
   return true;
 }
 
-bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const char * text) {
+bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
   stackViewController()->pop();
   return true;
 }

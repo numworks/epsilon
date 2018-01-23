@@ -42,14 +42,22 @@ void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, 
   /* First we look for prime divisors in the table primeFactors (to speed up
    * the prime factorization for low numbers). When k_numberOfPrimeFactors is
    * overflow, try every number as divisor. */
-  for (int index = 0; index < outputLength; index++) {
-    outputCoefficients[index] = Integer(0);
-  }
   Integer m = *n;
   m.setNegative(false);
   if (m.isEqualTo(Integer(1))) {
     return;
   }
+  if (k_primorial32.isLowerThan(m)) {
+    /* Special case 1: We do not want to break i in prime factor because it
+     * might take too many factors... More than k_maxNumberOfPrimeFactors.
+     * outputCoefficients[0] is set to -1 to indicate a special case. */
+    outputCoefficients[0] = Integer(-1);
+    return;
+  }
+  for (int index = 0; index < outputLength; index++) {
+    outputCoefficients[index] = Integer(0);
+  }
+
   int t = 0; // n prime factor index
   int k = 0; // prime factor index
   Integer testedPrimeFactor = Integer(primeFactors[k]); // prime factor
@@ -74,6 +82,14 @@ void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, 
     testedPrimeFactor = k < k_numberOfPrimeFactors ? Integer(primeFactors[k]) : Integer::Addition(testedPrimeFactor, Integer(1));
     outputFactors[t] = testedPrimeFactor;
   } while (stopCondition && testedPrimeFactor.isLowerThan(Integer(k_biggestPrimeFactor)));
+  if (Integer(k_biggestPrimeFactor).isLowerThan(m)) {
+    /* Special case 2: We do not want to break i in prime factor because it
+     * take too much time: the prime factor that should be tested is above
+     * k_biggestPrimeFactor.
+     * outputCoefficients[0] is set to -1 to indicate a special case. */
+    outputCoefficients[0] = -1;
+    return;
+  }
   outputFactors[t] = std::move(m);
   outputCoefficients[t] = Integer::Addition(outputCoefficients[t], Integer(1));
 }

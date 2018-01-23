@@ -531,15 +531,16 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   }
   Integer absI = i;
   absI.setNegative(false);
-  if (Arithmetic::k_primorial32.isLowerThan(absI)) {
-    r->setSign(isDenominator ? Sign::Negative : Sign::Positive);
-    /* We do not want to break i in prime factor because it might be take too
-     * many factors... More than k_maxNumberOfPrimeFactors. */
-    return new Power(new Rational(i), r->clone(), false);
-  }
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
   Arithmetic::PrimeFactorization(&i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+
+  if (coefficients[0].isMinusOne()) {
+    /* We could not break i in prime factor (either it might take too many
+     * factors or too much time). */
+    r->setSign(isDenominator ? Sign::Negative : Sign::Positive);
+    return new Power(new Rational(i), r->clone(), false);
+  }
 
   Integer r1(1);
   Integer r2(1);

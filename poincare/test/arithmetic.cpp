@@ -39,8 +39,8 @@ void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
 }
 
 void assert_prime_factorization_equals_to(Integer a, int * factors, int * coefficients, int length) {
-  Integer outputFactors[1000];
-  Integer outputCoefficients[1000];
+  Integer outputFactors[100];
+  Integer outputCoefficients[100];
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Primes factorization ----"  << endl;
   cout << "Decomp(" << a.approximate<float>() << ") = ";
@@ -82,7 +82,7 @@ QUIZ_CASE(poincare_arithmetic) {
   int factors2[3] = {2,5, 7};
   int coefficients2[3] = {2,4,2};
   assert_prime_factorization_equals_to(Integer(122500), factors2, coefficients2, 3);
-  int factors3[8] = {3,7,11, 13, 19, 3607, 3803, 52579};
-  int coefficients3[8] = {4,2,2,2,2,2,2,1};
-  assert_prime_factorization_equals_to(Integer("289879586539753105148873518899"), factors3, coefficients3, 8);
+  int factors3[7] = {3,7,11, 13, 19, 3607, 3803};
+  int coefficients3[7] = {4,2,2,2,2,2,2};
+  assert_prime_factorization_equals_to(Integer("5513219850886344455940081"), factors3, coefficients3, 7);
 }

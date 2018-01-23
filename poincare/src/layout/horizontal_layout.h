@@ -31,9 +31,7 @@ public:
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
 
   /* Expression Engine */
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "");
-  }
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
 
   /* Other */
   bool isHorizontal() const override { return true; }

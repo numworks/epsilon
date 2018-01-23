@@ -131,6 +131,11 @@ bool ScrollableExpressionViewWithCursor::privateHandleEvent(Ion::Events::Event e
     m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
     return true;
   }
+  if (event == Ion::Events::Back && isEditing()) {
+    setEditing(false);
+    m_delegate->scrollableExpressionViewWithCursorDidAbortEditing(this);
+    return true;
+  }
   if (event == Ion::Events::Division) {
     m_expressionViewWithCursor.cursor()->addFractionLayoutAndCollapseBrothers();
     return true;

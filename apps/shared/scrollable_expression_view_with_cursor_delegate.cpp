@@ -16,8 +16,8 @@ bool ScrollableExpressionViewWithCursorDelegate::scrollableExpressionViewWithCur
   return editableExpressionViewDelegateApp()->scrollableExpressionViewWithCursorDidFinishEditing(scrollableExpressionViewWithCursor, text, event);
 }
 
-bool ScrollableExpressionViewWithCursorDelegate::scrollableExpressionViewWithCursorDidAbortEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text) {
-  return editableExpressionViewDelegateApp()->scrollableExpressionViewWithCursorDidAbortEditing(scrollableExpressionViewWithCursor, text);
+bool ScrollableExpressionViewWithCursorDelegate::scrollableExpressionViewWithCursorDidAbortEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
+  return editableExpressionViewDelegateApp()->scrollableExpressionViewWithCursorDidAbortEditing(scrollableExpressionViewWithCursor);
 }
 
 void ScrollableExpressionViewWithCursorDelegate::scrollableExpressionViewWithCursorDidChangeSize(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {

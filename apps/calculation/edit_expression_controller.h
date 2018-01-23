@@ -24,12 +24,12 @@ public:
   /* TextFieldDelegate */
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(::TextField * textField, const char * text) override;
+  bool textFieldDidAbortEditing(::TextField * textField) override;
 
   /* ScrollableExpressionViewWithCursorDelegate */
   bool scrollableExpressionViewWithCursorDidReceiveEvent(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) override;
   bool scrollableExpressionViewWithCursorDidFinishEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text, Ion::Events::Event event) override;
-  bool scrollableExpressionViewWithCursorDidAbortEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text) override;
+  bool scrollableExpressionViewWithCursorDidAbortEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) override;
   void scrollableExpressionViewWithCursorDidChangeSize(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) override;
 
 private:

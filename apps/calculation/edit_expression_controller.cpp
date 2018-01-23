@@ -84,9 +84,9 @@ bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField
   return inputViewDidFinishEditing(text, event);
 }
 
-bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField, const char * text) {
+bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField) {
   assert(textField == ((ContentView *)view())->editableExpressionView()->textField());
-  return inputViewDidAbortEditing(text);
+  return inputViewDidAbortEditing(textField->text());
 }
 
 bool EditExpressionController::scrollableExpressionViewWithCursorDidReceiveEvent(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) {
@@ -102,9 +102,9 @@ bool EditExpressionController::scrollableExpressionViewWithCursorDidFinishEditin
   return inputViewDidFinishEditing(text, event);
 }
 
-bool EditExpressionController::scrollableExpressionViewWithCursorDidAbortEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text) {
+bool EditExpressionController::scrollableExpressionViewWithCursorDidAbortEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
   assert(scrollableExpressionViewWithCursor == ((ContentView *)view())->editableExpressionView()->scrollableExpressionViewWithCursor());
-  return inputViewDidAbortEditing(text);
+  return inputViewDidAbortEditing(nullptr);
 }
 
 void EditExpressionController::scrollableExpressionViewWithCursorDidChangeSize(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
@@ -157,8 +157,10 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Ion:
 }
 
 bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
-  ((ContentView *)view())->editableExpressionView()->setEditing(true, true);
-  ((ContentView *)view())->editableExpressionView()->setText(text);
+  if (text != nullptr) {
+    ((ContentView *)view())->editableExpressionView()->setEditing(true, true);
+    ((ContentView *)view())->editableExpressionView()->setText(text);
+  }
   return false;
 }
 

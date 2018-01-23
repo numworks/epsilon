@@ -16,7 +16,6 @@ public:
 
   virtual void scrollToCell(int i, int j);
   HighlightCell * cellAtLocation(int i, int j);
-  virtual void reloadData();
   void reloadCellAtLocation(int i, int j);
   KDSize minimalSizeForOptimalDisplay() const override;
 protected:
@@ -24,6 +23,7 @@ protected:
   const char * className() const override;
 #endif
   TableViewDataSource * dataSource();
+  void layoutSubviews() override;
   class ContentView : public View {
   public:
     ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping);
@@ -69,8 +69,6 @@ protected:
     KDCoordinate m_verticalCellOverlapping;
   };
   ContentView m_contentView;
-private:
-  void layoutSubviews() override;
 };
 
 #endif

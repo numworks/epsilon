@@ -29,18 +29,22 @@ void SelectableTableView::selectColumn(int i) {
   m_selectionDataSource->selectColumn(i);
 }
 
-void SelectableTableView::reloadData() {
+void SelectableTableView::reloadData(bool reloadSelection) {
   int col = selectedColumn();
   int row = selectedRow();
-  deselectTable();
-  /* FIXME: The problem with calling deselectTable is that at this point in time
-   * the datasource's model is very likely to have changed. Therefore it's
-   * rather complicated to get a pointer to the currently selected cell (in
-   * order to deselect it). */
-  /* As a workaround, datasources can reset the highlighted state in their
-   * willDisplayCell callback. */
-  TableView::reloadData();
-  selectCellAtLocation(col, row);
+  if (reloadSelection) {
+    deselectTable();
+    /* FIXME: The problem with calling deselectTable is that at this point in time
+     * the datasource's model is very likely to have changed. Therefore it's
+     * rather complicated to get a pointer to the currently selected cell (in
+     * order to deselect it). */
+    /* As a workaround, datasources can reset the highlighted state in their
+     * willDisplayCell callback. */
+  }
+  TableView::layoutSubviews();
+  if (reloadSelection) {
+    selectCellAtLocation(col, row);
+  }
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {

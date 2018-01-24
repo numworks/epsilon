@@ -45,6 +45,10 @@ void ExpressionLayoutCursor::addLayout(ExpressionLayout * layout) {
   pointedExpressionLayout()->addBrother(this, layout);
 }
 
+void ExpressionLayoutCursor::addLayoutAndMoveCursor(ExpressionLayout * layout) {
+  pointedExpressionLayout()->addBrotherAndMoveCursor(this, layout);
+}
+
 void ExpressionLayoutCursor::addEmptyExponentialLayout() {
   CharLayout * child1 = new CharLayout(Ion::Charset::Exponential);
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Superscript, false);

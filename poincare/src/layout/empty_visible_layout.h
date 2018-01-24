@@ -14,7 +14,6 @@ public:
   };
   EmptyVisibleLayout(Color color = Color::Yellow);
   ExpressionLayout * clone() const override;
-  void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
@@ -30,6 +29,7 @@ protected:
     assert(false);
     return KDPointZero;
   }
+  void privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) override;
 private:
   constexpr static KDCoordinate k_width = 7;
   constexpr static KDCoordinate k_height = 13;

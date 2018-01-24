@@ -40,6 +40,7 @@ public:
 
   /* Edition */
   void addLayout(ExpressionLayout * layout);
+  void addLayoutAndMoveCursor(ExpressionLayout * layout);
   void addEmptyExponentialLayout();
   void addFractionLayoutAndCollapseBrothers();
   void addEmptyMatrixLayout(int numberOfRows = 1, int numberOfColumns = 1);

@@ -17,17 +17,6 @@ ExpressionLayout * EmptyVisibleLayout::clone() const {
   return layout;
 }
 
-void EmptyVisibleLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
-  Color currentColor = m_color;
-  int indexInParent = m_parent->indexOfChild(this);
-  ExpressionLayout * parent = m_parent;
-  replaceWith(brother, true);
-  if (currentColor == Color::Grey) {
-    // The parent is a MatrixLayout.
-    static_cast<MatrixLayout *>(parent)->newRowOrColumnAtIndex(indexInParent);
-  }
-}
-
 void EmptyVisibleLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   assert(cursor->pointedExpressionLayout() == this);
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
@@ -93,6 +82,21 @@ KDSize EmptyVisibleLayout::computeSize() {
 void EmptyVisibleLayout::computeBaseline() {
   m_baseline = k_marginHeight + k_height/2;
   m_baselined = true;
+}
+
+void EmptyVisibleLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
+  Color currentColor = m_color;
+  int indexInParent = m_parent->indexOfChild(this);
+  ExpressionLayout * parent = m_parent;
+  replaceWith(brother, true);
+  if (moveCursor) {
+    cursor->setPointedExpressionLayout(brother);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+  }
+  if (currentColor == Color::Grey) {
+    // The parent is a MatrixLayout.
+    static_cast<MatrixLayout *>(parent)->newRowOrColumnAtIndex(indexInParent);
+  }
 }
 
 }

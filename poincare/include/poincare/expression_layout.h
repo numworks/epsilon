@@ -50,7 +50,8 @@ public:
 
   // Add
   virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
-  virtual void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
+  void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
+  void addBrotherAndMoveCursor(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
 
   // Replace
   virtual ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace);
@@ -129,6 +130,7 @@ protected:
     ExpressionLayout ** childResult,
     void * resultPosition,
     int * resultScore);
+  virtual void privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor);
   ExpressionLayout * m_parent;
   KDCoordinate m_baseline;
   /* m_baseline is the signed vertical distance from the top of the layout to

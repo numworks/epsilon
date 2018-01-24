@@ -198,9 +198,13 @@ void ScrollableExpressionViewWithCursor::insertLayoutAtCursor(Poincare::Expressi
   if (layout->isMatrix() && pointedLayout->hasAncestor(layout)) {
     static_cast<Poincare::MatrixLayout *>(layout)->addGreySquares();
   }
-  m_expressionViewWithCursor.cursor()->addLayout(layout);
-  m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(pointedLayout);
-  m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
+  if (pointedLayout != nullptr) {
+    m_expressionViewWithCursor.cursor()->addLayout(layout);
+    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(pointedLayout);
+    m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
+  } else {
+    m_expressionViewWithCursor.cursor()->addLayoutAndMoveCursor(layout);
+  }
   reload();
   KDSize newSize = minimalSizeForOptimalDisplay();
   if (m_delegate && previousSize.height() != newSize.height()) {
@@ -213,7 +217,7 @@ void ScrollableExpressionViewWithCursor::insertLayoutFromTextAtCursor(const char
   if (expression != nullptr) {
     Poincare::ExpressionLayout * layout = expression->createLayout();
     delete expression;
-    insertLayoutAtCursor(layout, layout);
+    insertLayoutAtCursor(layout, nullptr);
     reload();
     return;
   }

@@ -52,11 +52,7 @@ HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
 }
 
 void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (typeAtLocation(0, index) == 2) {
-    ExpressionTableCell * myCell = (ExpressionTableCell *)cell;
-    myCell->setExpression(m_addedCellLayout[index]);
-    return;
-  } else {
+  if (typeAtLocation(0, index) != 2) {
     MathToolbox::willDisplayCellForIndex(cell, mathToolboxIndex(index));
   }
 }
@@ -97,6 +93,9 @@ void SequenceToolbox::setExtraCells(const char * sequenceName, int recurrenceDep
   if (recurrenceDepth < 2) {
     const char * indice = recurrenceDepth == 0 ? "n" : (recurrenceDepth == 1 ? "n+1" : "n+2");
     m_addedCellLayout[2*recurrenceDepth] = new BaselineRelativeLayout(new StringLayout(otherSequenceName, 1, KDText::FontSize::Large), new StringLayout(indice, strlen(indice), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  }
+  for (int index = 0; index < k_maxNumberOfDisplayedRows; index++) {
+    m_addedCells[index].setExpression(m_addedCellLayout[index]);
   }
 }
 

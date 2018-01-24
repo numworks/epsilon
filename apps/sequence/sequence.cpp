@@ -149,20 +149,14 @@ void Sequence::setInitialRank(int rank) {
 
 Poincare::Expression * Sequence::firstInitialConditionExpression(Context * context) const {
   if (m_firstInitialConditionExpression == nullptr) {
-    m_firstInitialConditionExpression = Poincare::Expression::parse(m_firstInitialConditionText);
-    if (m_firstInitialConditionExpression) {
-      Expression::Simplify(&m_firstInitialConditionExpression, *context);
-    }
+    m_firstInitialConditionExpression = Poincare::Expression::ParseAndSimplify(m_firstInitialConditionText, *context);
   }
   return m_firstInitialConditionExpression;
 }
 
 Poincare::Expression * Sequence::secondInitialConditionExpression(Context * context) const {
   if (m_secondInitialConditionExpression == nullptr) {
-    m_secondInitialConditionExpression = Poincare::Expression::parse(m_secondInitialConditionText);
-    if (m_secondInitialConditionExpression) {
-      Expression::Simplify(&m_secondInitialConditionExpression, *context);
-    }
+    m_secondInitialConditionExpression = Poincare::Expression::ParseAndSimplify(m_secondInitialConditionText, *context);
   }
   return m_secondInitialConditionExpression;
 }

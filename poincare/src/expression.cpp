@@ -56,6 +56,7 @@ Expression * Expression::replaceSymbolWithExpression(char symbol, Expression * e
 /* Circuit breaker */
 
 static Expression::CircuitBreaker sCircuitBreaker = nullptr;
+static bool sSimplificationHasBeenInterrupted = false;
 
 void Expression::setCircuitBreaker(CircuitBreaker cb) {
   sCircuitBreaker = cb;
@@ -65,7 +66,11 @@ bool Expression::shouldStopProcessing() {
   if (sCircuitBreaker == nullptr) {
     return false;
   }
-  return sCircuitBreaker();
+  if (sCircuitBreaker()) {
+    sSimplificationHasBeenInterrupted = true;
+    return true;
+  }
+  return false;
 }
 
 /* Hierarchy */
@@ -229,7 +234,20 @@ ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, C
 
 /* Simplification */
 
+Expression * Expression::ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit) {
+  Expression * exp = parse(text);
+  if (exp == nullptr) {
+    return new Undefined();
+  }
+  Simplify(&exp, context, angleUnit);
+  if (exp == nullptr) {
+    return parse(text);
+  }
+  return exp;
+}
+
 void Expression::Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit) {
+  sSimplificationHasBeenInterrupted = false;
   if (angleUnit == AngleUnit::Default) {
     angleUnit = Preferences::sharedPreferences()->angleUnit();
   }
@@ -243,6 +261,11 @@ void Expression::Simplify(Expression ** expressionAddress, Context & context, An
   root.editableOperand(0)->deepReduce(context, angleUnit);
   root.editableOperand(0)->deepBeautify(context, angleUnit);
   *expressionAddress = root.editableOperand(0);
+  if (sSimplificationHasBeenInterrupted) {
+    root.detachOperands();
+    delete *expressionAddress;
+    *expressionAddress = nullptr;
+  }
 }
 
 
@@ -310,8 +333,7 @@ template<typename T> T Expression::approximateToScalar(Context& context, AngleUn
 }
 
 template<typename T> T Expression::approximateToScalar(const char * text, Context& context, AngleUnit angleUnit) {
-  Expression * exp = parse(text);
-  Simplify(&exp, context, angleUnit);
+  Expression * exp = ParseAndSimplify(text, context, angleUnit);
   T result = exp->approximateToScalar<T>(context, angleUnit);
   delete exp;
   return result;

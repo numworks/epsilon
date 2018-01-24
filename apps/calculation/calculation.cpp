@@ -71,8 +71,7 @@ void Calculation::setContent(const char * c, Context * context, CalculationStore
   /* We do not store directly the text enter by the user but its serialization
    * to be able to compare it to the exact ouput text. */
   m_input->writeTextInBuffer(m_inputText, sizeof(m_inputText));
-  m_exactOutput = input()->clone();
-  Expression::Simplify(&m_exactOutput, *context);
+  m_exactOutput = Expression::ParseAndSimplify(m_inputText, *context);
   m_exactOutput->writeTextInBuffer(m_exactOutputText, sizeof(m_exactOutputText));
   m_approximateOutput = m_exactOutput->approximate<double>(*context);
   m_approximateOutput->writeTextInBuffer(m_approximateOutputText, sizeof(m_approximateOutputText));
@@ -148,13 +147,8 @@ void Calculation::tidy() {
 Expression * Calculation::exactOutput(Context * context) {
   if (m_exactOutput == nullptr) {
     /* To ensure that the expression 'm_exactOutput' is a simplified, we
-     * call 'simplifyAndBeautify'. */
-    m_exactOutput = Expression::parse(m_exactOutputText);
-    if (m_exactOutput != nullptr) {
-      Expression::Simplify(&m_exactOutput, *context);
-    } else {
-      m_exactOutput = new Undefined();
-    }
+     * call 'ParseAndSimplify'. */
+    m_exactOutput = Expression::ParseAndSimplify(m_exactOutputText, *context);
   }
   return m_exactOutput;
 }

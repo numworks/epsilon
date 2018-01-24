@@ -217,6 +217,7 @@ public:
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
 
   /* Simplification */
+  static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit = AngleUnit::Default);
   static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
 
   /* Evaluation Engine

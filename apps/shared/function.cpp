@@ -71,10 +71,7 @@ const char * Function::name() const {
 
 Poincare::Expression * Function::expression(Poincare::Context * context) const {
   if (m_expression == nullptr) {
-    m_expression = Expression::parse(m_text);
-    if (m_expression) {
-      Expression::Simplify(&m_expression, *context);
-    }
+    m_expression = Expression::ParseAndSimplify(m_text, *context);
   }
   return m_expression;
 }

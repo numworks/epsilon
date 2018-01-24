@@ -30,7 +30,6 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
 
   /* Responder */
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
   static constexpr int k_bufferLength = TextField::maxBufferSize();

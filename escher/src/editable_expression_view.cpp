@@ -88,14 +88,6 @@ void EditableExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-void EditableExpressionView::didBecomeFirstResponder() {
-  if (editionIsInTextField()) {
-    app()->setFirstResponder(&m_textField);
-    return;
-  }
-  app()->setFirstResponder(&m_scrollableExpressionViewWithCursor);
-}
-
 bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
   return editionIsInTextField() ? m_textField.handleEvent(event) : m_scrollableExpressionViewWithCursor.handleEvent(event);
 }

@@ -209,6 +209,7 @@ SumGraphController::LegendView::LegendView(SumGraphController * controller, char
   m_editableZone(controller, m_draftText, m_draftText, TextField::maxBufferSize(), controller, false, KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumSymbol(sumSymbol)
 {
+  m_draftText[0] = 0;
 }
 
 SumGraphController::LegendView::~LegendView() {

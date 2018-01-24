@@ -48,7 +48,7 @@ Expression * Factorial::shallowReduce(Context& context, AngleUnit angleUnit) {
 #endif
   if (operand(0)->type() == Type::Rational) {
     Rational * r = static_cast<Rational *>(editableOperand(0));
-    if (!r->denominator().isOne()) {
+    if (!r->denominator().isOne() || r->sign() == Sign::Negative) {
       return replaceWith(new Undefined(), true);
     }
     if (Integer(k_maxOperandValue).isLowerThan(r->numerator())) {

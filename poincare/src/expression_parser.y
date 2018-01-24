@@ -194,7 +194,7 @@ exp:
 
 final_exp:
   exp      { $$ = $1; }
-  | exp STO symb   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Store(terms, false); };
+  | exp STO symb   { if ($3->name() == Poincare::Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Store(terms, false); };
 %%
 
 void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, const char * msg) {

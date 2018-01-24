@@ -17,5 +17,4 @@ QUIZ_CASE(poincare_store_evaluate) {
 QUIZ_CASE(poincare_store_simplify) {
   assert_parsed_expression_simplify_to("1+2>A", "A");
   assert_parsed_expression_simplify_to("1+2>x", "x");
-  assert_parsed_expression_simplify_to("1+2>ans", "ans");
 }

@@ -9,4 +9,8 @@ void CursorView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, height/2, width, 1), KDColorBlack);
 }
 
+KDSize CursorView::minimalSizeForOptimalDisplay() const {
+  return KDSize(k_size, k_size);
+}
+
 }

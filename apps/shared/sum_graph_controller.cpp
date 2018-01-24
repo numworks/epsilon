@@ -27,7 +27,6 @@ SumGraphController::SumGraphController(Responder * parentResponder, FunctionGrap
 
 void SumGraphController::viewWillAppear() {
   m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
-  m_graphView->setVerticalCursor(true);
   m_graphView->setBannerView(&m_legendView);
   m_graphView->setCursorView(&m_cursorView);
   m_graphView->setOkView(nullptr);

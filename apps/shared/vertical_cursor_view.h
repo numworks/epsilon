@@ -9,6 +9,7 @@ class VerticalCursorView : public View {
 public:
   using View::View;
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  KDSize minimalSizeForOptimalDisplay() const override;
 };
 
 }

@@ -36,7 +36,6 @@ protected:
   constexpr static KDCoordinate k_labelGraduationLength =  6;
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;
-  constexpr static KDCoordinate k_cursorSize = 25;
   constexpr static int k_externRectMargin = 2;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
@@ -54,7 +53,6 @@ protected:
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
   void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
-  virtual KDSize cursorSize();
   View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
 private:

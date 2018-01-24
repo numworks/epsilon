@@ -25,12 +25,10 @@ private:
   const char * firstAvailableName() override;
   const KDColor firstAvailableColor() override;
   static constexpr KDColor k_defaultColors[k_maxNumberOfFunctions] = {
-    Palette::Red, Palette::Blue,  Palette::YellowDark, Palette::Magenta,
-    //Palette::Pink, Palette::Turquoise, Palette::Orange,  Palette::Green
+    Palette::Red, Palette::Blue,  Palette::Green, Palette::YellowDark,
   };
   static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {
     "f", "g", "h", "p",
-    //"q", "r", "s", "t"
   };
   CartesianFunction m_functions[k_maxNumberOfFunctions];
 };

@@ -15,6 +15,7 @@ public:
   template<typename T> static Complex<T> compute(const Complex<T> c, AngleUnit angleUnit);
 private:
   /* Layout */
+  bool operandNeedParenthesis(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   /* Simplification */

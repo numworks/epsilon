@@ -23,6 +23,13 @@ Expression * Addition::clone() const {
   return new Addition(operands(), numberOfOperands(), true);
 }
 
+/* Layout */
+
+bool Addition::operandNeedParenthesis(const Expression * e) const {
+  Type types[] = {Type::Opposite, Type::Complex};
+  return e->isOfType(types, 2);
+}
+
 /* Simplication */
 
 Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {

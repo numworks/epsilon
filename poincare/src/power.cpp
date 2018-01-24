@@ -119,8 +119,8 @@ bool Power::operandNeedParenthesis(const Expression * e) const {
   if (e->type() == Type::Rational && !static_cast<const Rational *>(e)->denominator().isOne()) {
     return true;
   }
-  Type types[] = {Type::Power, Type::Division, Type::Multiplication, Type::Addition, Type::Subtraction, Type::Opposite};
-  return e->isOfType(types, 5);
+  Type types[] = {Type::Power, Type::Division, Type::Multiplication, Type::Addition, Type::Subtraction, Type::Opposite, Type::Complex};
+  return e->isOfType(types, 7);
 }
 
 ExpressionLayout * Power::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

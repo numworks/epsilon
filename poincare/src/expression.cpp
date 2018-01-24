@@ -190,7 +190,7 @@ bool Expression::isOfType(Type * types, int length) const {
 }
 
 bool Expression::operandNeedParenthesis(const Expression * e) const {
-  return e->type() == Expression::Type::Opposite;
+  return false;
 }
 
 /* Comparison */

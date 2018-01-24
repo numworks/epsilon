@@ -23,6 +23,13 @@ Expression * Opposite::clone() const {
   return o;
 }
 
+/* Layout */
+
+bool Opposite::operandNeedParenthesis(const Expression * e) const {
+  Type types[] = {Type::Addition, Type::Opposite, Type::Complex, Type::Subtraction};
+  return e->isOfType(types, 4);
+}
+
 template<typename T>
 Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Cartesian(-c.a(), -c.b());

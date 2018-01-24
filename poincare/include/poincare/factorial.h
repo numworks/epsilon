@@ -13,6 +13,13 @@ public:
   Expression * clone() const override;
 private:
   constexpr static int k_maxOperandValue = 100;
+  /* Layout */
+  bool operandNeedParenthesis(const Expression * e) const override;
+  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  /* Simplication */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
@@ -20,9 +27,7 @@ private:
   Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return ApproximationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+
 #if 0
   int simplificationOrderGreaterType(const Expression * e) const override;
   int simplificationOrderSameType(const Expression * e) const override;

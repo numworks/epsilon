@@ -15,6 +15,7 @@ public:
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
   /* Layout */
+  bool operandNeedParenthesis(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, name());
   }

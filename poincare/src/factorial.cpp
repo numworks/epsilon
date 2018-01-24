@@ -27,6 +27,15 @@ Expression * Factorial::clone() const {
   return a;
 }
 
+/* Layout */
+
+bool Factorial::operandNeedParenthesis(const Expression * e) const {
+  Type types[] = {Type::Opposite, Type::Complex, Type::Multiplication, Type::Power, Type::Addition, Type::Factorial, Type::Division, Type::Opposite, Type::Subtraction};
+  return e->isOfType(types, 9);
+}
+
+/* Simplification */
+
 Expression * Factorial::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

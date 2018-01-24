@@ -89,8 +89,8 @@ bool Division::operandNeedParenthesis(const Expression * e) const {
   if (e->type() == Type::Rational && !static_cast<const Rational *>(e)->denominator().isOne()) {
     return true;
   }
-  Type types[] = {Type::Division, Type::Multiplication, Type::Addition, Type::Subtraction, Type::Opposite};
-  return e->isOfType(types, 5);
+  Type types[] = {Type::Division, Type::Multiplication, Type::Addition, Type::Subtraction, Type::Opposite, Type::Complex};
+  return e->isOfType(types, 6);
 }
 
 ExpressionLayout * Division::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

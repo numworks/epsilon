@@ -11,7 +11,7 @@ CalculationStore::CalculationStore() :
 
 Calculation * CalculationStore::push(const char * text, Context * context) {
   Calculation * result = &m_calculations[m_startIndex];
-  result->setContent(text, context, this);
+  result->setContent(text, context, ansExpression(context));
   m_startIndex++;
   if (m_startIndex >= k_maxNumberOfCalculations) {
     m_startIndex = 0;
@@ -87,6 +87,18 @@ void CalculationStore::tidy() {
   for (int i = 0; i < k_maxNumberOfCalculations; i++) {
     m_calculations[i].tidy();
   }
+}
+
+Expression * CalculationStore::ansExpression(Context * context) {
+  if (numberOfCalculations() == 0) {
+    static Rational defaultExpression(0);
+    return &defaultExpression;
+  }
+  Calculation * lastCalculation = calculationAtIndex(numberOfCalculations()-1);
+  if (lastCalculation->input()->isApproximate(*context)) {
+    return lastCalculation->approximateOutput(context);
+  }
+  return lastCalculation->exactOutput(context);
 }
 
 }

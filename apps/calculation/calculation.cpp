@@ -64,10 +64,10 @@ void Calculation::reset() {
   tidy();
 }
 
-void Calculation::setContent(const char * c, Context * context, CalculationStore * calculationStore) {
+void Calculation::setContent(const char * c, Context * context, Expression * ansExpression) {
   reset();
   m_input = Expression::parse(c);
-  Expression::ReplaceSymbolWithExpression(&m_input, Symbol::SpecialSymbols::Ans, ansExpression(calculationStore, context));
+  Expression::ReplaceSymbolWithExpression(&m_input, Symbol::SpecialSymbols::Ans, ansExpression);
   /* We do not store directly the text enter by the user but its serialization
    * to be able to compare it to the exact ouput text. */
   m_input->writeTextInBuffer(m_inputText, sizeof(m_inputText));
@@ -190,18 +190,6 @@ bool Calculation::shouldDisplayApproximateOutput(Context * context) {
     return true;
   }
   return input()->isApproximate(*context);
-}
-
-Expression * Calculation::ansExpression(CalculationStore * calculationStore, Context * context) {
-  if (calculationStore->numberOfCalculations() == 0) {
-    static Rational defaultExpression(0);
-    return &defaultExpression;
-  }
-  Calculation * lastCalculation = calculationStore->calculationAtIndex(calculationStore->numberOfCalculations()-1);
-  if (lastCalculation->input()->isApproximate(*context)) {
-    return lastCalculation->approximateOutput(context);
-  }
-  return lastCalculation->exactOutput(context);
 }
 
 }

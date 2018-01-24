@@ -18,7 +18,7 @@ public:
   Calculation& operator=(Calculation&& other) = delete;
   /* c.reset() is the equivalent of c = Calculation() without copy assingment. */
   void reset();
-  void setContent(const char * c, Poincare::Context * context, CalculationStore * calculationStore);
+  void setContent(const char * c, Poincare::Context * context, Poincare::Expression * ansExpression);
   const char * inputText();
   const char * exactOutputText();
   const char * approximateOutputText();
@@ -33,7 +33,6 @@ public:
   bool shouldDisplayApproximateOutput(Poincare::Context * context);
   constexpr static int k_printedExpressionSize = 2*::TextField::maxBufferSize();
 private:
-  Poincare::Expression * ansExpression(CalculationStore * calculationStore, Poincare::Context * context);
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::maxBufferSize()) because when we
    * print an expression we add omitted signs (multiplications, parenthesis...) */

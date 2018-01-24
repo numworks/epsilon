@@ -62,6 +62,7 @@ bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event e
       textField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
+    Expression::ReplaceSymbolWithExpression(&exp, Symbol::SpecialSymbols::Ans, static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext()));
     char buffer[Calculation::k_printedExpressionSize];
     int length = exp->writeTextInBuffer(buffer, sizeof(buffer));
     delete exp;

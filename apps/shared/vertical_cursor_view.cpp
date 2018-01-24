@@ -7,4 +7,8 @@ void VerticalCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, 1, height), KDColorBlack);
 }
 
+KDSize VerticalCursorView::minimalSizeForOptimalDisplay() const {
+  return KDSize(1, 0);
+}
+
 }

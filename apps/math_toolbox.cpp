@@ -133,9 +133,10 @@ void MathToolbox::actionForScrollableExpressionViewWithCursor(void * sender, con
   }
   ExpressionLayout * resultLayout = resultExpression->createLayout();
   // Find the pointed layout.
-  ExpressionLayout * pointedLayout = resultLayout;
+  ExpressionLayout * pointedLayout = nullptr;
   if (resultLayout->isHorizontal()) {
     // If the layout is horizontal, pick the first open parenthesis.
+    // For now, all horizontal layouts in MathToolbox have parentheses.
     for (int i = 0; i < resultLayout->numberOfChildren(); i++) {
       if (resultLayout->editableChild(i)->isLeftParenthesis()) {
         pointedLayout = resultLayout->editableChild(i);
@@ -146,7 +147,8 @@ void MathToolbox::actionForScrollableExpressionViewWithCursor(void * sender, con
     // Else, if the layout has children, pick the first one.
     pointedLayout = resultLayout->editableChild(0);
   }
-  // Insert the layout
+  // Insert the layout. If pointedLayout is nullptr, the cursor will be on the
+  // right of the inserted layout.
   expressionLayoutEditorSender->insertLayoutAtCursor(resultLayout, pointedLayout);
 }
 

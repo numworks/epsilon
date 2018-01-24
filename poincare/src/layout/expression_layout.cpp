@@ -107,36 +107,11 @@ bool ExpressionLayout::hasAncestor(const ExpressionLayout * e) const {
 }
 
 void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
-  // First, assess the special case when the layout is horizontal.
-  // If so, add the "brother" as a child.
-  if (isHorizontal()) {
-    // If there is only one empty child, remove it before adding the layout.
-    if (numberOfChildren() == 1 && editableChild(0)->isEmpty()) {
-      removeChildAtIndex(0, true);
-    }
-    if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-      addChildAtIndex(brother, 0);
-      return;
-    }
-    assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-    addChildAtIndex(brother, numberOfChildren());
-    return;
-  }
+  privateAddBrother(cursor, brother, false);
+}
 
-  // If the layout is not horizontal, it must have a parent.
-  assert(m_parent);
-  int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? m_parent->indexOfChild(this) : m_parent->indexOfChild(this) + 1;
-  if (m_parent->isHorizontal()) {
-    static_cast<HorizontalLayout *>(m_parent)->addOrMergeChildAtIndex(brother, brotherIndex, true);
-    return;
-  }
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    replaceWithJuxtapositionOf(brother, this, false);
-    return;
-  }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  replaceWithJuxtapositionOf(this, brother, false);
-  return;
+void ExpressionLayout::addBrotherAndMoveCursor(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
+  privateAddBrother(cursor, brother, true);
 }
 
 ExpressionLayout * ExpressionLayout::replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace) {
@@ -374,8 +349,40 @@ void ExpressionLayout::moveCursorInsideAtDirection (
   }
 }
 
+void ExpressionLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
+  // The layout must have a parent, because HorizontalLayout overrides
+  // privateAddBrother and only an HorizontalLayout can be the root layout.
+  assert(m_parent);
+  if (m_parent->isHorizontal()) {
+    int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? m_parent->indexOfChild(this) : m_parent->indexOfChild(this) + 1;
+    if (moveCursor) {
+      if (brotherIndex < m_parent->numberOfChildren()) {
+        cursor->setPointedExpressionLayout(m_parent->editableChild(brotherIndex));
+        cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      } else {
+        cursor->setPointedExpressionLayout(m_parent);
+        cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      }
+    }
+    static_cast<HorizontalLayout *>(m_parent)->addOrMergeChildAtIndex(brother, brotherIndex, true);
+    return;
+  }
+  ExpressionLayout * juxtapositionLayout = nullptr;
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    juxtapositionLayout = replaceWithJuxtapositionOf(brother, this, false);
+  } else {
+    assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+    juxtapositionLayout = replaceWithJuxtapositionOf(this, brother, false);
+  }
+  if (moveCursor) {
+    cursor->setPointedExpressionLayout(juxtapositionLayout);
+    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+  }
+}
+
 ExpressionLayout * ExpressionLayout::replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace) {
   assert(m_parent != nullptr);
+  assert(!m_parent->isHorizontal());
   /* One of the children to juxtapose might be "this", so we first have to
    * replace "this" with an horizontal layout, then add "this" to the layout. */
   ExpressionLayout * layout = new HorizontalLayout();

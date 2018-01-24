@@ -352,6 +352,31 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(x, y);
 }
 
+void HorizontalLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
+  // Add the "brother" as a child.
+  // If there is only one empty child, remove it before adding the layout.
+  if (numberOfChildren() == 1 && editableChild(0)->isEmpty()) {
+    removeChildAtIndex(0, true);
+  }
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    if (moveCursor) {
+      if (numberOfChildren() > 0) {
+        cursor->setPointedExpressionLayout(editableChild(0));
+      } else {
+        cursor->setPointedExpressionLayout(this);
+        cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      }
+    }
+    addChildAtIndex(brother, 0);
+    return;
+  }
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  addChildAtIndex(brother, numberOfChildren());
+  if (moveCursor) {
+    cursor->setPointedExpressionLayout(this);
+  }
+}
+
 bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
   // Prevent looping fom child to parent
   if (previousPreviousLayout == this) {

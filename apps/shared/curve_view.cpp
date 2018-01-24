@@ -424,10 +424,6 @@ int CurveView::numberOfLabels(Axis axis) const {
   return std::ceil((max(axis) - min(axis))/(2*gridUnit(axis)));
 }
 
-KDSize CurveView::cursorSize() {
-  return KDSize(k_cursorSize, k_cursorSize);
-}
-
 void CurveView::jointDots(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float x, float y, float u, float v, KDColor color, int maxNumberOfRecursion) const {
   float pyf = floatToPixel(Axis::Vertical, y);
   float pvf = floatToPixel(Axis::Vertical, v);
@@ -525,12 +521,13 @@ void CurveView::layoutSubviews() {
 KDRect CurveView::cursorFrame() {
   KDRect cursorFrame = KDRectZero;
   if (m_cursorView && m_mainViewSelected && !std::isnan(m_curveViewCursor->x()) && !std::isnan(m_curveViewCursor->y())) {
+    KDSize cursorSize = m_cursorView->minimalSizeForOptimalDisplay();
     KDCoordinate xCursorPixelPosition = std::round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
     KDCoordinate yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
-    cursorFrame = KDRect(xCursorPixelPosition - cursorSize().width()/2, yCursorPixelPosition - cursorSize().height()/2, cursorSize().width(), cursorSize().height());
-    if (cursorSize().height() == 0) {
+    cursorFrame = KDRect(xCursorPixelPosition - cursorSize.width()/2, yCursorPixelPosition - cursorSize.height()/2, cursorSize.width(), cursorSize.height());
+    if (cursorSize.height() == 0) {
       KDCoordinate bannerHeight = m_bannerView != nullptr ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;
-      cursorFrame = KDRect(xCursorPixelPosition - cursorSize().width()/2, 0, cursorSize().width(),bounds().height()-bannerHeight);
+      cursorFrame = KDRect(xCursorPixelPosition - cursorSize.width()/2, 0, cursorSize.width(),bounds().height()-bannerHeight);
     }
   }
   return cursorFrame;

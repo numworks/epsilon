@@ -10,7 +10,6 @@ FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
   CurveView(graphRange, cursor, bannerView, cursorView),
   m_selectedFunction(nullptr),
-  m_verticalCursor(false),
   m_highlightedStart(NAN),
   m_highlightedEnd(NAN),
   m_shouldColorHighlighted(false),
@@ -44,10 +43,6 @@ void FunctionGraphView::selectFunction(Function * function) {
   }
 }
 
-void FunctionGraphView::setVerticalCursor(bool verticalCursor) {
-  m_verticalCursor = verticalCursor;
-}
-
 void FunctionGraphView::setAreaHighlight(float start, float end) {
   if (m_highlightedStart != start || m_highlightedEnd != end) {
     float dirtyStart = start > m_highlightedStart ? m_highlightedStart : start;
@@ -72,13 +67,6 @@ void FunctionGraphView::setAreaHighlightColor(bool highlightColor) {
     reloadBetweenBounds(m_highlightedStart, m_highlightedEnd);
     m_shouldColorHighlighted = highlightColor;
   }
-}
-
-KDSize FunctionGraphView::cursorSize() {
-  if (m_verticalCursor) {
-    return KDSize(1, 0);
-  }
-  return CurveView::cursorSize();
 }
 
 char * FunctionGraphView::label(Axis axis, int index) const {

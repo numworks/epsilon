@@ -131,6 +131,7 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
   }
   if (index < 0) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
   }
   m_sequence->setInitialRank(index);
   // Invalidate sequence context cache when changing sequence type

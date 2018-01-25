@@ -6,8 +6,8 @@ using namespace Poincare;
 
 namespace Sequence {
 
-GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion, ButtonRowController * header) :
-  FunctionGraphController(parentResponder, header, graphRange, &m_view, cursor, modelVersion, rangeVersion, angleUnitVersion),
+GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion, ButtonRowController * header) :
+  FunctionGraphController(parentResponder, header, graphRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
   m_bannerView(),
   m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(graphRange),
@@ -34,7 +34,7 @@ BannerView * GraphController::bannerView() {
 }
 
 bool GraphController::handleEnter() {
-  m_termSumController.setFunction(m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor));
+  m_termSumController.setFunction(m_sequenceStore->activeFunctionAtIndex(indexFunctionSelectedByCursor()));
   return FunctionGraphController::handleEnter();
 }
 
@@ -53,7 +53,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   if (x < 0.0) {
     return false;
   }
-  Sequence * s = m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  Sequence * s = m_sequenceStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   double y = s->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
@@ -63,7 +63,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
 
 void GraphController::initCursorParameters() {
   double x = std::round((interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0);
-  m_indexFunctionSelectedByCursor = 0;
+  selectFunctionWithCursor(0);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   int functionIndex = 0;
   double y = 0;

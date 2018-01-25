@@ -155,14 +155,14 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
       return;
     }
     KDSize textSize = KDText::stringSize(label(axis, i), KDText::FontSize::Small);
-    KDPoint origin(floatToPixel(Axis::Horizontal, x) - textSize.width()/2, floatToPixel(Axis::Vertical, 0.0f)  + k_labelMargin);
-    KDRect graduation((int)floatToPixel(Axis::Horizontal, x), (int)floatToPixel(Axis::Vertical, 0.0f) -(k_labelGraduationLength-2)/2, 1, k_labelGraduationLength);
+    KDPoint origin(std::round(floatToPixel(Axis::Horizontal, x)) - textSize.width()/2, std::round(floatToPixel(Axis::Vertical, 0.0f))  + k_labelMargin);
+    KDRect graduation(std::round(floatToPixel(Axis::Horizontal, x)), std::round(floatToPixel(Axis::Vertical, 0.0f)) -(k_labelGraduationLength-2)/2, 1, k_labelGraduationLength);
     if (axis == Axis::Vertical) {
-      origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, x) - textSize.height()/2);
-      graduation = KDRect((int)floatToPixel(Axis::Horizontal, 0.0f)-(k_labelGraduationLength-2)/2, (int)floatToPixel(Axis::Vertical, x), k_labelGraduationLength, 1);
+      origin = KDPoint(std::round(floatToPixel(Axis::Horizontal, 0.0f)) + k_labelMargin, std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2);
+      graduation = KDRect(std::round(floatToPixel(Axis::Horizontal, 0.0f))-(k_labelGraduationLength-2)/2, std::round(floatToPixel(Axis::Vertical, x)), k_labelGraduationLength, 1);
     }
     if (-step < x && x < step && shiftOrigin) {
-      origin = KDPoint(floatToPixel(Axis::Horizontal, 0.0f) + k_labelMargin, floatToPixel(Axis::Vertical, 0.0f) + k_labelMargin);
+      origin = KDPoint(std::round(floatToPixel(Axis::Horizontal, 0.0f)) + k_labelMargin, std::round(floatToPixel(Axis::Vertical, 0.0f)) + k_labelMargin);
     }
     if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i), KDText::FontSize::Small)))) {
       ctx->blendString(label(axis, i), origin, KDText::FontSize::Small, KDColorBlack);
@@ -177,13 +177,13 @@ void CurveView::drawLine(KDContext * ctx, KDRect rect, Axis axis, float coordina
   switch(axis) {
     case Axis::Horizontal:
       lineRect = KDRect(
-          rect.x(), floatToPixel(Axis::Vertical, coordinate),
+          rect.x(), std::round(floatToPixel(Axis::Vertical, coordinate)),
           rect.width(), thickness
           );
       break;
     case Axis::Vertical:
       lineRect = KDRect(
-          floatToPixel(Axis::Horizontal, coordinate), rect.y(),
+          std::round(floatToPixel(Axis::Horizontal, coordinate)), rect.y(),
           thickness, rect.height()
       );
       break;
@@ -359,9 +359,9 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, EvaluateModelWithParamet
     float pxf = floatToPixel(Axis::Horizontal, x);
     float pyf = floatToPixel(Axis::Vertical, y);
     if (colorUnderCurve && pxf > pixelColorLowerBound && pxf < pixelColorUpperBound) {
-      KDRect colorRect((int)pxf, std::round(pyf), 1, floatToPixel(Axis::Vertical, 0.0f) - std::round(pyf));
+      KDRect colorRect((int)pxf, std::round(pyf), 1, std::round(floatToPixel(Axis::Vertical, 0.0f)) - std::round(pyf));
       if (floatToPixel(Axis::Vertical, 0.0f) < std::round(pyf)) {
-        colorRect = KDRect((int)pxf, floatToPixel(Axis::Vertical, 0.0f), 1, std::round(pyf) - floatToPixel(Axis::Vertical, 0.0f));
+        colorRect = KDRect((int)pxf, std::round(floatToPixel(Axis::Vertical, 0.0f)), 1, std::round(pyf) - std::round(floatToPixel(Axis::Vertical, 0.0f)));
       }
       ctx->fillRect(colorRect, color);
     }
@@ -403,9 +403,9 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
     KDCoordinate pxf = std::round(floatToPixel(Axis::Horizontal, x));
     KDCoordinate pyf = std::round(floatToPixel(Axis::Vertical, y));
     KDCoordinate pixelBarWidth = fillBar ? std::round(floatToPixel(Axis::Horizontal, x+barWidth)) - std::round(floatToPixel(Axis::Horizontal, x))-1 : 2;
-    KDRect binRect(pxf, pyf, pixelBarWidth, floatToPixel(Axis::Vertical, 0.0f) - pyf);
+    KDRect binRect(pxf, pyf, pixelBarWidth, std::round(floatToPixel(Axis::Vertical, 0.0f)) - pyf);
     if (floatToPixel(Axis::Vertical, 0.0f) < pyf) {
-      binRect = KDRect(pxf, floatToPixel(Axis::Vertical, 0.0f), pixelBarWidth+1, pyf - floatToPixel(Axis::Vertical, 0.0f));
+      binRect = KDRect(pxf, std::round(floatToPixel(Axis::Vertical, 0.0f)), pixelBarWidth+1, pyf - std::round(floatToPixel(Axis::Vertical, 0.0f)));
     }
     KDColor binColor = defaultColor;
     bool shouldColorBin = fillBar ? centerX >= highlightLowerBound && centerX <= highlightUpperBound : pxf >= floorf(pHighlightLowerBound) && pxf <= floorf(pHighlightUpperBound);
@@ -486,7 +486,7 @@ void CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float p
   }
   KDCoordinate px = pxf;
   KDCoordinate py = pyf;
-  KDRect stampRect(px-circleDiameter/2, py-circleDiameter/2, stampSize, stampSize);
+  KDRect stampRect(px-(circleDiameter-2)/2, py-(circleDiameter-2)/2, stampSize, stampSize);
   if (!rect.intersects(stampRect)) {
     return;
   }
@@ -524,10 +524,10 @@ KDRect CurveView::cursorFrame() {
     KDSize cursorSize = m_cursorView->minimalSizeForOptimalDisplay();
     KDCoordinate xCursorPixelPosition = std::round(floatToPixel(Axis::Horizontal, m_curveViewCursor->x()));
     KDCoordinate yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
-    cursorFrame = KDRect(xCursorPixelPosition - cursorSize.width()/2, yCursorPixelPosition - cursorSize.height()/2, cursorSize.width(), cursorSize.height());
+    cursorFrame = KDRect(xCursorPixelPosition - (cursorSize.width()-1)/2, yCursorPixelPosition - (cursorSize.height()-1)/2, cursorSize.width(), cursorSize.height());
     if (cursorSize.height() == 0) {
       KDCoordinate bannerHeight = m_bannerView != nullptr ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;
-      cursorFrame = KDRect(xCursorPixelPosition - cursorSize.width()/2, 0, cursorSize.width(),bounds().height()-bannerHeight);
+      cursorFrame = KDRect(xCursorPixelPosition - (cursorSize.width()-1)/2, 0, cursorSize.width(),bounds().height()-bannerHeight);
     }
   }
   return cursorFrame;

@@ -8,11 +8,11 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion) :
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion) :
   InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
-  m_indexFunctionSelectedByCursor(0),
   m_initialisationParameterController(this, interactiveRange),
-  m_angleUnitVersion(angleUnitVersion)
+  m_angleUnitVersion(angleUnitVersion),
+  m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
 }
 
@@ -45,18 +45,22 @@ void FunctionGraphController::viewWillAppear() {
 }
 
 bool FunctionGraphController::handleEnter() {
-  Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  Function * f = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   curveParameterController()->setFunction(f);
   StackViewController * stack = stackController();
   stack->push(curveParameterController());
   return true;
 }
 
+void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
+  *m_indexFunctionSelectedByCursor = functionIndex;
+}
+
 void FunctionGraphController::reloadBannerView() {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return;
   }
-  Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  Function * f = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   reloadBannerViewForCursorOnFunction(m_cursor, f, functionStore()->symbol());
 }
 
@@ -99,11 +103,11 @@ float FunctionGraphController::addMargin(float x, float range, bool isMin) {
 void FunctionGraphController::initRangeParameters() {
   interactiveCurveViewRange()->setDefault();
   initCursorParameters();
-  m_indexFunctionSelectedByCursor = 0;
+  selectFunctionWithCursor(0);
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {
-  Function * actualFunction = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  Function * actualFunction = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   double y = actualFunction->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
   Function * nextFunction = actualFunction;
@@ -113,7 +117,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
     double newY = f->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
     bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
     if (isNextFunction) {
-      m_indexFunctionSelectedByCursor = i;
+      selectFunctionWithCursor(i);
       nextY = newY;
       nextFunction = f;
     }

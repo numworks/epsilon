@@ -10,7 +10,6 @@ namespace Shared {
 InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion) :
   SimpleInteractiveCurveViewController(parentResponder, interactiveRange, curveView, cursor),
   ButtonRowDelegate(header, nullptr),
-  m_cursorView(),
   m_modelVersion(modelVersion),
   m_rangeVersion(rangeVersion),
   m_rangeParameterController(this, interactiveRange),

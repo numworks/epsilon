@@ -2,8 +2,8 @@
 
 namespace Shared {
 
-RoundCursorView::RoundCursorView() :
-  m_color(KDColorBlack)
+RoundCursorView::RoundCursorView(KDColor color) :
+  m_color(color)
 {
 }
 

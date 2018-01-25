@@ -10,6 +10,7 @@
 #include "../shared/interactive_curve_view_controller.h"
 #include "../shared/curve_view_cursor.h"
 #include "../shared/cursor_view.h"
+#include "../shared/round_cursor_view.h"
 
 namespace Regression {
 
@@ -20,6 +21,7 @@ public:
   ViewController * initialisationParameterController() override;
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
+  void viewWillAppear() override;
   void selectRegressionCurve();
 private:
   constexpr static float k_cursorTopMarginRatio = 0.07f;    // (cursorHeight/2)/graphViewHeight
@@ -37,7 +39,8 @@ private:
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
   bool isCursorVisible() override;
-  Shared::CursorView m_cursorView;
+  Shared::CursorView m_crossCursorView;
+  Shared::RoundCursorView m_roundCursorView;
   BannerView m_bannerView;
   GraphView m_view;
   Store * m_store;

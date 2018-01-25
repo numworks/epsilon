@@ -7,7 +7,7 @@ namespace Shared {
 
 class RoundCursorView : public View {
 public:
-  RoundCursorView();
+  RoundCursorView(KDColor color = KDColorBlack);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void setColor(KDColor color);

@@ -65,8 +65,8 @@ void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, 
   IntegerDivision d = {.quotient = 0, .remainder = 0};
   bool stopCondition;
   do {
+    stopCondition = Integer::Power(outputFactors[t], Integer(2)).isLowerThan(m);
     d = Integer::Division(m, testedPrimeFactor);
-    stopCondition = outputFactors[t].isLowerThan(d.quotient); // We evaluate the condition here in case we move d.quotient in n
     if (d.remainder.isEqualTo(Integer(0))) {
       outputCoefficients[t] = Integer::Addition(outputCoefficients[t], Integer(1));
       m = std::move(d.quotient);
@@ -82,7 +82,7 @@ void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, 
     testedPrimeFactor = k < k_numberOfPrimeFactors ? Integer(primeFactors[k]) : Integer::Addition(testedPrimeFactor, Integer(1));
     outputFactors[t] = testedPrimeFactor;
   } while (stopCondition && testedPrimeFactor.isLowerThan(Integer(k_biggestPrimeFactor)));
-  if (Integer(k_biggestPrimeFactor).isLowerThan(m)) {
+  if (Integer::Power(Integer(k_biggestPrimeFactor), Integer(2)).isLowerThan(m)) {
     /* Special case 2: We do not want to break i in prime factor because it
      * take too much time: the prime factor that should be tested is above
      * k_biggestPrimeFactor.

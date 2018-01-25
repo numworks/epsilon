@@ -187,6 +187,10 @@ bool ScrollableExpressionViewWithCursor::privateHandleEvent(Ion::Events::Event e
     insertLayoutFromTextAtCursor(Clipboard::sharedClipboard()->storedText());
     return true;
   }
+  if (event == Ion::Events::Clear && isEditing()) {
+    clearLayout();
+    return true;
+  }
   return false;
 }
 

@@ -29,7 +29,7 @@ public:
   }
 private:
   /* Layout */
-  bool operandNeedParenthesis(const Expression * e) const override;
+  bool needParenthesisWithParent(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, name());
   }

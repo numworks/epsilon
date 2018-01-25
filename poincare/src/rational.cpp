@@ -144,6 +144,14 @@ template<typename T> Complex<T> * Rational::templatedApproximate(Context& contex
   return new Complex<T>(Complex<T>::Float(n/d));
 }
 
+bool Rational::needParenthesisWithParent(const Expression * e) const {
+  if (m_denominator.isOne()) {
+    return false;
+  }
+  Type types[] = {Type::Division, Type::Power, Type::Factorial};
+  return e->isOfType(types, 3);
+}
+
 ExpressionLayout * Rational::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   ExpressionLayout * numeratorLayout = m_numerator.createLayout();
   if (m_denominator.isOne()) {

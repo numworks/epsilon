@@ -25,9 +25,9 @@ Expression * Opposite::clone() const {
 
 /* Layout */
 
-bool Opposite::operandNeedParenthesis(const Expression * e) const {
-  Type types[] = {Type::Addition, Type::Opposite, Type::Complex, Type::Subtraction};
-  return e->isOfType(types, 4);
+bool Opposite::needParenthesisWithParent(const Expression * e) const {
+  Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
+  return e->isOfType(types, 7);
 }
 
 template<typename T>

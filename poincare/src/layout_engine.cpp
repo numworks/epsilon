@@ -60,12 +60,12 @@ int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 1);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-  if (expression->operandNeedParenthesis(expression->operand(0))) {
+  if (expression->operand(0)->needParenthesisWithParent(expression)) {
     buffer[numberOfChar++] = '(';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
   numberOfChar += expression->operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
-  if (expression->operandNeedParenthesis(expression->operand(0))) {
+  if (expression->operand(0)->needParenthesisWithParent(expression)) {
     buffer[numberOfChar++] = ')';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
@@ -73,12 +73,12 @@ int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     numberOfChar += strlcpy(buffer+numberOfChar, operatorName, bufferSize-numberOfChar);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    if (expression->operandNeedParenthesis(expression->operand(i))) {
+    if (expression->operand(i)->needParenthesisWithParent(expression)) {
       buffer[numberOfChar++] = '(';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
     numberOfChar += expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
-    if (expression->operandNeedParenthesis(expression->operand(i))) {
+    if (expression->operand(i)->needParenthesisWithParent(expression)) {
       buffer[numberOfChar++] = ')';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }

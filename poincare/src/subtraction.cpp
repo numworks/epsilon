@@ -25,10 +25,11 @@ Expression * Subtraction::clone() const {
 
 /* Layout */
 
-bool Subtraction::operandNeedParenthesis(const Expression * e) const {
-  Type types[] = {Type::Opposite, Type::Complex, Type::Subtraction, Type::Addition};
-  return e->isOfType(types, 4);
+bool Subtraction::needParenthesisWithParent(const Expression * e) const {
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
+  return e->isOfType(types, 6);
 }
+
 template<typename T>
 Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
   return Complex<T>::Cartesian(c.a()-d.a(), c.b() - d.b());

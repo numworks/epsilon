@@ -32,7 +32,7 @@ private:
   /* Property */
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
   /* Layout */
-  bool operandNeedParenthesis(const Expression * e) const override;
+  bool needParenthesisWithParent(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   /* Simplification */

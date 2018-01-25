@@ -11,7 +11,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
-  constexpr static KDCoordinate k_size = 25;
+  constexpr static KDCoordinate k_size = 19;
 };
 
 }

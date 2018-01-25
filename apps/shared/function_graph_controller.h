@@ -42,6 +42,7 @@ private:
   uint32_t rangeVersion() override;
   bool isCursorVisible() override;
   virtual FunctionGraphView * functionGraphView() = 0;
+  virtual View * cursorView() = 0;
   virtual FunctionStore * functionStore() const = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;
   InitialisationParameterController m_initialisationParameterController;

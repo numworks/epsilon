@@ -9,6 +9,7 @@
 #include "prediction_parameter_controller.h"
 #include "../shared/interactive_curve_view_controller.h"
 #include "../shared/curve_view_cursor.h"
+#include "../shared/cursor_view.h"
 
 namespace Regression {
 
@@ -36,6 +37,7 @@ private:
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
   bool isCursorVisible() override;
+  Shared::CursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;
   Store * m_store;

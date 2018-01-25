@@ -28,6 +28,7 @@ I18n::Message GraphController::emptyMessage() {
 void GraphController::viewWillAppear() {
   m_view.drawTangent(false);
   FunctionGraphController::viewWillAppear();
+  selectFunctionWithCursor(indexFunctionSelectedByCursor()); // update the color of the cursor
 }
 
 bool GraphController::displayDerivativeInBanner() const {
@@ -36,6 +37,12 @@ bool GraphController::displayDerivativeInBanner() const {
 
 void GraphController::setDisplayDerivativeInBanner(bool displayDerivative) {
   m_displayDerivativeInBanner = displayDerivative;
+}
+
+void GraphController::selectFunctionWithCursor(int functionIndex) {
+  FunctionGraphController::selectFunctionWithCursor(functionIndex);
+  CartesianFunction * f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
+  m_cursorView.setColor(f->color());
 }
 
 BannerView * GraphController::bannerView() {

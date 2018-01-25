@@ -38,7 +38,6 @@ protected:
   virtual uint32_t modelVersion() = 0;
   virtual uint32_t rangeVersion() = 0;
   virtual bool isCursorVisible() = 0;
-  CursorView m_cursorView;
   OkView m_okView;
 private:
   uint32_t * m_modelVersion;

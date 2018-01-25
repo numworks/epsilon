@@ -28,7 +28,7 @@ ViewController * FunctionGraphController::initialisationParameterController() {
 }
 
 void FunctionGraphController::viewWillAppear() {
-  functionGraphView()->setCursorView(&m_cursorView);
+  functionGraphView()->setCursorView(cursorView());
   functionGraphView()->setBannerView(bannerView());
   functionGraphView()->setAreaHighlight(NAN,NAN);
 

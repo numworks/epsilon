@@ -238,6 +238,24 @@ int Complex<T>::writeTextInBuffer(char * buffer, int bufferSize) const {
 }
 
 template <class T>
+bool Complex<T>::needParenthesisWithParent(const Expression * e) const {
+  switch (e->type()) {
+    case Type::Addition:
+      return m_a < 0.0 || (m_a == 0.0 && m_b < 0.0);
+    case Type::Subtraction:
+    case Type::Multiplication:
+    case Type::Opposite:
+      return m_a < 0.0 || m_b < 0.0 || (m_a != 0.0 && m_b != 0.0);
+    case Type::Factorial:
+    case Type::Power:
+    case Type::Division:
+      return m_a < 0.0 || m_b != 0.0;
+    default:
+      return false;
+  }
+}
+
+template <class T>
 int Complex<T>::convertFloatToText(T f, char * buffer, int bufferSize,
     int numberOfSignificantDigits, Expression::FloatDisplayMode mode) {
   assert(numberOfSignificantDigits > 0);

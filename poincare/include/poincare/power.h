@@ -29,7 +29,7 @@ private:
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
   /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  bool operandNeedParenthesis(const Expression * e) const override;
+  bool needParenthesisWithParent(const Expression * e) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, name());
   }

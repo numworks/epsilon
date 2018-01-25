@@ -105,7 +105,7 @@ Expression * Symbol::clone() const {
 Expression * Symbol::replaceSymbolWithExpression(char symbol, Expression * expression) {
   if (m_name == symbol) {
     Expression * value = expression->clone();
-    if (parent() && parent()->operandNeedParenthesis(value)) {
+    if (parent() && value->needParenthesisWithParent(parent())) {
       value = new Parenthesis(value, false);
     }
     return replaceWith(value, true);

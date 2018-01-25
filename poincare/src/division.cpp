@@ -23,6 +23,11 @@ Expression * Division::clone() const {
   return new Division(m_operands, true);
 }
 
+bool Division::needParenthesisWithParent(const Expression * e) const {
+  Type types[] = {Type::Division, Type::Power, Type::Factorial};
+  return e->isOfType(types, 3);
+}
+
 Expression * Division::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -83,14 +88,6 @@ Complex<T> Division::compute(const Complex<T> c, const Complex<T> d) {
   T temp = min/max;
   T norm = temp*min + max;
   return Complex<T>::Cartesian((temp*aa + ab) / norm, (temp*bb + ba) / norm);
-}
-
-bool Division::operandNeedParenthesis(const Expression * e) const {
-  if (e->type() == Type::Rational && !static_cast<const Rational *>(e)->denominator().isOne()) {
-    return true;
-  }
-  Type types[] = {Type::Division, Type::Multiplication, Type::Addition, Type::Subtraction, Type::Opposite, Type::Complex};
-  return e->isOfType(types, 6);
 }
 
 ExpressionLayout * Division::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {

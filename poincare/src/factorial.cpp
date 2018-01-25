@@ -29,9 +29,8 @@ Expression * Factorial::clone() const {
 
 /* Layout */
 
-bool Factorial::operandNeedParenthesis(const Expression * e) const {
-  Type types[] = {Type::Opposite, Type::Complex, Type::Multiplication, Type::Power, Type::Addition, Type::Factorial, Type::Division, Type::Opposite, Type::Subtraction};
-  return e->isOfType(types, 9);
+bool Factorial::needParenthesisWithParent(const Expression * e) const {
+  return e->type() == Type::Factorial;
 }
 
 /* Simplification */

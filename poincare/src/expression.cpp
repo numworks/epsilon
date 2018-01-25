@@ -189,7 +189,7 @@ bool Expression::isOfType(Type * types, int length) const {
   return false;
 }
 
-bool Expression::operandNeedParenthesis(const Expression * e) const {
+bool Expression::needParenthesisWithParent(const Expression * e) const {
   return false;
 }
 

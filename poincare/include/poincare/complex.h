@@ -63,6 +63,9 @@ public:
   Complex<T> * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
 
+  /* Properties */
+  bool needParenthesisWithParent(const Expression * e) const override;
+
   /* Simplification: complex does not implement simplificationOrderSameType
    * because Complex expressions are always transformed into an addition of
    * Decimal and I symbol before compared with another Expression. */

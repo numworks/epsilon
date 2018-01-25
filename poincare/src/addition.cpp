@@ -25,9 +25,9 @@ Expression * Addition::clone() const {
 
 /* Layout */
 
-bool Addition::operandNeedParenthesis(const Expression * e) const {
-  Type types[] = {Type::Opposite, Type::Complex};
-  return e->isOfType(types, 2);
+bool Addition::needParenthesisWithParent(const Expression * e) const {
+  Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
+  return e->isOfType(types, 6);
 }
 
 /* Simplication */

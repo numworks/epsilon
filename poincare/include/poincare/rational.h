@@ -42,6 +42,7 @@ public:
   static Rational Power(const Rational & i, const Integer & j);
   static int NaturalOrder(const Rational & i, const Rational & j);
 private:
+  bool needParenthesisWithParent(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }

@@ -255,7 +255,7 @@ private:
   /* Properties */
   virtual Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
   bool isOfType(Type * types, int length) const;
-  virtual bool operandNeedParenthesis(const Expression * e) const;
+  virtual bool needParenthesisWithParent(const Expression * e) const;
   /* Comparison */
   /* In the simplification order, most expressions are compared by only
    * comparing their types. However hierarchical expressions of same type would

@@ -201,6 +201,14 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
   return currentChar;
 }
 
+bool Decimal::needParenthesisWithParent(const Expression * e) const {
+  if (sign() == Sign::Positive) {
+    return false;
+  }
+  Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
+  return e->isOfType(types, 7);
+}
+
 ExpressionLayout * Decimal::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
   char buffer[255];
   int numberOfChars = writeTextInBuffer(buffer, 255);

@@ -32,6 +32,7 @@ private:
   /* Comparison */
   int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   /* Layout */
+  bool needParenthesisWithParent(const Expression * e) const override;
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;

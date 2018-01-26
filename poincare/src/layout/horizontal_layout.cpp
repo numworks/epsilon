@@ -367,11 +367,11 @@ void HorizontalLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Expres
         cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       }
     }
-    addChildAtIndex(brother, 0);
+    addOrMergeChildAtIndex(brother, 0, false);
     return;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  addChildAtIndex(brother, numberOfChildren());
+  addOrMergeChildAtIndex(brother, numberOfChildren(), false);
   if (moveCursor) {
     cursor->setPointedExpressionLayout(this);
   }

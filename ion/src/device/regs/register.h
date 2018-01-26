@@ -56,6 +56,6 @@ typedef Register<uint64_t> Register64;
 #define REGS_BOOL_FIELD(name,bit) REGS_FIELD(name,bool,bit,bit)
 #define REGS_BOOL_FIELD_R(name,bit) REGS_FIELD_R(name,bool,bit,bit)
 #define REGS_BOOL_FIELD_W(name,bit) REGS_FIELD_W(name,bool,bit,bit)
-#define REGS_REGISTER_AT(name, offset) volatile name * name() const { return (class name *)(Base() + offset); };
+#define REGS_REGISTER_AT(name, offset) constexpr volatile name * name() const { return (class name *)(Base() + offset); };
 
 #endif

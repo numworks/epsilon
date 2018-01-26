@@ -76,11 +76,16 @@ void ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
 
   // Collapse the brothers on the right
   int numberOfOpenParenthesis = 0;
-  while (fractionIndexInParent < numberOfBrothers - 1) {
-    ExpressionLayout * rightBrother = newChild->editableParent()->editableChild(fractionIndexInParent+1);
+  bool canCollapseOnRight = true;
+  if (fractionIndexInParent < numberOfBrothers - 1) {
+    canCollapseOnRight = !(newChild->editableParent()->editableChild(fractionIndexInParent+1)->mustHaveLeftBrother());
+  }
+  ExpressionLayout * rightBrother = nullptr;
+  while (canCollapseOnRight && fractionIndexInParent < numberOfBrothers - 1) {
+    rightBrother = newChild->editableParent()->editableChild(fractionIndexInParent+1);
     if (rightBrother->isCollapsable(&numberOfOpenParenthesis, false)) {
       newChild->editableParent()->removeChildAtIndex(fractionIndexInParent+1, false);
-      child2->addOrMergeChildAtIndex(rightBrother, child2->numberOfChildren(), true);
+      child2->addOrMergeChildAtIndex(rightBrother, child2->numberOfChildren(), false);
       numberOfBrothers--;
     } else {
       break;

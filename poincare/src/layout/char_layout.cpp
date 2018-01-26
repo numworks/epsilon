@@ -56,7 +56,8 @@ bool CharLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) co
         || m_char == '-'
         || m_char == '*'
         || m_char == Ion::Charset::MultiplicationSign
-        || m_char == Ion::Charset::MiddleDot))
+        || m_char == Ion::Charset::MiddleDot
+        || m_char == ','))
   {
     return false;
   }

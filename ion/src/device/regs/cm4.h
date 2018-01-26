@@ -5,6 +5,13 @@
 
 class CM4 {
 public:
+  // Vector table offset register
+  // http://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf
+  class VTOR : Register32 {
+  public:
+    void setVTOR(void *address) volatile { set((uint32_t)address); }
+  };
+
   // Coprocessor Access Control Register
   // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/BEHBJHIG.html
   class CPACR : public Register32 {
@@ -34,6 +41,7 @@ public:
   };
 
   constexpr CM4() {};
+  REGS_REGISTER_AT(VTOR, 0x08);
   REGS_REGISTER_AT(AIRCR, 0x0C);
   REGS_REGISTER_AT(SCR, 0x10);
   REGS_REGISTER_AT(CPACR, 0x88);

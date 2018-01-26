@@ -32,7 +32,7 @@ public:
     REGS_FIELD(PSIZE, DataSize, 12, 11);
     REGS_BOOL_FIELD(MINC, 10);
     REGS_BOOL_FIELD(PINC, 9);
-    //REGS_BOOL_FIELD(CIRC, 8);
+    REGS_BOOL_FIELD(CIRC, 8);
     REGS_FIELD(DIR, Direction, 7, 6);
     REGS_BOOL_FIELD(EN, 0);
   };

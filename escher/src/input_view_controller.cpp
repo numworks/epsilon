@@ -33,11 +33,10 @@ void InputViewController::edit(Responder * caller, Ion::Events::Event event, voi
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
   displayModalViewController(&m_editableExpressionViewController, 1.0f, 1.0f);
+  m_editableExpressionViewController.editableExpressionView()->handleEvent(event);
   if (initialText != nullptr) {
     m_editableExpressionViewController.editableExpressionView()->setText(initialText);
-    //TODO is the editableExpressionView always clean before we set the text? Otherwise, problem if there is no initial text.
   }
-  m_editableExpressionViewController.editableExpressionView()->handleEvent(event);
 }
 
 void InputViewController::abortEditionAndDismiss() {

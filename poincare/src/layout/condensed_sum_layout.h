@@ -10,8 +10,8 @@ class CondensedSumLayout : public StaticLayoutHierarchy<3> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
-  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
-  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   int writeTextInBuffer(char * buffer, int bufferSize) const override {

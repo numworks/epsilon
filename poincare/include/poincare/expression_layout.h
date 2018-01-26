@@ -76,8 +76,8 @@ public:
   virtual void backspaceAtCursor(ExpressionLayoutCursor * cursor);
 
   /* Tree navigation */
-  virtual bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) = 0;
-  virtual bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) = 0;
+  virtual bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
+  virtual bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
   virtual bool moveUp(
       ExpressionLayoutCursor * cursor,
       bool * shouldRecomputeLayout = nullptr,
@@ -88,8 +88,8 @@ public:
       bool * shouldRecomputeLayout = nullptr,
       ExpressionLayout * previousLayout = nullptr,
       ExpressionLayout * previousPreviousLayout = nullptr);
-  virtual bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr);
-  virtual bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr);
+  virtual bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
+  virtual bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
 
   /* Expression Engine */
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;

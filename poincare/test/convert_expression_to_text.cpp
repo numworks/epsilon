@@ -93,6 +93,10 @@ QUIZ_CASE(assert_float_prints_to) {
   assert_float_prints_to(-9.99999904, "-10", DecimalDisplay, 6);
   assert_float_prints_to(-0.017452, "-0.01745", DecimalDisplay, 6);
   assert_float_prints_to(1E50, "1E50", DecimalDisplay, 9);
+  assert_float_prints_to(100.0, "100", DecimalDisplay, 9);
+  assert_float_prints_to(12345.678910121314, "12345.678910121", DecimalDisplay, 14);
+  assert_float_prints_to(9.999999999999999999999E12, "1E13", DecimalDisplay, 9);
+  assert_float_prints_to(-0.000000099999999, "-0.0000001", DecimalDisplay, 9);
 }
 
 QUIZ_CASE(poincare_rational_to_text) {

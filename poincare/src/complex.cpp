@@ -14,19 +14,40 @@ extern "C" {
 #include "layout/string_layout.h"
 #include "layout/baseline_relative_layout.h"
 #include <ion.h>
+#include <stdio.h>
 
 namespace Poincare {
 
 template<typename T>
 int exponent(T f) {
-  T logBase10 = f != 0 ? std::log10(std::fabs(f)) : 0;
-  int exponentInBase10 = std::floor(logBase10);
-  /* Correct the exponent in base 10: sometines the exact log10 of f is 6.999999
-   * but is stored as 7 in hardware. We catch these cases here. */
-  if (f != 0 && logBase10 == (int)logBase10 && std::fabs(f) < std::pow(10, logBase10)) {
-    exponentInBase10--;
+  static double k_log10base2 = 3.321928094887362347870319429489390175864831393024580612054;
+  if (f == 0.0) {
+    return 0;
   }
-  return exponentInBase10;
+  union {
+    uint64_t uint_result;
+    T float_result;
+  } u;
+  u.float_result = f;
+  int mantissaNbBit = sizeof(T) == sizeof(float) ? 23 : 52;
+  uint64_t oneOnExponentBits = sizeof(T) == sizeof(float)? 0xFF : 0x7FF;
+  int exponentBase2 = (u.uint_result >> mantissaNbBit) & oneOnExponentBits; // Get the exponent bits
+  exponentBase2 -= (oneOnExponentBits >> 1);
+  /* Compute the exponent in base 10 from exponent in base 2:
+   * f = m1*2^e1
+   * f = m2*10^e2
+   * --> f = m1*10^(e1/log(10,2))
+   * --> f = m1*10^x*10^(e1/log(10,2)-x), with x in [-1,1]
+   * Thus e2 = e1/log(10,2)-x,
+   *   with x such as 1 <= m1*10^x < 9 and e1/log(10,2)-x is round.
+   * Knowing that the equation 1 <= m1*10^x < 10 with 1<=m1<2 has its solution
+   * in -0.31 < x < 1, we get:
+   * e2 = [e1/log(10,2)]  or e2 = [e1/log(10,2)]-1 depending on m1. */
+  int exponentBase10 = std::round(exponentBase2/k_log10base2);
+  if (std::pow(10.0, exponentBase10) > std::fabs(f)) {
+    exponentBase10--;
+  }
+  return exponentBase10;
 }
 
 void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferLength, Integer i, int decimalMarkerPosition) {
@@ -391,7 +412,7 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == Expression::FloatDisplayMode::Scientific ?
                                    exponentInBase10 + 1 : 1;
 
-  T unroundedMantissa = f * std::pow(10, (T)availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal);
+  T unroundedMantissa = f * std::pow((T)10.0, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
   T mantissa = std::round(unroundedMantissa);
 
   /* if availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal
@@ -402,12 +423,15 @@ int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
     mantissa = std::copysign(mantissa, f);
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
-   * instance) */
-  T newLogBase10 = mantissa != 0 ? std::log10(std::fabs(mantissa/std::pow((T)10, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)))) : 0;
-  if (std::isnan(newLogBase10) || std::isinf(newLogBase10)) {
-    newLogBase10 = std::log10(std::fabs((T)mantissa)) - (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal);
+   * instance)
+   * NB: the following if-condition would rather be:
+   * "exponent(unroundedMantissa) != exponent(mantissa)",
+   * however, unroundedMantissa can have a different exponent than expected
+   * (ex: f = 1E13, unroundedMantissa = 99999999.99 and mantissa = 1000000000) */
+  if (f != 0 && exponent(mantissa)-exponentInBase10 != availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal) {
+    exponentInBase10++;
   }
-  exponentInBase10 = std::floor(newLogBase10);
+
   // Update the display mode if the exponent changed
   if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Expression::FloatDisplayMode::Decimal) {
     displayMode = Expression::FloatDisplayMode::Scientific;

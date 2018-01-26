@@ -35,6 +35,7 @@ const char * EditableExpressionView::text() {
 void EditableExpressionView::setText(const char * text) {
   if (editionIsInTextField()) {
     m_textField.setText(text);
+    return;
   }
   m_scrollableExpressionViewWithCursor.clearLayout();
   if (strlen(text) > 0) {

@@ -24,13 +24,14 @@ const char * ListController::title() {
 }
 
 Toolbox * ListController::toolboxForTextField(TextField * textField) {
-  int recurrenceDepth = -1;
-  int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
-  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
-  if (sequenceDefinition == 0) {
-    recurrenceDepth = sequence->numberOfElements()-1;
-  }
-  m_sequenceToolbox.setExtraCells(sequence->name(), recurrenceDepth);
+  setToolboxExtraCells();
+  m_sequenceToolbox.setSenderAndAction(textField, MathToolbox::actionForTextField);
+  return &m_sequenceToolbox;
+}
+
+Toolbox * ListController::toolboxForScrollableExpressionViewWithCursor(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
+  setToolboxExtraCells();
+  m_sequenceToolbox.setSenderAndAction(scrollableExpressionViewWithCursor, MathToolbox::actionForScrollableExpressionViewWithCursor);
   return &m_sequenceToolbox;
 }
 
@@ -306,6 +307,16 @@ void ListController::unloadView(View * view) {
     m_expressionCells[i] = nullptr;
   }
   Shared::ListController::unloadView(view);
+}
+
+void ListController::setToolboxExtraCells() {
+  int recurrenceDepth = -1;
+  int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
+  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
+  if (sequenceDefinition == 0) {
+    recurrenceDepth = sequence->numberOfElements()-1;
+  }
+  m_sequenceToolbox.setExtraCells(sequence->name(), recurrenceDepth);
 }
 
 }

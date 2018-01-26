@@ -4,7 +4,6 @@
 #define MATRICES_ARE_DEFINED 1
 #include <escher.h>
 #include <apps/i18n.h>
-#include <apps/expression_editor/controller.h>
 
 class MathToolbox : public Toolbox {
 public:

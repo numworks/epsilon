@@ -11,12 +11,12 @@ public:
   ExpressionLayout * clone() const override;
 
   /* Navigation */
-  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
-  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr) override;
   bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr) override;
-  bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
-  bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
 
   /* Dynamic layout */
   void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) override;

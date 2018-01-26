@@ -17,8 +17,8 @@ public:
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
 
   /* Tree navigation */
-  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
-  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr) override;
+  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
 

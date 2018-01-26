@@ -205,7 +205,8 @@ void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     // Case: The pointed layout is a child.
     // Move Left.
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-    cursor->moveLeft();
+    bool shouldRecomputeLayout = false;
+    cursor->moveLeft(&shouldRecomputeLayout);
     return;
   }
   assert(cursor->pointedExpressionLayout() == this);

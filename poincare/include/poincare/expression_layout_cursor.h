@@ -33,7 +33,7 @@ public:
   KDPoint middleLeftPointOfCursor(ExpressionLayout * expressionLayout, Position position);
 
   /* Move */
-  bool moveLeft(bool * shouldRecomputeLayout = nullptr);
+  bool moveLeft(bool * shouldRecomputeLayout);
   bool moveRight(bool * shouldRecomputeLayout);
   bool moveUp(bool * shouldRecomputeLayout);
   bool moveDown(bool * shouldRecomputeLayout);

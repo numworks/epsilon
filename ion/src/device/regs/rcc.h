@@ -66,6 +66,7 @@ public:
   class AHB2ENR : Register32 {
   public:
     REGS_BOOL_FIELD(RNGEN, 6);
+    REGS_BOOL_FIELD(OTGFSEN, 7);
   };
 
   class AHB3ENR : Register32 {

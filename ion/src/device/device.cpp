@@ -251,6 +251,12 @@ void initClocks() {
   ahb1enr.setDMA2EN(true);
   RCC.AHB1ENR()->set(ahb1enr);
 
+  // AHB2 bus
+  RCC.AHB2ENR()->setOTGFSEN(true);
+
+  // AHB3 bus
+  RCC.AHB3ENR()->setFSMCEN(true);
+
   // APB1 bus
   // We're using TIM3
   RCC.APB1ENR()->setTIM3EN(true);
@@ -264,8 +270,6 @@ void initClocks() {
   apb2enr.setSDIOEN(true);
 #endif
   RCC.APB2ENR()->set(apb2enr);
-
-  RCC.AHB3ENR()->setFSMCEN(true);
 }
 
 void shutdownClocks() {

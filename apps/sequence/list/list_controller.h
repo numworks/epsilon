@@ -23,6 +23,7 @@ public:
   virtual KDCoordinate rowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForTextField(TextField * textField) override;
+  Toolbox * toolboxForScrollableExpressionViewWithCursor(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) override;
   void selectPreviousNewSequenceCell();
 private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
@@ -43,6 +44,7 @@ private:
   void reinitExpression(Shared::Function * function) override;
   View * loadView() override;
   void unloadView(View * view) override;
+  void setToolboxExtraCells();
   static constexpr KDCoordinate k_emptySubRowHeight = 30;
   constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
   SequenceStore * m_sequenceStore;

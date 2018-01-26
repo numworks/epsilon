@@ -211,16 +211,24 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
   // Returns true if the layout on the left of the pointed layout is suitable to
   // be the base of a new power layout.
   int numberOfOpenParenthesis = 0;
-  int indexInParent = m_pointedExpressionLayout->parent()->indexOfChild(m_pointedExpressionLayout);
-  return ((m_position == Position::Right
-        && !m_pointedExpressionLayout->isEmpty()
-        && m_pointedExpressionLayout->isCollapsable(&numberOfOpenParenthesis, true))
-     || (m_position == Position::Left
-      && m_pointedExpressionLayout->parent()
+  if (m_position == Position::Right
+      && !m_pointedExpressionLayout->isEmpty()
+      && m_pointedExpressionLayout->isCollapsable(&numberOfOpenParenthesis, true))
+  {
+    return true;
+  }
+  if (m_pointedExpressionLayout->parent() != nullptr) {
+    int indexInParent = m_pointedExpressionLayout->parent()->indexOfChild(m_pointedExpressionLayout);
+    if (m_position == Position::Left
       && m_pointedExpressionLayout->parent()->isHorizontal()
       && indexInParent > 0
       && !m_pointedExpressionLayout->editableParent()->editableChild(indexInParent-1)->isEmpty()
-      && !m_pointedExpressionLayout->editableParent()->editableChild(indexInParent-1)->isCollapsable(&numberOfOpenParenthesis, true)));
+      && !m_pointedExpressionLayout->editableParent()->editableChild(indexInParent-1)->isCollapsable(&numberOfOpenParenthesis, true))
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 }

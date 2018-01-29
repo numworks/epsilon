@@ -32,6 +32,8 @@ void VerticalOffsetLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
         cursor->setPointedExpressionLayout(this);
         cursor->setPosition(ExpressionLayoutCursor::Position::Right);
         parent->removePointedChildAtIndexAndMoveCursor(indexInParent, true, cursor);
+        cursor->setPointedExpressionLayout(parent->editableChild(indexInParent-1));
+        cursor->setPosition(ExpressionLayoutCursor::Position::Right);
         parent->removePointedChildAtIndexAndMoveCursor(indexInParent-1, true, cursor);
         return;
       }

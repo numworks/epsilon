@@ -184,7 +184,7 @@ python/src/extmod/modurandom.o: SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
 
 port_objs += $(addprefix python/port/,\
   port.o \
-  import_helper.o\
+  builtins.o\
   interrupt_helper.o \
   modkandinsky.o \
   modkandinsky_impl.o \

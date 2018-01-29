@@ -79,6 +79,10 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
   m_consoleStore.deleteLastLineIfEmpty();
 }
 
+const char * ConsoleController::input() {
+  return "1+1";
+}
+
 void ConsoleController::removeExtensionIfAny(char * name) {
   int nameLength = strlen(name);
   if (nameLength<4) {

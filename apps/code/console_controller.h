@@ -62,6 +62,7 @@ public:
   // MicroPython::ExecutionEnvironment
   void displaySandbox() override;
   void printText(const char * text, size_t length) override;
+  const char * input() override;
 
 private:
   static constexpr int LineCellType = 0;

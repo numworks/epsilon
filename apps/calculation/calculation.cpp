@@ -192,4 +192,14 @@ bool Calculation::shouldDisplayApproximateOutput(Context * context) {
   return input()->isApproximate(*context);
 }
 
+bool Calculation::exactAndApproximateOutputsAreEqual(Poincare::Context * context) {
+  if (exactOutput(context)->type() != Expression::Type::Rational) {
+    return false;
+  }
+  Expression * approximateOutput = Expression::ParseAndSimplify(m_approximateOutputText, *context);
+  bool isEqual = approximateOutput->isIdenticalTo(exactOutput(context));
+  delete approximateOutput;
+  return isEqual;
+}
+
 }

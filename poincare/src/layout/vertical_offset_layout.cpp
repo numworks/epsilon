@@ -29,6 +29,8 @@ void VerticalOffsetLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
         // Case: Empty base and indice.
         // Remove both the base and the indice layout.
         ExpressionLayout * parent = m_parent;
+        cursor->setPointedExpressionLayout(this);
+        cursor->setPosition(ExpressionLayoutCursor::Position::Right);
         parent->removePointedChildAtIndexAndMoveCursor(indexInParent, true, cursor);
         parent->removePointedChildAtIndexAndMoveCursor(indexInParent-1, true, cursor);
         return;

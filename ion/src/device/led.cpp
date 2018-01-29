@@ -58,9 +58,9 @@ void initTimer() {
   TIM3.CCR4()->set(0);
 
   // Set Channels 2-4 as outputs, PWM mode 1
-  TIM3.CCMR()->setOC2M(TIM::CCMR::OCM::PWM1);
-  TIM3.CCMR()->setOC3M(TIM::CCMR::OCM::PWM1);
-  TIM3.CCMR()->setOC4M(TIM::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOC2M(TIM<Register16>::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOC3M(TIM<Register16>::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOC4M(TIM<Register16>::CCMR::OCM::PWM1);
 
   // Output preload enable for channels 2-4
   TIM3.CCMR()->setOC2PE(true);
@@ -81,9 +81,9 @@ void initTimer() {
 }
 
 void shutdownTimer() {
-  TIM3.CCMR()->setOC2M(TIM::CCMR::OCM::ForceInactive);
-  TIM3.CCMR()->setOC3M(TIM::CCMR::OCM::ForceInactive);
-  TIM3.CCMR()->setOC4M(TIM::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC2M(TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC3M(TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC4M(TIM<Register16>::CCMR::OCM::ForceInactive);
 }
 
 void enforceState(bool red, bool green, bool blue) {

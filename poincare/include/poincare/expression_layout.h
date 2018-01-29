@@ -95,6 +95,7 @@ public:
   virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
 
   /* Other */
+  bool addGreySquaresToAllMatrixAncestors();
   bool hasText() const;
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a brother fraction: should the layout be
@@ -123,7 +124,7 @@ protected:
   virtual KDSize computeSize() = 0;
   virtual void computeBaseline() = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
-  virtual void moveCursorInsideAtDirection (
+  void moveCursorInsideAtDirection (
     VerticalDirection direction,
     ExpressionLayoutCursor * cursor,
     bool * shouldRecomputeLayout,

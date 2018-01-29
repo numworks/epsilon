@@ -38,13 +38,6 @@ protected:
   KDSize computeSize() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
-  void moveCursorInsideAtDirection (
-    VerticalDirection direction,
-    ExpressionLayoutCursor * cursor,
-    bool * shouldRecomputeLayout,
-    ExpressionLayout ** childResult,
-    void * resultPosition,
-    int * resultScore) override;
   void childWasReplacedAtIndex(int index);
   bool isRowEmpty(int index) const;
   bool isColumnEmpty(int index) const;

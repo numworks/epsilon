@@ -55,6 +55,7 @@ int TextField::ContentView::draftTextLength() const {
 }
 
 void TextField::ContentView::setText(const char * text) {
+  reload();
   if (m_isEditing) {
     strlcpy(m_draftTextBuffer, text, m_textBufferSize);
     int textLength = strlen(text) >= m_textBufferSize ? m_textBufferSize-1 : strlen(text);

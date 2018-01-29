@@ -259,6 +259,19 @@ bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor, bool * sh
   return moveInside(VerticalDirection::Down, cursor, shouldRecomputeLayout);
 }
 
+bool ExpressionLayout::addGreySquaresToAllMatrixAncestors() {
+  bool addedSquares = false;
+  ExpressionLayout * currentAncestor = m_parent;
+  while (currentAncestor != nullptr) {
+    if (currentAncestor->isMatrix()) {
+      static_cast<MatrixLayout *>(currentAncestor)->addGreySquares();
+      addedSquares = true;
+    }
+    currentAncestor = currentAncestor->editableParent();
+  }
+  return addedSquares;
+}
+
 bool ExpressionLayout::hasText() const {
   // A layout has text if it is not empty and it is not an horizontal layout
   // with no child or with one child with no text.
@@ -309,6 +322,7 @@ bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutC
   }
   cursor->setPointedExpressionLayout(*childResultPtr);
   cursor->setPosition(resultPosition);
+  *shouldRecomputeLayout = (*childResultPtr)->addGreySquaresToAllMatrixAncestors();
   return true;
 }
 

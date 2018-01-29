@@ -275,24 +275,6 @@ ExpressionLayout * dummyGridLayout = new GridLayout(children(), m_numberOfRows, 
   return GridLayout::positionOfChild(child).translatedBy(dummyLayout.positionOfChild(dummyGridLayout));
 }
 
-void MatrixLayout::moveCursorInsideAtDirection (
-    VerticalDirection direction,
-    ExpressionLayoutCursor * cursor,
-    bool * shouldRecomputeLayout,
-    ExpressionLayout ** childResult,
-    void * resultPosition,
-    int * resultScore)
-{
-  GridLayout::moveCursorInsideAtDirection(direction, cursor, shouldRecomputeLayout, childResult, resultPosition, resultScore);
-  if (*childResult != this) {
-    // Add the grey squares if the cursor is pointing at a matrix descendant,
-    // not at the matrix itself.
-    assert(!hasGreySquares());
-    addGreySquares();
-    *shouldRecomputeLayout = true;
-  }
-}
-
 bool MatrixLayout::isRowEmpty(int index) const {
   assert(index >= 0 && index < m_numberOfRows);
   for (int i = index * m_numberOfColumns; i < (index+1) * m_numberOfColumns; i++) {

@@ -354,11 +354,11 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
 
 void HorizontalLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
   // Add the "brother" as a child.
-  // If there is only one empty child, remove it before adding the layout.
-  if (numberOfChildren() == 1 && editableChild(0)->isEmpty()) {
-    removeChildAtIndex(0, true);
-  }
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    // If the first child is empty, remove it before adding the layout.
+    if (numberOfChildren() > 0 && editableChild(0)->isEmpty()) {
+      removeChildAtIndex(0, true);
+    }
     if (moveCursor) {
       if (numberOfChildren() > 0) {
         cursor->setPointedExpressionLayout(editableChild(0));
@@ -371,7 +371,12 @@ void HorizontalLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Expres
     return;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  addOrMergeChildAtIndex(brother, numberOfChildren(), false);
+  // If the first child is empty, remove it before adding the layout.
+  int childrenCount = numberOfChildren();
+  if (childrenCount > 0 && editableChild(childrenCount - 1)->isEmpty()) {
+    removeChildAtIndex(childrenCount - 1, true);
+  }
+  addOrMergeChildAtIndex(brother, childrenCount, false);
   if (moveCursor) {
     cursor->setPointedExpressionLayout(this);
   }

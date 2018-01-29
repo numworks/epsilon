@@ -13,6 +13,9 @@ public:
   ExecutionEnvironment();
   static ExecutionEnvironment * currentExecutionEnvironment();
   void runCode(const char * );
+  virtual const char * input() {
+    return nullptr;
+  }
   virtual void displaySandbox() {
   }
   virtual void printText(const char * text, size_t length) {
@@ -31,5 +34,6 @@ void registerScriptProvider(ScriptProvider * s);
 // mp_lexer_new_from_file -> Ask the context about a file
 // mp_import_stat
 // mp_hal_stdout_tx_strn_cooked -> Tell the context Python printed text
+// mp_hal_input
 
 #endif

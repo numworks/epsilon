@@ -13,6 +13,7 @@ public:
   };
   OutputExpressionsView(Responder * parentResponder);
   void setExpressions(Poincare::ExpressionLayout ** expressionsLayout);
+  void setEqualMessage(I18n::Message equalSignMessage);
   KDColor backgroundColor() const override;
   void setHighlighted(bool highlight) override;
   Responder * responder() override {

@@ -21,6 +21,10 @@ void OutputExpressionsView::setExpressions(ExpressionLayout ** expressionsLayout
   layoutSubviews();
 }
 
+void OutputExpressionsView::setEqualMessage(I18n::Message equalSignMessage) {
+  m_approximateSign.setMessage(equalSignMessage);
+}
+
 void OutputExpressionsView::setHighlighted(bool highlight) {
   // Do not call HighlightCell::setHighlighted to avoid marking all cell as dirty
   m_highlighted = highlight;

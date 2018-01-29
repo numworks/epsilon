@@ -149,8 +149,11 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
         }
       }
     }
+    bool oldChildRemovedAtMerge = oldChild->isEmpty();
     mergeChildrenAtIndex(static_cast<HorizontalLayout *>(newChild), indexForInsertion + 1, true);
-    removeChildAtIndex(indexForInsertion, deleteOldChild);
+    if (!oldChildRemovedAtMerge) {
+      removeChildAtIndex(indexForInsertion, deleteOldChild);
+    }
     return;
   }
   // Else, just replace the child.
@@ -165,16 +168,11 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
 }
 
 void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren) {
-  int newIndex = index;
-  if (numberOfChildren() > 0 && child(0)->isEmpty() && (numberOfChildren() < 1 || !child(1)->mustHaveLeftBrother())) {
-    removeChildAtIndex(0, true);
-    newIndex = index == 0 ? 0 : index - 1;
-  }
   if (eL->isHorizontal()) {
-    mergeChildrenAtIndex(static_cast<HorizontalLayout *>(eL), newIndex, removeEmptyChildren);
+    mergeChildrenAtIndex(static_cast<HorizontalLayout *>(eL), index, removeEmptyChildren);
     return;
   }
-  addChildAtIndex(eL, newIndex);
+  addChildAtIndex(eL, index);
 }
 
 bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
@@ -279,14 +277,25 @@ bool HorizontalLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRe
   return moveVertically(ExpressionLayout::VerticalDirection::Down, cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
+
+void HorizontalLayout::addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) {
+  int newIndex = removeEmptyChildBeforeInsertionAtIndex(indexForInsertion, operands[0]->mustHaveLeftBrother());
+  DynamicLayoutHierarchy::addChildrenAtIndex(operands, numberOfOperands, newIndex, removeEmptyChildren);
+}
+
+bool HorizontalLayout::addChildAtIndex(ExpressionLayout * operand, int index) {
+  int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, operand->mustHaveLeftBrother());
+  return DynamicLayoutHierarchy::addChildAtIndex(operand, newIndex);
+}
+
 void HorizontalLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
-  // If the child to remove is at index 0 and its right brother must have a left
-  // brother (e.g. it is a VerticalOffsetLayout), replace the child with an
-  // EmptyVisibleLayout instead of removing it.
-  if (index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftBrother()) {
-    addChildAtIndex(new EmptyVisibleLayout(), index + 1);
-  }
-  DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);
+  privateRemoveChildAtIndex(index, deleteAfterRemoval, false);
+}
+
+void HorizontalLayout::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren) {
+  bool shouldRemoveOnLeft = eL->numberOfChildren() > 0 ? eL->child(0)->mustHaveLeftBrother() : true;
+  int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, shouldRemoveOnLeft);
+  DynamicLayoutHierarchy::mergeChildrenAtIndex(eL, newIndex, removeEmptyChildren);
 }
 
 int HorizontalLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
@@ -424,6 +433,34 @@ bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direct
   }
   assert(direction == ExpressionLayout::VerticalDirection::Down);
   return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+}
+
+void HorizontalLayout::privateRemoveChildAtIndex(int index, bool deleteAfterRemoval, bool forceRemove) {
+  // If the child to remove is at index 0 and its right brother must have a left
+  // brother (e.g. it is a VerticalOffsetLayout), replace the child with an
+  // EmptyVisibleLayout instead of removing it.
+  if ( !forceRemove && index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftBrother()) {
+    addChildAtIndex(new EmptyVisibleLayout(), index + 1);
+  }
+  DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);
+}
+
+int HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft) {
+  int newIndex = index;
+  // If empty, remove the child that would be on the right of the inserted
+  // layout.
+  if (newIndex < numberOfChildren()
+      && child(newIndex)->isEmpty())
+  {
+    privateRemoveChildAtIndex(newIndex, true, true);
+  }
+  // If empty, remove the child that would be on the left of the inserted
+  // layout.
+  if ( shouldRemoveOnLeft && newIndex - 1 > 0 && newIndex - 1 < numberOfChildren() -1 && child(newIndex - 1)->isEmpty()) {
+    privateRemoveChildAtIndex(newIndex-1, true, true);
+    newIndex = index - 1;
+  }
+  return newIndex;
 }
 
 }

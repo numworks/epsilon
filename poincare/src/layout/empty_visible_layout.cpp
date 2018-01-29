@@ -88,10 +88,15 @@ void EmptyVisibleLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Expr
   Color currentColor = m_color;
   int indexInParent = m_parent->indexOfChild(this);
   ExpressionLayout * parent = m_parent;
-  replaceWith(brother, true);
-  if (moveCursor) {
-    cursor->setPointedExpressionLayout(brother);
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+  if (brother->mustHaveLeftBrother()) {
+    m_color = Color::Yellow;
+    ExpressionLayout::privateAddBrother(cursor, brother, moveCursor);
+  } else {
+    if (moveCursor) {
+      replaceWithAndMoveCursor(brother, true, cursor);
+    } else {
+      replaceWith(brother, true);
+    }
   }
   if (currentColor == Color::Grey) {
     // The parent is a MatrixLayout.

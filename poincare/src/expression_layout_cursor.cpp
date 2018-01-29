@@ -217,7 +217,6 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
   // be the base of a new power layout.
   int numberOfOpenParenthesis = 0;
   if (m_position == Position::Right
-      && !m_pointedExpressionLayout->isEmpty()
       && m_pointedExpressionLayout->isCollapsable(&numberOfOpenParenthesis, true))
   {
     return true;

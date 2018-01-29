@@ -28,7 +28,10 @@ public:
   bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
 
   /* Dynamic layout */
+  void addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) override;
+  bool addChildAtIndex(ExpressionLayout * operand, int index) override;
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
+  void mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren) override;
 
   /* Expression Engine */
   int writeTextInBuffer(char * buffer, int bufferSize) const override;
@@ -46,6 +49,8 @@ protected:
 private:
   bool moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout);
   void privateReplaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor);
+  void privateRemoveChildAtIndex(int index, bool deleteAfterRemoval, bool forceRemove);
+  int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft);
 };
 
 }

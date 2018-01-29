@@ -166,7 +166,7 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
 
 void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren) {
   int newIndex = index;
-  if (numberOfChildren() > 0 && child(0)->isEmpty()) {
+  if (numberOfChildren() > 0 && child(0)->isEmpty() && (numberOfChildren() < 1 || !child(1)->mustHaveLeftBrother())) {
     removeChildAtIndex(0, true);
     newIndex = index == 0 ? 0 : index - 1;
   }
@@ -371,12 +371,12 @@ void HorizontalLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Expres
     return;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  // If the first child is empty, remove it before adding the layout.
+  // If the last child is empty, remove it before adding the layout.
   int childrenCount = numberOfChildren();
   if (childrenCount > 0 && editableChild(childrenCount - 1)->isEmpty()) {
     removeChildAtIndex(childrenCount - 1, true);
   }
-  addOrMergeChildAtIndex(brother, childrenCount, false);
+  addOrMergeChildAtIndex(brother, numberOfChildren(), false);
   if (moveCursor) {
     cursor->setPointedExpressionLayout(this);
   }

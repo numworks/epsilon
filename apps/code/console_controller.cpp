@@ -14,6 +14,8 @@ extern "C" {
 
 namespace Code {
 
+static const char * sStandardPromptText = ">>> ";
+
 ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * scriptStore) :
   ViewController(parentResponder),
   SelectableTableViewDataSource(),
@@ -27,6 +29,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   m_scriptStore(scriptStore),
   m_sandboxController(this)
 {
+  m_editCell.setPrompt(sStandardPromptText);
   for (int i = 0; i < k_numberOfLineCells; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);
   }
@@ -75,18 +78,20 @@ void ConsoleController::autoImport() {
 void ConsoleController::runAndPrintForCommand(const char * command) {
   m_consoleStore.pushCommand(command, strlen(command));
   assert(m_outputAccumulationBuffer[0] == '\0');
+
   runCode(command);
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
 }
 
-const char * ConsoleController::input() {
+const char * ConsoleController::inputText(const char * prompt) {
   AppsContainer * a = (AppsContainer *)(app()->container());
   m_inputRunLoopActive = true;
 
   m_selectableTableView.reloadData();
   m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
-  m_editCell.setText("???");
+  m_editCell.setPrompt(prompt);
+  m_editCell.setText("");
 
   a->redrawWindow();
   a->runWhile([](void * a){
@@ -96,6 +101,7 @@ const char * ConsoleController::input() {
 
   flushOutputAccumulationBufferToStore();
   m_consoleStore.deleteLastLineIfEmpty();
+  m_editCell.setPrompt(sStandardPromptText);
 
   return m_editCell.text();
 }

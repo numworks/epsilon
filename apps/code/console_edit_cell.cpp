@@ -10,7 +10,7 @@ ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, TextFieldDelegate 
   HighlightCell(),
   Responder(parentResponder),
   m_textBuffer{0},
-  m_promptView(ConsoleController::k_fontSize, I18n::Message::ConsolePrompt, 0, 0.5),
+  m_promptView(ConsoleController::k_fontSize, nullptr, 0, 0.5),
   m_textField(this, m_textBuffer, m_textBuffer, TextField::maxBufferSize(), delegate, false, ConsoleController::k_fontSize)
 {
 }
@@ -29,9 +29,9 @@ View * ConsoleEditCell::subviewAtIndex(int index) {
 }
 
 void ConsoleEditCell::layoutSubviews() {
-  KDSize chevronsSize = KDText::stringSize(I18n::translate(I18n::Message::ConsolePrompt), ConsoleController::k_fontSize);
-  m_promptView.setFrame(KDRect(KDPointZero, chevronsSize.width(), bounds().height()));
-  m_textField.setFrame(KDRect(KDPoint(chevronsSize.width(), KDCoordinate(0)), bounds().width() - chevronsSize.width(), bounds().height()));
+  KDSize promptSize = m_promptView.minimalSizeForOptimalDisplay();
+  m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()));
+  m_textField.setFrame(KDRect(KDPoint(promptSize.width(), KDCoordinate(0)), bounds().width() - promptSize.width(), bounds().height()));
 }
 
 void ConsoleEditCell::didBecomeFirstResponder() {
@@ -44,6 +44,11 @@ void ConsoleEditCell::setEditing(bool isEditing,  bool reinitDraftBuffer) {
 
 void ConsoleEditCell::setText(const char * text) {
   m_textField.setText(text);
+}
+
+void ConsoleEditCell::setPrompt(const char * prompt) {
+  m_promptView.setText(prompt);
+  layoutSubviews();
 }
 
 bool ConsoleEditCell::insertText(const char * text) {

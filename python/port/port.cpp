@@ -171,7 +171,7 @@ void mp_hal_stdout_tx_strn_cooked(const char * str, size_t len) {
   sCurrentExecutionEnvironment->printText(str, len);
 }
 
-const char * mp_hal_input() {
+const char * mp_hal_input(const char * prompt) {
   assert(sCurrentExecutionEnvironment != nullptr);
-  return sCurrentExecutionEnvironment->input();
+  return sCurrentExecutionEnvironment->inputText(prompt);
 }

@@ -211,6 +211,8 @@ bool CalculationController::textFieldDidHandleEvent(::TextField * textField, Ion
      * the first responder. */
     bool shouldUpdateFirstResponder = app()->firstResponder() == textField;
     m_selectableTableView.reloadData(shouldUpdateFirstResponder);
+    // The textField frame might have increased which forces to reload the textField scroll
+    textField->scrollToCursor();
   }
   return returnValue;
 }

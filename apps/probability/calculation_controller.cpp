@@ -117,10 +117,17 @@ int CalculationController::numberOfColumns() {
   return m_calculation->numberOfParameters()+1;
 }
 
+/* WARNING: we set one type per cell to be able to deduce the column width from
+ * the cell minimalSizeForOptimalDisplay. Otherwise, we can not know which cell
+ * to interrogate to get the column width and we neither can call
+ * tableView->cellAtLocation as this function depends on the
+ * numberOfDisplaybleRows which depends on the column width! */
+
 KDCoordinate CalculationController::columnWidth(int i) {
   if (i == 0) {
     return m_imageCell.minimalSizeForOptimalDisplay().width();
   }
+  // WARNING: that is possible only because we know which view cell corresponds to which cell
   return m_calculationCells[i-1].minimalSizeForOptimalDisplay().width();
 }
 
@@ -158,26 +165,21 @@ int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 }
 
 HighlightCell * CalculationController::reusableCell(int index, int type) {
-  if (type == 0) {
-    assert(index == 0);
-    return &m_imageCell;
+  assert(index == 0);
+  switch(type) {
+    case 0:
+      return &m_imageCell;
+    default:
+      return &m_calculationCells[type-1];
   }
-  assert(index >= 0 && index < k_numberOfCalculationCells);
-  return &m_calculationCells[index];
 }
 
 int CalculationController::reusableCellCount(int type) {
-  if (type == 0) {
-    return 1;
-  }
-  return k_numberOfCalculationCells;
+  return 1;
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
-  if (i == 0 && j == 0) {
-    return 0;
-  }
-  return 1;
+  return i;
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

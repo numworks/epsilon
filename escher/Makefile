@@ -41,6 +41,7 @@ objs += $(addprefix escher/src/,\
   message_tree.o\
   modal_view_controller.o\
   palette.o\
+  pointer_text_view.o\
   responder.o\
   run_loop.o\
   scroll_view.o\

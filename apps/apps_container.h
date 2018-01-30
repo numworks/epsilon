@@ -39,6 +39,7 @@ public:
   virtual bool dispatchEvent(Ion::Events::Event event) override;
   void switchTo(App::Snapshot * snapshot) override;
   void run() override;
+  void runWhile(bool (*callback)(void * ctx), void * ctx);
   bool updateBatteryState();
   void refreshPreferences();
   void displayExamModePopUp(bool activate);

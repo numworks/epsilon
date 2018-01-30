@@ -6,6 +6,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/metric.h>
+#include "../apps_container.h"
 
 extern "C" {
 #include <stdlib.h>
@@ -80,7 +81,23 @@ void ConsoleController::runAndPrintForCommand(const char * command) {
 }
 
 const char * ConsoleController::input() {
-  return "1+1";
+  AppsContainer * a = (AppsContainer *)(app()->container());
+  m_inputRunLoopActive = true;
+
+  m_selectableTableView.reloadData();
+  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  m_editCell.setText("???");
+
+  a->redrawWindow();
+  a->runWhile([](void * a){
+      ConsoleController * c = static_cast<ConsoleController *>(a);
+      return c->inputRunLoopActive();
+  }, this);
+
+  flushOutputAccumulationBufferToStore();
+  m_consoleStore.deleteLastLineIfEmpty();
+
+  return m_editCell.text();
 }
 
 void ConsoleController::removeExtensionIfAny(char * name) {
@@ -111,6 +128,12 @@ void ConsoleController::didBecomeFirstResponder() {
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Home && inputRunLoopActive()) {
+    askInputRunLoopTermination();
+    // We need to return true here because we want to actually exit from the
+    // input run loop, which requires ending a dispatchEvent cycle.
+    return true;
+  }
   if (event == Ion::Events::Up) {
     if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
       m_editCell.setEditing(false);
@@ -245,6 +268,10 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  if (inputRunLoopActive()) {
+    askInputRunLoopTermination();
+    return false;
+  }
   runAndPrintForCommand(text);
   if (m_sandboxIsDisplayed) {
     return true;
@@ -257,7 +284,11 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
 }
 
 bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const char * text) {
-  stackViewController()->pop();
+  if (inputRunLoopActive()) {
+    askInputRunLoopTermination();
+  } else {
+    stackViewController()->pop();
+  }
   return true;
 }
 

@@ -35,6 +35,7 @@ public:
   constexpr static int maxBufferSize() {
      return ContentView::k_maxBufferSize;
   }
+  void scrollToCursor();
 protected:
   class ContentView : public View {
   public:
@@ -95,7 +96,6 @@ private:
   bool privateHandleEvent(Ion::Events::Event event);
   void deleteCharPrecedingCursor();
   bool deleteEndOfLine();
-  void scrollToCursor();
   bool m_hasTwoBuffers;
   TextFieldDelegate * m_delegate;
 };

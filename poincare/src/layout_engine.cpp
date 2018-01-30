@@ -51,7 +51,7 @@ ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expressio
   return new HorizontalLayout(childrenLayouts, 2);
 }
 
-int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, const char * operatorName) {
+int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName) {
   if (bufferSize == 0) {
     return -1;
   }
@@ -64,7 +64,7 @@ int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression
     buffer[numberOfChar++] = '(';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
-  numberOfChar += expression->operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += expression->operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
   if (expression->operand(0)->needParenthesisWithParent(expression)) {
     buffer[numberOfChar++] = ')';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
@@ -77,7 +77,7 @@ int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression
       buffer[numberOfChar++] = '(';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
-    numberOfChar += expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+    numberOfChar += expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
     if (expression->operand(i)->needParenthesisWithParent(expression)) {
       buffer[numberOfChar++] = ')';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
@@ -87,7 +87,7 @@ int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression
   return numberOfChar;
 }
 
-int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, const char * operatorName) {
+int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName) {
   if (bufferSize == 0) {
     return -1;
   }
@@ -99,12 +99,12 @@ int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expressio
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   int numberOfOperands = expression->numberOfOperands();
   if (numberOfOperands > 0) {
-    numberOfChar += expression->operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+    numberOfChar += expression->operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
     for (int i = 1; i < numberOfOperands; i++) {
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
       buffer[numberOfChar++] = ',';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-      numberOfChar += expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+      numberOfChar += expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
     }
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }

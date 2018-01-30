@@ -45,9 +45,9 @@ ExpressionLayout * Multiplication::privateCreateLayout(FloatDisplayMode floatDis
   return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, middleDotString);
 }
 
-int Multiplication::writeTextInBuffer(char * buffer, int bufferSize) const {
+int Multiplication::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   const char multiplicationString[] = {Ion::Charset::MultiplicationSign, 0};
-  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, multiplicationString);
+  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, multiplicationString);
 }
 
 Expression::Sign Multiplication::sign() const {

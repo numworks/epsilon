@@ -22,7 +22,7 @@ public:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return nullptr;
   }
-  int writeTextInBuffer(char * buffer, int bufferSize) const override { return 0; }
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override { return 0; }
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;

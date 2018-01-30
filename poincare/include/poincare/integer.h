@@ -1,9 +1,9 @@
 #ifndef POINCARE_INTEGER_H
 #define POINCARE_INTEGER_H
 
-#include <poincare/static_hierarchy.h>
 #include <stdint.h>
 #include <assert.h>
+#include <poincare/expression_layout.h>
 
 namespace Poincare {
 

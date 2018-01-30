@@ -31,7 +31,7 @@ public:
   bool isEmpty();
   void tidy();
   bool shouldDisplayApproximateOutput(Poincare::Context * context);
-  bool exactAndApproximateOutputsAreEqual(Poincare::Context * context);
+  bool exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
   constexpr static int k_printedExpressionSize = 2*::TextField::maxBufferSize();
 private:
   /* Buffers holding text expressions have to be longer than the text written

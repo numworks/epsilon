@@ -12,8 +12,8 @@ protected:
   virtual bool dispatchEvent(Ion::Events::Event e) = 0;
   virtual int numberOfTimers();
   virtual Timer * timerAtIndex(int i);
-private:
   bool step();
+private:
   int m_time;
 };
 

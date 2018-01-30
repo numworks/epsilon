@@ -65,6 +65,8 @@ public:
   const char * input() override;
 
 private:
+  bool inputRunLoopActive() { return m_inputRunLoopActive; }
+  void askInputRunLoopTermination() { m_inputRunLoopActive = false; }
   static constexpr int LineCellType = 0;
   static constexpr int EditCellType = 1;
   static constexpr int k_numberOfLineCells = 15; // May change depending on the screen height
@@ -91,6 +93,7 @@ private:
    * ConsoleLine in the ConsoleStore and empty m_outputAccumulationBuffer. */
   ScriptStore * m_scriptStore;
   SandboxController m_sandboxController;
+  bool m_inputRunLoopActive;
 };
 }
 

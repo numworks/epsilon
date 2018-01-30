@@ -136,6 +136,11 @@ void AppsContainer::run() {
   switchTo(nullptr);
 }
 
+void AppsContainer::runWhile(bool (*callback)(void * ctx), void * ctx) {
+  while (callback(ctx) && RunLoop::step()) {
+  }
+}
+
 bool AppsContainer::updateBatteryState() {
   if (m_window.updateBatteryLevel() ||
       m_window.updateIsChargingState() ||

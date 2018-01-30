@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_H
 
 #include <poincare/expression_layout.h>
+#include <poincare/print_float.h>
 extern "C" {
 #include <assert.h>
 }
@@ -214,7 +215,7 @@ public:
 
   /* Layout Engine */
   ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
-  virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
+  virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Simplification */
   static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit = AngleUnit::Default);

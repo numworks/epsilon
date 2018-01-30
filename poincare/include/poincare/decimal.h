@@ -22,7 +22,7 @@ public:
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   Sign sign() const override { return m_mantissa.isNegative() ? Sign::Negative : Sign::Positive; }
 private:
   constexpr static int k_doublePrecision = 15;

@@ -24,7 +24,7 @@ ExpressionLayout * Undefined::privateCreateLayout(FloatDisplayMode floatDisplayM
   return new StringLayout(buffer, numberOfChars);
 }
 
-int Undefined::writeTextInBuffer(char * buffer, int bufferSize) const {
+int Undefined::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

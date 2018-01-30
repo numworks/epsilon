@@ -197,7 +197,7 @@ ExpressionLayout * Symbol::privateCreateLayout(FloatDisplayMode floatDisplayMode
   return new StringLayout(&m_name, 1);
 }
 
-int Symbol::writeTextInBuffer(char * buffer, int bufferSize) const {
+int Symbol::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

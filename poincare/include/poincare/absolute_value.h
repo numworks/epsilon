@@ -17,8 +17,8 @@ private:
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
   /* Layout */
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, "abs");
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "abs");
   }
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;

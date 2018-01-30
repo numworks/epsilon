@@ -90,12 +90,12 @@ ExpressionLayout * Factorial::privateCreateLayout(FloatDisplayMode floatDisplayM
   return new HorizontalLayout(childrenLayouts, 2);
 }
 
-int Factorial::writeTextInBuffer(char * buffer, int bufferSize) const {
+int Factorial::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  int numberOfChar = operand(0)->writeTextInBuffer(buffer, bufferSize);
+  int numberOfChar = operand(0)->writeTextInBuffer(buffer, bufferSize, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) {
     return numberOfChar;
   }

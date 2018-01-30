@@ -113,7 +113,7 @@ template<typename T> Expression * Decimal::templatedApproximate(Context& context
   return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));
 }
 
-int Decimal::writeTextInBuffer(char * buffer, int bufferSize) const {
+int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

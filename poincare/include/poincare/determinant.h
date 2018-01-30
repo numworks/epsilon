@@ -17,8 +17,8 @@ private:
   ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
   }
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, name());
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, name());
   }
   const char * name() const { return "det"; }
   /* Simplification */

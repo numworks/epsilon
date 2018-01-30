@@ -13,7 +13,7 @@ public:
   ExecutionEnvironment();
   static ExecutionEnvironment * currentExecutionEnvironment();
   void runCode(const char * );
-  virtual const char * input() {
+  virtual const char * inputText(const char * prompt) {
     return nullptr;
   }
   virtual void displaySandbox() {

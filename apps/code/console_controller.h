@@ -62,7 +62,7 @@ public:
   // MicroPython::ExecutionEnvironment
   void displaySandbox() override;
   void printText(const char * text, size_t length) override;
-  const char * input() override;
+  const char * inputText(const char * prompt) override;
 
 private:
   bool inputRunLoopActive() { return m_inputRunLoopActive; }

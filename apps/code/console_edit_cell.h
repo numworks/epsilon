@@ -5,7 +5,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
-#include <escher/message_text_view.h>
+#include <escher/pointer_text_view.h>
 
 namespace Code {
 
@@ -31,10 +31,10 @@ public:
   const char * text() const { return m_textField.text(); }
   void setText(const char * text);
   bool insertText(const char * text);
-
+  void setPrompt(const char * prompt);
 private:
   char m_textBuffer[TextField::maxBufferSize()];
-  MessageTextView m_promptView;
+  PointerTextView m_promptView;
   TextField m_textField;
 };
 

@@ -192,13 +192,14 @@ bool Calculation::shouldDisplayApproximateOutput(Context * context) {
   return input()->isApproximate(*context);
 }
 
-bool Calculation::exactAndApproximateOutputsAreEqual(Poincare::Context * context) {
-  if (exactOutput(context)->type() != Expression::Type::Rational) {
-    return false;
-  }
-  assert(approximateOutput(context)->type() == Type::Complex);
+bool Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {
   char buffer[k_printedExpressionSize];
-  Complex<double>::convertFloatToText(static_cast<Complex<double> *>(approximateOutput(context))->a(), buffer, k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits(), Preferences::sharedPreferences()->displayMode());
+  approximateOutput(context)->writeTextInBuffer(buffer, k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
+  /* Warning: we cannot use directly the m_approximateOutputText but we have to
+   * re-serialize the approximateOutput because the number of stored
+   * significative numbers and the number of displayed significative numbers
+   * are not identical. (For example, 0.000025 might be displayed "0.00003"
+   * which requires in an approximative equal) */
   Expression * approximateOutput = Expression::ParseAndSimplify(buffer, *context);
   bool isEqual = approximateOutput->isIdenticalTo(exactOutput(context));
   delete approximateOutput;

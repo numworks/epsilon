@@ -43,6 +43,7 @@ private:
   View * loadView() override;
   void unloadView(View * view) override;
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
+  char m_cacheBuffer[TextField::maxBufferSize()];
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
 };

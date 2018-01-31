@@ -17,8 +17,7 @@ bool USBTimer::fire() {
       needRedrawing = true;
     }
 #if LED_WHILE_CHARGING
-    KDColor LEDColor = Ion::Battery::isCharging() ? KDColorYellow : KDColorGreen;
-    Ion::LED::setColor(LEDColor);
+    Ion::LED::setCharging(Ion::USB::isPlugged(), Ion::Battery::isCharging());
 #endif
     if (!m_previousPluggedState) {
       Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
@@ -27,7 +26,7 @@ bool USBTimer::fire() {
   } else {
     if (m_previousPluggedState) {
 #if LED_WHILE_CHARGING
-      Ion::LED::setColor(KDColorBlack);
+      Ion::LED::setCharging(Ion::USB::isPlugged(), Ion::Battery::isCharging());
 #endif
       m_previousPluggedState = false;
     }

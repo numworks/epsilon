@@ -21,7 +21,6 @@ app_objs += $(addprefix apps/,\
   exam_pop_up_controller.o\
   global_preferences.o\
   i18n.o\
-  led_timer.o\
   lock_view.o\
   main.o\
   math_toolbox.o\

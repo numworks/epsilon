@@ -14,14 +14,26 @@ namespace Device {
  *  PC7 | LED red           | Alternate Function 2  | TIM3_CH2
  */
 
+enum Mode {
+  PWM,
+  BLINK
+} ;
+
+enum Color {
+  RED,
+  GREEN,
+  BLUE
+} ;
+
 void init();
 void shutdown();
+void setColorStatus(Color color, bool enable);
 /* This call bypasses the timer, and immediately enforces a given LED state. */
 void enforceState(bool red, bool green, bool blue);
 
 void initGPIO();
 void shutdownGPIO();
-void initTimer();
+void initTimer(Mode mode, float blinkPeriod = 0);
 void shutdownTimer();
 
 constexpr static GPIOPin RGBPins[] = {

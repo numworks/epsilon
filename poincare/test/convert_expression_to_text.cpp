@@ -164,6 +164,8 @@ QUIZ_CASE(poincare_decimal_to_text) {
   assert_expression_prints_to(&e14, "9.99999999999995E-7");
   Decimal e15(0.0000009999999999999995);
   assert_expression_prints_to(&e15, "0.000001");
+  Decimal e16(0.0000009999999999901200121020102010201201201021099995);
+  assert_expression_prints_to(&e16, "9.9999999999012E-7");
 }
 
 QUIZ_CASE(poincare_complex_to_text) {

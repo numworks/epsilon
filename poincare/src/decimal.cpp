@@ -125,17 +125,23 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignif
     buffer[currentChar] = 0;
     return currentChar;
   }
+  char tempBuffer[200];
+  int mantissaLength = m_mantissa.writeTextInBuffer(tempBuffer, 200);
+  if (strcmp(tempBuffer, "undef") == 0) {
+    strlcpy(buffer, tempBuffer, bufferSize);
+    return mantissaLength;
+  }
   int nbOfDigitsInMantissaWithoutSign = numberOfDigitsInMantissaWithoutSign();
   int numberOfRequiredDigits = nbOfDigitsInMantissaWithoutSign > m_exponent ? nbOfDigitsInMantissaWithoutSign : m_exponent;
   numberOfRequiredDigits = m_exponent < 0 ? 1+nbOfDigitsInMantissaWithoutSign-m_exponent : numberOfRequiredDigits;
   /* Case 0: the number would be too long if we print it as a natural decimal */
   if (numberOfRequiredDigits > k_maxLength) {
     if (nbOfDigitsInMantissaWithoutSign == 1) {
-      currentChar +=m_mantissa.writeTextInBuffer(buffer, bufferSize);
+      currentChar += strlcpy(buffer, tempBuffer, bufferSize);
     } else {
       currentChar++;
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
-      currentChar += m_mantissa.writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+      currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
       int decimalMarkerPosition = 1;
       if (buffer[1] == '-') {
         decimalMarkerPosition++;
@@ -153,6 +159,8 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignif
     return currentChar;
   }
   /* Case 2: Print a natural decimal number */
+  int deltaCharMantissa = m_exponent < 0 ? -m_exponent+1 : 0;
+  strlcpy(buffer+deltaCharMantissa, tempBuffer, bufferSize-deltaCharMantissa);
   if (m_mantissa.isNegative()) {
     buffer[currentChar++] = '-';
   }
@@ -176,7 +184,7 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignif
     tempChar = buffer[currentChar];
     tempCharPosition = currentChar;
   }
-  currentChar += m_mantissa.writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+  currentChar += mantissaLength;
   if (m_mantissa.isNegative()) { // replace the temp char back
     buffer[tempCharPosition] = tempChar;
   }

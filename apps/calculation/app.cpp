@@ -57,6 +57,9 @@ bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event e
    * less than k_printedExpressionLength characters. Otherwise, we prevent the
    * user from adding this expression to the calculation store. */
   if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
+    if (textField->text()[0] == 0) {
+      return true;
+    }
     Expression * exp = Expression::parse(textField->text());
     if (exp == nullptr) {
       textField->app()->displayWarning(I18n::Message::SyntaxError);

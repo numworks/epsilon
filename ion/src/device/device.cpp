@@ -238,8 +238,9 @@ void shutdownClocks() {
   // APB2 bus
   RCC.APB2ENR()->set(0x00008000); // Reset value
 
-  // AHB1
-  RCC.APB1ENR()->set(0x00000400);
+  // APB1
+  RCC.APB1ENR()->set(0x00000402);
+  RCC.APB1LPENR()->setTIM3LPEN(true); // Keep the LED going
 
   // AHB1 bus
   RCC.AHB1ENR()->set(0); // Reset value

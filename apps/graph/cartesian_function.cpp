@@ -64,7 +64,11 @@ CartesianFunction::Point CartesianFunction::nextIntersectionFrom(double start, d
   double resultAbscissa = nextIntersectionWithFunction(start, step, max, [](double x, Context * context, const Shared::Function * function0, const Shared::Function * function1) {
         return function0->evaluateAtAbscissa(x, context)-function1->evaluateAtAbscissa(x, context);
       }, context, function);
-  return {.abscissa = resultAbscissa, .value = evaluateAtAbscissa(resultAbscissa, context)};
+  CartesianFunction::Point result = {.abscissa = resultAbscissa, .value = evaluateAtAbscissa(resultAbscissa, context)};
+  if (std::fabs(result.value) < step*k_precision) {
+    result.value = 0.0;
+  }
+  return result;
 }
 
 CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, double step, double max, Evaluation evaluate, Context * context, const Shared::Function * function, bool lookForRootMinimum) const {
@@ -82,9 +86,12 @@ CartesianFunction::Point CartesianFunction::nextMinimumOfFunction(double start, 
     }
   } while (endCondition);
 
-  if (std::fabs(result.abscissa) < 1E2*k_sqrtEps) {
+  if (std::fabs(result.abscissa) < step*k_precision) {
     result.abscissa = 0;
     result.value = evaluate(0, context, this, function);
+  }
+  if (std::fabs(result.value) < step*k_precision) {
+    result.value = 0;
   }
   if (lookForRootMinimum) {
     result.abscissa = std::fabs(result.value) >= k_sqrtEps ? NAN : result.abscissa;
@@ -247,7 +254,7 @@ double CartesianFunction::nextIntersectionWithFunction(double start, double step
       result = resultExtremum[i].abscissa;
     }
   }
-  if (std::fabs(result) < step/1E3) {
+  if (std::fabs(result) < step*k_precision) {
     result = 0;
   }
   return result;

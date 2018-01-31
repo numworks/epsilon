@@ -199,7 +199,7 @@ void ScrollableExpressionViewWithCursor::insertLayoutAtCursor(Poincare::Expressi
     return;
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  if (layout->isMatrix() && pointedLayout->hasAncestor(layout)) {
+  if (layout->isMatrix() && pointedLayout && pointedLayout->hasAncestor(layout)) {
     static_cast<Poincare::MatrixLayout *>(layout)->addGreySquares();
   }
   if (pointedLayout != nullptr) {

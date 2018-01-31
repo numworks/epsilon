@@ -579,7 +579,7 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
    * Experimentally, we can display at most integer whose number of digits is
    * around 25. */
   if (m_numberOfDigits > 25) {
-    return strlcpy(buffer, "inf", 4);
+    return strlcpy(buffer, "undef", bufferSize);
   }
 
   Integer base = Integer(10);
@@ -599,7 +599,7 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
         d.quotient.isEqualTo(Integer(0)))) {
     char c = char_from_digit(d.remainder.digit(0));
     if (size >= bufferSize-1) {
-      return strlcpy(buffer, "inf", bufferSize);
+      return strlcpy(buffer, "undef", bufferSize);
     }
     buffer[size++] = c;
     d = Division(d.quotient, base);

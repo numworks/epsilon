@@ -28,6 +28,7 @@ public:
     CalculationStore m_calculationStore;
   };
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
+  bool textInputIsCorrect(const char * text);
   const char * XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);

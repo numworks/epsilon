@@ -4,6 +4,8 @@
 namespace Ion {
 namespace Device {
 
+constexpr int SYSBUS_FREQ = 96*1000*1000;
+
 void init();
 void shutdown();
 
@@ -12,6 +14,8 @@ void initPeripherals();
 void shutdownPeripherals();
 void initClocks();
 void shutdownClocks();
+
+void waitTIM6(unsigned short prescaler, long cycles);
 
 /*  Pin | Role              | Mode                  | Function
  * -----+-------------------+-----------------------+----------

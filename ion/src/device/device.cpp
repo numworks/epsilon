@@ -19,15 +19,20 @@ extern "C" {
 
 // Public Ion methods
 
-/* TODO: The delay methods 'msleep' and 'usleep' are currently dependent on the
- * optimizations chosen by the compiler. To prevent that and to gain in
- * precision, we could use the controller cycle counter (Systick). */
-
 void Ion::msleep(long ms) {
-  for (volatile long i=0; i<8852*ms; i++) {
-      __asm volatile("nop");
-  }
+  // We need a frequency high enough to not overflow the prescaler,
+  // which is 16 bits wide.
+  constexpr int TIM6_FREQ = 4*1000;
+
+  Ion::Device::waitTIM6(Ion::Device::SYSBUS_FREQ / TIM6_FREQ, ms * TIM6_FREQ / 1000);
 }
+
+/* TODO: The delay method 'usleep' is currently dependent on the optimizations
+ * chosen by the compiler. To prevent that and to gain in precision, we could
+ * use the controller cycle counter (Systick). We can't use a regular timer
+ * (like TIM6) for this since setting it up takes a significant amount of time
+ * in these timescales.
+ */
 void Ion::usleep(long us) {
   for (volatile long i=0; i<9*us; i++) {
     __asm volatile("nop");
@@ -211,8 +216,10 @@ void initClocks() {
   RCC.AHB1ENR()->set(ahb1enr);
 
   // APB1 bus
-  // We're using TIM3
+  // We're using TIM3 for the LEDs
   RCC.APB1ENR()->setTIM3EN(true);
+  // We're using TIM6 for sleeping
+  RCC.APB1ENR()->setTIM6EN(true);
   RCC.APB1ENR()->setPWREN(true);
 
   // APB2 bus
@@ -238,6 +245,32 @@ void shutdownClocks() {
   RCC.AHB1ENR()->set(0); // Reset value
 
   RCC.AHB3ENR()->setFSMCEN(false);
+}
+
+void waitTIM6(unsigned short prescaler, long cycles) {
+  while (cycles > 0) {
+    // TIM6 counts up to 2^16-1, make sure we won't overflow the counter.
+    uint16_t iterCycles = (cycles > 0xFFFF ? 0xFFFF : cycles);
+
+    // Initialize TIM6
+    TIM6.PSC()->set(prescaler);
+    TIM6.CNT()->set(0);
+    TIM6.ARR()->set(iterCycles);
+    TIM6.EGR()->setUG(true);
+    TIM6.SR()->setUIF(false);
+    TIM6.CR1()->setCEN(true);
+
+    // Wait until the timer elapses
+    do {
+      // TODO: Use interrupts instead of busy-waiting
+      __asm volatile("nop");
+    } while (TIM6.SR()->getUIF() == false);
+
+    // Stop TIM6
+    TIM6.CR1()->setCEN(false);
+
+    cycles -= iterCycles;
+  }
 }
 
 }

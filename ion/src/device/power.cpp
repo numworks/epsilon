@@ -47,7 +47,7 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
    * to clear it, and then a second WFE to wait for a _new_ event. */
     asm("sev");
     asm("wfe");
-    msleep(1);
+    asm("nop");
     asm("wfe");
 
     Device::initClocks();

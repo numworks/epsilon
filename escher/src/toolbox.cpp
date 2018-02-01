@@ -74,6 +74,7 @@ View * Toolbox::ListController::view() {
 }
 
 void Toolbox::ListController::didBecomeFirstResponder() {
+  m_selectableTableView->reloadData();
   m_selectableTableView->selectCellAtLocation(0, m_firstSelectedRow);
   app()->setFirstResponder(m_selectableTableView);
 }

@@ -1,4 +1,6 @@
-products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin) $(products:.$(EXE)=.map)
+products += $(patsubst %.$(EXE),%.hex,$(filter %.$(EXE),$(products)))
+products += $(patsubst %.$(EXE),%.bin,$(filter %.$(EXE),$(products)))
+products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
 %.hex: %.$(EXE)
 	@echo "OBJCOPY $@"

@@ -6,6 +6,7 @@ extern "C" {
 }
 #include <cmath>
 #include <poincare/complex.h>
+#include <poincare/ieee754.h>
 #include "layout/string_layout.h"
 #include <utility>
 
@@ -485,19 +486,10 @@ T Integer::approximate() const {
     T result = m_negative ? -0.0 : 0.0;
     return result;
   }
-  union {
-    uint64_t uint_result;
-    T float_result;
-  } u;
   assert(sizeof(T) == 4 || sizeof(T) == 8);
   /* We're generating an IEEE 754 compliant float(double).
-  * Theses numbers are 32(64)-bit values, stored as follow:
-  * sign: 1 bit (1 bit)
-  * exponent: 8 bits (11 bits)
-  * mantissa: 23 bits (52 bits)
-  *
   * We can tell that:
-  * - the sign is going to be 0 for now, we only handle positive numbers
+  * - the sign depends on m_negative
   * - the exponent is the length of our BigInt, in bits - 1 + 127 (-1+1023);
   * - the mantissa is the beginning of our BigInt, discarding the first bit
   */
@@ -507,28 +499,20 @@ T Integer::approximate() const {
 
   bool sign = m_negative;
 
-  int signNbBit = 1;
-  int exponentNbBit = sizeof(T) == sizeof(float) ? 8 : 11;
-  int mantissaNbBit = sizeof(T) == sizeof(float) ? 23 : 52;
-  int totalNumberOfBits = signNbBit + exponentNbBit + mantissaNbBit;
-  uint16_t exponent = (1 << (exponentNbBit-1)) -2;
-  /* if the exponent is bigger then 255 (2047), it cannot be stored as a
-   * uint8(uint11). Also, the integer whose 2-exponent is bigger than 255(2047)
-   * cannot be stored as a float (IEEE 754 floating(double) point). The
-   * approximation is thus INFINITY. */
-  int maxExponent = (1 << exponentNbBit) -1;
-  if ((int)exponent + (m_numberOfDigits-1)*32 +numberOfBitsInLastDigit> maxExponent) {
+  uint16_t exponent = IEEE754<T>::exponentOffset();
+  /* Escape case if the exponent is too big to be stored */
+  if ((m_numberOfDigits-1)*32+numberOfBitsInLastDigit-1> IEEE754<T>::maxExponent()-IEEE754<T>::exponentOffset()) {
     return INFINITY;
   }
   exponent += (m_numberOfDigits-1)*32;
-  exponent += numberOfBitsInLastDigit;
+  exponent += numberOfBitsInLastDigit-1;
 
   uint64_t mantissa = 0;
   /* Shift the most significant int to the left of the mantissa. The most
    * significant 1 will be ignore at the end when inserting the mantissa in
    * the resulting uint64_t (as required by IEEE754). */
-  assert(totalNumberOfBits-numberOfBitsInLastDigit >= 0 && totalNumberOfBits-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
-  mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBitsInLastDigit));
+  assert(IEEE754<T>::size()-numberOfBitsInLastDigit >= 0 && IEEE754<T>::size()-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
+  mantissa |= ((uint64_t)lastDigit << (IEEE754<T>::size()-numberOfBitsInLastDigit));
   int digitIndex = 2;
   int numberOfBits = numberOfBitsInLastDigit;
   /* Complete the mantissa by inserting, from left to right, every digit of the
@@ -539,14 +523,14 @@ T Integer::approximate() const {
   while (m_numberOfDigits >= digitIndex) {
     lastDigit = digit(m_numberOfDigits-digitIndex);
     numberOfBits += 32;
-    if (numberOfBits-totalNumberOfBits >= 64) {
+    if (numberOfBits-IEEE754<T>::size() >= 64) {
       break;
     }
-    if (totalNumberOfBits > numberOfBits) {
-      assert(totalNumberOfBits-numberOfBits > 0 && totalNumberOfBits-numberOfBits < 64);
-      mantissa |= ((uint64_t)lastDigit << (totalNumberOfBits-numberOfBits));
+    if (IEEE754<T>::size() > numberOfBits) {
+      assert(IEEE754<T>::size()-numberOfBits > 0 && IEEE754<T>::size()-numberOfBits < 64);
+      mantissa |= ((uint64_t)lastDigit << (IEEE754<T>::size()-numberOfBits));
     } else {
-      mantissa |= ((uint64_t)lastDigit >> (numberOfBits-totalNumberOfBits));
+      mantissa |= ((uint64_t)lastDigit >> (numberOfBits-IEEE754<T>::size()));
     }
     digitIndex++;
   }
@@ -556,18 +540,14 @@ T Integer::approximate() const {
   // shift the mantissa if the rounding increase the length in bits of the
   // mantissa.
 
-  u.uint_result = 0;
-  u.uint_result |= ((uint64_t)sign << (totalNumberOfBits-1));
-  u.uint_result |= ((uint64_t)exponent << mantissaNbBit);
-  uint64_t oneOnMantissaBits = mantissaNbBit == 23 ? 0x7FFFFF : 0xFFFFFFFFFFFFF;
-  u.uint_result |= ((uint64_t)mantissa >> (totalNumberOfBits-mantissaNbBit-1) & oneOnMantissaBits);
+  T result = IEEE754<T>::buildFloat(sign, exponent, mantissa);
 
   /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
    * representable float. */
-  if (exponent == maxExponent && std::isnan(u.float_result)) {
+  if (exponent == IEEE754<T>::maxExponent() && std::isnan(result)) {
     return INFINITY;
   }
-  return u.float_result;
+  return result;
 }
 
 int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {

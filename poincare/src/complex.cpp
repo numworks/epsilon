@@ -4,6 +4,7 @@
 #include <poincare/addition.h>
 #include <poincare/multiplication.h>
 #include <poincare/symbol.h>
+#include <poincare/ieee754.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -20,19 +21,11 @@ namespace Poincare {
 
 template<typename T>
 int exponent(T f) {
-  static double k_log10base2 = 3.321928094887362347870319429489390175864831393024580612054;
+  static T k_log10base2 = 3.321928094887362347870319429489390175864831393024580612054;
   if (f == 0.0) {
     return 0;
   }
-  union {
-    uint64_t uint_result;
-    T float_result;
-  } u;
-  u.float_result = f;
-  int mantissaNbBit = sizeof(T) == sizeof(float) ? 23 : 52;
-  uint64_t oneOnExponentBits = sizeof(T) == sizeof(float)? 0xFF : 0x7FF;
-  int exponentBase2 = (u.uint_result >> mantissaNbBit) & oneOnExponentBits; // Get the exponent bits
-  exponentBase2 -= (oneOnExponentBits >> 1);
+  T exponentBase2 = IEEE754<T>::exponent(f);
   /* Compute the exponent in base 10 from exponent in base 2:
    * f = m1*2^e1
    * f = m2*10^e2

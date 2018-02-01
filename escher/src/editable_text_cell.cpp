@@ -13,6 +13,7 @@ EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegat
   m_bottomMargin(bottomMargin),
   m_leftMargin(leftMargin)
 {
+  m_textBody[0] = 0;
 }
 
 void EditableTextCell::setMargins(KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) {

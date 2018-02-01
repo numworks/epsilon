@@ -1,6 +1,6 @@
 include build/config.mak
 
-default: app.$(EXE)
+default: epsilon.$(EXE)
 
 .PHONY: info
 info:

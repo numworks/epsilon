@@ -1,17 +1,16 @@
-app.js: LDFLAGS += -s 'EMTERPRETIFY_FILE="app.etb"'
-app.js: $(app_objs) $(app_image_objs)
+epsilon.js: LDFLAGS += -s 'EMTERPRETIFY_FILE="epsilon.etb"'
 
-app.packed.js: LDFLAGS += --memory-init-file 0
-app.packed.js: $(app_objs) $(app_image_objs)
+epsilon.packed.js: LDFLAGS += --memory-init-file 0
+epsilon.packed.js: $(app_objs) $(app_image_objs)
 
-numworks_simulator.zip: app.packed.js
+numworks_simulator.zip: epsilon.packed.js
 	@rm -rf $(basename $@)
 	@mkdir $(basename $@)
-	@cp app.packed.js $(basename $@)/epsilon.js
+	@cp epsilon.packed.js $(basename $@)/epsilon.js
 	@cp ion/src/emscripten/background.jpg $(basename $@)/
 	@cp ion/src/emscripten/simulator.html $(basename $@)/
 	@echo "ZIP     $@"
 	@zip -r -9 $@ $(basename $@) > /dev/null
 	@rm -rf $(basename $@)
 
-products += $(addprefix app.,js mem etb) app.packed.js numworks_simulator.zip
+products += $(addprefix epsilon.,js mem etb) epsilon.packed.js numworks_simulator.zip

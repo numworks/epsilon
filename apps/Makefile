@@ -1,5 +1,3 @@
-EPSILON_I18N_LANGUAGES ?= en fr es de pt
-EPSILON_APPS ?= calculation graph sequence settings statistics probability regression code
 
 include apps/shared/Makefile
 include apps/home/Makefile
@@ -45,7 +43,7 @@ snapshot_includes = $(foreach i,$(snapshot_headers),-include $(i) )
 apps/apps_container_storage.o apps/main.o: CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count)
 
 
-i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N_LANGUAGES)))
+i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N)))
 i18n_files += $(addprefix apps/,\
   shared.de.i18n\
   shared.en.i18n\
@@ -68,7 +66,7 @@ i18n_files += $(addprefix apps/,\
 apps/i18n.h: apps/i18n.cpp
 apps/i18n.cpp: $(i18n_files)
 	@echo "I18N    $@"
-	@python apps/i18n.py --header $(subst .cpp,.h,$@) --implementation $@ --locales $(EPSILON_I18N_LANGUAGES) --files $^
+	$(Q) @python apps/i18n.py --header $(subst .cpp,.h,$@) --implementation $@ --locales $(EPSILON_I18N) --files $^
 
 $(app_objs): apps/i18n.h
 

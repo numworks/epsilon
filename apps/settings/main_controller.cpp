@@ -16,18 +16,18 @@ const SettingsMessageTree complexFormatChildren[2] = {SettingsMessageTree(I18n::
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
 const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
 const SettingsMessageTree menu[8] =
 #else
 const SettingsMessageTree menu[7] =
 #endif
   {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2), SettingsMessageTree(I18n::Message::DisplayMode, FloatDisplayModeChildren, 3), SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 2),
   SettingsMessageTree(I18n::Message::Brightness), SettingsMessageTree(I18n::Message::Language), SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   SettingsMessageTree(I18n::Message::UpdatePopUp),
 #endif
   SettingsMessageTree(I18n::Message::About, aboutChildren, 3)};
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
 const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
 #else
 const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 7);
@@ -35,7 +35,7 @@ const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp
 
 MainController::MainController(Responder * parentResponder) :
   ViewController(parentResponder),
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   m_updateCell(I18n::Message::Default, KDText::FontSize::Large),
 #endif
   m_complexFormatCell(I18n::Message::Default, KDText::FontSize::Large),
@@ -72,7 +72,7 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (m_messageTreeModel->children(selectedRow())->numberOfChildren() == 0) {
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
     if (m_messageTreeModel->children(selectedRow())->label() == I18n::Message::UpdatePopUp) {
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         GlobalPreferences::sharedGlobalPreferences()->setShowUpdatePopUp(!GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
@@ -135,7 +135,7 @@ HighlightCell * MainController::reusableCell(int index, int type) {
   if (type == 2) {
     return &m_brightnessCell;
   }
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   if (type == 3) {
     return &m_updateCell;
   }
@@ -157,7 +157,7 @@ int MainController::typeAtLocation(int i, int j) {
   if (j == 3) {
     return 2;
   }
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   if (j == 6) {
     return 3;
   }
@@ -197,7 +197,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   if (index == 6) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();

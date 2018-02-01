@@ -8,8 +8,8 @@
 #error This file expects PATCH_LEVEL to be defined
 #endif
 
-#ifndef VERSION
-#error This file expects VERSION to be defined
+#ifndef EPSILON_VERSION
+#error This file expects EPSILON_VERSION to be defined
 #endif
 
 #ifndef HEADER_SECTION
@@ -20,7 +20,7 @@ class VersionInfo {
 public:
   constexpr VersionInfo() :
     m_header(Magic),
-    m_version{VERSION},
+    m_version{EPSILON_VERSION},
     m_patchLevel{PATCH_LEVEL},
     m_footer(Magic) { }
   const char * version() const {

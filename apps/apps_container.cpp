@@ -63,7 +63,7 @@ VariableBoxController * AppsContainer::variableBoxController() {
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
   resetShiftAlphaStatus();
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   if (activeApp()->snapshot()!= onBoardingAppSnapshot() && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
     activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f);
   }
@@ -126,7 +126,7 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
 
 void AppsContainer::run() {
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
-#if OS_WITH_ONBOARDING_APP
+#if EPSILON_ONBOARDING_APP
   switchTo(onBoardingAppSnapshot());
 #else
   refreshPreferences();

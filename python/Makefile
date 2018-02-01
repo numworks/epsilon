@@ -208,7 +208,7 @@ endif
 
 python/port/genhdr/qstrdefs.generated.h: python/port/genhdr/qstrdefs.in.h
 	@echo "QSTRDAT $@"
-	@$(PYTHON) python/src/py/makeqstrdata.py $< > $@
+	$(Q) $(PYTHON) python/src/py/makeqstrdata.py $< > $@
 
 products += python/port/genhdr/qstrdefs.generated.h
 

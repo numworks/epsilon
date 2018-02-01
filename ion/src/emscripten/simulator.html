@@ -181,7 +181,7 @@
       </div>
     </div>
     <div>
-      <a id="screenshot" href="#">Save screenshot</a>
+      <a id="screenshot" href="#" target="_blank" download>Save screenshot</a>
     </div>
     <script>
 var Module = {
@@ -215,11 +215,10 @@ for (var i=0; i< buttons.length; i++) {
     }
   }, false);
 
-document.getElementById("screenshot").addEventListener("click", function(e) {
-  var canvas = document.getElementById("screen");
-  window.open(canvas.toDataURL("image/png"));
-  e.preventDefault();
-});
+  document.getElementById("screenshot").addEventListener("click", function(e) {
+    this.href = document.getElementById("screen").toDataURL("image/png");
+  });
+
     </script>
   </body>
 </html>

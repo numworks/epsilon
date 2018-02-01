@@ -30,11 +30,7 @@ CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
 products :=
 
-ifeq ($(VERBOSE),1)
-default: info clean app_size app_memory_map
-else
 default: app.$(EXE)
-endif
 run: app_run
 
 .PHONY: info
@@ -91,23 +87,6 @@ $(all_objs): $(generated_headers)
 %.$(EXE): $(objs)
 	@echo "LD      $@"
 	@$(LD) $^ $(LDFLAGS) -o $@
-
-.PHONY: %_size
-%_size: %.$(EXE)
-	@echo "========= BUILD OUTPUT ========"
-	@echo "File:  $<"
-	@$(SIZE) $< | tail -n 1 | awk '{print "Code:  " $$1 " bytes";print "Data:  " $$2 " bytes"; print "Total: " int(($$1+$$2)/1024) " kB (" $$1 + $$2 " bytes)";}'
-	@echo "==============================="
-
-ifdef OBJCOPY
-products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin)
-%.hex: %.$(EXE)
-	@echo "OBJCOPY $@"
-	@$(OBJCOPY) -O ihex $< $@
-%.bin: %.$(EXE)
-	@echo "OBJCOPY $@"
-	@$(OBJCOPY) -O binary $< $@
-endif
 
 %.o: %.c
 	@echo "CC      $@"

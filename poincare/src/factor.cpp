@@ -71,6 +71,7 @@ Expression * Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, 
   Arithmetic::PrimeFactorization(&i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
   int index = 0;
   if (coefficients[0].isMinusOne()) {
+    delete m;
     return new Undefined();
   }
   while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {

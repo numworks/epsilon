@@ -18,12 +18,12 @@ Timer * RunLoop::timerAtIndex(int i) {
 }
 
 void RunLoop::run() {
-#ifdef __EMSCRIPTEN__
-  emscripten_set_main_loop_arg([](void * ctx){ ((RunLoop *)ctx)->step(); }, this, 0, 1);
-#else
-  while(step()) {
+  runWhile(nullptr, nullptr);
+}
+
+void RunLoop::runWhile(bool (*callback)(void * ctx), void * ctx) {
+  while ((callback == nullptr || callback(ctx)) && step()) {
   }
-#endif
 }
 
 bool RunLoop::step() {

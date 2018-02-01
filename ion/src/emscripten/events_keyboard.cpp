@@ -4,6 +4,7 @@
 extern "C" {
 #include <SDL/SDL.h>
 }
+#include <emscripten.h>
 
 static Ion::Events::Event sEvent = Ion::Events::None;
 
@@ -47,6 +48,7 @@ static constexpr Event sEventForASCIICharAbove32[95] = {
 
 Event getEvent(int * timeout) {
   Ion::Display::Emscripten::refresh();
+  emscripten_sleep(1);
   if (sEvent != None) {
     Event event = sEvent;
     updateModifiersFromEvent(event);

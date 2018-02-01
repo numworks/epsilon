@@ -125,3 +125,5 @@ endif
 clean:
 	@echo "CLEAN"
 	@rm -f $(products)
+
+-include build/targets.$(PLATFORM).mak

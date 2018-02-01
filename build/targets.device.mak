@@ -17,7 +17,7 @@ products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin) $(products:.$(EXE)
 
 .PHONY: %_run
 %_run: %.$(EXE)
-	$(GDB) -x gdb_script.gdb $<
+	$(GDB) -x build/device/gdb_script.gdb $<
 
 %.map: %.elf
 	@echo "LDMAP   $@"
@@ -26,7 +26,7 @@ products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin) $(products:.$(EXE)
 .PHONY: %_memory_map
 %_memory_map: %.map
 	@echo "========== MEMORY MAP ========="
-	$(Q) awk -f ion/src/device/boot/memory_map.awk < $<
+	$(Q) awk -f build/device/memory_map.awk < $<
 	@echo "==============================="
 
 .PHONY: %_flash
@@ -37,3 +37,7 @@ products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin) $(products:.$(EXE)
 	@until dfu-util -l | grep "Internal Flash" > /dev/null 2>&1; do sleep 1;done
 	@echo "DFU     $@"
 	@dfu-util -i 0 -a 0 -s 0x08000000:leave -D $<
+
+.PHONY: openocd
+openocd:
+	openocd -f build/device/openocd.cfg

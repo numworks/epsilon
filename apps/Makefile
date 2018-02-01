@@ -1,4 +1,3 @@
-
 include apps/shared/Makefile
 include apps/home/Makefile
 include apps/on_boarding/Makefile
@@ -84,6 +83,6 @@ app_image_objs := $(app_images:.png=.o)
 .SECONDARY: $(app_images:.png=.cpp)
 $(app_objs): $(app_image_objs)
 
-app.$(EXE): $(app_objs) $(app_image_objs)
+epsilon.$(EXE): $(app_objs) $(app_image_objs)
 
-products += app.$(EXE) $(app_objs) $(call INLINER_PRODUCTS,$(app_images))
+products += epsilon.$(EXE) $(app_objs) $(call INLINER_PRODUCTS,$(app_images))

@@ -9,4 +9,4 @@ install:
   - pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-fltk git make bison mingw-w64-x86_64-python2
 
 build_script:
-  - bash -lc "make -C $APPVEYOR_BUILD_FOLDER PLATFORM=simulator app.exe test.exe"
+  - bash -lc "make -C $APPVEYOR_BUILD_FOLDER PLATFORM=simulator epsilon.exe test.exe"

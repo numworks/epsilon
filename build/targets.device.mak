@@ -1,4 +1,4 @@
-products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin)
+products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin) $(products:.$(EXE)=.map)
 
 %.hex: %.$(EXE)
 	@echo "OBJCOPY $@"
@@ -18,6 +18,16 @@ products += $(products:.$(EXE)=.hex) $(products:.$(EXE)=.bin)
 .PHONY: %_run
 %_run: %.$(EXE)
 	$(GDB) -x gdb_script.gdb $<
+
+%.map: %.elf
+	@echo "LDMAP   $@"
+	$(Q) $(LD) $^ $(LDFLAGS) -M -Map $@ -o /dev/null
+
+.PHONY: %_memory_map
+%_memory_map: %.map
+	@echo "========== MEMORY MAP ========="
+	$(Q) awk -f ion/src/device/boot/memory_map.awk < $<
+	@echo "==============================="
 
 .PHONY: %_flash
 %_flash: %.bin

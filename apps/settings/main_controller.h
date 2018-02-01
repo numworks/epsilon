@@ -30,7 +30,7 @@ public:
   void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   constexpr static int k_totalNumberOfCell = 8;
   MessageTableCellWithSwitch m_updateCell;
 #else

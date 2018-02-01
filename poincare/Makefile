@@ -141,7 +141,7 @@ lexer_files = $(addprefix poincare/src/, expression_lexer.cpp expression_lexer.h
 poincare/src/expression_lexer.hpp: poincare/src/expression_lexer.cpp
 poincare/src/expression_lexer.cpp: poincare/src/expression_lexer.l
 	@echo "FLEX    $(lexer_files)"
-	@flex -P poincare_expression_yy --header-file=poincare/src/expression_lexer.hpp -o poincare/src/expression_lexer.cpp $<
+	$(Q) flex -P poincare_expression_yy --header-file=poincare/src/expression_lexer.hpp -o poincare/src/expression_lexer.cpp $<
 
 poincare/src/expression_lexer.o: CXXFLAGS += -Wno-deprecated-register -Wno-unused-value -Wno-unused-function
 
@@ -149,7 +149,7 @@ parser_files = $(addprefix poincare/src/, expression_parser.cpp expression_parse
 poincare/src/expression_parser.hpp: poincare/src/expression_parser.cpp
 poincare/src/expression_parser.cpp: poincare/src/expression_parser.y
 	@echo "BISON   $(parser_files)"
-	@bison -d -p poincare_expression_yy -o poincare/src/expression_parser.cpp $<
+	$(Q) bison -d -p poincare_expression_yy -o poincare/src/expression_parser.cpp $<
 
 poincare/src/expression.cpp: $(lexer_files) $(parser_files)
 

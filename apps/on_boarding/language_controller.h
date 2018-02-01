@@ -14,7 +14,7 @@ public:
   void reinitOnBoarding();
   bool handleEvent(Ion::Events::Event event) override;
 private:
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   UpdateController * m_updateController;
 #endif
   LogoController * m_logoController;

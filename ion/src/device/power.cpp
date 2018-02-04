@@ -24,7 +24,7 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
   CM4.SCR()->setSLEEPDEEP(!Ion::LED::getLockState());
 
   while (1) {
-#if LED_WHILE_CHARGING
+#if EPSILON_LED_WHILE_CHARGING
     /* Update LEDS
      * if the standby mode was stopped due to a "stop charging" event, we wait
      * a while to be sure that the plug state of the USB is up-to-date. */
@@ -34,7 +34,7 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
 
     WakeUp::Device::onPowerKeyDown();
     WakeUp::Device::onUSBPlugging();
-#if LED_WHILE_CHARGING
+#if EPSILON_LED_WHILE_CHARGING
     WakeUp::Device::onChargingEvent();
 #endif
 

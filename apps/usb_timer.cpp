@@ -16,7 +16,7 @@ bool USBTimer::fire() {
       m_container->displayExamModePopUp(false);
       needRedrawing = true;
     }
-#if LED_WHILE_CHARGING
+#if EPSILON_LED_WHILE_CHARGING
     Ion::LED::setCharging(Ion::USB::isPlugged(), Ion::Battery::isCharging());
 #endif
     if (!m_previousPluggedState) {
@@ -25,7 +25,7 @@ bool USBTimer::fire() {
     m_previousPluggedState = true;
   } else {
     if (m_previousPluggedState) {
-#if LED_WHILE_CHARGING
+#if EPSILON_LED_WHILE_CHARGING
       Ion::LED::setCharging(Ion::USB::isPlugged(), Ion::Battery::isCharging());
 #endif
       m_previousPluggedState = false;

@@ -30,6 +30,7 @@ public:
     REGS_BOOL_FIELD(SOF, 3);
     REGS_BOOL_FIELD(RXFLVL, 4);
     REGS_BOOL_FIELD(USBSUSP, 11);
+    REGS_BOOL_FIELD(USBRST, 12);
     REGS_BOOL_FIELD(ENUMDNE, 13);
     REGS_BOOL_FIELD(WKUPINT, 31);
   };
@@ -38,6 +39,7 @@ public:
   public:
     using Register32::Register32;
     REGS_BOOL_FIELD(RXFLVLM, 4);
+    REGS_BOOL_FIELD(USBRST, 12);
     REGS_BOOL_FIELD(ENUMDNEM, 13);
     REGS_BOOL_FIELD(IEPINT, 18);
     REGS_BOOL_FIELD(USBSUSPM, 11);
@@ -58,6 +60,7 @@ public:
   class GCCFG : public Register32 {
   public:
     REGS_BOOL_FIELD(PWRDWN, 16);
+    REGS_BOOL_FIELD(VBDEN, 21);
   };
 
   class DCFG : public Register32 {

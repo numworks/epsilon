@@ -50,33 +50,13 @@ void usb_set_address(uint8_t address) {
 void poll() {
   class OTG::GINTSTS intsts(OTG.GINTSTS()->get());
   if (intsts.getENUMDNE()) {
-    // Enumeration done?
+    abort();
+    // **SPEED** enumeration done
     /* Handle USB RESET condition. */
 
     usb_endpoint_setup();
 
     usb_set_address(0);
-    // Size is 64
-     /*
-    const struct usb_device_descriptor dev = {
-	.bLength = USB_DT_DEVICE_SIZE,
-	.bDescriptorType = USB_DT_DEVICE,
-	.bcdUSB = 0x0200,
-	.bDeviceClass = 0,
-	.bDeviceSubClass = 0,
-	.bDeviceProtocol = 0,
-	.bMaxPacketSize0 = 64,
-	.idVendor = 0x0483,
-	.idProduct = 0xDF11,
-	.bcdDevice = 0x0200,
-	.iManufacturer = 1,
-	.iProduct = 2,
-	.iSerialNumber = 3,
-	.bNumConfigurations = 1,
-};
-*/
-
-    //abort();
     return;
   }
 
@@ -112,50 +92,77 @@ void poll() {
 void init() {
   initGPIO();
 
-  OTG.GUSBCFG()->setPHYSEL(true);
-
   // Wait for AHB idle
+  // Discard?
   while (!OTG.GRSTCTL()->getAHBIDL()) {
   }
 
   // Do core soft reset
   OTG.GRSTCTL()->setCSRST(true);
+  while (OTG.GRSTCTL()->getCSRST()) {
+  }
 
   // TODO: Check BCUSBSEN / VBDEN
-  OTG.GCCFG()->setPWRDWN(true);
 
-  /* Explicitly enable DP pullup (not all cores do this by default) */
+  // Enable the USB transceiver
+  OTG.GCCFG()->setPWRDWN(true);
+  // FIXME: Understand why VBDEN is required
+  OTG.GCCFG()->setVBDEN(true);
+
+  /* Get out of soft-disconnected state */
   OTG.DCTL()->setSDIS(false);
 
   /* Force peripheral only mode. */
   OTG.GUSBCFG()->setFDMOD(true);
-  OTG.GUSBCFG()->setTRDT(6); // Based on AHB bus speed.
+
+  /* Configure the USB turnaround time.
+   * This has to be configured depending on the AHB clock speed. */
+  //OTG.GUSBCFG()->setTRDT(6);
+  OTG.GUSBCFG()->setTRDT(0xF);
 
   // Mismatch interrupt? Not needed
   //OTG_FS_GINTSTS = OTG_GINTSTS_MMIS;
+  OTG.GINTSTS()->set(0);
 
   /* Full speed device. */
   OTG.DCFG()->setDSPD(OTG::DCFG::DSPD::FullSpeed);
 
   /* Restart the PHY clock. */
   //OTG::PCGCCTL pcgcctl;// = OTG.PCGCCTL();
-  OTG.PCGCCTL()->setGATEHCLK(0);
-  OTG.PCGCCTL()->setSTPPCLK(0);
+  // This is already zero...
+  //OTG.PCGCCTL()->setGATEHCLK(0);
+  //OTG.PCGCCTL()->setSTPPCLK(0);
 
-  // FIFO-size = 128 * 32bits
+  // FIFO-size = 128 * 32bits.
+  // FIXME: Explain :-)
   OTG.GRXFSIZ()->setRXFD(128);
 
+  // Unmask the interrupt line assertions
   OTG.GAHBCFG()->setGINTMSK(true);
 
+  // Pick which interrupts we're interested in
   class OTG::GINTMSK intMask(0); // Reset value
-  intMask.setENUMDNEM(true);
-  intMask.setRXFLVLM(true);
-  intMask.setIEPINT(true);
-  intMask.setWUIM(true);
+  intMask.setENUMDNEM(true); // Speed enumeration done
+  intMask.setUSBRST(true); // USB reset
+  intMask.setRXFLVLM(true); // Receive FIFO non empty
+  intMask.setIEPINT(true); // IN endpoint interrupt
+  intMask.setWUIM(true); // Resume / wakeup
   OTG.GINTMSK()->set(intMask);
 
+  // Unmask IN endpoint interrupts 0 to 7
   OTG.DAINTMSK()->setIEPM(0xF);
+
+  // Unmask the transfer completed interrupt
   OTG.DIEPMSK()->setXFRCM(true);
+
+  // Wait for an USB reset
+  while (!OTG.GINTSTS()->getUSBRST()) {
+  }
+  // Wait for ENUMDNE, this
+  while (!OTG.GINTSTS()->getENUMDNE()) {
+  }
+
+  abort();
 
   while (true) {
     poll();
@@ -166,8 +173,14 @@ void initGPIO() {
   /* Configure the GPIO
    * The VBUS pin is connected to the USB VBUS port. To read if the USB is
    * plugged, the pin must be pulled down. */
+  // FIXME: Understand how the Vbus pin really works!
+#if 0
   VbusPin.group().MODER()->setMode(VbusPin.pin(), GPIO::MODER::Mode::Input);
   VbusPin.group().PUPDR()->setPull(VbusPin.pin(), GPIO::PUPDR::Pull::Down);
+#else
+  VbusPin.group().MODER()->setMode(VbusPin.pin(), GPIO::MODER::Mode::AlternateFunction);
+  VbusPin.group().AFR()->setAlternateFunction(VbusPin.pin(), GPIO::AFR::AlternateFunction::AF10);
+#endif
 
   DmPin.group().MODER()->setMode(DmPin.pin(), GPIO::MODER::Mode::AlternateFunction);
   DmPin.group().AFR()->setAlternateFunction(DmPin.pin(), GPIO::AFR::AlternateFunction::AF10);

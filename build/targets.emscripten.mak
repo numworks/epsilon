@@ -1,5 +1,3 @@
-epsilon.js: LDFLAGS += -s 'EMTERPRETIFY_FILE="epsilon.etb"'
-
 epsilon.packed.js: LDFLAGS += --memory-init-file 0
 epsilon.packed.js: $(app_objs) $(app_image_objs)
 
@@ -13,4 +11,4 @@ simulator.zip: epsilon.packed.js
 	@zip -r -9 $@ $(basename $@) > /dev/null
 	@rm -rf $(basename $@)
 
-products += $(addprefix epsilon,.js .js.mem .etb) epsilon.packed.js simulator.zip
+products += $(addprefix epsilon,.js .js.mem) epsilon.packed.js simulator.zip

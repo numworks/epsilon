@@ -20,6 +20,9 @@ public:
   class GRSTCTL : public Register32 {
   public:
     REGS_BOOL_FIELD(CSRST, 0);
+    REGS_BOOL_FIELD(RXFFLSH, 4);
+    REGS_BOOL_FIELD(TXFFLSH, 5);
+    REGS_FIELD(TXFNUM, uint8_t, 10, 6);
     REGS_BOOL_FIELD(AHBIDL, 31);
   };
 
@@ -32,6 +35,7 @@ public:
     REGS_BOOL_FIELD(USBSUSP, 11);
     REGS_BOOL_FIELD(USBRST, 12);
     REGS_BOOL_FIELD(ENUMDNE, 13);
+    REGS_BOOL_FIELD(IEPINT, 18);
     REGS_BOOL_FIELD(WKUPINT, 31);
   };
 
@@ -44,6 +48,21 @@ public:
     REGS_BOOL_FIELD(IEPINT, 18);
     REGS_BOOL_FIELD(USBSUSPM, 11);
     REGS_BOOL_FIELD(WUIM, 31);
+  };
+
+  class GRXSTSP : public Register32 {
+  public:
+    using Register32::Register32;
+    enum class PKTSTS {
+      GlobalOutNAK = 1,
+      OutReceived = 2,
+      OutCompleted = 3,
+      SetupCompleted = 4,
+      SetupReceived = 6
+    };
+    REGS_FIELD(EPNUM, uint8_t, 3, 0);
+    REGS_FIELD(BCNT, uint16_t, 14, 4);
+    PKTSTS getPKTSTS() volatile { return (PKTSTS)getBitRange(20, 17); }
   };
 
   class GRXFSIZ : public Register32 {
@@ -96,6 +115,9 @@ public:
       Size8 = 3
     };
     void setMPSIZ(MPSIZ s) volatile { setBitRange(1, 0, (uint8_t)s); }
+    REGS_BOOL_FIELD(STALL, 21);
+    REGS_FIELD(TXFNUM, uint8_t, 25, 22);
+    REGS_BOOL_FIELD(CNAK, 26);
     REGS_BOOL_FIELD(SNAK, 27);
     REGS_BOOL_FIELD(EPENA, 31);
   };
@@ -103,6 +125,14 @@ public:
   class DIEPTSIZ0 : public Register32 {
   public:
     REGS_FIELD(XFRSIZ, uint8_t, 6, 0);
+    REGS_FIELD(PKTCNT, uint8_t, 20, 19);
+  };
+
+  class DOEPCTL0 : public Register32 {
+  public:
+    REGS_BOOL_FIELD(CNAK, 26);
+    REGS_BOOL_FIELD(SNAK, 27);
+    REGS_BOOL_FIELD(EPENA, 31);
   };
 
   class DOEPTSIZ0 : public Register32 {
@@ -116,6 +146,7 @@ public:
   class DIEPINT : public Register32 {
   public:
     REGS_BOOL_FIELD(XFRC, 0);
+    REGS_BOOL_FIELD(INEPNE, 6);
   };
 
   class PCGCCTL : public Register32 {
@@ -124,12 +155,16 @@ public:
     REGS_BOOL_FIELD(STPPCLK, 1);
   };
 
+  class DFIFO0 : public Register32 {
+  };
+
   constexpr OTG() {};
   REGS_REGISTER_AT(GAHBCFG, 0x008);
   REGS_REGISTER_AT(GUSBCFG, 0x00C);
   REGS_REGISTER_AT(GRSTCTL, 0x010);
   REGS_REGISTER_AT(GINTSTS, 0x014);
   REGS_REGISTER_AT(GINTMSK, 0x018);
+  REGS_REGISTER_AT(GRXSTSP, 0x020);
   REGS_REGISTER_AT(GRXFSIZ, 0x024);
   REGS_REGISTER_AT(DIEPTXF0, 0x28);
   REGS_REGISTER_AT(GCCFG, 0x038);
@@ -139,8 +174,10 @@ public:
   REGS_REGISTER_AT(DAINTMSK, 0x81C);
   REGS_REGISTER_AT(DIEPCTL0, 0x900);
   REGS_REGISTER_AT(DIEPTSIZ0, 0x910);
+  REGS_REGISTER_AT(DOEPCTL0, 0xB00);
   REGS_REGISTER_AT(DOEPTSIZ0, 0xB10);
   REGS_REGISTER_AT(PCGCCTL, 0xE00);
+  REGS_REGISTER_AT(DFIFO0, 0x1000);
   constexpr volatile DIEPINT * DIEPINT(int i) const {
     return (class DIEPINT *)(Base() + 0xB08 + i*0x20);
   }

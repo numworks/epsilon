@@ -188,11 +188,6 @@ int Toolbox::stackDepth() {
 
 bool Toolbox::handleEventForRow(Ion::Events::Event event, int selectedRow) {
   int depth = m_stack.depth();
-  if (event == Ion::Events::Back && depth == 0) {
-    m_selectableTableView.deselectTable();
-    app()->dismissModalViewController();
-    return true;
-  }
   if ((event == Ion::Events::Back || event == Ion::Events::Left) && depth > 0) {
     return returnToPreviousMenu();
   }

@@ -25,8 +25,8 @@ SequenceToolbox::~SequenceToolbox() {
 }
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
-  if (selectedRow() < m_numberOfAddedCells) {
-    if ((event == Ion::Events::OK || event == Ion::Events::EXE) && stackDepth() == 0) {
+  if (selectedRow() < m_numberOfAddedCells && stackDepth() == 0) {
+    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       return selectAddedCell(selectedRow());
     }
     return false;

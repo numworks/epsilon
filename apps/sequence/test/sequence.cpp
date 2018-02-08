@@ -14,34 +14,45 @@ void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, cons
   SequenceStore store;
   SequenceContext sequenceContext(&globalContext, &store);
 
-  Sequence * u = store.addEmptyFunction();
-  Sequence * v = store.addEmptyFunction();
-  u->setType(typeU);
+  Sequence * u = nullptr;
+  Sequence * v = nullptr;
   if (definitionU) {
+    u = store.addEmptyFunction();
+    assert(u->name()[0] == 'u');
+    u->setType(typeU);
     u->setContent(definitionU);
+    if (conditionU1) {
+      u->setFirstInitialConditionContent(conditionU1);
+    }
+    if (conditionU2) {
+      u->setSecondInitialConditionContent(conditionU2);
+    }
   }
-  if (conditionU1) {
-    u->setFirstInitialConditionContent(conditionU1);
-  }
-  if (conditionU2) {
-    u->setSecondInitialConditionContent(conditionU2);
-  }
-  v->setType(typeV);
   if (definitionV) {
+    if (store.numberOfFunctions() == 0) {
+      Sequence * tempU = store.addEmptyFunction();
+      v = store.addEmptyFunction();
+      store.removeFunction(tempU);
+      v = store.functionAtIndex(0);
+    } else {
+      assert(store.numberOfFunctions() == 1);
+      v = store.addEmptyFunction();
+    }
+    v->setType(typeV);
     v->setContent(definitionV);
-  }
-  if (conditionV1) {
-    v->setFirstInitialConditionContent(conditionV1);
-  }
-  if (conditionV2) {
-    v->setSecondInitialConditionContent(conditionV2);
+    if (conditionV1) {
+      v->setFirstInitialConditionContent(conditionV1);
+    }
+    if (conditionV2) {
+      v->setSecondInitialConditionContent(conditionV2);
+    }
   }
   for (int j = 0; j < 10; j++) {
-    if (u->isDefined()) {
+    if (u && u->isDefined()) {
       double un = u->evaluateAtAbscissa((double)j, &sequenceContext);
       assert((std::isnan(un) && std::isnan(result[0][j])) || (un == result[0][j]));
     }
-    if (v->isDefined()) {
+    if (v && v->isDefined()) {
       double vn = v->evaluateAtAbscissa((double)j, &sequenceContext);
       assert((std::isnan(vn) && std::isnan(result[1][j])) || (vn == result[1][j]));
     }
@@ -134,6 +145,14 @@ QUIZ_CASE(sequence_evaluation) {
   // u(n+2) = v(n+1)+u(n+1)+v(n)+u(n)+n, u(1) = 0, u(0) = 0; v(n+1) = u(n)+n, v(0)=0
   double result17[2][10] = {{0.0, 0.0, 0.0, 2.0, 7.0, 19.0, 46.0, 105.0, 233.0, 509.0}, {0.0, 0.0, 1.0, 2.0, 5.0, 11.0, 24.0, 52.0, 112.0, 241.0}};
   check_sequences_defined_by(result17, Sequence::Type::DoubleRecurrence, "v(n+1)+v(n)+u(n+1)+u(n)+n", "0", "0", Sequence::Type::SingleRecurrence, "u(n)+n", "0");
-  }
+
+  // u(n) = n; v undefined
+  double result18[2][10] = {{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}, {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}};
+  check_sequences_defined_by(result18, Sequence::Type::Explicit, "n");
+
+  // u undefined; v(n) = n
+  double result19[2][10] = {{NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN}, {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}};
+  check_sequences_defined_by(result19, Sequence::Type::Explicit, nullptr, nullptr, nullptr, Sequence::Type::Explicit, "n");
+}
 
 }

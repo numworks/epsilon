@@ -53,8 +53,15 @@ void TemplatedSequenceContext<T>::step(SequenceStore * sequenceStore, SequenceCo
   u = u && u->isDefined() ? u : nullptr;
   Sequence * v = sequenceStore->numberOfFunctions() > 1 ? sequenceStore->functionAtIndex(1) : nullptr;
   v = v && v->isDefined() ? v : nullptr;
+  /* Switch u & v  if the name of u is v */
+  if (u != nullptr && u->name()[0] ==  SequenceStore::k_sequenceNames[1][0]) {
+    Sequence * temp = u;
+    u = v;
+    v = temp;
+  }
 
-  /* TODO: explain */
+  /* Approximate u & v at the new rank. We evaluate u twice in case its
+   * expression depends on v. */
   m_values[0][0] = u ? u->approximateToNextRank<T>(m_rank, sqctx) : NAN;
   m_values[1][0] = v ? v->approximateToNextRank<T>(m_rank, sqctx) : NAN;
   m_values[0][0] = u ? u->approximateToNextRank<T>(m_rank, sqctx) : NAN;

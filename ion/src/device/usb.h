@@ -146,31 +146,53 @@ enum class ControlState {
   STATUS_OUT,
 };
 
+// Initialization and shutdown
 void init();
-void initGPIO();
-void shutdown();
-void flushTxFifo();
-void flushRxFifo();
+
+// Usb polling
+void poll();
+
+// Control transfers
+// Control Setup
 void controlSetup();
 void controlSetupIn();
 void controlSetupOut();
 int controlSetupGetDescriptor();
 int controlSetupSetConfiguration();
-void controlSendChunk();
-int controlReceiveChunk();
 int controlRequestDispatch();
+// Control In and Out
 void controlOut();
 void controlIn();
+// Send or receive data
+void controlSendChunk();
+int controlReceiveChunk();
+
+// Endpoint
+void usb_endpoint_setup();
+void usb_endpoints_reset();
 uint16_t endpoint0ReadPacket(void * buffer, uint16_t length);
 uint16_t endpoint0WritePacket(const void *buffer, uint16_t length);
 void endpoint0StallTransaction();
 void endpoint0SetNak(bool nak);
 
+// Fifos
+void flushTxFifo();
+void flushRxFifo();
+
+// Device
+void usb_set_address(uint8_t address);
+
+// Helpers
+uint16_t buildConfigDescriptor(uint8_t index);
 DataDirection bmRequestTypeDirection(uint8_t bmRequestType);
 int descriptorIndexFromWValue(uint16_t wValue);
 int descriptorTypeFromWValue(uint16_t wValue);
-uint16_t buildConfigDescriptor(uint8_t index);
 bool zlpIsNeeded(uint16_t dataLength, uint16_t dataExpectedLength, uint8_t endpointMaxPacketSize);
+
+// Init helper
+void initGPIO();
+// Shutdown
+void shutdown();
 
 constexpr static const char *sStrings[] = {
   "Numworks",

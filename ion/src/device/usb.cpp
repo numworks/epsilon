@@ -1,5 +1,8 @@
 #include <ion/usb.h>
 #include "usb.h"
+#include <ion/display.h>
+#include "device.h"
+#include "display.h"
 #include "regs/regs.h"
 
 namespace Ion {
@@ -62,7 +65,8 @@ SetupData sSetupData;
 uint16_t sRxPacketSize;
 // TODO Explain those two buffers
 /* Buffer used for control requests. */
-static uint8_t sControlBufferInit[5*64]; // TODO why 5*64? (from libopencm3/tests/gadget-zero/usb-gadget0.c)
+// TODO why 5*64? (from libopencm3/tests/gadget-zero/usb-gadget0.c)
+static uint8_t sControlBufferInit[5*64];
 static uint16_t sControlBufferInitLength = sizeof(sControlBufferInit);
 uint8_t * sControlBuffer;
 uint16_t sControlBufferLength;
@@ -70,48 +74,88 @@ bool sZLPNeeded; /* True if the device needs to send a Zero-Length Packet */
 bool sForceNAK = false;
 ControlState sControlState;
 
-void usb_endpoint_setup() {
-
-  // Configure IN
-
-  /* Set the maximum packet size */
-  OTG.DIEPCTL0()->setMPSIZ(OTG::DIEPCTL0::MPSIZ::Size64);
-  /* Transfer size */
-  OTG.DIEPTSIZ0()->setXFRSIZ(64);
-  /* Set the NAK bit */
-  OTG.DIEPCTL0()->setSNAK(true);
-  /* Enable the endpoint */
-  OTG.DIEPCTL0()->setEPENA(true);
-
-  // Configure OUT
-
-  class OTG::DOEPTSIZ0 doeptsiz0(0);
-  /* Max number of back-to-back setup packets that can be received */
-  doeptsiz0.setSTUPCNT(1); //TODO 3 in the spec
-  doeptsiz0.setPKTCNT(true);
-  /* Transfer size */
-  doeptsiz0.setXFRSIZ(64);
-  OTG.DOEPTSIZ0()->set(doeptsiz0);
-  /* Set the NAK bit */
-  OTG.DOEPCTL0()->setSNAK(true);
-  /* Enable the endpoint */
-  OTG.DOEPCTL0()->setEPENA(true);
-
-  /* Endpoint0 Tx FIFO depth */
-  OTG.DIEPTXF0()->setTX0FD(64/4);
-  OTG.DIEPTXF0()->setTX0FSA(128 + 64/4); // TODO ?
+/* Debug helpers */
+void redScreen() {
+  Ion::Display::Device::pushColor(KDColorRed, 320*240);
+}
+void whiteScreen() {
+  Ion::Display::Device::pushColor(KDColorWhite, 320*240);
+}
+void greenScreen() {
+  Ion::Display::Device::pushColor(KDColorGreen, 320*240);
+}
+void blueScreen() {
+  Ion::Display::Device::pushColor(KDColorBlue, 320*240);
 }
 
-void usb_endpoints_reset() {
-  /* There are no additional endpoints to reset */
+void init() {
+  initGPIO();
 
-  /* Flush tx/rx fifo */
-  flushTxFifo();
-  flushRxFifo();
-}
+  // Wait for AHB idle
+  // Discard?
+  while (!OTG.GRSTCTL()->getAHBIDL()) {
+  }
 
-void usb_set_address(uint8_t address) {
-  OTG.DCFG()->setDAD(address);
+  // Do core soft reset
+  OTG.GRSTCTL()->setCSRST(true);
+  while (OTG.GRSTCTL()->getCSRST()) {
+  }
+
+  // Enable the USB transceiver
+  OTG.GCCFG()->setPWRDWN(true);
+  // FIXME: Understand why VBDEN is required
+  OTG.GCCFG()->setVBDEN(true);
+
+  /* Get out of soft-disconnected state */
+  OTG.DCTL()->setSDIS(false);
+
+  /* Force peripheral only mode. */
+  OTG.GUSBCFG()->setFDMOD(true);
+
+  /* Configure the USB turnaround time.
+   * This has to be configured depending on the AHB clock speed. */
+  //OTG.GUSBCFG()->setTRDT(6);
+  OTG.GUSBCFG()->setTRDT(0xF);
+
+  // Mismatch interrupt? Not needed
+  //OTG_FS_GINTSTS = OTG_GINTSTS_MMIS;
+  OTG.GINTSTS()->set(0);
+
+  /* Full speed device. */
+  OTG.DCFG()->setDSPD(OTG::DCFG::DSPD::FullSpeed);
+
+  // FIFO-size = 128 * 32bits.
+  // FIXME: Explain :-)
+  OTG.GRXFSIZ()->setRXFD(128);
+
+  // Unmask the interrupt line assertions
+  OTG.GAHBCFG()->setGINTMSK(true);
+
+  // Pick which interrupts we're interested in
+  class OTG::GINTMSK intMask(0); // Reset value
+  intMask.setENUMDNEM(true); // Speed enumeration done
+  intMask.setUSBRST(true); // USB reset
+  intMask.setRXFLVLM(true); // Receive FIFO non empty
+  intMask.setIEPINT(true); // IN endpoint interrupt
+  intMask.setWUIM(true); // Resume / wakeup
+  OTG.GINTMSK()->set(intMask);
+
+  // Unmask IN endpoint interrupts 0 to 7
+  OTG.DAINTMSK()->setIEPM(0xF);
+
+  // Unmask the transfer completed interrupt
+  OTG.DIEPMSK()->setXFRCM(true);
+
+  // Wait for an USB reset
+  while (!OTG.GINTSTS()->getUSBRST()) {
+  }
+  // Wait for ENUMDNE, this
+  while (!OTG.GINTSTS()->getENUMDNE()) {
+  }
+
+  while (true) {
+    poll();
+  }
 }
 
 void poll() {
@@ -229,46 +273,6 @@ void controlSetup() {
   }
 }
 
-void controlIn() {
-  switch (sControlState) {
-    case ControlState::DATA_IN:
-      controlSendChunk();
-      break;
-    case ControlState::LAST_DATA_IN:
-      sControlState = ControlState::STATUS_OUT;
-      endpoint0SetNak(false);
-      break;
-    case ControlState::STATUS_IN:
-      /*if (usbd_dev->control_state.complete) {
-        usbd_dev->control_state.complete(usbd_dev,
-            &(usbd_dev->control_state.req));
-      }*/
-
-      /* Exception: Handle SET ADDRESS function here... */
-      if ((sSetupData.bmRequestType == 0) && (sSetupData.bRequest == USB_REQ_SET_ADDRESS)) {
-        usb_set_address(sSetupData.wValue);
-      }
-      sControlState = ControlState::IDLE;
-      break;
-    default:
-      endpoint0StallTransaction();
-  }
-}
-
-DataDirection bmRequestTypeDirection(uint8_t bmRequestType) {
-  if (bmRequestType & 0x80) {
-    return DataDirection::In;
-  }
-  return DataDirection::Out;
-}
-
-int descriptorIndexFromWValue(uint16_t wValue) {
-  return wValue & 0xFF;
-}
-
-int descriptorTypeFromWValue(uint16_t wValue) {
-  return wValue >> 8;
-}
 
 void controlSetupIn() {
   sControlBuffer = sControlBufferInit;
@@ -292,93 +296,23 @@ void controlSetupIn() {
   }
 }
 
-void controlSendChunk() {
-  if (deviceDescriptor.bMaxPacketSize0 < sControlBufferLength) {
-    /* Data stage, normal transmission */
-    endpoint0WritePacket(sControlBuffer, deviceDescriptor.bMaxPacketSize0);
-    sControlState = ControlState::DATA_IN;
-    sControlBuffer += deviceDescriptor.bMaxPacketSize0;
-    sControlBufferLength -= deviceDescriptor.bMaxPacketSize0;
-  } else {
-    /* Data stage, end of transmission */
-    endpoint0WritePacket(sControlBuffer, deviceDescriptor.bMaxPacketSize0);
-    sControlState = sZLPNeeded ? ControlState::DATA_IN : ControlState::LAST_DATA_IN;
-    sZLPNeeded = false;
-    sControlBufferLength = 0;
-    sControlBuffer = NULL;
-  }
-}
-
-uint16_t endpoint0WritePacket(const void *buffer, uint16_t length) {
-  const uint32_t * buf32 = (uint32_t *) buffer;
-
-  /* Return if endpoint is already enabled. */ //TODO Why?
-  if (OTG.DIEPTSIZ0()->getPKTCNT()) {
-    return 0;
-  }
-
-  /* Enable endpoint for transmission. */
-  OTG.DIEPTSIZ0()->setPKTCNT(length);
-  OTG.DIEPCTL0()->setEPENA(true);
-  OTG.DIEPCTL0()->setCNAK(true);
-
-  /* Copy buffer to endpoint FIFO, note - memcpy does not work */
-  for (int i = length; i > 0; i -= 4) {
-    OTG.DFIFO0()->set(*buf32++);
-  }
-
-  return length;
-}
-
-void endpoint0StallTransaction() {
-  // Set endpoint stall
-  OTG.DIEPCTL0()->setSTALL(true);
-  // Set the control state to IDLE
-  sControlState = ControlState::IDLE;
-}
-
-void endpoint0SetNak(bool nak) {
-  sForceNAK = nak;
-  if (nak) {
-    OTG.DOEPCTL0()->setSNAK(true);
+void controlSetupOut() {
+  if (sSetupData.wLength > sControlBufferInitLength) {
+    endpoint0StallTransaction();
     return;
   }
-  OTG.DOEPCTL0()->setCNAK(true);
-}
 
-int controlRequestDispatch() {
-  switch (sSetupData.bRequest) {
-    case USB_REQ_GET_STATUS:
-      //TODO Not needed for enumeration?
-      break;
-    case USB_REQ_CLEAR_FEATURE:
-    case USB_REQ_SET_FEATURE:
-      //TODO Not needed for enumeration?
-      break;
-    case USB_REQ_SET_ADDRESS:
-      if ((sSetupData.bmRequestType != 0) || (sSetupData.wValue >= 128)) {
-        return 0;
-      }
-      /* The address should be set after the Status stage of the current
-       * transaction. This way, the device can reveice the IN ADDR 0 EP 0 packet
-       * that begins the status phase. */
-      return 1;
-      break;
-    case USB_REQ_GET_DESCRIPTOR:
-      return controlSetupGetDescriptor();
-      break;
-    case USB_REQ_SET_DESCRIPTOR:
-      //TODO Not needed for enumeration?
-      break;
-    case USB_REQ_SET_CONFIGURATION:
-      return controlSetupSetConfiguration();
-    case USB_REQ_GET_CONFIGURATION:
-      //TODO Not needed for enumeration?
-      break;
-    default:
-      break;
+  /* Buffer into which to write received data. */
+  sControlBuffer = sControlBufferInit;
+  sControlBufferLength = 0;
+  /* Wait for DATA OUT stage. */
+  if (sSetupData.wLength > deviceDescriptor.bMaxPacketSize0) {
+    sControlState = ControlState::DATA_OUT;
+  } else {
+    sControlState = ControlState::LAST_DATA_OUT;
   }
-  return 0;
+
+  endpoint0SetNak(false);
 }
 
 int controlSetupGetDescriptor() {
@@ -435,67 +369,6 @@ int controlSetupGetDescriptor() {
   return (int) RequestReturnCodes::USBD_REQ_NOTSUPP;
 }
 
-uint16_t buildConfigDescriptor(uint8_t index) {
-  uint8_t *tmpbuf = sControlBuffer;
-  uint16_t count = MIN(sControlBufferLength, configDescriptor.bLength);
-
-  memcpy(sControlBuffer, &configDescriptor, count);
-  sControlBuffer += count;
-  sControlBufferLength -= count;
-  uint16_t total = count;
-  uint16_t totalLength = configDescriptor.bLength;
-
-  /* For now, we have one interface only */
-  assert(configDescriptor.bNumInterfaces == 1);
-
-  /* The interface has no Interface Association Descriptor and one setting only */
-  /* Copy interface descriptor. */
-  count = MIN(sControlBufferLength, interfaceDescriptor.bLength);
-  memcpy(sControlBuffer, &interfaceDescriptor, count);
-  sControlBuffer += count;
-  sControlBufferLength -= count;
-  total += count;
-  totalLength += interfaceDescriptor.bLength;
-
-  /* We have no additional endpoints for this interface */
-
-  /* Fill in wTotalLength. */
-  *(uint16_t *)(tmpbuf + 2) = totalLength;
-
-  return total;
-}
-
-/* If the device needs to reply data, but less than what the host expects and a
- * multiple of the endpoint max packet size, the device needs to explicit the
- * end of the transfer by sending a Zero Length Data Packet. */
-bool zlpIsNeeded(uint16_t dataLength, uint16_t dataExpectedLength, uint8_t endpointMaxPacketSize) {
-  if (dataLength < dataExpectedLength) {
-    if (/* TODO I do not think this condition is needed: dataLength && */dataLength % endpointMaxPacketSize == 0) {
-      return true;
-    }
-  }
-  return false;
-}
-
-void controlSetupOut() {
-  if (sSetupData.wLength > sControlBufferInitLength) {
-    endpoint0StallTransaction();
-    return;
-  }
-
-  /* Buffer into which to write received data. */
-  sControlBuffer = sControlBufferInit;
-  sControlBufferLength = 0;
-  /* Wait for DATA OUT stage. */
-  if (sSetupData.wLength > deviceDescriptor.bMaxPacketSize0) {
-    sControlState = ControlState::DATA_OUT;
-  } else {
-    sControlState = ControlState::LAST_DATA_OUT;
-  }
-
-  endpoint0SetNak(false);
-}
-
 int controlSetupSetConfiguration() {
   /* We support one configuration only */
   if (sSetupData.wValue != 0 || sSetupData.wValue != USB_DFU_CONFIGURATION_VALUE) {
@@ -508,6 +381,41 @@ int controlSetupSetConfiguration() {
   usb_endpoints_reset();
 
   return (int) RequestReturnCodes::USBD_REQ_HANDLED;
+}
+
+int controlRequestDispatch() {
+  switch (sSetupData.bRequest) {
+    case USB_REQ_GET_STATUS:
+      //TODO Not needed for enumeration?
+      break;
+    case USB_REQ_CLEAR_FEATURE:
+    case USB_REQ_SET_FEATURE:
+      //TODO Not needed for enumeration?
+      break;
+    case USB_REQ_SET_ADDRESS:
+      if ((sSetupData.bmRequestType != 0) || (sSetupData.wValue >= 128)) {
+        return (int) RequestReturnCodes::USBD_REQ_NOTSUPP;
+      }
+      /* The address should be set after the Status stage of the current
+       * transaction. This way, the device can reveice the IN ADDR 0 EP 0 packet
+       * that begins the status phase. */
+      return (int) RequestReturnCodes::USBD_REQ_HANDLED;
+      break;
+    case USB_REQ_GET_DESCRIPTOR:
+      return controlSetupGetDescriptor();
+      break;
+    case USB_REQ_SET_DESCRIPTOR:
+      //TODO Not needed for enumeration?
+      break;
+    case USB_REQ_SET_CONFIGURATION:
+      return controlSetupSetConfiguration();
+    case USB_REQ_GET_CONFIGURATION:
+      //TODO Not needed for enumeration?
+      break;
+    default:
+      break;
+  }
+  return 0;
 }
 
 void controlOut() {
@@ -545,6 +453,49 @@ void controlOut() {
   }
 }
 
+void controlIn() {
+  switch (sControlState) {
+    case ControlState::DATA_IN:
+      controlSendChunk();
+      break;
+    case ControlState::LAST_DATA_IN:
+      sControlState = ControlState::STATUS_OUT;
+      endpoint0SetNak(false);
+      break;
+    case ControlState::STATUS_IN:
+      /*if (usbd_dev->control_state.complete) {
+        usbd_dev->control_state.complete(usbd_dev,
+            &(usbd_dev->control_state.req));
+      }*/
+
+      /* Exception: Handle SET ADDRESS function here... */
+      if ((sSetupData.bmRequestType == 0) && (sSetupData.bRequest == USB_REQ_SET_ADDRESS)) {
+        usb_set_address(sSetupData.wValue);
+      }
+      sControlState = ControlState::IDLE;
+      break;
+    default:
+      endpoint0StallTransaction();
+  }
+}
+
+void controlSendChunk() {
+  if (deviceDescriptor.bMaxPacketSize0 < sControlBufferLength) {
+    /* Data stage, normal transmission */
+    endpoint0WritePacket(sControlBuffer, deviceDescriptor.bMaxPacketSize0);
+    sControlState = ControlState::DATA_IN;
+    sControlBuffer += deviceDescriptor.bMaxPacketSize0;
+    sControlBufferLength -= deviceDescriptor.bMaxPacketSize0;
+  } else {
+    /* Data stage, end of transmission */
+    endpoint0WritePacket(sControlBuffer, deviceDescriptor.bMaxPacketSize0);
+    sControlState = sZLPNeeded ? ControlState::DATA_IN : ControlState::LAST_DATA_IN;
+    sZLPNeeded = false;
+    sControlBufferLength = 0;
+    sControlBuffer = NULL;
+  }
+}
+
 int controlReceiveChunk() {
   uint16_t packetsize = MIN(deviceDescriptor.bMaxPacketSize0, sSetupData.wLength - sControlBufferLength);
   uint16_t size = endpoint0ReadPacket(sControlBuffer + sControlBufferLength, packetsize); //TODO Pourquoi avance-t'on avant de lire?
@@ -555,6 +506,7 @@ int controlReceiveChunk() {
   sControlBufferLength += size;
   return packetsize;
 }
+
 
 uint16_t endpoint0ReadPacket(void * buffer, uint16_t length) {
   uint32_t * buf = (uint32_t *) buffer;
@@ -578,6 +530,87 @@ uint16_t endpoint0ReadPacket(void * buffer, uint16_t length) {
     memcpy(buf, &extra, i);
   }
   return len;
+}
+
+uint16_t endpoint0WritePacket(const void *buffer, uint16_t length) {
+  const uint32_t * buf32 = (uint32_t *) buffer;
+
+  /* Return if endpoint is already enabled. */ //TODO Why?
+  if (OTG.DIEPTSIZ0()->getPKTCNT()) {
+    return 0;
+  }
+
+  /* Enable endpoint for transmission. */
+  OTG.DIEPTSIZ0()->setPKTCNT(length);
+  OTG.DIEPCTL0()->setEPENA(true);
+  OTG.DIEPCTL0()->setCNAK(true);
+  redScreen();
+
+  /* Copy buffer to endpoint FIFO, note - memcpy does not work */ //TODO Why?
+  for (int i = length; i > 0; i -= 4) {
+    OTG.DFIFO0()->set(*buf32++);
+    uint32_t * a = reinterpret_cast<uint32_t *>(0x1212);
+    *a = 12;
+  }
+
+  return length;
+}
+
+void usb_endpoint_setup() {
+
+  // Configure IN
+
+  /* Set the maximum packet size */
+  OTG.DIEPCTL0()->setMPSIZ(OTG::DIEPCTL0::MPSIZ::Size64);
+  /* Transfer size */
+  OTG.DIEPTSIZ0()->setXFRSIZ(64);
+  /* Set the NAK bit */
+  OTG.DIEPCTL0()->setSNAK(true);
+  /* Enable the endpoint */
+  OTG.DIEPCTL0()->setEPENA(true);
+
+  // Configure OUT
+
+  class OTG::DOEPTSIZ0 doeptsiz0(0);
+  /* Max number of back-to-back setup packets that can be received */
+  doeptsiz0.setSTUPCNT(1); //TODO 3 in the spec
+  doeptsiz0.setPKTCNT(true);
+  /* Transfer size */
+  doeptsiz0.setXFRSIZ(64);
+  OTG.DOEPTSIZ0()->set(doeptsiz0);
+  /* Set the NAK bit */
+  OTG.DOEPCTL0()->setSNAK(true);
+  /* Enable the endpoint */
+  OTG.DOEPCTL0()->setEPENA(true);
+
+  /* Endpoint0 Tx FIFO depth */
+  OTG.DIEPTXF0()->setTX0FD(64/4);
+  OTG.DIEPTXF0()->setTX0FSA(128 + 64/4); // TODO ?
+}
+
+void usb_endpoints_reset() {
+  /* There are no additional endpoints to reset */
+
+  /* Flush tx/rx fifo */
+  flushTxFifo();
+  flushRxFifo();
+}
+
+
+void endpoint0StallTransaction() {
+  // Set endpoint stall
+  OTG.DIEPCTL0()->setSTALL(true);
+  // Set the control state to IDLE
+  sControlState = ControlState::IDLE;
+}
+
+void endpoint0SetNak(bool nak) {
+  sForceNAK = nak;
+  if (nak) {
+    OTG.DOEPCTL0()->setSNAK(true);
+    return;
+  }
+  OTG.DOEPCTL0()->setCNAK(true);
 }
 
 void flushTxFifo() {
@@ -626,74 +659,65 @@ void flushRxFifo() {
   }
 }
 
-void init() {
-  initGPIO();
+void usb_set_address(uint8_t address) {
+  OTG.DCFG()->setDAD(address);
+}
 
-  // Wait for AHB idle
-  // Discard?
-  while (!OTG.GRSTCTL()->getAHBIDL()) {
+uint16_t buildConfigDescriptor(uint8_t index) {
+  uint8_t *tmpbuf = sControlBuffer;
+  uint16_t count = MIN(sControlBufferLength, configDescriptor.bLength);
+
+  memcpy(sControlBuffer, &configDescriptor, count);
+  sControlBuffer += count;
+  sControlBufferLength -= count;
+  uint16_t total = count;
+  uint16_t totalLength = configDescriptor.bLength;
+
+  /* For now, we have one interface only */
+  assert(configDescriptor.bNumInterfaces == 1);
+
+  /* The interface has no Interface Association Descriptor and one setting only */
+  /* Copy interface descriptor. */
+  count = MIN(sControlBufferLength, interfaceDescriptor.bLength);
+  memcpy(sControlBuffer, &interfaceDescriptor, count);
+  sControlBuffer += count;
+  sControlBufferLength -= count;
+  total += count;
+  totalLength += interfaceDescriptor.bLength;
+
+  /* We have no additional endpoints for this interface */
+
+  /* Fill in wTotalLength. */
+  *(uint16_t *)(tmpbuf + 2) = totalLength;
+
+  return total;
+}
+
+DataDirection bmRequestTypeDirection(uint8_t bmRequestType) {
+  if (bmRequestType & 0x80) {
+    return DataDirection::In;
   }
+  return DataDirection::Out;
+}
 
-  // Do core soft reset
-  OTG.GRSTCTL()->setCSRST(true);
-  while (OTG.GRSTCTL()->getCSRST()) {
+int descriptorIndexFromWValue(uint16_t wValue) {
+  return wValue & 0xFF;
+}
+
+int descriptorTypeFromWValue(uint16_t wValue) {
+  return wValue >> 8;
+}
+
+/* If the device needs to reply data, but less than what the host expects and a
+ * multiple of the endpoint max packet size, the device needs to explicit the
+ * end of the transfer by sending a Zero Length Data Packet. */
+bool zlpIsNeeded(uint16_t dataLength, uint16_t dataExpectedLength, uint8_t endpointMaxPacketSize) {
+  if (dataLength < dataExpectedLength) {
+    if (/* TODO I do not think this condition is needed: dataLength && */dataLength % endpointMaxPacketSize == 0) {
+      return true;
+    }
   }
-
-  // Enable the USB transceiver
-  OTG.GCCFG()->setPWRDWN(true);
-  // FIXME: Understand why VBDEN is required
-  OTG.GCCFG()->setVBDEN(true);
-
-  /* Get out of soft-disconnected state */
-  OTG.DCTL()->setSDIS(false);
-
-  /* Force peripheral only mode. */
-  OTG.GUSBCFG()->setFDMOD(true);
-
-  /* Configure the USB turnaround time.
-   * This has to be configured depending on the AHB clock speed. */
-  //OTG.GUSBCFG()->setTRDT(6);
-  OTG.GUSBCFG()->setTRDT(0xF);
-
-  // Mismatch interrupt? Not needed
-  //OTG_FS_GINTSTS = OTG_GINTSTS_MMIS;
-  OTG.GINTSTS()->set(0);
-
-  /* Full speed device. */
-  OTG.DCFG()->setDSPD(OTG::DCFG::DSPD::FullSpeed);
-
-  // FIFO-size = 128 * 32bits.
-  // FIXME: Explain :-)
-  OTG.GRXFSIZ()->setRXFD(128);
-
-  // Unmask the interrupt line assertions
-  OTG.GAHBCFG()->setGINTMSK(true);
-
-  // Pick which interrupts we're interested in
-  class OTG::GINTMSK intMask(0); // Reset value
-  intMask.setENUMDNEM(true); // Speed enumeration done
-  intMask.setUSBRST(true); // USB reset
-  intMask.setRXFLVLM(true); // Receive FIFO non empty
-  intMask.setIEPINT(true); // IN endpoint interrupt
-  intMask.setWUIM(true); // Resume / wakeup
-  OTG.GINTMSK()->set(intMask);
-
-  // Unmask IN endpoint interrupts 0 to 7
-  OTG.DAINTMSK()->setIEPM(0xF);
-
-  // Unmask the transfer completed interrupt
-  OTG.DIEPMSK()->setXFRCM(true);
-
-  // Wait for an USB reset
-  while (!OTG.GINTSTS()->getUSBRST()) {
-  }
-  // Wait for ENUMDNE, this
-  while (!OTG.GINTSTS()->getENUMDNE()) {
-  }
-
-  while (true) {
-    poll();
-  }
+  return false;
 }
 
 void initGPIO() {

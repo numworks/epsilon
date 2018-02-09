@@ -12,7 +12,7 @@ aeabi_double_t __aeabi_l2d(int64_t i) {
   return d(i64_to_f64(i));
 }
 
-aeabi_float_t __aeabi_ul2d(uint64_t i) {
+aeabi_double_t __aeabi_ul2d(uint64_t i) {
   return d(ui64_to_f64(i));
 }
 

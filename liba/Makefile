@@ -142,6 +142,8 @@ objs += $(addprefix liba/src/aeabi-rt/, \
   memcpy.o \
 )
 
+liba/src/aeabi-rt/%.o: SFLAGS += -fno-lto
+
 liba/src/external/softfloat/src/%.o: CFLAGS += -Iliba/src/external/softfloat/include -Iliba/src/external/softfloat/src/8086 -Iliba/src/external/softfloat/port
 liba/src/external/softfloat/src/s_roundPackToF64.o: CFLAGS += -w
 liba/src/external/softfloat/src/s_roundPackToF32.o: CFLAGS += -w

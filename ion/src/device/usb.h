@@ -170,6 +170,7 @@ int controlReceiveChunk();
 // Endpoint
 void usb_endpoint_setup();
 void usb_endpoints_reset();
+void usb_setup_endpoint0_out();
 uint16_t endpoint0ReadPacket(void * buffer, uint16_t length);
 uint16_t endpoint0WritePacket(const void *buffer, uint16_t length);
 void endpoint0StallTransaction();

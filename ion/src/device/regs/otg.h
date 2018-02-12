@@ -43,10 +43,10 @@ public:
   public:
     using Register32::Register32;
     REGS_BOOL_FIELD(RXFLVLM, 4);
+    REGS_BOOL_FIELD(USBSUSPM, 11);
     REGS_BOOL_FIELD(USBRST, 12);
     REGS_BOOL_FIELD(ENUMDNEM, 13);
     REGS_BOOL_FIELD(IEPINT, 18);
-    REGS_BOOL_FIELD(USBSUSPM, 11);
     REGS_BOOL_FIELD(WUIM, 31);
   };
 
@@ -104,6 +104,7 @@ public:
   class DAINTMSK : public Register32 {
   public:
     REGS_FIELD(IEPM, uint16_t, 15, 0);
+    REGS_FIELD(OEPM, uint16_t, 31, 16);
   };
 
   class DIEPCTL0 : public Register32 {
@@ -122,17 +123,23 @@ public:
     REGS_BOOL_FIELD(EPENA, 31);
   };
 
-  class DIEPTSIZ0 : public Register32 {
-  public:
-    REGS_FIELD(XFRSIZ, uint8_t, 6, 0);
-    REGS_FIELD(PKTCNT, uint8_t, 20, 19);
-  };
-
   class DOEPCTL0 : public Register32 {
   public:
     REGS_BOOL_FIELD(CNAK, 26);
     REGS_BOOL_FIELD(SNAK, 27);
     REGS_BOOL_FIELD(EPENA, 31);
+  };
+
+  class DIEPINT : public Register32 {
+  public:
+    REGS_BOOL_FIELD(XFRC, 0);
+    REGS_BOOL_FIELD(INEPNE, 6);
+  };
+
+  class DIEPTSIZ0 : public Register32 {
+  public:
+    REGS_FIELD(XFRSIZ, uint8_t, 6, 0);
+    REGS_FIELD(PKTCNT, uint8_t, 20, 19);
   };
 
   class DOEPTSIZ0 : public Register32 {
@@ -143,16 +150,10 @@ public:
     REGS_FIELD(STUPCNT, uint8_t, 30, 29);
   };
 
-  class DIEPINT : public Register32 {
-  public:
-    REGS_BOOL_FIELD(XFRC, 0);
-    REGS_BOOL_FIELD(INEPNE, 6);
-  };
-
   class PCGCCTL : public Register32 {
   public:
-    REGS_BOOL_FIELD(GATEHCLK, 0);
-    REGS_BOOL_FIELD(STPPCLK, 1);
+    REGS_BOOL_FIELD(STPPCLK, 0);
+    REGS_BOOL_FIELD(GATEHCLK, 1);
   };
 
   class DFIFO0 : public Register32 {
@@ -179,7 +180,7 @@ public:
   REGS_REGISTER_AT(PCGCCTL, 0xE00);
   REGS_REGISTER_AT(DFIFO0, 0x1000);
   constexpr volatile DIEPINT * DIEPINT(int i) const {
-    return (class DIEPINT *)(Base() + 0xB08 + i*0x20);
+    return (class DIEPINT *)(Base() + 0x908 + i*0x20);
   }
 private:
   constexpr uint32_t Base() const {

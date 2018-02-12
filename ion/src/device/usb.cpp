@@ -19,6 +19,11 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
+static inline void DEBUGTOGGLE() {
+  bool state = GPIOC.ODR()->get(11);
+  GPIOC.ODR()->set(11, !state);
+}
+
 #include <stdlib.h>
 
 static const struct DeviceDescriptor deviceDescriptor = {
@@ -29,8 +34,8 @@ static const struct DeviceDescriptor deviceDescriptor = {
   .bDeviceSubClass = 0,
   .bDeviceProtocol = 0,
   .bMaxPacketSize0 = USB_MAX_PACKET_SIZE,
-  .idVendor = 0xcafe, //TODO Buy one!
-  .idProduct = 0xcafe, //TODO Create one!
+  .idVendor = 0xfeca, //TODO Buy one!
+  .idProduct = 0xfeca, //TODO Create one!
   .bcdDevice = 0x0001,
   .iManufacturer = 1,
   .iProduct = 2,
@@ -63,12 +68,10 @@ static const struct InterfaceDescriptor interfaceDescriptor = {
 
 SetupData sSetupData;
 uint16_t sRxPacketSize;
-// TODO Explain those two buffers
 /* Buffer used for control requests. */
-// TODO why 5*64? (from libopencm3/tests/gadget-zero/usb-gadget0.c)
-static uint8_t sControlBufferInit[5*64];
+static uint8_t sControlBufferInit[5*64]; // Buffer used to receive data form the host or to build data to send to the host. TODO why 5*64? (from libopencm3/tests/gadget-zero/usb-gadget0.c)
 static uint16_t sControlBufferInitLength = sizeof(sControlBufferInit);
-uint8_t * sControlBuffer;
+uint8_t * sControlBuffer; // Pointer to the buffer used for control transactions.
 uint16_t sControlBufferLength;
 bool sZLPNeeded; /* True if the device needs to send a Zero-Length Packet */
 bool sForceNAK = false;
@@ -86,6 +89,9 @@ void greenScreen() {
 }
 void blueScreen() {
   Ion::Display::Device::pushColor(KDColorBlue, 320*240);
+}
+void blackScreen() {
+  Ion::Display::Device::pushColor(KDColorBlack, 320*240);
 }
 
 void init() {
@@ -114,14 +120,12 @@ void init() {
 
   /* Configure the USB turnaround time.
    * This has to be configured depending on the AHB clock speed. */
-  //OTG.GUSBCFG()->setTRDT(6);
-  OTG.GUSBCFG()->setTRDT(0xF);
+  OTG.GUSBCFG()->setTRDT(0x6);
 
-  // Mismatch interrupt? Not needed
-  //OTG_FS_GINTSTS = OTG_GINTSTS_MMIS;
+  // Clear the interrupts.
   OTG.GINTSTS()->set(0);
 
-  /* Full speed device. */
+  // Full speed device.
   OTG.DCFG()->setDSPD(OTG::DCFG::DSPD::FullSpeed);
 
   // FIFO-size = 128 * 32bits.
@@ -131,6 +135,9 @@ void init() {
   // Unmask the interrupt line assertions
   OTG.GAHBCFG()->setGINTMSK(true);
 
+  /* Restart the PHY clock. */
+  OTG.PCGCCTL()->setSTPPCLK(0);
+
   // Pick which interrupts we're interested in
   class OTG::GINTMSK intMask(0); // Reset value
   intMask.setENUMDNEM(true); // Speed enumeration done
@@ -138,13 +145,15 @@ void init() {
   intMask.setRXFLVLM(true); // Receive FIFO non empty
   intMask.setIEPINT(true); // IN endpoint interrupt
   intMask.setWUIM(true); // Resume / wakeup
+  intMask.setUSBSUSPM(true); // USB suspend
   OTG.GINTMSK()->set(intMask);
 
-  // Unmask IN endpoint interrupts 0 to 7
-  OTG.DAINTMSK()->setIEPM(0xF);
+  // Unmask IN endpoint interrupt 0
+  OTG.DAINTMSK()->setIEPM(1);
 
   // Unmask the transfer completed interrupt
   OTG.DIEPMSK()->setXFRCM(true);
+
 
   // Wait for an USB reset
   while (!OTG.GINTSTS()->getUSBRST()) {
@@ -152,27 +161,29 @@ void init() {
   // Wait for ENUMDNE, this
   while (!OTG.GINTSTS()->getENUMDNE()) {
   }
-
   while (true) {
     poll();
   }
 }
 
 void poll() {
+  // Read the interrupts.
   class OTG::GINTSTS intsts(OTG.GINTSTS()->get());
   if (intsts.getENUMDNE()) {
     // **SPEED** enumeration done
-    /* Handle USB RESET condition. */
+    /* Handle USB RESET. */
     OTG.GINTSTS()->setENUMDNE(true); //Clear the ENUMDNE bit.
-    usb_endpoint_setup();
     usb_set_address(0);
+    usb_endpoint_setup();
     return;
   }
 
-  /* TODO There is no global interrupt flag for transmit complete.
+  /* There is no global interrupt flag for transmit complete.
    * The XFRC bit must be checked in each OTG_DIEPINT(x). */
-  if (OTG.DIEPINT(0)->getXFRC()) {//intsts.getIEPINT()) {
+
+  if (OTG.DIEPINT(0)->getXFRC()) {
     controlIn();
+    OTG.DIEPINT(0)->set(0);
     OTG.DIEPINT(0)->setXFRC(true); // This bit is cleared by writing 1 to it.
   }
 
@@ -186,21 +197,15 @@ void poll() {
         || pktsts == OTG::GRXSTSP::PKTSTS::SetupCompleted)
     {
       if (ep == 0) {
-        class OTG::DOEPTSIZ0 doeptsiz0(0);
-        /* Max number of back-to-back setup packets that can be received */
-        doeptsiz0.setSTUPCNT(1); //TODO 3 in the spec
-        doeptsiz0.setPKTCNT(true);
-        /* Transfer size */
-        doeptsiz0.setXFRSIZ(64);
-        OTG.DOEPTSIZ0()->set(doeptsiz0);
-        /* Enable the endpoint */
-        OTG.DOEPCTL0()->setEPENA(true);
+        usb_setup_endpoint0_out();
         /* Set the NAK bit */
         if (sForceNAK) {
           OTG.DOEPCTL0()->setSNAK(true);
         } else {
           OTG.DOEPCTL0()->setCNAK(true);
         }
+        /* Enable the endpoint */
+        OTG.DOEPCTL0()->setEPENA(true);
       }
       return;
     }
@@ -273,12 +278,12 @@ void controlSetup() {
   }
 }
 
-
 void controlSetupIn() {
   sControlBuffer = sControlBufferInit;
   sControlBufferLength = sSetupData.wLength;
 
   if (controlRequestDispatch()) {
+
     if (sSetupData.wLength) {
       // The host is waiting for device data. Check if we need to send a Zero
       // Length Packet to explicit a short transaction.
@@ -287,7 +292,7 @@ void controlSetupIn() {
       controlSendChunk();
     } else {
       /* If no data is expected, send a zero length packet. */
-      endpoint0WritePacket(NULL, 0);
+      endpoint0WritePacket(NULL, 0); // Send DATA1 [] to the host.
       sControlState = ControlState::STATUS_IN;
     }
   } else {
@@ -396,9 +401,10 @@ int controlRequestDispatch() {
       if ((sSetupData.bmRequestType != 0) || (sSetupData.wValue >= 128)) {
         return (int) RequestReturnCodes::USBD_REQ_NOTSUPP;
       }
-      /* The address should be set after the Status stage of the current
-       * transaction. This way, the device can reveice the IN ADDR 0 EP 0 packet
-       * that begins the status phase. */
+      /* According to the reference manual, the address should be set after the
+       * Status stage of the current transaction, but this is not true.
+       * It should be set here, after the Data stage. */
+      usb_set_address(sSetupData.wValue);
       return (int) RequestReturnCodes::USBD_REQ_HANDLED;
       break;
     case USB_REQ_GET_DESCRIPTOR:
@@ -438,14 +444,14 @@ void controlOut() {
        */
       if (controlRequestDispatch()) {
         /* Go to status stage on success. */
-        endpoint0WritePacket(NULL, 0); //TODO Why?
+        endpoint0WritePacket(NULL, 0); // Send the DATA1[] to the host.
         sControlState = ControlState::STATUS_IN;
       } else {
         endpoint0StallTransaction();
       }
       break;
     case ControlState::STATUS_OUT:
-      endpoint0ReadPacket(NULL, 0);  //TODO Why?
+      endpoint0ReadPacket(NULL, 0); // Read the DATA1[] sent by the host.
       sControlState = ControlState::IDLE;
       break;
     default:
@@ -463,15 +469,6 @@ void controlIn() {
       endpoint0SetNak(false);
       break;
     case ControlState::STATUS_IN:
-      /*if (usbd_dev->control_state.complete) {
-        usbd_dev->control_state.complete(usbd_dev,
-            &(usbd_dev->control_state.req));
-      }*/
-
-      /* Exception: Handle SET ADDRESS function here... */
-      if ((sSetupData.bmRequestType == 0) && (sSetupData.bRequest == USB_REQ_SET_ADDRESS)) {
-        usb_set_address(sSetupData.wValue);
-      }
       sControlState = ControlState::IDLE;
       break;
     default:
@@ -488,7 +485,7 @@ void controlSendChunk() {
     sControlBufferLength -= deviceDescriptor.bMaxPacketSize0;
   } else {
     /* Data stage, end of transmission */
-    endpoint0WritePacket(sControlBuffer, deviceDescriptor.bMaxPacketSize0);
+    endpoint0WritePacket(sControlBuffer, sControlBufferLength);
     sControlState = sZLPNeeded ? ControlState::DATA_IN : ControlState::LAST_DATA_IN;
     sZLPNeeded = false;
     sControlBufferLength = 0;
@@ -498,7 +495,7 @@ void controlSendChunk() {
 
 int controlReceiveChunk() {
   uint16_t packetsize = MIN(deviceDescriptor.bMaxPacketSize0, sSetupData.wLength - sControlBufferLength);
-  uint16_t size = endpoint0ReadPacket(sControlBuffer + sControlBufferLength, packetsize); //TODO Pourquoi avance-t'on avant de lire?
+  uint16_t size = endpoint0ReadPacket(sControlBuffer + sControlBufferLength, packetsize);
   if (size != packetsize) {
     endpoint0StallTransaction();
     return -1;
@@ -514,7 +511,7 @@ uint16_t endpoint0ReadPacket(void * buffer, uint16_t length) {
 
   int i;
   for (i = len; i >= 4; i -= 4) {
-    *buf++ = OTG.DFIFO0()->get(); //TODO: Why would this work?
+    *buf++ = OTG.DFIFO0()->get();
     sRxPacketSize -= 4;
   }
 
@@ -541,16 +538,15 @@ uint16_t endpoint0WritePacket(const void *buffer, uint16_t length) {
   }
 
   /* Enable endpoint for transmission. */
-  OTG.DIEPTSIZ0()->setPKTCNT(length);
+  OTG.DIEPTSIZ0()->set(0);
+  OTG.DIEPTSIZ0()->setPKTCNT(true);
+  OTG.DIEPTSIZ0()->setXFRSIZ(length);
   OTG.DIEPCTL0()->setEPENA(true);
   OTG.DIEPCTL0()->setCNAK(true);
-  redScreen();
 
   /* Copy buffer to endpoint FIFO, note - memcpy does not work */ //TODO Why?
   for (int i = length; i > 0; i -= 4) {
     OTG.DFIFO0()->set(*buf32++);
-    uint32_t * a = reinterpret_cast<uint32_t *>(0x1212);
-    *a = 12;
   }
 
   return length;
@@ -558,8 +554,11 @@ uint16_t endpoint0WritePacket(const void *buffer, uint16_t length) {
 
 void usb_endpoint_setup() {
 
-  // Configure IN
+  // We configure endpoint 0 only.
 
+  // Configure IN
+  OTG.DIEPCTL0()->set(0);
+  OTG.DIEPTSIZ0()->set(0);
   /* Set the maximum packet size */
   OTG.DIEPCTL0()->setMPSIZ(OTG::DIEPCTL0::MPSIZ::Size64);
   /* Transfer size */
@@ -570,14 +569,7 @@ void usb_endpoint_setup() {
   OTG.DIEPCTL0()->setEPENA(true);
 
   // Configure OUT
-
-  class OTG::DOEPTSIZ0 doeptsiz0(0);
-  /* Max number of back-to-back setup packets that can be received */
-  doeptsiz0.setSTUPCNT(1); //TODO 3 in the spec
-  doeptsiz0.setPKTCNT(true);
-  /* Transfer size */
-  doeptsiz0.setXFRSIZ(64);
-  OTG.DOEPTSIZ0()->set(doeptsiz0);
+  usb_setup_endpoint0_out();
   /* Set the NAK bit */
   OTG.DOEPCTL0()->setSNAK(true);
   /* Enable the endpoint */
@@ -585,7 +577,17 @@ void usb_endpoint_setup() {
 
   /* Endpoint0 Tx FIFO depth */
   OTG.DIEPTXF0()->setTX0FD(64/4);
-  OTG.DIEPTXF0()->setTX0FSA(128 + 64/4); // TODO ?
+  OTG.DIEPTXF0()->setTX0FSA(128);//+ 64/4); // TODO ?
+}
+
+void usb_setup_endpoint0_out() {
+  class OTG::DOEPTSIZ0 doeptsiz0(0);
+  /* Max number of back-to-back setup packets that can be received */
+  doeptsiz0.setSTUPCNT(1);
+  doeptsiz0.setPKTCNT(true);
+  /* Transfer size */
+  doeptsiz0.setXFRSIZ(64);
+  OTG.DOEPTSIZ0()->set(doeptsiz0);
 }
 
 void usb_endpoints_reset() {
@@ -595,7 +597,6 @@ void usb_endpoints_reset() {
   flushTxFifo();
   flushRxFifo();
 }
-
 
 void endpoint0StallTransaction() {
   // Set endpoint stall
@@ -633,7 +634,7 @@ void flushTxFifo() {
   OTG.GRSTCTL()->setTXFFLSH(true);
 
   /* Reset packet counter */
-  OTG.DIEPTSIZ0()->setPKTCNT(0);
+  OTG.DIEPTSIZ0()->set(0);
 
   /* Wait for the flush */
   while (OTG.GRSTCTL()->getTXFFLSH()) {
@@ -652,7 +653,7 @@ void flushRxFifo() {
   OTG.GRSTCTL()->setTXFFLSH(true);
 
   /* Reset packet counter */
-  OTG.DOEPTSIZ0()->setPKTCNT(0);
+  OTG.DOEPTSIZ0()->set(0);
 
   /* Wait for the flush */
   while (OTG.GRSTCTL()->getRXFFLSH()) {
@@ -661,6 +662,9 @@ void flushRxFifo() {
 
 void usb_set_address(uint8_t address) {
   OTG.DCFG()->setDAD(address);
+  if (address != 0) {
+    DEBUGTOGGLE();
+  }
 }
 
 uint16_t buildConfigDescriptor(uint8_t index) {
@@ -713,7 +717,8 @@ int descriptorTypeFromWValue(uint16_t wValue) {
  * end of the transfer by sending a Zero Length Data Packet. */
 bool zlpIsNeeded(uint16_t dataLength, uint16_t dataExpectedLength, uint8_t endpointMaxPacketSize) {
   if (dataLength < dataExpectedLength) {
-    if (/* TODO I do not think this condition is needed: dataLength && */dataLength % endpointMaxPacketSize == 0) {
+    if (dataLength && dataLength % endpointMaxPacketSize == 0) {
+      /* TODO I do not think this condition is needed: dataLength*/
       return true;
     }
   }
@@ -721,6 +726,11 @@ bool zlpIsNeeded(uint16_t dataLength, uint16_t dataExpectedLength, uint8_t endpo
 }
 
 void initGPIO() {
+
+  // DEBUG GPIO pin
+  GPIOC.MODER()->setMode(11, GPIO::MODER::Mode::Output);
+  GPIOC.ODR()->set(11, false);
+
   /* Configure the GPIO
    * The VBUS pin is connected to the USB VBUS port. To read if the USB is
    * plugged, the pin must be pulled down. */

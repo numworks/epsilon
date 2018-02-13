@@ -37,6 +37,12 @@ enum class DataDirection {
   Out
 };
 
+enum class RequestTypeType {
+  Standard = 0,
+  Class = 1,
+  Vendor = 2
+};
+
 /* USB Standard Request Codes */
 #define USB_REQ_GET_STATUS         0
 #define USB_REQ_CLEAR_FEATURE      1
@@ -160,6 +166,7 @@ void controlSetupOut();
 int controlSetupGetDescriptor();
 int controlSetupSetConfiguration();
 int controlRequestDispatch();
+int controlStandardRequest();
 // Control In and Out
 void controlOut();
 void controlIn();
@@ -186,6 +193,7 @@ void usb_set_address(uint8_t address);
 // Helpers
 uint16_t buildConfigDescriptor(uint8_t index);
 DataDirection bmRequestTypeDirection(uint8_t bmRequestType);
+RequestTypeType bmRequestTypeType(uint8_t bmRequestType);
 int descriptorIndexFromWValue(uint16_t wValue);
 int descriptorTypeFromWValue(uint16_t wValue);
 bool zlpIsNeeded(uint16_t dataLength, uint16_t dataExpectedLength, uint8_t endpointMaxPacketSize);
@@ -204,6 +212,70 @@ constexpr static uint16_t sNumberOfStrings = 4; //TODO set value
 constexpr static GPIOPin VbusPin = GPIOPin(GPIOA, 9);
 constexpr static GPIOPin DmPin = GPIOPin(GPIOA, 11);
 constexpr static GPIOPin DpPin = GPIOPin(GPIOA, 12);
+
+/* Windows OS Descriptor */
+
+#define USB_DT_OS_STRING_SIZE 0x12
+#define USB_DT_OS_STRING 3
+#define USB_OS_STRING_BMS_VENDOR_CODE 2 // Arbitrarily chosen
+#define USB_OS_STRING_PAD 0
+#define USB_OS_FEATURE_EXTENDED_COMPAT_ID 0x04
+#define USB_OS_FEATURE_EXTENDED_PROPERTIES 0x05
+#define USB_EXTENDED_COMPAT_ID_HEADER_BCD_VERSION 0x0100
+#define USB_EXTENDED_PROPERTIES_HEADER_BCD_VERSION 0x0100
+#define USB_OS_EXTENDED_COMPAT_ID_HEADER_SIZE 16
+#define USB_OS_EXTENDED_COMPAT_ID_FUNCTION_SIZE 24
+#define USB_OS_EXTENDED_PROPERTIES_HEADER_SIZE 10
+#define USB_OS_EXTENDED_PROPERTIES_FUNCTION_SIZE_WITHOUT_DATA 14
+#define USB_PROPERTY_DATA_TYPE_UTF_16_LITTLE_ENDIAN 1
+#define USB_GUID_PROPERTY_NAME_LENGTH 0x28
+#define USB_GUID_PROPERTY_DATA_LENGTH 0x4E
+
+struct OSStringDescriptor {
+  uint8_t bLength;
+  uint8_t bDescriptorType;
+  uint8_t qwSignature[14];
+  uint8_t bMS_VendorCode;
+  uint8_t bPad;
+} __attribute__((packed));
+
+struct OSExtendedCompatIDHeader {
+  uint32_t dwLength;     // The length, in bytes, of the complete extended compat ID descriptor
+  uint16_t bcdVersion;   // The descriptor’s version number, in binary coded decimal (BCD) format
+  uint16_t wIndex;       // An index that identifies the particular OS feature descriptor
+  uint8_t bCount;        // The number of custom property sections
+  uint8_t reserved[7];   // Reserved
+} __attribute__((packed));
+
+struct OSExtendedCompatIDFunction {
+  uint8_t bFirstInterfaceNumber; // The interface or function number
+  uint8_t bReserved;             // Reserved
+  uint8_t compatibleID[8];       // The function’s compatible ID
+  uint8_t subCompatibleID[8];    // The function’s subcompatible ID
+  uint8_t reserved[6];           // Reserved
+} __attribute__((packed));
+
+struct OSExtendedPropertiesHeader {
+  uint32_t dwLength;     // The length, in bytes, of the complete extended properties descriptor
+  uint16_t bcdVersion;   // The descriptor’s version number, in binary coded decimal (BCD) format
+  uint16_t wIndex;       // The index for extended properties OS descriptors
+  uint16_t wCount;        // The number of custom property sections that follow the header section
+} __attribute__((packed));
+
+struct OSExtendedPropertiesGUIDFunction {
+  uint32_t dwSize;              // The size of this custom properties section
+  uint32_t dwPropertyDataType;  // Property data format
+  uint16_t wPropertyNameLength;
+  uint8_t bPropertyName[USB_GUID_PROPERTY_NAME_LENGTH]; // Number of custom property sections that follow the header
+  uint32_t dwPropertyDataLength; // Length of the buffer holding the property data
+  uint8_t bPropertyData[USB_GUID_PROPERTY_DATA_LENGTH]; // Format-dependent Property data
+} __attribute__((packed));
+
+
+int controlCustomSetup();
+uint16_t buildExtendedCompatIDDescriptor();
+uint16_t buildExtendedPropertiesDescriptor();
+
 
 }
 }

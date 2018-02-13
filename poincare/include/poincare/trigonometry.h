@@ -11,6 +11,7 @@ public:
     Cosine = 0,
     Sine = 1,
   };
+  static float characteristicXRange(const Expression * e, Context & context, Expression::AngleUnit angleUnit);
   static Expression * shallowReduceDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit);
   static Expression * shallowReduceInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit);
   static bool ExpressionIsEquivalentToTangent(const Expression * e);

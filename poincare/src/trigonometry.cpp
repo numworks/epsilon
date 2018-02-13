@@ -6,13 +6,39 @@
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
 #include <poincare/subtraction.h>
+#include <poincare/derivative.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
 }
 #include <cmath>
+#include <float.h>
 
 namespace Poincare {
+
+float Trigonometry::characteristicXRange(const Expression * e, Context & context, Expression::AngleUnit angleUnit) {
+  assert(e->numberOfOperands() == 1);
+  const Expression * op = e->operand(0);
+  int d = op->polynomialDegree('x');
+  // op is not linear so we cannot not easily find an interesting range
+  if (d < 0 || d > 1) {
+    return op->characteristicXRange(context, angleUnit);
+  }
+  // The expression e is x-independent
+  if (d == 0) {
+    return 0.0f;
+  }
+  // e has the form cos/sin/tan(ax+b) so it is periodic of period 2*Pi/a
+  assert(d == 1);
+  /* To compute a, the slope of the expression op, we compute the derivative of
+   * op for any x value. */
+  Poincare::Complex<float> x = Poincare::Complex<float>::Float(1.0f);
+  const Poincare::Expression * args[2] = {op, &x};
+  Poincare::Derivative derivative(args, true);
+  float a = derivative.approximateToScalar<float>(context);
+  float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180.0f;
+  return 2.0f*pi/a;
+}
 
 Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::Sine || e->type() == Expression::Type::Cosine || e->type() == Expression::Type::Tangent);

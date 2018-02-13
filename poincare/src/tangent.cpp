@@ -23,6 +23,10 @@ Expression * Tangent::clone() const {
   return a;
 }
 
+float Tangent::characteristicXRange(Context & context, AngleUnit angleUnit) const {
+  return Trigonometry::characteristicXRange(this, context, angleUnit);
+}
+
 Expression * Tangent::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

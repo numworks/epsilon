@@ -14,6 +14,7 @@ class Cosine : public StaticHierarchy<1>::StaticHierarchy  {
 public:
   Type type() const override;
   Expression * clone() const override;
+  float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
 private:
   /* Layout */

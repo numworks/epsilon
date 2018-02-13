@@ -693,6 +693,7 @@ uint16_t buildConfigDescriptor(uint8_t index) {
 
   /* Fill in wTotalLength. */
   *(uint16_t *)(tmpbuf + 2) = totalLength;
+  sControlBuffer = tmpbuf;
 
   return total;
 }

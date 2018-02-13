@@ -23,3 +23,25 @@ QUIZ_CASE(poincare_polynomial_degree) {
   assert_parsed_expression_polynomial_degree("2-x-x^3", 3);
   assert_parsed_expression_polynomial_degree("P*x", 1);
 }
+
+void assert_parsed_expression_has_characteristic_range(const char * expression, float range, Expression::AngleUnit angleUnit = Expression::AngleUnit::Degree) {
+  GlobalContext globalContext;
+  Expression * e = parse_expression(expression);
+  Expression::Simplify(&e, globalContext, angleUnit);
+  if (std::isnan(range)) {
+    assert(std::isnan(e->characteristicXRange(globalContext, angleUnit)));
+  } else {
+    assert(std::fabs(e->characteristicXRange(globalContext, angleUnit) - range) < 0.0000001f);
+  }
+  delete e;
+}
+
+QUIZ_CASE(poincare_characteristic_range) {
+  assert_parsed_expression_has_characteristic_range("cos(x)", 360.0f);
+  assert_parsed_expression_has_characteristic_range("sin(9*x+10)", 40.0f);
+  assert_parsed_expression_has_characteristic_range("sin(9*x+10)+cos(x/2)", 720.0f);
+  assert_parsed_expression_has_characteristic_range("sin(9*x+10)+cos(x/2)", 4.0f*M_PI, Expression::AngleUnit::Radian);
+  assert_parsed_expression_has_characteristic_range("x", NAN);
+  assert_parsed_expression_has_characteristic_range("cos(3)+2", 0.0f);
+  assert_parsed_expression_has_characteristic_range("log(cos(40*x))", 9.0f);
+}

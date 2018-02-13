@@ -22,6 +22,10 @@ Expression * Sine::clone() const {
   return a;
 }
 
+float Sine::characteristicXRange(Context & context, AngleUnit angleUnit) const {
+  return Trigonometry::characteristicXRange(this, context, angleUnit);
+}
+
 Expression * Sine::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

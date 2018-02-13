@@ -142,6 +142,13 @@ bool Symbol::isApproximate(Context & context) const {
   return false;
 }
 
+float Symbol::characteristicXRange(Context & context, AngleUnit angleUnit) const {
+  if (m_name == 'x') {
+    return NAN;
+  }
+  return 0.0;
+}
+
 bool Symbol::hasAnExactRepresentation(Context & context) const {
   if (m_name == Ion::Charset::IComplex) {
     return true;

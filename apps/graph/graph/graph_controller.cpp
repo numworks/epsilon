@@ -39,6 +39,19 @@ void GraphController::setDisplayDerivativeInBanner(bool displayDerivative) {
   m_displayDerivativeInBanner = displayDerivative;
 }
 
+float GraphController::interestingXRange() {
+  float characteristicRange = 0.0f;
+  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
+    Function * f = functionStore()->activeFunctionAtIndex(i);
+    float fRange = f->expression(myApp->localContext())->characteristicXRange(*(myApp->localContext()));
+    if (!std::isnan(fRange)) {
+      characteristicRange = fRange > characteristicRange ? fRange : characteristicRange;
+    }
+  }
+  return (characteristicRange > 0.0f ? 1.6f*characteristicRange : 10.0f);
+}
+
 void GraphController::selectFunctionWithCursor(int functionIndex) {
   FunctionGraphController::selectFunctionWithCursor(functionIndex);
   CartesianFunction * f = m_functionStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());

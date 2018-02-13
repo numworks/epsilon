@@ -20,6 +20,7 @@ public:
   void viewWillAppear() override;
   bool displayDerivativeInBanner() const;
   void setDisplayDerivativeInBanner(bool displayDerivative);
+  float interestingXRange() override;
 private:
   void selectFunctionWithCursor(int functionIndex) override;
   BannerView * bannerView() override;

@@ -167,8 +167,9 @@ void InteractiveCurveViewRange::setTrigonometric() {
 }
 
 void InteractiveCurveViewRange::setDefault() {
-  m_xMax = 10.0f;
-  MemoizedCurveViewRange::setXMin(-10.0f);
+  assert(m_delegate);
+  m_xMax = m_delegate->interestingXRange();
+  MemoizedCurveViewRange::setXMin(-m_xMax);
   setYAuto(true);
 }
 

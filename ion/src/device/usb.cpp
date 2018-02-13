@@ -66,6 +66,46 @@ static const struct InterfaceDescriptor interfaceDescriptor = {
   .iInterface = 0
 };
 
+static const struct OSStringDescriptor osStringDescriptor = {
+  .bLength = USB_DT_OS_STRING_SIZE,
+  .bDescriptorType = USB_DT_OS_STRING,
+  .qwSignature = {'M', 0, 'S', 0, 'F', 0, 'T', 0, '1', 0, '0', 0, '0', 0},
+  .bMS_VendorCode = USB_OS_STRING_BMS_VENDOR_CODE,
+  .bPad = USB_OS_STRING_PAD
+};
+
+static const struct OSExtendedCompatIDHeader osExtendedCompatIDHeader = {
+  .dwLength = USB_OS_EXTENDED_COMPAT_ID_HEADER_SIZE + USB_OS_EXTENDED_COMPAT_ID_FUNCTION_SIZE,
+  .bcdVersion = USB_EXTENDED_COMPAT_ID_HEADER_BCD_VERSION,
+  .wIndex = USB_OS_FEATURE_EXTENDED_COMPAT_ID,
+  .bCount = 1,
+  .reserved = {0, 0, 0, 0, 0, 0, 0}
+};
+
+static const struct OSExtendedCompatIDFunction osExtendedCompatIDFunction = {
+  .bFirstInterfaceNumber = 0,
+  .bReserved = 0,
+  .compatibleID = {'W', 'I', 'N', 'U', 'S', 'B', 0, 0},
+  .subCompatibleID = {0, 0, 0, 0, 0, 0, 0, 0},
+  .reserved = {0, 0, 0, 0, 0, 0},
+};
+
+static const struct OSExtendedPropertiesHeader osExtendedPropertiesHeader = {
+  .dwLength = 0,
+  .bcdVersion = USB_EXTENDED_PROPERTIES_HEADER_BCD_VERSION,
+  .wIndex = USB_OS_FEATURE_EXTENDED_PROPERTIES,
+  .wCount = 1,
+};
+
+static const struct OSExtendedPropertiesGUIDFunction osExtendedPropertiesGUIDFunction = {
+  .dwSize = USB_OS_EXTENDED_PROPERTIES_FUNCTION_SIZE_WITHOUT_DATA + USB_GUID_PROPERTY_NAME_LENGTH + USB_GUID_PROPERTY_DATA_LENGTH,
+  .dwPropertyDataType = USB_PROPERTY_DATA_TYPE_UTF_16_LITTLE_ENDIAN,
+  .wPropertyNameLength = USB_GUID_PROPERTY_NAME_LENGTH,
+  .bPropertyName = {'D', 0, 'e', 0, 'v', 0, 'i', 0, 'c', 0, 'e', 0, 'I', 0, 'n', 0, 't', 0, 'e', 0, 'r', 0, 'f', 0, 'a', 0, 'c', 0, 'e', 0, 'G', 0, 'U', 0, 'I', 0, 'D', 0, 0, 0},
+  .dwPropertyDataLength = USB_GUID_PROPERTY_DATA_LENGTH,
+  .bPropertyData = {'{', 0, '9', 0, '5', 0, '2', 0, '3', 0, '6', 0, '2', 0, 'C', 0, '1', 0, '-', 0, '3', 0, 'D', 0, '9', 0, '3', 0, '-', 0, '4', 0, 'D', 0, '2', 0, 'A', 0, '-', 0, '9', 0, 'A', 0, '2', 0, '0', 0, '-', 0, '6', 0, '5', 0, '5', 0, '3', 0, '2', 0, '0', 0, '1', 0, '4', 0, '7', 0, 'C', 0, '6', 0, 'F', 0, '}', 0, 0, 0}
+};
+
 SetupData sSetupData;
 uint16_t sRxPacketSize;
 /* Buffer used for control requests. */
@@ -334,7 +374,6 @@ int controlSetupGetDescriptor() {
       return (int) RequestReturnCodes::USBD_REQ_HANDLED;
     case USB_DT_STRING:
       struct StringDescriptor * stringDescriptor = (struct StringDescriptor *)sControlBufferInit;
-
       if (descriptorIndex == 0) {
         /* Send sane Language ID descriptor. */
         stringDescriptor->wData[0] = USB_LANGID_ENGLISH_US;
@@ -342,6 +381,13 @@ int controlSetupGetDescriptor() {
           sizeof(stringDescriptor->bDescriptorType) +
           sizeof(stringDescriptor->wData[0]);
         sControlBufferLength = MIN(sControlBufferLength, stringDescriptor->bLength);
+      } else if (descriptorIndex == 0xEE) {
+        // Windows OS String Descriptor
+        assert(sSetupData.wIndex == 0);
+        assert(sSetupData.wLength == 0x12);
+        sControlBuffer = (uint8_t *)(&osStringDescriptor);
+        sControlBufferLength = MIN(sControlBufferLength, osStringDescriptor.bLength);
+        return (int) RequestReturnCodes::USBD_REQ_HANDLED;
       } else {
         int arrayIndex = descriptorIndex - 1;
         /* Check that string index is in range. */
@@ -389,6 +435,13 @@ int controlSetupSetConfiguration() {
 }
 
 int controlRequestDispatch() {
+  if (bmRequestTypeType(sSetupData.bmRequestType) == RequestTypeType::Vendor) {
+    return controlCustomSetup();
+  }
+  return controlStandardRequest();
+}
+
+int controlStandardRequest() {
   switch (sSetupData.bRequest) {
     case USB_REQ_GET_STATUS:
       //TODO Not needed for enumeration?
@@ -422,6 +475,26 @@ int controlRequestDispatch() {
       break;
   }
   return 0;
+}
+
+int controlCustomSetup() {
+  switch (sSetupData.bRequest) {
+    case USB_OS_STRING_BMS_VENDOR_CODE:
+      if (sSetupData.wIndex == USB_OS_FEATURE_EXTENDED_COMPAT_ID) {
+        sControlBuffer = sControlBufferInit;
+        sControlBufferLength = buildExtendedCompatIDDescriptor();
+        return (int) RequestReturnCodes::USBD_REQ_HANDLED;
+      }
+      if (sSetupData.wIndex == USB_OS_FEATURE_EXTENDED_PROPERTIES) {
+        sControlBuffer = sControlBufferInit;
+        sControlBufferLength = buildExtendedPropertiesDescriptor();
+        return (int) RequestReturnCodes::USBD_REQ_HANDLED;
+      }
+      break;
+    default:
+      break;
+  }
+  return (int) RequestReturnCodes::USBD_REQ_NOTSUPP;
 }
 
 void controlOut() {
@@ -698,11 +771,66 @@ uint16_t buildConfigDescriptor(uint8_t index) {
   return total;
 }
 
+uint16_t buildExtendedCompatIDDescriptor() {
+  uint8_t *tmpbuf = sControlBuffer;
+
+  /* Copy the header */
+  uint16_t count = MIN(sControlBufferLength, USB_OS_EXTENDED_COMPAT_ID_HEADER_SIZE);
+  memcpy(sControlBuffer, &osExtendedCompatIDHeader, count);
+  sControlBuffer += count;
+  sControlBufferLength -= count;
+  uint16_t total = count;
+  uint16_t totalLength = USB_OS_EXTENDED_COMPAT_ID_HEADER_SIZE;
+
+  /* Copy the function */
+  count = MIN(sControlBufferLength, USB_OS_EXTENDED_COMPAT_ID_FUNCTION_SIZE);
+  memcpy(sControlBuffer, &osExtendedCompatIDFunction, count);
+  sControlBuffer += count;
+  sControlBufferLength -= count;
+  total += count;
+  totalLength += USB_OS_EXTENDED_COMPAT_ID_FUNCTION_SIZE;
+
+  sControlBuffer = tmpbuf;
+
+  return total;
+}
+
+uint16_t buildExtendedPropertiesDescriptor() {
+  uint8_t *tmpbuf = sControlBuffer;
+
+  /* Copy the header */
+  uint16_t count = MIN(sControlBufferLength, USB_OS_EXTENDED_PROPERTIES_HEADER_SIZE);
+  memcpy(sControlBuffer, &osExtendedPropertiesHeader, count);
+  sControlBuffer += count;
+  sControlBufferLength -= count;
+  uint16_t total = count;
+  uint16_t totalLength = USB_OS_EXTENDED_PROPERTIES_HEADER_SIZE;
+
+  /* Copy the GUID Property function */
+  count = MIN(sControlBufferLength, osExtendedPropertiesGUIDFunction.dwSize);
+  memcpy(sControlBuffer, &osExtendedPropertiesGUIDFunction, count);
+  sControlBuffer += count;
+  sControlBufferLength -= count;
+  total += count;
+  totalLength += osExtendedPropertiesGUIDFunction.dwSize;
+
+  /* Fill in dwLength. */
+  *(uint16_t *)(tmpbuf) = totalLength;
+  sControlBuffer = tmpbuf;
+
+  return total;
+}
+
 DataDirection bmRequestTypeDirection(uint8_t bmRequestType) {
   if (bmRequestType & 0x80) {
     return DataDirection::In;
   }
   return DataDirection::Out;
+}
+
+RequestTypeType bmRequestTypeType(uint8_t bmRequestType) {
+  int type = (bmRequestType & 0b01100000) >> 5;
+  return (RequestTypeType)type;
 }
 
 int descriptorIndexFromWValue(uint16_t wValue) {

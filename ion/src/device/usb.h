@@ -138,7 +138,7 @@ struct InterfaceDescriptor {
 /* Class Definition */
 #define USB_PROTOCOL_DFU 0x01
 
-#define USB_DFU_CONFIGURATION_VALUE 1
+#define USB_DFU_CONFIGURATION_VALUE 0 //TODO
 
 
 enum class ControlState {
@@ -207,7 +207,8 @@ void shutdown();
 constexpr static const char *sStrings[] = {
   "Numworks",
   "Calculatrice USB",
-  "111111111" //TODO
+  "111111111", //TODO
+  "https://www.numworks.com/fr/"
 };
 constexpr static uint16_t sNumberOfStrings = 4; //TODO set value
 constexpr static GPIOPin VbusPin = GPIOPin(GPIOA, 9);
@@ -276,6 +277,55 @@ struct OSExtendedPropertiesGUIDFunction {
 int controlCustomSetup();
 uint16_t buildExtendedCompatIDDescriptor();
 uint16_t buildExtendedPropertiesDescriptor();
+
+/* WebUSB
+ * https://wicg.github.io/webusb/#webusb-platform-capability-descriptor */
+
+struct BinaryDeviceObjectStore {
+  uint8_t bLength;
+  uint8_t bDescriptorType;
+  uint16_t wTotalLength; // Length of this descriptor and all of its sub descriptors
+  uint8_t bNumDeviceCaps; // The number of separate device capability descriptors in the BOS
+}__attribute__((packed));
+
+#define USB_DT_BOS_SIZE 5
+#define USB_DT_BOS 0x0F
+
+struct PlatformDescriptor {
+  uint8_t bLength;
+  uint8_t bDescriptorType;
+  uint8_t bDevCapabilityType;
+  uint8_t bReserved;
+  uint8_t PlatformCapabilityUUID[16];
+  uint16_t bcdVersion;
+  uint8_t bVendorCode;
+  uint8_t iLandingPage;
+} __attribute__((packed));
+
+struct URLDescriptor {
+  uint8_t bLength;
+  uint8_t bDescriptorType;
+  uint8_t bScheme; // Must be a URLPrefixes value.
+  uint8_t URL[];
+} __attribute__((packed));
+
+enum class URLPrefixes {
+  HTTP = 0,
+  HTTPS = 1,
+  ENCODED_IN_URL = 255
+};
+
+#define USB_DT_PLATFORM_SIZE 24
+#define USB_DT_TYPE_DEVICE_CAPABLITY 16
+#define USB_DT_DEVICE_CAPABLITY_TYPE_PLATFORM 5
+#define USB_DT_PLATFORM_RESERVED_BYTE 0
+#define WEB_USB_BCD_VERSION 0x0100
+#define WEB_USB_BVENDOR_CODE 1 // Arbitrarily chosen
+#define WEB_USB_INDEX_REQUEST_GET_URL 2
+#define USB_DT_URL 3
+
+int controlCustomSetup();
+uint16_t buildBOSDescriptor();
 
 
 }

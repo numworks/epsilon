@@ -29,7 +29,7 @@ static inline void DEBUGTOGGLE() {
 static const struct DeviceDescriptor deviceDescriptor = {
   .bLength = USB_DT_DEVICE_SIZE,
   .bDescriptorType = USB_DT_DEVICE,
-  .bcdUSB = 0x0200,
+  .bcdUSB = 0x0300,
   .bDeviceClass = 0,
   .bDeviceSubClass = 0,
   .bDeviceProtocol = 0,
@@ -104,6 +104,27 @@ static const struct OSExtendedPropertiesGUIDFunction osExtendedPropertiesGUIDFun
   .bPropertyName = {'D', 0, 'e', 0, 'v', 0, 'i', 0, 'c', 0, 'e', 0, 'I', 0, 'n', 0, 't', 0, 'e', 0, 'r', 0, 'f', 0, 'a', 0, 'c', 0, 'e', 0, 'G', 0, 'U', 0, 'I', 0, 'D', 0, 0, 0},
   .dwPropertyDataLength = USB_GUID_PROPERTY_DATA_LENGTH,
   .bPropertyData = {'{', 0, '9', 0, '5', 0, '2', 0, '3', 0, '6', 0, '2', 0, 'C', 0, '1', 0, '-', 0, '3', 0, 'D', 0, '9', 0, '3', 0, '-', 0, '4', 0, 'D', 0, '2', 0, 'A', 0, '-', 0, '9', 0, 'A', 0, '2', 0, '0', 0, '-', 0, '6', 0, '5', 0, '5', 0, '3', 0, '2', 0, '0', 0, '1', 0, '4', 0, '7', 0, 'C', 0, '6', 0, 'F', 0, '}', 0, 0, 0}
+};
+
+static const struct BinaryDeviceObjectStore bosDescriptor = {
+  .bLength = USB_DT_BOS_SIZE,
+  .bDescriptorType = USB_DT_BOS,
+  .wTotalLength = 0, // This value is computed afterwards
+  .bNumDeviceCaps = 1
+};
+
+static const struct PlatformDescriptor webUSBPlatformDescriptor = {
+  .bLength = USB_DT_PLATFORM_SIZE,
+  .bDescriptorType = USB_DT_TYPE_DEVICE_CAPABLITY,
+  .bDevCapabilityType = USB_DT_DEVICE_CAPABLITY_TYPE_PLATFORM,
+  .bReserved = USB_DT_PLATFORM_RESERVED_BYTE,
+  .PlatformCapabilityUUID = {
+    // Little-endian encoding of {3408b638-09a9-47a0-8bfd-a0768815b665}.
+    0x38, 0xB6, 0x08, 0x34, 0xA9, 0x09, 0xA0, 0x47,
+    0x8B, 0xFD, 0xA0, 0x76, 0x88, 0x15, 0xB6, 0x65},
+  .bcdVersion = WEB_USB_BCD_VERSION,
+  .bVendorCode = WEB_USB_BVENDOR_CODE,
+  .iLandingPage = 4
 };
 
 SetupData sSetupData;
@@ -365,6 +386,10 @@ int controlSetupGetDescriptor() {
   int descriptorIndex = descriptorIndexFromWValue(sSetupData.wValue);
 
   switch (descriptorTypeFromWValue(sSetupData.wValue)) {
+    case USB_DT_BOS:
+      sControlBuffer = sControlBufferInit;
+      sControlBufferLength = buildBOSDescriptor();
+      return (int) RequestReturnCodes::USBD_REQ_HANDLED;
     case USB_DT_DEVICE:
       sControlBuffer = (uint8_t *)(&deviceDescriptor);
       sControlBufferLength = MIN(sControlBufferLength, deviceDescriptor.bLength);
@@ -500,6 +525,33 @@ int controlCustomSetup() {
         sControlBufferLength = buildExtendedPropertiesDescriptor();
         return (int) RequestReturnCodes::USBD_REQ_HANDLED;
       }
+      break;
+    case WEB_USB_BVENDOR_CODE:
+      if (sSetupData.wIndex == WEB_USB_INDEX_REQUEST_GET_URL) {
+        struct URLDescriptor * urlDescriptor = (struct URLDescriptor *)sControlBufferInit;
+        int arrayIndex = sSetupData.wValue - 1;
+        /* Check that string index is in range. */
+        if (arrayIndex < 0 || arrayIndex >= sNumberOfStrings) {
+          return (int) RequestReturnCodes::USBD_REQ_NOTSUPP;
+        }
+        /* This string is returned as UTF8 */
+        urlDescriptor->bLength = sizeof(urlDescriptor->bLength) +
+          sizeof(urlDescriptor->bDescriptorType)+
+          sizeof(urlDescriptor->bScheme) +
+          strlen(sStrings[arrayIndex]);
+
+        sControlBufferLength = MIN(sControlBufferLength, urlDescriptor->bLength);
+
+        for (int i = 0; i < sControlBufferLength - 1; i++) {
+          urlDescriptor->URL[i] = sStrings[arrayIndex][i];
+        }
+
+        urlDescriptor->bDescriptorType = USB_DT_URL;
+        sControlBuffer = (uint8_t *)urlDescriptor;
+        whiteScreen();
+        return (int) RequestReturnCodes::USBD_REQ_HANDLED;
+      }
+      return (int) RequestReturnCodes::USBD_REQ_NOTSUPP;
       break;
     default:
       break;
@@ -799,7 +851,31 @@ uint16_t buildExtendedCompatIDDescriptor() {
   sControlBufferLength -= count;
   total += count;
   totalLength += USB_OS_EXTENDED_COMPAT_ID_FUNCTION_SIZE;
+  sControlBuffer = tmpbuf;
 
+  return total;
+}
+
+uint16_t buildBOSDescriptor() {
+  uint8_t *tmpbuf = sControlBuffer;
+  uint16_t count = MIN(sControlBufferLength, bosDescriptor.bLength);
+
+  memcpy(sControlBuffer, &bosDescriptor, count);
+  sControlBuffer += count;
+  sControlBufferLength -= count;
+  uint16_t total = count;
+  uint16_t totalLength = bosDescriptor.bLength;
+
+  /* Copy the platform descriptor. */
+  count = MIN(sControlBufferLength, webUSBPlatformDescriptor.bLength);
+  memcpy(sControlBuffer, &webUSBPlatformDescriptor, count);
+  sControlBuffer += count;
+  sControlBufferLength -= count;
+  total += count;
+  totalLength += webUSBPlatformDescriptor.bLength;
+
+  /* Fill in wTotalLength. */
+  *(uint16_t *)(tmpbuf + 2) = totalLength;
   sControlBuffer = tmpbuf;
 
   return total;

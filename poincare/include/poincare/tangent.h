@@ -13,6 +13,7 @@ class Tangent : public StaticHierarchy<1>  {
 public:
   Type type() const override;
   Expression * clone() const override;
+  float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {

@@ -176,6 +176,22 @@ bool Expression::isApproximate(Context & context) const {
     }, context);
 }
 
+float Expression::characteristicXRange(Context & context, AngleUnit angleUnit) const {
+  /* A expression has a characteristic range if at least one of its operand has
+   * one and the other are x-independant. We keep the biggest interesting range
+   * among the operand interesting ranges. */
+  float range = 0.0f;
+  for (int i = 0; i < numberOfOperands(); i++) {
+    float opRange = operand(i)->characteristicXRange(context, angleUnit);
+    if (std::isnan(opRange)) {
+      return NAN;
+    } else if (range < opRange) {
+      range = opRange;
+    }
+  }
+  return range;
+}
+
 bool Expression::IsMatrix(const Expression * e, Context & context) {
   return e->type() == Type::Matrix || e->type() == Type::ConfidenceInterval || e->type() == Type::MatrixDimension || e->type() == Type::PredictionInterval || e->type() == Type::MatrixInverse || e->type() == Type::MatrixTranspose || (e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isMatrixSymbol());
 }

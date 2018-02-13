@@ -48,4 +48,8 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
   return true;
 }
 
+float InteractiveCurveViewRangeDelegate::interestingXRange() {
+  return 10.0f;
+}
+
 }

@@ -70,7 +70,6 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   float max = -FLT_MAX;
   float xMin = interactiveCurveViewRange->xMin();
   float xMax = interactiveCurveViewRange->xMax();
-  float step = (xMax - xMin)/curveView()->resolution();
   if (functionStore()->numberOfActiveFunctions() <= 0) {
     InteractiveCurveViewRangeDelegate::Range range;
     range.min = xMin;
@@ -80,8 +79,8 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
     Function * f = functionStore()->activeFunctionAtIndex(i);
     float y = 0.0f;
-    for (int i = 0; i <= curveView()->resolution(); i++) {
-      float x = xMin + i*step;
+    for (int j = 0; j <= curveView()->resolution(); j++) {
+      float x = xMin+(xMax-xMin)*j/curveView()->resolution();
       y = f->evaluateAtAbscissa(x, myApp->localContext());
       if (!std::isnan(y) && !std::isinf(y)) {
         min = min < y ? min : y;

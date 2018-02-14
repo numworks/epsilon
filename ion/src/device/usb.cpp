@@ -431,7 +431,7 @@ int controlSetupGetStatus() {
 
 int controlSetupSetConfiguration() {
   /* We support one configuration only */
-  if (sSetupData.wValue != 0 || sSetupData.wValue != USB_DFU_CONFIGURATION_VALUE) {
+  if (sSetupData.wValue != 0 && sSetupData.wValue != USB_DFU_CONFIGURATION_VALUE) {
     return (int) RequestReturnCodes::USBD_REQ_NOTSUPP;
   }
 

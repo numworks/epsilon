@@ -115,15 +115,43 @@ QUIZ_CASE(poincare_integer_divide) {
 }
 
 template<typename T>
-void assert_integer_evals_to(int i, T result) {
-  assert(Integer(i).approximate<T>() == result);
+void assert_integer_evals_to(const char * i, bool negative, T result) {
+  assert(Integer(i, negative).approximate<T>() == result);
 }
 
 QUIZ_CASE(poincare_integer_evaluate) {
-  assert_integer_evals_to(1, 1.0f);
-  assert_integer_evals_to(12345678, 12345678.0);
-  assert_integer_evals_to(0, 0.0f);
-  assert_integer_evals_to(-0, 0.0);
-  assert_integer_evals_to(-1, -1.0f);
-  assert_integer_evals_to(12345678, 12345678.0);
+  assert_integer_evals_to("1", false, 1.0f);
+  assert_integer_evals_to("1", false, 1.0);
+  assert_integer_evals_to("12345678", false, 12345678.0f);
+  assert_integer_evals_to("12345678", false, 12345678.0);
+  assert_integer_evals_to("0", false, 0.0f);
+  assert_integer_evals_to("0", false, 0.0);
+  assert_integer_evals_to("0", true, 0.0f);
+  assert_integer_evals_to("0", true, 0.0);
+  assert_integer_evals_to("1", true, -1.0f);
+  assert_integer_evals_to("1", true, -1.0);
+  assert_integer_evals_to("12345678", false, 12345678.0f);
+  assert_integer_evals_to("12345678", false, 12345678.0);
+  assert_integer_evals_to("4294967295", false, 4294967295.0f);
+  assert_integer_evals_to("4294967295", false, 4294967295.0);
+  assert_integer_evals_to("4294967296", true, -4294967296.0f);
+  assert_integer_evals_to("4294967296", true, -4294967296.0);
+  assert_integer_evals_to("2147483648", false, 2147483648.0f);
+  assert_integer_evals_to("2147483648", false, 2147483648.0);
+  assert_integer_evals_to("18446744073709551615", true, -18446744073709551615.0f);
+  assert_integer_evals_to("18446744073709551615", true, -18446744073709551615.0);
+  assert_integer_evals_to("18446744073709551616", true, -18446744073709551616.0f);
+  assert_integer_evals_to("18446744073709551616", true, -18446744073709551616.0);
+  assert_integer_evals_to("92233720372036854775808", false, 92233720372036854775808.0f);
+  assert_integer_evals_to("92233720372036854775808", false, 92233720372036854775808.0);
+  assert_integer_evals_to("134217720", false, 134217720.0f);
+  assert_integer_evals_to("134217720", false, 134217720.0);
+  assert_integer_evals_to("67108864", false, 67108864.0f);
+  assert_integer_evals_to("67108864", false, 67108864.0);
+  assert_integer_evals_to("33554432", false, 33554432.0f);
+  assert_integer_evals_to("33554432", false, 33554432.0);
+  assert_integer_evals_to("2", false, 2.0f);
+  assert_integer_evals_to("2", false, 2.0);
+  assert_integer_evals_to("4", false, 4.0f);
+  assert_integer_evals_to("4", false, 4.0);
 }

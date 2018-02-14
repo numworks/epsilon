@@ -34,6 +34,12 @@ public:
     u.ui |= ((uint64_t)sign << (size()-k_signNbBits));
     u.ui |= ((uint64_t)exponent << k_mantissaNbBits);
     u.ui |= ((uint64_t)mantissa >> (size()-k_mantissaNbBits-1) & oneOnMantissaBits);
+    /* So far, we just cast the Integer in float. To round it to the closest
+     * float, we increment the mantissa (and sometimes the exponent if the
+     * mantissa was full of 1) if the next mantissa bit is 1. */
+    if (((uint64_t)mantissa >> (size()-k_mantissaNbBits-2)) & 1) {
+      u.ui += 1;
+    }
     return u.f;
   }
   static int exponent(T f) {

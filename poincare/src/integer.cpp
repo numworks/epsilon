@@ -531,11 +531,6 @@ T Integer::approximate() const {
     }
     digitIndex++;
   }
-  // TODO: Here, we just cast the Integer in float(double). We should round it
-  // to the closest float(double). To do so, we should keep a additional bit
-  // at the end of the mantissa and add it to the mantissa; do not forget to
-  // shift the mantissa if the rounding increase the length in bits of the
-  // mantissa.
 
   T result = IEEE754<T>::buildFloat(sign, exponent, mantissa);
 

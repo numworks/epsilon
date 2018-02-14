@@ -214,6 +214,7 @@ void poll() {
     /* Handle USB RESET. */
     OTG.GINTSTS()->setENUMDNE(true); //Clear the ENUMDNE bit.
     usb_set_address(0);
+    usb_endpoints_reset();
     usb_endpoint_setup();
     return;
   }

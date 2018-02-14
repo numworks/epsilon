@@ -164,6 +164,7 @@ void controlSetup();
 void controlSetupIn();
 void controlSetupOut();
 int controlSetupGetDescriptor();
+int controlSetupGetStatus();
 int controlSetupSetConfiguration();
 int controlRequestDispatch();
 int controlStandardRequest();

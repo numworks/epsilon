@@ -420,6 +420,15 @@ int controlSetupGetDescriptor() {
   return (int) RequestReturnCodes::USBD_REQ_NOTSUPP;
 }
 
+int controlSetupGetStatus() {
+  if (sControlBufferLength > 2) {
+    sControlBufferLength = 2;
+  }
+  sControlBuffer[0] = 0;
+  sControlBuffer[1] = 0;
+  return (int) RequestReturnCodes::USBD_REQ_HANDLED;
+}
+
 int controlSetupSetConfiguration() {
   /* We support one configuration only */
   if (sSetupData.wValue != 0 || sSetupData.wValue != USB_DFU_CONFIGURATION_VALUE) {
@@ -444,7 +453,7 @@ int controlRequestDispatch() {
 int controlStandardRequest() {
   switch (sSetupData.bRequest) {
     case USB_REQ_GET_STATUS:
-      //TODO Not needed for enumeration?
+      return controlSetupGetStatus();
       break;
     case USB_REQ_CLEAR_FEATURE:
     case USB_REQ_SET_FEATURE:

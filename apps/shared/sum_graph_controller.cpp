@@ -158,7 +158,7 @@ bool SumGraphController::textFieldDidAbortEditing(TextField * textField, const c
     default:
       assert(false);
   }
-  Complex<double>::convertFloatToText(parameter, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  PrintFloat::convertFloatToText<double>(parameter, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
   textField->setText(buffer);
   return true;
 }
@@ -233,7 +233,7 @@ void SumGraphController::LegendView::setLegendMessage(I18n::Message message, Ste
 
 void SumGraphController::LegendView::setEditableZone(double d) {
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-  Complex<double>::convertFloatToText(d, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  PrintFloat::convertFloatToText<double>(d, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
  m_editableZone.setText(buffer);
 }
 
@@ -248,19 +248,19 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     m_sumLayout = new StringLayout(sigma, sizeof(sigma));
   } else if (step == Step::SecondParameter) {
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-    Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
     m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, sizeof(sigma)), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
   } else {
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex<double>::convertFloatToText(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
     ExpressionLayout * start =  new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
-    Complex<double>::convertFloatToText(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
     ExpressionLayout * end =  new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     m_sumLayout = new CondensedSumLayout(new StringLayout(sigma, sizeof(sigma)), start, end);
 
     ExpressionLayout * childrenLayouts[3];
     strlcpy(buffer, "= ", 3);
-    Complex<double>::convertFloatToText(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PrintFloat::convertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     childrenLayouts[2] = new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     childrenLayouts[1] = functionLayout;
     childrenLayouts[0] = m_sumLayout;

@@ -7,6 +7,16 @@
 namespace Poincare {
 
 namespace PrintFloat {
+  /* The 'Mode' refers to the way to display float 'scientific' or 'auto'. The
+   * scientific mode returns float with style -1.2E2 whereas the auto mode
+   * tries to return 'natural' float like (0.021) and switches to scientific
+   * mode if the float is too small or too big regarding the number of
+   * significant digits. */
+  enum class Mode {
+    Decimal = 0,
+    Scientific = 1,
+    Default = 2
+  };
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The wors case is -1.234E-38
     return numberOfSignificantDigits + 7;
@@ -35,11 +45,17 @@ namespace PrintFloat {
    * -1.99999999999999e-308*e^(-1.99999999999999e-308*i) (14+14+7+1 char) */
   constexpr static int k_maxComplexBufferLength = k_maxFloatBufferLength-1+k_maxFloatBufferLength-1+7+1;
 
-
-  // TODO: move these two functions here. Watch out, Expression::FloatDisplayMode has also to be moved.
-  //int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Expression::FloatDisplayMode mode = Expression::FloatDisplayMode::Default);
-
-  //static int convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Expression::FloatDisplayMode mode);
+  /* If the buffer size is too small to display the right number of significant
+   * digits, the function forces the scientific mode and cap the number of
+   * significant digits to fit the buffer. If the buffer is too small to
+   * display any float, the text representing the float is truncated at the end
+   * of the buffer.
+   * ConvertFloatToText return the number of characters that have been written
+   * in buffer (excluding the last \O character) */
+  template <class T>
+  int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Mode mode = Mode::Default);
+  template <class T>
+  static int convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Mode mode);
 }
 
 }

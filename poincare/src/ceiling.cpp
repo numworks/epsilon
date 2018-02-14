@@ -59,8 +59,8 @@ Complex<T> Ceiling::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(std::ceil(c.a()));
 }
 
-ExpressionLayout * Ceiling::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
+ExpressionLayout * Ceiling::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   return new CeilingLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat));
 }

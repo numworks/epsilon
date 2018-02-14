@@ -20,30 +20,6 @@ extern "C" {
 namespace Poincare {
 
 template<typename T>
-int exponent(T f) {
-  static T k_log10base2 = 3.321928094887362347870319429489390175864831393024580612054;
-  if (f == 0.0) {
-    return 0;
-  }
-  T exponentBase2 = IEEE754<T>::exponent(f);
-  /* Compute the exponent in base 10 from exponent in base 2:
-   * f = m1*2^e1
-   * f = m2*10^e2
-   * --> f = m1*10^(e1/log(10,2))
-   * --> f = m1*10^x*10^(e1/log(10,2)-x), with x in [-1,1]
-   * Thus e2 = e1/log(10,2)-x,
-   *   with x such as 1 <= m1*10^x < 9 and e1/log(10,2)-x is round.
-   * Knowing that the equation 1 <= m1*10^x < 10 with 1<=m1<2 has its solution
-   * in -0.31 < x < 1, we get:
-   * e2 = [e1/log(10,2)]  or e2 = [e1/log(10,2)]-1 depending on m1. */
-  int exponentBase10 = std::round(exponentBase2/k_log10base2);
-  if (std::pow(10.0, exponentBase10) > std::fabs(f)) {
-    exponentBase10--;
-  }
-  return exponentBase10;
-}
-
-template<typename T>
 Complex<T> Complex<T>::Float(T x) {
   return Complex(x,0);
 }
@@ -224,32 +200,7 @@ bool Complex<T>::needParenthesisWithParent(const Expression * e) const {
   }
 }
 
-template <class T>
-int Complex<T>::convertFloatToText(T f, char * buffer, int bufferSize,
-    int numberOfSignificantDigits, Expression::FloatDisplayMode mode) {
-  assert(numberOfSignificantDigits > 0);
-  if (mode == Expression::FloatDisplayMode::Default) {
-    return convertFloatToText(f, buffer, bufferSize, numberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
-  }
-  char tempBuffer[PrintFloat::k_maxFloatBufferLength];
-  int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode);
-  /* if the required buffer size overflows the buffer size, we first force the
-   * display mode to scientific and decrease the number of significant digits to
-   * fit the buffer size. If the buffer size is still to small, we only write
-   * the beginning of the float and truncate it (which can result in a non sense
-   * text) */
-  if (mode == Expression::FloatDisplayMode::Decimal && requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, Expression::FloatDisplayMode::Scientific);
-  }
-  if (requiredLength >= bufferSize) {
-    int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - requiredLength + bufferSize - 1;
-    adjustedNumberOfSignificantDigits = adjustedNumberOfSignificantDigits < 1 ? 1 : adjustedNumberOfSignificantDigits;
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, adjustedNumberOfSignificantDigits, Expression::FloatDisplayMode::Scientific);
-  }
-  requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize;
-  strlcpy(buffer, tempBuffer, bufferSize);
-  return requiredLength;
-}
+
 
 template <class T>
 Complex<T>::Complex(T a, T b) :
@@ -259,8 +210,8 @@ Complex<T>::Complex(T a, T b) :
 }
 
 template <class T>
-ExpressionLayout * Complex<T>::privateCreateLayout(Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != Expression::FloatDisplayMode::Default);
+ExpressionLayout * Complex<T>::privateCreateLayout(PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   if (complexFormat == Expression::ComplexFormat::Polar) {
     return createPolarLayout(floatDisplayMode);
   }
@@ -272,7 +223,7 @@ Expression * Complex<T>::CreateDecimal(T f) {
   if (std::isnan(f) || std::isinf(f)) {
     return new Undefined();
   }
-  int e = exponent(f);
+  int e = IEEE754<T>::exponentBase10(f);
   int64_t mantissaf = f * std::pow((T)10, -e+PrintFloat::k_numberOfStoredSignificantDigits+1);
   return new Decimal(Integer(mantissaf), e);
 }
@@ -296,15 +247,15 @@ Complex<U> * Complex<T>::templatedApproximate(Context& context, Expression::Angl
 }
 
 template <class T>
-int Complex<T>::convertComplexToText(char * buffer, int bufferSize, int numberOfSignificantDigits, Expression::FloatDisplayMode displayMode, Expression::ComplexFormat complexFormat, char multiplicationSpecialChar) const {
-  assert(displayMode != Expression::FloatDisplayMode::Default);
+int Complex<T>::convertComplexToText(char * buffer, int bufferSize, int numberOfSignificantDigits, PrintFloat::Mode displayMode, Expression::ComplexFormat complexFormat, char multiplicationSpecialChar) const {
+  assert(displayMode != PrintFloat::Mode::Default);
   int numberOfChars = 0;
   if (std::isnan(m_a) || std::isnan(m_b) || std::isinf(m_a) || std::isinf(m_b)) {
-    return convertFloatToText(NAN, buffer, bufferSize, numberOfSignificantDigits, displayMode);
+    return PrintFloat::convertFloatToText<T>(NAN, buffer, bufferSize, numberOfSignificantDigits, displayMode);
   }
   if (complexFormat == Expression::ComplexFormat::Polar) {
     if (r() != 1 || th() == 0) {
-      numberOfChars = convertFloatToText(r(), buffer, bufferSize, numberOfSignificantDigits, displayMode);
+      numberOfChars = PrintFloat::convertFloatToText<T>(r(), buffer, bufferSize, numberOfSignificantDigits, displayMode);
       if (r() != 0 && th() != 0 && bufferSize > numberOfChars+1) {
         buffer[numberOfChars++] = multiplicationSpecialChar;
         // Ensure that the string is null terminated even if buffer size is to small
@@ -319,7 +270,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, int numberOf
         // Ensure that the string is null terminated even if buffer size is to small
         buffer[numberOfChars] = 0;
       }
-      numberOfChars += convertFloatToText(th(), buffer+numberOfChars, bufferSize-numberOfChars, numberOfSignificantDigits, displayMode);
+      numberOfChars += PrintFloat::convertFloatToText<T>(th(), buffer+numberOfChars, bufferSize-numberOfChars, numberOfSignificantDigits, displayMode);
       if (bufferSize > numberOfChars+3) {
         buffer[numberOfChars++] = multiplicationSpecialChar;
         buffer[numberOfChars++] = Ion::Charset::IComplex;
@@ -331,7 +282,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, int numberOf
   }
 
   if (m_a != 0 || m_b == 0) {
-    numberOfChars = convertFloatToText(m_a, buffer, bufferSize, numberOfSignificantDigits, displayMode);
+    numberOfChars = PrintFloat::convertFloatToText<T>(m_a, buffer, bufferSize, numberOfSignificantDigits, displayMode);
     if (m_b > 0 && !std::isnan(m_b) && bufferSize > numberOfChars+1) {
       buffer[numberOfChars++] = '+';
       // Ensure that the string is null terminated even if buffer size is to small
@@ -339,7 +290,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, int numberOf
     }
   }
   if (m_b != 1 && m_b != -1 && m_b != 0) {
-    numberOfChars += convertFloatToText(m_b, buffer+numberOfChars, bufferSize-numberOfChars, numberOfSignificantDigits, displayMode);
+    numberOfChars += PrintFloat::convertFloatToText<T>(m_b, buffer+numberOfChars, bufferSize-numberOfChars, numberOfSignificantDigits, displayMode);
     buffer[numberOfChars++] = multiplicationSpecialChar;
   }
   if (m_b == -1 && bufferSize > numberOfChars+1) {
@@ -353,143 +304,18 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, int numberOf
 }
 
 template <class T>
-int Complex<T>::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Expression::FloatDisplayMode mode) {
-  assert(mode != Expression::FloatDisplayMode::Default);
-  assert(numberOfSignificantDigits > 0);
-  /*if (std::isinf(f)) {
-    int currentChar = 0;
-    if (f < 0) {
-      buffer[currentChar++] = '-';
-    }
-    buffer[currentChar++] = 'i';
-    buffer[currentChar++] = 'n';
-    buffer[currentChar++] = 'f';
-    buffer[currentChar] = 0;
-    return currentChar;
-  }*/
-
-  if (std::isinf(f) || std::isnan(f)) {
-    int currentChar = 0;
-    buffer[currentChar++] = 'u';
-    buffer[currentChar++] = 'n';
-    buffer[currentChar++] = 'd';
-    buffer[currentChar++] = 'e';
-    buffer[currentChar++] = 'f';
-    buffer[currentChar] = 0;
-    return currentChar;
-  }
-
-  int exponentInBase10 = exponent(f);
-
-  Expression::FloatDisplayMode displayMode = mode;
-  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Expression::FloatDisplayMode::Decimal) {
-    displayMode = Expression::FloatDisplayMode::Scientific;
-  }
-
-  // Number of char available for the mantissa
-  int availableCharsForMantissaWithoutSign = numberOfSignificantDigits + 1;
-  int availableCharsForMantissaWithSign = f >= 0 ? availableCharsForMantissaWithoutSign : availableCharsForMantissaWithoutSign + 1;
-
-  // Compute mantissa
-  /* The number of digits in an mantissa is capped because the maximal int64_t
-   * is 2^63 - 1. As our mantissa is an integer built from an int64_t, we assert
-   * that we stay beyond this threshold during computation. */
-  assert(availableCharsForMantissaWithoutSign - 1 < std::log10(std::pow(2.0f, 63.0f)));
-
-  int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == Expression::FloatDisplayMode::Scientific ?
-                                   exponentInBase10 + 1 : 1;
-
-  T unroundedMantissa = f * std::pow((T)10.0, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
-  T mantissa = std::round(unroundedMantissa);
-
-  /* if availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal
-   * is too big (or too small), mantissa is now inf. We handle this case by
-   * using logarithm function. */
-  if (std::isnan(mantissa) || std::isinf(mantissa)) {
-    mantissa = std::round(std::pow(10, std::log10(std::fabs(f))+(T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal)));
-    mantissa = std::copysign(mantissa, f);
-  }
-  /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
-   * instance)
-   * NB: the following if-condition would rather be:
-   * "exponent(unroundedMantissa) != exponent(mantissa)",
-   * however, unroundedMantissa can have a different exponent than expected
-   * (ex: f = 1E13, unroundedMantissa = 99999999.99 and mantissa = 1000000000) */
-  if (f != 0 && exponent(mantissa)-exponentInBase10 != availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal) {
-    exponentInBase10++;
-  }
-
-  // Update the display mode if the exponent changed
-  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Expression::FloatDisplayMode::Decimal) {
-    displayMode = Expression::FloatDisplayMode::Scientific;
-  }
-
-  int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == Expression::FloatDisplayMode::Scientific ?
-    1 : exponentInBase10+1;
-  decimalMarkerPosition = f < 0 ? decimalMarkerPosition+1 : decimalMarkerPosition;
-
-  // Correct the number of digits in mantissa after rounding
-  int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == Expression::FloatDisplayMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
-  if (std::floor(std::fabs((T)mantissa) * std::pow((T)10, - mantissaExponentInBase10)) > 0) {
-    mantissa = mantissa/10;
-  }
-
-  int numberOfCharExponent = exponentInBase10 != 0 ? std::log10(std::fabs((T)exponentInBase10)) + 1 : 1;
-  if (exponentInBase10 < 0){
-    // If the exponent is < 0, we need a additional char for the sign
-    numberOfCharExponent++;
-  }
-
-  // Supress the 0 on the right side of the mantissa
-  Integer dividend = Integer((int64_t)std::fabs(mantissa));
-  Integer quotient = Integer::Division(dividend, Integer(10)).quotient;
-  Integer digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
-  int minimumNumberOfCharsInMantissa = 1;
-  while (digit.isZero() && availableCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
-      (availableCharsForMantissaWithoutSign > exponentInBase10+2 || displayMode == Expression::FloatDisplayMode::Scientific)) {
-    mantissa = mantissa/10;
-    availableCharsForMantissaWithoutSign--;
-    availableCharsForMantissaWithSign--;
-    dividend = quotient;
-    quotient = Integer::Division(dividend, Integer(10)).quotient;
-    digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
-  }
-
-  // Suppress the decimal marker if no fractional part
-  if ((displayMode == Expression::FloatDisplayMode::Decimal && availableCharsForMantissaWithoutSign == exponentInBase10+2)
-      || (displayMode == Expression::FloatDisplayMode::Scientific && availableCharsForMantissaWithoutSign == 2)) {
-    availableCharsForMantissaWithSign--;
-  }
-
-  // Print mantissa
-  assert(availableCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
-  PrintFloat::printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, Integer((int64_t)mantissa), decimalMarkerPosition);
-  if (displayMode == Expression::FloatDisplayMode::Decimal || exponentInBase10 == 0) {
-    buffer[availableCharsForMantissaWithSign] = 0;
-    return availableCharsForMantissaWithSign;
-  }
-  // Print exponent
-  assert(availableCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
-  buffer[availableCharsForMantissaWithSign] = Ion::Charset::Exponent;
-  assert(numberOfCharExponent+availableCharsForMantissaWithSign+1 < PrintFloat::k_maxFloatBufferLength);
-  PrintFloat::printBase10IntegerWithDecimalMarker(buffer+availableCharsForMantissaWithSign+1, numberOfCharExponent, Integer(exponentInBase10), -1);
-  buffer[availableCharsForMantissaWithSign+1+numberOfCharExponent] = 0;
-  return (availableCharsForMantissaWithSign+1+numberOfCharExponent);
-}
-
-template <class T>
-ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Complex<T>::createPolarLayout(PrintFloat::Mode floatDisplayMode) const {
   char bufferBase[PrintFloat::k_maxFloatBufferLength+2];
   int numberOfCharInBase = 0;
   char bufferSuperscript[PrintFloat::k_maxFloatBufferLength+2];
   int numberOfCharInSuperscript = 0;
 
   if (std::isnan(r()) || (std::isnan(th()) && r() != 0)) {
-    numberOfCharInBase = convertFloatToText(NAN, bufferBase, PrintFloat::k_maxComplexBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
+    numberOfCharInBase = PrintFloat::convertFloatToText<T>(NAN, bufferBase, PrintFloat::k_maxComplexBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
     return new StringLayout(bufferBase, numberOfCharInBase);
   }
   if (r() != 1 || th() == 0) {
-    numberOfCharInBase = convertFloatToText(r(), bufferBase, PrintFloat::k_maxFloatBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
+    numberOfCharInBase = PrintFloat::convertFloatToText<T>(r(), bufferBase, PrintFloat::k_maxFloatBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
     if (r() != 0 && th() != 0) {
       bufferBase[numberOfCharInBase++] = Ion::Charset::MiddleDot;
     }
@@ -500,7 +326,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
   }
 
   if (r() != 0 && th() != 0) {
-    numberOfCharInSuperscript = convertFloatToText(th(), bufferSuperscript, PrintFloat::k_maxFloatBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
+    numberOfCharInSuperscript = PrintFloat::convertFloatToText<T>(th(), bufferSuperscript, PrintFloat::k_maxFloatBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode);
     bufferSuperscript[numberOfCharInSuperscript++] = Ion::Charset::MiddleDot;
     bufferSuperscript[numberOfCharInSuperscript++] = Ion::Charset::IComplex;
     bufferSuperscript[numberOfCharInSuperscript] = 0;
@@ -512,7 +338,7 @@ ExpressionLayout * Complex<T>::createPolarLayout(Expression::FloatDisplayMode fl
 }
 
 template <class T>
-ExpressionLayout * Complex<T>::createCartesianLayout(Expression::FloatDisplayMode floatDisplayMode) const {
+ExpressionLayout * Complex<T>::createCartesianLayout(PrintFloat::Mode floatDisplayMode) const {
   char buffer[PrintFloat::k_maxComplexBufferLength];
   int numberOfChars = convertComplexToText(buffer, PrintFloat::k_maxComplexBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode, Expression::ComplexFormat::Cartesian, Ion::Charset::MiddleDot);
   return new StringLayout(buffer, numberOfChars);

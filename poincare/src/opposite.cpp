@@ -52,8 +52,8 @@ Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
   return m->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * Opposite::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
+ExpressionLayout * Opposite::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * children_layouts[2];
   char string[2] = {'-', '\0'};

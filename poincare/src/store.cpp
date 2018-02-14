@@ -30,8 +30,8 @@ Expression * Store::shallowReduce(Context& context, AngleUnit angleUnit) {
   return replaceWith(editableOperand(1), true)->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * Store::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
+ExpressionLayout * Store::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * childrenLayouts[3];
   childrenLayouts[0] = value()->createLayout(floatDisplayMode, complexFormat);

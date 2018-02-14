@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <cmath>
 
 namespace Poincare {
 
@@ -49,6 +50,28 @@ public:
     int exp = (u.ui >> k_mantissaNbBits) & oneOnExponentsBits;
     exp -= exponentOffset();
     return exp;
+  }
+  static int exponentBase10(T f) {
+    static T k_log10base2 = 3.321928094887362347870319429489390175864831393024580612054;
+    if (f == 0.0) {
+      return 0;
+    }
+    T exponentBase2 = exponent(f);
+    /* Compute the exponent in base 10 from exponent in base 2:
+     * f = m1*2^e1
+     * f = m2*10^e2
+     * --> f = m1*10^(e1/log(10,2))
+     * --> f = m1*10^x*10^(e1/log(10,2)-x), with x in [-1,1]
+     * Thus e2 = e1/log(10,2)-x,
+     *   with x such as 1 <= m1*10^x < 9 and e1/log(10,2)-x is round.
+     * Knowing that the equation 1 <= m1*10^x < 10 with 1<=m1<2 has its solution
+     * in -0.31 < x < 1, we get:
+     * e2 = [e1/log(10,2)]  or e2 = [e1/log(10,2)]-1 depending on m1. */
+    int exponentBase10 = std::round(exponentBase2/k_log10base2);
+    if (std::pow(10.0, exponentBase10) > std::fabs(f)) {
+      exponentBase10--;
+    }
+    return exponentBase10;
   }
 private:
   union uint_float {

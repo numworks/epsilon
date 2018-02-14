@@ -17,7 +17,7 @@ public:
 private:
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
   /* Layout */
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
+  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
   }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {

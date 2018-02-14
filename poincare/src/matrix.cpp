@@ -95,8 +95,8 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignifi
   return currentChar;
 }
 
-ExpressionLayout * Matrix::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
+ExpressionLayout * Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout ** childrenLayouts = new ExpressionLayout * [numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {

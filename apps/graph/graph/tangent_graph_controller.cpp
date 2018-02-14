@@ -46,14 +46,14 @@ void TangentGraphController::reloadBannerView() {
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   double y = m_function->approximateDerivative(m_cursor->x(), myApp->localContext());
-  Complex<double>::convertFloatToText(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  PrintFloat::convertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView->setLegendAtIndex(buffer, 4);
 
   legend = "b=";
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   y = -y*m_cursor->x()+m_function->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
-  Complex<double>::convertFloatToText(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  PrintFloat::convertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   m_bannerView->setLegendAtIndex(buffer, 5);
 }
 

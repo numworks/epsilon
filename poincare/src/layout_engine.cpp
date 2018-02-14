@@ -8,8 +8,8 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionLayout * LayoutEngine::createInfixLayout(const Expression * expression, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
-  assert(floatDisplayMode != Expression::FloatDisplayMode::Default);
+ExpressionLayout * LayoutEngine::createInfixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != Expression::ComplexFormat::Default);
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 1);
@@ -26,8 +26,8 @@ ExpressionLayout * LayoutEngine::createInfixLayout(const Expression * expression
   return layout;
 }
 
-ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expression, Expression::FloatDisplayMode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
-  assert(floatDisplayMode != Expression::FloatDisplayMode::Default);
+ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != Expression::ComplexFormat::Default);
   int numberOfOperands = expression->numberOfOperands();
   ExpressionLayout * argumentLayouts = nullptr;

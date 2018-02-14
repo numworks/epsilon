@@ -154,9 +154,9 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
     const Matrix * matrixEvaluation = static_cast<const Matrix *>(evaluation);
     myCell->setExpression(matrixEvaluation);
     char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
-    int numberOfChars = Complex<float>::convertFloatToText(matrixEvaluation->numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    int numberOfChars = PrintFloat::convertFloatToText<float>(matrixEvaluation->numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, PrintFloat::Mode::Decimal);
     buffer[numberOfChars++] = 'x';
-    Complex<float>::convertFloatToText(matrixEvaluation->numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    PrintFloat::convertFloatToText<float>(matrixEvaluation->numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, PrintFloat::Mode::Decimal);
     myCell->setSubtitle(buffer);
   } else {
     myCell->setExpression(nullptr);

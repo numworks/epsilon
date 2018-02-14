@@ -80,7 +80,7 @@ Poincare::ExpressionLayout * Function::layout() {
   if (m_layout == nullptr) {
     Expression * nonSimplifiedExpression = Expression::parse(m_text);
     if (nonSimplifiedExpression != nullptr) {
-      m_layout = nonSimplifiedExpression->createLayout(Expression::FloatDisplayMode::Decimal);
+      m_layout = nonSimplifiedExpression->createLayout(PrintFloat::Mode::Decimal);
       delete nonSimplifiedExpression;
     }
   }

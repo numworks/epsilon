@@ -7,7 +7,7 @@ static Preferences s_preferences;
 
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
-  m_displayMode(Expression::FloatDisplayMode::Decimal),
+  m_displayMode(PrintFloat::Mode::Decimal),
   m_complexFormat(Expression::ComplexFormat::Cartesian),
   m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits)
 {
@@ -25,12 +25,12 @@ void Preferences::setAngleUnit(Expression::AngleUnit angleUnit) {
   m_angleUnit = angleUnit;
 }
 
-Expression::FloatDisplayMode Preferences::displayMode() const {
+PrintFloat::Mode Preferences::displayMode() const {
   return m_displayMode;
 }
 
-void Preferences::setDisplayMode(Expression::FloatDisplayMode FloatDisplayMode) {
-  m_displayMode = FloatDisplayMode;
+void Preferences::setDisplayMode(PrintFloat::Mode mode) {
+  m_displayMode = mode;
 }
 
 Expression::ComplexFormat Preferences::complexFormat() const {

@@ -8,13 +8,13 @@
 #include "helper.h"
 
 using namespace Poincare;
-constexpr Expression::FloatDisplayMode DecimalDisplay = Expression::FloatDisplayMode::Decimal;
-constexpr Expression::FloatDisplayMode ScientificDisplay = Expression::FloatDisplayMode::Scientific;
+constexpr PrintFloat::Mode DecimalDisplay = PrintFloat::Mode::Decimal;
+constexpr PrintFloat::Mode ScientificDisplay = PrintFloat::Mode::Scientific;
 constexpr Expression::ComplexFormat Cartesian = Expression::ComplexFormat::Cartesian;
 constexpr Expression::ComplexFormat Polar = Expression::ComplexFormat::Polar;
 
 template<typename T>
-void assert_float_prints_to(T a, const char * result, Expression::FloatDisplayMode mode = ScientificDisplay, int significantDigits = 7, int bufferSize = 250) {
+void assert_float_prints_to(T a, const char * result, PrintFloat::Mode mode = ScientificDisplay, int significantDigits = 7, int bufferSize = 250) {
   quiz_print(result);
 
   int tagSize = 8;
@@ -23,7 +23,7 @@ void assert_float_prints_to(T a, const char * result, Expression::FloatDisplayMo
   memset(taggedBuffer, tag, bufferSize+2*tagSize);
   char * buffer = taggedBuffer + tagSize;
 
-  Complex<T>::convertFloatToText(a, buffer, bufferSize, significantDigits, mode);
+  PrintFloat::convertFloatToText<T>(a, buffer, bufferSize, significantDigits, mode);
 
   for (int i=0; i<tagSize; i++) {
     assert(taggedBuffer[i] == tag);
@@ -38,7 +38,7 @@ void assert_float_prints_to(T a, const char * result, Expression::FloatDisplayMo
   delete[] taggedBuffer;
 }
 
-void assert_expression_prints_to(Expression * e, const char * result, Expression::FloatDisplayMode mode = ScientificDisplay, Expression::ComplexFormat format = Cartesian, int bufferSize = 250) {
+void assert_expression_prints_to(Expression * e, const char * result, PrintFloat::Mode mode = ScientificDisplay, Expression::ComplexFormat format = Cartesian, int bufferSize = 250) {
   quiz_print(result);
 
   int tagSize = 8;

@@ -213,9 +213,9 @@ int Expression::SimplificationOrder(const Expression * e1, const Expression * e2
 
 /* Layout */
 
-ExpressionLayout * Expression::createLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * Expression::createLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   switch (floatDisplayMode) {
-    case FloatDisplayMode::Default:
+    case PrintFloat::Mode::Default:
       switch (complexFormat) {
         case ComplexFormat::Default:
           return privateCreateLayout(Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());

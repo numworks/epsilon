@@ -520,12 +520,9 @@ T Integer::approximate() const {
    * the mantissa is complete to avoid undefined right shifting (Shift operator
    * behavior is undefined if the right operand is negative, or greater than or
    * equal to the length in bits of the promoted left operand). */
-  while (m_numberOfDigits >= digitIndex) {
+  while (m_numberOfDigits >= digitIndex && numberOfBits < IEEE754<T>::size()) {
     lastDigit = digit(m_numberOfDigits-digitIndex);
     numberOfBits += 32;
-    if (numberOfBits-IEEE754<T>::size() >= 64) {
-      break;
-    }
     if (IEEE754<T>::size() > numberOfBits) {
       assert(IEEE754<T>::size()-numberOfBits > 0 && IEEE754<T>::size()-numberOfBits < 64);
       mantissa |= ((uint64_t)lastDigit << (IEEE754<T>::size()-numberOfBits));

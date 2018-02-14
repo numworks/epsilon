@@ -165,7 +165,7 @@ Poincare::ExpressionLayout * Sequence::firstInitialConditionLayout() {
   if (m_firstInitialConditionLayout == nullptr) {
     Expression * nonSimplifedExpression = Expression::parse(m_firstInitialConditionText);
     if (nonSimplifedExpression) {
-      m_firstInitialConditionLayout = nonSimplifedExpression->createLayout(Expression::FloatDisplayMode::Decimal);
+      m_firstInitialConditionLayout = nonSimplifedExpression->createLayout(PrintFloat::Mode::Decimal);
       delete nonSimplifedExpression;
     }
   }
@@ -176,7 +176,7 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionLayout() {
   if (m_secondInitialConditionLayout == nullptr) {
     Expression * nonSimplifedExpression = Expression::parse(m_secondInitialConditionText);
     if (nonSimplifedExpression) {
-      m_secondInitialConditionLayout = nonSimplifedExpression->createLayout(Expression::FloatDisplayMode::Decimal);
+      m_secondInitialConditionLayout = nonSimplifedExpression->createLayout(PrintFloat::Mode::Decimal);
       delete nonSimplifedExpression;
     }
   }

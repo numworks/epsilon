@@ -73,8 +73,8 @@ Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angl
   return replaceWith(new Rational(result), true);
 }
 
-ExpressionLayout * BinomialCoefficient::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
+ExpressionLayout * BinomialCoefficient::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);

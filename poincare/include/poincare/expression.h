@@ -145,11 +145,6 @@ public:
     PredictionInterval,
     SimplificationRoot,
   };
-  enum class FloatDisplayMode {
-    Decimal = 0,
-    Scientific = 1,
-    Default = 2
-  };
   enum class ComplexFormat {
     Cartesian = 0,
     Polar = 1,
@@ -214,7 +209,7 @@ public:
   }
 
   /* Layout Engine */
-  ExpressionLayout * createLayout(FloatDisplayMode floatDisplayMode = FloatDisplayMode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
+  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
   virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Simplification */
@@ -267,7 +262,7 @@ private:
   //TODO: What should be the implementation for complex?
   virtual int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const { return 0; }
   /* Layout Engine */
-  virtual ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const = 0;
+  virtual ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Simplification */
   static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively = true);
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);

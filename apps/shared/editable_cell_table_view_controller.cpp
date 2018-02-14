@@ -62,7 +62,7 @@ KDCoordinate EditableCellTableViewController::rowHeight(int j) {
   return k_cellHeight;
 }
 
-void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Expression::FloatDisplayMode floatDisplayMode) {
+void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, PrintFloat::Mode floatDisplayMode) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
   /* We set the cell even or odd state only if the cell is not being edited.
    * Otherwise, the cell background is white whichever it is an odd or even cell
@@ -85,7 +85,7 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
     }
     if (!myEditableValueCell->editableTextCell()->textField()->isEditing()) {
       myCell->setEven(j%2 == 0);
-      Complex<double>::convertFloatToText(dataAtLocation(i, j), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
+      PrintFloat::convertFloatToText<double>(dataAtLocation(i, j), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, floatDisplayMode);
       myEditableValueCell->editableTextCell()->textField()->setText(buffer);
     }
     return;

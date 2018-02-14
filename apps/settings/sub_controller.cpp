@@ -256,7 +256,7 @@ void SubController::setPreferenceWithValueIndex(I18n::Message message, int value
     Preferences::sharedPreferences()->setAngleUnit((Expression::AngleUnit)valueIndex);
   }
   if (message == I18n::Message::DisplayMode) {
-    Preferences::sharedPreferences()->setDisplayMode((Expression::FloatDisplayMode)valueIndex);
+    Preferences::sharedPreferences()->setDisplayMode((PrintFloat::Mode)valueIndex);
   }
   if (message == I18n::Message::ComplexFormat) {
     Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);

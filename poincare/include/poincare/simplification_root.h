@@ -19,7 +19,7 @@ public:
   }
   Expression * clone() const override { return nullptr; }
   Type type() const override { return Expression::Type::SimplificationRoot; }
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override {
+  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
     return nullptr;
   }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override { return 0; }

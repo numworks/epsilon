@@ -84,7 +84,7 @@ void TitleBarView::layoutSubviews() {
 void TitleBarView::refreshPreferences() {
   char buffer[13];
   int numberOfChar = 0;
-  if (Preferences::sharedPreferences()->displayMode() == Expression::FloatDisplayMode::Scientific) {
+  if (Preferences::sharedPreferences()->displayMode() == PrintFloat::Mode::Scientific) {
     strlcpy(buffer, I18n::translate(I18n::Message::Sci), strlen(I18n::translate(I18n::Message::Sci))+1);
     numberOfChar += strlen(I18n::translate(I18n::Message::Sci));
   }

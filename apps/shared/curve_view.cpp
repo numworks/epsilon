@@ -135,9 +135,9 @@ void CurveView::computeLabels(Axis axis) {
     if (labelValue < step && labelValue > -step) {
       labelValue = 0.0f;
     }
-    Complex<float>::convertFloatToText(labelValue, buffer,
+    PrintFloat::convertFloatToText<float>(labelValue, buffer,
       PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits),
-      Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+      Constant::ShortNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
     //TODO: check for size of label?
     strlcpy(label(axis, index), buffer, strlen(buffer)+1);
   }

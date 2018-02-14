@@ -16,7 +16,7 @@ public:
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 
   int numberOfRows() override;
-  void willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Poincare::Expression::FloatDisplayMode FloatDisplayMode);
+  void willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Poincare::PrintFloat::Mode mode);
   KDCoordinate rowHeight(int j) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;

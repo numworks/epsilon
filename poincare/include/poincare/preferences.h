@@ -11,15 +11,15 @@ public:
   static Preferences * sharedPreferences();
   Expression::AngleUnit angleUnit() const;
   void setAngleUnit(Expression::AngleUnit angleUnit);
-  Expression::FloatDisplayMode displayMode() const;
-  void setDisplayMode(Expression::FloatDisplayMode FloatDisplayMode);
+  PrintFloat::Mode displayMode() const;
+  void setDisplayMode(PrintFloat::Mode mode);
   Expression::ComplexFormat complexFormat() const;
   void setComplexFormat(Expression::ComplexFormat complexFormat);
   char numberOfSignificantDigits() const;
   void setNumberOfSignificantDigits(char numberOfSignificantDigits);
 private:
   Expression::AngleUnit m_angleUnit;
-  Expression::FloatDisplayMode m_displayMode;
+  PrintFloat::Mode m_displayMode;
   Expression::ComplexFormat m_complexFormat;
   char m_numberOfSignificantDigits;
 };

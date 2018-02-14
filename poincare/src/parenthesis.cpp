@@ -17,8 +17,8 @@ Expression * Parenthesis::clone() const {
   return o;
 }
 
-ExpressionLayout * Parenthesis::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
+ExpressionLayout * Parenthesis::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   return new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }

@@ -63,7 +63,7 @@ int StoreController::typeAtLocation(int i, int j) {
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::FloatDisplayMode::Decimal);
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, PrintFloat::Mode::Decimal);
 }
 
 void StoreController::didBecomeFirstResponder() {

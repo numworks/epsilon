@@ -56,8 +56,8 @@ Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUn
   return new Complex<T>(Complex<T>::Float(result));
 }
 
-ExpressionLayout * Integral::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
+ExpressionLayout * Integral::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout * childrenLayouts[2];
   childrenLayouts[0] = operand(0)->createLayout(floatDisplayMode, complexFormat);

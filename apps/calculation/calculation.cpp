@@ -98,7 +98,7 @@ Expression * Calculation::input() {
 
 ExpressionLayout * Calculation::inputLayout() {
   if (m_inputLayout == nullptr && input() != nullptr) {
-    m_inputLayout = input()->createLayout(Expression::FloatDisplayMode::Decimal, Expression::ComplexFormat::Cartesian);
+    m_inputLayout = input()->createLayout(PrintFloat::Mode::Decimal, Expression::ComplexFormat::Cartesian);
   }
   return m_inputLayout;
 }

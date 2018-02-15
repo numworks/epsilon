@@ -26,6 +26,13 @@ objs += $(addprefix ion/src/device/, \
   set_msp.o \
   swd.o \
   usb.o \
+  usb_control_transfer_controller.o\
+  usb_data.o\
+  usb_data_structures.o\
+  usb_device.o\
+  usb_endpoint0_controller.o\
+  usb_web_usb_delegate.o\
+  usb_windows_os_string_delegate.o\
   wakeup.o \
 )
 

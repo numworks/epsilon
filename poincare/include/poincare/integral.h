@@ -13,6 +13,7 @@ class Integral : public StaticHierarchy<3> {
 public:
   Type type() const override;
   Expression * clone() const override;
+  int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;

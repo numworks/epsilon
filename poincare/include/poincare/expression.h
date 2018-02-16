@@ -198,6 +198,11 @@ public:
   bool isApproximate(Context & context) const;
   static bool IsMatrix(const Expression * e, Context & context);
 
+  /* polynomialDegree returns:
+   * - (-1) if the expression is not a polynome
+   * - the degree of the polynome otherwise */
+  virtual int polynomialDegree(char symbolName) const;
+
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
    * same structures and all their nodes have same types and values (ie,

@@ -21,6 +21,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   Sign sign() const override;
+  int polynomialDegree(char symbolName) const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;

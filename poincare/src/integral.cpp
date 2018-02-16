@@ -23,6 +23,18 @@ Expression * Integral::clone() const {
   return a;
 }
 
+int Integral::polynomialDegree(char symbolName) const {
+  if (symbolName == 'x') {
+    int da = operand(1)->polynomialDegree(symbolName);
+    int db = operand(2)->polynomialDegree(symbolName);
+    if (da != 0 || db != 0) {
+      return -1;
+    }
+    return 0;
+  }
+  return Expression::polynomialDegree(symbolName);
+}
+
 Expression * Integral::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

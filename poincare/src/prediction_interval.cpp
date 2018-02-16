@@ -22,6 +22,10 @@ Expression * PredictionInterval::clone() const {
   return a;
 }
 
+int PredictionInterval::polynomialDegree(char symbolName) const {
+  return -1;
+}
+
 Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

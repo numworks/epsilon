@@ -13,6 +13,7 @@ public:
   using StaticHierarchy<2>::StaticHierarchy;
   Type type() const override;
   Expression * clone() const override;
+  int polynomialDegree(char symbolName) const override;
 private:
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;

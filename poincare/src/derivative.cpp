@@ -20,6 +20,16 @@ Expression * Derivative::clone() const {
   return a;
 }
 
+int Derivative::polynomialDegree(char symbolName) const {
+  if (symbolName == 'x') {
+    if (operand(1)->polynomialDegree(symbolName) != 0) {
+      return -1;
+    }
+    return 0;
+  }
+  return Expression::polynomialDegree(symbolName);
+}
+
 Expression * Derivative::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

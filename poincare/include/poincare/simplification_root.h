@@ -18,6 +18,7 @@ public:
      * So we don't want it to be deleted when we're destroyed (parent destructor). */
   }
   Expression * clone() const override { return nullptr; }
+  int polynomialDegree(char symbolName) const override { return -1; }
   Type type() const override { return Expression::Type::SimplificationRoot; }
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
     return nullptr;

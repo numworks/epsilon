@@ -42,7 +42,7 @@ public:
   // Getter & Setter
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative);
-  int extractedInt() { assert(m_numberOfDigits == 1 && m_digit <= 0x7FFFFFFF); return m_negative ? -m_digit : m_digit; }
+  int extractedInt() const { assert(m_numberOfDigits == 1 && m_digit <= k_maxExtractableInteger); return m_negative ? -m_digit : m_digit; }
 
   // Comparison
   static int NaturalOrder(const Integer & i, const Integer & j);
@@ -70,6 +70,7 @@ public:
   bool isTen() const { return (m_numberOfDigits == 1 && digit(0) == 10 && !m_negative); };
   bool isMinusOne() const { return (m_numberOfDigits == 1 && digit(0) == 1 && m_negative); };
   bool isZero() const { return (m_numberOfDigits == 1 && digit(0) == 0); };
+  constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
 private:
   Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool negative);
   static Integer IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index);

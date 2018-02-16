@@ -23,6 +23,13 @@ Expression * Division::clone() const {
   return new Division(m_operands, true);
 }
 
+int Division::polynomialDegree(char symbolName) const {
+  if (operand(1)->polynomialDegree(symbolName) != 0) {
+    return -1;
+  }
+  return operand(0)->polynomialDegree(symbolName);
+}
+
 bool Division::needParenthesisWithParent(const Expression * e) const {
   Type types[] = {Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 3);

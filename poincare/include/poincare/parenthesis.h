@@ -12,6 +12,7 @@ public:
 public:
   Expression * clone() const override;
   Type type() const override;
+  int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;

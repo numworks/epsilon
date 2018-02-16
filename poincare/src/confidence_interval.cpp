@@ -21,6 +21,10 @@ Expression * ConfidenceInterval::clone() const {
   return a;
 }
 
+int ConfidenceInterval::polynomialDegree(char symbolName) const {
+  return -1;
+}
+
 Expression * ConfidenceInterval::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

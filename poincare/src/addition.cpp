@@ -23,6 +23,18 @@ Expression * Addition::clone() const {
   return new Addition(operands(), numberOfOperands(), true);
 }
 
+int Addition::polynomialDegree(char symbolName) const {
+  int degree = 0;
+  for (int i = 0; i < numberOfOperands(); i++) {
+    int d = operand(i)->polynomialDegree(symbolName);
+    if (d < 0) {
+      return -1;
+    }
+    degree = d > degree ? d : degree;
+  }
+  return degree;
+}
+
 /* Layout */
 
 bool Addition::needParenthesisWithParent(const Expression * e) const {

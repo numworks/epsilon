@@ -13,6 +13,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
+  int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */
   bool needParenthesisWithParent(const Expression * e) const override;

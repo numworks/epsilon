@@ -102,6 +102,13 @@ Expression * Symbol::clone() const {
   return new Symbol(m_name);
 }
 
+int Symbol::polynomialDegree(char symbol) const {
+  if (m_name == symbol) {
+    return 1;
+  }
+  return 0;
+}
+
 Expression * Symbol::replaceSymbolWithExpression(char symbol, Expression * expression) {
   if (m_name == symbol) {
     Expression * value = expression->clone();

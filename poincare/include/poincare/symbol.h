@@ -35,6 +35,7 @@ public:
   char name() const;
   Type type() const override;
   Expression * clone() const override;
+  int polynomialDegree(char symbolName) const override;
   Sign sign() const override;
   bool isMatrixSymbol() const;
   bool isScalarSymbol() const;

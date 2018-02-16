@@ -57,6 +57,14 @@ void assert_parsed_expression_type(const char * expression, Poincare::Expression
   delete e;
 }
 
+void assert_parsed_expression_polynomial_degree(const char * expression, int degree, char symbolName) {
+  GlobalContext globalContext;
+  Expression * e = parse_expression(expression);
+  Expression::Simplify(&e, globalContext);
+  assert(e->polynomialDegree(symbolName) == degree);
+  delete e;
+}
+
 template<typename T>
 void assert_parsed_expression_evaluates_to(const char * expression, Complex<T> * results, int numberOfRows, int numberOfColumns, Expression::AngleUnit angleUnit) {
   GlobalContext globalContext;

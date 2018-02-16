@@ -14,6 +14,10 @@ Expression * Undefined::clone() const {
   return new Undefined();
 }
 
+int Undefined::polynomialDegree(char symbolName) const {
+  return -1;
+}
+
 template<typename T> Complex<T> * Undefined::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   return new Complex<T>(Complex<T>::Float(NAN));
 }

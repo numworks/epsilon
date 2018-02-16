@@ -95,6 +95,10 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignifi
   return currentChar;
 }
 
+int Matrix::polynomialDegree(char symbolName) const {
+  return -1;
+}
+
 ExpressionLayout * Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);

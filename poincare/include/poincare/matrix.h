@@ -17,6 +17,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  int polynomialDegree(char symbolName) const override;
 
   /* Operation on matrix */
   /* createDeterminant, createTrace and createInverse can only be called on an

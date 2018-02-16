@@ -12,6 +12,7 @@ class Opposite : public StaticHierarchy<1> {
 public:
   Expression * clone() const override;
   Type type() const override;
+  int polynomialDegree(char symbolName) const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, AngleUnit angleUnit);
 private:
   /* Layout */

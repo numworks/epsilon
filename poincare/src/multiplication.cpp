@@ -35,6 +35,18 @@ Expression * Multiplication::clone() const {
   return new Multiplication(operands(), numberOfOperands(), true);
 }
 
+int Multiplication::polynomialDegree(char symbolName) const {
+  int degree = 0;
+  for (int i = 0; i < numberOfOperands(); i++) {
+    int d = operand(i)->polynomialDegree(symbolName);
+    if (d < 0) {
+      return -1;
+    }
+    degree += operand(i)->polynomialDegree(symbolName);
+  }
+  return degree;
+}
+
 bool Multiplication::needParenthesisWithParent(const Expression * e) const {
   Type types[] = {Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 3);

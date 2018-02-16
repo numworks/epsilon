@@ -118,6 +118,7 @@ tests += $(addprefix poincare/test/,\
   multiplication.cpp\
   parser.cpp\
   power.cpp\
+  properties.cpp\
   rational.cpp\
   simplify_mix.cpp\
   subtraction.cpp\

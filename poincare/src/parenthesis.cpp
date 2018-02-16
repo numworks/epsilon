@@ -17,6 +17,10 @@ Expression * Parenthesis::clone() const {
   return o;
 }
 
+int Parenthesis::polynomialDegree(char symbolName) const {
+  return operand(0)->polynomialDegree(symbolName);
+}
+
 ExpressionLayout * Parenthesis::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);

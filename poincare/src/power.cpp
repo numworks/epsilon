@@ -55,6 +55,24 @@ Expression::Sign Power::sign() const {
   return Sign::Unknown;
 }
 
+int Power::polynomialDegree(char symbolName) const {
+  Rational op0Deg = Rational(operand(0)->polynomialDegree(symbolName));
+  if (op0Deg.sign() == Sign::Negative) {
+    return -1;
+  }
+  if (operand(1)->type() == Type::Rational) {
+    op0Deg = Rational::Multiplication(op0Deg, *(static_cast<const Rational *>(operand(1))));
+    if (!op0Deg.denominator().isOne()) {
+      return -1;
+    }
+    if (Integer::NaturalOrder(op0Deg.numerator(), Integer(Integer::k_maxExtractableInteger)) > 0) {
+      return -1;
+    }
+    return op0Deg.numerator().extractedInt();
+  }
+  return -1;
+}
+
 Expression * Power::setSign(Sign s, Context & context, AngleUnit angleUnit) {
   assert(s == Sign::Positive);
   assert(operand(0)->sign() == Sign::Negative);

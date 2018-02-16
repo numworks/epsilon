@@ -22,6 +22,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   Sign sign() const override;
+  int polynomialDegree(char symbolName) const override;
   /* Evaluation */
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * m) {

@@ -23,6 +23,18 @@ Expression * Subtraction::clone() const {
   return new Subtraction(m_operands, true);
 }
 
+int Subtraction::polynomialDegree(char symbolName) const {
+  int degree = 0;
+  for (int i = 0; i < numberOfOperands(); i++) {
+    int d = operand(i)->polynomialDegree(symbolName);
+    if (d < 0) {
+      return -1;
+    }
+    degree = d > degree ? d : degree;
+  }
+  return degree;
+}
+
 /* Layout */
 
 bool Subtraction::needParenthesisWithParent(const Expression * e) const {

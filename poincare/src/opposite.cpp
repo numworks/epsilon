@@ -23,6 +23,10 @@ Expression * Opposite::clone() const {
   return o;
 }
 
+int Opposite::polynomialDegree(char symbolName) const {
+  return operand(0)->polynomialDegree(symbolName);
+}
+
 /* Layout */
 
 bool Opposite::needParenthesisWithParent(const Expression * e) const {

@@ -20,7 +20,7 @@ public:
   uint32_t storeChecksum();
   constexpr static int k_maxNumberOfPairs = 100;
 protected:
-  virtual double defaultValue(int i);
+  virtual double defaultValue(int i, int j);
   int m_numberOfPairs;
   double m_data[2][k_maxNumberOfPairs];
 };

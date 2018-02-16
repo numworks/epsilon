@@ -27,6 +27,16 @@ int Opposite::polynomialDegree(char symbolName) const {
   return operand(0)->polynomialDegree(symbolName);
 }
 
+Expression::Sign Opposite::sign() const {
+  if (operand(0)->sign() == Sign::Positive) {
+    return Sign::Negative;
+  }
+  if (operand(0)->sign() == Sign::Negative) {
+    return Sign::Positive;
+  }
+  return Sign::Unknown;
+}
+
 /* Layout */
 
 bool Opposite::needParenthesisWithParent(const Expression * e) const {

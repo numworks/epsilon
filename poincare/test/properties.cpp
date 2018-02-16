@@ -6,6 +6,34 @@
 
 using namespace Poincare;
 
+constexpr Poincare::Expression::Sign Positive = Poincare::Expression::Sign::Positive;
+constexpr Poincare::Expression::Sign Negative = Poincare::Expression::Sign::Negative;
+constexpr Poincare::Expression::Sign Unknown = Poincare::Expression::Sign::Unknown;
+
+void assert_parsed_expression_sign(const char * expression, Poincare::Expression::Sign sign) {
+  GlobalContext globalContext;
+  Expression * e = parse_expression(expression);
+  Expression::Simplify(&e, globalContext);
+  assert(e->sign() == sign);
+  delete e;
+}
+
+QUIZ_CASE(poincare_sign) {
+  assert_parsed_expression_sign("abs(-cos(2))", Positive);
+  assert_parsed_expression_sign("2.345E-23", Positive);
+  assert_parsed_expression_sign("-2.345E-23", Negative);
+  assert_parsed_expression_sign("2*(-3)*abs(-32)", Negative);
+  assert_parsed_expression_sign("2*(-3)*abs(-32)*cos(3)", Unknown);
+  assert_parsed_expression_sign("2^(-abs(3))", Positive);
+  assert_parsed_expression_sign("(-2)^4", Positive);
+  assert_parsed_expression_sign("(-2)^3", Negative);
+  assert_parsed_expression_sign("random()", Positive);
+  assert_parsed_expression_sign("42/3", Positive);
+  assert_parsed_expression_sign("-23/32", Negative);
+  assert_parsed_expression_sign("P", Positive);
+  assert_parsed_expression_sign("X", Positive);
+}
+
 QUIZ_CASE(poincare_polynomial_degree) {
   assert_parsed_expression_polynomial_degree("x+1", 1);
   assert_parsed_expression_polynomial_degree("cos(2)+1", 0);

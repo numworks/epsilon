@@ -13,6 +13,7 @@ public:
   Expression * clone() const override;
   Type type() const override;
   int polynomialDegree(char symbolName) const override;
+  Sign sign() const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, AngleUnit angleUnit);
 private:
   /* Layout */

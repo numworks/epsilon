@@ -58,6 +58,8 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
     upBoundPixel-lowBoundPixel), Palette::GreyWhite);
   // Add 'shadows' to the box
   if (thirdQuartilePixels-firstQuartilePixels > 2) {
+    ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels-firstQuartilePixels, 1), Palette::GreyMiddle);
+    ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel+1, thirdQuartilePixels-firstQuartilePixels, 1), Palette::GreyBright);
     ctx->fillRect(KDRect(firstQuartilePixels, upBoundPixel-1, thirdQuartilePixels-firstQuartilePixels, 1), Palette::GreyBright);
     ctx->fillRect(KDRect(firstQuartilePixels, upBoundPixel, thirdQuartilePixels-firstQuartilePixels, 1), Palette::GreyMiddle);
   }

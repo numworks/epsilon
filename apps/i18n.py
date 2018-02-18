@@ -3,7 +3,6 @@
 import sys
 import re
 import unicodedata
-from sets import Set
 import argparse
 
 ion_special_characters = {
@@ -53,8 +52,8 @@ def locale_from_filename(filename):
 
 def parse_files(files):
     data = {}
-    messages = Set()
-    universal_messages = Set()
+    messages = set()
+    universal_messages = set()
     for path in files:
         locale = locale_from_filename(path)
         if locale not in data:

@@ -65,7 +65,7 @@ i18n_files += $(addprefix apps/,\
 apps/i18n.h: apps/i18n.cpp
 apps/i18n.cpp: $(i18n_files)
 	@echo "I18N    $@"
-	$(Q) @python apps/i18n.py --header $(subst .cpp,.h,$@) --implementation $@ --locales $(EPSILON_I18N) --files $^
+	$(Q) $(PYTHON) apps/i18n.py --header $(subst .cpp,.h,$@) --implementation $@ --locales $(EPSILON_I18N) --files $^
 
 $(app_objs): apps/i18n.h
 

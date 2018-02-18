@@ -7,9 +7,6 @@ SFLAGS += -Ipython/port
 
 #BUILD = python/build
 
-PYTHON = python
-
-
 # How to write this makefile
 # // Copy PY_O_BASENAME from py.mk and add those to objs
 # // Add special-case optimizations

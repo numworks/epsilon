@@ -4,6 +4,7 @@ import sys
 import re
 import unicodedata
 import argparse
+import io
 
 ion_special_characters = {
     u'Σ': "Ion::Charset::CapitalSigma",
@@ -23,19 +24,18 @@ def ion_char(i18n_letter):
         return ion_special_characters[i18n_letter]
     normalized = unicodedata.normalize("NFD", i18n_letter).encode('ascii', 'ignore')
     #sys.stderr.write("Warning: Normalizing unicode character \"" + i18n_letter + "\" -> \"" + normalized + "\"\n")
-    return "'" + normalized + "'"
+    return "'" + normalized.decode() + "'"
 
 def source_definition(i18n_string):
     ion_characters = []
-    letters = i18n_string.decode('utf8')
     i = 0
-    while i < len(letters):
-        if letters[i] == '\\':
+    while i < len(i18n_string):
+        if i18n_string[i] == '\\':
             i = i+1
-            newChar = "'\\"+letters[i]+"'"
+            newChar = "'\\"+i18n_string[i]+"'"
             ion_characters.append(newChar)
         else:
-            ion_characters.append(ion_char(letters[i]))
+            ion_characters.append(ion_char(i18n_string[i]))
         i = i+1
     ion_characters.append("0")
     return "{" + ", ".join(ion_characters) + "}"
@@ -58,7 +58,7 @@ def parse_files(files):
         locale = locale_from_filename(path)
         if locale not in data:
             data[locale] = {}
-        with open(path, "r") as file:
+        with io.open(path, "r", encoding='utf-8') as file:
             for line in file:
                 name,definition = split_line(line)
                 if locale == "universal":

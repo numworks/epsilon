@@ -1,5 +1,6 @@
 HOSTCC = gcc
 HOSTCXX = g++
+PYTHON = python
 
 # Language-specific flags
 CFLAGS = -std=c99

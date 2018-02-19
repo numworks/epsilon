@@ -336,7 +336,7 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField, const char 
   return true;
 }
 
-bool MenuController::textFieldDidHandleEvent(TextField * textField, Ion::Events::Event event, bool returnValue, bool textHasChanged) {
+bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textHasChanged) {
   int scriptExtensionLength = strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing() && textField->cursorLocation() > textField->draftTextLength() - scriptExtensionLength) {
     textField->setCursorLocation(textField->draftTextLength() - scriptExtensionLength);

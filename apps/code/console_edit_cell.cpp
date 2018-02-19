@@ -52,10 +52,7 @@ void ConsoleEditCell::setPrompt(const char * prompt) {
 }
 
 bool ConsoleEditCell::insertText(const char * text) {
-  bool didCopy = m_textField.insertTextAtLocation(text, m_textField.cursorLocation());
-  if (didCopy) {
-    m_textField.setCursorLocation(m_textField.cursorLocation() + strlen(text));
-  }
-  return didCopy;
+  return m_textField.handleEventWithText(text);
 }
+
 }

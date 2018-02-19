@@ -102,9 +102,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
       textField->setEditing(true);
     }
     const char * xnt = privateXNT(textField);
-    textField->insertTextAtLocation(xnt, textField->cursorLocation());
-    textField->setCursorLocation(textField->cursorLocation()+strlen(xnt));
-    return true;
+    return textField->handleEventWithText(xnt);
   }
   return false;
 }

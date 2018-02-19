@@ -67,6 +67,7 @@ objs += $(addprefix escher/src/,\
   text_cursor_view.o\
   text_area.o\
   text_field.o\
+  text_input_helpers.o\
   text_view.o\
   tiled_view.o\
   timer.o\

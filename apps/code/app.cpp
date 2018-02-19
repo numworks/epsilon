@@ -1,7 +1,6 @@
 #include "app.h"
 #include "../apps_container.h"
 #include "code_icon.h"
-#include "../shared/toolbox_helpers.h"
 #include "../i18n.h"
 
 namespace Code {
@@ -80,27 +79,12 @@ App::App(Container * container, Snapshot * snapshot) :
   m_codeStackViewController(&m_modalViewController, &m_listFooter),
   m_toolboxActionForTextArea([](void * sender, const char * text) {
       TextArea * textArea = static_cast<TextArea *>(sender);
-      int previousCursorLocation = textArea->cursorLocation();
-      if (textArea->insertTextWithIndentation(text)) {
-      // insertText() also moves the cursor. We need to re-move it to the
-      // position we want (which is after the first parenthesis or before the
-      // first point).
-        int deltaCursorLocation = - textArea->cursorLocation() + previousCursorLocation + Shared::ToolboxHelpers::CursorIndexInCommand(text);
-      // WARNING: This is a dirty and only works because the cursor location we
-      // want is always on the first line of the text we insert. Because of the
-      // auto indentation, it would be difficult to compute the wanted cursor
-      // location on other lines of the text.
-        textArea->moveCursor(deltaCursorLocation);
-      }}),
+      textArea->handleEventWithText(text, true);
+    }),
   m_toolboxActionForTextField([](void * sender, const char * text) {
       TextField * textField = static_cast<TextField *>(sender);
-      if (!textField->isEditing()) {
-        textField->setEditing(true);
-      }
-      int newCursorLocation = textField->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(text);
-      if (textField->insertTextAtLocation(text, textField->cursorLocation())) {
-        textField->setCursorLocation(newCursorLocation);
-      }}),
+      textField->handleEventWithText(text);
+    }),
   m_variableBoxController(&m_menuController, snapshot->scriptStore())
 {
 }

@@ -65,11 +65,7 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     char label[3];
     putLabelAtIndexInBuffer(selectedRow(), label);
     const char * editedText = label;
-    if (!m_textFieldCaller->isEditing()) {
-      m_textFieldCaller->setEditing(true);
-    }
-    m_textFieldCaller->insertTextAtLocation(editedText, m_textFieldCaller->cursorLocation());
-    m_textFieldCaller->setCursorLocation(m_textFieldCaller->cursorLocation() + strlen(editedText));
+    m_textFieldCaller->handleEventWithText(editedText);
 #if MATRIX_VARIABLES
     m_selectableTableView.deselectTable();
     m_currentPage = Page::RootMenu;

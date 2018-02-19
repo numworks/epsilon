@@ -1,4 +1,5 @@
 #include <escher/text_field.h>
+#include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>
 #include <assert.h>
 
@@ -277,10 +278,6 @@ bool TextField::insertTextAtLocation(const char * text, int location) {
 }
 
 bool TextField::privateHandleEvent(Ion::Events::Event event) {
-    assert(m_delegate != nullptr);
-  if (m_delegate->textFieldDidReceiveEvent(this, event)) {
-    return true;
-  }
   if (Responder::handleEvent(event)) {
     /* The only event Responder handles is 'Toolbox' displaying. In that case,
      * the text field is forced into editing mode. */
@@ -342,20 +339,6 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     deleteCharPrecedingCursor();
     return true;
   }
-  if (event.hasText()) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    int nextCursorLocation = draftTextLength();
-    if (insertTextAtLocation(event.text(), cursorLocation())) {
-      /* All events whose text is longer than 2 have parenthesis. In these cases,
-       * we want to position the cursor before the last parenthesis */
-      int cursorDelta = strlen(event.text()) > 2 ? -1 : 0;
-      nextCursorLocation = cursorLocation() + strlen(event.text()) + cursorDelta;
-    }
-    setCursorLocation(nextCursorLocation);
-    return true;
-  }
   if (event == Ion::Events::Back && isEditing()) {
     setEditing(false);
     reloadScroll();
@@ -377,18 +360,6 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     setEditing(true, true);
     return true;
   }
-  if (event == Ion::Events::Paste) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    int nextCursorLocation = draftTextLength();
-    if (insertTextAtLocation(Clipboard::sharedClipboard()->storedText(), cursorLocation())) {
-      nextCursorLocation = cursorLocation() + strlen(Clipboard::sharedClipboard()->storedText());
-    }
-    setCursorLocation(nextCursorLocation);
-    return true;
-  }
-
   return false;
 }
 
@@ -415,9 +386,18 @@ bool TextField::textFieldShouldFinishEditing(Ion::Events::Event event) {
 
 bool TextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
+  if (m_delegate->textFieldDidReceiveEvent(this, event)) {
+    return true;
+  }
+  if (event.hasText()) {
+    return handleEventWithText(event.text());
+  }
+  if (event == Ion::Events::Paste) {
+    return handleEventWithText(Clipboard::sharedClipboard()->storedText());
+  }
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = privateHandleEvent(event);
-  return m_delegate->textFieldDidHandleEvent(this, event, didHandleEvent, strlen(text()) != previousTextLength);
+  return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
 }
 
 void TextField::scrollToCursor() {
@@ -425,4 +405,20 @@ void TextField::scrollToCursor() {
     return;
   }
   scrollToContentRect(m_contentView.cursorRect(), true);
+}
+
+bool TextField::handleEventWithText(const char * eventText) {
+  size_t previousTextLength = strlen(text());
+  if (!isEditing()) {
+    setEditing(true);
+  }
+  int nextCursorLocation = draftTextLength();
+  if (insertTextAtLocation(eventText, cursorLocation())) {
+    /* The cursor position depends on the text as we sometimes want to
+     * position the cursor at the end of the text and sometimes after the
+     * first parenthesis. */
+    nextCursorLocation = cursorLocation() + TextInputHelpers::CursorIndexInCommand(eventText);
+  }
+  setCursorLocation(nextCursorLocation);
+  return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);
 }

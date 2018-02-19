@@ -61,8 +61,7 @@ const char * EditExpressionController::textBody() {
 void EditExpressionController::insertTextBody(const char * text) {
   TextField * tf = ((ContentView *)view())->textField();
   tf->setEditing(true, false);
-  tf->insertTextAtLocation(text, tf->cursorLocation());
-  tf->setCursorLocation(tf->cursorLocation() + strlen(text));
+  tf->handleEventWithText(text);
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {

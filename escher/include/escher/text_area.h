@@ -15,14 +15,15 @@ public:
   void setDelegate(TextAreaDelegate * delegate) { m_delegate = delegate; }
   Toolbox * toolbox() override;
   bool handleEvent(Ion::Events::Event event) override;
+  bool handleEventWithText(const char * text, bool indentation = false);
   void setText(char * textBuffer, size_t textBufferSize);
-  bool insertText(const char * textBuffer) { return m_contentView.insertText(textBuffer); }
-  bool insertTextWithIndentation(const char * textBuffer);
+  bool insertTextAtLocation(const char * textBuffer, int location) { return m_contentView.insertTextAtLocation(textBuffer, location); }
+  bool insertTextWithIndentation(const char * textBuffer, int location);
   int indentationBeforeCursor() const;
-  void removeChar() { m_contentView.removeChar(); }
+  bool removeChar();
   const char * text() const { return m_contentView.text(); }
   int cursorLocation() const { return m_contentView.cursorLocation(); }
-  void moveCursor(int deltaX);
+  bool setCursorLocation(int location);
 private:
   class Text {
   public:
@@ -97,8 +98,8 @@ private:
     const char * text() const;
     const Text * getText() const { return &m_text; }
     int cursorLocation() const { return m_cursorIndex; }
-    bool insertText(const char * text);
-    void moveCursorIndex(int deltaX);
+    bool insertTextAtLocation(const char * text, int location);
+    void setCursorLocation(int cursorLocation);
     void moveCursorGeo(int deltaX, int deltaY);
     void removeChar();
     bool removeEndOfLine();

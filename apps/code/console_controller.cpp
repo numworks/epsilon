@@ -276,12 +276,7 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
   if (pythonText == nullptr) {
     return false;
   }
-  if (textField->insertTextAtLocation(pythonText, textField->cursorLocation())) {
-    textField->setCursorLocation(textField->cursorLocation()+strlen(pythonText));
-    if (pythonText[strlen(pythonText)-1] == ')') {
-      textField->setCursorLocation(textField->cursorLocation()-1);
-    }
-  }
+  textField->handleEventWithText(pythonText);
   return true;
 }
 

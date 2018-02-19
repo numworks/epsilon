@@ -122,19 +122,11 @@ void VariableBoxController::ContentViewController::insertTextInCaller(const char
   char commandBuffer[strlen(text)+1];
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, commandBuffer);
   if (m_textFieldCaller != nullptr) {
-    if (!m_textFieldCaller->isEditing()) {
-      m_textFieldCaller->setEditing(true);
-    }
-    int previousCursorLocation = m_textFieldCaller->cursorLocation();
-    m_textFieldCaller->insertTextAtLocation(commandBuffer, previousCursorLocation);
-    m_textFieldCaller->setCursorLocation(previousCursorLocation + Shared::ToolboxHelpers::CursorIndexInCommand(commandBuffer));
+    m_textFieldCaller->handleEventWithText(commandBuffer);
     return;
   }
   if (m_textAreaCaller != nullptr) {
-    int previousCursorLocation = m_textAreaCaller->cursorLocation();
-    m_textAreaCaller->insertText(commandBuffer);
-    int deltaCursorLocation = - m_textAreaCaller->cursorLocation() + previousCursorLocation + Shared::ToolboxHelpers::CursorIndexInCommand(commandBuffer);
-    m_textAreaCaller->moveCursor(deltaCursorLocation);
+    m_textAreaCaller->handleEventWithText(commandBuffer);
   }
 }
 

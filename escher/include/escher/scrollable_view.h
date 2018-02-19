@@ -8,7 +8,7 @@ class ScrollableView : public Responder, public ScrollView {
 public:
  ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource);
   bool handleEvent(Ion::Events::Event event) override;
-  void reloadScroll();
+  void reloadScroll(bool forceRelayout = false);
 protected:
   void layoutSubviews() override;
   KDPoint m_manualScrollingOffset;

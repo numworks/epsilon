@@ -312,7 +312,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     int cursorLoc = cursorLocation();
     setEditing(false, m_hasTwoBuffers);
     if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
-      reloadScroll();
+      reloadScroll(true);
       return true;
     }
     /* if the text was refused (textFieldDidFinishEditing returned false, we

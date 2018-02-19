@@ -312,6 +312,8 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     int cursorLoc = cursorLocation();
     setEditing(false, m_hasTwoBuffers);
     if (m_delegate->textFieldDidFinishEditing(this, text(), event)) {
+      /* We allow overscroll to avoid calling layoutSubviews twice because the
+       * content might have changed. */
       reloadScroll(true);
       return true;
     }

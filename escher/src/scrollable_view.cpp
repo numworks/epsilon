@@ -43,9 +43,9 @@ bool ScrollableView::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ScrollableView::reloadScroll() {
+void ScrollableView::reloadScroll(bool forceReLayout) {
   m_manualScrollingOffset = KDPointZero;
-  setContentOffset(m_manualScrollingOffset);
+  setContentOffset(m_manualScrollingOffset, forceReLayout);
 }
 
 void ScrollableView::layoutSubviews() {

@@ -14,7 +14,7 @@ public:
     KDColor indicatorColor = Palette::GreyDark, KDColor backgroundIndicatorColor = Palette::GreyMiddle,
     KDCoordinate indicatorMargin = 14);
 
-  void setContentOffset(KDPoint offset);
+  void setContentOffset(KDPoint offset, bool forceRelayout = false);
   KDPoint contentOffset() const;
   KDCoordinate topMargin() const;
   KDCoordinate leftMargin() const;

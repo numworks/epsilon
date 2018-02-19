@@ -142,9 +142,6 @@ KDCoordinate TextField::ContentView::charWidth() const {
 }
 
 KDCoordinate TextField::ContentView::textWidth() const {
-  if (m_isEditing) {
-    return (strlen(text())+1)*charWidth();
-  }
   return strlen(text())*charWidth();
 }
 
@@ -238,7 +235,6 @@ int TextField::cursorLocation() const{
 void TextField::setCursorLocation(int location) {
   m_contentView.setCursorLocation(location);
   scrollToCursor();
-  layoutSubviews();
 }
 
 void TextField::setText(const char * text) {
@@ -269,13 +265,12 @@ void TextField::setEditing(bool isEditing, bool reinitDrafBuffer) {
   m_contentView.setEditing(isEditing, reinitDrafBuffer);
   if (reinitDrafBuffer) {
     reloadScroll();
-    layoutSubviews();
   }
 }
 
 bool TextField::insertTextAtLocation(const char * text, int location) {
   if (m_contentView.insertTextAtLocation(text, location)) {
-    layoutSubviews();
+    scrollToCursor();
     return true;
   }
   return false;
@@ -398,13 +393,11 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
 void TextField::deleteCharPrecedingCursor() {
   m_contentView.deleteCharPrecedingCursor();
   scrollToCursor();
-  layoutSubviews();
 }
 
 bool TextField::deleteEndOfLine() {
   if (m_contentView.deleteEndOfLine()) {
     scrollToCursor();
-    layoutSubviews();
     return true;
   }
   return false;
@@ -429,5 +422,5 @@ void TextField::scrollToCursor() {
   if (!isEditing()) {
     return;
   }
-  scrollToContentRect(m_contentView.cursorRect());
+  scrollToContentRect(m_contentView.cursorRect(), true);
 }

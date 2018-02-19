@@ -63,6 +63,7 @@
 #include <escher/text_area_delegate.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
+#include <escher/text_input_helpers.h>
 #include <escher/text_view.h>
 #include <escher/tab_view_controller.h>
 #include <escher/tab_view_data_source.h>

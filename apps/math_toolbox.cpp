@@ -113,14 +113,9 @@ bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   m_selectableTableView.deselectTable();
   ToolboxMessageTree * messageTree = selectedMessageTree;
   const char * editedText = I18n::translate(messageTree->insertedText());
-  if (!sender()->isEditing()) {
-    sender()->setEditing(true);
-  }
   char strippedEditedText[strlen(editedText)];
   Shared::ToolboxHelpers::TextToInsertForCommandMessage(messageTree->insertedText(), strippedEditedText);
-  sender()->insertTextAtLocation(strippedEditedText, sender()->cursorLocation());
-  int newCursorLocation = sender()->cursorLocation() + Shared::ToolboxHelpers::CursorIndexInCommand(strippedEditedText);
-  sender()->setCursorLocation(newCursorLocation);
+  sender()->handleEventWithText(strippedEditedText);
   app()->dismissModalViewController();
   return true;
 }

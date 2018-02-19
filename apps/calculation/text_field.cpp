@@ -13,9 +13,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Ans) {
-    insertTextAtLocation("ans", cursorLocation());
-    setCursorLocation(cursorLocation() + strlen("ans"));
-    return true;
+    return handleEventWithText("ans");
   }
   if (isEditing() && draftTextLength() == 0 &&
       (event == Ion::Events::Multiplication ||
@@ -24,8 +22,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
        event == Ion::Events::Square ||
        event == Ion::Events::Division ||
        event == Ion::Events::Sto)) {
-    insertTextAtLocation("ans", cursorLocation());
-    setCursorLocation(cursorLocation() + strlen("ans"));
+    handleEventWithText("ans");
   }
   return(::TextField::handleEvent(event));
 }

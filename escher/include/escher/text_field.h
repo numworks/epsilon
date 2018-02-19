@@ -30,6 +30,7 @@ public:
    * the maximum buffer capacity) and false is returned. */
   bool insertTextAtLocation(const char * text, int location);
   KDSize minimalSizeForOptimalDisplay() const override;
+  bool handleEventWithText(const char * text);
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldShouldFinishEditing(Ion::Events::Event event);
   constexpr static int maxBufferSize() {

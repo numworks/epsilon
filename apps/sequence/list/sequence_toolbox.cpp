@@ -112,8 +112,7 @@ bool SequenceToolbox::selectAddedCell(int selectedRow){
   currentChar += strlen(subscriptLayout->text());
   buffer[currentChar++] = ')';
   buffer[currentChar] = 0;
-  sender()->insertTextAtLocation(buffer, sender()->cursorLocation());
-  sender()->setCursorLocation(sender()->cursorLocation()+currentChar);
+  sender()->handleEventWithText(buffer);
   app()->dismissModalViewController();
   return true;
 }

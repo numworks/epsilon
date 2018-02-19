@@ -33,7 +33,7 @@ void EditorController::didBecomeFirstResponder() {
 }
 
 void EditorController::viewWillAppear() {
-  m_textArea.moveCursor(strlen(m_textArea.text() - m_textArea.cursorLocation()));
+  m_textArea.setCursorLocation(strlen(m_textArea.text()));
 }
 
 void EditorController::viewDidDisappear() {
@@ -47,12 +47,7 @@ bool EditorController::textAreaShouldFinishEditing(TextArea * textArea, Ion::Eve
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
   const char * pythonText = Helpers::PythonTextForEvent(event);
   if (pythonText != nullptr) {
-    if (!textArea->insertText(pythonText)) {
-      return false;
-    }
-    if (pythonText[strlen(pythonText)-1] == ')') {
-      textArea->moveCursor(-1);
-    }
+    textArea->handleEventWithText(pythonText);
     return true;
   }
 
@@ -84,10 +79,13 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
         indentationIndex++;
       }
     }
-    textArea->insertText("\n");
+    char indentationBuffer[indentationSize+2]; // FIXME
+    indentationBuffer[0] = '\n';
     for (int i = 0; i < indentationSize; i++) {
-      textArea->insertText(" ");
+      indentationBuffer[i+1] = ' ';
     }
+    indentationBuffer[indentationSize+1] = 0;
+    textArea->handleEventWithText(indentationBuffer);
     return true;
   }
 
@@ -118,9 +116,12 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
       charBeforeCursorIndex--;
     }
     if (charBeforeCursorIndex >= 0 && text[charBeforeCursorIndex] == '\n') {
+      char indentationBuffer[k_indentationSpacesNumber+1];
       for (int i = 0; i < k_indentationSpacesNumber; i++) {
-        textArea->insertText(" ");
+        indentationBuffer[i] = ' ';
       }
+      indentationBuffer[k_indentationSpacesNumber] = 0;
+      textArea->handleEventWithText(indentationBuffer);
       return true;
     }
   }

@@ -40,7 +40,7 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 
   /* TextField delegate */
-  bool textFieldDidHandleEvent(TextField * textField, Ion::Events::Event event, bool returnValue, bool textHasChanged) override;
+  bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textHasChanged) override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 

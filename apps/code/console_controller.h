@@ -61,7 +61,7 @@ public:
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
-  Toolbox * toolboxForTextField(TextField * textField) override;
+  Toolbox * toolboxForTextInput(TextInput * textInput) override;
 
   // MicroPython::ExecutionEnvironment
   void displaySandbox() override;

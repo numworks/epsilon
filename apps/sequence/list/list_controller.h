@@ -21,7 +21,7 @@ public:
   int numberOfRows() override;
   virtual KDCoordinate rowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  Toolbox * toolboxForTextField(TextField * textField) override;
+  Toolbox * toolboxForTextInput(TextInput * textInput) override;
   void selectPreviousNewSequenceCell();
 private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;

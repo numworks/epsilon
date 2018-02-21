@@ -313,7 +313,7 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const ch
   return true;
 }
 
-Toolbox * ConsoleController::toolboxForTextField(TextField * textField) {
+Toolbox * ConsoleController::toolboxForTextInput(TextInput * textInput) {
   Code::App * codeApp = static_cast<Code::App *>(app());
   codeApp->pythonToolbox()->setAction(codeApp->toolboxActionForTextField());
   return codeApp->pythonToolbox();

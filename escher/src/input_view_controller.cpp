@@ -77,8 +77,7 @@ void InputViewController::edit(Responder * caller, Ion::Events::Event event, voi
   displayModalViewController(&m_textFieldController, 1.0f, 1.0f);
   m_textFieldController.textField()->handleEvent(event);
   if (initialText != nullptr) {
-    m_textFieldController.textField()->insertTextAtLocation(initialText, 0);
-    m_textFieldController.textField()->setCursorLocation(strlen(initialText));
+    m_textFieldController.textField()->handleEventWithText(initialText);
   }
 }
 
@@ -107,6 +106,6 @@ bool InputViewController::textFieldDidReceiveEvent(TextField * textField, Ion::E
   return m_textFieldDelegate->textFieldDidReceiveEvent(textField, event);
 }
 
-Toolbox * InputViewController::toolboxForTextField(TextField * textField) {
-  return m_textFieldDelegate->toolboxForTextField(textField);
+Toolbox * InputViewController::toolboxForTextInput(TextInput * input) {
+  return m_textFieldDelegate->toolboxForTextInput(input);
 }

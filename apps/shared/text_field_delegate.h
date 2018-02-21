@@ -11,7 +11,7 @@ class TextFieldDelegate : public ::TextFieldDelegate {
 public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  Toolbox * toolboxForTextField(TextField * textField) override;
+  Toolbox * toolboxForTextInput(TextInput * textInput) override;
 private:
   virtual TextFieldDelegateApp * textFieldDelegateApp() = 0;
 };

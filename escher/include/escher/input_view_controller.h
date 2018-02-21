@@ -16,7 +16,7 @@ public:
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField, const char * text) override;
-  Toolbox * toolboxForTextField(TextField * textFied) override;
+  Toolbox * toolboxForTextInput(TextInput * textInput) override;
 private:
   class TextFieldController : public ViewController {
   public:

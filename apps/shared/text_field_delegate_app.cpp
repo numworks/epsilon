@@ -107,7 +107,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
   return false;
 }
 
-Toolbox * TextFieldDelegateApp::toolboxForTextField(TextField * textField) {
+Toolbox * TextFieldDelegateApp::toolboxForTextInput(TextInput * textInput) {
   return container()->mathToolbox();
 }
 

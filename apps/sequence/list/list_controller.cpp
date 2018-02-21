@@ -23,7 +23,7 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::SequenceTab);
 }
 
-Toolbox * ListController::toolboxForTextField(TextField * textField) {
+Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
   int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
   Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));

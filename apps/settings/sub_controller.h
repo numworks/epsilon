@@ -39,7 +39,7 @@ private:
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);
   int valueIndexForPreference(I18n::Message message);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  constexpr static int k_totalNumberOfCell = I18n::NumberOfLanguages;
+  constexpr static int k_totalNumberOfCell = (I18n::NumberOfLanguages > 5 ? I18n::NumberOfLanguages : 5);
   constexpr static KDCoordinate k_topBottomMargin = 13;
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   ExpressionTableCell m_complexFormatCells[2];

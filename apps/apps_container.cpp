@@ -130,7 +130,11 @@ void AppsContainer::run() {
   switchTo(onBoardingAppSnapshot());
 #else
   refreshPreferences();
-  switchTo(appSnapshotAtIndex(0));
+  if (numberOfApps() == 2) {
+    switchTo(appSnapshotAtIndex(1));
+  } else {
+    switchTo(appSnapshotAtIndex(0));
+  }
 #endif
   Container::run();
   switchTo(nullptr);

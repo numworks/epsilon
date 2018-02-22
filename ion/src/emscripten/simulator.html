@@ -183,21 +183,14 @@
     <div>
       <a id="screenshot" href="#" target="_blank" download>Save screenshot</a>
     </div>
+    <script src="epsilon.js"></script>
     <script>
 var Module = {
-  arguments: ["fr"],
-  preRun: [],
-  postRun: [],
-  print: function(text) {
-    console.log(text);
-  },
-  printErr: function(text) {
-    console.error(text);
-  },
+  arguments: ["--language", "fr"],
   canvas: document.getElementById("screen")
 };
+Epsilon(Module);
     </script>
-    <script src="epsilon.js"></script>
     <script>
 var buttons = document.querySelectorAll(".calculator .keyboard a");
 for (var i=0; i< buttons.length; i++) {

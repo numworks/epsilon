@@ -41,6 +41,7 @@ public:
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name) override;
 
+  bool addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
 private:
   static constexpr int k_fullFreeSpaceSizeLimit = 50;
   // If m_accordion's free space has a size smaller than
@@ -49,7 +50,6 @@ private:
   static constexpr size_t k_fileInput2ParseNodeStructKind = 1;
   static constexpr size_t k_functionDefinitionParseNodeStructKind = 3;
   static constexpr size_t k_expressionStatementParseNodeStructKind = 5;
-  bool addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
   bool copyStaticScriptOnFreeSpace(const ScriptTemplate * scriptTemplate);
   int accordionIndexOfScriptAtIndex(int index) const;
   int accordionIndexOfMarkersOfScriptAtIndex(int index) const;

@@ -2,6 +2,6 @@
 
 AppsContainerStorage container;
 
-void ion_app() {
+void ion_main(int argc, char * argv[]) {
   container.run();
 }

@@ -17,8 +17,7 @@ int main(int argc, char * argv[]) {
       }
     }
   }
-
-  ion_app();
+  ion_main(argc, argv);
   return 0;
 }
 

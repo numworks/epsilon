@@ -20,7 +20,7 @@ void quiz_print(const char * message) {
 #endif
 }
 
-void ion_app() {
+void ion_main(int argc, char * argv[]) {
   int i = 0;
   while (quiz_cases[i] != NULL) {
     QuizCase c = quiz_cases[i];

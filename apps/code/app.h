@@ -21,11 +21,19 @@ public:
   };
   class Snapshot : public ::App::Snapshot {
   public:
+    Snapshot();
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
     ScriptStore * scriptStore();
+#if EPSILON_GETOPT
+    bool lockOnConsole() const;
+    void setOpt(const char * name, char * value) override;
+#endif
   private:
+#if EPSILON_GETOPT
+    bool m_lockOnConsole;
+#endif
     ScriptStore m_scriptStore;
   };
   StackViewController * stackViewController() { return &m_codeStackViewController; }

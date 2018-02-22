@@ -14,7 +14,11 @@ class ScriptParameterController;
 
 class MenuController : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public ButtonRowDelegate {
 public:
-  MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer);
+  MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer
+#if EPSILON_GETOPT
+      , bool m_lockOnConsole
+#endif
+      );
   ConsoleController * consoleController() { return &m_consoleController; }
   StackViewController * stackViewController();
   void renameSelectedScript();

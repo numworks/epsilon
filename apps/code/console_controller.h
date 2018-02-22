@@ -16,7 +16,11 @@ class ConsoleController : public ViewController, public ListViewDataSource, publ
 public:
   static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Large;
 
-  ConsoleController(Responder * parentResponder, ScriptStore * scriptStore);
+  ConsoleController(Responder * parentResponder, ScriptStore * scriptStore
+#if EPSILON_GETOPT
+      , bool m_lockOnConsole
+#endif
+      );
   ~ConsoleController();
   ConsoleController(const ConsoleController& other) = delete;
   ConsoleController(ConsoleController&& other) = delete;
@@ -64,6 +68,11 @@ public:
   void printText(const char * text, size_t length) override;
   const char * inputText(const char * prompt) override;
 
+#if EPSILON_GETOPT
+  bool locked() const {
+    return m_locked;
+  }
+#endif
 private:
   bool inputRunLoopActive() { return m_inputRunLoopActive; }
   void askInputRunLoopTermination() { m_inputRunLoopActive = false; }
@@ -94,6 +103,9 @@ private:
   ScriptStore * m_scriptStore;
   SandboxController m_sandboxController;
   bool m_inputRunLoopActive;
+#if EPSILON_GETOPT
+  bool m_locked;
+#endif
 };
 }
 

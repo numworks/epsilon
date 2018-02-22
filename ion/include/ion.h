@@ -18,9 +18,9 @@
  * will take care of configuring the whole environment for you. In POSIX terms,
  * ION will implement the "main" function.
  * Don't worry though, once all its initialization will be performed, ION will
- * jump to your code at ion_app, which you have to implement yourself. */
+ * jump to your code at ion_main, which you have to implement yourself. */
 
-void ion_app();
+void ion_main(int argc, char * argv[]);
 
 namespace Ion {
 

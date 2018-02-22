@@ -20,6 +20,6 @@ int main(int argc, char * argv[]) {
     }
   }
   signal(SIGABRT, Ion::Events::Blackbox::dumpEventCount);
-  ion_app();
+  ion_main(argc, argv);
   return 0;
 }

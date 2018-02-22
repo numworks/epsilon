@@ -3,5 +3,5 @@
 
 int main(int argc, char * argv[]) {
   init_platform();
-  ion_app();
+  ion_main(argc, argv);
 }

@@ -25,7 +25,7 @@ __ZN7RunLoop8runWhileEPFbPvES0_ \
 __ZN7RunLoop3runEv \
 __ZN9Container3runEv \
 __ZN13AppsContainer3runEv \
-__Z7ion_appv \
+__Z8ion_mainiPPc \
 _mp_execute_bytecode \
 _fun_bc_call \
 _mp_call_function_0 \

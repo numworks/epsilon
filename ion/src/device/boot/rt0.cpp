@@ -61,7 +61,7 @@ void start() {
 
   Ion::Device::init();
 
-  ion_app();
+  ion_main(0, nullptr);
 
   abort();
 }

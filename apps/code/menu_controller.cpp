@@ -7,7 +7,11 @@
 
 namespace Code {
 
-MenuController::MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer) :
+MenuController::MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer
+#if EPSILON_GETOPT
+      , bool lockOnConsole
+#endif
+    ) :
   ViewController(parentResponder),
   ButtonRowDelegate(nullptr, footer),
   m_scriptStore(scriptStore),
@@ -21,7 +25,11 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
     //TODO: Pop up warning message: not enough space to load Python
   }, this), KDText::FontSize::Large),
   m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, this, false),
-  m_consoleController(parentResponder, m_scriptStore),
+  m_consoleController(parentResponder, m_scriptStore
+#if EPSILON_GETOPT
+      , lockOnConsole
+#endif
+      ),
   m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, m_scriptStore, this),
   m_editorController(this),
   m_reloadConsoleWhenBecomingFirstResponder(false),
@@ -54,6 +62,12 @@ void MenuController::didBecomeFirstResponder() {
   }
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts() + 1);
   app()->setFirstResponder(&m_selectableTableView);
+#if EPSILON_GETOPT
+  if (consoleController()->locked() && consoleController()->loadPythonEnvironment()) {
+    stackViewController()->push(consoleController());
+    return;
+  }
+#endif
 }
 
 void MenuController::viewWillAppear() {

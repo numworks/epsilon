@@ -16,7 +16,11 @@ namespace Code {
 
 static const char * sStandardPromptText = ">>> ";
 
-ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * scriptStore) :
+ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * scriptStore
+#if EPSILON_GETOPT
+      , bool lockOnConsole
+#endif
+    ) :
   ViewController(parentResponder),
   SelectableTableViewDataSource(),
   TextFieldDelegate(),
@@ -28,6 +32,9 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   m_pythonHeap(nullptr),
   m_scriptStore(scriptStore),
   m_sandboxController(this)
+#if EPSILON_GETOPT
+      , m_locked(lockOnConsole)
+#endif
 {
   m_editCell.setPrompt(sStandardPromptText);
   for (int i = 0; i < k_numberOfLineCells; i++) {
@@ -171,6 +178,11 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.selectCellAtLocation(0, firstDeletedLineIndex);
     return true;
   }
+#if EPSILON_GETOPT
+  if (m_locked && (event == Ion::Events::Home || event == Ion::Events::Back)) {
+    return true;
+  }
+#endif
   return false;
 }
 
@@ -293,7 +305,15 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const ch
   if (inputRunLoopActive()) {
     askInputRunLoopTermination();
   } else {
-    stackViewController()->pop();
+#if EPSILON_GETOPT
+    if (!m_locked) {
+#endif
+      stackViewController()->pop();
+#if EPSILON_GETOPT
+    } else {
+      textField->setEditing(true);
+    }
+#endif
   }
   return true;
 }

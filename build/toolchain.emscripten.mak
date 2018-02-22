@@ -49,5 +49,7 @@ ifeq ($(DEBUG),1)
 EMFLAGS += --profiling-funcs -s ASSERTIONS=1
 endif
 
+EMFLAGS += -s MODULARIZE=1 -s 'EXPORT_NAME="Epsilon"'
+
 SFLAGS += $(EMFLAGS)
 LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonEventsEmscriptenPushKey", "_IonEventsEmscriptenPushEvent"]'

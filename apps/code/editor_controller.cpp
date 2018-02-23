@@ -2,7 +2,6 @@
 #include "menu_controller.h"
 #include "script_parameter_controller.h"
 #include "variable_box_controller.h"
-#include "helpers.h"
 #include <apps/code/app.h>
 #include <escher/metric.h>
 
@@ -45,19 +44,9 @@ bool EditorController::textAreaShouldFinishEditing(TextArea * textArea, Ion::Eve
 }
 
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
-  const char * pythonText = Helpers::PythonTextForEvent(event);
-  if (pythonText != nullptr) {
-    textArea->handleEventWithText(pythonText);
+  if (static_cast<App *>(textArea->app())->textInputDidReceiveEvent(textArea, event)) {
     return true;
   }
-
-  if (event == Ion::Events::Var) {
-    VariableBoxController * varBoxController = (static_cast<App *>(textArea->app()))->scriptsVariableBoxController();
-    varBoxController->setTextAreaCaller(textArea);
-    textArea->app()->displayModalViewController(varBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-    return true;
-  }
-
   if (event == Ion::Events::EXE) {
     // Auto-Indent
     char * text = const_cast<char *>(textArea->text());
@@ -79,7 +68,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
         indentationIndex++;
       }
     }
-    char indentationBuffer[indentationSize+2]; // FIXME
+    char indentationBuffer[50]; // FIXME
     indentationBuffer[0] = '\n';
     for (int i = 0; i < indentationSize; i++) {
       indentationBuffer[i+1] = ' ';
@@ -131,7 +120,6 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 
 Toolbox * EditorController::toolboxForTextInput(TextInput * textInput) {
   Code::App * codeApp = static_cast<Code::App *>(app());
-  codeApp->pythonToolbox()->setAction(codeApp->toolboxActionForTextArea());
   return codeApp->pythonToolbox();
 }
 

@@ -2,6 +2,7 @@
 #include "../apps_container.h"
 #include "code_icon.h"
 #include "../i18n.h"
+#include "helpers.h"
 
 namespace Code {
 
@@ -77,16 +78,22 @@ App::App(Container * container, Snapshot * snapshot) :
 #endif
       ),
   m_codeStackViewController(&m_modalViewController, &m_listFooter),
-  m_toolboxActionForTextArea([](void * sender, const char * text) {
-      TextArea * textArea = static_cast<TextArea *>(sender);
-      textArea->handleEventWithText(text, true);
-    }),
-  m_toolboxActionForTextField([](void * sender, const char * text) {
-      TextField * textField = static_cast<TextField *>(sender);
-      textField->handleEventWithText(text);
-    }),
   m_variableBoxController(&m_menuController, snapshot->scriptStore())
 {
+}
+
+bool App::textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event) {
+  const char * pythonText = Helpers::PythonTextForEvent(event);
+  if (pythonText != nullptr) {
+    textInput->handleEventWithText(pythonText);
+    return true;
+  }
+  if (event == Ion::Events::Var) {
+    m_variableBoxController.setTextInputCaller(textInput);
+    displayModalViewController(&m_variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+    return true;
+  }
+  return false;
 }
 
 }

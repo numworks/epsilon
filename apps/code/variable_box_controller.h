@@ -13,16 +13,14 @@ class VariableBoxController : public StackViewController {
 public:
   VariableBoxController(MenuController * menuController, ScriptStore * scriptStore);
   void didBecomeFirstResponder() override;
-  void setTextFieldCaller(TextField * textField);
-  void setTextAreaCaller(TextArea * textArea);
+  void setTextInputCaller(TextInput * textInput);
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
   class ContentViewController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
   public:
     ContentViewController(Responder * parentResponder, MenuController * menuController, ScriptStore * scriptStore);
-    void setTextFieldCaller(TextField * textField);
-    void setTextAreaCaller(TextArea * textArea);
+    void setTextInputCaller(TextInput * textInput);
     void reloadData();
 
     void addFunctionAtIndex(const char * functionName, int scriptIndex);
@@ -52,8 +50,7 @@ private:
     ScriptNode m_scriptNodes[k_maxScriptNodesCount];
     MenuController * m_menuController;
     ScriptStore * m_scriptStore;
-    TextField * m_textFieldCaller;
-    TextArea * m_textAreaCaller;
+    TextInput * m_textInputCaller;
     ScriptNodeCell m_leafCells[k_maxNumberOfDisplayedRows];
     SelectableTableView m_selectableTableView;
   };

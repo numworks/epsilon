@@ -91,6 +91,13 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, int locatio
     m_draftTextBuffer[location+textSize-1] = text[textSize-1];
   }
   m_currentDraftTextLength += textSize;
+  for (int i = 0; i < m_currentDraftTextLength; i++) {
+    if (m_draftTextBuffer[i] == '\n') {
+      m_draftTextBuffer[i] = 0;
+      m_currentDraftTextLength = i;
+      break;
+    }
+  }
   reloadRectFromCursorPosition((m_horizontalAlignment == 0.0f ? location : 0));
   return true;
 }

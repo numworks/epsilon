@@ -2,7 +2,6 @@
 #include "app.h"
 #include "script.h"
 #include "variable_box_controller.h"
-#include "helpers.h"
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/metric.h>
@@ -267,17 +266,8 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
     if (!textField->isEditing()) {
       textField->setEditing(true);
     }
-    VariableBoxController * varBoxController = (static_cast<App *>(textField->app()))->scriptsVariableBoxController();
-    varBoxController->setTextFieldCaller(textField);
-    textField->app()->displayModalViewController(varBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-    return true;
   }
-  const char * pythonText = Helpers::PythonTextForEvent(event);
-  if (pythonText == nullptr) {
-    return false;
-  }
-  textField->handleEventWithText(pythonText);
-  return true;
+  return static_cast<App *>(textField->app())->textInputDidReceiveEvent(textField, event);
 }
 
 bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
@@ -315,7 +305,6 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField, const ch
 
 Toolbox * ConsoleController::toolboxForTextInput(TextInput * textInput) {
   Code::App * codeApp = static_cast<Code::App *>(app());
-  codeApp->pythonToolbox()->setAction(codeApp->toolboxActionForTextField());
   return codeApp->pythonToolbox();
 }
 

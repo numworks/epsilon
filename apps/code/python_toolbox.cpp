@@ -259,10 +259,6 @@ PythonToolbox::PythonToolbox() :
 {
 }
 
-void PythonToolbox::setAction(Action action) {
-  m_action = action;
-}
-
 bool PythonToolbox::handleEvent(Ion::Events::Event event) {
   if (Toolbox::handleEvent(event)) {
     return true;
@@ -297,7 +293,8 @@ bool PythonToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   const char * editedText = I18n::translate(node->insertedText());
   char strippedEditedText[strlen(editedText)+1];
   Shared::ToolboxHelpers::TextToInsertForCommandMessage(node->insertedText(), strippedEditedText);
-  m_action(sender(), const_cast<const char *>(strippedEditedText));
+  TextInput * textInput = static_cast<TextInput *>(sender());
+  textInput->handleEventWithText(strippedEditedText, true);
   app()->dismissModalViewController();
   return true;
 }

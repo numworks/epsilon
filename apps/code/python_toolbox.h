@@ -12,7 +12,6 @@ class PythonToolbox : public Toolbox {
 public:
   typedef void (*Action)(void * sender, const char * text);
   PythonToolbox();
-  void setAction(Action action);
 
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;

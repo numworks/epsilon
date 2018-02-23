@@ -23,14 +23,8 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   }
 }
 
-void VariableBoxController::ContentViewController::setTextFieldCaller(TextField * textField) {
-  m_textFieldCaller = textField;
-  m_textAreaCaller = nullptr;
-}
-
-void VariableBoxController::ContentViewController::setTextAreaCaller(TextArea * textArea) {
-  m_textAreaCaller = textArea;
-  m_textFieldCaller = nullptr;
+void VariableBoxController::ContentViewController::setTextInputCaller(TextInput * textInput) {
+  m_textInputCaller = textInput;
 }
 
 void VariableBoxController::ContentViewController::reloadData() {
@@ -121,13 +115,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
 void VariableBoxController::ContentViewController::insertTextInCaller(const char * text) {
   char commandBuffer[strlen(text)+1];
   Shared::ToolboxHelpers::TextToInsertForCommandText(text, commandBuffer);
-  if (m_textFieldCaller != nullptr) {
-    m_textFieldCaller->handleEventWithText(commandBuffer);
-    return;
-  }
-  if (m_textAreaCaller != nullptr) {
-    m_textAreaCaller->handleEventWithText(commandBuffer);
-  }
+  m_textInputCaller->handleEventWithText(commandBuffer);
 }
 
 VariableBoxController::VariableBoxController(MenuController * menuController, ScriptStore * scriptStore) :
@@ -140,12 +128,8 @@ void VariableBoxController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_contentViewController);
 }
 
-void VariableBoxController::setTextFieldCaller(TextField * textField) {
-  m_contentViewController.setTextFieldCaller(textField);
-}
-
-void VariableBoxController::setTextAreaCaller(TextArea * textArea) {
-  m_contentViewController.setTextAreaCaller(textArea);
+void VariableBoxController::setTextInputCaller(TextInput * textInput) {
+  m_contentViewController.setTextInputCaller(textInput);
 }
 
 void VariableBoxController::viewWillAppear() {

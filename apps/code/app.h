@@ -37,18 +37,14 @@ public:
     ScriptStore m_scriptStore;
   };
   StackViewController * stackViewController() { return &m_codeStackViewController; }
-  VariableBoxController * scriptsVariableBoxController() { return &m_variableBoxController; }
   PythonToolbox * pythonToolbox() { return &m_toolbox; }
-  PythonToolbox::Action toolboxActionForTextArea() { return m_toolboxActionForTextArea; }
-  PythonToolbox::Action toolboxActionForTextField() { return m_toolboxActionForTextField; }
+  bool textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event);
 private:
   App(Container * container, Snapshot * snapshot);
   ButtonRowController m_listFooter;
   MenuController m_menuController;
   StackViewController m_codeStackViewController;
   PythonToolbox m_toolbox;
-  PythonToolbox::Action m_toolboxActionForTextArea;
-  PythonToolbox::Action m_toolboxActionForTextField;
   VariableBoxController m_variableBoxController;
 };
 

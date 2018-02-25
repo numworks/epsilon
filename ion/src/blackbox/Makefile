@@ -20,6 +20,7 @@ src += $(addprefix ion/src/shared/, \
   dummy/fcc_id.cpp \
   dummy/led.cpp \
   dummy/keyboard.cpp \
+  dummy/rpi.o \
   dummy/serial_number.cpp \
   dummy/stack.cpp \
   dummy/usb.cpp \

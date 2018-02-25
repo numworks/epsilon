@@ -26,6 +26,7 @@ src += $(addprefix ion/src/device/, \
   keyboard.cpp \
   led.cpp \
   power.cpp \
+  rpi.o \
   sd_card.cpp \
   stack.cpp \
   swd.cpp \

@@ -22,6 +22,7 @@ src += $(addprefix ion/src/shared/, \
   dummy/serial_number.cpp \
   dummy/stack.cpp \
   dummy/usb.cpp \
+  dummy/rpi.o \
 )
 
 SFLAGS += `fltk-config --cflags`

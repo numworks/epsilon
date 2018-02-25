@@ -24,7 +24,6 @@ public:
     void setAccess(int index, Access a) volatile { setBitRange(2*index+1, 2*index, (uint32_t)a); }
   };
 
-
   // Application Interrupt and Reset Control Register
   // http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0552a/Cihehdge.html
   class AIRCR : public Register32 {

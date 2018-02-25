@@ -1,4 +1,5 @@
 #include "isr.h"
+#include "../rpi.h"
 extern const void * _stack_start;
 
 /* Interrupt Service Routines are void->void functions */
@@ -52,7 +53,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // CAN1 RX0 interrupt
   0, // CAN1 RX1 interrupt
   0, // CAN1 SCE interrupt
-  0, // EXTI Line[9:5] interrupts
+  rpi_isr, // EXTI Line[9:5] interrupts
   0, // TIM1 Break interrupt and TIM9 global interrupt
   0, // TIM1 update interrupt and TIM10 global interrupt
   0, // TIM1 Trigger & Commutation interrupts and TIM11 global interrupt

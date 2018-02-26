@@ -77,7 +77,7 @@ bool ConsoleController::pythonEnvironmentIsLoaded() {
 
 void ConsoleController::autoImport() {
   for (int i = 0; i < m_scriptStore->numberOfScripts(); i++) {
-    autoImportScriptAtIndex(i);
+    autoImportScript(m_scriptStore->scriptAtIndex(i));
   }
 }
 
@@ -341,13 +341,12 @@ void ConsoleController::printText(const char * text, size_t length) {
   }
 }
 
-void ConsoleController::autoImportScriptAtIndex(int index, bool force) {
+void ConsoleController::autoImportScript(Script script, bool force) {
   const char * importCommand1 = "from ";
   const char * importCommand2 = " import *";
   int lenImportCommand1 = strlen(importCommand1);
   int lenImportCommand2 = strlen(importCommand2);
-  Script script = m_scriptStore->scriptAtIndex(index);
-  if (script.autoImport() || force) {
+  if (script.importationStatus() || force) {
     // Remove the name extension ".py" if there is one.
     int scriptOriginalNameLength = strlen(script.name());
     char scriptNewName[scriptOriginalNameLength];

@@ -3,7 +3,6 @@ snapshot_headers += apps/code/app.h
 
 app_objs += $(addprefix apps/code/,\
   app.o\
-  accordion.o\
   console_controller.o\
   console_edit_cell.o\
   console_line_cell.o\

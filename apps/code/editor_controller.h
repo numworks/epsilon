@@ -12,6 +12,7 @@ class ScriptParameterController;
 class EditorController : public ViewController, public TextAreaDelegate {
 public:
   EditorController(MenuController * menuController);
+  ~EditorController();
   void setScript(Script script);
 
   /* ViewController */
@@ -23,7 +24,6 @@ public:
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::WantsMaximumSpace; }
 
   /* TextAreaDelegate */
-  bool textAreaShouldFinishEditing(TextArea * textArea, Ion::Events::Event event) override;
   bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) override;
   Toolbox * toolboxForTextInput(TextInput * textInput) override;
 
@@ -31,6 +31,8 @@ private:
   static constexpr int k_indentationSpacesNumber = 2;
   StackViewController * stackController();
   TextArea m_textArea;
+  char * m_areaBuffer;
+  Script m_script;
   MenuController * m_menuController;
 };
 

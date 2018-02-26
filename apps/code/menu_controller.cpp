@@ -30,7 +30,7 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
       , lockOnConsole
 #endif
       ),
-  m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, m_scriptStore, this),
+  m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, this),
   m_editorController(this),
   m_reloadConsoleWhenBecomingFirstResponder(false),
   m_shouldDisplayAddScriptRow(true)
@@ -39,6 +39,7 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
     m_scriptCells[i].editableTextCell()->textField()->setDelegate(this);
     m_scriptCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
+    m_scriptCells[i].editableTextCell()->textField()->setTextBufferSize(Script::k_nameSize);
     m_scriptCells[i].editableTextCell()->textField()->setAlignment(0.0f, 0.5f);
     m_scriptCells[i].editableTextCell()->setMargins(0, 0, 0, Metric::HistoryHorizontalMargin);
   }
@@ -122,12 +123,11 @@ void MenuController::renameSelectedScript() {
   myCell->editableTextCell()->textField()->setEditing(true);
   myCell->editableTextCell()->textField()->setText(previousText);
   myCell->editableTextCell()->textField()->setCursorLocation(strlen(previousText) - strlen(ScriptStore::k_scriptExtension));
-  }
+}
 
-void MenuController::deleteScriptAtIndex(int i) {
-  assert(i >= 0);
-  assert(i < m_scriptStore->numberOfScripts());
-  m_scriptStore->deleteScriptAtIndex(i);
+void MenuController::deleteScript(Script script) {
+  assert(!script.isNull());
+  script.remove();
   updateAddScriptRowDisplay();
   m_selectableTableView.reloadData();
 }
@@ -141,11 +141,11 @@ void MenuController::loadPythonIfNeeded() {
   m_consoleController.loadPythonEnvironment(false);
 }
 
-void MenuController::openConsoleWithScriptAtIndex(int scriptIndex) {
+void MenuController::openConsoleWithScript(Script script) {
   reloadConsole();
   if (m_consoleController.loadPythonEnvironment(false)) {
     stackViewController()->push(&m_consoleController);
-    m_consoleController.autoImportScriptAtIndex(scriptIndex, true);
+    m_consoleController.autoImportScript(script, true);
   }
   m_reloadConsoleWhenBecomingFirstResponder = true;
 }
@@ -302,7 +302,8 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   } else {
     newName = text;
   }
-  if (m_scriptStore->renameScriptAtIndex(m_selectableTableView.selectedRow(), newName)) {
+  File::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).rename(newName);
+  if (error == File::ErrorStatus::None) {
     updateAddScriptRowDisplay();
     textField->setText(newName);
     int currentRow = m_selectableTableView.selectedRow();
@@ -316,9 +317,19 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     app()->setFirstResponder(&m_selectableTableView);
     static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
+  } else {
+    assert(error == File::ErrorStatus::NameTaken);
+    // The name cannot be to long as the text field size was set accordingly
+
+    // TODO:
+    // 2 solutions:
+    // 1. display a warning with
+    // app()->displayWarning(I18n::Message::ForbiddenValue);
+    // But that have to be done in textFieldDidReceiveEvent when textFieldShouldFinishEditing to avoid losing edition
+    // 2. Modify the name to take another one (add a number for instance).
+    // This would raise issues about the available space? We can't always add a character...
+    return false;
   }
-  // TODO: add pop up to explain to the user that the name is too long.
-  return false;
 }
 
 bool MenuController::textFieldDidAbortEditing(TextField * textField, const char * text) {
@@ -326,7 +337,8 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField, const char 
     // The previous text was an empty name. Use a numbered default script name.
     char numberedDefaultName[k_defaultScriptNameMaxSize];
     numberedDefaultScriptName(numberedDefaultName);
-    m_scriptStore->renameScriptAtIndex(m_selectableTableView.selectedRow(), const_cast<const char *>(numberedDefaultName));
+    File::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).rename(numberedDefaultName);
+    assert(error == File::ErrorStatus::None);
     updateAddScriptRowDisplay();
     m_selectableTableView.reloadData();
   }
@@ -357,13 +369,13 @@ void MenuController::addScript() {
 void MenuController::configureScript() {
   assert(m_selectableTableView.selectedRow() >= 0);
   assert(m_selectableTableView.selectedRow() < m_scriptStore->numberOfScripts());
-  m_scriptParameterController.setScript(m_selectableTableView.selectedRow());
+  m_scriptParameterController.setScript(m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()));
   stackViewController()->push(&m_scriptParameterController);
 }
 
 void MenuController::editScriptAtIndex(int scriptIndex) {
   assert(scriptIndex >=0 && scriptIndex < m_scriptStore->numberOfScripts());
-  Script script = m_scriptStore->scriptAtIndex(scriptIndex, ScriptStore::EditableZone::Content);
+  Script script = m_scriptStore->scriptAtIndex(scriptIndex);
   m_editorController.setScript(script);
   stackViewController()->push(&m_editorController);
 }

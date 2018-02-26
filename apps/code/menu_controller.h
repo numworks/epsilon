@@ -22,10 +22,10 @@ public:
   ConsoleController * consoleController() { return &m_consoleController; }
   StackViewController * stackViewController();
   void renameSelectedScript();
-  void deleteScriptAtIndex(int i);
+  void deleteScript(Script script);
   void reloadConsole();
   void loadPythonIfNeeded();
-  void openConsoleWithScriptAtIndex(int scriptIndex);
+  void openConsoleWithScript(Script script);
   void scriptContentEditionDidFinish();
 
   /* ViewController */
@@ -97,7 +97,7 @@ private:
   /* In the initializer list of the MenuController constructor, we initialize
    * m_scriptCells by copying k_maxNumberOfDisplayableScriptCells times the
    * constructor of an EvenOddEditableTextCell. */
-  char m_draftTextBuffer[TextField::maxBufferSize()];
+  char m_draftTextBuffer[Script::k_nameSize];
   EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];
   Shared::NewFunctionCell m_addNewScriptCell;
   EvenOddCell m_emptyCell;

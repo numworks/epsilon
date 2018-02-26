@@ -3,7 +3,7 @@
 
 namespace Code {
 
-ScriptParameterController::ScriptParameterController(Responder * parentResponder, I18n::Message title, ScriptStore * scriptStore, MenuController * menuController) :
+ScriptParameterController::ScriptParameterController(Responder * parentResponder, I18n::Message title, MenuController * menuController) :
   ViewController(parentResponder),
   m_pageTitle(title),
   m_executeScript(I18n::Message::ExecuteScript),
@@ -12,21 +12,17 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
   m_deleteScript(I18n::Message::DeleteScript),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
-  m_scriptStore(scriptStore),
-  m_menuController(menuController),
-  m_autoImport(true),
-  m_currentScriptIndex(-1)
+  m_script(File()),
+  m_menuController(menuController)
 {
 }
 
-void ScriptParameterController::setScript(int i){
-  Script script = (m_scriptStore->scriptAtIndex(i, ScriptStore::EditableZone::Content));
-  m_autoImport = script.autoImport();
-  m_currentScriptIndex = i;
+void ScriptParameterController::setScript(Script script){
+  m_script = script;
 }
 
 void ScriptParameterController::dismissScriptParameterController() {
-  m_currentScriptIndex = -1;
+  m_script = Script(File());
   stackViewController()->pop();
 }
 
@@ -36,26 +32,25 @@ const char * ScriptParameterController::title() {
 
 bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    int scriptIndex = m_currentScriptIndex;
+    Script s = m_script;
     switch (selectedRow()) {
       case 0:
         dismissScriptParameterController();
-        m_menuController->openConsoleWithScriptAtIndex(scriptIndex);
+        m_menuController->openConsoleWithScript(s);
         return true;
       case 1:
         dismissScriptParameterController();
         m_menuController->renameSelectedScript();
         return true;
       case 2:
-        m_scriptStore->switchAutoImportAtIndex(scriptIndex);
-        m_autoImport = !m_autoImport;
+        m_script.toggleImportationStatus();
         m_selectableTableView.reloadData();
         m_menuController->reloadConsole();
         app()->setFirstResponder(&m_selectableTableView);
         return true;
       case 3:
         dismissScriptParameterController();
-        m_menuController->deleteScriptAtIndex(scriptIndex);
+        m_menuController->deleteScript(s);
         m_menuController->reloadConsole();
         return true;
       default:
@@ -86,7 +81,7 @@ HighlightCell * ScriptParameterController::reusableCell(int index) {
 void ScriptParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_autoImportScript) {
     SwitchView * switchView = (SwitchView *)m_autoImportScript.accessoryView();
-    switchView->setState(m_autoImport);
+    switchView->setState(m_script.importationStatus());
   }
 }
 

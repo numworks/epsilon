@@ -22,6 +22,10 @@ void TextField::ContentView::setDraftTextBuffer(char * draftTextBuffer) {
   m_draftTextBuffer = draftTextBuffer;
 }
 
+void TextField::ContentView::setTextBufferSize(size_t size) {
+  m_textBufferSize = size;
+}
+
 void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor bckCol = m_backgroundColor;
   if (m_isEditing) {
@@ -170,6 +174,10 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, char * draf
 
 void TextField::setDraftTextBuffer(char * draftTextBuffer) {
   m_contentView.setDraftTextBuffer(draftTextBuffer);
+}
+
+void TextField::setTextBufferSize(size_t size) {
+  m_contentView.setTextBufferSize(size);
 }
 
 bool TextField::isEditing() const {

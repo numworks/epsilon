@@ -12,101 +12,39 @@ namespace Code {
 constexpr char ScriptStore::k_scriptExtension[];
 constexpr char ScriptStore::k_defaultScriptName[];
 
-ScriptStore::ScriptStore() :
-  m_accordion(m_scriptData, k_scriptDataSize)
+ScriptStore::ScriptStore()
 {
   addScriptFromTemplate(ScriptTemplate::Factorial());
   addScriptFromTemplate(ScriptTemplate::Mandelbrot());
   addScriptFromTemplate(ScriptTemplate::Polynomial());
 }
 
-const Script ScriptStore::scriptAtIndex(int index, EditableZone zone) {
-  assert(index >= 0 && index < numberOfScripts());
-  size_t nameBufferSize = 0;
-  size_t contentBufferSize = 0;
-  int accordionIndex;
-
-  // Move the Free Space at the end of the correct string.
-  switch (zone) {
-    case EditableZone::None:
-      break;
-    case EditableZone::Name:
-      accordionIndex = accordionIndexOfNameOfScriptAtIndex(index);
-      nameBufferSize = m_accordion.sizeOfEditableBufferAtIndex(accordionIndex);
-      break;
-    case EditableZone::Content:
-      accordionIndex = accordionIndexOfContentOfScriptAtIndex(index);
-      contentBufferSize = m_accordion.sizeOfEditableBufferAtIndex(accordionIndex);
-      break;
-  }
-
-  // Compute the positions and lengths of the Script Marker, Name and Content.
-  const char * marker = m_accordion.bufferAtIndex(accordionIndexOfMarkersOfScriptAtIndex(index));
-  const char * name = m_accordion.bufferAtIndex(accordionIndexOfNameOfScriptAtIndex(index));
-  if (nameBufferSize == 0) {
-    nameBufferSize = strlen(name);
-  }
-  const char * content = m_accordion.bufferAtIndex(accordionIndexOfContentOfScriptAtIndex(index));
-  if (contentBufferSize == 0) {
-    contentBufferSize = strlen(content);
-  }
-  return Script(marker, name, nameBufferSize, content, contentBufferSize);
+Script ScriptStore::scriptAtIndex(int index) {
+  File f = FileSystem::sharedFileSystem()->fileOfTypeAtIndex(File::Type::Script, index);
+  return Script(f);
 }
 
-const Script ScriptStore::scriptNamed(const char * name) {
-  for (int i = 0; i < numberOfScripts(); i++) {
-    int accordionIndex = accordionIndexOfNameOfScriptAtIndex(i);
-    const char * currentScriptName = m_accordion.bufferAtIndex(accordionIndex);
-    if (strcmp(currentScriptName, name) == 0) {
-      return scriptAtIndex(i);
-    }
-  }
-  return Script();
+Script ScriptStore::scriptNamed(const char * name) {
+  File f = FileSystem::sharedFileSystem()->getFile(File::Type::Script, name);
+  return Script(f);
 }
 
 int ScriptStore::numberOfScripts() {
-  return (m_accordion.numberOfBuffers())/Script::NumberOfStringsPerScript;
+  return FileSystem::sharedFileSystem()->numberOfFileOfType(File::Type::Script);
 }
 
 bool ScriptStore::addNewScript() {
   return addScriptFromTemplate(ScriptTemplate::Empty());
 }
 
-bool ScriptStore::renameScriptAtIndex(int index, const char * newName) {
-  assert (index >= 0 && index < numberOfScripts());
-  int accordionIndex = accordionIndexOfNameOfScriptAtIndex(index);
-  return m_accordion.replaceBufferAtIndex(accordionIndex, newName);
-}
-
-void ScriptStore::switchAutoImportAtIndex(int index) {
-  assert(index >= 0 && index < numberOfScripts());
-  Script script = scriptAtIndex(index);
-  bool autoImportation = script.autoImport();
-  int accordionIndex = accordionIndexOfMarkersOfScriptAtIndex(index);
-  if (autoImportation) {
-    const char autoImportationString[2] = {Script::NoAutoImportationMarker, 0};
-    m_accordion.replaceBufferAtIndex(accordionIndex, autoImportationString);
-    return;
-  }
-  const char autoImportationString[2] = {Script::AutoImportationMarker, 0};
-  m_accordion.replaceBufferAtIndex(accordionIndex, autoImportationString);
-}
-
-void ScriptStore::deleteScriptAtIndex(int index) {
-  assert (index >= 0 && index < numberOfScripts());
-  int accordionIndex = accordionIndexOfContentOfScriptAtIndex(index);
-  // We delete in reverse order because we want the indexes to stay true.
-  m_accordion.deleteBufferAtIndex(accordionIndex);
-  m_accordion.deleteBufferAtIndex(accordionIndex-1);
-  m_accordion.deleteBufferAtIndex(accordionIndex-2);
-}
-
 void ScriptStore::deleteAllScripts() {
-  m_accordion.deleteAll();
+  for (int i = 0; i < numberOfScripts(); i++) {
+    scriptAtIndex(i).remove();
+  }
 }
 
 bool ScriptStore::isFull() {
-  return (numberOfScripts() >= k_maxNumberOfScripts || m_accordion.freeSpaceSize() < k_fullFreeSpaceSizeLimit);
+  return (numberOfScripts() >= k_maxNumberOfScripts || FileSystem::sharedFileSystem()->availableSize() < k_fullFreeSpaceSizeLimit);
 }
 
 void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction, ScanCallback storeVariable) {
@@ -114,7 +52,7 @@ void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallba
     // Handle lexer or parser errors with nlr.
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
-      const char * scriptContent = scriptAtIndex(scriptIndex).content();
+      const char * scriptContent = scriptAtIndex(scriptIndex).readContent();
       if (scriptContent == nullptr) {
         continue;
       }
@@ -196,44 +134,21 @@ const char * ScriptStore::contentOfScript(const char * name) {
   if (script.isNull()) {
     return nullptr;
   }
-  return script.content();
+  return script.readContent();
 }
 
 bool ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
-  const char autoImportationString[2] = {Script::DefaultAutoImportationMarker, 0};
-  if (!m_accordion.appendBuffer(autoImportationString)) {
-    return false;
+  size_t scriptSize = strlen(scriptTemplate->content())+1;
+  char * body = new char[scriptSize+Script::k_importationStatusSize];
+  body[0] = 1;
+  strlcpy(body+1, scriptTemplate->content(), scriptSize);
+  bool result = false;
+  if (FileSystem::sharedFileSystem()->sizeOfFileWithBody(body) <= FileSystem::sharedFileSystem()->availableSize()) {
+    FileSystem::sharedFileSystem()->addFile(scriptTemplate->name(), File::Type::Script, body);
+    result = true;
   }
-
-  if (!m_accordion.appendBuffer(scriptTemplate->name())) {
-    // Delete the Auto Importation Marker
-    m_accordion.deleteLastBuffer();
-    return false;
-  }
-
-  if (copyStaticScriptOnFreeSpace(scriptTemplate)) {
-    return true;
-  }
-  // Delete the Auto Importation Marker and the Name Of the Script
-  m_accordion.deleteLastBuffer();
-  m_accordion.deleteLastBuffer();
-  return false;
-}
-
-bool ScriptStore::copyStaticScriptOnFreeSpace(const ScriptTemplate * scriptTemplate) {
-  return m_accordion.appendBuffer(scriptTemplate->content());
-}
-
-int ScriptStore::accordionIndexOfMarkersOfScriptAtIndex(int index) const {
-  return index * Script::NumberOfStringsPerScript;
-}
-
-int ScriptStore::accordionIndexOfNameOfScriptAtIndex(int index) const {
-  return index * Script::NumberOfStringsPerScript + 1;
-}
-
-int ScriptStore::accordionIndexOfContentOfScriptAtIndex(int index) const {
-  return index * Script::NumberOfStringsPerScript + 2;
+  delete[] body;
+  return result;
 }
 
 const char * ScriptStore::structID(mp_parse_node_struct_t *structNode) {

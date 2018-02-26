@@ -2,35 +2,36 @@
 
 namespace Code {
 
-Script::Script(const char * marker, const char * name, size_t nameBufferSize, const char * content, size_t contentBufferSize) :
-  m_marker(marker),
-  m_name(name),
-  m_nameBufferSize(nameBufferSize),
-  m_content(content),
-  m_contentBufferSize(contentBufferSize)
+Script::Script(File f) :
+  File(f)
 {
 }
 
-bool Script::isNull() const {
-  if (m_marker == nullptr) {
-    assert(m_name == nullptr);
-    assert(m_nameBufferSize == 0);
-    assert(m_content == nullptr);
-    assert(m_contentBufferSize == 0);
-    return true;
-  }
-  return false;
-}
-
-bool Script::autoImport() const {
+bool Script::importationStatus() const {
   assert(!isNull());
-  assert(m_marker != nullptr);
-  if (m_marker[0] == AutoImportationMarker) {
-    return true;
+  const char * body = read();
+  return (body[0] == 1);
+}
+
+void Script::toggleImportationStatus() {
+  assert(bodySize() >= 1);
+  m_body[0] = importationStatus() ? 0 : 1;
+}
+
+const char * Script::readContent() const {
+  const char * body = read();
+  return body+k_importationStatusSize;
+}
+
+File::ErrorStatus Script::writeContent(const char * data, size_t size) {
+  int deltaSize = (int)size+k_importationStatusSize - (int)bodySize();
+  if (FileSystem::sharedFileSystem()->moveNextFile(start(), deltaSize)) {
+    *m_size += deltaSize;
+    strlcpy(m_body+k_importationStatusSize, data, size);
+    return ErrorStatus::None;
+  } else {
+    return ErrorStatus::NoEnoughSpaceAvailable;
   }
-  assert (m_marker[0] == NoAutoImportationMarker);
-  return false;
 }
 
 }
-

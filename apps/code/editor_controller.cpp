@@ -10,18 +10,38 @@ namespace Code {
 EditorController::EditorController(MenuController * menuController) :
   ViewController(nullptr),
   m_textArea(this),
+  m_areaBuffer(nullptr),
+  m_script(File()),
   m_menuController(menuController)
 {
   m_textArea.setDelegate(this);
 }
 
-void EditorController::setScript(Script script){
-  m_textArea.setText(script.editableContent(), script.contentBufferSize());
+EditorController::~EditorController() {
+  delete m_areaBuffer;
+  m_areaBuffer = nullptr;
 }
 
+void EditorController::setScript(Script script) {
+  m_script = script;
+  const char * scriptBody = m_script.readContent();
+  size_t scriptBodySize = strlen(scriptBody)+1;
+  size_t availableScriptSize = scriptBodySize + FileSystem::sharedFileSystem()->availableSize();
+  assert(m_areaBuffer == nullptr);
+  m_areaBuffer = new char[availableScriptSize];
+  strlcpy(m_areaBuffer, scriptBody, scriptBodySize);
+  m_textArea.setText(m_areaBuffer, availableScriptSize);
+}
+
+// TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back) {
-    stackController()->pop();
+    File::ErrorStatus err = m_script.writeContent(m_areaBuffer, strlen(m_areaBuffer)+1);
+    if (err == File::ErrorStatus::NoEnoughSpaceAvailable) {
+      assert(false); // This should not happen as we set the text area according to the available space in the File System
+    } else {
+      stackController()->pop();
+    }
     return true;
   }
   return false;
@@ -37,10 +57,8 @@ void EditorController::viewWillAppear() {
 
 void EditorController::viewDidDisappear() {
   m_menuController->scriptContentEditionDidFinish();
-}
-
-bool EditorController::textAreaShouldFinishEditing(TextArea * textArea, Ion::Events::Event event) {
-  return false;
+  delete[] m_areaBuffer;
+  m_areaBuffer = nullptr;
 }
 
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
@@ -114,7 +132,6 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
       return true;
     }
   }
-
   return false;
 }
 

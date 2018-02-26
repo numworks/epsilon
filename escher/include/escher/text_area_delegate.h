@@ -7,7 +7,6 @@ class TextArea;
 
 class TextAreaDelegate : public TextInputDelegate {
 public:
-  virtual bool textAreaShouldFinishEditing(TextArea * textArea, Ion::Events::Event event) = 0;
   virtual bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) = 0;
 };
 

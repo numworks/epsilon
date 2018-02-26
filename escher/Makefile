@@ -21,6 +21,8 @@ objs += $(addprefix escher/src/,\
   expression_table_cell.o\
   expression_table_cell_with_pointer.o\
   expression_view.o\
+  file.o\
+  file_system.o\
   highlight_cell.o\
   gauge_view.o\
   image_view.o\

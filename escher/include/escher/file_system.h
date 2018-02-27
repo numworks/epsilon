@@ -29,10 +29,23 @@ private:
   char * nameOfFileStarting(char * start);
   char * bodyOfFileStarting(char * start);
   constexpr static size_t k_totalSize = 4096;
-  constexpr static uint32_t Magic = 0xDEC00DF0;
+  constexpr static uint32_t Magic = 0xDECA0DF0;
   uint32_t m_dataHeader;
   char m_data[k_totalSize];
   uint32_t m_dataFooter;
+};
+
+class FileSystemInfo {
+public:
+  constexpr FileSystemInfo(uint32_t address) :
+    m_header(Magic),
+    m_address(address),
+    m_footer(Magic) { }
+private:
+  constexpr static uint32_t Magic = 0xDECB0DF0;
+  uint32_t m_header;
+  uint32_t m_address;
+  uint32_t m_footer;
 };
 
 #endif

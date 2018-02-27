@@ -3,6 +3,17 @@
 #include <string.h>
 #include <assert.h>
 
+#ifndef HEADER_SECTION
+#define HEADER_SECTION
+#endif
+
+#ifndef FORCE_LINK
+#define FORCE_LINK
+#endif
+
+FileSystem f;
+constexpr FileSystemInfo HEADER_SECTION FORCE_LINK file_system_infos((uint32_t)(&f));
+
 FileSystem::FileSystem() :
   m_dataHeader(Magic),
   m_data(),
@@ -13,7 +24,6 @@ FileSystem::FileSystem() :
 }
 
 FileSystem * FileSystem::sharedFileSystem() {
-  static FileSystem f;
   return &f;
 }
 

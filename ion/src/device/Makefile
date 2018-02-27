@@ -1,6 +1,8 @@
 include ion/src/device/boot/Makefile
 include ion/src/device/bench/Makefile
 
+escher/src/file_system.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))" -DFORCE_LINK="__attribute__((used))"
+
 ion/src/shared/software_version.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
 
 objs += $(addprefix ion/src/shared/, \

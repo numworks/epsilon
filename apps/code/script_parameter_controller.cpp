@@ -12,7 +12,7 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
   m_deleteScript(I18n::Message::DeleteScript),
   m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
     Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
-  m_script(File()),
+  m_script(Record()),
   m_menuController(menuController)
 {
 }
@@ -22,7 +22,7 @@ void ScriptParameterController::setScript(Script script){
 }
 
 void ScriptParameterController::dismissScriptParameterController() {
-  m_script = Script(File());
+  m_script = Script(Record());
   stackViewController()->pop();
 }
 

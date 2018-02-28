@@ -1,9 +1,9 @@
-#include <escher/file.h>
-#include <escher/file_system.h>
+#include <escher/record.h>
+#include <escher/kallax.h>
 #include <string.h>
 #include <assert.h>
 
-File::File(size_t * size, char * name, Type type, char * body) :
+Record::Record(size_t * size, char * name, Type type, char * body) :
   m_body(body),
   m_size(size),
   m_name(name),
@@ -11,7 +11,7 @@ File::File(size_t * size, char * name, Type type, char * body) :
 {
 }
 
-bool File::isNull() const {
+bool Record::isNull() const {
   if (m_type == Type::Null) {
     assert(m_size == nullptr);
     return true;
@@ -20,12 +20,12 @@ bool File::isNull() const {
 }
 
 
-const char * File::name() const {
+const char * Record::name() const {
   return m_name;
 }
 
-File::ErrorStatus File::rename(const char * newName) {
-  if (FileSystem::sharedFileSystem()->isNameTaken(newName, m_type)) {
+Record::ErrorStatus Record::rename(const char * newName) {
+  if (Kallax::sharedKallax()->isNameTaken(newName, m_type)) {
     return ErrorStatus::NameTaken;
   }
   if (strlen(newName) >= k_nameSize) {
@@ -35,14 +35,14 @@ File::ErrorStatus File::rename(const char * newName) {
   return ErrorStatus::None;
 }
 
-const char * File::read() const {
+const char * Record::read() const {
   return m_body;
 }
 
-File::ErrorStatus File::write(const char * data, size_t size) {
+Record::ErrorStatus Record::write(const char * data, size_t size) {
   int deltaSize = (int)size - (int)bodySize();
   // TODO: if this fails because deltaSize is too big, return an error?
-  if (FileSystem::sharedFileSystem()->moveNextFile(start(), deltaSize)) {
+  if (Kallax::sharedKallax()->moveNextRecord(start(), deltaSize)) {
     *m_size += deltaSize;
     strlcpy(m_body, data, size);
     return ErrorStatus::None;
@@ -50,18 +50,18 @@ File::ErrorStatus File::write(const char * data, size_t size) {
   return ErrorStatus::NoEnoughSpaceAvailable;
 }
 
-File::Type File::type() {
+Record::Type Record::type() {
   return m_type;
 }
 
-void File::remove() {
-  FileSystem::sharedFileSystem()->moveNextFile(start(), -*(m_size));
+void Record::remove() {
+  Kallax::sharedKallax()->moveNextRecord(start(), -*(m_size));
 }
 
-char * File::start() {
+char * Record::start() {
   return m_name - k_typeSize - k_sizeSize;
 }
 
-size_t File::bodySize() const {
+size_t Record::bodySize() const {
   return *m_size - k_nameSize - k_typeSize - k_sizeSize;
 }

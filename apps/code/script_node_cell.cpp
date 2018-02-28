@@ -1,6 +1,6 @@
 #include "script_node_cell.h"
 #include <kandinsky/point.h>
-#include <escher/metric.h>
+#include <escher.h>
 
 namespace Code {
 

@@ -10,6 +10,8 @@
 #define FORCE_LINK
 #endif
 
+namespace Ion {
+
 Kallax f;
 
 Kallax::Kallax() :
@@ -157,4 +159,6 @@ char * Kallax::bodyOfRecordStarting(char * start) {
 
 size_t Kallax::sizeOfRecordWithBody(const char * body) const {
   return Record::k_sizeSize+Record::k_typeSize+Record::k_nameSize+strlen(body)+1;
+}
+
 }

@@ -1,4 +1,4 @@
-#include <escher/kallax.h>
+#include <ion/kallax.h>
 #include <string.h>
 #include <assert.h>
 
@@ -11,7 +11,6 @@
 #endif
 
 Kallax f;
-constexpr KallaxInfo HEADER_SECTION FORCE_LINK kallax_infos((uint32_t)(&f));
 
 Kallax::Kallax() :
   m_dataHeader(Magic),

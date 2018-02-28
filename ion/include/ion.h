@@ -7,9 +7,11 @@
 #include <ion/console.h>
 #include <ion/display.h>
 #include <ion/events.h>
+#include <ion/kallax.h>
 #include <ion/keyboard.h>
 #include <ion/led.h>
 #include <ion/power.h>
+#include <ion/record.h>
 #include <ion/usb.h>
 #include <stdint.h>
 #include <string.h>

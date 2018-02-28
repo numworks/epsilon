@@ -23,9 +23,9 @@ const char * Script::readContent() const {
   return body+k_importationStatusSize;
 }
 
-Record::ErrorStatus Script::writeContent(const char * data, size_t size) {
+Script::ErrorStatus Script::writeContent(const char * data, size_t size) {
   int deltaSize = (int)size+k_importationStatusSize - (int)bodySize();
-  if (Kallax::sharedKallax()->moveNextRecord(start(), deltaSize)) {
+  if (Ion::Kallax::sharedKallax()->moveNextRecord(start(), deltaSize)) {
     *m_size += deltaSize;
     strlcpy(m_body+k_importationStatusSize, data, size);
     return ErrorStatus::None;

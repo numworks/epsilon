@@ -6,6 +6,8 @@
 
 /* Record  : | Total Size | Type | Name | Body | */
 
+namespace Ion {
+
 class Record {
 public:
   enum class Type : uint8_t {
@@ -43,5 +45,7 @@ private:
   char * m_name;
   Type m_type;
 };
+
+}
 
 #endif

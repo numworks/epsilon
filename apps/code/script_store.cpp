@@ -20,17 +20,17 @@ ScriptStore::ScriptStore()
 }
 
 Script ScriptStore::scriptAtIndex(int index) {
-  Record f = Kallax::sharedKallax()->recordOfTypeAtIndex(Record::Type::Script, index);
+  Ion::Record f = Ion::Kallax::sharedKallax()->recordOfTypeAtIndex(Ion::Record::Type::Script, index);
   return Script(f);
 }
 
 Script ScriptStore::scriptNamed(const char * name) {
-  Record f = Kallax::sharedKallax()->getRecord(Record::Type::Script, name);
+  Ion::Record f = Ion::Kallax::sharedKallax()->getRecord(Ion::Record::Type::Script, name);
   return Script(f);
 }
 
 int ScriptStore::numberOfScripts() {
-  return Kallax::sharedKallax()->numberOfRecordOfType(Record::Type::Script);
+  return Ion::Kallax::sharedKallax()->numberOfRecordOfType(Ion::Record::Type::Script);
 }
 
 bool ScriptStore::addNewScript() {
@@ -44,7 +44,7 @@ void ScriptStore::deleteAllScripts() {
 }
 
 bool ScriptStore::isFull() {
-  return (numberOfScripts() >= k_maxNumberOfScripts || Kallax::sharedKallax()->availableSize() < k_fullFreeSpaceSizeLimit);
+  return (numberOfScripts() >= k_maxNumberOfScripts || Ion::Kallax::sharedKallax()->availableSize() < k_fullFreeSpaceSizeLimit);
 }
 
 void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction, ScanCallback storeVariable) {
@@ -143,8 +143,8 @@ bool ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
   body[0] = 1;
   strlcpy(body+1, scriptTemplate->content(), scriptSize);
   bool result = false;
-  if (Kallax::sharedKallax()->sizeOfRecordWithBody(body) <= Kallax::sharedKallax()->availableSize()) {
-    Kallax::sharedKallax()->addRecord(scriptTemplate->name(), Record::Type::Script, body);
+  if (Ion::Kallax::sharedKallax()->sizeOfRecordWithBody(body) <= Ion::Kallax::sharedKallax()->availableSize()) {
+    Ion::Kallax::sharedKallax()->addRecord(scriptTemplate->name(), Ion::Record::Type::Script, body);
     result = true;
   }
   delete[] body;

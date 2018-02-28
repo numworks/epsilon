@@ -3,6 +3,8 @@
 #include <string.h>
 #include <assert.h>
 
+namespace Ion {
+
 Record::Record(size_t * size, char * name, Type type, char * body) :
   m_body(body),
   m_size(size),
@@ -64,4 +66,6 @@ char * Record::start() {
 
 size_t Record::bodySize() const {
   return *m_size - k_nameSize - k_typeSize - k_sizeSize;
+}
+
 }

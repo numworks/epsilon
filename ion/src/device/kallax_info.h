@@ -3,6 +3,9 @@
 
 #include <ion/kallax.h>
 
+namespace Ion {
+namespace Device {
+
 class KallaxInfo {
 public:
   constexpr KallaxInfo(uint32_t address) :
@@ -15,6 +18,9 @@ private:
   uint32_t m_address;
   uint32_t m_footer;
 };
+
+}
+}
 
 #endif
 

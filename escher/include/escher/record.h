@@ -1,12 +1,12 @@
-#ifndef ESCHER_FILE_H
-#define ESCHER_FILE_H
+#ifndef ESCHER_RECORD_H
+#define ESCHER_RECORD_H
 
 #include <stdint.h>
 #include <stddef.h>
 
-/* File  : | Total Size | Type | Name | Body | */
+/* Record  : | Total Size | Type | Name | Body | */
 
-class File {
+class Record {
 public:
   enum class Type : uint8_t {
     Null,
@@ -18,7 +18,7 @@ public:
     NameTooLong = 2,
     NoEnoughSpaceAvailable = 3
   };
-  File(size_t * totalSize = nullptr, char * name = nullptr, Type type = Type::Null, char * body = nullptr);
+  Record(size_t * totalSize = nullptr, char * name = nullptr, Type type = Type::Null, char * body = nullptr);
 
   bool isNull() const;
 

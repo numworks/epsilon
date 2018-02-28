@@ -33,9 +33,9 @@ public:
 
   bool addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
 private:
-  // If the system file free space has a size smaller than
+  // If the kallax free space has a size smaller than
   // k_fullFreeSpaceSizeLimit, we consider the script store as full.
-  static constexpr int k_fullFreeSpaceSizeLimit = File::k_sizeSize+File::k_nameSize+File::k_typeSize+10;
+  static constexpr int k_fullFreeSpaceSizeLimit = Record::k_sizeSize+Record::k_nameSize+Record::k_typeSize+10;
   static constexpr size_t k_fileInput2ParseNodeStructKind = 1;
   static constexpr size_t k_functionDefinitionParseNodeStructKind = 3;
   static constexpr size_t k_expressionStatementParseNodeStructKind = 5;

@@ -5,13 +5,13 @@
 
 namespace Code {
 
-/* File  : | Total Size | Type | Name |             Body                |
- * Script:                            | AutoImportationStatus | Content |*/
+/* Record  : | Total Size | Type | Name |             Body                |
+ * Script:                              | AutoImportationStatus | Content |*/
 
-class Script : public File {
+class Script : public Record {
 friend class ScriptStore;
 public:
-  Script(File f);
+  Script(Record f);
 
   bool importationStatus() const;
   void toggleImportationStatus();

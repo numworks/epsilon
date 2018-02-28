@@ -302,8 +302,8 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   } else {
     newName = text;
   }
-  Record::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).rename(newName);
-  if (error == Record::ErrorStatus::None) {
+  Script::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).rename(newName);
+  if (error == Script::ErrorStatus::None) {
     updateAddScriptRowDisplay();
     textField->setText(newName);
     int currentRow = m_selectableTableView.selectedRow();
@@ -318,7 +318,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
   } else {
-    assert(error == Record::ErrorStatus::NameTaken);
+    assert(error == Script::ErrorStatus::NameTaken);
     // The name cannot be to long as the text field size was set accordingly
 
     // TODO:
@@ -337,8 +337,8 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField, const char 
     // The previous text was an empty name. Use a numbered default script name.
     char numberedDefaultName[k_defaultScriptNameMaxSize];
     numberedDefaultScriptName(numberedDefaultName);
-    Record::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).rename(numberedDefaultName);
-    assert(error == Record::ErrorStatus::None);
+    Script::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).rename(numberedDefaultName);
+    assert(error == Script::ErrorStatus::None);
     updateAddScriptRowDisplay();
     m_selectableTableView.reloadData();
   }

@@ -8,10 +8,10 @@ namespace Code {
 /* Record  : | Total Size | Type | Name |             Body                |
  * Script:                              | AutoImportationStatus | Content |*/
 
-class Script : public Record {
+class Script : public Ion::Record {
 friend class ScriptStore;
 public:
-  Script(Record f);
+  Script(Ion::Record f);
 
   bool importationStatus() const;
   void toggleImportationStatus();

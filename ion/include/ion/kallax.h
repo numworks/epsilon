@@ -6,6 +6,8 @@
 /* Kallax : | Magic |                    Record1                    |                Record2                    | ... | Magic |
  *              | Magic | Size1 | Type1 | Name1 | BodySize1 | Body1 | Size2 | Type2 | Name2 | BodySize2 | Body2 | ... | Magic */
 
+namespace Ion {
+
 class Kallax {
 public:
   Kallax();
@@ -37,5 +39,6 @@ private:
   uint32_t m_dataFooter;
 };
 
-#endif
+}
 
+#endif

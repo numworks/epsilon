@@ -11,7 +11,7 @@ EditorController::EditorController(MenuController * menuController) :
   ViewController(nullptr),
   m_textArea(this),
   m_areaBuffer(nullptr),
-  m_script(Record()),
+  m_script(Ion::Record()),
   m_menuController(menuController)
 {
   m_textArea.setDelegate(this);
@@ -26,7 +26,7 @@ void EditorController::setScript(Script script) {
   m_script = script;
   const char * scriptBody = m_script.readContent();
   size_t scriptBodySize = strlen(scriptBody)+1;
-  size_t availableScriptSize = scriptBodySize + Kallax::sharedKallax()->availableSize();
+  size_t availableScriptSize = scriptBodySize + Ion::Kallax::sharedKallax()->availableSize();
   assert(m_areaBuffer == nullptr);
   m_areaBuffer = new char[availableScriptSize];
   strlcpy(m_areaBuffer, scriptBody, scriptBodySize);
@@ -36,8 +36,8 @@ void EditorController::setScript(Script script) {
 // TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back) {
-    Record::ErrorStatus err = m_script.writeContent(m_areaBuffer, strlen(m_areaBuffer)+1);
-    if (err == Record::ErrorStatus::NoEnoughSpaceAvailable) {
+    Script::ErrorStatus err = m_script.writeContent(m_areaBuffer, strlen(m_areaBuffer)+1);
+    if (err == Script::ErrorStatus::NoEnoughSpaceAvailable) {
       assert(false); // This should not happen as we set the text area according to the available space in the Kallax
     } else {
       stackController()->pop();

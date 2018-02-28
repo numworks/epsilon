@@ -1,7 +1,7 @@
-#ifndef ESCHER_KALLAX_H
-#define ESCHER_KALLAX_H
+#ifndef ION_KALLAX_H
+#define ION_KALLAX_H
 
-#include <escher/record.h>
+#include <ion/record.h>
 
 /* Kallax : | Magic |                    Record1                    |                Record2                    | ... | Magic |
  *              | Magic | Size1 | Type1 | Name1 | BodySize1 | Body1 | Size2 | Type2 | Name2 | BodySize2 | Body2 | ... | Magic */
@@ -35,19 +35,6 @@ private:
   uint32_t m_dataHeader;
   char m_data[k_totalSize];
   uint32_t m_dataFooter;
-};
-
-class KallaxInfo {
-public:
-  constexpr KallaxInfo(uint32_t address) :
-    m_header(Magic),
-    m_address(address),
-    m_footer(Magic) { }
-private:
-  constexpr static uint32_t Magic = 0xDECB0DF0;
-  uint32_t m_header;
-  uint32_t m_address;
-  uint32_t m_footer;
 };
 
 #endif

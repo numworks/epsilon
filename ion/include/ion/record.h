@@ -1,5 +1,5 @@
-#ifndef ESCHER_RECORD_H
-#define ESCHER_RECORD_H
+#ifndef ION_RECORD_H
+#define ION_RECORD_H
 
 #include <stdint.h>
 #include <stddef.h>

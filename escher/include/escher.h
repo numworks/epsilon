@@ -29,7 +29,6 @@
 #include <escher/input_view_controller.h>
 #include <escher/invocation.h>
 #include <escher/i18n.h>
-#include <escher/kallax.h>
 #include <escher/key_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/message_table_cell.h>
@@ -47,7 +46,6 @@
 #include <escher/modal_view_controller.h>
 #include <escher/palette.h>
 #include <escher/pointer_text_view.h>
-#include <escher/record.h>
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 #include <escher/scroll_view_data_source.h>

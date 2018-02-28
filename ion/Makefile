@@ -18,6 +18,8 @@ ion/src/shared/software_version.o: SFLAGS += -DPATCH_LEVEL="$(call initializer_l
 
 objs += $(addprefix ion/src/shared/, \
   events.o \
+  kallax.o \
+  record.o \
   software_version.o \
 )
 

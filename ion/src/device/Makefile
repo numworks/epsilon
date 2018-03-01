@@ -1,9 +1,7 @@
 include ion/src/device/boot/Makefile
 include ion/src/device/bench/Makefile
 
-ion/src/device/kallax_info.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))" -DFORCE_LINK="__attribute__((used))"
-
-ion/src/shared/software_version.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
+ion/src/shared/platform_info.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))" -DFORCE_LINK="__attribute__((used))"
 
 objs += $(addprefix ion/src/shared/, \
   console_line.o \
@@ -21,7 +19,6 @@ objs += $(addprefix ion/src/device/, \
   display.o\
   events_keyboard.o\
   fcc_id.o\
-  kallax_info.o\
   keyboard.o\
   led.o\
   power.o\

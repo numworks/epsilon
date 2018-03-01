@@ -14,13 +14,13 @@ include ion/src/shared/tools/Makefile
 # char test[4]= "ab"; is valid and should initialize test to 'a','b',0,0).
 # Older versions of GCC are not conformant so we resort to an initializer list.
 initializer_list = $(shell echo $(1) | sed  "s/\(.\)/'\1',/g")0
-ion/src/shared/software_version.o: SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
+ion/src/shared/platform_info.o: SFLAGS += -DPATCH_LEVEL="$(call initializer_list,$(PATCH_LEVEL))" -DEPSILON_VERSION="$(call initializer_list,$(EPSILON_VERSION))"
 
 objs += $(addprefix ion/src/shared/, \
   events.o \
   kallax.o \
   record.o \
-  software_version.o \
+  platform_info.o \
 )
 
 tests += $(addprefix ion/test/,\

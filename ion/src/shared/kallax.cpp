@@ -2,17 +2,9 @@
 #include <string.h>
 #include <assert.h>
 
-#ifndef HEADER_SECTION
-#define HEADER_SECTION
-#endif
-
-#ifndef FORCE_LINK
-#define FORCE_LINK
-#endif
+Ion::Kallax kallax;
 
 namespace Ion {
-
-Kallax f;
 
 Kallax::Kallax() :
   m_dataHeader(Magic),
@@ -24,7 +16,7 @@ Kallax::Kallax() :
 }
 
 Kallax * Kallax::sharedKallax() {
-  return &f;
+  return &kallax;
 }
 
 int Kallax::numberOfRecordOfType(Record::Type type) {

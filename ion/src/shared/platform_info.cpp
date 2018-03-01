@@ -16,12 +16,19 @@
 #define HEADER_SECTION
 #endif
 
-class VersionInfo {
+#ifndef FORCE_LINK
+#define FORCE_LINK
+#endif
+
+extern Ion::Kallax kallax;
+
+class PlatformInfo {
 public:
-  constexpr VersionInfo() :
+  constexpr PlatformInfo() :
     m_header(Magic),
     m_version{EPSILON_VERSION},
     m_patchLevel{PATCH_LEVEL},
+    m_storageAddress(&kallax),
     m_footer(Magic) { }
   const char * version() const {
     assert(m_header == Magic);
@@ -38,15 +45,16 @@ private:
   uint32_t m_header;
   const char m_version[8];
   const char m_patchLevel[8];
+  void * m_storageAddress;
   uint32_t m_footer;
 };
 
-constexpr VersionInfo HEADER_SECTION version_infos;
+constexpr PlatformInfo HEADER_SECTION platform_infos;
 
 const char * Ion::softwareVersion() {
-  return version_infos.version();
+  return platform_infos.version();
 }
 
 const char * Ion::patchLevel() {
-  return version_infos.patchLevel();
+  return platform_infos.patchLevel();
 }

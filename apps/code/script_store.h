@@ -8,6 +8,8 @@ extern "C" {
 #include "py/parse.h"
 }
 
+extern Ion::Storage storage;
+
 namespace Code {
 
 class ScriptStore : public MicroPython::ScriptProvider {
@@ -17,10 +19,18 @@ public:
   static constexpr int k_maxNumberOfScripts = 8;
 
   ScriptStore();
-  Script scriptAtIndex(int index);
-  Script scriptNamed(const char * name);
-  int numberOfScripts();
-  bool addNewScript();
+  Script scriptAtIndex(int index) {
+    return Script(storage.recordWithExtensionAtIndex(k_scriptExtension, index));
+  }
+  Script scriptNamed(const char * name) {
+    return Script(storage.recordNamed(name));
+  }
+  int numberOfScripts() {
+    return storage.numberOfRecordsWithExtension(k_scriptExtension);
+  }
+  Ion::Storage::Record::ErrorStatus addNewScript() {
+    return addScriptFromTemplate(ScriptTemplate::Empty());
+  }
   void deleteAllScripts();
   bool isFull();
 
@@ -31,11 +41,15 @@ public:
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name) override;
 
-  bool addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
+  Ion::Storage::Record::ErrorStatus addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
 private:
-  // If the kallax free space has a size smaller than
-  // k_fullFreeSpaceSizeLimit, we consider the script store as full.
-  static constexpr int k_fullFreeSpaceSizeLimit = Ion::Record::k_sizeSize+Ion::Record::k_nameSize+Ion::Record::k_typeSize+10;
+  /* If the storage available space has a smaller size than
+   * k_fullFreeSpaceSizeLimit, we consider the script store as full.
+   * To be able to add a new empty record, the available space should at least
+   * stores a Script with default name "script99.py" (12 char), the importation
+   * status (1 char), the default content "from math import *\n" (20 char) and
+   * 10 char of free space. */
+  static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::record_size_t)+12+1+20+10;
   static constexpr size_t k_fileInput2ParseNodeStructKind = 1;
   static constexpr size_t k_functionDefinitionParseNodeStructKind = 3;
   static constexpr size_t k_expressionStatementParseNodeStructKind = 5;

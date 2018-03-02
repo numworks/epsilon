@@ -20,7 +20,7 @@
 #define FORCE_LINK
 #endif
 
-extern Ion::Kallax kallax;
+extern Ion::Storage storage;
 
 class PlatformInfo {
 public:
@@ -28,14 +28,16 @@ public:
     m_header(Magic),
     m_version{EPSILON_VERSION},
     m_patchLevel{PATCH_LEVEL},
-    m_storageAddress(&kallax),
+    m_storageAddress(&storage),
     m_footer(Magic) { }
   const char * version() const {
+    assert(m_storageAddress != nullptr);
     assert(m_header == Magic);
     assert(m_footer == Magic);
     return m_version;
   }
   const char * patchLevel() const {
+    assert(m_storageAddress != nullptr);
     assert(m_header == Magic);
     assert(m_footer == Magic);
     return m_patchLevel;

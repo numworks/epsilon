@@ -5,13 +5,12 @@
 
 namespace Code {
 
-/* Record  : | Total Size | Type | Name |             Body                |
- * Script:                              | AutoImportationStatus | Content |*/
+/* Record  : | Total Size |  Name |             Body                |
+ * Script:                        | AutoImportationStatus | Content |*/
 
-class Script : public Ion::Record {
-friend class ScriptStore;
+class Script : public Ion::Storage::Record {
 public:
-  Script(Ion::Record f);
+  Script(Ion::Storage::Record r);
 
   bool importationStatus() const;
   void toggleImportationStatus();
@@ -19,7 +18,6 @@ public:
   const char * readContent() const;
   ErrorStatus writeContent(const char * data, size_t size);
 
-private:
   constexpr static size_t k_importationStatusSize = 1;
 };
 

@@ -19,32 +19,14 @@ ScriptStore::ScriptStore()
   addScriptFromTemplate(ScriptTemplate::Polynomial());
 }
 
-Script ScriptStore::scriptAtIndex(int index) {
-  Ion::Record f = Ion::Kallax::sharedKallax()->recordOfTypeAtIndex(Ion::Record::Type::Script, index);
-  return Script(f);
-}
-
-Script ScriptStore::scriptNamed(const char * name) {
-  Ion::Record f = Ion::Kallax::sharedKallax()->getRecord(Ion::Record::Type::Script, name);
-  return Script(f);
-}
-
-int ScriptStore::numberOfScripts() {
-  return Ion::Kallax::sharedKallax()->numberOfRecordOfType(Ion::Record::Type::Script);
-}
-
-bool ScriptStore::addNewScript() {
-  return addScriptFromTemplate(ScriptTemplate::Empty());
-}
-
 void ScriptStore::deleteAllScripts() {
   for (int i = 0; i < numberOfScripts(); i++) {
-    scriptAtIndex(i).remove();
+    scriptAtIndex(i).destroy();
   }
 }
 
 bool ScriptStore::isFull() {
-  return (numberOfScripts() >= k_maxNumberOfScripts || Ion::Kallax::sharedKallax()->availableSize() < k_fullFreeSpaceSizeLimit);
+  return (numberOfScripts() >= k_maxNumberOfScripts || storage.availableSize() < k_fullFreeSpaceSizeLimit);
 }
 
 void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction, ScanCallback storeVariable) {
@@ -137,18 +119,15 @@ const char * ScriptStore::contentOfScript(const char * name) {
   return script.readContent();
 }
 
-bool ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
+Script::ErrorStatus ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
   size_t scriptSize = strlen(scriptTemplate->content())+1;
   char * body = new char[scriptSize+Script::k_importationStatusSize];
   body[0] = 1;
-  strlcpy(body+1, scriptTemplate->content(), scriptSize);
-  bool result = false;
-  if (Ion::Kallax::sharedKallax()->sizeOfRecordWithBody(body) <= Ion::Kallax::sharedKallax()->availableSize()) {
-    Ion::Kallax::sharedKallax()->addRecord(scriptTemplate->name(), Ion::Record::Type::Script, body);
-    result = true;
-  }
+  strlcpy(body+Script::k_importationStatusSize, scriptTemplate->content(), scriptSize);
+  Script::ErrorStatus err = storage.createRecord(scriptTemplate->name(), body, scriptSize+Script::k_importationStatusSize);
+  assert(err != Script::ErrorStatus::NonCompliantName);
   delete[] body;
-  return result;
+  return err;
 }
 
 const char * ScriptStore::structID(mp_parse_node_struct_t *structNode) {

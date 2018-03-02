@@ -12,7 +12,6 @@ public:
     float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
   void setDelegate(TextFieldDelegate * delegate) { m_delegate = delegate; }
   void setDraftTextBuffer(char * draftTextBuffer);
-  void setTextBufferSize(size_t size);
   bool isEditing() const;
   size_t draftTextLength() const;
   void setText(const char * text);
@@ -31,7 +30,6 @@ protected:
   public:
     ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, KDText::FontSize size, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
     void setDraftTextBuffer(char * draftTextBuffer);
-    void setTextBufferSize(size_t size);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     bool isEditing() const { return m_isEditing; }
     const char * text() const override;

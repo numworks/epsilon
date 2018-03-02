@@ -18,9 +18,8 @@ ion/src/shared/platform_info.o: SFLAGS += -DPATCH_LEVEL="$(call initializer_list
 
 objs += $(addprefix ion/src/shared/, \
   events.o \
-  kallax.o \
-  record.o \
   platform_info.o \
+  storage.o \
 )
 
 tests += $(addprefix ion/test/,\

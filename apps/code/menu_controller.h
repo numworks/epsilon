@@ -90,6 +90,9 @@ private:
   class EvenOddEditableTextCell : public ::EvenOddEditableTextCell {
   public:
     Responder * responder() override {
+      if (editableTextCell()->textField()->isEditing()) {
+        return this;
+      }
       return nullptr;
     }
   };
@@ -97,7 +100,7 @@ private:
   /* In the initializer list of the MenuController constructor, we initialize
    * m_scriptCells by copying k_maxNumberOfDisplayableScriptCells times the
    * constructor of an EvenOddEditableTextCell. */
-  char m_draftTextBuffer[Script::k_nameSize];
+  char m_draftTextBuffer[TextField::maxBufferSize()];
   EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];
   Shared::NewFunctionCell m_addNewScriptCell;
   EvenOddCell m_emptyCell;

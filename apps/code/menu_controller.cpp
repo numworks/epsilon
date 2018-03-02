@@ -39,7 +39,6 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
     m_scriptCells[i].editableTextCell()->textField()->setDelegate(this);
     m_scriptCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
-    m_scriptCells[i].editableTextCell()->textField()->setTextBufferSize(Script::k_nameSize);
     m_scriptCells[i].editableTextCell()->textField()->setAlignment(0.0f, 0.5f);
     m_scriptCells[i].editableTextCell()->setMargins(0, 0, 0, Metric::HistoryHorizontalMargin);
   }
@@ -127,9 +126,8 @@ void MenuController::renameSelectedScript() {
 
 void MenuController::deleteScript(Script script) {
   assert(!script.isNull());
-  script.remove();
+  script.destroy();
   updateAddScriptRowDisplay();
-  m_selectableTableView.reloadData();
 }
 
 void MenuController::reloadConsole() {
@@ -302,7 +300,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   } else {
     newName = text;
   }
-  Script::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).rename(newName);
+  Script::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).setName(newName);
   if (error == Script::ErrorStatus::None) {
     updateAddScriptRowDisplay();
     textField->setText(newName);
@@ -317,19 +315,15 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
     app()->setFirstResponder(&m_selectableTableView);
     static_cast<AppsContainer *>(const_cast<Container *>(app()->container()))->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
     return true;
+  } else if (error == Script::ErrorStatus::NameTaken) {
+    app()->displayWarning(I18n::Message::NameTaken);
+  } else if (error == Script::ErrorStatus::NonCompliantName) {
+    app()->displayWarning(I18n::Message::NonCompliantName);
   } else {
-    assert(error == Script::ErrorStatus::NameTaken);
-    // The name cannot be to long as the text field size was set accordingly
-
-    // TODO:
-    // 2 solutions:
-    // 1. display a warning with
-    // app()->displayWarning(I18n::Message::ForbiddenValue);
-    // But that have to be done in textFieldDidReceiveEvent when textFieldShouldFinishEditing to avoid losing edition
-    // 2. Modify the name to take another one (add a number for instance).
-    // This would raise issues about the available space? We can't always add a character...
-    return false;
+    assert(error == Script::ErrorStatus::NoEnoughSpaceAvailable);
+    app()->displayWarning(I18n::Message::NameTooLong);
   }
+  return false;
 }
 
 bool MenuController::textFieldDidAbortEditing(TextField * textField, const char * text) {
@@ -337,10 +331,15 @@ bool MenuController::textFieldDidAbortEditing(TextField * textField, const char 
     // The previous text was an empty name. Use a numbered default script name.
     char numberedDefaultName[k_defaultScriptNameMaxSize];
     numberedDefaultScriptName(numberedDefaultName);
-    Script::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).rename(numberedDefaultName);
+    Script::ErrorStatus error = m_scriptStore->scriptAtIndex(m_selectableTableView.selectedRow()).setName(numberedDefaultName);
+    if (error != Script::ErrorStatus::None) {
+      assert(false);
+      /* Because we use the numbered default name, the name should not be
+       * already taken. Plus, the script could be added only if the storage has
+       * enough available space to add a script named 'script99.py' */
+    }
     assert(error == Script::ErrorStatus::None);
     updateAddScriptRowDisplay();
-    m_selectableTableView.reloadData();
   }
   m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
   app()->setFirstResponder(&m_selectableTableView);
@@ -357,13 +356,13 @@ bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnV
 }
 
 void MenuController::addScript() {
-  if (m_scriptStore->addNewScript()) {
+  Script::ErrorStatus error = m_scriptStore->addNewScript();
+  if (error == Script::ErrorStatus::None) {
     updateAddScriptRowDisplay();
-    m_selectableTableView.reloadData();
     renameSelectedScript();
     return;
   }
-  m_selectableTableView.reloadData();
+  assert(false); // Adding a new script is called when !m_scriptStore.isFull() which guarantees that the available space in the storage is big enough
 }
 
 void MenuController::configureScript() {
@@ -419,6 +418,7 @@ void MenuController::intToText(int i, char * buffer) {
 
 void MenuController::updateAddScriptRowDisplay() {
   m_shouldDisplayAddScriptRow = !m_scriptStore->isFull();
+  m_selectableTableView.reloadData();
 }
 
 }

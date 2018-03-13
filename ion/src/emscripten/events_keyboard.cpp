@@ -46,9 +46,20 @@ static constexpr Event sEventForASCIICharAbove32[95] = {
   LowerX, LowerY, LowerZ, LeftBrace, None, RightBrace, None
 };
 
+static bool sleepWithTimeout(int duration, int * timeout) {
+  if (*timeout >= duration) {
+    emscripten_sleep(duration);
+    *timeout -= duration;
+    return false;
+  } else {
+    emscripten_sleep(*timeout);
+    *timeout = 0;
+    return true;
+  }
+}
+
 Event getEvent(int * timeout) {
   Ion::Display::Emscripten::refresh();
-  emscripten_sleep(1);
   if (sEvent != None) {
     Event event = sEvent;
     updateModifiersFromEvent(event);
@@ -56,7 +67,8 @@ Event getEvent(int * timeout) {
     return event;
   }
   SDL_Event event;
-  if (SDL_PollEvent(&event)) {
+  while (true) {
+    SDL_PollEvent(&event);
     if (event.type == SDL_KEYDOWN) {
       if (event.key.keysym.mod & KMOD_CTRL) {
         switch (event.key.keysym.sym) {
@@ -139,6 +151,9 @@ Event getEvent(int * timeout) {
       if (event.key.keysym.unicode >= 32 && event.key.keysym.unicode < 127) {
         return sEventForASCIICharAbove32[event.key.keysym.unicode-32];
       }
+    }
+    if (sleepWithTimeout(10, timeout)) {
+      return None;
     }
   }
   return None;

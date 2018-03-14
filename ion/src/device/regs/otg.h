@@ -56,8 +56,8 @@ public:
     enum class PKTSTS {
       GlobalOutNAK = 1,
       OutReceived = 2,
-      OutCompleted = 3,
-      SetupCompleted = 4,
+      OutTransferCompleted = 3,
+      SetupTransactionCompleted = 4, // TODO when sniffing the usb traffic, this interrupt is only done once, after the setAdress request receives a first NAK. It does not happen again after unpluggin and replugging the calculator: problem somewhere?
       SetupReceived = 6
     };
     REGS_FIELD(EPNUM, uint8_t, 3, 0);

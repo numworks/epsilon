@@ -26,14 +26,21 @@ objs += $(addprefix ion/src/device/, \
   set_msp.o \
   swd.o \
   usb.o \
-  usb_control_transfer_controller.o\
-  usb_data.o\
-  usb_data_structures.o\
-  usb_device.o\
-  usb_endpoint0_controller.o\
-  usb_web_usb_delegate.o\
-  usb_windows_os_string_delegate.o\
   wakeup.o \
+)
+
+objs += $(addprefix ion/src/device/usb/, \
+  calculator.o \
+  device.o\
+  endpoint0.o \
+  setup_packet.o\
+)
+
+objs += $(addprefix ion/src/device/usb/stack/, \
+  configuration_descriptor.o \
+  descriptor.o\
+  language_id_string_descriptor.o \
+  string_descriptor.o\
 )
 
 # When using the register.h C++ file in production mode, we expect the compiler

@@ -30,6 +30,7 @@ _mp_execute_bytecode \
 _fun_bc_call \
 _mp_call_function_0 \
 _IonEventsEmscriptenPushEvent \
+_IonEventsEmscriptenPushKey \
 __ZN3Ion6Events13isShiftActiveEv \
 __ZN3Ion6Events13isAlphaActiveEv \
 __ZN3Ion6Events5EventC2ENS_8Keyboard3KeyEbb \
@@ -49,4 +50,4 @@ EMFLAGS += --profiling-funcs -s ASSERTIONS=1
 endif
 
 SFLAGS += $(EMFLAGS)
-LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonEventsEmscriptenPushEvent"]'
+LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonEventsEmscriptenPushKey", "_IonEventsEmscriptenPushEvent"]'

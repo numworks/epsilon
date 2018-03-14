@@ -4,7 +4,8 @@
 #include <ion/events.h>
 
 extern "C" {
-void IonEventsEmscriptenPushEvent(int e);
+void IonEventsEmscriptenPushKey(int keyNumber);
+void IonEventsEmscriptenPushEvent(int eventNumber);
 }
 
 namespace Ion {

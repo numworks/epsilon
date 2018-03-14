@@ -6,10 +6,63 @@ extern "C" {
 }
 #include <emscripten.h>
 
-static Ion::Events::Event sEvent = Ion::Events::None;
+template<typename T, int N>
+class Queue {
+public:
+  Queue() : m_first(&m_elements[0]), m_last(&m_elements[0]) {}
+  int size() {
+    if (m_last >= m_first) {
+      return m_last - m_first;
+    } else {
+      return m_last - (m_first - N);
+    }
+  }
+
+  void enqueue(T element) {
+    if (size() > N) {
+      // Queue is full
+      return;
+    }
+    *m_last = element;
+    m_last = next(m_last);
+  }
+
+  T dequeue() {
+    if (size() <= 0) {
+      // Dequeueing an empty queue
+      return T();
+    }
+    T e = *m_first;
+    m_first = next(m_first);
+    return e;
+  }
+
+private:
+  T * next(T * p) {
+    if (p >= m_elements + N) {
+      return m_elements;
+    } else {
+      return p + 1;
+    }
+  }
+  T * m_first;
+  T * m_last;
+  T m_elements[N];
+};
+
+static Queue<Ion::Events::Event, 1024> sEventQueue;
+
+void IonEventsEmscriptenPushKey(int keyNumber) {
+  /* Note: This uses the *current* modifier state to generate the event. If some
+   * other modifiers were in the queue before, those won't be taken into account
+   * when the event corresponding to this key is dequeued.
+   * In practice, this should not happen because we push keys one by one. */
+  Ion::Events::Event event = Ion::Events::Event((Ion::Keyboard::Key)keyNumber, Ion::Events::isShiftActive(), Ion::Events::isAlphaActive());
+  sEventQueue.enqueue(event);
+}
 
 void IonEventsEmscriptenPushEvent(int eventNumber) {
-  sEvent = Ion::Events::Event((Ion::Keyboard::Key)eventNumber, Ion::Events::isShiftActive(), Ion::Events::isAlphaActive());
+  sEventQueue.enqueue(Ion::Events::Event(eventNumber));
 }
 
 Ion::Keyboard::State Ion::Keyboard::scan() {
@@ -59,15 +112,21 @@ static bool sleepWithTimeout(int duration, int * timeout) {
 }
 
 Event getEvent(int * timeout) {
-  Ion::Display::Emscripten::refresh();
-  if (sEvent != None) {
-    Event event = sEvent;
-    updateModifiersFromEvent(event);
-    sEvent = None;
-    return event;
+  // If multiple events are in the queue, don't waste time refreshing the display
+  if (sEventQueue.size() <= 1) {
+    Ion::Display::Emscripten::refresh();
   }
+
   SDL_Event event;
   while (true) {
+    // Look up events in the queue
+    if (sEventQueue.size() > 0) {
+      Event event = sEventQueue.dequeue();
+      updateModifiersFromEvent(event);
+      return event;
+    }
+
+    // Or directly from browser events, converted to SDL events by Emscripten
     SDL_PollEvent(&event);
     if (event.type == SDL_KEYDOWN) {
       if (event.key.keysym.mod & KMOD_CTRL) {

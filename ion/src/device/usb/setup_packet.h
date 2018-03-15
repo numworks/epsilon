@@ -15,6 +15,19 @@ public:
     OutTransaction
   };
 
+  enum class RequestType {
+    Standard = 0,
+    Class = 1,
+    Vendor = 2
+  };
+
+  enum class RecipientType {
+    Device = 0,
+    Interface = 1,
+    Endpoint = 2,
+    Other = 3
+  };
+
   constexpr SetupPacket() :
     m_bmRequestType(0),
     m_bRequest(0),
@@ -23,8 +36,11 @@ public:
     m_wLength(0)
   {
   }
+
   SetupPacket(void * buffer);
-  TransactionType followingTransaction();
+  TransactionType followingTransaction() const;
+  RequestType requestType() const;
+  RecipientType recipientType() const;
   int descriptorIndex();
   int descriptorType();
   uint8_t bmRequestType() { return m_bmRequestType; }

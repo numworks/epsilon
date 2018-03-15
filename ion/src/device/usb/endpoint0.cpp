@@ -72,7 +72,7 @@ void Endpoint0::reset() {
   flushRxFifo();
 }
 
-void Endpoint0::processSETUPpacket() {
+void Endpoint0::readAndDispatchSetupPacket() {
   setOutNAK(true);
 
   // Read the 8-bytes Setup packet
@@ -83,48 +83,18 @@ void Endpoint0::processSETUPpacket() {
 
   m_request = SetupPacket(m_largeBuffer);
 
-  if (m_request.followingTransaction() == SetupPacket::TransactionType::InTransaction) {
-  // There is no data stage in this transaction, or the data stage will be in IN direction.
-    if (!processSETUPInRequest()) {
-      stallTransaction();
+  switch (m_request.recipientType()) {
+    case SetupPacket::RecipientType::Device:
+      m_device->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, k_largeBufferLength);
       return;
-    }
-    m_transferBufferLength = m_request.wLength();
-    if (m_transferBufferLength > 0) {
-      // TODO: Update m_state ???
-      computeZeroLengthPacketNeeded();
-    } else {
-      m_state = State::StatusIn;
-    }
-    sendSomeData();
-  } else {
-    // The following transaction will be an OUT transaction.
-    m_transferBufferLength = 0;
-    // Set the transfer state.
-    m_state = (m_request.wLength() > k_maxPacketSize) ? State::DataOut : State::LastDataOut;
-    setOutNAK(false);
+    case SetupPacket::RecipientType::Interface:
+      // TODO
+      //m_interface->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, k_largeBufferLength);
+      return;
+    case SetupPacket::RecipientType::Endpoint:
+      //TODO ?
+      return;
   }
-}
-
-bool Endpoint0::processSETUPInRequest() {
-  switch (m_request.bRequest()) {
-    case k_requestGetStatus:
-      return m_device->getStatus(m_largeBuffer, &m_transferBufferLength);
-    case k_requestSetAddress:
-      if ((m_request.bmRequestType() != 0) || (m_request.wValue() >= 128)) {
-        return false;
-      }
-      /* According to the reference manual, the address should be set after the
-       * Status stage of the current transaction, but this is not true.
-       * It should be set here, after the Data stage. */
-      m_device->setAddress(m_request.wValue());
-      return true;
-    case k_requestGetDescriptor:
-      return m_device->getDescriptor(&m_request, m_largeBuffer, &m_transferBufferLength, k_largeBufferLength);
-    case k_requestSetConfiguration:
-      return m_device->setConfiguration(&m_request);
-  }
-  return false;
 }
 
 void Endpoint0::processINpacket() {

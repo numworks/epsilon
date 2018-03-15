@@ -22,8 +22,8 @@ public:
         0,      // bDeviceSUBClass: The subclass is defined by the interface.
         0,      // bDeviceProtocol: The protocol is defined by the interface.
         64,     // bMaxPacketSize0: Maximum packet size for endpoint 0
-        0xcafe, // idVendor
-        0xcafe, // idProduct
+        0x0483, // idVendor
+        0xA291, // idProduct
         0x0001, // bcdDevice: Device Release Number
         1,      // iManufacturer: Index of the manufacturer name string, see m_descriptor
         2,      // iProduct: Index of the product name string, see m_descriptor
@@ -55,7 +55,7 @@ public:
       &m_languageStringDescriptor,     // Type = String, Index = 0
       &m_manufacturerStringDescriptor, // Type = String, Index = 1
       &m_productStringDescriptor,      // Type = String, Index = 2
-      &m_serialNumberStringDescriptor, // Type = String, Index = 3
+      &m_serialNumberStringDescriptor  // Type = String, Index = 3
     }
   {
   }
@@ -77,7 +77,6 @@ private:
   StringDescriptor m_productStringDescriptor;
   StringDescriptor m_serialNumberStringDescriptor;
 
-  constexpr static uint8_t k_numberOfDescriptors = 6;
   Descriptor * m_descriptors[6]; // We do not need to include m_interfaceDescriptor.
 };
 

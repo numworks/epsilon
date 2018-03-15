@@ -7,7 +7,10 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
+class ConfigurationDescriptor;
+
 class InterfaceDescriptor : public Descriptor {
+  friend class ConfigurationDescriptor;
 public:
   constexpr InterfaceDescriptor(
       uint8_t bInterfaceNumber,
@@ -17,7 +20,7 @@ public:
       uint8_t bInterfaceSubClass,
       uint8_t bInterfaceProtocol,
       uint8_t iInterface) :
-    Descriptor(DescriptorSize, DescriptorType),
+    Descriptor(0x04),
     m_bInterfaceNumber(bInterfaceNumber),
     m_bAlternateSetting(bAlternateSetting),
     m_bNumEndpoints(bNumEndpoints),
@@ -27,9 +30,10 @@ public:
     m_iInterface(iInterface)
   {
   }
+protected:
+  void push(Channel * c) const override;
+  virtual uint8_t bLength() const override;
 private:
-  constexpr static uint8_t DescriptorSize = Descriptor::sizeOfAttributes() + 7*sizeof(uint8_t);
-  constexpr static uint8_t DescriptorType = 0x04;
   uint8_t m_bInterfaceNumber;
   uint8_t m_bAlternateSetting;
   uint8_t m_bNumEndpoints;
@@ -37,9 +41,7 @@ private:
   uint8_t m_bInterfaceSubClass;
   uint8_t m_bInterfaceProtocol;
   uint8_t m_iInterface;
-} __attribute__((packed));
-
-static_assert(sizeof(InterfaceDescriptor) == sizeof(Descriptor) + 7*sizeof(uint8_t));
+};
 
 }
 }

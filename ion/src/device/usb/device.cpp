@@ -166,69 +166,6 @@ void Device::poll() {
   }
 }
 
-/*void Device::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  if (request->nextTransactionIsOUT()) {
-    // The folllowing transaction will be an OUT transaction.
-    *transferBufferLength = 0;
-    // Set the Device state.
-    if (request->wLength() > Endpoint0::k_maxPacketSize) {
-      m_state = State::DataOut;
-    } else {
-      m_state = State::LastDataOut;
-    }
-    m_ep0.setOutNAK(false);
-    return;
-  }
-
-  // The folllowing transaction will be an IN transaction.
-  *transferBufferLength = request->wLength();
-
-  if (processInSetupRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength)) {
-    if (request.wLength() > 0) {
-      // The host is waiting for device data. Check if we need to send a Zero
-      // Length Packet to explicit a short transaction.
-      m_ep0->computeZeroLengthPacketNeeded();
-      // Send the data.
-      m_ep0->sendSomeData();
-    } else {
-      // If no data is expected, send a zero length packet
-      *transferBufferLength = 0;
-      m_ep0->sendSomeData();
-      m_state = State::StatusIn;
-    }
-    return;
-  }
-  // Stall endpoint on failure
-  m_ep0.stallTransaction();
-}
-
-bool Device::processInSetupRequest(SetupPacket request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t * transferBufferMaxLength) {
-  switch (request.bRequest()) {
-    case k_requestGetStatus:
-      return getStatus(transferBuffer, transferBufferLength);
-      break;
-    case k_requestSetAddress:
-      if ((request.bmRequestType() != 0) || (request.wValue() >= 128)) {
-        return false;
-      }
-      /* According to the reference manual, the address should be set after the
-       * Status stage of the current transaction, but this is not true.
-       * It should be set here, after the Data stage. */
- /*     setAddress(request.wValue());
-      return true;
-      break;
-    case k_requestGetDescriptor:
-      return getDescriptor(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
-      break;
-    case k_requestSetConfiguration:
-      return setConfiguration(request);
-    default:
-      //TODO other cases not needed?
-      break;
-  }
-  return false;
-}*/
-
 bool Device::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength) {
   if (*transferBufferLength > 2) {
     *transferBufferLength = 2;

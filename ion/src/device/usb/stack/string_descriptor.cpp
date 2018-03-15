@@ -4,25 +4,19 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-uint16_t StringDescriptor::copy(void * target, size_t maxSize) const {
-  size_t headerCopySize = copyHeaderOnly(target, maxSize);
-  if (!(maxSize > headerCopySize)) {
-    // Nothing left to copy
-    return headerCopySize;
-  }
-
-  /* USB expects UTF-16 encoded strings. We assume m_string will be an ASCII
-   * string, so we simply zero-pad m_string before copying it. */
-  uint16_t * utf16target = (uint16_t *)((char *)target + headerCopySize);
+void StringDescriptor::push(Channel * c) const {
+  Descriptor::push(c);
   const char * stringPointer = m_string;
-  size_t bodyCopySize = 0;
-  size_t maxBodyCopySize = maxSize - headerCopySize;
-  while (*stringPointer != 0 && bodyCopySize <= maxBodyCopySize) {
-    *utf16target++ = *stringPointer++;
-    bodyCopySize++;
+  while (*stringPointer != 0) {
+    uint16_t stringAsUTF16CodePoint = *stringPointer;
+    c->push(stringAsUTF16CodePoint);
+    stringPointer++;
   }
+}
 
-  return headerCopySize + bodyCopySize;
+uint8_t StringDescriptor::bLength() const {
+  // The script is returned in UTF-16, hence the multiplication.
+  return Descriptor::bLength() + 2*strlen(m_string);
 }
 
 }

@@ -22,7 +22,7 @@ public:
       uint8_t iProduct,
       uint8_t iSerialNumber,
       uint8_t bNumConfigurations) :
-    Descriptor(DescriptorSize, DescriptorType),
+    Descriptor(0x01),
     m_bcdUSB(bcdUSB),
     m_bDeviceClass(bDeviceClass),
     m_bDeviceSubClass(bDeviceSubClass),
@@ -37,10 +37,10 @@ public:
     m_bNumConfigurations(bNumConfigurations)
   {
   }
-
+protected:
+  void push(Channel * c) const override;
+  virtual uint8_t bLength() const override;
 private:
-  constexpr static uint8_t DescriptorSize = Descriptor::sizeOfAttributes() + sizeof(uint16_t) + 4*sizeof(uint8_t) + 3*sizeof(uint16_t) + 4*sizeof(uint8_t);
-  constexpr static uint8_t DescriptorType = 0x01;
   uint16_t m_bcdUSB;
   uint8_t m_bDeviceClass;
   uint8_t m_bDeviceSubClass;
@@ -53,9 +53,7 @@ private:
   uint8_t m_iProduct;
   uint8_t m_iSerialNumber;
   uint8_t m_bNumConfigurations;
-} __attribute__((packed));
-
-static_assert(sizeof(DeviceDescriptor) == sizeof(Descriptor) + 4*sizeof(uint16_t) + 8*sizeof(uint8_t));
+};
 
 }
 }

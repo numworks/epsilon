@@ -122,7 +122,7 @@ void Device::poll() {
     m_ep0.setReceivedPacketSize(grxstsp.getBCNT());
 
     if (type == TransactionType::Setup) {
-      m_ep0.processSETUPpacket();
+      m_ep0.readAndDispatchSetupPacket();
     } else {
       assert(type == TransactionType::Out);
       m_ep0.processOUTpacket();
@@ -164,6 +164,52 @@ void Device::poll() {
   if (intsts.getSOF()) {
     OTG.GINTSTS()->setSOF(true);
   }
+}
+
+void Device::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+
+  if (request->followingTransaction() == SetupPacket::TransactionType::InTransaction) {
+  // There is no data stage in this transaction, or the data stage will be in IN direction.
+    if (!processSetupInRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength)) {
+      m_ep0.stallTransaction();
+      return;
+    }
+    *transferBufferLength = request->wLength();
+    if (*transferBufferLength > 0) {
+      // TODO: Update m_state ???
+      m_ep0.computeZeroLengthPacketNeeded();
+    } else {
+      m_ep0.setState(Endpoint0::State::StatusIn);
+    }
+    m_ep0.sendSomeData();
+  } else {
+    // The following transaction will be an OUT transaction.
+    *transferBufferLength = 0;
+    // Set the transfer state.
+    m_ep0.setState((request->wLength() > Endpoint0::k_maxPacketSize) ? Endpoint0::State::DataOut : Endpoint0::State::LastDataOut);
+    m_ep0.setOutNAK(false);
+  }
+}
+
+bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  switch (request->bRequest()) {
+    case k_requestGetStatus:
+      return getStatus(transferBuffer, transferBufferLength);
+    case k_requestSetAddress:
+      if ((request->bmRequestType() != 0) || (request->wValue() >= 128)) {
+        return false;
+      }
+      /* According to the reference manual, the address should be set after the
+       * Status stage of the current transaction, but this is not true.
+       * It should be set here, after the Data stage. */
+      setAddress(request->wValue());
+      return true;
+    case k_requestGetDescriptor:
+      return getDescriptor(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
+    case k_requestSetConfiguration:
+      return setConfiguration(request);
+  }
+  return false;
 }
 
 bool Device::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength) {

@@ -1,5 +1,6 @@
 #include "endpoint0.h"
 #include "device.h"
+#include "interface.h"
 #include "../regs/regs.h"
 #include <string.h>
 
@@ -82,14 +83,15 @@ void Endpoint0::readAndDispatchSetupPacket() {
   };
 
   m_request = SetupPacket(m_largeBuffer);
+  uint16_t maxBufferLength = MIN(m_request.wLength(), k_largeBufferLength);
 
+  // TODO: Leverage virtuality
   switch (m_request.recipientType()) {
     case SetupPacket::RecipientType::Device:
-      m_device->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, k_largeBufferLength);
+      m_device->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
       return;
     case SetupPacket::RecipientType::Interface:
-      // TODO
-      //m_interface->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, k_largeBufferLength);
+      m_interface->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
       return;
     case SetupPacket::RecipientType::Endpoint:
       //TODO ?
@@ -222,6 +224,13 @@ void Endpoint0::sendSomeData() {
   m_bufferOffset = 0;
   m_zeroLengthPacketNeeded = false;
   m_transferBufferLength = 0;
+}
+
+void Endpoint0::clearForOutTransactions(uint16_t wLength) {
+  m_transferBufferLength = 0;
+  // Set the transfer state.
+  m_state = (wLength > k_maxPacketSize) ? State::DataOut : State::LastDataOut;
+  setOutNAK(false);
 }
 
 uint16_t Endpoint0::receiveSomeData() {

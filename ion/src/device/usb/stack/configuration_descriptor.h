@@ -41,8 +41,6 @@ private:
   const InterfaceDescriptor * m_interfaces;
 };
 
-//static_assert(sizeof(ConfigurationDescriptor) == sizeof(Descriptor) + sizeof(uint16_t) + 5 * sizeof(uint8_t) + sizeof(void *));
-
 }
 }
 }

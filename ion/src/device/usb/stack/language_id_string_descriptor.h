@@ -7,20 +7,15 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
+// For now this LanguageIDStringDescriptor only ever returns American English
+
 class LanguageIDStringDescriptor : public Descriptor {
 public:
-  constexpr LanguageIDStringDescriptor(const uint16_t * languageIDs, uint8_t languageIDCount) :
-    Descriptor(0x03),
-    m_languageIDs(languageIDs),
-    m_languageIDCount(languageIDCount)
-  {
-  }
+  constexpr LanguageIDStringDescriptor() :
+    Descriptor(0x03) { }
 protected:
   void push(Channel * c) const override;
   virtual uint8_t bLength() const override;
-private:
-  const uint16_t * m_languageIDs;
-  uint8_t m_languageIDCount;
 };
 
 }

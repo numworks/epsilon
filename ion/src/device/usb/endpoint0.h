@@ -8,6 +8,7 @@ namespace USB {
 namespace Device {
 
 class Device;
+class Interface;
 
 class Endpoint0 {
 public:
@@ -23,13 +24,14 @@ public:
   };
 
   constexpr static int k_maxPacketSize = 64;
-  constexpr Endpoint0(Device * device) :
+  constexpr Endpoint0(Device * device, Interface * interface) :
     m_forceNAK(false),
     m_bufferOffset(0),
     m_transferBufferLength(0),
     m_receivedPacketSize(0),
     m_zeroLengthPacketNeeded(false),
     m_device(device),
+    m_interface(interface),
     m_request(),
     m_state(State::Idle),
     m_largeBuffer{0}
@@ -52,11 +54,11 @@ public:
   void computeZeroLengthPacketNeeded();
   void setState(State state) { m_state = state; }
   void sendSomeData(); // Write a chunk of data in the TxFifo.
+  void clearForOutTransactions(uint16_t wLength);
 
 private:
   constexpr static int k_largeBufferLength = 2048;
 
-  bool processSETUPInRequest();
   uint16_t receiveSomeData();
   uint16_t readPacket(void * buffer, uint16_t length);
   uint16_t writePacket(const void * buffer, uint16_t length);
@@ -67,6 +69,7 @@ private:
   uint16_t m_receivedPacketSize;
   bool m_zeroLengthPacketNeeded;
   Device * m_device;
+  Interface * m_interface;
   SetupPacket m_request;
   State m_state;
   uint8_t m_largeBuffer[2048];

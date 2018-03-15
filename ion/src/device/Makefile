@@ -32,6 +32,7 @@ objs += $(addprefix ion/src/device/, \
 objs += $(addprefix ion/src/device/usb/, \
   calculator.o \
   device.o\
+  dfu_interface.o\
   endpoint0.o \
   setup_packet.o\
 )
@@ -39,6 +40,7 @@ objs += $(addprefix ion/src/device/usb/, \
 objs += $(addprefix ion/src/device/usb/stack/, \
   configuration_descriptor.o \
   descriptor.o\
+  dfu_functional_descriptor.o\
   language_id_string_descriptor.o \
   string_descriptor.o\
   device_descriptor.o\

@@ -8,7 +8,10 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
+class InterfaceDescriptor;
+
 class Descriptor {
+  friend class InterfaceDescriptor;
 public:
   constexpr Descriptor(uint8_t bDescriptorType) :
     m_bDescriptorType(bDescriptorType)

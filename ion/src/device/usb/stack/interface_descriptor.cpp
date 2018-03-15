@@ -13,6 +13,9 @@ void InterfaceDescriptor::push(Channel * c) const {
   c->push(m_bInterfaceSubClass);
   c->push(m_bInterfaceProtocol);
   c->push(m_iInterface);
+  if (m_additionalDescriptor != nullptr) {
+    m_additionalDescriptor->push(c);
+  }
 }
 
 uint8_t InterfaceDescriptor::bLength() const {

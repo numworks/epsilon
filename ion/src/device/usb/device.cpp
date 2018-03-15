@@ -166,15 +166,16 @@ void Device::poll() {
   }
 }
 
-void Device::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-
+bool Device::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  if (request->requestType() != SetupPacket::RequestType::Standard) {
+    return false;
+  }
   if (request->followingTransaction() == SetupPacket::TransactionType::InTransaction) {
   // There is no data stage in this transaction, or the data stage will be in IN direction.
     if (!processSetupInRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength)) {
       m_ep0.stallTransaction();
-      return;
+      return false;
     }
-    *transferBufferLength = request->wLength();
     if (*transferBufferLength > 0) {
       // TODO: Update m_state ???
       m_ep0.computeZeroLengthPacketNeeded();
@@ -184,18 +185,16 @@ void Device::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer
     m_ep0.sendSomeData();
   } else {
     // The following transaction will be an OUT transaction.
-    *transferBufferLength = 0;
-    // Set the transfer state.
-    m_ep0.setState((request->wLength() > Endpoint0::k_maxPacketSize) ? Endpoint0::State::DataOut : Endpoint0::State::LastDataOut);
-    m_ep0.setOutNAK(false);
+    m_ep0.clearForOutTransactions(request->wLength());
   }
+  return true;
 }
 
 bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   switch (request->bRequest()) {
-    case k_requestGetStatus:
+    case (int) Request::GetStatus:
       return getStatus(transferBuffer, transferBufferLength);
-    case k_requestSetAddress:
+    case (int) Request::SetAddress:
       if ((request->bmRequestType() != 0) || (request->wValue() >= 128)) {
         return false;
       }
@@ -203,11 +202,15 @@ bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuff
        * Status stage of the current transaction, but this is not true.
        * It should be set here, after the Data stage. */
       setAddress(request->wValue());
+      *transferBufferLength = 0;
       return true;
-    case k_requestGetDescriptor:
+    case (int) Request::GetDescriptor:
       return getDescriptor(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
-    case k_requestSetConfiguration:
+    case (int) Request::SetConfiguration:
+      *transferBufferLength = 0;
       return setConfiguration(request);
+    case (int) Request::GetConfiguration:
+      return getConfiguration(transferBuffer, transferBufferLength);
   }
   return false;
 }
@@ -216,7 +219,7 @@ bool Device::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength
   if (*transferBufferLength > 2) {
     *transferBufferLength = 2;
   }
-  //TODO check, in bmRequestType, who is the recipient: Device, interface or endpoint? And fill in the status correclty. See http://www.usbmadesimple.co.uk/ums_4.htm
+  //TODO fill in the status correclty. See http://www.usbmadesimple.co.uk/ums_4.htm
   transferBuffer[0] = 0;
   transferBuffer[1] = 0;
   //TODO Dirty
@@ -236,11 +239,15 @@ bool Device::getDescriptor(SetupPacket * request, uint8_t * transferBuffer, uint
   return true;
 }
 
+bool Device::getConfiguration(uint8_t * transferBuffer, uint16_t * transferBufferLength) {
+  *transferBufferLength = 1;
+  transferBuffer[0] = getActiveConfiguration();
+  return true;
+}
+
 bool Device::setConfiguration(SetupPacket * request) {
   // We support one configuration only
-  if (request->wValue() != 0) { //TODO this is bConfigurationValue in the configuration descriptor
-    return false;
-  }
+  setActiveConfiguration(request->wValue());
   /* There is one configuration only, we no need to set it again, just reset the
    * endpoint. */
   m_ep0.reset();

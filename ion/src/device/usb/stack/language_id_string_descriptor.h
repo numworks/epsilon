@@ -10,14 +10,15 @@ namespace Device {
 class LanguageIDStringDescriptor : public Descriptor {
 public:
   constexpr LanguageIDStringDescriptor(const uint16_t * languageIDs, uint8_t languageIDCount) :
-    Descriptor(Descriptor::sizeOfAttributes() + languageIDCount * sizeof(uint16_t), DescriptorType),
+    Descriptor(0x03),
     m_languageIDs(languageIDs),
     m_languageIDCount(languageIDCount)
   {
   }
-  uint16_t copy(void * target, size_t maxSize) const override;
+protected:
+  void push(Channel * c) const override;
+  virtual uint8_t bLength() const override;
 private:
-  constexpr static uint8_t DescriptorType = 0x03;
   const uint16_t * m_languageIDs;
   uint8_t m_languageIDCount;
 };

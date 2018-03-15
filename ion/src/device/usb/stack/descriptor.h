@@ -10,26 +10,41 @@ namespace Device {
 
 class Descriptor {
 public:
-  constexpr Descriptor(uint8_t bLength, uint8_t bDescriptorType) :
-    m_bLength(bLength),
+  constexpr Descriptor(uint8_t bDescriptorType) :
     m_bDescriptorType(bDescriptorType)
   {
   }
-  uint16_t copyHeaderOnly(void * target, size_t maxSize) const;
-  virtual uint16_t copy(void * target, size_t maxSize) const;
   uint8_t type() const { return m_bDescriptorType; }
+  uint16_t copy(void * target, size_t maxSize) const;
 protected:
-  constexpr static uint8_t sizeOfAttributes() { return 2*sizeof(uint8_t); }
-  uint8_t m_bLength;
+  class Channel {
+  public:
+    Channel(void * pointer, size_t maxSize) :
+      m_pointer(pointer),
+      m_sizeLeft(maxSize)
+    {
+    }
+    template<typename T>
+    void push(T data) {
+      if (m_sizeLeft >= sizeof(T)) {
+        T * typedPointer = static_cast<T *>(m_pointer);
+        *typedPointer++ = data; // Actually push the data
+        m_pointer = static_cast<void *>(typedPointer);
+        m_sizeLeft -= sizeof(T);
+      }
+    }
+    size_t sizeLeft() { return m_sizeLeft; }
+  private:
+    void * m_pointer;
+    size_t m_sizeLeft;
+  };
+  virtual void push(Channel * c) const;
+  virtual uint8_t bLength() const { return 2*sizeof(uint8_t); }
 private:
   uint8_t m_bDescriptorType;
-} __attribute__((packed));
+};
 
-/* We assert that the class is packed (no padding has been inserted between its
- * attributes). The size of this class should be the size of its vtable pointer
- * (which exists because there is a virtual method), plus the sum of the sizes
- * of its attributes. */
-static_assert(sizeof(Descriptor) == sizeof(void *) + 2*sizeof(uint8_t));
+
 }
 }
 }

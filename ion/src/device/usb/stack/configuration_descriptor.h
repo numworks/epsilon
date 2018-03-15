@@ -18,7 +18,7 @@ public:
       uint8_t bmAttributes,
       uint8_t bMaxPower,
       const InterfaceDescriptor * interfaces) :
-    Descriptor(DescriptorType, DescriptorSize),
+    Descriptor(0x02),
     m_wTotalLength(wTotalLength),
     m_bNumInterfaces(bNumInterfaces),
     m_bConfigurationValue(bConfigurationValue),
@@ -28,10 +28,10 @@ public:
     m_interfaces(interfaces)
   {
   }
-  uint16_t copy(void * target, size_t maxSize) const override;
+protected:
+  void push(Channel * c) const override;
+  virtual uint8_t bLength() const override;
 private:
-  constexpr static uint8_t DescriptorSize = sizeof(Descriptor) + sizeof(uint16_t) + 5*sizeof(uint8_t);
-  constexpr static uint8_t DescriptorType = 0x02;
   uint16_t m_wTotalLength;
   uint8_t m_bNumInterfaces;
   uint8_t m_bConfigurationValue;
@@ -39,9 +39,9 @@ private:
   uint8_t m_bmAttributes;
   uint8_t m_bMaxPower;
   const InterfaceDescriptor * m_interfaces;
-} __attribute__((packed));
+};
 
-static_assert(sizeof(ConfigurationDescriptor) == sizeof(Descriptor) + sizeof(uint16_t) + 5 * sizeof(uint8_t) + sizeof(void *));
+//static_assert(sizeof(ConfigurationDescriptor) == sizeof(Descriptor) + sizeof(uint16_t) + 5 * sizeof(uint8_t) + sizeof(void *));
 
 }
 }

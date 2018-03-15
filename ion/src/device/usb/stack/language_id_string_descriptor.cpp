@@ -7,15 +7,15 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-uint16_t LanguageIDStringDescriptor::copy(void * target, size_t maxSize) const {
-  uint16_t size = MIN(maxSize, sizeof(Descriptor));
-  memcpy(target, &m_bLength, size);
-  for (uint8_t i = 0; i < m_languageIDCount; i++) {
-    uint16_t languageIDsize = MIN(maxSize - sizeof(Descriptor), sizeof(uint16_t));
-    memcpy(((uint8_t *)target) + sizeof(Descriptor) + i*sizeof(uint16_t), m_languageIDs+i, languageIDsize);
-    size += languageIDsize;
+void LanguageIDStringDescriptor::push(Channel * c) const {
+  Descriptor::push(c);
+  for (uint8_t i = 0; i<m_languageIDCount; i++) {
+    c->push(m_languageIDs[i]);
   }
-  return size;
+}
+
+uint8_t LanguageIDStringDescriptor::bLength() const {
+  return Descriptor::bLength() + m_languageIDCount * sizeof(uint16_t);
 }
 
 }

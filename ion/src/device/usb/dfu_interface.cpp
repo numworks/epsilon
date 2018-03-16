@@ -28,10 +28,17 @@ void blackScreen() {
   Ion::Display::pushRectUniform(KDRect(KDPointZero, 320,240), KDColorWhite);
 }
 
-uint16_t DFUInterface::Data::copy(void * target, size_t maxSize) const {
-  uint16_t size = min(sizeof(this), maxSize);
-  memcpy(target, this, size);
-  return size;
+void DFUInterface::StatusData::push(Channel * c) const {
+  c->push(m_bStatus);
+  c->push(m_bwPollTimeout[0]);
+  c->push(m_bwPollTimeout[1]);
+  c->push(m_bwPollTimeout[2]);
+  c->push(m_bState);
+  c->push(m_iString);
+}
+
+void DFUInterface::StateData::push(Channel * c) const {
+  c->push(m_bState);
 }
 
 bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
@@ -41,10 +48,10 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
   switch (request->bRequest()) {
     case (uint8_t) DFURequest::GetStatus:
       whiteScreen();
-      return getStatus(transferBuffer, transferBufferLength, request->wValue());
+      return getStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (uint8_t) DFURequest::ClearStatus:
       redScreen();
-      return clearStatus(request->wValue(), transferBuffer, transferBufferLength);
+      return clearStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (uint8_t) DFURequest::Abort:
       greenScreen();
       return dfuAbort(transferBufferLength);
@@ -61,7 +68,7 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
   return false;
 }
 
-bool DFUInterface::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize) {
+bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   if (m_state == State::dfuMANIFESTSYNC) {
     // TODO Here, go back to the code on the flash instead of the ram
     m_state = State::dfuIDLE;
@@ -74,14 +81,14 @@ bool DFUInterface::getStatus(uint8_t * transferBuffer, uint16_t * transferBuffer
     changeAddressPointerIfNeeded();
     eraseMemoryIfNeeded();
   }
-  *transferBufferLength = StatusData(m_status, k_pollTimeout, m_state).copy(transferBuffer, maxSize);
+  *transferBufferLength = StatusData(m_status, k_pollTimeout, m_state).copy(transferBuffer, transferBufferMaxLength);
   return true;
 }
 
-bool DFUInterface::clearStatus(uint16_t wValue, uint8_t * transferBuffer, uint16_t * transferBufferLength) {
+bool DFUInterface::clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   m_status = Status::OK;
   m_state = State::dfuIDLE;
-  return getStatus(transferBuffer, transferBufferLength, wValue);
+  return getStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
 }
 
 bool DFUInterface::dfuAbort(uint16_t * transferBufferLength) {

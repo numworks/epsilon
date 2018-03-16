@@ -42,11 +42,12 @@ objs += $(addprefix ion/src/device/usb/, \
 objs += $(addprefix ion/src/device/usb/stack/, \
   configuration_descriptor.o \
   descriptor.o\
-  dfu_functional_descriptor.o\
-  language_id_string_descriptor.o \
-  string_descriptor.o\
   device_descriptor.o\
+  dfu_functional_descriptor.o\
   interface_descriptor.o\
+  language_id_string_descriptor.o \
+  streamable.o\
+  string_descriptor.o\
 )
 
 # When using the register.h C++ file in production mode, we expect the compiler

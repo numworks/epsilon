@@ -46,7 +46,7 @@ public:
         0xFE,   // bInterfaceClass: DFU (http://www.usb.org/developers/defined_class)
         1,      // bInterfaceSubClass: DFU
         2,      // bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be 1)
-        0,      // iInterface: No string descriptor for the interface
+        4,      // iInterface: Index of the Interface string, see m_descriptor
         &m_dfuFunctionalDescriptor),
     m_configurationDescriptor(
         9 + 9 + 9,       // wTotalLength: configuration descriptor length + interface descriptor length + dfu funcitonal descriptor length
@@ -60,13 +60,16 @@ public:
     m_manufacturerStringDescriptor("NumWorks"),
     m_productStringDescriptor("Calculator"),
     m_serialNumberStringDescriptor("12345"),
+    m_interfaceStringDescriptor("CalculatorDFU"),
     m_descriptors{
       &m_deviceDescriptor,             // Type = Device, Index = 0
       &m_configurationDescriptor,      // Type = Configuration, Index = 0
       &m_languageStringDescriptor,     // Type = String, Index = 0
       &m_manufacturerStringDescriptor, // Type = String, Index = 1
       &m_productStringDescriptor,      // Type = String, Index = 2
-      &m_serialNumberStringDescriptor  // Type = String, Index = 3
+      &m_serialNumberStringDescriptor, // Type = String, Index = 3
+      &m_interfaceStringDescriptor     // Type = String, Index = 4
+
     },
     m_dfuInterface(&m_ep0)
   {
@@ -90,8 +93,9 @@ private:
   StringDescriptor m_manufacturerStringDescriptor;
   StringDescriptor m_productStringDescriptor;
   StringDescriptor m_serialNumberStringDescriptor;
+  StringDescriptor m_interfaceStringDescriptor;
 
-  Descriptor * m_descriptors[6]; // We do not need to include m_interfaceDescriptor.
+  Descriptor * m_descriptors[7]; // We do not need to include m_interfaceDescriptor nor m_dfuFunctionalDescriptor, because they are inluded in other descriptors.
 
   DFUInterface m_dfuInterface;
 };

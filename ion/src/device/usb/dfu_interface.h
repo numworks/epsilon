@@ -4,6 +4,7 @@
 #include "interface.h"
 #include "endpoint0.h"
 #include "setup_packet.h"
+#include "stack/streamable.h"
 #include <stddef.h>
 #include <assert.h>
 
@@ -86,42 +87,41 @@ private:
     dfuERROR            = 10
   };
 
-  class Data {
-  public:
-    uint16_t copy(void * target, size_t maxSize) const;
-  };
-
-  class StatusData : public Data {
+  class StatusData : public Streamable {
   public:
     StatusData(Status status, uint32_t pollTimeout, State state) :
       m_bState((uint8_t)state),
       m_iString(0)
     {
-      *((uint32_t *)&m_bStatus) = (((uint32_t)status << 24) | pollTimeout >> 8);
+      *((uint32_t *)&m_bStatus) = (pollTimeout & 0xFFFFFF);
       /* m_bwPollTimeout should be 3 bytes, which is not a handy size. We cast
        * &m_bStatus to a 4-bytes pointer, fill in the first byte with the status
        * and the next three bytes with pollTimeout, which should be given in
        * microseconds and is then floored to the milliseconds value. */
+      m_bStatus = (uint8_t)status;
     }
+  protected:
+    void push(Channel * c) const override;
   private:
     uint8_t m_bStatus;  // Indication of the status resulting from the execution of the most recent request.
     uint8_t m_bwPollTimeout[3];
     uint8_t m_bState; // Indication of the state that the device is going to enter immediately following transmission of this response
     uint8_t m_iString;
-  } __attribute__((packed));
-  static_assert(sizeof(StatusData) == 6*sizeof(uint8_t));
+  };
 
-  class StateData : public Data {
+  class StateData : public Streamable {
   public:
     StateData(State state) : m_bState((uint8_t)state) {}
+  protected:
+    void push(Channel * c) const override;
   private:
     uint8_t m_bState; // Current state of the device
   };
 
   constexpr static uint8_t k_bInterfaceAlternativeValue = 0; // TODO bInterfaceNumber/bAlternateSetting from calculator.h. See https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/usb.chm/usb5.htm#AlternateSetting
   constexpr static uint32_t k_pollTimeout = 1000; // TODO: needed? value ?
-  bool getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize);
-  bool clearStatus(uint16_t wValue, uint8_t * transferBuffer, uint16_t * transferBufferLength);
+  bool getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
+  bool clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   bool dfuAbort(uint16_t * transferBufferLength);
   bool getState(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize);
   bool processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength);

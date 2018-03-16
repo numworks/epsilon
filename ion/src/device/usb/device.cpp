@@ -5,6 +5,8 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
+static inline uint16_t min(uint16_t x, uint16_t y) { return (x<y ? x : y); }
+
 void Device::init() {
   // Wait for AHB idle
   while (!OTG.GRSTCTL()->getAHBIDL()) {
@@ -166,7 +168,7 @@ void Device::poll() {
   }
 }
 
-bool Device::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+/*bool Device::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   if (request->requestType() != SetupPacket::RequestType::Standard) {
     return false;
   }
@@ -188,12 +190,15 @@ bool Device::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer
     m_ep0.clearForOutTransactions(request->wLength());
   }
   return true;
-}
+}*/
 
 bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  if (request->requestType() != SetupPacket::RequestType::Standard) {
+    return false;
+  }
   switch (request->bRequest()) {
     case (int) Request::GetStatus:
-      return getStatus(transferBuffer, transferBufferLength);
+      return getStatus(transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (int) Request::SetAddress:
       if ((request->bmRequestType() != 0) || (request->wValue() >= 128)) {
         return false;
@@ -215,14 +220,11 @@ bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuff
   return false;
 }
 
-bool Device::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength) {
-  if (*transferBufferLength > 2) {
-    *transferBufferLength = 2;
+bool Device::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  *transferBufferLength = min(2, transferBufferMaxLength);
+  for (int i = 0; i<*transferBufferLength; i++) {
+    transferBuffer[i] = 0; // No remote wakeup, not self-powered. //TODO ?
   }
-  //TODO fill in the status correclty. See http://www.usbmadesimple.co.uk/ums_4.htm
-  transferBuffer[0] = 0;
-  transferBuffer[1] = 0;
-  //TODO Dirty
   return true;
 }
 

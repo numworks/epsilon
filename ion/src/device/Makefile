@@ -34,6 +34,8 @@ objs += $(addprefix ion/src/device/usb/, \
   device.o\
   dfu_interface.o\
   endpoint0.o \
+  interface.o\
+  request_recipient.o\
   setup_packet.o\
 )
 

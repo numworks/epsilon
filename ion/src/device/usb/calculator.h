@@ -22,7 +22,7 @@ public:
   Calculator() :
     Device(&m_dfuInterface),
     m_deviceDescriptor(
-        0x0100, // bcdUSB: USB Specification Number which the device complies to.
+        0x0100, // bcdUSB: USB Specification Number which the device complies to. //TODO CHANGER
         0,      // bDeviceClass: The class is defined by the interface.
         0,      // bDeviceSUBClass: The subclass is defined by the interface.
         0,      // bDeviceProtocol: The protocol is defined by the interface.

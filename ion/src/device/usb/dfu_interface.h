@@ -5,6 +5,7 @@
 #include "endpoint0.h"
 #include "setup_packet.h"
 #include <stddef.h>
+#include <assert.h>
 
 namespace Ion {
 namespace USB {
@@ -14,7 +15,7 @@ class DFUInterface : public Interface {
 
 public:
   DFUInterface(Endpoint0 * ep0) :
-    m_ep0(ep0),
+    Interface(ep0),
     m_status(Status::OK),
     m_state(State::dfuIDLE),
     m_dataWaitingToBeFlashed(false),
@@ -23,9 +24,16 @@ public:
     m_erasePage(0)
   {
   }
-  bool processSetupRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) override;
   void wholeDataReceivedCallback() override;
 
+protected:
+  void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) override {
+    assert(interfaceAlternativeIndex == k_bInterfaceAlternativeValue);
+  }
+  uint8_t getActiveInterfaceAlternative() override {
+    return k_bInterfaceAlternativeValue;
+  }
+  bool processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) override;
 private:
   // DFU Request Codes
   enum class DFURequest {
@@ -110,6 +118,7 @@ private:
     uint8_t m_bState; // Current state of the device
   };
 
+  constexpr static uint8_t k_bInterfaceAlternativeValue = 0; // TODO bInterfaceNumber/bAlternateSetting from calculator.h. See https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/usb.chm/usb5.htm#AlternateSetting
   constexpr static uint32_t k_pollTimeout = 1000; // TODO: needed? value ?
   bool getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize);
   bool clearStatus(uint16_t wValue, uint8_t * transferBuffer, uint16_t * transferBufferLength);
@@ -124,7 +133,6 @@ private:
   void eraseMemoryIfNeeded();
   void writeMemoryCommand(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength);
 
-  Endpoint0 * m_ep0;
   Status m_status;
   State m_state;
   bool m_dataWaitingToBeFlashed;

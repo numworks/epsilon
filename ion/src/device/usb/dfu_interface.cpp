@@ -34,7 +34,10 @@ uint16_t DFUInterface::Data::copy(void * target, size_t maxSize) const {
   return size;
 }
 
-bool DFUInterface::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  if (Interface::processSetupInRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength)) {
+    return true;
+  }
   switch (request->bRequest()) {
     case (uint8_t) DFURequest::GetStatus:
       whiteScreen();

@@ -6,6 +6,8 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
+static inline uint32_t min(uint32_t x, uint32_t y) { return (x<y ? x : y); }
+
 //TODO vérifier qu'on ne change pas d'état si on est dans dfuError, sauf en cas de clear status
 
 // DEBUG functions
@@ -63,7 +65,7 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
       return processDownloadRequest(request->wLength(), transferBufferLength);
     case (uint8_t) DFURequest::Upload:
       blackScreen();
-      return processUploadRequest(request->wValue(), transferBuffer, transferBufferLength);
+      return processUploadRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
   }
   return false;
 }
@@ -227,16 +229,30 @@ void DFUInterface::writeMemoryCommand(SetupPacket * request, uint8_t * transferB
   m_status = Status::OK;
 }
 
-bool DFUInterface::processUploadRequest(uint16_t wValue, uint8_t * transferBuffer, uint16_t * transferBufferLength) {
+bool DFUInterface::processUploadRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   if (m_state != State::dfuIDLE && m_state !=  State::dfuUPLOADIDLE) {
     m_ep0->stallTransaction();
     return false;
   }
-  // TODO (ne pas faire, stall ?) Si l'adresse du pointeur de flash est 0, envoyer les commandes supportées
-  // TODO Si 1, stall
-  // TODO Read Operation Protected ?? Si oui, envoyer dfuERROR
+  if (request->wValue() == 0) {
+    // TODO Should we really do it anyway?
+    /* The host requests to read the commands supported by the bootloader. After
+     * receiving this command, the device returns N bytes representing the
+     * command codes. The STM32 sends bytes as follows (N = 4):
+     * Get command / Set Address Pointer / Erase / Read Unprotect */
+  } else if (request->wValue() == 1) {
+    m_ep0->stallTransaction();
+    return false;
+  } else {
+    // TODO Read Operation Protected ?? Si oui, envoyer dfuERROR
 
-  // TODO Copier les données dans le transfer buffer.
+    // Compute the reading address
+    uint32_t readAddress = (request->wValue() - 2) * request->wLength() + m_addressPointer;
+    // Copy the requested memory zone into the transfer buffer.
+    uint16_t copySize = min(transferBufferMaxLength, request->wLength());
+    memcpy(transferBuffer, (void *)readAddress, copySize);
+    *transferBufferLength = copySize;
+  }
   m_state = State::dfuUPLOADIDLE;
   return true;
 }

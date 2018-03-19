@@ -38,7 +38,7 @@ public:
         0b1111, // bmAttributes: bitWillDetach, bitManifestationTolerant, bitCanUpload, bitCanDnload
         1000,   // wDetachTimeOut (Time, in milliseconds, that the device will wait after receipt of the DFU_DETACH request) //TODO
         2048,   // wTransferSize: Maximum number of bytes that the device can accept per control-write transaction
-        0x0100),// bcdDFUVersion
+        0x0100),// bcdDFUVersion //TODO
     m_interfaceDescriptor(
         0,      // bInterfaceNumber
         0,      // bAlternateSetting

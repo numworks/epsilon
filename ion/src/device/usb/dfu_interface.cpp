@@ -30,9 +30,9 @@ void blackScreen() {
 
 void DFUInterface::StatusData::push(Channel * c) const {
   c->push(m_bStatus);
-  c->push(m_bwPollTimeout[0]);
-  c->push(m_bwPollTimeout[1]);
   c->push(m_bwPollTimeout[2]);
+  c->push(m_bwPollTimeout[1]);
+  c->push(m_bwPollTimeout[0]);
   c->push(m_bState);
   c->push(m_iString);
 }
@@ -50,10 +50,10 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
       whiteScreen();
       return getStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (uint8_t) DFURequest::ClearStatus:
-      redScreen();
+      greenScreen();
       return clearStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (uint8_t) DFURequest::Abort:
-      greenScreen();
+      redScreen();
       return dfuAbort(transferBufferLength);
     case (uint8_t) DFURequest::GetState:
       blueScreen();
@@ -69,19 +69,27 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
 }
 
 bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  bool actionsAfterStatus = false;
+  // Change the status if needed
   if (m_state == State::dfuMANIFESTSYNC) {
     // TODO Here, go back to the code on the flash instead of the ram
     m_state = State::dfuIDLE;
   } else if (m_state == State::dfuDNLOADSYNC) {
     m_state = State::dfuDNBUSY;
+    actionsAfterStatus = true;
+  }
+  // Copy the status on the TxFifo
+  *transferBufferLength = StatusData(m_status, k_pollTimeout, m_state).copy(transferBuffer, transferBufferMaxLength);
+  // Additional actions if needed
+  if (actionsAfterStatus) {
     if (m_dataWaitingToBeFlashed) {
       // TODO Here, copy the data from the transfer buffer to the flash memory
       m_dataWaitingToBeFlashed = false;
     }
     changeAddressPointerIfNeeded();
     eraseMemoryIfNeeded();
+    m_state = State::dfuDNLOADIDLE;
   }
-  *transferBufferLength = StatusData(m_status, k_pollTimeout, m_state).copy(transferBuffer, transferBufferMaxLength);
   return true;
 }
 
@@ -124,31 +132,34 @@ bool DFUInterface::processDownloadRequest(uint16_t wLength, uint16_t * transferB
   return true;
 }
 
-void DFUInterface::wholeDataReceivedCallback() {
+void DFUInterface::wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) {
   m_state = State::dfuDNLOADSYNC;
-  m_dataWaitingToBeFlashed = true;
+  processWholeDataReceived(request, transferBuffer, *transferBufferLength);
 }
 
 void DFUInterface::processWholeDataReceived(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength) {
-  if (request->wValue() == 0) {
-    switch (transferBuffer[0]) {
-      case (uint8_t) DFUDownloadCommand::SetAddressPointer:
-        setAddressPointerCommand(request, transferBuffer, transferBufferLength);
-        return;
-      case (uint8_t) DFUDownloadCommand::Erase:
-        eraseCommand(transferBuffer, transferBufferLength);
-        return;
-      default:
-        m_state = State::dfuERROR;
-        m_status = Status::errSTALLEDPKT;
-        return;
+  if (request->bRequest() == (uint8_t) DFURequest::Download) {
+    // Handle a download request
+    if (request->wValue() == 0) {
+      switch (transferBuffer[0]) {
+        case (uint8_t) DFUDownloadCommand::SetAddressPointer:
+          setAddressPointerCommand(request, transferBuffer, transferBufferLength);
+          return;
+        case (uint8_t) DFUDownloadCommand::Erase:
+          eraseCommand(transferBuffer, transferBufferLength);
+          return;
+        default:
+          m_state = State::dfuERROR;
+          m_status = Status::errSTALLEDPKT;
+          return;
+      }
     }
+    if (request->wValue() == 1) {
+      m_ep0->stallTransaction();
+      return;
+    }
+    writeMemoryCommand(request, transferBuffer, transferBufferLength);
   }
-  if (request->wValue() == 1) {
-    m_ep0->stallTransaction();
-    return;
-  }
-  writeMemoryCommand(request, transferBuffer, transferBufferLength);
 }
 
 void DFUInterface::setAddressPointerCommand(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength) {
@@ -175,14 +186,15 @@ void DFUInterface::changeAddressPointerIfNeeded() {
 
 void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBufferLength) {
   if (transferBufferLength == 1) {
+    // MASS ERASE
     m_erasePage = 1; //TODO Make sure this is not a valid address
-    return;
+  } else {
+    assert(transferBufferLength == 5);
+    m_erasePage = transferBuffer[1]
+      + (transferBuffer[2] << 8)
+      + (transferBuffer[3] << 16)
+      + (transferBuffer[3] << 24);
   }
-  assert(transferBufferLength == 5);
-  m_erasePage = transferBuffer[1]
-    + (transferBuffer[2] << 8)
-    + (transferBuffer[3] << 16)
-    + (transferBuffer[3] << 24);
   m_state = State::dfuDNLOADSYNC;
   // The erase should be done after the next getStatus request.
 }

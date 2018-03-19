@@ -1,6 +1,7 @@
 #include "endpoint0.h"
 #include "device.h"
 #include "interface.h"
+#include "request_recipient.h"
 #include "../regs/regs.h"
 #include <string.h>
 
@@ -85,18 +86,9 @@ void Endpoint0::readAndDispatchSetupPacket() {
   m_request = SetupPacket(m_largeBuffer);
   uint16_t maxBufferLength = MIN(m_request.wLength(), k_largeBufferLength);
 
-  // TODO: Leverage virtuality
-  switch (m_request.recipientType()) {
-    case SetupPacket::RecipientType::Device:
-      m_device->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
-      return;
-    case SetupPacket::RecipientType::Interface:
-      m_interface->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
-      return;
-    case SetupPacket::RecipientType::Endpoint:
-      //TODO ?
-      return;
-  }
+  // Requests are only sent to the device or the interface for now.
+  assert(((uint8_t)m_request.recipientType() == 0) || ((uint8_t)m_request.recipientType() == 1));
+  m_requestRecipients[(uint8_t)(m_request.recipientType())]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
 }
 
 void Endpoint0::processINpacket() {
@@ -110,7 +102,8 @@ void Endpoint0::processINpacket() {
       break;
     case State::StatusIn:
       m_state = State::Idle;
-      //TODO Romain: callback le device?
+      // All the data has been received. Callback the request recipient.
+      m_requestRecipients[(uint8_t)(m_request.recipientType())]->wholeDataReceivedCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
       break;
     default:
       stallTransaction();
@@ -131,17 +124,8 @@ void Endpoint0::processOUTpacket() {
       if (receiveSomeData() < 0) {
         break;
       }
-      // TODO TODO TODO Put here a callback because we received all the data.
       writePacket(NULL, 0); // Send the DATA1[] to the host.
       m_state = State::StatusIn;
-
-      /*// All the data of the OUT transactions has been received.
-      if (controlRequestDispatch()) {
-        writePacket(NULL, 0); // Send the DATA1[] to the host.
-        m_device->setState(Device::State::StatusIn);
-      } else {
-        stallTransaction();
-      }*/
       break;
     case State::StatusOut:
       readPacket(NULL, 0); // Read the DATA1[] sent by the host.

@@ -122,7 +122,7 @@ private:
   bool dfuAbort(uint16_t * transferBufferLength);
   bool getState(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize);
   bool processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength);
-  bool processUploadRequest(uint16_t wValue, uint8_t * transferBuffer, uint16_t * transferBufferLength);
+  bool processUploadRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   void processWholeDataReceived(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength);
   void setAddressPointerCommand(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength);
   void changeAddressPointerIfNeeded();

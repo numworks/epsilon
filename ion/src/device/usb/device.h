@@ -3,6 +3,7 @@
 
 #include "stack/descriptor.h"
 #include "endpoint0.h"
+#include "interface.h"
 #include "request_recipient.h"
 #include "setup_packet.h"
 

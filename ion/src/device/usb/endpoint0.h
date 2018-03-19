@@ -7,8 +7,7 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-class Device;
-class Interface;
+class RequestRecipient;
 
 class Endpoint0 {
 public:
@@ -24,15 +23,14 @@ public:
   };
 
   constexpr static int k_maxPacketSize = 64;
-  constexpr Endpoint0(Device * device, Interface * interface) :
+  constexpr Endpoint0(RequestRecipient * device, RequestRecipient * interface) :
     m_forceNAK(false),
     m_bufferOffset(0),
     m_transferBufferLength(0),
     m_receivedPacketSize(0),
     m_zeroLengthPacketNeeded(false),
-    m_device(device),
-    m_interface(interface),
     m_request(),
+    m_requestRecipients{device, interface},
     m_state(State::Idle),
     m_largeBuffer{0}
   {
@@ -68,9 +66,8 @@ private:
   uint16_t m_transferBufferLength;
   uint16_t m_receivedPacketSize;
   bool m_zeroLengthPacketNeeded;
-  Device * m_device;
-  Interface * m_interface;
   SetupPacket m_request;
+  RequestRecipient * m_requestRecipients[2];
   State m_state;
   uint8_t m_largeBuffer[2048];
 };

@@ -25,7 +25,7 @@ public:
     m_erasePage(0)
   {
   }
-  void wholeDataReceivedCallback() override;
+  void wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
 
 protected:
   void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) override {
@@ -90,21 +90,17 @@ private:
   class StatusData : public Streamable {
   public:
     StatusData(Status status, uint32_t pollTimeout, State state) :
+      m_bStatus((uint8_t)status),
+      m_bwPollTimeout{pollTimeout>>16 & 0xFF, pollTimeout>>8 & 0xFF, pollTimeout & 0xFF},
       m_bState((uint8_t)state),
       m_iString(0)
     {
-      *((uint32_t *)&m_bStatus) = (pollTimeout & 0xFFFFFF);
-      /* m_bwPollTimeout should be 3 bytes, which is not a handy size. We cast
-       * &m_bStatus to a 4-bytes pointer, fill in the first byte with the status
-       * and the next three bytes with pollTimeout, which should be given in
-       * microseconds and is then floored to the milliseconds value. */
-      m_bStatus = (uint8_t)status;
     }
   protected:
     void push(Channel * c) const override;
   private:
     uint8_t m_bStatus;  // Indication of the status resulting from the execution of the most recent request.
-    uint8_t m_bwPollTimeout[3];
+    uint8_t m_bwPollTimeout[3]; // m_bwPollTimeout is a uint24_t.
     uint8_t m_bState; // Indication of the state that the device is going to enter immediately following transmission of this response
     uint8_t m_iString;
   };
@@ -119,7 +115,8 @@ private:
   };
 
   constexpr static uint8_t k_bInterfaceAlternativeValue = 0; // TODO bInterfaceNumber/bAlternateSetting from calculator.h. See https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/usb.chm/usb5.htm#AlternateSetting
-  constexpr static uint32_t k_pollTimeout = 1000; // TODO: needed? value ?
+  constexpr static uint32_t k_pollTimeout = 1; // TODO: needed? value ?
+
   bool getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   bool clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   bool dfuAbort(uint16_t * transferBufferLength);

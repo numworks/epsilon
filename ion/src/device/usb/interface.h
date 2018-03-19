@@ -15,8 +15,6 @@ public:
     RequestRecipient(ep0)
   {
   }
-  virtual void wholeDataReceivedCallback() {
-  }
 protected:
   virtual void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) = 0;
   virtual uint8_t getActiveInterfaceAlternative() = 0;

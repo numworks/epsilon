@@ -9,11 +9,16 @@ namespace Device {
 
 class StringDescriptor : public Descriptor {
 public:
-  StringDescriptor() : Descriptor(0x03) { }
+  constexpr StringDescriptor(const char * string) :
+    Descriptor(0x03),
+    m_string(string)
+  {
+  }
 protected:
   void push(Channel * c) const override;
   virtual uint8_t bLength() const override;
-  virtual const char * string() const = 0;
+private:
+  const char * m_string;
 };
 
 }

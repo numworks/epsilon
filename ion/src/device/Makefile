@@ -1,5 +1,6 @@
 include ion/src/device/boot/Makefile
 include ion/src/device/bench/Makefile
+include ion/src/device/usb/Makefile
 
 ion/src/shared/platform_info.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))" -DFORCE_LINK="__attribute__((used))"
 
@@ -27,31 +28,6 @@ objs += $(addprefix ion/src/device/, \
   swd.o \
   usb.o \
   wakeup.o \
-)
-
-usb_objs += $(addprefix ion/src/device/usb/, \
-  calculator.o \
-  device.o\
-  dfu_interface.o\
-  endpoint0.o \
-  interface.o\
-  request_recipient.o\
-  setup_packet.o\
-)
-
-$(usb_objs): SFLAGS += -fPIC
-
-objs += $(usb_objs)
-
-objs += $(addprefix ion/src/device/usb/stack/, \
-  configuration_descriptor.o \
-  descriptor.o\
-  device_descriptor.o\
-  dfu_functional_descriptor.o\
-  interface_descriptor.o\
-  language_id_string_descriptor.o \
-  streamable.o\
-  string_descriptor.o\
 )
 
 # When using the register.h C++ file in production mode, we expect the compiler

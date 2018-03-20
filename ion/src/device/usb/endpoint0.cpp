@@ -86,9 +86,21 @@ void Endpoint0::readAndDispatchSetupPacket() {
   m_request = SetupPacket(m_largeBuffer);
   uint16_t maxBufferLength = MIN(m_request.wLength(), k_largeBufferLength);
 
+#if 0
   // Requests are only sent to the device or the interface for now.
   assert(((uint8_t)m_request.recipientType() == 0) || ((uint8_t)m_request.recipientType() == 1));
   m_requestRecipients[(uint8_t)(m_request.recipientType())]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
+#else
+  uint8_t type = static_cast<uint8_t>(m_request.recipientType());
+  if (type == 0) {
+    m_requestRecipients[0]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
+  } else {
+    for (volatile int i=0;i<10; i++) {
+      i = i+1;
+    }
+    m_requestRecipients[1]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
+  }
+#endif
 }
 
 void Endpoint0::processINpacket() {

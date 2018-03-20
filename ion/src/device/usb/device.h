@@ -20,13 +20,7 @@ public:
     m_ep0(this, interface)
   {
   }
-
-  void init();
-  void shutdown();
   void poll();
-
-  //virtual bool controlTransfer(struct usb_setup_data *req, uint8_t **buf, uint16_t *len);/*, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req));*/
-
 protected:
   virtual Descriptor * descriptor(uint8_t type, uint8_t index) = 0;
   virtual void setActiveConfiguration(uint8_t configurationIndex) = 0;

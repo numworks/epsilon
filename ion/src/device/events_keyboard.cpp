@@ -1,4 +1,5 @@
 #include <ion.h>
+#include "regs/otg.h"
 #include <assert.h>
 
 namespace Ion {
@@ -33,6 +34,12 @@ Event getEvent(int * timeout) {
   uint64_t keysSeenUp = 0;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   while (true) {
+    // Check if the USB is plugged and if we are being enumerated by a host.
+    if (OTG.GINTSTS()->getUSBRST()) {
+      // The device is being enumerated. Fire an event.
+      return Events::USBEnumeration;
+    }
+
     Keyboard::State state = Keyboard::scan();
     keysSeenUp |= ~state;
     keysSeenTransitionningFromUpToDown = keysSeenUp & state;

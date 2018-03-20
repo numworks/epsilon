@@ -1,6 +1,7 @@
 #include "apps_container.h"
 #include "global_preferences.h"
 #include <ion.h>
+#include <kandinsky.h>//TODO REMOVE
 
 extern "C" {
 #include <assert.h>
@@ -78,6 +79,13 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::USBEnumeration) {
+    switchTo(appSnapshotAtIndex(0));
+    // TODO remove include kandinsky.h
+    Ion::Display::pushRectUniform(KDRect(KDPointZero, 320,240), KDColorBlue);
+    Ion::USB::DFU();
+  }
+
   bool alphaLockWantsRedraw = updateAlphaLock();
 
   bool didProcessEvent = Container::dispatchEvent(event);

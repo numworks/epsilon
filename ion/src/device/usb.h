@@ -24,8 +24,11 @@ void init();
 void shutdown();
 void initGPIO();
 void shutdownGPIO();
+void initOTG();
+void shutdownOTG();
 
-Calculator * calculator();
+// Enters DFU mode, returns when detached.
+void poll(Calculator * calculator);
 
 }
 }

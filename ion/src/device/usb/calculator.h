@@ -9,7 +9,7 @@
 #include "stack/dfu_functional_descriptor.h"
 #include "stack/interface_descriptor.h"
 #include "stack/language_id_string_descriptor.h"
-#include "stack/string_descriptor.h"
+#include "stack/relocatable_string_descriptor.h"
 #include <stddef.h>
 #include <assert.h>
 
@@ -90,10 +90,10 @@ private:
   InterfaceDescriptor m_interfaceDescriptor;
   ConfigurationDescriptor m_configurationDescriptor;
   LanguageIDStringDescriptor m_languageStringDescriptor;
-  StringDescriptor m_manufacturerStringDescriptor;
-  StringDescriptor m_productStringDescriptor;
-  StringDescriptor m_serialNumberStringDescriptor;
-  StringDescriptor m_interfaceStringDescriptor;
+  RelocatableStringDescriptor<9> m_manufacturerStringDescriptor;
+  RelocatableStringDescriptor<11> m_productStringDescriptor;
+  RelocatableStringDescriptor<6> m_serialNumberStringDescriptor;
+  RelocatableStringDescriptor<47> m_interfaceStringDescriptor;
 
   Descriptor * m_descriptors[7]; // We do not need to include m_interfaceDescriptor nor m_dfuFunctionalDescriptor, because they are inluded in other descriptors.
 

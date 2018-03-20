@@ -31,7 +31,6 @@ bool RunLoop::step() {
   int eventDuration = Timer::TickDuration;
   int timeout = eventDuration;
   Ion::Events::Event event = Ion::Events::getEvent(&timeout);
-  assert(event.isDefined());
   eventDuration -= timeout;
 
   assert(eventDuration >= 0);
@@ -53,6 +52,12 @@ bool RunLoop::step() {
       }
     }
   }
+
+  if (event == Ion::Events::USBEnumeration) {
+    dispatchEvent(event);
+  }
+
+  assert(event.isDefined());
 
 #if ESCHER_LOG_EVENTS_BINARY
   Ion::Console::writeChar((char)event.id());

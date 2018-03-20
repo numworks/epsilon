@@ -3,3 +3,6 @@
 bool Ion::USB::isPlugged() {
   return false;
 }
+
+void Ion::USB::DFU() {
+}

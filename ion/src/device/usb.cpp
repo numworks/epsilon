@@ -4,12 +4,54 @@
 #include "device.h"
 #include "display.h"
 #include "regs/regs.h"
+#include <stdlib.h>
+#include <new>
+
+extern char _flash_usb_stack_start;
+extern char _flash_usb_stack_end;
 
 namespace Ion {
 namespace USB {
 
 bool isPlugged() {
   return Device::VbusPin.group().IDR()->get(Device::VbusPin.pin());
+}
+
+typedef void (*PollFunctionPointer)(Device::Calculator *);
+
+void DFU() {
+  size_t usb_stack_size = &_flash_usb_stack_end - &_flash_usb_stack_start;
+
+  /* 1 - Allocate a buffer in RAM that's large enough to contain all the code
+   * and objects of our USB stack. */
+
+  size_t ram_buffer_size = usb_stack_size + sizeof(Device::Calculator);
+  char * ram_buffer = static_cast<char *>(malloc(ram_buffer_size));
+  if (ram_buffer == nullptr) {
+    // Allocation failure
+    return;
+  }
+
+  // 2 - Copy the USB stack code from Flash to RAM
+  char * ram_usb_stack_start = ram_buffer;
+  memcpy(ram_usb_stack_start, &_flash_usb_stack_start, usb_stack_size);
+
+  // 3 - Initialize data in RAM buffer
+  Device::Calculator * calculator = new (ram_buffer + usb_stack_size) Device::Calculator();
+
+  // 4 - Figure out the address of Ion::USB::Device::poll() in RAM
+  char * flash_poll_function_address = reinterpret_cast<char *>(&Ion::USB::Device::poll);
+  assert(flash_poll_function_address >= &_flash_usb_stack_start);
+  assert(flash_poll_function_address < &_flash_usb_stack_end);
+  char * ram_poll_function_address = flash_poll_function_address - &_flash_usb_stack_start + ram_usb_stack_start;
+  PollFunctionPointer ram_poll_function = reinterpret_cast<PollFunctionPointer>(ram_poll_function_address);
+
+  // 5 - Execute Ion::USB::Device::poll() from RAM
+  ram_poll_function(calculator);
+
+  // 6 - Upon return, delete data and free the buffer in RAM
+  calculator->~Calculator();
+  free(ram_buffer);
 }
 
 }
@@ -19,18 +61,23 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-Calculator * calculator() {
-  static Calculator calculator;
-  return &calculator;
+void poll(Calculator * calculator) {
+  // Wait for speed enumeration done
+  while (!OTG.GINTSTS()->getENUMDNE()) {
+  }
+
+  while (true) {
+    calculator->poll();
+  }
 }
 
 void init() {
   initGPIO();
-  calculator()->init();
+  initOTG();
 }
 
 void shutdown() {
-  calculator()->shutdown();
+  shutdownOTG();
   shutdownGPIO();
 }
 
@@ -72,6 +119,68 @@ void shutdownGPIO() {
     g.group().MODER()->setMode(g.pin(), GPIO::MODER::Mode::Analog);
     g.group().PUPDR()->setPull(g.pin(), GPIO::PUPDR::Pull::None);
   }
+}
+
+void initOTG() {
+  // Wait for AHB idle
+  while (!OTG.GRSTCTL()->getAHBIDL()) {
+  }
+
+  // Core soft reset
+  OTG.GRSTCTL()->setCSRST(true);
+  while (OTG.GRSTCTL()->getCSRST()) {
+  }
+
+  // Enable the USB transceiver
+  OTG.GCCFG()->setPWRDWN(true);
+  // FIXME: Understand why VBDEN is required
+  OTG.GCCFG()->setVBDEN(true);
+
+  // Get out of soft-disconnected state
+  OTG.DCTL()->setSDIS(false);
+
+  // Force peripheral only mode
+  OTG.GUSBCFG()->setFDMOD(true);
+
+  /* Configure the USB turnaround time.
+   * This has to be configured depending on the AHB clock speed. */
+  OTG.GUSBCFG()->setTRDT(0x6);
+
+  // Clear the interrupts
+  OTG.GINTSTS()->set(0);
+
+  // Full speed device
+  OTG.DCFG()->setDSPD(OTG::DCFG::DSPD::FullSpeed);
+
+  // FIFO-size = 128 * 32bits
+  // FIXME: Explain :-) Maybe we can increase it.
+  OTG.GRXFSIZ()->setRXFD(128);
+
+  // Unmask the interrupt line assertions
+  OTG.GAHBCFG()->setGINTMSK(true);
+
+  // Restart the PHY clock.
+  OTG.PCGCCTL()->setSTPPCLK(0);
+
+  // Pick which interrupts we're interested in
+  class OTG::GINTMSK intMask(0); // Reset value
+  intMask.setENUMDNEM(true); // Speed enumeration done
+  intMask.setUSBRST(true); // USB reset
+  intMask.setRXFLVLM(true); // Receive FIFO non empty
+  intMask.setIEPINT(true); // IN endpoint interrupt
+  intMask.setWUIM(true); // Resume / wakeup
+  intMask.setUSBSUSPM(true); // USB suspend
+  OTG.GINTMSK()->set(intMask);
+
+  // Unmask IN endpoint interrupt 0
+  OTG.DAINTMSK()->setIEPM(true);
+
+  // Unmask the transfer completed interrupt
+  OTG.DIEPMSK()->setXFRCM(true);
+}
+
+void shutdownOTG() {
+  //TODO ?
 }
 
 }

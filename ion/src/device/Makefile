@@ -29,7 +29,7 @@ objs += $(addprefix ion/src/device/, \
   wakeup.o \
 )
 
-objs += $(addprefix ion/src/device/usb/, \
+usb_objs += $(addprefix ion/src/device/usb/, \
   calculator.o \
   device.o\
   dfu_interface.o\
@@ -38,6 +38,10 @@ objs += $(addprefix ion/src/device/usb/, \
   request_recipient.o\
   setup_packet.o\
 )
+
+$(usb_objs): SFLAGS += -fPIC
+
+objs += $(usb_objs)
 
 objs += $(addprefix ion/src/device/usb/stack/, \
   configuration_descriptor.o \

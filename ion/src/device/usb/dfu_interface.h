@@ -19,10 +19,12 @@ public:
     Interface(ep0),
     m_status(Status::OK),
     m_state(State::dfuIDLE),
-    m_dataWaitingToBeFlashed(false),
     m_addressPointer(0),
     m_potentialNewAddressPointer(0),
-    m_erasePage(0)
+    m_erasePage(k_flashMemorySectorsCount+1),
+    m_largeBuffer{0},
+    m_largeBufferLength(0),
+    m_writeAddress(0)
   {
   }
   void wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
@@ -116,6 +118,8 @@ private:
 
   constexpr static uint8_t k_bInterfaceAlternativeValue = 0; // TODO bInterfaceNumber/bAlternateSetting from calculator.h. See https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/usb.chm/usb5.htm#AlternateSetting
   constexpr static uint32_t k_pollTimeout = 1; // TODO: needed? value ?
+  constexpr static uint8_t k_flashMemorySectorsCount = 12;
+  constexpr static uint16_t k_maxTransferSize = 2048;
 
   bool getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   bool clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
@@ -128,14 +132,18 @@ private:
   void changeAddressPointerIfNeeded();
   void eraseCommand(uint8_t * transferBuffer, uint16_t transferBufferLength);
   void eraseMemoryIfNeeded();
-  void writeMemoryCommand(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength);
+  void writeOnMemory();
+  void unlockFlashMemory();
+  void lockFlashMemory();
 
   Status m_status;
   State m_state;
-  bool m_dataWaitingToBeFlashed;
   uint32_t m_addressPointer;
   uint32_t m_potentialNewAddressPointer;
   uint32_t m_erasePage;
+  uint8_t m_largeBuffer[2048]; // TODO = endpoint0.largeBufferLength = dfu transfer size
+  uint16_t m_largeBufferLength;
+  uint32_t m_writeAddress;
 };
 
 }

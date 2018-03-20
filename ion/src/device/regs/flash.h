@@ -13,8 +13,32 @@ public:
     REGS_BOOL_FIELD(DCEN, 10);
   };
 
+  class KEYR : public Register32 {
+  public:
+    REGS_FIELD(FKEYR, uint32_t, 31, 0);
+  };
+
+  class CR : public Register32 {
+  public:
+    REGS_BOOL_FIELD(PG, 0);
+    REGS_BOOL_FIELD(SER, 1);
+    REGS_BOOL_FIELD(MER, 2);
+    REGS_FIELD(SNB, uint8_t, 6, 3);
+    REGS_FIELD(PSIZE, uint8_t, 9, 8);
+    REGS_BOOL_FIELD(STRT, 16);
+    REGS_BOOL_FIELD(LOCK, 31);
+  };
+
+  class SR : public Register32 {
+  public:
+    REGS_BOOL_FIELD(BSY, 16);
+  };
+
   constexpr FLASH() {};
   REGS_REGISTER_AT(ACR, 0x00);
+  REGS_REGISTER_AT(KEYR, 0x04);
+  REGS_REGISTER_AT(CR, 0x10);
+  REGS_REGISTER_AT(SR, 0x0C);
 private:
   constexpr uint32_t Base() const {
     return 0x40023C00;

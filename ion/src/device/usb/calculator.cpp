@@ -1,8 +1,20 @@
 #include "calculator.h"
+#include "../regs/regs.h"
 
 namespace Ion {
 namespace USB {
 namespace Device {
+
+void Calculator::Poll() {
+  // Wait for speed enumeration done
+  while (!OTG.GINTSTS()->getENUMDNE()) {
+  }
+
+  Calculator c;
+  while (true) {
+    c.poll();
+  }
+}
 
 Descriptor * Calculator::descriptor(uint8_t type, uint8_t index) {
   int typeCount = 0;

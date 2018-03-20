@@ -1,7 +1,6 @@
 #include "dfu_interface.h"
 #include "../regs/flash.h"
-#include <ion.h> //TODO REMOVE
-#include <kandinsky.h>//TODO REMOVE
+#include <string.h>
 
 namespace Ion {
 namespace USB {
@@ -10,26 +9,6 @@ namespace Device {
 static inline uint32_t min(uint32_t x, uint32_t y) { return (x<y ? x : y); }
 
 //TODO vérifier qu'on ne change pas d'état si on est dans dfuError, sauf en cas de clear status
-
-// DEBUG functions
-void whiteScreen() {
-  Ion::Display::pushRectUniform(KDRect(KDPointZero, 320,240), KDColorWhite);
-}
-void redScreen() {
-  Ion::Display::pushRectUniform(KDRect(KDPointZero, 320,240), KDColorRed);
-}
-void blueScreen() {
-  Ion::Display::pushRectUniform(KDRect(KDPointZero, 320,240), KDColorBlue);
-}
-void greenScreen() {
-  Ion::Display::pushRectUniform(KDRect(KDPointZero, 320,240), KDColorGreen);
-}
-void yellowScreen() {
-  Ion::Display::pushRectUniform(KDRect(KDPointZero, 320,240), KDColorYellow);
-}
-void blackScreen() {
-  Ion::Display::pushRectUniform(KDRect(KDPointZero, 320,240), KDColorWhite);
-}
 
 void DFUInterface::StatusData::push(Channel * c) const {
   c->push(m_bStatus);
@@ -50,22 +29,16 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
   }
   switch (request->bRequest()) {
     case (uint8_t) DFURequest::GetStatus:
-      whiteScreen();
       return getStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (uint8_t) DFURequest::ClearStatus:
-      greenScreen();
       return clearStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (uint8_t) DFURequest::Abort:
-      redScreen();
       return dfuAbort(transferBufferLength);
     case (uint8_t) DFURequest::GetState:
-      blueScreen();
       return getState(transferBuffer, transferBufferLength, request->wValue());
     case (uint8_t) DFURequest::Download:
-      yellowScreen();
       return processDownloadRequest(request->wLength(), transferBufferLength);
     case (uint8_t) DFURequest::Upload:
-      blackScreen();
       return processUploadRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
   }
   return false;

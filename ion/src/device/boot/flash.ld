@@ -38,6 +38,16 @@ SECTIONS {
     KEEP(*(.header))
   } >FLASH
 
+  .usb : {
+    . = ALIGN(4);
+    _flash_usb_stack_start = .;
+    *(.text.*3Ion3USB6Device*)
+    *(.text.memcpy)
+    *(.text.strlen)
+    *(.text.*Register*)
+    _flash_usb_stack_end = .;
+  } >FLASH
+
   .text : {
     . = ALIGN(4);
     *(.text)

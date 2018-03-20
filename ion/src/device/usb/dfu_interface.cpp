@@ -1,4 +1,5 @@
 #include "dfu_interface.h"
+#include "../regs/flash.h"
 #include <ion.h> //TODO REMOVE
 #include <kandinsky.h>//TODO REMOVE
 
@@ -84,9 +85,9 @@ bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, ui
   *transferBufferLength = StatusData(m_status, k_pollTimeout, m_state).copy(transferBuffer, transferBufferMaxLength);
   // Additional actions if needed
   if (actionsAfterStatus) {
-    if (m_dataWaitingToBeFlashed) {
-      // TODO Here, copy the data from the transfer buffer to the flash memory
-      m_dataWaitingToBeFlashed = false;
+    if (m_largeBufferLength != 0) {
+      // Here, copy the data from the transfer buffer to the flash memory
+      writeOnMemory();
     }
     changeAddressPointerIfNeeded();
     eraseMemoryIfNeeded();
@@ -160,7 +161,11 @@ void DFUInterface::processWholeDataReceived(SetupPacket * request, uint8_t * tra
       m_ep0->stallTransaction();
       return;
     }
-    writeMemoryCommand(request, transferBuffer, transferBufferLength);
+    // Compute the writing address
+    m_writeAddress = (request->wValue() - 2) * k_maxTransferSize + m_addressPointer;
+    // Store the recieved data unitl we copy it on the flash
+    memcpy(m_largeBuffer, transferBuffer, transferBufferLength);
+    m_largeBufferLength = transferBufferLength;
   }
 }
 
@@ -188,43 +193,126 @@ void DFUInterface::changeAddressPointerIfNeeded() {
 
 void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBufferLength) {
   if (transferBufferLength == 1) {
-    // MASS ERASE
-    m_erasePage = 1; //TODO Make sure this is not a valid address
+    // Mass erase
+    m_erasePage = k_flashMemorySectorsCount;
   } else {
+    // Sector erase
     assert(transferBufferLength == 5);
-    m_erasePage = transferBuffer[1]
+    /* Find the sector number to erase. If the address is not a valid start of
+     * sector, return an error. */
+    uint32_t sectorAddresses[k_flashMemorySectorsCount] = {
+      0x08000000,
+      0x08004000,
+      0x08008000,
+      0x0800C000,
+      0x08010000,
+      0x08020000,
+      0x08040000,
+      0x08060000,
+      0x08080000,
+      0x080A0000,
+      0x080C0000,
+      0x080E0000
+    };
+    uint8_t eraseAddress = transferBuffer[1]
       + (transferBuffer[2] << 8)
       + (transferBuffer[3] << 16)
       + (transferBuffer[3] << 24);
+    m_erasePage = k_flashMemorySectorsCount + 1;
+    for (uint8_t i = 0; i < k_flashMemorySectorsCount; i++) {
+      if (sectorAddresses[i] == eraseAddress) {
+        m_erasePage = i;
+        break;
+      }
+    }
+    if (m_erasePage == k_flashMemorySectorsCount + 1) {
+      m_state = State::dfuERROR;
+      m_status = Status::errTARGET;
+      return;
+    }
   }
   m_state = State::dfuDNLOADSYNC;
   // The erase should be done after the next getStatus request.
 }
 
+void DFUInterface::unlockFlashMemory() {
+  /* After a reset, program and erase operations are forbidden on the flash.
+   * They can be unlocked by writting the appropriate keys in the FLASH_KEY
+   * register. */
+  FLASH.KEYR()->setFKEYR(0x45670123);
+  FLASH.KEYR()->setFKEYR(0xCDEF89AB);
+  // Set the parallelism size
+  FLASH.CR()->setPSIZE(0b10);
+}
+
+void DFUInterface::lockFlashMemory() {
+  FLASH.CR()->setLOCK(1);
+}
+
 void DFUInterface::eraseMemoryIfNeeded() {
-  if (m_erasePage == 0) {
+  if (m_erasePage == k_flashMemorySectorsCount + 1) {
     return;
   }
-  if (m_erasePage == 1) {
-    //TODO Mass erase.
-  } else {
-    //TODO Check the address is allowed. Return error if not.
-    //TODO Erase the right page of memory.
+  // Unlock the Flash and check that no memory operation is ongoing
+  unlockFlashMemory();
+  while (FLASH.SR()->getBSY()) {
   }
-  m_erasePage = 0;
+  if (m_erasePage == k_flashMemorySectorsCount) {
+    // Mass erase
+    FLASH.CR()->setMER(true);
+  } else {
+    // Sector erase
+    FLASH.CR()->setSER(true);
+    FLASH.CR()->setSNB(m_erasePage);
+  }
+  // Trigger the erase operation
+  FLASH.CR()->setSTRT(true);
+  // Lock the Flash after all operations are done
+  while (FLASH.SR()->getBSY()) {
+  }
+  lockFlashMemory();
+
+  //TODO
+  /*If a Flash memory write access concerns some data in the data cache, the Flash write access modifies the data in the Flash memory and the data in the cache.
+   * If an erase operation in Flash memory also concerns data in the data or instruction cache, you have to make sure that these data are rewritten before they are accessed during code execution. If this cannot be done safely, it is recommended to flush the caches by setting the DCRST and ICRST bits in the FLASH_CR register.
+   * The I/D cache should be flushed only when it is disabled (I/DCEN = 0).*/
+
+  m_erasePage = k_flashMemorySectorsCount + 1; // Out of range value to indicate we do not need to erase anything.
   m_state = State::dfuDNLOADIDLE;
   m_status = Status::OK;
 }
 
-void DFUInterface::writeMemoryCommand(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength) {
-  // Compute the writing address
-  uint32_t writeAddress = (request->wValue() - 2) * request->wLength() + m_addressPointer;
-  // TODO comment why we won't do Check it is allowed (if not, dfuERROR and status errTARGET)
-  // TODO comment why we won't doCheck the ROP is not active (???)
-
-  // Write the received buffer to the destination address
-  //TODO
-  // Check if the destination is the option bytes (Won't happen)
+void DFUInterface::writeOnMemory() {
+  // TODO Check here the address is allowed, else return with dfuERROR and status errTARGET
+  if (true) {//addressIsInFlash(m_writeAddress) {
+    // Check if the destination is the option bytes: it won't happen for us.
+    // Unlock the Flash and check that no memory operation is ongoing
+    unlockFlashMemory();
+    while (FLASH.SR()->getBSY()) {
+    }
+    FLASH.CR()->setPG(true);
+    // Write the received buffer to the destination address
+    // We use x32 parallelism, so we need to use word access.
+    uint16_t bufferIndex = 0;
+    while (bufferIndex < m_largeBufferLength - 1) {
+      *((uint16_t *)m_writeAddress++) = m_largeBuffer[bufferIndex];
+      bufferIndex += 2;
+    }
+    if (bufferIndex == m_largeBufferLength - 1) {
+      // We copy the data word by word, one byte has not been copied at the end.
+      *((uint16_t *)m_writeAddress-1) = m_largeBuffer[bufferIndex - 1];
+    }
+    // Lock the Flash after all operations are done
+    while (FLASH.SR()->getBSY()) {
+    }
+    lockFlashMemory();
+  } else {
+    // TODO We write in RAM, check we are not overriding the current instructions.
+    memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
+  }
+  // Reset the buffer length
+  m_largeBufferLength = 0;
+  // Change the interface state and status
   m_state = State::dfuDNLOADIDLE;
   m_status = Status::OK;
 }
@@ -244,10 +332,11 @@ bool DFUInterface::processUploadRequest(SetupPacket * request, uint8_t * transfe
     m_ep0->stallTransaction();
     return false;
   } else {
-    // TODO Read Operation Protected ?? Si oui, envoyer dfuERROR
+    /* We decided to never protect Read operation. Else we would have to check
+     * here it is not protected before reading. */
 
     // Compute the reading address
-    uint32_t readAddress = (request->wValue() - 2) * request->wLength() + m_addressPointer;
+    uint32_t readAddress = (request->wValue() - 2) * k_maxTransferSize + m_addressPointer;
     // Copy the requested memory zone into the transfer buffer.
     uint16_t copySize = min(transferBufferMaxLength, request->wLength());
     memcpy(transferBuffer, (void *)readAddress, copySize);

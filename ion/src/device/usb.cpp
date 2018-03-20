@@ -5,10 +5,6 @@
 #include "display.h"
 #include "regs/regs.h"
 #include <stdlib.h>
-#include <new>
-
-extern char _flash_usb_stack_start;
-extern char _flash_usb_stack_end;
 
 namespace Ion {
 namespace USB {
@@ -17,59 +13,12 @@ bool isPlugged() {
   return Device::VbusPin.group().IDR()->get(Device::VbusPin.pin());
 }
 
-typedef void (*PollFunctionPointer)(Device::Calculator *);
-
-void DFU() {
-  size_t usb_stack_size = &_flash_usb_stack_end - &_flash_usb_stack_start;
-
-  /* 1 - Allocate a buffer in RAM that's large enough to contain all the code
-   * and objects of our USB stack. */
-
-  size_t ram_buffer_size = usb_stack_size + sizeof(Device::Calculator);
-  char * ram_buffer = static_cast<char *>(malloc(ram_buffer_size));
-  if (ram_buffer == nullptr) {
-    // Allocation failure
-    return;
-  }
-
-  // 2 - Copy the USB stack code from Flash to RAM
-  char * ram_usb_stack_start = ram_buffer;
-  memcpy(ram_usb_stack_start, &_flash_usb_stack_start, usb_stack_size);
-
-  // 3 - Initialize data in RAM buffer
-  Device::Calculator * calculator = new (ram_buffer + usb_stack_size) Device::Calculator();
-
-  // 4 - Figure out the address of Ion::USB::Device::poll() in RAM
-  char * flash_poll_function_address = reinterpret_cast<char *>(&Ion::USB::Device::poll);
-  assert(flash_poll_function_address >= &_flash_usb_stack_start);
-  assert(flash_poll_function_address < &_flash_usb_stack_end);
-  char * ram_poll_function_address = flash_poll_function_address - &_flash_usb_stack_start + ram_usb_stack_start;
-  PollFunctionPointer ram_poll_function = reinterpret_cast<PollFunctionPointer>(ram_poll_function_address);
-
-  // 5 - Execute Ion::USB::Device::poll() from RAM
-  ram_poll_function(calculator);
-
-  // 6 - Upon return, delete data and free the buffer in RAM
-  calculator->~Calculator();
-  free(ram_buffer);
-}
-
 }
 }
 
 namespace Ion {
 namespace USB {
 namespace Device {
-
-void poll(Calculator * calculator) {
-  // Wait for speed enumeration done
-  while (!OTG.GINTSTS()->getENUMDNE()) {
-  }
-
-  while (true) {
-    calculator->poll();
-  }
-}
 
 void init() {
   initGPIO();

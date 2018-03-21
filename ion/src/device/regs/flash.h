@@ -41,8 +41,8 @@ public:
   constexpr FLASH() {};
   REGS_REGISTER_AT(ACR, 0x00);
   REGS_REGISTER_AT(KEYR, 0x04);
-  REGS_REGISTER_AT(CR, 0x10);
   REGS_REGISTER_AT(SR, 0x0C);
+  REGS_REGISTER_AT(CR, 0x10);
 private:
   constexpr uint32_t Base() const {
     return 0x40023C00;

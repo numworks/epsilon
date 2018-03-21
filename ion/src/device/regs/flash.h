@@ -14,17 +14,21 @@ public:
   };
 
   class KEYR : public Register32 {
-  public:
-    REGS_FIELD(FKEYR, uint32_t, 31, 0);
   };
 
   class CR : public Register32 {
   public:
+    enum class PSIZE : uint8_t {
+      X8 = 0,
+      X16 = 1,
+      X32 = 2,
+      X64 = 3
+    };
     REGS_BOOL_FIELD(PG, 0);
     REGS_BOOL_FIELD(SER, 1);
     REGS_BOOL_FIELD(MER, 2);
     REGS_FIELD(SNB, uint8_t, 6, 3);
-    REGS_FIELD(PSIZE, uint8_t, 9, 8);
+    REGS_TYPE_FIELD(PSIZE, 9, 8);
     REGS_BOOL_FIELD(STRT, 16);
     REGS_BOOL_FIELD(LOCK, 31);
   };

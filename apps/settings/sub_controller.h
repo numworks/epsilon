@@ -39,8 +39,8 @@ private:
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);
   int valueIndexForPreference(I18n::Message message);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  constexpr static int k_totalNumberOfCell = (I18n::NumberOfLanguages > 5 ? I18n::NumberOfLanguages : 5);
   constexpr static KDCoordinate k_topBottomMargin = 13;
+  constexpr static int k_totalNumberOfCell = (Ion::Display::Height-2*k_topBottomMargin-Metric::TitleBarHeight-Metric::StackTitleHeight)/Metric::ParameterCellHeight;
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   ExpressionTableCell m_complexFormatCells[2];
   Poincare::ExpressionLayout * m_complexFormatLayout[2];

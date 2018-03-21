@@ -93,7 +93,7 @@ private:
   public:
     StatusData(Status status, uint32_t pollTimeout, State state) :
       m_bStatus((uint8_t)status),
-      m_bwPollTimeout{pollTimeout>>16 & 0xFF, pollTimeout>>8 & 0xFF, pollTimeout & 0xFF},
+      m_bwPollTimeout{uint8_t((pollTimeout>>16) & 0xFF), uint8_t((pollTimeout>>8) & 0xFF), uint8_t(pollTimeout & 0xFF)},
       m_bState((uint8_t)state),
       m_iString(0)
     {

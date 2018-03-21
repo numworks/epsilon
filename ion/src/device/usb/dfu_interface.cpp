@@ -136,7 +136,7 @@ void DFUInterface::processWholeDataReceived(SetupPacket * request, uint8_t * tra
     }
     // Compute the writing address
     m_writeAddress = (request->wValue() - 2) * k_maxTransferSize + m_addressPointer;
-    // Store the recieved data unitl we copy it on the flash
+    // Store the received data unitl we copy it on the flash
     memcpy(m_largeBuffer, transferBuffer, transferBufferLength);
     m_largeBufferLength = transferBufferLength;
   }
@@ -187,10 +187,10 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
       0x080C0000,
       0x080E0000
     };
-    uint8_t eraseAddress = transferBuffer[1]
+    uint32_t eraseAddress = transferBuffer[1]
       + (transferBuffer[2] << 8)
       + (transferBuffer[3] << 16)
-      + (transferBuffer[3] << 24);
+      + (transferBuffer[4] << 24);
     m_erasePage = k_flashMemorySectorsCount + 1;
     for (uint8_t i = 0; i < k_flashMemorySectorsCount; i++) {
       if (sectorAddresses[i] == eraseAddress) {
@@ -257,29 +257,27 @@ void DFUInterface::eraseMemoryIfNeeded() {
 
 void DFUInterface::writeOnMemory() {
   // TODO Check here the address is allowed, else return with dfuERROR and status errTARGET
-  if (true) {//addressIsInFlash(m_writeAddress) {
+  if (m_writeAddress >= 0x08000000 && m_writeAddress <= 0x080FA000) {
+    //TODO get Flash adresses from linker script.
     // Check if the destination is the option bytes: it won't happen for us.
     // Unlock the Flash and check that no memory operation is ongoing
     unlockFlashMemory();
     while (FLASH.SR()->getBSY()) {
     }
     FLASH.CR()->setPG(true);
-    // Write the received buffer to the destination address
-    // We use x32 parallelism, so we need to use word access.
-    uint16_t bufferIndex = 0;
-    while (bufferIndex < m_largeBufferLength - 1) {
-      *((uint16_t *)m_writeAddress++) = m_largeBuffer[bufferIndex];
-      bufferIndex += 2;
+
+    uint32_t * source = reinterpret_cast<uint32_t *>(m_largeBuffer);
+    uint32_t * destination = reinterpret_cast<uint32_t *>(m_writeAddress);
+    for (int i=0; i<m_largeBufferLength/sizeof(uint32_t); i++) {
+      *destination++ = *source++;
     }
-    if (bufferIndex == m_largeBufferLength - 1) {
-      // We copy the data word by word, one byte has not been copied at the end.
-      *((uint16_t *)m_writeAddress-1) = m_largeBuffer[bufferIndex - 1];
-    }
+
     // Lock the Flash after all operations are done
     while (FLASH.SR()->getBSY()) {
     }
     lockFlashMemory();
-  } else {
+  } else if (m_writeAddress >= 0x20000000 && m_writeAddress <= 0x2003E800) {
+    //TODO get RAM adresses from linker script.
     // TODO We write in RAM, check we are not overriding the current instructions.
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
   }

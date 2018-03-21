@@ -22,6 +22,7 @@ bool Interface::processSetupInRequest(SetupPacket * request, uint8_t * transferB
     case (int) Request::SetFeature:
       return setFeature(transferBufferLength);
   }
+  return false;
 }
 
 bool Interface::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {

@@ -38,8 +38,5 @@ SECTIONS {
     *(.rodata.*)
   } >RAM_BUFFER
 
-  .data : {
-    *(.data)
-    *(.data.*)
-  } >RAM_BUFFER
+  /* For now, we do not need .bss and .data sections. */
 }

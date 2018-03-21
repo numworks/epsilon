@@ -33,6 +33,8 @@ usb_objs += liba/src/memset.o
 usb_objs += liba/src/memcpy.o
 usb_objs += libaxx/src/cxxabi/pure_virtual.o
 usb_objs += ion/src/device/usb/boot.o
+usb_objs += ion/src/device/keyboard.o
+usb_objs += ion/src/device/device.o
 
 ion/src/device/usb/dfu.elf: LDFLAGS = --gc-sections -T ion/src/device/boot/dfu.ld
 ion/src/device/usb/dfu.elf: $(usb_objs)

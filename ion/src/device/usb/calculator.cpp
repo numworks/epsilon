@@ -1,5 +1,6 @@
 #include "calculator.h"
 #include "../regs/regs.h"
+#include <ion/keyboard.h>
 
 namespace Ion {
 namespace USB {
@@ -11,7 +12,9 @@ void Calculator::Poll() {
   }
 
   Calculator c;
-  while (true) {
+  // Leave DFU mode when pressing the Back key.
+  // TODO also leave on detach or when unplugging
+  while (!Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::A6)) {
     c.poll();
   }
 }

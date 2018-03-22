@@ -19,6 +19,12 @@ namespace Ion {
 class Storage {
 public:
   class Record {
+    /* A Record is identified by the CRC32 on his name because:
+     * - a record is identified by its name which is unique
+     * - we cannot keep the address pointing to the name because if another
+     *   record is modified, it might alter our record name address and keeping
+     *   a buffer with the name will waste memory as we cannot forsee the size
+     *   of the name. */
   friend class Storage;
   public:
     enum class ErrorStatus {

@@ -41,7 +41,7 @@ Storage::Record::ErrorStatus Storage::createRecord(const char * name, const void
   }
   size_t recordSize = sizeOfRecord(name, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
-   return Record::ErrorStatus::NoEnoughSpaceAvailable;
+   return Record::ErrorStatus::NotEnoughSpaceAvailable;
   }
   if (isNameTaken(name)) {
     return Record::ErrorStatus::NameTaken;
@@ -126,7 +126,7 @@ Storage::Record::ErrorStatus Storage::setNameOfRecord(Record record, const char 
       record_size_t previousRecordSize = sizeOfRecordStarting(p);
       size_t newRecordSize = previousRecordSize-previousNameSize+nameSize;
       if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+sizeof(record_size_t)+previousNameSize, nameSize-previousNameSize)) {
-        return Record::ErrorStatus::NoEnoughSpaceAvailable;
+        return Record::ErrorStatus::NotEnoughSpaceAvailable;
       }
       overrideSizeAtPosition(p, newRecordSize);
       overrideNameAtPosition(p+sizeof(record_size_t), name);
@@ -157,7 +157,7 @@ Storage::Record::ErrorStatus Storage::setValueOfRecord(Record record, Record::Da
       const char * name = nameOfRecordStarting(p);
       size_t newRecordSize = sizeOfRecord(name, data.size);
       if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+previousRecordSize, newRecordSize-previousRecordSize)) {
-        return Record::ErrorStatus::NoEnoughSpaceAvailable;
+        return Record::ErrorStatus::NotEnoughSpaceAvailable;
       }
       record_size_t nameSize = strlen(name)+1;
       overrideSizeAtPosition(p, newRecordSize);

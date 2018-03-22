@@ -9,6 +9,9 @@ void ion_main(int argc, char * argv[]) {
     if (argv[i][0] != '-' || argv[i][1] != '-') {
       continue;
     }
+    /* Option should be given at run-time:
+     * $ ./epsilon.elf --language fr
+     */
     if (strcmp(argv[i], "--language") == 0 && argc > i+1) {
       const char * languageIdentifiers[] = {"none", "en", "fr", "es", "de", "pt"};
       const char * requestedLanguageId = argv[i+1];
@@ -20,6 +23,12 @@ void ion_main(int argc, char * argv[]) {
       }
       continue;
     }
+    /* Option should be given at run-time:
+     * $ ./epsilon.elf --[app_name]-[option] [arguments]
+     * For example:
+     * $ make -j8 PLATFORM=emscripten EPSILON_APPS=code
+     * $ ./epsilon.elf --code-script hello_world.py:print("hello") --code-lock-on-console
+     */
     const char * appNames[] = {"home", EPSILON_APPS_NAMES};
     for (int j = 0; j < container.numberOfApps(); j++) {
       App::Snapshot * snapshot = container.appSnapshotAtIndex(j);

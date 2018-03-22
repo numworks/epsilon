@@ -41,6 +41,10 @@ _mp_builtin___import__ \
 _mp_import_name \
 __ZN4Code25ScriptParameterController11handleEventEN3Ion6Events5EventE \
 __ZN4Code14MenuController28openConsoleWithScriptAtIndexEi \
+__ZN3Ion6EventsL16sleepWithTimeoutEiPi \
+__ZN5QueueIN3Ion6Events5EventELi1024EE7enqueueES2_ \
+__ZN5QueueIN3Ion6Events5EventELi1024EE4sizeEv \
+__ZN5QueueIN3Ion6Events5EventELi1024EE4nextEPS2_ \
 __ZN4Code17ConsoleController23autoImportScriptAtIndexEib
 
 EMFLAGS = -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST='[$(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)]'

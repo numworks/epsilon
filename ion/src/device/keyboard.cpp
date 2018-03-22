@@ -40,7 +40,6 @@
  *  means the corresponding key is pressed.
  */
 
-#include <ion.h>
 #include "keyboard.h"
 
 // Public Ion::Keyboard methods
@@ -52,24 +51,15 @@ State scan() {
   uint64_t state = 0;
 
   for (uint8_t i=0; i<Device::numberOfRows; i++) {
-    /* In open-drain mode, a 0 in the register drives the pin low, and a 1 lets
-     * the pin floating (Hi-Z). So we want to set the current row to zero and
-     * all the others to 1. */
-    uint16_t rowState = ~(1<<(Device::numberOfRows-1-i));
-
-    // TODO: Assert pin numbers are sequentials and dynamically find 9 and 0
-    Device::RowGPIO.ODR()->setBitRange(9, 0, rowState);
-
-    // TODO: 100 us seems to work, but wasn't really calculated
-    usleep(100);
+    Device::activateRow(Device::numberOfRows-1-i);
 
     // TODO: Assert pin numbers are sequentials and dynamically find 8 and 0
-    uint8_t column = Device::ColumnGPIO.IDR()->getBitRange(5,0);
+    uint8_t columns = Device::ColumnGPIO.IDR()->getBitRange(5,0);
 
     /* The key is down if the input is brought low by the output. In other
      * words, we want to return true if the input is low (false). So we need to
-     * append 6 bits of (not column) to state. */
-    state = (state << 6) | (~column & 0x3F);
+     * append 6 bits of (not columns) to state. */
+    state = (state << 6) | (~columns & 0x3F);
   }
 
   /* Last but not least, keys number 8, 9, 10, 11, 35, 41, 47 and 53 are not

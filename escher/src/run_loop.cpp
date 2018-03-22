@@ -55,6 +55,7 @@ bool RunLoop::step() {
 
   if (event == Ion::Events::USBEnumeration) {
     dispatchEvent(event);
+    return true;
   }
 
   assert(event.isDefined());

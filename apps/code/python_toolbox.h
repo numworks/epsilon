@@ -29,7 +29,6 @@ private:
   constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Small;
   void scrollToLetter(char letter);
   void scrollToAndSelectChild(int i);
-  Action m_action;
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
 };

@@ -122,7 +122,9 @@ Event getEvent(int * timeout) {
     // Look up events in the queue
     if (sEventQueue.size() > 0) {
       Event event = sEventQueue.dequeue();
-      updateModifiersFromEvent(event);
+      if (event.isKeyboardEvent()) {
+        updateModifiersFromEvent(event);
+      }
       return event;
     }
 

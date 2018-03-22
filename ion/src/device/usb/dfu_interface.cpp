@@ -109,20 +109,15 @@ bool DFUInterface::processDownloadRequest(uint16_t wLength, uint16_t * transferB
 }
 
 void DFUInterface::wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) {
-  m_state = State::dfuDNLOADSYNC;
-  processWholeDataReceived(request, transferBuffer, *transferBufferLength);
-}
-
-void DFUInterface::processWholeDataReceived(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength) {
   if (request->bRequest() == (uint8_t) DFURequest::Download) {
     // Handle a download request
     if (request->wValue() == 0) {
       switch (transferBuffer[0]) {
         case (uint8_t) DFUDownloadCommand::SetAddressPointer:
-          setAddressPointerCommand(request, transferBuffer, transferBufferLength);
+          setAddressPointerCommand(request, transferBuffer, *transferBufferLength);
           return;
         case (uint8_t) DFUDownloadCommand::Erase:
-          eraseCommand(transferBuffer, transferBufferLength);
+          eraseCommand(transferBuffer, *transferBufferLength);
           return;
         default:
           m_state = State::dfuERROR;
@@ -137,8 +132,9 @@ void DFUInterface::processWholeDataReceived(SetupPacket * request, uint8_t * tra
     // Compute the writing address
     m_writeAddress = (request->wValue() - 2) * k_maxTransferSize + m_addressPointer;
     // Store the received data unitl we copy it on the flash
-    memcpy(m_largeBuffer, transferBuffer, transferBufferLength);
-    m_largeBufferLength = transferBufferLength;
+    memcpy(m_largeBuffer, transferBuffer, *transferBufferLength);
+    m_largeBufferLength = *transferBufferLength;
+    m_state = State::dfuDNLOADSYNC;
   }
 }
 

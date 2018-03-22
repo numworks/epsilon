@@ -52,6 +52,16 @@ void DFU() {
    * first function we want to call is at the beginning of the DFU code. */
 
   FunctionPointer dfu_bootloader_entry = reinterpret_cast<FunctionPointer>(dfu_bootloader_ram_start);
+
+  /* To have the right debug symbols for the reallocated code, break here and:
+   *  - Get the address of the new .text section
+   *        In a terminal: arm-none-eabi-readelf -a ion/src/device/usb/dfu.elf
+   *  - Delete the current symbol table
+   *        symbol-file
+   *  - Add the new symbol table, with the address of the new .text section
+   *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
+   */
+
   dfu_bootloader_entry();
 
   /* 5- That's all. The DFU bootloader on the stack is now dead code that will

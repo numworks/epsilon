@@ -35,8 +35,10 @@ Event getEvent(int * timeout) {
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   while (true) {
     // Check if the USB is plugged and if we are being enumerated by a host.
-    if (OTG.GINTSTS()->getUSBRST()) {
-      // The device is being enumerated. Fire an event.
+    if (OTG.GINTSTS()->getENUMDNE()) {
+      /* The device is being enumerated, the speed enumeration is finished.
+       * Clear the interrupt and fire an event. */
+      OTG.GINTSTS()->setENUMDNE(1);
       return Events::USBEnumeration;
     }
 

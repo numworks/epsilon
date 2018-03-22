@@ -25,7 +25,7 @@ public:
       None = 0,
       NameTaken = 1,
       NonCompliantName = 2,
-      NoEnoughSpaceAvailable = 3,
+      NotEnoughSpaceAvailable = 3,
       RecordDoesNotExist = 4
     };
     struct Data

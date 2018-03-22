@@ -320,7 +320,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   } else if (error == Script::ErrorStatus::NonCompliantName) {
     app()->displayWarning(I18n::Message::NonCompliantName);
   } else {
-    assert(error == Script::ErrorStatus::NoEnoughSpaceAvailable);
+    assert(error == Script::ErrorStatus::NotEnoughSpaceAvailable);
     app()->displayWarning(I18n::Message::NameTooLong);
   }
   return false;

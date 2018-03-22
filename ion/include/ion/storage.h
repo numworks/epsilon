@@ -34,8 +34,7 @@ public:
       NotEnoughSpaceAvailable = 3,
       RecordDoesNotExist = 4
     };
-    struct Data
-    {
+    struct Data {
       const void * buffer;
       size_t size;
     };

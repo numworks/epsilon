@@ -78,14 +78,17 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
+  bool alphaLockWantsRedraw = updateAlphaLock();
+
+  bool didProcessEvent = false;
+
   if (event == Ion::Events::USBEnumeration) {
     switchTo(appSnapshotAtIndex(0));
     Ion::USB::DFU();
+    didProcessEvent = true;
+  } else {
+    didProcessEvent = Container::dispatchEvent(event);
   }
-
-  bool alphaLockWantsRedraw = updateAlphaLock();
-
-  bool didProcessEvent = Container::dispatchEvent(event);
 
   if (!didProcessEvent) {
     didProcessEvent = processEvent(event);

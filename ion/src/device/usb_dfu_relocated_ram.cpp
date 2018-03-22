@@ -36,6 +36,7 @@ void DFU() {
   assert(&_stack_end == (void *)(0x20000000 + 256*1024 - 32*1024));
 
   /* 2- Verify there is enough free space on the stack to copy the DFU code. */
+
   char foo;
   char * stackPointer = &foo;
   if (dfu_bootloader_ram_start + dfu_bootloader_size > stackPointer) {
@@ -44,17 +45,13 @@ void DFU() {
   }
 
   /* 3- Copy the DFU bootloader from Flash to RAM. */
+
   memcpy(dfu_bootloader_ram_start, &_dfu_bootloader_flash_start, dfu_bootloader_size);
 
   /* 4- Jump to DFU bootloader code. We made sure in the linker script that the
-   * first function we want to call is at the beginning of the DFU code.
-   *
-   * Cortex-M expects jumps to be made to odd addresses when jumping to Thumb
-   * code. In general this is handled by the compiler, but here we're jumping to
-   * an arbitrary address. */
+   * first function we want to call is at the beginning of the DFU code. */
 
-  // TODO: Check this is needed, maybe the compiler is super smart :)
-  FunctionPointer dfu_bootloader_entry = reinterpret_cast<FunctionPointer>(dfu_bootloader_ram_start+1);
+  FunctionPointer dfu_bootloader_entry = reinterpret_cast<FunctionPointer>(dfu_bootloader_ram_start);
   dfu_bootloader_entry();
 
   /* 5- That's all. The DFU bootloader on the stack is now dead code that will

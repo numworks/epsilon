@@ -23,7 +23,8 @@ public:
   };
 
   constexpr static int k_maxPacketSize = 64;
-  constexpr Endpoint0(RequestRecipient * device, RequestRecipient * interface) :
+  //constexpr Endpoint0(RequestRecipient * device, RequestRecipient * interface) :
+  Endpoint0(RequestRecipient * device, RequestRecipient * interface) :
     m_forceNAK(false),
     m_bufferOffset(0),
     m_transferBufferLength(0),
@@ -32,8 +33,27 @@ public:
     m_request(),
     m_requestRecipients{device, interface},
     m_state(State::Idle),
-    m_largeBuffer{0}
+    m_largeBuffer{0},
+    m_largeBufferDEBUG{0},
+    m_bufferIndex(8)
   {
+     m_largeBufferDEBUG[0] = 'D';
+     m_largeBufferDEBUG[1] = 'E';
+     m_largeBufferDEBUG[2] = 'B';
+     m_largeBufferDEBUG[3] = 'U';
+     m_largeBufferDEBUG[4] = 'G';
+     m_largeBufferDEBUG[5] = 'L';
+     m_largeBufferDEBUG[6] = 'E';
+     m_largeBufferDEBUG[7] = 'A';
+     m_largeBufferDEBUG[1015] = 'E';
+     m_largeBufferDEBUG[1016] = 'N';
+     m_largeBufferDEBUG[1017] = 'D';
+     m_largeBufferDEBUG[1018] = 'B';
+     m_largeBufferDEBUG[1019] = 'U';
+     m_largeBufferDEBUG[1020] = 'F';
+     m_largeBufferDEBUG[1021] = 'F';
+     m_largeBufferDEBUG[1022] = 'E';
+     m_largeBufferDEBUG[1023] = 'R';
   }
   void setup();
   void setupOut();
@@ -56,6 +76,7 @@ public:
 
 private:
   constexpr static int k_largeBufferLength = 2048;
+  constexpr static int k_largeBufferDEBUGLength = 1024;
 
   uint16_t receiveSomeData();
   uint16_t readPacket(void * buffer, uint16_t length);
@@ -70,6 +91,8 @@ private:
   RequestRecipient * m_requestRecipients[2];
   State m_state;
   uint8_t m_largeBuffer[2048];
+  char m_largeBufferDEBUG[1024];
+  int m_bufferIndex;
 };
 
 }

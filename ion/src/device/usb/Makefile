@@ -19,6 +19,7 @@ usb_objs += $(addprefix ion/src/device/usb/stack/, \
   string_descriptor.o\
 )
 
+USB_DFU_XIP_FLASH := 0
 ifeq ($(USB_DFU_XIP_FLASH),1)
 
 objs += ion/src/device/usb_dfu_xip_flash.o

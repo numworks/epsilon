@@ -35,7 +35,7 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
     case (uint8_t) DFURequest::Abort:
       return dfuAbort(transferBufferLength);
     case (uint8_t) DFURequest::GetState:
-      return getState(transferBuffer, transferBufferLength, request->wValue());
+      return getState(transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (uint8_t) DFURequest::Download:
       return processDownloadRequest(request->wLength(), transferBufferLength);
     case (uint8_t) DFURequest::Upload:

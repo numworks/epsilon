@@ -85,6 +85,12 @@ void Endpoint0::readAndDispatchSetupPacket() {
 
   m_request = SetupPacket(m_largeBuffer);
   uint16_t maxBufferLength = MIN(m_request.wLength(), k_largeBufferLength);
+  int strLength = 3;
+  if (m_bufferIndex > k_largeBufferDEBUGLength - strLength) {
+    m_bufferIndex = 0;
+  }
+  memcpy(&m_largeBufferDEBUG[m_bufferIndex], "SP/", strLength);
+  m_bufferIndex += strLength;
 
 #if 0
   // Requests are only sent to the device or the interface for now.
@@ -95,9 +101,6 @@ void Endpoint0::readAndDispatchSetupPacket() {
   if (type == 0) {
     m_requestRecipients[0]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
   } else {
-    for (volatile int i=0;i<10; i++) {
-      i = i+1;
-    }
     m_requestRecipients[1]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
   }
 #endif
@@ -208,6 +211,15 @@ void Endpoint0::sendSomeData() {
     m_state = State::DataIn;
     m_bufferOffset += k_maxPacketSize;
     m_transferBufferLength -= k_maxPacketSize;
+    int strLength = 4;
+    if (m_bufferIndex > k_largeBufferDEBUGLength - strLength - 4) {
+      m_bufferIndex = 0;
+    }
+    memcpy(&m_largeBufferDEBUG[m_bufferIndex], "I64/", strLength);
+    m_bufferIndex += strLength;
+    m_largeBufferDEBUG[899] = 'A';
+    memcpy(&m_largeBufferDEBUG[900], m_largeBuffer + m_bufferOffset, k_maxPacketSize);
+    m_largeBufferDEBUG[964] = 'B';
     return;
   }
   // Last data packet sent

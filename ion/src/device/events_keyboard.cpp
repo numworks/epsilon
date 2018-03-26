@@ -34,23 +34,11 @@ Event getEvent(int * timeout) {
   uint64_t keysSeenUp = 0;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   while (true) {
-#if 1
     // Check if the USB is plugged and if we are being enumerated by a host.
     if (OTG.GINTSTS()->getENUMDNE()) {
-      /* The device is being enumerated, the speed enumeration is finished.
-       * Clear the interrupt and fire an event. */
-      OTG.GINTSTS()->setENUMDNE(1);
+      // The device is being enumerated, the speed enumeration is finished.
       return Events::USBEnumeration;
     }
-#else
-    if (OTG.GINTSTS()->getUSBRST()) {
-      usleep(11000);
-      if (OTG.GINTSTS()->getENUMDNE()) {
-        OTG.GINTSTS()->setENUMDNE(1);
-        return Events::USBEnumeration;
-      }
-    }
-#endif
 
     Keyboard::State state = Keyboard::scan();
     keysSeenUp |= ~state;

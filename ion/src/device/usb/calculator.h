@@ -61,7 +61,8 @@ public:
     m_manufacturerStringDescriptor("NumWorks"),
     m_productStringDescriptor("Calculator"),
     m_serialNumberStringDescriptor("12345"),
-    m_interfaceStringDescriptor("@Flash  /0x08000000/04*016Kg,01*064Kg,07*128Kg"),
+    //m_interfaceStringDescriptor("@Flash/0x08000000/04*016Kg,01*064Kg,07*128Kg"),
+    m_interfaceStringDescriptor("@SRAM/0x20000000/01*256Ke"),
     m_descriptors{
       &m_deviceDescriptor,             // Type = Device, Index = 0
       &m_configurationDescriptor,      // Type = Configuration, Index = 0

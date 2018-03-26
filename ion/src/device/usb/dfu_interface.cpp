@@ -253,7 +253,7 @@ void DFUInterface::eraseMemoryIfNeeded() {
 
 void DFUInterface::writeOnMemory() {
   // TODO Check here the address is allowed, else return with dfuERROR and status errTARGET
-  if (m_writeAddress >= 0x08000000 && m_writeAddress <= 0x080FA000) {
+  if (m_writeAddress >= 0x08000000 && m_writeAddress <= 0x08100000) {
     //TODO get Flash adresses from linker script.
     // Check if the destination is the option bytes: it won't happen for us.
     // Unlock the Flash and check that no memory operation is ongoing

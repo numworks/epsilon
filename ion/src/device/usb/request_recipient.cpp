@@ -12,12 +12,14 @@ bool RequestRecipient::processSetupRequest(SetupPacket * request, uint8_t * tran
       return false;
     }
     if (*transferBufferLength > 0) {
-      // TODO: Update Endpoint0 state ???
       m_ep0->computeZeroLengthPacketNeeded();
+      m_ep0->sendSomeData();
     } else {
+      m_ep0->sendSomeData();
+      // On seeing a zero length packet, sendSomeData changed endpoint0 state to
+      // LastDataIn, but it should be StatusIn as there was no data stage.
       m_ep0->setState(Endpoint0::State::StatusIn);
     }
-    m_ep0->sendSomeData();
   } else {
     // The following transaction will be an OUT transaction.
     m_ep0->clearForOutTransactions(request->wLength());

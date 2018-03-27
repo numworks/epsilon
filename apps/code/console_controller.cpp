@@ -30,7 +30,8 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   m_editCell(this, this),
   m_pythonHeap(nullptr),
   m_scriptStore(scriptStore),
-  m_sandboxController(this)
+  m_sandboxController(this),
+  m_inputRunLoopActive(false)
 #if EPSILON_GETOPT
       , m_locked(lockOnConsole)
 #endif

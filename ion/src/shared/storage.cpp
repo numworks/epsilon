@@ -18,6 +18,7 @@ Storage::Record::Record(const char * name) {
   strlcpy((char *)crc32Input, name, lenght+1);
   assert((crc32InputSize*sizeof(uint32_t) & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   m_nameCRC32 = Ion::crc32(crc32Input, crc32InputSize);
+  delete[] crc32Input;
 }
 
 Storage::Storage() :

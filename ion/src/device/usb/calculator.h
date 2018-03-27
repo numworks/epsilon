@@ -52,7 +52,7 @@ public:
         0x0100),// bcdDFUVersion
     m_interfaceDescriptor(
         0,      // bInterfaceNumber
-        0,      // bAlternateSetting
+        k_dfuInterfaceAlternateSetting,      // bAlternateSetting
         0,      // bNumEndpoints: Other than endpoint 0
         0xFE,   // bInterfaceClass: DFU (http://www.usb.org/developers/defined_class)
         1,      // bInterfaceSubClass: DFU
@@ -87,7 +87,7 @@ public:
       &m_interfaceStringDescriptor     // Type = String, Index = 4
 
     },
-    m_dfuInterface(&m_ep0)
+    m_dfuInterface(&m_ep0, k_dfuInterfaceAlternateSetting)
   {
   }
 protected:
@@ -101,6 +101,7 @@ protected:
 
 private:
   static constexpr uint8_t k_bConfigurationValue = 1;
+  static constexpr uint8_t k_dfuInterfaceAlternateSetting = 0;
   DeviceDescriptor m_deviceDescriptor;
   DFUFunctionalDescriptor m_dfuFunctionalDescriptor;
   InterfaceDescriptor m_interfaceDescriptor;

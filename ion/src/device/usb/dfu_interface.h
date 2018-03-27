@@ -121,7 +121,6 @@ private:
   };
 
   constexpr static uint8_t k_flashMemorySectorsCount = 12;
-  constexpr static uint16_t k_maxTransferSize = 2048;
 
   bool getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   bool clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
@@ -142,7 +141,7 @@ private:
   uint32_t m_addressPointer;
   uint32_t m_potentialNewAddressPointer;
   uint32_t m_erasePage;
-  uint8_t m_largeBuffer[2048]; // TODO = endpoint0.largeBufferLength = dfu transfer size
+  uint8_t m_largeBuffer[Endpoint0::MaxTransferSize];
   uint16_t m_largeBufferLength;
   uint32_t m_writeAddress;
   uint8_t m_bInterfaceAlternateSetting;

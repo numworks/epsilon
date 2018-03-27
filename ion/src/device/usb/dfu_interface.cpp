@@ -130,7 +130,7 @@ void DFUInterface::wholeDataReceivedCallback(SetupPacket * request, uint8_t * tr
       return;
     }
     // Compute the writing address
-    m_writeAddress = (request->wValue() - 2) * k_maxTransferSize + m_addressPointer;
+    m_writeAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
     // Store the received data unitl we copy it on the flash
     memcpy(m_largeBuffer, transferBuffer, *transferBufferLength);
     m_largeBufferLength = *transferBufferLength;
@@ -303,7 +303,7 @@ bool DFUInterface::processUploadRequest(SetupPacket * request, uint8_t * transfe
      * here it is not protected before reading. */
 
     // Compute the reading address
-    uint32_t readAddress = (request->wValue() - 2) * k_maxTransferSize + m_addressPointer;
+    uint32_t readAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
     // Copy the requested memory zone into the transfer buffer.
     uint16_t copySize = min(transferBufferMaxLength, request->wLength());
     memcpy(transferBuffer, (void *)readAddress, copySize);

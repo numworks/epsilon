@@ -23,6 +23,8 @@ public:
   };
 
   constexpr static int k_maxPacketSize = 64;
+  constexpr static int MaxTransferSize = 2048;
+
   //constexpr Endpoint0(RequestRecipient * device, RequestRecipient * interface) :
   Endpoint0(RequestRecipient * device, RequestRecipient * interface) :
     m_forceNAK(false),
@@ -75,7 +77,6 @@ public:
   void clearForOutTransactions(uint16_t wLength);
 
 private:
-  constexpr static int k_largeBufferLength = 2048;
   constexpr static int k_largeBufferDEBUGLength = 1024;
 
   uint16_t receiveSomeData();
@@ -90,7 +91,7 @@ private:
   SetupPacket m_request;
   RequestRecipient * m_requestRecipients[2];
   State m_state;
-  uint8_t m_largeBuffer[2048];
+  uint8_t m_largeBuffer[MaxTransferSize];
   char m_largeBufferDEBUG[1024];
   int m_bufferIndex;
 };

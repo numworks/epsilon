@@ -55,7 +55,7 @@ bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, ui
     actionsAfterStatus = true;
   }
   // Copy the status on the TxFifo
-  *transferBufferLength = StatusData(m_status, k_pollTimeout, m_state).copy(transferBuffer, transferBufferMaxLength);
+  *transferBufferLength = StatusData(m_status, m_state).copy(transferBuffer, transferBufferMaxLength);
   // Additional actions if needed
   if (actionsAfterStatus) {
     if (m_largeBufferLength != 0) {

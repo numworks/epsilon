@@ -92,7 +92,7 @@ void Endpoint0::readAndDispatchSetupPacket() {
   };
 
   m_request = SetupPacket(m_largeBuffer);
-  uint16_t maxBufferLength = MIN(m_request.wLength(), k_largeBufferLength);
+  uint16_t maxBufferLength = MIN(m_request.wLength(), MaxTransferSize);
   int strLength = 3;
   if (m_bufferIndex > k_largeBufferDEBUGLength - strLength) {
     m_bufferIndex = 0;

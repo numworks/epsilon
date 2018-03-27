@@ -12,32 +12,40 @@ namespace USB {
 namespace Device {
 
 void Endpoint0::setup() {
-  /* Setup the IN direction */
+  // Setup the IN direction
 
   // Reset the device IN endpoint 0 control register
-  OTG.DIEPCTL0()->set(0);
-  // Reset the device IN endpoint 0 transfer size register
-  OTG.DIEPTSIZ0()->set(0);
-  // Maximum packet size
-  OTG.DIEPCTL0()->setMPSIZ(OTG::DIEPCTL0::MPSIZ::Size64);
-  // Transfer size. The core interrupts the application only after it has
-  // exhausted the transfer size amount of data. The transfer size is set to the
-  // maximum packet size, to be interrupted at the end of each packet.
-  OTG.DIEPTSIZ0()->setXFRSIZ(k_maxPacketSize);
+  class OTG::DIEPCTL0 diepctl0(0); // Reset value
+  // Set the maximum packet size
+  diepctl0.setMPSIZ(OTG::DIEPCTL0::MPSIZ::Size64);
   // Set the NAK bit: all IN transactions on endpoint 0 receive a NAK answer
-  OTG.DIEPCTL0()->setSNAK(true);
+  diepctl0.setSNAK(true);
   // Enable the endpoint
-  OTG.DIEPCTL0()->setEPENA(true);
+  diepctl0.setEPENA(true);
+  OTG.DIEPCTL0()->set(diepctl0);
 
-  /* Setup the OUT direction */
+  // Reset the device IN endpoint 0 transfer size register
+  class OTG::DIEPTSIZ0 dieptsiz0(0);
+  /* Transfer size. The core interrupts the application only after it has
+   * exhausted the transfer size amount of data. The transfer size is set to the
+   * maximum packet size, to be interrupted at the end of each packet. */
+  dieptsiz0.setXFRSIZ(k_maxPacketSize);
+  OTG.DIEPTSIZ0()->set(dieptsiz0);
+
+  // Setup the OUT direction
+
   setupOut();
   // Set the NAK bit
   OTG.DOEPCTL0()->setSNAK(true);
   // Enable the endpoint
   enableOut();
 
-  /* Setup the Tx FIFO */
-  // Tx FIFO depth. Division by 4 because the value is in terms of 32-bit words.
+  // Setup the Tx FIFO
+
+  /* Tx FIFO depth
+   * We process each packet as soon as it arrives, so we only need
+   * k_maxPacketSize bytes. TX0FD being in terms of 32-bit words, we divide
+   * k_maxPacketSize by 4. */
   OTG.DIEPTXF0()->setTX0FD(k_maxPacketSize/4);
   // Tx RAM start address. It starts just after the Rx FIFO. //TODO: get the value from elsewhere.
   OTG.DIEPTXF0()->setTX0FSA(128);

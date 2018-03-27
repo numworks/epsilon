@@ -11,9 +11,8 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-/* We only handle control transfers, on EP0 then. */
+// We only handle control transfers, on EP0.
 class Device : public RequestRecipient {
-
 public:
   Device(Interface * interface) :
     RequestRecipient(&m_ep0),
@@ -27,16 +26,15 @@ protected:
   virtual uint8_t getActiveConfiguration() = 0;
   bool processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) override;
   Endpoint0 m_ep0;
-
 private:
   // USB Standard Device Request Codes
   enum class Request {
-    GetStatus       = 0,
-    ClearFeature    = 1,
-    SetFeature      = 3,
-    SetAddress      = 5,
-    GetDescriptor   = 6,
-    SetDescriptor   = 7,
+    GetStatus        = 0,
+    ClearFeature     = 1,
+    SetFeature       = 3,
+    SetAddress       = 5,
+    GetDescriptor    = 6,
+    SetDescriptor    = 7,
     GetConfiguration = 8,
     SetConfiguration = 9,
   };

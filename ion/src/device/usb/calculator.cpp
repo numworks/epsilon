@@ -10,7 +10,8 @@ namespace Device {
 void Calculator::Poll() {
   Calculator c;
 
-  // Leave DFU mode when pressing the Back key.
+  // Leave DFU mode when pressing the Back key, or when the calculator is
+  // unplugged.
   Ion::Keyboard::Key exitKey = Ion::Keyboard::Key::A6;
   uint8_t exitKeyRow = Ion::Keyboard::Device::rowForKey(exitKey);
   uint8_t exitKeyColumn = Ion::Keyboard::Device::columnForKey(exitKey);

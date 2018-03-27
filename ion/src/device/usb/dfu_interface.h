@@ -101,9 +101,9 @@ private:
   protected:
     void push(Channel * c) const override;
   private:
-    uint8_t m_bStatus;  // Indication of the status resulting from the execution of the most recent request.
-    uint8_t m_bwPollTimeout[3]; // m_bwPollTimeout is a uint24_t.
-    uint8_t m_bState; // Indication of the state that the device is going to enter immediately following transmission of this response
+    uint8_t m_bStatus;  // Status resulting from the execution of the most recent request
+    uint8_t m_bwPollTimeout[3]; // m_bwPollTimeout is 24 bits
+    uint8_t m_bState; // State of the device immediately following transmission of this response
     uint8_t m_iString;
   };
 

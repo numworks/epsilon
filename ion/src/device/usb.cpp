@@ -133,10 +133,10 @@ void initOTG() {
   intMask.setUSBSUSPM(true); // USB suspend
   OTG.GINTMSK()->set(intMask);
 
-  // Unmask IN endpoint interrupt 0
-  OTG.DAINTMSK()->setIEPM(true);
+  // Unmask IN interrupt for endpoint 0 only
+  OTG.DAINTMSK()->setIEPM(1); //TODO not necessary as we have one endpoint only.
 
-  // Unmask the transfer completed interrupt
+  // Unmask the IN transfer completed interrupt for all endpoints.
   OTG.DIEPMSK()->setXFRCM(true);
 }
 

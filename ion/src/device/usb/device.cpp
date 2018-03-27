@@ -14,7 +14,6 @@ void Device::poll() {
   /* SETUP or OUT transaction
    * If the Rx FIFO is not empty, there is a SETUP or OUT transaction.
    * The interrupt is done AFTER THE HANSDHAKE of the transaction. */
-
   if (intsts.getRXFLVL()) {
     class OTG::GRXSTSP grxstsp(OTG.GRXSTSP()->get());
 
@@ -22,7 +21,7 @@ void Device::poll() {
     OTG::GRXSTSP::PKTSTS pktsts = grxstsp.getPKTSTS();
 
     // We only use endpoint 0
-    assert(grxstsp.getEPNUM() == 0); // TODO assert or return?
+    assert(grxstsp.getEPNUM() == 0);
 
     if (pktsts == OTG::GRXSTSP::PKTSTS::OutTransferCompleted || pktsts == OTG::GRXSTSP::PKTSTS::SetupTransactionCompleted) {
       // Reset the out endpoint
@@ -34,14 +33,16 @@ void Device::poll() {
       return;
     }
 
-    if (pktsts != OTG::GRXSTSP::PKTSTS::OutReceived && pktsts != OTG::GRXSTSP::PKTSTS::SetupReceived) {
-      return; // TODO other option: global Out Nak. what to do?
-    }
+    assert(pktsts != OTG::GRXSTSP::PKTSTS::GlobalOutNAK);
+    /* We did not enable the GONAKEFFM (Global OUT NAK effective mask) bit in
+     * GINTSTS, so we should never get this interrupt. */
+
+    assert(pktsts == OTG::GRXSTSP::PKTSTS::OutReceived || pktsts == OTG::GRXSTSP::PKTSTS::SetupReceived);
 
     TransactionType type = (pktsts == OTG::GRXSTSP::PKTSTS::OutReceived) ? TransactionType::Out : TransactionType::Setup;
 
     if (type == TransactionType::Setup && OTG.DIEPTSIZ0()->getPKTCNT()) {
-      // SETUP received but there is something in the Tx FIFO. Flush it.
+      // SETUP received but there is a packet in the Tx FIFO. Flush it.
       m_ep0.flushTxFifo();
     }
 
@@ -58,9 +59,9 @@ void Device::poll() {
     m_ep0.discardUnreadData();
   }
 
-  /* IN transactions
+  /* IN transactions.
    * The interrupt is done AFTER THE HANSDHAKE of the transaction. */
-  if (OTG.DIEPINT(0)->getXFRC()) {
+  if (OTG.DIEPINT(0)->getXFRC()) { // We only check endpoint 0.
     m_ep0.processINpacket();
     // Clear the Transfer Completed Interrupt
     OTG.DIEPINT(0)->setXFRC(true);
@@ -70,10 +71,15 @@ void Device::poll() {
   if (intsts.getENUMDNE()) {
     // Clear the ENUMDNE bit
     OTG.GINTSTS()->setENUMDNE(true);
+    /* After a USB reset, the host talks to the device by sending messages to
+     * address 0; */
     setAddress(0);
     // Flush the FIFOs
     m_ep0.reset();
     m_ep0.setup();
+    /* In setup(), we should set the MPSIZ field in OTG_DIEPCTL0 to the maximum
+     * packet size depending on the enumeration speed (found in OTG_DSTS). We
+     * should always get FullSpeed, so we set the packet size accordingly. */
     return;
   }
 
@@ -94,6 +100,7 @@ void Device::poll() {
 }
 
 bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  // Device only handles standard requests.
   if (request->requestType() != SetupPacket::RequestType::Standard) {
     return false;
   }
@@ -101,9 +108,8 @@ bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuff
     case (int) Request::GetStatus:
       return getStatus(transferBuffer, transferBufferLength, transferBufferMaxLength);
     case (int) Request::SetAddress:
-      if ((request->bmRequestType() != 0) || (request->wValue() >= 128)) {
-        return false;
-      }
+      // Make sure the request is adress is valid.
+      assert(request->wValue() < 128);
       /* According to the reference manual, the address should be set after the
        * Status stage of the current transaction, but this is not true.
        * It should be set here, after the Data stage. */
@@ -124,7 +130,7 @@ bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuff
 bool Device::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   *transferBufferLength = min(2, transferBufferMaxLength);
   for (int i = 0; i<*transferBufferLength; i++) {
-    transferBuffer[i] = 0; // No remote wakeup, not self-powered. //TODO ?
+    transferBuffer[i] = 0; // No remote wakeup, not self-powered.
   }
   return true;
 }

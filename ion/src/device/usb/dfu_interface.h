@@ -15,7 +15,7 @@ namespace Device {
 class DFUInterface : public Interface {
 
 public:
-  DFUInterface(Endpoint0 * ep0) :
+  DFUInterface(Endpoint0 * ep0, uint8_t bInterfaceAlternateSetting) :
     Interface(ep0),
     m_status(Status::OK),
     m_state(State::dfuIDLE),
@@ -24,19 +24,21 @@ public:
     m_erasePage(k_flashMemorySectorsCount+1),
     m_largeBuffer{0},
     m_largeBufferLength(0),
-    m_writeAddress(0)
+    m_writeAddress(0),
+    m_bInterfaceAlternateSetting(bInterfaceAlternateSetting)
   {
   }
   void wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
 
 protected:
   void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) override {
-    assert(interfaceAlternativeIndex == k_bInterfaceAlternativeValue);
+    assert(interfaceAlternativeIndex == m_bInterfaceAlternateSetting);
   }
   uint8_t getActiveInterfaceAlternative() override {
-    return k_bInterfaceAlternativeValue;
+    return m_bInterfaceAlternateSetting;
   }
   bool processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) override;
+
 private:
   // DFU Request Codes
   enum class DFURequest {
@@ -116,7 +118,6 @@ private:
     uint8_t m_bState; // Current state of the device
   };
 
-  constexpr static uint8_t k_bInterfaceAlternativeValue = 0; // TODO bInterfaceNumber/bAlternateSetting from calculator.h. See https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/usb.chm/usb5.htm#AlternateSetting
   constexpr static uint32_t k_pollTimeout = 1; // TODO: needed? value ?
   constexpr static uint8_t k_flashMemorySectorsCount = 12;
   constexpr static uint16_t k_maxTransferSize = 2048;
@@ -143,6 +144,7 @@ private:
   uint8_t m_largeBuffer[2048]; // TODO = endpoint0.largeBufferLength = dfu transfer size
   uint16_t m_largeBufferLength;
   uint32_t m_writeAddress;
+  uint8_t m_bInterfaceAlternateSetting;
 };
 
 }

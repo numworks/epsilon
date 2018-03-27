@@ -112,16 +112,6 @@ const char * ConsoleController::inputText(const char * prompt) {
   return m_editCell.text();
 }
 
-void ConsoleController::removeExtensionIfAny(char * name) {
-  int nameLength = strlen(name);
-  if (nameLength<4) {
-    return;
-  }
-  if (strcmp(&name[nameLength-3], ScriptStore::k_scriptExtension) == 0) {
-    name[nameLength-3] = 0;
-  }
-}
-
 void ConsoleController::viewWillAppear() {
   assert(pythonEnvironmentIsLoaded());
   m_sandboxIsDisplayed = false;
@@ -342,22 +332,15 @@ void ConsoleController::printText(const char * text, size_t length) {
 }
 
 void ConsoleController::autoImportScript(Script script, bool force) {
-  const char * importCommand1 = "from ";
-  const char * importCommand2 = " import *";
-  int lenImportCommand1 = strlen(importCommand1);
-  int lenImportCommand2 = strlen(importCommand2);
   if (script.importationStatus() || force) {
-    // Remove the name extension ".py" if there is one.
-    int scriptOriginalNameLength = strlen(script.name());
-    char scriptNewName[scriptOriginalNameLength];
-    memcpy(scriptNewName, script.name(), scriptOriginalNameLength + 1);
-    removeExtensionIfAny(scriptNewName);
-    int scriptNewNameLength = strlen(scriptNewName);
     // Create the command "from scriptName import *".
-    char command[lenImportCommand1 + scriptNewNameLength + lenImportCommand2 + 1];
-    memcpy(command, importCommand1, lenImportCommand1);
-    memcpy(&command[lenImportCommand1], scriptNewName, scriptNewNameLength);
-    memcpy(&command[lenImportCommand1 + scriptNewNameLength], importCommand2, lenImportCommand2 + 1);
+    char command[k_maxImportCommandSize];
+    size_t currentChar = strlcpy(command, k_importCommand1, strlen(k_importCommand1)+1);
+    const char * scriptName = script.name();
+    currentChar += strlcpy(command+currentChar, scriptName, strlen(scriptName)+1);
+    // Remove the name extension ".py"
+    currentChar -= strlen(ScriptStore::k_scriptExtension);
+    currentChar += strlcpy(command+currentChar, k_importCommand2, strlen(k_importCommand2)+1);
     runAndPrintForCommand(command);
   }
   if (force) {

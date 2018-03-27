@@ -47,7 +47,9 @@ void Endpoint0::setup() {
    * k_maxPacketSize bytes. TX0FD being in terms of 32-bit words, we divide
    * k_maxPacketSize by 4. */
   OTG.DIEPTXF0()->setTX0FD(k_maxPacketSize/4);
-  // Tx RAM start address. It starts just after the Rx FIFO. //TODO: get the value from elsewhere.
+  /* Tx FIFO RAM start address. It starts just after the Rx FIFOso the value is
+   * Rx FIFO start address (0) + Rx FIFO depth. the Rx FIFO depth is set in
+   * usb.cpp, but because the code is linked separately, we cannot get it. */
   OTG.DIEPTXF0()->setTX0FSA(128);
 }
 
@@ -57,20 +59,22 @@ void Endpoint0::setupOut() {
   doeptsiz0.setSTUPCNT(1);
   // Packet count, false if a packet is written into the Rx FIFO
   doeptsiz0.setPKTCNT(true);
-  // Transfer size. The core interrupts the application only after it has
-  // exhausted the transfer size amount of data. The transfer size is set to the
-  // maximum packet size, to be interrupted at the end of each packet.
+  /* Transfer size. The core interrupts the application only after it has
+   * exhausted the transfer size amount of data. The transfer size is set to the
+   * maximum packet size, to be interrupted at the end of each packet. */
   doeptsiz0.setXFRSIZ(64);
   OTG.DOEPTSIZ0()->set(doeptsiz0);
 }
 
 void Endpoint0::setOutNAK(bool nak) {
   m_forceNAK = nak;
+  /* We need to keep track of the NAK state of the endpoint to use the value
+   * after a setupOut in poll() of device.cpp. */
   if (nak) {
     OTG.DOEPCTL0()->setSNAK(true);
-    return;
+  } else {
+    OTG.DOEPCTL0()->setCNAK(true);
   }
-  OTG.DOEPCTL0()->setCNAK(true);
 }
 
 void Endpoint0::enableOut() {
@@ -93,25 +97,16 @@ void Endpoint0::readAndDispatchSetupPacket() {
 
   m_request = SetupPacket(m_largeBuffer);
   uint16_t maxBufferLength = MIN(m_request.wLength(), MaxTransferSize);
-  int strLength = 3;
-  if (m_bufferIndex > k_largeBufferDEBUGLength - strLength) {
-    m_bufferIndex = 0;
-  }
-  memcpy(&m_largeBufferDEBUG[m_bufferIndex], "SP/", strLength);
-  m_bufferIndex += strLength;
 
-#if 0
-  // Requests are only sent to the device or the interface for now.
-  assert(((uint8_t)m_request.recipientType() == 0) || ((uint8_t)m_request.recipientType() == 1));
-  m_requestRecipients[(uint8_t)(m_request.recipientType())]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
-#else
+  // Forward the request to the request recipient
   uint8_t type = static_cast<uint8_t>(m_request.recipientType());
   if (type == 0) {
+    // Device recipient
     m_requestRecipients[0]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
   } else {
+    // Interface recipient
     m_requestRecipients[1]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
   }
-#endif
 }
 
 void Endpoint0::processINpacket() {
@@ -121,12 +116,22 @@ void Endpoint0::processINpacket() {
       break;
     case State::LastDataIn:
       m_state = State::StatusOut;
-      setOutNAK(false); // TODO Why not In?
+      // Prepare to receive the OUT Data[] transaction.
+      setOutNAK(false);
       break;
     case State::StatusIn:
-      m_state = State::Idle;
-      // All the data has been received. Callback the request recipient.
-      m_requestRecipients[(uint8_t)(m_request.recipientType())]->wholeDataReceivedCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
+      {
+        m_state = State::Idle;
+        // All the data has been received. Callback the request recipient.
+        uint8_t type = static_cast<uint8_t>(m_request.recipientType());
+        if (type == 0) {
+          // Device recipient
+          m_requestRecipients[0]->wholeDataReceivedCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
+        } else {
+          // Interface recipient
+          m_requestRecipients[1]->wholeDataReceivedCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
+        }
+      }
       break;
     default:
       stallTransaction();
@@ -147,11 +152,13 @@ void Endpoint0::processOUTpacket() {
       if (receiveSomeData() < 0) {
         break;
       }
-      writePacket(NULL, 0); // Send the DATA1[] to the host.
+      // Send the DATA1[] to the host.
+      writePacket(NULL, 0);
       m_state = State::StatusIn;
       break;
     case State::StatusOut:
-      readPacket(NULL, 0); // Read the DATA1[] sent by the host.
+      // Read the DATA1[] sent by the host.
+      readPacket(NULL, 0);
       m_state = State::Idle;
       break;
     default:
@@ -219,15 +226,6 @@ void Endpoint0::sendSomeData() {
     m_state = State::DataIn;
     m_bufferOffset += k_maxPacketSize;
     m_transferBufferLength -= k_maxPacketSize;
-    int strLength = 4;
-    if (m_bufferIndex > k_largeBufferDEBUGLength - strLength - 4) {
-      m_bufferIndex = 0;
-    }
-    memcpy(&m_largeBufferDEBUG[m_bufferIndex], "I64/", strLength);
-    m_bufferIndex += strLength;
-    m_largeBufferDEBUG[899] = 'A';
-    memcpy(&m_largeBufferDEBUG[900], m_largeBuffer + m_bufferOffset, k_maxPacketSize);
-    m_largeBufferDEBUG[964] = 'B';
     return;
   }
   // Last data packet sent
@@ -244,7 +242,6 @@ void Endpoint0::sendSomeData() {
 
 void Endpoint0::clearForOutTransactions(uint16_t wLength) {
   m_transferBufferLength = 0;
-  // Set the transfer state.
   m_state = (wLength > k_maxPacketSize) ? State::DataOut : State::LastDataOut;
   setOutNAK(false);
 }
@@ -273,8 +270,8 @@ uint16_t Endpoint0::readPacket(void * buffer, uint16_t length) {
   }
 
   if (i) {
-    // If there are remaining bytes that should be read, read the next 4 bytes
-    // and copy only the wanted bytes.
+    /* If there are remaining bytes that should be read, read the next 4 bytes
+     * and copy only the wanted bytes. */
     uint32_t extraData = OTG.DFIFO0()->get();
     memcpy(buffer32, &extraData, i);
     if (m_receivedPacketSize < 4) {
@@ -289,25 +286,25 @@ uint16_t Endpoint0::readPacket(void * buffer, uint16_t length) {
 uint16_t Endpoint0::writePacket(const void * buffer, uint16_t length) {
   const uint32_t * buffer32 = (uint32_t *) buffer;
 
-  /*  Return if there is already a packet waiting to be read in the TX FIFO */
+  //  Return if there is already a packet waiting to be read in the TX FIFO 
   if (OTG.DIEPTSIZ0()->getPKTCNT()) {
     return 0;
   }
 
-  /* Enable transmission */
-  // Reset the device IN endpoint 0 transfer size register
-  OTG.DIEPTSIZ0()->set(0);
+  // Enable transmission
+
+  class OTG::DIEPTSIZ0 dieptsiz0(0);
   // Indicate that the Transfer Size is one packet
-  OTG.DIEPTSIZ0()->setPKTCNT(1);
+  dieptsiz0.setPKTCNT(1);
   // Indicate the length of the Transfer Size
-  OTG.DIEPTSIZ0()->setXFRSIZ(length);
+  dieptsiz0.setXFRSIZ(length);
+  OTG.DIEPTSIZ0()->set(dieptsiz0);
   // Enable the endpoint
   OTG.DIEPCTL0()->setEPENA(true);
-  // Remove the NAK bit
+  // Clear the NAK bit
   OTG.DIEPCTL0()->setCNAK(true);
 
-  /* Copy the buffer to the TX FIFO */
-  // memcpy does not work  //TODO Why?
+  // Copy the buffer to the TX FIFO by writing data 32bits by 32 bits.
   for (int i = length; i > 0; i -= 4) {
     OTG.DFIFO0()->set(*buffer32++);
   }

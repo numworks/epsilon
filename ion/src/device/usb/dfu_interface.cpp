@@ -25,6 +25,7 @@ void DFUInterface::wholeDataReceivedCallback(SetupPacket * request, uint8_t * tr
   if (request->bRequest() == (uint8_t) DFURequest::Download) {
     // Handle a download request
     if (request->wValue() == 0) {
+      // The request is a special command
       switch (transferBuffer[0]) {
         case (uint8_t) DFUDownloadCommand::SetAddressPointer:
           setAddressPointerCommand(request, transferBuffer, *transferBufferLength);
@@ -42,9 +43,9 @@ void DFUInterface::wholeDataReceivedCallback(SetupPacket * request, uint8_t * tr
       m_ep0->stallTransaction();
       return;
     }
-    // Compute the writing address
+    // The request is a "real" download. Compute the writing address.
     m_writeAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
-    // Store the received data unitl we copy it on the flash
+    // Store the received data until we copy it on the flash.
     memcpy(m_largeBuffer, transferBuffer, *transferBufferLength);
     m_largeBufferLength = *transferBufferLength;
     m_state = State::dfuDNLOADSYNC;
@@ -73,18 +74,19 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
 }
 
 bool DFUInterface::processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength) {
-  if (m_state != State::dfuIDLE && m_state !=  State::dfuDNLOADIDLE) {
+  if (m_state != State::dfuIDLE && m_state != State::dfuDNLOADIDLE) {
     m_ep0->stallTransaction();
     return false;
   }
   if (wLength == 0) {
     if (m_state == State::dfuIDLE ) {
-      // If the device is idle, it should not receive a zero-length download.
-      m_ep0->stallTransaction();
+      // Leave DFU routine
+      //TODO
       return false;
+    } else {
+      // The download has ended, enter the manifestation phase.
+      m_state = State::dfuMANIFESTSYNC;
     }
-    // The download has ended, enter the manifestation phase.
-    m_state = State::dfuMANIFESTSYNC;
   } else {
     // Prepare to receive the download data
     m_ep0->clearForOutTransactions(wLength);
@@ -99,11 +101,12 @@ bool DFUInterface::processUploadRequest(SetupPacket * request, uint8_t * transfe
     return false;
   }
   if (request->wValue() == 0) {
-    // TODO Should we really do it anyway?
     /* The host requests to read the commands supported by the bootloader. After
-     * receiving this command, the device returns N bytes representing the
-     * command codes. The STM32 sends bytes as follows (N = 4):
-     * Get command / Set Address Pointer / Erase / Read Unprotect */
+     * receiving this command, the device  should returns N bytes representing
+     * the command codes for :
+     * Get command / Set Address Pointer / Erase / Read Unprotect
+     * We no not need it for now. */
+     return false;
   } else if (request->wValue() == 1) {
     m_ep0->stallTransaction();
     return false;
@@ -124,17 +127,17 @@ bool DFUInterface::processUploadRequest(SetupPacket * request, uint8_t * transfe
 
 void DFUInterface::setAddressPointerCommand(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength) {
   assert(transferBufferLength == 5);
+  // Compute the new address but change it after the next getStatus request.
   m_potentialNewAddressPointer = transferBuffer[1]
     + (transferBuffer[2] << 8)
     + (transferBuffer[3] << 16)
     + (transferBuffer[4] << 24);
-  // TODO Check the address is allowed.
   m_state = State::dfuDNLOADSYNC;
-  // The address change should be done after the next getStatus request.
 }
 
 void DFUInterface::changeAddressPointerIfNeeded() {
   if (m_potentialNewAddressPointer == 0) {
+    // There was no address change waiting.
     return;
   }
   // If there is a new address pointer waiting, change the pointer address.
@@ -145,6 +148,8 @@ void DFUInterface::changeAddressPointerIfNeeded() {
 }
 
 void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBufferLength) {
+  /* We determine whether the commands asks for a mass erase or which sector to
+   * erase. The erase must be done after the next getStatus request. */
   if (transferBufferLength == 1) {
     // Mass erase
     m_erasePage = k_flashMemorySectorsCount;
@@ -185,18 +190,20 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
     }
   }
   m_state = State::dfuDNLOADSYNC;
-  // The erase should be done after the next getStatus request.
 }
 
 
 void DFUInterface::eraseMemoryIfNeeded() {
   if (m_erasePage == k_flashMemorySectorsCount + 1) {
+    // There was no erase waiting.
     return;
   }
+
   // Unlock the Flash and check that no memory operation is ongoing
   unlockFlashMemory();
   while (FLASH.SR()->getBSY()) {
   }
+
   if (m_erasePage == k_flashMemorySectorsCount) {
     // Mass erase
     FLASH.CR()->setMER(true);
@@ -207,26 +214,39 @@ void DFUInterface::eraseMemoryIfNeeded() {
   }
   // Trigger the erase operation
   FLASH.CR()->setSTRT(true);
+
   // Lock the Flash after all operations are done
   while (FLASH.SR()->getBSY()) {
   }
   lockFlashMemory();
 
-  //TODO
-  /*If a Flash memory write access concerns some data in the data cache, the Flash write access modifies the data in the Flash memory and the data in the cache.
-   * If an erase operation in Flash memory also concerns data in the data or instruction cache, you have to make sure that these data are rewritten before they are accessed during code execution. If this cannot be done safely, it is recommended to flush the caches by setting the DCRST and ICRST bits in the FLASH_CR register.
-   * The I/D cache should be flushed only when it is disabled (I/DCEN = 0).*/
+  /* The Reference manual says: "If a Flash memory write access concerns some
+   * data in the data cache, the Flash write access modifies the data in the
+   * Flash memory and the data in the cache.
+   * If an erase operation in Flash memory also concerns data in the data or
+   * instruction cache, you have to make sure that these data are rewritten
+   * before they are accessed during code execution. If this cannot be done
+   * safely, it is recommended to flush the caches by setting the DCRST and
+   * ICRST bits in the FLASH_CR register.
+   * The I/D cache should be flushed only when it is disabled (I/DCEN = 0).
+   *
+   * We normally do a reset after erasing and writing on the Flash, so this
+   * should not be needed. */
 
-  m_erasePage = k_flashMemorySectorsCount + 1; // Out of range value to indicate we do not need to erase anything.
+  /* Put an out of range value in m_erasePage to indicate that no erase is
+   * waiting. */
+  m_erasePage = k_flashMemorySectorsCount + 1;
   m_state = State::dfuDNLOADIDLE;
   m_status = Status::OK;
 }
 
 void DFUInterface::writeOnMemory() {
-  // TODO Check here the address is allowed, else return with dfuERROR and status errTARGET
-  if (m_writeAddress >= 0x08000000 && m_writeAddress <= 0x08100000) {
-    //TODO get Flash adresses from linker script.
-    // Check if the destination is the option bytes: it won't happen for us.
+  if (m_writeAddress >= k_flashStartAddress && m_writeAddress <= k_flashEndAddress) {
+    // Write ont the Flash
+
+    /* We should check here that the destination is not the option bytes: it
+     * won't happen for us. */
+
     // Unlock the Flash and check that no memory operation is ongoing
     unlockFlashMemory();
     while (FLASH.SR()->getBSY()) {
@@ -243,10 +263,16 @@ void DFUInterface::writeOnMemory() {
     while (FLASH.SR()->getBSY()) {
     }
     lockFlashMemory();
-  } else if (m_writeAddress >= 0x20000000 && m_writeAddress <= 0x2003E800) {
-    //TODO get RAM adresses from linker script.
-    // TODO We write in RAM, check we are not overriding the current instructions.
+  } else if (m_writeAddress >= k_sramStartAddress && m_writeAddress <= k_sramEndAddress) {
+    // Write on SRAM
+    // FIXME We should check that we are not overriding the current instructions.
     memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
+  } else {
+    // Invalid write address
+    m_largeBufferLength = 0;
+    m_state = State::dfuERROR;
+    m_status = Status::errTARGET;
+    return;
   }
   // Reset the buffer length
   m_largeBufferLength = 0;
@@ -266,7 +292,7 @@ void DFUInterface::unlockFlashMemory() {
 }
 
 void DFUInterface::lockFlashMemory() {
-  FLASH.CR()->setLOCK(1);
+  FLASH.CR()->setLOCK(true);
 }
 
 bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {

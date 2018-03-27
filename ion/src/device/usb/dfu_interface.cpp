@@ -8,8 +8,6 @@ namespace Device {
 
 static inline uint32_t min(uint32_t x, uint32_t y) { return (x<y ? x : y); }
 
-//TODO vérifier qu'on ne change pas d'état si on est dans dfuError, sauf en cas de clear status
-
 void DFUInterface::StatusData::push(Channel * c) const {
   c->push(m_bStatus);
   c->push(m_bwPollTimeout[2]);
@@ -21,91 +19,6 @@ void DFUInterface::StatusData::push(Channel * c) const {
 
 void DFUInterface::StateData::push(Channel * c) const {
   c->push(m_bState);
-}
-
-bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  if (Interface::processSetupInRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength)) {
-    return true;
-  }
-  switch (request->bRequest()) {
-    case (uint8_t) DFURequest::GetStatus:
-      return getStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
-    case (uint8_t) DFURequest::ClearStatus:
-      return clearStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
-    case (uint8_t) DFURequest::Abort:
-      return dfuAbort(transferBufferLength);
-    case (uint8_t) DFURequest::GetState:
-      return getState(transferBuffer, transferBufferLength, transferBufferMaxLength);
-    case (uint8_t) DFURequest::Download:
-      return processDownloadRequest(request->wLength(), transferBufferLength);
-    case (uint8_t) DFURequest::Upload:
-      return processUploadRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
-  }
-  return false;
-}
-
-bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  bool actionsAfterStatus = false;
-  // Change the status if needed
-  if (m_state == State::dfuMANIFESTSYNC) {
-    // TODO Here, go back to the code on the flash instead of the ram
-    m_state = State::dfuIDLE;
-  } else if (m_state == State::dfuDNLOADSYNC) {
-    m_state = State::dfuDNBUSY;
-    actionsAfterStatus = true;
-  }
-  // Copy the status on the TxFifo
-  *transferBufferLength = StatusData(m_status, m_state).copy(transferBuffer, transferBufferMaxLength);
-  // Additional actions if needed
-  if (actionsAfterStatus) {
-    if (m_largeBufferLength != 0) {
-      // Here, copy the data from the transfer buffer to the flash memory
-      writeOnMemory();
-    }
-    changeAddressPointerIfNeeded();
-    eraseMemoryIfNeeded();
-    m_state = State::dfuDNLOADIDLE;
-  }
-  return true;
-}
-
-bool DFUInterface::clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  m_status = Status::OK;
-  m_state = State::dfuIDLE;
-  return getStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
-}
-
-bool DFUInterface::dfuAbort(uint16_t * transferBufferLength) {
-  m_status = Status::OK;
-  m_state = State::dfuIDLE;
-  *transferBufferLength = 0;
-  return true;
-}
-
-bool DFUInterface::getState(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize) {
-  *transferBufferLength = StateData(m_state).copy(transferBuffer, maxSize);
-  return true;
-}
-
-bool DFUInterface::processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength) {
-  if (m_state != State::dfuIDLE && m_state !=  State::dfuDNLOADIDLE) {
-    m_ep0->stallTransaction();
-    return false;
-  }
-  if (wLength == 0) {
-    if (m_state == State::dfuIDLE ) {
-      // If the device is idle, it should not receive a zero-length download.
-      m_ep0->stallTransaction();
-      return false;
-    }
-    // The download has ended, enter the manifestation phase.
-    m_state = State::dfuMANIFESTSYNC;
-  } else {
-    // Prepare to receive the download data
-    m_ep0->clearForOutTransactions(wLength);
-    m_state = State::dfuDNLOADSYNC;
-  }
-  return true;
 }
 
 void DFUInterface::wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) {
@@ -136,6 +49,77 @@ void DFUInterface::wholeDataReceivedCallback(SetupPacket * request, uint8_t * tr
     m_largeBufferLength = *transferBufferLength;
     m_state = State::dfuDNLOADSYNC;
   }
+}
+
+bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  if (Interface::processSetupInRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength)) {
+    return true;
+  }
+  switch (request->bRequest()) {
+    case (uint8_t) DFURequest::Download:
+      return processDownloadRequest(request->wLength(), transferBufferLength);
+    case (uint8_t) DFURequest::Upload:
+      return processUploadRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
+    case (uint8_t) DFURequest::GetStatus:
+      return getStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
+    case (uint8_t) DFURequest::ClearStatus:
+      return clearStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
+    case (uint8_t) DFURequest::GetState:
+      return getState(transferBuffer, transferBufferLength, transferBufferMaxLength);
+    case (uint8_t) DFURequest::Abort:
+      return dfuAbort(transferBufferLength);
+  }
+  return false;
+}
+
+bool DFUInterface::processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength) {
+  if (m_state != State::dfuIDLE && m_state !=  State::dfuDNLOADIDLE) {
+    m_ep0->stallTransaction();
+    return false;
+  }
+  if (wLength == 0) {
+    if (m_state == State::dfuIDLE ) {
+      // If the device is idle, it should not receive a zero-length download.
+      m_ep0->stallTransaction();
+      return false;
+    }
+    // The download has ended, enter the manifestation phase.
+    m_state = State::dfuMANIFESTSYNC;
+  } else {
+    // Prepare to receive the download data
+    m_ep0->clearForOutTransactions(wLength);
+    m_state = State::dfuDNLOADSYNC;
+  }
+  return true;
+}
+
+bool DFUInterface::processUploadRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  if (m_state != State::dfuIDLE && m_state !=  State::dfuUPLOADIDLE) {
+    m_ep0->stallTransaction();
+    return false;
+  }
+  if (request->wValue() == 0) {
+    // TODO Should we really do it anyway?
+    /* The host requests to read the commands supported by the bootloader. After
+     * receiving this command, the device returns N bytes representing the
+     * command codes. The STM32 sends bytes as follows (N = 4):
+     * Get command / Set Address Pointer / Erase / Read Unprotect */
+  } else if (request->wValue() == 1) {
+    m_ep0->stallTransaction();
+    return false;
+  } else {
+    /* We decided to never protect Read operation. Else we would have to check
+     * here it is not protected before reading. */
+
+    // Compute the reading address
+    uint32_t readAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
+    // Copy the requested memory zone into the transfer buffer.
+    uint16_t copySize = min(transferBufferMaxLength, request->wLength());
+    memcpy(transferBuffer, (void *)readAddress, copySize);
+    *transferBufferLength = copySize;
+  }
+  m_state = State::dfuUPLOADIDLE;
+  return true;
 }
 
 void DFUInterface::setAddressPointerCommand(SetupPacket * request, uint8_t * transferBuffer, uint16_t transferBufferLength) {
@@ -204,19 +188,6 @@ void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBuffe
   // The erase should be done after the next getStatus request.
 }
 
-void DFUInterface::unlockFlashMemory() {
-  /* After a reset, program and erase operations are forbidden on the flash.
-   * They can be unlocked by writting the appropriate keys in the FLASH_KEY
-   * register. */
-  FLASH.KEYR()->set(0x45670123);
-  FLASH.KEYR()->set(0xCDEF89AB);
-  // Set the parallelism size
-  FLASH.CR()->setPSIZE(FLASH::CR::PSIZE::X32);
-}
-
-void DFUInterface::lockFlashMemory() {
-  FLASH.CR()->setLOCK(1);
-}
 
 void DFUInterface::eraseMemoryIfNeeded() {
   if (m_erasePage == k_flashMemorySectorsCount + 1) {
@@ -284,32 +255,60 @@ void DFUInterface::writeOnMemory() {
   m_status = Status::OK;
 }
 
-bool DFUInterface::processUploadRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  if (m_state != State::dfuIDLE && m_state !=  State::dfuUPLOADIDLE) {
-    m_ep0->stallTransaction();
-    return false;
-  }
-  if (request->wValue() == 0) {
-    // TODO Should we really do it anyway?
-    /* The host requests to read the commands supported by the bootloader. After
-     * receiving this command, the device returns N bytes representing the
-     * command codes. The STM32 sends bytes as follows (N = 4):
-     * Get command / Set Address Pointer / Erase / Read Unprotect */
-  } else if (request->wValue() == 1) {
-    m_ep0->stallTransaction();
-    return false;
-  } else {
-    /* We decided to never protect Read operation. Else we would have to check
-     * here it is not protected before reading. */
+void DFUInterface::unlockFlashMemory() {
+  /* After a reset, program and erase operations are forbidden on the flash.
+   * They can be unlocked by writting the appropriate keys in the FLASH_KEY
+   * register. */
+  FLASH.KEYR()->set(0x45670123);
+  FLASH.KEYR()->set(0xCDEF89AB);
+  // Set the parallelism size
+  FLASH.CR()->setPSIZE(FLASH::CR::PSIZE::X32);
+}
 
-    // Compute the reading address
-    uint32_t readAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
-    // Copy the requested memory zone into the transfer buffer.
-    uint16_t copySize = min(transferBufferMaxLength, request->wLength());
-    memcpy(transferBuffer, (void *)readAddress, copySize);
-    *transferBufferLength = copySize;
+void DFUInterface::lockFlashMemory() {
+  FLASH.CR()->setLOCK(1);
+}
+
+bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  bool actionsAfterStatus = false;
+  // Change the status if needed
+  if (m_state == State::dfuMANIFESTSYNC) {
+    // TODO Here, go back to the code on the flash instead of the ram
+    m_state = State::dfuIDLE;
+  } else if (m_state == State::dfuDNLOADSYNC) {
+    m_state = State::dfuDNBUSY;
+    actionsAfterStatus = true;
   }
-  m_state = State::dfuUPLOADIDLE;
+  // Copy the status on the TxFifo
+  *transferBufferLength = StatusData(m_status, m_state).copy(transferBuffer, transferBufferMaxLength);
+  // Additional actions if needed
+  if (actionsAfterStatus) {
+    if (m_largeBufferLength != 0) {
+      // Here, copy the data from the transfer buffer to the flash memory
+      writeOnMemory();
+    }
+    changeAddressPointerIfNeeded();
+    eraseMemoryIfNeeded();
+    m_state = State::dfuDNLOADIDLE;
+  }
+  return true;
+}
+
+bool DFUInterface::clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  m_status = Status::OK;
+  m_state = State::dfuIDLE;
+  return getStatus(request, transferBuffer, transferBufferLength, transferBufferMaxLength);
+}
+
+bool DFUInterface::getState(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize) {
+  *transferBufferLength = StateData(m_state).copy(transferBuffer, maxSize);
+  return true;
+}
+
+bool DFUInterface::dfuAbort(uint16_t * transferBufferLength) {
+  m_status = Status::OK;
+  m_state = State::dfuIDLE;
+  *transferBufferLength = 0;
   return true;
 }
 

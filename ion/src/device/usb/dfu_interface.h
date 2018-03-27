@@ -122,13 +122,6 @@ private:
 
   constexpr static uint8_t k_flashMemorySectorsCount = 12;
 
-  // Status
-  bool getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
-  bool clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
-  // Abort
-  bool dfuAbort(uint16_t * transferBufferLength);
-  // State
-  bool getState(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize);
   // Download and upload
   bool processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength);
   bool processUploadRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
@@ -141,6 +134,13 @@ private:
   void writeOnMemory();
   void unlockFlashMemory();
   void lockFlashMemory();
+  // Status
+  bool getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
+  bool clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
+  // State
+  bool getState(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize);
+  // Abort
+  bool dfuAbort(uint16_t * transferBufferLength);
 
   Status m_status;
   State m_state;

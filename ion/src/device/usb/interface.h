@@ -29,7 +29,7 @@ private:
     SetInterface    = 11,
   };
   bool getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
-  bool getInterface(uint8_t * transferBuffer, uint16_t * transferBufferLength);
+  bool getInterface(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   bool setInterface(SetupPacket * request, uint16_t * transferBufferLength);
   bool clearFeature(uint16_t * transferBufferLength);
   bool setFeature(uint16_t * transferBufferLength);

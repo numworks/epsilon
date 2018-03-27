@@ -101,8 +101,20 @@ void initOTG() {
   // Full speed device
   OTG.DCFG()->setDSPD(OTG::DCFG::DSPD::FullSpeed);
 
-  // FIFO-size = 128 * 32bits
-  // FIXME: Explain :-) Maybe we can increase it.
+  /* RxFIFO size. The value is in terms of 32-bit words.
+   * According to the reference manual, it should be, at minimum:
+   * (4 * number of control endpoints + 6)
+   *    To receive SETUP packets on control endpoint
+   * + ((largest USB packet used / 4) + 1)
+   *    To receive 1 USB packet + 1 packet status
+   * + (2 * number of OUT endpoints)
+   *    Transfer complete status information
+   * + 1 for Global NAK
+   * So, for the calculator: (4*1+6) + (64/4 + 1) + (2*1) + 1 = 30
+   * As the RAM size is 1.25kB, the size should be at most 320, minus the space
+   * for the Tx FIFOs.
+   * However, we tested and found that only values between 40 and 255 actually
+   * work. We arbitrarily chose 128. */
   OTG.GRXFSIZ()->setRXFD(128);
 
   // Unmask the interrupt line assertions

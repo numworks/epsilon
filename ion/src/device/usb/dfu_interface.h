@@ -122,6 +122,13 @@ private:
 
   constexpr static uint8_t k_flashMemorySectorsCount = 12;
 
+  /* The Flash and SRAM addresses are in flash.ld. However, dfu_interface is
+   * linked with dfu.ld, so we cannot access the values. */
+  constexpr static uint32_t k_flashStartAddress = 0x08000000;
+  constexpr static uint32_t k_flashEndAddress = 0x08100000;
+  constexpr static uint32_t k_sramStartAddress = 0x20000000;
+  constexpr static uint32_t k_sramEndAddress = 0x2003E800;
+
   // Download and upload
   bool processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength);
   bool processUploadRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);

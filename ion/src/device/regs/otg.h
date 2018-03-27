@@ -115,6 +115,7 @@ public:
       Size16 = 2,
       Size8 = 3
     };
+    using Register32::Register32;
     void setMPSIZ(MPSIZ s) volatile { setBitRange(1, 0, (uint8_t)s); }
     REGS_BOOL_FIELD(STALL, 21);
     REGS_FIELD(TXFNUM, uint8_t, 25, 22);
@@ -138,6 +139,7 @@ public:
 
   class DIEPTSIZ0 : public Register32 {
   public:
+    using Register32::Register32;
     REGS_FIELD(XFRSIZ, uint8_t, 6, 0);
     REGS_FIELD(PKTCNT, uint8_t, 20, 19);
   };

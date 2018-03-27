@@ -34,7 +34,6 @@ public:
   void autoImport();
   void autoImportScript(Script script, bool force = false);
   void runAndPrintForCommand(const char * command);
-  void removeExtensionIfAny(char * name);
 
   // ViewController
   View * view() override { return &m_selectableTableView; }
@@ -74,6 +73,9 @@ public:
   }
 #endif
 private:
+  static constexpr const char * k_importCommand1 = "from ";
+  static constexpr const char * k_importCommand2 = " import *";
+  static constexpr size_t k_maxImportCommandSize = 5 + 9 + TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
   bool inputRunLoopActive() { return m_inputRunLoopActive; }
   void askInputRunLoopTermination() { m_inputRunLoopActive = false; }
   static constexpr int LineCellType = 0;

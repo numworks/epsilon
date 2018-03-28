@@ -24,12 +24,7 @@ void Device::poll() {
     assert(grxstsp.getEPNUM() == 0);
 
     if (pktsts == OTG::GRXSTSP::PKTSTS::OutTransferCompleted || pktsts == OTG::GRXSTSP::PKTSTS::SetupTransactionCompleted) {
-      // Reset the out endpoint
-      m_ep0.setupOut();
-      // Set the NAK bit
-      m_ep0.setOutNAK(m_ep0.NAKForced());
-      // Enable the endpoint
-      m_ep0.enableOut();
+      // There is no data associated with this interrupt.
       return;
     }
 

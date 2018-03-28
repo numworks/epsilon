@@ -9,14 +9,17 @@ usb_objs += $(addprefix ion/src/device/usb/, \
 )
 
 usb_objs += $(addprefix ion/src/device/usb/stack/, \
+  bos_descriptor.o\
   configuration_descriptor.o \
   descriptor.o\
   device_descriptor.o\
+  device_capability_descriptor.o\
   dfu_functional_descriptor.o\
   interface_descriptor.o\
   language_id_string_descriptor.o \
   streamable.o\
   string_descriptor.o\
+  webusb_platform_descriptor.o\
 )
 
 USB_DFU_XIP_FLASH := 0

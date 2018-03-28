@@ -1,21 +1,36 @@
+#ifndef ION_DEVICE_USB_STACK_BOS_DESCRIPTOR_H
+#define ION_DEVICE_USB_STACK_BOS_DESCRIPTOR_H
+
+#include "descriptor.h"
+#include "device_capability_descriptor.h"
+
+namespace Ion {
+namespace USB {
+namespace Device {
+
 class BOSDescriptor : public Descriptor {
 public:
-      BOSDescriptor(const CapabilityDescriptor * capabilityDescriptors, int number) :
-      Descriptor(...)
-      m_wTotalLength(somme des size des capDesc),
-      bNumDeviceCaps(number)
-    {
-    }
-  uint16_t copy(void * target) override {
-    super::copy();
-    for (capability in m_deviceCapabilities) {
-      capability->copy(target+machinchose,...);
-    }
+  constexpr BOSDescriptor(
+      uint16_t wTotalLength,
+      uint8_t bNumDeviceCapabilities,
+      const DeviceCapabilityDescriptor * deviceCapabilities) :
+    Descriptor(0x0F),
+    m_wTotalLength(wTotalLength),
+    m_bNumDeviceCaps(bNumDeviceCapabilities),
+    m_deviceCapabilities(deviceCapabilities)
+  {
+  }
+protected:
+  void push(Channel * c) const override;
+  virtual uint8_t bLength() const override;
 private:
-    uint16_t wTotalLength; // Length of this descriptor and all of its sub descriptors
-    uint8_t bNumDeviceCaps; // The number of separate device capability descriptors in the BOS
+  uint16_t m_wTotalLength;
+  uint8_t m_bNumDeviceCaps;
+  const DeviceCapabilityDescriptor * m_deviceCapabilities;
+};
 
-  DeviceCapabilityDescriptor * m_deviceCapabilities;
-} __attribute__((packed));
+}
+}
+}
 
-static_assert(sizeof(DeviceDescriptor) == 12);
+#endif

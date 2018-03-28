@@ -43,3 +43,6 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 .PHONY: openocd
 openocd:
 	openocd -f build/device/openocd.cfg
+
+flasher.$(EXE): LDFLAGS = --gc-sections -T ion/src/device/usb/flasher.ld
+flasher.$(EXE): $(objs) $(usb_objs) ion/src/device/usb/flasher.o

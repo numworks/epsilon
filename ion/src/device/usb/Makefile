@@ -34,19 +34,19 @@ objs += $(usb_objs)
 
 else
 
-usb_objs += liba/src/assert.o
-usb_objs += liba/src/strlen.o
-usb_objs += liba/src/strlcpy.o
-usb_objs += liba/src/memset.o
-usb_objs += liba/src/memcpy.o
-usb_objs += libaxx/src/cxxabi/pure_virtual.o
-usb_objs += ion/src/device/usb/boot.o
-usb_objs += ion/src/device/keyboard.o
-usb_objs += ion/src/device/device.o
-usb_objs += ion/src/device/usb.o
+dfu_objs += liba/src/assert.o
+dfu_objs += liba/src/strlen.o
+dfu_objs += liba/src/strlcpy.o
+dfu_objs += liba/src/memset.o
+dfu_objs += liba/src/memcpy.o
+dfu_objs += libaxx/src/cxxabi/pure_virtual.o
+dfu_objs += ion/src/device/usb/boot.o
+dfu_objs += ion/src/device/keyboard.o
+dfu_objs += ion/src/device/device.o
+dfu_objs += ion/src/device/usb.o
 
-ion/src/device/usb/dfu.elf: LDFLAGS = --gc-sections -T ion/src/device/boot/dfu.ld
-ion/src/device/usb/dfu.elf: $(usb_objs)
+ion/src/device/usb/dfu.elf: LDFLAGS = --gc-sections -T ion/src/device/usb/dfu.ld
+ion/src/device/usb/dfu.elf: $(usb_objs) $(dfu_objs)
 
 ion/src/device/usb/dfu.o: ion/src/device/usb/dfu.bin
 	@echo "OBJCOPY $@"

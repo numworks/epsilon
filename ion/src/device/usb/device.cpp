@@ -82,21 +82,6 @@ void Device::poll() {
      * should always get FullSpeed, so we set the packet size accordingly. */
     return;
   }
-
-  // Handle Suspend interrupt: clear it
-  if (intsts.getUSBSUSP()) {
-    OTG.GINTSTS()->setUSBSUSP(true);
-  }
-
-  // Handle WakeUp interrupt: clear it
-  if (intsts.getWKUPINT()) {
-    OTG.GINTSTS()->setWKUPINT(true);
-  }
-
-  // Handle StartOfFrame interrupt: clear it
-  if (intsts.getSOF()) {
-    OTG.GINTSTS()->setSOF(true);
-  }
 }
 
 bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {

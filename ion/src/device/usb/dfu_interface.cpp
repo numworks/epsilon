@@ -255,7 +255,7 @@ void DFUInterface::writeOnMemory() {
 
     uint32_t * source = reinterpret_cast<uint32_t *>(m_largeBuffer);
     uint32_t * destination = reinterpret_cast<uint32_t *>(m_writeAddress);
-    for (int i=0; i<m_largeBufferLength/sizeof(uint32_t); i++) {
+    for (uint16_t i=0; i<m_largeBufferLength/sizeof(uint32_t); i++) {
       *destination++ = *source++;
     }
 

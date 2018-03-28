@@ -75,14 +75,17 @@ void initOTG() {
   while (!OTG.GRSTCTL()->getAHBIDL()) {
   }
 
-  // Core soft reset
+  /* Core soft reset: Clears the interrupts and many the CSR register bits,
+   * resets state machines, flushes the FIFOs and terminates USB transactions.*/
   OTG.GRSTCTL()->setCSRST(true);
   while (OTG.GRSTCTL()->getCSRST()) {
   }
 
-  // Enable the USB transceiver
+  /* Enable the transceiver module of the PHY. It must be done to allow any USB
+   * operation */
   OTG.GCCFG()->setPWRDWN(true);
-  // FIXME: Understand why VBDEN is required
+  /* Enable VBUS sensing comparators to detect valid levels for USB operation.
+   * This is used for instance to end the session if the host is switched off.*/
   OTG.GCCFG()->setVBDEN(true);
 
   // Get out of soft-disconnected state
@@ -91,9 +94,8 @@ void initOTG() {
   // Force peripheral only mode
   OTG.GUSBCFG()->setFDMOD(true);
 
-  /* Configure the USB turnaround time.
-   * This has to be configured depending on the AHB clock speed. */
-  OTG.GUSBCFG()->setTRDT(0x6);
+  // Configure the USB turnaround time, depending on the AHB clock speed.
+  OTG.GUSBCFG()->setTRDT(0x6); // TODO
 
   // Clear the interrupts
   OTG.GINTSTS()->set(0);
@@ -130,11 +132,13 @@ void initOTG() {
   intMask.setIEPINT(true);       // IN endpoint interrupt
   OTG.GINTMSK()->set(intMask);
 
-  // Unmask IN interrupt for endpoint 0 only
-  OTG.DAINTMSK()->setIEPM(1); //TODO not necessary as we have one endpoint only.
+  // Unmask IN interrupts for endpoint 0 only
+  OTG.DAINTMSK()->setIEPM(1);
 
-  // Unmask the IN transfer completed interrupt for all endpoints.
+  /* Unmask the IN transfer completed interrupt for all endpoints. This
+   * interrupt warns that a IN transaction happened on the endpoint. */
   OTG.DIEPMSK()->setXFRCM(true);
+
 }
 
 void shutdownOTG() {

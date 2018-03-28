@@ -3,6 +3,7 @@
 
 #include "device.h"
 #include "dfu_interface.h"
+#include "stack/bos_descriptor.h"
 #include "stack/configuration_descriptor.h"
 #include "stack/descriptor.h"
 #include "stack/device_descriptor.h"
@@ -10,6 +11,8 @@
 #include "stack/interface_descriptor.h"
 #include "stack/language_id_string_descriptor.h"
 #include "stack/string_descriptor.h"
+#include "stack/url_descriptor.h"
+#include "stack/webusb_platform_descriptor.h"
 #include <stddef.h>
 #include <assert.h>
 
@@ -60,7 +63,7 @@ public:
         4,      // iInterface: Index of the Interface string, see m_descriptor
         &m_dfuFunctionalDescriptor),
     m_configurationDescriptor(
-        9 + 9 + 9,      // wTotalLength: configuration descriptor + interface descriptor + dfu functional descriptor lengths
+        9 + 9 + 9, // wTotalLength: configuration descriptor + interface descriptor + dfu functional descriptor lengths
         1,      // bNumInterfaces
         k_bConfigurationValue, // bConfigurationValue
         0,      // iConfiguration: No string descriptor for the configuration
@@ -71,12 +74,20 @@ public:
                  * Bit 4..0: Reserved, set to 0 */
         0x32,   // bMaxPower: half of the Maximum Power Consumption
         &m_interfaceDescriptor),
+    m_webUSBPlatformDescriptor(
+        k_webUSBVendorCode,
+        k_webUSBLandingPageIndex),
+    m_bosDescriptor(
+        5 + 24, // wTotalLength: BOS descriptor + webusb platform descriptor lengths
+        1,      // bNumDeviceCapabilities
+        &m_webUSBPlatformDescriptor),
     m_languageStringDescriptor(),
     m_manufacturerStringDescriptor("NumWorks"),
     m_productStringDescriptor("Calculator"),
     m_serialNumberStringDescriptor("12345"),
     m_interfaceStringDescriptor("@Flash/0x08000000/04*016Kg,01*064Kg,07*128Kg"),
     //m_interfaceStringDescriptor("@SRAM/0x20000000/01*256Ke"), //TODO: Add this descriptor to use dfu-util to write in the SRAM
+    m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "workshop.numworks.com"),
     m_descriptors{
       &m_deviceDescriptor,             // Type = Device, Index = 0
       &m_configurationDescriptor,      // Type = Configuration, Index = 0
@@ -84,8 +95,8 @@ public:
       &m_manufacturerStringDescriptor, // Type = String, Index = 1
       &m_productStringDescriptor,      // Type = String, Index = 2
       &m_serialNumberStringDescriptor, // Type = String, Index = 3
-      &m_interfaceStringDescriptor     // Type = String, Index = 4
-
+      &m_interfaceStringDescriptor,    // Type = String, Index = 4
+      &m_bosDescriptor                 // Type = BOS, Index = 0
     },
     m_dfuInterface(&m_ep0, k_dfuInterfaceAlternateSetting)
   {
@@ -98,23 +109,35 @@ protected:
   virtual uint8_t getActiveConfiguration() override {
     return k_bConfigurationValue;
   }
+  bool processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) override;
 
 private:
   static constexpr uint8_t k_bConfigurationValue = 1;
   static constexpr uint8_t k_dfuInterfaceAlternateSetting = 0;
+  static constexpr uint8_t k_webUSBVendorCode = 1;
+  static constexpr uint8_t k_webUSBLandingPageIndex = 1;
+  bool getURLCommand(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   DeviceDescriptor m_deviceDescriptor;
   DFUFunctionalDescriptor m_dfuFunctionalDescriptor;
   InterfaceDescriptor m_interfaceDescriptor;
   ConfigurationDescriptor m_configurationDescriptor;
+  WebUSBPlatformDescriptor m_webUSBPlatformDescriptor;
+  BOSDescriptor m_bosDescriptor;
   LanguageIDStringDescriptor m_languageStringDescriptor;
   StringDescriptor m_manufacturerStringDescriptor;
   StringDescriptor m_productStringDescriptor;
   StringDescriptor m_serialNumberStringDescriptor;
   StringDescriptor m_interfaceStringDescriptor;
+  URLDescriptor m_workshopURLDescriptor;
 
-  Descriptor * m_descriptors[7];
-  /* Do not count m_interfaceDescriptor nor m_dfuFunctionalDescriptor, because
-   * they are inluded in other descriptors. */
+  Descriptor * m_descriptors[8];
+  /* m_descriptors contains only descriptors that sould be returned via the
+   * method descriptor(uint8_t type, uint8_t index), so do not count descriptors
+   * included in other descriptors or returned by other functions :
+   *   - m_interfaceDescriptor,
+   *   - m_dfuFunctionalDescriptor,
+   *   - m_webUSBPlatformDescriptor
+   *   - m_workshopURLDescriptor */
 
   DFUInterface m_dfuInterface;
 };

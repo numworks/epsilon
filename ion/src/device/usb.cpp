@@ -125,12 +125,9 @@ void initOTG() {
 
   // Pick which interrupts we're interested in
   class OTG::GINTMSK intMask(0); // Reset value
-  intMask.setENUMDNEM(true); // Speed enumeration done
-  intMask.setUSBRST(true); // USB reset
-  intMask.setRXFLVLM(true); // Receive FIFO non empty
-  intMask.setIEPINT(true); // IN endpoint interrupt
-  intMask.setWUIM(true); // Resume / wakeup
-  intMask.setUSBSUSPM(true); // USB suspend
+  intMask.setENUMDNEM(true);     // Speed enumeration done
+  intMask.setRXFLVLM(true);      // Receive FIFO non empty
+  intMask.setIEPINT(true);       // IN endpoint interrupt
   OTG.GINTMSK()->set(intMask);
 
   // Unmask IN interrupt for endpoint 0 only

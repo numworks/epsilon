@@ -1,9 +1,6 @@
-#include <apps/i18n.h>
-#include <escher/metric.h>
-#include <ion/display.h>
-#include <ion/events.h>
-#include <ion/keyboard.h>
 #include "port.h"
+
+#include <ion/keyboard.h>
 
 #include <stdint.h>
 #include <string.h>

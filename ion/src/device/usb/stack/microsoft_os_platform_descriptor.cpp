@@ -1,12 +1,12 @@
-#include "winusb_platform_descriptor.h"
+#include "microsoft_os_platform_descriptor.h"
 
 namespace Ion {
 namespace USB {
 namespace Device {
 
-constexpr uint8_t WinUSBPlatformDescriptor::k_winUSBUUID[];
+constexpr uint8_t MicrosoftOSPlatformDescriptor::k_microsoftOSUUID[];
 
-void WinUSBPlatformDescriptor::push(Channel * c) const {
+void MicrosoftOSPlatformDescriptor::push(Channel * c) const {
   PlatformDeviceCapabilityDescriptor::push(c);
   c->push(m_dwWindowsVersion);
   c->push(m_wMSOSDescriptorSetTotalLength);
@@ -14,7 +14,7 @@ void WinUSBPlatformDescriptor::push(Channel * c) const {
   c->push(m_bAltEnumCode);
 }
 
-uint8_t WinUSBPlatformDescriptor::bLength() const {
+uint8_t MicrosoftOSPlatformDescriptor::bLength() const {
   return PlatformDeviceCapabilityDescriptor::bLength() + sizeof(uint32_t) + sizeof(uint16_t) + 2*sizeof(uint8_t);
 }
 

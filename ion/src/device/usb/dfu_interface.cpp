@@ -306,10 +306,12 @@ void DFUInterface::unlockFlashMemory() {
   /* After a reset, program and erase operations are forbidden on the flash.
    * They can be unlocked by writting the appropriate keys in the FLASH_KEY
    * register. */
-  FLASH.KEYR()->set(0x45670123);
-  FLASH.KEYR()->set(0xCDEF89AB);
-  // Set the parallelism size
-  FLASH.CR()->setPSIZE(FLASH::CR::PSIZE::X32);
+  if (FLASH.CR()->getLOCK()) {
+    FLASH.KEYR()->set(0x45670123);
+    FLASH.KEYR()->set(0xCDEF89AB);
+    // Set the parallelism size
+    FLASH.CR()->setPSIZE(FLASH::CR::PSIZE::X32);
+  }
 }
 
 void DFUInterface::lockFlashMemory() {

@@ -22,6 +22,7 @@ usb_objs += $(addprefix ion/src/device/usb/stack/, \
   string_descriptor.o\
   url_descriptor.o\
   webusb_platform_descriptor.o\
+  winusb_platform_descriptor.o\
 )
 
 USB_DFU_XIP_FLASH := 0

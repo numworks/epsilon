@@ -10,6 +10,7 @@
 #include "stack/dfu_functional_descriptor.h"
 #include "stack/interface_descriptor.h"
 #include "stack/language_id_string_descriptor.h"
+#include "stack/microsoft_os_string_descriptor.h"
 #include "stack/string_descriptor.h"
 #include "stack/url_descriptor.h"
 #include "stack/webusb_platform_descriptor.h"
@@ -88,6 +89,7 @@ public:
     m_serialNumberStringDescriptor("12345"),
     m_interfaceStringDescriptor("@Flash/0x08000000/04*016Kg,01*064Kg,07*128Kg"),
     //m_interfaceStringDescriptor("@SRAM/0x20000000/01*256Ke"), //TODO: Add this descriptor to use dfu-util to write in the SRAM
+    m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
     m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "workshop.numworks.com"),
     m_descriptors{
       &m_deviceDescriptor,             // Type = Device, Index = 0
@@ -117,6 +119,7 @@ private:
   static constexpr uint8_t k_dfuInterfaceAlternateSetting = 0;
   static constexpr uint8_t k_webUSBVendorCode = 1;
   static constexpr uint8_t k_webUSBLandingPageIndex = 1;
+  static constexpr uint8_t k_microsoftOSVendorCode = 2;
   bool getURLCommand(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   DeviceDescriptor m_deviceDescriptor;
   DFUFunctionalDescriptor m_dfuFunctionalDescriptor;
@@ -129,6 +132,7 @@ private:
   StringDescriptor m_productStringDescriptor;
   StringDescriptor m_serialNumberStringDescriptor;
   StringDescriptor m_interfaceStringDescriptor;
+  MicrosoftOSStringDescriptor m_microsoftOSStringDescriptor;
   URLDescriptor m_workshopURLDescriptor;
 
   Descriptor * m_descriptors[8];

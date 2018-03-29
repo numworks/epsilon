@@ -19,6 +19,7 @@ usb_objs += $(addprefix ion/src/device/usb/stack/, \
   language_id_string_descriptor.o \
   streamable.o\
   string_descriptor.o\
+  url_descriptor.o\
   webusb_platform_descriptor.o\
 )
 

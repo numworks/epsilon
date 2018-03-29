@@ -18,7 +18,7 @@ SetupPacket::TransactionType SetupPacket::followingTransaction() const {
 }
 
 SetupPacket::RequestType SetupPacket::requestType() const {
-  return (RequestType) (m_bmRequestType & 0b01100000);
+  return (RequestType) ((m_bmRequestType & 0b01100000) >> 5);
 }
 
 SetupPacket::RecipientType SetupPacket::recipientType() const {

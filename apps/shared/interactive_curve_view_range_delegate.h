@@ -7,6 +7,7 @@ class InteractiveCurveViewRange;
 
 class InteractiveCurveViewRangeDelegate {
 public:
+  static constexpr float DefaultXRange = 10.0f;
   bool didChangeRange(InteractiveCurveViewRange * interactiveCurveViewRange);
   virtual float interestingXRange();
 protected:

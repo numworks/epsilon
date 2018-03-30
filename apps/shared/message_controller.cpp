@@ -66,11 +66,11 @@ void MessageController::ContentView::layoutSubviews() {
   KDCoordinate width = bounds().width();
   KDCoordinate titleHeight = m_titleTextView.minimalSizeForOptimalDisplay().height();
   KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
-  m_titleTextView.setFrame(KDRect(0, k_titleMargin, width, titleHeight));
-  m_messageTextView1.setFrame(KDRect(0, k_paragraphHeight, width, textHeight));
-  m_messageTextView2.setFrame(KDRect(0, k_paragraphHeight+textHeight, width, textHeight));
-  m_messageTextView3.setFrame(KDRect(0, k_paragraphHeight+2*textHeight+k_paragraphMargin, width, textHeight));
-  m_messageTextView4.setFrame(KDRect(0, k_paragraphHeight+3*textHeight+k_paragraphMargin, width, textHeight));
+  m_titleTextView.setFrame(KDRect(0, Metric::MessageScreenTitleMargin, width, titleHeight));
+  m_messageTextView1.setFrame(KDRect(0, Metric::MessageScreenParagraphHeight, width, textHeight));
+  m_messageTextView2.setFrame(KDRect(0, Metric::MessageScreenParagraphHeight+textHeight, width, textHeight));
+  m_messageTextView3.setFrame(KDRect(0, Metric::MessageScreenParagraphHeight+2*textHeight+Metric::MessageScreenParagraphMargin, width, textHeight));
+  m_messageTextView4.setFrame(KDRect(0, Metric::MessageScreenParagraphHeight+3*textHeight+Metric::MessageScreenParagraphMargin, width, textHeight));
   KDSize okSize = m_okView.minimalSizeForOptimalDisplay();
   m_skipView.setFrame(KDRect(0, height-k_bottomMargin-textHeight, width-okSize.width()-k_okMargin-k_skipMargin, textHeight));
   m_okView.setFrame(KDRect(width - okSize.width()-k_okMargin, height-okSize.height()-k_okMargin, okSize));

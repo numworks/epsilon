@@ -15,6 +15,7 @@ usb_objs += $(addprefix ion/src/device/usb/stack/, \
   device_descriptor.o\
   device_capability_descriptor.o\
   dfu_functional_descriptor.o\
+  extended_compat_id_descriptor.o \
   interface_descriptor.o\
   language_id_string_descriptor.o \
   microsoft_os_string_descriptor.o\

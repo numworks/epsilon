@@ -49,7 +49,7 @@ float GraphController::interestingXRange() {
       characteristicRange = fRange > characteristicRange ? fRange : characteristicRange;
     }
   }
-  return (characteristicRange > 0.0f ? 1.6f*characteristicRange : 10.0f);
+  return (characteristicRange > 0.0f ? 1.6f*characteristicRange : InteractiveCurveViewRangeDelegate::DefaultXRange);
 }
 
 void GraphController::selectFunctionWithCursor(int functionIndex) {

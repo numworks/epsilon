@@ -5,6 +5,7 @@ namespace Ion {
 namespace USB {
 
 bool isPlugged();
+void removeSoftDisconnect();
 void DFU();
 
 }

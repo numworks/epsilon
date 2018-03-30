@@ -12,6 +12,9 @@ USBTimer::USBTimer(AppsContainer * container) :
 bool USBTimer::fire() {
   bool needRedrawing = false;
   if (Ion::USB::isPlugged()) {
+    if (!m_previousPluggedState) {
+      Ion::USB::removeSoftDisconnect();
+    }
     if (!m_previousPluggedState && GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
       m_container->displayExamModePopUp(false);
       needRedrawing = true;

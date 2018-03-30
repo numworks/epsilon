@@ -90,6 +90,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBEnumeration) {
     switchTo(usbConnectedAppSnapshot());
     Ion::USB::DFU();
+    switchTo(appSnapshotAtIndex(0));
     didProcessEvent = true;
   } else {
     didProcessEvent = Container::dispatchEvent(event);

@@ -103,7 +103,7 @@ public:
       &m_interfaceStringDescriptor,    // Type = String, Index = 4
       &m_bosDescriptor                 // Type = BOS, Index = 0
     },
-    m_dfuInterface(&m_ep0, k_dfuInterfaceAlternateSetting)
+    m_dfuInterface(this, &m_ep0, k_dfuInterfaceAlternateSetting)
   {
   }
 protected:

@@ -79,6 +79,15 @@ void Device::poll() {
   }
 }
 
+bool Device::isSoftDisconnected() const {
+  return OTG.DCTL()->getSDIS();
+}
+
+void Device::detach() {
+  // Get in soft-disconnected state
+  OTG.DCTL()->setSDIS(true);
+}
+
 bool Device::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   // Device only handles standard requests.
   if (request->requestType() != SetupPacket::RequestType::Standard) {

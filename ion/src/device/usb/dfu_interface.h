@@ -1,6 +1,7 @@
 #ifndef ION_DEVICE_USB_DFU_INTERFACE_H
 #define ION_DEVICE_USB_DFU_INTERFACE_H
 
+#include "device.h"
 #include "interface.h"
 #include "endpoint0.h"
 #include "setup_packet.h"
@@ -15,8 +16,9 @@ namespace Device {
 class DFUInterface : public Interface {
 
 public:
-  DFUInterface(Endpoint0 * ep0, uint8_t bInterfaceAlternateSetting) :
+  DFUInterface(Device * device, Endpoint0 * ep0, uint8_t bInterfaceAlternateSetting) :
     Interface(ep0),
+    m_device(device),
     m_status(Status::OK),
     m_state(State::dfuIDLE),
     m_addressPointer(0),
@@ -42,6 +44,7 @@ protected:
 private:
   // DFU Request Codes
   enum class DFURequest {
+    Detach       = 0,
     Download     = 1,
     Upload       = 2,
     GetStatus    = 3,
@@ -149,6 +152,7 @@ private:
   // Abort
   bool dfuAbort(uint16_t * transferBufferLength);
 
+  Device * m_device;
   Status m_status;
   State m_state;
   uint32_t m_addressPointer;

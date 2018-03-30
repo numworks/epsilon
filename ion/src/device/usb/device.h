@@ -20,6 +20,8 @@ public:
   {
   }
   void poll();
+  bool isSoftDisconnected() const;
+  void detach();
 protected:
   virtual Descriptor * descriptor(uint8_t type, uint8_t index) = 0;
   virtual void setActiveConfiguration(uint8_t configurationIndex) = 0;

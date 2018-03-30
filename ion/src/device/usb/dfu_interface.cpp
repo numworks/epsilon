@@ -57,6 +57,9 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
     return true;
   }
   switch (request->bRequest()) {
+    case (uint8_t) DFURequest::Detach:
+      m_device->detach();
+      return true;
     case (uint8_t) DFURequest::Download:
       return processDownloadRequest(request->wLength(), transferBufferLength);
     case (uint8_t) DFURequest::Upload:

@@ -13,6 +13,10 @@ bool isPlugged() {
   return Device::VbusPin.group().IDR()->get(Device::VbusPin.pin());
 }
 
+void removeSoftDisconnect() {
+  OTG.DCTL()->setSDIS(false);
+}
+
 }
 }
 

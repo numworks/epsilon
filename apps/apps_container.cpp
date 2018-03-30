@@ -23,7 +23,8 @@ AppsContainer::AppsContainer() :
   m_backlightDimmingTimer(),
   m_homeSnapshot(),
   m_onBoardingSnapshot(),
-  m_hardwareTestSnapshot()
+  m_hardwareTestSnapshot(),
+  m_usbConnectedSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
@@ -40,6 +41,10 @@ App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
 
 App::Snapshot * AppsContainer::onBoardingAppSnapshot() {
   return &m_onBoardingSnapshot;
+}
+
+App::Snapshot * AppsContainer::usbConnectedAppSnapshot() {
+  return &m_usbConnectedSnapshot;
 }
 
 void AppsContainer::reset() {
@@ -83,7 +88,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool didProcessEvent = false;
 
   if (event == Ion::Events::USBEnumeration) {
-    switchTo(appSnapshotAtIndex(0));
+    switchTo(usbConnectedAppSnapshot());
     Ion::USB::DFU();
     didProcessEvent = true;
   } else {

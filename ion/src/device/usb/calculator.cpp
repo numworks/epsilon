@@ -50,11 +50,15 @@ bool Calculator::processSetupInRequest(SetupPacket * request, uint8_t * transfer
     return true;
   }
   if (request->requestType() == SetupPacket::RequestType::Vendor) {
-    if (request->bRequest() == k_webUSBVendorCode) {
-      // This is a WebUSB request
+    if (request->bRequest() == k_webUSBVendorCode && request->wIndex() == 2) {
+      // This is a WebUSB, GET_URL request
       assert(request->wValue() == k_webUSBLandingPageIndex);
-      assert(request->wIndex() == 2); // GET_URL request
       return getURLCommand(transferBuffer, transferBufferLength, transferBufferMaxLength);
+    }
+    if (request->bRequest() == k_microsoftOSVendorCode && request->wIndex() == 0x0004) {
+      // This is a Microsoft OS descriptor, Extended Compat ID request
+      assert(request->wValue() == 0);
+      return getExtendedCompatIDCommand(transferBuffer, transferBufferLength, transferBufferMaxLength);
     }
   }
   return false;
@@ -62,6 +66,11 @@ bool Calculator::processSetupInRequest(SetupPacket * request, uint8_t * transfer
 
 bool Calculator::getURLCommand(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   *transferBufferLength = m_workshopURLDescriptor.copy(transferBuffer, transferBufferMaxLength);
+  return true;
+}
+
+bool Calculator::getExtendedCompatIDCommand(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
+  *transferBufferLength = m_extendedCompatIdDescriptor.copy(transferBuffer, transferBufferMaxLength);
   return true;
 }
 

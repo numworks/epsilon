@@ -26,6 +26,10 @@ public:
   constexpr static KDCoordinate StoreRowHeight = 50;
   constexpr static KDCoordinate ToolboxRowHeight = 40;
   constexpr static KDCoordinate StackTitleHeight = 20;
+  constexpr static KDCoordinate MessageScreenTitleMargin = 40;
+  constexpr static KDCoordinate MessageScreenParagraphHeight = 100;
+  constexpr static KDCoordinate MessageScreenParagraphMargin = 13;
+
 };
 
 #endif

@@ -16,9 +16,6 @@ private:
     ContentView(I18n::Message * messages, KDColor * colors);
     void drawRect(KDContext * ctx, KDRect rect) const override;
   private:
-    constexpr static KDCoordinate k_titleMargin = 40;
-    constexpr static KDCoordinate k_paragraphHeight = 100;
-    constexpr static KDCoordinate k_paragraphMargin = 13;
     int numberOfSubviews() const override { return 7; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;

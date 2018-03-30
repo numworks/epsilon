@@ -5,6 +5,7 @@
 #include "on_boarding/app.h"
 #include "hardware_test/app.h"
 #include "on_boarding/update_controller.h"
+#include "usb/app.h"
 #include "apps_window.h"
 #include "empty_battery_window.h"
 #include "math_toolbox.h"
@@ -31,6 +32,7 @@ public:
   virtual App::Snapshot * appSnapshotAtIndex(int index) = 0;
   App::Snapshot * hardwareTestAppSnapshot();
   App::Snapshot * onBoardingAppSnapshot();
+  App::Snapshot * usbConnectedAppSnapshot();
   void reset();
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
@@ -73,6 +75,7 @@ private:
   Home::App::Snapshot m_homeSnapshot;
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;
+  USB::App::Snapshot m_usbConnectedSnapshot;
 };
 
 #endif

@@ -8,6 +8,7 @@
 #include "stack/descriptor.h"
 #include "stack/device_descriptor.h"
 #include "stack/dfu_functional_descriptor.h"
+#include "stack/extended_compat_id_descriptor.h"
 #include "stack/interface_descriptor.h"
 #include "stack/language_id_string_descriptor.h"
 #include "stack/microsoft_os_string_descriptor.h"
@@ -91,6 +92,7 @@ public:
     //m_interfaceStringDescriptor("@SRAM/0x20000000/01*256Ke"), //TODO: Add this descriptor to use dfu-util to write in the SRAM
     m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
     m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "workshop.numworks.com"),
+    m_extendedCompatIdDescriptor("WINUSB"),
     m_descriptors{
       &m_deviceDescriptor,             // Type = Device, Index = 0
       &m_configurationDescriptor,      // Type = Configuration, Index = 0
@@ -121,6 +123,7 @@ private:
   static constexpr uint8_t k_webUSBLandingPageIndex = 1;
   static constexpr uint8_t k_microsoftOSVendorCode = 2;
   bool getURLCommand(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
+  bool getExtendedCompatIDCommand(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   DeviceDescriptor m_deviceDescriptor;
   DFUFunctionalDescriptor m_dfuFunctionalDescriptor;
   InterfaceDescriptor m_interfaceDescriptor;
@@ -134,15 +137,12 @@ private:
   StringDescriptor m_interfaceStringDescriptor;
   MicrosoftOSStringDescriptor m_microsoftOSStringDescriptor;
   URLDescriptor m_workshopURLDescriptor;
+  ExtendedCompatIDDescriptor m_extendedCompatIdDescriptor;
 
   Descriptor * m_descriptors[8];
   /* m_descriptors contains only descriptors that sould be returned via the
    * method descriptor(uint8_t type, uint8_t index), so do not count descriptors
-   * included in other descriptors or returned by other functions :
-   *   - m_interfaceDescriptor,
-   *   - m_dfuFunctionalDescriptor,
-   *   - m_webUSBPlatformDescriptor
-   *   - m_workshopURLDescriptor */
+   * included in other descriptors or returned by other functions. */
 
   DFUInterface m_dfuInterface;
 };

@@ -75,11 +75,12 @@ void CurveViewRange::setTrigonometric() {
 }
 
 void CurveViewRange::setDefault() {
-  assert(m_delegate);
-  m_xMax = m_delegate->interestingXRange();
-  m_xMin = -k_displayLeftMarginRatio*m_xMax;
-  m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
-  setYAuto(true);
+  if (m_delegate) {
+    m_xMax = m_delegate->interestingXRange();
+    m_xMin = -k_displayLeftMarginRatio*m_xMax;
+    m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
+    setYAuto(true);
+  }
 }
 
 }

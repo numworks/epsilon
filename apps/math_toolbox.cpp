@@ -105,6 +105,23 @@ MathToolbox::MathToolbox() : Toolbox(nullptr, I18n::translate(rootModel()->label
 {
 }
 
+bool MathToolbox::handleEvent(Ion::Events::Event event) {
+  if (Toolbox::handleEvent(event)) {
+    return true;
+  }
+  if (event.hasText() && strlen(event.text()) == 1) {
+    char key = event.text()[0];
+    if (key >= '0' && key <= '9') {
+      int index = key == '0' ? 9 : key - '0' - 1;
+      if (index >= 0 && index < m_messageTreeModel->numberOfChildren()) {
+        scrollToAndSelectChild(index);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 TextField * MathToolbox::sender() {
   return (TextField *)Toolbox::sender();
 }
@@ -136,4 +153,11 @@ MessageTableCellWithChevron* MathToolbox::nodeCellAtIndex(int index) {
 
 int MathToolbox::maxNumberOfDisplayedRows() {
  return k_maxNumberOfDisplayedRows;
+}
+
+void MathToolbox::scrollToAndSelectChild(int i) {
+  assert(i >=0 && i<m_messageTreeModel->numberOfChildren());
+  m_selectableTableView.deselectTable();
+  m_selectableTableView.scrollToCell(0, i);
+  m_selectableTableView.selectCellAtLocation(0, i);
 }

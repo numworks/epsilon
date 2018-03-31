@@ -8,6 +8,7 @@
 class MathToolbox : public Toolbox {
 public:
   MathToolbox();
+  bool handleEvent(Ion::Events::Event event) override;
 protected:
   TextField * sender() override;
   bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;
@@ -17,6 +18,7 @@ protected:
   int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows = 6; // = 240/40
 private:
+  void scrollToAndSelectChild(int i);
   MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
   MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
 };

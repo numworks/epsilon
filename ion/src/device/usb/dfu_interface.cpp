@@ -1,4 +1,5 @@
 #include "dfu_interface.h"
+#include "../regs/cm4.h"
 #include "../regs/flash.h"
 #include <string.h>
 
@@ -78,18 +79,15 @@ bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transf
 
 bool DFUInterface::processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength) {
   if (m_state != State::dfuIDLE && m_state != State::dfuDNLOADIDLE) {
+    m_state = State::dfuERROR;
+    m_status = Status::errNOTDONE;
     m_ep0->stallTransaction();
     return false;
   }
   if (wLength == 0) {
-    if (m_state == State::dfuIDLE ) {
-      // Leave DFU routine
-      //TODO
-      return false;
-    } else {
-      // The download has ended, enter the manifestation phase.
-      m_state = State::dfuMANIFESTSYNC;
-    }
+    // Leave DFU routine: Reset the device and jump to application code
+    m_state = State::dfuMANIFESTSYNC;
+    //leaveDFUAndReset();
   } else {
     // Prepare to receive the download data
     m_ep0->clearForOutTransactions(wLength);
@@ -277,6 +275,7 @@ void DFUInterface::writeOnMemory() {
     m_status = Status::errTARGET;
     return;
   }
+
   // Reset the buffer length
   m_largeBufferLength = 0;
   // Change the interface state and status
@@ -302,8 +301,9 @@ bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, ui
   bool actionsAfterStatus = false;
   // Change the status if needed
   if (m_state == State::dfuMANIFESTSYNC) {
-    // TODO Here, go back to the code on the flash instead of the ram
-    m_state = State::dfuIDLE;
+    // Leave DFU routine: Reset the device and jump to application code
+    leaveDFUAndReset();
+    return true;
   } else if (m_state == State::dfuDNLOADSYNC) {
     m_state = State::dfuDNBUSY;
     actionsAfterStatus = true;
@@ -339,6 +339,10 @@ bool DFUInterface::dfuAbort(uint16_t * transferBufferLength) {
   m_state = State::dfuIDLE;
   *transferBufferLength = 0;
   return true;
+}
+
+void DFUInterface::leaveDFUAndReset() {
+  CM4.AIRCR()->requestReset();
 }
 
 }

@@ -1,4 +1,3 @@
-#include <apps/i18n.h>
 #include <escher/metric.h>
 #include <ion/display.h>
 #include <ion/events.h>

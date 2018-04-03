@@ -151,6 +151,8 @@ private:
   bool getState(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t maxSize);
   // Abort
   bool dfuAbort(uint16_t * transferBufferLength);
+  // Leave DFU
+  void leaveDFUAndReset();
 
   Device * m_device;
   Status m_status;

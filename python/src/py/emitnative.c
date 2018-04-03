@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -46,11 +46,10 @@
 #include <string.h>
 #include <assert.h>
 
-#include "py/nlr.h"
 #include "py/emit.h"
 #include "py/bc.h"
 
-#if 0 // print debugging info
+#if MICROPY_DEBUG_VERBOSE // print debugging info
 #define DEBUG_PRINT (1)
 #define DEBUG_printf DEBUG_printf
 #else // don't print debugging info
@@ -124,6 +123,8 @@ STATIC byte mp_f_n_args[MP_F_NUMBER_OF] = {
     [MP_F_NEW_CELL] = 1,
     [MP_F_MAKE_CLOSURE_FROM_RAW_CODE] = 3,
     [MP_F_SETUP_CODE_STATE] = 5,
+    [MP_F_SMALL_INT_FLOOR_DIVIDE] = 2,
+    [MP_F_SMALL_INT_MODULO] = 2,
 };
 
 #include "py/asmx86.h"
@@ -824,7 +825,7 @@ STATIC void emit_get_stack_pointer_to_reg_for_pop(emit_t *emit, mp_uint_t reg_de
                     break;
                 default:
                     // not handled
-                    mp_not_implemented("conversion to object");
+                    mp_raise_NotImplementedError("conversion to object");
             }
         }
 
@@ -1824,18 +1825,20 @@ STATIC void emit_native_binary_op(emit_t *emit, mp_binary_op_t op) {
     vtype_kind_t vtype_lhs = peek_vtype(emit, 1);
     vtype_kind_t vtype_rhs = peek_vtype(emit, 0);
     if (vtype_lhs == VTYPE_INT && vtype_rhs == VTYPE_INT) {
+        // for integers, inplace and normal ops are equivalent, so use just normal ops
+        if (MP_BINARY_OP_INPLACE_OR <= op && op <= MP_BINARY_OP_INPLACE_POWER) {
+            op += MP_BINARY_OP_OR - MP_BINARY_OP_INPLACE_OR;
+        }
+
         #if N_X64 || N_X86
         // special cases for x86 and shifting
-        if (op == MP_BINARY_OP_LSHIFT
-            || op == MP_BINARY_OP_INPLACE_LSHIFT
-            || op == MP_BINARY_OP_RSHIFT
-            || op == MP_BINARY_OP_INPLACE_RSHIFT) {
+        if (op == MP_BINARY_OP_LSHIFT || op == MP_BINARY_OP_RSHIFT) {
             #if N_X64
             emit_pre_pop_reg_reg(emit, &vtype_rhs, ASM_X64_REG_RCX, &vtype_lhs, REG_RET);
             #else
             emit_pre_pop_reg_reg(emit, &vtype_rhs, ASM_X86_REG_ECX, &vtype_lhs, REG_RET);
             #endif
-            if (op == MP_BINARY_OP_LSHIFT || op == MP_BINARY_OP_INPLACE_LSHIFT) {
+            if (op == MP_BINARY_OP_LSHIFT) {
                 ASM_LSL_REG(emit->as, REG_RET);
             } else {
                 ASM_ASR_REG(emit->as, REG_RET);
@@ -1844,35 +1847,48 @@ STATIC void emit_native_binary_op(emit_t *emit, mp_binary_op_t op) {
             return;
         }
         #endif
+
+        // special cases for floor-divide and module because we dispatch to helper functions
+        if (op == MP_BINARY_OP_FLOOR_DIVIDE || op == MP_BINARY_OP_MODULO) {
+            emit_pre_pop_reg_reg(emit, &vtype_rhs, REG_ARG_2, &vtype_lhs, REG_ARG_1);
+            if (op == MP_BINARY_OP_FLOOR_DIVIDE) {
+                emit_call(emit, MP_F_SMALL_INT_FLOOR_DIVIDE);
+            } else {
+                emit_call(emit, MP_F_SMALL_INT_MODULO);
+            }
+            emit_post_push_reg(emit, VTYPE_INT, REG_RET);
+            return;
+        }
+
         int reg_rhs = REG_ARG_3;
         emit_pre_pop_reg_flexible(emit, &vtype_rhs, &reg_rhs, REG_RET, REG_ARG_2);
         emit_pre_pop_reg(emit, &vtype_lhs, REG_ARG_2);
         if (0) {
             // dummy
         #if !(N_X64 || N_X86)
-        } else if (op == MP_BINARY_OP_LSHIFT || op == MP_BINARY_OP_INPLACE_LSHIFT) {
+        } else if (op == MP_BINARY_OP_LSHIFT) {
             ASM_LSL_REG_REG(emit->as, REG_ARG_2, reg_rhs);
             emit_post_push_reg(emit, VTYPE_INT, REG_ARG_2);
-        } else if (op == MP_BINARY_OP_RSHIFT || op == MP_BINARY_OP_INPLACE_RSHIFT) {
+        } else if (op == MP_BINARY_OP_RSHIFT) {
             ASM_ASR_REG_REG(emit->as, REG_ARG_2, reg_rhs);
             emit_post_push_reg(emit, VTYPE_INT, REG_ARG_2);
         #endif
-        } else if (op == MP_BINARY_OP_OR || op == MP_BINARY_OP_INPLACE_OR) {
+        } else if (op == MP_BINARY_OP_OR) {
             ASM_OR_REG_REG(emit->as, REG_ARG_2, reg_rhs);
             emit_post_push_reg(emit, VTYPE_INT, REG_ARG_2);
-        } else if (op == MP_BINARY_OP_XOR || op == MP_BINARY_OP_INPLACE_XOR) {
+        } else if (op == MP_BINARY_OP_XOR) {
             ASM_XOR_REG_REG(emit->as, REG_ARG_2, reg_rhs);
             emit_post_push_reg(emit, VTYPE_INT, REG_ARG_2);
-        } else if (op == MP_BINARY_OP_AND || op == MP_BINARY_OP_INPLACE_AND) {
+        } else if (op == MP_BINARY_OP_AND) {
             ASM_AND_REG_REG(emit->as, REG_ARG_2, reg_rhs);
             emit_post_push_reg(emit, VTYPE_INT, REG_ARG_2);
-        } else if (op == MP_BINARY_OP_ADD || op == MP_BINARY_OP_INPLACE_ADD) {
+        } else if (op == MP_BINARY_OP_ADD) {
             ASM_ADD_REG_REG(emit->as, REG_ARG_2, reg_rhs);
             emit_post_push_reg(emit, VTYPE_INT, REG_ARG_2);
-        } else if (op == MP_BINARY_OP_SUBTRACT || op == MP_BINARY_OP_INPLACE_SUBTRACT) {
+        } else if (op == MP_BINARY_OP_SUBTRACT) {
             ASM_SUB_REG_REG(emit->as, REG_ARG_2, reg_rhs);
             emit_post_push_reg(emit, VTYPE_INT, REG_ARG_2);
-        } else if (op == MP_BINARY_OP_MULTIPLY || op == MP_BINARY_OP_INPLACE_MULTIPLY) {
+        } else if (op == MP_BINARY_OP_MULTIPLY) {
             ASM_MUL_REG_REG(emit->as, REG_ARG_2, reg_rhs);
             emit_post_push_reg(emit, VTYPE_INT, REG_ARG_2);
         } else if (MP_BINARY_OP_LESS <= op && op <= MP_BINARY_OP_NOT_EQUAL) {
@@ -2158,7 +2174,7 @@ STATIC void emit_native_call_function(emit_t *emit, mp_uint_t n_positional, mp_u
                 break;
             default:
                 // this can happen when casting a cast: int(int)
-                mp_not_implemented("casting");
+                mp_raise_NotImplementedError("casting");
         }
     } else {
         assert(vtype_fun == VTYPE_PYOBJ);
@@ -2232,12 +2248,12 @@ STATIC void emit_native_raise_varargs(emit_t *emit, mp_uint_t n_args) {
 STATIC void emit_native_yield_value(emit_t *emit) {
     // not supported (for now)
     (void)emit;
-    mp_not_implemented("native yield");
+    mp_raise_NotImplementedError("native yield");
 }
 STATIC void emit_native_yield_from(emit_t *emit) {
     // not supported (for now)
     (void)emit;
-    mp_not_implemented("native yield from");
+    mp_raise_NotImplementedError("native yield from");
 }
 
 STATIC void emit_native_start_except_handler(emit_t *emit) {

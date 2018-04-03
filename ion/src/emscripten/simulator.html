@@ -6,19 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>NumWorks graphing calculator</title>
 <style>
-.keys {
-  margin-top: 20px;
-  margin-bottom: 20px; }
-
-.key {
-  margin-top: 6px;
-  border: 1px solid #333;
-  border-radius: 2px;
-  padding: 2px 3px;
-  text-align: center;
-  min-width: 26px;
-  display: inline-block; }
-
 .calculator {
   position: relative;
   display: inline-block;
@@ -41,20 +28,21 @@
     left: 19%;
     width: 63%;
     bottom: 14%; }
-    .calculator .keyboard a {
+    .calculator .keyboard span {
+      cursor: pointer;
       border-radius: 40%;
       display: block;
       float: left; }
-    .calculator .keyboard a:hover {
+    .calculator .keyboard span:hover {
       background-color: rgba(0, 0, 0, 0.1); }
-    .calculator .keyboard a:active {
+    .calculator .keyboard span:active {
       background-color: rgba(0, 0, 0, 0.2); }
     .calculator .keyboard .nav {
       position: absolute;
       top: 0;
       height: 27%;
       width: 100%; }
-      .calculator .keyboard .nav a {
+      .calculator .keyboard .nav span {
         position: absolute; }
       .calculator .keyboard .nav .left {
         top: 36%;
@@ -101,7 +89,7 @@
       top: 26.75%;
       left: 1%;
       width: 98%; }
-      .calculator .keyboard .functions a {
+      .calculator .keyboard .functions span {
         margin: 1.7% 1%;
         width: 14.65%;
         height: 0;
@@ -111,7 +99,7 @@
       top: 57%;
       left: 0.5%;
       width: 98%; }
-      .calculator .keyboard .digits a {
+      .calculator .keyboard .digits span {
         margin: 1.8% 2%;
         width: 16%;
         height: 0;
@@ -127,56 +115,56 @@
       <canvas id="screen" class="screen" oncontextmenu="event.preventDefault()"></canvas>
       <div class="keyboard">
         <div class="nav">
-          <a class="left" href="" data-key="0"></a>
-          <a class="top" href="" data-key="1"></a>
-          <a class="bottom" href="" data-key="2"></a>
-          <a class="right" href="" data-key="3"></a>
-          <a class="ok" href="" data-key="4"></a>
-          <a class="back" href="" data-key="5"></a>
-          <a class="home" href="" data-key="6"></a>
-          <a class="power" href="" data-key="7"></a>
+          <span class="left" data-key="0"></span>
+          <span class="top" data-key="1"></span>
+          <span class="bottom" data-key="2"></span>
+          <span class="right" data-key="3"></span>
+          <span class="ok" data-key="4"></span>
+          <span class="back" data-key="5"></span>
+          <span class="home" data-key="6"></span>
+          <span class="power" data-key="7"></span>
         </div>
         <div class="functions">
-          <a href="" data-key="12"></a>
-          <a href="" data-key="13"></a>
-          <a href="" data-key="14"></a>
-          <a href="" data-key="15"></a>
-          <a href="" data-key="16"></a>
-          <a href="" data-key="17"></a>
-          <a href="" data-key="18"></a>
-          <a href="" data-key="19"></a>
-          <a href="" data-key="20"></a>
-          <a href="" data-key="21"></a>
-          <a href="" data-key="22"></a>
-          <a href="" data-key="23"></a>
-          <a href="" data-key="24"></a>
-          <a href="" data-key="25"></a>
-          <a href="" data-key="26"></a>
-          <a href="" data-key="27"></a>
-          <a href="" data-key="28"></a>
-          <a href="" data-key="29"></a>
+          <span data-key="12"></span>
+          <span data-key="13"></span>
+          <span data-key="14"></span>
+          <span data-key="15"></span>
+          <span data-key="16"></span>
+          <span data-key="17"></span>
+          <span data-key="18"></span>
+          <span data-key="19"></span>
+          <span data-key="20"></span>
+          <span data-key="21"></span>
+          <span data-key="22"></span>
+          <span data-key="23"></span>
+          <span data-key="24"></span>
+          <span data-key="25"></span>
+          <span data-key="26"></span>
+          <span data-key="27"></span>
+          <span data-key="28"></span>
+          <span data-key="29"></span>
         </div>
         <div class="digits">
-          <a href="" data-key="30"></a>
-          <a href="" data-key="31"></a>
-          <a href="" data-key="32"></a>
-          <a href="" data-key="33"></a>
-          <a href="" data-key="34"></a>
-          <a href="" data-key="36"></a>
-          <a href="" data-key="37"></a>
-          <a href="" data-key="38"></a>
-          <a href="" data-key="39"></a>
-          <a href="" data-key="40"></a>
-          <a href="" data-key="42"></a>
-          <a href="" data-key="43"></a>
-          <a href="" data-key="44"></a>
-          <a href="" data-key="45"></a>
-          <a href="" data-key="46"></a>
-          <a href="" data-key="48"></a>
-          <a href="" data-key="49"></a>
-          <a href="" data-key="50"></a>
-          <a href="" data-key="51"></a>
-          <a href="" data-key="52"></a>
+          <span data-key="30"></span>
+          <span data-key="31"></span>
+          <span data-key="32"></span>
+          <span data-key="33"></span>
+          <span data-key="34"></span>
+          <span data-key="36"></span>
+          <span data-key="37"></span>
+          <span data-key="38"></span>
+          <span data-key="39"></span>
+          <span data-key="40"></span>
+          <span data-key="42"></span>
+          <span data-key="43"></span>
+          <span data-key="44"></span>
+          <span data-key="45"></span>
+          <span data-key="46"></span>
+          <span data-key="48"></span>
+          <span data-key="49"></span>
+          <span data-key="50"></span>
+          <span data-key="51"></span>
+          <span data-key="52"></span>
         </div>
       </div>
     </div>
@@ -192,12 +180,11 @@ var Module = {
 Epsilon(Module);
     </script>
     <script>
-var buttons = document.querySelectorAll(".calculator .keyboard a");
-for (var i=0; i< buttons.length; i++) {
-  var button = buttons[i];
-  button.addEventListener("click", function(e) {
+var spans = document.querySelectorAll(".calculator .keyboard span");
+for (var i=0; i< spans.length; i++) {
+  var span = spans[i];
+  span.addEventListener("click", function(e) {
     Module._IonEventsEmscriptenPushKey(this.getAttribute("data-key"));
-    e.preventDefault();
   });
 }
 

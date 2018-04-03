@@ -68,4 +68,18 @@ clean:
 	@echo "CLEAN"
 	$(Q) rm -f $(products)
 
+.PHONY: cowsay_%
+cowsay_%:
+	@echo " -------"
+	@echo "| $(*F) |"
+	@echo " -------"
+	@echo "        \\   ^__^"
+	@echo "         \\  (oo)\\_______"
+	@echo "            (__)\\       )\\/\\"
+	@echo "                ||----w |"
+	@echo "                ||     ||"
+
+.PHONY: clena
+clena: cowsay_CLENA clean
+
 -include build/targets.$(PLATFORM).mak

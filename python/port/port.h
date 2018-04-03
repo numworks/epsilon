@@ -1,6 +1,10 @@
 #ifndef PYTHON_PORT_H
 #define PYTHON_PORT_H
 
+extern "C" {
+#include <stddef.h>
+}
+
 namespace MicroPython {
 
 class ScriptProvider {

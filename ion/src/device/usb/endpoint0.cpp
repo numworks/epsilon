@@ -14,6 +14,14 @@ namespace Device {
 void Endpoint0::setup() {
   // Setup the IN direction
 
+  // Reset the device IN endpoint 0 transfer size register
+  class OTG::DIEPTSIZ0 dieptsiz0(0);
+  /* Transfer size. The core interrupts the application only after it has
+   * exhausted the transfer size amount of data. The transfer size is set to the
+   * maximum packet size, to be interrupted at the end of each packet. */
+  dieptsiz0.setXFRSIZ(k_maxPacketSize);
+  OTG.DIEPTSIZ0()->set(dieptsiz0);
+
   // Reset the device IN endpoint 0 control register
   class OTG::DIEPCTL0 diepctl0(0); // Reset value
   // Set the maximum packet size
@@ -23,14 +31,6 @@ void Endpoint0::setup() {
   // Enable the endpoint
   diepctl0.setEPENA(true);
   OTG.DIEPCTL0()->set(diepctl0);
-
-  // Reset the device IN endpoint 0 transfer size register
-  class OTG::DIEPTSIZ0 dieptsiz0(0);
-  /* Transfer size. The core interrupts the application only after it has
-   * exhausted the transfer size amount of data. The transfer size is set to the
-   * maximum packet size, to be interrupted at the end of each packet. */
-  dieptsiz0.setXFRSIZ(k_maxPacketSize);
-  OTG.DIEPTSIZ0()->set(dieptsiz0);
 
   // Setup the OUT direction
 

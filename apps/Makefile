@@ -29,7 +29,6 @@ app_objs += $(addprefix apps/,\
   shift_alpha_lock_view.o\
   suspend_timer.o\
   title_bar_view.o\
-  usb_timer.o\
   variable_box_controller.o\
   variable_box_leaf_cell.o\
 )

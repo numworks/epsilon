@@ -1,5 +1,4 @@
 #include <ion.h>
-#include "regs/otg.h"
 #include <assert.h>
 
 namespace Ion {
@@ -20,6 +19,7 @@ static bool sleepWithTimeout(int duration, int * timeout) {
 Event sLastEvent = Events::None;
 Keyboard::State sLastKeyboardState;
 bool sLastUSBPlugged = false;
+bool sLastUSBEnumerated = false;
 bool sEventIsRepeating = 0;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
@@ -41,9 +41,12 @@ Event getEvent(int * timeout) {
       sLastUSBPlugged = usbPlugged;
       return Events::USBPlug;
     }
+
     // Second, check if the USB device has been connected to an USB host
-    if (OTG.GINTSTS()->getENUMDNE()) {
-      // The device is being enumerated, the speed enumeration is finished.
+    bool usbEnumerated = USB::isEnumerated();
+    bool previousUsbEnumerated = sLastUSBEnumerated;
+    sLastUSBEnumerated = usbEnumerated;
+    if (usbEnumerated && !previousUsbEnumerated) {
       return Events::USBEnumeration;
     }
 

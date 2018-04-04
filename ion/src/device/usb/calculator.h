@@ -91,7 +91,9 @@ public:
     m_productStringDescriptor("NumWorks Calculator"),
     m_serialNumberStringDescriptor(serialNumber),
     m_interfaceStringDescriptor("@Flash/0x08000000/04*016Kg,01*064Kg,07*128Kg"),
-    //m_interfaceStringDescriptor("@SRAM/0x20000000/01*256Ke"), //TODO: Add this descriptor to use dfu-util to write in the SRAM
+    //m_interfaceStringDescriptor("@SRAM/0x20000000/01*256Ke"),
+    /* Switch to this descriptor to use dfu-util to write in the SRAM.
+     * FIXME Should be an alternate Interface. */
     m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
     m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "workshop.numworks.com"),
     m_extendedCompatIdDescriptor("WINUSB"),

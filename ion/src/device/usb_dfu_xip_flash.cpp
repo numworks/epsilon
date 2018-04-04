@@ -1,10 +1,13 @@
 #include "usb/calculator.h"
+#include <ion.h>
 
 namespace Ion {
 namespace USB {
 
 void DFU() {
-  Ion::USB::Device::Calculator::Poll();
+  if (Ion::USB::Device::Calculator::PollAndReset()) {
+    Ion::Device::jumpReset();
+  }
 }
 
 }

@@ -28,7 +28,7 @@ MEMORY {
 SECTIONS {
   .text : {
     . = ALIGN(4);
-    KEEP(*(.text._ZN3Ion3USB6Device10Calculator4PollEv))
+    KEEP(*(.text._ZN3Ion3USB6Device10Calculator12PollAndResetEv))
     *(.text)
     *(.text.*)
   } >RAM_BUFFER

@@ -91,7 +91,10 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         displayExamModePopUp(false);
       }
+      Ion::USB::enable();
       Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+    } else {
+      Ion::USB::disable();
     }
     didProcessEvent = true;
   } else if (event == Ion::Events::USBEnumeration) {

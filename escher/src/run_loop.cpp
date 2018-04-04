@@ -30,9 +30,11 @@ bool RunLoop::step() {
   // Fetch the event, if any
   int eventDuration = Timer::TickDuration;
   int timeout = eventDuration;
-  Ion::Events::Event event = Ion::Events::getEvent(&timeout);
-  eventDuration -= timeout;
 
+  Ion::Events::Event event = Ion::Events::getEvent(&timeout);
+  assert(event.isDefined());
+
+  eventDuration -= timeout;
   assert(eventDuration >= 0);
   assert(eventDuration <= Timer::TickDuration);
 
@@ -53,13 +55,6 @@ bool RunLoop::step() {
     }
   }
 
-  if (event == Ion::Events::USBEnumeration) {
-    dispatchEvent(event);
-    return true;
-  }
-
-  assert(event.isDefined());
-
 #if ESCHER_LOG_EVENTS_BINARY
   Ion::Console::writeChar((char)event.id());
 #endif
@@ -71,7 +66,7 @@ bool RunLoop::step() {
   Ion::Console::writeLine(name);
 #endif
 
-  if (event.isKeyboardEvent()) {
+  if (event != Ion::Events::None) {
     dispatchEvent(event);
   }
 

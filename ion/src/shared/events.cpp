@@ -127,7 +127,7 @@ bool Event::isDefined() const {
   if (isKeyboardEvent()) {
     return s_dataForEvent[m_id].isDefined();
   } else {
-    return (*this == None || *this == Termination);
+    return (*this == None || *this == Termination || *this == USBEnumeration || *this == USBPlug);
   }
 }
 

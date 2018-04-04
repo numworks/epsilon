@@ -55,6 +55,24 @@ void DFUInterface::wholeDataReceivedCallback(SetupPacket * request, uint8_t * tr
   }
 }
 
+void DFUInterface::wholeDataSentCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) {
+  if (request->bRequest() == (uint8_t) DFURequest::GetStatus) {
+    // Do any needed action after the GetStatus request.
+    if (m_state == State::dfuMANIFEST) {
+      // Leave DFU routine: Leave DFU, reset device, jump to application code
+      leaveDFUAndReset();
+    } else if (m_state == State::dfuDNBUSY) {
+      if (m_largeBufferLength != 0) {
+        // Here, copy the data from the transfer buffer to the flash memory
+        writeOnMemory();
+      }
+      changeAddressPointerIfNeeded();
+      eraseMemoryIfNeeded();
+      m_state = State::dfuDNLOADIDLE;
+    }
+  }
+}
+
 bool DFUInterface::processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   if (Interface::processSetupInRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength)) {
     return true;
@@ -299,28 +317,14 @@ void DFUInterface::lockFlashMemory() {
 }
 
 bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  bool actionsAfterStatus = false;
   // Change the status if needed
   if (m_state == State::dfuMANIFESTSYNC) {
-    // Leave DFU routine: Reset the device and jump to application code
-    leaveDFUAndReset();
-    return true;
+    m_state = State::dfuMANIFEST;
   } else if (m_state == State::dfuDNLOADSYNC) {
     m_state = State::dfuDNBUSY;
-    actionsAfterStatus = true;
   }
   // Copy the status on the TxFifo
   *transferBufferLength = StatusData(m_status, m_state).copy(transferBuffer, transferBufferMaxLength);
-  // Additional actions if needed
-  if (actionsAfterStatus) {
-    if (m_largeBufferLength != 0) {
-      // Here, copy the data from the transfer buffer to the flash memory
-      writeOnMemory();
-    }
-    changeAddressPointerIfNeeded();
-    eraseMemoryIfNeeded();
-    m_state = State::dfuDNLOADIDLE;
-  }
   return true;
 }
 

@@ -14,6 +14,7 @@ extern "C" {
 #include "swd.h"
 #include "usb.h"
 #include "bench/bench.h"
+#include "set_msp.h"
 
 #define USE_SD_CARD 0
 
@@ -65,8 +66,26 @@ uint32_t Ion::random() {
   return result;
 }
 
-void Ion::reset() {
+static void coreReset() {
+  // Perform a full core reset
   CM4.AIRCR()->requestReset();
+}
+
+static void jumpReset() {
+  Ion::Device::shutdown();
+  uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(0x08000000);
+  uint32_t * resetHandlerAddress = reinterpret_cast<uint32_t *>(0x08000004);
+  set_msp(*stackPointerAddress);
+  void (*ResetHandler)(void) = (void (*)())(*resetHandlerAddress);
+  ResetHandler();
+}
+
+void Ion::reset(bool jump) {
+  if (jump) {
+    jumpReset();
+  } else {
+    coreReset();
+  }
 }
 
 static inline char hex(uint8_t d) {

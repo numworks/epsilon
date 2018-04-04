@@ -38,5 +38,13 @@ SECTIONS {
     *(.rodata.*)
   } >RAM_BUFFER
 
-  /* For now, we do not need .bss and .data sections. */
+  /DISCARD/ : {
+    /* For now, we do not need .bss and .data sections. This allows us to simply
+     * skip any rt0-style initialization and jump straight into the PollAndReset
+     * routine. */
+    *(.bss)
+    *(.bss.*)
+    *(.data)
+    *(.data.*)
+  }
 }

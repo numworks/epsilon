@@ -20,8 +20,12 @@ bool isEnumerated() {
   return OTG.GINTSTS()->getENUMDNE();
 }
 
-void removeSoftDisconnect() {
+void enable() {
   OTG.DCTL()->setSDIS(false);
+}
+
+void disable() {
+  OTG.DCTL()->setSDIS(true);
 }
 
 }

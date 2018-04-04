@@ -87,7 +87,6 @@ bool DFUInterface::processDownloadRequest(uint16_t wLength, uint16_t * transferB
   if (wLength == 0) {
     // Leave DFU routine: Reset the device and jump to application code
     m_state = State::dfuMANIFESTSYNC;
-    //leaveDFUAndReset();
   } else {
     // Prepare to receive the download data
     m_ep0->clearForOutTransactions(wLength);
@@ -342,7 +341,8 @@ bool DFUInterface::dfuAbort(uint16_t * transferBufferLength) {
 }
 
 void DFUInterface::leaveDFUAndReset() {
-  CM4.AIRCR()->requestReset();
+  m_device->setResetOnDisconnect(true);
+  m_device->detach();
 }
 
 }

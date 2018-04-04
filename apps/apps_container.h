@@ -13,7 +13,6 @@
 #include "exam_pop_up_controller.h"
 #include "led_timer.h"
 #include "battery_timer.h"
-#include "usb_timer.h"
 #include "suspend_timer.h"
 #include "backlight_dimming_timer.h"
 
@@ -69,7 +68,6 @@ private:
   OnBoarding::UpdateController m_updateController;
   LedTimer m_ledTimer;
   BatteryTimer m_batteryTimer;
-  USBTimer m_USBTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
   Home::App::Snapshot m_homeSnapshot;

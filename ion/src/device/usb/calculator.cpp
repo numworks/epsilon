@@ -7,7 +7,7 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-void Calculator::Poll() {
+bool Calculator::PollAndReset() {
   Calculator c;
 
   /* Leave DFU mode if the Back key is pressed, the calculator unplugged or the
@@ -24,6 +24,8 @@ void Calculator::Poll() {
   if (!c.isSoftDisconnected()) {
     c.detach();
   }
+
+  return false;
 }
 
 Descriptor * Calculator::descriptor(uint8_t type, uint8_t index) {

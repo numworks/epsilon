@@ -24,7 +24,7 @@ namespace Device {
 
 class Calculator : public Device {
 public:
-  static void Poll();
+  static bool PollAndReset(); // Return true if reset is needed
   Calculator() :
     Device(&m_dfuInterface),
     m_deviceDescriptor(

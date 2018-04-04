@@ -10,7 +10,7 @@ extern char _dfu_bootloader_flash_end;
 namespace Ion {
 namespace USB {
 
-typedef void (*FunctionPointer)();
+typedef bool (*PollFunctionPointer)(void);
 
 void DFU() {
 
@@ -51,7 +51,7 @@ void DFU() {
   /* 4- Jump to DFU bootloader code. We made sure in the linker script that the
    * first function we want to call is at the beginning of the DFU code. */
 
-  FunctionPointer dfu_bootloader_entry = reinterpret_cast<FunctionPointer>(dfu_bootloader_ram_start);
+  PollFunctionPointer dfu_bootloader_entry = reinterpret_cast<PollFunctionPointer>(dfu_bootloader_ram_start);
 
   /* To have the right debug symbols for the reallocated code, break here and:
    *  - Get the address of the new .text section
@@ -62,7 +62,14 @@ void DFU() {
    *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
    */
 
-  dfu_bootloader_entry();
+  if (dfu_bootloader_entry()) {
+    /* We don't perform a core reset because at this point in time the USB cable
+     * is most likely plugged in. Doing a full core reset would be the clean
+     * thing to do but would therefore result in the device entering the ROMed
+     * DFU bootloader, which we want to avoid. By performing a jump-reset, we
+     * will enter the newly flashed firmware. */
+    Ion::Device::jumpReset();
+  }
 
   /* 5- That's all. The DFU bootloader on the stack is now dead code that will
    * be overwritten when the stack grows. */

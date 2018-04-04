@@ -29,7 +29,9 @@ public:
     m_bInterfaceSubClass(bInterfaceSubClass),
     m_bInterfaceProtocol(bInterfaceProtocol),
     m_iInterface(iInterface),
-    m_additionalDescriptor(additionalDescriptor) // TODO: can there be more than one additional descriptor?
+    m_additionalDescriptor(additionalDescriptor)
+    /* There could be more than one additional descriptor, but we do not need
+     * this for now. */
   {
   }
 protected:

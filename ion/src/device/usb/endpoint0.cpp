@@ -157,9 +157,20 @@ void Endpoint0::processOUTpacket() {
       m_state = State::StatusIn;
       break;
     case State::StatusOut:
-      // Read the DATA1[] sent by the host.
-      readPacket(NULL, 0);
-      m_state = State::Idle;
+      {
+        // Read the DATA1[] sent by the host.
+        readPacket(NULL, 0);
+        m_state = State::Idle;
+        // All the data has been sent. Callback the request recipient.
+        uint8_t type = static_cast<uint8_t>(m_request.recipientType());
+        if (type == 0) {
+          // Device recipient
+          m_requestRecipients[0]->wholeDataSentCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
+        } else {
+          // Interface recipient
+          m_requestRecipients[1]->wholeDataSentCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
+        }
+      }
       break;
     default:
       stallTransaction();

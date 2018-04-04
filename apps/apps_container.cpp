@@ -150,10 +150,10 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
 
 void AppsContainer::run() {
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  refreshPreferences();
 #if EPSILON_ONBOARDING_APP
   switchTo(onBoardingAppSnapshot());
 #else
-  refreshPreferences();
   if (numberOfApps() == 2) {
     switchTo(appSnapshotAtIndex(1));
   } else {

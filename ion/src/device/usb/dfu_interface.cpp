@@ -44,12 +44,14 @@ void DFUInterface::wholeDataReceivedCallback(SetupPacket * request, uint8_t * tr
       m_ep0->stallTransaction();
       return;
     }
-    // The request is a "real" download. Compute the writing address.
-    m_writeAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
-    // Store the received data until we copy it on the flash.
-    memcpy(m_largeBuffer, transferBuffer, *transferBufferLength);
-    m_largeBufferLength = *transferBufferLength;
-    m_state = State::dfuDNLOADSYNC;
+    if (request->wLength() > 0) {
+      // The request is a "real" download. Compute the writing address.
+      m_writeAddress = (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
+      // Store the received data until we copy it on the flash.
+      memcpy(m_largeBuffer, transferBuffer, *transferBufferLength);
+      m_largeBufferLength = *transferBufferLength;
+      m_state = State::dfuDNLOADSYNC;
+    }
   }
 }
 

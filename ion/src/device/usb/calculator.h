@@ -36,7 +36,7 @@ public:
         64,     // bMaxPacketSize0: Maximum packet size for endpoint 0
         0x0483, // idVendor
         0xA291, // idProduct
-        0x0001, // bcdDevice: Device Release Number //TODO
+        0x0100, // bcdDevice: Device Release Number
         1,      // iManufacturer: Index of the manufacturer name string, see m_descriptor
         2,      // iProduct: Index of the product name string, see m_descriptor
         3,      // iSerialNumber: Index of the SerialNumber string, see m_descriptor

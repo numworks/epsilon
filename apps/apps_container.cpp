@@ -18,7 +18,6 @@ AppsContainer::AppsContainer() :
   m_updateController(),
   m_ledTimer(LedTimer()),
   m_batteryTimer(BatteryTimer(this)),
-  m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
   m_backlightDimmingTimer(),
   m_homeSnapshot(),
@@ -211,11 +210,11 @@ Window * AppsContainer::window() {
 }
 
 int AppsContainer::numberOfContainerTimers() {
-  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
+  return 3+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
 }
 
 Timer * AppsContainer::containerTimerAtIndex(int i) {
-  Timer * timers[5] = {&m_batteryTimer, &m_USBTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer};
+  Timer * timers[4] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer};
   return timers[i];
 }
 

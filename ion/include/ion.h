@@ -28,7 +28,8 @@ namespace Ion {
 void msleep(long ms);
 void usleep(long us);
 
-const char * serialNumber();
+constexpr static int SerialNumberLength = 24;
+void getSerialNumber(char * buffer);
 const char * softwareVersion();
 const char * patchLevel();
 const char * fccId();

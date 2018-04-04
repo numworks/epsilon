@@ -8,7 +8,9 @@ namespace USB {
 namespace Device {
 
 bool Calculator::PollAndReset() {
-  Calculator c;
+  char serialNumber[Ion::SerialNumberLength+1];
+  Ion::getSerialNumber(serialNumber);
+  Calculator c(serialNumber);
 
   /* Leave DFU mode if the Back key is pressed, the calculator unplugged or the
    * USB core soft-disconnected. */

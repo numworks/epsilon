@@ -103,9 +103,6 @@ void initOTG() {
    * This is used for instance to end the session if the host is switched off.*/
   OTG.GCCFG()->setVBDEN(true);
 
-  // Get out of soft-disconnected state
-  OTG.DCTL()->setSDIS(false);
-
   // Force peripheral only mode
   OTG.GUSBCFG()->setFDMOD(true);
 
@@ -154,6 +151,9 @@ void initOTG() {
    * interrupt warns that a IN transaction happened on the endpoint. */
   OTG.DIEPMSK()->setXFRCM(true);
 
+  /* To communicate with a USB host, the device still needs to get out of soft-
+   * disconnected state (SDIS in the DCTL register). We do this when we detect
+   * that the USB cable is plugged. */
 }
 
 void shutdownOTG() {

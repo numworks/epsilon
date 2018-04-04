@@ -31,6 +31,7 @@ public:
   {
   }
   void wholeDataReceivedCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
+  void wholeDataSentCallback(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength) override;
 
 protected:
   void setActiveInterfaceAlternative(uint8_t interfaceAlternativeIndex) override {

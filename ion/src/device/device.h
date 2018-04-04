@@ -8,6 +8,9 @@ void init();
 void shutdown();
 
 void initFPU();
+void coreReset();
+void jumpReset();
+
 void initPeripherals();
 void shutdownPeripherals();
 void initClocks();

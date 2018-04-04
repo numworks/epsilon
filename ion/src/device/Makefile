@@ -23,6 +23,7 @@ objs += $(addprefix ion/src/device/, \
   led.o\
   power.o\
   sd_card.o\
+  set_msp.o \
   swd.o \
   usb.o \
   wakeup.o \

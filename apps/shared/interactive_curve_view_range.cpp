@@ -167,11 +167,12 @@ void InteractiveCurveViewRange::setTrigonometric() {
 }
 
 void InteractiveCurveViewRange::setDefault() {
-  if (m_delegate) {
-    m_xMax = m_delegate->interestingXRange();
-    MemoizedCurveViewRange::setXMin(-m_xMax);
-    setYAuto(true);
+  if (m_delegate == nullptr) {
+    return;
   }
+  m_xMax = m_delegate->interestingXRange();
+  MemoizedCurveViewRange::setXMin(-m_xMax);
+  setYAuto(true);
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {

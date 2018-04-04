@@ -11,8 +11,8 @@ void MCUSerial(const char * input) {
     reply(sSyntaxError);
     return;
   }
-  char response[11+24+1] = {'M', 'C', 'U', '_', 'S', 'E', 'R', 'I', 'A', 'L', '=', 0};
-  strlcpy(response+11, Ion::serialNumber(), 25);
+  char response[11+Ion::SerialNumberLength + 1] = {'M', 'C', 'U', '_', 'S', 'E', 'R', 'I', 'A', 'L', '=', 0};
+  Ion::getSerialNumber(response+11);
   reply(response);
 }
 

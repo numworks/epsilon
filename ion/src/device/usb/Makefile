@@ -49,7 +49,8 @@ ion/src/device/usb/dfu.elf: LDFLAGS = --gc-sections -T ion/src/device/boot/dfu.l
 ion/src/device/usb/dfu.elf: $(usb_objs)
 
 ion/src/device/usb/dfu.o: ion/src/device/usb/dfu.bin
-	$(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata --redefine-sym _binary_ion_src_device_usb_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_ion_src_device_usb_dfu_bin_end=_dfu_bootloader_flash_end $< $@
+	@echo "OBJCOPY $@"
+	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata --redefine-sym _binary_ion_src_device_usb_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_ion_src_device_usb_dfu_bin_end=_dfu_bootloader_flash_end $< $@
 
 objs += ion/src/device/usb/dfu.o
 objs += ion/src/device/usb_dfu_relocated_ram.o

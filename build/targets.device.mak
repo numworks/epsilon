@@ -4,11 +4,11 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
 %.hex: %.$(EXE)
 	@echo "OBJCOPY $@"
-	@$(OBJCOPY) -O ihex $< $@
+	$(Q) $(OBJCOPY) -O ihex $< $@
 
 %.bin: %.$(EXE)
 	@echo "OBJCOPY $@"
-	@$(OBJCOPY) -O binary $< $@
+	$(Q) $(OBJCOPY) -O binary $< $@
 
 .PHONY: %_size
 %_size: %.$(EXE)

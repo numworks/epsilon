@@ -16,12 +16,15 @@ class Device : public RequestRecipient {
 public:
   Device(Interface * interface) :
     RequestRecipient(&m_ep0),
-    m_ep0(this, interface)
+    m_ep0(this, interface),
+    m_resetOnDisconnect(false)
   {
   }
   void poll();
   bool isSoftDisconnected() const;
   void detach();
+  bool resetOnDisconnect() { return m_resetOnDisconnect; }
+  void setResetOnDisconnect(bool reset) { m_resetOnDisconnect = reset; }
 protected:
   virtual Descriptor * descriptor(uint8_t type, uint8_t index) = 0;
   virtual void setActiveConfiguration(uint8_t configurationIndex) = 0;
@@ -52,6 +55,8 @@ private:
   bool getDescriptor(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   bool getConfiguration(uint8_t * transferBuffer, uint16_t * transferBufferLength);
   bool setConfiguration(SetupPacket * request);
+
+  bool m_resetOnDisconnect;
 };
 
 }

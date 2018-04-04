@@ -75,18 +75,14 @@ static inline char hex(uint8_t d) {
   return '0'+d;
 }
 
-const char * Ion::serialNumber() {
-  static char serialNumber[25] = {0};
-  if (serialNumber[0] == 0) {
-    uint8_t * rawUniqueID = (uint8_t *)0x1FFF7A10;
-    for (int i=0; i<12; i++) {
-      uint8_t d = *rawUniqueID++;
-      serialNumber[2*i] = hex(d >> 4);
-      serialNumber[2*i+1] = hex(d & 0xF);
-    }
-    serialNumber[24] = 0;
+void Ion::getSerialNumber(char * buffer) {
+  uint8_t * rawUniqueID = (uint8_t *)0x1FFF7A10;
+  for (int i=0; i<SerialNumberLength/2; i++) {
+    uint8_t d = *rawUniqueID++;
+    buffer[2*i] = hex(d >> 4);
+    buffer[2*i+1] = hex(d & 0xF);
   }
-  return serialNumber;
+  buffer[SerialNumberLength] = 0;
 }
 
 // Private Ion::Device methods

@@ -75,7 +75,6 @@ void Device::poll() {
     /* In setup(), we should set the MPSIZ field in OTG_DIEPCTL0 to the maximum
      * packet size depending on the enumeration speed (found in OTG_DSTS). We
      * should always get FullSpeed, so we set the packet size accordingly. */
-    return;
   }
 }
 

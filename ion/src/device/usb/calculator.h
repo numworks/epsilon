@@ -42,18 +42,20 @@ public:
         3,      // iSerialNumber: Index of the SerialNumber string, see m_descriptor
         1),     // bNumConfigurations
     m_dfuFunctionalDescriptor(
-        0b1111, /* bmAttributes:
+        0b0011, /* bmAttributes:
                  * - bitWillDetach: If true, the device will perform a bus
                  *   detach-attach sequence when it receives a DFU_DETACH
                  *   request. The host must not issue a USB Reset.
-                 * TODO Will we attach ?
-                 * - bitManifestationTolerant: device is able to communicate via
-                 * USB after Manifestation phase
+                 * - bitManifestationTolerant: if true, the device is able to
+                 *   communicate via USB after Manifestation phase. The
+                 *   manifestation phase implies a reset in the calculator, so,
+                 *   even if the device is still plugged, it needs to be
+                 *   re-enumerated to communicate.
                  * - bitCanUpload
                  * - bitCanDnload */
-        0,      /* wDetachTimeOut: Time, in milliseconds, that the device will
-                 * wait after receipt of the DFU_DETACH request.
-                 * We do not use it as bitWillDetach = 1.*/
+        0,      /* wDetachTimeOut: Time, in milliseconds, that the device in APP
+                 * mode will wait after receipt of the DFU_DETACH request before
+                 * switching to DFU mode. It does not apply to the calculator.*/
         2048,   // wTransferSize: Maximum number of bytes that the device can accept per control-write transaction
         0x0100),// bcdDFUVersion
     m_interfaceDescriptor(

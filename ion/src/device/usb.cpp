@@ -13,6 +13,13 @@ bool isPlugged() {
   return Device::VbusPin.group().IDR()->get(Device::VbusPin.pin());
 }
 
+bool isEnumerated() {
+  /* Note: This implementation is not perfect. One would assume isEnumerated to
+   * return true for as long as the device is enumerated. But the GINTSTS
+   * register will be cleared in the poll() routine. */
+  return OTG.GINTSTS()->getENUMDNE();
+}
+
 void removeSoftDisconnect() {
   OTG.DCTL()->setSDIS(false);
 }

@@ -24,8 +24,7 @@ bool Calculator::PollAndReset() {
   if (!c.isSoftDisconnected()) {
     c.detach();
   }
-
-  return false;
+  return c.resetOnDisconnect();
 }
 
 Descriptor * Calculator::descriptor(uint8_t type, uint8_t index) {

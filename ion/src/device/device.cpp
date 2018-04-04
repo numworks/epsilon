@@ -66,27 +66,7 @@ uint32_t Ion::random() {
   return result;
 }
 
-static void coreReset() {
-  // Perform a full core reset
-  CM4.AIRCR()->requestReset();
-}
 
-static void jumpReset() {
-  Ion::Device::shutdown();
-  uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(0x08000000);
-  uint32_t * resetHandlerAddress = reinterpret_cast<uint32_t *>(0x08000004);
-  set_msp(*stackPointerAddress);
-  void (*ResetHandler)(void) = (void (*)())(*resetHandlerAddress);
-  ResetHandler();
-}
-
-void Ion::reset(bool jump) {
-  if (jump) {
-    jumpReset();
-  } else {
-    coreReset();
-  }
-}
 
 static inline char hex(uint8_t d) {
   if (d > 9) {
@@ -119,6 +99,20 @@ void initFPU() {
   CM4.CPACR()->setAccess(10, CM4::CPACR::Access::Full);
   CM4.CPACR()->setAccess(11, CM4::CPACR::Access::Full);
   // FIXME: The pipeline should be flushed at this point
+}
+
+void coreReset() {
+  // Perform a full core reset
+  CM4.AIRCR()->requestReset();
+}
+
+void jumpReset() {
+  shutdown();
+  uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(0x08000000);
+  uint32_t * resetHandlerAddress = reinterpret_cast<uint32_t *>(0x08000004);
+  set_msp(*stackPointerAddress);
+  void (*ResetHandler)(void) = (void (*)())(*resetHandlerAddress);
+  ResetHandler();
 }
 
 void init() {

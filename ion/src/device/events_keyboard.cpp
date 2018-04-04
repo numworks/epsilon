@@ -19,6 +19,7 @@ static bool sleepWithTimeout(int duration, int * timeout) {
 
 Event sLastEvent = Events::None;
 Keyboard::State sLastKeyboardState;
+bool sLastUSBPlugged = false;
 bool sEventIsRepeating = 0;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
@@ -34,7 +35,13 @@ Event getEvent(int * timeout) {
   uint64_t keysSeenUp = 0;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   while (true) {
-    // Check if the USB is plugged and if we are being enumerated by a host.
+    // First, check if the USB plugged status has changed
+    bool usbPlugged = USB::isPlugged();
+    if (usbPlugged != sLastUSBPlugged) {
+      sLastUSBPlugged = usbPlugged;
+      return Events::USBPlug;
+    }
+    // Second, check if the USB device has been connected to an USB host
     if (OTG.GINTSTS()->getENUMDNE()) {
       // The device is being enumerated, the speed enumeration is finished.
       return Events::USBEnumeration;

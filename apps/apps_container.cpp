@@ -87,7 +87,15 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 
   bool didProcessEvent = false;
 
-  if (event == Ion::Events::USBEnumeration) {
+  if (event == Ion::Events::USBPlug) {
+    if (Ion::USB::isPlugged()) {
+      if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+        displayExamModePopUp(false);
+      }
+      Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+    }
+    didProcessEvent = true;
+  } else if (event == Ion::Events::USBEnumeration) {
     switchTo(usbConnectedAppSnapshot());
     Ion::USB::DFU();
     switchTo(appSnapshotAtIndex(0));

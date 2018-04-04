@@ -122,8 +122,12 @@ private:
   static constexpr uint8_t k_webUSBVendorCode = 1;
   static constexpr uint8_t k_webUSBLandingPageIndex = 1;
   static constexpr uint8_t k_microsoftOSVendorCode = 2;
+
+  // WebUSB and MicrosoftOSDescriptor commands
   bool getURLCommand(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   bool getExtendedCompatIDCommand(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
+
+  // Descriptors
   DeviceDescriptor m_deviceDescriptor;
   DFUFunctionalDescriptor m_dfuFunctionalDescriptor;
   InterfaceDescriptor m_interfaceDescriptor;
@@ -144,6 +148,7 @@ private:
    * method descriptor(uint8_t type, uint8_t index), so do not count descriptors
    * included in other descriptors or returned by other functions. */
 
+  // Interface
   DFUInterface m_dfuInterface;
 };
 

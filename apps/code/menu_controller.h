@@ -21,6 +21,7 @@ public:
       );
   ConsoleController * consoleController() { return &m_consoleController; }
   StackViewController * stackViewController();
+  void willExitResponderChain(Responder * nextFirstResponder) override;
   void renameSelectedScript();
   void deleteScript(Script script);
   void reloadConsole();

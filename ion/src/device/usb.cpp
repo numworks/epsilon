@@ -90,7 +90,7 @@ void initOTG() {
   while (!OTG.GRSTCTL()->getAHBIDL()) {
   }
 
-  /* Core soft reset: Clears the interrupts and many the CSR register bits,
+  /* Core soft reset: Clears the interrupts and many of the CSR register bits,
    * resets state machines, flushes the FIFOs and terminates USB transactions.*/
   OTG.GRSTCTL()->setCSRST(true);
   while (OTG.GRSTCTL()->getCSRST()) {
@@ -106,8 +106,8 @@ void initOTG() {
   // Force peripheral only mode
   OTG.GUSBCFG()->setFDMOD(true);
 
-  // Configure the USB turnaround time, depending on the AHB clock speed.
-  OTG.GUSBCFG()->setTRDT(0x6); // TODO
+  // Configure the USB turnaround time, depending on the AHB clock speed (96MHz)
+  OTG.GUSBCFG()->setTRDT(0x6);
 
   // Clear the interrupts
   OTG.GINTSTS()->set(0);

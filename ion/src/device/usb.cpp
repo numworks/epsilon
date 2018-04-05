@@ -157,7 +157,12 @@ void initOTG() {
 }
 
 void shutdownOTG() {
-  //TODO ?
+  // Core soft reset
+  OTG.GRSTCTL()->setCSRST(true);
+  while (OTG.GRSTCTL()->getCSRST()) {
+  }
+  // Disable the transceiver module of the PHY
+  OTG.GCCFG()->setPWRDWN(false);
 }
 
 }

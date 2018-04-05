@@ -21,10 +21,12 @@ bool isEnumerated() {
 }
 
 void enable() {
+  // Get out of soft-disconnected state
   OTG.DCTL()->setSDIS(false);
 }
 
 void disable() {
+  // Get into soft-disconnected state
   OTG.DCTL()->setSDIS(true);
 }
 
@@ -99,6 +101,7 @@ void initOTG() {
   /* Enable the transceiver module of the PHY. It must be done to allow any USB
    * operation */
   OTG.GCCFG()->setPWRDWN(true);
+
   /* Enable VBUS sensing comparators to detect valid levels for USB operation.
    * This is used for instance to end the session if the host is switched off.*/
   OTG.GCCFG()->setVBDEN(true);
@@ -134,8 +137,8 @@ void initOTG() {
   // Unmask the interrupt line assertions
   OTG.GAHBCFG()->setGINTMSK(true);
 
-  // Restart the PHY clock.
-  OTG.PCGCCTL()->setSTPPCLK(0);
+  // Restart the PHY clock
+  OTG.PCGCCTL()->setSTPPCLK(false);
 
   // Pick which interrupts we're interested in
   class OTG::GINTMSK intMask(0); // Reset value
@@ -161,6 +164,16 @@ void shutdownOTG() {
   OTG.GRSTCTL()->setCSRST(true);
   while (OTG.GRSTCTL()->getCSRST()) {
   }
+
+  // Get into soft-disconnected state
+  OTG.DCTL()->setSDIS(true);
+
+  // Stop the PHY clock
+  OTG.PCGCCTL()->setSTPPCLK(true);
+
+  // Stop VBUS sensing
+  OTG.GCCFG()->setVBDEN(false);
+
   // Disable the transceiver module of the PHY
   OTG.GCCFG()->setPWRDWN(false);
 }

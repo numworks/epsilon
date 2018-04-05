@@ -64,9 +64,13 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
       Sequence::Type sequenceType = (Sequence::Type)selectedRow();
       if (m_sequence->type() != sequenceType) {
         m_listController->selectPreviousNewSequenceCell();
-        m_sequence->setType((Sequence::Type)selectedRow());
+        m_sequence->setType(sequenceType);
         // Invalidate sequence context cache when changing sequence type
         static_cast<App *>(app())->localContext()->resetCache();
+        // Reset the first index if the new type is "Explicit"
+        if (sequenceType == Sequence::Type::Explicit) {
+          m_sequence->setInitialRank(0);
+        }
       }
       StackViewController * stack = stackController();
       assert(stack->depth()>2);

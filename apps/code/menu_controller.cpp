@@ -48,6 +48,18 @@ StackViewController * MenuController::stackViewController() {
   return static_cast<StackViewController *>(parentResponder()->parentResponder());
 }
 
+void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
+  int selectedRow = m_selectableTableView.selectedRow();
+  int selectedColumn = m_selectableTableView.selectedColumn();
+  if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() && selectedColumn == 0) {
+    TextField * tf = static_cast<EvenOddEditableTextCell *>(m_selectableTableView.selectedCell())->editableTextCell()->textField();
+    if (tf->isEditing()) {
+      tf->setEditing(false);
+      textFieldDidAbortEditing(tf, tf->text());
+    }
+  }
+}
+
 void MenuController::didBecomeFirstResponder() {
   if (m_reloadConsoleWhenBecomingFirstResponder) {
     reloadConsole();

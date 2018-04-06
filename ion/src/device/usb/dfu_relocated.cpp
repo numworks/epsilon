@@ -1,7 +1,6 @@
 #include <ion/usb.h>
-#include "usb.h"
-#include "device.h"
-#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
 extern char _stack_end;
 extern char _dfu_bootloader_flash_start;

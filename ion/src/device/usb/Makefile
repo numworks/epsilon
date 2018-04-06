@@ -26,10 +26,11 @@ usb_objs += $(addprefix ion/src/device/usb/stack/, \
   webusb_platform_descriptor.o\
 )
 
-USB_DFU_XIP_FLASH := 0
-ifeq ($(USB_DFU_XIP_FLASH),1)
+EPSILON_USB_DFU_XIP ?= 0
 
-objs += ion/src/device/usb_dfu_xip_flash.o
+ifeq ($(EPSILON_USB_DFU_XIP),1)
+
+objs += ion/src/device/usb/dfu_xip.o
 objs += $(usb_objs)
 
 else
@@ -53,7 +54,7 @@ ion/src/device/usb/dfu.o: ion/src/device/usb/dfu.bin
 	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.rodata --redefine-sym _binary_ion_src_device_usb_dfu_bin_start=_dfu_bootloader_flash_start --redefine-sym _binary_ion_src_device_usb_dfu_bin_end=_dfu_bootloader_flash_end $< $@
 
 objs += ion/src/device/usb/dfu.o
-objs += ion/src/device/usb_dfu_relocated_ram.o
+objs += ion/src/device/usb/dfu_relocated.o
 
 products += $(usb_objs) $(addprefix ion/src/device/usb/dfu, .elf .bin)
 

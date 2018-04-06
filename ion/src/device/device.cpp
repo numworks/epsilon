@@ -130,13 +130,17 @@ void init() {
     GPIO(g).PUPDR()->set(0x00000000); // All to "None"
   }
 
+#if EPSILON_DEVICE_BENCH
   bool consolePeerConnectedOnBoot = Ion::Console::Device::peerConnected();
+#endif
 
   initPeripherals();
 
+#if EPSILON_DEVICE_BENCH
   if (consolePeerConnectedOnBoot) {
     Ion::Device::Bench::run();
   }
+#endif
 }
 
 void shutdown() {

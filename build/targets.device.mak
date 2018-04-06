@@ -51,3 +51,5 @@ else
 flasher.$(EXE):
 	@echo "Error: flasher.elf requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=1"
 endif
+
+products += flasher.$(EXE) flasher.bin

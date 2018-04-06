@@ -203,6 +203,8 @@ endif
 
 # QSTR generation
 
+generated_headers += $(addprefix python/port/genhdr/, qstrdefs.generated.h)
+
 python/port/genhdr/qstrdefs.generated.h: python/port/genhdr/qstrdefs.in.h
 	@echo "QSTRDAT $@"
 	$(Q) $(PYTHON) python/src/py/makeqstrdata.py $< > $@

@@ -5,7 +5,7 @@ namespace Ion {
 namespace USB {
 
 void DFU() {
-  if (Ion::USB::Device::Calculator::PollAndReset()) {
+  if (Ion::USB::Device::Calculator::PollAndReset(true)) {
     Ion::Device::jumpReset();
   }
 }

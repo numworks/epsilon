@@ -1,6 +1,7 @@
 #include <ion/usb.h>
 #include <string.h>
 #include <assert.h>
+#include "../device.h"
 
 extern char _stack_end;
 extern char _dfu_bootloader_flash_start;
@@ -9,7 +10,7 @@ extern char _dfu_bootloader_flash_end;
 namespace Ion {
 namespace USB {
 
-typedef bool (*PollFunctionPointer)(void);
+typedef bool (*PollFunctionPointer)(bool exitWithKeyboard);
 
 void DFU() {
 
@@ -61,7 +62,7 @@ void DFU() {
    *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
    */
 
-  if (dfu_bootloader_entry()) {
+  if (dfu_bootloader_entry(true)) {
     /* We don't perform a core reset because at this point in time the USB cable
      * is most likely plugged in. Doing a full core reset would be the clean
      * thing to do but would therefore result in the device entering the ROMed

@@ -131,7 +131,7 @@ void ConsoleController::didBecomeFirstResponder() {
 }
 
 bool ConsoleController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Home && inputRunLoopActive()) {
+  if ((event == Ion::Events::Home || event == Ion::Events::Up) && inputRunLoopActive()) {
     askInputRunLoopTermination();
     // We need to return true here because we want to actually exit from the
     // input run loop, which requires ending a dispatchEvent cycle.

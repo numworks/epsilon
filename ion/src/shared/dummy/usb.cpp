@@ -8,9 +8,6 @@ bool Ion::USB::isEnumerated() {
   return false;
 }
 
-void Ion::USB::removeSoftDisconnect() {
-}
-
 void Ion::USB::DFU() {
 }
 

@@ -18,6 +18,9 @@ namespace Poincare {
 
 float Trigonometry::characteristicXRange(const Expression * e, Context & context, Expression::AngleUnit angleUnit) {
   assert(e->numberOfOperands() == 1);
+  if (angleUnit == Expression::AngleUnit::Default) {
+    angleUnit = Preferences::sharedPreferences()->angleUnit();
+  }
   const Expression * op = e->operand(0);
   int d = op->polynomialDegree('x');
   // op is not linear so we cannot not easily find an interesting range

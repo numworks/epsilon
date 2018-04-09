@@ -5,6 +5,7 @@
 #include <poincare/static_hierarchy.h>
 #include <poincare/approximation_engine.h>
 #include <poincare/trigonometry.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
@@ -14,7 +15,7 @@ class Cosine : public StaticHierarchy<1>::StaticHierarchy  {
 public:
   Type type() const override;
   Expression * clone() const override;
-  float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
+  float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
 private:
   /* Layout */

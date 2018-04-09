@@ -5,6 +5,7 @@
 #include "on_boarding/app.h"
 #include "hardware_test/app.h"
 #include "on_boarding/update_controller.h"
+#include "usb/app.h"
 #include "apps_window.h"
 #include "empty_battery_window.h"
 #include "math_toolbox.h"
@@ -12,7 +13,6 @@
 #include "exam_pop_up_controller.h"
 #include "led_timer.h"
 #include "battery_timer.h"
-#include "usb_timer.h"
 #include "suspend_timer.h"
 #include "backlight_dimming_timer.h"
 
@@ -31,6 +31,7 @@ public:
   virtual App::Snapshot * appSnapshotAtIndex(int index) = 0;
   App::Snapshot * hardwareTestAppSnapshot();
   App::Snapshot * onBoardingAppSnapshot();
+  App::Snapshot * usbConnectedAppSnapshot();
   void reset();
   Poincare::Context * globalContext();
   MathToolbox * mathToolbox();
@@ -67,12 +68,12 @@ private:
   OnBoarding::UpdateController m_updateController;
   LedTimer m_ledTimer;
   BatteryTimer m_batteryTimer;
-  USBTimer m_USBTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;
   Home::App::Snapshot m_homeSnapshot;
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;
+  USB::App::Snapshot m_usbConnectedSnapshot;
 };
 
 #endif

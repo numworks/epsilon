@@ -66,27 +66,7 @@ uint32_t Ion::random() {
   return result;
 }
 
-static void coreReset() {
-  // Perform a full core reset
-  CM4.AIRCR()->requestReset();
-}
 
-static void jumpReset() {
-  Ion::Device::shutdown();
-  uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(0x08000000);
-  uint32_t * resetHandlerAddress = reinterpret_cast<uint32_t *>(0x08000004);
-  set_msp(*stackPointerAddress);
-  void (*ResetHandler)(void) = (void (*)())(*resetHandlerAddress);
-  ResetHandler();
-}
-
-void Ion::reset(bool jump) {
-  if (jump) {
-    jumpReset();
-  } else {
-    coreReset();
-  }
-}
 
 static inline char hex(uint8_t d) {
   if (d > 9) {
@@ -95,18 +75,14 @@ static inline char hex(uint8_t d) {
   return '0'+d;
 }
 
-const char * Ion::serialNumber() {
-  static char serialNumber[25] = {0};
-  if (serialNumber[0] == 0) {
-    uint8_t * rawUniqueID = (uint8_t *)0x1FFF7A10;
-    for (int i=0; i<12; i++) {
-      uint8_t d = *rawUniqueID++;
-      serialNumber[2*i] = hex(d >> 4);
-      serialNumber[2*i+1] = hex(d & 0xF);
-    }
-    serialNumber[24] = 0;
+void Ion::getSerialNumber(char * buffer) {
+  uint8_t * rawUniqueID = (uint8_t *)0x1FFF7A10;
+  for (int i=0; i<SerialNumberLength/2; i++) {
+    uint8_t d = *rawUniqueID++;
+    buffer[2*i] = hex(d >> 4);
+    buffer[2*i+1] = hex(d & 0xF);
   }
-  return serialNumber;
+  buffer[SerialNumberLength] = 0;
 }
 
 // Private Ion::Device methods
@@ -119,6 +95,20 @@ void initFPU() {
   CM4.CPACR()->setAccess(10, CM4::CPACR::Access::Full);
   CM4.CPACR()->setAccess(11, CM4::CPACR::Access::Full);
   // FIXME: The pipeline should be flushed at this point
+}
+
+void coreReset() {
+  // Perform a full core reset
+  CM4.AIRCR()->requestReset();
+}
+
+void jumpReset() {
+  shutdown();
+  uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(0x08000000);
+  uint32_t * resetHandlerAddress = reinterpret_cast<uint32_t *>(0x08000004);
+  set_msp(*stackPointerAddress);
+  void (*ResetHandler)(void) = (void (*)())(*resetHandlerAddress);
+  ResetHandler();
 }
 
 void init() {
@@ -140,13 +130,17 @@ void init() {
     GPIO(g).PUPDR()->set(0x00000000); // All to "None"
   }
 
+#if EPSILON_DEVICE_BENCH
   bool consolePeerConnectedOnBoot = Ion::Console::Device::peerConnected();
+#endif
 
   initPeripherals();
 
+#if EPSILON_DEVICE_BENCH
   if (consolePeerConnectedOnBoot) {
     Ion::Device::Bench::run();
   }
+#endif
 }
 
 void shutdown() {
@@ -201,12 +195,26 @@ void initClocks() {
   FLASH.ACR()->setDCEN(true);
   FLASH.ACR()->setICEN(true);
 
-  /* We're using the high-speed internal oscillator as a clock source. It runs
-   * at a fixed 16 MHz frequency, but by piping it through the PLL we can derive
-   * faster oscillations. Combining default values and a PLLQ of 4 can provide
-   * us with a 96 MHz frequency for SYSCLK. */
+  /* After reset, the device is using the high-speed internal oscillator (HSI)
+   * as a clock source, which runs at a fixed 16 MHz frequency. The HSI is not
+   * accurate enough for reliable USB operation, so we need to use the external
+   * high-speed oscillator (HSE). */
+
+  // Enable the HSE and wait for it to be ready
+  RCC.CR()->setHSEON(true);
+  while(!RCC.CR()->getHSERDY()) {
+  }
+
+  /* Given the crystal used on our device, the HSE will oscillate at 25 MHz. By
+   * piping it through a phase-locked loop (PLL) we can derive other frequencies
+   * for use in different parts of the system. Combining the default PLL values
+   * with a PLLM of 25 and a PLLQ of 4 yields both a 96 MHz frequency for SYSCLK
+   * and the required 48 MHz USB clock. */
+
+  // Configure the PLL ratios and use HSE as a PLL input
+  RCC.PLLCFGR()->setPLLM(25);
   RCC.PLLCFGR()->setPLLQ(4);
-  RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSI);
+  RCC.PLLCFGR()->setPLLSRC(RCC::PLLCFGR::PLLSRC::HSE);
   // 96 MHz is too fast for APB1. Divide it by two to reach 48 MHz
   RCC.CFGR()->setPPRE1(RCC::CFGR::AHBRatio::DivideBy2);
 
@@ -215,10 +223,13 @@ void initClocks() {
   while(!RCC.CR()->getPLLRDY()) {
   }
 
-  // Last but not least, use the PLL output as a SYSCLK source
+  // Use the PLL output as a SYSCLK source
   RCC.CFGR()->setSW(RCC::CFGR::SW::PLL);
   while (RCC.CFGR()->getSWS() != RCC::CFGR::SW::PLL) {
   }
+
+  // Now that we don't need use it anymore, turn the HSI off
+  RCC.CR()->setHSION(false);
 
   // Peripheral clocks
 
@@ -234,6 +245,12 @@ void initClocks() {
   ahb1enr.setDMA2EN(true);
   RCC.AHB1ENR()->set(ahb1enr);
 
+  // AHB2 bus
+  RCC.AHB2ENR()->setOTGFSEN(true);
+
+  // AHB3 bus
+  RCC.AHB3ENR()->setFSMCEN(true);
+
   // APB1 bus
   // We're using TIM3
   RCC.APB1ENR()->setTIM3EN(true);
@@ -247,8 +264,6 @@ void initClocks() {
   apb2enr.setSDIOEN(true);
 #endif
   RCC.APB2ENR()->set(apb2enr);
-
-  RCC.AHB3ENR()->setFSMCEN(true);
 }
 
 void shutdownClocks() {

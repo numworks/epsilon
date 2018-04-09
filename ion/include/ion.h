@@ -28,13 +28,11 @@ namespace Ion {
 void msleep(long ms);
 void usleep(long us);
 
-const char * serialNumber();
+constexpr static int SerialNumberLength = 24;
+void getSerialNumber(char * buffer);
 const char * softwareVersion();
 const char * patchLevel();
 const char * fccId();
-
-/* CAUTION: This is a complete reset! */
-void reset(bool jump = false);
 
 // CRC32 : non xor-ed, non reversed, direct, polynomial 4C11DB7
 // Only accepts whole 32bit values

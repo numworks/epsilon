@@ -5,6 +5,13 @@ namespace Ion {
 namespace USB {
 
 bool isPlugged();
+bool isEnumerated(); // Speed-enumerated, to be accurate
+
+void removeSoftDisconnect();
+
+void DFU();
+void enable();
+void disable();
 
 }
 }

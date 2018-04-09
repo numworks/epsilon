@@ -2,6 +2,7 @@
 #define ION_DEVICE_KEYBOARD_H
 
 #include <ion/keyboard.h>
+#include <ion.h>
 #include "regs/regs.h"
 
 namespace Ion {
@@ -43,6 +44,23 @@ inline uint8_t rowForKey(Key key) {
 }
 inline uint8_t columnForKey(Key key) {
   return (int)key%numberOfColumns;
+}
+
+inline void activateRow(uint8_t row) {
+  /* In open-drain mode, a 0 in the register drives the pin low, and a 1 lets
+   * the pin floating (Hi-Z). So we want to set the current row to zero and all
+   * the others to 1. */
+  uint16_t rowState = ~(1<<row);
+
+  // TODO: Assert pin numbers are sequentials and dynamically find 9 and 0
+  Device::RowGPIO.ODR()->setBitRange(9, 0, rowState);
+
+  // TODO: 100 us seems to work, but wasn't really calculated
+  usleep(100);
+}
+
+inline bool columnIsActive(uint8_t column) {
+  return !(Device::ColumnGPIO.IDR()->getBitRange(column,column));
 }
 
 }

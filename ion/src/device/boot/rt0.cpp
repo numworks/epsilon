@@ -24,7 +24,7 @@ void abort() {
   while (1) {
   }
 #else
-  Ion::reset();
+  Ion::Device::coreReset();
 #endif
 }
 

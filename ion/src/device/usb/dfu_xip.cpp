@@ -1,4 +1,5 @@
 #include "calculator.h"
+#include "../device.h"
 
 namespace Ion {
 namespace USB {

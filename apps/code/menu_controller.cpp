@@ -296,7 +296,12 @@ bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
 }
 
 bool MenuController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Left && textField->isEditing() && textField->cursorLocation() == 0) {
+  if (event == Ion::Events::Right && textField->isEditing() && textField->cursorLocation() == textField->draftTextLength()) {
+    return true;
+  }
+  if (event == Ion::Events::Clear && textField->isEditing()) {
+    textField->setText(ScriptStore::k_scriptExtension);
+    textField->setCursorLocation(0);
     return true;
   }
   return false;

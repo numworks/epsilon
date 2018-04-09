@@ -20,7 +20,7 @@ bool Calculator::PollAndReset(bool exitWithKeyboard) {
 
   Ion::Keyboard::Device::activateRow(exitKeyRow);
 
-  while ((exitWithKeyboard && !Ion::Keyboard::Device::columnIsActive(exitKeyColumn)) &&
+  while (!(exitWithKeyboard && Ion::Keyboard::Device::columnIsActive(exitKeyColumn)) &&
       Ion::USB::isPlugged() &&
       !c.isSoftDisconnected()) {
     c.poll();

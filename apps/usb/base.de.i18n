@@ -1,0 +1,7 @@
+USBConnected = "DER RECHNER ANGESCHLOSSEN IST"
+ConnectedMessage1 = "Um Daten zu übertragen, verbinden"
+ConnectedMessage2 = "Sie sich von Ihrem Computer an"
+ConnectedMessage3 = "workshop.numworks.com"
+ConnectedMessage4 = "Drücken Sie die RETURN-Taste am"
+ConnectedMessage5 = "Taschenrechner oder ausstecken Sie ihn,"
+ConnectedMessage6 = "um die Verbindung zu trennen."

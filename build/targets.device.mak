@@ -4,11 +4,11 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 
 %.hex: %.$(EXE)
 	@echo "OBJCOPY $@"
-	@$(OBJCOPY) -O ihex $< $@
+	$(Q) $(OBJCOPY) -O ihex $< $@
 
 %.bin: %.$(EXE)
 	@echo "OBJCOPY $@"
-	@$(OBJCOPY) -O binary $< $@
+	$(Q) $(OBJCOPY) -O binary $< $@
 
 .PHONY: %_size
 %_size: %.$(EXE)
@@ -36,10 +36,20 @@ products += $(patsubst %.$(EXE),%.map,$(filter %.$(EXE),$(products)))
 	@echo "DFU     $@"
 	@echo "INFO    About to flash your device. Please plug your device to your computer"
 	@echo "        using an USB cable and press the RESET button the back of your device."
-	@until dfu-util -l | grep "Internal Flash" > /dev/null 2>&1; do sleep 1;done
+	@until dfu-util -l | grep "Flash" > /dev/null 2>&1; do sleep 1;done
 	@echo "DFU     $@"
-	@dfu-util -i 0 -a 0 -s 0x08000000:leave -D $<
+	$(Q) dfu-util -i 0 -a 0 -s 0x08000000:leave -D $<
 
 .PHONY: openocd
 openocd:
 	openocd -f build/device/openocd.cfg
+
+ifeq ($(EPSILON_USB_DFU_XIP)$(EPSILON_DEVICE_BENCH),10)
+flasher.$(EXE): LDFLAGS = --gc-sections -T ion/src/device/usb/flasher.ld
+flasher.$(EXE): $(objs) $(usb_objs) ion/src/device/usb/flasher.o
+else
+flasher.$(EXE):
+	@echo "Error: flasher.elf requires EPSILON_DEVICE_BENCH=0 EPSILON_USB_DFU_XIP=1"
+endif
+
+products += flasher.$(EXE) flasher.bin

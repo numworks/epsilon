@@ -18,6 +18,8 @@ static bool sleepWithTimeout(int duration, int * timeout) {
 
 Event sLastEvent = Events::None;
 Keyboard::State sLastKeyboardState;
+bool sLastUSBPlugged = false;
+bool sLastUSBEnumerated = false;
 bool sEventIsRepeating = 0;
 constexpr int delayBeforeRepeat = 200;
 constexpr int delayBetweenRepeat = 50;
@@ -33,6 +35,21 @@ Event getEvent(int * timeout) {
   uint64_t keysSeenUp = 0;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
   while (true) {
+    // First, check if the USB plugged status has changed
+    bool usbPlugged = USB::isPlugged();
+    if (usbPlugged != sLastUSBPlugged) {
+      sLastUSBPlugged = usbPlugged;
+      return Events::USBPlug;
+    }
+
+    // Second, check if the USB device has been connected to an USB host
+    bool usbEnumerated = USB::isEnumerated();
+    bool previousUsbEnumerated = sLastUSBEnumerated;
+    sLastUSBEnumerated = usbEnumerated;
+    if (usbEnumerated && !previousUsbEnumerated) {
+      return Events::USBEnumeration;
+    }
+
     Keyboard::State state = Keyboard::scan();
     keysSeenUp |= ~state;
     keysSeenTransitionningFromUpToDown = keysSeenUp & state;

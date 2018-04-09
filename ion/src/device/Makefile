@@ -1,5 +1,6 @@
 include ion/src/device/boot/Makefile
 include ion/src/device/bench/Makefile
+include ion/src/device/usb/Makefile
 
 ion/src/shared/platform_info.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))" -DFORCE_LINK="__attribute__((used))"
 

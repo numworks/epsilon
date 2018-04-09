@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include <ion/events.h>
-#include "../shared/message_controller.h"
 #include "menu_controller.h"
 #include "script_store.h"
 #include "python_toolbox.h"

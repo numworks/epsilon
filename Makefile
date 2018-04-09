@@ -46,8 +46,11 @@ products += $(dependencies)
 
 $(all_objs): $(generated_headers)
 
+epsilon.$(EXE): $(objs)
+test.$(EXE): $(objs)
+
 .SECONDARY: $(objs)
-%.$(EXE): $(objs)
+%.$(EXE):
 	@echo "LD      $@"
 	$(Q) $(LD) $^ $(LDFLAGS) -o $@
 

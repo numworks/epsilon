@@ -26,6 +26,7 @@ constexpr const CommandList sCommandList = CommandList(handles);
 constexpr int kMaxCommandLength = 255;
 
 void run() {
+  Ion::Display::pushRectUniform(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);
   char command[kMaxCommandLength];
   while (true) {
     Ion::Console::readLine(command, kMaxCommandLength);

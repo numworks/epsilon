@@ -5,6 +5,6 @@ void ion_main(int argc, char * argv[]) {
   while (true) {
     while (!OTG.GINTSTS()->getENUMDNE()) {
     }
-    Ion::USB::Device::Calculator::PollAndReset();
+    Ion::USB::Device::Calculator::PollAndReset(false);
   }
 }

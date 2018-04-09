@@ -7,7 +7,7 @@ namespace Ion {
 namespace USB {
 namespace Device {
 
-bool Calculator::PollAndReset() {
+bool Calculator::PollAndReset(bool exitWithKeyboard) {
   char serialNumber[Ion::SerialNumberLength+1];
   Ion::getSerialNumber(serialNumber);
   Calculator c(serialNumber);
@@ -20,7 +20,9 @@ bool Calculator::PollAndReset() {
 
   Ion::Keyboard::Device::activateRow(exitKeyRow);
 
-  while (!(Ion::Keyboard::Device::columnIsActive(exitKeyColumn)) && Ion::USB::isPlugged() && !c.isSoftDisconnected()) {
+  while ((exitWithKeyboard && !Ion::Keyboard::Device::columnIsActive(exitKeyColumn)) &&
+      Ion::USB::isPlugged() &&
+      !c.isSoftDisconnected()) {
     c.poll();
   }
   if (!c.isSoftDisconnected()) {

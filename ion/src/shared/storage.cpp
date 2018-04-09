@@ -1,10 +1,11 @@
 #include <ion.h>
 #include <string.h>
 #include <assert.h>
-
-Ion::Storage storage;
+#include "default_record.h"
 
 namespace Ion {
+
+Storage storage;
 
 Storage::Record::Record(const char * name) {
   if (name == nullptr) {
@@ -30,10 +31,24 @@ Storage::Storage() :
   assert(m_magicFooter == Magic);
   // Set the size of the first record to 0
   overrideSizeAtPosition(m_buffer, 0);
+ for (int i = 0; i < DefaultRecord::k_numberOfDefaultScripts; i++) {
+    createScript(DefaultRecord::defaultScripts[i][0], DefaultRecord::defaultScripts[i][1]);
+  }
 }
 
 size_t Storage::availableSize() {
   return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
+}
+
+Storage::Record::ErrorStatus Storage::createScript(const char * name, const char * content) {
+  size_t scriptSize = strlen(content)+1;
+  char * body = new char[scriptSize+1];
+  body[0] = 1;
+  strlcpy(body+1, content, scriptSize);
+  Storage::Record::ErrorStatus err = createRecord(name, body, scriptSize+1);
+  assert(err != Storage::Record::ErrorStatus::NonCompliantName);
+  delete[] body;
+  return err;
 }
 
 Storage::Record::ErrorStatus Storage::createRecord(const char * name, const void * data, size_t size) {

@@ -14,9 +14,6 @@ constexpr char ScriptStore::k_defaultScriptName[];
 
 ScriptStore::ScriptStore()
 {
-  addScriptFromTemplate(ScriptTemplate::Factorial());
-  addScriptFromTemplate(ScriptTemplate::Mandelbrot());
-  addScriptFromTemplate(ScriptTemplate::Polynomial());
 }
 
 void ScriptStore::deleteAllScripts() {
@@ -26,7 +23,7 @@ void ScriptStore::deleteAllScripts() {
 }
 
 bool ScriptStore::isFull() {
-  return (numberOfScripts() >= k_maxNumberOfScripts || storage.availableSize() < k_fullFreeSpaceSizeLimit);
+  return (numberOfScripts() >= k_maxNumberOfScripts || Ion::storage.availableSize() < k_fullFreeSpaceSizeLimit);
 }
 
 void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction, ScanCallback storeVariable) {
@@ -117,17 +114,6 @@ const char * ScriptStore::contentOfScript(const char * name) {
     return nullptr;
   }
   return script.readContent();
-}
-
-Script::ErrorStatus ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
-  size_t scriptSize = strlen(scriptTemplate->content())+1;
-  char * body = new char[scriptSize+Script::k_importationStatusSize];
-  body[0] = 1;
-  strlcpy(body+Script::k_importationStatusSize, scriptTemplate->content(), scriptSize);
-  Script::ErrorStatus err = storage.createRecord(scriptTemplate->name(), body, scriptSize+Script::k_importationStatusSize);
-  assert(err != Script::ErrorStatus::NonCompliantName);
-  delete[] body;
-  return err;
 }
 
 const char * ScriptStore::structID(mp_parse_node_struct_t *structNode) {

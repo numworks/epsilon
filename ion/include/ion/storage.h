@@ -7,11 +7,14 @@ namespace Ion {
 
 class Storage;
 
-}
+/* Using a singleton pattern to init storage would prevent from static
+ * initialization order fiasco. However, we need to store the address of the
+ * storage object in the header section of the flash which prevent from
+ * initializing storage at run-time. Finally, to get around the initialization
+ * order fiasco, we avoid using storage in any other constructor but Storage().
+ */
 
-extern Ion::Storage storage;
-
-namespace Ion {
+extern Storage storage;
 
 /* Storage : | Magic |             Record1             |            Record2              | ... | Magic |
  *           | Magic | Size1(uint16_t) | Name1 | Body1 | Size2(uint16_t) | Name2 | Body2 | ... | Magic */
@@ -66,6 +69,7 @@ public:
   Storage();
   size_t availableSize();
   Record::ErrorStatus createRecord(const char * name, const void * data, size_t size);
+  Record::ErrorStatus createScript(const char * name, const char * content);
   int numberOfRecordsWithExtension(const char * extension);
   Record recordWithExtensionAtIndex(const char * extension, int index);
   Record recordNamed(const char * name);

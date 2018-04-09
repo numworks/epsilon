@@ -16,7 +16,6 @@ app_objs += $(addprefix apps/code/,\
   script_node_cell.o\
   script_parameter_controller.o\
   script_store.o\
-  script_template.o\
   variable_box_controller.o\
 )
 

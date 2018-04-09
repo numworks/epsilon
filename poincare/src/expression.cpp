@@ -177,6 +177,9 @@ bool Expression::isApproximate(Context & context) const {
 }
 
 float Expression::characteristicXRange(Context & context, AngleUnit angleUnit) const {
+  if (angleUnit == AngleUnit::Default) {
+    angleUnit = Preferences::sharedPreferences()->angleUnit();
+  }
   /* A expression has a characteristic range if at least one of its operand has
    * one and the other are x-independant. We keep the biggest interesting range
    * among the operand interesting ranges. */

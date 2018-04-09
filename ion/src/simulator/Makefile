@@ -1,7 +1,6 @@
 objs += $(addprefix ion/src/simulator/, \
   init.o\
   led.o\
-  usb.o\
 )
 
 objs += $(addprefix ion/src/simulator/boot/, main.o)
@@ -18,6 +17,7 @@ objs += $(addprefix ion/src/shared/, \
   dummy/backlight.o \
   dummy/battery.o \
   dummy/fcc_id.o \
+  dummy/usb.o \
 )
 
 SFLAGS += `fltk-config --cflags`

@@ -32,8 +32,9 @@ bool isHex(char c) {
 
 uint32_t hexNumber(const char * s) {
   uint32_t result = 0;
-  while (*s != NULL) {
-    result = (result << 4) | hexChar(*s++);
+  int8_t digit = 0;
+  while ((digit = hexChar(*s++)) >= 0) {
+    result = (result << 4) | digit;
   }
   return result;
 }

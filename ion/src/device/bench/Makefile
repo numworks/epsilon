@@ -15,5 +15,6 @@ objs += $(addprefix ion/src/device/bench/command/, \
   led.o \
   mcu_serial.o \
   ping.o \
+  print.o \
   suspend.o \
 )

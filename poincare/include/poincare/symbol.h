@@ -40,7 +40,7 @@ public:
   bool isMatrixSymbol() const;
   bool isScalarSymbol() const;
   bool isApproximate(Context & context) const;
-  float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
+  float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
   bool hasAnExactRepresentation(Context & context) const;
 private:
   const char * textForSpecialSymbols(char name) const;

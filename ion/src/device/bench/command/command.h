@@ -19,6 +19,7 @@ void Keyboard(const char * input);
 void LED(const char * input);
 void MCUSerial(const char * input);
 void Ping(const char * input);
+void Print(const char * input);
 void Suspend(const char * input);
 
 extern const char * const sOK;

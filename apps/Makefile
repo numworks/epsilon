@@ -2,6 +2,7 @@ include apps/shared/Makefile
 include apps/home/Makefile
 include apps/on_boarding/Makefile
 include apps/hardware_test/Makefile
+include apps/usb/Makefile
 snapshots =
 
 # All selected apps are included. Each Makefile below is responsible for setting
@@ -28,7 +29,6 @@ app_objs += $(addprefix apps/,\
   shift_alpha_lock_view.o\
   suspend_timer.o\
   title_bar_view.o\
-  usb_timer.o\
   variable_box_controller.o\
   variable_box_leaf_cell.o\
 )

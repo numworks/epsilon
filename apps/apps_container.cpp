@@ -18,12 +18,12 @@ AppsContainer::AppsContainer() :
   m_updateController(),
   m_ledTimer(LedTimer()),
   m_batteryTimer(BatteryTimer(this)),
-  m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
   m_backlightDimmingTimer(),
   m_homeSnapshot(),
   m_onBoardingSnapshot(),
-  m_hardwareTestSnapshot()
+  m_hardwareTestSnapshot(),
+  m_usbConnectedSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
@@ -40,6 +40,10 @@ App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
 
 App::Snapshot * AppsContainer::onBoardingAppSnapshot() {
   return &m_onBoardingSnapshot;
+}
+
+App::Snapshot * AppsContainer::usbConnectedAppSnapshot() {
+  return &m_usbConnectedSnapshot;
 }
 
 void AppsContainer::reset() {
@@ -80,7 +84,27 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   bool alphaLockWantsRedraw = updateAlphaLock();
 
-  bool didProcessEvent = Container::dispatchEvent(event);
+  bool didProcessEvent = false;
+
+  if (event == Ion::Events::USBPlug) {
+    if (Ion::USB::isPlugged()) {
+      if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+        displayExamModePopUp(false);
+      }
+      Ion::USB::enable();
+      Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+    } else {
+      Ion::USB::disable();
+    }
+    didProcessEvent = true;
+  } else if (event == Ion::Events::USBEnumeration) {
+    switchTo(usbConnectedAppSnapshot());
+    Ion::USB::DFU();
+    switchTo(appSnapshotAtIndex(0));
+    didProcessEvent = true;
+  } else {
+    didProcessEvent = Container::dispatchEvent(event);
+  }
 
   if (!didProcessEvent) {
     didProcessEvent = processEvent(event);
@@ -126,10 +150,10 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
 
 void AppsContainer::run() {
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  refreshPreferences();
 #if EPSILON_ONBOARDING_APP
   switchTo(onBoardingAppSnapshot());
 #else
-  refreshPreferences();
   if (numberOfApps() == 2) {
     switchTo(appSnapshotAtIndex(1));
   } else {
@@ -189,11 +213,11 @@ Window * AppsContainer::window() {
 }
 
 int AppsContainer::numberOfContainerTimers() {
-  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
+  return 3+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
 }
 
 Timer * AppsContainer::containerTimerAtIndex(int i) {
-  Timer * timers[5] = {&m_batteryTimer, &m_USBTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer};
+  Timer * timers[4] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer};
   return timers[i];
 }
 

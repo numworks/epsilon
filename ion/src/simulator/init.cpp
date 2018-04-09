@@ -1,6 +1,7 @@
 extern "C" {
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 }
 #include <chrono>
@@ -116,6 +117,6 @@ void Ion::msleep(long ms) {
   }
 }
 
-const char * Ion::serialNumber() {
-  return "Simulator";
+void Ion::getSerialNumber(char * buffer) {
+  strlcpy(buffer, "Simulator", Ion::SerialNumberLength+1);
 }

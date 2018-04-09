@@ -16,6 +16,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("LED", Command::LED),
   CommandHandler("MCU_SERIAL", Command::MCUSerial),
   CommandHandler("PING", Command::Ping),
+  CommandHandler("PRINT", Command::Print),
   CommandHandler("SUSPEND", Command::Suspend),
   CommandHandler(nullptr, nullptr)
 };

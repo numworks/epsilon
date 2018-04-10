@@ -31,7 +31,7 @@ extern const char * const sOFF;
 void reply(const char * s);
 int8_t hexChar(char c);
 bool isHex(char c);
-uint32_t hexNumber(const char * s);
+uint32_t hexNumber(const char * s, int maxLength = -1);
 
 }
 }

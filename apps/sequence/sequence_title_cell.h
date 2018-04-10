@@ -8,7 +8,7 @@ namespace Sequence {
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:
   SequenceTitleCell(Orientation orientation);
-  void setExpression(Poincare::ExpressionLayout * expressionLayout);
+  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;

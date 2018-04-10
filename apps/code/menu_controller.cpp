@@ -343,8 +343,8 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   return false;
 }
 
-bool MenuController::textFieldDidAbortEditing(TextField * textField, const char * text) {
-  if (strlen(text) <= strlen(ScriptStore::k_scriptExtension)) {
+bool MenuController::textFieldDidAbortEditing(TextField * textField) {
+  if (strlen(textField->text()) <= strlen(ScriptStore::k_scriptExtension)) {
     // The previous text was an empty name. Use a numbered default script name.
     char numberedDefaultName[k_defaultScriptNameMaxSize];
     numberedDefaultScriptName(numberedDefaultName);

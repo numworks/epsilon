@@ -10,9 +10,11 @@
 
 class VariableBoxController : public StackViewController {
 public:
+  typedef void (*Action)(void * sender, const char * text);
   VariableBoxController(Poincare::GlobalContext * context);
   void didBecomeFirstResponder() override;
-  void setTextFieldCaller(TextField * textField);
+  void setTextFieldSender(TextField * textField);
+  void setScrollableExpressionViewWithCursorSender(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor);
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
@@ -31,7 +33,8 @@ private:
     KDCoordinate cumulatedHeightFromIndex(int j) override;
     int indexFromCumulatedHeight(KDCoordinate offsetY) override;
     int typeAtLocation(int i, int j) override;
-    void setTextFieldCaller(TextField * textField);
+    void setTextFieldSender(TextField * textField);
+    void setScrollableExpressionViewWithCursorSender(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor);
     void reloadData();
     void resetPage();
     void viewDidDisappear() override;
@@ -55,9 +58,11 @@ private:
     void putLabelAtIndexInBuffer(int index, char * buffer);
     I18n::Message nodeLabelAtIndex(int index);
     const Poincare::Expression * expressionForIndex(int index);
-
+    static void insertTextInTextInput(void * sender, const char * textToInsert);
+    static void insertTextInScrollableExpressionViewWithCursor(void * sender, const char * textToInsert);
     Poincare::GlobalContext * m_context;
-    TextField * m_textFieldCaller;
+    Responder * m_sender;
+    Action m_insertTextAction;
     int m_firstSelectedRow;
     int m_previousSelectedRow;
     Page m_currentPage;

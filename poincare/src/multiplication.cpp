@@ -42,7 +42,7 @@ int Multiplication::polynomialDegree(char symbolName) const {
     if (d < 0) {
       return -1;
     }
-    degree += operand(i)->polynomialDegree(symbolName);
+    degree += d;
   }
   return degree;
 }

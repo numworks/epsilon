@@ -55,9 +55,19 @@ void start() {
    * between _init_array_start and _init_array_end. So to initialize all C++
    * static objects we just have to iterate between theses two addresses and
    * call the pointed function. */
+#define SUPPORT_CPP_GLOBAL_CONSTRUCTORS 0
+#if SUPPORT_CPP_GLOBAL_CONSTRUCTORS
   for (cxx_constructor * c = &_init_array_start; c<&_init_array_end; c++) {
     (*c)();
   }
+#else
+  /* In practice, static initialized objects are a terrible idea. Since the init
+   * order is not specified, most often than not this yields the dreaded static
+   * init order fiasco. How about bypassing the issue altogether? */
+  if (&_init_array_start != &_init_array_end) {
+    abort();
+  }
+#endif
 
   Ion::Device::init();
 

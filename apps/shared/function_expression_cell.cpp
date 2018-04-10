@@ -11,8 +11,8 @@ FunctionExpressionCell::FunctionExpressionCell() :
 {
 }
 
-void FunctionExpressionCell::setExpression(ExpressionLayout * expressionLayout) {
-  m_expressionView.setExpression(expressionLayout);
+void FunctionExpressionCell::setExpressionLayout(ExpressionLayout * expressionLayout) {
+  m_expressionView.setExpressionLayout(expressionLayout);
 }
 
 void FunctionExpressionCell::setTextColor(KDColor textColor) {

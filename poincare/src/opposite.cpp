@@ -1,16 +1,16 @@
 #include <poincare/opposite.h>
+#include "layout/char_layout.h"
+#include "layout/horizontal_layout.h"
+#include <cmath>
 #include <poincare/complex.h>
+#include <poincare/layout_engine.h>
 #include <poincare/multiplication.h>
-#include <poincare/simplification_engine.h>
 #include <poincare/rational.h>
+#include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-#include <cmath>
-#include "layout/horizontal_layout.h"
-#include "layout/parenthesis_layout.h"
-#include "layout/string_layout.h"
 
 namespace Poincare {
 
@@ -69,11 +69,14 @@ Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
 ExpressionLayout * Opposite::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * children_layouts[2];
-  char string[2] = {'-', '\0'};
-  children_layouts[0] = new StringLayout(string, 1);
-  children_layouts[1] = operand(0)->type() == Type::Opposite ? new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat)) : operand(0)->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(children_layouts, 2);
+  HorizontalLayout * result = new HorizontalLayout(new CharLayout('-'), false);
+  if (operand(0)->type() == Type::Opposite) {
+    result->addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false), 1, false);
+    return result;
+  }
+  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 1, false);
+  return result;
+
 }
 
 int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

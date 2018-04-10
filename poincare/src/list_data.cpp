@@ -6,6 +6,11 @@ extern "C" {
 
 namespace Poincare {
 
+ListData::ListData() :
+  m_numberOfOperands(0),
+  m_operands(new Expression*[0])
+{}
+
 ListData::ListData(Expression * operand) :
   m_numberOfOperands(1),
   m_operands(new Expression*[1])

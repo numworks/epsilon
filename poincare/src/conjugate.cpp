@@ -22,7 +22,7 @@ Expression * Conjugate::clone() const {
 ExpressionLayout * Conjugate::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new ConjugateLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
+  return new ConjugateLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
 }
 
 Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {

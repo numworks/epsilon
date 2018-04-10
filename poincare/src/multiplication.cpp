@@ -1,26 +1,22 @@
+#include <poincare/multiplication.h>
+#include <poincare/addition.h>
+#include <poincare/arithmetic.h>
+#include <poincare/division.h>
+#include <poincare/matrix.h>
+#include <poincare/opposite.h>
+#include <poincare/parenthesis.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
+#include <poincare/simplification_root.h>
+#include <poincare/subtraction.h>
+#include <poincare/tangent.h>
+#include <poincare/undefined.h>
+#include <cmath>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-#include <cmath>
-
-#include <poincare/multiplication.h>
-#include <poincare/rational.h>
-#include <poincare/addition.h>
-#include <poincare/power.h>
-#include <poincare/opposite.h>
-#include <poincare/undefined.h>
-#include <poincare/parenthesis.h>
-#include <poincare/subtraction.h>
-#include <poincare/tangent.h>
-#include <poincare/division.h>
-#include <poincare/arithmetic.h>
-#include <poincare/simplification_root.h>
-#include <poincare/matrix.h>
-#include <ion.h>
-#include "layout/string_layout.h"
-#include "layout/horizontal_layout.h"
-#include "layout/parenthesis_layout.h"
 
 namespace Poincare {
 

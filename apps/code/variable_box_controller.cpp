@@ -113,8 +113,9 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
 }
 
 void VariableBoxController::ContentViewController::insertTextInCaller(const char * text) {
-  char commandBuffer[strlen(text)+1];
-  Shared::ToolboxHelpers::TextToInsertForCommandText(text, commandBuffer);
+  int commandBufferMaxSize = strlen(text)+1;
+  char commandBuffer[commandBufferMaxSize];
+  Shared::ToolboxHelpers::TextToInsertForCommandText(text, commandBuffer, commandBufferMaxSize);
   m_textInputCaller->handleEventWithText(commandBuffer);
 }
 

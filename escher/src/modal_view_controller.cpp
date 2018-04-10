@@ -95,6 +95,11 @@ bool ModalViewController::ContentView::isDisplayingModal() const {
   return m_isDisplayingModal;
 }
 
+void ModalViewController::ContentView::reload() {
+  markRectAsDirty(frame());
+  layoutSubviews();
+}
+
 ModalViewController::ModalViewController(Responder * parentResponder, ViewController * child) :
   ViewController(parentResponder),
   m_contentView(),
@@ -161,4 +166,8 @@ void ModalViewController::viewDidDisappear() {
     m_currentModalViewController->viewDidDisappear();
   }
   m_regularViewController->viewDidDisappear();
+}
+
+void ModalViewController::reloadView() {
+  m_contentView.reload();
 }

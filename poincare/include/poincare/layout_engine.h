@@ -18,7 +18,6 @@ public:
   static ExpressionLayout * createLogLayout(ExpressionLayout * argument, ExpressionLayout * index);
 
   /* Expression to Text */
-  typedef bool (*OperandNeedsParenthesis)(const Expression * e);
   static int writeInfixExpressionTextInBuffer(
       const Expression * expression,
       char * buffer,

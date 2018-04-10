@@ -1,14 +1,13 @@
 #ifndef CODE_SCRIPT_STORE_H
 #define CODE_SCRIPT_STORE_H
 
+#include <ion.h>
 #include "script.h"
 #include "script_template.h"
 #include <python/port/port.h>
 extern "C" {
 #include "py/parse.h"
 }
-
-extern Ion::Storage storage;
 
 namespace Code {
 
@@ -20,13 +19,13 @@ public:
 
   ScriptStore();
   Script scriptAtIndex(int index) {
-    return Script(storage.recordWithExtensionAtIndex(k_scriptExtension, index));
+    return Script(Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(k_scriptExtension, index));
   }
   Script scriptNamed(const char * name) {
-    return Script(storage.recordNamed(name));
+    return Script(Ion::Storage::sharedStorage()->recordNamed(name));
   }
   int numberOfScripts() {
-    return storage.numberOfRecordsWithExtension(k_scriptExtension);
+    return Ion::Storage::sharedStorage()->numberOfRecordsWithExtension(k_scriptExtension);
   }
   Ion::Storage::Record::ErrorStatus addNewScript() {
     return addScriptFromTemplate(ScriptTemplate::Empty());

@@ -26,7 +26,7 @@ void ScriptStore::deleteAllScripts() {
 }
 
 bool ScriptStore::isFull() {
-  return (numberOfScripts() >= k_maxNumberOfScripts || storage.availableSize() < k_fullFreeSpaceSizeLimit);
+  return (numberOfScripts() >= k_maxNumberOfScripts || Ion::Storage::sharedStorage()->availableSize() < k_fullFreeSpaceSizeLimit);
 }
 
 void ScriptStore::scanScriptsForFunctionsAndVariables(void * context, ScanCallback storeFunction, ScanCallback storeVariable) {
@@ -124,7 +124,7 @@ Script::ErrorStatus ScriptStore::addScriptFromTemplate(const ScriptTemplate * sc
   char * body = new char[scriptSize+Script::k_importationStatusSize];
   body[0] = 1;
   strlcpy(body+Script::k_importationStatusSize, scriptTemplate->content(), scriptSize);
-  Script::ErrorStatus err = storage.createRecord(scriptTemplate->name(), body, scriptSize+Script::k_importationStatusSize);
+  Script::ErrorStatus err = Ion::Storage::sharedStorage()->createRecord(scriptTemplate->name(), body, scriptSize+Script::k_importationStatusSize);
   assert(err != Script::ErrorStatus::NonCompliantName);
   delete[] body;
   return err;

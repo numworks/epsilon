@@ -3,8 +3,6 @@
 
 namespace Poincare {
 
-const Integer Arithmetic::k_primorial32("525896479052627740771371797072411912900610967452630");
-
 Integer Arithmetic::LCM(const Integer * a, const Integer * b) {
   if (a->isZero() || b->isZero()) {
     return Integer(0);
@@ -47,7 +45,8 @@ void Arithmetic::PrimeFactorization(const Integer * n, Integer * outputFactors, 
   if (m.isEqualTo(Integer(1))) {
     return;
   }
-  if (k_primorial32.isLowerThan(m)) {
+  const Integer primorial32("525896479052627740771371797072411912900610967452630");
+  if (primorial32.isLowerThan(m)) {
     /* Special case 1: We do not want to break i in prime factor because it
      * might take too many factors... More than k_maxNumberOfPrimeFactors.
      * outputCoefficients[0] is set to -1 to indicate a special case. */

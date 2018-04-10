@@ -298,7 +298,7 @@ void HorizontalLayout::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int ind
   DynamicLayoutHierarchy::mergeChildrenAtIndex(eL, newIndex, removeEmptyChildren);
 }
 
-int HorizontalLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const {
+int HorizontalLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (numberOfChildren() == 0) {
     if (bufferSize == 0) {
       return -1;

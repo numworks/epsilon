@@ -14,7 +14,7 @@ AppsContainer::AppsContainer() :
   m_emptyBatteryWindow(),
   m_globalContext(),
   m_variableBoxController(&m_globalContext),
-  m_examPopUpController(),
+  m_examPopUpController(this),
   m_updateController(),
   m_ledTimer(LedTimer()),
   m_batteryTimer(BatteryTimer(this)),
@@ -90,8 +90,9 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     if (Ion::USB::isPlugged()) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         displayExamModePopUp(false);
+      } else {
+        Ion::USB::enable();
       }
-      Ion::USB::enable();
       Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
     } else {
       Ion::USB::disable();
@@ -206,6 +207,12 @@ OnBoarding::UpdateController * AppsContainer::updatePopUpController() {
 
 void AppsContainer::redrawWindow() {
   m_window.redraw();
+}
+
+void AppsContainer::examDeactivatingPopUpIsDismissed() {
+  if (Ion::USB::isPlugged()) {
+    Ion::USB::enable();
+  }
 }
 
 Window * AppsContainer::window() {

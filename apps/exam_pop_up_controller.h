@@ -2,15 +2,19 @@
 #define APPS_EXAM_POP_UP_CONTROLLER_H
 
 #include <escher.h>
+#include "exam_pop_up_controller_delegate.h"
 
 class ExamPopUpController : public ViewController {
 public:
-  ExamPopUpController();
+  ExamPopUpController(ExamPopUpControllerDelegate * delegate);
+  void setActivatingExamMode(bool activingExamMode);
+  bool isActivatingExamMode() const { return m_isActivatingExamMode; }
+  // View Controller
   View * view() override;
+  void viewDidDisappear() override;
+  // Responder
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setActivatingExamMode(bool activingExamMode);
-  bool isActivatingExamMode();
 private:
   class ContentView : public View {
   public:
@@ -36,6 +40,7 @@ private:
   };
   ContentView m_contentView;
   bool m_isActivatingExamMode;
+  ExamPopUpControllerDelegate * m_delegate;
 };
 
 #endif

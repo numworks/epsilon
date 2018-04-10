@@ -11,6 +11,7 @@
 #include "math_toolbox.h"
 #include "variable_box_controller.h"
 #include "exam_pop_up_controller.h"
+#include "exam_pop_up_controller_delegate.h"
 #include "led_timer.h"
 #include "battery_timer.h"
 #include "suspend_timer.h"
@@ -23,7 +24,7 @@
 
 #include <ion/events.h>
 
-class AppsContainer : public Container {
+class AppsContainer : public Container, ExamPopUpControllerDelegate {
 public:
   AppsContainer();
   static bool poincareCircuitBreaker();
@@ -47,6 +48,8 @@ public:
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::UpdateController * updatePopUpController();
   void redrawWindow();
+  // Exam pop-up controller delegate
+  void examDeactivatingPopUpIsDismissed() override;
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
 private:

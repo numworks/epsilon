@@ -1,5 +1,6 @@
 #include <poincare/symbol.h>
 
+#include <poincare/context.h>
 #include <poincare/complex.h>
 #include <poincare/division.h>
 #include <poincare/multiplication.h>

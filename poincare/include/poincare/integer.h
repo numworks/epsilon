@@ -3,9 +3,10 @@
 
 #include <stdint.h>
 #include <assert.h>
-#include <poincare/expression_layout.h>
 
 namespace Poincare {
+
+class ExpressionLayout;
 
 /* All algorithm should be improved with:
  * Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann */

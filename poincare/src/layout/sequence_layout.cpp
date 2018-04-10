@@ -136,7 +136,7 @@ char SequenceLayout::XNTChar() const {
   return 'n';
 }
 
-int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize) const {
+int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   assert(operatorName != nullptr);
   if (bufferSize == 0) {
     return -1;
@@ -152,7 +152,7 @@ int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * 
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the argument
-  numberOfChar += const_cast<SequenceLayout *>(this)->argumentLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += const_cast<SequenceLayout *>(this)->argumentLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
@@ -160,7 +160,7 @@ int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * 
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the lower bound
-  numberOfChar += const_cast<SequenceLayout *>(this)->lowerBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += const_cast<SequenceLayout *>(this)->lowerBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
@@ -168,7 +168,7 @@ int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * 
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the upper bound
-  numberOfChar += const_cast<SequenceLayout *>(this)->upperBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += const_cast<SequenceLayout *>(this)->upperBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the closing parenthesis

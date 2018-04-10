@@ -80,7 +80,7 @@ bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldReco
   return false;
 }
 
-int BracketLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+int BracketLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

@@ -11,7 +11,7 @@ class CharLayout : public StaticLayoutHierarchy<0> {
 public:
   CharLayout(char c, KDText::FontSize fontSize = KDText::FontSize::Large);
   ExpressionLayout * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
     return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, m_char);
   }
 

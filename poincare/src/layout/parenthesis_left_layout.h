@@ -12,7 +12,7 @@ class ParenthesisLeftLayout : public ParenthesisLeftRightLayout {
 public:
   using ParenthesisLeftRightLayout::ParenthesisLeftRightLayout;
   ExpressionLayout * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
     return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, '(');
   }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;

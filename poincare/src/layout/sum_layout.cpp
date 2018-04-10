@@ -27,8 +27,8 @@ ExpressionLayout * SumLayout::clone() const {
   return layout;
 }
 
-int SumLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
-  return SequenceLayout::writeDerivedClassInBuffer("sum", buffer, bufferSize);
+int SumLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+  return SequenceLayout::writeDerivedClassInBuffer("sum", buffer, bufferSize, numberOfSignificantDigits);
 }
 
 void SumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

@@ -24,7 +24,7 @@ public:
   // grid's children, do not call this function.
 
   /* Expression engine */
-  int writeTextInBuffer(char * buffer, int bufferSize) const override { return 0; }
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override { return 0; }
 
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

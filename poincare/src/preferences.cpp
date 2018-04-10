@@ -3,8 +3,6 @@
 
 namespace Poincare {
 
-static Preferences s_preferences;
-
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
   m_displayMode(PrintFloat::Mode::Decimal),
@@ -14,7 +12,8 @@ Preferences::Preferences() :
 }
 
 Preferences * Preferences::sharedPreferences() {
-  return &s_preferences;
+  static Preferences preferences;
+  return &preferences;
 }
 
 Expression::AngleUnit Preferences::angleUnit() const {

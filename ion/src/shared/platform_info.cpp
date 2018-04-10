@@ -1,9 +1,6 @@
 #include <ion.h>
 #include <assert.h>
 
-#define STR_EXPAND(arg) #arg
-#define STR(arg) STR_EXPAND(arg)
-
 #ifndef PATCH_LEVEL
 #error This file expects PATCH_LEVEL to be defined
 #endif

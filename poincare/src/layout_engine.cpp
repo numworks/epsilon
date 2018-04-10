@@ -87,7 +87,7 @@ int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expressio
 }
 
 int LayoutEngine::writeInfixExpressionLayoutTextInBuffer(const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis) {
-  return writeInfixExpressionOrExpressionLayoutTextInBuffer(nullptr, expressionLayout, buffer, bufferSize, numberOfDigits, operatorName, firstChildIndex, lastChildIndex, [](const Expression * e) { return true; }, childNeedsParenthesis);
+  return writeInfixExpressionOrExpressionLayoutTextInBuffer(nullptr, expressionLayout, buffer, bufferSize, numberOfDigits, operatorName, firstChildIndex, lastChildIndex, childNeedsParenthesis);
 }
 
 int LayoutEngine::writePrefixExpressionLayoutTextInBuffer(const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, bool writeFirstChild) {

@@ -15,8 +15,8 @@ void Print(const char * input) {
     return;
   }
 
-  char x = hexNumber(input);
-  char y = hexNumber(input+3);
+  char x = hexNumber(input, 2);
+  char y = hexNumber(input+3, 2);
 
   KDContext * ctx = KDIonContext::sharedContext();
   ctx->drawString(input+6, KDPoint(x, y));

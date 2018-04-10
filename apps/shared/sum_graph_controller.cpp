@@ -144,7 +144,7 @@ bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const 
   return false;
 }
 
-bool SumGraphController::textFieldDidAbortEditing(TextField * textField, const char * text) {
+bool SumGraphController::textFieldDidAbortEditing(TextField * textField) {
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
   double parameter = NAN;
   switch(m_step) {
@@ -265,7 +265,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     childrenLayouts[0] = m_sumLayout;
     m_sumLayout = new HorizontalLayout(childrenLayouts, 3);
   }
-  m_sum.setExpression(m_sumLayout);
+  m_sum.setExpressionLayout(m_sumLayout);
   if (step == Step::Result) {
     m_sum.setAlignment(0.5f, 0.5f);
   } else {

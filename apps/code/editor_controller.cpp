@@ -87,13 +87,14 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
         indentationIndex++;
       }
     }
-    char indentationBuffer[50]; // FIXME
+    char * indentationBuffer = new char [indentationSize+2];
     indentationBuffer[0] = '\n';
     for (int i = 0; i < indentationSize; i++) {
       indentationBuffer[i+1] = ' ';
     }
     indentationBuffer[indentationSize+1] = 0;
     textArea->handleEventWithText(indentationBuffer);
+    delete[] indentationBuffer;
     return true;
   }
 

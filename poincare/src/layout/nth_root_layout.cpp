@@ -171,17 +171,17 @@ bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecom
 }
 
 static_assert('\x90' == Ion::Charset::Root, "Unicode error");
-int NthRootLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+int NthRootLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   // Case: root(x,n)
   if (numberOfChildren() == 2
       && (const_cast<NthRootLayout *>(this))->indexLayout()
       && !(const_cast<NthRootLayout *>(this))->indexLayout()->isEmpty())
   {
-    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "root");
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "root");
   }
   // Case: squareRoot(x)
   if (numberOfChildren() == 1) {
-    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "\x90");
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "\x90");
   }
   // Case: root(x,empty)
   // Write "'SquareRootSymbol'('radicandLayout')".
@@ -202,7 +202,7 @@ int NthRootLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
     return bufferSize-1;
   }
 
-  numberOfChar += (const_cast<NthRootLayout *>(this))->radicandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += (const_cast<NthRootLayout *>(this))->radicandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   buffer[numberOfChar++] = ')';

@@ -61,7 +61,7 @@ bool EmptyVisibleLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shoul
   return false;
 }
 
-int EmptyVisibleLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+int EmptyVisibleLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

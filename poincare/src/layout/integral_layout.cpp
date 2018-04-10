@@ -160,7 +160,7 @@ bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldReco
   return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
-int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -179,7 +179,7 @@ int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   }
 
   // Write the argument
-  numberOfChar += const_cast<IntegralLayout *>(this)->integrandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += const_cast<IntegralLayout *>(this)->integrandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
@@ -187,7 +187,7 @@ int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the lower bound
-  numberOfChar += const_cast<IntegralLayout *>(this)->lowerBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += const_cast<IntegralLayout *>(this)->lowerBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
@@ -195,7 +195,7 @@ int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the upper bound
-  numberOfChar += const_cast<IntegralLayout *>(this)->upperBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += const_cast<IntegralLayout *>(this)->upperBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the closing parenthesis

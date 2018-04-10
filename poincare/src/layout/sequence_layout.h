@@ -19,7 +19,7 @@ public:
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
-  int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize) const;
+  int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
   ExpressionLayout * lowerBoundLayout();
   ExpressionLayout * upperBoundLayout();
   ExpressionLayout * argumentLayout();

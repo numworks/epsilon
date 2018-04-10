@@ -2,6 +2,7 @@
 #define POINCARE_BRACKET_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
+#include <poincare/print_float.h>
 
 namespace Poincare {
 
@@ -12,7 +13,7 @@ public:
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  int writeTextInBuffer(char * buffer, int bufferSize) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 protected:
   ExpressionLayout * operandLayout();
   KDCoordinate externWidthMargin() const { return 2; }

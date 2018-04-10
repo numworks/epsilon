@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_LAYOUT_H
 
 #include <kandinsky.h>
+#include <poincare/print_float.h>
 
 namespace Poincare {
 
@@ -92,7 +93,7 @@ public:
   virtual bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
 
   /* Expression Engine */
-  virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
+  virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Other */
   bool addGreySquaresToAllMatrixAncestors();

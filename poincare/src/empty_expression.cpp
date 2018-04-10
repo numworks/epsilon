@@ -13,11 +13,11 @@ Expression * EmptyExpression::clone() const {
   return new EmptyExpression();
 }
 
-int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize) const {
+int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, Ion::Charset::Empty);
 }
 
-ExpressionLayout * EmptyExpression::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * EmptyExpression::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   return new EmptyVisibleLayout();
 }
 

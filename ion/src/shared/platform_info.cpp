@@ -16,10 +16,6 @@
 #define HEADER_SECTION
 #endif
 
-#ifndef FORCE_LINK
-#define FORCE_LINK
-#endif
-
 extern Ion::Storage storage;
 
 class PlatformInfo {

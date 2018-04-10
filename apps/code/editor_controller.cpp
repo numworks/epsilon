@@ -5,8 +5,6 @@
 #include <apps/code/app.h>
 #include <escher/metric.h>
 
-extern Ion::Storage storage;
-
 namespace Code {
 
 EditorController::EditorController(MenuController * menuController) :
@@ -28,7 +26,7 @@ void EditorController::setScript(Script script) {
   m_script = script;
   const char * scriptBody = m_script.readContent();
   size_t scriptBodySize = strlen(scriptBody)+1;
-  size_t availableScriptSize = scriptBodySize + storage.availableSize();
+  size_t availableScriptSize = scriptBodySize + Ion::storage.availableSize();
   assert(m_areaBuffer == nullptr);
   m_areaBuffer = new char[availableScriptSize];
   strlcpy(m_areaBuffer, scriptBody, scriptBodySize);

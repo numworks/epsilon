@@ -20,15 +20,13 @@
 #define FORCE_LINK
 #endif
 
-extern Ion::Storage storage;
-
 class PlatformInfo {
 public:
   constexpr PlatformInfo() :
     m_header(Magic),
     m_version{EPSILON_VERSION},
     m_patchLevel{PATCH_LEVEL},
-    m_storageAddress(&storage),
+    m_storageAddress(&Ion::storage),
     m_footer(Magic) { }
   const char * version() const {
     assert(m_storageAddress != nullptr);

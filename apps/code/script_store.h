@@ -2,13 +2,10 @@
 #define CODE_SCRIPT_STORE_H
 
 #include "script.h"
-#include "script_template.h"
 #include <python/port/port.h>
 extern "C" {
 #include "py/parse.h"
 }
-
-extern Ion::Storage storage;
 
 namespace Code {
 
@@ -20,16 +17,16 @@ public:
 
   ScriptStore();
   Script scriptAtIndex(int index) {
-    return Script(storage.recordWithExtensionAtIndex(k_scriptExtension, index));
+    return Script(Ion::storage.recordWithExtensionAtIndex(k_scriptExtension, index));
   }
   Script scriptNamed(const char * name) {
-    return Script(storage.recordNamed(name));
+    return Script(Ion::storage.recordNamed(name));
   }
   int numberOfScripts() {
-    return storage.numberOfRecordsWithExtension(k_scriptExtension);
+    return Ion::storage.numberOfRecordsWithExtension(k_scriptExtension);
   }
   Ion::Storage::Record::ErrorStatus addNewScript() {
-    return addScriptFromTemplate(ScriptTemplate::Empty());
+    return Ion::storage.createScript(".py", "from math import *\n");
   }
   void deleteAllScripts();
   bool isFull();
@@ -41,7 +38,9 @@ public:
   /* MicroPython::ScriptProvider */
   const char * contentOfScript(const char * name) override;
 
-  Ion::Storage::Record::ErrorStatus addScriptFromTemplate(const ScriptTemplate * scriptTemplate);
+  Ion::Storage::Record::ErrorStatus addScript(const char * name, const char * content) {
+    return Ion::storage.createScript(name, content);
+  }
 private:
   /* If the storage available space has a smaller size than
    * k_fullFreeSpaceSizeLimit, we consider the script store as full.

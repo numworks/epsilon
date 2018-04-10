@@ -58,8 +58,7 @@ void App::Snapshot::setOpt(const char * name, char * value) {
       *separator = 0;
       const char * scriptName = value;
       const char * scriptContent = separator+1;
-      Code::ScriptTemplate script(scriptName, scriptContent);
-      m_scriptStore.addScriptFromTemplate(&script);
+      m_scriptStore.addScript(scriptName, scriptContent);
       return;
   }
   if (strcmp(name, "lock-on-console") == 0) {

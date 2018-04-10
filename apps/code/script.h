@@ -18,6 +18,7 @@ public:
   const char * readContent() const;
   ErrorStatus writeContent(const char * data, size_t size);
 
+private:
   constexpr static size_t k_importationStatusSize = 1;
 };
 

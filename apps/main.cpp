@@ -1,8 +1,6 @@
 #include "apps_container_storage.h"
 #include "global_preferences.h"
 
-AppsContainerStorage container;
-
 void ion_main(int argc, char * argv[]) {
 #if EPSILON_GETOPT
   for (int i=1; i<argc; i++) {
@@ -30,8 +28,8 @@ void ion_main(int argc, char * argv[]) {
      * $ ./epsilon.elf --code-script hello_world.py:print("hello") --code-lock-on-console
      */
     const char * appNames[] = {"home", EPSILON_APPS_NAMES};
-    for (int j = 0; j < container.numberOfApps(); j++) {
-      App::Snapshot * snapshot = container.appSnapshotAtIndex(j);
+    for (int j = 0; j < AppsContainerStorage::sharedContainer()->numberOfApps(); j++) {
+      App::Snapshot * snapshot = AppsContainerStorage::sharedContainer()->appSnapshotAtIndex(j);
       int cmp = strcmp(argv[i]+2, appNames[j]);
       if (cmp == '-') {
         snapshot->setOpt(argv[i]+2+strlen(appNames[j])+1, argv[i+1]);
@@ -40,5 +38,5 @@ void ion_main(int argc, char * argv[]) {
     }
   }
 #endif
-  container.run();
+  AppsContainerStorage::sharedContainer()->run();
 }

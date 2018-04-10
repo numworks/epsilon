@@ -5,16 +5,17 @@
 #include "../sequence_title_cell.h"
 #include "../sequence_store.h"
 #include "../../shared/function_expression_cell.h"
-#include "type_parameter_controller.h"
-#include "../../shared/new_function_cell.h"
 #include "../../shared/list_controller.h"
+#include "../../shared/new_function_cell.h"
+#include "../../shared/scrollable_expression_view_with_cursor_delegate.h"
 #include "../../shared/text_field_delegate.h"
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"
+#include "type_parameter_controller.h"
 
 namespace Sequence {
 
-class ListController : public Shared::ListController, public Shared::TextFieldDelegate {
+class ListController : public Shared::ListController, public Shared::TextFieldDelegate, public Shared::ScrollableExpressionViewWithCursorDelegate {
 public:
   ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
@@ -22,9 +23,11 @@ public:
   virtual KDCoordinate rowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForTextInput(TextInput * textInput) override;
+  Toolbox * toolboxForScrollableExpressionViewWithCursor(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) override;
   void selectPreviousNewSequenceCell();
 private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
+  Shared::EditableExpressionViewDelegateApp * editableExpressionViewDelegateApp() override;
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
   ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
@@ -41,6 +44,7 @@ private:
   void reinitExpression(Shared::Function * function) override;
   View * loadView() override;
   void unloadView(View * view) override;
+  void setToolboxExtraCells();
   static constexpr KDCoordinate k_emptySubRowHeight = 30;
   constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
   SequenceStore * m_sequenceStore;

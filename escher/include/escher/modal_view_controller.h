@@ -17,6 +17,8 @@ public:
   bool isDisplayingModal();
   void viewWillAppear() override;
   void viewDidDisappear() override;
+protected:
+  void reloadView();
 private:
   class ContentView : public View {
   public:
@@ -29,6 +31,7 @@ private:
       KDCoordinate topMargin, KDCoordinate leftMargin,  KDCoordinate bottomMargin, KDCoordinate rightMargin);
     void dismissModalView();
     bool isDisplayingModal() const;
+    void reload();
   private:
     KDRect frame() const;
     View * m_regularView;

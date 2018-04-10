@@ -1,28 +1,31 @@
 #ifndef POINCARE_CONDENSED_SUM_LAYOUT_H
 #define POINCARE_CONDENSED_SUM_LAYOUT_H
 
-#include <poincare/expression.h>
-#include <poincare/expression_layout.h>
+#include <poincare/static_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class CondensedSumLayout : public ExpressionLayout {
+class CondensedSumLayout : public StaticLayoutHierarchy<3> {
 public:
-  CondensedSumLayout(ExpressionLayout * baseLayout, ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout = nullptr);
-  ~CondensedSumLayout();
-  CondensedSumLayout(const CondensedSumLayout& other) = delete;
-  CondensedSumLayout(CondensedSumLayout&& other) = delete;
-  CondensedSumLayout& operator=(const CondensedSumLayout& other) = delete;
-  CondensedSumLayout& operator=(CondensedSumLayout&& other) = delete;
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
+  ExpressionLayout * clone() const override;
+  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "sum");
+  }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
-  ExpressionLayout * child(uint16_t index) override;
+  void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
-  ExpressionLayout * m_baseLayout;
-  ExpressionLayout * m_subscriptLayout;
-  ExpressionLayout * m_superscriptLayout;
+  ExpressionLayout * baseLayout();
+  ExpressionLayout * subscriptLayout();
+  ExpressionLayout * superscriptLayout();
 };
 
 }

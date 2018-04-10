@@ -91,7 +91,7 @@ void VariableBoxLeafCell::setExpression(const Expression * expression) {
   if (expression) {
     m_expressionLayout = expression->createLayout();
   }
-  m_expressionView.setExpression(m_expressionLayout);
+  m_expressionView.setExpressionLayout(m_expressionLayout);
 }
 
 void VariableBoxLeafCell::drawRect(KDContext * ctx, KDRect rect) const {

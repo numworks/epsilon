@@ -105,6 +105,14 @@ bool KDRect::contains(KDPoint p) const {
   return (p.x() >= x() && p.x() <= right() && p.y() >= y() && p.y() <= bottom());
 }
 
+bool KDRect::isAbove(KDPoint p) const {
+  return (p.y() >= y());
+}
+
+bool KDRect::isUnder(KDPoint p) const {
+  return (p.y() <= bottom());
+}
+
 KDRect KDRect::translatedBy(KDPoint p) const {
   return KDRect(x() + p.x(), y() + p.y(), width(), height());
 }

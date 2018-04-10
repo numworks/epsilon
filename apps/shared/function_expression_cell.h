@@ -9,7 +9,7 @@ namespace Shared {
 class FunctionExpressionCell : public EvenOddCell {
 public:
   FunctionExpressionCell();
-  void setExpression(Poincare::ExpressionLayout * expressionLayout);
+  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
   void setTextColor(KDColor color);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;

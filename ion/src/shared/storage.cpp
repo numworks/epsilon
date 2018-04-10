@@ -1,10 +1,30 @@
 #include <ion.h>
 #include <string.h>
 #include <assert.h>
-
-Ion::Storage storage;
+#include <new>
 
 namespace Ion {
+
+/* We want to implement a simple singleton pattern, to make sure the storage is
+ * initialized on first use, therefore preventing the static init order fiasco.
+ * That being said, we rely on knowing where the storage resides in the device's
+ * memory at compile time. Indeed, we want to advertise the static storage's
+ * memory address in the PlatformInfo structure (so that we can read and write
+ * it in DFU).
+ * Using a "static Storage storage;" variable makes it a local symbol at best,
+ * preventing the PlatformInfo from retrieving its address. And making the
+ * Storage variable global yields the static init fiasco issue. We're working
+ * around both issues by creating a global staticStorageArea buffer, and by
+ * placement-newing the Storage into that area on first use. */
+
+char staticStorageArea[sizeof(Storage)] = {0};
+Storage * Storage::sharedStorage() {
+  static Storage * storage = nullptr;
+  if (storage == nullptr) {
+    storage = new (staticStorageArea) Storage();
+  }
+  return storage;
+}
 
 Storage::Record::Record(const char * name) {
   if (name == nullptr) {

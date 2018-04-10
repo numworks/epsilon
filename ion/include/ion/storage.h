@@ -5,19 +5,12 @@
 
 namespace Ion {
 
-class Storage;
-
-}
-
-extern Ion::Storage storage;
-
-namespace Ion {
-
 /* Storage : | Magic |             Record1             |            Record2              | ... | Magic |
  *           | Magic | Size1(uint16_t) | Name1 | Body1 | Size2(uint16_t) | Name2 | Body2 | ... | Magic */
 
 class Storage {
 public:
+  static Storage * sharedStorage();
   class Record {
     /* A Record is identified by the CRC32 on his name because:
      * - a record is identified by its name which is unique
@@ -46,19 +39,19 @@ public:
       return m_nameCRC32 == 0;
     }
     const char * name() const {
-      return storage.nameOfRecord(*this);
+      return Storage::sharedStorage()->nameOfRecord(*this);
     }
     ErrorStatus setName(const char * name) {
-      return storage.setNameOfRecord(*this, name);
+      return Storage::sharedStorage()->setNameOfRecord(*this, name);
     }
     Data value() const {
-      return storage.valueOfRecord(*this);
+      return Storage::sharedStorage()->valueOfRecord(*this);
     }
     ErrorStatus setValue(Data data) {
-      return storage.setValueOfRecord(*this, data);
+      return Storage::sharedStorage()->setValueOfRecord(*this, data);
     }
     void destroy() {
-      return storage.destroyRecord(*this);
+      return Storage::sharedStorage()->destroyRecord(*this);
     }
   private:
     uint32_t m_nameCRC32;

@@ -13,7 +13,10 @@
 #define HEADER_SECTION
 #endif
 
-extern Ion::Storage storage;
+namespace Ion {
+extern char staticStorageArea[];
+}
+constexpr void * storageAddress = &(Ion::staticStorageArea);
 
 class PlatformInfo {
 public:
@@ -21,7 +24,7 @@ public:
     m_header(Magic),
     m_version{EPSILON_VERSION},
     m_patchLevel{PATCH_LEVEL},
-    m_storageAddress(&storage),
+    m_storageAddress(storageAddress),
     m_footer(Magic) { }
   const char * version() const {
     assert(m_storageAddress != nullptr);

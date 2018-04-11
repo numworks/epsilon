@@ -7,12 +7,11 @@
 class VariableBoxLeafCell : public HighlightCell {
 public:
   VariableBoxLeafCell();
-  ~VariableBoxLeafCell();
   void displayExpression(bool displayExpression);
   void reloadCell() override;
   void setLabel(const char * text);
   void setSubtitle(const char * text);
-  void setExpression(const Poincare::Expression * expression);
+  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;
@@ -20,9 +19,6 @@ private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-  /* The cell is responsible to delete the layout that may be created by its
-   * dynamic method 'setExpression'.*/
-  Poincare::ExpressionLayout * m_expressionLayout;
   BufferTextView m_labelView;
   BufferTextView m_subtitleView;
   ExpressionView m_expressionView;

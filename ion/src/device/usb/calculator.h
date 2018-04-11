@@ -24,7 +24,7 @@ namespace Device {
 
 class Calculator : public Device {
 public:
-  static bool PollAndReset(bool exitWithKeyboard); // Return true if reset is needed
+  static void PollAndReset(bool exitWithKeyboard); // Return true if reset is needed
   Calculator(const char * serialNumber) :
     Device(&m_dfuInterface),
     m_deviceDescriptor(

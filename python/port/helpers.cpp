@@ -1,10 +1,10 @@
-#include "interrupt_helper.h"
+#include "helpers.h"
 #include <ion.h>
 extern "C" {
 #include "mphalport.h"
 }
 
-void shouldInterrupt() {
+void micropython_port_should_interrupt() {
   static int c = 0;
   c++;
   if (c%20000 != 0) {

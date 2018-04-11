@@ -55,7 +55,7 @@ void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
     TextField * tf = static_cast<EvenOddEditableTextCell *>(m_selectableTableView.selectedCell())->editableTextCell()->textField();
     if (tf->isEditing()) {
       tf->setEditing(false);
-      textFieldDidAbortEditing(tf, tf->text());
+      textFieldDidAbortEditing(tf);
     }
   }
 }

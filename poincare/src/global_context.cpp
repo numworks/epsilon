@@ -17,6 +17,7 @@ GlobalContext::GlobalContext() :
   }
   for (int i = 0; i < k_maxNumberOfMatrixExpressions ; i++) {
     m_matrixExpressions[i] = nullptr;
+    m_matrixLayout[i] = nullptr;
   }
 }
 
@@ -32,6 +33,10 @@ GlobalContext::~GlobalContext() {
       delete m_matrixExpressions[i];
     }
     m_matrixExpressions[i] = nullptr;
+    if (m_matrixLayout[i] != nullptr) {
+      delete m_matrixLayout[i];
+    }
+    m_matrixLayout[i] = nullptr;
   }
 }
 
@@ -73,6 +78,17 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   return m_expressions[index];
 }
 
+ExpressionLayout * GlobalContext::expressionLayoutForSymbol(const Symbol * symbol) {
+  if (symbol->isMatrixSymbol()) {
+    int index = symbolIndex(symbol);
+    if (m_matrixLayout[index] == nullptr && m_matrixExpressions[index] != nullptr) {
+      m_matrixLayout[index] = m_matrixExpressions[index]->createLayout();
+    }
+    return m_matrixLayout[index];
+  }
+  return nullptr;
+}
+
 void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
   int index = symbolIndex(symbol);
  if (symbol->isMatrixSymbol()) {
@@ -82,6 +98,10 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
     if (m_matrixExpressions[indexMatrix] != nullptr) {
       delete m_matrixExpressions[indexMatrix];
       m_matrixExpressions[indexMatrix] = nullptr;
+    }
+    if (m_matrixLayout[indexMatrix] != nullptr) {
+      delete m_matrixLayout[indexMatrix];
+      m_matrixLayout[indexMatrix] = nullptr;
     }
     if (evaluation != nullptr) {
       if (evaluation->type() == Expression::Type::Complex) {

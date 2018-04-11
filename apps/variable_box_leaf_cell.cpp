@@ -5,7 +5,6 @@ using namespace Poincare;
 
 VariableBoxLeafCell::VariableBoxLeafCell() :
   HighlightCell(),
-  m_expressionLayout(nullptr),
   m_labelView(KDText::FontSize::Small, 0, 0.5, KDColorBlack, KDColorWhite),
   m_subtitleView(KDText::FontSize::Small, 0, 0.5, Palette::GreyDark, KDColorWhite),
   m_expressionView(1.0f, 0.5f),
@@ -13,12 +12,6 @@ VariableBoxLeafCell::VariableBoxLeafCell() :
 {
 }
 
-VariableBoxLeafCell::~VariableBoxLeafCell() {
-  if (m_expressionLayout != nullptr) {
-    delete m_expressionLayout;
-    m_expressionLayout = nullptr;
-  }
-}
 void VariableBoxLeafCell::displayExpression(bool displayExpression) {
   m_displayExpression = displayExpression;
 }
@@ -83,15 +76,8 @@ void VariableBoxLeafCell::setSubtitle(const char * text) {
   layoutSubviews();
 }
 
-void VariableBoxLeafCell::setExpression(const Expression * expression) {
-  if(m_expressionLayout != nullptr) {
-    delete m_expressionLayout;
-    m_expressionLayout = nullptr;
-  }
-  if (expression) {
-    m_expressionLayout = expression->createLayout();
-  }
-  m_expressionView.setExpression(m_expressionLayout);
+void VariableBoxLeafCell::setExpressionLayout(ExpressionLayout * expressionLayout) {
+  m_expressionView.setExpression(expressionLayout);
 }
 
 void VariableBoxLeafCell::drawRect(KDContext * ctx, KDRect rect) const {

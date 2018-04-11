@@ -40,7 +40,7 @@ float Trigonometry::characteristicXRange(const Expression * e, Context & context
   Poincare::Derivative derivative(args, true);
   float a = derivative.approximateToScalar<float>(context);
   float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180.0f;
-  return 2.0f*pi/a;
+  return 2.0f*pi/std::fabs(a);
 }
 
 Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {

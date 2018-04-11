@@ -2,12 +2,13 @@
 #include "../regs/regs.h"
 #include "../keyboard.h"
 #include <ion/usb.h>
+#include "../device.h"
 
 namespace Ion {
 namespace USB {
 namespace Device {
 
-bool Calculator::PollAndReset(bool exitWithKeyboard) {
+void Calculator::PollAndReset(bool exitWithKeyboard) {
   char serialNumber[Ion::SerialNumberLength+1];
   Ion::getSerialNumber(serialNumber);
   Calculator c(serialNumber);
@@ -28,7 +29,14 @@ bool Calculator::PollAndReset(bool exitWithKeyboard) {
   if (!c.isSoftDisconnected()) {
     c.detach();
   }
-  return c.resetOnDisconnect();
+  if (c.resetOnDisconnect()) {
+    /* We don't perform a core reset because at this point in time the USB cable
+     * is most likely plugged in. Doing a full core reset would be the clean
+     * thing to do but would therefore result in the device entering the ROMed
+     * DFU bootloader, which we want to avoid. By performing a jump-reset, we
+     * will enter the newly flashed firmware. */
+    Ion::Device::jumpReset();
+  }
 }
 
 Descriptor * Calculator::descriptor(uint8_t type, uint8_t index) {

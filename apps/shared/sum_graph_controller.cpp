@@ -248,15 +248,22 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
   } else if (step == Step::SecondParameter) {
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
-    m_sumLayout = new CondensedSumLayout(LayoutEngine::createStringLayout(sigma, sizeof(sigma)), LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr, false);
+    m_sumLayout = new CondensedSumLayout(
+        LayoutEngine::createStringLayout(sigma, sizeof(sigma)),
+        LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small),
+        nullptr,
+        false);
   } else {
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
     ExpressionLayout * start =  LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
     ExpressionLayout * end =  LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
-    m_sumLayout = new CondensedSumLayout(LayoutEngine::createStringLayout(sigma, sizeof(sigma)), start, end);
-
+    m_sumLayout = new CondensedSumLayout(
+        LayoutEngine::createStringLayout(sigma, sizeof(sigma)),
+        start,
+        end,
+        false);
     ExpressionLayout * childrenLayouts[3];
     strlcpy(buffer, "= ", 3);
     PrintFloat::convertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);

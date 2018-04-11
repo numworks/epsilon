@@ -20,7 +20,7 @@ ScriptStore::ScriptStore()
 }
 
 void ScriptStore::deleteAllScripts() {
-  for (int i = 0; i < numberOfScripts(); i++) {
+  for (int i = numberOfScripts() - 1; i >= 0; i--) {
     scriptAtIndex(i).destroy();
   }
 }

@@ -99,9 +99,14 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     }
     didProcessEvent = true;
   } else if (event == Ion::Events::USBEnumeration) {
+    bool onBoardingAppActive = (activeApp() == nullptr ? false : activeApp()->snapshot() == onBoardingAppSnapshot());
     switchTo(usbConnectedAppSnapshot());
     Ion::USB::DFU();
-    switchTo(appSnapshotAtIndex(0));
+    if (onBoardingAppActive) {
+      switchTo(onBoardingAppSnapshot());
+    } else {
+      switchTo(appSnapshotAtIndex(0));
+    }
     didProcessEvent = true;
   } else {
     didProcessEvent = Container::dispatchEvent(event);

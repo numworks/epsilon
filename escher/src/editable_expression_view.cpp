@@ -14,11 +14,12 @@ EditableExpressionView::EditableExpressionView(Responder * parentResponder, Text
 void EditableExpressionView::setEditing(bool isEditing, bool reinitDraftBuffer) {
   if (editionIsInTextField()) {
     m_textField.setEditing(isEditing, reinitDraftBuffer);
+  } else {
+    if (reinitDraftBuffer) {
+      m_scrollableExpressionViewWithCursor.clearLayout();
+    }
+    m_scrollableExpressionViewWithCursor.setEditing(isEditing);
   }
-  if (reinitDraftBuffer) {
-    m_scrollableExpressionViewWithCursor.clearLayout();
-  }
-  m_scrollableExpressionViewWithCursor.setEditing(isEditing);
 }
 
 bool EditableExpressionView::isEditing() const {

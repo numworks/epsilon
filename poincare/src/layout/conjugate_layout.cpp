@@ -1,4 +1,7 @@
 #include "conjugate_layout.h"
+#include "empty_visible_layout.h"
+#include <escher/metric.h>
+#include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -6,36 +9,116 @@ extern "C" {
 
 namespace Poincare {
 
-ConjugateLayout::ConjugateLayout(ExpressionLayout * operandLayout) :
-  ExpressionLayout(),
-  m_operandLayout(operandLayout)
-{
-  m_operandLayout->setParent(this);
-  m_baseline = m_operandLayout->baseline()+k_overlineWidth+k_overlineMargin;
+ExpressionLayout * ConjugateLayout::clone() const {
+  ConjugateLayout * layout = new ConjugateLayout(const_cast<ConjugateLayout *>(this)->operandLayout(), true);
+  return layout;
 }
 
-ConjugateLayout::~ConjugateLayout() {
-  delete m_operandLayout;
+void ConjugateLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+  if (cursor->pointedExpressionLayout() == this
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    // Case: Right.
+    // Move to the operand and delete.
+    cursor->setPointedExpressionLayout(operandLayout());
+    cursor->performBackspace();
+    return;
+  }
+  ExpressionLayout::backspaceAtCursor(cursor);
+}
+
+bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  // Case: Left of the operand.
+  // Move Left.
+  if (operandLayout()
+      && cursor->pointedExpressionLayout() == operandLayout()
+      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Right.
+  // Go to the operand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+    assert(operandLayout() != nullptr);
+    cursor->setPointedExpressionLayout(operandLayout());
+    return true;
+  }
+  // Case: Left.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  if (m_parent) {
+    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
+  }
+  return false;
+}
+
+bool ConjugateLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  // Case: Right of the operand.
+  // Move Right.
+  if (operandLayout()
+      && cursor->pointedExpressionLayout() == operandLayout()
+      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  {
+    cursor->setPointedExpressionLayout(this);
+    return true;
+  }
+  assert(cursor->pointedExpressionLayout() == this);
+  // Case: Left.
+  // Go to the operand.
+  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    assert(operandLayout() != nullptr);
+    cursor->setPointedExpressionLayout(operandLayout());
+    return true;
+  }
+  // Case: Right.
+  // Ask the parent.
+  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  if (m_parent) {
+    return m_parent->moveRight(cursor, shouldRecomputeLayout);
+  }
+  return false;
+}
+
+void ConjugateLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
+  assert(oldChild == operandLayout());
+  if (newChild->isEmpty()) {
+    if (!deleteOldChild) {
+      detachChild(oldChild);
+    }
+    replaceWithAndMoveCursor(newChild, true, cursor);
+    return;
+  }
+  ExpressionLayout::replaceChildAndMoveCursor(oldChild, newChild, deleteOldChild, cursor);
+}
+
+void ConjugateLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
+  assert(index >= 0 && index < numberOfChildren());
+  assert((cursor->pointedExpressionLayout() == child(index)) || (cursor->pointedExpressionLayout()->hasAncestor(child(index))));
+  replaceChildAndMoveCursor(child(index), new EmptyVisibleLayout(), deleteAfterRemoval, cursor);
 }
 
 void ConjugateLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->fillRect(KDRect(p.x(), p.y(), m_operandLayout->size().width(), k_overlineWidth), expressionColor);
+  ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, p.y(), operandLayout()->size().width()+2*Metric::FractionAndConjugateHorizontalOverflow, k_overlineWidth), expressionColor);
 }
 
 KDSize ConjugateLayout::computeSize() {
-  KDSize operandSize = m_operandLayout->size();
-  return KDSize(operandSize.width(), operandSize.height()+k_overlineWidth+k_overlineMargin);
+  KDSize operandSize = operandLayout()->size();
+  return KDSize(Metric::FractionAndConjugateHorizontalMargin+Metric::FractionAndConjugateHorizontalOverflow+operandSize.width()+Metric::FractionAndConjugateHorizontalOverflow+Metric::FractionAndConjugateHorizontalMargin, operandSize.height()+k_overlineWidth+k_overlineVerticalMargin);
 }
 
-ExpressionLayout * ConjugateLayout::child(uint16_t index) {
-  if (index == 0) {
-    return m_operandLayout;
-  }
-  return nullptr;
+void ConjugateLayout::computeBaseline() {
+  m_baseline = operandLayout()->baseline()+k_overlineWidth+k_overlineVerticalMargin;
+  m_baselined = true;
 }
 
 KDPoint ConjugateLayout::positionOfChild(ExpressionLayout * child) {
-  return KDPoint(0, k_overlineWidth+k_overlineMargin);
+  return KDPoint(Metric::FractionAndConjugateHorizontalMargin+Metric::FractionAndConjugateHorizontalOverflow, k_overlineWidth+k_overlineVerticalMargin);
+}
+
+ExpressionLayout * ConjugateLayout::operandLayout() {
+  return editableChild(0);
 }
 
 }

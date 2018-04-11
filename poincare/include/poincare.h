@@ -22,10 +22,13 @@
 #include <poincare/division.h>
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
+#include <poincare/empty_expression.h>
 #include <poincare/expression.h>
 #include <poincare/expression_array.h>
 #include <poincare/expression_layout.h>
 #include <poincare/factor.h>
+#include <poincare/expression_layout_array.h>
+#include <poincare/expression_layout_cursor.h>
 #include <poincare/factorial.h>
 #include <poincare/floor.h>
 #include <poincare/frac_part.h>

@@ -83,7 +83,7 @@ void HistoryViewCell::layoutSubviews() {
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
-  m_inputView.setExpression(calculation->inputLayout());
+  m_inputView.setExpressionLayout(calculation->inputLayout());
   App * calculationApp = (App *)app();
   /* Both output expressions have to be updated at the same time. The
    * outputView points to deleted layouts and a call to

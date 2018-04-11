@@ -51,6 +51,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token <character> SYMBOL
 %token <function> FUNCTION
 %token <expression> UNDEFINED
+%token <expression> EMPTY
 
 /* Operator tokens */
 %token PLUS
@@ -66,9 +67,9 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token LEFT_BRACKET
 %token RIGHT_BRACKET
 %token COMMA
+%token UNDERSCORE
 %token DOT
 %token EE
-%token ICOMPLEX
 %token STO
 %token UNDEFINED_SYMBOL
 
@@ -90,9 +91,9 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * one has the highest precedence. */
 
 %nonassoc STO
+%right UNARY_MINUS
 %left PLUS
 %left MINUS
-%right UNARY_MINUS
 %left MULTIPLY
 %left DIVIDE
 %left IMPLICIT_MULTIPLY
@@ -102,17 +103,28 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %nonassoc RIGHT_PARENTHESIS
 %nonassoc LEFT_BRACKET
 %nonassoc RIGHT_BRACKET
+%nonassoc LEFT_BRACE
+%nonassoc RIGHT_BRACE
 %nonassoc FUNCTION
 %left COMMA
+%nonassoc UNDERSCORE
 %nonassoc DIGITS
 %nonassoc DOT
 %nonassoc EE
-%nonassoc ICOMPLEX
 %nonassoc UNDEFINED
 %nonassoc SYMBOL
+%nonassoc EMPTY
 
 /* The "exp" symbol uses the "expression" part of the union. */
 %type <expression> final_exp;
+%type <expression> term;
+%type <expression> bang;
+%type <expression> factor;
+%type <expression> pow;
+%type <expression> div;
+%type <expression> mul;
+%type <expression> min;
+%type <expression> unmin;
 %type <expression> exp;
 %type <expression> number;
 %type <symbol> symb;
@@ -125,7 +137,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * have some heap-allocated data that need to be discarded. */
 
 %destructor { delete $$; } FUNCTION
-%destructor { delete $$; } UNDEFINED final_exp exp number
+%destructor { delete $$; } UNDEFINED final_exp exp unmin min mul div pow factor bang term number EMPTY
 %destructor { delete $$; } lstData
 /* MATRICES_ARE_DEFINED */
 %destructor { delete $$; } mtxData
@@ -137,64 +149,97 @@ Root:
   final_exp {
     *expressionOutput = $1;
   }
+  ;
 
-lstData:
-  exp { $$ = new Poincare::ListData($1); }
-  | lstData COMMA exp { $$ = $1; $$->pushExpression($3); }
+lstData: exp { $$ = new Poincare::ListData($1); }
+       | lstData COMMA exp { $$ = $1; $$->pushExpression($3); }
+       ;
+
 /* MATRICES_ARE_DEFINED */
- mtxData:
-  LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, false); $2->detachOperands(); delete $2; }
-  | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3->numberOfOperands() != $1->numberOfColumns()) { delete $1; delete $3; YYERROR; } ; $$ = $1; $$->pushListData($3, false); $3->detachOperands(); delete $3; }
+mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, false); $2->detachOperands(); delete $2; }
+       | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3->numberOfOperands() != $1->numberOfColumns()) { delete $1; delete $3; YYERROR; } ; $$ = $1; $$->pushListData($3, false); $3->detachOperands(); delete $3; }
+       ;
 
 /* When approximating expressions to double, results are bounded by 1E308 (and
  * 1E-308 for small numbers). We thus accept decimals whose exponents are in
  * {-1000, 1000}. However, we have to compute the exponent first to decide
- * wether to accept the decimal. The exponent of a Decimal is stored as an
+ * whether to accept the decimal. The exponent of a Decimal is stored as an
  * int32_t. We thus have to throw an error when the exponent computation might
  * overflow. Finally, we escape computation by throwing an error when the length
  * of the exponent digits is above 4 (0.00...-256 times-...01E1256=1E1000 is
  * accepted and 1000-...256times...-0E10000 = 1E10256, 10256 does not overflow
  * an int32_t). */
-number:
-  DIGITS { $$ = new Poincare::Rational(Poincare::Integer($1.address, false)); }
-  | DOT DIGITS { $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, nullptr, 0, false)); }
-  | DIGITS DOT DIGITS { $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, nullptr, 0, false)); }
-  | DOT DIGITS EE DIGITS { if ($4.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $4.address, $4.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
-  | DIGITS DOT DIGITS EE DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $5.address, $5.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
-  | DIGITS EE DIGITS { if ($3.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $3.address, $3.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
-  | DOT DIGITS EE MINUS DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $5.address, $5.length, true);  if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
-  | DIGITS DOT DIGITS EE MINUS DIGITS { if ($6.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $6.address, $6.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
-  | DIGITS EE MINUS DIGITS { if ($4.length > 4) { YYERROR; }; int exponent =  Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $4.address, $4.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
+number : DIGITS { $$ = new Poincare::Rational(Poincare::Integer($1.address, false)); }
+       | DOT DIGITS { $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, nullptr, 0, false)); }
+       | DIGITS DOT DIGITS { $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, nullptr, 0, false)); }
+       | DOT DIGITS EE DIGITS { if ($4.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $4.address, $4.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
+       | DIGITS DOT DIGITS EE DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $5.address, $5.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
+       | DIGITS EE DIGITS { if ($3.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $3.address, $3.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
+       | DOT DIGITS EE MINUS DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $5.address, $5.length, true);  if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
+       | DIGITS DOT DIGITS EE MINUS DIGITS { if ($6.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $6.address, $6.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
+       | DIGITS EE MINUS DIGITS { if ($4.length > 4) { YYERROR; }; int exponent =  Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $4.address, $4.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
+       ;
 
-symb:
-  SYMBOL           { $$ = new Poincare::Symbol($1); }
+symb   : SYMBOL         { $$ = new Poincare::Symbol($1); }
+       ;
 
-/* The rules "exp MINUS exp" and "MINUS exp" are sometimes ambiguous. We want
- * to favor "exp MINUS exp" over "MINUS exp". Bison by default resolves
- * reduce/reduce conflicts in favor of the first grammar rule. Thus, the order
- * of the grammar rules is here paramount: "MINUS exp" should always be after
- *  "exp MINUS exp". */
-exp:
-  UNDEFINED        { $$ = $1; }
-  | exp BANG       { $$ = new Poincare::Factorial($1, false); }
-  | number             { $$ = $1; }
-  | symb           { $$ = $1; }
-  | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, 2, false); }
-  | exp MINUS exp    { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
-  | exp MULTIPLY exp { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, 2, false);  }
-  | exp exp %prec IMPLICIT_MULTIPLY  { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, 2, false);  }
-  | exp DIVIDE exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Division(terms, false); }
-  | exp POW exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
-  | MINUS exp %prec UNARY_MINUS           { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Opposite(terms, false); }
-  | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Parenthesis(terms, false); }
+term   : EMPTY          { $$ = $1; }
+       | symb           { $$ = $1; }
+       | UNDEFINED      { $$ = $1; }
+       | number         { $$ = $1; }
+       | FUNCTION UNDERSCORE LEFT_BRACE lstData RIGHT_BRACE LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; int totalNumberOfArguments = $4->numberOfOperands()+$7->numberOfOperands();
+if (!$1->hasValidNumberOfOperands(totalNumberOfArguments)) { delete $1; delete $4; delete $7; YYERROR; };
+Poincare::ListData * arguments = new Poincare::ListData();
+for (int i = 0; i < $7->numberOfOperands(); i++) { arguments->pushExpression($7->operands()[i]); }
+for (int i = 0; i < $4->numberOfOperands(); i++) { arguments->pushExpression($4->operands()[i]); }
+$1->setArgument(arguments, totalNumberOfArguments, false);
+$4->detachOperands(); delete $4; $7->detachOperands(); delete $7; arguments->detachOperands(); delete arguments;}
+       | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfOperands())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfOperands(), false); $3->detachOperands(); delete $3; }
+       | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands(0)) { delete $1; YYERROR; } ; }
+       | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Parenthesis(terms, false); }
 /* MATRICES_ARE_DEFINED */
-  | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); delete $2; }
-  | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfOperands())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfOperands(), false); $3->detachOperands(); delete $3; }
-  | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands(0)) { delete $1; YYERROR; } ; }
+       | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); delete $2; }
+       ;
 
-final_exp:
-  exp      { $$ = $1; }
-  | exp STO symb   { if ($3->name() == Poincare::Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Store(terms, false); };
+bang   : term               { $$ = $1; }
+       | term BANG          { $$ = new Poincare::Factorial($1, false); }
+       ;
+
+factor : bang               { $$ = $1; }
+       | bang pow %prec IMPLICIT_MULTIPLY { Poincare::Expression * terms[2] = {$1,$2}; $$ = new Poincare::Multiplication(terms, 2, false);  }
+       ;
+
+pow    : factor             { $$ = $1; }
+       | bang POW pow       { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Power(terms, false); }
+       | bang POW MINUS pow { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Power(terms, false); }
+       ;
+
+div    : pow                { $$ = $1; }
+       | div DIVIDE pow     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Division(terms, false);  }
+       | div DIVIDE MINUS pow { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Division(terms, false);  }
+       ;
+
+mul    : div                { $$ = $1; }
+       | mul MULTIPLY div   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, 2, false);  }
+       | mul MULTIPLY MINUS div { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Multiplication(terms, 2, false);  }
+       ;
+
+min    : mul                { $$ = $1; }
+       | mul MINUS min      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
+       | mul MINUS MINUS min { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Subtraction(terms, false); }
+       ;
+
+unmin  : min                { $$ = $1; }
+       | MINUS min %prec UNARY_MINUS { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Opposite(terms, false); }
+       ;
+
+exp    : unmin              { $$ = $1; }
+       | exp PLUS unmin     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, 2, false); }
+       ;
+
+final_exp : exp             { $$ = $1; }
+          | exp STO symb   { if ($3->name() == Poincare::Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Store(terms, false); }
+          ;
 %%
 
 void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, const char * msg) {

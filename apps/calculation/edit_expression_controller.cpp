@@ -158,8 +158,8 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Ion:
   m_calculationStore->push(textBody(), calculationApp->localContext());
   m_historyController->reload();
   ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-  ((ContentView *)view())->textField()->setEditing(true);
-  ((ContentView *)view())->textField()->setText("");
+  ((ContentView *)view())->editableExpressionView()->setEditing(true);
+  ((ContentView *)view())->editableExpressionView()->setText("");
   return true;
 }
 

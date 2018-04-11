@@ -115,10 +115,10 @@ bool SequenceToolbox::selectAddedCell(int selectedRow){
   char buffer[bufferSize];
   m_addedCellLayout[selectedRow]->writeTextInBuffer(buffer, bufferSize);
   if (m_action == MathToolbox::actionForTextInput) {
-    // DIRTY. The symbols are layouted using a Subscript VerticalOffsetLayout,
-    // which serializes into "_{}", but we want parentheses for text fields. We
-    // thus need to remove any underscores, and changes brackets into
-    // parentheses.
+    /* DIRTY. The symbols are layouted using a Subscript VerticalOffsetLayout,
+     * which serializes into "_{}", but we want parentheses for text fields. We
+     * thus need to remove any underscores, and changes brackets into
+     * parentheses. */
     for (int i = 0; i < bufferSize; i++) {
       if (buffer[i] == '{') {
         buffer[i] = '(';

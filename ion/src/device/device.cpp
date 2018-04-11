@@ -103,7 +103,6 @@ void coreReset() {
 }
 
 void jumpReset() {
-  shutdown();
   uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(0x08000000);
   uint32_t * resetHandlerAddress = reinterpret_cast<uint32_t *>(0x08000004);
   set_msp(*stackPointerAddress);

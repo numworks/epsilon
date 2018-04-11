@@ -7,6 +7,7 @@ namespace Poincare {
 
 class ListData {
 public:
+  ListData();
   ListData(Expression * operand);
   ~ListData();
   ListData(const ListData& other) = delete;

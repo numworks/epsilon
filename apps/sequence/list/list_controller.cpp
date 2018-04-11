@@ -24,17 +24,22 @@ const char * ListController::title() {
 }
 
 Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
-  int recurrenceDepth = -1;
-  int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
-  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
-  if (sequenceDefinition == 0) {
-    recurrenceDepth = sequence->numberOfElements()-1;
-  }
-  m_sequenceToolbox.setExtraCells(sequence->name(), recurrenceDepth);
+  setToolboxExtraCells();
+  m_sequenceToolbox.setSenderAndAction(textInput, MathToolbox::actionForTextInput);
+  return &m_sequenceToolbox;
+}
+
+Toolbox * ListController::toolboxForScrollableExpressionViewWithCursor(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
+  setToolboxExtraCells();
+  m_sequenceToolbox.setSenderAndAction(scrollableExpressionViewWithCursor, MathToolbox::actionForScrollableExpressionViewWithCursor);
   return &m_sequenceToolbox;
 }
 
 TextFieldDelegateApp * ListController::textFieldDelegateApp() {
+  return (App *)app();
+}
+
+EditableExpressionViewDelegateApp * ListController::editableExpressionViewDelegateApp() {
   return (App *)app();
 }
 
@@ -169,13 +174,13 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
   Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setExpression(sequence->definitionName());
+    myCell->setExpressionLayout(sequence->definitionName());
   }
   if (sequenceDefinitionForRow(j) == 1) {
-    myCell->setExpression(sequence->firstInitialConditionName());
+    myCell->setExpressionLayout(sequence->firstInitialConditionName());
   }
   if (sequenceDefinitionForRow(j) == 2) {
-    myCell->setExpression(sequence->secondInitialConditionName());
+    myCell->setExpressionLayout(sequence->secondInitialConditionName());
   }
   KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::GreyDark;
   myCell->setColor(nameColor);
@@ -185,13 +190,13 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setExpression(sequence->layout());
+    myCell->setExpressionLayout(sequence->layout());
   }
   if (sequenceDefinitionForRow(j) == 1) {
-    myCell->setExpression(sequence->firstInitialConditionLayout());
+    myCell->setExpressionLayout(sequence->firstInitialConditionLayout());
   }
   if (sequenceDefinitionForRow(j) == 2) {
-    myCell->setExpression(sequence->secondInitialConditionLayout());
+    myCell->setExpressionLayout(sequence->secondInitialConditionLayout());
   }
   bool active = sequence->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
@@ -302,6 +307,16 @@ void ListController::unloadView(View * view) {
     m_expressionCells[i] = nullptr;
   }
   Shared::ListController::unloadView(view);
+}
+
+void ListController::setToolboxExtraCells() {
+  int recurrenceDepth = -1;
+  int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
+  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
+  if (sequenceDefinition == 0) {
+    recurrenceDepth = sequence->numberOfElements()-1;
+  }
+  m_sequenceToolbox.setExtraCells(sequence->name(), recurrenceDepth);
 }
 
 }

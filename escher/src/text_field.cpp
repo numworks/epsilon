@@ -249,7 +249,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back && isEditing()) {
     setEditing(false);
     reloadScroll();
-    m_delegate->textFieldDidAbortEditing(this, text());
+    m_delegate->textFieldDidAbortEditing(this);
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {

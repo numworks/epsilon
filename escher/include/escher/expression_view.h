@@ -16,12 +16,14 @@ public:
   ExpressionView(float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   Poincare::ExpressionLayout * expressionLayout() const;
-  void setExpression(Poincare::ExpressionLayout * expressionLayout);
+  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   KDSize minimalSizeForOptimalDisplay() const override;
+  KDPoint drawingOrigin() const;
+  KDPoint absoluteDrawingOrigin() const;
 private:
   /* Warning: we do not need to delete the previous expression layout when
    * deleting object or setting a new expression layout. Indeed, the expression

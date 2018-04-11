@@ -1,5 +1,5 @@
 epsilon.packed.js: LDFLAGS += --memory-init-file 0
-epsilon.packed.js: $(app_objs) $(app_image_objs)
+epsilon.packed.js: $(objs) $(app_objs) $(app_image_objs)
 
 simulator.zip: epsilon.packed.js
 	@rm -rf $(basename $@)

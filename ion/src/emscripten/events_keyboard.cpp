@@ -111,13 +111,100 @@ static bool sleepWithTimeout(int duration, int * timeout) {
   }
 }
 
+static Event eventFromSDLEvent(SDL_Event sdlEvent) {
+  if (sdlEvent.type != SDL_KEYDOWN) {
+    return None;
+  }
+  if (sdlEvent.key.keysym.mod & KMOD_CTRL) {
+    switch (sdlEvent.key.keysym.sym) {
+      case SDLK_BACKSPACE:
+        return Clear;
+      case SDLK_x:
+        return Cut;
+      case SDLK_c:
+        return Copy;
+      case SDLK_v:
+        return Paste;
+    }
+  }
+  if (sdlEvent.key.keysym.mod & KMOD_ALT) {
+    if (sdlEvent.key.keysym.mod & KMOD_SHIFT) {
+      switch (sdlEvent.key.keysym.sym) {
+        case SDLK_s:
+          return Arcsine;
+        case SDLK_c:
+          return Arccosine;
+        case SDLK_t:
+          return Arctangent;
+      }
+    }
+    switch (sdlEvent.key.keysym.sym) {
+      case SDLK_ESCAPE:
+        return Home;
+      case SDLK_RETURN:
+        return OK;
+      case SDLK_v:
+        return Var;
+      case SDLK_BACKSPACE:
+        return Clear;
+      case SDLK_x:
+        return Exp;
+      case SDLK_n:
+        return Ln;
+      case SDLK_l:
+        return Log;
+      case SDLK_i:
+        return Imaginary;
+      case SDLK_EQUALS:
+        return Sto;
+      case SDLK_s:
+        return Sine;
+      case SDLK_c:
+        return Cosine;
+      case SDLK_t:
+        return Tangent;
+      case SDLK_p:
+        return Pi;
+      case SDLK_r:
+        return Sqrt;
+      case SDLK_2:
+        return Square;
+      case SDLK_e:
+        return EE;
+      case SDLK_a:
+        return Ans;
+    }
+  }
+  switch(sdlEvent.key.keysym.sym) {
+    case SDLK_UP:
+      return Up;
+    case SDLK_DOWN:
+      return Down;
+    case SDLK_LEFT:
+      return Left;
+    case SDLK_RIGHT:
+      return Right;
+    case SDLK_RETURN:
+      return EXE;
+    case SDLK_ESCAPE:
+      return Back;
+    case SDLK_TAB:
+      return Toolbox;
+    case SDLK_BACKSPACE:
+      return Backspace;
+  }
+  if (sdlEvent.key.keysym.unicode >= 32 && sdlEvent.key.keysym.unicode < 127) {
+    return sEventForASCIICharAbove32[sdlEvent.key.keysym.unicode-32];
+  }
+  return None;
+}
+
 Event getEvent(int * timeout) {
   // If multiple events are in the queue, don't waste time refreshing the display
   if (sEventQueue.size() <= 1) {
     Ion::Display::Emscripten::refresh();
   }
 
-  SDL_Event event;
   while (true) {
     // Look up events in the queue
     if (sEventQueue.size() > 0) {
@@ -129,90 +216,13 @@ Event getEvent(int * timeout) {
     }
 
     // Or directly from browser events, converted to SDL events by Emscripten
-    SDL_PollEvent(&event);
-    if (event.type == SDL_KEYDOWN) {
-      if (event.key.keysym.mod & KMOD_CTRL) {
-        switch (event.key.keysym.sym) {
-          case SDLK_BACKSPACE:
-            return Clear;
-          case SDLK_x:
-            return Cut;
-          case SDLK_c:
-            return Copy;
-          case SDLK_v:
-            return Paste;
-        }
-      }
-      if (event.key.keysym.mod & KMOD_ALT) {
-        if (event.key.keysym.mod & KMOD_SHIFT) {
-          switch (event.key.keysym.sym) {
-            case SDLK_s:
-              return Arcsine;
-            case SDLK_c:
-              return Arccosine;
-            case SDLK_t:
-              return Arctangent;
-          }
-        }
-        switch (event.key.keysym.sym) {
-          case SDLK_ESCAPE:
-            return Home;
-          case SDLK_RETURN:
-            return OK;
-          case SDLK_v:
-            return Var;
-          case SDLK_BACKSPACE:
-            return Clear;
-          case SDLK_x:
-            return Exp;
-          case SDLK_n:
-            return Ln;
-          case SDLK_l:
-            return Log;
-          case SDLK_i:
-            return Imaginary;
-          case SDLK_EQUALS:
-            return Sto;
-          case SDLK_s:
-            return Sine;
-          case SDLK_c:
-            return Cosine;
-          case SDLK_t:
-            return Tangent;
-          case SDLK_p:
-            return Pi;
-          case SDLK_r:
-            return Sqrt;
-          case SDLK_2:
-            return Square;
-          case SDLK_e:
-            return EE;
-          case SDLK_a:
-            return Ans;
-        }
-      }
-      switch(event.key.keysym.sym) {
-        case SDLK_UP:
-          return Up;
-        case SDLK_DOWN:
-          return Down;
-        case SDLK_LEFT:
-          return Left;
-        case SDLK_RIGHT:
-          return Right;
-        case SDLK_RETURN:
-          return EXE;
-        case SDLK_ESCAPE:
-          return Back;
-        case SDLK_TAB:
-          return Toolbox;
-        case SDLK_BACKSPACE:
-          return Backspace;
-      }
-      if (event.key.keysym.unicode >= 32 && event.key.keysym.unicode < 127) {
-        return sEventForASCIICharAbove32[event.key.keysym.unicode-32];
-      }
+    SDL_Event sdlEvent;
+    SDL_PollEvent(&sdlEvent);
+    Event eventFromSDL = eventFromSDLEvent(sdlEvent);
+    if (eventFromSDL != None) {
+      return eventFromSDL;
     }
+
     if (sleepWithTimeout(10, timeout)) {
       return None;
     }

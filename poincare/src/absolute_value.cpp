@@ -27,7 +27,7 @@ Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUn
 ExpressionLayout * AbsoluteValue::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
+  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
 }
 
 Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit) {

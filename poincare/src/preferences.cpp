@@ -6,6 +6,7 @@ namespace Poincare {
 Preferences::Preferences() :
   m_angleUnit(Expression::AngleUnit::Degree),
   m_displayMode(PrintFloat::Mode::Decimal),
+  m_editionMode(EditionMode::Edition2D),
   m_complexFormat(Expression::ComplexFormat::Cartesian),
   m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits)
 {
@@ -30,6 +31,14 @@ PrintFloat::Mode Preferences::displayMode() const {
 
 void Preferences::setDisplayMode(PrintFloat::Mode mode) {
   m_displayMode = mode;
+}
+
+Preferences::EditionMode Preferences::editionMode() const {
+  return m_editionMode;
+}
+
+void Preferences::setEditionMode(Preferences::EditionMode editionMode) {
+  m_editionMode = editionMode;
 }
 
 Expression::ComplexFormat Preferences::complexFormat() const {

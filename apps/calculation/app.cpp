@@ -43,7 +43,7 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  TextFieldDelegateApp(container, snapshot, &m_editExpressionController),
+  EditableExpressionViewDelegateApp(container, snapshot, &m_editExpressionController),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),
   m_editExpressionController(&m_modalViewController, &m_historyController, snapshot->calculationStore())
 {
@@ -83,6 +83,36 @@ bool App::textInputIsCorrect(const char * text) {
     return false;
   }
   return true;
+}
+
+bool App::scrollableExpressionViewWithCursorDidReceiveEvent(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) {
+  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && EditableExpressionViewDelegateApp::scrollableExpressionViewWithCursorDidReceiveEvent(scrollableExpressionViewWithCursor, event)) {
+    return true;
+  }
+  /* Here, we check that the expression entered by the user can be printed with
+   * less than k_printedExpressionLength characters. Otherwise, we prevent the
+   * user from adding this expression to the calculation store. */
+  if (scrollableExpressionViewWithCursor->isEditing() && scrollableExpressionViewWithCursor->scrollableExpressionViewWithCursorShouldFinishEditing(event)) {
+    int bufferLength = TextField::maxBufferSize();
+    char bufferForParsing[bufferLength];
+    Poincare::ExpressionLayout * expressionLayout = scrollableExpressionViewWithCursor->expressionViewWithCursor()->expressionView()->expressionLayout();
+    expressionLayout->writeTextInBuffer(bufferForParsing, bufferLength);
+    Expression * exp = Expression::parse(bufferForParsing);
+    if (exp == nullptr) {
+      scrollableExpressionViewWithCursor->app()->displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+    char buffer[Calculation::k_printedExpressionSize];
+    int length = exp->writeTextInBuffer(buffer, sizeof(buffer));
+    delete exp;
+    /* if the buffer is totally full, it is VERY likely that writeTextInBuffer
+     * escaped before printing utterly the expression. */
+    if (length >= Calculation::k_printedExpressionSize-1) {
+      displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+  }
+  return false;
 }
 
 const char * App::XNT() {

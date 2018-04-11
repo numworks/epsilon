@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "helpers.h"
 
 // options to control how Micro Python is built
 
@@ -54,6 +55,8 @@
 #define MICROPY_CPYTHON_COMPAT      (0)
 #define MICROPY_LONGINT_IMPL        (MICROPY_LONGINT_IMPL_MPZ)
 #define MICROPY_FLOAT_IMPL          (MICROPY_FLOAT_IMPL_DOUBLE)
+
+#define MICROPY_VM_HOOK_LOOP micropython_port_should_interrupt();
 
 // type definitions for the specific machine
 

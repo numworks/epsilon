@@ -25,7 +25,7 @@ const char * ListController::title() {
 
 Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
   setToolboxExtraCells();
-  m_sequenceToolbox.setSenderAndAction(textField, MathToolbox::actionForTextInput);
+  m_sequenceToolbox.setSenderAndAction(textInput, MathToolbox::actionForTextInput);
   return &m_sequenceToolbox;
 }
 

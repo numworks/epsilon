@@ -106,7 +106,7 @@ void SequenceToolbox::setExtraCells(const char * sequenceName, int recurrenceDep
         false);
   }
   for (int index = 0; index < k_maxNumberOfDisplayedRows; index++) {
-    m_addedCells[index].setExpression(m_addedCellLayout[index]);
+    m_addedCells[index].setExpressionLayout(m_addedCellLayout[index]);
   }
 }
 
@@ -114,7 +114,7 @@ bool SequenceToolbox::selectAddedCell(int selectedRow){
   int bufferSize = 10;
   char buffer[bufferSize];
   m_addedCellLayout[selectedRow]->writeTextInBuffer(buffer, bufferSize);
-  if (m_action == MathToolbox::actionForTextField) {
+  if (m_action == MathToolbox::actionForTextInput) {
     // DIRTY. The symbols are layouted using a Subscript VerticalOffsetLayout,
     // which serializes into "_{}", but we want parentheses for text fields. We
     // thus need to remove any underscores, and changes brackets into

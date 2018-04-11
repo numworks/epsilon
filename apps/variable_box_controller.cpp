@@ -147,15 +147,16 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   if (evaluation) {
     /* TODO: implement list contexts */
     // TODO: handle matrix and scalar!
+    ExpressionLayout * layout = expressionLayoutForIndex(index);
     const Matrix * matrixEvaluation = static_cast<const Matrix *>(evaluation);
-    myCell->setExpression(matrixEvaluation);
+    myCell->setExpressionLayout(layout);
     char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
     int numberOfChars = PrintFloat::convertFloatToText<float>(matrixEvaluation->numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, PrintFloat::Mode::Decimal);
     buffer[numberOfChars++] = 'x';
     PrintFloat::convertFloatToText<float>(matrixEvaluation->numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, PrintFloat::Mode::Decimal);
     myCell->setSubtitle(buffer);
   } else {
-    myCell->setExpression(nullptr);
+    myCell->setExpressionLayout(nullptr);
     myCell->setSubtitle(I18n::translate(I18n::Message::Empty));
   }
 }
@@ -164,12 +165,9 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
   if (m_currentPage == Page::RootMenu || m_currentPage == Page::Scalar) {
     return Metric::ToolboxRowHeight;
   }
-  const Expression * expression = expressionForIndex(index);
-  if (expression) {
-    ExpressionLayout * layout = expression->createLayout();
-    KDCoordinate expressionHeight = layout->size().height();
-    delete layout;
-    return expressionHeight+k_leafMargin;
+  ExpressionLayout * expressionLayout = expressionLayoutForIndex(index);
+  if (expressionLayout) {
+    return expressionLayout->size().height()+k_leafMargin;
   }
   return Metric::ToolboxRowHeight;
 }
@@ -206,6 +204,19 @@ const Expression * VariableBoxController::ContentViewController::expressionForIn
   if (m_currentPage == Page::Matrix) {
     const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
     return m_context->expressionForSymbol(&symbol);
+  }
+#if LIST_VARIABLES
+  if (m_currentPage == Page::List) {
+    return nullptr;
+  }
+#endif
+  return nullptr;
+}
+
+ExpressionLayout * VariableBoxController::ContentViewController::expressionLayoutForIndex(int index) {
+  if (m_currentPage == Page::Matrix) {
+    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
+    return m_context->expressionLayoutForSymbol(&symbol);
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {

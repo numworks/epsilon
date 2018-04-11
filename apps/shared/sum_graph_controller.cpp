@@ -248,7 +248,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
   } else if (step == Step::SecondParameter) {
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
-    m_sumLayout = new CondensedSumLayout(LayoutEngine::createStringLayout(sigma, sizeof(sigma)), LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr);
+    m_sumLayout = new CondensedSumLayout(LayoutEngine::createStringLayout(sigma, sizeof(sigma)), LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small), nullptr, false);
   } else {
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
@@ -263,7 +263,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     childrenLayouts[2] = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     childrenLayouts[1] = functionLayout;
     childrenLayouts[0] = m_sumLayout;
-    m_sumLayout = new HorizontalLayout(childrenLayouts, 3);
+    m_sumLayout = new HorizontalLayout(childrenLayouts, 3, false);
   }
   m_sum.setExpressionLayout(m_sumLayout);
   if (step == Step::Result) {

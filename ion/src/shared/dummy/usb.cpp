@@ -8,6 +8,9 @@ bool Ion::USB::isEnumerated() {
   return false;
 }
 
+void Ion::USB::clearEnumerationInterrupt() {
+}
+
 void Ion::USB::DFU() {
 }
 

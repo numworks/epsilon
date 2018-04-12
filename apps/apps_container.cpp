@@ -99,11 +99,19 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
     }
     didProcessEvent = true;
   } else if (event == Ion::Events::USBEnumeration) {
-    App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
-    switchTo(usbConnectedAppSnapshot());
-    Ion::USB::DFU();
-    switchTo(activeSnapshot);
-    didProcessEvent = true;
+    if (Ion::USB::isPlugged()) {
+      App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
+      switchTo(usbConnectedAppSnapshot());
+      Ion::USB::DFU();
+      switchTo(activeSnapshot);
+      didProcessEvent = true;
+    } else {
+      /* Sometimes, the device gets an ENUMDNE interrupts when being unplugged
+       * from a non-USB communicating host (e.g. a USB charger). The interrupt
+       * must me cleared: if not the next enumeration attempts will not be
+       * detected. */
+      Ion::USB::clearEnumerationInterrupt();
+    }
   } else {
     didProcessEvent = Container::dispatchEvent(event);
   }

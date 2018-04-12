@@ -44,10 +44,11 @@ Event getEvent(int * timeout) {
 
     // Second, check if the USB device has been connected to an USB host
     bool usbEnumerated = USB::isEnumerated();
-    bool previousUsbEnumerated = sLastUSBEnumerated;
-    sLastUSBEnumerated = usbEnumerated;
-    if (usbEnumerated && !previousUsbEnumerated) {
-      return Events::USBEnumeration;
+    if (usbEnumerated != sLastUSBEnumerated) {
+      sLastUSBEnumerated = usbEnumerated;
+      if (usbEnumerated) {
+        return Events::USBEnumeration;
+      }
     }
 
     Keyboard::State state = Keyboard::scan();

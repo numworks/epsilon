@@ -20,6 +20,10 @@ bool isEnumerated() {
   return OTG.GINTSTS()->getENUMDNE();
 }
 
+void clearEnumerationInterrupt() {
+  OTG.GINTSTS()->setENUMDNE(true);
+}
+
 void enable() {
   // Get out of soft-disconnected state
   OTG.DCTL()->setSDIS(false);

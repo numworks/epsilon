@@ -25,6 +25,7 @@
 #undef fabsf
 #undef floorf
 #undef fmodf
+#undef hypotf
 #undef lgammaf
 #undef lgammaf_r
 #undef log1pf
@@ -57,6 +58,7 @@
 #undef expm1
 #undef fabs
 #undef floor
+#undef hypot
 #undef lgamma
 #undef lgamma_r
 #undef log1p
@@ -104,6 +106,8 @@ static inline double floor(double x) { return __builtin_floor(x); }
 static inline float floor(float x) { return __builtin_floorf(x); }
 static inline int fpclassify(double x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
 static inline int fpclassify(float x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
+static inline double hypot(double x, double y) { return __builtin_hypot(x, y); }
+static inline float hypotf(float x, float y) { return __builtin_hypotf(x, y); }
 static inline bool isfinite(double x) { return __builtin_isfinite(x); }
 static inline bool isfinite(float x) { return __builtin_isfinite(x); }
 static inline bool isinf(double x) { return __builtin_isinf(x); }

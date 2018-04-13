@@ -25,7 +25,6 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   Sign sign() const override { return m_mantissa.isNegative() ? Sign::Negative : Sign::Positive; }
 private:
-  constexpr static int k_doublePrecision = 15;
   constexpr static double k_biggestMantissaFromDouble = 999999999999999;
   constexpr static int k_maxDoubleExponent = 308;
   int numberOfDigitsInMantissaWithoutSign() const;

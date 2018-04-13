@@ -75,9 +75,10 @@ Decimal::Decimal(Integer mantissa, int exponent) :
 {
 }
 
-Decimal::Decimal(double f) {
-  m_exponent = IEEE754<double>::exponentBase10(f);
-  int64_t mantissaf = std::round(f * std::pow(10.0, -m_exponent+PrintFloat::k_numberOfStoredSignificantDigits+1));
+template <typename T>
+Decimal::Decimal(T f) {
+  m_exponent = IEEE754<T>::exponentBase10(f);
+  int64_t mantissaf = std::round((double)f * std::pow((double)10.0, (double)(-m_exponent+PrintFloat::k_numberOfStoredSignificantDigits+1)));
   m_mantissa = Integer(mantissaf);
 }
 
@@ -274,5 +275,8 @@ int Decimal::simplificationOrderSameType(const Expression * e, bool canBeInterru
   }
   return ((int)sign())*unsignedComparison;
 }
+
+template Decimal::Decimal(double);
+template Decimal::Decimal(float);
 
 }

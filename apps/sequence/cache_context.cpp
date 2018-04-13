@@ -5,30 +5,42 @@ using namespace Poincare;
 
 namespace Sequence {
 
-template<typename T>
-CacheContext<T>::CacheContext(Context * parentContext) :
-  VariableContext<T>('n', parentContext),
-  m_values{{Complex<T>::Float(NAN), Complex<T>::Float(NAN)},
-    {Complex<T>::Float(NAN), Complex<T>::Float(NAN)}}
+CacheContext::CacheContext(Context * parentContext) :
+  VariableContext('n', parentContext),
+  m_values{{new Undefined(), new Undefined()},
+    {new Undefined(), new Undefined()}}
 {
 }
 
-template<typename T>
-const Expression * CacheContext<T>::expressionForSymbol(const Symbol * symbol) {
+CacheContext::~CacheContext() {
+  Poincare::Expression * m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
+  for (int i = 0; i < MaxNumberOfSequences; i++) {
+    for (int j = 0; j < MaxRecurrenceDepth; j++) {
+      if (m_values[i][j]) {
+        delete m_values[i][j];
+      }
+    }
+  }
+}
+
+const Expression * CacheContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Symbol::SpecialSymbols::un || symbol->name() == Symbol::SpecialSymbols::un1 ||
       symbol->name() == Symbol::SpecialSymbols::vn || symbol->name() == Symbol::SpecialSymbols::vn1) {
-    return &m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)];
+    return m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)];
   }
-  return VariableContext<T>::expressionForSymbol(symbol);
+  return VariableContext::expressionForSymbol(symbol);
 }
 
 template<typename T>
-void CacheContext<T>::setValueForSymbol(T value, const Poincare::Symbol * symbol) {
-  m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = Complex<T>::Float(value);
+void CacheContext::setValueForSymbol(T value, const Poincare::Symbol * symbol) {
+  if (m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)]) {
+    delete m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)];
+    m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = nullptr;
+  }
+  m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = Expression::CreateDecimal(value);
 }
 
-template<typename T>
-int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol * symbol) {
+int CacheContext::nameIndexForSymbol(const Poincare::Symbol * symbol) {
   switch (symbol->name()) {
     case Symbol::SpecialSymbols::un:
       return 0;
@@ -43,8 +55,7 @@ int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol * symbol) {
   }
 }
 
-template<typename T>
-int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol * symbol) {
+int CacheContext::rankIndexForSymbol(const Poincare::Symbol * symbol) {
   switch (symbol->name()) {
     case Symbol::SpecialSymbols::un:
       return 0;
@@ -59,7 +70,7 @@ int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol * symbol) {
   }
 }
 
-template class CacheContext<float>;
-template class CacheContext<double>;
+template void CacheContext::setValueForSymbol<double>(double, Poincare::Symbol const*);
+template void CacheContext::setValueForSymbol<float>(float, Poincare::Symbol const*);
 
 }

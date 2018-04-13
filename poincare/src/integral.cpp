@@ -49,22 +49,22 @@ Expression * Integral::shallowReduce(Context& context, AngleUnit angleUnit) {
 
 template<typename T>
 Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUnit) const {
-  VariableContext<T> xContext = VariableContext<T>('x', &context);
-  Expression * aInput = operand(1)->approximate<T>(context, angleUnit);
-  T a = aInput->type() == Type::Complex ? static_cast<Complex<T> *>(aInput)->toScalar() : NAN;
+  VariableContext xContext = VariableContext('x', &context);
+  Evaluation<T> * aInput = operand(1)->privateApproximate(T(), context, angleUnit);
+  T a = aInput->toScalar();
   delete aInput;
-  Expression * bInput = operand(2)->approximate<T>(context, angleUnit);
-  T b = bInput->type() == Type::Complex ? static_cast<Complex<T> *>(bInput)->toScalar() : NAN;
+  Evaluation<T> * bInput = operand(2)->privateApproximate(T(), context, angleUnit);
+  T b = bInput->toScalar();
   delete bInput;
   if (std::isnan(a) || std::isnan(b)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Undefined());
   }
 #ifdef LAGRANGE_METHOD
   T result = lagrangeGaussQuadrature<T>(a, b, xContext, angleUnit);
 #else
   T result = adaptiveQuadrature<T>(a, b, 0.1, k_maxNumberOfIterations, xContext, angleUnit);
 #endif
-  return new Complex<T>(Complex<T>::Float(result));
+  return new Complex<T>(result);
 }
 
 ExpressionLayout * Integral::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
@@ -78,12 +78,10 @@ ExpressionLayout * Integral::privateCreateLayout(PrintFloat::Mode floatDisplayMo
 }
 
 template<typename T>
-T Integral::functionValueAtAbscissa(T x, VariableContext<T> xContext, AngleUnit angleUnit) const {
-  Complex<T> e = Complex<T>::Float(x);
-  Symbol xSymbol('x');
-  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  Expression * f = operand(0)->approximate<T>(xContext, angleUnit);
-  T result = f->type() == Type::Complex ? static_cast<Complex<T> *>(f)->toScalar() : NAN;
+T Integral::functionValueAtAbscissa(T x, VariableContext xContext, AngleUnit angleUnit) const {
+  xContext.setApproximationForVariable(x);
+  Evaluation<T> * f = operand(0)->privateApproximate(T(), xContext, angleUnit);
+  T result = f->toScalar();
   delete f;
   return result;
 }
@@ -91,7 +89,7 @@ T Integral::functionValueAtAbscissa(T x, VariableContext<T> xContext, AngleUnit 
 #ifdef LAGRANGE_METHOD
 
 template<typename T>
-T Integral::lagrangeGaussQuadrature(T a, T b, VariableContext<T> xContext, AngleUnit angleUnit) const {
+T Integral::lagrangeGaussQuadrature(T a, T b, VariableContext xContext, AngleUnit angleUnit) const {
   /* We here use Gauss-Legendre quadrature with n = 5
    * Gauss-Legendre abscissae and weights can be found in
    * C/C++ library source code. */
@@ -114,7 +112,7 @@ T Integral::lagrangeGaussQuadrature(T a, T b, VariableContext<T> xContext, Angle
 #else
 
 template<typename T>
-Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, VariableContext<T> xContext, AngleUnit angleUnit) const {
+Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, VariableContext xContext, AngleUnit angleUnit) const {
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   static T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
@@ -185,7 +183,7 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, VariableC
 }
 
 template<typename T>
-T Integral::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, VariableContext<T> xContext, AngleUnit angleUnit) const {
+T Integral::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, VariableContext xContext, AngleUnit angleUnit) const {
   if (shouldStopProcessing()) {
     return NAN;
   }

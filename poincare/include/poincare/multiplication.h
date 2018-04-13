@@ -24,11 +24,11 @@ public:
   Sign sign() const override;
   int polynomialDegree(char symbolName) const override;
   /* Evaluation */
-  template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
-  template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * m) {
-    return ApproximationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+  template<typename T> static std::complex<T> compute(const std::complex<T> c, const std::complex<T> d);
+  template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {
+    return ApproximationEngine::elementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
-  template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n);
+  template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
 private:
   /* Property */
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
@@ -57,13 +57,13 @@ private:
   Expression * mergeNegativePower(Context & context, AngleUnit angleUnit);
   /* Evaluation */
 
-  template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * c) {
-    return ApproximationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
+  template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
+    return ApproximationEngine::elementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };

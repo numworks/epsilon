@@ -1,7 +1,6 @@
 #include <poincare/symbol.h>
 
 #include <poincare/context.h>
-#include <poincare/complex.h>
 #include <poincare/division.h>
 #include <poincare/multiplication.h>
 #include <poincare/parenthesis.h>
@@ -175,11 +174,14 @@ Expression * Symbol::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Expression * Symbol::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->approximate<T>(context, angleUnit);
+Evaluation<T> * Symbol::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  if (m_name == Ion::Charset::IComplex) {
+    return new Complex<T>(0.0, 1.0);
   }
-  return new Complex<T>(Complex<T>::Float(NAN));
+  if (context.expressionForSymbol(this) != nullptr) {
+    return context.expressionForSymbol(this)->privateApproximate(T(), context, angleUnit);
+  }
+  return new Complex<T>(Complex<T>::Undefined());
 }
 
 Expression::Type Symbol::type() const {

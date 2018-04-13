@@ -34,15 +34,9 @@ Expression * Determinant::shallowReduce(Context& context, AngleUnit angleUnit) {
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
-Expression * Determinant::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * input = operand(0)->approximate<T>(context, angleUnit);
-  Expression * result = nullptr;
-  if (input->type() == Type::Complex) {
-    result = input->clone();
-  } else {
-    assert(input->type() == Type::Matrix);
-    result = static_cast<Matrix *>(input)->createDeterminant<T>();
-  }
+Evaluation<T> * Determinant::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
+  Complex<T> * result = new Complex<T>(input->createDeterminant());
   delete input;
   return result;
 }

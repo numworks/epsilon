@@ -77,19 +77,19 @@ Expression * Factorial::shallowBeautify(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  T n = c.a();
-  if (c.b() != 0 || std::isnan(n) || n != (int)n || n < 0) {
-    return Complex<T>::Float(NAN);
+std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  T n = c.real();
+  if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
+    return Complex<T>::Undefined();
   }
   T result = 1;
   for (int i = 1; i <= (int)n; i++) {
     result *= (T)i;
     if (std::isinf(result)) {
-      return Complex<T>::Float(result);
+      return Complex<T>(result);
     }
   }
-  return Complex<T>::Float(std::round(result));
+  return Complex<T>(std::round(result));
 }
 
 ExpressionLayout * Factorial::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {

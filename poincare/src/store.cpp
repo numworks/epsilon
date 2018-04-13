@@ -5,7 +5,6 @@ extern "C" {
 }
 #include <poincare/store.h>
 #include <ion.h>
-#include <poincare/complex.h>
 #include <poincare/context.h>
 #include "layout/char_layout.h"
 #include "layout/horizontal_layout.h"
@@ -45,12 +44,12 @@ ExpressionLayout * Store::privateCreateLayout(PrintFloat::Mode floatDisplayMode,
 }
 
 template<typename T>
-Expression * Store::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * Store::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   context.setExpressionForSymbolName(value(), symbol(), context);
   if (context.expressionForSymbol(symbol()) != nullptr) {
-    return context.expressionForSymbol(symbol())->approximate<T>(context, angleUnit);
+    return context.expressionForSymbol(symbol())->privateApproximate(T(), context, angleUnit);
   }
-  return new Complex<T>(Complex<T>::Float(NAN));
+  return new Complex<T>(Complex<T>::Undefined());
 }
 
 }

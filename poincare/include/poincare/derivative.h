@@ -25,11 +25,11 @@ private:
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
-  template<typename T> T growthRateAroundAbscissa(T x, T h, VariableContext<T> variableContext, AngleUnit angleUnit) const;
-  template<typename T> T riddersApproximation(VariableContext<T> variableContext, AngleUnit angleUnit, T x, T h, T * error) const;
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> Complex<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  template<typename T> T growthRateAroundAbscissa(T x, T h, VariableContext variableContext, AngleUnit angleUnit) const;
+  template<typename T> T riddersApproximation(VariableContext variableContext, AngleUnit angleUnit, T x, T h, T * error) const;
   // TODO: Change coefficients?
   constexpr static double k_maxErrorRateOnApproximation = 0.001;
   constexpr static double k_minInitialRate = 0.01;

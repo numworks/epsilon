@@ -39,23 +39,18 @@ bool Subtraction::needParenthesisWithParent(const Expression * e) const {
 }
 
 template<typename T>
-Complex<T> Subtraction::compute(const Complex<T> c, const Complex<T> d) {
-  return Complex<T>::Cartesian(c.a()-d.a(), c.b() - d.b());
+std::complex<T> Subtraction::compute(const std::complex<T> c, const std::complex<T> d) {
+  return c - d;
 }
 
-template<typename T> Matrix * Subtraction::computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * m) {
-  Matrix * opposite = computeOnMatrixAndComplex(m, c);
-  if (opposite == nullptr) {
-    return nullptr;
+template<typename T> MatrixComplex<T> Subtraction::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {
+  MatrixComplex<T> opposite = computeOnMatrixAndComplex(m, c);
+  std::complex<T> * operands = new std::complex<T> [opposite.numberOfComplexOperands()];
+  for (int i = 0; i < opposite.numberOfComplexOperands(); i++) {
+    operands[i] = -opposite.complexOperand(i);
   }
-  Expression ** operands = new Expression * [opposite->numberOfRows() * opposite->numberOfColumns()];
-  for (int i = 0; i < opposite->numberOfOperands(); i++) {
-    const Complex<T> * entry = static_cast<const Complex<T> *>(opposite->operand(i));
-    operands[i] = new Complex<T>(Complex<T>::Cartesian(-entry->a(), -entry->b()));
-  }
-  Matrix * result = new Matrix(operands, m->numberOfRows(), m->numberOfColumns(), false);
+  MatrixComplex<T> result = MatrixComplex<T>(operands, opposite.numberOfRows(), opposite.numberOfColumns());
   delete[] operands;
-  delete opposite;
   return result;
 }
 

@@ -1,5 +1,4 @@
 #include <poincare/decimal.h>
-#include <poincare/complex.h>
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/ieee754.h>
@@ -75,6 +74,13 @@ Decimal::Decimal(Integer mantissa, int exponent) :
 {
 }
 
+template <typename T>
+Decimal::Decimal(T f) {
+  m_exponent = IEEE754<T>::exponentBase10(f);
+  int64_t mantissaf = std::round(f * std::pow((T)10, -m_exponent+PrintFloat::k_numberOfStoredSignificantDigits+1));
+  m_mantissa = Integer(mantissaf);
+}
+
 Expression::Type Decimal::type() const {
   return Type::Decimal;
 }
@@ -83,10 +89,10 @@ Expression * Decimal::clone() const {
   return new Decimal(m_mantissa, m_exponent);
 }
 
-template<typename T> Expression * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
+template<typename T> Evaluation<T> * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
   int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
-  return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));
+  return new Complex<T>(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1)));
 }
 
 int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode, int numberOfSignificantDigits) const {
@@ -265,5 +271,8 @@ int Decimal::simplificationOrderSameType(const Expression * e, bool canBeInterru
   }
   return ((int)sign())*unsignedComparison;
 }
+
+template Decimal::Decimal(double);
+template Decimal::Decimal(float);
 
 }

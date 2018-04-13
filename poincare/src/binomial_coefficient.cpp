@@ -1,6 +1,5 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/undefined.h>
-#include <poincare/complex.h>
 #include <poincare/rational.h>
 #include "layout/binomial_coefficient_layout.h"
 
@@ -82,17 +81,14 @@ ExpressionLayout * BinomialCoefficient::privateCreateLayout(PrintFloat::Mode flo
 }
 
 template<typename T>
-Expression * BinomialCoefficient::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * nInput = operand(0)->approximate<T>(context, angleUnit);
-  Expression * kInput = operand(1)->approximate<T>(context, angleUnit);
-  if (nInput->type() != Type::Complex || kInput->type() != Type::Complex) {
-    return new Complex<T>(Complex<T>::Float(NAN));
-  }
-  T n = static_cast<Complex<T> *>(nInput)->toScalar();
-  T k = static_cast<Complex<T> *>(kInput)->toScalar();
+Complex<T> * BinomialCoefficient::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * nInput = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * kInput = operand(1)->privateApproximate(T(), context, angleUnit);
+  T n = nInput->toScalar();
+  T k = kInput->toScalar();
   delete nInput;
   delete kInput;
-  return new Complex<T>(Complex<T>::Float(compute(k, n)));
+  return new Complex<T>(compute(k, n));
 }
 
 

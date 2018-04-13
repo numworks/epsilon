@@ -3,6 +3,8 @@
 
 #include <poincare/expression_layout.h>
 #include <poincare/print_float.h>
+#include <poincare/evaluation.h>
+#include <complex>
 extern "C" {
 #include <assert.h>
 }
@@ -10,7 +12,6 @@ extern "C" {
 namespace Poincare {
 
 class Context;
-template<class T> class Complex;
 class Rational;
 
 class Expression {
@@ -77,10 +78,8 @@ class Expression {
   friend class ApproximationEngine;
   friend class SimplificationEngine;
   friend class LayoutEngine;
-  friend class Complex<float>;
-  friend class Complex<double>;
   friend class EmptyExpression;
-
+  friend class Randint;
 public:
   enum class Type : uint8_t {
     Undefined = 0,
@@ -137,7 +136,6 @@ public:
     Sum,
     Symbol,
 
-    Complex,
     Matrix,
     ConfidenceInterval,
     MatrixDimension,
@@ -232,12 +230,13 @@ public:
   static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit = AngleUnit::Default);
   static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
 
-  /* Evaluation Engine
-   * The function evaluate creates a new expression and thus mallocs memory.
+  /* Evaluation Engine */
+  template<typename T> static Expression * CreateDecimal(T f);
+  /* The function approximate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
-  template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
+  template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default, ComplexFormat complexFormat = ComplexFormat::Default) const;
+  template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit = AngleUnit::Default, ComplexFormat complexFormat = ComplexFormat::Default) const;
+  template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default, ComplexFormat complexFormat = ComplexFormat::Default);
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}
@@ -292,8 +291,9 @@ private:
     return nullptr;
   }
   /* Evaluation Engine */
-  virtual Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  virtual Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  template<typename T> static Expression * complexToExpression(std::complex<T> c, ComplexFormat complexFormat);
+  virtual Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 
   Expression * m_parent;
 };

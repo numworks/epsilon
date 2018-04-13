@@ -21,7 +21,7 @@ int Undefined::polynomialDegree(char symbolName) const {
 }
 
 template<typename T> Complex<T> * Undefined::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  return new Complex<T>(Complex<T>::Float(NAN));
+  return new Complex<T>(Complex<T>::Undefined());
 }
 
 ExpressionLayout * Undefined::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {

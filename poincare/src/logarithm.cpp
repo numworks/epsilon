@@ -30,11 +30,8 @@ Expression * Logarithm::clone() const {
 }
 
 template<typename T>
-Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
-  }
-  return Complex<T>::Float(std::log10(c.a()));
+std::complex<T> Logarithm::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  return std::log10(c);
 }
 
 Expression * Logarithm::simpleShallowReduce(Context & context, AngleUnit angleUnit) {
@@ -211,14 +208,14 @@ Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) 
 }
 
 template<typename T>
-Expression * Logarithm::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * Logarithm::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   if (numberOfOperands() == 1) {
     return ApproximationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }
-  Expression * x = operand(0)->approximate<T>(context, angleUnit);
-  Expression * n = operand(1)->approximate<T>(context, angleUnit);
-  Complex<T> result = Complex<T>::Float(NAN);
-  if (x->type() == Type::Complex && n->type() == Type::Complex) {
+  Evaluation<T> * x = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * n = operand(1)->privateApproximate(T(), context, angleUnit);
+  std::complex<T> result = std::complex<T>(NAN, NAN);
+  if (x->type() == Evaluation<T>::Type::Complex && n->type() == Evaluation<T>::Type::Complex) {
     Complex<T> * xc = static_cast<Complex<T> *>(x);
     Complex<T> * nc = static_cast<Complex<T> *>(n);
     result = Division::compute<T>(computeOnComplex(*xc, angleUnit), computeOnComplex(*nc, angleUnit));

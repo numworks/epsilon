@@ -52,11 +52,11 @@ Expression * Ceiling::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Ceiling::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+std::complex<T> Ceiling::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  if (c.imag() != 0) {
+    return Complex<T>::Undefined();
   }
-  return Complex<T>::Float(std::ceil(c.a()));
+  return std::ceil(c.real());
 }
 
 ExpressionLayout * Ceiling::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {

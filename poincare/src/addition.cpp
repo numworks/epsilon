@@ -328,17 +328,17 @@ Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
 /* Evaluation */
 
 template<typename T>
-Complex<T> Addition::compute(const Complex<T> c, const Complex<T> d) {
-  return Complex<T>::Cartesian(c.a()+d.a(), c.b()+d.b());
+std::complex<T> Addition::compute(const std::complex<T> c, const std::complex<T> d) {
+  return c+d;
 }
 
-template Complex<float> Poincare::Addition::compute<float>(Poincare::Complex<float>, Poincare::Complex<float>);
-template Complex<double> Poincare::Addition::compute<double>(Poincare::Complex<double>, Poincare::Complex<double>);
+template std::complex<float> Poincare::Addition::compute<float>(std::complex<float>, std::complex<float>);
+template std::complex<double> Poincare::Addition::compute<double>(std::complex<double>, std::complex<double>);
 
-template Matrix* Addition::computeOnMatrices<float>(const Matrix*,const Matrix*);
-template Matrix* Addition::computeOnMatrices<double>(const Matrix*,const Matrix*);
+template MatrixComplex<float> Addition::computeOnMatrices<float>(const MatrixComplex<float>,const MatrixComplex<float>);
+template MatrixComplex<double> Addition::computeOnMatrices<double>(const MatrixComplex<double>,const MatrixComplex<double>);
 
-template Matrix* Addition::computeOnComplexAndMatrix<float>(Complex<float> const*, const Matrix*);
-template Matrix* Addition::computeOnComplexAndMatrix<double>(Complex<double> const*, const Matrix*);
+template MatrixComplex<float> Addition::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>);
+template MatrixComplex<double> Addition::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>);
 
 }

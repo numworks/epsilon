@@ -3,7 +3,6 @@
 #include <poincare/symbol.h>
 #include <poincare/integer.h>
 #include <poincare/rational.h>
-#include <poincare/complex.h>
 #include <ion.h>
 #include <iostream>
 
@@ -38,13 +37,6 @@ void print_expression(const Expression * e, int indentationLevel) {
       break;
     case Expression::Type::Ceiling:
       std::cout << "Ceiling";
-      break;
-    case Expression::Type::Complex:
-      std::cout << "Complex(";
-      std::cout << static_cast<const Complex<double> *>(e)->a();
-      std::cout << ", ";
-      std::cout << static_cast<const Complex<double> *>(e)->b();
-      std::cout << ")";
       break;
     case Expression::Type::ComplexArgument:
       std::cout << "ComplexArgument";

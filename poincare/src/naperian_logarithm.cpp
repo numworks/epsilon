@@ -37,11 +37,8 @@ Expression * NaperianLogarithm::shallowReduce(Context& context, AngleUnit angleU
 }
 
 template<typename T>
-Complex<T> NaperianLogarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
-  }
-  return Complex<T>::Float(std::log(c.a()));
+std::complex<T> NaperianLogarithm::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  return std::log(c);
 }
 
 }

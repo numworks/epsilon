@@ -1,5 +1,4 @@
 #include <poincare/complex_argument.h>
-#include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
@@ -32,8 +31,8 @@ Expression * ComplexArgument::shallowReduce(Context& context, AngleUnit angleUni
 }
 
 template<typename T>
-Complex<T> ComplexArgument::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  return Complex<T>::Float(c.th());
+std::complex<T> ComplexArgument::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  return Complex<T>(std::arg(c));
 }
 
 }

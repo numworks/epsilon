@@ -323,14 +323,13 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   if (n < m_initialRank || n < 0) {
     return NAN;
   }
-  CacheContext<T> ctx = CacheContext<T>(sqctx);
+  CacheContext ctx = CacheContext(sqctx);
   T un = sqctx->valueOfSequenceAtPreviousRank<T>(0, 0);
   T unm1 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 1);
   T unm2 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 2);
   T vn = sqctx->valueOfSequenceAtPreviousRank<T>(1, 0);
   T vnm1 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 1);
   T vnm2 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 2);
-  Poincare::Symbol nSymbol(symbol());
   Poincare::Symbol vnSymbol(Symbol::SpecialSymbols::vn);
   Poincare::Symbol vn1Symbol(Symbol::SpecialSymbols::vn1);
   Poincare::Symbol unSymbol(Symbol::SpecialSymbols::un);
@@ -340,8 +339,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     {
       ctx.setValueForSymbol(un, &unSymbol);
       ctx.setValueForSymbol(vn, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
+      ctx.setApproximationForVariable((T)n);
       return expression(sqctx)->template approximateToScalar<T>(ctx);
     }
     case Type::SingleRecurrence:
@@ -353,8 +351,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm1, &unSymbol);
       ctx.setValueForSymbol(vn, &vn1Symbol);
       ctx.setValueForSymbol(vnm1, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-1);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
+      ctx.setApproximationForVariable((T)n-1);
       return expression(sqctx)->template approximateToScalar<T>(ctx);
     }
     default:
@@ -369,8 +366,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm2, &unSymbol);
       ctx.setValueForSymbol(vnm1, &vn1Symbol);
       ctx.setValueForSymbol(vnm2, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-2);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
+      ctx.setApproximationForVariable((T)n-2);
       return expression(sqctx)->template approximateToScalar<T>(ctx);
     }
   }

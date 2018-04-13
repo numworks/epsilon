@@ -36,8 +36,8 @@ Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Expression * Parenthesis::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  return operand(0)->approximate<T>(context, angleUnit);
+Evaluation<T> * Parenthesis::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  return operand(0)->privateApproximate(T(), context, angleUnit);
 }
 
 }

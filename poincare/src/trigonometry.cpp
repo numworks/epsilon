@@ -1,12 +1,13 @@
 #include <poincare/trigonometry.h>
 #include <poincare/hyperbolic_cosine.h>
-#include <poincare/complex.h>
 #include <poincare/symbol.h>
+#include <poincare/preferences.h>
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
 #include <poincare/subtraction.h>
 #include <poincare/derivative.h>
+#include <poincare/decimal.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -35,7 +36,7 @@ float Trigonometry::characteristicXRange(const Expression * e, Context & context
   assert(d == 1);
   /* To compute a, the slope of the expression op, we compute the derivative of
    * op for any x value. */
-  Poincare::Complex<float> x = Poincare::Complex<float>::Float(1.0f);
+  Poincare::Decimal x(1.0f);
   const Poincare::Expression * args[2] = {op, &x};
   Poincare::Derivative derivative(args, true);
   float a = derivative.approximateToScalar<float>(context);
@@ -239,5 +240,32 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
   }
   return nullptr;
 }
+
+template <typename T>
+std::complex<T> Trigonometry::computeOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, Approximation<T> approximate) {
+  assert(angleUnit != Expression::AngleUnit::Default);
+  std::complex<T> input(c);
+  if (angleUnit == Expression::AngleUnit::Degree && input.imag() == 0.0) {
+    input = input*std::complex<T>(M_PI/180.0);
+  }
+  std::complex<T> result = approximate(input);
+  /* Cheat: openbsd trigonometric functions (cos, sin & tan) are numerical
+   * implementation and thus are approximative. The error epsilon is ~1E-7
+   * on float and ~1E-15 on double. In order to avoid weird results as
+   * cos(90) = 6E-17, we neglect the result when its ratio with the argument
+   * (pi in the exemple) is smaller than epsilon.
+   * We can't do that for all evaluation as the user can operate on values as
+   * small as 1E-308 (in double) and most results still be correct. */
+  if (std::abs(input) !=  0 && std::fabs(result.real()/std::abs(input)) <= Expression::epsilon<T>()) {
+    result.real(0);
+  }
+  if (std::abs(input) !=  0 && std::fabs(result.imag()/std::abs(input)) <= Expression::epsilon<T>()) {
+    result.imag(0);
+  }
+  return result;
+}
+
+template std::complex<double> Trigonometry::computeOnComplex<double>(const std::complex<double>, Expression::AngleUnit, Approximation<double>);
+template std::complex<float> Trigonometry::computeOnComplex<float>(const std::complex<float>, Expression::AngleUnit, Approximation<float>);
 
 }

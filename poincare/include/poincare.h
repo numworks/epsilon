@@ -10,7 +10,6 @@
 #include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare/ceiling.h>
-#include <poincare/complex.h>
 #include <poincare/complex_argument.h>
 #include <poincare/confidence_interval.h>
 #include <poincare/conjugate.h>

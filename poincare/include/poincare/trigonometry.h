@@ -17,6 +17,8 @@ public:
   static bool ExpressionIsEquivalentToTangent(const Expression * e);
   constexpr static int k_numberOfEntries = 37;
   static Expression * table(const Expression * e, Expression::Type type, Context & context, Expression::AngleUnit angleUnit); // , Function f, bool inverse
+  template <typename T> using Approximation = std::complex<T> (*)(const std::complex<T>&);
+  template <typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, Approximation<T> approximate);
 };
 
 }

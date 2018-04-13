@@ -75,12 +75,6 @@ Decimal::Decimal(Integer mantissa, int exponent) :
 {
 }
 
-Decimal::Decimal(double f) {
-  m_exponent = IEEE754<double>::exponentBase10(f);
-  int64_t mantissaf = std::round(f * std::pow(10.0, -m_exponent+PrintFloat::k_numberOfStoredSignificantDigits+1));
-  m_mantissa = Integer(mantissaf);
-}
-
 Expression::Type Decimal::type() const {
   return Type::Decimal;
 }

@@ -16,8 +16,10 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   m_scriptNodesCount(0),
   m_menuController(menuController),
   m_scriptStore(scriptStore),
-  m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false)
+  m_selectableTableView(this)
 {
+  m_selectableTableView.setMargins(0);
+  m_selectableTableView.setShowsIndicators(false);
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setScriptStore(scriptStore);
   }

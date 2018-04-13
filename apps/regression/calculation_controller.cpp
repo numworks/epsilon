@@ -242,7 +242,9 @@ Responder * CalculationController::tabController() const {
 }
 
 View * CalculationController::loadView() {
-  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 0,  Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, this, true, true, Palette::WallScreenDark);
+  SelectableTableView * tableView = new SelectableTableView(this, this, this, this);
+  tableView->setVerticalCellOverlap(0);
+  tableView->setBackgroundColor(Palette::WallScreenDark);
 ;
   m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
   m_columnTitleCell = new EvenOddDoubleBufferTextCell(tableView);

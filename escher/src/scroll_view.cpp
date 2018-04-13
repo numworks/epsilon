@@ -1,39 +1,45 @@
 #include <escher/scroll_view.h>
+#include <escher/palette.h>
+#include <escher/metric.h>
 
 extern "C" {
 #include <assert.h>
 }
 
-ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource, KDCoordinate topMargin, KDCoordinate rightMargin,
-  KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
-  KDColor backgroundColor, KDCoordinate indicatorThickness, KDColor indicatorColor,
-  KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
+ScrollView::ScrollView(View * contentView, ScrollViewDataSource * dataSource) :
   View(),
-  m_topMargin(topMargin),
   m_contentView(contentView),
   m_dataSource(dataSource),
-  m_verticalScrollIndicator(ScrollViewIndicator::Direction::Vertical, indicatorColor, backgroundIndicatorColor, indicatorMargin),
-  m_horizontalScrollIndicator(ScrollViewIndicator::Direction::Horizontal, indicatorColor, backgroundIndicatorColor, indicatorMargin),
-  m_rightMargin(rightMargin),
-  m_bottomMargin(bottomMargin),
-  m_leftMargin(leftMargin),
-  m_indicatorThickness(indicatorThickness),
-  m_showIndicators(showIndicators),
-  m_colorBackground(colorBackground),
-  m_backgroundColor(backgroundColor)
+  m_verticalScrollIndicator(ScrollViewIndicator::Direction::Vertical),
+  m_horizontalScrollIndicator(ScrollViewIndicator::Direction::Horizontal),
+  m_topMargin(0),
+  m_rightMargin(0),
+  m_bottomMargin(0),
+  m_leftMargin(0),
+  m_indicatorThickness(20),
+  m_showsIndicators(true),
+  m_colorsBackground(true),
+  m_backgroundColor(Palette::WallScreen)
 {
   assert(m_dataSource != nullptr);
 }
 
+void ScrollView::setCommonMargins() {
+  setTopMargin(Metric::CommonTopMargin);
+  setRightMargin(Metric::CommonRightMargin);
+  setBottomMargin(Metric::CommonBottomMargin);
+  setLeftMargin(Metric::CommonLeftMargin);
+}
+
 bool ScrollView::hasVerticalIndicator() const {
-  if (m_showIndicators) {
+  if (m_showsIndicators) {
     return m_verticalScrollIndicator.end() < 1 || m_verticalScrollIndicator.start() > 0;
   }
   return false;
 }
 
 bool ScrollView::hasHorizontalIndicator() const {
-  if (m_showIndicators) {
+  if (m_showsIndicators) {
     return m_horizontalScrollIndicator.end() < 1 || m_horizontalScrollIndicator.start() > 0;
   }
   return false;
@@ -56,7 +62,7 @@ View * ScrollView::subviewAtIndex(int index) {
 }
 
 void ScrollView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (!m_colorBackground) {
+  if (!m_colorsBackground) {
     return;
   }
   KDCoordinate height = bounds().height();
@@ -163,25 +169,26 @@ void ScrollView::layoutSubviews() {
 }
 
 void ScrollView::updateScrollIndicator() {
-  if (m_showIndicators) {
-    float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
-    bool hadVerticalIndicator = hasVerticalIndicator();
-    float verticalStart = contentOffset().y();
-    float verticalEnd = contentOffset().y() + m_frame.height();
-    m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
-    m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
-    if (hadVerticalIndicator && !hasVerticalIndicator()) {
-      markRectAsDirty(m_verticalScrollIndicator.frame());
-    }
-    float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
-    bool hadHorizontalIndicator = hasHorizontalIndicator();
-    float horizontalStart = contentOffset().x();
-    float horizontalEnd = contentOffset().x() + m_frame.width();
-    m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
-    m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
-    if (hadHorizontalIndicator && !hasHorizontalIndicator()) {
-      markRectAsDirty(m_horizontalScrollIndicator.frame());
-    }
+  if (!m_showsIndicators) {
+    return;
+  }
+  float contentHeight = m_contentView->bounds().height()+m_topMargin+m_bottomMargin;
+  bool hadVerticalIndicator = hasVerticalIndicator();
+  float verticalStart = contentOffset().y();
+  float verticalEnd = contentOffset().y() + m_frame.height();
+  m_verticalScrollIndicator.setStart(verticalStart/contentHeight);
+  m_verticalScrollIndicator.setEnd(verticalEnd/contentHeight);
+  if (hadVerticalIndicator && !hasVerticalIndicator()) {
+    markRectAsDirty(m_verticalScrollIndicator.frame());
+  }
+  float contentWidth = m_contentView->bounds().width()+m_leftMargin+m_rightMargin;
+  bool hadHorizontalIndicator = hasHorizontalIndicator();
+  float horizontalStart = contentOffset().x();
+  float horizontalEnd = contentOffset().x() + m_frame.width();
+  m_horizontalScrollIndicator.setStart(horizontalStart/contentWidth);
+  m_horizontalScrollIndicator.setEnd(horizontalEnd/contentWidth);
+  if (hadHorizontalIndicator && !hasHorizontalIndicator()) {
+    markRectAsDirty(m_horizontalScrollIndicator.frame());
   }
 }
 
@@ -193,18 +200,6 @@ void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {
   if (m_dataSource->setOffset(offset) || forceRelayout) {
     layoutSubviews();
   }
-}
-
-KDPoint ScrollView::contentOffset() const {
-  return m_dataSource->offset();
-}
-
-KDCoordinate ScrollView::topMargin() const {
-  return m_topMargin;
-}
-
-KDCoordinate ScrollView::leftMargin() const {
-  return m_leftMargin;
 }
 
 KDCoordinate ScrollView::maxContentWidthDisplayableWithoutScrolling() {

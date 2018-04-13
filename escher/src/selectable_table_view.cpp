@@ -1,15 +1,13 @@
 #include <escher/selectable_table_view.h>
 #include <assert.h>
 
-SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin,
-    SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate, bool showIndicators, bool colorBackground, KDColor backgroundColor,
-    KDCoordinate indicatorThickness, KDColor indicatorColor, KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
-  TableView(dataSource, selectionDataSource, horizontalCellOverlapping, verticalCellOverlapping, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground, backgroundColor,
-    indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
+SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
+  TableView(dataSource, selectionDataSource),
   Responder(parentResponder),
   m_selectionDataSource(selectionDataSource),
   m_delegate(delegate)
 {
+  setCommonMargins();
   assert(m_selectionDataSource != nullptr);
 }
 

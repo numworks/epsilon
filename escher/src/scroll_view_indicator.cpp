@@ -1,16 +1,17 @@
 #include <escher/scroll_view_indicator.h>
+#include <escher/palette.h>
 extern "C" {
 #include <assert.h>
 }
 
-ScrollViewIndicator::ScrollViewIndicator(ScrollViewIndicator::Direction direction, KDColor indicatorColor, KDColor backgroundColor, KDCoordinate margin) :
+ScrollViewIndicator::ScrollViewIndicator(ScrollViewIndicator::Direction direction) :
   View(),
   m_direction(direction),
   m_start(0),
   m_end(0),
-  m_indicatorColor(indicatorColor),
-  m_backgroundColor(backgroundColor),
-  m_margin(margin)
+  m_indicatorColor(Palette::GreyDark),
+  m_backgroundColor(Palette::GreyMiddle),
+  m_margin(14)
 {
 }
 

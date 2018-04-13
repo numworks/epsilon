@@ -7,13 +7,9 @@ extern "C" {
 
 #define MIN(x,y) ((x)<(y) ? (x) : (y))
 
-TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin,
-    KDCoordinate bottomMargin, KDCoordinate leftMargin, bool showIndicators, bool colorBackground,
-    KDColor backgroundColor, KDCoordinate indicatorThickness, KDColor indicatorColor,
-    KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
-  ScrollView(&m_contentView, scrollDataSource, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground,
-    backgroundColor, indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
-  m_contentView(this, dataSource, horizontalCellOverlapping, verticalCellOverlapping)
+TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource) :
+  ScrollView(&m_contentView, scrollDataSource),
+  m_contentView(this, dataSource, 0, 1)
 {
 }
 
@@ -56,12 +52,12 @@ void TableView::reloadCellAtLocation(int i, int j) {
 
 /* TableView::ContentView */
 
-TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping) :
+TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlap, KDCoordinate verticalCellOverlap) :
   View(),
   m_tableView(tableView),
   m_dataSource(dataSource),
-  m_horizontalCellOverlapping(horizontalCellOverlapping),
-  m_verticalCellOverlapping(verticalCellOverlapping)
+  m_horizontalCellOverlap(horizontalCellOverlap),
+  m_verticalCellOverlap(verticalCellOverlap)
 {
 }
 
@@ -85,11 +81,11 @@ void TableView::ContentView::resizeToFitContent() {
 }
 
 KDCoordinate TableView::ContentView::height() const {
-  return m_dataSource->cumulatedHeightFromIndex(m_dataSource->numberOfRows())+m_verticalCellOverlapping;
+  return m_dataSource->cumulatedHeightFromIndex(m_dataSource->numberOfRows())+m_verticalCellOverlap;
 }
 
 KDCoordinate TableView::ContentView::width() const {
-  int result = m_dataSource->cumulatedWidthFromIndex(m_dataSource->numberOfColumns())+m_horizontalCellOverlapping;
+  int result = m_dataSource->cumulatedWidthFromIndex(m_dataSource->numberOfColumns())+m_horizontalCellOverlap;
   // handle the case of list: cumulatedWidthFromIndex() = 0
   return result ? result : m_tableView->maxContentWidthDisplayableWithoutScrolling();
 }
@@ -175,7 +171,7 @@ void TableView::ContentView::layoutSubviews() {
     KDCoordinate verticalOffset = m_dataSource->cumulatedHeightFromIndex(j);
     KDCoordinate horizontalOffset = m_dataSource->cumulatedWidthFromIndex(i);
     KDRect cellFrame(horizontalOffset, verticalOffset,
-      columnWidth+m_horizontalCellOverlapping, rowHeight+m_verticalCellOverlapping);
+      columnWidth+m_horizontalCellOverlap, rowHeight+m_verticalCellOverlap);
     cell->setFrame(cellFrame);
   }
 }

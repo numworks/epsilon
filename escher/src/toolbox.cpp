@@ -87,11 +87,13 @@ void Toolbox::ListController::setFirstSelectedRow(int firstSelectedRow) {
 
 Toolbox::Toolbox(Responder * parentResponder, const char * title) :
   StackViewController(parentResponder, &m_listController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
-  m_selectableTableView(&m_listController, this, 0, 1, 0, 0, 0, 0, this, nullptr, false),
+  m_selectableTableView(&m_listController, this, this),
   m_listController(this, &m_selectableTableView, title),
   m_messageTreeModel(nullptr),
   m_sender(nullptr)
 {
+  m_selectableTableView.setMargins(0);
+  m_selectableTableView.setShowsIndicators(false);
 }
 
 void Toolbox::setSender(Responder * sender) {

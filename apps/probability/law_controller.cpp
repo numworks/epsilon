@@ -54,14 +54,14 @@ static I18n::Message sMessages[] = {
 
 LawController::LawController(Responder * parentResponder, Law * law, ParametersController * parametersController) :
   ViewController(parentResponder),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin-ContentView::k_titleMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this),
   m_contentView(&m_selectableTableView),
   m_law(law),
   m_parametersController(parametersController)
 {
-  m_messages = sMessages;
   assert(m_law != nullptr);
+  m_messages = sMessages;
+  m_selectableTableView.setTopMargin(Metric::CommonTopMargin-ContentView::k_titleMargin);
 }
 
 View * LawController::view() {

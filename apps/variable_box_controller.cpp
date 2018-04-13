@@ -14,8 +14,10 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   m_firstSelectedRow(0),
   m_previousSelectedRow(0),
   m_currentPage(Page::RootMenu),
-  m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false)
+  m_selectableTableView(this)
 {
+  m_selectableTableView.setMargins(0);
+  m_selectableTableView.setShowsIndicators(false);
 }
 
 const char * VariableBoxController::ContentViewController::title() {

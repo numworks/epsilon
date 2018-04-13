@@ -41,8 +41,7 @@ MainController::MainController(Responder * parentResponder) :
   m_complexFormatCell(I18n::Message::Default, KDText::FontSize::Large),
   m_brightnessCell(I18n::Message::Default, KDText::FontSize::Large),
   m_complexFormatLayout(nullptr),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this),
   m_messageTreeModel((MessageTree *)&model),
   m_subController(this),
   m_languageController(this, 13)

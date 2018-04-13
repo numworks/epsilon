@@ -9,8 +9,7 @@ namespace Graph {
 
 CalculationParameterController::CalculationParameterController(Responder * parentResponder, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CartesianFunctionStore * functionStore) :
   ViewController(parentResponder),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this),
   m_function(nullptr),
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
   m_integralGraphController(nullptr, graphView, range, cursor),

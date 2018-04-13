@@ -7,9 +7,14 @@ extern "C" {
 namespace Home {
 
 Controller::ContentView::ContentView(Controller * controller, SelectableTableViewDataSource * selectionDataSource) :
-  m_selectableTableView(controller, controller, 0, 0, 0, k_sideMargin, 0, k_sideMargin, selectionDataSource, controller, true, false,
-    KDColorBlack, k_indicatorThickness, Palette::GreyDark, Palette::GreyMiddle, k_indicatorMargin)
+  m_selectableTableView(controller, controller, selectionDataSource, controller)
 {
+  m_selectableTableView.setVerticalCellOverlap(0);
+  m_selectableTableView.setMargins(0, k_sideMargin, 0, k_sideMargin);
+  m_selectableTableView.setColorsBackground(false);
+  m_selectableTableView.setIndicatorThickness(k_indicatorThickness);
+  m_selectableTableView.horizontalScrollIndicator()->setMargin(k_indicatorMargin);
+  m_selectableTableView.verticalScrollIndicator()->setMargin(k_indicatorMargin);
 }
 
 SelectableTableView * Controller::ContentView::selectableTableView() {

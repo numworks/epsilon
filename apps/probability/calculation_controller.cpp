@@ -55,7 +55,7 @@ void CalculationController::ContentView::layoutSubviews() {
 CalculationController::CalculationController(Responder * parentResponder, Law * law, Calculation * calculation) :
   ViewController(parentResponder),
   m_contentView(&m_selectableTableView, law, calculation),
-  m_selectableTableView(this, this, 0, 0, k_tableMargin, k_tableMargin, k_tableMargin, k_tableMargin, this, nullptr, false, true, KDColorWhite),
+  m_selectableTableView(this),
   m_imageCell(&m_selectableTableView, law, calculation, this),
   m_draftTextBuffer{},
   m_calculation(calculation),
@@ -63,6 +63,12 @@ CalculationController::CalculationController(Responder * parentResponder, Law * 
 {
   assert(law != nullptr);
   assert(calculation != nullptr);
+  m_selectableTableView.setMargins(k_tableMargin);
+  m_selectableTableView.setVerticalCellOverlap(0);
+  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setBackgroundColor(KDColorWhite);
+
+
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
     m_calculationCells[i].editableTextCell()->setParentResponder(&m_selectableTableView);
     m_calculationCells[i].editableTextCell()->textField()->setDelegate(this);

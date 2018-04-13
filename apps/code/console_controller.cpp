@@ -26,7 +26,7 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
   MicroPython::ExecutionEnvironment(),
   m_rowHeight(KDText::charSize(k_fontSize).height()),
   m_importScriptsWhenViewAppears(false),
-  m_selectableTableView(this, this, 0, 1, 0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin, this, this, true, true, KDColorWhite),
+  m_selectableTableView(this, this, this, this),
   m_editCell(this, this),
   m_pythonHeap(nullptr),
   m_scriptStore(scriptStore),
@@ -36,6 +36,8 @@ ConsoleController::ConsoleController(Responder * parentResponder, ScriptStore * 
       , m_locked(lockOnConsole)
 #endif
 {
+  m_selectableTableView.setMargins(0, Metric::CommonRightMargin, 0, Metric::TitleBarExternHorizontalMargin);
+  m_selectableTableView.setBackgroundColor(KDColorWhite);
   m_editCell.setPrompt(sStandardPromptText);
   for (int i = 0; i < k_numberOfLineCells; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);

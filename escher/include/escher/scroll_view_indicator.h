@@ -9,8 +9,15 @@ public:
     Horizontal,
     Vertical
   };
-  ScrollViewIndicator(Direction direction, KDColor indicatorColor, KDColor backgroundColor, KDCoordinate margin);
+  ScrollViewIndicator(Direction direction);
   void drawRect(KDContext * ctx, KDRect rect) const override;
+
+  void setIndicatorColor(KDColor c) { m_indicatorColor = c; }
+  KDColor indicatorColor() const { return m_indicatorColor; }
+  void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
+  KDColor backgroundColor() const { return m_backgroundColor; }
+  void setMargin(KDCoordinate m) { m_margin = m; }
+  KDCoordinate margin() const { return m_margin; }
 
   float start() const;
   void setStart(float start);

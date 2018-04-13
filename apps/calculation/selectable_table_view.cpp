@@ -4,16 +4,19 @@ namespace Calculation {
 
 CalculationSelectableTableView::CalculationSelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
  SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
-  ::SelectableTableView(parentResponder, dataSource, 0, 0, 0, 0, 0, 0, selectionDataSource, delegate, false)
+  ::SelectableTableView(parentResponder, dataSource, selectionDataSource, delegate)
 {
+  setVerticalCellOverlap(0);
+  setMargins(0);
+  setShowsIndicators(false);
 }
 
 void CalculationSelectableTableView::scrollToCell(int i, int j) {
   ::SelectableTableView::scrollToCell(i, j);
   if (m_contentView.bounds().height() < bounds().height()) {
-    m_topMargin = bounds().height() - m_contentView.bounds().height();
+    setTopMargin(bounds().height() - m_contentView.bounds().height());
   } else {
-    m_topMargin = 0;
+    setTopMargin(0);
   }
   ScrollView::layoutSubviews();
   if (m_contentView.bounds().height() - contentOffset().y() < bounds().height()) {

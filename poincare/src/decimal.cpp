@@ -2,6 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
+#include <poincare/ieee754.h>
 #include <assert.h>
 #include <ion.h>
 #include <cmath>
@@ -78,25 +79,10 @@ Decimal::Decimal(Integer mantissa, int exponent) :
 }
 
 Decimal::Decimal(double f) {
-  double logBase10 = f != 0 ? std::log10(std::fabs(f)) : 0;
-  int exponentInBase10 = std::floor(logBase10);
-  /* Correct the exponent in base 10: sometines the exact log10 of f is 6.999999
-   * but is stored as 7 in hardware. We catch these cases here. */
-  if (f != 0 && logBase10 == (int)logBase10 && std::fabs(f) < std::pow(10, logBase10)) {
-    exponentInBase10--;
-  }
-  double m = f*std::pow(10, (double)-exponentInBase10); // TODO: hangle exponentInBase10 is too big! mantissa is nan
-  m = m * std::pow(10, (double)(k_doublePrecision-1));
-  int64_t integerMantissa = std::round(m);
-  /* If m > 999999999999999.5, the mantissa stored will be 1 (as we keep only
-   * 15 significative numbers from double. In that case, the exponent must be
-   * increment as well. */
-  if (m >= k_biggestMantissaFromDouble+0.5) {
-    exponentInBase10++;
-  }
-  m_mantissa = Integer(integerMantissa);
+  m_exponent = IEEE754<double>::exponentBase10(f);
+  int64_t mantissaf = std::round(f * std::pow(10.0, -m_exponent+PrintFloat::k_numberOfStoredSignificantDigits+1));
+  m_mantissa = Integer(mantissaf);
   removeZeroAtTheEnd(m_mantissa);
-  m_exponent = exponentInBase10;
 }
 
 Expression::Type Decimal::type() const {

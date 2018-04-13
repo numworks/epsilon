@@ -6,8 +6,7 @@ namespace Shared {
 ValuesFunctionParameterController::ValuesFunctionParameterController(char symbol) :
   ViewController(nullptr),
   m_copyColumn(I18n::Message::CopyColumnInList),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this, this, this),
   m_function(nullptr),
   m_symbol(symbol)
 {

@@ -13,10 +13,11 @@ namespace Settings {
 SubController::SubController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_editableCell(&m_selectableTableView, this, m_draftTextBuffer),
-  m_selectableTableView(this, this, 0, 1, k_topBottomMargin, Metric::CommonRightMargin,
-    k_topBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this),
   m_messageTreeModel(nullptr)
 {
+  m_selectableTableView.setTopMargin(k_topBottomMargin);
+  m_selectableTableView.setBottomMargin(k_topBottomMargin);
   for (int i = 0; i < k_totalNumberOfCell; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
     m_cells[i].setAccessoryFontSize(KDText::FontSize::Small);

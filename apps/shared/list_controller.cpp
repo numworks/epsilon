@@ -295,7 +295,11 @@ void ListController::addEmptyFunction() {
 View * ListController::loadView() {
   m_emptyCell = new EvenOddCell();
   m_addNewFunction = new NewFunctionCell(m_addNewMessage);
-  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, this, false, true);
+  SelectableTableView * selectableTableView = new SelectableTableView(this, this, this, this);
+  selectableTableView->setMargins(0);
+  selectableTableView->setVerticalCellOverlap(0);
+  selectableTableView->setShowsIndicators(false);
+  return selectableTableView;
 }
 
 void ListController::unloadView(View * view) {

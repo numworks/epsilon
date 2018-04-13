@@ -4,9 +4,11 @@
 
 ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource) :
   Responder(parentResponder),
-  ScrollView(view, dataSource, 0, 0, 0, 0, false, false),
+  ScrollView(view, dataSource),
   m_manualScrollingOffset(KDPointZero)
 {
+  setShowsIndicators(false);
+  setColorsBackground(false);
 }
 
 bool ScrollableView::handleEvent(Ion::Events::Event event) {

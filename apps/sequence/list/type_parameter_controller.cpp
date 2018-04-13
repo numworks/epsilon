@@ -16,11 +16,13 @@ TypeParameterController::TypeParameterController(Responder * parentResponder, Se
   m_singleRecurrenceCell(I18n::Message::SingleRecurrence, cellLayout),
   m_doubleRecurenceCell(I18n::Message::DoubleRecurrence, cellLayout),
   m_expressionLayouts{},
-  m_selectableTableView(this, this, 0, 1, topMargin, rightMargin, bottomMargin, leftMargin, this, nullptr, false),
+  m_selectableTableView(this),
   m_sequenceStore(sequenceStore),
   m_sequence(nullptr),
   m_listController(list)
 {
+  m_selectableTableView.setMargins(topMargin, rightMargin, bottomMargin, leftMargin);
+  m_selectableTableView.setShowsIndicators(false);
 }
 
 TypeParameterController::~TypeParameterController() {

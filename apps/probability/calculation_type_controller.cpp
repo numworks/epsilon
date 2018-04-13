@@ -14,12 +14,16 @@ namespace Probability {
 
 CalculationTypeController::CalculationTypeController(Responder * parentResponder, Law * law, Calculation * calculation, CalculationController * calculationController) :
   ViewController(parentResponder),
-  m_selectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, nullptr, false, false),
+  m_selectableTableView(this),
   m_law(law),
   m_calculation(calculation),
   m_calculationController(calculationController)
 {
   assert(m_calculation != nullptr);
+  m_selectableTableView.setMargins(0);
+  m_selectableTableView.setVerticalCellOverlap(0);
+  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setColorsBackground(false);
 }
 
 View * CalculationTypeController::view() {

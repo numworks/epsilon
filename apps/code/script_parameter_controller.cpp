@@ -10,8 +10,7 @@ ScriptParameterController::ScriptParameterController(Responder * parentResponder
   m_renameScript(I18n::Message::RenameScript),
   m_autoImportScript(I18n::Message::AutoImportScript),
   m_deleteScript(I18n::Message::DeleteScript),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this),
   m_script(Ion::Storage::Record()),
   m_menuController(menuController)
 {

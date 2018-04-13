@@ -17,12 +17,9 @@
 
 class SelectableTableView : public TableView, public Responder {
 public:
-  SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping,
-    KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0,
-    KDCoordinate leftMargin = 0, SelectableTableViewDataSource * selectionDataSource = nullptr, SelectableTableViewDelegate * delegate = nullptr,
-    bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen,
-    KDCoordinate indicatorThickness = 20, KDColor indicatorColor = Palette::GreyDark,
-    KDColor backgroundIndicatorColor = Palette::GreyMiddle, KDCoordinate indicatorMargin = 14);
+  SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
+      SelectableTableViewDataSource * selectionDataSource = nullptr, SelectableTableViewDelegate * delegate = nullptr);
+  template <typename T> SelectableTableView(T * p) : SelectableTableView(p, p, p) {};
   int selectedRow();
   int selectedColumn();
   void selectRow(int j);

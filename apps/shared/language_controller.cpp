@@ -7,8 +7,10 @@ namespace Shared {
 
 LanguageController::LanguageController(Responder * parentResponder, KDCoordinate topMargin) :
   ViewController(parentResponder),
-  m_selectableTableView(this, this, 0, 1, topMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin, this)
+  m_selectableTableView(this, this, this)
 {
+  m_selectableTableView.setTopMargin(topMargin);
+  m_selectableTableView.setBottomMargin(0);
   for (int i = 0; i < I18n::NumberOfLanguages; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
   }

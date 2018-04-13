@@ -24,7 +24,7 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
     }
     //TODO: Pop up warning message: not enough space to load Python
   }, this), KDText::FontSize::Large),
-  m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, this, false),
+  m_selectableTableView(this, this, this, this),
   m_consoleController(parentResponder, m_scriptStore
 #if EPSILON_GETOPT
       , lockOnConsole
@@ -35,6 +35,8 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   m_reloadConsoleWhenBecomingFirstResponder(false),
   m_shouldDisplayAddScriptRow(true)
 {
+  m_selectableTableView.setMargins(0);
+  m_selectableTableView.setShowsIndicators(false);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
     m_scriptCells[i].editableTextCell()->textField()->setDelegate(this);

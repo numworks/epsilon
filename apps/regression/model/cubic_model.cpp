@@ -47,14 +47,14 @@ Expression * CubicModel::simplifiedExpression(double * modelCoefficients, Poinca
       new Decimal(a),
       new Power(
         new Symbol('x'),
-        new Decimal(3),
+        new Decimal(3.0),
         false),
       false);
   Expression * bx2Expression = new Multiplication(
     new Decimal(b),
     new Power(
       new Symbol('x'),
-      new Decimal(2),
+      new Decimal(2.0),
       false),
     false);
   Expression * cxExpression = new Multiplication(

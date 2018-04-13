@@ -56,21 +56,21 @@ Expression * QuarticModel::simplifiedExpression(double * modelCoefficients, Poin
       new Decimal(a),
       new Power(
         new Symbol('x'),
-        new Decimal(4),
+        new Decimal(4.0),
         false),
       false);
   Expression * bx3Expression = new Multiplication(
       new Decimal(b),
       new Power(
         new Symbol('x'),
-        new Decimal(3),
+        new Decimal(3.0),
         false),
       false);
   Expression * cx2Expression = new Multiplication(
     new Decimal(c),
     new Power(
       new Symbol('x'),
-      new Decimal(2),
+      new Decimal(2.0),
       false),
     false);
   Expression * dxExpression = new Multiplication(

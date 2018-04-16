@@ -40,21 +40,18 @@ Toolbox * ScrollableExpressionViewWithCursor::toolbox() {
 bool ScrollableExpressionViewWithCursor::handleEvent(Ion::Events::Event event) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRecomputeLayout = false;
+  bool didHandleEvent = false;
   if (privateHandleMoveEvent(event, &shouldRecomputeLayout)) {
     if (!shouldRecomputeLayout) {
       m_expressionViewWithCursor.cursorPositionChanged();
       scrollToCursor();
       return true;
     }
-    reload();
-    KDSize newSize = minimalSizeForOptimalDisplay();
-    if (m_delegate && previousSize.height() != newSize.height()) {
-      m_delegate->scrollableExpressionViewWithCursorDidChangeSize(this);
-      reload();
-    }
-    return true;
+    didHandleEvent = true;
+  } else if (privateHandleEvent(event)) {
+    didHandleEvent = true;
   }
-  if (privateHandleEvent(event)) {
+  if (didHandleEvent) {
     reload();
     KDSize newSize = minimalSizeForOptimalDisplay();
     if (m_delegate && previousSize.height() != newSize.height()) {

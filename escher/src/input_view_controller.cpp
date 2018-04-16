@@ -33,10 +33,10 @@ void InputViewController::edit(Responder * caller, Ion::Events::Event event, voi
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
   displayModalViewController(&m_editableExpressionViewController, 1.0f, 1.0f);
-  m_editableExpressionViewController.editableExpressionView()->handleEvent(event);
   if (initialText != nullptr) {
     m_editableExpressionViewController.editableExpressionView()->setText(initialText);
   }
+  m_editableExpressionViewController.editableExpressionView()->handleEvent(event);
 }
 
 void InputViewController::abortEditionAndDismiss() {

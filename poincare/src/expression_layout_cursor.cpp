@@ -212,6 +212,26 @@ void ExpressionLayoutCursor::performBackspace() {
   m_pointedExpressionLayout->backspaceAtCursor(this);
 }
 
+bool ExpressionLayoutCursor::showEmptyLayoutIfNeeded() {
+  return privateShowHideEmptyLayoutIfNeeded(true);
+}
+
+bool ExpressionLayoutCursor::hideEmptyLayoutIfNeeded() {
+  return privateShowHideEmptyLayoutIfNeeded(false);
+}
+
+bool ExpressionLayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
+  if (m_pointedExpressionLayout->isEmpty()) {
+    if (m_pointedExpressionLayout->isHorizontal()) {
+      static_cast<EmptyVisibleLayout *>(m_pointedExpressionLayout->editableChild(0))->setVisible(show);
+    } else {
+      static_cast<EmptyVisibleLayout *>(m_pointedExpressionLayout)->setVisible(show);
+    }
+    return true;
+  }
+  return false;
+}
+
 bool ExpressionLayoutCursor::baseForNewPowerLayout() {
   // Returns true if the layout on the left of the pointed layout is suitable to
   // be the base of a new power layout.

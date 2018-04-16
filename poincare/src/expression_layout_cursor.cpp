@@ -226,8 +226,8 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
     if (m_position == Position::Left
       && m_pointedExpressionLayout->parent()->isHorizontal()
       && indexInParent > 0
-      && !m_pointedExpressionLayout->editableParent()->editableChild(indexInParent-1)->isEmpty()
-      && !m_pointedExpressionLayout->editableParent()->editableChild(indexInParent-1)->isCollapsable(&numberOfOpenParenthesis, true))
+      && (m_pointedExpressionLayout->editableParent()->editableChild(indexInParent-1)->isEmpty()
+       || m_pointedExpressionLayout->editableParent()->editableChild(indexInParent-1)->isCollapsable(&numberOfOpenParenthesis, true)))
     {
       return true;
     }

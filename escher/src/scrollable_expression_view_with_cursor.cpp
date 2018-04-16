@@ -39,21 +39,25 @@ Toolbox * ScrollableExpressionViewWithCursor::toolbox() {
 
 bool ScrollableExpressionViewWithCursor::handleEvent(Ion::Events::Event event) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  bool shouldRecomputeLayout = false;
   bool didHandleEvent = false;
-  if (privateHandleMoveEvent(event, &shouldRecomputeLayout)) {
-    if (!shouldRecomputeLayout) {
-      m_expressionViewWithCursor.cursorPositionChanged();
-      scrollToCursor();
-      return true;
-    }
+  bool shouldRecomputeLayout = m_expressionViewWithCursor.cursor()->showEmptyLayoutIfNeeded();
+  bool moveEventChangedLayout = false;
+  if (privateHandleMoveEvent(event, &moveEventChangedLayout)) {
+    shouldRecomputeLayout = shouldRecomputeLayout || moveEventChangedLayout;
     didHandleEvent = true;
   } else if (privateHandleEvent(event)) {
+    shouldRecomputeLayout = true;
     didHandleEvent = true;
   }
   if (didHandleEvent) {
     if (!isEditing()) {
       setEditing(true);
+    }
+    shouldRecomputeLayout = m_expressionViewWithCursor.cursor()->hideEmptyLayoutIfNeeded() || shouldRecomputeLayout;
+    if (!shouldRecomputeLayout) {
+      m_expressionViewWithCursor.cursorPositionChanged();
+      scrollToCursor();
+      return true;
     }
     reload();
     KDSize newSize = minimalSizeForOptimalDisplay();
@@ -198,6 +202,7 @@ void ScrollableExpressionViewWithCursor::insertLayoutAtCursor(Poincare::Expressi
   if (layout == nullptr) {
     return;
   }
+  m_expressionViewWithCursor.cursor()->showEmptyLayoutIfNeeded();
   KDSize previousSize = minimalSizeForOptimalDisplay();
   if (layout->isMatrix() && pointedLayout && pointedLayout->hasAncestor(layout)) {
     static_cast<Poincare::MatrixLayout *>(layout)->addGreySquares();
@@ -209,6 +214,7 @@ void ScrollableExpressionViewWithCursor::insertLayoutAtCursor(Poincare::Expressi
   } else {
     m_expressionViewWithCursor.cursor()->addLayoutAndMoveCursor(layout);
   }
+  m_expressionViewWithCursor.cursor()->hideEmptyLayoutIfNeeded();
   reload();
   KDSize newSize = minimalSizeForOptimalDisplay();
   if (m_delegate && previousSize.height() != newSize.height()) {
@@ -225,7 +231,9 @@ void ScrollableExpressionViewWithCursor::insertLayoutFromTextAtCursor(const char
     reload();
     return;
   }
+  m_expressionViewWithCursor.cursor()->showEmptyLayoutIfNeeded();
   m_expressionViewWithCursor.cursor()->insertText(text);
+  m_expressionViewWithCursor.cursor()->hideEmptyLayoutIfNeeded();
   reload();
 }
 

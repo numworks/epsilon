@@ -50,10 +50,13 @@ public:
   void addXNTCharLayout();
   void insertText(const char * text);
   void performBackspace();
+  bool showEmptyLayoutIfNeeded();
+  bool hideEmptyLayoutIfNeeded();
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   bool baseForNewPowerLayout();
+  bool privateShowHideEmptyLayoutIfNeeded(bool show);
   ExpressionLayout * m_pointedExpressionLayout;
   Position m_position;
 };

@@ -14,7 +14,6 @@ extern "C" {
 #include "swd.h"
 #include "usb.h"
 #include "bench/bench.h"
-#include "set_msp.h"
 
 #define USE_SD_CARD 0
 
@@ -105,9 +104,18 @@ void coreReset() {
 void jumpReset() {
   uint32_t * stackPointerAddress = reinterpret_cast<uint32_t *>(0x08000000);
   uint32_t * resetHandlerAddress = reinterpret_cast<uint32_t *>(0x08000004);
-  set_msp(*stackPointerAddress);
-  void (*ResetHandler)(void) = (void (*)())(*resetHandlerAddress);
-  ResetHandler();
+
+  /* Jump to the reset service routine after having reset the stack pointer.
+   * Both addresses are fetched from the base of the Flash memory, just like a
+   * real reset would. These operations should be made at once, otherwise the C
+   * compiler might emit some instructions that modify the stack inbetween. */
+
+  asm volatile (
+      "msr MSP, %[stackPointer] ; bx %[resetHandler]"
+      : :
+      [stackPointer] "r" (*stackPointerAddress),
+      [resetHandler] "r" (*resetHandlerAddress)
+  );
 }
 
 void init() {

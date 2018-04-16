@@ -277,7 +277,6 @@ bool HorizontalLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRe
   return moveVertically(ExpressionLayout::VerticalDirection::Down, cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
-
 void HorizontalLayout::addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) {
   int newIndex = removeEmptyChildBeforeInsertionAtIndex(indexForInsertion, operands[0]->mustHaveLeftBrother());
   DynamicLayoutHierarchy::addChildrenAtIndex(operands, numberOfOperands, newIndex, removeEmptyChildren);
@@ -293,7 +292,10 @@ void HorizontalLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
 }
 
 void HorizontalLayout::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren) {
-  bool shouldRemoveOnLeft = eL->numberOfChildren() > 0 ? eL->child(0)->mustHaveLeftBrother() : true;
+  /* If the layout to insert starts with a vertical offset layout, the child
+   * empty layout on the left of the inserted layout (if there is one) shoul not
+   * be reomved, as it wil be the base for the VerticalOffsetLayout. */
+  bool shouldRemoveOnLeft = eL->numberOfChildren() > 0 ? !(eL->child(0)->mustHaveLeftBrother()) : true;
   int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, shouldRemoveOnLeft);
   DynamicLayoutHierarchy::mergeChildrenAtIndex(eL, newIndex, removeEmptyChildren);
 }
@@ -447,7 +449,7 @@ void HorizontalLayout::privateRemoveChildAtIndex(int index, bool deleteAfterRemo
   // If the child to remove is at index 0 and its right brother must have a left
   // brother (e.g. it is a VerticalOffsetLayout), replace the child with an
   // EmptyVisibleLayout instead of removing it.
-  if ( !forceRemove && index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftBrother()) {
+  if (!forceRemove && index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftBrother()) {
     addChildAtIndex(new EmptyVisibleLayout(), index + 1);
   }
   DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);
@@ -464,7 +466,11 @@ int HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int index, bool sho
   }
   // If empty, remove the child that would be on the left of the inserted
   // layout.
-  if ( shouldRemoveOnLeft && newIndex - 1 > 0 && newIndex - 1 < numberOfChildren() -1 && child(newIndex - 1)->isEmpty()) {
+  if (shouldRemoveOnLeft
+      && newIndex - 1 >= 0
+      && newIndex - 1 <= numberOfChildren() -1
+      && child(newIndex - 1)->isEmpty())
+  {
     privateRemoveChildAtIndex(newIndex-1, true, true);
     newIndex = index - 1;
   }

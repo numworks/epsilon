@@ -173,9 +173,23 @@ int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberO
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
   }
 
+  bool addParenthesis = false;
+  if (indexInParent >= 0 && indexInParent < (m_parent->numberOfChildren() - 1) && m_parent->isHorizontal() && m_parent->child(indexInParent + 1)->mustHaveLeftBrother()) {
+    addParenthesis = true;
+    // Add parenthesis
+    buffer[numberOfChar++] = '(';
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+  }
+
   // Write the content of the fraction
   numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits, "/");
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+  if (addParenthesis) {
+    // Add parenthesis
+    buffer[numberOfChar++] = ')';
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
+  }
 
   // Add a multiplication if omitted.
   if (indexInParent >= 0 && indexInParent < (m_parent->numberOfChildren() - 1) && m_parent->isHorizontal() && m_parent->child(indexInParent + 1)->canBeOmittedMultiplicationRightFactor()) {

@@ -243,6 +243,9 @@ void VerticalOffsetLayout::render(KDContext * ctx, KDPoint p, KDColor expression
 KDSize VerticalOffsetLayout::computeSize() {
   KDSize indiceSize = indiceLayout()->size();
   KDCoordinate width = indiceSize.width();
+  if (m_type == Type::Superscript) {
+    width += 5;
+  }
   KDCoordinate height = 0;
   if (m_type == Type::Subscript) {
     height = positionOfChild(indiceLayout()).y()+ indiceLayout()->size().height();

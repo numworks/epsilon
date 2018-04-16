@@ -64,7 +64,6 @@ KDCoordinate ExpressionLayout::baseline() {
   return m_baseline;
 }
 
-
 void ExpressionLayout::invalidAllSizesPositionsAndBaselines() {
   m_sized = false;
   m_positioned = false;

@@ -1,5 +1,5 @@
 #include "matrix_layout.h"
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include "horizontal_layout.h"
 #include "bracket_left_layout.h"
 #include "bracket_right_layout.h"
@@ -162,7 +162,7 @@ void MatrixLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, 
 void MatrixLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
   assert(index >= 0 && index < numberOfChildren());
   assert((cursor->pointedExpressionLayout() == child(index)) || (cursor->pointedExpressionLayout()->hasAncestor(child(index))));
-  replaceChildAndMoveCursor(child(index), new EmptyVisibleLayout(), deleteAfterRemoval, cursor);
+  replaceChildAndMoveCursor(child(index), new EmptyLayout(), deleteAfterRemoval, cursor);
 }
 
 int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
@@ -200,27 +200,27 @@ void MatrixLayout::newRowOrColumnAtIndex(int index) {
   // We need to compute this bool before modifying the layout.:w
   //
   if (GridLayout::childIsRightOfGrid(index)) {
-    // Color the grey EmptyVisibleLayouts of the column in yellow.
+    // Color the grey EmptyLayouts of the column in yellow.
     int correspondingColumn = m_numberOfColumns - 1;
     for (int i = 0; i < m_numberOfRows - 1; i++) {
       ExpressionLayout * lastLayoutOfRow = editableChild(i*m_numberOfColumns+correspondingColumn);
       if (lastLayoutOfRow->isEmpty()) {
-        static_cast<EmptyVisibleLayout *>(lastLayoutOfRow)->setColor(EmptyVisibleLayout::Color::Yellow);
+        static_cast<EmptyLayout *>(lastLayoutOfRow)->setColor(EmptyLayout::Color::Yellow);
       }
     }
-    // Add a column of grey EmptyVisibleLayouts on the right.
-    addEmptyColumn(EmptyVisibleLayout::Color::Grey);
+    // Add a column of grey EmptyLayouts on the right.
+    addEmptyColumn(EmptyLayout::Color::Grey);
   }
   if (shouldAddNewRow) {
-    // Color the grey EmptyVisibleLayouts of the row in yellow.
+    // Color the grey EmptyLayouts of the row in yellow.
     for (int i = 0; i < m_numberOfColumns - 1; i++) {
       ExpressionLayout * lastLayoutOfColumn = editableChild(correspondingRow*m_numberOfColumns+i);
       if (lastLayoutOfColumn->isEmpty()) {
-        static_cast<EmptyVisibleLayout *>(lastLayoutOfColumn)->setColor(EmptyVisibleLayout::Color::Yellow);
+        static_cast<EmptyLayout *>(lastLayoutOfColumn)->setColor(EmptyLayout::Color::Yellow);
       }
     }
-    // Add a row of grey EmptyVisibleLayouts at the bottom.
-    addEmptyRow(EmptyVisibleLayout::Color::Grey);
+    // Add a row of grey EmptyLayouts at the bottom.
+    addEmptyRow(EmptyLayout::Color::Grey);
   }
 }
 
@@ -242,7 +242,7 @@ void MatrixLayout::childWasReplacedAtIndex(int index) {
         && (childIsRightOfGrid(index)
          || childIsBottomOfGrid(index)))
     {
-      static_cast<EmptyVisibleLayout *>(newChild)->setColor(EmptyVisibleLayout::Color::Grey);
+      static_cast<EmptyLayout *>(newChild)->setColor(EmptyLayout::Color::Grey);
     }
   }
 }
@@ -297,8 +297,8 @@ bool MatrixLayout::isColumnEmpty(int index) const {
 
 void MatrixLayout::addGreySquares() {
   if (!hasGreySquares()) {
-    addEmptyRow(EmptyVisibleLayout::Color::Grey);
-    addEmptyColumn(EmptyVisibleLayout::Color::Grey);
+    addEmptyRow(EmptyLayout::Color::Grey);
+    addEmptyColumn(EmptyLayout::Color::Grey);
   }
 }
 
@@ -314,7 +314,7 @@ bool MatrixLayout::hasGreySquares() const {
   const ExpressionLayout * lastChild = child(m_numberOfRows * m_numberOfColumns - 1);
   if (lastChild->isEmpty()
       && !lastChild->isHorizontal()
-      && (static_cast<const EmptyVisibleLayout *>(lastChild))->color() == EmptyVisibleLayout::Color::Grey)
+      && (static_cast<const EmptyLayout *>(lastChild))->color() == EmptyLayout::Color::Grey)
   {
     assert(isRowEmpty(m_numberOfRows - 1));
     assert(isColumnEmpty(m_numberOfColumns - 1));

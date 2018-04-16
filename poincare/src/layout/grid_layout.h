@@ -2,7 +2,7 @@
 #define POINCARE_GRID_LAYOUT_H
 
 #include <poincare/dynamic_layout_hierarchy.h>
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 
 namespace Poincare {
 
@@ -20,7 +20,7 @@ public:
 
   /* Dynamic layout */
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
-  // This function replaces the child with an EmptyVisibleLayout. To delete the
+  // This function replaces the child with an EmptyLayout. To delete the
   // grid's children, do not call this function.
 
   /* Expression engine */
@@ -31,8 +31,8 @@ protected:
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
-  void addEmptyRow(EmptyVisibleLayout::Color color);
-  void addEmptyColumn(EmptyVisibleLayout::Color color);
+  void addEmptyRow(EmptyLayout::Color color);
+  void addEmptyColumn(EmptyLayout::Color color);
   void deleteRowAtIndex(int index);
   void deleteColumnAtIndex(int index);
   bool childIsRightOfGrid(int index) const;

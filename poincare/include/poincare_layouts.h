@@ -11,7 +11,7 @@
 #include <poincare/src/layout/char_layout.h>
 #include <poincare/src/layout/condensed_sum_layout.h>
 #include <poincare/src/layout/conjugate_layout.h>
-#include <poincare/src/layout/empty_visible_layout.h>
+#include <poincare/src/layout/empty_layout.h>
 #include <poincare/src/layout/floor_layout.h>
 #include <poincare/src/layout/fraction_layout.h>
 #include <poincare/src/layout/grid_layout.h>

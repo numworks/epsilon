@@ -1,5 +1,5 @@
 #include <poincare/dynamic_layout_hierarchy.h>
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>

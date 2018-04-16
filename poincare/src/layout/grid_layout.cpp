@@ -1,5 +1,5 @@
 #include "grid_layout.h"
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/layout_engine.h>
 extern "C" {
@@ -199,20 +199,20 @@ KDPoint GridLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(x, y);
 }
 
-void GridLayout::addEmptyRow(EmptyVisibleLayout::Color color) {
+void GridLayout::addEmptyRow(EmptyLayout::Color color) {
   ExpressionLayout * newChildren[m_numberOfColumns];
   for (int i = 0; i < m_numberOfColumns; i++) {
-    newChildren[i] = new EmptyVisibleLayout(color);
+    newChildren[i] = new EmptyLayout(color);
   }
   addChildrenAtIndex(const_cast<const ExpressionLayout * const *>(const_cast<ExpressionLayout * const *>(newChildren)), m_numberOfColumns, numberOfChildren(), false);
   m_numberOfRows++;
   invalidAllSizesPositionsAndBaselines();
 }
 
-void GridLayout::addEmptyColumn(EmptyVisibleLayout::Color color) {
+void GridLayout::addEmptyColumn(EmptyLayout::Color color) {
   m_numberOfColumns++;
   for (int i = 0; i < m_numberOfRows; i++) {
-    addChildAtIndex(new EmptyVisibleLayout(color), i*m_numberOfColumns + m_numberOfColumns-1);
+    addChildAtIndex(new EmptyLayout(color), i*m_numberOfColumns + m_numberOfColumns-1);
   }
   invalidAllSizesPositionsAndBaselines();
 }

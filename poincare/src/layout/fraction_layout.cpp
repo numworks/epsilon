@@ -1,5 +1,5 @@
 #include "fraction_layout.h"
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include "horizontal_layout.h"
 #include <escher/metric.h>
 #include <ion/charset.h>
@@ -23,7 +23,7 @@ void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     if (numeratorLayout()->isEmpty() && denominatorLayout()->isEmpty()) {
       // Case: Numerator and denominator are empty.
       // Move the cursor then replace the fraction with an empty layout.
-      replaceWithAndMoveCursor(new EmptyVisibleLayout(), true, cursor);
+      replaceWithAndMoveCursor(new EmptyLayout(), true, cursor);
       return;
     }
 

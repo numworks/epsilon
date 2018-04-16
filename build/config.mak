@@ -3,7 +3,7 @@
 PLATFORM ?= device
 DEBUG ?= 0
 
-EPSILON_VERSION ?= 1.4.0
+EPSILON_VERSION ?= 1.4.1
 EPSILON_ONBOARDING_APP ?= 1
 EPSILON_SOFTWARE_UPDATE_PROMPT ?= 1
 EPSILON_APPS ?= calculation graph sequence settings statistics probability regression code

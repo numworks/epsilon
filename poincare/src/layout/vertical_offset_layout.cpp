@@ -1,5 +1,5 @@
 #include "vertical_offset_layout.h"
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include <ion/charset.h>
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/layout_engine.h>

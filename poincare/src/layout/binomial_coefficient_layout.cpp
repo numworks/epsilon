@@ -1,5 +1,5 @@
 #include "binomial_coefficient_layout.h"
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include "grid_layout.h"
 #include "horizontal_layout.h"
 #include "parenthesis_left_layout.h"

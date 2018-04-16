@@ -51,7 +51,7 @@ void ExpressionLayoutCursor::addLayoutAndMoveCursor(ExpressionLayout * layout) {
 
 void ExpressionLayoutCursor::addEmptyExponentialLayout() {
   CharLayout * child1 = new CharLayout(Ion::Charset::Exponential);
-  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Superscript, false);
+  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyLayout(), VerticalOffsetLayout::Type::Superscript, false);
   HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
   pointedExpressionLayout()->addBrother(this, newChild);
   setPointedExpressionLayout(offsetLayout->editableChild(0));
@@ -60,8 +60,8 @@ void ExpressionLayoutCursor::addEmptyExponentialLayout() {
 
 void ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
   // Add a new FractionLayout
-  HorizontalLayout * child1 = new HorizontalLayout(new EmptyVisibleLayout(), false);
-  HorizontalLayout * child2 = new HorizontalLayout(new EmptyVisibleLayout(), false);
+  HorizontalLayout * child1 = new HorizontalLayout(new EmptyLayout(), false);
+  HorizontalLayout * child2 = new HorizontalLayout(new EmptyLayout(), false);
   FractionLayout * newChild = new FractionLayout(child1, child2, false);
   pointedExpressionLayout()->addBrother(this, newChild);
 
@@ -115,9 +115,9 @@ void ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOf
   for (int i = 0; i < numberOfRows + 1; i++) {
     for (int j = 0; j < numberOfColumns + 1; j++) {
       if (i < numberOfRows && j < numberOfColumns) {
-        children[i*(numberOfColumns+1)+j] = new EmptyVisibleLayout(EmptyVisibleLayout::Color::Yellow);
+        children[i*(numberOfColumns+1)+j] = new EmptyLayout(EmptyLayout::Color::Yellow);
       } else {
-        children[i*(numberOfColumns+1)+j] = new EmptyVisibleLayout(EmptyVisibleLayout::Color::Grey);
+        children[i*(numberOfColumns+1)+j] = new EmptyLayout(EmptyLayout::Color::Grey);
       }
     }
   }
@@ -128,7 +128,7 @@ void ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOf
 }
 
 void ExpressionLayoutCursor::addEmptyPowerLayout() {
-  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyVisibleLayout(), VerticalOffsetLayout::Type::Superscript, false);
+  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyLayout(), VerticalOffsetLayout::Type::Superscript, false);
   // If there is already a base
   if (baseForNewPowerLayout()) {
     m_pointedExpressionLayout->addBrother(this, offsetLayout);
@@ -137,7 +137,7 @@ void ExpressionLayoutCursor::addEmptyPowerLayout() {
     return;
   }
   // Else, add an empty base
-  EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
+  EmptyLayout * child1 = new EmptyLayout();
   HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
   setPointedExpressionLayout(child1);
@@ -145,7 +145,7 @@ void ExpressionLayoutCursor::addEmptyPowerLayout() {
 }
 
 void ExpressionLayoutCursor::addEmptySquareRootLayout() {
-  EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
+  EmptyLayout * child1 = new EmptyLayout();
   NthRootLayout * newChild = new NthRootLayout(child1, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
   setPointedExpressionLayout(child1);
@@ -163,7 +163,7 @@ void ExpressionLayoutCursor::addEmptySquarePowerLayout() {
     return;
   }
   // Else, add an empty base
-  EmptyVisibleLayout * child1 = new EmptyVisibleLayout();
+  EmptyLayout * child1 = new EmptyLayout();
   HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
   setPointedExpressionLayout(child1);
@@ -223,9 +223,9 @@ bool ExpressionLayoutCursor::hideEmptyLayoutIfNeeded() {
 bool ExpressionLayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
   if (m_pointedExpressionLayout->isEmpty()) {
     if (m_pointedExpressionLayout->isHorizontal()) {
-      static_cast<EmptyVisibleLayout *>(m_pointedExpressionLayout->editableChild(0))->setVisible(show);
+      static_cast<EmptyLayout *>(m_pointedExpressionLayout->editableChild(0))->setVisible(show);
     } else {
-      static_cast<EmptyVisibleLayout *>(m_pointedExpressionLayout)->setVisible(show);
+      static_cast<EmptyLayout *>(m_pointedExpressionLayout)->setVisible(show);
     }
     return true;
   }

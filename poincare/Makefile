@@ -100,7 +100,7 @@ objs += $(addprefix poincare/src/layout/,\
   condensed_sum_layout.o\
   conjugate_layout.o\
   dynamic_layout_hierarchy.o\
-  empty_visible_layout.o\
+  empty_layout.o\
   expression_layout.o\
   floor_layout.o\
   fraction_layout.o\

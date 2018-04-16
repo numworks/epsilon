@@ -1,6 +1,6 @@
 #include <poincare/empty_expression.h>
 #include <poincare/layout_engine.h>
-#include <poincare/src/layout/empty_visible_layout.h>
+#include <poincare/src/layout/empty_layout.h>
 #include <ion/charset.h>
 
 extern "C" {
@@ -18,7 +18,7 @@ int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, int number
 }
 
 ExpressionLayout * EmptyExpression::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  return new EmptyVisibleLayout();
+  return new EmptyLayout();
 }
 
 template<typename T> Complex<T> * EmptyExpression::templatedApproximate(Context& context, AngleUnit angleUnit) const {

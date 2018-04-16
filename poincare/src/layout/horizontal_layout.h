@@ -39,6 +39,7 @@ public:
   /* Other */
   bool isHorizontal() const override { return true; }
   bool isEmpty() const override;
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return false; }
 
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

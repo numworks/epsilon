@@ -39,6 +39,10 @@ namespace Ion {
 namespace Display {
 namespace Blackbox {
 
+const KDColor * frameBufferAddress() {
+  return sPixels;
+}
+
 void setFrameBufferActive(bool enabled) {
   sFrameBufferActive = enabled;
 }

@@ -131,7 +131,7 @@ private:
   constexpr static uint32_t k_flashStartAddress = 0x08000000;
   constexpr static uint32_t k_flashEndAddress = 0x08100000;
   constexpr static uint32_t k_sramStartAddress = 0x20000000;
-  constexpr static uint32_t k_sramEndAddress = 0x2003E800;
+  constexpr static uint32_t k_sramEndAddress = 0x20040000;
 
   // Download and upload
   bool processDownloadRequest(uint16_t wLength, uint16_t * transferBufferLength);

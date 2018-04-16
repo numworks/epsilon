@@ -317,6 +317,14 @@ bool HorizontalLayout::isEmpty() const {
   return false;
 }
 
+bool HorizontalLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
+  if (m_numberOfChildren == 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 void HorizontalLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
 }
 

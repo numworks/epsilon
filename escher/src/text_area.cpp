@@ -344,7 +344,7 @@ void TextArea::setText(char * textBuffer, size_t textBufferSize) {
 
 bool TextArea::insertTextWithIndentation(const char * textBuffer, int location) {
   int indentation = indentationBeforeCursor();
-  char spaceString[indentation+1]; // WOUHOU
+  char spaceString[indentation+1];
   for (int i = 0; i < indentation; i++) {
     spaceString[i] = ' ';
   }

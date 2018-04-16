@@ -278,12 +278,12 @@ bool HorizontalLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRe
 }
 
 void HorizontalLayout::addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) {
-  int newIndex = removeEmptyChildBeforeInsertionAtIndex(indexForInsertion, operands[0]->mustHaveLeftBrother());
+  int newIndex = removeEmptyChildBeforeInsertionAtIndex(indexForInsertion, !operands[0]->mustHaveLeftBrother());
   DynamicLayoutHierarchy::addChildrenAtIndex(operands, numberOfOperands, newIndex, removeEmptyChildren);
 }
 
 bool HorizontalLayout::addChildAtIndex(ExpressionLayout * operand, int index) {
-  int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, operand->mustHaveLeftBrother());
+  int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, !operand->mustHaveLeftBrother());
   return DynamicLayoutHierarchy::addChildAtIndex(operand, newIndex);
 }
 

@@ -1,18 +1,18 @@
-#ifndef POINCARE_EMPTY_VISIBLE_LAYOUT_H
-#define POINCARE_EMPTY_VISIBLE_LAYOUT_H
+#ifndef POINCARE_empty_layout_H
+#define POINCARE_empty_layout_H
 
 #include <poincare/static_layout_hierarchy.h>
 #include <assert.h>
 
 namespace Poincare {
 
-class EmptyVisibleLayout : public StaticLayoutHierarchy<0> {
+class EmptyLayout : public StaticLayoutHierarchy<0> {
 public:
   enum class Color {
     Yellow,
     Grey
   };
-  EmptyVisibleLayout(Color color = Color::Yellow, bool visible = true);
+  EmptyLayout(Color color = Color::Yellow, bool visible = true);
   ExpressionLayout * clone() const override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;

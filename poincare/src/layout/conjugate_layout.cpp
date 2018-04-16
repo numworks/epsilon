@@ -1,5 +1,5 @@
 #include "conjugate_layout.h"
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include <escher/metric.h>
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
@@ -96,7 +96,7 @@ void ConjugateLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChil
 void ConjugateLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
   assert(index >= 0 && index < numberOfChildren());
   assert((cursor->pointedExpressionLayout() == child(index)) || (cursor->pointedExpressionLayout()->hasAncestor(child(index))));
-  replaceChildAndMoveCursor(child(index), new EmptyVisibleLayout(), deleteAfterRemoval, cursor);
+  replaceChildAndMoveCursor(child(index), new EmptyLayout(), deleteAfterRemoval, cursor);
 }
 
 void ConjugateLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

@@ -1,5 +1,5 @@
 #include "horizontal_layout.h"
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
@@ -448,9 +448,9 @@ bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direct
 void HorizontalLayout::privateRemoveChildAtIndex(int index, bool deleteAfterRemoval, bool forceRemove) {
   // If the child to remove is at index 0 and its right brother must have a left
   // brother (e.g. it is a VerticalOffsetLayout), replace the child with an
-  // EmptyVisibleLayout instead of removing it.
+  // EmptyLayout instead of removing it.
   if (!forceRemove && index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftBrother()) {
-    addChildAtIndex(new EmptyVisibleLayout(), index + 1);
+    addChildAtIndex(new EmptyLayout(), index + 1);
   }
   DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);
 }

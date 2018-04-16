@@ -1,5 +1,5 @@
 #include <poincare/expression_layout.h>
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include "horizontal_layout.h"
 #include "matrix_layout.h"
 #include <poincare/expression_layout_cursor.h>
@@ -174,7 +174,7 @@ void ExpressionLayout::detachChildren() {
 
 void ExpressionLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
   assert(index >= 0 && index < numberOfChildren());
-  replaceChild(editableChild(index), new EmptyVisibleLayout(), deleteAfterRemoval);
+  replaceChild(editableChild(index), new EmptyLayout(), deleteAfterRemoval);
 }
 
 void ExpressionLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {

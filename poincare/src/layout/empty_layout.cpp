@@ -1,4 +1,4 @@
-#include "empty_visible_layout.h"
+#include "empty_layout.h"
 #include "matrix_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <escher/palette.h>
@@ -6,19 +6,19 @@
 
 namespace Poincare {
 
-EmptyVisibleLayout::EmptyVisibleLayout(Color color, bool visible) :
+EmptyLayout::EmptyLayout(Color color, bool visible) :
   StaticLayoutHierarchy(),
   m_isVisible(visible),
   m_color(color)
 {
 }
 
-ExpressionLayout * EmptyVisibleLayout::clone() const {
-  EmptyVisibleLayout * layout = new EmptyVisibleLayout(m_color, m_isVisible);
+ExpressionLayout * EmptyLayout::clone() const {
+  EmptyLayout * layout = new EmptyLayout(m_color, m_isVisible);
   return layout;
 }
 
-void EmptyVisibleLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void EmptyLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   assert(cursor->pointedExpressionLayout() == this);
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
@@ -30,7 +30,7 @@ void EmptyVisibleLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   }
 }
 
-bool EmptyVisibleLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool EmptyLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Ask the parent.
   if (m_parent) {
@@ -40,7 +40,7 @@ bool EmptyVisibleLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * should
   return false;
 }
 
-bool EmptyVisibleLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool EmptyLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Ask the parent.
   if (m_parent) {
@@ -50,7 +50,7 @@ bool EmptyVisibleLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shoul
   return false;
 }
 
-int EmptyVisibleLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int EmptyLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -58,7 +58,7 @@ int EmptyVisibleLayout::writeTextInBuffer(char * buffer, int bufferSize, int num
   return 0;
 }
 
-void EmptyVisibleLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void EmptyLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   if (m_isVisible) {
     KDColor fillColor = m_color == Color::Yellow ? Palette::YellowDark : Palette::GreyBright;
     ctx->fillRect(KDRect(p.x()+k_marginWidth, p.y()+k_marginHeight, k_width, k_height), fillColor);
@@ -66,17 +66,17 @@ void EmptyVisibleLayout::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   }
 }
 
-KDSize EmptyVisibleLayout::computeSize() {
+KDSize EmptyLayout::computeSize() {
   KDCoordinate width = m_isVisible ? k_width + 2*k_marginWidth : 0;
   return KDSize(width, k_height + 2*k_marginHeight);
 }
 
-void EmptyVisibleLayout::computeBaseline() {
+void EmptyLayout::computeBaseline() {
   m_baseline = k_marginHeight + k_height/2;
   m_baselined = true;
 }
 
-void EmptyVisibleLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
+void EmptyLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
   Color currentColor = m_color;
   int indexInParent = m_parent->indexOfChild(this);
   ExpressionLayout * parent = m_parent;

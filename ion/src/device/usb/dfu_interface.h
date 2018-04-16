@@ -144,7 +144,7 @@ private:
   void eraseMemoryIfNeeded();
   void writeOnMemory();
   void unlockFlashMemory();
-  void lockFlashMemory();
+  void lockFlashMemoryAndPurgeCaches();
   // Status
   bool getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);
   bool clearStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);

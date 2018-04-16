@@ -238,20 +238,7 @@ void DFUInterface::eraseMemoryIfNeeded() {
   // Lock the Flash after all operations are done
   while (FLASH.SR()->getBSY()) {
   }
-  lockFlashMemory();
-
-  /* The Reference manual says: "If a Flash memory write access concerns some
-   * data in the data cache, the Flash write access modifies the data in the
-   * Flash memory and the data in the cache.
-   * If an erase operation in Flash memory also concerns data in the data or
-   * instruction cache, you have to make sure that these data are rewritten
-   * before they are accessed during code execution. If this cannot be done
-   * safely, it is recommended to flush the caches by setting the DCRST and
-   * ICRST bits in the FLASH_CR register.
-   * The I/D cache should be flushed only when it is disabled (I/DCEN = 0).
-   *
-   * We normally do a reset after erasing and writing on the Flash, so this
-   * should not be needed. */
+  lockFlashMemoryAndPurgeCaches();
 
   /* Put an out of range value in m_erasePage to indicate that no erase is
    * waiting. */
@@ -282,7 +269,7 @@ void DFUInterface::writeOnMemory() {
     // Lock the Flash after all operations are done
     while (FLASH.SR()->getBSY()) {
     }
-    lockFlashMemory();
+    lockFlashMemoryAndPurgeCaches();
   } else if (m_writeAddress >= k_sramStartAddress && m_writeAddress <= k_sramEndAddress) {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current instructions.
@@ -316,10 +303,19 @@ void DFUInterface::unlockFlashMemory() {
   }
 }
 
-void DFUInterface::lockFlashMemory() {
+void DFUInterface::lockFlashMemoryAndPurgeCaches() {
   while (FLASH.SR()->getBSY()) {
   }
   FLASH.CR()->setLOCK(true);
+
+  if (FLASH.ACR()->getDCEN()) {
+    FLASH.ACR()->setDCEN(false);
+    FLASH.ACR()->setDCRST(true);
+  }
+  if (FLASH.ACR()->getICEN()) {
+    FLASH.ACR()->setICEN(false);
+    FLASH.ACR()->setICRST(true);
+  }
 }
 
 bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {

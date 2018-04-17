@@ -3,6 +3,7 @@
 
 #include <poincare/dynamic_layout_hierarchy.h>
 #include <poincare/layout_engine.h>
+#include <poincare/expression_layout_cursor.h>
 
 namespace Poincare {
 
@@ -48,6 +49,7 @@ protected:
   void privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) override;
 private:
   bool moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout);
+  bool tryMoveVerticallyFromAnotherLayout(ExpressionLayout * otherLayout, ExpressionLayoutCursor::Position otherPosition, ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout);
   void privateReplaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor);
   void privateRemoveChildAtIndex(int index, bool deleteAfterRemoval, bool forceRemove);
   int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft);

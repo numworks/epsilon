@@ -46,7 +46,11 @@ void ExpressionLayoutCursor::addLayout(ExpressionLayout * layout) {
 }
 
 void ExpressionLayoutCursor::addLayoutAndMoveCursor(ExpressionLayout * layout) {
+  bool layoutWillBeMerged = layout->isHorizontal();
   pointedExpressionLayout()->addBrotherAndMoveCursor(this, layout);
+  if (!layoutWillBeMerged) {
+    layout->collapseBrothersAndMoveCursor(this);
+  }
 }
 
 void ExpressionLayoutCursor::addEmptyExponentialLayout() {

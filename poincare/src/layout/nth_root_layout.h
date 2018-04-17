@@ -14,6 +14,7 @@ public:
   ExpressionLayout * clone() const override;
 
   /* Dynamic Layout*/
+  void collapseBrothers() override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
 
   /* Tree navigation */

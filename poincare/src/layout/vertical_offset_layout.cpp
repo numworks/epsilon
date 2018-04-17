@@ -246,7 +246,12 @@ KDSize VerticalOffsetLayout::computeSize() {
   KDSize indiceSize = indiceLayout()->size();
   KDCoordinate width = indiceSize.width();
   if (m_type == Type::Superscript) {
-    width += 5;
+    assert(m_parent != nullptr);
+    assert(m_parent->isHorizontal());
+    int indexInParent = m_parent->indexOfChild(this);
+    if (indexInParent < m_parent-> numberOfChildren() - 1 && m_parent->editableChild(indexInParent + 1)->hasUpperLeftIndex()) {
+      width += 5;
+    }
   }
   KDCoordinate height = 0;
   if (m_type == Type::Subscript) {

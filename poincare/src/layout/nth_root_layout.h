@@ -26,6 +26,7 @@ public:
   /* Expression Engine */
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
+  bool hasUpperLeftIndex() const override { return numberOfChildren() > 1; }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

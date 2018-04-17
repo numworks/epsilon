@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+static inline uint16_t max(uint16_t x, uint16_t y) { return (x>y ? x : y); }
+
 const uint8_t radixPixel[NthRootLayout::k_leftRadixHeight][NthRootLayout::k_leftRadixWidth] = {
   {0x00, 0xFF, 0xFF, 0xFF, 0xFF},
   {0xFF, 0x00, 0xFF, 0xFF, 0xFF},
@@ -224,7 +226,7 @@ int NthRootLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOf
 
 void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize radicandSize = radicandLayout()->size();
-  KDSize indexSize = indexLayout() != nullptr ? indexLayout()->size() : KDSize(k_leftRadixWidth,0);
+  KDSize indexSize = adjustedIndexSize();
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];
   KDRect leftRadixFrame(p.x() + indexSize.width() + k_widthMargin - k_leftRadixWidth,
     p.y() + baseline() + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin - k_leftRadixHeight,
@@ -266,7 +268,7 @@ void NthRootLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
 
 KDSize NthRootLayout::computeSize() {
   KDSize radicandSize = radicandLayout()->size();
-  KDSize indexSize = indexLayout() != nullptr ? indexLayout()->size() : KDSize(k_leftRadixWidth,0);
+  KDSize indexSize = adjustedIndexSize();
   return KDSize(
       indexSize.width() + 3*k_widthMargin + 2*k_radixLineThickness + radicandSize.width() + k_radixHorizontalOverflow,
       baseline() + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin
@@ -286,7 +288,7 @@ void NthRootLayout::computeBaseline() {
 KDPoint NthRootLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  KDSize indexSize = indexLayout() != nullptr ? indexLayout()->size() : KDSize(k_leftRadixWidth,0);
+  KDSize indexSize = adjustedIndexSize();
   if (child == radicandLayout()) {
     x = indexSize.width() + 2*k_widthMargin + k_radixLineThickness;
     y = baseline() - radicandLayout()->baseline();
@@ -308,6 +310,10 @@ ExpressionLayout * NthRootLayout::indexLayout() {
     return editableChild(1);
   }
   return nullptr;
+}
+
+KDSize NthRootLayout::adjustedIndexSize() {
+  return indexLayout() != nullptr ? KDSize(max(k_leftRadixWidth, indexLayout()->size().width()), indexLayout()->size().height()) : KDSize(k_leftRadixWidth,0);
 }
 
 }

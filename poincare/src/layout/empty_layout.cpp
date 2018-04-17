@@ -19,12 +19,7 @@ ExpressionLayout * EmptyLayout::clone() const {
 }
 
 void EmptyLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  assert(cursor->pointedExpressionLayout() == this);
-  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return;
-  }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
     return m_parent->backspaceAtCursor(cursor);
   }

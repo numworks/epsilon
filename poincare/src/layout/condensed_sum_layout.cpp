@@ -124,6 +124,11 @@ bool CondensedSumLayout::moveDown(ExpressionLayoutCursor * cursor, bool * should
   return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
+ExpressionLayout * CondensedSumLayout::layoutToPointWhenInserting() {
+  assert(subscriptLayout() != nullptr);
+  return subscriptLayout();
+}
+
 void CondensedSumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Nothing to draw
 }

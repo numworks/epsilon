@@ -99,6 +99,7 @@ public:
   virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Other */
+  virtual ExpressionLayout * layoutToPointWhenInserting();
   bool addGreySquaresToAllMatrixAncestors();
   bool hasText() const;
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }

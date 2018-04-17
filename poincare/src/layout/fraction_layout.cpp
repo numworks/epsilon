@@ -14,9 +14,11 @@ ExpressionLayout * FractionLayout::clone() const {
   return layout;
 }
 
-void FractionLayout::collapseBrothers() {
+void FractionLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 1);
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Left, 0);
+  cursor->setPointedExpressionLayout(denominatorLayout());
+  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
 void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {

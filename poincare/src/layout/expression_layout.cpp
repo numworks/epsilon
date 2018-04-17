@@ -105,6 +105,11 @@ bool ExpressionLayout::hasAncestor(const ExpressionLayout * e) const {
   return m_parent->hasAncestor(e);
 }
 
+void ExpressionLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
+  cursor->setPointedExpressionLayout(this);
+  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+}
+
 void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
   privateAddBrother(cursor, brother, false);
 }

@@ -12,6 +12,7 @@ public:
     Superscript
   };
   VerticalOffsetLayout(ExpressionLayout * indice, Type type, bool cloneOperands);
+  Type type() const { return m_type; }
   ExpressionLayout * clone() const override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -28,6 +29,7 @@ protected:
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
+  void privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) override;
   Type m_type;
 private:
   constexpr static KDCoordinate k_indiceHeight = 5;

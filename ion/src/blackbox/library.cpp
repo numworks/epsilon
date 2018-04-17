@@ -6,33 +6,38 @@
 #include <condition_variable>
 
 void PREFIXED(main)() {
+  Ion::Display::Blackbox::setFrameBufferActive(true);
   ion_main(0, nullptr);
 }
 
-static Ion::Events::Event sEventAvailable = Ion::Events::None;
-std::mutex eventAvailableMutex;
-std::condition_variable eventAvailableConditionVariable;
-static bool sEventProcessed = false;
-std::mutex eventProcessedMutex;
-std::condition_variable eventProcessedConditionVariable;
+static std::mutex m;
+static std::condition_variable cv;
+static Ion::Events::Event sEvent = Ion::Events::None;
+
+enum class State {
+  WaitingForEvent,
+  EventAvailable,
+  Processing,
+  Processed
+};
+
+static State state = State::WaitingForEvent;
 
 Ion::Events::Event Ion::Events::getEvent(int * timeout) {
-  // Notify the eventProcessed condition
-  {
-    std::unique_lock<std::mutex> lock(eventProcessedMutex);
-    sEventProcessed = true;
+  if (state == State::Processing) {
+    std::lock_guard<std::mutex> lk(m);
+    state = State::Processed;
+    cv.notify_one();
   }
-  eventProcessedConditionVariable.notify_one();
 
-  // Wait for the eventAvailable condition
-  std::unique_lock<std::mutex> lock(eventAvailableMutex);
-  eventAvailableConditionVariable.wait(lock, []{return sEventAvailable != Ion::Events::None;});
-  Ion::Events::Event e = sEventAvailable;
-  sEventAvailable = Ion::Events::None;
-  lock.unlock();
-  eventAvailableConditionVariable.notify_one();
+  std::unique_lock<std::mutex> lk(m);
+  cv.wait(lk, []{return (state == State::EventAvailable);});
+  state = State::Processing;
 
-  return e;
+  lk.unlock();
+  cv.notify_one();
+
+  return sEvent;
 }
 
 void PREFIXED(send_event)(int c) {
@@ -46,21 +51,28 @@ void PREFIXED(send_event)(int c) {
     }
   }
 
-  // Notify the eventAvailable condition
+  sEvent = e;
   {
-    std::unique_lock<std::mutex> lock(eventAvailableMutex);
-    sEventAvailable = e;
+    std::lock_guard<std::mutex> lk(m);
+    state = State::EventAvailable;
   }
-  eventAvailableConditionVariable.notify_one();
-
-  // Wait the eventProcessed condition
-  std::unique_lock<std::mutex> lock(eventProcessedMutex);
-  eventProcessedConditionVariable.wait(lock, []{return sEventProcessed; });
-  sEventProcessed = false;
-  lock.unlock();
-  eventProcessedConditionVariable.notify_one();
+  cv.notify_one();
 }
+
+void PREFIXED(wait_event_processed)() {
+  if (state == State::EventAvailable || state == State::Processing) {
+    std::unique_lock<std::mutex> lk(m);
+    cv.wait(lk, []{return state == State::Processed;});
+    state = State::WaitingForEvent;
+  }
+  cv.notify_one();
+}
+
 
 const KDColor * PREFIXED(frame_buffer)() {
   return Ion::Display::Blackbox::frameBufferAddress();
+}
+
+void PREFIXED(write_frame_buffer_to_file)(const char * c) {
+  Ion::Display::Blackbox::writeFrameBufferToFile(c);
 }

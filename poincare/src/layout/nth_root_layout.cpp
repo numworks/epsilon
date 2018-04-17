@@ -1,4 +1,5 @@
 #include "nth_root_layout.h"
+#include "horizontal_layout.h"
 #include <ion/charset.h>
 #include <poincare/expression_layout_cursor.h>
 #include <string.h>
@@ -26,6 +27,11 @@ ExpressionLayout * NthRootLayout::clone() const {
 }
 
 void NthRootLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
+  // If the radicand layout is not an HorizontalLayout, replace it with one.
+  if (!radicandLayout()->isHorizontal()) {
+    HorizontalLayout * horizontalRadicandLayout = new HorizontalLayout(radicandLayout(), false);
+    replaceChild(radicandLayout(), horizontalRadicandLayout, false);
+  }
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 0);
   cursor->setPointedExpressionLayout(radicandLayout());
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);

@@ -204,8 +204,7 @@ bool ExpressionLayout::insertLayoutAtCursor(ExpressionLayout * newChild, Express
 void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
   if (indexOfPointedExpression >= 0) {
-    // Case: The pointed layout is a child.
-    // Move Left.
+    // Case: The pointed layout is a child. Move Left.
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
     bool shouldRecomputeLayout = false;
     cursor->moveLeft(&shouldRecomputeLayout);
@@ -214,21 +213,18 @@ void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: this is the pointed layout.
   if (m_parent == nullptr) {
-    // Case: No parent.
-    // Return.
+    // Case: No parent. Return.
     return;
   }
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    // Case: Left.
-    // Ask the parent.
+    // Case: Left. Ask the parent.
     if (m_parent) {
       m_parent->backspaceAtCursor(cursor);
     }
     return;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  // Case: Right.
-  // Delete the layout.
+  // Case: Right. Delete the layout.
   m_parent->removePointedChildAtIndexAndMoveCursor(m_parent->indexOfChild(this), true, cursor);
 }
 
@@ -282,24 +278,24 @@ bool ExpressionLayout::addGreySquaresToAllMatrixAncestors() {
 }
 
 bool ExpressionLayout::hasText() const {
-  // A layout has text if it is not empty and it is not an horizontal layout
-  // with no child or with one child with no text.
+  /* A layout has text if it is not empty and it is not an horizontal layout
+   * with no child or with one child with no text. */
   return !isEmpty() && !(isHorizontal() && (numberOfChildren() == 0 || (numberOfChildren() == 1 && !child(0)->hasText())));
 }
 
 bool ExpressionLayout::canBeOmittedMultiplicationLeftFactor() const {
-  // WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
-  // isCollapsable is true too. If isCollapsable changes, it might not be the
-  // case anymore so make sure to modify this function if needed.
+  /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
+   * isCollapsable is true too. If isCollapsable changes, it might not be the
+   * case anymore so make sure to modify this function if needed. */
   int numberOfOpenParentheses = 0;
   return isCollapsable(&numberOfOpenParentheses, true);
 }
 
 bool ExpressionLayout::canBeOmittedMultiplicationRightFactor() const {
-  // WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
-  // isCollapsable is true and mustHaveLeftBrother is false. If one of these
-  // functions changes, , it might not be the case anymore so make sure to
-  // modify canBeOmittedMultiplicationRightFactor if needed.
+  /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
+   * isCollapsable is true and mustHaveLeftBrother is false. If one of these
+   * functions changes, it might not be the case anymore so make sure to modify
+   * canBeOmittedMultiplicationRightFactor if needed. */
   int numberOfOpenParentheses = 0;
   return isCollapsable(&numberOfOpenParentheses, false) && !mustHaveLeftBrother();
 }
@@ -319,8 +315,8 @@ bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutC
   ExpressionLayout *  chilResult = nullptr;
   ExpressionLayout ** childResultPtr = &chilResult;
   ExpressionLayoutCursor::Position resultPosition = ExpressionLayoutCursor::Position::Left;
-  // The distance between the cursor and its next position cannot be greater
-  // than this initial value of score.
+  /* The distance between the cursor and its next position cannot be greater
+   * than this initial value of score. */
   int resultScore = Ion::Display::Width*Ion::Display::Width + Ion::Display::Height*Ion::Display::Height;
 
   moveCursorInsideAtDirection(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore);
@@ -374,8 +370,8 @@ void ExpressionLayout::moveCursorInsideAtDirection (
 }
 
 void ExpressionLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
-  // The layout must have a parent, because HorizontalLayout overrides
-  // privateAddBrother and only an HorizontalLayout can be the root layout.
+  /* The layout must have a parent, because HorizontalLayout overrides
+   * privateAddBrother and only an HorizontalLayout can be the root layout. */
   assert(m_parent);
   if (m_parent->isHorizontal()) {
     int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? m_parent->indexOfChild(this) : m_parent->indexOfChild(this) + 1;

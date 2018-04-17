@@ -18,8 +18,7 @@ void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
       && cursor->position() == ExpressionLayoutCursor::Position::Left
       && m_parent == nullptr)
   {
-    // Case: Left and this is the main layout.
-    // Return.
+    // Case: Left and this is the main layout. Return.
     return;
   }
   if (cursor->pointedExpressionLayout() == this
@@ -27,16 +26,15 @@ void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
       && m_parent == nullptr
       && numberOfChildren() == 0)
   {
-    // Case: Right and this is the main layout with no children.
-    // Return.
+    // Case: Right and this is the main layout with no children. Return.
     return;
   }
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
     if (indexOfPointedExpression >= 0) {
-      // Case: Left of a child.
-      // Point Right of the previous child. If there is no previous child, point
-      // Left of this. Perform another backspace.
+      /* Case: Left of a child.
+       * Point Right of the previous child. If there is no previous child, point
+       * Left of this. Perform another backspace. */
       if (indexOfPointedExpression == 0) {
         cursor->setPointedExpressionLayout(this);
       } else if (indexOfPointedExpression > 0) {
@@ -49,8 +47,7 @@ void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   }
   assert(cursor->pointedExpressionLayout() == this);
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    // Case: Right.
-    // Point to the last child and perform backspace.
+    // Case: Right. Point to the last child and perform backspace.
     cursor->setPointedExpressionLayout(editableChild(numberOfChildren() - 1));
     cursor->performBackspace();
     return;
@@ -75,8 +72,8 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
   int oldChildIndex = indexOfChild(oldChild);
   if (newChild->isEmpty()) {
     if (numberOfChildren() > 1) {
-      // If the new layout is empty and the horizontal layout has other
-      // children, just delete the old child.
+      /* If the new layout is empty and the horizontal layout has other
+       * children, just delete the old child. */
       if (!newChild->hasAncestor(oldChild)) {
         delete newChild;
       }
@@ -93,9 +90,9 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       return;
     }
-    // If the new layout is empty and it was the only horizontal layout child,
-    // replace the horizontal layout with this empty layout (only if this is not
-    // the main layout, so only if the layout has a parent).
+    /* If the new layout is empty and it was the only horizontal layout child,
+     * replace the horizontal layout with this empty layout (only if this is not
+     * the main layout, so only if the layout has a parent). */
     if (m_parent) {
       if (!deleteOldChild) {
         removeChildAtIndex(indexOfChild(oldChild), false);
@@ -107,8 +104,8 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
       replaceWith(newChild, deleteOldChild);
       return;
     }
-    // If this is the main horizontal layout, the old child its only child and
-    // the new child is Empty, remove the old child and delete the new child.
+    /* If this is the main horizontal layout, the old child its only child and
+     * the new child is Empty, remove the old child and delete the new child. */
     assert(m_parent == nullptr);
     removeChildAtIndex(0, deleteOldChild);
     delete newChild;
@@ -119,15 +116,15 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return;
   }
-  // If the new child is also an horizontal layout, steal the children of the
-  // new layout then destroy it.
+  /* If the new child is also an horizontal layout, steal the children of the
+   * new layout then destroy it. */
   if (newChild->isHorizontal()) {
     int indexForInsertion = indexOfChild(oldChild);
     if (cursor != nullptr) {
-      // If the old layout is not an ancestor of the new layout, or if the
-      // cursor was on the right of the new layout, place the cursor on the
-      // right of the new layout, which is left of the next brother or right of
-      // the parent.
+      /* If the old layout is not an ancestor of the new layout, or if the
+       * cursor was on the right of the new layout, place the cursor on the
+       * right of the new layout, which is left of the next brother or right of
+       * the parent. */
       if (!oldWasAncestorOfNewLayout || cursor->position() == ExpressionLayoutCursor::Position::Right) {
         if (oldChildIndex == numberOfChildren() - 1) {
           cursor->setPointedExpressionLayout(this);
@@ -137,8 +134,8 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
           cursor->setPosition(ExpressionLayoutCursor::Position::Left);
         }
       } else {
-        // Else place the cursor on the left of the new layout, which is right
-        // of the previous brother or left of the parent.
+        /* Else place the cursor on the left of the new layout, which is right
+         * of the previous brother or left of the parent. */
         if (oldChildIndex == 0) {
           cursor->setPointedExpressionLayout(this);
           cursor->setPosition(ExpressionLayoutCursor::Position::Left);
@@ -175,8 +172,7 @@ void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index, 
 }
 
 bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  // Case: Left.
-  // Ask the parent.
+  // Case: Left. Ask the parent.
   if (cursor->pointedExpressionLayout() == this) {
     if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
       if (m_parent) {
@@ -185,9 +181,9 @@ bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRe
       return false;
     }
     assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-    // Case: Right.
-    // Go to the last child if there is one, and move Left.
-    // Else go Left and ask the parent.
+    /* Case: Right.
+     * Go to the last child if there is one, and move Left.
+     * Else go Left and ask the parent. */
     if (numberOfChildren() < 1) {
       cursor->setPosition(ExpressionLayoutCursor::Position::Left);
       if (m_parent) {
@@ -206,24 +202,21 @@ bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRe
   int childIndex = indexOfChild(cursor->pointedExpressionLayout());
   assert(childIndex >= 0);
   if (childIndex == 0) {
-    // Case: the child is the leftmost.
-    // Ask the parent.
+    // Case: the child is the leftmost. Ask the parent.
     if (m_parent) {
       cursor->setPointedExpressionLayout(this);
       return m_parent->moveLeft(cursor, shouldRecomputeLayout);
     }
     return false;
   }
-  // Case: the child is not the leftmost.
-  // Go to its left brother and move Left.
+  // Case: the child is not the leftmost. Go to its left brother and move Left.
   cursor->setPointedExpressionLayout(editableChild(childIndex-1));
   cursor->setPosition(ExpressionLayoutCursor::Position::Right);
   return editableChild(childIndex-1)->moveLeft(cursor, shouldRecomputeLayout);
 }
 
 bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  // Case: Right.
-  // Ask the parent.
+  // Case: Right. Ask the parent.
   if (cursor->pointedExpressionLayout() == this) {
     if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
       if (m_parent) {
@@ -232,9 +225,9 @@ bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldR
       return false;
     }
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-    // Case: Left.
-    // Go to the first child if there is one, and move Right.
-    // Else go Right and ask the parent.
+    /* Case: Left.
+     * Go to the first child if there is one, and move Right.
+     * Else go Right and ask the parent. */
     if (numberOfChildren() < 1) {
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       if (m_parent) {
@@ -261,8 +254,8 @@ bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldR
     }
     return false;
   }
-  // Case: the child is not the rightmost.
-  // Go to its right brother and move Right.
+  /* Case: the child is not the rightmost. Go to its right brother and move
+   * Right. */
   cursor->setPointedExpressionLayout(editableChild(childIndex+1));
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
   return editableChild(childIndex+1)->moveRight(cursor, shouldRecomputeLayout);
@@ -460,9 +453,9 @@ bool HorizontalLayout::tryMoveVerticallyFromAnotherLayout(ExpressionLayout * oth
 }
 
 void HorizontalLayout::privateRemoveChildAtIndex(int index, bool deleteAfterRemoval, bool forceRemove) {
-  // If the child to remove is at index 0 and its right brother must have a left
-  // brother (e.g. it is a VerticalOffsetLayout), replace the child with an
-  // EmptyLayout instead of removing it.
+  /* If the child to remove is at index 0 and its right brother must have a left
+   * brother (e.g. it is a VerticalOffsetLayout), replace the child with an
+   * EmptyLayout instead of removing it. */
   if (!forceRemove && index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftBrother()) {
     addChildAtIndex(new EmptyLayout(), index + 1);
   }
@@ -471,15 +464,15 @@ void HorizontalLayout::privateRemoveChildAtIndex(int index, bool deleteAfterRemo
 
 int HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft) {
   int newIndex = index;
-  // If empty, remove the child that would be on the right of the inserted
-  // layout.
+  /* If empty, remove the child that would be on the right of the inserted
+   * layout. */
   if (newIndex < numberOfChildren()
       && child(newIndex)->isEmpty())
   {
     privateRemoveChildAtIndex(newIndex, true, true);
   }
-  // If empty, remove the child that would be on the left of the inserted
-  // layout.
+  /* If empty, remove the child that would be on the left of the inserted
+   * layout. */
   if (shouldRemoveOnLeft
       && newIndex - 1 >= 0
       && newIndex - 1 <= numberOfChildren() -1

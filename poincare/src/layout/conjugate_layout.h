@@ -10,6 +10,7 @@ class ConjugateLayout : public StaticLayoutHierarchy<1> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
+  void collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;

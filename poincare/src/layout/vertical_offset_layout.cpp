@@ -1,5 +1,7 @@
 #include "vertical_offset_layout.h"
 #include "empty_layout.h"
+#include "parenthesis_left_layout.h"
+#include "parenthesis_right_layout.h"
 #include <ion/charset.h>
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/layout_engine.h>
@@ -273,5 +275,35 @@ KDPoint VerticalOffsetLayout::positionOfChild(ExpressionLayout * child) {
   ExpressionLayout * base = baseLayout();
   return KDPoint(0, base->size().height() - base->baseline() - k_indiceHeight);
 }
+
+void VerticalOffsetLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
+  if (brother->isVerticalOffset()){
+    VerticalOffsetLayout * verticalOffsetBrother = static_cast<VerticalOffsetLayout *>(brother);
+    if (verticalOffsetBrother->type() == Type::Superscript) {
+      // Add parenthesis
+      assert(m_parent->isHorizontal());
+      int indexInParent = m_parent->indexOfChild(this);
+      // Add the right parenthesis
+      ParenthesisRightLayout * parenthesisRight = new ParenthesisRightLayout();
+      m_parent->addChildAtIndex(parenthesisRight, indexInParent + 1);
+      // Add the left parenthesis
+      ParenthesisLeftLayout * parenthesisLeft = new ParenthesisLeftLayout();
+      int leftParenthesisIndex = indexInParent;
+      int numberOfOpenParenthesis = 0;
+      while (leftParenthesisIndex > 0 && editableParent()->editableChild(leftParenthesisIndex-1)->isCollapsable(&numberOfOpenParenthesis,true)) {
+        leftParenthesisIndex--;
+      }
+      m_parent->addChildAtIndex(parenthesisLeft, leftParenthesisIndex);
+      if (moveCursor) {
+        parenthesisRight->addBrotherAndMoveCursor(cursor, brother);
+      } else {
+        parenthesisRight->addBrother(cursor, brother);
+      }
+      return;
+    }
+  }
+  ExpressionLayout::privateAddBrother(cursor, brother, moveCursor);
+}
+
 
 }

@@ -41,10 +41,6 @@ bool ExpressionLayoutCursor::moveDown(bool * shouldRecomputeLayout) {
   return m_pointedExpressionLayout->moveDown(this, shouldRecomputeLayout);
 }
 
-void ExpressionLayoutCursor::addLayout(ExpressionLayout * layout) {
-  pointedExpressionLayout()->addBrother(this, layout);
-}
-
 void ExpressionLayoutCursor::addLayoutAndMoveCursor(ExpressionLayout * layout) {
   bool layoutWillBeMerged = layout->isHorizontal();
   pointedExpressionLayout()->addBrotherAndMoveCursor(this, layout);

@@ -39,7 +39,6 @@ public:
   bool moveDown(bool * shouldRecomputeLayout);
 
   /* Edition */
-  void addLayout(ExpressionLayout * layout);
   void addLayoutAndMoveCursor(ExpressionLayout * layout);
   void addEmptyExponentialLayout();
   void addFractionLayoutAndCollapseBrothers();

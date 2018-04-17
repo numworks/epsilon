@@ -221,13 +221,36 @@ bool ExpressionLayoutCursor::hideEmptyLayoutIfNeeded() {
 }
 
 bool ExpressionLayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
+  /* Find Empty layouts adjacent to the cursor: Check the pointed layout and its
+   * neighbour in an Horizontal layout */
+
+  // Check the pointed layout
   if (m_pointedExpressionLayout->isEmpty()) {
+    /* An empty layout is either an EmptyLayout or an HorizontalLayout with one
+     * child only, and this child is an EmptyLayout. */
     if (m_pointedExpressionLayout->isHorizontal()) {
       static_cast<EmptyLayout *>(m_pointedExpressionLayout->editableChild(0))->setVisible(show);
     } else {
       static_cast<EmptyLayout *>(m_pointedExpressionLayout)->setVisible(show);
     }
     return true;
+  } else if (m_pointedExpressionLayout->parent() != nullptr
+      && m_pointedExpressionLayout->parent()->isHorizontal())
+  {
+    // Check the neighbour of the pointed layout in an HorizontalLayout
+    int indexInParent = m_pointedExpressionLayout->parent()->indexOfChild(m_pointedExpressionLayout);
+    int indexToCheck = m_position == Position::Right ? indexInParent + 1 : indexInParent - 1;
+    if (indexToCheck >=0
+        && indexToCheck < m_pointedExpressionLayout->parent()->numberOfChildren()
+        && m_pointedExpressionLayout->parent()->child(indexToCheck)->isEmpty())
+    {
+      if (m_pointedExpressionLayout->isHorizontal()) {
+        static_cast<EmptyLayout *>(m_pointedExpressionLayout->editableParent()->editableChild(indexToCheck)->editableChild(0))->setVisible(show);
+      } else {
+        static_cast<EmptyLayout *>(m_pointedExpressionLayout->editableParent()->editableChild(indexToCheck))->setVisible(show);
+      }
+      return true;
+    }
   }
   return false;
 }

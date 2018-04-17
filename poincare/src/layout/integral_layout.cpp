@@ -204,6 +204,11 @@ int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberO
   return numberOfChar;
 }
 
+ExpressionLayout * IntegralLayout::layoutToPointWhenInserting() {
+  assert(lowerBoundLayout() != nullptr);
+  return lowerBoundLayout();
+}
+
 void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize integrandSize = integrandLayout()->size();
   KDSize upperBoundSize = upperBoundLayout()->size();

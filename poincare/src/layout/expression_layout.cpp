@@ -261,6 +261,13 @@ bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor, bool * sh
   return moveInside(VerticalDirection::Down, cursor, shouldRecomputeLayout);
 }
 
+ExpressionLayout * ExpressionLayout::layoutToPointWhenInserting() {
+  if (numberOfChildren() > 0) {
+    return editableChild(0);
+  }
+  return this;
+}
+
 bool ExpressionLayout::addGreySquaresToAllMatrixAncestors() {
   bool addedSquares = false;
   ExpressionLayout * currentAncestor = m_parent;

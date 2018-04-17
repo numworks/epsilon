@@ -25,6 +25,8 @@ public:
   /* Expression Engine */
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
+  /* Other */
+  ExpressionLayout * layoutToPointWhenInserting() override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

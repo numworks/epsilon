@@ -1,4 +1,5 @@
 #include "bracket_layout.h"
+#include "horizontal_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/layout_engine.h>
 extern "C" {
@@ -11,6 +12,17 @@ namespace Poincare {
 ExpressionLayout * BracketLayout::clone() const {
   BracketLayout * layout = new BracketLayout(const_cast<BracketLayout *>(this)->operandLayout(), true);
   return layout;
+}
+
+void BracketLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
+  // If the operand layouts is not HorizontalLayouts, replace it with one.
+  if (!operandLayout()->isHorizontal()) {
+    HorizontalLayout * horizontalOperandLayout = new HorizontalLayout(operandLayout(), false);
+    replaceChild(operandLayout(), horizontalOperandLayout, false);
+  }
+  ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 0);
+  cursor->setPointedExpressionLayout(operandLayout());
+  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
 void BracketLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {

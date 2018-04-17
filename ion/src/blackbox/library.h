@@ -14,6 +14,8 @@ extern "C" {
 
 void PREFIXED(main)();
 void PREFIXED(send_event)(int c);
+void PREFIXED(wait_event_processed)();
 const KDColor * PREFIXED(frame_buffer)();
+void PREFIXED(write_frame_buffer_to_file)(const char * c);
 
 }

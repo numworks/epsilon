@@ -64,45 +64,7 @@ void ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
   HorizontalLayout * child2 = new HorizontalLayout(new EmptyLayout(), false);
   FractionLayout * newChild = new FractionLayout(child1, child2, false);
   pointedExpressionLayout()->addBrother(this, newChild);
-
-  if (!newChild->parent()->isHorizontal()) {
-    setPointedExpressionLayout(child2->editableChild(0));
-    setPosition(Position::Left);
-    return;
-  }
-
-  int fractionIndexInParent = newChild->parent()->indexOfChild(newChild);
-  int numberOfBrothers = newChild->parent()->numberOfChildren();
-
-  // Collapse the brothers on the right
-  int numberOfOpenParenthesis = 0;
-  bool canCollapseOnRight = true;
-  if (fractionIndexInParent < numberOfBrothers - 1) {
-    canCollapseOnRight = !(newChild->editableParent()->editableChild(fractionIndexInParent+1)->mustHaveLeftBrother());
-  }
-  ExpressionLayout * rightBrother = nullptr;
-  while (canCollapseOnRight && fractionIndexInParent < numberOfBrothers - 1) {
-    rightBrother = newChild->editableParent()->editableChild(fractionIndexInParent+1);
-    if (rightBrother->isCollapsable(&numberOfOpenParenthesis, false)) {
-      newChild->editableParent()->removeChildAtIndex(fractionIndexInParent+1, false);
-      child2->addOrMergeChildAtIndex(rightBrother, child2->numberOfChildren(), true);
-      numberOfBrothers--;
-    } else {
-      break;
-    }
-  }
-  // Collapse the brothers on the left
-  numberOfOpenParenthesis = 0;
-  while (fractionIndexInParent > 0) {
-    ExpressionLayout * leftBrother = newChild->editableParent()->editableChild(fractionIndexInParent-1);
-    if (leftBrother->isCollapsable(&numberOfOpenParenthesis, true)) {
-      newChild->editableParent()->removeChildAtIndex(fractionIndexInParent-1, false);
-      child1->addOrMergeChildAtIndex(leftBrother, 0, true);
-      fractionIndexInParent--;
-    } else {
-      break;
-    }
-  }
+  newChild->collapseBrothers();
   // Set the cursor position
   setPointedExpressionLayout(child2->editableChild(0));
   setPosition(Position::Left);

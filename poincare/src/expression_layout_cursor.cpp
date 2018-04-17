@@ -92,7 +92,7 @@ void ExpressionLayoutCursor::addEmptyPowerLayout() {
   if (baseForNewPowerLayout()) {
     m_pointedExpressionLayout->addBrother(this, offsetLayout);
     setPointedExpressionLayout(offsetLayout->editableChild(0));
-    setPosition(ExpressionLayoutCursor::Position::Left);
+    setPosition(ExpressionLayoutCursor::Position::Right);
     return;
   }
   // Else, add an empty base

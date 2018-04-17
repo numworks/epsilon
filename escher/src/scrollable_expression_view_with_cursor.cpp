@@ -232,7 +232,9 @@ void ScrollableExpressionViewWithCursor::insertLayoutFromTextAtCursor(const char
   if (expression != nullptr) {
     Poincare::ExpressionLayout * layout = expression->createLayout();
     delete expression;
+    m_expressionViewWithCursor.cursor()->showEmptyLayoutIfNeeded();
     insertLayoutAtCursor(layout, nullptr);
+    m_expressionViewWithCursor.cursor()->hideEmptyLayoutIfNeeded();
     reload();
     return;
   }

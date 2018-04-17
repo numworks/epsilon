@@ -243,8 +243,9 @@ void ScrollableExpressionViewWithCursor::insertLayoutFromTextAtCursor(const char
 
 void ScrollableExpressionViewWithCursor::reload() {
   m_expressionViewWithCursor.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
-  m_expressionViewWithCursor.cursorPositionChanged();
   layoutSubviews();
+  m_delegate->scrollableExpressionViewWithCursorDidChangeSize(this);
   scrollToCursor();
+  m_expressionViewWithCursor.cursorPositionChanged();
   markRectAsDirty(bounds());
 }

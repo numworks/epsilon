@@ -132,6 +132,11 @@ bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldReco
   return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
+ExpressionLayout * SequenceLayout::layoutToPointWhenInserting() {
+  assert(lowerBoundLayout() != nullptr);
+  return lowerBoundLayout();
+}
+
 char SequenceLayout::XNTChar() const {
   return 'n';
 }

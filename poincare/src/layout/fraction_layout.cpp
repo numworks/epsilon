@@ -218,6 +218,16 @@ int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberO
   return numberOfChar;
 }
 
+ExpressionLayout * FractionLayout::layoutToPointWhenInserting() {
+  if (numeratorLayout()->isEmpty()){
+    return numeratorLayout();
+  }
+  if (denominatorLayout()->isEmpty()){
+    return denominatorLayout();
+  }
+  return this;
+}
+
 void FractionLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDCoordinate fractionLineY = p.y() + numeratorLayout()->size().height() + k_fractionLineMargin;
   ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, fractionLineY, size().width()-2*Metric::FractionAndConjugateHorizontalMargin, 1), expressionColor);

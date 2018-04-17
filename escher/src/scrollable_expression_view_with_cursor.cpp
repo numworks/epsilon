@@ -207,9 +207,14 @@ void ScrollableExpressionViewWithCursor::insertLayoutAtCursor(Poincare::Expressi
   if (layout->isMatrix() && pointedLayout && pointedLayout->hasAncestor(layout)) {
     static_cast<Poincare::MatrixLayout *>(layout)->addGreySquares();
   }
-  if (pointedLayout != nullptr) {
+  bool layoutWillBeMerged = layout->isHorizontal();
+  if (!layoutWillBeMerged) {
     m_expressionViewWithCursor.cursor()->addLayout(layout);
-    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(pointedLayout);
+    if (pointedLayout != nullptr) {
+      m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(pointedLayout);
+    } else {
+      m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(layout->layoutToPointWhenInserting());
+    }
     m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
   } else {
     m_expressionViewWithCursor.cursor()->addLayoutAndMoveCursor(layout);

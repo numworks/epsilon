@@ -146,9 +146,6 @@ void MathToolbox::actionForScrollableExpressionViewWithCursor(void * sender, con
         break;
       }
     }
-  } else if (resultLayout->numberOfChildren() > 0) {
-    // Else, if the layout has children, pick the first one.
-    pointedLayout = resultLayout->editableChild(0);
   }
   // Insert the layout. If pointedLayout is nullptr, the cursor will be on the
   // right of the inserted layout.

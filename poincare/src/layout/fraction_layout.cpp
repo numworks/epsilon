@@ -15,6 +15,16 @@ ExpressionLayout * FractionLayout::clone() const {
 }
 
 void FractionLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
+  /* If the numerator or denominator layouts are not HorizontalLayouts, replace
+   * them with one. */
+  if (!numeratorLayout()->isHorizontal()) {
+    HorizontalLayout * horizontalNumeratorLayout = new HorizontalLayout(numeratorLayout(), false);
+    replaceChild(numeratorLayout(), horizontalNumeratorLayout, false);
+  }
+  if (!denominatorLayout()->isHorizontal()) {
+    HorizontalLayout * horizontalDenominatorLayout = new HorizontalLayout(denominatorLayout(), false);
+    replaceChild(denominatorLayout(), horizontalDenominatorLayout, false);
+  }
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 1);
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Left, 0);
   cursor->setPointedExpressionLayout(denominatorLayout());

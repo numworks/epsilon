@@ -20,6 +20,7 @@ public:
   bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   bool mustHaveLeftBrother() const override { return true; }
+  bool isVerticalOffset() const { return true; }
 protected:
   ExpressionLayout * indiceLayout();
   ExpressionLayout * baseLayout();

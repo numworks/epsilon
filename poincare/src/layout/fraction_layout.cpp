@@ -191,7 +191,7 @@ int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberO
   }
 
   bool addParenthesis = false;
-  if (indexInParent >= 0 && indexInParent < (m_parent->numberOfChildren() - 1) && m_parent->isHorizontal() && m_parent->child(indexInParent + 1)->mustHaveLeftBrother()) {
+  if (indexInParent >= 0 && indexInParent < (m_parent->numberOfChildren() - 1) && m_parent->isHorizontal() && m_parent->child(indexInParent + 1)->isVerticalOffset()) {
     addParenthesis = true;
     // Add parenthesis
     buffer[numberOfChar++] = '(';

@@ -115,6 +115,9 @@ public:
    * returns true, because |3|2 means |3|*2. A '+' CharLayout returns false,
    * because +'something' nevers means +*'something'. */
   virtual bool mustHaveLeftBrother() const { return false; }
+  virtual bool isVerticalOffset() const { return false; }
+  /* For now, mustHaveLeftBrother and isVerticalOffset behave the same, but code
+   * is clearer with different names. */
   virtual bool isHorizontal() const { return false; }
   virtual bool isLeftParenthesis() const { return false; }
   virtual bool isRightParenthesis() const { return false; }

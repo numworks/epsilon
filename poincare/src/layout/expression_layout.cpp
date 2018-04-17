@@ -394,6 +394,46 @@ void ExpressionLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Expres
   }
 }
 
+void ExpressionLayout::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {
+  if (!parent() || !parent()->isHorizontal()) {
+    return;
+  }
+  int indexInParent = parent()->indexOfChild(this);
+  int numberOfBrothers = parent()->numberOfChildren();
+  int numberOfOpenParenthesis = 0;
+  bool canCollapse = true;
+  ExpressionLayout * absorbingChild = editableChild(absorbingChildIndex);
+  if (!absorbingChild || !absorbingChild->isHorizontal()) {
+    return;
+  }
+  HorizontalLayout * horizontalAbsorbingChild = static_cast<HorizontalLayout *>(absorbingChild);
+  if (direction == HorizontalDirection::Right && indexInParent < numberOfBrothers - 1) {
+    canCollapse = !(editableParent()->editableChild(indexInParent+1)->mustHaveLeftBrother());
+  }
+  ExpressionLayout * brother = nullptr;
+  while (canCollapse) {
+    if (direction == HorizontalDirection::Right && indexInParent == numberOfBrothers - 1) {
+      break;
+    }
+    if (direction == HorizontalDirection::Left && indexInParent == 0) {
+      break;
+    }
+    int brotherIndex = direction == HorizontalDirection::Right ? indexInParent+1 : indexInParent-1;
+    brother = editableParent()->editableChild(brotherIndex);
+    if (brother->isCollapsable(&numberOfOpenParenthesis, direction == HorizontalDirection::Left)) {
+      editableParent()->removeChildAtIndex(brotherIndex, false);
+      int newIndex = direction == HorizontalDirection::Right ? absorbingChild->numberOfChildren() : 0;
+      horizontalAbsorbingChild->addOrMergeChildAtIndex(brother, newIndex, true);
+      numberOfBrothers--;
+      if (direction == HorizontalDirection::Left) {
+        indexInParent--;
+      }
+    } else {
+      break;
+    }
+  }
+}
+
 ExpressionLayout * ExpressionLayout::replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace) {
   assert(m_parent != nullptr);
   assert(!m_parent->isHorizontal());

@@ -49,6 +49,9 @@ public:
 
   /* Dynamic Layout */
 
+  // Collapse
+  virtual void collapseBrothers() {}
+
   // Add
   virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
   void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
@@ -133,6 +136,7 @@ protected:
     void * resultPosition,
     int * resultScore);
   virtual void privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor);
+  void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
   ExpressionLayout * m_parent;
   KDCoordinate m_baseline;
   /* m_baseline is the signed vertical distance from the top of the layout to

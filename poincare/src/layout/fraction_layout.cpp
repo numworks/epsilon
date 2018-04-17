@@ -14,6 +14,11 @@ ExpressionLayout * FractionLayout::clone() const {
   return layout;
 }
 
+void FractionLayout::collapseBrothers() {
+  ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 1);
+  ExpressionLayout::collapseOnDirection(HorizontalDirection::Left, 0);
+}
+
 void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   // Case: Left of the denominator.
   // Replace the fraction with a horizontal juxtaposition of the numerator and

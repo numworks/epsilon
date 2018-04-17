@@ -71,7 +71,7 @@ void ParenthesisLeftLayout::computeOperandHeight() {
   int currentNumberOfOpenParentheses = 1;
   int numberOfBrothers = m_parent->numberOfChildren();
   if (indexInParent < numberOfBrothers - 1
-      && m_parent->child(indexInParent + 1)->mustHaveLeftBrother())
+      && m_parent->child(indexInParent + 1)->isVerticalOffset())
   {
     // If the parenthesis is the base of a superscript layout, it should have a
     // default height, else it creates an infinite loop because the parenthesis
@@ -116,7 +116,7 @@ void ParenthesisLeftLayout::computeBaseline() {
     m_baselined = true;
     return;
   }
-  if (m_parent->child(indexInParent + 1)->mustHaveLeftBrother()) {
+  if (m_parent->child(indexInParent + 1)->isVerticalOffset()) {
     // If the parenthesis is the base of a superscript layout, it should have a
     // default baseline, else it creates an infinite loop because the
     // parenthesis needs the superscript height, which needs the parenthesis

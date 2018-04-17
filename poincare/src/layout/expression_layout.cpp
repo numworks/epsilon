@@ -293,11 +293,11 @@ bool ExpressionLayout::canBeOmittedMultiplicationLeftFactor() const {
 
 bool ExpressionLayout::canBeOmittedMultiplicationRightFactor() const {
   /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
-   * isCollapsable is true and mustHaveLeftBrother is false. If one of these
+   * isCollapsable is true and isVerticalOffset is false. If one of these
    * functions changes, it might not be the case anymore so make sure to modify
    * canBeOmittedMultiplicationRightFactor if needed. */
   int numberOfOpenParentheses = 0;
-  return isCollapsable(&numberOfOpenParentheses, false) && !mustHaveLeftBrother();
+  return isCollapsable(&numberOfOpenParentheses, false) && !isVerticalOffset();
 }
 
 void ExpressionLayout::detachChildAtIndex(int i) {

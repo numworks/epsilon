@@ -64,10 +64,7 @@ void ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
   HorizontalLayout * child2 = new HorizontalLayout(new EmptyLayout(), false);
   FractionLayout * newChild = new FractionLayout(child1, child2, false);
   pointedExpressionLayout()->addBrother(this, newChild);
-  newChild->collapseBrothers();
-  // Set the cursor position
-  setPointedExpressionLayout(child2->editableChild(0));
-  setPosition(Position::Left);
+  newChild->collapseBrothersAndMoveCursor(this);
 }
 
 void ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOfColumns) {
@@ -110,9 +107,7 @@ void ExpressionLayoutCursor::addEmptySquareRootLayout() {
   HorizontalLayout * child1 = new HorizontalLayout(new EmptyLayout(), false);
   NthRootLayout * newChild = new NthRootLayout(child1, false);
   m_pointedExpressionLayout->addBrother(this, newChild);
-  newChild->collapseBrothers();
-  setPointedExpressionLayout(child1);
-  setPosition(ExpressionLayoutCursor::Position::Left);
+  newChild->collapseBrothersAndMoveCursor(this);
 }
 
 void ExpressionLayoutCursor::addEmptySquarePowerLayout() {

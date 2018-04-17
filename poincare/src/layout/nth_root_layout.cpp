@@ -25,8 +25,10 @@ ExpressionLayout * NthRootLayout::clone() const {
   return new NthRootLayout(const_cast<NthRootLayout *>(this)->radicandLayout(), const_cast<NthRootLayout *>(this)->indexLayout(), true);
 }
 
-void NthRootLayout::collapseBrothers() {
+void NthRootLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 0);
+  cursor->setPointedExpressionLayout(radicandLayout());
+  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
 void NthRootLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {

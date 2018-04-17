@@ -428,9 +428,9 @@ bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direct
       }
     }
   }
-  /* If the cursor is Lefit or Right of the HorizontalLayout, try moving it up
+  /* If the cursor is Left or Right of the HorizontalLayout, try moving it up
    * from its extremal child. */
-  if (cursor->pointedExpressionLayout() == this && previousLayout == nullptr) {
+  if (cursor->pointedExpressionLayout() == this && previousLayout == nullptr && numberOfChildren() > 0) {
     int indexOfChildToCheck = cursor->position() == ExpressionLayoutCursor::Position::Left ? 0 : numberOfChildren() - 1;
     if (tryMoveVerticallyFromAnotherLayout(editableChild(indexOfChildToCheck), cursor->position(), direction, cursor, shouldRecomputeLayout, previousLayout)) {
       return true;

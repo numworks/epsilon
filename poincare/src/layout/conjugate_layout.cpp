@@ -1,5 +1,6 @@
 #include "conjugate_layout.h"
 #include "empty_layout.h"
+#include "horizontal_layout.h"
 #include <escher/metric.h>
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
@@ -12,6 +13,17 @@ namespace Poincare {
 ExpressionLayout * ConjugateLayout::clone() const {
   ConjugateLayout * layout = new ConjugateLayout(const_cast<ConjugateLayout *>(this)->operandLayout(), true);
   return layout;
+}
+
+void ConjugateLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
+  // If the operand layouts is not HorizontalLayouts, replace it with one.
+  if (!operandLayout()->isHorizontal()) {
+    HorizontalLayout * horizontalOperandLayout = new HorizontalLayout(operandLayout(), false);
+    replaceChild(operandLayout(), horizontalOperandLayout, false);
+  }
+  ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 0);
+  cursor->setPointedExpressionLayout(operandLayout());
+  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
 void ConjugateLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {

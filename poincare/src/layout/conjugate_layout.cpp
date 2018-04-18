@@ -26,19 +26,6 @@ void ConjugateLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cur
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
-void ConjugateLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  if (cursor->pointedExpressionLayout() == this
-      && cursor->position() == ExpressionLayoutCursor::Position::Right)
-  {
-    // Case: Right.
-    // Move to the operand and delete.
-    cursor->setPointedExpressionLayout(operandLayout());
-    cursor->performBackspace();
-    return;
-  }
-  ExpressionLayout::backspaceAtCursor(cursor);
-}
-
 bool ConjugateLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the operand.
   // Move Left.

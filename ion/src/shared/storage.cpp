@@ -17,7 +17,8 @@ namespace Ion {
  * around both issues by creating a global staticStorageArea buffer, and by
  * placement-newing the Storage into that area on first use. */
 
-char staticStorageArea[sizeof(Storage)] = {0};
+uint32_t staticStorageArea[sizeof(Storage)/sizeof(uint32_t)] = {0};
+
 Storage * Storage::sharedStorage() {
   static Storage * storage = nullptr;
   if (storage == nullptr) {
@@ -199,8 +200,19 @@ void Storage::destroyRecord(Record record) {
   }
 }
 
+static inline uint16_t unalignedShort(char * address) {
+#if __EMSCRIPTEN__
+  uint8_t f1 = *(address);
+  uint8_t f2 = *(address+1);
+  uint16_t f = (uint16_t)f1 + (((uint16_t)f2)<<8);
+  return f;
+#else
+  return *(uint16_t *)address;
+#endif
+}
+
 Storage::record_size_t Storage::sizeOfRecordStarting(char * start) const {
-  return *((record_size_t *)start);
+  return unalignedShort(start);
 }
 
 const char * Storage::nameOfRecordStarting(char * start) const {
@@ -289,9 +301,9 @@ bool Storage::slideBuffer(char * position, int delta) {
 }
 
 Storage::RecordIterator & Storage::RecordIterator::operator++() {
-  record_size_t size = *((record_size_t *)m_recordStart);
+  record_size_t size = unalignedShort(m_recordStart);
   char * nextRecord = m_recordStart+size;
-  record_size_t newRecordSize = *((record_size_t *)nextRecord);
+  record_size_t newRecordSize = unalignedShort(nextRecord);
   m_recordStart = (newRecordSize == 0 ? nullptr : nextRecord);
   return *this;
 }

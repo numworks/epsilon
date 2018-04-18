@@ -33,22 +33,6 @@ KDCoordinate ExpressionLayoutCursor::baseline() {
   return max(baseline1, baseline2);
 }
 
-ExpressionLayout * ExpressionLayoutCursor::equivalentPointedBrotherLayout() {
-  if (m_pointedExpressionLayout->parent() != nullptr
-      && m_pointedExpressionLayout->parent()->isHorizontal())
-  {
-    ExpressionLayout * pointedLayoutParent = m_pointedExpressionLayout->editableParent();
-    int indexOfPointedLayoutInParent = pointedLayoutParent->indexOfChild(m_pointedExpressionLayout);
-    if (m_position == Position::Left && indexOfPointedLayoutInParent > 0) {
-      return pointedLayoutParent->editableChild(indexOfPointedLayoutInParent - 1);
-    }
-    if (m_position == Position::Right && indexOfPointedLayoutInParent < pointedLayoutParent->numberOfChildren() - 1) {
-      return pointedLayoutParent->editableChild(indexOfPointedLayoutInParent + 1);
-    }
-  }
-  return nullptr;
-}
-
 bool ExpressionLayoutCursor::positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position) {
   assert(expressionLayout != nullptr);
   return middleLeftPoint() == middleLeftPointOfCursor(expressionLayout, position);
@@ -243,20 +227,14 @@ bool ExpressionLayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
       static_cast<EmptyLayout *>(m_pointedExpressionLayout)->setVisible(show);
     }
     return true;
-  } else if (m_pointedExpressionLayout->parent() != nullptr
-      && m_pointedExpressionLayout->parent()->isHorizontal())
-  {
+  } else {
     // Check the neighbour of the pointed layout in an HorizontalLayout
-    int indexInParent = m_pointedExpressionLayout->parent()->indexOfChild(m_pointedExpressionLayout);
-    int indexToCheck = m_position == Position::Right ? indexInParent + 1 : indexInParent - 1;
-    if (indexToCheck >=0
-        && indexToCheck < m_pointedExpressionLayout->parent()->numberOfChildren()
-        && m_pointedExpressionLayout->parent()->child(indexToCheck)->isEmpty())
-    {
-      if (m_pointedExpressionLayout->isHorizontal()) {
-        static_cast<EmptyLayout *>(m_pointedExpressionLayout->editableParent()->editableChild(indexToCheck)->editableChild(0))->setVisible(show);
+    ExpressionLayout * equivalentPointedLayout = equivalentPointedBrotherLayout();
+    if (equivalentPointedLayout != nullptr && equivalentPointedLayout->isEmpty()) {
+      if (equivalentPointedLayout->isHorizontal()) {
+        static_cast<EmptyLayout *>(equivalentPointedLayout->editableChild(0))->setVisible(show);
       } else {
-        static_cast<EmptyLayout *>(m_pointedExpressionLayout->editableParent()->editableChild(indexToCheck))->setVisible(show);
+        static_cast<EmptyLayout *>(equivalentPointedLayout)->setVisible(show);
       }
       return true;
     }
@@ -299,6 +277,22 @@ KDCoordinate ExpressionLayoutCursor::pointedLayoutHeight() {
       + max(height1 - baseline1, height2 - baseline2);
   }
   return height;
+}
+
+ExpressionLayout * ExpressionLayoutCursor::equivalentPointedBrotherLayout() {
+  if (m_pointedExpressionLayout->parent() != nullptr
+      && m_pointedExpressionLayout->parent()->isHorizontal())
+  {
+    ExpressionLayout * pointedLayoutParent = m_pointedExpressionLayout->editableParent();
+    int indexOfPointedLayoutInParent = pointedLayoutParent->indexOfChild(m_pointedExpressionLayout);
+    if (m_position == Position::Left && indexOfPointedLayoutInParent > 0) {
+      return pointedLayoutParent->editableChild(indexOfPointedLayoutInParent - 1);
+    }
+    if (m_position == Position::Right && indexOfPointedLayoutInParent < pointedLayoutParent->numberOfChildren() - 1) {
+      return pointedLayoutParent->editableChild(indexOfPointedLayoutInParent + 1);
+    }
+  }
+  return nullptr;
 }
 
 }

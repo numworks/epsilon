@@ -226,9 +226,17 @@ bool ExpressionLayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
    * neighbour in an Horizontal layout */
 
   // Check the pointed layout
-  if (m_pointedExpressionLayout->isEmpty()) {
-    /* An empty layout is either an EmptyLayout or an HorizontalLayout with one
-     * child only, and this child is an EmptyLayout. */
+  if (m_pointedExpressionLayout->isEmpty()
+      || (m_position == Position::Left
+        && m_pointedExpressionLayout->isHorizontal()
+        && m_pointedExpressionLayout->numberOfChildren() > 0
+        && m_pointedExpressionLayout->editableChild(0)->isEmpty()))
+  {
+    /* The cursor is next to an EmptyLayout if the pointed layout is an empty
+     * layout (either an EmptyLayout or HorizontalLayout with one child only,
+     * and this child is an EmptyLayout), or if the cursor points to the left of
+     * an HorizontalLayout that starts with an EmptyLayout (for instance, the
+     * emty base of a vertical offset layout). */
     if (m_pointedExpressionLayout->isHorizontal()) {
       static_cast<EmptyLayout *>(m_pointedExpressionLayout->editableChild(0))->setVisible(show);
     } else {

@@ -253,12 +253,7 @@ KDSize VerticalOffsetLayout::computeSize() {
       width += 5;
     }
   }
-  KDCoordinate height = 0;
-  if (m_type == Type::Subscript) {
-    height = positionOfChild(indiceLayout()).y()+ indiceLayout()->size().height();
-  } else {
-    height = indiceLayout()->size().height() + baseLayout()->baseline() - k_indiceHeight;
-  }
+  KDCoordinate height = baseLayout()->size().height() + indiceLayout()->size().height() - k_indiceHeight;
   return KDSize(width, height);
 }
 
@@ -266,7 +261,7 @@ void VerticalOffsetLayout::computeBaseline() {
   if (m_type == Type::Subscript) {
     m_baseline = 0;
   } else {
-    m_baseline = size().height();
+    m_baseline = indiceLayout()->size().height() - k_indiceHeight + baseLayout()->baseline();
   }
   m_baselined = true;
 }

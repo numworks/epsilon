@@ -6,6 +6,49 @@
 
 namespace Poincare {
 
+static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return (x>y ? x : y); }
+
+ExpressionLayout * ExpressionLayoutCursor::pointedExpressionLayoutEquivalentChild() {
+  if (m_pointedExpressionLayout->isHorizontal() && m_pointedExpressionLayout->numberOfChildren() > 0) {
+    return m_position == Position::Left ? m_pointedExpressionLayout->editableChild(0) : m_pointedExpressionLayout->editableChild(m_pointedExpressionLayout->numberOfChildren()-1);
+  }
+  return m_pointedExpressionLayout;
+}
+
+KDCoordinate ExpressionLayoutCursor::cursorHeight() {
+  KDCoordinate height = pointedLayoutHeight();
+  return height == 0 ? k_cursorHeight : height;
+}
+
+KDCoordinate ExpressionLayoutCursor::baseline() {
+  if (pointedLayoutHeight() == 0) {
+    return k_cursorHeight / 2;
+  }
+  KDCoordinate baseline1 = pointedExpressionLayoutEquivalentChild()->baseline();
+  KDCoordinate baseline2 = (KDCoordinate)0;
+  ExpressionLayout * equivalentBrotherLayout = equivalentPointedBrotherLayout();
+  if (equivalentBrotherLayout != nullptr) {
+    baseline2 = equivalentBrotherLayout->baseline();
+  }
+  return max(baseline1, baseline2);
+}
+
+ExpressionLayout * ExpressionLayoutCursor::equivalentPointedBrotherLayout() {
+  if (m_pointedExpressionLayout->parent() != nullptr
+      && m_pointedExpressionLayout->parent()->isHorizontal())
+  {
+    ExpressionLayout * pointedLayoutParent = m_pointedExpressionLayout->editableParent();
+    int indexOfPointedLayoutInParent = pointedLayoutParent->indexOfChild(m_pointedExpressionLayout);
+    if (m_position == Position::Left && indexOfPointedLayoutInParent > 0) {
+      return pointedLayoutParent->editableChild(indexOfPointedLayoutInParent - 1);
+    }
+    if (m_position == Position::Right && indexOfPointedLayoutInParent < pointedLayoutParent->numberOfChildren() - 1) {
+      return pointedLayoutParent->editableChild(indexOfPointedLayoutInParent + 1);
+    }
+  }
+  return nullptr;
+}
+
 bool ExpressionLayoutCursor::positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position) {
   assert(expressionLayout != nullptr);
   return middleLeftPoint() == middleLeftPointOfCursor(expressionLayout, position);
@@ -234,6 +277,20 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
     }
   }
   return false;
+}
+
+KDCoordinate ExpressionLayoutCursor::pointedLayoutHeight() {
+  KDCoordinate height = pointedExpressionLayoutEquivalentChild()->size().height();
+  KDCoordinate height1 = height;
+  ExpressionLayout * equivalentBrotherLayout = equivalentPointedBrotherLayout();
+  if (equivalentBrotherLayout != nullptr) {
+    KDCoordinate height2 = equivalentBrotherLayout->size().height();
+    KDCoordinate baseline1 = pointedExpressionLayoutEquivalentChild()->baseline();
+    KDCoordinate baseline2 = equivalentBrotherLayout->baseline();
+    height = max(baseline1, baseline2)
+      + max(height1 - baseline1, height2 - baseline2);
+  }
+  return height;
 }
 
 }

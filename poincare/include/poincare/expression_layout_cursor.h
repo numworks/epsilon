@@ -20,10 +20,13 @@ public:
 
   /* Getters and setters */
   ExpressionLayout * pointedExpressionLayout() { return m_pointedExpressionLayout; }
+  ExpressionLayout * pointedExpressionLayoutEquivalentChild();
   void setPointedExpressionLayout(ExpressionLayout * expressionLayout) { m_pointedExpressionLayout = expressionLayout; }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
-  KDCoordinate cursorHeight() const { return k_cursorHeight; }
+  KDCoordinate cursorHeight();
+  KDCoordinate baseline();
+  ExpressionLayout * equivalentPointedBrotherLayout();
 
   /* Comparison */
   bool positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position);
@@ -56,6 +59,7 @@ private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
+  KDCoordinate pointedLayoutHeight();
   ExpressionLayout * m_pointedExpressionLayout;
   Position m_position;
 };

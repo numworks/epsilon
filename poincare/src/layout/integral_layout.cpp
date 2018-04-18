@@ -27,17 +27,8 @@ ExpressionLayout * IntegralLayout::clone() const {
 }
 
 void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  if (cursor->pointedExpressionLayout() == this
-      && cursor->position() == ExpressionLayoutCursor::Position::Right)
-  {
-    // Case: Right.
-    // Delete the layout, keep the integrand.
-    replaceWithAndMoveCursor(integrandLayout(), true, cursor);
-    return;
-  }
-  if (cursor->pointedExpressionLayout() == integrandLayout()
-      && cursor->position() == ExpressionLayoutCursor::Position::Left)
-  {
+
+  if (cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left)) {
     // Case: Left of the integrand.
     // Delete the layout, keep the integrand.
     replaceWithAndMoveCursor(integrandLayout(), true, cursor);

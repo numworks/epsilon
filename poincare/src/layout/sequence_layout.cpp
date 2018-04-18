@@ -9,11 +9,8 @@
 namespace Poincare {
 
 void SequenceLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  if (cursor->pointedExpressionLayout() == this
-      && cursor->position() == ExpressionLayoutCursor::Position::Right)
-  {
-    // Case: Right.
-    // Delete the layout, keep the operand.
+  if (cursor->positionIsEquivalentTo(argumentLayout(), ExpressionLayoutCursor::Position::Left)) {
+    // Case: Left of the argument. Delete the layout, keep the argument.
     replaceWithAndMoveCursor(argumentLayout(), true, cursor);
     return;
   }

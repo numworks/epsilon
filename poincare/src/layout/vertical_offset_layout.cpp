@@ -282,23 +282,33 @@ KDPoint VerticalOffsetLayout::positionOfChild(ExpressionLayout * child) {
 }
 
 void VerticalOffsetLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
-  if (brother->isVerticalOffset()){
+  if (brother->isVerticalOffset()) {
     VerticalOffsetLayout * verticalOffsetBrother = static_cast<VerticalOffsetLayout *>(brother);
     if (verticalOffsetBrother->type() == Type::Superscript) {
-      // Add parenthesis
       assert(m_parent->isHorizontal());
+
+      // Add the Left parenthesis
       int indexInParent = m_parent->indexOfChild(this);
-      // Add the right parenthesis
-      ParenthesisRightLayout * parenthesisRight = new ParenthesisRightLayout();
-      m_parent->addChildAtIndex(parenthesisRight, indexInParent + 1);
-      // Add the left parenthesis
-      ParenthesisLeftLayout * parenthesisLeft = new ParenthesisLeftLayout();
       int leftParenthesisIndex = indexInParent;
+      ParenthesisLeftLayout * parenthesisLeft = new ParenthesisLeftLayout();
       int numberOfOpenParenthesis = 0;
-      while (leftParenthesisIndex > 0 && editableParent()->editableChild(leftParenthesisIndex-1)->isCollapsable(&numberOfOpenParenthesis,true)) {
+      while (leftParenthesisIndex > 0
+          && editableParent()->editableChild(leftParenthesisIndex-1)->isCollapsable(&numberOfOpenParenthesis, true))
+      {
         leftParenthesisIndex--;
       }
       m_parent->addChildAtIndex(parenthesisLeft, leftParenthesisIndex);
+      indexInParent++;
+
+      // Add the Right parenthesis
+      ParenthesisRightLayout * parenthesisRight = new ParenthesisRightLayout();
+      if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+        m_parent->addChildAtIndex(parenthesisRight, indexInParent + 1);
+      } else {
+        assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+        m_parent->addChildAtIndex(parenthesisRight, indexInParent);
+      }
+      cursor->setPointedExpressionLayout(parenthesisRight);
       if (moveCursor) {
         parenthesisRight->addBrotherAndMoveCursor(cursor, brother);
       } else {

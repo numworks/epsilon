@@ -28,6 +28,7 @@ protected:
 private:
   constexpr static KDCoordinate k_bracketWidth = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
+  constexpr static KDCoordinate k_verticalMargin = 1;
 };
 
 }

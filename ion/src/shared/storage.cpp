@@ -211,6 +211,15 @@ static inline uint16_t unalignedShort(char * address) {
 #endif
 }
 
+static inline void writeUnalignedShort(uint16_t value, char * address) {
+#if __EMSCRIPTEN__
+  *((uint8_t *)address) = (uint8_t)(value & ((1 << 8) - 1));
+  *((uint8_t *)address+1) = (uint8_t)(value >> 8);
+#else
+  *((uint16_t *)address) = value;
+#endif
+}
+
 Storage::record_size_t Storage::sizeOfRecordStarting(char * start) const {
   return unalignedShort(start);
 }
@@ -228,7 +237,7 @@ const void * Storage::valueOfRecordStarting(char * start) const {
 }
 
 size_t Storage::overrideSizeAtPosition(char * position, record_size_t size) {
-  *((record_size_t *)position) = size;
+  writeUnalignedShort(size, position);
   return sizeof(record_size_t);
 }
 

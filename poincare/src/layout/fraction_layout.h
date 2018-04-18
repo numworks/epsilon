@@ -31,7 +31,7 @@ protected:
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
   constexpr static KDCoordinate k_fractionLineMargin = 2;
-  constexpr static KDCoordinate k_fractionLineHeight = 2;
+  constexpr static KDCoordinate k_fractionLineHeight = 1;
   ExpressionLayout * numeratorLayout();
   ExpressionLayout * denominatorLayout();
 };

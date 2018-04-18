@@ -250,7 +250,7 @@ KDSize VerticalOffsetLayout::computeSize() {
     assert(m_parent->isHorizontal());
     int indexInParent = m_parent->indexOfChild(this);
     if (indexInParent < m_parent-> numberOfChildren() - 1 && m_parent->editableChild(indexInParent + 1)->hasUpperLeftIndex()) {
-      width += 5;
+      width += k_separationMargin;
     }
   }
   KDCoordinate height = baseLayout()->size().height() + indiceLayout()->size().height() - k_indiceHeight;

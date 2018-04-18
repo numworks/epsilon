@@ -37,13 +37,15 @@ ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expressio
   result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, true);
 
   // Create the layout of arguments separated by commas.
-  HorizontalLayout * args = new HorizontalLayout();
+  ExpressionLayout * args = nullptr;
   int numberOfOperands = expression->numberOfOperands();
   if (numberOfOperands > 0) {
-    args->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, complexFormat), 0, true);
+    args = new HorizontalLayout();
+    HorizontalLayout * horizontalArgs = static_cast<HorizontalLayout *>(args);
+    horizontalArgs->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, complexFormat), 0, true);
     for (int i = 1; i < numberOfOperands; i++) {
-      args->addChildAtIndex(new CharLayout(','), args->numberOfChildren());
-      args->addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), args->numberOfChildren(), true);
+      horizontalArgs->addChildAtIndex(new CharLayout(','), args->numberOfChildren());
+      horizontalArgs->addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), horizontalArgs->numberOfChildren(), true);
     }
   }
   // Add the parenthesed arguments.

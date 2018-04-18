@@ -45,12 +45,16 @@ __ZN3Ion6EventsL16sleepWithTimeoutEiPi \
 __ZN5QueueIN3Ion6Events5EventELi1024EE7enqueueES2_ \
 __ZN5QueueIN3Ion6Events5EventELi1024EE4sizeEv \
 __ZN5QueueIN3Ion6Events5EventELi1024EE4nextEPS2_ \
-__ZN4Code17ConsoleController23autoImportScriptAtIndexEib
+__ZN4Code17ConsoleController23autoImportScriptAtIndexEib \
+SAFE_HEAP_STORE \
+SAFE_HEAP_LOAD
 
 EMFLAGS = -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST='[$(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)]'
 
 ifeq ($(DEBUG),1)
-EMFLAGS += --profiling-funcs -s ASSERTIONS=1
+EMFLAGS += --profiling-funcs
+EMFLAGS += -s ASSERTIONS=1
+EMFLAGS += -s SAFE_HEAP=1
 endif
 
 EMFLAGS += -s MODULARIZE=1 -s 'EXPORT_NAME="Epsilon"'

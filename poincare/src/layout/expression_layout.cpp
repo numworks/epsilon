@@ -374,7 +374,29 @@ void ExpressionLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Expres
    * privateAddBrother and only an HorizontalLayout can be the root layout. */
   assert(m_parent);
   if (m_parent->isHorizontal()) {
-    int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? m_parent->indexOfChild(this) : m_parent->indexOfChild(this) + 1;
+    int indexInParent = m_parent->indexOfChild(this);
+    int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? indexInParent : indexInParent + 1;
+
+    /* Special case: If the neighbour brother is a VerticalOffsetLayout, let it
+     * handle the insertion of the new brother. */
+    ExpressionLayout * neighbour = nullptr;
+    if (cursor->position() == ExpressionLayoutCursor::Position::Left && indexInParent > 0) {
+      neighbour = m_parent->editableChild(indexInParent - 1);
+    } else if (cursor->position() == ExpressionLayoutCursor::Position::Right && indexInParent < m_parent->numberOfChildren() - 1) {
+      neighbour = m_parent->editableChild(indexInParent + 1);
+    }
+    if (neighbour != nullptr && neighbour->isVerticalOffset()) {
+      cursor->setPointedExpressionLayout(neighbour);
+      cursor->setPosition(cursor->position() == ExpressionLayoutCursor::Position::Left ? ExpressionLayoutCursor::Position::Right : ExpressionLayoutCursor::Position::Left);
+      if (moveCursor) {
+        neighbour->addBrotherAndMoveCursor(cursor, brother);
+      } else {
+        neighbour->addBrother(cursor, brother);
+      }
+      return;
+    }
+
+    // Else, let the parent add the brother.
     if (moveCursor) {
       if (brotherIndex < m_parent->numberOfChildren()) {
         cursor->setPointedExpressionLayout(m_parent->editableChild(brotherIndex));

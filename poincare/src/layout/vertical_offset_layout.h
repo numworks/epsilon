@@ -33,6 +33,7 @@ protected:
   Type m_type;
 private:
   constexpr static KDCoordinate k_indiceHeight = 5;
+  constexpr static KDCoordinate k_separationMargin = 5;
 };
 
 }

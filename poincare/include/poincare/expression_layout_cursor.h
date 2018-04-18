@@ -26,7 +26,6 @@ public:
   void setPosition(Position position) { m_position = position; }
   KDCoordinate cursorHeight();
   KDCoordinate baseline();
-  ExpressionLayout * equivalentPointedBrotherLayout();
 
   /* Comparison */
   bool positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position);
@@ -60,6 +59,7 @@ private:
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
   KDCoordinate pointedLayoutHeight();
+  ExpressionLayout * equivalentPointedBrotherLayout();
   ExpressionLayout * m_pointedExpressionLayout;
   Position m_position;
 };

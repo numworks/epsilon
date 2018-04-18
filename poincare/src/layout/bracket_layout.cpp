@@ -15,7 +15,7 @@ ExpressionLayout * BracketLayout::clone() const {
 }
 
 void BracketLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
-  // If the operand layouts is not HorizontalLayouts, replace it with one.
+  // If the operand layout is not an HorizontalLayout, replace it with one.
   if (!operandLayout()->isHorizontal()) {
     HorizontalLayout * horizontalOperandLayout = new HorizontalLayout(operandLayout(), false);
     replaceChild(operandLayout(), horizontalOperandLayout, false);
@@ -26,11 +26,8 @@ void BracketLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * curso
 }
 
 void BracketLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
-  if (cursor->pointedExpressionLayout() == this
-      && cursor->position() == ExpressionLayoutCursor::Position::Right)
-  {
-    // Case: Right.
-    // Delete the layout, keep the operand.
+  if (cursor->positionIsEquivalentTo(operandLayout(), ExpressionLayoutCursor::Position::Left)) {
+    // Case: Left of the operand. Delete the layout, keep the operand.
     replaceWithAndMoveCursor(operandLayout(), true, cursor);
     return;
   }

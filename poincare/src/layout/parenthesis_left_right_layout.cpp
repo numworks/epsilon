@@ -8,6 +8,9 @@ extern "C" {
 
 namespace Poincare {
 
+static inline uint16_t max(uint16_t x, uint16_t y) { return (x>y ? x : y); }
+
+
 ParenthesisLeftRightLayout::ParenthesisLeftRightLayout() :
   StaticLayoutHierarchy<0>(),
   m_operandHeightComputed(false)
@@ -54,7 +57,28 @@ bool ParenthesisLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor, bool
 }
 
 KDSize ParenthesisLeftRightLayout::computeSize() {
-  return KDSize(parenthesisWidth(), operandHeight());
+  uint16_t maxNumberOfNestedParenthesis = 0;
+  assert(m_parent != nullptr);
+  if (m_parent->isHorizontal()) {
+    int index = m_parent->indexOfChild(this);
+    uint16_t numberOfOpenParenthesis = 1;
+    bool goingLeft = isRightParenthesis();
+    while (numberOfOpenParenthesis > 0) {
+      if ((goingLeft && index == 0)
+          || (!goingLeft && index == m_parent->numberOfChildren() - 1))
+      {
+        break;
+      }
+      index += goingLeft ? -1 : 1;
+      if (m_parent->child(index)->isLeftParenthesis()) {
+        numberOfOpenParenthesis += goingLeft ? -1 : 1;
+      } else if (m_parent->child(index)->isRightParenthesis()) {
+        numberOfOpenParenthesis += goingLeft ? 1 : -1;
+      }
+      maxNumberOfNestedParenthesis = max(maxNumberOfNestedParenthesis, numberOfOpenParenthesis);
+    }
+  }
+  return KDSize(parenthesisWidth(), operandHeight()+maxNumberOfNestedParenthesis*2);
 }
 
 void ParenthesisLeftRightLayout::computeBaseline() {

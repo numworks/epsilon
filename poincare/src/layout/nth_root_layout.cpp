@@ -133,11 +133,11 @@ bool NthRootLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldReco
   return false;
 }
 
-bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is Left of the radicand, move it to the index.
   if (indexLayout()
       && radicandLayout()
-      && previousLayout == radicandLayout()
+      && cursor->pointedExpressionLayout()->hasAncestor(radicandLayout())
       && cursor->positionIsEquivalentTo(radicandLayout(), ExpressionLayoutCursor::Position::Left))
   {
     cursor->setPointedExpressionLayout(indexLayout());
@@ -153,11 +153,11 @@ bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecompu
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
 }
 
-bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
-  if (indexLayout() && previousLayout == indexLayout()) {
+bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  if (indexLayout() && cursor->pointedExpressionLayout()->hasAncestor(indexLayout())) {
     // If the cursor is Right of the index, move it to the radicand.
     if (cursor->positionIsEquivalentTo(indexLayout(), ExpressionLayoutCursor::Position::Right)) {
       assert(radicandLayout() != nullptr);
@@ -172,7 +172,7 @@ bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecom
       return true;
     }
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
 }
 
 static_assert('\x90' == Ion::Charset::Root, "Unicode error");

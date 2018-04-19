@@ -13,8 +13,8 @@ public:
   ExpressionLayout * clone() const override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr) override;
-  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout = nullptr, ExpressionLayout * previousLayout = nullptr, ExpressionLayout * previousPreviousLayout = nullptr) override;
+  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
     return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "binomial");
   }

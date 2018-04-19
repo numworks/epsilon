@@ -25,8 +25,6 @@ public:
   /* Navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
-  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
 
   /* Dynamic layout */
   void addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) override;
@@ -48,8 +46,6 @@ protected:
   KDPoint positionOfChild(ExpressionLayout * child) override;
   void privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) override;
 private:
-  bool moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout);
-  bool tryMoveVerticallyFromAnotherLayout(ExpressionLayout * otherLayout, ExpressionLayoutCursor::Position otherPosition, ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout);
   void privateReplaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor);
   void privateRemoveChildAtIndex(int index, bool deleteAfterRemoval, bool forceRemove);
   int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft);

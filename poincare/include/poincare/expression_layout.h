@@ -77,7 +77,7 @@ public:
 
   // User input
   bool insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor);
-  virtual void backspaceAtCursor(ExpressionLayoutCursor * cursor);
+  virtual void deleteBeforeCursor(ExpressionLayoutCursor * cursor);
 
   /* Tree navigation */
   virtual bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;

@@ -25,13 +25,13 @@ void BracketLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * curso
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
-void BracketLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void BracketLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->positionIsEquivalentTo(operandLayout(), ExpressionLayoutCursor::Position::Left)) {
     // Case: Left of the operand. Delete the layout, keep the operand.
     replaceWithAndMoveCursor(operandLayout(), true, cursor);
     return;
   }
-  ExpressionLayout::backspaceAtCursor(cursor);
+  ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
 bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {

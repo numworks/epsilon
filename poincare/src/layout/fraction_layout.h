@@ -11,7 +11,7 @@ public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
   void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) override;
-  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
+  void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;

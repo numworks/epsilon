@@ -18,10 +18,10 @@ ExpressionLayout * EmptyLayout::clone() const {
   return layout;
 }
 
-void EmptyLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void EmptyLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
-    return m_parent->backspaceAtCursor(cursor);
+    return m_parent->deleteBeforeCursor(cursor);
   }
 }
 

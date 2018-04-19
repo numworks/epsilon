@@ -31,7 +31,7 @@ void FractionLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * curs
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
-void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void FractionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   // Case: Left of the denominator.
   // Replace the fraction with a horizontal juxtaposition of the numerator and
   // the denominator.
@@ -86,7 +86,7 @@ void FractionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     cursor->setPointedExpressionLayout(denominatorLayout());
     return;
   }
-  ExpressionLayout::backspaceAtCursor(cursor);
+  ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
 bool FractionLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {

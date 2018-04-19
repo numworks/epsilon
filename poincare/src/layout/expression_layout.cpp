@@ -201,7 +201,7 @@ bool ExpressionLayout::insertLayoutAtCursor(ExpressionLayout * newChild, Express
   return true;
 }
 
-void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void ExpressionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
   if (indexOfPointedExpression >= 0) {
     // Case: The pointed layout is a child. Move Left.
@@ -219,7 +219,7 @@ void ExpressionLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     // Case: Left. Ask the parent.
     if (m_parent) {
-      m_parent->backspaceAtCursor(cursor);
+      m_parent->deleteBeforeCursor(cursor);
     }
     return;
   }

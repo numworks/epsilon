@@ -13,7 +13,7 @@ ExpressionLayout * HorizontalLayout::clone() const {
   return layout;
 }
 
-void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void HorizontalLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Left
       && m_parent == nullptr)
@@ -52,7 +52,7 @@ void HorizontalLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     cursor->performBackspace();
     return;
   }
-  ExpressionLayout::backspaceAtCursor(cursor);
+  ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
 void HorizontalLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {

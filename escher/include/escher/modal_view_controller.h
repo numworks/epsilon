@@ -33,7 +33,7 @@ private:
     bool isDisplayingModal() const;
     void reload();
   private:
-    KDRect frame() const;
+    KDRect modalViewFrame() const;
     View * m_regularView;
     View * m_currentModalView;
     bool m_isDisplayingModal;

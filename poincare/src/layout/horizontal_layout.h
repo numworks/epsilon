@@ -15,7 +15,7 @@ class HorizontalLayout : public DynamicLayoutHierarchy {
 public:
   using DynamicLayoutHierarchy::DynamicLayoutHierarchy;
   ExpressionLayout * clone() const override;
-  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
+  void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
 
   /* Hierarchy */
   void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) override;

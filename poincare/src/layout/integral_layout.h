@@ -14,7 +14,7 @@ public:
   ExpressionLayout * clone() const override;
 
   /* Dynamic Layout*/
-  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
+  void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
 
   /* Tree navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;

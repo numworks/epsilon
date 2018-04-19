@@ -39,7 +39,7 @@ void NthRootLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * curso
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
-void NthRootLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void NthRootLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->pointedExpressionLayout() == radicandLayout()
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
@@ -47,7 +47,7 @@ void NthRootLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     replaceWithAndMoveCursor(radicandLayout(), true, cursor);
     return;
   }
-  ExpressionLayout::backspaceAtCursor(cursor);
+  ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
 bool NthRootLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {

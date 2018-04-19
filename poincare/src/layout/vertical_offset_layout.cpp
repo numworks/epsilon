@@ -21,7 +21,7 @@ ExpressionLayout * VerticalOffsetLayout::clone() const {
   return layout;
 }
 
-void VerticalOffsetLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void VerticalOffsetLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->pointedExpressionLayout() == indiceLayout()) {
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
     ExpressionLayout * base = baseLayout();
@@ -60,7 +60,7 @@ void VerticalOffsetLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     cursor->setPointedExpressionLayout(indiceLayout());
     return;
   }
-  ExpressionLayout::backspaceAtCursor(cursor);
+  ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
 bool VerticalOffsetLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {

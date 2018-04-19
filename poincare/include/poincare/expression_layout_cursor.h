@@ -1,10 +1,11 @@
 #ifndef POINCARE_EXPRESSION_LAYOUT_CURSOR_H
 #define POINCARE_EXPRESSION_LAYOUT_CURSOR_H
 
-#include <poincare/expression_layout.h>
 #include <kandinsky/point.h>
 
 namespace Poincare {
+
+class ExpressionLayout;
 
 class ExpressionLayoutCursor {
 public:

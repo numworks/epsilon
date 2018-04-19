@@ -14,7 +14,7 @@ public:
   };
   EmptyLayout(Color color = Color::Yellow, bool visible = true);
   ExpressionLayout * clone() const override;
-  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
+  void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;

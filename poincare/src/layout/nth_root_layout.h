@@ -15,7 +15,7 @@ public:
 
   /* Dynamic Layout*/
   void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) override;
-  void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
+  void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
 
   /* Tree navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;

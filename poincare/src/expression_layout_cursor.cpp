@@ -194,7 +194,7 @@ void ExpressionLayoutCursor::insertText(const char * text) {
 }
 
 void ExpressionLayoutCursor::performBackspace() {
-  m_pointedExpressionLayout->backspaceAtCursor(this);
+  m_pointedExpressionLayout->deleteBeforeCursor(this);
 }
 
 bool ExpressionLayoutCursor::showEmptyLayoutIfNeeded() {

@@ -26,7 +26,7 @@ ExpressionLayout * IntegralLayout::clone() const {
   return layout;
 }
 
-void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
+void IntegralLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
 
   if (cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left)) {
     // Case: Left of the integrand.
@@ -34,7 +34,7 @@ void IntegralLayout::backspaceAtCursor(ExpressionLayoutCursor * cursor) {
     replaceWithAndMoveCursor(integrandLayout(), true, cursor);
     return;
   }
-  ExpressionLayout::backspaceAtCursor(cursor);
+  ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
 bool IntegralLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {

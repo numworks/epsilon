@@ -1,16 +1,16 @@
 #ifndef POINCARE_PARENTHESIS_LEFT_LAYOUT_H
 #define POINCARE_PARENTHESIS_LEFT_LAYOUT_H
 
-#include <poincare/src/layout/parenthesis_left_right_layout.h>
+#include <poincare/src/layout/parenthesis_layout.h>
 #include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class ParenthesisLeftLayout : public ParenthesisLeftRightLayout {
+class ParenthesisLeftLayout : public ParenthesisLayout {
   friend class BinomialCoefficientLayout;
   friend class SequenceLayout;
 public:
-  using ParenthesisLeftRightLayout::ParenthesisLeftRightLayout;
+  using ParenthesisLayout::ParenthesisLayout;
   ExpressionLayout * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
     return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, '(');

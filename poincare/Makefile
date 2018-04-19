@@ -110,7 +110,7 @@ objs += $(addprefix poincare/src/layout/,\
   matrix_layout.o\
   nth_root_layout.o\
   parenthesis_left_layout.o\
-  parenthesis_left_right_layout.o\
+  parenthesis_layout.o\
   parenthesis_right_layout.o\
   product_layout.o\
   sequence_layout.o\

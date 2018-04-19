@@ -20,7 +20,7 @@ public:
   bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
-  bool mustHaveLeftBrother() const override { return true; }
+  bool mustHaveLeftSibling() const override { return true; }
   bool isVerticalOffset() const { return true; }
 protected:
   ExpressionLayout * indiceLayout();
@@ -29,7 +29,7 @@ protected:
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
-  void privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) override;
+  void privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) override;
   Type m_type;
 private:
   constexpr static KDCoordinate k_indiceHeight = 5;

@@ -28,7 +28,7 @@ ExpressionLayout * NthRootLayout::clone() const {
   return new NthRootLayout(const_cast<NthRootLayout *>(this)->radicandLayout(), const_cast<NthRootLayout *>(this)->indexLayout(), true);
 }
 
-void NthRootLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
+void NthRootLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {
   // If the radicand layout is not an HorizontalLayout, replace it with one.
   if (!radicandLayout()->isHorizontal()) {
     HorizontalLayout * horizontalRadicandLayout = new HorizontalLayout(radicandLayout(), false);

@@ -26,9 +26,9 @@ KDCoordinate ExpressionLayoutCursor::baseline() {
   }
   KDCoordinate baseline1 = pointedExpressionLayoutEquivalentChild()->baseline();
   KDCoordinate baseline2 = (KDCoordinate)0;
-  ExpressionLayout * equivalentBrotherLayout = equivalentPointedBrotherLayout();
-  if (equivalentBrotherLayout != nullptr) {
-    baseline2 = equivalentBrotherLayout->baseline();
+  ExpressionLayout * equivalentSiblingLayout = equivalentPointedSiblingLayout();
+  if (equivalentSiblingLayout != nullptr) {
+    baseline2 = equivalentSiblingLayout->baseline();
   }
   return max(baseline1, baseline2);
 }
@@ -70,9 +70,9 @@ bool ExpressionLayoutCursor::moveDown(bool * shouldRecomputeLayout) {
 
 void ExpressionLayoutCursor::addLayoutAndMoveCursor(ExpressionLayout * layout) {
   bool layoutWillBeMerged = layout->isHorizontal();
-  pointedExpressionLayout()->addBrotherAndMoveCursor(this, layout);
+  pointedExpressionLayout()->addSiblingAndMoveCursor(this, layout);
   if (!layoutWillBeMerged) {
-    layout->collapseBrothersAndMoveCursor(this);
+    layout->collapseSiblingsAndMoveCursor(this);
   }
 }
 
@@ -80,18 +80,18 @@ void ExpressionLayoutCursor::addEmptyExponentialLayout() {
   CharLayout * child1 = new CharLayout(Ion::Charset::Exponential);
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyLayout(), VerticalOffsetLayout::Type::Superscript, false);
   HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
-  pointedExpressionLayout()->addBrother(this, newChild);
+  pointedExpressionLayout()->addSibling(this, newChild);
   setPointedExpressionLayout(offsetLayout->editableChild(0));
   setPosition(ExpressionLayoutCursor::Position::Right);
 }
 
-void ExpressionLayoutCursor::addFractionLayoutAndCollapseBrothers() {
+void ExpressionLayoutCursor::addFractionLayoutAndCollapseSiblings() {
   // Add a new FractionLayout
   HorizontalLayout * child1 = new HorizontalLayout(new EmptyLayout(), false);
   HorizontalLayout * child2 = new HorizontalLayout(new EmptyLayout(), false);
   FractionLayout * newChild = new FractionLayout(child1, child2, false);
-  pointedExpressionLayout()->addBrother(this, newChild);
-  newChild->collapseBrothersAndMoveCursor(this);
+  pointedExpressionLayout()->addSibling(this, newChild);
+  newChild->collapseSiblingsAndMoveCursor(this);
 }
 
 void ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOfColumns) {
@@ -108,7 +108,7 @@ void ExpressionLayoutCursor::addEmptyMatrixLayout(int numberOfRows, int numberOf
     }
   }
   ExpressionLayout * matrixLayout = new MatrixLayout(const_cast<const ExpressionLayout * const *>(const_cast<ExpressionLayout * const *>(children)), numberOfRows+1, numberOfColumns+1, false);
-  m_pointedExpressionLayout->addBrother(this, matrixLayout);
+  m_pointedExpressionLayout->addSibling(this, matrixLayout);
   setPointedExpressionLayout(matrixLayout->editableChild(0));
   setPosition(ExpressionLayoutCursor::Position::Right);
 }
@@ -117,7 +117,7 @@ void ExpressionLayoutCursor::addEmptyPowerLayout() {
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(new EmptyLayout(), VerticalOffsetLayout::Type::Superscript, false);
   // If there is already a base
   if (baseForNewPowerLayout()) {
-    m_pointedExpressionLayout->addBrother(this, offsetLayout);
+    m_pointedExpressionLayout->addSibling(this, offsetLayout);
     setPointedExpressionLayout(offsetLayout->editableChild(0));
     setPosition(ExpressionLayoutCursor::Position::Right);
     return;
@@ -125,7 +125,7 @@ void ExpressionLayoutCursor::addEmptyPowerLayout() {
   // Else, add an empty base
   EmptyLayout * child1 = new EmptyLayout();
   HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
-  m_pointedExpressionLayout->addBrother(this, newChild);
+  m_pointedExpressionLayout->addSibling(this, newChild);
   setPointedExpressionLayout(child1);
   setPosition(ExpressionLayoutCursor::Position::Right);
 }
@@ -133,8 +133,8 @@ void ExpressionLayoutCursor::addEmptyPowerLayout() {
 void ExpressionLayoutCursor::addEmptySquareRootLayout() {
   HorizontalLayout * child1 = new HorizontalLayout(new EmptyLayout(), false);
   NthRootLayout * newChild = new NthRootLayout(child1, false);
-  m_pointedExpressionLayout->addBrother(this, newChild);
-  newChild->collapseBrothersAndMoveCursor(this);
+  m_pointedExpressionLayout->addSibling(this, newChild);
+  newChild->collapseSiblingsAndMoveCursor(this);
 }
 
 void ExpressionLayoutCursor::addEmptySquarePowerLayout() {
@@ -142,7 +142,7 @@ void ExpressionLayoutCursor::addEmptySquarePowerLayout() {
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(indiceLayout, VerticalOffsetLayout::Type::Superscript, false);
   // If there is already a base
   if (baseForNewPowerLayout()) {
-    m_pointedExpressionLayout->addBrother(this, offsetLayout);
+    m_pointedExpressionLayout->addSibling(this, offsetLayout);
     setPointedExpressionLayout(offsetLayout);
     setPosition(ExpressionLayoutCursor::Position::Right);
     return;
@@ -150,14 +150,14 @@ void ExpressionLayoutCursor::addEmptySquarePowerLayout() {
   // Else, add an empty base
   EmptyLayout * child1 = new EmptyLayout();
   HorizontalLayout * newChild = new HorizontalLayout(child1, offsetLayout, false);
-  m_pointedExpressionLayout->addBrother(this, newChild);
+  m_pointedExpressionLayout->addSibling(this, newChild);
   setPointedExpressionLayout(child1);
   setPosition(ExpressionLayoutCursor::Position::Right);
 }
 
 void ExpressionLayoutCursor::addXNTCharLayout() {
   CharLayout * newChild = new CharLayout(m_pointedExpressionLayout->XNTChar());
-  m_pointedExpressionLayout->addBrother(this, newChild);
+  m_pointedExpressionLayout->addSibling(this, newChild);
   setPointedExpressionLayout(newChild);
   setPosition(ExpressionLayoutCursor::Position::Right);
 }
@@ -184,7 +184,7 @@ void ExpressionLayoutCursor::insertText(const char * text) {
     } else {
       newChild = new CharLayout(text[i]);
     }
-    m_pointedExpressionLayout->addBrother(this, newChild);
+    m_pointedExpressionLayout->addSibling(this, newChild);
     m_pointedExpressionLayout = newChild;
     m_position = Position::Right;
   }
@@ -229,7 +229,7 @@ bool ExpressionLayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
     return true;
   } else {
     // Check the neighbour of the pointed layout in an HorizontalLayout
-    ExpressionLayout * equivalentPointedLayout = equivalentPointedBrotherLayout();
+    ExpressionLayout * equivalentPointedLayout = equivalentPointedSiblingLayout();
     if (equivalentPointedLayout != nullptr && equivalentPointedLayout->isEmpty()) {
       if (equivalentPointedLayout->isHorizontal()) {
         static_cast<EmptyLayout *>(equivalentPointedLayout->editableChild(0))->setVisible(show);
@@ -268,18 +268,18 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
 KDCoordinate ExpressionLayoutCursor::pointedLayoutHeight() {
   KDCoordinate height = pointedExpressionLayoutEquivalentChild()->size().height();
   KDCoordinate height1 = height;
-  ExpressionLayout * equivalentBrotherLayout = equivalentPointedBrotherLayout();
-  if (equivalentBrotherLayout != nullptr) {
-    KDCoordinate height2 = equivalentBrotherLayout->size().height();
+  ExpressionLayout * equivalentSiblingLayout = equivalentPointedSiblingLayout();
+  if (equivalentSiblingLayout != nullptr) {
+    KDCoordinate height2 = equivalentSiblingLayout->size().height();
     KDCoordinate baseline1 = pointedExpressionLayoutEquivalentChild()->baseline();
-    KDCoordinate baseline2 = equivalentBrotherLayout->baseline();
+    KDCoordinate baseline2 = equivalentSiblingLayout->baseline();
     height = max(baseline1, baseline2)
       + max(height1 - baseline1, height2 - baseline2);
   }
   return height;
 }
 
-ExpressionLayout * ExpressionLayoutCursor::equivalentPointedBrotherLayout() {
+ExpressionLayout * ExpressionLayoutCursor::equivalentPointedSiblingLayout() {
   if (m_pointedExpressionLayout->parent() != nullptr
       && m_pointedExpressionLayout->parent()->isHorizontal())
   {

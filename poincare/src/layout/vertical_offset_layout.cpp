@@ -276,10 +276,10 @@ KDPoint VerticalOffsetLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(0, base->size().height() - base->baseline() - k_indiceHeight);
 }
 
-void VerticalOffsetLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
-  if (brother->isVerticalOffset()) {
-    VerticalOffsetLayout * verticalOffsetBrother = static_cast<VerticalOffsetLayout *>(brother);
-    if (verticalOffsetBrother->type() == Type::Superscript) {
+void VerticalOffsetLayout::privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) {
+  if (sibling->isVerticalOffset()) {
+    VerticalOffsetLayout * verticalOffsetSibling = static_cast<VerticalOffsetLayout *>(sibling);
+    if (verticalOffsetSibling->type() == Type::Superscript) {
       assert(m_parent->isHorizontal());
 
       // Add the Left parenthesis
@@ -305,14 +305,14 @@ void VerticalOffsetLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Ex
       }
       cursor->setPointedExpressionLayout(rightParenthesis);
       if (moveCursor) {
-        rightParenthesis->addBrotherAndMoveCursor(cursor, brother);
+        rightParenthesis->addSiblingAndMoveCursor(cursor, sibling);
       } else {
-        rightParenthesis->addBrother(cursor, brother);
+        rightParenthesis->addSibling(cursor, sibling);
       }
       return;
     }
   }
-  ExpressionLayout::privateAddBrother(cursor, brother, moveCursor);
+  ExpressionLayout::privateAddSibling(cursor, sibling, moveCursor);
 }
 
 

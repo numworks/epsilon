@@ -46,7 +46,7 @@ protected:
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
-  void privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) override;
+  void privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) override;
 private:
   bool moveVertically(ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout);
   bool tryMoveVerticallyFromAnotherLayout(ExpressionLayout * otherLayout, ExpressionLayoutCursor::Position otherPosition, ExpressionLayout::VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout);

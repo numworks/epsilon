@@ -71,18 +71,18 @@ void EmptyLayout::computeBaseline() {
   m_baselined = true;
 }
 
-void EmptyLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
+void EmptyLayout::privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) {
   Color currentColor = m_color;
   int indexInParent = m_parent->indexOfChild(this);
   ExpressionLayout * parent = m_parent;
-  if (brother->mustHaveLeftBrother()) {
+  if (sibling->mustHaveLeftSibling()) {
     m_color = Color::Yellow;
-    ExpressionLayout::privateAddBrother(cursor, brother, moveCursor);
+    ExpressionLayout::privateAddSibling(cursor, sibling, moveCursor);
   } else {
     if (moveCursor) {
-      replaceWithAndMoveCursor(brother, true, cursor);
+      replaceWithAndMoveCursor(sibling, true, cursor);
     } else {
-      replaceWith(brother, true);
+      replaceWith(sibling, true);
     }
   }
   if (currentColor == Color::Grey) {

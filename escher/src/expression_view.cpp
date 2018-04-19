@@ -49,7 +49,7 @@ KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
 
 KDPoint ExpressionView::drawingOrigin() const {
   KDSize expressionSize = m_expressionLayout->size();
-  return KDPoint(m_horizontalAlignment*(m_frame.width() - expressionSize.width()), 0.5f*(m_frame.height() - expressionSize.height()));
+  return KDPoint(m_horizontalAlignment*(m_frame.width() - expressionSize.width()), (m_frame.height() - expressionSize.height())/2);
 }
 
 KDPoint ExpressionView::absoluteDrawingOrigin() const {

@@ -2,7 +2,7 @@
 #include "char_layout.h"
 #include "horizontal_layout.h"
 #include "parenthesis_left_layout.h"
-#include "parenthesis_right_layout.h"
+#include "right_parenthesis_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <assert.h>
 
@@ -194,7 +194,7 @@ ExpressionLayout * SequenceLayout::argumentLayout() {
 KDSize SequenceLayout::computeSize() {
   KDSize lowerBoundSizeWithNEquals = HorizontalLayout(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone(), false).size();
   ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
-  ParenthesisRightLayout * dummyRightParenthesis = new ParenthesisRightLayout();
+  RightParenthesisLayout * dummyRightParenthesis = new RightParenthesisLayout();
   HorizontalLayout dummyLayout2(dummyLeftParenthesis, argumentLayout()->clone(), dummyRightParenthesis, false);
   KDSize dummyLayoutSize = dummyLayout2.size();
   KDSize upperBoundSize = upperBoundLayout()->size();
@@ -240,7 +240,7 @@ void SequenceLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor,
 
   // Render the parentheses.
   ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
-  ParenthesisRightLayout * dummyRightParenthesis = new ParenthesisRightLayout();
+  RightParenthesisLayout * dummyRightParenthesis = new RightParenthesisLayout();
   HorizontalLayout dummyLayout2(dummyLeftParenthesis, argumentLayout()->clone(), dummyRightParenthesis, false);
   KDPoint leftParenthesisPoint = positionOfChild(argumentLayout()).translatedBy(dummyLayout2.positionOfChild(dummyLeftParenthesis)).translatedBy(dummyLayout2.positionOfChild(dummyLayout2.editableChild(1)).opposite());
   KDPoint rightParenthesisPoint = positionOfChild(argumentLayout()).translatedBy(dummyLayout2.positionOfChild(dummyRightParenthesis)).translatedBy(dummyLayout2.positionOfChild(dummyLayout2.editableChild(1)).opposite());

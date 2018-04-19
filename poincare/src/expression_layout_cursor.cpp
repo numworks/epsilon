@@ -176,7 +176,7 @@ void ExpressionLayoutCursor::insertText(const char * text) {
         pointedChild = newChild;
       }
     } else if (text[i] == ')') {
-      newChild = new ParenthesisRightLayout();
+      newChild = new RightParenthesisLayout();
     } else if (text[i] == '[') {
       newChild = new BracketLeftLayout();
     } else if (text[i] == ']') {

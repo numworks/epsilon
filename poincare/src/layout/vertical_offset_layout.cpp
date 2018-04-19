@@ -1,7 +1,7 @@
 #include "vertical_offset_layout.h"
 #include "empty_layout.h"
 #include "parenthesis_left_layout.h"
-#include "parenthesis_right_layout.h"
+#include "right_parenthesis_layout.h"
 #include <ion/charset.h>
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/layout_engine.h>
@@ -296,18 +296,18 @@ void VerticalOffsetLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Ex
       indexInParent++;
 
       // Add the Right parenthesis
-      ParenthesisRightLayout * parenthesisRight = new ParenthesisRightLayout();
+      RightParenthesisLayout * rightParenthesis = new RightParenthesisLayout();
       if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-        m_parent->addChildAtIndex(parenthesisRight, indexInParent + 1);
+        m_parent->addChildAtIndex(rightParenthesis, indexInParent + 1);
       } else {
         assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-        m_parent->addChildAtIndex(parenthesisRight, indexInParent);
+        m_parent->addChildAtIndex(rightParenthesis, indexInParent);
       }
-      cursor->setPointedExpressionLayout(parenthesisRight);
+      cursor->setPointedExpressionLayout(rightParenthesis);
       if (moveCursor) {
-        parenthesisRight->addBrotherAndMoveCursor(cursor, brother);
+        rightParenthesis->addBrotherAndMoveCursor(cursor, brother);
       } else {
-        parenthesisRight->addBrother(cursor, brother);
+        rightParenthesis->addBrother(cursor, brother);
       }
       return;
     }

@@ -2,7 +2,7 @@
 #include "layout/char_layout.h"
 #include "layout/horizontal_layout.h"
 #include "layout/parenthesis_left_layout.h"
-#include "layout/parenthesis_right_layout.h"
+#include "layout/right_parenthesis_layout.h"
 #include "layout/vertical_offset_layout.h"
 extern "C" {
 #include<assert.h>
@@ -59,7 +59,7 @@ ExpressionLayout * LayoutEngine::createParenthesedLayout(ExpressionLayout * layo
   if (layout != nullptr) {
     result->addOrMergeChildAtIndex(cloneLayout ? layout->clone() : layout, 1, true);
   }
-  result->addChildAtIndex(new ParenthesisRightLayout(), result->numberOfChildren());
+  result->addChildAtIndex(new RightParenthesisLayout(), result->numberOfChildren());
   return result;
 }
 

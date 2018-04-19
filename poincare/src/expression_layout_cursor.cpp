@@ -177,11 +177,18 @@ void ExpressionLayoutCursor::insertText(const char * text) {
       }
     } else if (text[i] == ')') {
       newChild = new RightParenthesisLayout();
-    } else if (text[i] == '[') {
+    }
+
+    /* We never insert text with brackets for now. Removing this code saves the
+     * binary file 2K. */
+#if 0
+    else if (text[i] == '[') {
       newChild = new BracketLeftLayout();
     } else if (text[i] == ']') {
       newChild = new BracketRightLayout();
-    } else {
+    }
+#endif
+    else {
       newChild = new CharLayout(text[i]);
     }
     m_pointedExpressionLayout->addSibling(this, newChild);

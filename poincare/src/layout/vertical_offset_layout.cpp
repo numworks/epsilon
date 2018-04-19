@@ -1,6 +1,6 @@
 #include "vertical_offset_layout.h"
 #include "empty_layout.h"
-#include "parenthesis_left_layout.h"
+#include "left_parenthesis_layout.h"
 #include "right_parenthesis_layout.h"
 #include <ion/charset.h>
 #include <poincare/expression_layout_cursor.h>
@@ -285,14 +285,14 @@ void VerticalOffsetLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Ex
       // Add the Left parenthesis
       int indexInParent = m_parent->indexOfChild(this);
       int leftParenthesisIndex = indexInParent;
-      ParenthesisLeftLayout * parenthesisLeft = new ParenthesisLeftLayout();
+      LeftParenthesisLayout * leftParenthesis = new LeftParenthesisLayout();
       int numberOfOpenParenthesis = 0;
       while (leftParenthesisIndex > 0
           && editableParent()->editableChild(leftParenthesisIndex-1)->isCollapsable(&numberOfOpenParenthesis, true))
       {
         leftParenthesisIndex--;
       }
-      m_parent->addChildAtIndex(parenthesisLeft, leftParenthesisIndex);
+      m_parent->addChildAtIndex(leftParenthesis, leftParenthesisIndex);
       indexInParent++;
 
       // Add the Right parenthesis

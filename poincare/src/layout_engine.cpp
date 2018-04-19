@@ -1,7 +1,7 @@
 #include <poincare/layout_engine.h>
 #include "layout/char_layout.h"
 #include "layout/horizontal_layout.h"
-#include "layout/parenthesis_left_layout.h"
+#include "layout/left_parenthesis_layout.h"
 #include "layout/right_parenthesis_layout.h"
 #include "layout/vertical_offset_layout.h"
 extern "C" {
@@ -55,7 +55,7 @@ ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expressio
 
 ExpressionLayout * LayoutEngine::createParenthesedLayout(ExpressionLayout * layout, bool cloneLayout) {
   HorizontalLayout * result = new HorizontalLayout();
-  result->addChildAtIndex(new ParenthesisLeftLayout(), 0);
+  result->addChildAtIndex(new LeftParenthesisLayout(), 0);
   if (layout != nullptr) {
     result->addOrMergeChildAtIndex(cloneLayout ? layout->clone() : layout, 1, true);
   }

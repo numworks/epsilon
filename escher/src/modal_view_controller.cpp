@@ -24,7 +24,7 @@ void ModalViewController::ContentView::setMainView(View * regularView) {
 
 int ModalViewController::ContentView::numberOfSubviews() const {
   KDRect regularFrame = bounds();
-  KDRect modalFrame = frame();
+  KDRect modalFrame = modalViewFrame();
   bool shouldDrawTheRegularViewBehind = !modalFrame.contains(regularFrame.topLeft()) || !modalFrame.contains(regularFrame.bottomRight());
   return 1 + (m_isDisplayingModal && shouldDrawTheRegularViewBehind);
 }
@@ -49,7 +49,7 @@ View * ModalViewController::ContentView::subviewAtIndex(int index) {
   }
 }
 
-KDRect ModalViewController::ContentView::frame() const {
+KDRect ModalViewController::ContentView::modalViewFrame() const {
   KDSize modalSize = m_isDisplayingModal ? m_currentModalView->minimalSizeForOptimalDisplay() : KDSize(0,0);
   KDCoordinate modalHeight = modalSize.height();
   modalHeight = modalHeight == 0 ? bounds().height()-m_topMargin-m_bottomMargin : modalHeight;
@@ -65,7 +65,7 @@ void ModalViewController::ContentView::layoutSubviews() {
   m_regularView->setFrame(bounds());
   if (m_isDisplayingModal) {
     assert(m_currentModalView != nullptr);
-    m_currentModalView->setFrame(frame());
+    m_currentModalView->setFrame(modalViewFrame());
   }
 }
 
@@ -79,13 +79,13 @@ void ModalViewController::ContentView::presentModalView(View * modalView, float 
   m_leftMargin = leftMargin;
   m_bottomMargin = bottomMargin;
   m_rightMargin = rightMargin;
-  markRectAsDirty(frame());
+  markRectAsDirty(modalViewFrame());
   layoutSubviews();
 }
 
 void ModalViewController::ContentView::dismissModalView() {
   m_isDisplayingModal = false;
-  markRectAsDirty(frame());
+  markRectAsDirty(modalViewFrame());
   m_currentModalView->resetSuperview();
   m_currentModalView = nullptr;
   layoutSubviews();

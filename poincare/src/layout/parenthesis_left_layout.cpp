@@ -1,5 +1,4 @@
 #include "parenthesis_left_layout.h"
-#include <escher/metric.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -60,94 +59,6 @@ void ParenthesisLeftLayout::render(KDContext * ctx, KDPoint p, KDColor expressio
         ParenthesisLeftRightLayout::k_lineThickness,
         operandHeight() - 2*(ParenthesisLeftRightLayout::k_parenthesisCurveHeight+ParenthesisLeftRightLayout::k_externHeightMargin)),
       expressionColor);
-}
-
-void ParenthesisLeftLayout::computeOperandHeight() {
-  assert(m_parent != nullptr);
-  m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
-  KDCoordinate max_under_baseline = 0;
-  KDCoordinate max_above_baseline = 0;
-  int indexInParent = m_parent->indexOfChild(this);
-  int currentNumberOfOpenParentheses = 1;
-  int numberOfBrothers = m_parent->numberOfChildren();
-  if (indexInParent < numberOfBrothers - 1
-      && m_parent->child(indexInParent + 1)->isVerticalOffset())
-  {
-    // If the parenthesis is the base of a superscript layout, it should have a
-    // default height, else it creates an infinite loop because the parenthesis
-    // needs the superscript height, which needs the parenthesis height.
-    return;
-  }
-  for (int i = indexInParent + 1; i < numberOfBrothers; i++) {
-    ExpressionLayout * brother = m_parent->editableChild(i);
-    if (brother->isRightParenthesis()) {
-      currentNumberOfOpenParentheses--;
-      if (currentNumberOfOpenParentheses == 0) {
-        if (max_under_baseline + max_above_baseline > m_operandHeight) {
-          m_operandHeight = max_under_baseline + max_above_baseline;
-        }
-        return;
-      }
-    } else if (brother->isLeftParenthesis()) {
-      currentNumberOfOpenParentheses++;
-    }
-    KDCoordinate brotherHeight = brother->size().height();
-    KDCoordinate brotherBaseline = brother->baseline();
-    if (brotherHeight - brotherBaseline > max_under_baseline) {
-      max_under_baseline = brotherHeight - brotherBaseline ;
-    }
-    if (brotherBaseline > max_above_baseline) {
-      max_above_baseline = brotherBaseline;
-    }
-  }
-  if (max_under_baseline + max_above_baseline > m_operandHeight) {
-    m_operandHeight = max_under_baseline + max_above_baseline;
-  }
-}
-
-void ParenthesisLeftLayout::computeBaseline() {
-  assert(m_parent != nullptr);
-  int currentNumberOfOpenParentheses = 1;
-  int indexInParent = m_parent->indexOfChild(this);
-  int numberOfBrothers = m_parent->numberOfChildren();
-  if (indexInParent == numberOfBrothers - 1) {
-    // The parenthesis is the rightmost child of its parent.
-    m_baseline = operandHeight()/2;
-    m_baselined = true;
-    return;
-  }
-  if (m_parent->child(indexInParent + 1)->isVerticalOffset()) {
-    // If the parenthesis is the base of a superscript layout, it should have a
-    // default baseline, else it creates an infinite loop because the
-    // parenthesis needs the superscript height, which needs the parenthesis
-    // baseline.
-    m_baseline = operandHeight()/2;
-    m_baselined = true;
-    return;
-  }
-
-  m_baseline = 0;
-  for (int i = indexInParent + 1; i < numberOfBrothers; i++) {
-    ExpressionLayout * brother = m_parent->editableChild(i);
-    if (brother->isRightParenthesis()) {
-      if (i == indexInParent + 1) {
-        // If the parenthesis is immediately closed, we set the baseline to half
-        // the parenthesis height.
-        m_baseline = operandHeight()/2;
-        break;
-      }
-      currentNumberOfOpenParentheses--;
-      if (currentNumberOfOpenParentheses == 0) {
-        break;
-      }
-    } else if (brother->isLeftParenthesis()) {
-      currentNumberOfOpenParentheses++;
-    }
-    if (brother->baseline() > m_baseline) {
-      m_baseline = brother->baseline();
-    }
-  }
-  m_baselined = true;
 }
 
 }

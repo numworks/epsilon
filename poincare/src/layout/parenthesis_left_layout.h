@@ -19,8 +19,6 @@ public:
   bool isLeftParenthesis() const override { return true; }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  void computeOperandHeight() override;
-  void computeBaseline() override;
 };
 
 }

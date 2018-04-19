@@ -64,7 +64,7 @@ void DynamicLayoutHierarchy::addChildrenAtIndex(const ExpressionLayout * const *
   for (int i=0; i<numberOfOperands; i++) {
     if (!removeEmptyChildren
         || !operands[i]->isEmpty()
-        || (i < numberOfOperands-1 && operands[i+1]->mustHaveLeftBrother()))
+        || (i < numberOfOperands-1 && operands[i+1]->mustHaveLeftSibling()))
     {
       const_cast<ExpressionLayout *>(operands[i])->setParent(this);
       newOperands[currentIndex++] = operands[i];

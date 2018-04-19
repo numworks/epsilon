@@ -14,7 +14,7 @@ ExpressionLayout * BracketLayout::clone() const {
   return layout;
 }
 
-void BracketLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
+void BracketLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {
   // If the operand layout is not an HorizontalLayout, replace it with one.
   if (!operandLayout()->isHorizontal()) {
     HorizontalLayout * horizontalOperandLayout = new HorizontalLayout(operandLayout(), false);

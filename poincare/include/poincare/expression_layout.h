@@ -50,12 +50,12 @@ public:
   /* Dynamic Layout */
 
   // Collapse
-  virtual void collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor);
+  virtual void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor);
 
   // Add
   virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }
-  void addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
-  void addBrotherAndMoveCursor(ExpressionLayoutCursor * cursor, ExpressionLayout * brother);
+  void addSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling);
+  void addSiblingAndMoveCursor(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling);
 
   // Replace
   virtual ExpressionLayout * replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace);
@@ -103,7 +103,7 @@ public:
   bool addGreySquaresToAllMatrixAncestors();
   bool hasText() const;
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
-  /* isCollapsable is used when adding a brother fraction: should the layout be
+  /* isCollapsable is used when adding a sibling fraction: should the layout be
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
    * become 1+ 2/3 - 4 when pressing "Divide": a CharLayout is collapsable if
    * its char is not +, -, or *. */
@@ -114,9 +114,9 @@ public:
    * with an omitted multiplication sign. For instance, an absolute value layout
    * returns true, because |3|2 means |3|*2. A '+' CharLayout returns false,
    * because +'something' nevers means +*'something'. */
-  virtual bool mustHaveLeftBrother() const { return false; }
+  virtual bool mustHaveLeftSibling() const { return false; }
   virtual bool isVerticalOffset() const { return false; }
-  /* For now, mustHaveLeftBrother and isVerticalOffset behave the same, but code
+  /* For now, mustHaveLeftSibling and isVerticalOffset behave the same, but code
    * is clearer with different names. */
   virtual bool isHorizontal() const { return false; }
   virtual bool isLeftParenthesis() const { return false; }
@@ -140,12 +140,12 @@ protected:
     ExpressionLayout ** childResult,
     void * resultPosition,
     int * resultScore);
-  virtual void privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor);
+  virtual void privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor);
   void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
   ExpressionLayout * m_parent;
   KDCoordinate m_baseline;
   /* m_baseline is the signed vertical distance from the top of the layout to
-   * the fraction bar of an hypothetical fraction brother layout. If the top of
+   * the fraction bar of an hypothetical fraction sibling layout. If the top of
    * the layout is under that bar, the baseline is negative. */
   bool m_sized;
   bool m_baselined;

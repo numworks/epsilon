@@ -22,18 +22,18 @@ void BracketRightLayout::computeOperandHeight() {
   m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
   int currentNumberOfOpenBrackets = 1;
   for (int i = m_parent->indexOfChild(this) - 1; i >= 0; i--) {
-    ExpressionLayout * brother = m_parent->editableChild(i);
-    if (brother->isLeftBracket()) {
+    ExpressionLayout * sibling = m_parent->editableChild(i);
+    if (sibling->isLeftBracket()) {
       currentNumberOfOpenBrackets--;
       if (currentNumberOfOpenBrackets == 0) {
         return;
       }
-    } else if (brother->isRightBracket()) {
+    } else if (sibling->isRightBracket()) {
       currentNumberOfOpenBrackets++;
     }
-    KDCoordinate brotherHeight = brother->size().height();
-    if (brotherHeight > m_operandHeight) {
-      m_operandHeight = brotherHeight;
+    KDCoordinate siblingHeight = sibling->size().height();
+    if (siblingHeight > m_operandHeight) {
+      m_operandHeight = siblingHeight;
     }
   }
 }
@@ -43,17 +43,17 @@ void BracketRightLayout::computeBaseline() {
   m_baseline = operandHeight()/2;
   int currentNumberOfOpenBrackets = 1;
   for (int i = m_parent->indexOfChild(this) - 1; i >= 0; i--) {
-    ExpressionLayout * brother = m_parent->editableChild(i);
-    if (brother->isLeftBracket()) {
+    ExpressionLayout * sibling = m_parent->editableChild(i);
+    if (sibling->isLeftBracket()) {
       currentNumberOfOpenBrackets--;
       if (currentNumberOfOpenBrackets == 0) {
         break;
       }
-    } else if (brother->isRightBracket()) {
+    } else if (sibling->isRightBracket()) {
       currentNumberOfOpenBrackets++;
     }
-    if (brother->baseline() > m_baseline) {
-      m_baseline = brother->baseline();
+    if (sibling->baseline() > m_baseline) {
+      m_baseline = sibling->baseline();
     }
   }
   m_baselined = true;

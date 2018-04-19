@@ -14,7 +14,7 @@ ExpressionLayout * FractionLayout::clone() const {
   return layout;
 }
 
-void FractionLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
+void FractionLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {
   /* If the numerator or denominator layouts are not HorizontalLayouts, replace
    * them with one. */
   if (!numeratorLayout()->isHorizontal()) {

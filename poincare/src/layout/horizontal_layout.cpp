@@ -123,7 +123,7 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
     if (cursor != nullptr) {
       /* If the old layout is not an ancestor of the new layout, or if the
        * cursor was on the right of the new layout, place the cursor on the
-       * right of the new layout, which is left of the next brother or right of
+       * right of the new layout, which is left of the next sibling or right of
        * the parent. */
       if (!oldWasAncestorOfNewLayout || cursor->position() == ExpressionLayoutCursor::Position::Right) {
         if (oldChildIndex == numberOfChildren() - 1) {
@@ -135,7 +135,7 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
         }
       } else {
         /* Else place the cursor on the left of the new layout, which is right
-         * of the previous brother or left of the parent. */
+         * of the previous sibling or left of the parent. */
         if (oldChildIndex == 0) {
           cursor->setPointedExpressionLayout(this);
           cursor->setPosition(ExpressionLayoutCursor::Position::Left);
@@ -209,7 +209,7 @@ bool HorizontalLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRe
     }
     return false;
   }
-  // Case: the child is not the leftmost. Go to its left brother and move Left.
+  // Case: the child is not the leftmost. Go to its left sibling and move Left.
   cursor->setPointedExpressionLayout(editableChild(childIndex-1));
   cursor->setPosition(ExpressionLayoutCursor::Position::Right);
   return editableChild(childIndex-1)->moveLeft(cursor, shouldRecomputeLayout);
@@ -254,7 +254,7 @@ bool HorizontalLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldR
     }
     return false;
   }
-  /* Case: the child is not the rightmost. Go to its right brother and move
+  /* Case: the child is not the rightmost. Go to its right sibling and move
    * Right. */
   cursor->setPointedExpressionLayout(editableChild(childIndex+1));
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
@@ -270,12 +270,12 @@ bool HorizontalLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRe
 }
 
 void HorizontalLayout::addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) {
-  int newIndex = removeEmptyChildBeforeInsertionAtIndex(indexForInsertion, !operands[0]->mustHaveLeftBrother());
+  int newIndex = removeEmptyChildBeforeInsertionAtIndex(indexForInsertion, !operands[0]->mustHaveLeftSibling());
   DynamicLayoutHierarchy::addChildrenAtIndex(operands, numberOfOperands, newIndex, removeEmptyChildren);
 }
 
 bool HorizontalLayout::addChildAtIndex(ExpressionLayout * operand, int index) {
-  int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, !operand->mustHaveLeftBrother());
+  int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, !operand->mustHaveLeftSibling());
   return DynamicLayoutHierarchy::addChildAtIndex(operand, newIndex);
 }
 
@@ -287,7 +287,7 @@ void HorizontalLayout::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int ind
   /* If the layout to insert starts with a vertical offset layout, the child
    * empty layout on the left of the inserted layout (if there is one) shoul not
    * be reomved, as it wil be the base for the VerticalOffsetLayout. */
-  bool shouldRemoveOnLeft = eL->numberOfChildren() > 0 ? !(eL->child(0)->mustHaveLeftBrother()) : true;
+  bool shouldRemoveOnLeft = eL->numberOfChildren() > 0 ? !(eL->child(0)->mustHaveLeftSibling()) : true;
   int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, shouldRemoveOnLeft);
   DynamicLayoutHierarchy::mergeChildrenAtIndex(eL, newIndex, removeEmptyChildren);
 }
@@ -363,8 +363,8 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(x, y);
 }
 
-void HorizontalLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
-  // Add the "brother" as a child.
+void HorizontalLayout::privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) {
+  // Add the "sibling" as a child.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     // If the first child is empty, remove it before adding the layout.
     if (numberOfChildren() > 0 && editableChild(0)->isEmpty()) {
@@ -378,7 +378,7 @@ void HorizontalLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Expres
         cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       }
     }
-    addOrMergeChildAtIndex(brother, 0, false);
+    addOrMergeChildAtIndex(sibling, 0, false);
     return;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
@@ -387,7 +387,7 @@ void HorizontalLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Expres
   if (childrenCount > 0 && editableChild(childrenCount - 1)->isEmpty()) {
     removeChildAtIndex(childrenCount - 1, true);
   }
-  addOrMergeChildAtIndex(brother, numberOfChildren(), false);
+  addOrMergeChildAtIndex(sibling, numberOfChildren(), false);
   if (moveCursor) {
     cursor->setPointedExpressionLayout(this);
   }
@@ -402,21 +402,21 @@ bool HorizontalLayout::moveVertically(ExpressionLayout::VerticalDirection direct
     assert(direction == ExpressionLayout::VerticalDirection::Down);
     return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
   }
-  // If the cursor Left or Right of a child, try moving it up from its brother.
+  // If the cursor Left or Right of a child, try moving it up from its sibling.
   int previousLayoutIndex = indexOfChild(previousLayout);
   if (previousLayoutIndex > -1) {
-    ExpressionLayout * brother = nullptr;
+    ExpressionLayout * sibling = nullptr;
     ExpressionLayoutCursor::Position newPosition = ExpressionLayoutCursor::Position::Right;
     if (cursor->position() == ExpressionLayoutCursor::Position::Left && previousLayoutIndex > 0) {
-      brother = editableChild(previousLayoutIndex - 1);
+      sibling = editableChild(previousLayoutIndex - 1);
       newPosition = ExpressionLayoutCursor::Position::Right;
     }
     if (cursor->position() == ExpressionLayoutCursor::Position::Right && previousLayoutIndex < numberOfChildren() - 1) {
-      brother = editableChild(previousLayoutIndex + 1);
+      sibling = editableChild(previousLayoutIndex + 1);
       newPosition = ExpressionLayoutCursor::Position::Left;
     }
-    if (brother && cursor->positionIsEquivalentTo(brother, newPosition)) {
-      if (tryMoveVerticallyFromAnotherLayout(brother, newPosition, direction, cursor, shouldRecomputeLayout, previousLayout)) {
+    if (sibling && cursor->positionIsEquivalentTo(sibling, newPosition)) {
+      if (tryMoveVerticallyFromAnotherLayout(sibling, newPosition, direction, cursor, shouldRecomputeLayout, previousLayout)) {
         return true;
       }
     }
@@ -453,10 +453,10 @@ bool HorizontalLayout::tryMoveVerticallyFromAnotherLayout(ExpressionLayout * oth
 }
 
 void HorizontalLayout::privateRemoveChildAtIndex(int index, bool deleteAfterRemoval, bool forceRemove) {
-  /* If the child to remove is at index 0 and its right brother must have a left
-   * brother (e.g. it is a VerticalOffsetLayout), replace the child with an
+  /* If the child to remove is at index 0 and its right sibling must have a left
+   * sibling (e.g. it is a VerticalOffsetLayout), replace the child with an
    * EmptyLayout instead of removing it. */
-  if (!forceRemove && index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftBrother()) {
+  if (!forceRemove && index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftSibling()) {
     addChildAtIndex(new EmptyLayout(), index + 1);
   }
   DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);

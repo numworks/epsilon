@@ -105,15 +105,15 @@ bool ExpressionLayout::hasAncestor(const ExpressionLayout * e) const {
   return m_parent->hasAncestor(e);
 }
 
-void ExpressionLayout::collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) {
+void ExpressionLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {
 }
 
-void ExpressionLayout::addBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
-  privateAddBrother(cursor, brother, false);
+void ExpressionLayout::addSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling) {
+  privateAddSibling(cursor, sibling, false);
 }
 
-void ExpressionLayout::addBrotherAndMoveCursor(ExpressionLayoutCursor * cursor, ExpressionLayout * brother) {
-  privateAddBrother(cursor, brother, true);
+void ExpressionLayout::addSiblingAndMoveCursor(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling) {
+  privateAddSibling(cursor, sibling, true);
 }
 
 ExpressionLayout * ExpressionLayout::replaceWith(ExpressionLayout * newChild, bool deleteAfterReplace) {
@@ -197,7 +197,7 @@ void ExpressionLayout::removePointedChildAtIndexAndMoveCursor(int index, bool de
 
 
 bool ExpressionLayout::insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor) {
-  cursor->pointedExpressionLayout()->addBrother(cursor, newChild);
+  cursor->pointedExpressionLayout()->addSibling(cursor, newChild);
   return true;
 }
 
@@ -369,16 +369,16 @@ void ExpressionLayout::moveCursorInsideAtDirection (
   }
 }
 
-void ExpressionLayout::privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) {
+void ExpressionLayout::privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) {
   /* The layout must have a parent, because HorizontalLayout overrides
-   * privateAddBrother and only an HorizontalLayout can be the root layout. */
+   * privateAddSibling and only an HorizontalLayout can be the root layout. */
   assert(m_parent);
   if (m_parent->isHorizontal()) {
     int indexInParent = m_parent->indexOfChild(this);
-    int brotherIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? indexInParent : indexInParent + 1;
+    int siblingIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? indexInParent : indexInParent + 1;
 
-    /* Special case: If the neighbour brother is a VerticalOffsetLayout, let it
-     * handle the insertion of the new brother. */
+    /* Special case: If the neighbour sibling is a VerticalOffsetLayout, let it
+     * handle the insertion of the new sibling. */
     ExpressionLayout * neighbour = nullptr;
     if (cursor->position() == ExpressionLayoutCursor::Position::Left && indexInParent > 0) {
       neighbour = m_parent->editableChild(indexInParent - 1);
@@ -389,32 +389,32 @@ void ExpressionLayout::privateAddBrother(ExpressionLayoutCursor * cursor, Expres
       cursor->setPointedExpressionLayout(neighbour);
       cursor->setPosition(cursor->position() == ExpressionLayoutCursor::Position::Left ? ExpressionLayoutCursor::Position::Right : ExpressionLayoutCursor::Position::Left);
       if (moveCursor) {
-        neighbour->addBrotherAndMoveCursor(cursor, brother);
+        neighbour->addSiblingAndMoveCursor(cursor, sibling);
       } else {
-        neighbour->addBrother(cursor, brother);
+        neighbour->addSibling(cursor, sibling);
       }
       return;
     }
 
-    // Else, let the parent add the brother.
+    // Else, let the parent add the sibling.
     if (moveCursor) {
-      if (brotherIndex < m_parent->numberOfChildren()) {
-        cursor->setPointedExpressionLayout(m_parent->editableChild(brotherIndex));
+      if (siblingIndex < m_parent->numberOfChildren()) {
+        cursor->setPointedExpressionLayout(m_parent->editableChild(siblingIndex));
         cursor->setPosition(ExpressionLayoutCursor::Position::Left);
       } else {
         cursor->setPointedExpressionLayout(m_parent);
         cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       }
     }
-    static_cast<HorizontalLayout *>(m_parent)->addOrMergeChildAtIndex(brother, brotherIndex, true);
+    static_cast<HorizontalLayout *>(m_parent)->addOrMergeChildAtIndex(sibling, siblingIndex, true);
     return;
   }
   ExpressionLayout * juxtapositionLayout = nullptr;
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    juxtapositionLayout = replaceWithJuxtapositionOf(brother, this, false);
+    juxtapositionLayout = replaceWithJuxtapositionOf(sibling, this, false);
   } else {
     assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-    juxtapositionLayout = replaceWithJuxtapositionOf(this, brother, false);
+    juxtapositionLayout = replaceWithJuxtapositionOf(this, sibling, false);
   }
   if (moveCursor) {
     cursor->setPointedExpressionLayout(juxtapositionLayout);
@@ -427,7 +427,7 @@ void ExpressionLayout::collapseOnDirection(HorizontalDirection direction, int ab
     return;
   }
   int indexInParent = parent()->indexOfChild(this);
-  int numberOfBrothers = parent()->numberOfChildren();
+  int numberOfSiblings = parent()->numberOfChildren();
   int numberOfOpenParenthesis = 0;
   bool canCollapse = true;
   ExpressionLayout * absorbingChild = editableChild(absorbingChildIndex);
@@ -435,24 +435,24 @@ void ExpressionLayout::collapseOnDirection(HorizontalDirection direction, int ab
     return;
   }
   HorizontalLayout * horizontalAbsorbingChild = static_cast<HorizontalLayout *>(absorbingChild);
-  if (direction == HorizontalDirection::Right && indexInParent < numberOfBrothers - 1) {
-    canCollapse = !(editableParent()->editableChild(indexInParent+1)->mustHaveLeftBrother());
+  if (direction == HorizontalDirection::Right && indexInParent < numberOfSiblings - 1) {
+    canCollapse = !(editableParent()->editableChild(indexInParent+1)->mustHaveLeftSibling());
   }
-  ExpressionLayout * brother = nullptr;
+  ExpressionLayout * sibling = nullptr;
   while (canCollapse) {
-    if (direction == HorizontalDirection::Right && indexInParent == numberOfBrothers - 1) {
+    if (direction == HorizontalDirection::Right && indexInParent == numberOfSiblings - 1) {
       break;
     }
     if (direction == HorizontalDirection::Left && indexInParent == 0) {
       break;
     }
-    int brotherIndex = direction == HorizontalDirection::Right ? indexInParent+1 : indexInParent-1;
-    brother = editableParent()->editableChild(brotherIndex);
-    if (brother->isCollapsable(&numberOfOpenParenthesis, direction == HorizontalDirection::Left)) {
-      editableParent()->removeChildAtIndex(brotherIndex, false);
+    int siblingIndex = direction == HorizontalDirection::Right ? indexInParent+1 : indexInParent-1;
+    sibling = editableParent()->editableChild(siblingIndex);
+    if (sibling->isCollapsable(&numberOfOpenParenthesis, direction == HorizontalDirection::Left)) {
+      editableParent()->removeChildAtIndex(siblingIndex, false);
       int newIndex = direction == HorizontalDirection::Right ? absorbingChild->numberOfChildren() : 0;
-      horizontalAbsorbingChild->addOrMergeChildAtIndex(brother, newIndex, true);
-      numberOfBrothers--;
+      horizontalAbsorbingChild->addOrMergeChildAtIndex(sibling, newIndex, true);
+      numberOfSiblings--;
       if (direction == HorizontalDirection::Left) {
         indexInParent--;
       }

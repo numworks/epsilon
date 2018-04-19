@@ -31,7 +31,7 @@ protected:
     assert(false);
     return KDPointZero;
   }
-  void privateAddBrother(ExpressionLayoutCursor * cursor, ExpressionLayout * brother, bool moveCursor) override;
+  void privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) override;
 private:
   constexpr static KDCoordinate k_width = 7;
   constexpr static KDCoordinate k_height = 13;

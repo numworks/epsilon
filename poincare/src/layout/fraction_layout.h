@@ -10,7 +10,7 @@ class FractionLayout : public StaticLayoutHierarchy<2> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
-  void collapseBrothersAndMoveCursor(ExpressionLayoutCursor * cursor) override;
+  void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) override;
   void backspaceAtCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -20,7 +20,7 @@ public:
   ExpressionLayout * layoutToPointWhenInserting() override;
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
   /* WARNING: We need to override this function, else 1/2 3/4 would be
-   * serialized as 1/2**3/4, as the two Fraction layouts think their brother is
+   * serialized as 1/2**3/4, as the two Fraction layouts think their sibling is
    * an omitted multiplication layout factor. We have the same problem with
    *  2^3 1/2 being serialized as 2^3**1/2, so must override the Right version
    * and not canBeOmittedMultiplicationLeftFactor. */

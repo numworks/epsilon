@@ -1,4 +1,4 @@
-#include "bracket_left_layout.h"
+#include "left_bracket_layout.h"
 #include <escher/metric.h>
 extern "C" {
 #include <assert.h>
@@ -6,18 +6,18 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionLayout * BracketLeftLayout::clone() const {
-  BracketLeftLayout * layout = new BracketLeftLayout();
+ExpressionLayout * LeftBracketLayout::clone() const {
+  LeftBracketLayout * layout = new LeftBracketLayout();
   return layout;
 }
 
-void BracketLeftLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void LeftBracketLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y(), k_lineThickness, operandHeight()), expressionColor);
   ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y(), k_bracketWidth, k_lineThickness), expressionColor);
   ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y() + operandHeight(), k_bracketWidth, k_lineThickness), expressionColor);
 }
 
-void BracketLeftLayout::computeOperandHeight() {
+void LeftBracketLayout::computeOperandHeight() {
   assert(m_parent != nullptr);
   m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
   int currentNumberOfOpenBrackets = 1;
@@ -39,7 +39,7 @@ void BracketLeftLayout::computeOperandHeight() {
   }
 }
 
-void BracketLeftLayout::computeBaseline() {
+void LeftBracketLayout::computeBaseline() {
   assert(m_parent != nullptr);
   m_baseline = operandHeight()/2;
   int currentNumberOfOpenBrackets = 1;

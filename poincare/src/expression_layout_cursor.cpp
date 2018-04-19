@@ -183,9 +183,9 @@ void ExpressionLayoutCursor::insertText(const char * text) {
      * binary file 2K. */
 #if 0
     else if (text[i] == '[') {
-      newChild = new BracketLeftLayout();
+      newChild = new LeftBracketLayout();
     } else if (text[i] == ']') {
-      newChild = new BracketRightLayout();
+      newChild = new RightBracketLayout();
     }
 #endif
     else {

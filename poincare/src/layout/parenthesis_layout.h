@@ -1,13 +1,13 @@
-#ifndef POINCARE_PARENTHESIS_LEFT_RIGHT_LAYOUT_H
-#define POINCARE_PARENTHESIS_LEFT_RIGHT_LAYOUT_H
+#ifndef POINCARE_PARENTHESIS_LAYOUT_H
+#define POINCARE_PARENTHESIS_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
 
 namespace Poincare {
 
-class ParenthesisLeftRightLayout : public StaticLayoutHierarchy<0> {
+class ParenthesisLayout : public StaticLayoutHierarchy<0> {
 public:
-  ParenthesisLeftRightLayout();
+  ParenthesisLayout();
   void invalidAllSizesPositionsAndBaselines() override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;

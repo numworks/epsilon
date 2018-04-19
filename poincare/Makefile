@@ -111,7 +111,7 @@ objs += $(addprefix poincare/src/layout/,\
   nth_root_layout.o\
   parenthesis_left_layout.o\
   parenthesis_layout.o\
-  parenthesis_right_layout.o\
+  right_parenthesis_layout.o\
   product_layout.o\
   sequence_layout.o\
   static_layout_hierarchy.o\

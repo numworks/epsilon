@@ -98,9 +98,9 @@ bool SequenceLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRec
   return false;
 }
 
-bool SequenceLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool SequenceLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside the lower bound, move it to the upper bound.
-  if (lowerBoundLayout() && previousLayout == lowerBoundLayout()) {
+  if (lowerBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(lowerBoundLayout())) {
     assert(upperBoundLayout() != nullptr);
     return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
@@ -111,11 +111,12 @@ bool SequenceLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomp
     assert(upperBoundLayout() != nullptr);
     return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
 }
-bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+
+bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside the upper bound, move it to the lower bound.
-  if (upperBoundLayout() && previousLayout == upperBoundLayout()) {
+  if (upperBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(upperBoundLayout())) {
     assert(lowerBoundLayout() != nullptr);
     return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
@@ -126,7 +127,7 @@ bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldReco
     assert(lowerBoundLayout() != nullptr);
     return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
 }
 
 ExpressionLayout * SequenceLayout::layoutToPointWhenInserting() {

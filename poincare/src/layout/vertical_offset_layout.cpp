@@ -120,7 +120,7 @@ bool VerticalOffsetLayout::moveRight(ExpressionLayoutCursor * cursor, bool * sho
   return false;
 }
 
-bool VerticalOffsetLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool VerticalOffsetLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Superscript.
   if (m_type == VerticalOffsetLayout::Type::Superscript) {
     // Case: Right.
@@ -151,10 +151,10 @@ bool VerticalOffsetLayout::moveUp(ExpressionLayoutCursor * cursor, bool * should
     cursor->setPointedExpressionLayout(this);
     return true;
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
 }
 
-bool VerticalOffsetLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool VerticalOffsetLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Subscript.
   if (m_type == VerticalOffsetLayout::Type::Subscript) {
     // Case: Right.
@@ -184,7 +184,7 @@ bool VerticalOffsetLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shou
     cursor->setPointedExpressionLayout(this);
     return true;
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
 }
 
 int VerticalOffsetLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

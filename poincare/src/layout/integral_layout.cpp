@@ -117,38 +117,38 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRec
   return false;
 }
 
-bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside the lower bound, move it to the upper bound.
-  if (lowerBoundLayout() && previousLayout == lowerBoundLayout()) {
+  if (lowerBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(lowerBoundLayout())) {
     assert(upperBoundLayout() != nullptr);
     return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the integrand, move it to the upper bound.
   if (integrandLayout()
-      && previousLayout == integrandLayout()
+      && cursor->pointedExpressionLayout()->hasAncestor(integrandLayout())
       && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(upperBoundLayout() != nullptr);
     return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
 }
 
-bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside the upper bound, move it to the lower bound.
-  if (upperBoundLayout() && previousLayout == upperBoundLayout()) {
+  if (upperBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(upperBoundLayout())) {
     assert(lowerBoundLayout() != nullptr);
     return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the integrand, move it to the lower bound.
   if (integrandLayout()
-      && previousLayout == integrandLayout()
+      && cursor->pointedExpressionLayout()->hasAncestor(integrandLayout())
       && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(lowerBoundLayout() != nullptr);
     return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
 }
 
 int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

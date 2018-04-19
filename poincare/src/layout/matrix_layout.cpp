@@ -80,14 +80,16 @@ bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecom
   return GridLayout::moveRight(cursor, shouldRecomputeLayout);
 }
 
-bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   bool shouldRemoveGreySquares = false;
-  int childIndex = indexOfChild(previousLayout);
-  if (childIndex >- 1 && childIsTopOfGrid(childIndex)) {
-    // The cursor is leaving the matrix, so remove the grey squares.
-    shouldRemoveGreySquares = true;
+  for (int childIndex = 0; childIndex < m_numberOfColumns; childIndex++) {
+    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex))) {
+      // The cursor is leaving the matrix, so remove the grey squares.
+      shouldRemoveGreySquares = true;
+      break;
+    }
   }
-  bool returnValue = GridLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  bool returnValue = GridLayout::moveUp(cursor, shouldRecomputeLayout);
   if (returnValue && shouldRemoveGreySquares) {
     assert(hasGreySquares());
     removeGreySquares();
@@ -96,14 +98,16 @@ bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomput
   return returnValue;
 }
 
-bool MatrixLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool MatrixLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   bool shouldRemoveGreySquares = false;
-  int childIndex = indexOfChild(previousLayout);
-  if (childIndex >- 1 && childIsBottomOfGrid(childIndex)) {
-    // The cursor is leaving the matrix, so remove the grey squares.
-    shouldRemoveGreySquares = true;
+  for (int childIndex = numberOfChildren() - m_numberOfColumns; childIndex < m_numberOfChildren; childIndex++) {
+    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex))) {
+      // The cursor is leaving the matrix, so remove the grey squares.
+      shouldRemoveGreySquares = true;
+      break;
+    }
   }
-  bool returnValue = GridLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  bool returnValue = GridLayout::moveDown(cursor, shouldRecomputeLayout);
   if (returnValue && shouldRemoveGreySquares) {
     assert(hasGreySquares());
     removeGreySquares();

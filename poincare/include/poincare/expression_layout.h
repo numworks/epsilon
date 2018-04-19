@@ -82,16 +82,8 @@ public:
   /* Tree navigation */
   virtual bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
   virtual bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual bool moveUp(
-      ExpressionLayoutCursor * cursor,
-      bool * shouldRecomputeLayout = nullptr,
-      ExpressionLayout * previousLayout = nullptr,
-      ExpressionLayout * previousPreviousLayout = nullptr);
-  virtual bool moveDown(
-      ExpressionLayoutCursor * cursor,
-      bool * shouldRecomputeLayout = nullptr,
-      ExpressionLayout * previousLayout = nullptr,
-      ExpressionLayout * previousPreviousLayout = nullptr);
+  virtual bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
+  virtual bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
   virtual bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
   virtual bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
 

@@ -235,9 +235,9 @@ char ExpressionLayout::XNTChar() const {
   return m_parent->XNTChar();
 }
 
-bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (m_parent) {
-    return m_parent->moveUp(cursor, shouldRecomputeLayout, this, previousLayout);
+    return m_parent->moveUp(cursor, shouldRecomputeLayout);
   }
   return false;
 }
@@ -246,9 +246,9 @@ bool ExpressionLayout::moveUpInside(ExpressionLayoutCursor * cursor, bool * shou
   return moveInside(VerticalDirection::Up, cursor, shouldRecomputeLayout);
 }
 
-bool ExpressionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool ExpressionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (m_parent) {
-    return m_parent->moveDown(cursor, shouldRecomputeLayout, this, previousLayout);
+    return m_parent->moveDown(cursor, shouldRecomputeLayout);
   }
   return false;
 }

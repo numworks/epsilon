@@ -143,9 +143,9 @@ bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRec
   return false;
 }
 
-bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside denominator, move it to the numerator.
-  if (denominatorLayout() && previousLayout == denominatorLayout()) {
+  if (denominatorLayout() && cursor->pointedExpressionLayout()->hasAncestor(denominatorLayout())) {
     assert(numeratorLayout() != nullptr);
     return numeratorLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
@@ -154,12 +154,12 @@ bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomp
     assert(numeratorLayout() != nullptr);
     return numeratorLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
 }
 
-bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside numerator, move it to the denominator.
-  if (numeratorLayout() && previousLayout == numeratorLayout()) {
+  if (numeratorLayout() && cursor->pointedExpressionLayout()->hasAncestor(numeratorLayout())) {
     assert(denominatorLayout() != nullptr);
     return denominatorLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
@@ -168,7 +168,7 @@ bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldReco
     assert(denominatorLayout() != nullptr);
     return denominatorLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
 }
 
 int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

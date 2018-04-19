@@ -2,7 +2,7 @@
 #include "empty_layout.h"
 #include "grid_layout.h"
 #include "horizontal_layout.h"
-#include "parenthesis_left_layout.h"
+#include "left_parenthesis_layout.h"
 #include "parenthesis_layout.h"
 #include "right_parenthesis_layout.h"
 #include <poincare/expression_layout_cursor.h>
@@ -96,7 +96,7 @@ bool BinomialCoefficientLayout::moveDown(ExpressionLayoutCursor * cursor, bool *
 
 void BinomialCoefficientLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Render the parentheses.
-  ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
+  LeftParenthesisLayout * dummyLeftParenthesis = new LeftParenthesisLayout();
   RightParenthesisLayout * dummyRightParenthesis = new RightParenthesisLayout();
   GridLayout * dummyGridLayout = new GridLayout(ExpressionLayoutArray(nLayout(), kLayout()).array(), 2, 1, true);
   HorizontalLayout dummyLayout(dummyLeftParenthesis, dummyGridLayout, dummyRightParenthesis, false);
@@ -117,7 +117,7 @@ void BinomialCoefficientLayout::computeBaseline() {
 }
 
 KDPoint BinomialCoefficientLayout::positionOfChild(ExpressionLayout * child) {
-  ParenthesisLeftLayout * dummyLeftParenthesis = new ParenthesisLeftLayout();
+  LeftParenthesisLayout * dummyLeftParenthesis = new LeftParenthesisLayout();
   RightParenthesisLayout * dummyRightParenthesis = new RightParenthesisLayout();
   GridLayout * dummyGridLayout = new GridLayout(ExpressionLayoutArray(nLayout(), kLayout()).array(), 2, 1, true);
   HorizontalLayout dummyLayout(dummyLeftParenthesis, dummyGridLayout, dummyRightParenthesis, false);

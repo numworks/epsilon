@@ -1,12 +1,12 @@
-#ifndef POINCARE_PARENTHESIS_LEFT_LAYOUT_H
-#define POINCARE_PARENTHESIS_LEFT_LAYOUT_H
+#ifndef POINCARE_LEFT_PARENTHESIS_LAYOUT_H
+#define POINCARE_LEFT_PARENTHESIS_LAYOUT_H
 
 #include <poincare/src/layout/parenthesis_layout.h>
 #include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class ParenthesisLeftLayout : public ParenthesisLayout {
+class LeftParenthesisLayout : public ParenthesisLayout {
   friend class BinomialCoefficientLayout;
   friend class SequenceLayout;
 public:

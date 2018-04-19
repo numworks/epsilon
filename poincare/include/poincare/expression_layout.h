@@ -3,10 +3,10 @@
 
 #include <kandinsky.h>
 #include <poincare/print_float.h>
+#include <poincare/expression_layout_cursor.h>
+
 
 namespace Poincare {
-
-class ExpressionLayoutCursor;
 
 class ExpressionLayout {
 public:

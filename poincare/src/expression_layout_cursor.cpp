@@ -1,4 +1,5 @@
 #include <poincare/expression_layout_cursor.h>
+#include <poincare/expression_layout.h>
 #include <poincare/expression_layout_array.h>
 #include <poincare_layouts.h> //TODO: finer include?
 #include <ion/charset.h>

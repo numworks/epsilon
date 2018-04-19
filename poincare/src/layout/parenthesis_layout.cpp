@@ -64,12 +64,12 @@ void ParenthesisLayout::computeBaseline() {
   assert(m_parent != nullptr);
   bool isParenthesisLeft = isLeftParenthesis();
   int indexInParent = m_parent->indexOfChild(this);
-  int numberOfBrothers = m_parent->numberOfChildren();
-  if ((isParenthesisLeft && indexInParent == numberOfBrothers - 1)
+  int numberOfSiblings = m_parent->numberOfChildren();
+  if ((isParenthesisLeft && indexInParent == numberOfSiblings - 1)
       || (!isParenthesisLeft && indexInParent == 0)
-      || (isParenthesisLeft && indexInParent < numberOfBrothers - 1 && m_parent->child(indexInParent + 1)->isVerticalOffset()))
+      || (isParenthesisLeft && indexInParent < numberOfSiblings - 1 && m_parent->child(indexInParent + 1)->isVerticalOffset()))
   {
-    /* The parenthesis does not have brothers on its open direction, or it is a
+    /* The parenthesis does not have siblings on its open direction, or it is a
      * left parenthesis that is base of a superscript layout. In the latter
      * case, it should have a default baseline, else it creates an infinite loop
      * because the parenthesis needs the superscript height, which needs the
@@ -82,10 +82,10 @@ void ParenthesisLayout::computeBaseline() {
   int currentNumberOfOpenParentheses = 1;
   m_baseline = 0;
   int increment = isParenthesisLeft ? 1 : -1;
-  for (int i = indexInParent + increment; i >= 0 && i <= numberOfBrothers - 1; i+= increment) {
-    ExpressionLayout * brother = m_parent->editableChild(i);
-    if ((isParenthesisLeft && brother->isRightParenthesis())
-        || (!isParenthesisLeft && brother->isLeftParenthesis()))
+  for (int i = indexInParent + increment; i >= 0 && i <= numberOfSiblings - 1; i+= increment) {
+    ExpressionLayout * sibling = m_parent->editableChild(i);
+    if ((isParenthesisLeft && sibling->isRightParenthesis())
+        || (!isParenthesisLeft && sibling->isLeftParenthesis()))
     {
       if (i == indexInParent + increment) {
         /* If the parenthesis is immediately closed, we set the baseline to half
@@ -98,13 +98,13 @@ void ParenthesisLayout::computeBaseline() {
       if (currentNumberOfOpenParentheses == 0) {
         break;
       }
-    } else if ((isParenthesisLeft && brother->isLeftParenthesis())
-        || (!isParenthesisLeft && brother->isRightParenthesis()))
+    } else if ((isParenthesisLeft && sibling->isLeftParenthesis())
+        || (!isParenthesisLeft && sibling->isRightParenthesis()))
     {
       currentNumberOfOpenParentheses++;
     }
-    if (brother->baseline() > m_baseline) {
-      m_baseline = brother->baseline();
+    if (sibling->baseline() > m_baseline) {
+      m_baseline = sibling->baseline();
     }
   }
   m_baseline += (size().height() - operandHeight()) / 2;
@@ -124,9 +124,9 @@ void ParenthesisLayout::computeOperandHeight() {
   m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
   bool isParenthesisLeft = isLeftParenthesis();
   int indexInParent = m_parent->indexOfChild(this);
-  int numberOfBrothers = m_parent->numberOfChildren();
+  int numberOfSiblings = m_parent->numberOfChildren();
   if (isParenthesisLeft
-      && indexInParent < numberOfBrothers - 1
+      && indexInParent < numberOfSiblings - 1
       && m_parent->child(indexInParent + 1)->isVerticalOffset())
   {
     /* If a left parenthesis is the base of a superscript layout, it should have
@@ -141,10 +141,10 @@ void ParenthesisLayout::computeOperandHeight() {
 
   int currentNumberOfOpenParentheses = 1;
   int increment = isParenthesisLeft ? 1 : -1;
-  for (int i = indexInParent + increment; i >= 0 && i < numberOfBrothers; i+= increment) {
-    ExpressionLayout * brother = m_parent->editableChild(i);
-    if ((!isParenthesisLeft && brother->isLeftParenthesis())
-        || (isParenthesisLeft && brother->isRightParenthesis()))
+  for (int i = indexInParent + increment; i >= 0 && i < numberOfSiblings; i+= increment) {
+    ExpressionLayout * sibling = m_parent->editableChild(i);
+    if ((!isParenthesisLeft && sibling->isLeftParenthesis())
+        || (isParenthesisLeft && sibling->isRightParenthesis()))
     {
       currentNumberOfOpenParentheses--;
       if (currentNumberOfOpenParentheses == 0) {
@@ -153,18 +153,18 @@ void ParenthesisLayout::computeOperandHeight() {
         }
         return;
       }
-    } else if ((isParenthesisLeft && brother->isLeftParenthesis())
-        || (!isParenthesisLeft && brother->isRightParenthesis()))
+    } else if ((isParenthesisLeft && sibling->isLeftParenthesis())
+        || (!isParenthesisLeft && sibling->isRightParenthesis()))
     {
       currentNumberOfOpenParentheses++;
     }
-    KDCoordinate brotherHeight = brother->size().height();
-    KDCoordinate brotherBaseline = brother->baseline();
-    if (brotherHeight - brotherBaseline > max_under_baseline) {
-      max_under_baseline = brotherHeight - brotherBaseline ;
+    KDCoordinate siblingHeight = sibling->size().height();
+    KDCoordinate siblingBaseline = sibling->baseline();
+    if (siblingHeight - siblingBaseline > max_under_baseline) {
+      max_under_baseline = siblingHeight - siblingBaseline ;
     }
-    if (brotherBaseline > max_above_baseline) {
-      max_above_baseline = brotherBaseline;
+    if (siblingBaseline > max_above_baseline) {
+      max_above_baseline = siblingBaseline;
     }
   }
   if (max_under_baseline + max_above_baseline > m_operandHeight) {

@@ -43,7 +43,7 @@ bool GridLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomput
       return true;
     }
     // Case: Left of another child.
-    // Go Right of its brother on the left.
+    // Go Right of its sibling on the left.
     cursor->setPointedExpressionLayout(editableChild(childIndex-1));
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
     return true;
@@ -80,7 +80,7 @@ bool GridLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecompu
       return true;
     }
     // Case: Right of another child.
-    // Go Left of its brother on the right.
+    // Go Left of its sibling on the right.
     cursor->setPointedExpressionLayout(editableChild(childIndex+1));
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
     return true;

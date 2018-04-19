@@ -141,7 +141,7 @@ bool ScrollableExpressionViewWithCursor::privateHandleEvent(Ion::Events::Event e
     return true;
   }
   if (event == Ion::Events::Division) {
-    m_expressionViewWithCursor.cursor()->addFractionLayoutAndCollapseBrothers();
+    m_expressionViewWithCursor.cursor()->addFractionLayoutAndCollapseSiblings();
     return true;
   }
   if (event == Ion::Events::XNT) {

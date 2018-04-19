@@ -43,7 +43,7 @@ public:
   /* Edition */
   void addLayoutAndMoveCursor(ExpressionLayout * layout);
   void addEmptyExponentialLayout();
-  void addFractionLayoutAndCollapseBrothers();
+  void addFractionLayoutAndCollapseSiblings();
   void addEmptyMatrixLayout(int numberOfRows = 1, int numberOfColumns = 1);
   void addEmptyPowerLayout();
   void addEmptySquareRootLayout();
@@ -59,7 +59,7 @@ private:
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
   KDCoordinate pointedLayoutHeight();
-  ExpressionLayout * equivalentPointedBrotherLayout();
+  ExpressionLayout * equivalentPointedSiblingLayout();
   ExpressionLayout * m_pointedExpressionLayout;
   Position m_position;
 };

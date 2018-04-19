@@ -91,7 +91,7 @@ bool BinomialCoefficientLayout::moveDown(ExpressionLayoutCursor * cursor, bool *
   if (previousLayout == nLayout()) {
     return kLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
 }
 
 void BinomialCoefficientLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

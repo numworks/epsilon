@@ -1,4 +1,4 @@
-#include "parenthesis_right_layout.h"
+#include "right_parenthesis_layout.h"
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -26,12 +26,12 @@ const uint8_t bottomRightCurve[ParenthesisLayout::k_parenthesisCurveHeight][Pare
   {0x66, 0xF9, 0xFF, 0xFF, 0xFF},
 };
 
-ExpressionLayout * ParenthesisRightLayout::clone() const {
-  ParenthesisRightLayout * layout = new ParenthesisRightLayout();
+ExpressionLayout * RightParenthesisLayout::clone() const {
+  RightParenthesisLayout * layout = new RightParenthesisLayout();
   return layout;
 }
 
-bool ParenthesisRightLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
+bool RightParenthesisLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
   if (*numberOfOpenParenthesis == 0 && !goingLeft) {
     return false;
   }
@@ -39,7 +39,7 @@ bool ParenthesisRightLayout::isCollapsable(int * numberOfOpenParenthesis, bool g
   return true;
 }
 
-void ParenthesisRightLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void RightParenthesisLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDRect frame = KDRect(p.x() + ParenthesisLayout::k_widthMargin + ParenthesisLayout::k_lineThickness - ParenthesisLayout::k_parenthesisCurveWidth,
       p.y() + ParenthesisLayout::k_externHeightMargin,
       ParenthesisLayout::k_parenthesisCurveWidth,

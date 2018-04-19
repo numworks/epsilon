@@ -21,8 +21,9 @@ public:
 protected:
   KDColor s_parenthesisWorkingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
   KDSize computeSize() override;
+  void computeBaseline() override;
   KDCoordinate operandHeight();
-  virtual void computeOperandHeight() = 0;
+  void computeOperandHeight();
   KDPoint positionOfChild(ExpressionLayout * child) override;
   bool m_operandHeightComputed;
   uint16_t m_operandHeight;

@@ -1,8 +1,6 @@
 #include "matrix_layout.h"
 #include "empty_layout.h"
-#include "horizontal_layout.h"
-#include "bracket_left_layout.h"
-#include "bracket_right_layout.h"
+#include "bracket_pair_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/layout_engine.h>
 extern "C" {
@@ -248,30 +246,21 @@ void MatrixLayout::childWasReplacedAtIndex(int index) {
 }
 
 void MatrixLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  BracketLeftLayout * dummyLeftBracket = new BracketLeftLayout();
-  BracketRightLayout * dummyRightBracket = new BracketRightLayout();
-  ExpressionLayout * dummyGridLayout = new GridLayout(children(), m_numberOfRows, m_numberOfColumns, true);
-  HorizontalLayout dummyLayout(dummyLeftBracket, dummyGridLayout, dummyRightBracket, false);
-  KDPoint leftBracketPoint = dummyLayout.positionOfChild(dummyLeftBracket);
-  KDPoint rightBracketPoint = dummyLayout.positionOfChild(dummyRightBracket);
-  dummyLeftBracket->render(ctx, p.translatedBy(leftBracketPoint), expressionColor, backgroundColor);
-  dummyRightBracket->render(ctx, p.translatedBy(rightBracketPoint), expressionColor, backgroundColor);
+  const ExpressionLayout * dummyGridLayout = new GridLayout(children(), m_numberOfRows, m_numberOfColumns, true);
+  BracketPairLayout dummyLayout(dummyGridLayout, false);
+  dummyLayout.render(ctx, p, expressionColor, backgroundColor);
 }
 
 KDSize MatrixLayout::computeSize() {
-  BracketLeftLayout * dummyLeftBracket = new BracketLeftLayout();
-  BracketRightLayout * dummyRightBracket = new BracketRightLayout();
-ExpressionLayout * dummyGridLayout = new GridLayout(children(), m_numberOfRows, m_numberOfColumns, true);
-  HorizontalLayout dummyLayout(dummyLeftBracket, dummyGridLayout, dummyRightBracket, false);
+  const ExpressionLayout * dummyGridLayout = new GridLayout(children(), m_numberOfRows, m_numberOfColumns, true);
+  BracketPairLayout dummyLayout(dummyGridLayout, false);
   return dummyLayout.size();
 }
 
 KDPoint MatrixLayout::positionOfChild(ExpressionLayout * child) {
   assert(indexOfChild(child) > -1);
-  BracketLeftLayout * dummyLeftBracket = new BracketLeftLayout();
-  BracketRightLayout * dummyRightBracket = new BracketRightLayout();
-ExpressionLayout * dummyGridLayout = new GridLayout(children(), m_numberOfRows, m_numberOfColumns, true);
-  HorizontalLayout dummyLayout(dummyLeftBracket, dummyGridLayout, dummyRightBracket, false);
+  ExpressionLayout * dummyGridLayout = new GridLayout(children(), m_numberOfRows, m_numberOfColumns, true);
+  BracketPairLayout dummyLayout(dummyGridLayout, false);
   return GridLayout::positionOfChild(child).translatedBy(dummyLayout.positionOfChild(dummyGridLayout));
 }
 

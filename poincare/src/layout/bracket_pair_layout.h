@@ -7,6 +7,7 @@
 namespace Poincare {
 
 class BracketPairLayout : public StaticLayoutHierarchy<1> {
+  friend class MatrixLayout;
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;

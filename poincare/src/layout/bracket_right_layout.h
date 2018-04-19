@@ -7,7 +7,6 @@
 namespace Poincare {
 
 class BracketRightLayout : public BracketLeftRightLayout {
-  friend class MatrixLayout;
 public:
   using BracketLeftRightLayout::BracketLeftRightLayout;
   ExpressionLayout * clone() const override;

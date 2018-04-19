@@ -1,12 +1,12 @@
-#ifndef POINCARE_BRACKET_LAYOUT_H
-#define POINCARE_BRACKET_LAYOUT_H
+#ifndef POINCARE_BRACKET_PAIR_LAYOUT_H
+#define POINCARE_BRACKET_PAIR_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
 #include <poincare/print_float.h>
 
 namespace Poincare {
 
-class BracketLayout : public StaticLayoutHierarchy<1> {
+class BracketPairLayout : public StaticLayoutHierarchy<1> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;

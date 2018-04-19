@@ -1,4 +1,4 @@
-#include "bracket_layout.h"
+#include "bracket_pair_layout.h"
 #include "horizontal_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/layout_engine.h>
@@ -9,12 +9,12 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionLayout * BracketLayout::clone() const {
-  BracketLayout * layout = new BracketLayout(const_cast<BracketLayout *>(this)->operandLayout(), true);
+ExpressionLayout * BracketPairLayout::clone() const {
+  BracketPairLayout * layout = new BracketPairLayout(const_cast<BracketPairLayout *>(this)->operandLayout(), true);
   return layout;
 }
 
-void BracketLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {
+void BracketPairLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {
   // If the operand layout is not an HorizontalLayout, replace it with one.
   if (!operandLayout()->isHorizontal()) {
     HorizontalLayout * horizontalOperandLayout = new HorizontalLayout(operandLayout(), false);
@@ -25,7 +25,7 @@ void BracketLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * curso
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
-void BracketLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
+void BracketPairLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   if (cursor->positionIsEquivalentTo(operandLayout(), ExpressionLayoutCursor::Position::Left)) {
     // Case: Left of the operand. Delete the layout, keep the operand.
     replaceWithAndMoveCursor(operandLayout(), true, cursor);
@@ -34,7 +34,7 @@ void BracketLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
-bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool BracketPairLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the operand.
   // Go Left of the brackets.
   if (operandLayout()
@@ -61,7 +61,7 @@ bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecom
   return false;
 }
 
-bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool BracketPairLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the operand.
   // Go Right of the brackets.
   if (operandLayout()
@@ -89,7 +89,7 @@ bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldReco
   return false;
 }
 
-int BracketLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int BracketPairLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -101,7 +101,7 @@ int BracketLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOf
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
   // Write the argument
-  numberOfChar += const_cast<Poincare::BracketLayout *>(this)->operandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += const_cast<Poincare::BracketPairLayout *>(this)->operandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the closing bracket
@@ -110,11 +110,11 @@ int BracketLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOf
   return numberOfChar;
 }
 
-ExpressionLayout * BracketLayout::operandLayout()  {
+ExpressionLayout * BracketPairLayout::operandLayout()  {
   return editableChild(0);
 }
 
-void BracketLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+void BracketPairLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   const KDCoordinate k_widthMargin = widthMargin();
   const KDCoordinate k_externWidthMargin = externWidthMargin();
   KDSize operandSize = operandLayout()->size();
@@ -131,19 +131,19 @@ void BracketLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, 
   }
 }
 
-KDSize BracketLayout::computeSize() {
+KDSize BracketPairLayout::computeSize() {
   const KDCoordinate k_widthMargin = widthMargin();
   const KDCoordinate k_externWidthMargin = externWidthMargin();
   KDSize operandSize = operandLayout()->size();
   return KDSize(operandSize.width() + 2*k_externWidthMargin + 2*k_widthMargin + 2*k_lineThickness, operandSize.height() + 2 * k_verticalMargin);
 }
 
-void BracketLayout::computeBaseline() {
+void BracketPairLayout::computeBaseline() {
   m_baseline = operandLayout()->baseline() + k_verticalMargin;
   m_baselined = true;
 }
 
-KDPoint BracketLayout::positionOfChild(ExpressionLayout * child) {
+KDPoint BracketPairLayout::positionOfChild(ExpressionLayout * child) {
   const KDCoordinate k_widthMargin = widthMargin();
   const KDCoordinate k_externWidthMargin = externWidthMargin();
   return KDPoint(k_widthMargin+k_externWidthMargin+k_lineThickness, k_verticalMargin);

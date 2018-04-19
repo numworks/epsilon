@@ -93,7 +93,7 @@ objs += $(addprefix poincare/src/layout/,\
   bounded_static_layout_hierarchy.o\
   bracket_pair_layout.o\
   left_bracket_layout.o\
-  bracket_left_right_layout.o\
+  bracket_layout.o\
   right_bracket_layout.o\
   ceiling_layout.o\
   char_layout.o\

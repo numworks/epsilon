@@ -1,4 +1,4 @@
-#include "bracket_left_right_layout.h"
+#include "bracket_layout.h"
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
@@ -7,18 +7,18 @@ extern "C" {
 
 namespace Poincare {
 
-BracketLeftRightLayout::BracketLeftRightLayout() :
+BracketLayout::BracketLayout() :
   StaticLayoutHierarchy<0>(),
   m_operandHeightComputed(false)
 {
 }
 
-void BracketLeftRightLayout::invalidAllSizesPositionsAndBaselines() {
+void BracketLayout::invalidAllSizesPositionsAndBaselines() {
   m_operandHeightComputed = false;
   ExpressionLayout::invalidAllSizesPositionsAndBaselines();
 }
 
-bool BracketLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool BracketLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right.
   // Go Left.
@@ -35,7 +35,7 @@ bool BracketLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * sh
   return false;
 }
 
-bool BracketLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool BracketLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left.
   // Go Right.
@@ -53,11 +53,11 @@ bool BracketLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor, bool * s
 }
 
 
-KDSize BracketLeftRightLayout::computeSize() {
+KDSize BracketLayout::computeSize() {
   return KDSize(k_externWidthMargin + k_lineThickness + k_widthMargin, operandHeight() + k_lineThickness);
 }
 
-KDCoordinate BracketLeftRightLayout::operandHeight() {
+KDCoordinate BracketLayout::operandHeight() {
   if (!m_operandHeightComputed) {
     computeOperandHeight();
     m_operandHeightComputed = true;
@@ -65,7 +65,7 @@ KDCoordinate BracketLeftRightLayout::operandHeight() {
   return m_operandHeight;
 }
 
-KDPoint BracketLeftRightLayout::positionOfChild(ExpressionLayout * child) {
+KDPoint BracketLayout::positionOfChild(ExpressionLayout * child) {
   assert(false);
   return KDPointZero;
 }

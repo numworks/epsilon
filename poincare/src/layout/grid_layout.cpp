@@ -94,24 +94,28 @@ bool GridLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecompu
   return false;
 }
 
-bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is child that is not on the top row, move it inside the upper
   // neighbourg.
-  int childIndex = indexOfChild(previousLayout);
-  if (childIndex >- 1 && !childIsTopOfGrid(childIndex)) {
-    return editableChild(childIndex - m_numberOfColumns)->moveUpInside(cursor, shouldRecomputeLayout);
+  int childIndex = m_numberOfColumns;
+  while (childIndex < numberOfChildren()) {
+    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex))) {
+      return editableChild(childIndex - m_numberOfColumns)->moveUpInside(cursor, shouldRecomputeLayout);
+    }
+    childIndex++;
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
 }
 
-bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
-  // If the cursor is child that is not on the bottom row, move it inside the
-  // lower neighbourg.
-  int childIndex = indexOfChild(previousLayout);
-  if (childIndex >- 1 && !childIsBottomOfGrid(childIndex)) {
-    return editableChild(childIndex + m_numberOfColumns)->moveDownInside(cursor, shouldRecomputeLayout);
+bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  int childIndex = 0;
+  while (childIndex < numberOfChildren() - m_numberOfColumns) {
+    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex))) {
+      return editableChild(childIndex + m_numberOfColumns)->moveDownInside(cursor, shouldRecomputeLayout);
+    }
+    childIndex++;
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
 }
 
 void GridLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {

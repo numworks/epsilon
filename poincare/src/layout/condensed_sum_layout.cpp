@@ -90,38 +90,38 @@ bool CondensedSumLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shoul
   return false;
 }
 
-bool CondensedSumLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool CondensedSumLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside the subscript layout, move it to the superscript.
-  if (subscriptLayout() && previousLayout == subscriptLayout()) {
+  if (subscriptLayout() && cursor->pointedExpressionLayout()->hasAncestor(subscriptLayout())) {
     assert(superscriptLayout() != nullptr);
     return superscriptLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the base layout, move it to the superscript.
   if (baseLayout()
-      && previousLayout == baseLayout()
+      && cursor->pointedExpressionLayout()->hasAncestor(baseLayout())
       && cursor->positionIsEquivalentTo(baseLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(superscriptLayout() != nullptr);
     return superscriptLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
 }
 
-bool CondensedSumLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, ExpressionLayout * previousLayout, ExpressionLayout * previousPreviousLayout) {
+bool CondensedSumLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside the superscript layout, move it to the subscript.
-  if (superscriptLayout() && previousLayout == superscriptLayout()) {
+  if (superscriptLayout() && cursor->pointedExpressionLayout()->hasAncestor(superscriptLayout())) {
     assert(subscriptLayout() != nullptr);
     return subscriptLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the base layout, move it to the subscript.
   if (baseLayout()
-      && previousLayout == baseLayout()
+      && cursor->pointedExpressionLayout()->hasAncestor(baseLayout())
       && cursor->positionIsEquivalentTo(baseLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(subscriptLayout() != nullptr);
     return subscriptLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, previousLayout, previousPreviousLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
 }
 
 ExpressionLayout * CondensedSumLayout::layoutToPointWhenInserting() {

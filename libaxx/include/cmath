@@ -23,6 +23,7 @@
 #undef expf
 #undef expm1f
 #undef fabsf
+#undef fmaxf
 #undef floorf
 #undef fmodf
 #undef hypotf
@@ -57,6 +58,7 @@
 #undef exp
 #undef expm1
 #undef fabs
+#undef fmax
 #undef floor
 #undef hypot
 #undef lgamma
@@ -102,6 +104,8 @@ static inline double exp(double x) { return __builtin_exp(x); }
 static inline float exp(float x) { return __builtin_expf(x); }
 static inline double fabs(double x) { return __builtin_fabs(x); }
 static inline float fabs(float x) { return __builtin_fabsf(x); }
+static inline double fmax(double x, double y) { return __builtin_fmax(x, y); }
+static inline float fmax(float x, float y) { return __builtin_fmaxf(x, y); }
 static inline double floor(double x) { return __builtin_floor(x); }
 static inline float floor(float x) { return __builtin_floorf(x); }
 static inline int fpclassify(double x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }

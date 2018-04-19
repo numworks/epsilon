@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Poincare {
 
-static inline uint16_t max(uint16_t x, uint16_t y) { return (x>y ? x : y); }
+static inline int max(int x, int y) { return (x>y ? x : y); }
 
 
 ParenthesisLeftRightLayout::ParenthesisLeftRightLayout() :
@@ -57,11 +57,11 @@ bool ParenthesisLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor, bool
 }
 
 KDSize ParenthesisLeftRightLayout::computeSize() {
-  uint16_t maxNumberOfNestedParenthesis = 0;
+  int maxNumberOfNestedParenthesis = 0;
   assert(m_parent != nullptr);
   if (m_parent->isHorizontal()) {
     int index = m_parent->indexOfChild(this);
-    uint16_t numberOfOpenParenthesis = 1;
+    int numberOfOpenParenthesis = 1;
     bool goingLeft = isRightParenthesis();
     while (numberOfOpenParenthesis > 0) {
       if ((goingLeft && index == 0)
@@ -75,7 +75,7 @@ KDSize ParenthesisLeftRightLayout::computeSize() {
       } else if (m_parent->child(index)->isRightParenthesis()) {
         numberOfOpenParenthesis += goingLeft ? 1 : -1;
       }
-      maxNumberOfNestedParenthesis = max(maxNumberOfNestedParenthesis, numberOfOpenParenthesis);
+      maxNumberOfNestedParenthesis = max(maxNumberOfNestedParenthesis, numberOfOpenParenthesis-1);
     }
   }
   return KDSize(parenthesisWidth(), operandHeight()+maxNumberOfNestedParenthesis*2);
@@ -95,7 +95,7 @@ void ParenthesisLeftRightLayout::computeBaseline() {
      * case, it should have a default baseline, else it creates an infinite loop
      * because the parenthesis needs the superscript height, which needs the
      * parenthesis baseline. */
-    m_baseline = operandHeight()/2;
+    m_baseline = size().height()/2;
     m_baselined = true;
     return;
   }
@@ -112,7 +112,8 @@ void ParenthesisLeftRightLayout::computeBaseline() {
         /* If the parenthesis is immediately closed, we set the baseline to half
          * the parenthesis height. */
         m_baseline = size().height()/2;
-        break;
+        m_baselined = true;
+        return;
       }
       currentNumberOfOpenParentheses--;
       if (currentNumberOfOpenParentheses == 0) {
@@ -127,6 +128,7 @@ void ParenthesisLeftRightLayout::computeBaseline() {
       m_baseline = brother->baseline();
     }
   }
+  m_baseline += (size().height() - operandHeight()) / 2;
   m_baselined = true;
 }
 

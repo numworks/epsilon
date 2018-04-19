@@ -1,14 +1,14 @@
 #ifndef POINCARE_BRACKET_LEFT_LAYOUT_H
 #define POINCARE_BRACKET_LEFT_LAYOUT_H
 
-#include <poincare/src/layout/bracket_left_right_layout.h>
+#include <poincare/src/layout/bracket_layout.h>
 #include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class LeftBracketLayout : public BracketLeftRightLayout {
+class LeftBracketLayout : public BracketLayout {
 public:
-  using BracketLeftRightLayout::BracketLeftRightLayout;
+  using BracketLayout::BracketLayout;
   ExpressionLayout * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
     return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, '[');

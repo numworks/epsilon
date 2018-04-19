@@ -1,13 +1,13 @@
-#ifndef POINCARE_BRACKET_LEFT_RIGHT_LAYOUT_H
-#define POINCARE_BRACKET_LEFT_RIGHT_LAYOUT_H
+#ifndef POINCARE_BRACKET_LAYOUT_H
+#define POINCARE_BRACKET_LAYOUT_H
 
 #include <poincare/static_layout_hierarchy.h>
 
 namespace Poincare {
 
-class BracketLeftRightLayout : public StaticLayoutHierarchy<0> {
+class BracketLayout : public StaticLayoutHierarchy<0> {
 public:
-  BracketLeftRightLayout();
+  BracketLayout();
   void invalidAllSizesPositionsAndBaselines() override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;

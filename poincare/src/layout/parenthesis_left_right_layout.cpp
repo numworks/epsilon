@@ -57,28 +57,7 @@ bool ParenthesisLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor, bool
 }
 
 KDSize ParenthesisLeftRightLayout::computeSize() {
-  int maxNumberOfNestedParenthesis = 0;
-  assert(m_parent != nullptr);
-  if (m_parent->isHorizontal()) {
-    int index = m_parent->indexOfChild(this);
-    int numberOfOpenParenthesis = 1;
-    bool goingLeft = isRightParenthesis();
-    while (numberOfOpenParenthesis > 0) {
-      if ((goingLeft && index == 0)
-          || (!goingLeft && index == m_parent->numberOfChildren() - 1))
-      {
-        break;
-      }
-      index += goingLeft ? -1 : 1;
-      if (m_parent->child(index)->isLeftParenthesis()) {
-        numberOfOpenParenthesis += goingLeft ? -1 : 1;
-      } else if (m_parent->child(index)->isRightParenthesis()) {
-        numberOfOpenParenthesis += goingLeft ? 1 : -1;
-      }
-      maxNumberOfNestedParenthesis = max(maxNumberOfNestedParenthesis, numberOfOpenParenthesis-1);
-    }
-  }
-  return KDSize(parenthesisWidth(), operandHeight()+maxNumberOfNestedParenthesis*2);
+  return KDSize(parenthesisWidth(), operandHeight() + k_verticalMargin);
 }
 
 void ParenthesisLeftRightLayout::computeBaseline() {

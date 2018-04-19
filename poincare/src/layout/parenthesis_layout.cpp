@@ -1,4 +1,4 @@
-#include "parenthesis_left_right_layout.h"
+#include "parenthesis_layout.h"
 #include <escher/metric.h>
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
@@ -11,18 +11,18 @@ namespace Poincare {
 static inline int max(int x, int y) { return (x>y ? x : y); }
 
 
-ParenthesisLeftRightLayout::ParenthesisLeftRightLayout() :
+ParenthesisLayout::ParenthesisLayout() :
   StaticLayoutHierarchy<0>(),
   m_operandHeightComputed(false)
 {
 }
 
-void ParenthesisLeftRightLayout::invalidAllSizesPositionsAndBaselines() {
+void ParenthesisLayout::invalidAllSizesPositionsAndBaselines() {
   m_operandHeightComputed = false;
   ExpressionLayout::invalidAllSizesPositionsAndBaselines();
 }
 
-bool ParenthesisLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool ParenthesisLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right.
   // Go Left.
@@ -39,7 +39,7 @@ bool ParenthesisLeftRightLayout::moveLeft(ExpressionLayoutCursor * cursor, bool 
   return false;
 }
 
-bool ParenthesisLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool ParenthesisLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left.
   // Go Right.
@@ -56,11 +56,11 @@ bool ParenthesisLeftRightLayout::moveRight(ExpressionLayoutCursor * cursor, bool
   return false;
 }
 
-KDSize ParenthesisLeftRightLayout::computeSize() {
+KDSize ParenthesisLayout::computeSize() {
   return KDSize(parenthesisWidth(), operandHeight() + k_verticalMargin);
 }
 
-void ParenthesisLeftRightLayout::computeBaseline() {
+void ParenthesisLayout::computeBaseline() {
   assert(m_parent != nullptr);
   bool isParenthesisLeft = isLeftParenthesis();
   int indexInParent = m_parent->indexOfChild(this);
@@ -111,7 +111,7 @@ void ParenthesisLeftRightLayout::computeBaseline() {
   m_baselined = true;
 }
 
-KDCoordinate ParenthesisLeftRightLayout::operandHeight() {
+KDCoordinate ParenthesisLayout::operandHeight() {
   if (!m_operandHeightComputed) {
     computeOperandHeight();
     m_operandHeightComputed = true;
@@ -119,7 +119,7 @@ KDCoordinate ParenthesisLeftRightLayout::operandHeight() {
   return m_operandHeight;
 }
 
-void ParenthesisLeftRightLayout::computeOperandHeight() {
+void ParenthesisLayout::computeOperandHeight() {
   assert(m_parent != nullptr);
   m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
   bool isParenthesisLeft = isLeftParenthesis();
@@ -172,7 +172,7 @@ void ParenthesisLeftRightLayout::computeOperandHeight() {
   }
 }
 
-KDPoint ParenthesisLeftRightLayout::positionOfChild(ExpressionLayout * child) {
+KDPoint ParenthesisLayout::positionOfChild(ExpressionLayout * child) {
   assert(false);
   return KDPointZero;
 }

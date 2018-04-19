@@ -3,7 +3,7 @@
 #include "grid_layout.h"
 #include "horizontal_layout.h"
 #include "parenthesis_left_layout.h"
-#include "parenthesis_left_right_layout.h"
+#include "parenthesis_layout.h"
 #include "parenthesis_right_layout.h"
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/expression_layout_array.h>
@@ -108,7 +108,7 @@ void BinomialCoefficientLayout::render(KDContext * ctx, KDPoint p, KDColor expre
 
 KDSize BinomialCoefficientLayout::computeSize() {
   KDSize coefficientsSize = GridLayout(ExpressionLayoutArray(nLayout(), kLayout()).array(), 2, 1, true).size();
-  return KDSize(coefficientsSize.width() + 2*ParenthesisLeftRightLayout::parenthesisWidth(), coefficientsSize.height());
+  return KDSize(coefficientsSize.width() + 2*ParenthesisLayout::parenthesisWidth(), coefficientsSize.height());
 }
 
 void BinomialCoefficientLayout::computeBaseline() {

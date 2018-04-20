@@ -43,7 +43,7 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  EditableExpressionViewDelegateApp(container, snapshot, &m_editExpressionController),
+  ExpressionFieldDelegateApp(container, snapshot, &m_editExpressionController),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),
   m_editExpressionController(&m_modalViewController, &m_historyController, snapshot->calculationStore())
 {
@@ -86,7 +86,7 @@ bool App::textInputIsCorrect(const char * text) {
 }
 
 bool App::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
-  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && EditableExpressionViewDelegateApp::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {
+  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {
     return true;
   }
   /* Here, we check that the expression entered by the user can be printed with

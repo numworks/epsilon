@@ -11,7 +11,7 @@
 #include <escher/clipboard.h>
 #include <escher/container.h>
 #include <escher/dynamic_view_controller.h>
-#include <escher/editable_expression_view.h>
+#include <escher/expression_field.h>
 #include <escher/editable_text_cell.h>
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>

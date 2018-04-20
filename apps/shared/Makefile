@@ -6,7 +6,7 @@ app_objs += $(addprefix apps/shared/,\
   curve_view_cursor.o\
   curve_view_range.o\
   editable_cell_table_view_controller.o\
-  editable_expression_view_delegate_app.o\
+  expression_field_delegate_app.o\
   float_pair_store.o\
   float_parameter_controller.o\
   function.o\

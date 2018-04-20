@@ -27,7 +27,7 @@ public:
   void selectPreviousNewSequenceCell();
 private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  Shared::EditableExpressionViewDelegateApp * editableExpressionViewDelegateApp() override;
+  Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
   ListParameterController * parameterController() override;
   int maxNumberOfRows() override;

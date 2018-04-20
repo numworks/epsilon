@@ -1,14 +1,14 @@
-#ifndef ESCHER_EDITABLE_EXPRESSION_VIEW_H
-#define ESCHER_EDITABLE_EXPRESSION_VIEW_H
+#ifndef ESCHER_EXPRESSION_FIELD_H
+#define ESCHER_EXPRESSION_FIELD_H
 
 #include <escher/expression_layout_field.h>
 #include <escher/expression_layout_field_delegate.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 
-class EditableExpressionView :  public Responder, public View {
+class ExpressionField :  public Responder, public View {
 public:
-  EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
+  ExpressionField(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing() const;

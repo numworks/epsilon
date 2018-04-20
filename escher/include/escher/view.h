@@ -41,7 +41,6 @@ public:
   KDPoint pointFromPointInView(View * view, KDPoint point);
 
   KDRect bounds() const;
-  KDRect frame() const;
   View * subview(int index);
 
   virtual KDSize minimalSizeForOptimalDisplay() const;

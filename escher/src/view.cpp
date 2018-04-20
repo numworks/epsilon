@@ -158,10 +158,6 @@ KDRect View::bounds() const {
   return m_frame.movedTo(KDPointZero);
 }
 
-KDRect View::frame() const {
-  return KDRect(m_frame);
-}
-
 KDPoint View::absoluteOrigin() const {
   if (m_superview == nullptr) {
     assert(this == (View *)window());

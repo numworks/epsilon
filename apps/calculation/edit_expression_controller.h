@@ -38,6 +38,10 @@ private:
   public:
     ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
     ~ContentView();
+    ContentView(const ContentView& other) = delete;
+    ContentView(ContentView&& other) = delete;
+    ContentView& operator=(const ContentView& other) = delete;
+    ContentView& operator=(ContentView&& other) = delete;
     void reload();
     TableView * mainView() { return m_mainView; }
     ExpressionField * expressionField() { return &m_expressionField; }

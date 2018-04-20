@@ -6,7 +6,7 @@
 
 InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   ViewController(parentResponder),
-  m_expressionField(this, textFieldDelegate, expressionLayoutFieldDelegate)
+  m_expressionField(this, m_textBuffer, k_bufferLength, m_layout, textFieldDelegate, expressionLayoutFieldDelegate)
 {
 }
 

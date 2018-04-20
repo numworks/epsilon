@@ -56,6 +56,7 @@ public:
   void performBackspace();
   bool showEmptyLayoutIfNeeded();
   bool hideEmptyLayoutIfNeeded();
+  void clearLayout();
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;

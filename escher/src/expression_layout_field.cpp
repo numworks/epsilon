@@ -21,10 +21,7 @@ void ExpressionLayoutField::setEditing(bool isEditing) {
 }
 
 void ExpressionLayoutField::clearLayout() {
-  delete m_contentView.expressionView()->expressionLayout();
-  Poincare::ExpressionLayout * newLayout = new Poincare::HorizontalLayout();
-  m_contentView.editableExpressionView()->setExpressionLayout(newLayout);
-  m_contentView.cursor()->setPointedExpressionLayout(newLayout);
+  m_contentView.clearLayout();
 }
 
 void ExpressionLayoutField::scrollToCursor() {

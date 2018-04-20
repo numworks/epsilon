@@ -5,10 +5,11 @@
 #include <escher/expression_layout_field_delegate.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
+#include <poincare/expression_layout.h>
 
 class ExpressionField :  public Responder, public View {
 public:
-  ExpressionField(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
+  ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, Poincare::ExpressionLayout * layout, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing() const;
@@ -16,8 +17,6 @@ public:
   void setText(const char * text);
   void insertText(const char * text);
   void reload();
-  TextField * textField() { return &m_textField; }
-  ExpressionLayoutField * expressionLayoutField() { return &m_expressionLayoutField; }
   bool editionIsInTextField() const;
   bool isEmpty() const;
   bool heightIsMaximal() const;
@@ -32,7 +31,6 @@ public:
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
 
-  static constexpr int k_bufferLength = TextField::maxBufferSize();
 private:
   static constexpr KDCoordinate k_textFieldHeight = 37;
   static constexpr KDCoordinate k_leftMargin = 5;
@@ -42,7 +40,8 @@ private:
   KDCoordinate maximalHeight() const;
   TextField m_textField;
   ExpressionLayoutField m_expressionLayoutField;
-  char m_textBody[k_bufferLength];
+  char *  m_textBuffer;
+  int m_textBufferLength;
 };
 
 #endif

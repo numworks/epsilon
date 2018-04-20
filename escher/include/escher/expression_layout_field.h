@@ -49,6 +49,7 @@ private:
     Poincare::ExpressionLayoutCursor * cursor() { return &m_cursor; }
     const ExpressionView * expressionView() const { return &m_expressionView; }
     ExpressionView * editableExpressionView() { return &m_expressionView; }
+    void clearLayout();
     /* View */
     KDSize minimalSizeForOptimalDisplay() const override;
   private:

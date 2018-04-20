@@ -29,6 +29,10 @@ KDRect ExpressionLayoutField::ContentView::cursorRect() {
   return m_cursorView.frame();
 }
 
+void ExpressionLayoutField::ContentView::clearLayout() {
+  m_cursor.clearLayout();
+}
+
 KDSize ExpressionLayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize expressionViewSize = m_expressionView.minimalSizeForOptimalDisplay();
   KDSize cursorSize = isEditing() ? m_cursorView.minimalSizeForOptimalDisplay() : KDSizeZero;

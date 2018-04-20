@@ -207,6 +207,15 @@ bool ExpressionLayoutCursor::hideEmptyLayoutIfNeeded() {
   return privateShowHideEmptyLayoutIfNeeded(false);
 }
 
+void ExpressionLayoutCursor::clearLayout() {
+  ExpressionLayout * rootLayout = m_pointedExpressionLayout->editableRoot();
+  assert(rootLayout->isHorizontal());
+  for (int i = 0; i < rootLayout->numberOfChildren(); i++) {
+    static_cast<HorizontalLayout *>(rootLayout)->removeAndDeleteChildren();
+  }
+  m_pointedExpressionLayout = rootLayout;
+}
+
 bool ExpressionLayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
   /* Find Empty layouts adjacent to the cursor: Check the pointed layout and its
    * neighbour in an Horizontal layout */

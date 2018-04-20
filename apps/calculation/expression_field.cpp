@@ -2,8 +2,8 @@
 
 namespace Calculation {
 
-ExpressionField::ExpressionField(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
-  ::ExpressionField(parentResponder, textFieldDelegate, expressionLayoutFieldDelegate)
+ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, Poincare::ExpressionLayout * layout, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+  ::ExpressionField(parentResponder, textBuffer, textBufferLength, layout, textFieldDelegate, expressionLayoutFieldDelegate)
 {
   setEditing(true);
 }

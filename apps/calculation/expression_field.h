@@ -7,7 +7,7 @@ namespace Calculation {
 
 class ExpressionField : public ::ExpressionField {
 public:
-  ExpressionField(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
+  ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, Poincare::ExpressionLayout * layout, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
 protected:
   bool handleEvent(Ion::Events::Event event) override;
 };

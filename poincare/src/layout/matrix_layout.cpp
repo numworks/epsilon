@@ -83,7 +83,7 @@ bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecom
 bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   bool shouldRemoveGreySquares = false;
   for (int childIndex = 0; childIndex < m_numberOfColumns; childIndex++) {
-    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex))) {
+    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
       // The cursor is leaving the matrix, so remove the grey squares.
       shouldRemoveGreySquares = true;
       break;
@@ -101,7 +101,7 @@ bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomput
 bool MatrixLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   bool shouldRemoveGreySquares = false;
   for (int childIndex = numberOfChildren() - m_numberOfColumns; childIndex < m_numberOfChildren; childIndex++) {
-    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex))) {
+    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
       // The cursor is leaving the matrix, so remove the grey squares.
       shouldRemoveGreySquares = true;
       break;

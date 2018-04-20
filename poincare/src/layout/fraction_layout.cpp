@@ -143,7 +143,7 @@ bool FractionLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRec
   return false;
 }
 
-bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // If the cursor is inside denominator, move it to the numerator.
   if (denominatorLayout() && cursor->pointedExpressionLayout()->hasAncestor(denominatorLayout(), true)) {
     assert(numeratorLayout() != nullptr);
@@ -154,10 +154,10 @@ bool FractionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomp
     assert(numeratorLayout() != nullptr);
     return numeratorLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // If the cursor is inside numerator, move it to the denominator.
   if (numeratorLayout() && cursor->pointedExpressionLayout()->hasAncestor(numeratorLayout(), true)) {
     assert(denominatorLayout() != nullptr);
@@ -168,7 +168,7 @@ bool FractionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldReco
     assert(denominatorLayout() != nullptr);
     return denominatorLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
 int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

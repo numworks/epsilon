@@ -82,8 +82,8 @@ public:
   /* Tree navigation */
   virtual bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
   virtual bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
-  virtual bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
+  virtual bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
+  virtual bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
   virtual bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
   virtual bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
 
@@ -147,6 +147,7 @@ protected:
   bool m_positioned;
 private:
   void detachChildAtIndex(int i);
+  bool moveVertically(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
   bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
   KDRect m_frame;

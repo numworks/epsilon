@@ -13,8 +13,8 @@ public:
   void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   ExpressionLayout * layoutToPointWhenInserting() override;
   char XNTChar() const override;
 protected:

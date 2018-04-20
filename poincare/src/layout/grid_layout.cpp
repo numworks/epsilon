@@ -94,7 +94,7 @@ bool GridLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecompu
   return false;
 }
 
-bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // If the cursor is child that is not on the top row, move it inside the upper
   // neighbourg.
   int childIndex = m_numberOfColumns;
@@ -104,10 +104,10 @@ bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeL
     }
     childIndex++;
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   int childIndex = 0;
   while (childIndex < numberOfChildren() - m_numberOfColumns) {
     if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
@@ -115,7 +115,7 @@ bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomput
     }
     childIndex++;
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
 void GridLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {

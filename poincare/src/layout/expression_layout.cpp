@@ -237,22 +237,16 @@ char ExpressionLayout::XNTChar() const {
   return m_parent->XNTChar();
 }
 
-bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (m_parent) {
-    return m_parent->moveUp(cursor, shouldRecomputeLayout);
-  }
-  return false;
+bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  return moveVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
 bool ExpressionLayout::moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   return moveInside(VerticalDirection::Up, cursor, shouldRecomputeLayout);
 }
 
-bool ExpressionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (m_parent) {
-    return m_parent->moveDown(cursor, shouldRecomputeLayout);
-  }
-  return false;
+bool ExpressionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  return moveVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
 bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
@@ -341,6 +335,29 @@ bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutC
   cursor->setPosition(resultPosition);
   *shouldRecomputeLayout = (*childResultPtr)->addGreySquaresToAllMatrixAncestors();
   return true;
+}
+
+bool ExpressionLayout::moveVertically(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  if (!equivalentPositionVisited) {
+    ExpressionLayoutCursor cursorEquivalent = equivalentCursor(cursor);
+    if (cursorEquivalent.isDefined()) {
+      cursor->setPointedExpressionLayout(cursorEquivalent.pointedExpressionLayout());
+      cursor->setPosition(cursorEquivalent.position());
+      if (direction == VerticalDirection::Up) {
+        return cursor->pointedExpressionLayout()->moveUp(cursor, shouldRecomputeLayout, true);
+      } else {
+        return cursor->pointedExpressionLayout()->moveDown(cursor, shouldRecomputeLayout, true);
+      }
+    }
+  }
+  if (m_parent) {
+    if (direction == VerticalDirection::Up) {
+        return m_parent->moveUp(cursor, shouldRecomputeLayout, true);
+      } else {
+        return m_parent->moveDown(cursor, shouldRecomputeLayout, true);
+      }
+  }
+  return false;
 }
 
 void ExpressionLayout::moveCursorInsideAtDirection (

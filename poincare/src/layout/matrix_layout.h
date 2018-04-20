@@ -13,8 +13,8 @@ public:
   /* Navigation */
   bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+  bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
 

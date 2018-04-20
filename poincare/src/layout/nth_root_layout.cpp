@@ -50,128 +50,102 @@ void NthRootLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
-bool NthRootLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  // Case: Left of the radicand.
-  // Go the index if there is one, else go Left of the root.
+ExpressionLayoutCursor NthRootLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  // Case: Left of the radicand. Go the index if any, else go Left of the root.
   if (radicandLayout()
     && cursor->pointedExpressionLayout() == radicandLayout()
     && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
     if (indexLayout()) {
-      cursor->setPointedExpressionLayout(indexLayout());
-      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-      return true;
+      return ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Right);
     }
-    cursor->setPointedExpressionLayout(this);
-    return true;
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
-  // Case: Left of the index.
-  // Go Left of the root.
+  // Case: Left of the index. Go Left of the root.
   if (indexLayout()
     && cursor->pointedExpressionLayout() == indexLayout()
     && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
-    cursor->setPointedExpressionLayout(this);
-    return true;
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
   assert(cursor->pointedExpressionLayout() == this);
-  // Case: Right.
-  // Go Right of the radicand.
+  // Case: Right. Go Right of the radicand.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(radicandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(radicandLayout());
-    return true;
+    return ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Right);
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-  // Case: Left.
-  // Ask the parent.
+  // Case: Left. Ask the parent.
   if (m_parent) {
-    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
+    return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
   }
-  return false;
+  return ExpressionLayoutCursor();
 }
 
-bool NthRootLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  // Case: Right of the radicand.
-  // Go the Right of the root.
+ExpressionLayoutCursor NthRootLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  // Case: Right of the radicand. Go the Right of the root.
   if (radicandLayout()
     && cursor->pointedExpressionLayout() == radicandLayout()
     && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
-    cursor->setPointedExpressionLayout(this);
-    return true;
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
-  // Case: Right of the index.
-  // Go Left of the integrand.
+  // Case: Right of the index. Go Left of the integrand.
   if (indexLayout()
     && cursor->pointedExpressionLayout() == indexLayout()
     && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
     assert(radicandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(radicandLayout());
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return true;
+    return ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Left);
   }
   assert(cursor->pointedExpressionLayout() == this);
-  // Case: Left.
-  // Go index if there is one, else go to the radicand.
+  // Case: Left. Go index if there is one, else go to the radicand.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     if (indexLayout()) {
-      cursor->setPointedExpressionLayout(indexLayout());
-      return true;
+      return ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Left);
     }
     assert(radicandLayout() != nullptr);
-    cursor->setPointedExpressionLayout(radicandLayout());
-    return true;
+    return ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Left);
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  // Case: Right.
-  // Ask the parent.
+  // Case: Right. Ask the parent.
   if (m_parent) {
-    return m_parent->moveRight(cursor, shouldRecomputeLayout);
+    return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
   }
-  return false;
+  return ExpressionLayoutCursor();
 }
 
-bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor NthRootLayout::cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // If the cursor is Left of the radicand, move it to the index.
   if (indexLayout()
       && radicandLayout()
       && cursor->isEquivalentTo(ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Left)))
   {
-    cursor->setPointedExpressionLayout(indexLayout());
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    return true;
+    return ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Right);
   }
   // If the cursor is Left, move it to the index.
   if (indexLayout()
       && cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
-    cursor->setPointedExpressionLayout(indexLayout());
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return true;
+    return ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Left);
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  return ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor NthRootLayout::cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   if (indexLayout() && cursor->pointedExpressionLayout()->hasAncestor(indexLayout(), true)) {
     // If the cursor is Right of the index, move it to the radicand.
     if (cursor->isEquivalentTo(ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Right))) {
       assert(radicandLayout() != nullptr);
-      cursor->setPointedExpressionLayout(radicandLayout());
-      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-      return true;
+      return ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Left);
     }
     // If the cursor is Left of the index, move it Left .
     if (cursor->isEquivalentTo(ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Left))) {
-      cursor->setPointedExpressionLayout(this);
-      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-      return true;
+      return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
     }
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  return ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
 static_assert('\x90' == Ion::Charset::Root, "Unicode error");

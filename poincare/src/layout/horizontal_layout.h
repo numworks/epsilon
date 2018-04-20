@@ -23,8 +23,8 @@ public:
   void addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren);
 
   /* Navigation */
-  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
 
   /* Dynamic layout */
   void addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) override;

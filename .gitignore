@@ -50,3 +50,11 @@ escher/image/inliner
 
 # Ignore generated qtsrdefs file
 python/port/genhdr/qstrdefs.generated.h
+
+# No system files
+Thumbs.db
+desktop.ini
+.DS_Store
+.Spotlight-V100
+.Trashes
+._*

@@ -157,7 +157,7 @@ QUIZ_CASE(poincare_decimal_to_text) {
   assert_expression_prints_to(&e10, "0.12345");
   Decimal e11(1);
   assert_expression_prints_to(&e11, "1");
-  Decimal e12(0.9999999999999995);
+  Decimal e12(0.9999999999999996);
   assert_expression_prints_to(&e12, "1");
   Decimal e13(0.999999999999995);
   assert_expression_prints_to(&e13, "9.99999999999995E-1");

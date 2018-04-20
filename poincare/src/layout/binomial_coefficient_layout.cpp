@@ -79,7 +79,7 @@ bool BinomialCoefficientLayout::moveRight(ExpressionLayoutCursor * cursor, bool 
 bool BinomialCoefficientLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: kLayout.
   // Move to nLayout.
-  if (cursor->pointedExpressionLayout()->hasAncestor(kLayout())) {
+  if (cursor->pointedExpressionLayout()->hasAncestor(kLayout(), true)) {
     return nLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
   return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
@@ -88,7 +88,7 @@ bool BinomialCoefficientLayout::moveUp(ExpressionLayoutCursor * cursor, bool * s
 bool BinomialCoefficientLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: nLayout.
   // Move to kLayout.
-  if (cursor->pointedExpressionLayout()->hasAncestor(nLayout())) {
+  if (cursor->pointedExpressionLayout()->hasAncestor(nLayout(), true)) {
     return kLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
   return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);

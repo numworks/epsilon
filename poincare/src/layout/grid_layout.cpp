@@ -99,7 +99,7 @@ bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeL
   // neighbourg.
   int childIndex = m_numberOfColumns;
   while (childIndex < numberOfChildren()) {
-    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex))) {
+    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
       return editableChild(childIndex - m_numberOfColumns)->moveUpInside(cursor, shouldRecomputeLayout);
     }
     childIndex++;
@@ -110,7 +110,7 @@ bool GridLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeL
 bool GridLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   int childIndex = 0;
   while (childIndex < numberOfChildren() - m_numberOfColumns) {
-    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex))) {
+    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
       return editableChild(childIndex + m_numberOfColumns)->moveDownInside(cursor, shouldRecomputeLayout);
     }
     childIndex++;

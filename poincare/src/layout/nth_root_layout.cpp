@@ -137,7 +137,7 @@ bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecompu
   // If the cursor is Left of the radicand, move it to the index.
   if (indexLayout()
       && radicandLayout()
-      && cursor->pointedExpressionLayout()->hasAncestor(radicandLayout())
+      && cursor->pointedExpressionLayout()->hasAncestor(radicandLayout(), true)
       && cursor->positionIsEquivalentTo(radicandLayout(), ExpressionLayoutCursor::Position::Left))
   {
     cursor->setPointedExpressionLayout(indexLayout());
@@ -157,7 +157,7 @@ bool NthRootLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecompu
 }
 
 bool NthRootLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (indexLayout() && cursor->pointedExpressionLayout()->hasAncestor(indexLayout())) {
+  if (indexLayout() && cursor->pointedExpressionLayout()->hasAncestor(indexLayout(), true)) {
     // If the cursor is Right of the index, move it to the radicand.
     if (cursor->positionIsEquivalentTo(indexLayout(), ExpressionLayoutCursor::Position::Right)) {
       assert(radicandLayout() != nullptr);

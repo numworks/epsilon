@@ -259,6 +259,16 @@ bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor, bool * sh
   return moveInside(VerticalDirection::Down, cursor, shouldRecomputeLayout);
 }
 
+ExpressionLayoutCursor ExpressionLayout::equivalentCursor(ExpressionLayoutCursor * cursor) {
+  // Only HorizontalLayout may not have a parent, and it overload this function
+  assert(m_parent);
+  if (cursor->pointedExpressionLayout() == this) {
+    return m_parent->equivalentCursor(cursor);
+  } else {
+    return ExpressionLayoutCursor();
+  }
+}
+
 ExpressionLayout * ExpressionLayout::layoutToPointWhenInserting() {
   if (numberOfChildren() > 0) {
     return editableChild(0);

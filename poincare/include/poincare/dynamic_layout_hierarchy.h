@@ -29,6 +29,7 @@ public:
   bool addChildAtIndex(ExpressionLayout * operand, int index) override;
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
   void removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) override;
+  void removeAndDeleteChildren();
   virtual void mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren); // WITHOUT delete.
 
 protected:

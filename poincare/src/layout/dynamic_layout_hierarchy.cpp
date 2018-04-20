@@ -33,14 +33,7 @@ DynamicLayoutHierarchy::DynamicLayoutHierarchy(const ExpressionLayout * const * 
 }
 
 DynamicLayoutHierarchy::~DynamicLayoutHierarchy() {
-  if (m_children != nullptr) {
-    for (int i = 0; i < m_numberOfChildren; i++) {
-      if (m_children[i] != nullptr) {
-        delete m_children[i];
-      }
-    }
-  }
-  delete[] m_children;
+  removeAndDeleteChildren();
 }
 
 void DynamicLayoutHierarchy::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren) {
@@ -73,7 +66,9 @@ void DynamicLayoutHierarchy::addChildrenAtIndex(const ExpressionLayout * const *
   for (int i=indexForInsertion; i<m_numberOfChildren; i++) {
     newOperands[currentIndex++] = m_children[i];
   }
-  delete[] m_children;
+  if (m_children != nullptr) {
+    delete[] m_children;
+  }
   m_children = newOperands;
   m_numberOfChildren = currentIndex;
   m_sized = false;
@@ -140,6 +135,19 @@ void DynamicLayoutHierarchy::removePointedChildAtIndexAndMoveCursor(int index, b
   assert(indexOfNewPointedLayout >= 0);
   assert(indexOfNewPointedLayout < numberOfChildren());
   cursor->setPointedExpressionLayout(editableChild(indexOfNewPointedLayout));
+}
+
+void DynamicLayoutHierarchy::removeAndDeleteChildren() {
+  if (m_children != nullptr) {
+    for (int i = 0; i < m_numberOfChildren; i++) {
+      if (m_children[i] != nullptr) {
+        delete m_children[i];
+      }
+    }
+  }
+  delete[] m_children;
+  m_children = nullptr;
+  m_numberOfChildren = 0;
 }
 
 }

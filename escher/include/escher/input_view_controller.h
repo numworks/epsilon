@@ -41,7 +41,10 @@ private:
     View * view() override { return &m_expressionField; }
     ExpressionField * expressionField() { return &m_expressionField; }
   private:
+    static constexpr int k_bufferLength = TextField::maxBufferSize();
     ExpressionField m_expressionField;
+    char m_textBuffer[k_bufferLength];
+    Poincare::ExpressionLayout * m_layout;
   };
   bool inputViewDidFinishEditing();
   bool inputViewDidAbortEditing();

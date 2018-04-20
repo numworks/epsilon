@@ -110,6 +110,13 @@ bool ExpressionLayout::hasAncestor(const ExpressionLayout * e, bool includeSelf)
 void ExpressionLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {
 }
 
+ExpressionLayout * ExpressionLayout::editableRoot() {
+  if (m_parent == nullptr) {
+    return this;
+  }
+  return m_parent->editableRoot();
+}
+
 void ExpressionLayout::addSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling) {
   privateAddSibling(cursor, sibling, false);
 }

@@ -295,6 +295,47 @@ int HorizontalLayout::writeTextInBuffer(char * buffer, int bufferSize, int numbe
   return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "");
 }
 
+ExpressionLayoutCursor HorizontalLayout::equivalentCursor(ExpressionLayoutCursor * cursor) {
+  ExpressionLayoutCursor result;
+  ExpressionLayout * newPointedLayout = nullptr;
+  ExpressionLayoutCursor::Position newPosition = ExpressionLayoutCursor::Position::Left;
+  if (cursor->pointedExpressionLayout() == this) {
+    // First or last child, if any
+    if(numberOfChildren() == 0) {
+      return result;
+    } else {
+      newPointedLayout = editableChild(cursor->position() == ExpressionLayoutCursor::Position::Left ? 0 : numberOfChildren() - 1);
+      newPosition = cursor->position();
+    }
+  } else {
+    // Left or right child
+    int indexOfPointedLayout = indexOfChild(cursor->pointedExpressionLayout());
+    if (indexOfPointedLayout < 0) {
+      return result;
+    } else if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+      if (indexOfPointedLayout == 0) {
+        newPointedLayout = this;
+        newPosition = ExpressionLayoutCursor::Position::Left;
+      } else {
+        newPointedLayout = editableChild(indexOfPointedLayout - 1);
+        newPosition = ExpressionLayoutCursor::Position::Right;
+      }
+    } else {
+      assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+      if (indexOfPointedLayout == numberOfChildren() - 1) {
+        newPointedLayout = this;
+        newPosition = ExpressionLayoutCursor::Position::Right;
+      } else {
+        newPointedLayout = editableChild(indexOfPointedLayout + 1);
+        newPosition = ExpressionLayoutCursor::Position::Left;
+      }
+    }
+  }
+  result.setPointedExpressionLayout(newPointedLayout);
+  result.setPosition(newPosition);
+  return result;
+}
+
 bool HorizontalLayout::isEmpty() const {
   if (m_numberOfChildren == 1 && child(0)->isEmpty())
   {

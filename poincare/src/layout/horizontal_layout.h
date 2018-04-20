@@ -35,6 +35,9 @@ public:
   /* Expression Engine */
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
+  /* Cursor */
+  ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor * cursor) override;
+
   /* Other */
   bool isHorizontal() const override { return true; }
   bool isEmpty() const override;

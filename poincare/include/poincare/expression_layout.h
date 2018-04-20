@@ -90,6 +90,9 @@ public:
   /* Expression Engine */
   virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
+  /* Cursor */
+  virtual ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor * cursor);
+
   /* Other */
   virtual ExpressionLayout * layoutToPointWhenInserting();
   bool addGreySquaresToAllMatrixAncestors();

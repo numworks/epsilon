@@ -41,7 +41,9 @@ private:
   Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Expression * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const;
 
-  constexpr static int k_maxLength = 15;
+  int convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode, int numberOfSignificantDigits) const;
+  // Worst case is -1.2345678901234E-1000
+  constexpr static int k_maxBufferSize = PrintFloat::k_numberOfStoredSignificantDigits+1+1+1+1+4+1;
   Integer m_mantissa;
   int m_exponent;
 };

@@ -324,6 +324,7 @@ STATIC void parse_string_literal(mp_lexer_t *lex, bool is_raw) {
                                 break;
                             }
                             // Otherwise fall through.
+                            __attribute__ ((fallthrough));
                         case 'x':
                         {
                             mp_uint_t num = 0;

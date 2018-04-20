@@ -25,24 +25,24 @@ void EmptyLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   }
 }
 
-bool EmptyLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor EmptyLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Ask the parent.
   if (m_parent) {
     cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
+    return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
   }
-  return false;
+  return ExpressionLayoutCursor();
 }
 
-bool EmptyLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor EmptyLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Ask the parent.
   if (m_parent) {
     cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    return m_parent->moveRight(cursor, shouldRecomputeLayout);
+    return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
   }
-  return false;
+  return ExpressionLayoutCursor();
 }
 
 int EmptyLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

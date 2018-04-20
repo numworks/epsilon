@@ -18,36 +18,30 @@ ExpressionLayout * CharLayout::clone() const {
   return layout;
 }
 
-bool CharLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor CharLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
-  // Case: Right.
-  // Go Left.
+  // Case: Right. Go Left.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return true;
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
-  // Case: Left.
-  // Ask the parent.
+  // Case: Left. Ask the parent.
   if (m_parent) {
-    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
+    return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
   }
-  return false;
+  return ExpressionLayoutCursor();
 }
 
-bool CharLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor CharLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
-  // Case: Left.
-  // Go Right.
+  // Case: Left. Go Right.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    return true;
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
-  // Case: Right.
-  // Ask the parent.
+  // Case: Right. Ask the parent.
   if (m_parent) {
-    return m_parent->moveRight(cursor, shouldRecomputeLayout);
+    return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
   }
-  return false;
+  return ExpressionLayoutCursor();
 }
 
 bool CharLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {

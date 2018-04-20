@@ -80,12 +80,12 @@ public:
   virtual void deleteBeforeCursor(ExpressionLayoutCursor * cursor);
 
   /* Tree navigation */
-  virtual bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual bool moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
-  virtual bool moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
-  virtual bool moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
-  virtual bool moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
+  virtual ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
+  virtual ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
+  virtual ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
+  virtual ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
+  virtual ExpressionLayoutCursor cursorInDescendantsAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
+  virtual ExpressionLayoutCursor cursorInDescendantsUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
 
   /* Expression Engine */
   virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
@@ -128,7 +128,7 @@ protected:
   virtual KDSize computeSize() = 0;
   virtual void computeBaseline() = 0;
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
-  void moveCursorInsideAtDirection (
+  void scoreCursorInDescendantsVerticalOf (
     VerticalDirection direction,
     ExpressionLayoutCursor * cursor,
     bool * shouldRecomputeLayout,
@@ -147,8 +147,8 @@ protected:
   bool m_positioned;
 private:
   void detachChildAtIndex(int i);
-  bool moveVertically(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
-  bool moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
+  ExpressionLayoutCursor cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
+  ExpressionLayoutCursor cursorInDescendantsVerticalOf(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
   KDRect m_frame;
 };

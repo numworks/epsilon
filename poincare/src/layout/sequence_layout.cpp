@@ -17,49 +17,40 @@ void SequenceLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
-bool SequenceLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  // Case: Left of the bounds.
-  // Go Left of the sequence.
+ExpressionLayoutCursor SequenceLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  // Case: Left of the bounds. Go Left of the sequence.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left
       && ((lowerBoundLayout()
           && cursor->pointedExpressionLayout() == lowerBoundLayout())
         || (upperBoundLayout()
           && cursor->pointedExpressionLayout() == upperBoundLayout())))
   {
-    cursor->setPointedExpressionLayout(this);
-    return true;
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
-  // Case: Left of the argument.
-  // Go Right of the lower bound.
+  // Case: Left of the argument. Go Right of the lower bound.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left
       && argumentLayout()
       && cursor->pointedExpressionLayout() == argumentLayout())
   {
     assert(lowerBoundLayout() != nullptr);
-    cursor->setPointedExpressionLayout(lowerBoundLayout());
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    return true;
+    return ExpressionLayoutCursor(lowerBoundLayout(), ExpressionLayoutCursor::Position::Right);
   }
   assert(cursor->pointedExpressionLayout() == this);
-  // Case: Right.
-  // Go to the argument and move Left.
+  // Case: Right. Go to the argument and move Left.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
     assert(argumentLayout() != nullptr);
-    cursor->setPointedExpressionLayout(argumentLayout());
-    return true;
+    return ExpressionLayoutCursor(argumentLayout(), ExpressionLayoutCursor::Position::Right);
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-  // Case: Left.
-  // Ask the parent.
+  // Case: Left. Ask the parent.
   if (m_parent) {
-    return m_parent->moveLeft(cursor, shouldRecomputeLayout);
+    return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
   }
-  return false;
+  return ExpressionLayoutCursor();
 }
 
-bool SequenceLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  // Case: Right of the bounds.
-  // Go Left of the argument.
+ExpressionLayoutCursor SequenceLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  // Case: Right of the bounds. Go Left of the argument.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right
       && ((lowerBoundLayout()
           && cursor->pointedExpressionLayout() == lowerBoundLayout())
@@ -67,67 +58,59 @@ bool SequenceLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRec
           && cursor->pointedExpressionLayout() == upperBoundLayout())))
   {
     assert(argumentLayout() != nullptr);
-    cursor->setPointedExpressionLayout(argumentLayout());
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return true;
+    return ExpressionLayoutCursor(argumentLayout(), ExpressionLayoutCursor::Position::Left);
   }
-  // Case: Right of the argument.
-  // Ask the parent.
+  // Case: Right of the argument. Go Right.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right
       && argumentLayout()
       && cursor->pointedExpressionLayout() == argumentLayout())
   {
-    cursor->setPointedExpressionLayout(this);
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-    return true;
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
   assert(cursor->pointedExpressionLayout() == this);
-  // Case: Left.
-  // Go to the upper bound.
+  // Case: Left. Go to the upper bound.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
     assert(upperBoundLayout() != nullptr);
-    cursor->setPointedExpressionLayout(upperBoundLayout());
-    return true;
+    return ExpressionLayoutCursor(upperBoundLayout(), ExpressionLayoutCursor::Position::Left);
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  // Case: Right.
-  // Ask the parent.
+  // Case: Right. Ask the parent.
   if (m_parent) {
-    return m_parent->moveRight(cursor, shouldRecomputeLayout);
+    return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
   }
-  return false;
+  return ExpressionLayoutCursor();
 }
 
-bool SequenceLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor SequenceLayout::cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // If the cursor is inside the lower bound, move it to the upper bound.
   if (lowerBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(lowerBoundLayout(), true)) {
     assert(upperBoundLayout() != nullptr);
-    return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
+    return upperBoundLayout()->cursorInDescendantsAbove(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the argument, move it to the upper bound.
   if (argumentLayout()
       && cursor->isEquivalentTo(ExpressionLayoutCursor(argumentLayout(), ExpressionLayoutCursor::Position::Left)))
   {
     assert(upperBoundLayout() != nullptr);
-    return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
+    return upperBoundLayout()->cursorInDescendantsAbove(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  return ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor SequenceLayout::cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // If the cursor is inside the upper bound, move it to the lower bound.
   if (upperBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(upperBoundLayout(), true)) {
     assert(lowerBoundLayout() != nullptr);
-    return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
+    return lowerBoundLayout()->cursorInDescendantsUnder(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the argument, move it to the lower bound.
   if (argumentLayout()
       && cursor->isEquivalentTo(ExpressionLayoutCursor(argumentLayout(), ExpressionLayoutCursor::Position::Left)))
   {
     assert(lowerBoundLayout() != nullptr);
-    return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
+    return lowerBoundLayout()->cursorInDescendantsUnder(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  return ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
 ExpressionLayout * SequenceLayout::layoutToPointWhenInserting() {

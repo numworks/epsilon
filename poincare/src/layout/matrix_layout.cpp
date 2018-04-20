@@ -15,24 +15,21 @@ ExpressionLayout * MatrixLayout::clone() const {
   return layout;
 }
 
-bool MatrixLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor MatrixLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   int childIndex = indexOfChild(cursor->pointedExpressionLayout());
   if (childIndex >- 1
       && cursor->position() == ExpressionLayoutCursor::Position::Left
       && childIsLeftOfGrid(childIndex))
   {
-    // Case: Left of a child on the left of the grid.
-    // Remove the grey squares of the grid, then go left of the grid.
+    /* Case: Left of a child on the left of the grid.
+     * Remove the grey squares of the grid, then go left of the grid. */
     assert(hasGreySquares());
     removeGreySquares();
     *shouldRecomputeLayout = true;
-    cursor->setPointedExpressionLayout(this);
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-    return true;
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
-  // Case: Right.
-  // Add the grey squares to the matrix, then move to the bottom right non empty
-  // nor grey child.
+  /* Case: Right.  Add the grey squares to the matrix, then move to the bottom
+   * right non empty nor grey child. */
   if (cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {
@@ -41,15 +38,13 @@ bool MatrixLayout::moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomp
     *shouldRecomputeLayout = true;
     ExpressionLayout * lastChild = editableChild((m_numberOfColumns-1)*(m_numberOfRows-1));
     assert(lastChild != nullptr);
-    cursor->setPointedExpressionLayout(lastChild);
-    return true;
+    return ExpressionLayoutCursor(lastChild, ExpressionLayoutCursor::Position::Right);
   }
-  return GridLayout::moveLeft(cursor, shouldRecomputeLayout);
+  return GridLayout::cursorLeftOf(cursor, shouldRecomputeLayout);
 }
 
-bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  // Case: Left.
-  // Add the grey squares to the matrix,, then go to the first entry.
+ExpressionLayoutCursor MatrixLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  // Case: Left. Add the grey squares to the matrix, then go to the first entry.
   if (cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Left)
   {
@@ -59,8 +54,7 @@ bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecom
     assert(m_numberOfColumns*m_numberOfRows >= 1);
     ExpressionLayout * firstChild = editableChild(0);
     assert(firstChild != nullptr);
-    cursor->setPointedExpressionLayout(firstChild);
-    return true;
+    return ExpressionLayoutCursor(firstChild, ExpressionLayoutCursor::Position::Left);
   }
   // Case: The cursor points to a grid's child.
   int childIndex = indexOfChild(cursor->pointedExpressionLayout());
@@ -68,19 +62,18 @@ bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecom
       && cursor->position() == ExpressionLayoutCursor::Position::Right
       && childIsRightOfGrid(childIndex))
   {
-    // Case: Right of a child on the right of the grid.
-    // Remove the grey squares of the grid, then go right of the grid.
-    cursor->setPointedExpressionLayout(this);
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    /* Case: Right of a child on the right of the grid. Remove the grey squares
+     * of the grid, then go right of the grid. */
     assert(hasGreySquares());
     removeGreySquares();
     *shouldRecomputeLayout = true;
-    return true;
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
+
   }
-  return GridLayout::moveRight(cursor, shouldRecomputeLayout);
+  return GridLayout::cursorRightOf(cursor, shouldRecomputeLayout);
 }
 
-bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor MatrixLayout::cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   bool shouldRemoveGreySquares = false;
   for (int childIndex = 0; childIndex < m_numberOfColumns; childIndex++) {
     if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
@@ -89,16 +82,16 @@ bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomput
       break;
     }
   }
-  bool returnValue = GridLayout::moveUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-  if (returnValue && shouldRemoveGreySquares) {
+  ExpressionLayoutCursor resultCursor = GridLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  if (resultCursor.isDefined() && shouldRemoveGreySquares) {
     assert(hasGreySquares());
     removeGreySquares();
     *shouldRecomputeLayout = true;
   }
-  return returnValue;
+  return resultCursor;
 }
 
-bool MatrixLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor MatrixLayout::cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   bool shouldRemoveGreySquares = false;
   for (int childIndex = numberOfChildren() - m_numberOfColumns; childIndex < m_numberOfChildren; childIndex++) {
     if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
@@ -107,18 +100,18 @@ bool MatrixLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomp
       break;
     }
   }
-  bool returnValue = GridLayout::moveDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-  if (returnValue && shouldRemoveGreySquares) {
+  ExpressionLayoutCursor resultCursor = GridLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  if (resultCursor.isDefined() && shouldRemoveGreySquares) {
     assert(hasGreySquares());
     removeGreySquares();
     *shouldRecomputeLayout = true;
   }
-  return returnValue;
+  return resultCursor;
 }
 
-bool MatrixLayout::moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout)  {
-  bool result = GridLayout::moveUpInside(cursor, shouldRecomputeLayout);
-  if (result && cursor->pointedExpressionLayout() != this) {
+ExpressionLayoutCursor MatrixLayout::cursorInDescendantsAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout)  {
+  ExpressionLayoutCursor result = GridLayout::cursorInDescendantsAbove(cursor, shouldRecomputeLayout);
+  if (result.isDefined() && cursor->pointedExpressionLayout() != this) {
     // Add the grey squares if the cursor is pointing at a matrix descendant,
     // not at the matrix itself.
     assert(!hasGreySquares());
@@ -128,9 +121,9 @@ bool MatrixLayout::moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRe
   return result;
 }
 
-bool MatrixLayout::moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout)  {
-  bool result = GridLayout::moveDownInside(cursor, shouldRecomputeLayout);
-  if (result && cursor->pointedExpressionLayout() != this) {
+ExpressionLayoutCursor MatrixLayout::cursorInDescendantsUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout)  {
+  ExpressionLayoutCursor result = GridLayout::cursorInDescendantsUnder(cursor, shouldRecomputeLayout);
+  if (result.isDefined() && cursor->pointedExpressionLayout() != this) {
     // Add the grey squares if the cursor is pointing at a matrix descendant,
     // not at the matrix itself.
     assert(!hasGreySquares());

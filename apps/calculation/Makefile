@@ -6,7 +6,7 @@ app_objs += $(addprefix apps/calculation/,\
   calculation.o\
   calculation_store.o\
   edit_expression_controller.o\
-  editable_expression_view.o\
+  expression_field.o\
   history_view_cell.o\
   history_controller.o\
   output_expressions_view.o\

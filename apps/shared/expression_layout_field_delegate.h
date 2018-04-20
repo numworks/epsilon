@@ -2,7 +2,7 @@
 #define SHARED_EXPRESSION_LAYOUT_FIELD_DELEGATE_H
 
 #include <escher/expression_layout_field_delegate.h>
-#include "editable_expression_view_delegate_app.h"
+#include "expression_field_delegate_app.h"
 
 namespace Shared {
 
@@ -15,7 +15,7 @@ public:
   void expressionLayoutFieldDidChangeSize(ExpressionLayoutField * expressionLayoutField) override;
   Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) override;
 private:
-  virtual EditableExpressionViewDelegateApp * editableExpressionViewDelegateApp() = 0;
+  virtual ExpressionFieldDelegateApp * expressionFieldDelegateApp() = 0;
 };
 
 }

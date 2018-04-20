@@ -1,7 +1,7 @@
 #ifndef ESCHER_INPUT_VIEW_CONTROLLER_H
 #define ESCHER_INPUT_VIEW_CONTROLLER_H
 
-#include <escher/editable_expression_view.h>
+#include <escher/expression_field.h>
 #include <escher/expression_layout_field_delegate.h>
 #include <escher/modal_view_controller.h>
 #include <escher/invocation.h>
@@ -34,18 +34,18 @@ public:
   Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) override;
 
 private:
-  class EditableExpressionViewController : public ViewController {
+  class ExpressionFieldController : public ViewController {
   public:
-    EditableExpressionViewController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
+    ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
     void didBecomeFirstResponder() override;
-    View * view() override { return &m_editableExpressionView; }
-    EditableExpressionView * editableExpressionView() { return &m_editableExpressionView; }
+    View * view() override { return &m_expressionField; }
+    ExpressionField * expressionField() { return &m_expressionField; }
   private:
-    EditableExpressionView m_editableExpressionView;
+    ExpressionField m_expressionField;
   };
   bool inputViewDidFinishEditing();
   bool inputViewDidAbortEditing();
-  EditableExpressionViewController m_editableExpressionViewController;
+  ExpressionFieldController m_expressionFieldController;
   Invocation m_successAction;
   Invocation m_failureAction;
   TextFieldDelegate * m_textFieldDelegate;

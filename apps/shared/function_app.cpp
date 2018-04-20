@@ -53,7 +53,7 @@ void FunctionApp::Snapshot::reset() {
 }
 
 FunctionApp::FunctionApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
-  EditableExpressionViewDelegateApp(container, snapshot, rootViewController)
+  ExpressionFieldDelegateApp(container, snapshot, rootViewController)
 {
 }
 

@@ -2,7 +2,7 @@
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
 #include <escher.h>
-#include "editable_expression_view.h"
+#include "expression_field.h"
 #include "../shared/text_field_delegate.h"
 #include "../shared/expression_layout_field_delegate.h"
 #include "history_controller.h"
@@ -38,14 +38,14 @@ private:
     ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
     void reload();
     TableView * mainView() { return m_mainView; }
-    EditableExpressionView * editableExpressionView() { return &m_editableExpressionView; }
+    ExpressionField * expressionField() { return &m_expressionField; }
     /* View */
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
   private:
     TableView * m_mainView;
-    EditableExpressionView m_editableExpressionView;
+    ExpressionField m_expressionField;
   };
   View * loadView() override;
   void unloadView(View * view) override;
@@ -55,7 +55,7 @@ private:
   bool inputViewDidAbortEditing(const char * text);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   char m_cacheBuffer[TextField::maxBufferSize()];
-  Shared::EditableExpressionViewDelegateApp * editableExpressionViewDelegateApp() override;
+  Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   Poincare::ExpressionLayout * expressionLayout();
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;

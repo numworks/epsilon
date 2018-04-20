@@ -39,7 +39,7 @@ TextFieldDelegateApp * ListController::textFieldDelegateApp() {
   return (App *)app();
 }
 
-EditableExpressionViewDelegateApp * ListController::editableExpressionViewDelegateApp() {
+ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
   return (App *)app();
 }
 

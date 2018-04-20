@@ -9,7 +9,7 @@
 
 namespace Calculation {
 
-class App : public Shared::EditableExpressionViewDelegateApp {
+class App : public Shared::ExpressionFieldDelegateApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:

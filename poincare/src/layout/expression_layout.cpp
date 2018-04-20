@@ -209,7 +209,7 @@ void ExpressionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
     // Case: The pointed layout is a child. Move Left.
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
     bool shouldRecomputeLayout = false;
-    cursor->moveLeft(&shouldRecomputeLayout);
+    cursor->cursorOnLeft(&shouldRecomputeLayout);
     return;
   }
   assert(cursor->pointedExpressionLayout() == this);
@@ -237,20 +237,20 @@ char ExpressionLayout::XNTChar() const {
   return m_parent->XNTChar();
 }
 
-bool ExpressionLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  return moveVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+ExpressionLayoutCursor ExpressionLayout::cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  return cursorVerticalOf(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-bool ExpressionLayout::moveUpInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  return moveInside(VerticalDirection::Up, cursor, shouldRecomputeLayout);
+ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  return cursorInDescendantsVerticalOf(VerticalDirection::Up, cursor, shouldRecomputeLayout);
 }
 
-bool ExpressionLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  return moveVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+ExpressionLayoutCursor ExpressionLayout::cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  return cursorVerticalOf(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-bool ExpressionLayout::moveDownInside(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  return moveInside(VerticalDirection::Down, cursor, shouldRecomputeLayout);
+ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  return cursorInDescendantsVerticalOf(VerticalDirection::Down, cursor, shouldRecomputeLayout);
 }
 
 ExpressionLayoutCursor ExpressionLayout::equivalentCursor(ExpressionLayoutCursor * cursor) {
@@ -317,7 +317,7 @@ void ExpressionLayout::detachChildAtIndex(int i) {
   m_baselined = false;
 }
 
-bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsVerticalOf(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   ExpressionLayout *  chilResult = nullptr;
   ExpressionLayout ** childResultPtr = &chilResult;
   ExpressionLayoutCursor::Position resultPosition = ExpressionLayoutCursor::Position::Left;
@@ -325,42 +325,40 @@ bool ExpressionLayout::moveInside(VerticalDirection direction, ExpressionLayoutC
    * than this initial value of score. */
   int resultScore = Ion::Display::Width*Ion::Display::Width + Ion::Display::Height*Ion::Display::Height;
 
-  moveCursorInsideAtDirection(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore);
+  scoreCursorInDescendantsVerticalOf(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore);
 
   // If there is a valid result
   if (*childResultPtr == nullptr) {
-    return false;
+    return ExpressionLayoutCursor();
   }
-  cursor->setPointedExpressionLayout(*childResultPtr);
-  cursor->setPosition(resultPosition);
   *shouldRecomputeLayout = (*childResultPtr)->addGreySquaresToAllMatrixAncestors();
-  return true;
+  return ExpressionLayoutCursor(*childResultPtr, resultPosition);
 }
 
-bool ExpressionLayout::moveVertically(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor ExpressionLayout::cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   if (!equivalentPositionVisited) {
     ExpressionLayoutCursor cursorEquivalent = equivalentCursor(cursor);
     if (cursorEquivalent.isDefined()) {
       cursor->setPointedExpressionLayout(cursorEquivalent.pointedExpressionLayout());
       cursor->setPosition(cursorEquivalent.position());
       if (direction == VerticalDirection::Up) {
-        return cursor->pointedExpressionLayout()->moveUp(cursor, shouldRecomputeLayout, true);
+        return cursor->pointedExpressionLayout()->cursorAbove(cursor, shouldRecomputeLayout, true);
       } else {
-        return cursor->pointedExpressionLayout()->moveDown(cursor, shouldRecomputeLayout, true);
+        return cursor->pointedExpressionLayout()->cursorUnder(cursor, shouldRecomputeLayout, true);
       }
     }
   }
   if (m_parent) {
     if (direction == VerticalDirection::Up) {
-        return m_parent->moveUp(cursor, shouldRecomputeLayout, true);
+        return m_parent->cursorAbove(cursor, shouldRecomputeLayout, true);
       } else {
-        return m_parent->moveDown(cursor, shouldRecomputeLayout, true);
+        return m_parent->cursorUnder(cursor, shouldRecomputeLayout, true);
       }
   }
-  return false;
+  return ExpressionLayoutCursor();
 }
 
-void ExpressionLayout::moveCursorInsideAtDirection (
+void ExpressionLayout::scoreCursorInDescendantsVerticalOf (
     VerticalDirection direction,
     ExpressionLayoutCursor * cursor,
     bool * shouldRecomputeLayout,
@@ -393,7 +391,7 @@ void ExpressionLayout::moveCursorInsideAtDirection (
   if (layoutIsUnderOrAbove || layoutContains) {
     int childIndex = 0;
     while (child(childIndex++)) {
-      editableChild(childIndex-1)->moveCursorInsideAtDirection(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore);
+      editableChild(childIndex-1)->scoreCursorInDescendantsVerticalOf(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore);
     }
   }
 }

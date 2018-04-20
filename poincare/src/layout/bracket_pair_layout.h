@@ -13,8 +13,8 @@ public:
   ExpressionLayout * clone() const override;
   void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) override;
   void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
-  bool moveLeft(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  bool moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 protected:
   ExpressionLayout * operandLayout();

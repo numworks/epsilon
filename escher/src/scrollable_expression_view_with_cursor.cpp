@@ -2,6 +2,7 @@
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/src/layout/matrix_layout.h>
+#include <poincare/expression_layout_cursor.h>
 #include <assert.h>
 
 ScrollableExpressionViewWithCursor::ScrollableExpressionViewWithCursor(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ScrollableExpressionViewWithCursorDelegate * delegate) :
@@ -79,26 +80,24 @@ KDSize ScrollableExpressionViewWithCursor::minimalSizeForOptimalDisplay() const 
 }
 
 bool ScrollableExpressionViewWithCursor::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
+  Poincare::ExpressionLayoutCursor result;
   if (event == Ion::Events::Left) {
-    return m_expressionViewWithCursor.cursor()->moveLeft(shouldRecomputeLayout);
+    result = m_expressionViewWithCursor.cursor()->cursorOnLeft(shouldRecomputeLayout);
+  } else if (event == Ion::Events::Right) {
+    result =  m_expressionViewWithCursor.cursor()->cursorOnRight(shouldRecomputeLayout);
+  } else if (event == Ion::Events::Up) {
+    result = m_expressionViewWithCursor.cursor()->cursorAbove(shouldRecomputeLayout);
+  } else if (event == Ion::Events::Down) {
+    result = m_expressionViewWithCursor.cursor()->cursorUnder(shouldRecomputeLayout);
+  } else if (event == Ion::Events::ShiftLeft) {
+    result.setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
+    result.setPosition(Poincare::ExpressionLayoutCursor::Position::Left);
+  } else if (event == Ion::Events::ShiftRight) {
+    result.setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
+    result.setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
   }
-  if (event == Ion::Events::Right) {
-    return m_expressionViewWithCursor.cursor()->moveRight(shouldRecomputeLayout);
-  }
-  if (event == Ion::Events::Up) {
-    return m_expressionViewWithCursor.cursor()->moveUp(shouldRecomputeLayout);
-  }
-  if (event == Ion::Events::Down) {
-    return m_expressionViewWithCursor.cursor()->moveDown(shouldRecomputeLayout);
-  }
-  if (event == Ion::Events::ShiftLeft) {
-    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
-    m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Left);
-    return true;
-  }
-  if (event == Ion::Events::ShiftRight) {
-    m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(m_expressionViewWithCursor.expressionView()->expressionLayout());
-    m_expressionViewWithCursor.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
+  if (result.isDefined()) {
+    m_expressionViewWithCursor.setCursor(result);
     return true;
   }
   return false;

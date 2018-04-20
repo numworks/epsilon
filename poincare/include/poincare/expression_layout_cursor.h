@@ -38,10 +38,10 @@ public:
   KDPoint middleLeftPoint();
 
   /* Move */
-  bool moveLeft(bool * shouldRecomputeLayout);
-  bool moveRight(bool * shouldRecomputeLayout);
-  bool moveUp(bool * shouldRecomputeLayout);
-  bool moveDown(bool * shouldRecomputeLayout);
+  ExpressionLayoutCursor cursorOnLeft(bool * shouldRecomputeLayout);
+  ExpressionLayoutCursor cursorOnRight(bool * shouldRecomputeLayout);
+  ExpressionLayoutCursor cursorAbove(bool * shouldRecomputeLayout);
+  ExpressionLayoutCursor cursorUnder(bool * shouldRecomputeLayout);
 
   /* Edition */
   void addLayoutAndMoveCursor(ExpressionLayout * layout);

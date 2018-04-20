@@ -52,9 +52,9 @@ private:
   private:
     static constexpr int k_bufferLength = TextField::maxBufferSize();
     TableView * m_mainView;
-    ExpressionField m_expressionField;
     char m_textBody[k_bufferLength];
     Poincare::ExpressionLayout * m_layout;
+    ExpressionField m_expressionField;
   };
   View * loadView() override;
   void unloadView(View * view) override;

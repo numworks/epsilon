@@ -80,7 +80,7 @@ bool MatrixLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRecom
   return GridLayout::moveRight(cursor, shouldRecomputeLayout);
 }
 
-bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   bool shouldRemoveGreySquares = false;
   for (int childIndex = 0; childIndex < m_numberOfColumns; childIndex++) {
     if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
@@ -89,7 +89,7 @@ bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomput
       break;
     }
   }
-  bool returnValue = GridLayout::moveUp(cursor, shouldRecomputeLayout);
+  bool returnValue = GridLayout::moveUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
   if (returnValue && shouldRemoveGreySquares) {
     assert(hasGreySquares());
     removeGreySquares();
@@ -98,7 +98,7 @@ bool MatrixLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomput
   return returnValue;
 }
 
-bool MatrixLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool MatrixLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   bool shouldRemoveGreySquares = false;
   for (int childIndex = numberOfChildren() - m_numberOfColumns; childIndex < m_numberOfChildren; childIndex++) {
     if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
@@ -107,7 +107,7 @@ bool MatrixLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomp
       break;
     }
   }
-  bool returnValue = GridLayout::moveDown(cursor, shouldRecomputeLayout);
+  bool returnValue = GridLayout::moveDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
   if (returnValue && shouldRemoveGreySquares) {
     assert(hasGreySquares());
     removeGreySquares();

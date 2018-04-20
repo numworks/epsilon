@@ -304,7 +304,7 @@ void gc_collect_start(void) {
     #if MICROPY_GC_ALLOC_THRESHOLD
     MP_STATE_MEM(gc_alloc_amount) = 0;
     #endif
-    MP_STATE_MEM(gc_stack_overflow) = 0; 
+    MP_STATE_MEM(gc_stack_overflow) = 0;
     MP_STATE_MEM(gc_sp) = MP_STATE_MEM(gc_stack);
     // Trace root pointers.  This relies on the root pointers being organised
     // correctly in the mp_state_ctx structure.  We scan nlr_top, dict_locals,

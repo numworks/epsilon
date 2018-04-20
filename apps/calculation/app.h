@@ -29,7 +29,7 @@ public:
   };
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool textInputIsCorrect(const char * text);
-  bool scrollableExpressionViewWithCursorDidReceiveEvent(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) override;
+  bool expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
   const char * XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);

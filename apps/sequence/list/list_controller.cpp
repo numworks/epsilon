@@ -29,9 +29,9 @@ Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
   return &m_sequenceToolbox;
 }
 
-Toolbox * ListController::toolboxForScrollableExpressionViewWithCursor(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
+Toolbox * ListController::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
   setToolboxExtraCells();
-  m_sequenceToolbox.setSenderAndAction(scrollableExpressionViewWithCursor, MathToolbox::actionForScrollableExpressionViewWithCursor);
+  m_sequenceToolbox.setSenderAndAction(expressionLayoutField, MathToolbox::actionForExpressionLayoutField);
   return &m_sequenceToolbox;
 }
 

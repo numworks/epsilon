@@ -2,8 +2,8 @@
 
 namespace Calculation {
 
-EditableExpressionView::EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate) :
-  ::EditableExpressionView(parentResponder, textFieldDelegate, scrollableExpressionViewWithCursorDelegate)
+EditableExpressionView::EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+  ::EditableExpressionView(parentResponder, textFieldDelegate, expressionLayoutFieldDelegate)
 {
   setEditing(true);
 }

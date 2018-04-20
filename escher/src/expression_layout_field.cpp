@@ -1,44 +1,44 @@
-#include <escher/scrollable_expression_view_with_cursor.h>
+#include <escher/expression_layout_field.h>
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/src/layout/matrix_layout.h>
 #include <poincare/expression_layout_cursor.h>
 #include <assert.h>
 
-ScrollableExpressionViewWithCursor::ScrollableExpressionViewWithCursor(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ScrollableExpressionViewWithCursorDelegate * delegate) :
+ExpressionLayoutField::ExpressionLayoutField(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ExpressionLayoutFieldDelegate * delegate) :
   ScrollableView(parentResponder, &m_expressionViewWithCursor, this),
   m_expressionViewWithCursor(expressionLayout),
   m_delegate(delegate)
 {
 }
 
-bool ScrollableExpressionViewWithCursor::isEditing() const {
+bool ExpressionLayoutField::isEditing() const {
   return m_expressionViewWithCursor.isEditing();
 }
 
-void ScrollableExpressionViewWithCursor::setEditing(bool isEditing) {
+void ExpressionLayoutField::setEditing(bool isEditing) {
   m_expressionViewWithCursor.setEditing(isEditing);
 }
 
-void ScrollableExpressionViewWithCursor::clearLayout() {
+void ExpressionLayoutField::clearLayout() {
   delete m_expressionViewWithCursor.expressionView()->expressionLayout();
   Poincare::ExpressionLayout * newLayout = new Poincare::HorizontalLayout();
   m_expressionViewWithCursor.expressionView()->setExpressionLayout(newLayout);
   m_expressionViewWithCursor.cursor()->setPointedExpressionLayout(newLayout);
 }
 
-void ScrollableExpressionViewWithCursor::scrollToCursor() {
+void ExpressionLayoutField::scrollToCursor() {
   scrollToContentRect(m_expressionViewWithCursor.cursorRect(), true);
 }
 
-Toolbox * ScrollableExpressionViewWithCursor::toolbox() {
+Toolbox * ExpressionLayoutField::toolbox() {
   if (m_delegate) {
-    return m_delegate->toolboxForScrollableExpressionViewWithCursor(this);
+    return m_delegate->toolboxForExpressionLayoutField(this);
   }
   return nullptr;
 }
 
-bool ScrollableExpressionViewWithCursor::handleEvent(Ion::Events::Event event) {
+bool ExpressionLayoutField::handleEvent(Ion::Events::Event event) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool didHandleEvent = false;
   bool shouldRecomputeLayout = m_expressionViewWithCursor.cursor()->showEmptyLayoutIfNeeded();
@@ -63,7 +63,7 @@ bool ScrollableExpressionViewWithCursor::handleEvent(Ion::Events::Event event) {
     reload();
     KDSize newSize = minimalSizeForOptimalDisplay();
     if (m_delegate && previousSize.height() != newSize.height()) {
-      m_delegate->scrollableExpressionViewWithCursorDidChangeSize(this);
+      m_delegate->expressionLayoutFieldDidChangeSize(this);
       reload();
     }
     return true;
@@ -71,15 +71,15 @@ bool ScrollableExpressionViewWithCursor::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool ScrollableExpressionViewWithCursor::scrollableExpressionViewWithCursorShouldFinishEditing(Ion::Events::Event event) {
-  return m_delegate->scrollableExpressionViewWithCursorShouldFinishEditing(this, event);
+bool ExpressionLayoutField::expressionLayoutFieldShouldFinishEditing(Ion::Events::Event event) {
+  return m_delegate->expressionLayoutFieldShouldFinishEditing(this, event);
 }
 
-KDSize ScrollableExpressionViewWithCursor::minimalSizeForOptimalDisplay() const {
+KDSize ExpressionLayoutField::minimalSizeForOptimalDisplay() const {
   return m_expressionViewWithCursor.minimalSizeForOptimalDisplay();
 }
 
-bool ScrollableExpressionViewWithCursor::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
+bool ExpressionLayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
   Poincare::ExpressionLayoutCursor result;
   if (event == Ion::Events::Left) {
     result = m_expressionViewWithCursor.cursor()->cursorOnLeft(shouldRecomputeLayout);
@@ -103,24 +103,24 @@ bool ScrollableExpressionViewWithCursor::privateHandleMoveEvent(Ion::Events::Eve
   return false;
 }
 
-bool ScrollableExpressionViewWithCursor::privateHandleEvent(Ion::Events::Event event) {
-  if (m_delegate && m_delegate->scrollableExpressionViewWithCursorDidReceiveEvent(this, event)) {
+bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
+  if (m_delegate && m_delegate->expressionLayoutFieldDidReceiveEvent(this, event)) {
     return true;
   }
   if (Responder::handleEvent(event)) {
     /* The only event Responder handles is 'Toolbox' displaying. In that case,
-     * the ScrollableExpressionViewWithCursor is forced into editing mode. */
+     * the ExpressionLayoutField is forced into editing mode. */
     if (!isEditing()) {
       setEditing(true);
     }
     return true;
   }
-  if (isEditing() && scrollableExpressionViewWithCursorShouldFinishEditing(event)) {
+  if (isEditing() && expressionLayoutFieldShouldFinishEditing(event)) {
     setEditing(false);
     int bufferSize = TextField::maxBufferSize();
     char buffer[bufferSize];
     m_expressionViewWithCursor.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferSize);
-    if (m_delegate->scrollableExpressionViewWithCursorDidFinishEditing(this, buffer, event)) {
+    if (m_delegate->expressionLayoutFieldDidFinishEditing(this, buffer, event)) {
       delete m_expressionViewWithCursor.expressionView()->expressionLayout();
       Poincare::ExpressionLayout * newLayout = new Poincare::HorizontalLayout();
       m_expressionViewWithCursor.expressionView()->setExpressionLayout(newLayout);
@@ -136,7 +136,7 @@ bool ScrollableExpressionViewWithCursor::privateHandleEvent(Ion::Events::Event e
   }
   if (event == Ion::Events::Back && isEditing()) {
     setEditing(false);
-    m_delegate->scrollableExpressionViewWithCursorDidAbortEditing(this);
+    m_delegate->expressionLayoutFieldDidAbortEditing(this);
     return true;
   }
   if (event == Ion::Events::Division) {
@@ -197,7 +197,7 @@ bool ScrollableExpressionViewWithCursor::privateHandleEvent(Ion::Events::Event e
   return false;
 }
 
-void ScrollableExpressionViewWithCursor::insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout) {
+void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout) {
   if (layout == nullptr) {
     return;
   }
@@ -219,11 +219,11 @@ void ScrollableExpressionViewWithCursor::insertLayoutAtCursor(Poincare::Expressi
   reload();
   KDSize newSize = minimalSizeForOptimalDisplay();
   if (m_delegate && previousSize.height() != newSize.height()) {
-    m_delegate->scrollableExpressionViewWithCursorDidChangeSize(this);
+    m_delegate->expressionLayoutFieldDidChangeSize(this);
   }
 }
 
-void ScrollableExpressionViewWithCursor::insertLayoutFromTextAtCursor(const char * text) {
+void ExpressionLayoutField::insertLayoutFromTextAtCursor(const char * text) {
   Poincare::Expression * expression = Poincare::Expression::parse(text);
   if (expression != nullptr) {
     Poincare::ExpressionLayout * layout = expression->createLayout();
@@ -240,10 +240,10 @@ void ScrollableExpressionViewWithCursor::insertLayoutFromTextAtCursor(const char
   reload();
 }
 
-void ScrollableExpressionViewWithCursor::reload() {
+void ExpressionLayoutField::reload() {
   m_expressionViewWithCursor.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
   layoutSubviews();
-  m_delegate->scrollableExpressionViewWithCursorDidChangeSize(this);
+  m_delegate->expressionLayoutFieldDidChangeSize(this);
   scrollToCursor();
   m_expressionViewWithCursor.cursorPositionChanged();
   markRectAsDirty(bounds());

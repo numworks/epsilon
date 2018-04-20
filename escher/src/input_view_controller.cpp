@@ -4,9 +4,9 @@
 #include <poincare/src/layout/horizontal_layout.h>
 #include <assert.h>
 
-InputViewController::EditableExpressionViewController::EditableExpressionViewController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate) :
+InputViewController::EditableExpressionViewController::EditableExpressionViewController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   ViewController(parentResponder),
-  m_editableExpressionView(this, textFieldDelegate, scrollableExpressionViewWithCursorDelegate)
+  m_editableExpressionView(this, textFieldDelegate, expressionLayoutFieldDelegate)
 {
 }
 
@@ -14,13 +14,13 @@ void InputViewController::EditableExpressionViewController::didBecomeFirstRespon
   app()->setFirstResponder(&m_editableExpressionView);
 }
 
-InputViewController::InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate) :
+InputViewController::InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   ModalViewController(parentResponder, child),
   m_editableExpressionViewController(this, this, this),
   m_successAction(Invocation(nullptr, nullptr)),
   m_failureAction(Invocation(nullptr, nullptr)),
   m_textFieldDelegate(textFieldDelegate),
-  m_scrollableExpressionViewWithCursorDelegate(scrollableExpressionViewWithCursorDelegate),
+  m_expressionLayoutFieldDelegate(expressionLayoutFieldDelegate),
   m_inputViewHeightIsMaximal(false)
 {
 }
@@ -64,23 +64,23 @@ Toolbox * InputViewController::toolboxForTextInput(TextInput * input) {
   return m_textFieldDelegate->toolboxForTextInput(input);
 }
 
-bool InputViewController::scrollableExpressionViewWithCursorShouldFinishEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) {
+bool InputViewController::expressionLayoutFieldShouldFinishEditing(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool InputViewController::scrollableExpressionViewWithCursorDidReceiveEvent(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) {
-  return m_scrollableExpressionViewWithCursorDelegate->scrollableExpressionViewWithCursorDidReceiveEvent(scrollableExpressionViewWithCursor, event);
+bool InputViewController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+  return m_expressionLayoutFieldDelegate->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
 }
 
-bool InputViewController::scrollableExpressionViewWithCursorDidFinishEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text, Ion::Events::Event event) {
+bool InputViewController::expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) {
   return inputViewDidFinishEditing();
 }
 
-bool InputViewController::scrollableExpressionViewWithCursorDidAbortEditing(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
+bool InputViewController::expressionLayoutFieldDidAbortEditing(ExpressionLayoutField * expressionLayoutField) {
   return inputViewDidAbortEditing();
 }
 
-void InputViewController::scrollableExpressionViewWithCursorDidChangeSize(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
+void InputViewController::expressionLayoutFieldDidChangeSize(ExpressionLayoutField * expressionLayoutField) {
   // Reload the view only if the EditableExpressionView height actually changes,
   // i.e. not if the height is already maximal and stays maximal.
   bool newInputViewHeightIsMaximal = m_editableExpressionViewController.editableExpressionView()->heightIsMaximal();
@@ -90,8 +90,8 @@ void InputViewController::scrollableExpressionViewWithCursorDidChangeSize(Scroll
   }
 }
 
-Toolbox * InputViewController::toolboxForScrollableExpressionViewWithCursor(ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
-  return m_scrollableExpressionViewWithCursorDelegate->toolboxForScrollableExpressionViewWithCursor(scrollableExpressionViewWithCursor);
+Toolbox * InputViewController::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
+  return m_expressionLayoutFieldDelegate->toolboxForExpressionLayoutField(expressionLayoutField);
 }
 
 bool InputViewController::inputViewDidFinishEditing() {

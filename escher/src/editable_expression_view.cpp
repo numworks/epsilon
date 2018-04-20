@@ -2,11 +2,11 @@
 #include <poincare/preferences.h>
 #include <assert.h>
 
-EditableExpressionView::EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate) :
+EditableExpressionView::EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   Responder(parentResponder),
   View(),
   m_textField(parentResponder, m_textBody, m_textBody, k_bufferLength, textFieldDelegate, false),
-  m_scrollableExpressionViewWithCursor(parentResponder, new Poincare::HorizontalLayout(), scrollableExpressionViewWithCursorDelegate)
+  m_expressionLayoutField(parentResponder, new Poincare::HorizontalLayout(), expressionLayoutFieldDelegate)
 {
   m_textBody[0] = 0;
 }
@@ -16,19 +16,19 @@ void EditableExpressionView::setEditing(bool isEditing, bool reinitDraftBuffer) 
     m_textField.setEditing(isEditing, reinitDraftBuffer);
   } else {
     if (reinitDraftBuffer) {
-      m_scrollableExpressionViewWithCursor.clearLayout();
+      m_expressionLayoutField.clearLayout();
     }
-    m_scrollableExpressionViewWithCursor.setEditing(isEditing);
+    m_expressionLayoutField.setEditing(isEditing);
   }
 }
 
 bool EditableExpressionView::isEditing() const {
-  return editionIsInTextField() ? m_textField.isEditing() : m_scrollableExpressionViewWithCursor.isEditing();
+  return editionIsInTextField() ? m_textField.isEditing() : m_expressionLayoutField.isEditing();
 }
 
 const char * EditableExpressionView::text() {
   if (!editionIsInTextField()) {
-    m_scrollableExpressionViewWithCursor.expressionViewWithCursor()->expressionView()->expressionLayout()->writeTextInBuffer(m_textBody, k_bufferLength);
+    m_expressionLayoutField.expressionViewWithCursor()->expressionView()->expressionLayout()->writeTextInBuffer(m_textBody, k_bufferLength);
   }
   return m_textBody;
 }
@@ -38,9 +38,9 @@ void EditableExpressionView::setText(const char * text) {
     m_textField.setText(text);
     return;
   }
-  m_scrollableExpressionViewWithCursor.clearLayout();
+  m_expressionLayoutField.clearLayout();
   if (strlen(text) > 0) {
-    m_scrollableExpressionViewWithCursor.insertLayoutFromTextAtCursor(text);
+    m_expressionLayoutField.insertLayoutFromTextAtCursor(text);
   }
 }
 
@@ -48,8 +48,8 @@ void EditableExpressionView::insertText(const char * text) {
   if (editionIsInTextField()) {
     m_textField.handleEventWithText(text);
   } else {
-    m_scrollableExpressionViewWithCursor.setEditing(true);
-    m_scrollableExpressionViewWithCursor.insertLayoutFromTextAtCursor(text);
+    m_expressionLayoutField.setEditing(true);
+    m_expressionLayoutField.insertLayoutFromTextAtCursor(text);
   }
 }
 
@@ -58,17 +58,17 @@ View * EditableExpressionView::subviewAtIndex(int index) {
   if (editionIsInTextField()) {
     return &m_textField;
   }
-  return &m_scrollableExpressionViewWithCursor;
+  return &m_expressionLayoutField;
 }
 
 void EditableExpressionView::layoutSubviews() {
   KDRect inputViewFrame(k_leftMargin, k_separatorThickness, bounds().width() - k_leftMargin, bounds().height() - k_separatorThickness);
   if (editionIsInTextField()) {
     m_textField.setFrame(inputViewFrame);
-    m_scrollableExpressionViewWithCursor.setFrame(KDRectZero);
+    m_expressionLayoutField.setFrame(KDRectZero);
     return;
   }
-  m_scrollableExpressionViewWithCursor.setFrame(inputViewFrame);
+  m_expressionLayoutField.setFrame(inputViewFrame);
   m_textField.setFrame(KDRectZero);
 }
 
@@ -89,7 +89,7 @@ void EditableExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
-  return editionIsInTextField() ? m_textField.handleEvent(event) : m_scrollableExpressionViewWithCursor.handleEvent(event);
+  return editionIsInTextField() ? m_textField.handleEvent(event) : m_expressionLayoutField.handleEvent(event);
 }
 
 KDSize EditableExpressionView::minimalSizeForOptimalDisplay() const {
@@ -104,7 +104,7 @@ bool EditableExpressionView::isEmpty() const {
   if (editionIsInTextField()) {
     return m_textField.draftTextLength() == 0;
   }
-  Poincare::ExpressionLayout * layout =  const_cast<ScrollableExpressionViewWithCursor *>(&m_scrollableExpressionViewWithCursor)->expressionViewWithCursor()->expressionView()->expressionLayout();
+  Poincare::ExpressionLayout * layout =  const_cast<ExpressionLayoutField *>(&m_expressionLayoutField)->expressionViewWithCursor()->expressionView()->expressionLayout();
   return !layout->hasText();
 }
 
@@ -120,7 +120,7 @@ KDCoordinate EditableExpressionView::inputViewHeight() const {
     + k_verticalExpressionViewMargin
     + min(maximalHeight(),
         max(k_textFieldHeight,
-          m_scrollableExpressionViewWithCursor.minimalSizeForOptimalDisplay().height()
+          m_expressionLayoutField.minimalSizeForOptimalDisplay().height()
           + k_verticalExpressionViewMargin));
 }
 

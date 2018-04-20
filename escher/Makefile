@@ -50,7 +50,7 @@ objs += $(addprefix escher/src/,\
   scroll_view_data_source.o\
   scroll_view_indicator.o\
   scrollable_view.o\
-  scrollable_expression_view_with_cursor.o\
+  expression_layout_field.o\
   selectable_table_view.o\
   selectable_table_view_data_source.o\
   selectable_table_view_delegate.o\

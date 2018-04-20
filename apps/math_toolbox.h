@@ -10,7 +10,7 @@ public:
   typedef void (*Action)(void * sender, const char * text, bool removeArguments);
   MathToolbox();
   void setSenderAndAction(Responder * sender, Action action);
-  static void actionForScrollableExpressionViewWithCursor(void * sender, const char * text, bool removeArguments = true);
+  static void actionForExpressionLayoutField(void * sender, const char * text, bool removeArguments = true);
   static void actionForTextInput(void * sender, const char * text, bool removeArguments = true);
 protected:
   bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;

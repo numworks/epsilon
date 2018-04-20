@@ -71,6 +71,10 @@ clean:
 	@echo "CLEAN"
 	$(Q) rm -f $(products)
 
+.PHONY: lint
+lint:
+	cppcheck --enable=warning,style,performance .
+
 .PHONY: cowsay_%
 cowsay_%:
 	@echo " -------"

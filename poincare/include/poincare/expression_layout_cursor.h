@@ -19,6 +19,9 @@ public:
     m_position(Position::Right)
   {};
 
+  /* Definition */
+  bool isDefined() const { return m_pointedExpressionLayout != nullptr; }
+
   /* Getters and setters */
   ExpressionLayout * pointedExpressionLayout() { return m_pointedExpressionLayout; }
   ExpressionLayout * pointedExpressionLayoutEquivalentChild();

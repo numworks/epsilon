@@ -13,7 +13,9 @@
 #include <poincare/ieee754.h>
 #include <poincare/addition.h>
 #include <poincare/multiplication.h>
+#include <poincare/subtraction.h>
 #include <poincare/power.h>
+#include <poincare/opposite.h>
 #include <ion.h>
 #include <cmath>
 #include "expression_parser.hpp"
@@ -402,12 +404,69 @@ template<typename T> Expression * Expression::complexToExpression(std::complex<T
   if (complexFormat == ComplexFormat::Default) {
     complexFormat = Preferences::sharedPreferences()->complexFormat();
   }
+  if (std::isnan(c.real()) || std::isnan(c.imag()) || std::isinf(c.real()) || std::isinf(c.imag())) {
+    return new Undefined();
+  }
+
   switch (complexFormat) {
     case ComplexFormat::Cartesian:
-      return new Addition(CreateDecimal(c.real()), new Multiplication(new Symbol(Ion::Charset::IComplex), CreateDecimal(c.imag()), false), false);
+    {
+      Expression * real = nullptr;
+      Expression * imag = nullptr;
+      if (c.real() != 0 || c.imag() == 0) {
+        real = CreateDecimal(c.real());
+      }
+      if (c.imag() != 0) {
+        if (c.imag() == 1.0 || c.imag() == -1) {
+          imag = new Symbol(Ion::Charset::IComplex);
+        } else if (c.imag() > 0) {
+          imag = new Multiplication(CreateDecimal(c.imag()), new Symbol(Ion::Charset::IComplex), false);
+        } else {
+          imag = new Multiplication(CreateDecimal(-c.imag()), new Symbol(Ion::Charset::IComplex), false);
+        }
+      }
+      if (imag == nullptr) {
+        return real;
+      } else if (real == nullptr) {
+        if (c.imag() > 0) {
+          return imag;
+        } else {
+          return new Opposite(imag, false);
+        }
+        return imag;
+      } else if (c.imag() > 0) {
+        return new Addition(real, imag, false);
+      } else {
+        return new Subtraction(real, imag, false);
+      }
+    }
     default:
+    {
       assert(complexFormat == ComplexFormat::Polar);
-      return new Multiplication(CreateDecimal(std::abs(c)), new Power(new Symbol(Ion::Charset::Exponential), new Multiplication(new Symbol(Ion::Charset::IComplex), CreateDecimal(std::arg(c)), false), false), false);
+      Expression * norm = nullptr;
+      Expression * exp = nullptr;
+      T r = std::abs(c);
+      T th = std::arg(c);
+      if (r != 1 || th == 0) {
+        norm = CreateDecimal(r);
+      }
+      if (r != 0 && th != 0) {
+        Expression * arg = nullptr;
+        if (th > 0) {
+          arg = new Multiplication(CreateDecimal(th), new Symbol(Ion::Charset::IComplex), false);
+        } else {
+          arg = new Opposite(new Multiplication(CreateDecimal(-th), new Symbol(Ion::Charset::IComplex), false));
+        }
+        exp = new Power(new Symbol(Ion::Charset::Exponential), arg, false);
+      }
+      if (exp == nullptr) {
+        return norm;
+      } else if (norm == nullptr) {
+        return exp;
+      } else {
+        return new Multiplication(norm, exp, false);
+      }
+    }
   }
 }
 

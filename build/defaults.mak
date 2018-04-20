@@ -17,7 +17,7 @@ endif
 SFLAGS += -Ilib -I.
 
 # Flags - Building options
-SFLAGS += -Wall
+SFLAGS += -Wall -Wextra -Wno-unused
 
 # Flags - Header dependency tracking
 SFLAGS += -MD -MP

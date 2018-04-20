@@ -375,7 +375,7 @@ void ExpressionLayout::moveCursorInsideAtDirection (
 
   if (layoutIsUnderOrAbove) {
     // Check the distance to a Left cursor.
-    int currentDistance = cursor->middleLeftPointOfCursor(this, ExpressionLayoutCursor::Position::Left).squareDistanceTo(cursorMiddleLeft);
+    int currentDistance = ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left).middleLeftPoint().squareDistanceTo(cursorMiddleLeft);
     if (currentDistance <= *resultScore ){
       *childResult = this;
       *castedResultPosition = ExpressionLayoutCursor::Position::Left;
@@ -383,7 +383,7 @@ void ExpressionLayout::moveCursorInsideAtDirection (
     }
 
     // Check the distance to a Right cursor.
-    currentDistance = cursor->middleLeftPointOfCursor(this, ExpressionLayoutCursor::Position::Right).squareDistanceTo(cursorMiddleLeft);
+    currentDistance = ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right).middleLeftPoint().squareDistanceTo(cursorMiddleLeft);
     if (currentDistance < *resultScore) {
       *childResult = this;
       *castedResultPosition = ExpressionLayoutCursor::Position::Right;

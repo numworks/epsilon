@@ -14,9 +14,9 @@ public:
     Right
   };
 
-  ExpressionLayoutCursor() :
-    m_pointedExpressionLayout(nullptr),
-    m_position(Position::Right)
+  ExpressionLayoutCursor(ExpressionLayout * layout = nullptr, Position position = Position::Right) :
+    m_pointedExpressionLayout(layout),
+    m_position(position)
   {};
 
   /* Definition */
@@ -32,11 +32,10 @@ public:
   KDCoordinate baseline();
 
   /* Comparison */
-  bool positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position);
+  bool isEquivalentTo(ExpressionLayoutCursor cursor);
 
   /* Position */
   KDPoint middleLeftPoint();
-  KDPoint middleLeftPointOfCursor(ExpressionLayout * expressionLayout, Position position);
 
   /* Move */
   bool moveLeft(bool * shouldRecomputeLayout);

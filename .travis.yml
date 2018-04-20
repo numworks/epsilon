@@ -1,4 +1,12 @@
 language: cpp
+os: linux
+
+matrix:
+  include:
+    - env: PLATFORM=device EXT=elf
+    - env: PLATFORM=simulator EXT=elf
+    - env: PLATFORM=simulator EXT=elf TOOLCHAIN=host-clang
+    - env: PLATFORM=blackbox EXT=bin QUIZ_USE_CONSOLE=1
 
 addons:
   apt:
@@ -8,14 +16,8 @@ addons:
     - gcc-arm-embedded
     - libfltk1.3-dev
 
-matrix:
-  include:
-    - env: PLATFORM=device EXT=elf
-    - env: PLATFORM=simulator EXT=elf
-    - env: PLATFORM=simulator EXT=elf TOOLCHAIN=host-clang
-    - env: PLATFORM=blackbox EXT=bin QUIZ_USE_CONSOLE=1
-
-os: linux
 script:
 - make clean && make epsilon.$EXT test.$EXT
 - if [ "$PLATFORM" = "blackbox" ]; then ./test.$EXT; fi
+
+cache: ccache

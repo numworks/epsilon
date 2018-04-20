@@ -51,7 +51,7 @@ public:
   /* Dynamic Layout */
 
   // Collapse
-  virtual void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor);
+  virtual void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {}
 
   // Add
   virtual bool addChildAtIndex(ExpressionLayout * child, int index) { return false; }

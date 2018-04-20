@@ -1,8 +1,8 @@
-#include <escher/editable_expression_view.h>
+#include <escher/expression_field.h>
 #include <poincare/preferences.h>
 #include <assert.h>
 
-EditableExpressionView::EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+ExpressionField::ExpressionField(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   Responder(parentResponder),
   View(),
   m_textField(parentResponder, m_textBody, m_textBody, k_bufferLength, textFieldDelegate, false),
@@ -11,7 +11,7 @@ EditableExpressionView::EditableExpressionView(Responder * parentResponder, Text
   m_textBody[0] = 0;
 }
 
-void EditableExpressionView::setEditing(bool isEditing, bool reinitDraftBuffer) {
+void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {
   if (editionIsInTextField()) {
     m_textField.setEditing(isEditing, reinitDraftBuffer);
   } else {
@@ -22,18 +22,18 @@ void EditableExpressionView::setEditing(bool isEditing, bool reinitDraftBuffer) 
   }
 }
 
-bool EditableExpressionView::isEditing() const {
+bool ExpressionField::isEditing() const {
   return editionIsInTextField() ? m_textField.isEditing() : m_expressionLayoutField.isEditing();
 }
 
-const char * EditableExpressionView::text() {
+const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
     m_expressionLayoutField.expressionViewWithCursor()->expressionView()->expressionLayout()->writeTextInBuffer(m_textBody, k_bufferLength);
   }
   return m_textBody;
 }
 
-void EditableExpressionView::setText(const char * text) {
+void ExpressionField::setText(const char * text) {
   if (editionIsInTextField()) {
     m_textField.setText(text);
     return;
@@ -44,7 +44,7 @@ void EditableExpressionView::setText(const char * text) {
   }
 }
 
-void EditableExpressionView::insertText(const char * text) {
+void ExpressionField::insertText(const char * text) {
   if (editionIsInTextField()) {
     m_textField.handleEventWithText(text);
   } else {
@@ -53,7 +53,7 @@ void EditableExpressionView::insertText(const char * text) {
   }
 }
 
-View * EditableExpressionView::subviewAtIndex(int index) {
+View * ExpressionField::subviewAtIndex(int index) {
   assert(index == 0);
   if (editionIsInTextField()) {
     return &m_textField;
@@ -61,7 +61,7 @@ View * EditableExpressionView::subviewAtIndex(int index) {
   return &m_expressionLayoutField;
 }
 
-void EditableExpressionView::layoutSubviews() {
+void ExpressionField::layoutSubviews() {
   KDRect inputViewFrame(k_leftMargin, k_separatorThickness, bounds().width() - k_leftMargin, bounds().height() - k_separatorThickness);
   if (editionIsInTextField()) {
     m_textField.setFrame(inputViewFrame);
@@ -72,12 +72,12 @@ void EditableExpressionView::layoutSubviews() {
   m_textField.setFrame(KDRectZero);
 }
 
-void EditableExpressionView::reload() {
+void ExpressionField::reload() {
   layoutSubviews();
   markRectAsDirty(bounds());
 }
 
-void EditableExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
+void ExpressionField::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the separator
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
   // Color the left margin
@@ -88,19 +88,19 @@ void EditableExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
+bool ExpressionField::handleEvent(Ion::Events::Event event) {
   return editionIsInTextField() ? m_textField.handleEvent(event) : m_expressionLayoutField.handleEvent(event);
 }
 
-KDSize EditableExpressionView::minimalSizeForOptimalDisplay() const {
+KDSize ExpressionField::minimalSizeForOptimalDisplay() const {
   return KDSize(0, inputViewHeight());
 }
 
-bool EditableExpressionView::editionIsInTextField() const {
+bool ExpressionField::editionIsInTextField() const {
   return Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition1D;
 }
 
-bool EditableExpressionView::isEmpty() const {
+bool ExpressionField::isEmpty() const {
   if (editionIsInTextField()) {
     return m_textField.draftTextLength() == 0;
   }
@@ -108,11 +108,11 @@ bool EditableExpressionView::isEmpty() const {
   return !layout->hasText();
 }
 
-bool EditableExpressionView::heightIsMaximal() const {
+bool ExpressionField::heightIsMaximal() const {
   return inputViewHeight() == k_separatorThickness + k_verticalExpressionViewMargin + maximalHeight();
 }
 
-KDCoordinate EditableExpressionView::inputViewHeight() const {
+KDCoordinate ExpressionField::inputViewHeight() const {
   if (editionIsInTextField()) {
     return k_separatorThickness + k_textFieldHeight;
   }
@@ -124,6 +124,6 @@ KDCoordinate EditableExpressionView::inputViewHeight() const {
           + k_verticalExpressionViewMargin));
 }
 
-KDCoordinate EditableExpressionView::maximalHeight() const {
+KDCoordinate ExpressionField::maximalHeight() const {
   return 0.6*Ion::Display::Height;
 }

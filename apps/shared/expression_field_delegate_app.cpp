@@ -1,4 +1,4 @@
-#include "editable_expression_view_delegate_app.h"
+#include "expression_field_delegate_app.h"
 #include "../i18n.h"
 #include "../apps_container.h"
 
@@ -6,17 +6,17 @@ using namespace Poincare;
 
 namespace Shared {
 
-EditableExpressionViewDelegateApp::EditableExpressionViewDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
+ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
   TextFieldDelegateApp(container, snapshot, rootViewController),
   ExpressionLayoutFieldDelegate()
 {
 }
 
-bool EditableExpressionViewDelegateApp::expressionLayoutFieldShouldFinishEditing(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+bool ExpressionFieldDelegateApp::expressionLayoutFieldShouldFinishEditing(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool EditableExpressionViewDelegateApp::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+bool ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
   if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event)) {
     if (!expressionLayoutField->expressionViewWithCursor()->expressionView()->expressionLayout()->hasText()) {
       expressionLayoutField->app()->displayWarning(I18n::Message::SyntaxError);
@@ -47,7 +47,7 @@ bool EditableExpressionViewDelegateApp::expressionLayoutFieldDidReceiveEvent(Exp
   return false;
 }
 
-Toolbox * EditableExpressionViewDelegateApp::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
+Toolbox * ExpressionFieldDelegateApp::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
   Toolbox * toolbox = container()->mathToolbox();
   static_cast<MathToolbox *>(toolbox)->setSenderAndAction(expressionLayoutField, MathToolbox::actionForExpressionLayoutField);
   return toolbox;

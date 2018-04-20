@@ -1,14 +1,14 @@
-#include "editable_expression_view.h"
+#include "expression_field.h"
 
 namespace Calculation {
 
-EditableExpressionView::EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
-  ::EditableExpressionView(parentResponder, textFieldDelegate, expressionLayoutFieldDelegate)
+ExpressionField::ExpressionField(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+  ::ExpressionField(parentResponder, textFieldDelegate, expressionLayoutFieldDelegate)
 {
   setEditing(true);
 }
 
-bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
+bool ExpressionField::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     return false;
   }
@@ -25,7 +25,7 @@ bool EditableExpressionView::handleEvent(Ion::Events::Event event) {
        event == Ion::Events::Sto)) {
     insertText("ans");
   }
-  return(::EditableExpressionView::handleEvent(event));
+  return(::ExpressionField::handleEvent(event));
 }
 
 }

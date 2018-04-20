@@ -12,7 +12,7 @@ objs += $(addprefix escher/src/,\
   dynamic_view_controller.o\
   editable_text_cell.o\
   ellipsis_view.o\
-  editable_expression_view.o\
+  expression_field.o\
   even_odd_cell.o\
   even_odd_cell_with_ellipsis.o\
   even_odd_buffer_text_cell.o\

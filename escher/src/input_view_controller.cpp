@@ -4,19 +4,19 @@
 #include <poincare/src/layout/horizontal_layout.h>
 #include <assert.h>
 
-InputViewController::EditableExpressionViewController::EditableExpressionViewController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   ViewController(parentResponder),
-  m_editableExpressionView(this, textFieldDelegate, expressionLayoutFieldDelegate)
+  m_expressionField(this, textFieldDelegate, expressionLayoutFieldDelegate)
 {
 }
 
-void InputViewController::EditableExpressionViewController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_editableExpressionView);
+void InputViewController::ExpressionFieldController::didBecomeFirstResponder() {
+  app()->setFirstResponder(&m_expressionField);
 }
 
 InputViewController::InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   ModalViewController(parentResponder, child),
-  m_editableExpressionViewController(this, this, this),
+  m_expressionFieldController(this, this, this),
   m_successAction(Invocation(nullptr, nullptr)),
   m_failureAction(Invocation(nullptr, nullptr)),
   m_textFieldDelegate(textFieldDelegate),
@@ -26,21 +26,21 @@ InputViewController::InputViewController(Responder * parentResponder, ViewContro
 }
 
 const char * InputViewController::textBody() {
-  return m_editableExpressionViewController.editableExpressionView()->text();
+  return m_expressionFieldController.expressionField()->text();
 }
 
 void InputViewController::edit(Responder * caller, Ion::Events::Event event, void * context, const char * initialText, Invocation::Action successAction, Invocation::Action failureAction) {
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
-  displayModalViewController(&m_editableExpressionViewController, 1.0f, 1.0f);
+  displayModalViewController(&m_expressionFieldController, 1.0f, 1.0f);
   if (initialText != nullptr) {
-    m_editableExpressionViewController.editableExpressionView()->setText(initialText);
+    m_expressionFieldController.expressionField()->setText(initialText);
   }
-  m_editableExpressionViewController.editableExpressionView()->handleEvent(event);
+  m_expressionFieldController.expressionField()->handleEvent(event);
 }
 
 void InputViewController::abortEditionAndDismiss() {
-  m_editableExpressionViewController.editableExpressionView()->setEditing(false);
+  m_expressionFieldController.expressionField()->setEditing(false);
   dismissModalViewController();
 }
 
@@ -81,9 +81,9 @@ bool InputViewController::expressionLayoutFieldDidAbortEditing(ExpressionLayoutF
 }
 
 void InputViewController::expressionLayoutFieldDidChangeSize(ExpressionLayoutField * expressionLayoutField) {
-  // Reload the view only if the EditableExpressionView height actually changes,
+  // Reload the view only if the ExpressionField height actually changes,
   // i.e. not if the height is already maximal and stays maximal.
-  bool newInputViewHeightIsMaximal = m_editableExpressionViewController.editableExpressionView()->heightIsMaximal();
+  bool newInputViewHeightIsMaximal = m_expressionFieldController.expressionField()->heightIsMaximal();
   if (!m_inputViewHeightIsMaximal || !newInputViewHeightIsMaximal) {
     m_inputViewHeightIsMaximal = newInputViewHeightIsMaximal;
     reloadView();

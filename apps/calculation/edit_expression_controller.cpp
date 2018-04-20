@@ -12,7 +12,7 @@ namespace Calculation {
 EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_editableExpressionView(parentResponder, textFieldDelegate, expressionLayoutFieldDelegate)
+  m_expressionField(parentResponder, textFieldDelegate, expressionLayoutFieldDelegate)
 {
 }
 
@@ -22,15 +22,15 @@ View * EditExpressionController::ContentView::subviewAtIndex(int index) {
     return m_mainView;
   }
   assert(index == 1);
-  return &m_editableExpressionView;
+  return &m_expressionField;
 }
 
 void EditExpressionController::ContentView::layoutSubviews() {
-  KDCoordinate inputViewFrameHeight = m_editableExpressionView.minimalSizeForOptimalDisplay().height();
+  KDCoordinate inputViewFrameHeight = m_expressionField.minimalSizeForOptimalDisplay().height();
   KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - inputViewFrameHeight);
   m_mainView->setFrame(mainViewFrame);
   KDRect inputViewFrame(0, bounds().height() - inputViewFrameHeight, bounds().width(), inputViewFrameHeight);
-  m_editableExpressionView.setFrame(inputViewFrame);
+  m_expressionField.setFrame(inputViewFrame);
 }
 
 void EditExpressionController::ContentView::reload() {
@@ -47,18 +47,18 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
 }
 
 const char * EditExpressionController::textBody() {
-  return ((ContentView *)view())->editableExpressionView()->text();
+  return ((ContentView *)view())->expressionField()->text();
 }
 
 void EditExpressionController::insertTextBody(const char * text) {
-  ((ContentView *)view())->editableExpressionView()->insertText(text);
+  ((ContentView *)view())->expressionField()->insertText(text);
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
       m_cacheBuffer[0] = 0;
-      ((ContentView *)view())->editableExpressionView()->setEditing(false, false);
+      ((ContentView *)view())->expressionField()->setEditing(false, false);
       app()->setFirstResponder(m_historyController);
     }
     return true;
@@ -69,12 +69,12 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
 void EditExpressionController::didBecomeFirstResponder() {
   int lastRow = m_calculationStore->numberOfCalculations() > 0 ? m_calculationStore->numberOfCalculations()-1 : 0;
   m_historyController->scrollToCell(0, lastRow);
-  ((ContentView *)view())->editableExpressionView()->setEditing(true, false);
-  app()->setFirstResponder(((ContentView *)view())->editableExpressionView());
+  ((ContentView *)view())->expressionField()->setEditing(true, false);
+  app()->setFirstResponder(((ContentView *)view())->expressionField());
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  assert(textField == ((ContentView *)view())->editableExpressionView()->textField());
+  assert(textField == ((ContentView *)view())->expressionField()->textField());
   if (textField->isEditing() && textField->textFieldShouldFinishEditing(event) && textField->draftTextLength() == 0 && m_cacheBuffer[0] != 0) {
     return inputViewDidReceiveEvent(event);
   }
@@ -82,35 +82,35 @@ bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField,
 }
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
-  assert(textField == ((ContentView *)view())->editableExpressionView()->textField());
+  assert(textField == ((ContentView *)view())->expressionField()->textField());
   return inputViewDidFinishEditing(text, event);
 }
 
 bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField) {
-  assert(textField == ((ContentView *)view())->editableExpressionView()->textField());
+  assert(textField == ((ContentView *)view())->expressionField()->textField());
   return inputViewDidAbortEditing(textField->text());
 }
 
 bool EditExpressionController::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
-  assert(expressionLayoutField == ((ContentView *)view())->editableExpressionView()->expressionLayoutField());
+  assert(expressionLayoutField == ((ContentView *)view())->expressionField()->expressionLayoutField());
   if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event) && !expressionLayout()->hasText() && m_calculationStore->numberOfCalculations() > 0) {
     return inputViewDidReceiveEvent(event);
   }
-  return editableExpressionViewDelegateApp()->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
+  return expressionFieldDelegateApp()->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
 }
 
 bool EditExpressionController::expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) {
-  assert(expressionLayoutField == ((ContentView *)view())->editableExpressionView()->expressionLayoutField());
+  assert(expressionLayoutField == ((ContentView *)view())->expressionField()->expressionLayoutField());
   return inputViewDidFinishEditing(text, event);
 }
 
 bool EditExpressionController::expressionLayoutFieldDidAbortEditing(::ExpressionLayoutField * expressionLayoutField) {
-  assert(expressionLayoutField == ((ContentView *)view())->editableExpressionView()->expressionLayoutField());
+  assert(expressionLayoutField == ((ContentView *)view())->expressionField()->expressionLayoutField());
   return inputViewDidAbortEditing(nullptr);
 }
 
 void EditExpressionController::expressionLayoutFieldDidChangeSize(::ExpressionLayoutField * expressionLayoutField) {
-  assert(expressionLayoutField == ((ContentView *)view())->editableExpressionView()->expressionLayoutField());
+  assert(expressionLayoutField == ((ContentView *)view())->expressionField()->expressionLayoutField());
   reloadView();
 }
 
@@ -118,7 +118,7 @@ TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {
   return (App *)app();
 }
 
-EditableExpressionViewDelegateApp * EditExpressionController::editableExpressionViewDelegateApp() {
+ExpressionFieldDelegateApp * EditExpressionController::expressionFieldDelegateApp() {
   return (App *)app();
 }
 
@@ -158,15 +158,15 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Ion:
   m_calculationStore->push(textBody(), calculationApp->localContext());
   m_historyController->reload();
   ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-  ((ContentView *)view())->editableExpressionView()->setEditing(true);
-  ((ContentView *)view())->editableExpressionView()->setText("");
+  ((ContentView *)view())->expressionField()->setEditing(true);
+  ((ContentView *)view())->expressionField()->setText("");
   return true;
 }
 
 bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
   if (text != nullptr) {
-    ((ContentView *)view())->editableExpressionView()->setEditing(true, true);
-    ((ContentView *)view())->editableExpressionView()->setText(text);
+    ((ContentView *)view())->expressionField()->setEditing(true, true);
+    ((ContentView *)view())->expressionField()->setText(text);
   }
   return false;
 }
@@ -177,7 +177,7 @@ void EditExpressionController::viewDidDisappear() {
 }
 
 Poincare::ExpressionLayout * EditExpressionController::expressionLayout() {
-  return ((ContentView *)view())->editableExpressionView()->expressionLayoutField()->expressionViewWithCursor()->expressionView()->expressionLayout();
+  return ((ContentView *)view())->expressionField()->expressionLayoutField()->expressionViewWithCursor()->expressionView()->expressionLayout();
 }
 
 }

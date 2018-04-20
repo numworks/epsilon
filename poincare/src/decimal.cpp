@@ -99,7 +99,7 @@ template<typename T> Expression * Decimal::templatedApproximate(Context& context
   return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));
 }
 
-int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -111,28 +111,36 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignif
     buffer[currentChar] = 0;
     return currentChar;
   }
-  char tempBuffer[200];
-  int mantissaLength = m_mantissa.writeTextInBuffer(tempBuffer, 200);
+  char tempBuffer[PrintFloat::k_numberOfStoredSignificantDigits+1];
+  // truncate the integer if m_mantissa > 10^numberOfSignificantDigits-1
+  Integer absMantissa = m_mantissa;
+  absMantissa.setNegative(false);
+  while (Integer::NaturalOrder(absMantissa, Integer((int64_t)std::pow(10.0, numberOfSignificantDigits))) >= 0) {
+    absMantissa = Integer::Division(absMantissa, Integer(10)).quotient;
+  }
+  int mantissaLength = absMantissa.writeTextInBuffer(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
   if (strcmp(tempBuffer, "undef") == 0) {
     strlcpy(buffer, tempBuffer, bufferSize);
     return mantissaLength;
   }
-  int nbOfDigitsInMantissaWithoutSign = numberOfDigitsInMantissaWithoutSign();
-  int numberOfRequiredDigits = nbOfDigitsInMantissaWithoutSign > m_exponent ? nbOfDigitsInMantissaWithoutSign : m_exponent;
-  numberOfRequiredDigits = m_exponent < 0 ? 1+nbOfDigitsInMantissaWithoutSign-m_exponent : numberOfRequiredDigits;
+  int numberOfRequiredDigits = mantissaLength;
+  if (mode == PrintFloat::Mode::Decimal) {
+    numberOfRequiredDigits = mantissaLength > m_exponent ? mantissaLength : m_exponent;
+    numberOfRequiredDigits = m_exponent < 0 ? 1+mantissaLength-m_exponent : numberOfRequiredDigits;
+  }
+  if (m_mantissa.isNegative()) {
+    buffer[currentChar++] = '-';
+    if (currentChar >= bufferSize-1) { return bufferSize-1; }
+  }
   /* Case 0: the number would be too long if we print it as a natural decimal */
-  if (numberOfRequiredDigits > k_maxLength) {
-    if (nbOfDigitsInMantissaWithoutSign == 1) {
-      currentChar += strlcpy(buffer, tempBuffer, bufferSize);
+  if (numberOfRequiredDigits > PrintFloat::k_numberOfStoredSignificantDigits || mode == PrintFloat::Mode::Scientific) {
+    if (mantissaLength == 1) {
+      currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     } else {
       currentChar++;
+      int decimalMarkerPosition = currentChar;
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
       currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
-      int decimalMarkerPosition = 1;
-      if (buffer[1] == '-') {
-        decimalMarkerPosition++;
-        buffer[0] = buffer[1];
-      }
       buffer[decimalMarkerPosition-1] = buffer[decimalMarkerPosition];
       buffer[decimalMarkerPosition] = '.';
     }
@@ -144,12 +152,9 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignif
     currentChar += Integer(m_exponent).writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
     return currentChar;
   }
-  /* Case 2: Print a natural decimal number */
+  /* Case 1: Print a natural decimal number */
   int deltaCharMantissa = m_exponent < 0 ? -m_exponent+1 : 0;
-  strlcpy(buffer+deltaCharMantissa, tempBuffer, bufferSize-deltaCharMantissa);
-  if (m_mantissa.isNegative()) {
-    buffer[currentChar++] = '-';
-  }
+  strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, bufferSize-deltaCharMantissa-currentChar);
   if (m_exponent < 0) {
     for (int i = 0; i <= -m_exponent; i++) {
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
@@ -160,39 +165,29 @@ int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignif
       buffer[currentChar++] = '0';
     }
   }
-  /* If mantissa is negative, m_mantissa.writeTextInBuffer is going to add an
-   * unwanted '-' in place of the temp char. We store it to replace it back
-   * after calling m_mantissa.writeTextInBuffer. */
-  char tempChar = 0;
-  int tempCharPosition = 0;
-  if (m_mantissa.isNegative()) {
-    currentChar--;
-    tempChar = buffer[currentChar];
-    tempCharPosition = currentChar;
-  }
   currentChar += mantissaLength;
-  if (m_mantissa.isNegative()) { // replace the temp char back
-    buffer[tempCharPosition] = tempChar;
-  }
-  int currentExponent = m_mantissa.isNegative() ? currentChar-2 : currentChar-1;
-  if (m_exponent >= 0 && m_exponent < currentExponent) {
+  if (m_exponent >= 0 && m_exponent < mantissaLength-1) {
     if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
-    int decimalMarkerPosition = m_mantissa.isNegative() ? m_exponent +1 : m_exponent;
+    int decimalMarkerPosition = m_mantissa.isNegative() ? m_exponent + 1 : m_exponent;
     for (int i = currentChar-1; i > decimalMarkerPosition; i--) {
       buffer[i+1] = buffer[i];
     }
     buffer[decimalMarkerPosition+1] = '.';
     currentChar++;
   }
-  if (m_exponent >= 0 && m_exponent > currentExponent) {
-    int decimalMarkerPosition = m_mantissa.isNegative() ? m_exponent+1 : m_exponent;
-    for (int i = currentChar-1; i < decimalMarkerPosition; i++) {
+  if (m_exponent >= 0 && m_exponent > mantissaLength-1) {
+    int endMarkerPosition = m_mantissa.isNegative() ? m_exponent+1 : m_exponent;
+    for (int i = currentChar-1; i < endMarkerPosition; i++) {
       if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
       buffer[currentChar++] = '0';
     }
   }
   buffer[currentChar] = 0;
   return currentChar;
+}
+
+int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+  return convertToText(buffer, bufferSize, PrintFloat::Mode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
 }
 
 bool Decimal::needParenthesisWithParent(const Expression * e) const {
@@ -204,8 +199,8 @@ bool Decimal::needParenthesisWithParent(const Expression * e) const {
 }
 
 ExpressionLayout * Decimal::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  char buffer[255];
-  int numberOfChars = writeTextInBuffer(buffer, 255);
+  char buffer[k_maxBufferSize];
+  int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, PrintFloat::k_numberOfStoredSignificantDigits);
   return new StringLayout(buffer, numberOfChars);
 }
 

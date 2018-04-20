@@ -6,8 +6,14 @@
 
 InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   ViewController(parentResponder),
+  m_layout(new Poincare::HorizontalLayout()),
   m_expressionField(this, m_textBuffer, k_bufferLength, m_layout, textFieldDelegate, expressionLayoutFieldDelegate)
 {
+  m_textBuffer[0] = 0;
+}
+
+InputViewController::ExpressionFieldController::~ExpressionFieldController() {
+  delete m_layout;
 }
 
 void InputViewController::ExpressionFieldController::didBecomeFirstResponder() {

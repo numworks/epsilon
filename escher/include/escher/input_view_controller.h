@@ -37,14 +37,19 @@ private:
   class ExpressionFieldController : public ViewController {
   public:
     ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
+    ~ExpressionFieldController();
+    ExpressionFieldController(const ExpressionFieldController& other) = delete;
+    ExpressionFieldController(ExpressionFieldController&& other) = delete;
+    ExpressionFieldController& operator=(const ExpressionFieldController& other) = delete;
+    ExpressionFieldController& operator=(ExpressionFieldController&& other) = delete;
     void didBecomeFirstResponder() override;
     View * view() override { return &m_expressionField; }
     ExpressionField * expressionField() { return &m_expressionField; }
   private:
     static constexpr int k_bufferLength = TextField::maxBufferSize();
-    ExpressionField m_expressionField;
-    char m_textBuffer[k_bufferLength];
     Poincare::ExpressionLayout * m_layout;
+    char m_textBuffer[k_bufferLength];
+    ExpressionField m_expressionField;
   };
   bool inputViewDidFinishEditing();
   bool inputViewDidAbortEditing();

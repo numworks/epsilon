@@ -26,7 +26,7 @@ void BracketPairLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * c
 }
 
 void BracketPairLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
-  if (cursor->positionIsEquivalentTo(operandLayout(), ExpressionLayoutCursor::Position::Left)) {
+  if (cursor->isEquivalentTo(ExpressionLayoutCursor(operandLayout(), ExpressionLayoutCursor::Position::Left))) {
     // Case: Left of the operand. Delete the layout, keep the operand.
     replaceWithAndMoveCursor(operandLayout(), true, cursor);
     return;

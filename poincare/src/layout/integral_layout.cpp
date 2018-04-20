@@ -27,8 +27,7 @@ ExpressionLayout * IntegralLayout::clone() const {
 }
 
 void IntegralLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
-
-  if (cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left)) {
+  if (cursor->isEquivalentTo(ExpressionLayoutCursor(integrandLayout(), ExpressionLayoutCursor::Position::Left))) {
     // Case: Left of the integrand.
     // Delete the layout, keep the integrand.
     replaceWithAndMoveCursor(integrandLayout(), true, cursor);
@@ -125,8 +124,7 @@ bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomp
   }
   // If the cursor is Left of the integrand, move it to the upper bound.
   if (integrandLayout()
-      && cursor->pointedExpressionLayout()->hasAncestor(integrandLayout(), true)
-      && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
+      && cursor->isEquivalentTo(ExpressionLayoutCursor(integrandLayout(), ExpressionLayoutCursor::Position::Left)))
   {
     assert(upperBoundLayout() != nullptr);
     return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
@@ -142,8 +140,7 @@ bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldReco
   }
   // If the cursor is Left of the integrand, move it to the lower bound.
   if (integrandLayout()
-      && cursor->pointedExpressionLayout()->hasAncestor(integrandLayout(), true)
-      && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
+      && cursor->isEquivalentTo(ExpressionLayoutCursor(integrandLayout(), ExpressionLayoutCursor::Position::Left)))
   {
     assert(lowerBoundLayout() != nullptr);
     return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);

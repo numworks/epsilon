@@ -119,13 +119,13 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRec
 
 bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside the lower bound, move it to the upper bound.
-  if (lowerBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(lowerBoundLayout())) {
+  if (lowerBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(lowerBoundLayout(), true)) {
     assert(upperBoundLayout() != nullptr);
     return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the integrand, move it to the upper bound.
   if (integrandLayout()
-      && cursor->pointedExpressionLayout()->hasAncestor(integrandLayout())
+      && cursor->pointedExpressionLayout()->hasAncestor(integrandLayout(), true)
       && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(upperBoundLayout() != nullptr);
@@ -136,13 +136,13 @@ bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomp
 
 bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // If the cursor is inside the upper bound, move it to the lower bound.
-  if (upperBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(upperBoundLayout())) {
+  if (upperBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(upperBoundLayout(), true)) {
     assert(lowerBoundLayout() != nullptr);
     return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
   // If the cursor is Left of the integrand, move it to the lower bound.
   if (integrandLayout()
-      && cursor->pointedExpressionLayout()->hasAncestor(integrandLayout())
+      && cursor->pointedExpressionLayout()->hasAncestor(integrandLayout(), true)
       && cursor->positionIsEquivalentTo(integrandLayout(), ExpressionLayoutCursor::Position::Left))
   {
     assert(lowerBoundLayout() != nullptr);

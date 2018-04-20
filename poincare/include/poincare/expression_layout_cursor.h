@@ -14,7 +14,7 @@ public:
     Right
   };
 
-  ExpressionLayoutCursor(ExpressionLayout * layout = nullptr, Position position = Position::Right) :
+  constexpr ExpressionLayoutCursor(ExpressionLayout * layout = nullptr, Position position = Position::Right) :
     m_pointedExpressionLayout(layout),
     m_position(position)
   {};

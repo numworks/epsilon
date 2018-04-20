@@ -85,23 +85,23 @@ bool App::textInputIsCorrect(const char * text) {
   return true;
 }
 
-bool App::scrollableExpressionViewWithCursorDidReceiveEvent(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) {
-  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && EditableExpressionViewDelegateApp::scrollableExpressionViewWithCursorDidReceiveEvent(scrollableExpressionViewWithCursor, event)) {
+bool App::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && EditableExpressionViewDelegateApp::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {
     return true;
   }
   /* Here, we check that the expression entered by the user can be printed with
    * less than k_printedExpressionLength characters. Otherwise, we prevent the
    * user from adding this expression to the calculation store. */
-  if (!(scrollableExpressionViewWithCursor->isEditing() && scrollableExpressionViewWithCursor->scrollableExpressionViewWithCursorShouldFinishEditing(event))) {
+  if (!(expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event))) {
     return false;
   }
   int bufferLength = TextField::maxBufferSize();
   char bufferForParsing[bufferLength];
-  Poincare::ExpressionLayout * expressionLayout = scrollableExpressionViewWithCursor->expressionViewWithCursor()->expressionView()->expressionLayout();
+  Poincare::ExpressionLayout * expressionLayout = expressionLayoutField->expressionViewWithCursor()->expressionView()->expressionLayout();
   expressionLayout->writeTextInBuffer(bufferForParsing, bufferLength);
   Expression * exp = Expression::parse(bufferForParsing);
   if (exp == nullptr) {
-    scrollableExpressionViewWithCursor->app()->displayWarning(I18n::Message::SyntaxError);
+    expressionLayoutField->app()->displayWarning(I18n::Message::SyntaxError);
     return true;
   }
   char buffer[Calculation::k_printedExpressionSize];

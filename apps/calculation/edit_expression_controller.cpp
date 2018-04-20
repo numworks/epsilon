@@ -9,10 +9,10 @@ using namespace Shared;
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate) :
+EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_editableExpressionView(parentResponder, textFieldDelegate, scrollableExpressionViewWithCursorDelegate)
+  m_editableExpressionView(parentResponder, textFieldDelegate, expressionLayoutFieldDelegate)
 {
 }
 
@@ -91,26 +91,26 @@ bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField)
   return inputViewDidAbortEditing(textField->text());
 }
 
-bool EditExpressionController::scrollableExpressionViewWithCursorDidReceiveEvent(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) {
-  assert(scrollableExpressionViewWithCursor == ((ContentView *)view())->editableExpressionView()->scrollableExpressionViewWithCursor());
-  if (scrollableExpressionViewWithCursor->isEditing() && scrollableExpressionViewWithCursor->scrollableExpressionViewWithCursorShouldFinishEditing(event) && !expressionLayout()->hasText() && m_calculationStore->numberOfCalculations() > 0) {
+bool EditExpressionController::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+  assert(expressionLayoutField == ((ContentView *)view())->editableExpressionView()->expressionLayoutField());
+  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event) && !expressionLayout()->hasText() && m_calculationStore->numberOfCalculations() > 0) {
     return inputViewDidReceiveEvent(event);
   }
-  return editableExpressionViewDelegateApp()->scrollableExpressionViewWithCursorDidReceiveEvent(scrollableExpressionViewWithCursor, event);
+  return editableExpressionViewDelegateApp()->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
 }
 
-bool EditExpressionController::scrollableExpressionViewWithCursorDidFinishEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text, Ion::Events::Event event) {
-  assert(scrollableExpressionViewWithCursor == ((ContentView *)view())->editableExpressionView()->scrollableExpressionViewWithCursor());
+bool EditExpressionController::expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) {
+  assert(expressionLayoutField == ((ContentView *)view())->editableExpressionView()->expressionLayoutField());
   return inputViewDidFinishEditing(text, event);
 }
 
-bool EditExpressionController::scrollableExpressionViewWithCursorDidAbortEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
-  assert(scrollableExpressionViewWithCursor == ((ContentView *)view())->editableExpressionView()->scrollableExpressionViewWithCursor());
+bool EditExpressionController::expressionLayoutFieldDidAbortEditing(::ExpressionLayoutField * expressionLayoutField) {
+  assert(expressionLayoutField == ((ContentView *)view())->editableExpressionView()->expressionLayoutField());
   return inputViewDidAbortEditing(nullptr);
 }
 
-void EditExpressionController::scrollableExpressionViewWithCursorDidChangeSize(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) {
-  assert(scrollableExpressionViewWithCursor == ((ContentView *)view())->editableExpressionView()->scrollableExpressionViewWithCursor());
+void EditExpressionController::expressionLayoutFieldDidChangeSize(::ExpressionLayoutField * expressionLayoutField) {
+  assert(expressionLayoutField == ((ContentView *)view())->editableExpressionView()->expressionLayoutField());
   reloadView();
 }
 
@@ -177,7 +177,7 @@ void EditExpressionController::viewDidDisappear() {
 }
 
 Poincare::ExpressionLayout * EditExpressionController::expressionLayout() {
-  return ((ContentView *)view())->editableExpressionView()->scrollableExpressionViewWithCursor()->expressionViewWithCursor()->expressionView()->expressionLayout();
+  return ((ContentView *)view())->editableExpressionView()->expressionLayoutField()->expressionViewWithCursor()->expressionView()->expressionLayout();
 }
 
 }

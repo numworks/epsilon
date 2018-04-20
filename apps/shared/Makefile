@@ -38,7 +38,7 @@ app_objs += $(addprefix apps/shared/,\
   regular_table_view_data_source.o\
   round_cursor_view.o\
   simple_interactive_curve_view_controller.o\
-  scrollable_expression_view_with_cursor_delegate.o\
+  expression_layout_field_delegate.o\
   store_controller.o\
   store_parameter_controller.o\
   sum_graph_controller.o\

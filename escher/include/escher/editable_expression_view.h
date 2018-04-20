@@ -1,14 +1,14 @@
 #ifndef ESCHER_EDITABLE_EXPRESSION_VIEW_H
 #define ESCHER_EDITABLE_EXPRESSION_VIEW_H
 
-#include <escher/scrollable_expression_view_with_cursor.h>
-#include <escher/scrollable_expression_view_with_cursor_delegate.h>
+#include <escher/expression_layout_field.h>
+#include <escher/expression_layout_field_delegate.h>
 #include <escher/text_field.h>
 #include <escher/text_field_delegate.h>
 
 class EditableExpressionView :  public Responder, public View {
 public:
-  EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate);
+  EditableExpressionView(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing() const;
@@ -17,7 +17,7 @@ public:
   void insertText(const char * text);
   void reload();
   TextField * textField() { return &m_textField; }
-  ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor() { return &m_scrollableExpressionViewWithCursor; }
+  ExpressionLayoutField * expressionLayoutField() { return &m_expressionLayoutField; }
   bool editionIsInTextField() const;
   bool isEmpty() const;
   bool heightIsMaximal() const;
@@ -41,7 +41,7 @@ private:
   KDCoordinate inputViewHeight() const;
   KDCoordinate maximalHeight() const;
   TextField m_textField;
-  ScrollableExpressionViewWithCursor m_scrollableExpressionViewWithCursor;
+  ExpressionLayoutField m_expressionLayoutField;
   char m_textBody[k_bufferLength];
 };
 

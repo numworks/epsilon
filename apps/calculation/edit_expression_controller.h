@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "editable_expression_view.h"
 #include "../shared/text_field_delegate.h"
-#include "../shared/scrollable_expression_view_with_cursor_delegate.h"
+#include "../shared/expression_layout_field_delegate.h"
 #include "history_controller.h"
 #include "calculation_store.h"
 
@@ -12,7 +12,7 @@ namespace Calculation {
 class HistoryController;
 
 /* TODO: implement a split view */
-class EditExpressionController : public DynamicViewController, public Shared::TextFieldDelegate, public Shared::ScrollableExpressionViewWithCursorDelegate {
+class EditExpressionController : public DynamicViewController, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
 public:
   EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
   void didBecomeFirstResponder() override;
@@ -26,16 +26,16 @@ public:
   bool textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(::TextField * textField) override;
 
-  /* ScrollableExpressionViewWithCursorDelegate */
-  bool scrollableExpressionViewWithCursorDidReceiveEvent(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, Ion::Events::Event event) override;
-  bool scrollableExpressionViewWithCursorDidFinishEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor, const char * text, Ion::Events::Event event) override;
-  bool scrollableExpressionViewWithCursorDidAbortEditing(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) override;
-  void scrollableExpressionViewWithCursorDidChangeSize(::ScrollableExpressionViewWithCursor * scrollableExpressionViewWithCursor) override;
+  /* ExpressionLayoutFieldDelegate */
+  bool expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
+  bool expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) override;
+  bool expressionLayoutFieldDidAbortEditing(::ExpressionLayoutField * expressionLayoutField) override;
+  void expressionLayoutFieldDidChangeSize(::ExpressionLayoutField * expressionLayoutField) override;
 
 private:
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ScrollableExpressionViewWithCursorDelegate * scrollableExpressionViewWithCursorDelegate);
+    ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
     void reload();
     TableView * mainView() { return m_mainView; }
     EditableExpressionView * editableExpressionView() { return &m_editableExpressionView; }

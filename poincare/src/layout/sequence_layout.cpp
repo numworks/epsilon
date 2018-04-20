@@ -9,7 +9,7 @@
 namespace Poincare {
 
 void SequenceLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
-  if (cursor->positionIsEquivalentTo(argumentLayout(), ExpressionLayoutCursor::Position::Left)) {
+  if (cursor->isEquivalentTo(ExpressionLayoutCursor(argumentLayout(), ExpressionLayoutCursor::Position::Left))) {
     // Case: Left of the argument. Delete the layout, keep the argument.
     replaceWithAndMoveCursor(argumentLayout(), true, cursor);
     return;
@@ -106,7 +106,7 @@ bool SequenceLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomp
   }
   // If the cursor is Left of the argument, move it to the upper bound.
   if (argumentLayout()
-      && cursor->positionIsEquivalentTo(argumentLayout(), ExpressionLayoutCursor::Position::Left))
+      && cursor->isEquivalentTo(ExpressionLayoutCursor(argumentLayout(), ExpressionLayoutCursor::Position::Left)))
   {
     assert(upperBoundLayout() != nullptr);
     return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
@@ -122,7 +122,7 @@ bool SequenceLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldReco
   }
   // If the cursor is Left of the argument, move it to the lower bound.
   if (argumentLayout()
-      && cursor->positionIsEquivalentTo(argumentLayout(), ExpressionLayoutCursor::Position::Left))
+      && cursor->isEquivalentTo(ExpressionLayoutCursor(argumentLayout(), ExpressionLayoutCursor::Position::Left)))
   {
     assert(lowerBoundLayout() != nullptr);
     return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);

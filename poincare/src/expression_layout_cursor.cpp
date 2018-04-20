@@ -34,23 +34,17 @@ KDCoordinate ExpressionLayoutCursor::baseline() {
   return max(baseline1, baseline2);
 }
 
-bool ExpressionLayoutCursor::positionIsEquivalentTo(ExpressionLayout * expressionLayout, Position position) {
-  assert(expressionLayout != nullptr);
-  return middleLeftPoint() == middleLeftPointOfCursor(expressionLayout, position);
+bool ExpressionLayoutCursor::isEquivalentTo(ExpressionLayoutCursor cursor) {
+  assert(isDefined());
+  assert(cursor.isDefined());
+  return middleLeftPoint() == cursor.middleLeftPoint();
 }
 
 KDPoint ExpressionLayoutCursor::middleLeftPoint() {
-  return middleLeftPointOfCursor(m_pointedExpressionLayout, m_position);
-}
-
-KDPoint ExpressionLayoutCursor::middleLeftPointOfCursor(ExpressionLayout * expressionLayout, Position position) {
-  KDPoint layoutOrigin = expressionLayout->absoluteOrigin();
-  KDCoordinate y = layoutOrigin.y() + expressionLayout->baseline() - k_cursorHeight/2;
-  if (position == Position::Left) {
-    return KDPoint(layoutOrigin.x(), y);
-  }
-  assert(position == Position::Right);
-  return KDPoint(layoutOrigin.x() + expressionLayout->size().width(), y);
+  KDPoint layoutOrigin = m_pointedExpressionLayout->absoluteOrigin();
+  KDCoordinate x = layoutOrigin.x() + (m_position == Position::Left ? 0 : m_pointedExpressionLayout->size().width());
+  KDCoordinate y = layoutOrigin.y() + m_pointedExpressionLayout->baseline() - k_cursorHeight/2;
+  return KDPoint(x, y);
 }
 
 bool ExpressionLayoutCursor::moveLeft(bool * shouldRecomputeLayout) {

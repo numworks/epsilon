@@ -125,7 +125,7 @@ bool VerticalOffsetLayout::moveUp(ExpressionLayoutCursor * cursor, bool * should
   if (m_type == VerticalOffsetLayout::Type::Superscript) {
     // Case: Right.
     // Move to the indice.
-    if (cursor->positionIsEquivalentTo(this, ExpressionLayoutCursor::Position::Right)) {
+    if (cursor->isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right))) {
       assert(indiceLayout() != nullptr);
       cursor->setPointedExpressionLayout(indiceLayout());
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
@@ -133,7 +133,7 @@ bool VerticalOffsetLayout::moveUp(ExpressionLayoutCursor * cursor, bool * should
     }
     // Case: Left.
     // Move to the indice.
-    if (cursor->positionIsEquivalentTo(this, ExpressionLayoutCursor::Position::Left)) {
+    if (cursor->isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left))) {
       assert(indiceLayout() != nullptr);
       cursor->setPointedExpressionLayout(indiceLayout());
       cursor->setPosition(ExpressionLayoutCursor::Position::Left);
@@ -145,8 +145,8 @@ bool VerticalOffsetLayout::moveUp(ExpressionLayoutCursor * cursor, bool * should
   // Put the cursor at the same position, pointing this.
   if (m_type == VerticalOffsetLayout::Type::Subscript
     && indiceLayout() != nullptr
-    && (cursor->positionIsEquivalentTo(indiceLayout(), ExpressionLayoutCursor::Position::Left)
-      || cursor->positionIsEquivalentTo(indiceLayout(), ExpressionLayoutCursor::Position::Right)))
+    && (cursor->isEquivalentTo(ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Left))
+      || cursor->isEquivalentTo(ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Right))))
   {
     cursor->setPointedExpressionLayout(this);
     return true;
@@ -159,7 +159,7 @@ bool VerticalOffsetLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shou
   if (m_type == VerticalOffsetLayout::Type::Subscript) {
     // Case: Right.
     // Move to the indice.
-    if (cursor->positionIsEquivalentTo(this, ExpressionLayoutCursor::Position::Right)) {
+    if (cursor->isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right))) {
       assert(indiceLayout() != nullptr);
       cursor->setPointedExpressionLayout(indiceLayout());
       cursor->setPosition(ExpressionLayoutCursor::Position::Right);
@@ -167,7 +167,7 @@ bool VerticalOffsetLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shou
     }
     // Case: Left.
     // Move to the indice.
-    if (cursor->positionIsEquivalentTo(this, ExpressionLayoutCursor::Position::Left)) {
+    if (cursor->isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left))) {
       assert(indiceLayout() != nullptr);
       cursor->setPointedExpressionLayout(indiceLayout());
       cursor->setPosition(ExpressionLayoutCursor::Position::Left);

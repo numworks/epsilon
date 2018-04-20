@@ -117,7 +117,7 @@ bool IntegralLayout::moveRight(ExpressionLayoutCursor * cursor, bool * shouldRec
   return false;
 }
 
-bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // If the cursor is inside the lower bound, move it to the upper bound.
   if (lowerBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(lowerBoundLayout(), true)) {
     assert(upperBoundLayout() != nullptr);
@@ -131,10 +131,10 @@ bool IntegralLayout::moveUp(ExpressionLayoutCursor * cursor, bool * shouldRecomp
     assert(upperBoundLayout() != nullptr);
     return upperBoundLayout()->moveUpInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout);
+  return ExpressionLayout::moveUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // If the cursor is inside the upper bound, move it to the lower bound.
   if (upperBoundLayout() && cursor->pointedExpressionLayout()->hasAncestor(upperBoundLayout(), true)) {
     assert(lowerBoundLayout() != nullptr);
@@ -148,7 +148,7 @@ bool IntegralLayout::moveDown(ExpressionLayoutCursor * cursor, bool * shouldReco
     assert(lowerBoundLayout() != nullptr);
     return lowerBoundLayout()->moveDownInside(cursor, shouldRecomputeLayout);
   }
-  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout);
+  return ExpressionLayout::moveDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
 int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

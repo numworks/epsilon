@@ -22,7 +22,6 @@ objs += $(addprefix escher/src/,\
   expression_table_cell.o\
   expression_table_cell_with_pointer.o\
   expression_view.o\
-  expression_view_with_cursor.o\
   highlight_cell.o\
   gauge_view.o\
   image_view.o\
@@ -51,6 +50,7 @@ objs += $(addprefix escher/src/,\
   scroll_view_indicator.o\
   scrollable_view.o\
   expression_layout_field.o\
+  expression_layout_field_content_view.o\
   selectable_table_view.o\
   selectable_table_view_data_source.o\
   selectable_table_view_delegate.o\

@@ -1,10 +1,10 @@
-#include <escher/expression_view_with_cursor.h>
+#include <escher/expression_layout_field.h>
 #include <kandinsky/rect.h>
 #include <assert.h>
 
 using namespace Poincare;
 
-ExpressionViewWithCursor::ExpressionViewWithCursor(ExpressionLayout * expressionLayout) :
+ExpressionLayoutField::ContentView::ContentView(ExpressionLayout * expressionLayout) :
   m_cursor(),
   m_expressionView(),
   m_cursorView(),
@@ -15,21 +15,21 @@ ExpressionViewWithCursor::ExpressionViewWithCursor(ExpressionLayout * expression
   m_expressionView.setExpressionLayout(expressionLayout);
 }
 
-void ExpressionViewWithCursor::setEditing(bool isEditing) {
+void ExpressionLayoutField::ContentView::setEditing(bool isEditing) {
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
   layoutSubviews();
 }
 
-void ExpressionViewWithCursor::cursorPositionChanged() {
+void ExpressionLayoutField::ContentView::cursorPositionChanged() {
   layoutCursorSubview();
 }
 
-KDRect ExpressionViewWithCursor::cursorRect() {
+KDRect ExpressionLayoutField::ContentView::cursorRect() {
   return m_cursorView.frame();
 }
 
-KDSize ExpressionViewWithCursor::minimalSizeForOptimalDisplay() const {
+KDSize ExpressionLayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize expressionViewSize = m_expressionView.minimalSizeForOptimalDisplay();
   KDSize cursorSize = isEditing() ? m_cursorView.minimalSizeForOptimalDisplay() : KDSizeZero;
   KDCoordinate resultWidth = expressionViewSize.width() + cursorSize.width();
@@ -37,18 +37,18 @@ KDSize ExpressionViewWithCursor::minimalSizeForOptimalDisplay() const {
   return KDSize(resultWidth, resultHeight);
 }
 
-View * ExpressionViewWithCursor::subviewAtIndex(int index) {
+View * ExpressionLayoutField::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);
   View * m_views[] = {&m_expressionView, &m_cursorView};
   return m_views[index];
 }
 
-void ExpressionViewWithCursor::layoutSubviews() {
+void ExpressionLayoutField::ContentView::layoutSubviews() {
   m_expressionView.setFrame(bounds());
   layoutCursorSubview();
 }
 
-void ExpressionViewWithCursor::layoutCursorSubview() {
+void ExpressionLayoutField::ContentView::layoutCursorSubview() {
   if (!m_isEditing) {
     m_cursorView.setFrame(KDRectZero);
     return;

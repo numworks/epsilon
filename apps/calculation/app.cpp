@@ -97,8 +97,7 @@ bool App::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * express
   }
   int bufferLength = TextField::maxBufferSize();
   char bufferForParsing[bufferLength];
-  Poincare::ExpressionLayout * expressionLayout = expressionLayoutField->expressionViewWithCursor()->expressionView()->expressionLayout();
-  expressionLayout->writeTextInBuffer(bufferForParsing, bufferLength);
+  expressionLayoutField->writeTextInBuffer(bufferForParsing, bufferLength);
   Expression * exp = Expression::parse(bufferForParsing);
   if (exp == nullptr) {
     expressionLayoutField->app()->displayWarning(I18n::Message::SyntaxError);

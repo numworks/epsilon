@@ -81,6 +81,13 @@ Decimal::Decimal(T f) {
   m_mantissa = Integer(mantissaf);
 }
 
+template<typename T>
+T Decimal::toScalar() const {
+  T m = m_mantissa.approximate<T>();
+  int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
+  return m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1));
+}
+
 Expression::Type Decimal::type() const {
   return Type::Decimal;
 }
@@ -90,9 +97,7 @@ Expression * Decimal::clone() const {
 }
 
 template<typename T> Evaluation<T> * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
-  T m = m_mantissa.approximate<T>();
-  int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
-  return new Complex<T>(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1)));
+  return new Complex<T>(toScalar<T>());
 }
 
 int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode, int numberOfSignificantDigits) const {
@@ -274,5 +279,7 @@ int Decimal::simplificationOrderSameType(const Expression * e, bool canBeInterru
 
 template Decimal::Decimal(double);
 template Decimal::Decimal(float);
+template double Decimal::toScalar<double>() const;
+template float Decimal::toScalar<float>() const;
 
 }

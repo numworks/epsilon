@@ -367,7 +367,7 @@ template<typename T> T Expression::approximateToScalar(Context& context, AngleUn
   Expression * evaluation = approximate<T>(context, angleUnit, complexFormat);
   T result = NAN;
   if (evaluation->type() == Type::Decimal) {
-    //result = static_cast<const Decimal *>(evaluation)->toScalar(); //TODO
+    result = static_cast<const Decimal *>(evaluation)->toScalar<T>();
   }
   /*if (evaluation->type() == Type::Matrix) {
     if (numberOfOperands() == 1) {

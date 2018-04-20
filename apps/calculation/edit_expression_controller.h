@@ -2,6 +2,7 @@
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
 #include <escher.h>
+#include <poincare/expression_layout.h>
 #include "expression_field.h"
 #include "../shared/text_field_delegate.h"
 #include "../shared/expression_layout_field_delegate.h"
@@ -36,6 +37,7 @@ private:
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
+    ~ContentView();
     void reload();
     TableView * mainView() { return m_mainView; }
     ExpressionField * expressionField() { return &m_expressionField; }
@@ -44,8 +46,11 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
   private:
+    static constexpr int k_bufferLength = TextField::maxBufferSize();
     TableView * m_mainView;
     ExpressionField m_expressionField;
+    char m_textBody[k_bufferLength];
+    Poincare::ExpressionLayout * m_layout;
   };
   View * loadView() override;
   void unloadView(View * view) override;
@@ -56,7 +61,6 @@ private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   char m_cacheBuffer[TextField::maxBufferSize()];
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
-  Poincare::ExpressionLayout * expressionLayout();
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
 };

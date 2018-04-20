@@ -2,13 +2,14 @@
 #include <poincare/preferences.h>
 #include <assert.h>
 
-ExpressionField::ExpressionField(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, Poincare::ExpressionLayout * layout, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   Responder(parentResponder),
   View(),
-  m_textField(parentResponder, m_textBody, m_textBody, k_bufferLength, textFieldDelegate, false),
-  m_expressionLayoutField(parentResponder, new Poincare::HorizontalLayout(), expressionLayoutFieldDelegate)
+  m_textField(parentResponder, textBuffer, textBuffer, textBufferLength, textFieldDelegate, false),
+  m_expressionLayoutField(parentResponder, layout, expressionLayoutFieldDelegate),
+  m_textBuffer(textBuffer),
+  m_textBufferLength(textBufferLength)
 {
-  m_textBody[0] = 0;
 }
 
 void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {
@@ -28,9 +29,9 @@ bool ExpressionField::isEditing() const {
 
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
-    m_expressionLayoutField.writeTextInBuffer(m_textBody, k_bufferLength);
+    m_expressionLayoutField.writeTextInBuffer(m_textBuffer, m_textBufferLength);
   }
-  return m_textBody;
+  return m_textBuffer;
 }
 
 void ExpressionField::setText(const char * text) {

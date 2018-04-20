@@ -46,6 +46,7 @@ public:
   const ExpressionLayout * parent() const { return m_parent; }
   ExpressionLayout * editableParent() { return m_parent; }
   bool hasAncestor(const ExpressionLayout * e, bool includeSelf = false) const;
+  ExpressionLayout * editableRoot();
 
   /* Dynamic Layout */
 

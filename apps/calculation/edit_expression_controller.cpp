@@ -12,8 +12,14 @@ namespace Calculation {
 EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_expressionField(parentResponder, textFieldDelegate, expressionLayoutFieldDelegate)
+  m_expressionField(parentResponder, m_textBody, k_bufferLength, m_layout, textFieldDelegate, expressionLayoutFieldDelegate),
+  m_layout(new Poincare::HorizontalLayout)
 {
+  m_textBody[0] = 0;
+}
+
+EditExpressionController::ContentView::~ContentView() {
+  delete m_layout;
 }
 
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {
@@ -93,7 +99,7 @@ bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField)
 
 bool EditExpressionController::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
   assert(expressionLayoutField == ((ContentView *)view())->expressionField()->expressionLayoutField());
-  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event) && !expressionLayout()->hasText() && m_calculationStore->numberOfCalculations() > 0) {
+  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event) && !expressionLayoutField->hasText() && m_calculationStore->numberOfCalculations() > 0) {
     return inputViewDidReceiveEvent(event);
   }
   return expressionFieldDelegateApp()->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
@@ -127,7 +133,6 @@ View * EditExpressionController::loadView() {
 }
 
 void EditExpressionController::unloadView(View * view) {
-  delete expressionLayout();
   delete view;
 }
 
@@ -174,10 +179,6 @@ bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
 void EditExpressionController::viewDidDisappear() {
   DynamicViewController::viewDidDisappear();
   m_historyController->viewDidDisappear();
-}
-
-Poincare::ExpressionLayout * EditExpressionController::expressionLayout() {
-  return ((ContentView *)view())->expressionField()->expressionLayoutField()->expressionLayout();
 }
 
 }

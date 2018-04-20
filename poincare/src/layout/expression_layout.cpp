@@ -94,8 +94,10 @@ int ExpressionLayout::indexOfChild(const ExpressionLayout * child) const {
   return -1;
 }
 
-bool ExpressionLayout::hasAncestor(const ExpressionLayout * e) const {
-  assert(m_parent != this);
+bool ExpressionLayout::hasAncestor(const ExpressionLayout * e, bool includeSelf) const {
+  if (includeSelf && e == this) {
+    return true;
+  }
   if (m_parent == e) {
     return true;
   }

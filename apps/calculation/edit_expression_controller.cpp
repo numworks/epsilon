@@ -177,7 +177,7 @@ void EditExpressionController::viewDidDisappear() {
 }
 
 Poincare::ExpressionLayout * EditExpressionController::expressionLayout() {
-  return ((ContentView *)view())->expressionField()->expressionLayoutField()->expressionViewWithCursor()->expressionView()->expressionLayout();
+  return ((ContentView *)view())->expressionField()->expressionLayoutField()->expressionLayout();
 }
 
 }

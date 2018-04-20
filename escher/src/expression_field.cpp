@@ -28,7 +28,7 @@ bool ExpressionField::isEditing() const {
 
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
-    m_expressionLayoutField.expressionViewWithCursor()->expressionView()->expressionLayout()->writeTextInBuffer(m_textBody, k_bufferLength);
+    m_expressionLayoutField.writeTextInBuffer(m_textBody, k_bufferLength);
   }
   return m_textBody;
 }
@@ -101,11 +101,7 @@ bool ExpressionField::editionIsInTextField() const {
 }
 
 bool ExpressionField::isEmpty() const {
-  if (editionIsInTextField()) {
-    return m_textField.draftTextLength() == 0;
-  }
-  Poincare::ExpressionLayout * layout =  const_cast<ExpressionLayoutField *>(&m_expressionLayoutField)->expressionViewWithCursor()->expressionView()->expressionLayout();
-  return !layout->hasText();
+  return editionIsInTextField() ? (m_textField.draftTextLength() == 0) : m_expressionLayoutField.hasText();
 }
 
 bool ExpressionField::heightIsMaximal() const {

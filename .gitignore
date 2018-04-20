@@ -2,6 +2,7 @@
 *.o
 *.elf
 *.exe
+*.bin
 
 # No dependency files
 *.d

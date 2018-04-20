@@ -94,7 +94,7 @@ void ConjugateLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChil
 
 void ConjugateLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
   assert(index >= 0 && index < numberOfChildren());
-  assert((cursor->pointedExpressionLayout() == child(index)) || (cursor->pointedExpressionLayout()->hasAncestor(child(index))));
+  assert(cursor->pointedExpressionLayout()->hasAncestor(child(index), true));
   replaceChildAndMoveCursor(child(index), new EmptyLayout(), deleteAfterRemoval, cursor);
 }
 

@@ -74,6 +74,7 @@ clean:
 .PHONY: lint
 lint:
 	cppcheck --enable=warning,style,performance .
+	bloaty epsilon.elf
 
 .PHONY: cowsay_%
 cowsay_%:

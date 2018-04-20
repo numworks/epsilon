@@ -184,7 +184,7 @@ void ExpressionLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
 
 void ExpressionLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
   assert(index >= 0 && index < numberOfChildren());
-  assert((cursor->pointedExpressionLayout() == child(index)) || (cursor->pointedExpressionLayout()->hasAncestor(child(index))));
+  assert(cursor->pointedExpressionLayout()->hasAncestor(child(index), true));
   removeChildAtIndex(index, deleteAfterRemoval);
   if (index < numberOfChildren()) {
     cursor->setPointedExpressionLayout(editableChild(index));

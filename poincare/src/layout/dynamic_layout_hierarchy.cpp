@@ -116,7 +116,7 @@ void DynamicLayoutHierarchy::removeChildAtIndex(int index, bool deleteAfterRemov
 
 void DynamicLayoutHierarchy::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
   assert(index >= 0 && index < numberOfChildren());
-  assert((cursor->pointedExpressionLayout() == child(index)) || (cursor->pointedExpressionLayout()->hasAncestor(child(index))));
+  assert(cursor->pointedExpressionLayout()->hasAncestor(child(index), true));
   if (numberOfChildren() == 1) {
     if (m_parent) {
       if (!deleteAfterRemoval) {

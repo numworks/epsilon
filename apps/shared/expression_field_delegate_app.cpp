@@ -18,13 +18,13 @@ bool ExpressionFieldDelegateApp::expressionLayoutFieldShouldFinishEditing(Expres
 
 bool ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
   if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event)) {
-    if (!expressionLayoutField->expressionViewWithCursor()->expressionView()->expressionLayout()->hasText()) {
+    if (!expressionLayoutField->hasText()) {
       expressionLayoutField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
     int bufferSize = 256;
     char buffer[bufferSize];
-    expressionLayoutField->expressionViewWithCursor()->expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferSize);
+    expressionLayoutField->writeTextInBuffer(buffer, bufferSize);
     Expression * exp = Expression::parse(buffer);
     if (exp != nullptr) {
       delete exp;

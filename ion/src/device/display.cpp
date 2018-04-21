@@ -230,11 +230,12 @@ void initPanel() {
   *CommandAddress = Command::SleepOut;
   msleep(5);
 
-  SEND_COMMAND(PixelFormatSet, 0x05);
+  SEND_COMMAND(PixelFormatSet, 0x05); // 65K colors R5-G6-B5 bits
   //SEND_COMMAND(MemoryAccessControl, 0xA0);
   SEND_COMMAND(TearingEffectLineOn, 0x00);
   SEND_COMMAND(FrameRateControl, 0x1E); // 40 Hz frame rate
-
+  SEND_COMMAND(GammaSet, 0x00); // Set gamma gamma 0x01 = gamma 2.2 is default
+  //SEND_COMMAND(LCDbias, 0x35); // Set the contrast of LCD (maybe not used in HW)
   *CommandAddress = Command::DisplayOn;
 }
 

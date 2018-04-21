@@ -12,7 +12,13 @@ ion_special_characters = {
     u'μ': "Ion::Charset::SmallMu",
     u'σ': "Ion::Charset::SmallSigma",
     u'≤': "Ion::Charset::LessEqual",
-    u'≈': "Ion::Charset::AlmostEqual"
+    u'≈': "Ion::Charset::AlmostEqual",
+    u'å': "Ion::Charset::SE_aa",
+    u'ä': "Ion::Charset::SE_ae",
+    u'ö': "Ion::Charset::SE_oe",
+    u'Å': "Ion::Charset::SE_AA",
+    u'Ä': "Ion::Charset::SE_AE",
+    u'Ö': "Ion::Charset::SE_OE"
 }
 
 def ion_char(i18n_letter):

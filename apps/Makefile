@@ -50,17 +50,20 @@ i18n_files += $(addprefix apps/,\
   shared.es.i18n\
   shared.fr.i18n\
   shared.pt.i18n\
+  shared.se.i18n\
   shared.universal.i18n\
   toolbox.de.i18n\
   toolbox.en.i18n\
   toolbox.es.i18n\
   toolbox.fr.i18n\
   toolbox.pt.i18n\
+  toolbox.se.i18n\
   variables.de.i18n\
   variables.en.i18n\
   variables.es.i18n\
   variables.fr.i18n\
   variables.pt.i18n\
+  variables.se.i18n\
 )
 
 apps/i18n.h: apps/i18n.cpp

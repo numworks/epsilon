@@ -22,6 +22,7 @@ i18n_files += $(addprefix apps/statistics/,\
   base.es.i18n\
   base.fr.i18n\
   base.pt.i18n\
+  base.se.i18n\
 )
 
 app_images += apps/statistics/stat_icon.png

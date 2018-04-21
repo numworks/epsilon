@@ -3,11 +3,11 @@
 PLATFORM ?= device
 DEBUG ?= 0
 
-EPSILON_VERSION ?= 1.4.1
+EPSILON_VERSION ?= 1.4.1.X
 EPSILON_ONBOARDING_APP ?= 1
 EPSILON_SOFTWARE_UPDATE_PROMPT ?= 1
 EPSILON_APPS ?= calculation graph sequence settings statistics probability regression code
-EPSILON_I18N ?= en fr es de pt
+EPSILON_I18N ?= en fr es de pt se
 EPSILON_GETOPT ?= 0
 
 include build/defaults.mak

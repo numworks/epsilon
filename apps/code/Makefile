@@ -26,18 +26,21 @@ i18n_files += $(addprefix apps/code/,\
   base.es.i18n\
   base.fr.i18n\
   base.pt.i18n\
+  base.se.i18n\
   base.universal.i18n\
   catalog.de.i18n\
   catalog.en.i18n\
   catalog.es.i18n\
   catalog.fr.i18n\
   catalog.pt.i18n\
+  catalog.se.i18n\
   catalog.universal.i18n\
   toolbox.de.i18n\
   toolbox.en.i18n\
   toolbox.es.i18n\
   toolbox.fr.i18n\
   toolbox.pt.i18n\
+  toolbox.se.i18n\
   toolbox.universal.i18n\
 )
 

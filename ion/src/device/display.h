@@ -65,6 +65,7 @@ enum class Command : uint16_t {
   Reset = 0x01,
   SleepIn = 0x10,
   SleepOut = 0x11,
+  GammaSet = 0x26,
   DisplayOff = 0x28,
   DisplayOn = 0x29,
   ColumnAddressSet = 0x2A,
@@ -74,6 +75,7 @@ enum class Command : uint16_t {
   TearingEffectLineOn = 0x35,
   MemoryAccessControl = 0x36,
   PixelFormatSet = 0x3A,
+  LCDbias = 0xB7, // Bias voltage for contrast control
   FrameRateControl = 0xC6
 };
 

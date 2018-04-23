@@ -49,7 +49,7 @@ bool ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(Expression
 
 Toolbox * ExpressionFieldDelegateApp::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
   Toolbox * toolbox = container()->mathToolbox();
-  static_cast<MathToolbox *>(toolbox)->setSenderAndAction(expressionLayoutField, MathToolbox::actionForExpressionLayoutField);
+  toolbox->setSender(expressionLayoutField);
   return toolbox;
 }
 

@@ -20,6 +20,7 @@ public:
   void reload();
   bool hasText() const;
   void writeTextInBuffer(char * buffer, int bufferLength);
+  bool handleEventWithText(const char * text, bool indentation = false);
   Poincare::ExpressionLayout * expressionLayout();
 
   /* Responder */

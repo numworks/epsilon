@@ -105,7 +105,7 @@ bool Function::isEmpty() {
 
 template<typename T>
 T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
-  Poincare::VariableContext variableContext = Poincare::VariableContext(symbol(), context);
+  Poincare::VariableContext<T> variableContext = Poincare::VariableContext<T>(symbol(), context);
   variableContext.setApproximationForVariable(x);
   return expression(context)->approximateToScalar<T>(variableContext);
 }

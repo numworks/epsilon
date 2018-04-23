@@ -47,7 +47,7 @@ template<typename T>
 Complex<T> * Derivative::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
-  VariableContext xContext = VariableContext('x', &context);
+  VariableContext<T> xContext = VariableContext<T>('x', &context);
   Evaluation<T> * xInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T x = xInput->toScalar();
   delete xInput;
@@ -80,7 +80,7 @@ Complex<T> * Derivative::templatedApproximate(Context& context, AngleUnit angleU
 }
 
 template<typename T>
-T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext xContext, AngleUnit angleUnit) const {
+T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const {
   Symbol xSymbol('x');
   xContext.setApproximationForVariable(x + h);
   Evaluation<T> * fInput = operand(0)->privateApproximate(T(), xContext, angleUnit);
@@ -94,7 +94,7 @@ T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext xContext, Angle
 }
 
 template<typename T>
-T Derivative::riddersApproximation(VariableContext xContext, AngleUnit angleUnit, T x, T h, T * error) const {
+T Derivative::riddersApproximation(VariableContext<T> xContext, AngleUnit angleUnit, T x, T h, T * error) const {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Engineering Software, vol. 4, no. 2,

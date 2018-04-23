@@ -85,6 +85,7 @@ public:
     Undefined = 0,
     Rational = 1,
     Decimal,
+    Approximation,
     Multiplication,
     Power,
     Addition,
@@ -231,7 +232,6 @@ public:
   static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
 
   /* Evaluation Engine */
-  template<typename T> static Expression * CreateDecimal(T f);
   /* The function approximate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
   template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default, ComplexFormat complexFormat = ComplexFormat::Default) const;
@@ -291,6 +291,7 @@ private:
     return nullptr;
   }
   /* Evaluation Engine */
+  template<typename T> static Expression * CreateDecimal(T f);
   template<typename T> static Expression * complexToExpression(std::complex<T> c, ComplexFormat complexFormat);
   virtual Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;

@@ -323,7 +323,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   if (n < m_initialRank || n < 0) {
     return NAN;
   }
-  CacheContext ctx = CacheContext(sqctx);
+  CacheContext<T> ctx = CacheContext<T>(sqctx);
   T un = sqctx->valueOfSequenceAtPreviousRank<T>(0, 0);
   T unm1 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 1);
   T unm2 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 2);

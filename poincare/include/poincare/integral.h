@@ -33,12 +33,12 @@ private:
   };
   constexpr static int k_maxNumberOfIterations = 10;
 #ifdef LAGRANGE_METHOD
-  template<typename T> T lagrangeGaussQuadrature(T a, T b, VariableContext xContext, AngleUnit angleUnit) const;
+  template<typename T> T lagrangeGaussQuadrature(T a, T b, VariableContext<T> xContext, AngleUnit angleUnit) const;
 #else
-  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, VariableContext xContext, AngleUnit angleUnit) const;
-  template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, VariableContext xContext, AngleUnit angleUnit) const;
+  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, VariableContext<T> xContext, AngleUnit angleUnit) const;
+  template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, VariableContext<T> xContext, AngleUnit angleUnit) const;
 #endif
-  template<typename T> T functionValueAtAbscissa(T x, VariableContext xcontext, AngleUnit angleUnit) const;
+  template<typename T> T functionValueAtAbscissa(T x, VariableContext<T> xcontext, AngleUnit angleUnit) const;
 };
 
 }

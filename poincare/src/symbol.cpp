@@ -153,9 +153,6 @@ float Symbol::characteristicXRange(Context & context, AngleUnit angleUnit) const
 }
 
 bool Symbol::hasAnExactRepresentation(Context & context) const {
-  if (m_name == Ion::Charset::IComplex) {
-    return true;
-  }
   // TODO: so far, no symbols can be exact but A, ..Z should be able to hold exact values later.
   return false;
 }

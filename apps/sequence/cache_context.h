@@ -6,16 +6,16 @@
 
 namespace Sequence {
 
-class CacheContext : public Poincare::VariableContext {
+template<typename T>
+class CacheContext : public Poincare::VariableContext<T> {
 public:
   CacheContext(Poincare::Context * parentContext);
-  ~CacheContext();
   const Poincare::Expression * expressionForSymbol(const Poincare::Symbol * symbol) override;
-  template<typename T> void setValueForSymbol(T value, const Poincare::Symbol * symbol);
+  void setValueForSymbol(T value, const Poincare::Symbol * symbol);
 private:
   int nameIndexForSymbol(const Poincare::Symbol * symbol);
   int rankIndexForSymbol(const Poincare::Symbol * symbol);
-  Poincare::Expression * m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
+  Poincare::Approximation<T> m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
 };
 
 }

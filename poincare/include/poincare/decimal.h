@@ -12,12 +12,11 @@ namespace Poincare {
  */
 
 class Decimal : public StaticHierarchy<0> {
+  friend class Expression;
 public:
   static int exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
   static Integer mantissa(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative);
   Decimal(Integer mantissa, int exponent);
-  template <typename T> Decimal(T f);
-  template<typename T> T toScalar() const;
   int exponent() const { return m_exponent; }
   Integer mantissa() const { return m_mantissa; }
   // Expression subclassing
@@ -37,6 +36,7 @@ private:
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
+  template <typename T> Decimal(T f);
   Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const;

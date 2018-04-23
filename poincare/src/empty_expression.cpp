@@ -17,7 +17,7 @@ int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, int number
   return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, Ion::Charset::Empty);
 }
 
-ExpressionLayout * EmptyExpression::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * EmptyExpression::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   return new EmptyLayout();
 }
 

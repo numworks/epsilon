@@ -213,7 +213,7 @@ bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentat
       m_contentView.cursor()->insertText(text);
       return true;
     }
-    Poincare::ExpressionLayout * resultLayout = resultExpression->createLayout();
+    Poincare::ExpressionLayout * resultLayout = resultExpression->createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
     delete resultExpression;
     if (currentNumberOfLayouts + resultLayout->numberOfDescendants(true) >= k_maxNumberOfLayouts) {
       delete resultLayout;

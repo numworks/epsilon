@@ -1,8 +1,10 @@
 #include "box_controller.h"
 #include "app.h"
+#include "../shared/poincare_helpers.h"
 #include "../apps_container.h"
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Statistics {
 
@@ -53,7 +55,7 @@ void BoxController::reloadBannerView() {
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeriesIndex());
-  int numberOfChar = PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  int numberOfChar = PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = ' ';
   buffer[numberOfChar] = 0;
   m_view.editableBannerView()->setLegendAtIndex(buffer, 2);

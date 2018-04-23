@@ -9,7 +9,8 @@ namespace Poincare {
 class Multiplication;
 
 class Matrix : public DynamicHierarchy {
-  template<typename T> friend class MatrixComplex;
+template<typename T> friend class MatrixComplex;
+friend class GlobalContext;
 public:
   Matrix(MatrixData * matrixData); // pilfer the operands of matrixData
   Matrix(const Expression * const * operands, int numberOfRows, int numberOfColumns, bool cloneOperands = true);
@@ -41,7 +42,7 @@ private:
   // Row canonize the array in place
   template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
   /* Layout */
-  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
+  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Evaluation */
   Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }

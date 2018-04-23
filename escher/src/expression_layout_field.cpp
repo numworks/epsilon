@@ -50,9 +50,6 @@ bool ExpressionLayoutField::handleEvent(Ion::Events::Event event) {
     didHandleEvent = true;
   }
   if (didHandleEvent) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
     shouldRecomputeLayout = m_contentView.cursor()->hideEmptyLayoutIfNeeded() || shouldRecomputeLayout;
     if (!shouldRecomputeLayout) {
       m_contentView.cursorPositionChanged();

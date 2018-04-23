@@ -20,6 +20,7 @@ protected:
   ExpressionLayout * operandLayout();
   KDCoordinate externWidthMargin() const { return 2; }
   virtual KDCoordinate widthMargin() const { return 5; }
+  virtual KDCoordinate verticalExternMargin() const { return 0; }
   virtual bool renderTopBar() const { return true; }
   virtual bool renderBottomBar() const { return true; }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

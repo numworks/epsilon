@@ -210,9 +210,7 @@ bool ExpressionLayoutCursor::hideEmptyLayoutIfNeeded() {
 void ExpressionLayoutCursor::clearLayout() {
   ExpressionLayout * rootLayout = m_pointedExpressionLayout->editableRoot();
   assert(rootLayout->isHorizontal());
-  for (int i = 0; i < rootLayout->numberOfChildren(); i++) {
-    static_cast<HorizontalLayout *>(rootLayout)->removeAndDeleteChildren();
-  }
+  static_cast<HorizontalLayout *>(rootLayout)->removeAndDeleteChildren();
   m_pointedExpressionLayout = rootLayout;
 }
 

@@ -226,13 +226,13 @@ KDSize VerticalOffsetLayout::computeSize() {
       width += k_separationMargin;
     }
   }
-  KDCoordinate height = baseLayout()->size().height() + indiceLayout()->size().height() - k_indiceHeight;
+  KDCoordinate height = baseLayout()->size().height() - k_indiceHeight + indiceLayout()->size().height();
   return KDSize(width, height);
 }
 
 void VerticalOffsetLayout::computeBaseline() {
   if (m_type == Type::Subscript) {
-    m_baseline = 0;
+    m_baseline = baseLayout()->baseline();
   } else {
     m_baseline = indiceLayout()->size().height() - k_indiceHeight + baseLayout()->baseline();
   }
@@ -246,7 +246,7 @@ KDPoint VerticalOffsetLayout::positionOfChild(ExpressionLayout * child) {
   }
   assert(m_type == Type::Subscript);
   ExpressionLayout * base = baseLayout();
-  return KDPoint(0, base->size().height() - base->baseline() - k_indiceHeight);
+  return KDPoint(0, base->size().height() - k_indiceHeight);
 }
 
 void VerticalOffsetLayout::privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) {

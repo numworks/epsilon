@@ -109,15 +109,15 @@ void BracketPairLayout::render(KDContext * ctx, KDPoint p, KDColor expressionCol
   const KDCoordinate k_externWidthMargin = externWidthMargin();
   KDSize operandSize = operandLayout()->size();
   KDCoordinate verticalBarHeight = operandLayout()->size().height() + 2*k_verticalMargin;
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y(), k_lineThickness, verticalBarHeight), expressionColor);
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y(), k_lineThickness, verticalBarHeight), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+verticalExternMargin(), k_lineThickness, verticalBarHeight), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y()+verticalExternMargin(), k_lineThickness, verticalBarHeight), expressionColor);
   if (renderTopBar()) {
-    ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y(), k_bracketWidth, k_lineThickness), expressionColor);
-    ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+operandSize.width()+2*k_widthMargin-k_bracketWidth, p.y(), k_bracketWidth, k_lineThickness), expressionColor);
+    ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+verticalExternMargin(), k_bracketWidth, k_lineThickness), expressionColor);
+    ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+operandSize.width()+2*k_widthMargin-k_bracketWidth, p.y() + verticalExternMargin(), k_bracketWidth, k_lineThickness), expressionColor);
   }
   if (renderBottomBar()) {
-    ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
-    ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+operandSize.width()+2*k_widthMargin-k_bracketWidth, p.y()+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
+    ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+verticalExternMargin()+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
+    ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+operandSize.width()+2*k_widthMargin-k_bracketWidth, p.y()+verticalExternMargin()+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
   }
 }
 
@@ -125,18 +125,18 @@ KDSize BracketPairLayout::computeSize() {
   const KDCoordinate k_widthMargin = widthMargin();
   const KDCoordinate k_externWidthMargin = externWidthMargin();
   KDSize operandSize = operandLayout()->size();
-  return KDSize(operandSize.width() + 2*k_externWidthMargin + 2*k_widthMargin + 2*k_lineThickness, operandSize.height() + 2 * k_verticalMargin);
+  return KDSize(operandSize.width() + 2*k_externWidthMargin + 2*k_widthMargin + 2*k_lineThickness, operandSize.height() + 2 * k_verticalMargin + 2*verticalExternMargin());
 }
 
 void BracketPairLayout::computeBaseline() {
-  m_baseline = operandLayout()->baseline() + k_verticalMargin;
+  m_baseline = operandLayout()->baseline() + k_verticalMargin + verticalExternMargin();
   m_baselined = true;
 }
 
 KDPoint BracketPairLayout::positionOfChild(ExpressionLayout * child) {
   const KDCoordinate k_widthMargin = widthMargin();
   const KDCoordinate k_externWidthMargin = externWidthMargin();
-  return KDPoint(k_widthMargin+k_externWidthMargin+k_lineThickness, k_verticalMargin);
+  return KDPoint(k_widthMargin+k_externWidthMargin+k_lineThickness, k_verticalMargin + verticalExternMargin());
 }
 
 }

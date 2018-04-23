@@ -8,7 +8,8 @@ namespace Shared {
 namespace ToolboxHelpers {
 
 int CursorIndexInCommandText(const char * text) {
-  for (size_t i = 0; i < strlen(text); i++) {
+  size_t textLength = strlen(text);
+  for (size_t i = 0; i < textLength; i++) {
     if (text[i] == '(' || text[i] == '\'') {
       return i + 1;
     }
@@ -16,7 +17,7 @@ int CursorIndexInCommandText(const char * text) {
       return i;
     }
   }
-  return strlen(text);
+  return textLength;
 }
 
 void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
@@ -63,14 +64,6 @@ void TextToInsertForCommandText(const char * command, char * buffer, int bufferS
     }
   }
   buffer[currentNewTextIndex] = 0;
-}
-
-void TextToParseIntoLayoutForCommandMessage(I18n::Message message, char * buffer, int bufferSize) {
-  TextToParseIntoLayoutForCommandText(I18n::translate(message), buffer, bufferSize);
-}
-
-void TextToParseIntoLayoutForCommandText(const char * command, char * buffer, int bufferSize) {
-  TextToInsertForCommandText(command, buffer, bufferSize, true);
 }
 
 }

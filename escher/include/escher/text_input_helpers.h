@@ -8,12 +8,9 @@ namespace TextInputHelpers {
 int CursorIndexInCommand(const char * text);
 /* Returns the index of the cursor position in a Command, which is the smallest
  * index between :
- *   - After the first open parenthesis/quote if the following element is
- *   either a quote, a coma or a parenthesi
- *   - The end of the text
- *   - Special case: when the text preceding the parenthesis is 'random', the
- *   cursor position is the end of the text. */
-constexpr static const char * k_random = "random";
+ *   - The first EmptyChar index (which is the position of the first argument)
+ *   - The first empty quote
+ *   - The end of the text */
 }
 
 #endif

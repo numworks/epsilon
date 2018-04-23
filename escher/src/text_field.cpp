@@ -1,6 +1,7 @@
 #include <escher/text_field.h>
 #include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>
+#include <ion/charset.h>
 #include <assert.h>
 
 /* TextField::ContentView */
@@ -305,12 +306,41 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation) {
   if (!isEditing()) {
     setEditing(true);
   }
+  size_t eventTextSize = strlen(eventText) + 1;
+  char buffer[eventTextSize];
+  size_t bufferIndex = 0;
+
+  /* DIRTY
+   * We use the notation "_{}" to indicate a subscript layout. In a text field,
+   * such a subscript should be written using parentheses. For instance: "u_{n}"
+   * should be inserted as "u(n)".
+   * We thus remove underscores and changes brackets into parentheses. */
+  for (size_t i = bufferIndex; i < eventTextSize; i++) {
+    if (eventText[i] == '{') {
+      buffer[bufferIndex++] = '(';
+    } else if (eventText[i] == '}') {
+      buffer[bufferIndex++] = ')';
+    } else if (eventText[i] != '_') {
+      buffer[bufferIndex++] = eventText[i];
+    }
+  }
+
+  int cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(eventText);
+
+  bufferIndex = 0;
+  // Remove EmptyChars
+  for (size_t i = bufferIndex; i < eventTextSize; i++) {
+    if (buffer[i] != Ion::Charset::Empty) {
+      buffer[bufferIndex++] = buffer[i];
+    }
+  }
+
   int nextCursorLocation = draftTextLength();
-  if (insertTextAtLocation(eventText, cursorLocation())) {
-    /* The cursor position depends on the text as we sometimes want to
-     * position the cursor at the end of the text and sometimes after the
-     * first parenthesis. */
-    nextCursorLocation = cursorLocation() + TextInputHelpers::CursorIndexInCommand(eventText);
+  if (insertTextAtLocation(buffer, cursorLocation())) {
+    /* The cursor position depends on the text as we sometimes want to position
+     * the cursor at the end of the text and sometimes after the first
+     * parenthesis. */
+    nextCursorLocation = cursorLocation() + cursorIndexInCommand;
   }
   setCursorLocation(nextCursorLocation);
   return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);

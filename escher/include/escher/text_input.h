@@ -19,7 +19,6 @@ public:
   size_t cursorLocation() const { return nonEditableContentView()->cursorLocation(); }
   bool setCursorLocation(int location);
   virtual void scrollToCursor();
-  virtual bool handleEventWithText(const char * text, bool indenting = false) = 0;
 protected:
   class ContentView : public View {
   public:

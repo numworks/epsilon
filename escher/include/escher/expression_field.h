@@ -7,7 +7,7 @@
 #include <escher/text_field_delegate.h>
 #include <poincare/expression_layout.h>
 
-class ExpressionField :  public Responder, public View {
+class ExpressionField : public Responder, public View {
 public:
   ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, Poincare::ExpressionLayout * layout, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate);
 
@@ -20,6 +20,7 @@ public:
   bool editionIsInTextField() const;
   bool isEmpty() const;
   bool heightIsMaximal() const;
+  bool handleEventWithText(const char * text, bool indentation = false) override;
 
   /* View */
   int numberOfSubviews() const override { return 1; }

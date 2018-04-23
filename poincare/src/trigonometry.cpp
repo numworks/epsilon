@@ -36,7 +36,7 @@ float Trigonometry::characteristicXRange(const Expression * e, Context & context
   assert(d == 1);
   /* To compute a, the slope of the expression op, we compute the derivative of
    * op for any x value. */
-  Poincare::Decimal x(1.0f);
+  Poincare::Approximation<float> x(1.0f);
   const Poincare::Expression * args[2] = {op, &x};
   Poincare::Derivative derivative(args, true);
   float a = derivative.approximateToScalar<float>(context);

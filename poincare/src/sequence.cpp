@@ -28,7 +28,7 @@ Evaluation<T> * Sequence::templatedApproximate(Context& context, AngleUnit angle
   if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
     return new Complex<T>(Complex<T>::Undefined());
   }
-  VariableContext nContext = VariableContext('n', &context);
+  VariableContext<T> nContext = VariableContext<T>('n', &context);
   Evaluation<T> * result = new Complex<T>(emptySequenceValue());
   for (int i = (int)start; i <= (int)end; i++) {
     if (shouldStopProcessing()) {

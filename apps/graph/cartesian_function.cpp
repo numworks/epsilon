@@ -21,7 +21,7 @@ void CartesianFunction::setDisplayDerivative(bool display) {
 }
 
 double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
-  Poincare::Expression * abscissa = Expression::CreateDecimal(x);
+  Poincare::Expression * abscissa = new Poincare::Approximation<double>(x);
   Poincare::Expression * args[2] = {expression(context)->clone(), abscissa};
   Poincare::Derivative derivative(args, false); // derivative takes ownership of abscissa and the clone of expression
   /* TODO: when we will simplify derivative, we might want to simplify the
@@ -31,8 +31,8 @@ double CartesianFunction::approximateDerivative(double x, Poincare::Context * co
 }
 
 double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
-  Poincare::Expression * x = Expression::CreateDecimal(start);
-  Poincare::Expression * y = Expression::CreateDecimal(end);
+  Poincare::Expression * x = new Poincare::Approximation<double>(start);
+  Poincare::Expression * y = new Poincare::Approximation<double>(end);
   Poincare::Expression * args[3] = {expression(context)->clone(), x, y};
   Poincare::Integral integral(args, false); // Integral takes ownership of args
   /* TODO: when we will simplify integral, we might want to simplify the

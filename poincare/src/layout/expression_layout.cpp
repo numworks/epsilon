@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <ion/display.h>
+#include <ion/charset.h>
 
 namespace Poincare {
 
@@ -236,7 +237,7 @@ void ExpressionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
 
 char ExpressionLayout::XNTChar() const {
   if (m_parent == nullptr) {
-    return 'x';
+    return Ion::Charset::Empty;
   }
   return m_parent->XNTChar();
 }

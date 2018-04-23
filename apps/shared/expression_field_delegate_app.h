@@ -13,6 +13,7 @@ public:
   virtual bool expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
   Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) override;
 protected:
+  char privateXNT(ExpressionLayoutField * expressionLayoutField);
   ExpressionFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController);
 };
 

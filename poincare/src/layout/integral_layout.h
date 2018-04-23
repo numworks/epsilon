@@ -27,6 +27,7 @@ public:
 
   /* Other */
   ExpressionLayout * layoutToPointWhenInserting() override;
+  char XNTChar() const override { return 'x'; }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

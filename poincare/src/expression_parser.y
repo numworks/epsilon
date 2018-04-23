@@ -224,17 +224,17 @@ mul    : div                { $$ = $1; }
        | mul MULTIPLY MINUS div { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Multiplication(terms, 2, false);  }
        ;
 
-min    : mul                { $$ = $1; }
-       | mul MINUS min      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
-       | mul MINUS MINUS min { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Subtraction(terms, false); }
+unmin  : mul                { $$ = $1; }
+       | MINUS mul %prec UNARY_MINUS { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Opposite(terms, false); }
        ;
 
-unmin  : min                { $$ = $1; }
-       | MINUS min %prec UNARY_MINUS { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Opposite(terms, false); }
+min    : unmin                { $$ = $1; }
+       | unmin MINUS min      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
+       | unmin MINUS MINUS min { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Subtraction(terms, false); }
        ;
 
-exp    : unmin              { $$ = $1; }
-       | exp PLUS unmin     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, 2, false); }
+exp    : min              { $$ = $1; }
+       | exp PLUS min     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, 2, false); }
        ;
 
 final_exp : exp             { $$ = $1; }

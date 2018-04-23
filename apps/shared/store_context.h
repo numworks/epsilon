@@ -1,7 +1,7 @@
 #ifndef SHARED_STORE_CONTEXT_H
 #define SHARED_STORE_CONTEXT_H
 
-#include <poincare/context.h>
+#include <poincare.h>
 #include "double_pair_store.h"
 #include <cmath>
 
@@ -13,8 +13,8 @@ public:
     Poincare::Context(),
     m_store(store),
     m_seriesPairIndex(-1),
-    m_parentContext(nullptr)//,
-    //m_value(Poincare::Complex<double>::Float(NAN))
+    m_parentContext(nullptr),
+    m_value(NAN)
   {}
   void setParentContext(Poincare::Context * parentContext) { m_parentContext = parentContext; }
   void setSeriesPairIndex(int j) { m_seriesPairIndex = j; }
@@ -23,7 +23,7 @@ protected:
   Shared::DoublePairStore * m_store;
   int m_seriesPairIndex;
   Poincare::Context * m_parentContext;
-  //Poincare::Complex<double> m_value; // FIXME
+  Poincare::Approximation<double> m_value;
 };
 
 }

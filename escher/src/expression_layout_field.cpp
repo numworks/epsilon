@@ -247,7 +247,7 @@ void ExpressionLayoutField::reload() {
 }
 
 bool ExpressionLayoutField::hasText() const {
-  return m_contentView.expressionView()->expressionLayout()->isEmpty();
+  return m_contentView.expressionView()->expressionLayout()->hasText();
 }
 
 void ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {

@@ -102,7 +102,7 @@ bool ExpressionField::editionIsInTextField() const {
 }
 
 bool ExpressionField::isEmpty() const {
-  return editionIsInTextField() ? (m_textField.draftTextLength() == 0) : m_expressionLayoutField.hasText();
+  return editionIsInTextField() ? (m_textField.draftTextLength() == 0) : !m_expressionLayoutField.hasText();
 }
 
 bool ExpressionField::heightIsMaximal() const {

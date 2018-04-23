@@ -11,7 +11,7 @@ void Clipboard::store(const char * storedText) {
 }
 
 void Clipboard::store(Poincare::ExpressionLayout * layout) {
-  layout->writeTextInBuffer(m_textBuffer, TextField::maxBufferSize(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
+  layout->writeTextInBuffer(m_textBuffer, TextField::maxBufferSize());
 }
 
 const char * Clipboard::storedText() {

@@ -19,8 +19,8 @@ public:
   ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
 
   // Serialization
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "binomial");
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "binomial");
   }
 
 protected:

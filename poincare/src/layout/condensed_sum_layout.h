@@ -33,8 +33,8 @@ public:
   }
 
   // Serialization
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "sum");
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "sum");
   }
 
   // Other

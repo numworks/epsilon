@@ -36,7 +36,7 @@ public:
   void mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren) override;
 
   // Serialization
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
 
   // Cursor
   ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor cursor) override;

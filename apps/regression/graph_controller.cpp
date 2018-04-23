@@ -1,4 +1,5 @@
 #include "graph_controller.h"
+#include "../shared/poincare_helpers.h"
 #include "../apps_container.h"
 #include <kandinsky/text.h>
 #include <cmath>
@@ -125,7 +126,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += PrintFloat::convertFloatToText<double>(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
     buffer[numberOfChar++] = ' ';
   }
@@ -144,7 +145,7 @@ void GraphController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  numberOfChar += PrintFloat::convertFloatToText<double>(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
     buffer[numberOfChar++] = ' ';
   }
@@ -182,7 +183,7 @@ void GraphController::reloadBannerView() {
     legendLength = strlen(legend);
     strlcpy(buffer, legend, legendLength+1);
     numberOfChar += legendLength;
-    numberOfChar += PrintFloat::convertFloatToText<double>(coefficients[i], buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(coefficients[i], buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     buffer[k_maxLegendLength] = 0;
     m_bannerView.setLegendAtIndex(buffer, 4 + i);
     coefficientName++;
@@ -196,7 +197,7 @@ void GraphController::reloadBannerView() {
     legendLength = strlen(legend);
     strlcpy(buffer, legend, legendLength+1);
     numberOfChar += legendLength;
-    numberOfChar += PrintFloat::convertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     buffer[k_maxLegendLength+10] = 0;
     m_bannerView.setLegendAtIndex(buffer, 6);
 
@@ -207,7 +208,7 @@ void GraphController::reloadBannerView() {
     legendLength = strlen(legend);
     strlcpy(buffer, legend, legendLength+1);
     numberOfChar += legendLength;
-    numberOfChar += PrintFloat::convertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     buffer[k_maxLegendLength] = 0;
     m_bannerView.setLegendAtIndex(buffer, 7);
 

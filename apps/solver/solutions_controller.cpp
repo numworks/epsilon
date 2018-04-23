@@ -1,6 +1,7 @@
 #include "solutions_controller.h"
 #include "app.h"
 #include "../constant.h"
+#include "../shared/poincare_helpers.h"
 #include <assert.h>
 #include <limits.h>
 
@@ -173,7 +174,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
     if (m_equationStore->type() == EquationStore::Type::Monovariable) {
       EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
       char bufferValue[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-      PrintFloat::convertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+      PoincareHelpers::ConvertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
       valueCell->setText(bufferValue);
     } else {
       Shared::ScrollableExactApproximateExpressionsCell * valueCell = static_cast<ScrollableExactApproximateExpressionsCell *>(cell);

@@ -44,7 +44,7 @@ void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryC
   const char * legend = "Battery level: ";
   int legendLength = strlen(legend);
   strlcpy(bufferLevel, legend, legendLength+1);
-  PrintFloat::convertFloatToText<float>(batteryLevel, bufferLevel+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  PrintFloat::convertFloatToText<float>(batteryLevel, bufferLevel+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
   m_view.batteryLevelTextView()->setText(bufferLevel);
 
   char bufferCharging[ContentView::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];

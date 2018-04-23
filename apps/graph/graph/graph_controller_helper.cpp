@@ -1,5 +1,6 @@
 #include "graph_controller_helper.h"
 #include "../../constant.h"
+#include "../../shared/poincare_helpers.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -25,7 +26,7 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
   buffer[0] = function->name()[0];
   buffer[1] = '\'';
   double y = function->approximateDerivative(cursor->x(), app->localContext());
-  numberOfChar += PrintFloat::convertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(y, buffer + legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, spaceLength+1);
   buffer[k_maxDigitLegendLength+6] = 0;
   bannerView()->setLegendAtIndex(buffer, 2);

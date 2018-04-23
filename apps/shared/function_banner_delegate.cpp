@@ -1,4 +1,5 @@
 #include "function_banner_delegate.h"
+#include "poincare_helpers.h"
 #include "../constant.h"
 
 using namespace Poincare;
@@ -15,7 +16,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   buffer[0] = symbol;
-  numberOfChar += PrintFloat::convertFloatToText<double>(cursor->x(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(cursor->x(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, spaceLength+1);
   buffer[k_maxDigitLegendLength+2] = 0;
   bannerView()->setLegendAtIndex(buffer, 0);
@@ -27,7 +28,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   strlcpy(buffer, legend, legendLength+1);
   buffer[2] = symbol;
   buffer[0] = function->name()[0];
-  numberOfChar += PrintFloat::convertFloatToText<double>(cursor->y(), buffer+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(cursor->y(), buffer+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, spaceLength+1);
   buffer[k_maxDigitLegendLength+5] = 0;
   bannerView()->setLegendAtIndex(buffer, 1);

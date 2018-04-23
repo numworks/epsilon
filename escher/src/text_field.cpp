@@ -303,9 +303,7 @@ void TextField::scrollToCursor() {
 
 bool TextField::handleEventWithText(const char * eventText, bool indentation) {
   size_t previousTextLength = strlen(text());
-  if (!isEditing()) {
-    setEditing(true);
-  }
+
   size_t eventTextSize = strlen(eventText) + 1;
   char buffer[eventTextSize];
   size_t bufferIndex = 0;
@@ -325,7 +323,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation) {
     }
   }
 
-  int cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(eventText);
+  int cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(buffer);
 
   bufferIndex = 0;
   // Remove EmptyChars
@@ -335,6 +333,9 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation) {
     }
   }
 
+  if (!isEditing()) {
+    setEditing(true);
+  }
   int nextCursorLocation = draftTextLength();
   if (insertTextAtLocation(buffer, cursorLocation())) {
     /* The cursor position depends on the text as we sometimes want to position

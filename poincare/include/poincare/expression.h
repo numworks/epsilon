@@ -245,12 +245,11 @@ public:
      * order on expresssions. */
     return SimplificationOrder(this, e, true) == 0;
   }
-  bool isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, int numberOfSignificantDigits, Context & context);
+  bool isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, Context & context);
 
   /* Layout Engine */
   virtual ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const = 0; // Returned object must be deleted
-  //virtual int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode) const = 0;
-  virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
+  virtual int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Simplification */
   static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit = AngleUnit::Default);

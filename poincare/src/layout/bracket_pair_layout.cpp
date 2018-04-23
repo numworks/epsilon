@@ -80,7 +80,7 @@ ExpressionLayoutCursor BracketPairLayout::cursorRightOf(ExpressionLayoutCursor c
   return ExpressionLayoutCursor();
 }
 
-int BracketPairLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int BracketPairLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   if (bufferSize == 0) {
     return -1;
   }

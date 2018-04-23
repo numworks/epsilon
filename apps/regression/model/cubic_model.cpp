@@ -1,9 +1,11 @@
 #include "cubic_model.h"
+#include "../../shared/poincare_helpers.h"
 #include <math.h>
 #include <assert.h>
 #include "../../poincare/include/poincare_layouts.h"
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Regression {
 
@@ -64,7 +66,7 @@ Expression * CubicModel::simplifiedExpression(double * modelCoefficients, Poinca
   Expression * dExpression = new Decimal(d);
   Expression * const operands[] = {ax3Expression, bx2Expression, cxExpression, dExpression};
   Expression * result = new Addition(operands, 4, false);
-  Expression::Simplify(&result, *context);
+  PoincareHelpers::Simplify(&result, *context);
   return result;
 }
 

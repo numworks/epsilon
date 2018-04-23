@@ -14,7 +14,7 @@ public:
   Expression * clone() const override;
   int polynomialDegree(char symbolName) const override;
   // For the equation A = B, create the reduced expression A-B
-  Expression * standardEquation(Context & context, AngleUnit angleUnit = AngleUnit::Default) const;
+  Expression * standardEquation(Context & context, AngleUnit angleUnit) const;
 private:
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;

@@ -224,7 +224,8 @@ public:
   }
 
   /* Layout Engine */
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
+  virtual ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const = 0; // Returned object must be deleted
+  //virtual int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode) const = 0;
   virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Simplification */
@@ -276,8 +277,6 @@ private:
   virtual int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const { return -1; }
   //TODO: What should be the implementation for complex?
   virtual int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const { return 0; }
-  /* Layout Engine */
-  virtual ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Simplification */
   static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively = true);
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);

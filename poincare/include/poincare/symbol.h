@@ -6,6 +6,7 @@
 namespace Poincare {
 
 class Symbol : public StaticHierarchy<0> {
+  friend class Store;
 public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
@@ -50,7 +51,7 @@ private:
   /* Comparison */
   int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   /* Layout */
-  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
+  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   /* Evaluation */
   Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }

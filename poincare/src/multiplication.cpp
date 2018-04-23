@@ -48,9 +48,9 @@ bool Multiplication::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 3);
 }
 
-ExpressionLayout * Multiplication::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * Multiplication::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
-  return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, middleDotString);
+  return LayoutEngine::createInfixLayout(this, floatDisplayMode, numberOfSignificantDigits, middleDotString);
 }
 
 int Multiplication::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

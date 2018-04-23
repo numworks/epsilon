@@ -1,5 +1,6 @@
 #include "histogram_controller.h"
 #include "../apps_container.h"
+#include "../shared/poincare_helpers.h"
 #include "app.h"
 #include <cmath>
 #include <assert.h>
@@ -161,14 +162,12 @@ void HistogramController::reloadBannerView() {
 
   // Add lower bound
   double lowerBound = m_store->startOfBarAtIndex(*m_selectedBarIndex);
-  numberOfChar += PrintFloat::convertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = ';';
 
   // Add upper bound
   double upperBound = m_store->endOfBarAtIndex(*m_selectedBarIndex);
-  numberOfChar += PrintFloat::convertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = '[';
 
   // Padding
@@ -185,7 +184,7 @@ void HistogramController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   double size = m_store->heightOfBarAtIndex(*m_selectedBarIndex);
-  numberOfChar += PrintFloat::convertFloatToText<double>(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   // Padding
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
     buffer[numberOfChar++] = ' ';
@@ -200,7 +199,7 @@ void HistogramController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   double frequency = size/m_store->sumOfColumn(1);
-  numberOfChar += PrintFloat::convertFloatToText<double>(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   // Padding
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
     buffer[numberOfChar++] = ' ';

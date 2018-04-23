@@ -128,18 +128,16 @@ bool Power::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 2);
 }
 
-ExpressionLayout * Power::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Power::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   const Expression * indiceOperand = m_operands[1];
   // Delete eventual parentheses of the indice in the pretty print
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = m_operands[1]->operand(0);
   }
   HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(m_operands[0]->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result->addOrMergeChildAtIndex(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result->addChildAtIndex(new VerticalOffsetLayout(
-        indiceOperand->createLayout(floatDisplayMode, complexFormat),
+        indiceOperand->createLayout(floatDisplayMode, numberOfSignificantDigits),
         VerticalOffsetLayout::Type::Superscript,
         false),
       result->numberOfChildren());

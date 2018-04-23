@@ -245,27 +245,6 @@ int Expression::SimplificationOrder(const Expression * e1, const Expression * e2
   }
 }
 
-/* Layout */
-
-ExpressionLayout * Expression::createLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  switch (floatDisplayMode) {
-    case PrintFloat::Mode::Default:
-      switch (complexFormat) {
-        case ComplexFormat::Default:
-          return privateCreateLayout(Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
-        default:
-          return privateCreateLayout(Preferences::sharedPreferences()->displayMode(), complexFormat);
-      }
-    default:
-      switch (complexFormat) {
-        case ComplexFormat::Default:
-          return privateCreateLayout(floatDisplayMode, Preferences::sharedPreferences()->complexFormat());
-        default:
-          return privateCreateLayout(floatDisplayMode, complexFormat);
-      }
-  }
-}
-
 /* Simplification */
 
 Expression * Expression::ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit) {

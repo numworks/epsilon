@@ -41,9 +41,6 @@ template <class T>
 int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
     int numberOfSignificantDigits, Mode mode) {
   assert(numberOfSignificantDigits > 0);
-  if (mode == Mode::Default) {
-    return convertFloatToText(f, buffer, bufferSize, numberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
-  }
   char tempBuffer[PrintFloat::k_maxFloatBufferLength];
   int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode);
   /* if the required buffer size overflows the buffer size, we first force the
@@ -66,7 +63,6 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
 
 template <class T>
 int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Mode mode) {
-  assert(mode != Mode::Default);
   assert(numberOfSignificantDigits > 0);
   /*if (std::isinf(f)) {
     int currentChar = 0;

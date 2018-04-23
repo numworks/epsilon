@@ -151,7 +151,7 @@ bool Rational::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 3);
 }
 
-ExpressionLayout * Rational::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * Rational::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   ExpressionLayout * numeratorLayout = m_numerator.createLayout();
   if (m_denominator.isOne()) {
     return numeratorLayout;

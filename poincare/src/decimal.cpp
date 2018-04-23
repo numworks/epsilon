@@ -214,7 +214,7 @@ bool Decimal::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 7);
 }
 
-ExpressionLayout * Decimal::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * Decimal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, PrintFloat::k_numberOfStoredSignificantDigits);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);

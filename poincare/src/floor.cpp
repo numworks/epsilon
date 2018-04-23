@@ -56,10 +56,8 @@ std::complex<T> Floor::computeOnComplex(const std::complex<T> c, AngleUnit angle
   return Complex<T>(std::floor(c.real()));
 }
 
-ExpressionLayout * Floor::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new FloorLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat), false);
+ExpressionLayout * Floor::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return new FloorLayout(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
 }

@@ -9,8 +9,8 @@ class LayoutEngine {
 
 public:
   /* Expression to ExpressionLayout */
-  static ExpressionLayout * createInfixLayout(const Expression * expression,  PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
-  static ExpressionLayout * createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
+  static ExpressionLayout * createInfixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  static ExpressionLayout * createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
 
   /* Create special layouts */
   static ExpressionLayout * createParenthesedLayout(ExpressionLayout * layout, bool cloneLayout);

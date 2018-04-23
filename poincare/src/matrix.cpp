@@ -97,12 +97,10 @@ int Matrix::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-ExpressionLayout * Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Matrix::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   ExpressionLayout ** childrenLayouts = new ExpressionLayout * [numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
-    childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, complexFormat);
+    childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits);
   }
   ExpressionLayout * layout = new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns(), false);
   delete [] childrenLayouts;

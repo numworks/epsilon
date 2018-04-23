@@ -10,27 +10,23 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionLayout * LayoutEngine::createInfixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != Expression::ComplexFormat::Default);
+ExpressionLayout * LayoutEngine::createInfixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 1);
   HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(expression->operand(0)->createLayout(), 0, true);
+  result->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
   for (int i = 1; i < numberOfOperands; i++) {
     result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result->numberOfChildren(), true);
     result->addOrMergeChildAtIndex(
         expression->operand(i)->type() == Expression::Type::Opposite ?
-          createParenthesedLayout(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), false) :
-          expression->operand(i)->createLayout(floatDisplayMode, complexFormat),
+          createParenthesedLayout(expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), false) :
+          expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits),
         result->numberOfChildren(), true);
   }
   return result;
 }
 
-ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != Expression::ComplexFormat::Default);
+ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
   HorizontalLayout * result = new HorizontalLayout();
 
   // Add the operator name.
@@ -42,10 +38,10 @@ ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expressio
   if (numberOfOperands > 0) {
     args = new HorizontalLayout();
     HorizontalLayout * horizontalArgs = static_cast<HorizontalLayout *>(args);
-    horizontalArgs->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, complexFormat), 0, true);
+    horizontalArgs->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
     for (int i = 1; i < numberOfOperands; i++) {
       horizontalArgs->addChildAtIndex(new CharLayout(','), args->numberOfChildren());
-      horizontalArgs->addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), horizontalArgs->numberOfChildren(), true);
+      horizontalArgs->addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), horizontalArgs->numberOfChildren(), true);
     }
   }
   // Add the parenthesed arguments.

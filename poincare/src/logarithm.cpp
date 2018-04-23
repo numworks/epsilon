@@ -225,13 +225,11 @@ Evaluation<T> * Logarithm::templatedApproximate(Context& context, AngleUnit angl
   return new Complex<T>(result);
 }
 
-ExpressionLayout * Logarithm::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Logarithm::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (numberOfOperands() == 1) {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
+    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, "log");
   }
-  return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));
+  return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 }

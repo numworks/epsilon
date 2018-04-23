@@ -92,11 +92,9 @@ std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, AngleUnit a
   return Complex<T>(std::round(result));
 }
 
-ExpressionLayout * Factorial::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Factorial::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result->addChildAtIndex(new CharLayout('!'), result->numberOfChildren());
   return result;
 }

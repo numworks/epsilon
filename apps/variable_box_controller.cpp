@@ -272,7 +272,7 @@ const Expression * VariableBoxController::ContentViewController::expressionForIn
 ExpressionLayout * VariableBoxController::ContentViewController::expressionLayoutForIndex(int index) {
   if (m_currentPage == Page::Matrix) {
     const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->expressionLayoutForSymbol(&symbol);
+    return m_context->expressionLayoutForSymbol(&symbol, Constant::LargeNumberOfSignificantDigits);
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {

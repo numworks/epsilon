@@ -71,12 +71,10 @@ Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angl
   return replaceWith(new Rational(result), true);
 }
 
-ExpressionLayout * BinomialCoefficient::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * BinomialCoefficient::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   return new BinomialCoefficientLayout(
-      operand(0)->createLayout(floatDisplayMode, complexFormat),
-      operand(1)->createLayout(floatDisplayMode, complexFormat),
+      operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       false);
 }
 

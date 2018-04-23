@@ -189,9 +189,7 @@ char Symbol::name() const {
   return m_name;
 }
 
-ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name == SpecialSymbols::Ans) {
     return LayoutEngine::createStringLayout("ans", 3);
   }

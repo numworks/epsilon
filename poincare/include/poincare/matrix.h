@@ -7,6 +7,7 @@
 namespace Poincare {
 
 class Matrix : public DynamicHierarchy {
+friend class GlobalContext;
 public:
   Matrix(MatrixData * matrixData); // pilfer the operands of matrixData
   Matrix(const Expression * const * operands, int numberOfRows, int numberOfColumns, bool cloneOperands = true);
@@ -23,7 +24,7 @@ public:
   static Matrix * createIdentity(int dim);
 private:
   /* Layout */
-  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
+  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Evaluation */
   Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }

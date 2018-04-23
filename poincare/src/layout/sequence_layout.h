@@ -16,7 +16,7 @@ public:
   ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   ExpressionLayout * layoutToPointWhenInserting() override;
-  char XNTChar() const override;
+  char XNTChar() const override { return 'n'; }
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;

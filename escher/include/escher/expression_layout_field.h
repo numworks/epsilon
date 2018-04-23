@@ -22,6 +22,7 @@ public:
   void writeTextInBuffer(char * buffer, int bufferLength);
   bool handleEventWithText(const char * text, bool indentation = false);
   Poincare::ExpressionLayout * expressionLayout();
+  char XNTChar();
 
   /* Responder */
   Toolbox * toolbox() override;

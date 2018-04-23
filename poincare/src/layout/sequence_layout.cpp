@@ -118,10 +118,6 @@ ExpressionLayout * SequenceLayout::layoutToPointWhenInserting() {
   return lowerBoundLayout();
 }
 
-char SequenceLayout::XNTChar() const {
-  return 'n';
-}
-
 int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   assert(operatorName != nullptr);
   if (bufferSize == 0) {

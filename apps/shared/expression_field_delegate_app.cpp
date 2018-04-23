@@ -12,6 +12,14 @@ ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Container * container, Sn
 {
 }
 
+char ExpressionFieldDelegateApp::privateXNT(ExpressionLayoutField * expressionLayoutField) {
+  char xntCharFromLayout = expressionLayoutField->XNTChar();
+  if (xntCharFromLayout != Ion::Charset::Empty) {
+    return xntCharFromLayout;
+  }
+  return XNT()[0];
+}
+
 bool ExpressionFieldDelegateApp::expressionLayoutFieldShouldFinishEditing(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
@@ -43,6 +51,13 @@ bool ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(Expression
     variableBoxController->setExpressionLayoutFieldSender(expressionLayoutField);
     expressionLayoutField->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
+  }
+  if (event == Ion::Events::XNT) {
+    if (!expressionLayoutField->isEditing()) {
+      expressionLayoutField->setEditing(true);
+    }
+    const char xnt[2] = {privateXNT(expressionLayoutField), 0};
+    return expressionLayoutField->handleEventWithText(xnt);
   }
   return false;
 }

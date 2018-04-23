@@ -65,7 +65,7 @@ ExpressionLayoutCursor SequenceLayout::cursorRightOf(ExpressionLayoutCursor * cu
       && argumentLayout()
       && cursor->pointedExpressionLayout() == argumentLayout())
   {
-    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
+    return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left. Go to the upper bound.

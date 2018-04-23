@@ -17,9 +17,6 @@ void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int buf
 void TextToInsertForCommandText(const char * command, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar = false);
 /* Removes the arguments from a command:
  *  - Removes text between parentheses or brackets, except commas */
-void TextToParseIntoLayoutForCommandMessage(I18n::Message message, char * buffer, int bufferSize);
-void TextToParseIntoLayoutForCommandText(const char * command, char * buffer, int bufferSize);
-/* Removes the arguments from a command and replaces them with empty chars. */
 
 }
 }

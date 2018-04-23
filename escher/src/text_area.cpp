@@ -293,8 +293,22 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
 
 bool TextArea::handleEventWithText(const char * text, bool indentation) {
   int nextCursorLocation = cursorLocation();
-  if ((indentation && insertTextWithIndentation(text, cursorLocation())) || insertTextAtLocation(text, cursorLocation())) {
-    nextCursorLocation += TextInputHelpers::CursorIndexInCommand(text);
+
+  int cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(text);
+
+  size_t eventTextSize = strlen(text) + 1;
+  char buffer[eventTextSize];
+  size_t bufferIndex = 0;
+
+  // Remove EmptyChars
+  for (size_t i = bufferIndex; i < eventTextSize; i++) {
+    if (text[i] != Ion::Charset::Empty) {
+      buffer[bufferIndex++] = text[i];
+    }
+  }
+
+  if ((indentation && insertTextWithIndentation(buffer, cursorLocation())) || insertTextAtLocation(buffer, cursorLocation())) {
+    nextCursorLocation += cursorIndexInCommand;
   }
   setCursorLocation(nextCursorLocation);
   return true;

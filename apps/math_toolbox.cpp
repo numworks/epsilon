@@ -108,67 +108,21 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbo
 #endif
 
 MathToolbox::MathToolbox() :
-  Toolbox(nullptr, I18n::translate(rootModel()->label())),
-  m_action(actionForTextInput)
+  Toolbox(nullptr, I18n::translate(rootModel()->label()))
 {
-}
-
-void MathToolbox::setSenderAndAction(Responder * sender, Action action) {
-  setSender(sender);
-  m_action = action;
-}
-
-void MathToolbox::actionForExpressionLayoutField(void * sender, const char * text, bool removeArguments) {
-  ExpressionLayoutField * expressionLayoutEditorSender = static_cast<ExpressionLayoutField *>(sender);
-  Expression * resultExpression = nullptr;
-  if (removeArguments) {
-    // Replace the arguments with Empty chars.
-    int textToInsertMaxLength = strlen(text);
-    char textToInsert[textToInsertMaxLength];
-    Shared::ToolboxHelpers::TextToParseIntoLayoutForCommandText(text, textToInsert, textToInsertMaxLength);
-    // Create the layout
-    resultExpression = Expression::parse(textToInsert);
-  } else {
-    resultExpression = Expression::parse(text);
-  }
-  if (resultExpression == nullptr) {
-    return;
-  }
-  ExpressionLayout * resultLayout = resultExpression->createLayout();
-  // Find the pointed layout.
-  ExpressionLayout * pointedLayout = nullptr;
-  if (resultLayout->isHorizontal()) {
-    // If the layout is horizontal, pick the first open parenthesis.
-    // For now, all horizontal layouts in MathToolbox have parentheses.
-    for (int i = 0; i < resultLayout->numberOfChildren(); i++) {
-      if (resultLayout->editableChild(i)->isLeftParenthesis()) {
-        pointedLayout = resultLayout->editableChild(i);
-        break;
-      }
-    }
-  }
-  // Insert the layout. If pointedLayout is nullptr, the cursor will be on the
-  // right of the inserted layout.
-  expressionLayoutEditorSender->insertLayoutAtCursor(resultLayout, pointedLayout);
-}
-
-void MathToolbox::actionForTextInput(void * sender, const char * text, bool removeArguments) {
-  TextInput * textInputSender = static_cast<TextInput *>(sender);
-  if (removeArguments) {
-    int maxTextToInsertLength = strlen(text);
-    char textToInsert[maxTextToInsertLength];
-    // Translate the message and remove the arguments.
-    Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength);
-    textInputSender->handleEventWithText(textToInsert);
-  } else {
-    textInputSender->handleEventWithText(text);
-  }
 }
 
 bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   ToolboxMessageTree * messageTree = selectedMessageTree;
   m_selectableTableView.deselectTable();
-  m_action(sender(), I18n::translate(messageTree->insertedText()), true);
+
+  // Translate the message and remove the arguments
+  const char * text = I18n::translate(messageTree->insertedText());
+  int maxTextToInsertLength = strlen(text) + 1;
+  char textToInsert[maxTextToInsertLength];
+  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength, true);
+
+  sender()->handleEventWithText(textToInsert);
   app()->dismissModalViewController();
   return true;
 }

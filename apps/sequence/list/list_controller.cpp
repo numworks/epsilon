@@ -24,15 +24,11 @@ const char * ListController::title() {
 }
 
 Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
-  setToolboxExtraCells();
-  m_sequenceToolbox.setSenderAndAction(textInput, MathToolbox::actionForTextInput);
-  return &m_sequenceToolbox;
+  return toolbox(textInput);
 }
 
 Toolbox * ListController::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
-  setToolboxExtraCells();
-  m_sequenceToolbox.setSenderAndAction(expressionLayoutField, MathToolbox::actionForExpressionLayoutField);
-  return &m_sequenceToolbox;
+  return toolbox(expressionLayoutField);
 }
 
 TextFieldDelegateApp * ListController::textFieldDelegateApp() {
@@ -85,6 +81,20 @@ void ListController::selectPreviousNewSequenceCell() {
   if (sequenceDefinitionForRow(selectedRow()) >= 0) {
     selectCellAtLocation(selectedColumn(), selectedRow()-sequenceDefinitionForRow(selectedRow()));
   }
+}
+
+Toolbox * ListController::toolbox(Responder * sender) {
+  // Set extra cells
+  int recurrenceDepth = -1;
+  int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
+  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
+  if (sequenceDefinition == 0) {
+    recurrenceDepth = sequence->numberOfElements()-1;
+  }
+  m_sequenceToolbox.setExtraCells(sequence->name(), recurrenceDepth);
+  // Set sender
+  m_sequenceToolbox.setSender(sender);
+  return &m_sequenceToolbox;
 }
 
 void ListController::editExpression(Sequence * sequence, int sequenceDefinition, Ion::Events::Event event) {
@@ -307,16 +317,6 @@ void ListController::unloadView(View * view) {
     m_expressionCells[i] = nullptr;
   }
   Shared::ListController::unloadView(view);
-}
-
-void ListController::setToolboxExtraCells() {
-  int recurrenceDepth = -1;
-  int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
-  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
-  if (sequenceDefinition == 0) {
-    recurrenceDepth = sequence->numberOfElements()-1;
-  }
-  m_sequenceToolbox.setExtraCells(sequence->name(), recurrenceDepth);
 }
 
 }

@@ -10,10 +10,7 @@ namespace Code {
 
 class PythonToolbox : public Toolbox {
 public:
-  typedef void (*Action)(void * sender, const char * text);
   PythonToolbox();
-
-  // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   KDCoordinate rowHeight(int j) override;

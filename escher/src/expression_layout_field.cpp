@@ -1,9 +1,11 @@
 #include <escher/expression_layout_field.h>
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
-#include <poincare/src/layout/matrix_layout.h>
+#include <poincare/expression.h>
 #include <poincare/expression_layout_cursor.h>
+#include <poincare/src/layout/matrix_layout.h>
 #include <assert.h>
+#include <string.h>
 
 ExpressionLayoutField::ExpressionLayoutField(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ExpressionLayoutFieldDelegate * delegate) :
   ScrollableView(parentResponder, &m_contentView, this),
@@ -252,6 +254,47 @@ bool ExpressionLayoutField::hasText() const {
 
 void ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
   m_contentView.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferLength);
+}
+
+bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation) {
+  size_t textLength = strlen(text) + 1;
+  size_t textToInsertMaxLength = 2*textLength;
+  char textToInsert[textToInsertMaxLength];
+
+  size_t textToInsertIndex = 0;
+  // Add empty chars where arguments are needed
+  for (size_t i = textToInsertIndex; i < textLength; i++) {
+    textToInsert[textToInsertIndex++] = text[i];
+    if (((text[i] == '(' || text[i] == '[')
+          && text[i+1] == ',')
+        || (text[i] == ','
+          && (text[i+1] == ')' || text[i+1] == ']')))
+    {
+      textToInsert[textToInsertIndex++] = Ion::Charset::Empty;
+    }
+  }
+
+  Poincare::Expression * resultExpression = Poincare::Expression::parse(textToInsert);
+  if (resultExpression == nullptr) {
+    return false;
+  }
+  Poincare::ExpressionLayout * resultLayout = resultExpression->createLayout();
+  // Find the pointed layout.
+  Poincare::ExpressionLayout * pointedLayout = nullptr;
+  if (resultLayout->isHorizontal()) {
+    /* If the layout is horizontal, pick the first open parenthesis. For now,
+     * all horizontal layouts in MathToolbox have parentheses. */
+    for (int i = 0; i < resultLayout->numberOfChildren(); i++) {
+      if (resultLayout->editableChild(i)->isLeftParenthesis()) {
+        pointedLayout = resultLayout->editableChild(i);
+        break;
+      }
+    }
+  }
+  /* Insert the layout. If pointedLayout is nullptr, the cursor will be on the
+   * right of the inserted layout. */
+  insertLayoutAtCursor(resultLayout, pointedLayout);
+  return true;
 }
 
 Poincare::ExpressionLayout * ExpressionLayoutField::expressionLayout() {

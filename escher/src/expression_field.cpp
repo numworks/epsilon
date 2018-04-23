@@ -109,6 +109,14 @@ bool ExpressionField::heightIsMaximal() const {
   return inputViewHeight() == k_separatorThickness + k_verticalExpressionViewMargin + maximalHeight();
 }
 
+bool ExpressionField::handleEventWithText(const char * text, bool indentation) {
+  if (editionIsInTextField()) {
+    return m_textField.handleEventWithText(text, indentation);
+  } else {
+    return m_expressionLayoutField.handleEventWithText(text, indentation);
+  }
+}
+
 KDCoordinate ExpressionField::inputViewHeight() const {
   if (editionIsInTextField()) {
     return k_separatorThickness + k_textFieldHeight;

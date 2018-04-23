@@ -72,7 +72,7 @@ const char * Function::name() const {
 
 Poincare::Expression * Function::expression(Poincare::Context * context) const {
   if (m_expression == nullptr) {
-    m_expression = Expression::ParseAndSimplify(m_text, *context);
+    m_expression = PoincareHelpers::ParseAndSimplify(m_text, *context);
   }
   return m_expression;
 }
@@ -108,7 +108,7 @@ template<typename T>
 T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
   Poincare::VariableContext<T> variableContext = Poincare::VariableContext<T>(symbol(), context);
   variableContext.setApproximationForVariable(x);
-  return expression(context)->approximateToScalar<T>(variableContext);
+  return PoincareHelpers::ApproximateToScalar<T>(expression(context), variableContext);
 }
 
 void Function::tidy() {

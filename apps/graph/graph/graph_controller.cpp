@@ -44,7 +44,7 @@ float GraphController::interestingXRange() {
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   for (int i = 0; i < functionStore()->numberOfActiveFunctions(); i++) {
     Function * f = functionStore()->activeFunctionAtIndex(i);
-    float fRange = f->expression(myApp->localContext())->characteristicXRange(*(myApp->localContext()));
+    float fRange = f->expression(myApp->localContext())->characteristicXRange(*(myApp->localContext()), Preferences::sharedPreferences()->angleUnit());
     if (!std::isnan(fRange)) {
       characteristicRange = fRange > characteristicRange ? fRange : characteristicRange;
     }

@@ -149,12 +149,10 @@ public:
   enum class ComplexFormat {
     Cartesian = 0,
     Polar = 1,
-    Default = 2
   };
   enum class AngleUnit {
     Degree = 0,
     Radian = 1,
-    Default = 2
   };
 
   /* Constructor & Destructor */
@@ -205,7 +203,7 @@ public:
    * the return value is NAN.
    * NB: so far, we consider that the only way of building a periodic function
    * is to use sin/tan/cos(f(x)) with f a linear function. */
-  virtual float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const;
+  virtual float characteristicXRange(Context & context, AngleUnit angleUnit) const;
   static bool IsMatrix(const Expression * e, Context & context);
 
   /* polynomialDegree returns:
@@ -228,15 +226,15 @@ public:
   virtual int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Simplification */
-  static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit = AngleUnit::Default);
-  static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
+  static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit);
+  static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit);
 
   /* Evaluation Engine */
   /* The function approximate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
-  template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default, ComplexFormat complexFormat = ComplexFormat::Default) const;
-  template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit = AngleUnit::Default, ComplexFormat complexFormat = ComplexFormat::Default) const;
-  template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default, ComplexFormat complexFormat = ComplexFormat::Default);
+  template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit, ComplexFormat complexFormat) const;
+  template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit) const;
+  template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit);
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}

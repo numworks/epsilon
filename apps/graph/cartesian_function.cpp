@@ -1,8 +1,10 @@
 #include "cartesian_function.h"
+#include "../shared/poincare_helpers.h"
 #include <float.h>
 #include <cmath>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Graph {
 
@@ -27,7 +29,7 @@ double CartesianFunction::approximateDerivative(double x, Poincare::Context * co
   /* TODO: when we will simplify derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
-  return derivative.approximateToScalar<double>(*context);
+  return PoincareHelpers::ApproximateToScalar<double>(&derivative, *context);
 }
 
 double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
@@ -38,7 +40,7 @@ double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::C
   /* TODO: when we will simplify integral, we might want to simplify the
    * integral here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
-  return integral.approximateToScalar<double>(*context);
+  return PoincareHelpers::ApproximateToScalar<double>(&integral, *context);
 }
 
 CartesianFunction::Point CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {

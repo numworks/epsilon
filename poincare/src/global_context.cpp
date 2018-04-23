@@ -1,6 +1,7 @@
 #include <poincare/global_context.h>
 #include <poincare/matrix.h>
 #include <poincare/undefined.h>
+#include <poincare/preferences.h>
 #include <assert.h>
 #include <cmath>
 #include <ion.h>
@@ -94,7 +95,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
  if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
-    Expression * evaluation = expression ? expression->approximate<double>(context) : nullptr; // evaluate before deleting anything (to be able to evaluate M1+2->M1)
+    Expression * evaluation = expression ? expression->approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()) : nullptr; // evaluate before deleting anything (to be able to evaluate M1+2->M1)
     if (m_matrixExpressions[indexMatrix] != nullptr) {
       delete m_matrixExpressions[indexMatrix];
       m_matrixExpressions[indexMatrix] = nullptr;
@@ -115,7 +116,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return;
   }
-  Expression * evaluation = expression ? expression->approximate<double>(context) : nullptr; // evaluate before deleting anything (to be able to evaluate A+2->A)
+  Expression * evaluation = expression ? expression->approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()) : nullptr; // evaluate before deleting anything (to be able to evaluate A+2->A)
   if (m_expressions[index] != nullptr) {
     delete m_expressions[index];
     m_expressions[index] = nullptr;

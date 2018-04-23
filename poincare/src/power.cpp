@@ -104,7 +104,7 @@ template<typename T> MatrixComplex<T> Power::computeOnMatrixAndComplex(const Mat
   }
   if (power < 0) {
     MatrixComplex<T> inverse = m.createInverse();
-    Complex<T> minusC = Complex<T>(Opposite::compute(d, AngleUnit::Default));
+    Complex<T> minusC = Complex<T>(-d);
     MatrixComplex<T> result = Power::computeOnMatrixAndComplex(inverse, minusC);
     return result;
   }

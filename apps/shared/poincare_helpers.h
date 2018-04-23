@@ -20,6 +20,26 @@ inline int WriteTextInBuffer(const Poincare::Expression * e, char * buffer, int 
   return e->writeTextInBuffer(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits);
 }
 
+template <class T>
+inline Poincare::Expression * Approximate(const Poincare::Expression * e, Poincare::Context & context) {
+  return e->approximate<T>(context, Poincare::Preferences::sharedPreferences()->angleUnit(), Poincare::Preferences::sharedPreferences()->complexFormat());
+}
+
+template <class T>
+inline T ApproximateToScalar(const Poincare::Expression * e, Poincare::Context & context) {
+  return e->approximateToScalar<T>(context, Poincare::Preferences::sharedPreferences()->angleUnit());
+}
+
+template <class T>
+inline T ApproximateToScalar(const char * text, Poincare::Context & context) {
+  return Poincare::Expression::approximateToScalar<T>(text, context, Poincare::Preferences::sharedPreferences()->angleUnit());
+}
+
+inline Poincare::Expression * ParseAndSimplify(const char * text, Poincare::Context & context) {
+  return Poincare::Expression::ParseAndSimplify(text, context, Poincare::Preferences::sharedPreferences()->angleUnit());
+}
+
+
 }
 
 }

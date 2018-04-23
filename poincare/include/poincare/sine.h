@@ -11,7 +11,7 @@ namespace Poincare {
 class Sine : public StaticHierarchy<1> {
   using StaticHierarchy<1>::StaticHierarchy;
   friend class Tangent;
-  float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
+  float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
 public:
   Type type() const override;
   Expression * clone() const override;

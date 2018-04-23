@@ -366,11 +366,14 @@ template<typename T> Expression * Expression::approximate(Context& context, Angl
 }
 
 template<typename T> T Expression::approximateToScalar(Context& context, AngleUnit angleUnit, ComplexFormat complexFormat) const {
-  Expression * evaluation = approximate<T>(context, angleUnit, complexFormat);
-  T result = NAN;
-  if (evaluation->type() == Type::Decimal) {
-    result = static_cast<const Decimal *>(evaluation)->toScalar<T>();
+  if (angleUnit == AngleUnit::Default) {
+    angleUnit = Preferences::sharedPreferences()->angleUnit();
   }
+  if (complexFormat == ComplexFormat::Default) {
+    complexFormat = Preferences::sharedPreferences()->complexFormat();
+  }
+  Evaluation<T> * evaluation = privateApproximate(T(), context, angleUnit);
+  T result = evaluation->toScalar();
   /*if (evaluation->type() == Type::Matrix) {
     if (numberOfOperands() == 1) {
       result = static_cast<const Complex<T> *>(operand(0))->toScalar();

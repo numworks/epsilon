@@ -1,5 +1,6 @@
 #include "store_controller.h"
 #include "../apps_container.h"
+#include "../shared/poincare_helpers.h"
 #include "../constant.h"
 #include <escher/metric.h>
 #include <assert.h>
@@ -85,7 +86,7 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
   }
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  double floatBody = Expression::approximateToScalar<double>(text, *globalContext);
+  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
   if (std::isnan(floatBody) || std::isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
@@ -299,7 +300,7 @@ bool StoreController::privateFillColumnWithFormula(Expression * formula, Express
     // Set the context
     store->setSeriesPairIndex(j);
     // Compute the new value using the formula
-    double evaluation = formula->approximateToScalar<double>(*store);
+    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, *store);
     if (std::isnan(evaluation) || std::isinf(evaluation)) {
       app()->displayWarning(I18n::Message::DataNotSuitable);
       return false;
@@ -309,7 +310,7 @@ bool StoreController::privateFillColumnWithFormula(Expression * formula, Express
   // Fill in the table with the formula values
   for (int j = 0; j < numberOfValuesToCompute; j++) {
     store->setSeriesPairIndex(j);
-    double evaluation = formula->approximateToScalar<double>(*store);
+    double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, *store);
     setDataAtLocation(evaluation, currentColumn, j + 1);
   }
   selectableTableView()->reloadData();

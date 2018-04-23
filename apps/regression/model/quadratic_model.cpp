@@ -1,9 +1,11 @@
 #include "quadratic_model.h"
+#include "../../shared/poincare_helpers.h"
 #include <math.h>
 #include <assert.h>
 #include "../../poincare/include/poincare_layouts.h"
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Regression {
 
@@ -48,7 +50,7 @@ Expression * QuadraticModel::simplifiedExpression(double * modelCoefficients, Po
   Expression * cExpression = new Decimal(c);
   Expression * const operands[] = {ax2Expression, bxExpression, cExpression};
   Expression * result = new Addition(operands, 3, false);
-  Expression::Simplify(&result, *context);
+  PoincareHelpers::Simplify(&result, *context);
   return result;
 }
 

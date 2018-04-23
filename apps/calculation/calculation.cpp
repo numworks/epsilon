@@ -61,9 +61,9 @@ void Calculation::setContent(const char * c, Context * context, Expression * ans
   /* We do not store directly the text enter by the user because we do not want
    * to keep Ans symbol in the calculation store. */
   PoincareHelpers::WriteTextInBuffer(m_input, m_inputText, sizeof(m_inputText));
-  m_exactOutput = Expression::ParseAndSimplify(m_inputText, *context);
+  m_exactOutput = PoincareHelpers::ParseAndSimplify(m_inputText, *context);
   PoincareHelpers::WriteTextInBuffer(m_exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
-  m_approximateOutput = m_exactOutput->approximate<double>(*context);
+  m_approximateOutput = PoincareHelpers::Approximate<double>(m_exactOutput, *context);
   PoincareHelpers::WriteTextInBuffer(m_approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
@@ -172,7 +172,7 @@ Expression * Calculation::approximateOutput(Context * context) {
      * call 'evaluate'. */
     Expression * exp = Expression::parse(m_approximateOutputText);
     if (exp != nullptr) {
-      m_approximateOutput = exp->approximate<double>(*context);
+      m_approximateOutput = PoincareHelpers::Approximate<double>(exp, *context);
       delete exp;
     } else {
       m_approximateOutput = new Undefined();
@@ -202,7 +202,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
   }
-  m_equalSign = exactOutput(context)->isEqualToItsApproximationLayout(approximateOutput(context), k_printedExpressionSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
+  m_equalSign = exactOutput(context)->isEqualToItsApproximationLayout(approximateOutput(context), k_printedExpressionSize, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

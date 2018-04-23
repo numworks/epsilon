@@ -2,12 +2,6 @@
 
 namespace Calculation {
 
-ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, Poincare::ExpressionLayout * layout, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
-  ::ExpressionField(parentResponder, textBuffer, textBufferLength, layout, textFieldDelegate, expressionLayoutFieldDelegate)
-{
-  setEditing(true);
-}
-
 bool ExpressionField::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     return false;

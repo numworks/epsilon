@@ -177,7 +177,7 @@ ExpressionLayoutCursor FractionLayout::cursorUnder(ExpressionLayoutCursor cursor
   return ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -205,7 +205,7 @@ int FractionLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberO
   }
 
   // Write the content of the fraction
-  numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits, "/");
+  numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, "/");
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   if (addParenthesis) {

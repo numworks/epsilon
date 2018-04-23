@@ -60,11 +60,11 @@ void Calculation::setContent(const char * c, Context * context, Expression * ans
   Expression::ReplaceSymbolWithExpression(&m_input, Symbol::SpecialSymbols::Ans, ansExpression);
   /* We do not store directly the text enter by the user because we do not want
    * to keep Ans symbol in the calculation store. */
-  m_input->writeTextInBuffer(m_inputText, sizeof(m_inputText));
+  PoincareHelpers::WriteTextInBuffer(m_input, m_inputText, sizeof(m_inputText));
   m_exactOutput = Expression::ParseAndSimplify(m_inputText, *context);
-  m_exactOutput->writeTextInBuffer(m_exactOutputText, sizeof(m_exactOutputText));
+  PoincareHelpers::WriteTextInBuffer(m_exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
   m_approximateOutput = m_exactOutput->approximate<double>(*context);
-  m_approximateOutput->writeTextInBuffer(m_approximateOutputText, sizeof(m_approximateOutputText));
+  PoincareHelpers::WriteTextInBuffer(m_approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
 KDCoordinate Calculation::height(Context * context) {
@@ -202,7 +202,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
   }
-  m_equalSign = exactOutput(context)->isEqualToItsApproximationLayout(approximateOutput(context), k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
+  m_equalSign = exactOutput(context)->isEqualToItsApproximationLayout(approximateOutput(context), k_printedExpressionSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

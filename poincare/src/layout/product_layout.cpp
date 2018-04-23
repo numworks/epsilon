@@ -9,8 +9,8 @@ ExpressionLayout * ProductLayout::clone() const {
   return layout;
 }
 
-int ProductLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
-  return SequenceLayout::writeDerivedClassInBuffer("product", buffer, bufferSize, numberOfSignificantDigits);
+int ProductLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+  return SequenceLayout::writeDerivedClassInBuffer("product", buffer, bufferSize);
 }
 
 void ProductLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

@@ -139,10 +139,6 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
     m_contentView.cursor()->addFractionLayoutAndCollapseSiblings();
     return true;
   }
-  if (event == Ion::Events::XNT) {
-    m_contentView.cursor()->addXNTCharLayout();
-    return true;
-  }
   if (event == Ion::Events::Exp) {
     m_contentView.cursor()->addEmptyExponentialLayout();
     return true;
@@ -296,4 +292,8 @@ bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentat
 
 Poincare::ExpressionLayout * ExpressionLayoutField::expressionLayout() {
   return m_contentView.expressionView()->expressionLayout();
+}
+
+char ExpressionLayoutField::XNTChar() {
+  return m_contentView.cursor()->pointedExpressionLayout()->XNTChar();
 }

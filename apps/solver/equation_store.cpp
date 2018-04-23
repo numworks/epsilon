@@ -1,7 +1,9 @@
 #include "equation_store.h"
+#include "../shared/poincare_helpers.h"
 #include <limits.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Solver {
 
@@ -158,9 +160,9 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   /* Turn the results in layouts */
   for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
     if (exactSolutions[i]) {
-      m_exactSolutionExactLayouts[i] = exactSolutions[i]->createLayout();
+      m_exactSolutionExactLayouts[i] = PoincareHelpers::CreateLayout(exactSolutions[i]);
       Expression * approximate = exactSolutions[i]->approximate<double>(*context);
-      m_exactSolutionApproximateLayouts[i] = approximate->createLayout();
+      m_exactSolutionApproximateLayouts[i] = PoincareHelpers::CreateLayout(approximate);
       /* Check for identity between exact and approximate layouts */
       char exactBuffer[Shared::ExpressionModel::k_expressionBufferSize];
       char approximateBuffer[Shared::ExpressionModel::k_expressionBufferSize];

@@ -1,5 +1,6 @@
 #include "equation_models_parameter_controller.h"
 #include "list_controller.h"
+#include "../constant.h"
 #include <assert.h>
 #include <poincare/layout_engine.h>
 #include "../i18n.h"
@@ -22,7 +23,7 @@ EquationModelsParameterController::EquationModelsParameterController(Responder *
   m_selectableTableView.setShowsIndicators(false);
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::Expression * e = Expression::parse(k_models[i+1]);
-    m_expressionLayouts[i] = e->createLayout(Poincare::PrintFloat::Mode::Decimal, Poincare::Expression::ComplexFormat::Cartesian);
+    m_expressionLayouts[i] = e->createLayout(Poincare::PrintFloat::Mode::Decimal, Constant::ShortNumberOfSignificantDigits);
     delete e;
     m_modelCells[i].setExpressionLayout(m_expressionLayouts[i]);
   }

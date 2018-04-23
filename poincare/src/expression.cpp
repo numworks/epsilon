@@ -823,7 +823,7 @@ double Expression::brentRoot(char symbol, double ax, double bx, double precision
 
 template<typename T>
 T Expression::approximateWithValueForSymbol(char symbol, T x, Context & context) const {
-  VariableContext variableContext = VariableContext(symbol, &context);
+  VariableContext<T> variableContext = VariableContext<T>(symbol, &context);
   variableContext.setApproximationForVariable(x);
   T value = approximateToScalar<T>(variableContext);
   return value;

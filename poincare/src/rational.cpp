@@ -160,7 +160,7 @@ ExpressionLayout * Rational::createLayout(PrintFloat::Mode floatDisplayMode, int
   return new FractionLayout(numeratorLayout, denominatorLayout, false);
 }
 
-int Rational::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Rational::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   buffer[bufferSize-1] = 0;
   int numberOfChar = m_numerator.writeTextInBuffer(buffer, bufferSize);
   if (m_denominator.isOne()) {

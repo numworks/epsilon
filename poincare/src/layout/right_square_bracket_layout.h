@@ -10,7 +10,7 @@ class RightSquareBracketLayout : public SquareBracketLayout {
 public:
   using SquareBracketLayout::SquareBracketLayout;
   ExpressionLayout * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
     return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, ']');
   }
   bool isRightBracket() const override { return true; }

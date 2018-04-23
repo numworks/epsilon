@@ -30,7 +30,7 @@ ExpressionLayout * Undefined::createLayout(PrintFloat::Mode floatDisplayMode, in
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
-int Undefined::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Undefined::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

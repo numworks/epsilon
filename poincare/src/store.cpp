@@ -24,8 +24,8 @@ int Store::polynomialDegree(char symbolName) const {
 }
 
 static_assert('\x8F' == Ion::Charset::Sto, "Incorrect");
-int Store::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
-  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "\x8F");
+int Store::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x8F");
 }
 
 Expression * Store::shallowReduce(Context& context, AngleUnit angleUnit) {

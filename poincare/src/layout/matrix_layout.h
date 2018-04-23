@@ -25,7 +25,7 @@ public:
   void removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) override;
 
   // Serialization
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
 
   // Other
   bool isMatrix() const override { return true; }

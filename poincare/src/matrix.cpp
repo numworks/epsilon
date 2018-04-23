@@ -47,7 +47,7 @@ Expression * Matrix::clone() const {
   return new Matrix(m_operands, numberOfRows(), numberOfColumns(), true);
 }
 
-int Matrix::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Matrix::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -65,7 +65,7 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignifi
     if (currentChar >= bufferSize-1) {
       return currentChar;
     }
-    currentChar += operand(i*numberOfColumns())->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar, numberOfSignificantDigits);
+    currentChar += operand(i*numberOfColumns())->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar, floatDisplayMode, numberOfSignificantDigits);
     if (currentChar >= bufferSize-1) {
       return currentChar;
     }
@@ -74,7 +74,7 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignifi
       if (currentChar >= bufferSize-1) {
         return currentChar;
       }
-      currentChar += operand(i*numberOfColumns()+j)->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar, numberOfSignificantDigits);
+      currentChar += operand(i*numberOfColumns()+j)->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar, floatDisplayMode, numberOfSignificantDigits);
       if (currentChar >= bufferSize-1) {
         return currentChar;
       }

@@ -22,7 +22,7 @@ public:
   // Expression subclassing
   Type type() const override;
   Expression * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   Sign sign() const override { return m_mantissa.isNegative() ? Sign::Negative : Sign::Positive; }
 private:
   constexpr static double k_biggestMantissaFromDouble = 999999999999999;

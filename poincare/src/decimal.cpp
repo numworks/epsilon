@@ -202,8 +202,8 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
   return currentChar;
 }
 
-int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
-  return convertToText(buffer, bufferSize, PrintFloat::Mode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
+int Decimal::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return convertToText(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
 bool Decimal::needParenthesisWithParent(const Expression * e) const {

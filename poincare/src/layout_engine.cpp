@@ -76,23 +76,23 @@ ExpressionLayout * LayoutEngine::createLogLayout(ExpressionLayout * argument, Ex
   return resultLayout;
 }
 
-int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName) {
-  return writeInfixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize, numberOfDigits, operatorName, 0, -1, [](const char * operatorName) { return true; });
+int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName) {
+  return writeInfixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize,floatDisplayMode, numberOfDigits, operatorName, 0, -1, [](const char * operatorName) { return true; });
 }
 
-int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName) {
-  return writePrefixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize, numberOfDigits, operatorName);
+int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName) {
+  return writePrefixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName);
 }
 
-int LayoutEngine::writeInfixExpressionLayoutTextInBuffer(const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis) {
-  return writeInfixExpressionOrExpressionLayoutTextInBuffer(nullptr, expressionLayout, buffer, bufferSize, numberOfDigits, operatorName, firstChildIndex, lastChildIndex, childNeedsParenthesis);
+int LayoutEngine::writeInfixExpressionLayoutTextInBuffer(const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis) {
+  return writeInfixExpressionOrExpressionLayoutTextInBuffer(nullptr, expressionLayout, buffer, bufferSize, PrintFloat::Mode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits, operatorName, firstChildIndex, lastChildIndex, childNeedsParenthesis);
 }
 
-int LayoutEngine::writePrefixExpressionLayoutTextInBuffer(const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, bool writeFirstChild) {
-  return writePrefixExpressionOrExpressionLayoutTextInBuffer(nullptr, expressionLayout, buffer, bufferSize, numberOfDigits, operatorName, writeFirstChild);
+int LayoutEngine::writePrefixExpressionLayoutTextInBuffer(const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, const char * operatorName, bool writeFirstChild) {
+  return writePrefixExpressionOrExpressionLayoutTextInBuffer(nullptr, expressionLayout, buffer, bufferSize, PrintFloat::Mode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits, operatorName, writeFirstChild);
 }
 
-int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis) {
+int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis) {
   assert(expression != nullptr || expressionLayout != nullptr);
   if (bufferSize == 0) {
     return -1;
@@ -114,7 +114,7 @@ int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expre
     }
   }
 
-  numberOfChar += (expression != nullptr) ? expression->operand(firstChildIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits) : expressionLayout->child(firstChildIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
+  numberOfChar += (expression != nullptr) ? expression->operand(firstChildIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits) : expressionLayout->child(firstChildIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
   if ((expression != nullptr && expression->operand(firstChildIndex)->needParenthesisWithParent(expression))
       || (expression == nullptr && childNeedsParenthesis(operatorName)))
   {
@@ -132,7 +132,7 @@ int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expre
       buffer[numberOfChar++] = '(';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
-    numberOfChar += (expression != nullptr) ? expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits) : expressionLayout->child(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
+    numberOfChar += (expression != nullptr) ? expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits) : expressionLayout->child(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
     if ((expression != nullptr && expression->operand(i)->needParenthesisWithParent(expression))
       || (expression == nullptr && childNeedsParenthesis(operatorName)))
     {
@@ -144,7 +144,7 @@ int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expre
   return numberOfChar;
 }
 
-int LayoutEngine::writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, bool writeFirstChild) {
+int LayoutEngine::writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, bool writeFirstChild) {
   assert(expression != nullptr || expressionLayout != nullptr);
   if (bufferSize == 0) {
     return -1;
@@ -166,12 +166,12 @@ int LayoutEngine::writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expr
       assert(numberOfOperands > 1);
     }
     int firstOperandIndex = writeFirstChild ? 0 : 1;
-    numberOfChar += (expression != nullptr) ? expression->operand(firstOperandIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits) : expressionLayout->child(firstOperandIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
+    numberOfChar += (expression != nullptr) ? expression->operand(firstOperandIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits) : expressionLayout->child(firstOperandIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
     for (int i = firstOperandIndex + 1; i < numberOfOperands; i++) {
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
       buffer[numberOfChar++] = ',';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-      numberOfChar += (expression != nullptr) ? expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar) : expressionLayout->child(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+      numberOfChar += (expression != nullptr) ? expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits) : expressionLayout->child(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
     }
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }

@@ -236,7 +236,7 @@ ExpressionLayout * Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int n
   return LayoutEngine::createStringLayout(&m_name, 1);
 }
 
-int Symbol::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Symbol::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

@@ -23,8 +23,8 @@ public:
   ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
 
   // Serialization
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "conj");
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "conj");
   }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

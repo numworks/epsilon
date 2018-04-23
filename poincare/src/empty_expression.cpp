@@ -13,7 +13,7 @@ Expression * EmptyExpression::clone() const {
   return new EmptyExpression();
 }
 
-int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, Ion::Charset::Empty);
 }
 

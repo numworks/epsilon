@@ -60,11 +60,11 @@ void Calculation::setContent(const char * c, Context * context, Expression * ans
   Expression::ReplaceSymbolWithExpression(&m_input, Symbol::SpecialSymbols::Ans, ansExpression);
   /* We do not store directly the text enter by the user because we do not want
    * to keep Ans symbol in the calculation store. */
-  m_input->writeTextInBuffer(m_inputText, sizeof(m_inputText));
+  PoincareHelpers::WriteTextInBuffer(m_input, m_inputText, sizeof(m_inputText));
   m_exactOutput = Expression::ParseAndSimplify(m_inputText, *context);
-  m_exactOutput->writeTextInBuffer(m_exactOutputText, sizeof(m_exactOutputText));
+  PoincareHelpers::WriteTextInBuffer(m_exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
   m_approximateOutput = m_exactOutput->approximate<double>(*context);
-  m_approximateOutput->writeTextInBuffer(m_approximateOutputText, sizeof(m_approximateOutputText));
+  PoincareHelpers::WriteTextInBuffer(m_approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
 KDCoordinate Calculation::height(Context * context) {
@@ -198,7 +198,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
     return m_equalSign;
   }
   char buffer[k_printedExpressionSize];
-  approximateOutput(context)->writeTextInBuffer(buffer, k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
+  PoincareHelpers::WriteTextInBuffer(approximateOutput(context), buffer, k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
   /* Warning: we cannot use directly the m_approximateOutputText but we have to
    * re-serialize the approximateOutput because the number of stored
    * significative numbers and the number of displayed significative numbers

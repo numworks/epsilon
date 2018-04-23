@@ -1,5 +1,6 @@
 #include "app.h"
 #include "../apps_container.h"
+#include "../shared/poincare_helpers.h"
 #include "calculation_icon.h"
 #include "../i18n.h"
 
@@ -96,7 +97,7 @@ bool App::textInputIsCorrect(const char * text) {
   }
   Expression::ReplaceSymbolWithExpression(&exp, Symbol::SpecialSymbols::Ans, static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext()));
   char buffer[Calculation::k_printedExpressionSize];
-  int length = exp->writeTextInBuffer(buffer, sizeof(buffer));
+  int length = PoincareHelpers::WriteTextInBuffer(exp, buffer, sizeof(buffer));
   delete exp;
   /* if the buffer is totally full, it is VERY likely that writeTextInBuffer
    * escaped before printing utterly the expression. */

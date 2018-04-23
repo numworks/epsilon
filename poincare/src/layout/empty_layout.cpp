@@ -47,7 +47,7 @@ ExpressionLayoutCursor EmptyLayout::cursorRightOf(ExpressionLayoutCursor cursor,
   return ExpressionLayoutCursor();
 }
 
-int EmptyLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int EmptyLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   if (bufferSize == 0) {
     return -1;
   }

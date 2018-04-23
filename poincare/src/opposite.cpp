@@ -75,7 +75,7 @@ ExpressionLayout * Opposite::createLayout(PrintFloat::Mode floatDisplayMode, int
   return result;
 }
 
-int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Opposite::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -83,7 +83,7 @@ int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSigni
   int numberOfChar = 0;
   if (bufferSize == 1) { return 0; }
   buffer[numberOfChar++] = '-';
-  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
+  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

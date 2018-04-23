@@ -16,7 +16,7 @@ private:
   /* Layout */
   bool needParenthesisWithParent(const Expression * e) const override;
   ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplication */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context& context, AngleUnit angleUnit) override;

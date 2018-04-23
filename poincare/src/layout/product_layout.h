@@ -10,7 +10,7 @@ class ProductLayout : public SequenceLayout {
 public:
   using SequenceLayout::SequenceLayout;
   ExpressionLayout * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize) const override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 private:

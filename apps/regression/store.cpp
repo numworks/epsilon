@@ -29,7 +29,7 @@ Store::Store() :
   InteractiveCurveViewRange(nullptr),
   DoublePairStore(),
   m_seriesChecksum{0, 0, 0},
-  m_angleUnit(Poincare::Expression::AngleUnit::Default)
+  m_angleUnit(Poincare::Expression::AngleUnit::Degree)
 {
   for (int i = 0; i < k_numberOfSeries; i++) {
     m_regressionTypes[i] = Model::Type::Linear;

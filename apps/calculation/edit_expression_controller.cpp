@@ -80,7 +80,6 @@ void EditExpressionController::didBecomeFirstResponder() {
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  assert(textField == ((ContentView *)view())->expressionField()->textField());
   if (textField->isEditing() && textField->textFieldShouldFinishEditing(event) && textField->draftTextLength() == 0 && m_cacheBuffer[0] != 0) {
     return inputViewDidReceiveEvent(event);
   }
@@ -88,17 +87,14 @@ bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField,
 }
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
-  assert(textField == ((ContentView *)view())->expressionField()->textField());
   return inputViewDidFinishEditing(text, event);
 }
 
 bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField) {
-  assert(textField == ((ContentView *)view())->expressionField()->textField());
   return inputViewDidAbortEditing(textField->text());
 }
 
 bool EditExpressionController::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
-  assert(expressionLayoutField == ((ContentView *)view())->expressionField()->expressionLayoutField());
   if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event) && !expressionLayoutField->hasText() && m_calculationStore->numberOfCalculations() > 0) {
     return inputViewDidReceiveEvent(event);
   }
@@ -106,17 +102,14 @@ bool EditExpressionController::expressionLayoutFieldDidReceiveEvent(::Expression
 }
 
 bool EditExpressionController::expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) {
-  assert(expressionLayoutField == ((ContentView *)view())->expressionField()->expressionLayoutField());
   return inputViewDidFinishEditing(text, event);
 }
 
 bool EditExpressionController::expressionLayoutFieldDidAbortEditing(::ExpressionLayoutField * expressionLayoutField) {
-  assert(expressionLayoutField == ((ContentView *)view())->expressionField()->expressionLayoutField());
   return inputViewDidAbortEditing(nullptr);
 }
 
 void EditExpressionController::expressionLayoutFieldDidChangeSize(::ExpressionLayoutField * expressionLayoutField) {
-  assert(expressionLayoutField == ((ContentView *)view())->expressionField()->expressionLayoutField());
   reloadView();
 }
 

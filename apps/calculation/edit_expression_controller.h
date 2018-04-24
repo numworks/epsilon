@@ -63,8 +63,8 @@ private:
   bool inputViewDidFinishEditing(const char * text, Ion::Events::Event event);
   bool inputViewDidAbortEditing(const char * text);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
-  char m_cacheBuffer[TextField::maxBufferSize()];
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
+  char m_cacheBuffer[TextField::maxBufferSize()];
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
 };

@@ -16,7 +16,7 @@ public:
   }
 protected:
   KDCoordinate widthMargin() const override { return 2; }
-  virtual KDCoordinate verticalExternMargin() const { return 1; }
+  virtual KDCoordinate verticalExternMargin() const override { return 1; }
   bool renderTopBar() const override { return false; }
   bool renderBottomBar() const override { return false; }
 };

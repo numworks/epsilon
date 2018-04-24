@@ -64,7 +64,7 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     char label[3];
     putLabelAtIndexInBuffer(selectedRow(), label);
     const char * editedText = label;
-    m_insertTextAction(m_sender, editedText);
+    m_sender->handleEventWithText(editedText);
 #if MATRIX_VARIABLES
     m_selectableTableView.deselectTable();
     m_currentPage = Page::RootMenu;
@@ -195,16 +195,6 @@ int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
   return 0;
 }
 
-void VariableBoxController::ContentViewController::setTextFieldSender(TextField * textField) {
-  m_sender = textField;
-  m_insertTextAction = &insertTextInTextInput;
-}
-
-void VariableBoxController::ContentViewController::setExpressionLayoutFieldSender(ExpressionLayoutField * expressionLayoutField) {
-  m_sender = expressionLayoutField;
-  m_insertTextAction = &insertTextInExpressionLayoutField;
-}
-
 void VariableBoxController::ContentViewController::reloadData() {
   m_selectableTableView.reloadData();
 }
@@ -290,19 +280,6 @@ ExpressionLayout * VariableBoxController::ContentViewController::expressionLayou
   return nullptr;
 }
 
-void VariableBoxController::ContentViewController::insertTextInTextInput(void * sender, const char * textToInsert) {
-  TextInput * textInput = static_cast<TextInput *>(sender);
-  textInput->handleEventWithText(textToInsert);
-}
-
-void VariableBoxController::ContentViewController::insertTextInExpressionLayoutField(void * sender, const char * textToInsert) {
-  ExpressionLayoutField * expressionLayoutField = static_cast<ExpressionLayoutField *>(sender);
-  if (!expressionLayoutField->isEditing()) {
-    expressionLayoutField->setEditing(true);
-  }
-  expressionLayoutField->insertLayoutFromTextAtCursor(textToInsert);
-}
-
 VariableBoxController::VariableBoxController(GlobalContext * context) :
   StackViewController(nullptr, &m_contentViewController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_contentViewController(this, context)
@@ -313,12 +290,8 @@ void VariableBoxController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_contentViewController);
 }
 
-void VariableBoxController::setTextFieldSender(TextField * textField) {
-  m_contentViewController.setTextFieldSender(textField);
-}
-
-void VariableBoxController::setExpressionLayoutFieldSender(ExpressionLayoutField * expressionLayoutField) {
-  m_contentViewController.setExpressionLayoutFieldSender(expressionLayoutField);
+void VariableBoxController::setSender(Responder * sender) {
+  m_contentViewController.setSender(sender);
 }
 
 void VariableBoxController::viewWillAppear() {

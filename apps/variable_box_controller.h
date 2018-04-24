@@ -10,11 +10,9 @@
 
 class VariableBoxController : public StackViewController {
 public:
-  typedef void (*Action)(void * sender, const char * text);
   VariableBoxController(Poincare::GlobalContext * context);
   void didBecomeFirstResponder() override;
-  void setTextFieldSender(TextField * textField);
-  void setExpressionLayoutFieldSender(ExpressionLayoutField * expressionLayoutField);
+  void setSender(Responder * sender);
   void viewWillAppear() override;
   void viewDidDisappear() override;
 private:
@@ -33,8 +31,7 @@ private:
     KDCoordinate cumulatedHeightFromIndex(int j) override;
     int indexFromCumulatedHeight(KDCoordinate offsetY) override;
     int typeAtLocation(int i, int j) override;
-    void setTextFieldSender(TextField * textField);
-    void setExpressionLayoutFieldSender(ExpressionLayoutField * expressionLayoutField);
+    void setSender(Responder * responder) { m_sender = responder; }
     void reloadData();
     void resetPage();
     void viewDidDisappear() override;
@@ -59,11 +56,8 @@ private:
     I18n::Message nodeLabelAtIndex(int index);
     const Poincare::Expression * expressionForIndex(int index);
     Poincare::ExpressionLayout * expressionLayoutForIndex(int index);
-    static void insertTextInTextInput(void * sender, const char * textToInsert);
-    static void insertTextInExpressionLayoutField(void * sender, const char * textToInsert);
     Poincare::GlobalContext * m_context;
     Responder * m_sender;
-    Action m_insertTextAction;
     int m_firstSelectedRow;
     int m_previousSelectedRow;
     Page m_currentPage;

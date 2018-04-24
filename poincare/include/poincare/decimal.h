@@ -27,7 +27,6 @@ public:
 private:
   constexpr static double k_biggestMantissaFromDouble = 999999999999999;
   constexpr static int k_maxDoubleExponent = 308;
-  int numberOfDigitsInMantissaWithoutSign() const;
   /* Comparison */
   int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   /* Layout */

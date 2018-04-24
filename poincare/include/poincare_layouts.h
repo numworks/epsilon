@@ -5,8 +5,8 @@
 #include <poincare/src/layout/absolute_value_layout.h>
 #include <poincare/src/layout/binomial_coefficient_layout.h>
 #include <poincare/src/layout/bracket_pair_layout.h>
-#include <poincare/src/layout/left_bracket_layout.h>
-#include <poincare/src/layout/right_bracket_layout.h>
+#include <poincare/src/layout/left_square_bracket_layout.h>
+#include <poincare/src/layout/right_square_bracket_layout.h>
 #include <poincare/src/layout/ceiling_layout.h>
 #include <poincare/src/layout/char_layout.h>
 #include <poincare/src/layout/condensed_sum_layout.h>

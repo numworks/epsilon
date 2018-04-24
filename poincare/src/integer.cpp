@@ -322,6 +322,19 @@ Integer Integer::Power(const Integer & i, const Integer & j) {
   return result;
 }
 
+int Integer::numberOfDigitsWithoutSign(const Integer & i) {
+  int numberOfDigits = 1;
+  Integer copy = i;
+  copy.setNegative(false);
+  IntegerDivision d = Integer::Division(copy, Integer(10));
+  while (!d.quotient.isZero()) {
+    copy = d.quotient;
+    d = Integer::Division(copy, Integer(10));
+    numberOfDigits++;
+  }
+  return numberOfDigits;
+}
+
 // Private methods
 
   /* WARNING: This constructor takes ownership of the digits array! */

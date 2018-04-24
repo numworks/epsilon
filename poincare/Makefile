@@ -92,9 +92,6 @@ objs += $(addprefix poincare/src/layout/,\
   binomial_coefficient_layout.o\
   bounded_static_layout_hierarchy.o\
   bracket_pair_layout.o\
-  left_bracket_layout.o\
-  bracket_layout.o\
-  right_bracket_layout.o\
   ceiling_layout.o\
   char_layout.o\
   condensed_sum_layout.o\
@@ -107,13 +104,16 @@ objs += $(addprefix poincare/src/layout/,\
   grid_layout.o\
   horizontal_layout.o\
   integral_layout.o\
+  left_parenthesis_layout.o\
+  left_square_bracket_layout.o\
   matrix_layout.o\
   nth_root_layout.o\
-  left_parenthesis_layout.o\
   parenthesis_layout.o\
-  right_parenthesis_layout.o\
   product_layout.o\
+  right_parenthesis_layout.o\
+  right_square_bracket_layout.o\
   sequence_layout.o\
+  square_bracket_layout.o\
   static_layout_hierarchy.o\
   sum_layout.o\
   vertical_offset_layout.o\

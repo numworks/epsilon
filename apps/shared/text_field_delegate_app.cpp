@@ -93,7 +93,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::
     }
     AppsContainer * appsContainer = (AppsContainer *)textField->app()->container();
     VariableBoxController * variableBoxController = appsContainer->variableBoxController();
-    variableBoxController->setTextFieldSender(textField);
+    variableBoxController->setSender(textField);
     textField->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }

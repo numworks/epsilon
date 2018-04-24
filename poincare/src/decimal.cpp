@@ -95,7 +95,7 @@ Expression * Decimal::clone() const {
 
 template<typename T> Expression * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
-  int numberOfDigits = numberOfDigitsInMantissaWithoutSign();
+  int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
   return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));
 }
 
@@ -111,29 +111,49 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
     buffer[currentChar] = 0;
     return currentChar;
   }
+  int exponent = m_exponent;
   char tempBuffer[PrintFloat::k_numberOfStoredSignificantDigits+1];
-  // truncate the integer if m_mantissa > 10^numberOfSignificantDigits-1
+  // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
   Integer absMantissa = m_mantissa;
   absMantissa.setNegative(false);
-  while (Integer::NaturalOrder(absMantissa, Integer((int64_t)std::pow(10.0, numberOfSignificantDigits))) >= 0) {
-    absMantissa = Integer::Division(absMantissa, Integer(10)).quotient;
+  int numberOfDigitsInMantissa = Integer::numberOfDigitsWithoutSign(m_mantissa);
+  if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
+    IntegerDivision d = Integer::Division(absMantissa, Integer((int64_t)std::pow(10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)));
+    absMantissa = d.quotient;
+    if (Integer::NaturalOrder(d.remainder, Integer((int64_t)(5.0*std::pow(10.0, numberOfDigitsInMantissa-numberOfSignificantDigits-1)))) >= 0) {
+      absMantissa = Integer::Addition(absMantissa, Integer(1));
+      // if 9999 was rounded to 10000, we need to update exponent and mantissa
+      if (Integer::numberOfDigitsWithoutSign(absMantissa) > numberOfSignificantDigits) {
+        exponent++;
+        absMantissa = Integer::Division(absMantissa, Integer(10)).quotient;
+      }
+    }
+    removeZeroAtTheEnd(absMantissa);
   }
   int mantissaLength = absMantissa.writeTextInBuffer(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
   if (strcmp(tempBuffer, "undef") == 0) {
     strlcpy(buffer, tempBuffer, bufferSize);
     return mantissaLength;
   }
+  /* We force scientific mode if the number of digits before the dot is superior
+   * to the number of significant digits (ie with 4 significant digits,
+   * 12345 -> 1.235E4 or 12340 -> 1.234E4). */
+  bool forceScientificMode = mode == PrintFloat::Mode::Scientific || exponent >= numberOfSignificantDigits;
   int numberOfRequiredDigits = mantissaLength;
-  if (mode == PrintFloat::Mode::Decimal) {
-    numberOfRequiredDigits = mantissaLength > m_exponent ? mantissaLength : m_exponent;
-    numberOfRequiredDigits = m_exponent < 0 ? 1+mantissaLength-m_exponent : numberOfRequiredDigits;
+  if (!forceScientificMode) {
+    numberOfRequiredDigits = mantissaLength > exponent ? mantissaLength : exponent;
+    numberOfRequiredDigits = exponent < 0 ? 1+mantissaLength-exponent : numberOfRequiredDigits;
   }
   if (m_mantissa.isNegative()) {
     buffer[currentChar++] = '-';
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
   }
-  /* Case 0: the number would be too long if we print it as a natural decimal */
-  if (numberOfRequiredDigits > PrintFloat::k_numberOfStoredSignificantDigits || mode == PrintFloat::Mode::Scientific) {
+  /* Case 0: Scientific mode. Three cases:
+   * - the user chooses the scientific mode
+   * - the exponent is too big compared to the number of significant digits, so
+   *   we force the scientific mode to avoid inventing digits
+   * - the number would be too long if we print it as a natural decimal */
+  if (numberOfRequiredDigits > PrintFloat::k_numberOfStoredSignificantDigits || forceScientificMode) {
     if (mantissaLength == 1) {
       currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     } else {
@@ -144,19 +164,19 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
       buffer[decimalMarkerPosition-1] = buffer[decimalMarkerPosition];
       buffer[decimalMarkerPosition] = '.';
     }
-    if (m_exponent == 0) {
+    if (exponent == 0) {
       return currentChar;
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
     buffer[currentChar++] = Ion::Charset::Exponent;
-    currentChar += Integer(m_exponent).writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
+    currentChar += Integer(exponent).writeTextInBuffer(buffer+currentChar, bufferSize-currentChar);
     return currentChar;
   }
-  /* Case 1: Print a natural decimal number */
-  int deltaCharMantissa = m_exponent < 0 ? -m_exponent+1 : 0;
+  /* Case 1: Decimal mode */
+  int deltaCharMantissa = exponent < 0 ? -exponent+1 : 0;
   strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, bufferSize-deltaCharMantissa-currentChar);
-  if (m_exponent < 0) {
-    for (int i = 0; i <= -m_exponent; i++) {
+  if (exponent < 0) {
+    for (int i = 0; i <= -exponent; i++) {
       if (currentChar >= bufferSize-1) { return bufferSize-1; }
       if (i == 1) {
         buffer[currentChar++] = '.';
@@ -166,17 +186,17 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
     }
   }
   currentChar += mantissaLength;
-  if (m_exponent >= 0 && m_exponent < mantissaLength-1) {
+  if (exponent >= 0 && exponent < mantissaLength-1) {
     if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
-    int decimalMarkerPosition = m_mantissa.isNegative() ? m_exponent + 1 : m_exponent;
+    int decimalMarkerPosition = m_mantissa.isNegative() ? exponent + 1 : exponent;
     for (int i = currentChar-1; i > decimalMarkerPosition; i--) {
       buffer[i+1] = buffer[i];
     }
     buffer[decimalMarkerPosition+1] = '.';
     currentChar++;
   }
-  if (m_exponent >= 0 && m_exponent > mantissaLength-1) {
-    int endMarkerPosition = m_mantissa.isNegative() ? m_exponent+1 : m_exponent;
+  if (exponent >= 0 && exponent > mantissaLength-1) {
+    int endMarkerPosition = m_mantissa.isNegative() ? exponent+1 : exponent;
     for (int i = currentChar-1; i < endMarkerPosition; i++) {
       if (currentChar+1 >= bufferSize-1) { return bufferSize-1; }
       buffer[currentChar++] = '0';
@@ -213,7 +233,7 @@ Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (m_exponent > k_maxDoubleExponent || m_exponent < -k_maxDoubleExponent) {
     return this; // TODO: return new Infinite() ? new Rational(0) ?
   }
-  int numberOfDigits = numberOfDigitsInMantissaWithoutSign();
+  int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
   Integer numerator = m_mantissa;
   Integer denominator = Integer(1);
   if (m_exponent >= numberOfDigits-1) {
@@ -253,19 +273,6 @@ int Decimal::simplificationOrderSameType(const Expression * e, bool canBeInterru
     unsignedComparison = Integer::NaturalOrder(mantissa(), other->mantissa());
   }
   return ((int)sign())*unsignedComparison;
-}
-
-int Decimal::numberOfDigitsInMantissaWithoutSign() const {
-  int numberOfDigits = 1;
-  Integer mantissaCopy = m_mantissa;
-  mantissaCopy.setNegative(false);
-  IntegerDivision d = Integer::Division(mantissaCopy, Integer(10));
-  while (!d.quotient.isZero()) {
-    mantissaCopy = d.quotient;
-    d = Integer::Division(mantissaCopy, Integer(10));
-    numberOfDigits++;
-  }
-  return numberOfDigits;
 }
 
 }

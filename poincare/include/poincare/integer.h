@@ -63,6 +63,7 @@ public:
   static Integer Factorial(const Integer & i);
   static IntegerDivision Division(const Integer & numerator, const Integer & denominator);
   static Integer Power(const Integer & i, const Integer & j);
+  static int numberOfDigitsWithoutSign(const Integer & i);
   //static Integer Division(const Integer & i, const Integer & j);
   //static IntegerDivision division(const Integer & i, const Integer & j);
   bool isOne() const { return (m_numberOfDigits == 1 && digit(0) == 1 && !m_negative); };

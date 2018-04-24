@@ -21,7 +21,7 @@ public:
   ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   bool mustHaveLeftSibling() const override { return true; }
-  bool isVerticalOffset() const { return true; }
+  bool isVerticalOffset() const override { return true; }
 protected:
   ExpressionLayout * indiceLayout();
   ExpressionLayout * baseLayout();

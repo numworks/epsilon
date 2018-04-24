@@ -23,7 +23,6 @@
 #include <escher/expression_table_cell.h>
 #include <escher/expression_table_cell_with_pointer.h>
 #include <escher/expression_view.h>
-#include <escher/expression_view_with_cursor.h>
 #include <escher/gauge_view.h>
 #include <escher/highlight_cell.h>
 #include <escher/image.h>

@@ -48,7 +48,7 @@ bool ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(Expression
     }
     AppsContainer * appsContainer = (AppsContainer *)expressionLayoutField->app()->container();
     VariableBoxController * variableBoxController = appsContainer->variableBoxController();
-    variableBoxController->setExpressionLayoutFieldSender(expressionLayoutField);
+    variableBoxController->setSender(expressionLayoutField);
     expressionLayoutField->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }

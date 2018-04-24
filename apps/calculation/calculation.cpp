@@ -68,8 +68,8 @@ void Calculation::setContent(const char * c, Context * context, Expression * ans
   reset();
   m_input = Expression::parse(c);
   Expression::ReplaceSymbolWithExpression(&m_input, Symbol::SpecialSymbols::Ans, ansExpression);
-  /* We do not store directly the text enter by the user but its serialization
-   * to be able to compare it to the exact ouput text. */
+  /* We do not store directly the text enter by the user because we do not want
+   * to keep Ans symbol in the calculation store. */
   m_input->writeTextInBuffer(m_inputText, sizeof(m_inputText));
   m_exactOutput = Expression::ParseAndSimplify(m_inputText, *context);
   m_exactOutput->writeTextInBuffer(m_exactOutputText, sizeof(m_exactOutputText));
@@ -184,9 +184,6 @@ ExpressionLayout * Calculation::approximateOutputLayout(Context * context) {
 
 bool Calculation::shouldDisplayApproximateOutput(Context * context) {
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
-    return true;
-  }
-  if (strcmp(m_exactOutputText, m_inputText) == 0) {
     return true;
   }
   return input()->isApproximate(*context);

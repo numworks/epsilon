@@ -1,4 +1,5 @@
 #include "bracket_layout.h"
+#include <escher/metric.h>
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
 #include <assert.h>
@@ -50,12 +51,66 @@ KDSize BracketLayout::computeSize() {
   return KDSize(k_externWidthMargin + k_lineThickness + k_widthMargin, operandHeight() + k_lineThickness);
 }
 
+void BracketLayout::computeBaseline() {
+  assert(m_parent != nullptr);
+  m_baseline = operandHeight()/2;
+  int currentNumberOfOpenBrackets = 1;
+  int increment = isLeftBracket() ? 1 : -1;
+  int numberOfSiblings = m_parent->numberOfChildren();
+  for (int i = m_parent->indexOfChild(this) + increment; i >= 0 && i < numberOfSiblings; i+=increment) {
+    ExpressionLayout * sibling = m_parent->editableChild(i);
+    if ((isRightBracket() && sibling->isLeftBracket())
+        || (isLeftBracket() && sibling->isRightBracket()))
+    {
+      currentNumberOfOpenBrackets--;
+      if (currentNumberOfOpenBrackets == 0) {
+        break;
+      }
+    } else if ((isRightBracket() && sibling->isRightBracket())
+        || (isLeftBracket() && sibling->isLeftBracket()))
+    {
+      currentNumberOfOpenBrackets++;
+    }
+    if (sibling->baseline() > m_baseline) {
+      m_baseline = sibling->baseline();
+    }
+  }
+  m_baselined = true;
+}
+
 KDCoordinate BracketLayout::operandHeight() {
   if (!m_operandHeightComputed) {
     computeOperandHeight();
-    m_operandHeightComputed = true;
   }
   return m_operandHeight;
+}
+
+void BracketLayout::computeOperandHeight() {
+  assert(m_parent != nullptr);
+  m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
+  int currentNumberOfOpenBrackets = 1;
+  int increment = isLeftBracket() ? 1 : -1;
+  int numberOfSiblings = m_parent->numberOfChildren();
+  for (int i = m_parent->indexOfChild(this) + increment; i >= 0 && i < numberOfSiblings; i+=increment) {
+    ExpressionLayout * sibling = m_parent->editableChild(i);
+    if ((isRightBracket() && sibling->isLeftBracket())
+       || (isLeftBracket() && sibling->isRightBracket()))
+    {
+      currentNumberOfOpenBrackets--;
+      if (currentNumberOfOpenBrackets == 0) {
+        break;
+      }
+    } else if ((isRightBracket() && sibling->isRightBracket())
+       || (isLeftBracket() && sibling->isLeftBracket()))
+    {
+      currentNumberOfOpenBrackets++;
+    }
+    KDCoordinate siblingHeight = sibling->size().height();
+    if (siblingHeight > m_operandHeight) {
+      m_operandHeight = siblingHeight;
+    }
+  }
+  m_operandHeightComputed = true;
 }
 
 KDPoint BracketLayout::positionOfChild(ExpressionLayout * child) {

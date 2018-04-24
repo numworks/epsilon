@@ -1,4 +1,4 @@
-#include "bracket_layout.h"
+#include "square_bracket_layout.h"
 #include <escher/metric.h>
 #include <poincare/expression_layout_cursor.h>
 extern "C" {
@@ -8,18 +8,18 @@ extern "C" {
 
 namespace Poincare {
 
-BracketLayout::BracketLayout() :
+SquareBracketLayout::SquareBracketLayout() :
   StaticLayoutHierarchy<0>(),
   m_operandHeightComputed(false)
 {
 }
 
-void BracketLayout::invalidAllSizesPositionsAndBaselines() {
+void SquareBracketLayout::invalidAllSizesPositionsAndBaselines() {
   m_operandHeightComputed = false;
   ExpressionLayout::invalidAllSizesPositionsAndBaselines();
 }
 
-ExpressionLayoutCursor BracketLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor SquareBracketLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Right. Go Left.
   if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
@@ -33,7 +33,7 @@ ExpressionLayoutCursor BracketLayout::cursorLeftOf(ExpressionLayoutCursor * curs
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor BracketLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor SquareBracketLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->pointedExpressionLayout() == this);
   // Case: Left. Go Right.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
@@ -47,11 +47,11 @@ ExpressionLayoutCursor BracketLayout::cursorRightOf(ExpressionLayoutCursor * cur
   return ExpressionLayoutCursor();
 }
 
-KDSize BracketLayout::computeSize() {
+KDSize SquareBracketLayout::computeSize() {
   return KDSize(k_externWidthMargin + k_lineThickness + k_widthMargin, operandHeight() + k_lineThickness);
 }
 
-void BracketLayout::computeBaseline() {
+void SquareBracketLayout::computeBaseline() {
   assert(m_parent != nullptr);
   m_baseline = operandHeight()/2;
   int currentNumberOfOpenBrackets = 1;
@@ -78,14 +78,14 @@ void BracketLayout::computeBaseline() {
   m_baselined = true;
 }
 
-KDCoordinate BracketLayout::operandHeight() {
+KDCoordinate SquareBracketLayout::operandHeight() {
   if (!m_operandHeightComputed) {
     computeOperandHeight();
   }
   return m_operandHeight;
 }
 
-void BracketLayout::computeOperandHeight() {
+void SquareBracketLayout::computeOperandHeight() {
   assert(m_parent != nullptr);
   m_operandHeight = Metric::MinimalBracketAndParenthesisHeight;
   int currentNumberOfOpenBrackets = 1;
@@ -113,7 +113,7 @@ void BracketLayout::computeOperandHeight() {
   m_operandHeightComputed = true;
 }
 
-KDPoint BracketLayout::positionOfChild(ExpressionLayout * child) {
+KDPoint SquareBracketLayout::positionOfChild(ExpressionLayout * child) {
   assert(false);
   return KDPointZero;
 }

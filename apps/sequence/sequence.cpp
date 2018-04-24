@@ -258,7 +258,10 @@ Poincare::ExpressionLayout * Sequence::definitionName() {
 Poincare::ExpressionLayout * Sequence::firstInitialConditionName() {
   char buffer[k_initialRankNumberOfDigits+1];
   Integer(m_initialRank).writeTextInBuffer(buffer, k_initialRankNumberOfDigits+1);
-  if (m_firstInitialConditionName == nullptr) {
+  if (m_firstInitialConditionName == nullptr
+      && (m_type == Type::SingleRecurrence
+       || m_type == Type::DoubleRecurrence))
+  {
     m_firstInitialConditionName = new HorizontalLayout(
         new CharLayout(name()[0], KDText::FontSize::Small),
         new VerticalOffsetLayout(new CharLayout('0', KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),

@@ -26,7 +26,7 @@ public:
   Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) override;
   void selectPreviousNewSequenceCell();
 private:
-  Toolbox * toolbox(Responder * sender);
+  Toolbox * toolboxForSender(Responder * sender);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);

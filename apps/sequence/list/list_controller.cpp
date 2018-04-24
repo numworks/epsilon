@@ -24,11 +24,11 @@ const char * ListController::title() {
 }
 
 Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
-  return toolbox(textInput);
+  return toolboxForSender(textInput);
 }
 
 Toolbox * ListController::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
-  return toolbox(expressionLayoutField);
+  return toolboxForSender(expressionLayoutField);
 }
 
 TextFieldDelegateApp * ListController::textFieldDelegateApp() {
@@ -83,7 +83,7 @@ void ListController::selectPreviousNewSequenceCell() {
   }
 }
 
-Toolbox * ListController::toolbox(Responder * sender) {
+Toolbox * ListController::toolboxForSender(Responder * sender) {
   // Set extra cells
   int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());

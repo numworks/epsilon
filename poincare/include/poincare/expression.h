@@ -76,7 +76,7 @@ class Expression {
   friend class Trigonometry;
   friend class ApproximationEngine;
   friend class SimplificationEngine;
-  friend class LayoutEngine; //TODO MERGE SAISIEJOLIE: Remove?
+  friend class LayoutEngine;
   friend class Complex<float>;
   friend class Complex<double>;
   friend class EmptyExpression;

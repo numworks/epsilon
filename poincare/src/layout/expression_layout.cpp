@@ -83,6 +83,13 @@ const ExpressionLayout * ExpressionLayout::child(int i) const {
   return nullptr;
 }
 
+bool ExpressionLayout::hasChild(const ExpressionLayout * child) const {
+  if (child == nullptr) {
+    return false;
+  }
+  return child->parent() == this;
+}
+
 int ExpressionLayout::indexOfChild(const ExpressionLayout * child) const {
   if (child == nullptr) {
     return -1;

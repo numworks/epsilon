@@ -24,7 +24,6 @@ public:
 
   /* Getters and setters */
   ExpressionLayout * pointedExpressionLayout() { return m_pointedExpressionLayout; }
-  ExpressionLayout * pointedExpressionLayoutEquivalentChild();
   void setPointedExpressionLayout(ExpressionLayout * expressionLayout) { m_pointedExpressionLayout = expressionLayout; }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }

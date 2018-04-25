@@ -39,6 +39,7 @@ public:
   const ExpressionLayout * child(int i) const;
   ExpressionLayout * editableChild(int i) { return const_cast<ExpressionLayout *>(child(i)); }
   virtual int numberOfChildren() const = 0;
+  bool hasChild(const ExpressionLayout * child) const;
   int indexOfChild(const ExpressionLayout * child) const;
 
   // Parent

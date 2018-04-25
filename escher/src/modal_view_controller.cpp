@@ -123,6 +123,10 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
   app()->setFirstResponder(vc);
 }
 
+void ModalViewController::reloadModalViewController() {
+  m_contentView.layoutSubviews();
+}
+
 void ModalViewController::dismissModalViewController() {
   m_currentModalViewController->viewDidDisappear();
   app()->setFirstResponder(m_previousResponder);

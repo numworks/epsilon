@@ -87,12 +87,12 @@ bool InputViewController::expressionLayoutFieldDidAbortEditing(ExpressionLayoutF
 }
 
 void InputViewController::expressionLayoutFieldDidChangeSize(ExpressionLayoutField * expressionLayoutField) {
-  // Reload the view only if the ExpressionField height actually changes,
-  // i.e. not if the height is already maximal and stays maximal.
+  /* Reload the view only if the ExpressionField height actually changes, i.e.
+   * not if the height is already maximal and stays maximal. */
   bool newInputViewHeightIsMaximal = m_expressionFieldController.expressionField()->heightIsMaximal();
   if (!m_inputViewHeightIsMaximal || !newInputViewHeightIsMaximal) {
     m_inputViewHeightIsMaximal = newInputViewHeightIsMaximal;
-    reloadView();
+    reloadModalViewController();
   }
 }
 

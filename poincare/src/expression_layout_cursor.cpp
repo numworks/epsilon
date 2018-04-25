@@ -247,12 +247,26 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
   /* Returns true if the layout on the left of the pointed layout is suitable to
    * be the base of a new power layout: the base layout should be anything but
    * an horizontal layout with no child. */
-  if (m_pointedExpressionLayout->isHorizontal()
-      && m_pointedExpressionLayout->numberOfChildren() == 0)
-  {
-    return false;
+  if (m_position == Position::Right) {
+    if (m_pointedExpressionLayout->isHorizontal() && m_pointedExpressionLayout->numberOfChildren() == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    assert(m_position == Position::Left);
+    if (m_pointedExpressionLayout->isHorizontal()) {
+      return false;
+    }
+    ExpressionLayoutCursor equivalentLayoutCursor = m_pointedExpressionLayout->equivalentCursor(this);
+    if (equivalentLayoutCursor.pointedExpressionLayout() != nullptr
+        && equivalentLayoutCursor.pointedExpressionLayout()->isHorizontal()
+        && equivalentLayoutCursor.position() == Position::Left)
+    {
+      return false;
+    }
+    return true;
   }
-  return true;
 }
 
 KDCoordinate ExpressionLayoutCursor::pointedLayoutHeight() {

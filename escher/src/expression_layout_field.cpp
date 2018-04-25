@@ -224,7 +224,6 @@ void ExpressionLayoutField::insertLayoutFromTextAtCursor(const char * text) {
 void ExpressionLayoutField::reload() {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   m_contentView.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
-  layoutSubviews();
   KDSize newSize = minimalSizeForOptimalDisplay();
   if (m_delegate && previousSize.height() != newSize.height()) {
     m_delegate->expressionLayoutFieldDidChangeSize(this);

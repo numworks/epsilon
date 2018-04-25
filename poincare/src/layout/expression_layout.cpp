@@ -171,9 +171,6 @@ void ExpressionLayout::replaceChild(const ExpressionLayout * oldChild, Expressio
       break;
     }
   }
-  m_sized = false;
-  m_positioned = false;
-  m_baselined = false;
 }
 
 void ExpressionLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
@@ -331,9 +328,6 @@ void ExpressionLayout::detachChildAtIndex(int i) {
     const_cast<ExpressionLayout *>(op[i])->setParent(nullptr);
   }
   op[i] = nullptr;
-  m_sized = false;
-  m_positioned = false;
-  m_baselined = false;
 }
 
 ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsVerticalOf(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {

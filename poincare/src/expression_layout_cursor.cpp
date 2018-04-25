@@ -9,13 +9,6 @@ namespace Poincare {
 
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return (x>y ? x : y); }
 
-ExpressionLayout * ExpressionLayoutCursor::pointedExpressionLayoutEquivalentChild() {
-  if (m_pointedExpressionLayout->isHorizontal() && m_pointedExpressionLayout->numberOfChildren() > 0) {
-    return m_position == Position::Left ? m_pointedExpressionLayout->editableChild(0) : m_pointedExpressionLayout->editableChild(m_pointedExpressionLayout->numberOfChildren()-1);
-  }
-  return m_pointedExpressionLayout;
-}
-
 KDCoordinate ExpressionLayoutCursor::cursorHeight() {
   KDCoordinate height = pointedLayoutHeight();
   return height == 0 ? k_cursorHeight : height;
@@ -25,13 +18,14 @@ KDCoordinate ExpressionLayoutCursor::baseline() {
   if (pointedLayoutHeight() == 0) {
     return k_cursorHeight / 2;
   }
-  KDCoordinate baseline1 = pointedExpressionLayoutEquivalentChild()->baseline();
-  KDCoordinate baseline2 = (KDCoordinate)0;
+  KDCoordinate pointedLayoutBaseline = m_pointedExpressionLayout->baseline();
   ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(this).pointedExpressionLayout();
-  if (m_pointedExpressionLayout->hasSibling(equivalentPointedLayout)) {
-    baseline2 = equivalentPointedLayout->baseline();
+  if (m_pointedExpressionLayout->hasChild(equivalentPointedLayout)) {
+    return equivalentPointedLayout->baseline();
+  } else if (m_pointedExpressionLayout->hasSibling(equivalentPointedLayout)) {
+    return max(pointedLayoutBaseline, equivalentPointedLayout->baseline());
   }
-  return max(baseline1, baseline2);
+  return pointedLayoutBaseline;
 }
 
 bool ExpressionLayoutCursor::isEquivalentTo(ExpressionLayoutCursor cursor) {
@@ -270,17 +264,17 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
 }
 
 KDCoordinate ExpressionLayoutCursor::pointedLayoutHeight() {
-  KDCoordinate height = pointedExpressionLayoutEquivalentChild()->size().height();
-  KDCoordinate height1 = height;
   ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(this).pointedExpressionLayout();
-  if (m_pointedExpressionLayout->hasSibling(equivalentPointedLayout)) {
-    KDCoordinate height2 = equivalentPointedLayout->size().height();
-    KDCoordinate baseline1 = pointedExpressionLayoutEquivalentChild()->baseline();
-    KDCoordinate baseline2 = equivalentPointedLayout->baseline();
-    height = max(baseline1, baseline2)
-      + max(height1 - baseline1, height2 - baseline2);
+  if (m_pointedExpressionLayout->hasChild(equivalentPointedLayout)) {
+    return equivalentPointedLayout->size().height();
+  } else if (m_pointedExpressionLayout->hasSibling(equivalentPointedLayout)) {
+    KDCoordinate pointedLayoutHeight = m_pointedExpressionLayout->size().height();
+    KDCoordinate equivalentLayoutHeight = equivalentPointedLayout->size().height();
+    KDCoordinate pointedLayoutBaseline = m_pointedExpressionLayout->baseline();
+    KDCoordinate equivalentLayoutBaseline = equivalentPointedLayout->baseline();
+    return max(pointedLayoutBaseline, equivalentLayoutBaseline)
+      + max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }
-  return height;
 }
 
 }

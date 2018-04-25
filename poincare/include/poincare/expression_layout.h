@@ -48,6 +48,9 @@ public:
   bool hasAncestor(const ExpressionLayout * e, bool includeSelf = false) const;
   ExpressionLayout * editableRoot();
 
+  // Sibling
+  bool hasSibling(const ExpressionLayout * e) const;
+
   /* Dynamic Layout */
 
   // Collapse

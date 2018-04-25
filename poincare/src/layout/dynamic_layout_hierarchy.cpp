@@ -71,9 +71,6 @@ void DynamicLayoutHierarchy::addChildrenAtIndex(const ExpressionLayout * const *
   }
   m_children = newOperands;
   m_numberOfChildren = currentIndex;
-  m_sized = false;
-  m_positioned = false;
-  m_baselined = false;
 }
 
 bool DynamicLayoutHierarchy::addChildAtIndex(ExpressionLayout * child, int index) {
@@ -91,9 +88,6 @@ bool DynamicLayoutHierarchy::addChildAtIndex(ExpressionLayout * child, int index
   delete[] m_children;
   m_children = newChildren;
   m_numberOfChildren += 1;
-  m_sized = false;
-  m_positioned = false;
-  m_baselined = false;
   return true;
 }
 

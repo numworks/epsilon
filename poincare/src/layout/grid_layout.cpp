@@ -192,7 +192,6 @@ void GridLayout::addEmptyRow(EmptyLayout::Color color) {
   }
   addChildrenAtIndex(const_cast<const ExpressionLayout * const *>(const_cast<ExpressionLayout * const *>(newChildren)), m_numberOfColumns, numberOfChildren(), false);
   m_numberOfRows++;
-  invalidAllSizesPositionsAndBaselines();
 }
 
 void GridLayout::addEmptyColumn(EmptyLayout::Color color) {
@@ -200,7 +199,6 @@ void GridLayout::addEmptyColumn(EmptyLayout::Color color) {
   for (int i = 0; i < m_numberOfRows; i++) {
     addChildAtIndex(new EmptyLayout(color), i*m_numberOfColumns + m_numberOfColumns-1);
   }
-  invalidAllSizesPositionsAndBaselines();
 }
 
 void GridLayout::deleteRowAtIndex(int index) {
@@ -209,7 +207,6 @@ void GridLayout::deleteRowAtIndex(int index) {
     DynamicLayoutHierarchy::removeChildAtIndex(index * m_numberOfColumns, true);
   }
   m_numberOfRows--;
-  invalidAllSizesPositionsAndBaselines();
 }
 
 void GridLayout::deleteColumnAtIndex(int index) {
@@ -218,7 +215,6 @@ void GridLayout::deleteColumnAtIndex(int index) {
     DynamicLayoutHierarchy::removeChildAtIndex(i, true);
   }
   m_numberOfColumns--;
-  invalidAllSizesPositionsAndBaselines();
 }
 
 bool GridLayout::childIsLeftOfGrid(int index) const {

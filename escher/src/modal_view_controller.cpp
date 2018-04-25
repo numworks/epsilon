@@ -66,6 +66,10 @@ void ModalViewController::ContentView::layoutSubviews() {
   if (m_isDisplayingModal) {
     assert(m_currentModalView != nullptr);
     m_currentModalView->setFrame(modalViewFrame());
+  } else {
+    if (m_currentModalView) {
+      m_currentModalView->setFrame(KDRectZero);
+    }
   }
 }
 
@@ -79,16 +83,14 @@ void ModalViewController::ContentView::presentModalView(View * modalView, float 
   m_leftMargin = leftMargin;
   m_bottomMargin = bottomMargin;
   m_rightMargin = rightMargin;
-  markRectAsDirty(modalViewFrame());
   layoutSubviews();
 }
 
 void ModalViewController::ContentView::dismissModalView() {
   m_isDisplayingModal = false;
-  markRectAsDirty(modalViewFrame());
+  layoutSubviews();
   m_currentModalView->resetSuperview();
   m_currentModalView = nullptr;
-  layoutSubviews();
 }
 
 bool ModalViewController::ContentView::isDisplayingModal() const {

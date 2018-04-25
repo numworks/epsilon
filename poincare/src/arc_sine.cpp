@@ -30,13 +30,4 @@ Expression * ArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
   return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
 }
 
-template<typename T>
-std::complex<T> ArcSine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  std::complex<T> result = std::asin(c);
-  if (angleUnit == AngleUnit::Degree && result.imag() == 0.0) {
-    result *= 180/M_PI;
-  }
-  return result;
-}
-
 }

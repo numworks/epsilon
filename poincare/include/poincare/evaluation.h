@@ -25,7 +25,7 @@ public:
 template<typename T>
 class Complex : public std::complex<T>, public Evaluation<T> {
 public:
-  Complex(T a, T b = 0.0) : std::complex<T>(a, b) {}
+  Complex(T a, T b = -0.0) : std::complex<T>(a, b) {}
   Complex(std::complex<T> c) : std::complex<T>(c) {}
   static Complex Undefined() {
     return Complex(NAN, NAN);

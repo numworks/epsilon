@@ -91,12 +91,12 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * one has the highest precedence. */
 
 %nonassoc STO
-%right UNARY_MINUS
 %left PLUS
 %left MINUS
 %left MULTIPLY
 %left DIVIDE
 %left IMPLICIT_MULTIPLY
+%nonassoc UNARY_MINUS
 %right POW
 %left BANG
 %nonassoc LEFT_PARENTHESIS
@@ -121,10 +121,6 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %type <expression> bang;
 %type <expression> factor;
 %type <expression> pow;
-%type <expression> div;
-%type <expression> mul;
-%type <expression> min;
-%type <expression> unmin;
 %type <expression> exp;
 %type <expression> number;
 %type <symbol> symb;
@@ -137,7 +133,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
  * have some heap-allocated data that need to be discarded. */
 
 %destructor { delete $$; } FUNCTION
-%destructor { delete $$; } UNDEFINED final_exp exp unmin min mul div pow factor bang term number EMPTY
+%destructor { delete $$; } UNDEFINED final_exp exp pow factor bang term number EMPTY
 %destructor { delete $$; } lstData
 /* MATRICES_ARE_DEFINED */
 %destructor { delete $$; } mtxData
@@ -214,27 +210,12 @@ pow    : factor             { $$ = $1; }
        | bang POW MINUS pow { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Power(terms, false); }
        ;
 
-div    : pow                { $$ = $1; }
-       | div DIVIDE pow     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Division(terms, false);  }
-       | div DIVIDE MINUS pow { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Division(terms, false);  }
-       ;
-
-mul    : div                { $$ = $1; }
-       | mul MULTIPLY div   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, 2, false);  }
-       | mul MULTIPLY MINUS div { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Multiplication(terms, 2, false);  }
-       ;
-
-unmin  : mul                { $$ = $1; }
-       | MINUS mul %prec UNARY_MINUS { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Opposite(terms, false); }
-       ;
-
-min    : unmin                { $$ = $1; }
-       | unmin MINUS min      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
-       | unmin MINUS MINUS min { Poincare::Expression * terms1[1] = {$4}; Poincare::Expression * terms[2] = {$1,new Poincare::Opposite(terms1, false)}; $$ = new Poincare::Subtraction(terms, false); }
-       ;
-
-exp    : min              { $$ = $1; }
-       | exp PLUS min     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, 2, false); }
+exp    : pow                { $$ = $1; }
+       | exp DIVIDE exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Division(terms, false);  }
+       | exp MULTIPLY exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Multiplication(terms, 2, false);  }
+       | exp MINUS exp      { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Subtraction(terms, false); }
+       | MINUS exp %prec UNARY_MINUS { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Opposite(terms, false); }
+       | exp PLUS exp     { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Addition(terms, 2, false); }
        ;
 
 final_exp : exp             { $$ = $1; }

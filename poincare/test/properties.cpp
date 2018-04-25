@@ -13,7 +13,7 @@ constexpr Poincare::Expression::Sign Unknown = Poincare::Expression::Sign::Unkno
 void assert_parsed_expression_sign(const char * expression, Poincare::Expression::Sign sign) {
   GlobalContext globalContext;
   Expression * e = parse_expression(expression);
-  Expression::Simplify(&e, globalContext);
+  Expression::Simplify(&e, globalContext, Degree);
   assert(e->sign() == sign);
   delete e;
 }

@@ -6,30 +6,16 @@
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_substraction_evaluate) {
-  Complex<float> a[1] = {Complex<float>::Float(-1.0f)};
-  assert_parsed_expression_evaluates_to("1-2", a);
-
-  Complex<double> b[1] = {Complex<double>::Cartesian(-1.0, 0.0)};
-  assert_parsed_expression_evaluates_to("3+I-(4+I)", b);
+QUIZ_CASE(poincare_subtraction_evaluate) {
+  assert_parsed_expression_evaluates_to<float>("1-2", "-1");
+  assert_parsed_expression_evaluates_to<double>("3+I-(4+I)", "-1");
 
 #if MATRICES_ARE_DEFINED
-  Complex<float> c[6] = {Complex<float>::Float(-2.0f), Complex<float>::Float(-1.0f), Complex<float>::Float(0.0f), Complex<float>::Float(1.0f), Complex<float>::Float(2.0f), Complex<float>::Float(3.0f)};
-  assert_parsed_expression_evaluates_to("[[1,2][3,4][5,6]]-3", c, 3, 2);
-
-  Complex<double> d[6] = {Complex<double>::Cartesian(-3.0, -1.0), Complex<double>::Cartesian(-2.0, 0.0), Complex<double>::Cartesian(-1.0, -1.0), Complex<double>::Cartesian(0.0, -1.0), Complex<double>::Cartesian(1.0, -1.0), Complex<double>::Cartesian(2.0, -1.0)};
-  assert_parsed_expression_evaluates_to("[[1,2+I][3,4][5,6]]-(4+I)", d, 3, 2);
-
-  Complex<float> e[6] = {Complex<float>::Float(2.0f), Complex<float>::Float(1.0f), Complex<float>::Float(0.0f), Complex<float>::Float(-1.0f), Complex<float>::Float(-2.0f), Complex<float>::Float(-3.0f)};
-  assert_parsed_expression_evaluates_to("3-[[1,2][3,4][5,6]]", e, 3, 2);
-
-  Complex<double> f[6] = {Complex<double>::Cartesian(2.0, 1.0), Complex<double>::Cartesian(1.0, 0.0), Complex<double>::Cartesian(0.0, 1.0), Complex<double>::Cartesian(-1.0, 1.0), Complex<double>::Cartesian(-2.0, 1.0), Complex<double>::Cartesian(-3.0, 1.0)};
-  assert_parsed_expression_evaluates_to("3+I-[[1,2+I][3,4][5,6]]", f, 3, 2);
-
-  Complex<float> g[6] = {Complex<float>::Float(-5.0f), Complex<float>::Float(-3.0f), Complex<float>::Float(-1.0f), Complex<float>::Float(1.0f), Complex<float>::Float(3.0f), Complex<float>::Float(5.0f)};
-  assert_parsed_expression_evaluates_to("[[1,2][3,4][5,6]]-[[6,5][4,3][2,1]]", g, 3, 2);
-
-  Complex<double> h[6] = {Complex<double>::Float(0.0), Complex<double>::Float(0.0), Complex<double>::Float(0.0), Complex<double>::Float(0.0), Complex<double>::Float(0.0), Complex<double>::Float(0.0)};
-  assert_parsed_expression_evaluates_to("[[1,2+I][3,4][5,6]]-[[1,2+I][3,4][5,6]]", h, 3, 2);
+  assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]-3", "[[-2,-1][0,1][2,3]]");
+  assert_parsed_expression_evaluates_to<double>("[[1,2+I][3,4][5,6]]-(4+I)", "[[(-3)-I,-2][(-1)-I,-I][1-I,2-I]]");
+  assert_parsed_expression_evaluates_to<float>("3-[[1,2][3,4][5,6]]", "[[2,1][0,-1][-2,-3]]");
+  assert_parsed_expression_evaluates_to<double>("3+I-[[1,2+I][3,4][5,6]]", "[[2+I,1][I,(-1)+I][(-2)+I,(-3)+I]]");
+  assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]-[[6,5][4,3][2,1]]", "[[-5,-3][-1,1][3,5]]");
+  assert_parsed_expression_evaluates_to<double>("[[1,2+I][3,4][5,6]]-[[1,2+I][3,4][5,6]]", "[[0,0][0,0][0,0]]");
 #endif
 }

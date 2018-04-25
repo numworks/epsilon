@@ -8,31 +8,17 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_power_evaluate) {
-  Complex<float> a[1] = {Complex<float>::Float(8.0f)};
-  assert_parsed_expression_evaluates_to("2^3", a);
-
-  Complex<double> b[1] = {Complex<double>::Cartesian(28.0, 96.0)};
-  assert_parsed_expression_evaluates_to("(3+I)^4", b);
-
-  Complex<float> c[1] = {Complex<float>::Cartesian(11.7412464f, 62.9137754f)};
-  assert_parsed_expression_evaluates_to("4^(3+I)", c);
+  assert_parsed_expression_evaluates_to<float>("2^3", "8");
+  assert_parsed_expression_evaluates_to<double>("(3+I)^4", "28+96*I");
+  assert_parsed_expression_evaluates_to<float>("4^(3+I)", "11.74125+62.91378*I");
 
 #if MATRICES_ARE_DEFINED
-  Complex<double> d[4] = {Complex<double>::Float(37.0), Complex<double>::Float(54.0), Complex<double>::Float(81.0), Complex<double>::Float(118.0)};
-  assert_parsed_expression_evaluates_to("[[1,2][3,4]]^3", d, 2, 2);
+  assert_parsed_expression_evaluates_to<double>("[[1,2][3,4]]^3", "[[37,54][81,118]]");
 #endif
-
-  Complex<float> e[1] = {Complex<float>::Float(0.0f)};
-  assert_parsed_expression_evaluates_to("0^2", e);
-
-  Complex<double> f[1] = {Complex<double>::Float(std::exp(-M_PI_2))};
-  assert_parsed_expression_evaluates_to("I^I", f);
-
-  Complex<float> g[1] = {Complex<float>::Float(1.489846)};
-  assert_parsed_expression_evaluates_to("1.006666666666667^60", g);
-
-  Complex<double> h[1] = {Complex<double>::Float(1.48984570830164)};
-  assert_parsed_expression_evaluates_to("1.006666666666667^60", h);
+  assert_parsed_expression_evaluates_to<float>("0^2", "0");
+  assert_parsed_expression_evaluates_to<double>("I^I", "2.0787957635076E-1");
+  assert_parsed_expression_evaluates_to<float>("1.006666666666667^60", "1.489846");
+  assert_parsed_expression_evaluates_to<double>("1.006666666666667^60", "1.48984570830164");
 }
 
 QUIZ_CASE(poincare_power_simplify) {

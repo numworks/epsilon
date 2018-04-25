@@ -22,30 +22,18 @@ QUIZ_CASE(poincare_parse_trigo) {
 }
 
 QUIZ_CASE(poincare_trigo_evaluate) {
-  Complex<double> a[1] = {Complex<double>::Float(-0.4161468365)};
-  assert_parsed_expression_evaluates_to("cos(2)", a, Radian);
-  Complex<float> a1[1] = {Complex<float>::Cartesian(-1.0086248134f, -0.8893951958f)};
-  assert_parsed_expression_evaluates_to("cos(I-4)", a1, Radian);
-  Complex<double> b[1] = {Complex<double>::Float(0.9092974268)};
-  assert_parsed_expression_evaluates_to("sin(2)", b, Radian);
-  Complex<float> b1[1] = {Complex<float>::Cartesian( 1.16780727488f, -0.768162763456f)};
-  assert_parsed_expression_evaluates_to("sin(I-4)", b1, Radian);
-  Complex<double> c[1] = {Complex<double>::Float(-2.18503986326151899)};
-  assert_parsed_expression_evaluates_to("tan(2)", c, Radian);
-  Complex<float> c1[1] = {Complex<float>::Cartesian(-0.27355308280730f, 1.002810507583504f)};
-  assert_parsed_expression_evaluates_to("tan(I-4)", c1, Radian);
-  Complex<double> a2[1] = {Complex<double>::Float(3.762195691)};
-  assert_parsed_expression_evaluates_to("cosh(2)", a2, Radian);
-  Complex<float> a3[1] = {Complex<float>::Cartesian(14.754701170483756280f,-22.96367349919304059f)};
-  assert_parsed_expression_evaluates_to("cosh(I-4)", a3, Radian);
-  Complex<double> b2[1] = {Complex<double>::Float(3.62686040784701876)};
-  assert_parsed_expression_evaluates_to("sinh(2)", b2, Radian);
-  Complex<float> b3[1] = {Complex<float>::Cartesian(-14.744805188558725031023f, 22.979085577886129555168f)};
-  assert_parsed_expression_evaluates_to("sinh(I-4)", b3, Radian);
-  Complex<double> c2[1] = {Complex<double>::Float(0.9640275800758168839464)};
-  assert_parsed_expression_evaluates_to("tanh(2)", c2, Radian);
-  Complex<float> c3[1] = {Complex<float>::Cartesian(-1.00027905623446556836909f, 0.000610240921376259f)};
-  assert_parsed_expression_evaluates_to("tanh(I-4)", c3, Radian);
+  assert_parsed_expression_evaluates_to<double>("cos(2)", "-4.1614683654714E-1", Radian);
+  assert_parsed_expression_evaluates_to<float>("cos(I-4)", "(-1.008625)-0.8893952*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("sin(2)", "9.0929742682568E-1", Radian);
+  assert_parsed_expression_evaluates_to<float>("sin(I-4)", "1.16781-0.768163*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<double>("tan(2)", "-2.1850398632615", Radian);
+  assert_parsed_expression_evaluates_to<float>("tan(I-4)", "(-0.2735531)+1.00281*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("cosh(2)", "3.7621956910836", Radian);
+  assert_parsed_expression_evaluates_to<float>("cosh(I-4)", "14.7547-22.96367*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("sinh(2)", "3.626860407847", Radian);
+  assert_parsed_expression_evaluates_to<float>("sinh(I-4)", "(-14.7448)+22.97909*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("tanh(2)", "9.6402758007582E-1", Radian);
+  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.0006102409*I", Radian);
 }
 
 QUIZ_CASE(poincare_trigo_simplify) {

@@ -19,10 +19,8 @@ QUIZ_CASE(poincare_rational_compare) {
 }
 
 QUIZ_CASE(poincare_rational_evaluate) {
-  Complex<float> a[1] = {Complex<float>::Float(0.333333333f)};
-  assert_parsed_expression_evaluates_to("1/3", a);
-  Complex<float> b[1] = {Complex<float>::Float(0.099999)};
-  assert_parsed_expression_evaluates_to("123456/1234567", b);
+  assert_parsed_expression_evaluates_to<float>("1/3", "0.3333333");
+  assert_parsed_expression_evaluates_to<double>("123456/1234567", "9.9999432999586E-2");
 }
 
 QUIZ_CASE(poincare_rational_simplify) {

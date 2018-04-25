@@ -38,7 +38,6 @@ Toolbox * ExpressionLayoutField::toolbox() {
 }
 
 bool ExpressionLayoutField::handleEvent(Ion::Events::Event event) {
-  KDSize previousSize = minimalSizeForOptimalDisplay();
   bool didHandleEvent = false;
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();
   bool moveEventChangedLayout = false;
@@ -54,12 +53,7 @@ bool ExpressionLayoutField::handleEvent(Ion::Events::Event event) {
     if (!shouldRecomputeLayout) {
       m_contentView.cursorPositionChanged();
       scrollToCursor();
-      return true;
-    }
-    reload();
-    KDSize newSize = minimalSizeForOptimalDisplay();
-    if (m_delegate && previousSize.height() != newSize.height()) {
-      m_delegate->expressionLayoutFieldDidChangeSize(this);
+    } else {
       reload();
     }
     return true;
@@ -194,7 +188,6 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
     return;
   }
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
-  KDSize previousSize = minimalSizeForOptimalDisplay();
   if (layout->isMatrix() && pointedLayout && pointedLayout->hasAncestor(layout)) {
     static_cast<Poincare::MatrixLayout *>(layout)->addGreySquares();
   }
@@ -209,10 +202,6 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
   }
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();
   reload();
-  KDSize newSize = minimalSizeForOptimalDisplay();
-  if (m_delegate && previousSize.height() != newSize.height()) {
-    m_delegate->expressionLayoutFieldDidChangeSize(this);
-  }
 }
 
 void ExpressionLayoutField::insertLayoutFromTextAtCursor(const char * text) {
@@ -233,9 +222,13 @@ void ExpressionLayoutField::insertLayoutFromTextAtCursor(const char * text) {
 }
 
 void ExpressionLayoutField::reload() {
+  KDSize previousSize = minimalSizeForOptimalDisplay();
   m_contentView.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
   layoutSubviews();
-  m_delegate->expressionLayoutFieldDidChangeSize(this);
+  KDSize newSize = minimalSizeForOptimalDisplay();
+  if (m_delegate && previousSize.height() != newSize.height()) {
+    m_delegate->expressionLayoutFieldDidChangeSize(this);
+  }
   scrollToCursor();
   m_contentView.cursorPositionChanged();
   markRectAsDirty(bounds());

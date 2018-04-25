@@ -8,31 +8,17 @@ QUIZ_CASE(kandinsky_rect_intersect) {
   assert(a.intersects(b));
   assert(b.intersects(a));
   KDRect c = a.intersectedWith(b);
-  assert(c.x() == 0);
-  assert(c.y() == 0);
-  assert(c.width() == 5);
-  assert(c.height() == 5);
+  KDRect result(0, 0, 5, 5);
+  assert(c == result);
   c = b.intersectedWith(a);
-  assert(c.x() == 0);
-  assert(c.y() == 0);
-  assert(c.width() == 5);
-  assert(c.height() == 5);
+  assert(c == result);
 }
 
 QUIZ_CASE(kandinsky_rect_union) {
   KDRect a(-5, -5, 10, 10);
   KDRect b(0, 0, 10, 10);
   KDRect c = a.unionedWith(b);
-  assert(c.x() == -5);
-  assert(c.y() == -5);
-  assert(c.width() == 15);
-  assert(c.height() == 15);
-
-  c = a.unionedWith(b);
-  assert(c.x() == -5);
-  assert(c.y() == -5);
-  assert(c.width() == 15);
-  assert(c.height() == 15);
+  assert(c == KDRect(-5, -5, 15, 15));
 }
 
 QUIZ_CASE(kandinsky_rect_empty_union) {
@@ -41,22 +27,13 @@ QUIZ_CASE(kandinsky_rect_empty_union) {
   KDRect c(-2, -1, 0, 1);
 
   KDRect t = a.unionedWith(b);
-  assert(t.x() == a.x());
-  assert(t.y() == a.y());
-  assert(t.width() == a.width());
-  assert(t.height() == a.height());
+  assert(t == a);
 
   t = b.unionedWith(a);
-  assert(t.x() == a.x());
-  assert(t.y() == a.y());
-  assert(t.width() == a.width());
-  assert(t.height() == a.height());
+  assert(t == a);
 
   t = a.unionedWith(c);
-  assert(t.x() == a.x());
-  assert(t.y() == a.y());
-  assert(t.width() == a.width());
-  assert(t.height() == a.height());
+  assert(t == a);
 }
 
 QUIZ_CASE(kandinsky_rect_difference) {

@@ -11,6 +11,10 @@ QUIZ_CASE(poincare_logarithm_evaluate) {
   assert_parsed_expression_evaluates_to<double>("log(6,7)", "0.9207822211616");
   assert_parsed_expression_evaluates_to<float>("log(5)", "0.69897");
   assert_parsed_expression_evaluates_to<double>("ln(5)", "1.6094379124341");
+  assert_parsed_expression_evaluates_to<float>("log(2+5*I,64)", "0.4048317+0.2862042*I");
+  assert_parsed_expression_evaluates_to<double>("log(6,7+4*I)", "8.0843880717528E-1-2.0108238082167E-1*I");
+  assert_parsed_expression_evaluates_to<float>("log(5+2*I)", "0.731199+0.1652518*I");
+  assert_parsed_expression_evaluates_to<double>("ln(5+2*I)", "1.6836479149932+3.8050637711236E-1*I");
 }
 
 QUIZ_CASE(poincare_logarithm_simplify) {

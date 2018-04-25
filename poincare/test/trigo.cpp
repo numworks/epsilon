@@ -22,18 +22,56 @@ QUIZ_CASE(poincare_parse_trigo) {
 }
 
 QUIZ_CASE(poincare_trigo_evaluate) {
+  // TODO: check with Léo how to handle cos/acos on complex in Degree...
   assert_parsed_expression_evaluates_to<double>("cos(2)", "-4.1614683654714E-1", Radian);
+  assert_parsed_expression_evaluates_to<double>("cos(2)", "0.9993908270191", Degree);
   assert_parsed_expression_evaluates_to<float>("cos(I-4)", "(-1.008625)-0.8893952*I", Radian);
+  assert_parsed_expression_evaluates_to<float>("cos(I-4)", "0.997716+0.00121754*I", Degree, Cartesian, 6); // TODO: should we?
   assert_parsed_expression_evaluates_to<double>("sin(2)", "9.0929742682568E-1", Radian);
+  assert_parsed_expression_evaluates_to<double>("sin(2)", "3.4899496702501E-2", Degree);
   assert_parsed_expression_evaluates_to<float>("sin(I-4)", "1.16781-0.768163*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("sin(I-4)", "(-0.0697671)+0.0174117*I", Degree, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("tan(2)", "-2.1850398632615", Radian);
+  assert_parsed_expression_evaluates_to<double>("tan(2)", "3.4920769491748E-2", Degree);
   assert_parsed_expression_evaluates_to<float>("tan(I-4)", "(-0.2735531)+1.00281*I", Radian);
+  assert_parsed_expression_evaluates_to<float>("tan(I-4)", "(-0.0699054)+0.0175368*I", Degree, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("cosh(2)", "3.7621956910836", Radian);
-  assert_parsed_expression_evaluates_to<float>("cosh(I-4)", "14.7547-22.96367*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("cosh(2)", "3.7621956910836", Degree);
+  assert_parsed_expression_evaluates_to<float>("cosh(I-4)", "14.7547-22.9637*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("cosh(I-4)", "14.7547-22.9637*I", Degree, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("sinh(2)", "3.626860407847", Radian);
-  assert_parsed_expression_evaluates_to<float>("sinh(I-4)", "(-14.7448)+22.97909*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("sinh(2)", "3.626860407847", Degree);
+  assert_parsed_expression_evaluates_to<float>("sinh(I-4)", "(-14.7448)+22.9791*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("sinh(I-4)", "(-14.7448)+22.9791*I", Degree, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("tanh(2)", "9.6402758007582E-1", Radian);
+  assert_parsed_expression_evaluates_to<double>("tanh(2)", "9.6402758007582E-1", Degree);
   assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.0006102409*I", Radian);
+  assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.0006102409*I", Degree);
+
+  assert_parsed_expression_evaluates_to<double>("acos(2)", "1.3169578969248*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("acos(2)", "75.456129290217*I", Degree);
+  assert_parsed_expression_evaluates_to<float>("acos(I-4)", "2.8894-2.0966*I", Radian, Cartesian, 5);
+  assert_parsed_expression_evaluates_to<float>("acos(I-4)", "165.551-120.126*I", Degree, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<double>("asin(2)", "1.5707963267949-1.3169578969248*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("asin(2)", "90-75.456129290217*I", Degree);
+  assert_parsed_expression_evaluates_to<float>("asin(I-4)", "(-1.3186)+2.0966*I", Radian, Cartesian, 5);
+  assert_parsed_expression_evaluates_to<float>("asin(I-4)", "(-75.551)+120.13*I", Degree, Cartesian, 5);
+  assert_parsed_expression_evaluates_to<double>("atan(2)", "1.1071487177941", Radian);
+  assert_parsed_expression_evaluates_to<double>("atan(2)", "63.434948822922", Degree);
+  assert_parsed_expression_evaluates_to<float>("atan(I-4)", "(-1.338973)+0.05578589*I", Radian);
+  assert_parsed_expression_evaluates_to<float>("atan(I-4)", "(-76.71748)+3.196296*I", Degree);
+  assert_parsed_expression_evaluates_to<double>("acosh(2)", "1.3169578969248", Radian);
+  assert_parsed_expression_evaluates_to<double>("acosh(2)", "1.3169578969248", Degree);
+  assert_parsed_expression_evaluates_to<float>("acosh(I-4)", "2.0966+2.8894*I", Radian, Cartesian, 5);
+  assert_parsed_expression_evaluates_to<float>("acosh(I-4)", "2.0966+2.8894*I", Degree, Cartesian, 5);
+  assert_parsed_expression_evaluates_to<double>("asinh(2)", "1.4436354751788", Radian);
+  assert_parsed_expression_evaluates_to<double>("asinh(2)", "1.4436354751788", Degree);
+  assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "(-2.123)+0.2383*I", Radian, Cartesian, 4);
+  assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "(-2.123)+0.2383*I", Degree, Cartesian, 4);
+  assert_parsed_expression_evaluates_to<double>("atanh(2)", "5.4930614433405E-1-1.5707963267949*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("atanh(2)", "5.4930614433405E-1-1.5707963267949*I", Degree);
+  assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Degree, Cartesian, 6);
 }
 
 QUIZ_CASE(poincare_trigo_simplify) {
@@ -157,38 +195,38 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("tan(tan(tan(tan(9))))", "tan(tan(tan(tan(9))))");
   // -- acos
   assert_parsed_expression_simplify_to("acos(-1/2)", "(2*P)/3");
-  assert_parsed_expression_simplify_to("acos(-1.2)", "undef");
+  assert_parsed_expression_simplify_to("acos(-1.2)", "(-acos(6/5))+P");
   assert_parsed_expression_simplify_to("acos(cos(2/3))", "2/3");
   assert_parsed_expression_simplify_to("acos(cos(3/2))", "3/2");
-  assert_parsed_expression_simplify_to("cos(acos(3/2))", "undef");
+  assert_parsed_expression_simplify_to("cos(acos(3/2))", "3/2");
   assert_parsed_expression_simplify_to("cos(acos(2/3))", "2/3");
   assert_parsed_expression_simplify_to("acos(cos(12))", "acos(cos(12))");
   assert_parsed_expression_simplify_to("acos(cos(4P/7))", "(4*P)/7");
   assert_parsed_expression_simplify_to("acos(-cos(2))", "(-2)+P");
   assert_parsed_expression_simplify_to("acos(-1/2)", "120", Expression::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("acos(-1.2)", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("acos(-1.2)", "180-acos(6/5)", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("acos(cos(2/3))", "2/3", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("acos(cos(190))", "170", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("acos(cos(75))", "75", Expression::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("cos(acos(190))", "undef", Expression::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("cos(acos(75))", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(acos(190))", "190", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(acos(75))", "75", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("acos(cos(12))", "12", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("acos(cos(720/7))", "720/7", Expression::AngleUnit::Degree);
   // -- asin
   assert_parsed_expression_simplify_to("asin(-1/2)", "-P/6");
-  assert_parsed_expression_simplify_to("asin(-1.2)", "undef");
+  assert_parsed_expression_simplify_to("asin(-1.2)", "-asin(6/5)");
   assert_parsed_expression_simplify_to("asin(sin(2/3))", "2/3");
   assert_parsed_expression_simplify_to("sin(asin(2/3))", "2/3");
-  assert_parsed_expression_simplify_to("sin(asin(3/2))", "undef");
+  assert_parsed_expression_simplify_to("sin(asin(3/2))", "3/2");
   assert_parsed_expression_simplify_to("asin(sin(3/2))", "3/2");
   assert_parsed_expression_simplify_to("asin(sin(12))", "asin(sin(12))");
   assert_parsed_expression_simplify_to("asin(sin(-P/7))", "-P/7");
   assert_parsed_expression_simplify_to("asin(sin(-R(2)))", "-R(2)");
   assert_parsed_expression_simplify_to("asin(-1/2)", "-30", Expression::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("asin(-1.2)", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("asin(-1.2)", "-asin(6/5)", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("asin(sin(75))", "75", Expression::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("sin(asin(75))", "undef", Expression::AngleUnit::Degree);
-  assert_parsed_expression_simplify_to("sin(asin(190))", "undef", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(asin(75))", "75", Expression::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("sin(asin(190))", "190", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("asin(sin(32))", "32", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("asin(sin(400))", "40", Expression::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("asin(sin(-180/7))", "-180/7", Expression::AngleUnit::Degree);

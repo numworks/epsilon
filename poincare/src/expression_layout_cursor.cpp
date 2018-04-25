@@ -267,14 +267,16 @@ KDCoordinate ExpressionLayoutCursor::pointedLayoutHeight() {
   ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(this).pointedExpressionLayout();
   if (m_pointedExpressionLayout->hasChild(equivalentPointedLayout)) {
     return equivalentPointedLayout->size().height();
-  } else if (m_pointedExpressionLayout->hasSibling(equivalentPointedLayout)) {
-    KDCoordinate pointedLayoutHeight = m_pointedExpressionLayout->size().height();
+  }
+  KDCoordinate pointedLayoutHeight = m_pointedExpressionLayout->size().height();
+  if (m_pointedExpressionLayout->hasSibling(equivalentPointedLayout)) {
     KDCoordinate equivalentLayoutHeight = equivalentPointedLayout->size().height();
     KDCoordinate pointedLayoutBaseline = m_pointedExpressionLayout->baseline();
     KDCoordinate equivalentLayoutBaseline = equivalentPointedLayout->baseline();
     return max(pointedLayoutBaseline, equivalentLayoutBaseline)
       + max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }
+  return pointedLayoutHeight;
 }
 
 }

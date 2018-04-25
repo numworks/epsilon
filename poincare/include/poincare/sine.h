@@ -16,7 +16,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, AngleUnit angleUnit = AngleUnit::Radian) {
-    return Trigonometry::computeOnComplex(c, angleUnit, std::sin);
+    return Trigonometry::computeDirectOnComplex(c, angleUnit, std::sin);
   }
 private:
   /* Layout */

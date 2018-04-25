@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <cmath>
+#include "helper.h"
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
 #include "../src/expression_debug.h"
 #include <iostream>
@@ -60,51 +61,53 @@ void assert_parsed_expression_type(const char * expression, Poincare::Expression
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, char symbolName) {
   GlobalContext globalContext;
   Expression * e = parse_expression(expression);
-  Expression::Simplify(&e, globalContext);
+  Expression::Simplify(&e, globalContext, Radian);
   assert(e->polynomialDegree(symbolName) == degree);
   delete e;
 }
 
-template<typename T>
-void assert_parsed_expression_evaluates_to(const char * expression, Complex<T> * results, int numberOfRows, int numberOfColumns, Expression::AngleUnit angleUnit) {
-  GlobalContext globalContext;
-  Expression * a = parse_expression(expression);
-  Expression::Simplify(&a, globalContext, angleUnit);
-  Expression * m = a->approximate<T>(globalContext, angleUnit);
-  assert(m);
-  assert(m->numberOfOperands() == 0 || m->numberOfOperands() == numberOfRows*numberOfColumns);
-  if (m->type() == Expression::Type::Matrix) {
-    assert(static_cast<Matrix *>(m)->numberOfRows() == numberOfRows);
-    assert(static_cast<Matrix *>(m)->numberOfColumns() == numberOfColumns);
-    for (int i = 0; i < m->numberOfOperands(); i++) {
-      assert(std::fabs(static_cast<const Complex<T> *>(m->operand(i))->a() - results[i].a()) < 0.0001f);
-      assert(std::fabs(static_cast<const Complex<T> *>(m->operand(i))->b() - results[i].b()) < 0.0001f);
-    }
-  } else {
-    assert(std::fabs(static_cast<const Complex<T> *>(m)->a() - results[0].a()) < 0.0001f);
-    assert(std::fabs(static_cast<const Complex<T> *>(m)->b() - results[0].b()) < 0.0001f);
-  }
-  delete a;
-  delete m;
-}
+typedef Expression * (*ProcessExpression)(Expression *, Context & context, Expression::AngleUnit angleUnit, Expression::ComplexFormat complexFormat);
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Expression::AngleUnit angleUnit) {
+void assert_parsed_expression_process_to(const char * expression, const char * result, Expression::AngleUnit angleUnit, Expression::ComplexFormat complexFormat, ProcessExpression process, int numberOfSignifiantDigits = PrintFloat::k_numberOfStoredSignificantDigits) {
   GlobalContext globalContext;
   Expression * e = parse_expression(expression);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
-  cout << "---- Simplify: " << expression << "----"  << endl;
+  cout << " Entry expression: " << expression << "----"  << endl;
 #endif
   Expression::Simplify(&e, globalContext, angleUnit);
+  Expression * m = process(e, globalContext, angleUnit, complexFormat);
   char buffer[500];
-  e->writeTextInBuffer(buffer, sizeof(buffer));
+  m->writeTextInBuffer(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);
   translate_in_ASCII_chars(buffer);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   print_expression(e, 0);
   cout << "---- serialize to: " << buffer << " ----"  << endl;
-  cout << "----- compared to: " << simplifiedExpression << " ----\n"  << endl;
+  cout << "----- compared to: " << result << " ----\n"  << endl;
 #endif
-  assert(strcmp(buffer, simplifiedExpression) == 0);
+  assert(strcmp(buffer, result) == 0);
   delete e;
+  if (e != m) {
+    delete m;
+  }
+}
+
+template<typename T>
+void assert_parsed_expression_evaluates_to(const char * expression, const char * approximation, Expression::AngleUnit angleUnit, Expression::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "--------- Approximation ---------" << endl;
+#endif
+  int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
+  numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
+  assert_parsed_expression_process_to(expression, approximation, angleUnit, complexFormat, [](Expression * e, Context & context, Expression::AngleUnit angleUnit, Expression::ComplexFormat complexFormat) {
+        return e->approximate<T>(context, angleUnit, complexFormat);
+      }, numberOfDigits);
+}
+
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Expression::AngleUnit angleUnit) {
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "--------- Simplification ---------" << endl;
+#endif
+  assert_parsed_expression_process_to(expression, simplifiedExpression, angleUnit, Expression::ComplexFormat::Cartesian, [](Expression * e, Context & context, Expression::AngleUnit angleUnit, Expression::ComplexFormat complexFormat) { return e; });
 }
 
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {
@@ -112,7 +115,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Serialize: " << expressionLayout << "----"  << endl;
 #endif
-  ExpressionLayout * el = e->createLayout();
+  ExpressionLayout * el = e->createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
   int bufferSize = 255;
   char buffer[bufferSize];
   el->writeTextInBuffer(buffer, bufferSize);
@@ -136,5 +139,5 @@ void assert_expression_layout_serialize_to(Poincare::ExpressionLayout * layout, 
   assert(strcmp(serialization, buffer) == 0);
 }
 
-template void assert_parsed_expression_evaluates_to<float>(char const*, Poincare::Complex<float>*, int, int, Poincare::Expression::AngleUnit);
-template void assert_parsed_expression_evaluates_to<double>(char const*, Poincare::Complex<double>*, int, int, Poincare::Expression::AngleUnit);
+template void assert_parsed_expression_evaluates_to<float>(char const*, char const *, Poincare::Expression::AngleUnit, Poincare::Expression::ComplexFormat, int);
+template void assert_parsed_expression_evaluates_to<double>(char const*, char const *, Poincare::Expression::AngleUnit, Poincare::Expression::ComplexFormat, int);

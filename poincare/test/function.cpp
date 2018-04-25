@@ -10,11 +10,9 @@ using namespace Poincare;
 template<typename T>
 void assert_exp_is_bounded(Expression * exp, T lowBound, T upBound, bool upBoundIncluded = false) {
   GlobalContext globalContext;
-  Expression * result = exp->approximate<T>(globalContext);
-  assert(result->type() == Expression::Type::Complex);
-  assert(static_cast<const Complex<T> *>(result)->a() >= lowBound);
-  assert(static_cast<const Complex<T> *>(result)->a() < upBound || (static_cast<const Complex<T> *>(result)->a() == upBound && upBoundIncluded));
-  delete result;
+  T result = exp->approximateToScalar<T>(globalContext, Radian);
+  assert(result >= lowBound);
+  assert(result < upBound || (result == upBound && upBoundIncluded));
 }
 
 QUIZ_CASE(poincare_parse_function) {
@@ -63,223 +61,144 @@ QUIZ_CASE(poincare_parse_function) {
 
 
 QUIZ_CASE(poincare_function_evaluate) {
-  Complex<float> a0[1] = {Complex<float>::Float(1.0)};
-  assert_parsed_expression_evaluates_to("abs(-1)", a0);
-  Complex<double> ad0[1] = {Complex<double>::Float(1.0)};
-  assert_parsed_expression_evaluates_to("abs(-1)", ad0);
+  assert_parsed_expression_evaluates_to<float>("abs(-1)", "1");
+  assert_parsed_expression_evaluates_to<double>("abs(-1)", "1");
 
-  Complex<float> a1[1] = {Complex<float>::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f))};
-  assert_parsed_expression_evaluates_to("abs(3+2I)", a1);
-  Complex<double> ad1[1] = {Complex<double>::Float(std::sqrt(3.0*3.0+2.0*2.0))};
-  assert_parsed_expression_evaluates_to("abs(3+2I)", ad1);
+  assert_parsed_expression_evaluates_to<float>("abs(3+2I)", "3.605551");
+  assert_parsed_expression_evaluates_to<double>("abs(3+2I)", "3.605551275464");
 
-  Complex<float> a2[4] = {Complex<float>::Float(1.0), Complex<float>::Float(2.0), Complex<float>::Float(3.0), Complex<float>::Float(4.0)};
-  assert_parsed_expression_evaluates_to("abs([[1,-2][3,-4]])", a2, 2, 2);
-  Complex<double> ad2[4] = {Complex<double>::Float(1.0), Complex<double>::Float(2.0), Complex<double>::Float(3.0), Complex<double>::Float(4.0)};
-  assert_parsed_expression_evaluates_to("abs([[1,-2][3,-4]])", ad2, 2, 2);
+  assert_parsed_expression_evaluates_to<float>("abs([[1,-2][3,-4]])", "[[1,2][3,4]]");
+  assert_parsed_expression_evaluates_to<double>("abs([[1,-2][3,-4]])", "[[1,2][3,4]]");
 
-  Complex<float> a3[4] = {Complex<float>::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f)), Complex<float>::Float(std::sqrt(3.0f*3.0f+4.0f*4.0f)), Complex<float>::Float(std::sqrt(5.0f*5.0f+2.0f*2.0f)), Complex<float>::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f))};
-  assert_parsed_expression_evaluates_to("abs([[3+2I,3+4I][5+2I,3+2I]])", a3, 2, 2);
-  Complex<double> ad3[4] = {Complex<double>::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f)), Complex<double>::Float(std::sqrt(3.0f*3.0f+4.0f*4.0f)), Complex<double>::Float(std::sqrt(5.0f*5.0f+2.0f*2.0f)), Complex<double>::Float(std::sqrt(3.0f*3.0f+2.0f*2.0f))};
-  assert_parsed_expression_evaluates_to("abs([[3+2I,3+4I][5+2I,3+2I]])", ad3, 2, 2);
+  assert_parsed_expression_evaluates_to<float>("abs([[3+2I,3+4I][5+2I,3+2I]])", "[[3.605551,5][5.385165,3.605551]]");
+  assert_parsed_expression_evaluates_to<double>("abs([[3+2I,3+4I][5+2I,3+2I]])", "[[3.605551275464,5][5.3851648071345,3.605551275464]]");
 
-  Complex<float> b[1] = {Complex<float>::Float(210.0)};
-  assert_parsed_expression_evaluates_to("binomial(10, 4)", b);
-  Complex<double> bd[1] = {Complex<double>::Float(210.0)};
-  assert_parsed_expression_evaluates_to("binomial(10, 4)", bd);
+  assert_parsed_expression_evaluates_to<float>("binomial(10, 4)", "210");
+  assert_parsed_expression_evaluates_to<double>("binomial(10, 4)", "210");
 
-  Complex<float> c[1] = {Complex<float>::Float(1.0f)};
-  assert_parsed_expression_evaluates_to("ceil(0.2)", c);
-  Complex<double> cd[1] = {Complex<double>::Float(1.0f)};
-  assert_parsed_expression_evaluates_to("ceil(0.2)", cd);
+  assert_parsed_expression_evaluates_to<float>("ceil(0.2)", "1");
+  assert_parsed_expression_evaluates_to<double>("ceil(0.2)", "1");
 
-  Complex<float> d[1] = {Complex<float>::Float(2.0)};
-  assert_parsed_expression_evaluates_to("diff(2*x, 2)", d);
-  Complex<double> dd[1] = {Complex<double>::Float(2.0)};
-  assert_parsed_expression_evaluates_to("diff(2*x, 2)", dd);
+  assert_parsed_expression_evaluates_to<float>("diff(2*x, 2)", "2");
+  assert_parsed_expression_evaluates_to<double>("diff(2*x, 2)", "2");
 
 #if MATRICES_ARE_DEFINED
-  Complex<float> e[1] = {Complex<float>::Float(126.0f)};
-  assert_parsed_expression_evaluates_to("det([[1,23,3][4,5,6][7,8,9]])", e);
-  Complex<double> ed[1] = {Complex<double>::Float(126.0f)};
-  assert_parsed_expression_evaluates_to("det([[1,23,3][4,5,6][7,8,9]])", ed);
+  assert_parsed_expression_evaluates_to<float>("det([[1,23,3][4,5,6][7,8,9]])", "126", Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
+  assert_parsed_expression_evaluates_to<double>("det([[1,23,3][4,5,6][7,8,9]])", "126");
 #endif
 
-  Complex<float> f[1] = {Complex<float>::Float(2.0)};
-  assert_parsed_expression_evaluates_to("floor(2.3)", f);
-  Complex<double> fd[1] = {Complex<double>::Float(2.0)};
-  assert_parsed_expression_evaluates_to("floor(2.3)", fd);
+  assert_parsed_expression_evaluates_to<float>("floor(2.3)", "2");
+  assert_parsed_expression_evaluates_to<double>("floor(2.3)", "2");
 
-  Complex<float> g[1] = {Complex<float>::Float(0.3f)};
-  assert_parsed_expression_evaluates_to("frac(2.3)", g);
-  Complex<double> gd[1] = {Complex<double>::Float(0.3f)};
-  assert_parsed_expression_evaluates_to("frac(2.3)", gd);
+  assert_parsed_expression_evaluates_to<float>("frac(2.3)", "0.3");
+  assert_parsed_expression_evaluates_to<double>("frac(2.3)", "0.3");
 
-  Complex<float> h[1] = {Complex<float>::Float(2.0)};
-  assert_parsed_expression_evaluates_to("gcd(234,394)", h);
-  Complex<double> hd[1] = {Complex<double>::Float(2.0)};
-  assert_parsed_expression_evaluates_to("gcd(234,394)", hd);
+  assert_parsed_expression_evaluates_to<float>("gcd(234,394)", "2");
+  assert_parsed_expression_evaluates_to<double>("gcd(234,394)", "2");
 
-  Complex<float> i[1] = {Complex<float>::Float(3.0f)};
-  assert_parsed_expression_evaluates_to("im(2+3I)", i);
-  Complex<double> id[1] = {Complex<double>::Float(3.0f)};
-  assert_parsed_expression_evaluates_to("im(2+3I)", id);
+  assert_parsed_expression_evaluates_to<float>("im(2+3I)", "3");
+  assert_parsed_expression_evaluates_to<double>("im(2+3I)", "3");
 
-  Complex<float> j[1] = {Complex<float>::Float(3.0/2.0)};
-  assert_parsed_expression_evaluates_to("int(x, 1, 2)", j);
-  Complex<double> jd[1] = {Complex<double>::Float(3.0/2.0)};
-  assert_parsed_expression_evaluates_to("int(x, 1, 2)", jd);
+  assert_parsed_expression_evaluates_to<float>("int(x, 1, 2)", "1.5");
+  assert_parsed_expression_evaluates_to<double>("int(x, 1, 2)", "1.5");
 
-  Complex<float> k[1] = {Complex<float>::Float(46098.0f)};
-  assert_parsed_expression_evaluates_to("lcm(234,394)", k);
-  Complex<double> kd[1] = {Complex<double>::Float(46098.0f)};
-  assert_parsed_expression_evaluates_to("lcm(234,394)", kd);
+  assert_parsed_expression_evaluates_to<float>("lcm(234,394)", "46098");
+  assert_parsed_expression_evaluates_to<double>("lcm(234,394)", "46098");
 
-  Complex<float> l[1] = {Complex<float>::Float(std::log(2.0))};
-  assert_parsed_expression_evaluates_to("ln(2)", l);
-  Complex<double> ld[1] = {Complex<double>::Float(std::log(2.0))};
-  assert_parsed_expression_evaluates_to("ln(2)", ld);
+  assert_parsed_expression_evaluates_to<float>("ln(2)", "0.6931472");
+  assert_parsed_expression_evaluates_to<double>("ln(2)", "6.9314718055995E-1");
 
-  Complex<float> m[1] = {Complex<float>::Float(std::log10(2.0f))};
-  assert_parsed_expression_evaluates_to("log(2)", m);
-  Complex<double> md[1] = {Complex<double>::Float(std::log10(2.0f))};
-  assert_parsed_expression_evaluates_to("log(2)", md);
+  assert_parsed_expression_evaluates_to<float>("log(2)", "0.30103");
+  assert_parsed_expression_evaluates_to<double>("log(2)", "3.0102999566398E-1");
 
-  Complex<float> n[1] = {Complex<float>::Float(5040.0)};
-  assert_parsed_expression_evaluates_to("permute(10, 4)", n);
-  Complex<double> nd[1] = {Complex<double>::Float(5040.0)};
-  assert_parsed_expression_evaluates_to("permute(10, 4)", nd);
+  assert_parsed_expression_evaluates_to<float>("permute(10, 4)", "5040");
+  assert_parsed_expression_evaluates_to<double>("permute(10, 4)", "5040");
 
-  Complex<float> o[1] = {Complex<float>::Float(604800.0f)};
-  assert_parsed_expression_evaluates_to("product(n, 4, 10)", o);
-  Complex<double> od[1] = {Complex<double>::Float(604800.0f)};
-  assert_parsed_expression_evaluates_to("product(n, 4, 10)", od);
+  assert_parsed_expression_evaluates_to<float>("product(n, 4, 10)", "604800");
+  assert_parsed_expression_evaluates_to<double>("product(n, 4, 10)", "604800");
 
-  Complex<float> p[1] = {Complex<float>::Float(2.0)};
-  assert_parsed_expression_evaluates_to("re(2+I)", p);
-  Complex<double> pd[1] = {Complex<double>::Float(2.0)};
-  assert_parsed_expression_evaluates_to("re(2+I)", pd);
+  assert_parsed_expression_evaluates_to<float>("re(2+I)", "2");
+  assert_parsed_expression_evaluates_to<double>("re(2+I)", "2");
 
-  Complex<float> q[1] = {Complex<float>::Float(9.0f)};
-  assert_parsed_expression_evaluates_to("rem(29, 10)", q);
-  Complex<double> qd[1] = {Complex<double>::Float(9.0f)};
-  assert_parsed_expression_evaluates_to("rem(29, 10)", qd);
+  assert_parsed_expression_evaluates_to<float>("rem(29, 10)", "9");
+  assert_parsed_expression_evaluates_to<double>("rem(29, 10)", "9");
 
-  Complex<float> r[1] = {Complex<float>::Float(std::pow(2.0, 1.0/3.0))};
-  assert_parsed_expression_evaluates_to("root(2,3)", r);
-  Complex<double> rd[1] = {Complex<double>::Float(std::pow(2.0, 1.0/3.0))};
-  assert_parsed_expression_evaluates_to("root(2,3)", rd);
+  assert_parsed_expression_evaluates_to<float>("root(2,3)", "1.259921");
+  assert_parsed_expression_evaluates_to<double>("root(2,3)", "1.2599210498949");
 
-  Complex<float> s[1] = {Complex<float>::Float(std::sqrt(2.0f))};
-  assert_parsed_expression_evaluates_to("R(2)", s);
-  Complex<double> sd[1] = {Complex<double>::Float(std::sqrt(2.0f))};
-  assert_parsed_expression_evaluates_to("R(2)", sd);
+  assert_parsed_expression_evaluates_to<float>("R(2)", "1.414214");
+  assert_parsed_expression_evaluates_to<double>("R(2)", "1.4142135623731");
 
-  Complex<float> t[1] = {Complex<float>::Float(49.0)};
-  assert_parsed_expression_evaluates_to("sum(n, 4, 10)", t);
-  Complex<double> td[1] = {Complex<double>::Float(49.0)};
-  assert_parsed_expression_evaluates_to("sum(n, 4, 10)", td);
+  assert_parsed_expression_evaluates_to<float>("sum(n, 4, 10)", "49");
+  assert_parsed_expression_evaluates_to<double>("sum(n, 4, 10)", "49");
 
 #if MATRICES_ARE_DEFINED
-  Complex<float> u[1] = {Complex<float>::Float(15.0f)};
-  assert_parsed_expression_evaluates_to("trace([[1,2,3][4,5,6][7,8,9]])", u);
-  Complex<double> ud[1] = {Complex<double>::Float(15.0f)};
-  assert_parsed_expression_evaluates_to("trace([[1,2,3][4,5,6][7,8,9]])", ud);
+  assert_parsed_expression_evaluates_to<float>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
+  assert_parsed_expression_evaluates_to<double>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
 #endif
 
-  Complex<float> v[2] = {Complex<float>::Float(0.1 - std::sqrt(1.0/100.0)), Complex<float>::Float(0.1 + std::sqrt(1.0/100.0))};
-  assert_parsed_expression_evaluates_to("confidence(0.1, 100)", v, 1, 2);
-  Complex<double> vd[2] = {Complex<double>::Float(0.1 - std::sqrt(1.0/100.0)), Complex<double>::Float(0.1 + std::sqrt(1.0/100.0))};
-  assert_parsed_expression_evaluates_to("confidence(0.1, 100)", vd, 1, 2);
+  assert_parsed_expression_evaluates_to<float>("confidence(0.1, 100)", "[[0,0.2]]");
+  assert_parsed_expression_evaluates_to<double>("confidence(0.1, 100)", "[[0,0.2]]");
 
 #if MATRICES_ARE_DEFINED
-  Complex<float> w[2] = {Complex<float>::Float(2.0f), Complex<float>::Float(3.0f)};
-  assert_parsed_expression_evaluates_to("dim([[1,2,3][4,5,-6]])", w, 1, 2);
-  Complex<double> wd[2] = {Complex<double>::Float(2.0f), Complex<double>::Float(3.0f)};
-  assert_parsed_expression_evaluates_to("dim([[1,2,3][4,5,-6]])", wd, 1, 2);
+  assert_parsed_expression_evaluates_to<float>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
+  assert_parsed_expression_evaluates_to<double>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
 #endif
 
-  Complex<float> x[1] = {Complex<float>::Cartesian(3.0, -2.0)};
-  assert_parsed_expression_evaluates_to("conj(3+2*I)", x);
-  Complex<double> xd[1] = {Complex<double>::Cartesian(3.0, -2.0)};
-  assert_parsed_expression_evaluates_to("conj(3+2*I)", xd);
+  assert_parsed_expression_evaluates_to<float>("conj(3+2*I)", "3-2*I");
+  assert_parsed_expression_evaluates_to<double>("conj(3+2*I)", "3-2*I");
 
 #if MATRICES_ARE_DEFINED
-  Complex<float> y[9] = {Complex<float>::Float(-31.0f/24.0f), Complex<float>::Float(-1.0f/12.0f), Complex<float>::Float(3.0f/8.0f), Complex<float>::Float(13.0f/12.0f), Complex<float>::Float(1.0f/6.0f), Complex<float>::Float(-1.0f/4.0f), Complex<float>::Float(1.0f/24.0f),Complex<float>::Float(-1.0f/12.0f), Complex<float>::Float(1.0f/24.0f)};
-  assert_parsed_expression_evaluates_to("inverse([[1,2,3][4,5,-6][7,8,9]])", y, 3, 3);
-  Complex<double> yd[9] = {Complex<double>::Float(-31.0f/24.0f), Complex<double>::Float(-1.0f/12.0f), Complex<double>::Float(3.0f/8.0f), Complex<double>::Float(13.0f/12.0f), Complex<double>::Float(1.0f/6.0f), Complex<double>::Float(-1.0f/4.0f), Complex<double>::Float(1.0f/24.0f),Complex<double>::Float(-1.0f/12.0f), Complex<double>::Float(1.0f/24.0f)};
-  assert_parsed_expression_evaluates_to("inverse([[1,2,3][4,5,-6][7,8,9]])", yd, 3, 3);
+  assert_parsed_expression_evaluates_to<float>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0.041667]]", Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
+  assert_parsed_expression_evaluates_to<double>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2916666666667,-8.3333333333333E-2,0.375][1.0833333333333,1.6666666666667E-1,-0.25][4.1666666666667E-2,-8.3333333333333E-2,4.1666666666667E-2]]");
 #endif
 
-  Complex<float> z[2] = {Complex<float>::Float(0.1-std::sqrt(1.0/100.0)), Complex<float>::Float(0.1+std::sqrt(1.0/100.0))};
-  assert_parsed_expression_evaluates_to("prediction(0.1, 100)", z, 1, 2);
-  Complex<double> zd[2] = {Complex<double>::Float(0.1-std::sqrt(1.0/100.0)), Complex<double>::Float(0.1+std::sqrt(1.0/100.0))};
-  assert_parsed_expression_evaluates_to("prediction(0.1, 100)", zd, 1, 2);
+  assert_parsed_expression_evaluates_to<float>("prediction(0.1, 100)", "[[0,0.2]]");
+  assert_parsed_expression_evaluates_to<double>("prediction(0.1, 100)", "[[0,0.2]]");
 
-  Complex<float> aa[2] = {Complex<float>::Float(0.1f-1.96f*std::sqrt((0.1f*(1.0f-0.1f))/100.0f)), Complex<float>::Float(0.1f+1.96f*std::sqrt((0.1f*(1.0f-0.1f))/100.0f))};
-  assert_parsed_expression_evaluates_to("prediction95(0.1, 100)", aa, 1, 2);
-  Complex<double> aad[2] = {Complex<double>::Float(0.1f-1.96f*std::sqrt((0.1f*(1.0f-0.1f))/100.0f)), Complex<double>::Float(0.1f+1.96f*std::sqrt((0.1f*(1.0f-0.1f))/100.0f))};
-  assert_parsed_expression_evaluates_to("prediction95(0.1, 100)", aad, 1, 2);
+  assert_parsed_expression_evaluates_to<float>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
+  assert_parsed_expression_evaluates_to<double>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
 
-  Complex<float> ab[1] = {Complex<float>::Cartesian(-100.0, -540.0)};
-  assert_parsed_expression_evaluates_to("product(2+n*I, 1, 5)", ab);
-  Complex<double> abd[1] = {Complex<double>::Cartesian(-100.0, -540.0)};
-  assert_parsed_expression_evaluates_to("product(2+n*I, 1, 5)", abd);
+  assert_parsed_expression_evaluates_to<float>("product(2+n*I, 1, 5)", "(-100)-540*I");
+  assert_parsed_expression_evaluates_to<double>("product(2+n*I, 1, 5)", "(-100)-540*I");
 
-  Complex<float> ac[1] = {Complex<float>::Cartesian(1.4593656008f, 0.1571201229f)};
-  assert_parsed_expression_evaluates_to("root(3+I, 3)", ac);
-  Complex<double> acd[1] = {Complex<double>::Cartesian(1.4593656008f, 0.1571201229f)};
-  assert_parsed_expression_evaluates_to("root(3+I, 3)", acd);
+  assert_parsed_expression_evaluates_to<float>("root(3+I, 3)", "1.459366+0.1571201*I");
+  assert_parsed_expression_evaluates_to<double>("root(3+I, 3)", "1.4593656008684+1.5712012294394E-1*I");
 
-  Complex<float> add[1] = {Complex<float>::Cartesian(1.38200696233, -0.152442779)};
-  assert_parsed_expression_evaluates_to("root(3, 3+I)", add);
-  Complex<double> addd[1] = {Complex<double>::Cartesian(1.38200696233, -0.152442779)};
-  assert_parsed_expression_evaluates_to("root(3, 3+I)", addd);
+  assert_parsed_expression_evaluates_to<float>("root(3, 3+I)", "1.382007-0.1524428*I");
+  assert_parsed_expression_evaluates_to<double>("root(3, 3+I)", "1.3820069623326-0.1524427794159*I");
 
-  Complex<float> ae[1] = {Complex<float>::Cartesian(1.75532f, 0.28485f)};
-  assert_parsed_expression_evaluates_to("R(3+I)", ae);
-  Complex<double> aed[1] = {Complex<double>::Cartesian(1.75532f, 0.28485f)};
-  assert_parsed_expression_evaluates_to("R(3+I)", aed);
+  assert_parsed_expression_evaluates_to<float>("root(5^(-I)3^9,I)", "3.504", Degree, Cartesian, 4);
+  assert_parsed_expression_evaluates_to<double>("root(5^(-I)3^9,I)", "3.5039410843", Degree, Cartesian, 11);
 
-  Complex<float> af[1] = {Complex<float>::Cartesian(10.0, 15.0)};
-  assert_parsed_expression_evaluates_to("sum(2+n*I,1,5)", af);
-  Complex<double> afd[1] = {Complex<double>::Cartesian(10.0, 15.0)};
-  assert_parsed_expression_evaluates_to("sum(2+n*I,1,5)", afd);
+  assert_parsed_expression_evaluates_to<float>("R(3+I)", "1.755317+0.2848488*I");
+  assert_parsed_expression_evaluates_to<double>("R(3+I)", "1.7553173018244+2.8484878459314E-1*I");
+
+  assert_parsed_expression_evaluates_to<double>("sum(2+n*I,1,5)", "10+15*I");
+  assert_parsed_expression_evaluates_to<double>("sum(2+n*I,1,5)", "10+15*I");
 #if MATRICES_ARE_DEFINED
-  Complex<float> ag[9] = {Complex<float>::Float(1.0), Complex<float>::Float(4.0), Complex<float>::Float(7.0), Complex<float>::Float(2.0), Complex<float>::Float(5.0), Complex<float>::Float(8.0), Complex<float>::Float(3.0), Complex<float>::Float(-6.0), Complex<float>::Float(9.0)};
-  assert_parsed_expression_evaluates_to("transpose([[1,2,3][4,5,-6][7,8,9]])", ag, 3, 3);
-  assert_parsed_expression_evaluates_to("transpose([[1,7,5][4,2,8]])", ag, 3, 2);
-  assert_parsed_expression_evaluates_to("transpose([[1,2][4,5][7,8]])", ag, 2, 3);
-  Complex<double> agd[9] = {Complex<double>::Float(1.0), Complex<double>::Float(4.0), Complex<double>::Float(7.0), Complex<double>::Float(2.0), Complex<double>::Float(5.0), Complex<double>::Float(8.0), Complex<double>::Float(3.0), Complex<double>::Float(-6.0), Complex<double>::Float(9.0)};
-  assert_parsed_expression_evaluates_to("transpose([[1,2,3][4,5,-6][7,8,9]])", agd, 3, 3);
-  assert_parsed_expression_evaluates_to("transpose([[1,7,5][4,2,8]])", agd, 3, 2);
-  assert_parsed_expression_evaluates_to("transpose([[1,2][4,5][7,8]])", agd, 2, 3);
+  assert_parsed_expression_evaluates_to<float>("transpose([[1,2,3][4,5,-6][7,8,9]])", "[[1,4,7][2,5,8][3,-6,9]]");
+  assert_parsed_expression_evaluates_to<float>("transpose([[1,7,5][4,2,8]])", "[[1,4][7,2][5,8]]");
+  assert_parsed_expression_evaluates_to<float>("transpose([[1,2][4,5][7,8]])", "[[1,4,7][2,5,8]]");
+  assert_parsed_expression_evaluates_to<double>("transpose([[1,2,3][4,5,-6][7,8,9]])", "[[1,4,7][2,5,8][3,-6,9]]");
+  assert_parsed_expression_evaluates_to<double>("transpose([[1,7,5][4,2,8]])", "[[1,4][7,2][5,8]]");
+  assert_parsed_expression_evaluates_to<double>("transpose([[1,2][4,5][7,8]])", "[[1,4,7][2,5,8]]");
 #endif
 
-  Complex<float> ah[1] = {Complex<float>::Float(2.325f)};
-  assert_parsed_expression_evaluates_to("round(2.3246,3)", ah);
-  Complex<double> ahd[1] = {Complex<double>::Float(2.325f)};
-  assert_parsed_expression_evaluates_to("round(2.3245,3)", ahd);
+  assert_parsed_expression_evaluates_to<float>("round(2.3246,3)", "2.325");
+  assert_parsed_expression_evaluates_to<double>("round(2.3245,3)", "2.325");
 
-  Complex<float> ai[1] = {Complex<float>::Float(720.0f)};
-  assert_parsed_expression_evaluates_to("6!", ai);
-  Complex<double> aid[1] = {Complex<double>::Float(720.0f)};
-  assert_parsed_expression_evaluates_to("6!", aid);
+  assert_parsed_expression_evaluates_to<float>("6!", "720");
+  assert_parsed_expression_evaluates_to<double>("6!", "720");
 
-  Complex<float> aj[1] = {Complex<float>::Cartesian(0.0f, 1.0f)};
-  assert_parsed_expression_evaluates_to("R(-1)", aj);
-  Complex<double> ajd[1] = {Complex<double>::Cartesian(0.0f, 1.0f)};
-  assert_parsed_expression_evaluates_to("R(-1)", ajd);
+  assert_parsed_expression_evaluates_to<float>("R(-1)", "I");
+  assert_parsed_expression_evaluates_to<double>("R(-1)", "I");
 
-  Complex<float> ak[1] = {Complex<float>::Cartesian(0.5, 0.86602540378443864676)};
-  assert_parsed_expression_evaluates_to("root(-1,3)", ak);
-  Complex<double> akd[1] = {Complex<double>::Cartesian(0.5, 0.86602540378443864676)};
-  assert_parsed_expression_evaluates_to("root(-1,3)", akd);
+  assert_parsed_expression_evaluates_to<float>("root(-1,3)", "0.5+0.8660254*I");
+  assert_parsed_expression_evaluates_to<double>("root(-1,3)", "0.5+8.6602540378444E-1*I");
 
-  Complex<float> al[1] = {Complex<float>::Float(-5.75f)};
-  assert_parsed_expression_evaluates_to("factor(-23/4)", al);
-  Complex<double> ald[1] = {Complex<double>::Float(-5.125)};
-  assert_parsed_expression_evaluates_to("factor(-123/24)", ald);
+  assert_parsed_expression_evaluates_to<float>("factor(-23/4)", "-5.75");
+  assert_parsed_expression_evaluates_to<double>("factor(-123/24)", "-5.125");
 
   Expression * exp = parse_expression("random()");
   assert_exp_is_bounded(exp, 0.0f, 1.0f);

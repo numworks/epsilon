@@ -39,6 +39,16 @@ QUIZ_CASE(poincare_simplify_mix) {
   assert_parsed_expression_simplify_to("(2+R(6))^2", "10+4*R(6)");
   assert_parsed_expression_simplify_to("tan(3)ln(2)+P", "tan(3)*ln(2)+P");
 
+  // Complex
+  assert_parsed_expression_simplify_to("I", "I");
+  assert_parsed_expression_simplify_to("R(-33)", "R(33)*I");
+  assert_parsed_expression_simplify_to("I^(3/5)", "(R(2)*R(5-R(5))+I+R(5)*I)/4");
+  assert_parsed_expression_simplify_to("IIII", "1");
+  assert_parsed_expression_simplify_to("R(-I)", "R(-I)");
+  assert_parsed_expression_simplify_to("Acos(9)IIln(2)", "-cos(9)*ln(2)*A");
+  assert_parsed_expression_simplify_to("(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2(R(2)+R(2)*I)/2", "(R(2)-R(2)*I)/32");
+  assert_parsed_expression_simplify_to("root(5^(-I)3^9,I)", "(5^(-19683*I))^(-I)");
+  assert_parsed_expression_simplify_to("I^I", "I^I");
 
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), cos(9))", "ln(2)+ln(3)"); // TODO: for this to work, we must know the sign of cos(9)
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)*log(cos(9), 9)"); // TODO: for this to work, we must know the sign of cos(9)

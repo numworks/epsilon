@@ -122,7 +122,6 @@ tests += $(addprefix poincare/test/,\
   addition.cpp\
   arithmetic.cpp\
   binomial_coefficient_layout.cpp\
-  complex.cpp\
   convert_expression_to_text.cpp\
   division.cpp\
   factorial.cpp\
@@ -139,9 +138,9 @@ tests += $(addprefix poincare/test/,\
   properties.cpp\
   rational.cpp\
   simplify_mix.cpp\
+  store.cpp\
   subtraction.cpp\
   symbol.cpp\
-  store.cpp\
   trigo.cpp\
   vertical_offset_layout.cpp\
 )

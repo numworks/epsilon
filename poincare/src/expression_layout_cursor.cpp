@@ -27,9 +27,9 @@ KDCoordinate ExpressionLayoutCursor::baseline() {
   }
   KDCoordinate baseline1 = pointedExpressionLayoutEquivalentChild()->baseline();
   KDCoordinate baseline2 = (KDCoordinate)0;
-  ExpressionLayout * equivalentSiblingLayout = equivalentPointedSiblingLayout();
-  if (equivalentSiblingLayout != nullptr) {
-    baseline2 = equivalentSiblingLayout->baseline();
+  ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(this).pointedExpressionLayout();
+  if (m_pointedExpressionLayout->hasSibling(equivalentPointedLayout)) {
+    baseline2 = equivalentPointedLayout->baseline();
   }
   return max(baseline1, baseline2);
 }
@@ -215,40 +215,32 @@ void ExpressionLayoutCursor::clearLayout() {
 }
 
 bool ExpressionLayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
-  /* Find Empty layouts adjacent to the cursor: Check the pointed layout and its
-   * neighbour in an Horizontal layout */
+  /* Find Empty layouts adjacent to the cursor: Check the pointed layout and the
+   * equivalent cursor positions */
 
+  ExpressionLayout * adjacentEmptyLayout = nullptr;
   // Check the pointed layout
-  if (m_pointedExpressionLayout->isEmpty()
-      || (m_position == Position::Left
-        && m_pointedExpressionLayout->isHorizontal()
-        && m_pointedExpressionLayout->numberOfChildren() > 0
-        && m_pointedExpressionLayout->editableChild(0)->isEmpty()))
-  {
-    /* The cursor is next to an EmptyLayout if the pointed layout is an empty
-     * layout (either an EmptyLayout or HorizontalLayout with one child only,
-     * and this child is an EmptyLayout), or if the cursor points to the left of
-     * an HorizontalLayout that starts with an EmptyLayout (for instance, the
-     * emty base of a vertical offset layout). */
-    if (m_pointedExpressionLayout->isHorizontal()) {
-      static_cast<EmptyLayout *>(m_pointedExpressionLayout->editableChild(0))->setVisible(show);
-    } else {
-      static_cast<EmptyLayout *>(m_pointedExpressionLayout)->setVisible(show);
-    }
-    return true;
+  if (m_pointedExpressionLayout->isEmpty()) {
+    adjacentEmptyLayout = m_pointedExpressionLayout;
   } else {
-    // Check the neighbour of the pointed layout in an HorizontalLayout
-    ExpressionLayout * equivalentPointedLayout = equivalentPointedSiblingLayout();
+    // Check the equivalent cursor position
+    ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(this).pointedExpressionLayout();
     if (equivalentPointedLayout != nullptr && equivalentPointedLayout->isEmpty()) {
-      if (equivalentPointedLayout->isHorizontal()) {
-        static_cast<EmptyLayout *>(equivalentPointedLayout->editableChild(0))->setVisible(show);
-      } else {
-        static_cast<EmptyLayout *>(equivalentPointedLayout)->setVisible(show);
-      }
-      return true;
+      adjacentEmptyLayout = equivalentPointedLayout;
     }
   }
-  return false;
+
+  if (adjacentEmptyLayout == nullptr) {
+    return false;
+  }
+  /* An EmptyLayout or HorizontalLayout with one child only, and this child is
+   * an EmptyLayout. */
+  if (adjacentEmptyLayout->isHorizontal()) {
+    static_cast<EmptyLayout *>(adjacentEmptyLayout->editableChild(0))->setVisible(show);
+  } else {
+    static_cast<EmptyLayout *>(adjacentEmptyLayout)->setVisible(show);
+  }
+  return true;
 }
 
 bool ExpressionLayoutCursor::baseForNewPowerLayout() {
@@ -266,31 +258,15 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
 KDCoordinate ExpressionLayoutCursor::pointedLayoutHeight() {
   KDCoordinate height = pointedExpressionLayoutEquivalentChild()->size().height();
   KDCoordinate height1 = height;
-  ExpressionLayout * equivalentSiblingLayout = equivalentPointedSiblingLayout();
-  if (equivalentSiblingLayout != nullptr) {
-    KDCoordinate height2 = equivalentSiblingLayout->size().height();
+  ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(this).pointedExpressionLayout();
+  if (m_pointedExpressionLayout->hasSibling(equivalentPointedLayout)) {
+    KDCoordinate height2 = equivalentPointedLayout->size().height();
     KDCoordinate baseline1 = pointedExpressionLayoutEquivalentChild()->baseline();
-    KDCoordinate baseline2 = equivalentSiblingLayout->baseline();
+    KDCoordinate baseline2 = equivalentPointedLayout->baseline();
     height = max(baseline1, baseline2)
       + max(height1 - baseline1, height2 - baseline2);
   }
   return height;
-}
-
-ExpressionLayout * ExpressionLayoutCursor::equivalentPointedSiblingLayout() {
-  if (m_pointedExpressionLayout->parent() != nullptr
-      && m_pointedExpressionLayout->parent()->isHorizontal())
-  {
-    ExpressionLayout * pointedLayoutParent = m_pointedExpressionLayout->editableParent();
-    int indexOfPointedLayoutInParent = pointedLayoutParent->indexOfChild(m_pointedExpressionLayout);
-    if (m_position == Position::Left && indexOfPointedLayoutInParent > 0) {
-      return pointedLayoutParent->editableChild(indexOfPointedLayoutInParent - 1);
-    }
-    if (m_position == Position::Right && indexOfPointedLayoutInParent < pointedLayoutParent->numberOfChildren() - 1) {
-      return pointedLayoutParent->editableChild(indexOfPointedLayoutInParent + 1);
-    }
-  }
-  return nullptr;
 }
 
 }

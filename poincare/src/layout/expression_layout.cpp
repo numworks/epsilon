@@ -115,6 +115,13 @@ ExpressionLayout * ExpressionLayout::editableRoot() {
   return m_parent->editableRoot();
 }
 
+bool ExpressionLayout::hasSibling(const ExpressionLayout * e) const {
+  if (e == nullptr) {
+    return false;
+  }
+  return m_parent == e->parent();
+}
+
 void ExpressionLayout::addSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling) {
   privateAddSibling(cursor, sibling, false);
 }

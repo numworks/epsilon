@@ -49,10 +49,7 @@ Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& 
   }
   Expression::Type correspondingType = e->type() == Expression::Type::Cosine ? Expression::Type::ArcCosine : (e->type() == Expression::Type::Sine ? Expression::Type::ArcSine : Expression::Type::ArcTangent);
   if (e->operand(0)->type() == correspondingType) {
-    float trigoOp = e->operand(0)->operand(0)->approximateToScalar<float>(context, angleUnit);
-    if (e->type() == Expression::Type::Tangent || (trigoOp >= -1.0f && trigoOp <= 1.0f)) {
-      return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
-    }
+    return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
   }
   if (e->operand(0)->sign() == Expression::Sign::Negative) {
     Expression * op = e->editableOperand(0);
@@ -109,12 +106,6 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression * e) {
 
 Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine || e->type() == Expression::Type::ArcTangent);
-  if (e->type() != Expression::Type::ArcTangent) {
-    float approxOp = e->operand(0)->approximateToScalar<float>(context, angleUnit);
-    if (approxOp > 1.0f || approxOp < -1.0f) {
-      return e->replaceWith(new Undefined(), true);
-    }
-  }
   Expression::Type correspondingType = e->type() == Expression::Type::ArcCosine ? Expression::Type::Cosine : (e->type() == Expression::Type::ArcSine ? Expression::Type::Sine : Expression::Type::Tangent);
   float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180;
   if (e->operand(0)->type() == correspondingType) {
@@ -239,9 +230,9 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
 }
 
 template <typename T>
-std::complex<T> Trigonometry::computeOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, Approximation<T> approximate) {
+std::complex<T> Trigonometry::computeDirectOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, Approximation<T> approximate) {
   std::complex<T> input(c);
-  if (angleUnit == Expression::AngleUnit::Degree && input.imag() == 0.0) {
+  if (angleUnit == Expression::AngleUnit::Degree) {
     input = input*std::complex<T>(M_PI/180.0);
   }
   std::complex<T> result = approximate(input);
@@ -261,7 +252,18 @@ std::complex<T> Trigonometry::computeOnComplex(const std::complex<T> c, Expressi
   return result;
 }
 
-template std::complex<double> Trigonometry::computeOnComplex<double>(const std::complex<double>, Expression::AngleUnit, Approximation<double>);
-template std::complex<float> Trigonometry::computeOnComplex<float>(const std::complex<float>, Expression::AngleUnit, Approximation<float>);
+template<typename T>
+std::complex<T> Trigonometry::computeInverseOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, Approximation<T> approximate) {
+  std::complex<T> result = approximate(c);
+  if (angleUnit == Expression::AngleUnit::Degree) {
+    result *= 180/M_PI;
+  }
+  return result;
+}
+
+template std::complex<double> Trigonometry::computeDirectOnComplex<double>(const std::complex<double>, Expression::AngleUnit, Approximation<double>);
+template std::complex<float> Trigonometry::computeDirectOnComplex<float>(const std::complex<float>, Expression::AngleUnit, Approximation<float>);
+template std::complex<double> Trigonometry::computeInverseOnComplex<double>(const std::complex<double>, Expression::AngleUnit, Approximation<double>);
+template std::complex<float> Trigonometry::computeInverseOnComplex<float>(const std::complex<float>, Expression::AngleUnit, Approximation<float>);
 
 }

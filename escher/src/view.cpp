@@ -129,13 +129,12 @@ void View::setFrame(KDRect frame) {
   /* CAUTION: This code is not resilient to multiple consecutive setFrame()
    * calls without intermediate redraw() calls. */
 
-  // TODO: Return if frame is equal to m_frame
   if (m_superview != nullptr) {
     /* We will move this view. This will leave a blank spot in its superview
      * were it previously was.
-     * At this point, we know that the only area that really needs to be redrawn
-     * in the superview is the value of m_frame at the start of that method. */
-    m_superview->markRectAsDirty(m_frame);
+     * At this point, we know that the only area that needs to be redrawn in the
+     * superview is the old frame minus the part covered by the new frame.*/
+    m_superview->markRectAsDirty(m_frame.differencedWith(frame));
   }
 
   m_frame = frame;

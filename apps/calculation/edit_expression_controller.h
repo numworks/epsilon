@@ -67,6 +67,7 @@ private:
   char m_cacheBuffer[TextField::maxBufferSize()];
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
+  bool m_inputViewHeightIsMaximal;
 };
 
 }

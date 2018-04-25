@@ -110,7 +110,15 @@ bool EditExpressionController::expressionLayoutFieldDidAbortEditing(::Expression
 }
 
 void EditExpressionController::expressionLayoutFieldDidChangeSize(::ExpressionLayoutField * expressionLayoutField) {
-  reloadView();
+  /* Reload the view only if the ExpressionField height actually changes, i.e.
+   * not if the height is already maximal and stays maximal. */
+  if (view()) {
+    bool newInputViewHeightIsMaximal = static_cast<ContentView *>(view())->expressionField()->heightIsMaximal();
+    if (!m_inputViewHeightIsMaximal || !newInputViewHeightIsMaximal) {
+      m_inputViewHeightIsMaximal = newInputViewHeightIsMaximal;
+      reloadView();
+    }
+  }
 }
 
 TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {

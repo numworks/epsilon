@@ -7,14 +7,10 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_logarithm_evaluate) {
-  Complex<float> a0[1] = {Complex<float>::Float(0.1666666666666666)};
-  assert_parsed_expression_evaluates_to("log(2,64)", a0);
-  Complex<double> a1[1] = {Complex<double>::Float(0.9207822211616017903187272451)};
-  assert_parsed_expression_evaluates_to("log(6,7)", a1);
-  Complex<float> a2[1] = {Complex<float>::Float(0.698970004336018804786261105275506973231810118537891458689)};
-  assert_parsed_expression_evaluates_to("log(5)", a2);
-  Complex<double> a3[1] = {Complex<double>::Float(1.609437912434100374600759333226187639525601354268517721912)};
-  assert_parsed_expression_evaluates_to("ln(5)", a3);
+  assert_parsed_expression_evaluates_to<float>("log(2,64)", "0.1666667");
+  assert_parsed_expression_evaluates_to<double>("log(6,7)", "0.9207822211616");
+  assert_parsed_expression_evaluates_to<float>("log(5)", "0.69897");
+  assert_parsed_expression_evaluates_to<double>("ln(5)", "1.6094379124341");
 }
 
 QUIZ_CASE(poincare_logarithm_simplify) {

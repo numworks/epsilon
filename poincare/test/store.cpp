@@ -7,11 +7,8 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_store_evaluate) {
-  Complex<float> a[1] = {Complex<float>::Float(43.0f)};
-  assert_parsed_expression_evaluates_to("1+42>A", a);
-
-  Complex<double> b[1] = {Complex<double>::Cartesian(0.123, 1.0)};
-  assert_parsed_expression_evaluates_to("0.123+I>B", b);
+  assert_parsed_expression_evaluates_to<float>("1+42>A", "43");
+  assert_parsed_expression_evaluates_to<double>("0.123+I>B", "0.123+I");
 }
 
 QUIZ_CASE(poincare_store_simplify) {

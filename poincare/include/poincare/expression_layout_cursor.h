@@ -63,7 +63,6 @@ private:
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
   KDCoordinate pointedLayoutHeight();
-  ExpressionLayout * equivalentPointedSiblingLayout();
   ExpressionLayout * m_pointedExpressionLayout;
   Position m_position;
 };

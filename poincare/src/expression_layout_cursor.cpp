@@ -144,6 +144,21 @@ void ExpressionLayoutCursor::addEmptySquarePowerLayout() {
   setPosition(ExpressionLayoutCursor::Position::Right);
 }
 
+void ExpressionLayoutCursor::addEmptyTenPowerLayout() {
+  HorizontalLayout * newSibling = new HorizontalLayout();
+  EmptyLayout * powerLayout = new EmptyLayout();
+  int numberOfChildren = 4;
+  ExpressionLayout * childLayouts[numberOfChildren] = {
+    new CharLayout(Ion::Charset::MiddleDot),
+    new CharLayout('1'),
+    new CharLayout('0'),
+    new VerticalOffsetLayout(powerLayout, VerticalOffsetLayout::Type::Superscript, false)};
+  newSibling->addChildrenAtIndex(childLayouts, numberOfChildren, 0, false);
+  m_pointedExpressionLayout->addSibling(this, newSibling);
+  setPointedExpressionLayout(powerLayout);
+  setPosition(ExpressionLayoutCursor::Position::Right);
+}
+
 void ExpressionLayoutCursor::addXNTCharLayout() {
   CharLayout * newChild = new CharLayout(m_pointedExpressionLayout->XNTChar());
   m_pointedExpressionLayout->addSibling(this, newChild);

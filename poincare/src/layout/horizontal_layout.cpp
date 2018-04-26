@@ -171,21 +171,21 @@ void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index, 
   addChildAtIndex(eL, index);
 }
 
-ExpressionLayoutCursor HorizontalLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor HorizontalLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Left. Ask the parent.
-  if (cursor->pointedExpressionLayout() == this) {
-    if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+  if (cursor.pointedExpressionLayout() == this) {
+    if (cursor.position() == ExpressionLayoutCursor::Position::Left) {
       if (m_parent) {
         return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
       }
       return ExpressionLayoutCursor();
     }
-    assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+    assert(cursor.position() == ExpressionLayoutCursor::Position::Right);
     /* Case: Right.
      * Go to the last child if there is one, and move Left.
      * Else go Left and ask the parent. */
     if (numberOfChildren() < 1) {
-      cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+      cursor.setPosition(ExpressionLayoutCursor::Position::Left);
       if (m_parent) {
         return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
       }
@@ -193,43 +193,43 @@ ExpressionLayoutCursor HorizontalLayout::cursorLeftOf(ExpressionLayoutCursor * c
     }
     ExpressionLayout * lastChild = editableChild(numberOfChildren()-1);
     assert(lastChild != nullptr);
-    cursor->setPointedExpressionLayout(lastChild);
+    cursor.setPointedExpressionLayout(lastChild);
     return lastChild->cursorLeftOf(cursor, shouldRecomputeLayout);
   }
 
   // Case: The cursor is Left of a child.
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
-  int childIndex = indexOfChild(cursor->pointedExpressionLayout());
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Left);
+  int childIndex = indexOfChild(cursor.pointedExpressionLayout());
   assert(childIndex >= 0);
   if (childIndex == 0) {
     // Case: the child is the leftmost. Ask the parent.
     if (m_parent) {
-      cursor->setPointedExpressionLayout(this);
+      cursor.setPointedExpressionLayout(this);
       return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
     }
     return ExpressionLayoutCursor();
   }
   // Case: the child is not the leftmost. Go to its left sibling and move Left.
-  cursor->setPointedExpressionLayout(editableChild(childIndex-1));
-  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+  cursor.setPointedExpressionLayout(editableChild(childIndex-1));
+  cursor.setPosition(ExpressionLayoutCursor::Position::Right);
   return editableChild(childIndex-1)->cursorLeftOf(cursor, shouldRecomputeLayout);
 }
 
-ExpressionLayoutCursor HorizontalLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor HorizontalLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Right. Ask the parent.
-  if (cursor->pointedExpressionLayout() == this) {
-    if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+  if (cursor.pointedExpressionLayout() == this) {
+    if (cursor.position() == ExpressionLayoutCursor::Position::Right) {
       if (m_parent) {
         return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
       }
       return ExpressionLayoutCursor();
     }
-    assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+    assert(cursor.position() == ExpressionLayoutCursor::Position::Left);
     /* Case: Left.
      * Go to the first child if there is one, and move Right.
      * Else go Right and ask the parent. */
     if (numberOfChildren() < 1) {
-      cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+      cursor.setPosition(ExpressionLayoutCursor::Position::Right);
       if (m_parent) {
         return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
       }
@@ -237,26 +237,26 @@ ExpressionLayoutCursor HorizontalLayout::cursorRightOf(ExpressionLayoutCursor * 
     }
     ExpressionLayout * firstChild = editableChild(0);
     assert(firstChild != nullptr);
-    cursor->setPointedExpressionLayout(firstChild);
+    cursor.setPointedExpressionLayout(firstChild);
     return firstChild->cursorRightOf(cursor, shouldRecomputeLayout);
   }
 
   // Case: The cursor is Right of a child.
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
-  int childIndex = indexOfChild(cursor->pointedExpressionLayout());
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Right);
+  int childIndex = indexOfChild(cursor.pointedExpressionLayout());
   assert(childIndex >= 0);
   if (childIndex == numberOfChildren() - 1) {
     // Case: the child is the rightmost. Ask the parent.
     if (m_parent) {
-      cursor->setPointedExpressionLayout(this);
+      cursor.setPointedExpressionLayout(this);
       return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
     }
     return ExpressionLayoutCursor();
   }
   /* Case: the child is not the rightmost. Go to its right sibling and move
    * Right. */
-  cursor->setPointedExpressionLayout(editableChild(childIndex+1));
-  cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+  cursor.setPointedExpressionLayout(editableChild(childIndex+1));
+  cursor.setPosition(ExpressionLayoutCursor::Position::Left);
   return editableChild(childIndex+1)->cursorRightOf(cursor, shouldRecomputeLayout);
 }
 
@@ -294,24 +294,24 @@ int HorizontalLayout::writeTextInBuffer(char * buffer, int bufferSize, int numbe
   return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "");
 }
 
-ExpressionLayoutCursor HorizontalLayout::equivalentCursor(ExpressionLayoutCursor * cursor) {
+ExpressionLayoutCursor HorizontalLayout::equivalentCursor(ExpressionLayoutCursor cursor) {
   ExpressionLayoutCursor result;
   ExpressionLayout * newPointedLayout = nullptr;
   ExpressionLayoutCursor::Position newPosition = ExpressionLayoutCursor::Position::Left;
-  if (cursor->pointedExpressionLayout() == this) {
+  if (cursor.pointedExpressionLayout() == this) {
     // First or last child, if any
     if(numberOfChildren() == 0) {
       return result;
     } else {
-      newPointedLayout = editableChild(cursor->position() == ExpressionLayoutCursor::Position::Left ? 0 : numberOfChildren() - 1);
-      newPosition = cursor->position();
+      newPointedLayout = editableChild(cursor.position() == ExpressionLayoutCursor::Position::Left ? 0 : numberOfChildren() - 1);
+      newPosition = cursor.position();
     }
   } else {
     // Left or right child
-    int indexOfPointedLayout = indexOfChild(cursor->pointedExpressionLayout());
+    int indexOfPointedLayout = indexOfChild(cursor.pointedExpressionLayout());
     if (indexOfPointedLayout < 0) {
       return result;
-    } else if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+    } else if (cursor.position() == ExpressionLayoutCursor::Position::Left) {
       if (indexOfPointedLayout == 0) {
         newPointedLayout = this;
         newPosition = ExpressionLayoutCursor::Position::Left;
@@ -320,7 +320,7 @@ ExpressionLayoutCursor HorizontalLayout::equivalentCursor(ExpressionLayoutCursor
         newPosition = ExpressionLayoutCursor::Position::Right;
       }
     } else {
-      assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+      assert(cursor.position() == ExpressionLayoutCursor::Position::Right);
       if (indexOfPointedLayout == numberOfChildren() - 1) {
         newPointedLayout = this;
         newPosition = ExpressionLayoutCursor::Position::Right;

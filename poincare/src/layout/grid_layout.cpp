@@ -21,18 +21,18 @@ ExpressionLayout * GridLayout::clone() const {
   return layout;
 }
 
-ExpressionLayoutCursor GridLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor GridLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Right. Go to the last entry.
-  if (cursor->pointedExpressionLayout() == this
-      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+  if (cursor.pointedExpressionLayout() == this
+      && cursor.position() == ExpressionLayoutCursor::Position::Right)
   {
     ExpressionLayout * lastChild = editableChild(m_numberOfColumns*m_numberOfRows-1);
     assert(lastChild != nullptr);
     return ExpressionLayoutCursor(lastChild, ExpressionLayoutCursor::Position::Right);
   }
   // Case: The cursor points to a grid's child.
-  int childIndex = indexOfChild(cursor->pointedExpressionLayout());
-  if (childIndex >- 1 && cursor->position() == ExpressionLayoutCursor::Position::Left) {
+  int childIndex = indexOfChild(cursor.pointedExpressionLayout());
+  if (childIndex >- 1 && cursor.position() == ExpressionLayoutCursor::Position::Left) {
     if (childIsLeftOfGrid(childIndex)) {
       // Case: Left of a child on the left of the grid. Go Left of the grid
       return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
@@ -40,7 +40,7 @@ ExpressionLayoutCursor GridLayout::cursorLeftOf(ExpressionLayoutCursor * cursor,
     // Case: Left of another child. Go Right of its sibling on the left.
     return ExpressionLayoutCursor(editableChild(childIndex-1), ExpressionLayoutCursor::Position::Right);
   }
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Left. Ask the parent.
   if (m_parent) {
     return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
@@ -48,10 +48,10 @@ ExpressionLayoutCursor GridLayout::cursorLeftOf(ExpressionLayoutCursor * cursor,
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor GridLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor GridLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Left. Go to the first entry.
-  if (cursor->pointedExpressionLayout() == this
-      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+  if (cursor.pointedExpressionLayout() == this
+      && cursor.position() == ExpressionLayoutCursor::Position::Left)
   {
     assert(m_numberOfColumns*m_numberOfRows >= 1);
     ExpressionLayout * firstChild = editableChild(0);
@@ -59,8 +59,8 @@ ExpressionLayoutCursor GridLayout::cursorRightOf(ExpressionLayoutCursor * cursor
       return ExpressionLayoutCursor(firstChild, ExpressionLayoutCursor::Position::Left);
       }
   // Case: The cursor points to a grid's child.
-  int childIndex = indexOfChild(cursor->pointedExpressionLayout());
-  if (childIndex >- 1 && cursor->position() == ExpressionLayoutCursor::Position::Right) {
+  int childIndex = indexOfChild(cursor.pointedExpressionLayout());
+  if (childIndex >- 1 && cursor.position() == ExpressionLayoutCursor::Position::Right) {
     if (childIsRightOfGrid(childIndex)) {
       // Case: Right of a child on the right of the grid. Go Right of the grid.
       return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
@@ -68,7 +68,7 @@ ExpressionLayoutCursor GridLayout::cursorRightOf(ExpressionLayoutCursor * cursor
     // Case: Right of another child. Go Left of its sibling on the right.
     return ExpressionLayoutCursor(editableChild(childIndex+1), ExpressionLayoutCursor::Position::Left);
   }
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Right. Ask the parent.
   if (m_parent) {
     return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
@@ -76,12 +76,12 @@ ExpressionLayoutCursor GridLayout::cursorRightOf(ExpressionLayoutCursor * cursor
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor GridLayout::cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor GridLayout::cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   /* If the cursor is child that is not on the top row, move it inside its upper
    * neighbour.*/
   int childIndex = m_numberOfColumns;
   while (childIndex < numberOfChildren()) {
-    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
+    if (cursor.pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
       return editableChild(childIndex - m_numberOfColumns)->cursorInDescendantsAbove(cursor, shouldRecomputeLayout);
     }
     childIndex++;
@@ -89,10 +89,10 @@ ExpressionLayoutCursor GridLayout::cursorAbove(ExpressionLayoutCursor * cursor, 
   return ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-ExpressionLayoutCursor GridLayout::cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor GridLayout::cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   int childIndex = 0;
   while (childIndex < numberOfChildren() - m_numberOfColumns) {
-    if (cursor->pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
+    if (cursor.pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
       return editableChild(childIndex + m_numberOfColumns)->cursorInDescendantsUnder(cursor, shouldRecomputeLayout);
     }
     childIndex++;

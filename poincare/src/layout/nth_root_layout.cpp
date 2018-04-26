@@ -50,11 +50,11 @@ void NthRootLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
-ExpressionLayoutCursor NthRootLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor NthRootLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the radicand. Go the index if any, else go Left of the root.
   if (radicandLayout()
-    && cursor->pointedExpressionLayout() == radicandLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Left)
+    && cursor.pointedExpressionLayout() == radicandLayout()
+    && cursor.position() == ExpressionLayoutCursor::Position::Left)
   {
     if (indexLayout()) {
       return ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Right);
@@ -63,18 +63,18 @@ ExpressionLayoutCursor NthRootLayout::cursorLeftOf(ExpressionLayoutCursor * curs
   }
   // Case: Left of the index. Go Left of the root.
   if (indexLayout()
-    && cursor->pointedExpressionLayout() == indexLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Left)
+    && cursor.pointedExpressionLayout() == indexLayout()
+    && cursor.position() == ExpressionLayoutCursor::Position::Left)
   {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Right. Go Right of the radicand.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Right) {
     assert(radicandLayout() != nullptr);
     return ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Right);
   }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
   if (m_parent) {
     return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
@@ -82,32 +82,32 @@ ExpressionLayoutCursor NthRootLayout::cursorLeftOf(ExpressionLayoutCursor * curs
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor NthRootLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor NthRootLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the radicand. Go the Right of the root.
   if (radicandLayout()
-    && cursor->pointedExpressionLayout() == radicandLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Right)
+    && cursor.pointedExpressionLayout() == radicandLayout()
+    && cursor.position() == ExpressionLayoutCursor::Position::Right)
   {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
   // Case: Right of the index. Go Left of the integrand.
   if (indexLayout()
-    && cursor->pointedExpressionLayout() == indexLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Right)
+    && cursor.pointedExpressionLayout() == indexLayout()
+    && cursor.position() == ExpressionLayoutCursor::Position::Right)
   {
     assert(radicandLayout() != nullptr);
     return ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Left);
   }
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Left. Go index if there is one, else go to the radicand.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Left) {
     if (indexLayout()) {
       return ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Left);
     }
     assert(radicandLayout() != nullptr);
     return ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Left);
   }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Right);
   // Case: Right. Ask the parent.
   if (m_parent) {
     return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
@@ -115,33 +115,33 @@ ExpressionLayoutCursor NthRootLayout::cursorRightOf(ExpressionLayoutCursor * cur
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor NthRootLayout::cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor NthRootLayout::cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // If the cursor is Left of the radicand, move it to the index.
   if (indexLayout()
       && radicandLayout()
-      && cursor->isEquivalentTo(ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Left)))
+      && cursor.isEquivalentTo(ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Left)))
   {
     return ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Right);
   }
   // If the cursor is Left, move it to the index.
   if (indexLayout()
-      && cursor->pointedExpressionLayout() == this
-      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+      && cursor.pointedExpressionLayout() == this
+      && cursor.position() == ExpressionLayoutCursor::Position::Left)
   {
     return ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Left);
   }
   return ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-ExpressionLayoutCursor NthRootLayout::cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (indexLayout() && cursor->pointedExpressionLayout()->hasAncestor(indexLayout(), true)) {
+ExpressionLayoutCursor NthRootLayout::cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  if (indexLayout() && cursor.pointedExpressionLayout()->hasAncestor(indexLayout(), true)) {
     // If the cursor is Right of the index, move it to the radicand.
-    if (cursor->isEquivalentTo(ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Right))) {
+    if (cursor.isEquivalentTo(ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Right))) {
       assert(radicandLayout() != nullptr);
       return ExpressionLayoutCursor(radicandLayout(), ExpressionLayoutCursor::Position::Left);
     }
     // If the cursor is Left of the index, move it Left .
-    if (cursor->isEquivalentTo(ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Left))) {
+    if (cursor.isEquivalentTo(ExpressionLayoutCursor(indexLayout(), ExpressionLayoutCursor::Position::Left))) {
       return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
     }
   }

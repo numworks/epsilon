@@ -85,18 +85,18 @@ public:
   virtual void deleteBeforeCursor(ExpressionLayoutCursor * cursor);
 
   /* Tree navigation */
-  virtual ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
-  virtual ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
-  virtual ExpressionLayoutCursor cursorInDescendantsAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
-  virtual ExpressionLayoutCursor cursorInDescendantsUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
+  virtual ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) = 0;
+  virtual ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) = 0;
+  virtual ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
+  virtual ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
+  virtual ExpressionLayoutCursor cursorInDescendantsAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
+  virtual ExpressionLayoutCursor cursorInDescendantsUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
 
   /* Expression Engine */
   virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Cursor */
-  virtual ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor * cursor);
+  virtual ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor cursor);
 
   /* Other */
   virtual ExpressionLayout * layoutToPointWhenInserting();
@@ -135,7 +135,7 @@ protected:
   virtual KDPoint positionOfChild(ExpressionLayout * child) = 0;
   void scoreCursorInDescendantsVerticalOf (
     VerticalDirection direction,
-    ExpressionLayoutCursor * cursor,
+    ExpressionLayoutCursor cursor,
     bool * shouldRecomputeLayout,
     ExpressionLayout ** childResult,
     void * resultPosition,
@@ -152,8 +152,8 @@ protected:
   bool m_positioned;
 private:
   void detachChildAtIndex(int i);
-  ExpressionLayoutCursor cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
-  ExpressionLayoutCursor cursorInDescendantsVerticalOf(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout);
+  ExpressionLayoutCursor cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
+  ExpressionLayoutCursor cursorInDescendantsVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
   KDRect m_frame;
 };

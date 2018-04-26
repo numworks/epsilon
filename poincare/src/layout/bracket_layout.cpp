@@ -21,13 +21,13 @@ void BracketLayout::invalidAllSizesPositionsAndBaselines() {
   ExpressionLayout::invalidAllSizesPositionsAndBaselines();
 }
 
-ExpressionLayoutCursor BracketLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->pointedExpressionLayout() == this);
+ExpressionLayoutCursor BracketLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Right. Go Left.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Right) {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
   if (m_parent) {
     return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
@@ -35,13 +35,13 @@ ExpressionLayoutCursor BracketLayout::cursorLeftOf(ExpressionLayoutCursor * curs
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor BracketLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->pointedExpressionLayout() == this);
+ExpressionLayoutCursor BracketLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Left. Go Right.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Left) {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Right);
   // Case: Right. Ask the parent.
   if (m_parent) {
     return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);

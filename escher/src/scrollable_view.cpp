@@ -2,9 +2,9 @@
 #include <escher/metric.h>
 #include <assert.h>
 
-ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource) :
+ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource, KDCoordinate leftMargin, KDCoordinate rightMargin, KDCoordinate topMargin, KDCoordinate bottomMargin, bool showIndicators, bool colorBackground, KDColor backgroundColor) :
   Responder(parentResponder),
-  ScrollView(view, dataSource, 0, 0, 0, 0, false, false),
+  ScrollView(view, dataSource, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground, backgroundColor),
   m_manualScrollingOffset(KDPointZero)
 {
 }

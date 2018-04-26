@@ -27,6 +27,9 @@ protected:
   KDRect visibleContentRect();
   void layoutSubviews() override;
   void updateScrollIndicator();
+  void setBackgroundColor(KDColor color) {
+    m_backgroundColor = color;
+  }
   KDSize contentSize();
   KDCoordinate m_topMargin;
 #if ESCHER_VIEW_LOGGING

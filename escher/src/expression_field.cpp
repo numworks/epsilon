@@ -5,8 +5,8 @@
 ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer, int textBufferLength, Poincare::ExpressionLayout * layout, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   Responder(parentResponder),
   View(),
-  m_textField(parentResponder, textBuffer, textBuffer, textBufferLength, textFieldDelegate, false),
-  m_expressionLayoutField(parentResponder, layout, expressionLayoutFieldDelegate),
+  m_textField(parentResponder, textBuffer, textBuffer, textBufferLength, textFieldDelegate, false, KDText::FontSize::Large, 0.0f, 0.5f, KDColorBlack, KDColorWhite, k_horizontalMargin, k_horizontalMargin, 0, 0),
+  m_expressionLayoutField(parentResponder, layout, expressionLayoutFieldDelegate, k_horizontalMargin, k_horizontalMargin, k_verticalMargin, k_verticalMargin),
   m_textBuffer(textBuffer),
   m_textBufferLength(textBufferLength)
 {
@@ -63,7 +63,7 @@ View * ExpressionField::subviewAtIndex(int index) {
 }
 
 void ExpressionField::layoutSubviews() {
-  KDRect inputViewFrame(k_leftMargin, k_separatorThickness, bounds().width() - k_leftMargin, bounds().height() - k_separatorThickness);
+  KDRect inputViewFrame(0, k_separatorThickness, bounds().width(), bounds().height() - k_separatorThickness);
   if (editionIsInTextField()) {
     m_textField.setFrame(inputViewFrame);
     m_expressionLayoutField.setFrame(KDRectZero);
@@ -81,12 +81,6 @@ void ExpressionField::reload() {
 void ExpressionField::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the separator
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
-  // Color the left margin
-  ctx->fillRect(KDRect(0, k_separatorThickness, k_leftMargin, bounds().height() - k_separatorThickness), m_textField.backgroundColor());
-  if (!editionIsInTextField()) {
-    // Color the upper margin
-    ctx->fillRect(KDRect(0, k_separatorThickness, bounds().width(), k_verticalExpressionViewMargin), m_textField.backgroundColor());
-  }
 }
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {
@@ -106,7 +100,7 @@ bool ExpressionField::isEmpty() const {
 }
 
 bool ExpressionField::heightIsMaximal() const {
-  return inputViewHeight() == k_separatorThickness + k_verticalExpressionViewMargin + maximalHeight();
+  return inputViewHeight() == k_separatorThickness + maximalHeight();
 }
 
 bool ExpressionField::handleEventWithText(const char * text, bool indentation) {
@@ -118,15 +112,10 @@ bool ExpressionField::handleEventWithText(const char * text, bool indentation) {
 }
 
 KDCoordinate ExpressionField::inputViewHeight() const {
-  if (editionIsInTextField()) {
-    return k_separatorThickness + k_textFieldHeight;
-  }
   return k_separatorThickness
-    + k_verticalExpressionViewMargin
-    + min(maximalHeight(),
-        max(k_textFieldHeight,
-          m_expressionLayoutField.minimalSizeForOptimalDisplay().height()
-          + k_verticalExpressionViewMargin));
+    + (editionIsInTextField() ? k_textFieldHeight :
+        min(maximalHeight(),
+          max(k_textFieldHeight, m_expressionLayoutField.minimalSizeForOptimalDisplay().height())));
 }
 
 KDCoordinate ExpressionField::maximalHeight() const {

@@ -225,7 +225,9 @@ void ExpressionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
     // Case: The pointed layout is a child. Move Left.
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
     bool shouldRecomputeLayout = false;
-    cursor->cursorOnLeft(&shouldRecomputeLayout);
+    ExpressionLayoutCursor newCursor = cursor->cursorOnLeft(&shouldRecomputeLayout);
+    cursor->setPointedExpressionLayout(newCursor.pointedExpressionLayout());
+    cursor->setPosition(newCursor.position());
     return;
   }
   assert(cursor->pointedExpressionLayout() == this);

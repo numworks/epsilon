@@ -34,8 +34,8 @@ public:
 
 private:
   static constexpr KDCoordinate k_textFieldHeight = 37;
-  static constexpr KDCoordinate k_leftMargin = 5;
-  static constexpr KDCoordinate k_verticalExpressionViewMargin = 5;
+  static constexpr KDCoordinate k_horizontalMargin = 5;
+  static constexpr KDCoordinate k_verticalMargin = 5;
   constexpr static int k_separatorThickness = 1;
   KDCoordinate inputViewHeight() const;
   KDCoordinate maximalHeight() const;

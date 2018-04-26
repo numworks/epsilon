@@ -57,8 +57,8 @@ void TextInput::ContentView::reloadRectFromCursorPosition(size_t index, bool lin
 
 /* TextInput */
 
-TextInput::TextInput(Responder * parentResponder, View * contentView) :
-  ScrollableView(parentResponder, contentView, this)
+TextInput::TextInput(Responder * parentResponder, View * contentView, KDCoordinate leftMargin, KDCoordinate rightMargin, KDCoordinate topMargin, KDCoordinate bottomMargin , KDColor backgroundColor) :
+  ScrollableView(parentResponder, contentView, this,leftMargin, rightMargin, topMargin, bottomMargin, false, true, backgroundColor)
 {
 }
 
@@ -70,6 +70,7 @@ Toolbox * TextInput::toolbox() {
 }
 
 void TextInput::setBackgroundColor(KDColor backgroundColor) {
+  ScrollView::setBackgroundColor(backgroundColor);
   contentView()->setBackgroundColor(backgroundColor);
 }
 

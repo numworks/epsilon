@@ -4,9 +4,9 @@
 
 using namespace Poincare;
 
-ExpressionLayoutField::ContentView::ContentView(ExpressionLayout * expressionLayout) :
+ExpressionLayoutField::ContentView::ContentView(ExpressionLayout * expressionLayout, KDColor backgroundColor) :
   m_cursor(expressionLayout, ExpressionLayoutCursor::Position::Right),
-  m_expressionView(),
+  m_expressionView(0.0f, 0.5f, KDColorBlack, backgroundColor),
   m_cursorView(),
   m_isEditing(false)
 {
@@ -32,11 +32,7 @@ void ExpressionLayoutField::ContentView::clearLayout() {
 }
 
 KDSize ExpressionLayoutField::ContentView::minimalSizeForOptimalDisplay() const {
-  KDSize expressionViewSize = m_expressionView.minimalSizeForOptimalDisplay();
-  KDSize cursorSize = isEditing() ? m_cursorView.minimalSizeForOptimalDisplay() : KDSizeZero;
-  KDCoordinate resultWidth = expressionViewSize.width() + cursorSize.width();
-  KDCoordinate resultHeight = expressionViewSize.height() + cursorSize.height()/2;
-  return KDSize(resultWidth, resultHeight);
+  return m_expressionView.minimalSizeForOptimalDisplay();
 }
 
 View * ExpressionLayoutField::ContentView::subviewAtIndex(int index) {

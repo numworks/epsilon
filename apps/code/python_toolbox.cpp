@@ -293,7 +293,7 @@ bool PythonToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   const char * editedText = I18n::translate(node->insertedText());
   int strippedEditedTextMaxLength = strlen(editedText)+1;
   char strippedEditedText[strippedEditedTextMaxLength];
-  Shared::ToolboxHelpers::TextToInsertForCommandMessage(node->insertedText(), strippedEditedText, strippedEditedTextMaxLength);
+  Shared::ToolboxHelpers::TextToInsertForCommandMessage(node->insertedText(), strippedEditedText, strippedEditedTextMaxLength, true);
   sender()->handleEventWithText(strippedEditedText, true);
   app()->dismissModalViewController();
   return true;

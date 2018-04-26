@@ -28,7 +28,16 @@ void ExpressionLayoutField::clearLayout() {
 }
 
 void ExpressionLayoutField::scrollToCursor() {
+  // Show the whole cursor
   scrollToContentRect(m_contentView.cursorRect(), true);
+  // Show the cursor area around its baseline
+  Poincare::ExpressionLayoutCursor * cursor = m_contentView.cursor();
+  KDCoordinate cursorBaseline = cursor->baseline();
+  KDCoordinate underBaseline = m_contentView.cursorRect().height() - cursorBaseline;
+  KDCoordinate minAroundBaseline = min(cursorBaseline, underBaseline);
+  minAroundBaseline = min(minAroundBaseline, bounds().height() / 2);
+  KDRect balancedRect(0, m_contentView.cursorRect().y() + cursorBaseline - minAroundBaseline, 1, 2 * minAroundBaseline);
+  scrollToContentRect(balancedRect, true);
 }
 
 Toolbox * ExpressionLayoutField::toolbox() {

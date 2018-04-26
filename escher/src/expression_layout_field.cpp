@@ -7,9 +7,10 @@
 #include <assert.h>
 #include <string.h>
 
-ExpressionLayoutField::ExpressionLayoutField(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ExpressionLayoutFieldDelegate * delegate) :
-  ScrollableView(parentResponder, &m_contentView, this),
-  m_contentView(expressionLayout),
+ExpressionLayoutField::ExpressionLayoutField(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ExpressionLayoutFieldDelegate * delegate, KDCoordinate leftMargin, KDCoordinate rightMargin, KDCoordinate topMargin, KDCoordinate bottomMargin, KDColor backgroundColor) :
+  ScrollableView(parentResponder, &m_contentView, this, leftMargin, rightMargin, 0, 0, false, true, backgroundColor),
+  m_contentView(expressionLayout, backgroundColor),
+  m_verticalMargin(topMargin), //FIXME Find a way to add the margins to the scrollableView without un-cetring the ExpressionLayout.
   m_delegate(delegate)
 {
 }
@@ -66,7 +67,8 @@ bool ExpressionLayoutField::expressionLayoutFieldShouldFinishEditing(Ion::Events
 }
 
 KDSize ExpressionLayoutField::minimalSizeForOptimalDisplay() const {
-  return m_contentView.minimalSizeForOptimalDisplay();
+  KDSize contentViewSize = m_contentView.minimalSizeForOptimalDisplay();
+  return KDSize(contentViewSize.width(), contentViewSize.height() + m_verticalMargin);
 }
 
 bool ExpressionLayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {

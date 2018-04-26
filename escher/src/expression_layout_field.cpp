@@ -228,8 +228,8 @@ void ExpressionLayoutField::reload() {
   if (m_delegate && previousSize.height() != newSize.height()) {
     m_delegate->expressionLayoutFieldDidChangeSize(this);
   }
-  scrollToCursor();
   m_contentView.cursorPositionChanged();
+  scrollToCursor();
   markRectAsDirty(bounds());
 }
 

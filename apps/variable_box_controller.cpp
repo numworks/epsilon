@@ -141,7 +141,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   if (m_currentPage == Page::Scalar) {
     myCell->displayExpression(false);
     char buffer[PrintFloat::k_maxComplexBufferLength];
-    evaluation->writeTextInBuffer(buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits));
+    evaluation->writeTextInBuffer(buffer, PrintFloat::k_maxComplexBufferLength, Constant::ShortNumberOfSignificantDigits);
     myCell->setSubtitle(buffer);
     return;
   }

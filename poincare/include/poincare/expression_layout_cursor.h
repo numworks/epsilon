@@ -50,6 +50,7 @@ public:
   void addEmptyPowerLayout();
   void addEmptySquareRootLayout();
   void addEmptySquarePowerLayout();
+  void addEmptyTenPowerLayout();
   void addXNTCharLayout();
   void insertText(const char * text);
   void performBackspace();

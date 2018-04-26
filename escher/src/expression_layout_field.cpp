@@ -151,6 +151,10 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
     m_contentView.cursor()->addEmptySquarePowerLayout();
     return true;
   }
+  if (event == Ion::Events::EE) {
+    m_contentView.cursor()->addEmptyTenPowerLayout();
+    return true;
+  }
   if (event.hasText()) {
     const char * textToInsert = event.text();
     if (textToInsert[1] == 0) {

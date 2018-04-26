@@ -63,62 +63,62 @@ void VerticalOffsetLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
-ExpressionLayoutCursor VerticalOffsetLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor VerticalOffsetLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the indice. Go Left.
   if (indiceLayout()
-      && cursor->pointedExpressionLayout() == indiceLayout()
-      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+      && cursor.pointedExpressionLayout() == indiceLayout()
+      && cursor.position() == ExpressionLayoutCursor::Position::Left)
   {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
 
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Right. Go to the indice.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Right) {
     assert(indiceLayout() != nullptr);
     return ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Right);
   }
   // Case: Left. Ask the parent.
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
     return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
   }
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor VerticalOffsetLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor VerticalOffsetLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the indice. Go Right.
   if (indiceLayout()
-      && cursor->pointedExpressionLayout() == indiceLayout()
-      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+      && cursor.pointedExpressionLayout() == indiceLayout()
+      && cursor.position() == ExpressionLayoutCursor::Position::Right)
   {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
 
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Left. Go to the indice.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Left) {
     assert(indiceLayout() != nullptr);
     return ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Left);
   }
   // Case: Right. Ask the parent.
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Right);
   if (m_parent) {
     return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
   }
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor VerticalOffsetLayout::cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor VerticalOffsetLayout::cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // Case: Superscript.
   if (m_type == VerticalOffsetLayout::Type::Superscript) {
     // Case: Right. Move to the indice.
-    if (cursor->isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right))) {
+    if (cursor.isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right))) {
       assert(indiceLayout() != nullptr);
       return ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Right);
     }
     // Case: Left. Move to the indice.
-    if (cursor->isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left))) {
+    if (cursor.isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left))) {
       assert(indiceLayout() != nullptr);
       return ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Left);
     }
@@ -127,24 +127,24 @@ ExpressionLayoutCursor VerticalOffsetLayout::cursorAbove(ExpressionLayoutCursor 
    * position, pointing this. */
   if (m_type == VerticalOffsetLayout::Type::Subscript
     && indiceLayout() != nullptr
-    && (cursor->isEquivalentTo(ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Left))
-      || cursor->isEquivalentTo(ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Right))))
+    && (cursor.isEquivalentTo(ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Left))
+      || cursor.isEquivalentTo(ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Right))))
   {
-      return ExpressionLayoutCursor(this, cursor->position());
+      return ExpressionLayoutCursor(this, cursor.position());
   }
   return ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-ExpressionLayoutCursor VerticalOffsetLayout::cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor VerticalOffsetLayout::cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   // Case: Subscript.
   if (m_type == VerticalOffsetLayout::Type::Subscript) {
     // Case: Right. Move to the indice.
-    if (cursor->isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right))) {
+    if (cursor.isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right))) {
       assert(indiceLayout() != nullptr);
       return ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Right);
     }
     // Case: Left. Move to the indice.
-    if (cursor->isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left))) {
+    if (cursor.isEquivalentTo(ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left))) {
       assert(indiceLayout() != nullptr);
       return ExpressionLayoutCursor(indiceLayout(), ExpressionLayoutCursor::Position::Left);
     }
@@ -153,9 +153,9 @@ ExpressionLayoutCursor VerticalOffsetLayout::cursorUnder(ExpressionLayoutCursor 
    * position, pointing this. */
   if (m_type == VerticalOffsetLayout::Type::Superscript
     && indiceLayout() != nullptr
-    && cursor->pointedExpressionLayout() == indiceLayout())
+    && cursor.pointedExpressionLayout() == indiceLayout())
   {
-    return ExpressionLayoutCursor(this, cursor->position());
+    return ExpressionLayoutCursor(this, cursor.position());
   }
   return ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }

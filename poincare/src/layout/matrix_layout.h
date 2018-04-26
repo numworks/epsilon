@@ -11,12 +11,12 @@ public:
   ExpressionLayout * clone() const override;
 
   /* Navigation */
-  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
-  ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
-  ExpressionLayoutCursor cursorInDescendantsAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  ExpressionLayoutCursor cursorInDescendantsUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+  ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+  ExpressionLayoutCursor cursorInDescendantsAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorInDescendantsUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
 
   /* Dynamic layout */
   void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) override;

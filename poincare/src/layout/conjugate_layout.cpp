@@ -26,44 +26,44 @@ void ConjugateLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cur
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
-ExpressionLayoutCursor ConjugateLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor ConjugateLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the operand. Move Left.
   if (operandLayout()
-      && cursor->pointedExpressionLayout() == operandLayout()
-      && cursor->position() == ExpressionLayoutCursor::Position::Left)
+      && cursor.pointedExpressionLayout() == operandLayout()
+      && cursor.position() == ExpressionLayoutCursor::Position::Left)
   {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Right. Go to the operand.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Right) {
     assert(operandLayout() != nullptr);
     return ExpressionLayoutCursor(operandLayout(), ExpressionLayoutCursor::Position::Right);
   }
   // Case: Left. Ask the parent.
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Left);
   if (m_parent) {
     return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
   }
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor ConjugateLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor ConjugateLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the operand. Move Right.
   if (operandLayout()
-      && cursor->pointedExpressionLayout() == operandLayout()
-      && cursor->position() == ExpressionLayoutCursor::Position::Right)
+      && cursor.pointedExpressionLayout() == operandLayout()
+      && cursor.position() == ExpressionLayoutCursor::Position::Right)
   {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Left. Go to the operand.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Left) {
     assert(operandLayout() != nullptr);
     return ExpressionLayoutCursor(operandLayout(), ExpressionLayoutCursor::Position::Left);
   }
   // Case: Right. Ask the parent.
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Right);
   if (m_parent) {
     return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
   }

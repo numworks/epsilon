@@ -253,26 +253,26 @@ char ExpressionLayout::XNTChar() const {
   return m_parent->XNTChar();
 }
 
-ExpressionLayoutCursor ExpressionLayout::cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor ExpressionLayout::cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   return cursorVerticalOf(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   return cursorInDescendantsVerticalOf(VerticalDirection::Up, cursor, shouldRecomputeLayout);
 }
 
-ExpressionLayoutCursor ExpressionLayout::cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor ExpressionLayout::cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   return cursorVerticalOf(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   return cursorInDescendantsVerticalOf(VerticalDirection::Down, cursor, shouldRecomputeLayout);
 }
 
-ExpressionLayoutCursor ExpressionLayout::equivalentCursor(ExpressionLayoutCursor * cursor) {
+ExpressionLayoutCursor ExpressionLayout::equivalentCursor(ExpressionLayoutCursor cursor) {
   // Only HorizontalLayout may not have a parent, and it overload this function
   assert(m_parent);
-  if (cursor->pointedExpressionLayout() == this) {
+  if (cursor.pointedExpressionLayout() == this) {
     return m_parent->equivalentCursor(cursor);
   } else {
     return ExpressionLayoutCursor();
@@ -330,7 +330,7 @@ void ExpressionLayout::detachChildAtIndex(int i) {
   op[i] = nullptr;
 }
 
-ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsVerticalOf(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   ExpressionLayout *  chilResult = nullptr;
   ExpressionLayout ** childResultPtr = &chilResult;
   ExpressionLayoutCursor::Position resultPosition = ExpressionLayoutCursor::Position::Left;
@@ -348,16 +348,16 @@ ExpressionLayoutCursor ExpressionLayout::cursorInDescendantsVerticalOf(VerticalD
   return ExpressionLayoutCursor(*childResultPtr, resultPosition);
 }
 
-ExpressionLayoutCursor ExpressionLayout::cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor ExpressionLayout::cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   if (!equivalentPositionVisited) {
     ExpressionLayoutCursor cursorEquivalent = equivalentCursor(cursor);
     if (cursorEquivalent.isDefined()) {
-      cursor->setPointedExpressionLayout(cursorEquivalent.pointedExpressionLayout());
-      cursor->setPosition(cursorEquivalent.position());
+      cursor.setPointedExpressionLayout(cursorEquivalent.pointedExpressionLayout());
+      cursor.setPosition(cursorEquivalent.position());
       if (direction == VerticalDirection::Up) {
-        return cursor->pointedExpressionLayout()->cursorAbove(cursor, shouldRecomputeLayout, true);
+        return cursor.pointedExpressionLayout()->cursorAbove(cursor, shouldRecomputeLayout, true);
       } else {
-        return cursor->pointedExpressionLayout()->cursorUnder(cursor, shouldRecomputeLayout, true);
+        return cursor.pointedExpressionLayout()->cursorUnder(cursor, shouldRecomputeLayout, true);
       }
     }
   }
@@ -373,14 +373,14 @@ ExpressionLayoutCursor ExpressionLayout::cursorVerticalOf(VerticalDirection dire
 
 void ExpressionLayout::scoreCursorInDescendantsVerticalOf (
     VerticalDirection direction,
-    ExpressionLayoutCursor * cursor,
+    ExpressionLayoutCursor cursor,
     bool * shouldRecomputeLayout,
     ExpressionLayout ** childResult,
     void * resultPosition,
     int * resultScore)
 {
   ExpressionLayoutCursor::Position * castedResultPosition = static_cast<ExpressionLayoutCursor::Position *>(resultPosition);
-  KDPoint cursorMiddleLeft = cursor->middleLeftPoint();
+  KDPoint cursorMiddleLeft = cursor.middleLeftPoint();
   bool layoutIsUnderOrAbove = direction == VerticalDirection::Up ? m_frame.isAbove(cursorMiddleLeft) : m_frame.isUnder(cursorMiddleLeft);
   bool layoutContains = m_frame.contains(cursorMiddleLeft);
 

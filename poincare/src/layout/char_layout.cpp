@@ -18,10 +18,10 @@ ExpressionLayout * CharLayout::clone() const {
   return layout;
 }
 
-ExpressionLayoutCursor CharLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->pointedExpressionLayout() == this);
+ExpressionLayoutCursor CharLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Right. Go Left.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Right) {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
   // Case: Left. Ask the parent.
@@ -31,10 +31,10 @@ ExpressionLayoutCursor CharLayout::cursorLeftOf(ExpressionLayoutCursor * cursor,
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor CharLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->pointedExpressionLayout() == this);
+ExpressionLayoutCursor CharLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Left. Go Right.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Left) {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
   // Case: Right. Ask the parent.

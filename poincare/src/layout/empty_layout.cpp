@@ -25,21 +25,21 @@ void EmptyLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   }
 }
 
-ExpressionLayoutCursor EmptyLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->pointedExpressionLayout() == this);
+ExpressionLayoutCursor EmptyLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
+  assert(cursor.pointedExpressionLayout() == this);
   // Ask the parent.
   if (m_parent) {
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
+    cursor.setPosition(ExpressionLayoutCursor::Position::Left);
     return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
   }
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor EmptyLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->pointedExpressionLayout() == this);
+ExpressionLayoutCursor EmptyLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
+  assert(cursor.pointedExpressionLayout() == this);
   // Ask the parent.
   if (m_parent) {
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
+    cursor.setPosition(ExpressionLayoutCursor::Position::Right);
     return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
   }
   return ExpressionLayoutCursor();

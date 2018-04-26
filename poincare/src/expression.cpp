@@ -413,7 +413,11 @@ template<typename T> Expression * Expression::complexToExpression(std::complex<T
       }
       if (r != 0 && th != 0) {
         Expression * arg = nullptr;
-        if (th > 0) {
+        if (th == 1.0) {
+          arg = new Symbol(Ion::Charset::IComplex);
+        } else if (th == -1.0) {
+          arg = new Opposite(new Symbol(Ion::Charset::IComplex), false);
+        } else if (th > 0) {
           arg = new Multiplication(CreateDecimal(th), new Symbol(Ion::Charset::IComplex), false);
         } else {
           arg = new Opposite(new Multiplication(CreateDecimal(-th), new Symbol(Ion::Charset::IComplex), false));

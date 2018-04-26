@@ -5,13 +5,11 @@
 using namespace Poincare;
 
 ExpressionLayoutField::ContentView::ContentView(ExpressionLayout * expressionLayout) :
-  m_cursor(),
+  m_cursor(expressionLayout, ExpressionLayoutCursor::Position::Right),
   m_expressionView(),
   m_cursorView(),
   m_isEditing(false)
 {
-  m_cursor.setPointedExpressionLayout(expressionLayout);
-  m_cursor.setPosition(ExpressionLayoutCursor::Position::Right);
   m_expressionView.setExpressionLayout(expressionLayout);
 }
 

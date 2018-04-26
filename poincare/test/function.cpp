@@ -85,6 +85,8 @@ QUIZ_CASE(poincare_function_evaluate) {
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("det([[1,23,3][4,5,6][7,8,9]])", "126", Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
   assert_parsed_expression_evaluates_to<double>("det([[1,23,3][4,5,6][7,8,9]])", "126");
+  assert_parsed_expression_evaluates_to<float>("det([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "126-231*I", Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
+  assert_parsed_expression_evaluates_to<double>("det([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "126-231*I");
 #endif
 
   assert_parsed_expression_evaluates_to<float>("floor(2.3)", "2");
@@ -151,6 +153,9 @@ QUIZ_CASE(poincare_function_evaluate) {
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0.041667]]", Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
   assert_parsed_expression_evaluates_to<double>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2916666666667,-8.3333333333333E-2,0.375][1.0833333333333,1.6666666666667E-1,-0.25][4.1666666666667E-2,-8.3333333333333E-2,4.1666666666667E-2]]");
+  assert_parsed_expression_evaluates_to<float>("inverse([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "[[(-0.011829)-0.045496*I,(-0.50045)-0.72702*I,0.31847+0.48863*I][0.040946+0.0036397*I,0.040036-0.021838*I,(-0.025478)+0.00090992*I][0.0033364-0.0018198*I,0.36093+0.53473*I,(-0.13012)-0.3576*I]]", Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
+  assert_parsed_expression_evaluates_to<double>("inverse([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "[[(-1.182893539581E-2)-4.549590536852E-2*I,(-0.5004549590537)-0.7270245677889*I,0.3184713375796+0.4886260236579*I][4.094631483167E-2+3.639672429481E-3*I,4.003639672429E-2-2.183803457689E-2*I,(-2.547770700637E-2)+9.099181073703E-4*I][3.336366393691E-3-1.819836214741E-3*I,0.3609341825902+0.534728541098*I,(-0.130118289354)-0.3575978161965*I]]", Degree, Cartesian, 13); // FIXME: inverse is not precise enough to display 14 significative digits
+
 #endif
 
   assert_parsed_expression_evaluates_to<float>("prediction(0.1, 100)", "[[0,0.2]]");

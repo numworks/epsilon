@@ -45,6 +45,29 @@ ExpressionLayoutCursor EmptyLayout::cursorRightOf(ExpressionLayoutCursor cursor,
   return ExpressionLayoutCursor();
 }
 
+ExpressionLayoutCursor EmptyLayout::cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  return cursorVerticalOf(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
+ExpressionLayoutCursor EmptyLayout::cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  return cursorVerticalOf(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
+ExpressionLayoutCursor EmptyLayout::cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  assert(cursor.pointedExpressionLayout() == this);
+  ExpressionLayoutCursor cursorResult = direction == VerticalDirection::Up ?
+    ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited) :
+    ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  if (cursorResult.isDefined()) {
+    return cursorResult;
+  }
+  ExpressionLayoutCursor::Position newPosition = cursor.position() == ExpressionLayoutCursor::Position::Left ? ExpressionLayoutCursor::Position::Right : ExpressionLayoutCursor::Position::Left;
+  cursor.setPosition(newPosition);
+  return direction == VerticalDirection::Up ?
+    ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited) :
+    ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
 int EmptyLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;

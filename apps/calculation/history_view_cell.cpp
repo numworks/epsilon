@@ -90,7 +90,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
    * outputView()->layoutSubviews() is going to fail. */
   Poincare::ExpressionLayout * outputExpressions[2] = {calculation->approximateOutputLayout(calculationApp->localContext()), calculation->shouldDisplayApproximateOutput(calculationApp->localContext()) ? nullptr : calculation->exactOutputLayout(calculationApp->localContext())};
   m_scrollableOutputView.outputView()->setExpressions(outputExpressions);
-  I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) ? I18n::Message::Equal : I18n::Message::AlmostEqual;
+  I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.outputView()->setEqualMessage(equalMessage);
 }
 

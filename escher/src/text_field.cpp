@@ -24,12 +24,12 @@ void TextField::ContentView::setDraftTextBuffer(char * draftTextBuffer) {
 }
 
 void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor bckCol = m_backgroundColor;
+  KDColor backgroundColor = m_backgroundColor;
   if (m_isEditing) {
-    bckCol = KDColorWhite;
+    backgroundColor = KDColorWhite;
   }
-  ctx->fillRect(rect, bckCol);
-  ctx->drawString(text(), characterFrameAtIndex(0).origin(), m_fontSize, m_textColor, bckCol);
+  ctx->fillRect(bounds(), backgroundColor);
+  ctx->drawString(text(), characterFrameAtIndex(0).origin(), m_fontSize, m_textColor, backgroundColor);
 }
 
 const char * TextField::ContentView::text() const {
@@ -161,9 +161,10 @@ KDRect TextField::ContentView::characterFrameAtIndex(size_t index) const {
 
 TextField::TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer,
     size_t textBufferSize, TextFieldDelegate * delegate, bool hasTwoBuffers, KDText::FontSize size,
-    float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
-  TextInput(parentResponder, &m_contentView),
-  m_contentView(textBuffer, draftTextBuffer, textBufferSize, size,horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+    float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor,
+    KDCoordinate leftMargin, KDCoordinate rightMargin, KDCoordinate topMargin, KDCoordinate bottomMargin) :
+  TextInput(parentResponder, &m_contentView, leftMargin, rightMargin, topMargin, bottomMargin),
+  m_contentView(textBuffer, draftTextBuffer, textBufferSize, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_hasTwoBuffers(hasTwoBuffers),
   m_delegate(delegate)
 {

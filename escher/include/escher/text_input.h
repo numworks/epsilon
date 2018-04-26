@@ -9,7 +9,7 @@
 
 class TextInput : public ScrollableView, public ScrollViewDataSource {
 public:
-  TextInput(Responder * parentResponder, View * contentView);
+  TextInput(Responder * parentResponder, View * contentView, KDCoordinate leftMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate topMargin = 0, KDCoordinate bottomMargin = 0, KDColor backgroundColor = KDColorWhite);
   Toolbox * toolbox() override;
   const char * text() const { return nonEditableContentView()->text(); }
   void setBackgroundColor(KDColor backgroundColor);

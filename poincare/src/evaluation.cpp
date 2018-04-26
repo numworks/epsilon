@@ -40,24 +40,22 @@ std::complex<T> MatrixComplex<T>::createTrace() const {
   return c;
 }
 
-// TODO: 1. implement determinant/inverse for complex matrix
-// TODO: 2. implement determinant/inverse for any expression (do not evaluate first)
+// TODO: implement determinant/inverse for any expression (do not evaluate first)
 template<typename T>
 std::complex<T> MatrixComplex<T>::createDeterminant() const {
   if (numberOfRows() != numberOfColumns()) {
     return std::complex<T>(NAN, NAN);
   }
   int dim = numberOfRows();
-  T ** tempMat = new T*[dim];
+  std::complex<T> ** tempMat = new std::complex<T>*[dim];
   for (int i = 0; i < dim; i++) {
-    tempMat[i] = new T[dim];
+    tempMat[i] = new std::complex<T>[dim];
   }
-  T det = 1;
+  std::complex<T> det = 1;
   /* Copy the matrix */
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      const std::complex<T> op = complexOperand(i*dim+j);
-      tempMat[i][j] = op.imag() != 0.0 ? NAN : op.real(); // TODO: keep complex
+      tempMat[i][j] = complexOperand(i*dim+j);
     }
   }
 
@@ -66,20 +64,20 @@ std::complex<T> MatrixComplex<T>::createDeterminant() const {
     /* Search for pivot */
     int rowWithPivot = i;
     for (int row = i+1; row < dim; row++) {
-      if (std::fabs(tempMat[rowWithPivot][i]) < std::fabs(tempMat[row][i])) {
+      if (std::abs(tempMat[rowWithPivot][i]) < std::abs(tempMat[row][i])) {
         rowWithPivot = row;
       }
     }
-    T valuePivot = tempMat[rowWithPivot][i];
+    std::complex<T> valuePivot = tempMat[rowWithPivot][i];
     /* if the pivot is null, det = 0. */
-    if (std::fabs(valuePivot) <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
+    if (std::abs(valuePivot) <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
       det = 0;
       break;
     }
     /* Switch rows to have the pivot row as first row */
     if (rowWithPivot != i) {
       for (int col = i; col < dim; col++) {
-        T temp = tempMat[i][col];
+        std::complex<T> temp = tempMat[i][col];
         tempMat[i][col] = tempMat[rowWithPivot][col];
         tempMat[rowWithPivot][col] = temp;
       }
@@ -88,7 +86,7 @@ std::complex<T> MatrixComplex<T>::createDeterminant() const {
     det *= valuePivot;
     /* Set to 0 all A[][i] by linear combination */
     for (int row = i+1; row < dim; row++) {
-      T factor = tempMat[row][i]/valuePivot;
+      std::complex<T> factor = tempMat[row][i]/valuePivot;
       for (int col = i; col < dim; col++) {
         tempMat[row][col] -= factor*tempMat[i][col];
       }
@@ -99,7 +97,7 @@ std::complex<T> MatrixComplex<T>::createDeterminant() const {
     delete[] tempMat[i];
   }
   delete[] tempMat;
-  return std::complex<T>(det);
+  return det;
 }
 
 template<typename T>
@@ -109,14 +107,13 @@ MatrixComplex<T> MatrixComplex<T>::createInverse() const {
   }
   int dim = numberOfRows();
   /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
-  T ** inv = new T*[dim];
+  std::complex<T> ** inv = new std::complex<T>*[dim];
   for (int i = 0; i < dim; i++) {
-    inv[i] = new T [2*dim];
+    inv[i] = new std::complex<T> [2*dim];
   }
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      const std::complex<T> op = complexOperand(i*dim+j);
-      inv[i][j] = op.imag() != 0.0 ? NAN : op.real(); // TODO: keep complex
+      inv[i][j] =  complexOperand(i*dim+j);
     }
     for (int j = dim; j < 2*dim; j++) {
       inv[i][j] = (i+dim == j);
@@ -127,13 +124,13 @@ MatrixComplex<T> MatrixComplex<T>::createInverse() const {
     /* Search for pivot */
     int rowWithPivot = i;
     for (int row = i+1; row < dim; row++) {
-      if (std::fabs(inv[rowWithPivot][i]) < std::fabs(inv[row][i])) {
+      if (std::abs(inv[rowWithPivot][i]) < std::abs(inv[row][i])) {
         rowWithPivot = row;
       }
     }
-    T valuePivot = inv[rowWithPivot][i];
+    std::complex<T> valuePivot = inv[rowWithPivot][i];
     /* if the pivot is null, the matrix in not invertible. */
-    if (std::fabs(valuePivot) <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
+    if (std::abs(valuePivot) <= (sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON)) {
       for (int i = 0; i < dim; i++) {
         delete[] inv[i];
       }
@@ -143,7 +140,7 @@ MatrixComplex<T> MatrixComplex<T>::createInverse() const {
     /* Switch rows to have the pivot row as first row */
     if (rowWithPivot != i) {
       for (int col = i; col < 2*dim; col++) {
-        T temp = inv[i][col];
+        std::complex<T> temp = inv[i][col];
         inv[i][col] = inv[rowWithPivot][col];
         inv[rowWithPivot][col] = temp;
       }
@@ -157,7 +154,7 @@ MatrixComplex<T> MatrixComplex<T>::createInverse() const {
       if (row == i) {
         continue;
       }
-      T factor = inv[row][i];
+      std::complex<T> factor = inv[row][i];
       for (int col = 0; col < 2*dim; col++) {
         inv[row][col] -= factor*inv[i][col];
       }
@@ -166,7 +163,7 @@ MatrixComplex<T> MatrixComplex<T>::createInverse() const {
   std::complex<T> * operands = new std::complex<T> [numberOfComplexOperands()];
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      operands[i*dim+j] = std::complex<T>(inv[i][j+dim]);
+      operands[i*dim+j] = inv[i][j+dim];
     }
   }
   for (int i = 0; i < dim; i++) {

@@ -59,6 +59,7 @@ bool ExpressionLayoutField::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
+  m_contentView.cursor()->hideEmptyLayoutIfNeeded();
   return false;
 }
 

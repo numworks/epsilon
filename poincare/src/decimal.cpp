@@ -68,7 +68,6 @@ Integer Decimal::mantissa(const char * integralPart, int integralPartLength, con
     numerator = Integer::Addition(numerator, Integer(*fractionalPart-'0'));
     fractionalPart++;
   }
-  removeZeroAtTheEnd(numerator);
   return numerator;
 }
 
@@ -82,7 +81,6 @@ Decimal::Decimal(double f) {
   m_exponent = IEEE754<double>::exponentBase10(f);
   int64_t mantissaf = std::round(f * std::pow(10.0, -m_exponent+PrintFloat::k_numberOfStoredSignificantDigits+1));
   m_mantissa = Integer(mantissaf);
-  removeZeroAtTheEnd(m_mantissa);
 }
 
 Expression::Type Decimal::type() const {
@@ -233,11 +231,12 @@ Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
   if (m_exponent > k_maxDoubleExponent || m_exponent < -k_maxDoubleExponent) {
     return this; // TODO: return new Infinite() ? new Rational(0) ?
   }
-  int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
   Integer numerator = m_mantissa;
+  removeZeroAtTheEnd(numerator);
+  int numberOfDigits = Integer::numberOfDigitsWithoutSign(numerator);
   Integer denominator = Integer(1);
   if (m_exponent >= numberOfDigits-1) {
-    numerator = Integer::Multiplication(m_mantissa, Integer::Power(Integer(10), Integer(m_exponent-numberOfDigits+1)));
+    numerator = Integer::Multiplication(numerator, Integer::Power(Integer(10), Integer(m_exponent-numberOfDigits+1)));
   } else {
     denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-m_exponent));
   }

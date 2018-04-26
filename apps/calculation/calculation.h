@@ -10,6 +10,11 @@ class CalculationStore;
 
 class Calculation {
 public:
+  enum class EqualSign : uint8_t {
+    Unknown,
+    Approximation,
+    Equal
+  };
   Calculation();
   ~Calculation(); // Delete expression and layout, if needed
   Calculation& operator=(const Calculation& other);
@@ -31,7 +36,7 @@ public:
   bool isEmpty();
   void tidy();
   bool shouldDisplayApproximateOutput(Poincare::Context * context);
-  bool exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
+  EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
   constexpr static int k_printedExpressionSize = 2*::TextField::maxBufferSize();
 private:
   /* Buffers holding text expressions have to be longer than the text written
@@ -46,6 +51,7 @@ private:
   Poincare::ExpressionLayout * m_exactOutputLayout;
   Poincare::Expression * m_approximateOutput;
   Poincare::ExpressionLayout * m_approximateOutputLayout;
+  EqualSign m_equalSign;
 };
 
 }

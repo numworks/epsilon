@@ -15,7 +15,8 @@ Calculation::Calculation() :
   m_exactOutput(nullptr),
   m_exactOutputLayout(nullptr),
   m_approximateOutput(nullptr),
-  m_approximateOutputLayout(nullptr)
+  m_approximateOutputLayout(nullptr),
+  m_equalSign(EqualSign::Unknown)
 {
 }
 
@@ -142,6 +143,7 @@ void Calculation::tidy() {
     delete m_approximateOutputLayout;
   }
   m_approximateOutputLayout = nullptr;
+  m_equalSign = EqualSign::Unknown;
 }
 
 Expression * Calculation::exactOutput(Context * context) {
@@ -189,7 +191,10 @@ bool Calculation::shouldDisplayApproximateOutput(Context * context) {
   return input()->isApproximate(*context);
 }
 
-bool Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {
+Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {
+  if (m_equalSign != EqualSign::Unknown) {
+    return m_equalSign;
+  }
   char buffer[k_printedExpressionSize];
   approximateOutput(context)->writeTextInBuffer(buffer, k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
   /* Warning: we cannot use directly the m_approximateOutputText but we have to
@@ -198,9 +203,9 @@ bool Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context 
    * are not identical. (For example, 0.000025 might be displayed "0.00003"
    * which requires in an approximative equal) */
   Expression * approximateOutput = Expression::ParseAndSimplify(buffer, *context);
-  bool isEqual = approximateOutput->isIdenticalTo(exactOutput(context));
+  m_equalSign = approximateOutput->isIdenticalTo(exactOutput(context)) ? EqualSign::Equal : EqualSign::Approximation;
   delete approximateOutput;
-  return isEqual;
+  return m_equalSign;
 }
 
 }

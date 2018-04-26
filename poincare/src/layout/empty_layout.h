@@ -34,9 +34,9 @@ protected:
   void privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) override;
 private:
   constexpr static KDCoordinate k_width = 7;
-  constexpr static KDCoordinate k_height = 13;
+  constexpr static KDCoordinate k_height = 12;
   constexpr static KDCoordinate k_marginWidth = 1;
-  constexpr static KDCoordinate k_marginHeight = 2;
+  constexpr static KDCoordinate k_marginHeight = 3;
   constexpr static KDCoordinate k_lineThickness = 1;
   bool m_isVisible;
   Color m_color;

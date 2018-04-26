@@ -19,7 +19,7 @@ KDCoordinate ExpressionLayoutCursor::baseline() {
     return k_cursorHeight / 2;
   }
   KDCoordinate pointedLayoutBaseline = m_pointedExpressionLayout->baseline();
-  ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(this).pointedExpressionLayout();
+  ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(*this).pointedExpressionLayout();
   if (m_pointedExpressionLayout->hasChild(equivalentPointedLayout)) {
     return equivalentPointedLayout->baseline();
   } else if (m_pointedExpressionLayout->hasSibling(equivalentPointedLayout)) {
@@ -42,19 +42,19 @@ KDPoint ExpressionLayoutCursor::middleLeftPoint() {
 }
 
 ExpressionLayoutCursor ExpressionLayoutCursor::cursorOnLeft(bool * shouldRecomputeLayout) {
-  return m_pointedExpressionLayout->cursorLeftOf(this, shouldRecomputeLayout);
+  return m_pointedExpressionLayout->cursorLeftOf(*this, shouldRecomputeLayout);
 }
 
 ExpressionLayoutCursor ExpressionLayoutCursor::cursorOnRight(bool * shouldRecomputeLayout) {
-  return m_pointedExpressionLayout->cursorRightOf(this, shouldRecomputeLayout);
+  return m_pointedExpressionLayout->cursorRightOf(*this, shouldRecomputeLayout);
 }
 
 ExpressionLayoutCursor ExpressionLayoutCursor::cursorAbove(bool * shouldRecomputeLayout) {
-  return m_pointedExpressionLayout->cursorAbove(this, shouldRecomputeLayout);
+  return m_pointedExpressionLayout->cursorAbove(*this, shouldRecomputeLayout);
 }
 
 ExpressionLayoutCursor ExpressionLayoutCursor::cursorUnder(bool * shouldRecomputeLayout) {
-  return m_pointedExpressionLayout->cursorUnder(this, shouldRecomputeLayout);
+  return m_pointedExpressionLayout->cursorUnder(*this, shouldRecomputeLayout);
 }
 
 void ExpressionLayoutCursor::addLayoutAndMoveCursor(ExpressionLayout * layout) {
@@ -218,7 +218,7 @@ bool ExpressionLayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
     adjacentEmptyLayout = m_pointedExpressionLayout;
   } else {
     // Check the equivalent cursor position
-    ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(this).pointedExpressionLayout();
+    ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(*this).pointedExpressionLayout();
     if (equivalentPointedLayout != nullptr && equivalentPointedLayout->isEmpty()) {
       adjacentEmptyLayout = equivalentPointedLayout;
     }
@@ -252,7 +252,7 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
     if (m_pointedExpressionLayout->isHorizontal()) {
       return false;
     }
-    ExpressionLayoutCursor equivalentLayoutCursor = m_pointedExpressionLayout->equivalentCursor(this);
+    ExpressionLayoutCursor equivalentLayoutCursor = m_pointedExpressionLayout->equivalentCursor(*this);
     if (equivalentLayoutCursor.pointedExpressionLayout() != nullptr
         && equivalentLayoutCursor.pointedExpressionLayout()->isHorizontal()
         && equivalentLayoutCursor.position() == Position::Left)
@@ -264,7 +264,7 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
 }
 
 KDCoordinate ExpressionLayoutCursor::pointedLayoutHeight() {
-  ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(this).pointedExpressionLayout();
+  ExpressionLayout * equivalentPointedLayout = m_pointedExpressionLayout->equivalentCursor(*this).pointedExpressionLayout();
   if (m_pointedExpressionLayout->hasChild(equivalentPointedLayout)) {
     return equivalentPointedLayout->size().height();
   }

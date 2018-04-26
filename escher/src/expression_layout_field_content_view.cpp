@@ -60,10 +60,10 @@ void ExpressionLayoutField::ContentView::layoutCursorSubview() {
   KDPoint expressionViewOrigin = m_expressionView.absoluteDrawingOrigin();
   ExpressionLayout * pointedLayout = m_cursor.pointedExpressionLayout();
   ExpressionLayoutCursor::Position cursorPosition = m_cursor.position();
-  ExpressionLayoutCursor equivalentCursor = pointedLayout->equivalentCursor(&m_cursor);
-  if (pointedLayout->hasChild(equivalentCursor.pointedExpressionLayout())) {
-    pointedLayout = equivalentCursor.pointedExpressionLayout();
-    cursorPosition = equivalentCursor.position();
+  ExpressionLayoutCursor eqCursor = pointedLayout->equivalentCursor(m_cursor);
+  if (pointedLayout->hasChild(eqCursor.pointedExpressionLayout())) {
+    pointedLayout = eqCursor.pointedExpressionLayout();
+    cursorPosition = eqCursor.position();
   }
   KDPoint cursoredExpressionViewOrigin = pointedLayout->absoluteOrigin();
   KDCoordinate cursorX = expressionViewOrigin.x() + cursoredExpressionViewOrigin.x();

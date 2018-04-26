@@ -23,8 +23,8 @@ public:
   void addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren);
 
   /* Navigation */
-  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
 
   /* Dynamic layout */
   void addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) override;
@@ -36,7 +36,7 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
   /* Cursor */
-  ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor * cursor) override;
+  ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor cursor) override;
 
   /* Other */
   bool isHorizontal() const override { return true; }

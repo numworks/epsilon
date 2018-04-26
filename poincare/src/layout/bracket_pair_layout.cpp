@@ -34,21 +34,21 @@ void BracketPairLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   ExpressionLayout::deleteBeforeCursor(cursor);
 }
 
-ExpressionLayoutCursor BracketPairLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor BracketPairLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the operand. Go Left of the brackets.
   if (operandLayout()
-    && cursor->pointedExpressionLayout() == operandLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Left)
+    && cursor.pointedExpressionLayout() == operandLayout()
+    && cursor.position() == ExpressionLayoutCursor::Position::Left)
   {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Left);
   }
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Right of the brackets. Go Right of the operand.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Right) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Right) {
     assert(operandLayout() != nullptr);
     return ExpressionLayoutCursor(operandLayout(), ExpressionLayoutCursor::Position::Right);
   }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Left);
   // Case: Left of the brackets. Ask the parent.
   if (m_parent) {
     return m_parent->cursorLeftOf(cursor, shouldRecomputeLayout);
@@ -56,23 +56,23 @@ ExpressionLayoutCursor BracketPairLayout::cursorLeftOf(ExpressionLayoutCursor * 
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor BracketPairLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor BracketPairLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the operand. Go Right of the brackets.
   if (operandLayout()
-    && cursor->pointedExpressionLayout() == operandLayout()
-    && cursor->position() == ExpressionLayoutCursor::Position::Right)
+    && cursor.pointedExpressionLayout() == operandLayout()
+    && cursor.position() == ExpressionLayoutCursor::Position::Right)
   {
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
-  assert(cursor->pointedExpressionLayout() == this);
+  assert(cursor.pointedExpressionLayout() == this);
   // Case: Left of the brackets. Go Left of the operand.
-  if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
+  if (cursor.position() == ExpressionLayoutCursor::Position::Left) {
     assert(operandLayout() != nullptr);
     return ExpressionLayoutCursor(operandLayout(), ExpressionLayoutCursor::Position::Left);
   }
-  assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
+  assert(cursor.position() == ExpressionLayoutCursor::Position::Right);
   // Case: Right of the brackets. Ask the parent.
-  cursor->setPointedExpressionLayout(this);
+  cursor.setPointedExpressionLayout(this);
   if (m_parent) {
     return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
   }

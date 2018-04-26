@@ -10,24 +10,24 @@ ExpressionLayout * CondensedSumLayout::clone() const {
   return layout;
 }
 
-ExpressionLayoutCursor CondensedSumLayout::cursorLeftOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor CondensedSumLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   /* CondensedSumLayout is only used in apps/shared/sum_graph_controller.cpp, in
    * a view with no cursor. */
   assert(false);
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor CondensedSumLayout::cursorRightOf(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout) {
+ExpressionLayoutCursor CondensedSumLayout::cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   assert(false);
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor CondensedSumLayout::cursorAbove(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor CondensedSumLayout::cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   assert(false);
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor CondensedSumLayout::cursorUnder(ExpressionLayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor CondensedSumLayout::cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   assert(false);
   return ExpressionLayoutCursor();
 }

@@ -5,6 +5,7 @@
 #include <poincare/undefined.h>
 #include <poincare/symbol.h>
 #include <poincare/simplification_engine.h>
+#include <poincare/parenthesis.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -65,6 +66,16 @@ Expression * Factorial::shallowReduce(Context& context, AngleUnit angleUnit) {
   return this;
 }
 
+Expression * Factorial::shallowBeautify(Context& context, AngleUnit angleUnit) {
+  // +(a,b)! ->(+(a,b))!
+  if (operand(0)->type() == Type::Addition || operand(0)->type() == Type::Multiplication || operand(0)->type() == Type::Power) {
+    const Expression * o[1] = {operand(0)};
+    Parenthesis * p = new Parenthesis(o, true);
+    replaceOperand(operand(0), p, true);
+  }
+  return this;
+}
+
 template<typename T>
 Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   T n = c.a();
@@ -95,7 +106,16 @@ int Factorial::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSign
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  int numberOfChar = operand(0)->writeTextInBuffer(buffer, bufferSize, numberOfSignificantDigits);
+  int numberOfChar = 0;
+  if (operand(0)->needParenthesisWithParent(this)) {
+    buffer[numberOfChar++] = '(';
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  }
+  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
+  if (operand(0)->needParenthesisWithParent(this)) {
+    buffer[numberOfChar++] = ')';
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  }
   if (numberOfChar >= bufferSize-1) {
     return numberOfChar;
   }

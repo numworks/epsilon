@@ -21,6 +21,10 @@ QUIZ_CASE(poincare_power_evaluate) {
   assert_parsed_expression_evaluates_to<double>("I^I", "2.0787957635076E-1");
   assert_parsed_expression_evaluates_to<float>("1.006666666666667^60", "1.489846");
   assert_parsed_expression_evaluates_to<double>("1.006666666666667^60", "1.48984570830164");
+  assert_parsed_expression_evaluates_to<float>("X^(I*P)", "-1");
+  assert_parsed_expression_evaluates_to<double>("X^(I*P)", "-1");
+  assert_parsed_expression_evaluates_to<float>("X^(I*P+2)", "-7.38906", Radian, Cartesian, 6);
+  assert_parsed_expression_evaluates_to<double>("X^(I*P+2)", "-7.3890560989307");
 }
 
 QUIZ_CASE(poincare_power_simplify) {

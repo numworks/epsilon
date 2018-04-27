@@ -131,6 +131,9 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("R(2)", "1.414214");
   assert_parsed_expression_evaluates_to<double>("R(2)", "1.4142135623731");
 
+  assert_parsed_expression_evaluates_to<float>("R(-1)", "I");
+  assert_parsed_expression_evaluates_to<double>("R(-1)", "I");
+
   assert_parsed_expression_evaluates_to<float>("sum(n, 4, 10)", "49");
   assert_parsed_expression_evaluates_to<double>("sum(n, 4, 10)", "49");
 

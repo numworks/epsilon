@@ -22,6 +22,9 @@ public:
   virtual std::complex<T> createDeterminant() const = 0;
 };
 
+template <typename T>
+using ComplexFunction = std::complex<T> (*)(const std::complex<T>&);
+
 template<typename T>
 class Complex : public std::complex<T>, public Evaluation<T> {
 public:
@@ -35,6 +38,21 @@ public:
   T toScalar() const override;
   std::complex<T> createTrace() const override { return *this; }
   std::complex<T> createDeterminant() const override { return *this; }
+  /* Complex functions */
+  static std::complex<T> pow(const std::complex<T> &c, const std::complex<T> &d);
+  static std::complex<T> sqrt(const std::complex<T> &c) {
+    return approximate(c, std::sqrt);
+  }
+  static std::complex<T> cos(const std::complex<T> &c) {
+    return approximate(c, std::cos);
+  }
+  static std::complex<T> sin(const std::complex<T> &c) {
+    return approximate(c, std::sin);
+  }
+  static std::complex<T> tan(const std::complex<T> &c) {
+    return approximate(c, std::tan);
+  }
+  static std::complex<T> approximate(const std::complex<T>& c, ComplexFunction<T> approximation);
 };
 
 template<typename T>

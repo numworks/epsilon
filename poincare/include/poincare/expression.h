@@ -15,6 +15,7 @@ class Context;
 class Rational;
 
 class Expression {
+  template<typename T> friend class Complex;
   friend class Undefined;
   friend class Rational;
   friend class Decimal;

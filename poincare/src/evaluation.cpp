@@ -4,6 +4,7 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/evaluation.h>
+#include <poincare/expression.h>
 #include <cmath>
 
 namespace Poincare {
@@ -14,6 +15,46 @@ T Complex<T>::toScalar() const {
     return this->real();
   }
   return NAN;
+}
+
+template<typename T>
+std::complex<T> Complex<T>::pow(const std::complex<T> &c, const std::complex<T> &d) {
+  std::complex<T> result = std::pow(c, d);
+  /* Cheat: pow openbsd immplementationd is a numerical approximation.
+   * We though want to avoid evaluating e^(i*pi) to -1+1E-17i. We thus round
+   * real and imaginary parts to 0 if they are negligible compared to their
+   * norm. */
+  T norm = std::norm(result);
+  if (norm !=  0 && std::fabs(result.real()/norm) <= Expression::epsilon<T>()) {
+    result.real(0);
+  }
+  if (norm !=  0 && std::fabs(result.imag()/norm) <= Expression::epsilon<T>()) {
+    result.imag(0);
+  }
+  if (c.imag() == 0 && d.imag() == 0 && (c.real() >= 0 || d.real() == std::round(d.real()))) {
+    result.imag(0);
+  }
+  return result;
+}
+
+template<typename T>
+std::complex<T> Complex<T>::approximate(const std::complex<T>& c, ComplexFunction<T> function) {
+  std::complex<T> result = function(c);
+  /* Cheat: openbsd trigonometric functions (cos, sin, tan, sqrt) are numerical
+   * implementation and thus are approximative. The error epsilon is ~1E-7
+   * on float and ~1E-15 on double. In order to avoid weird results as
+   * cos(90) = 6E-17, we neglect the result when its ratio with the argument
+   * (pi in the exemple) is smaller than epsilon.
+   * We can't do that for all evaluation as the user can operate on values as
+   * small as 1E-308 (in double) and most results still be correct. */
+  T inputNorm = std::abs(c);
+  if (inputNorm !=  0 && std::fabs(result.real()/inputNorm) <= Expression::epsilon<T>()) {
+    result.real(0);
+  }
+  if (inputNorm !=  0 && std::fabs(result.imag()/inputNorm) <= Expression::epsilon<T>()) {
+    result.imag(0);
+  }
+  return result;
 }
 
 template<typename T>
@@ -211,5 +252,4 @@ template class Complex<float>;
 template class Complex<double>;
 template class MatrixComplex<float>;
 template class MatrixComplex<double>;
-
 }

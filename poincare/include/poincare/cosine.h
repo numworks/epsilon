@@ -17,7 +17,7 @@ public:
   Expression * clone() const override;
   float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
   template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, AngleUnit angleUnit = AngleUnit::Radian) {
-    return Trigonometry::computeDirectOnComplex(c, angleUnit, std::cos);
+    return Trigonometry::computeDirectOnComplex(c, angleUnit, Complex<T>::cos);
   }
 private:
   /* Layout */

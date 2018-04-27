@@ -87,7 +87,7 @@ Expression * Power::setSign(Sign s, Context & context, AngleUnit angleUnit) {
 
 template<typename T>
 std::complex<T> Power::compute(const std::complex<T> c, const std::complex<T> d) {
-  return std::pow(c, d);
+  return Complex<T>::pow(c, d);
 }
 
 template<typename T> MatrixComplex<T> Power::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {

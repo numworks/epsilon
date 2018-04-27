@@ -142,7 +142,7 @@ ExpressionLayoutCursor FractionLayout::cursorAbove(ExpressionLayoutCursor cursor
   // If the cursor is Left or Right, move it to the numerator.
   if (cursor.pointedExpressionLayout() == this){
     assert(numeratorLayout() != nullptr);
-    return numeratorLayout()->cursorInDescendantsAbove(cursor, shouldRecomputeLayout);
+    return ExpressionLayoutCursor(numeratorLayout(), cursor.position());
   }
   return ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
@@ -156,7 +156,7 @@ ExpressionLayoutCursor FractionLayout::cursorUnder(ExpressionLayoutCursor cursor
   // If the cursor is Left or Right, move it to the denominator.
   if (cursor.pointedExpressionLayout() == this){
     assert(denominatorLayout() != nullptr);
-    return denominatorLayout()->cursorInDescendantsUnder(cursor, shouldRecomputeLayout);
+    return ExpressionLayoutCursor(denominatorLayout(), cursor.position());
   }
   return ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }

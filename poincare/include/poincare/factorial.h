@@ -19,6 +19,7 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   /* Simplication */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowBeautify(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
   template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {

@@ -230,30 +230,16 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
 }
 
 template <typename T>
-std::complex<T> Trigonometry::computeDirectOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, Approximation<T> approximate) {
+std::complex<T> Trigonometry::computeDirectOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, ComplexFunction<T> approximate) {
   std::complex<T> input(c);
   if (angleUnit == Expression::AngleUnit::Degree) {
     input = input*std::complex<T>(M_PI/180.0);
   }
-  std::complex<T> result = approximate(input);
-  /* Cheat: openbsd trigonometric functions (cos, sin & tan) are numerical
-   * implementation and thus are approximative. The error epsilon is ~1E-7
-   * on float and ~1E-15 on double. In order to avoid weird results as
-   * cos(90) = 6E-17, we neglect the result when its ratio with the argument
-   * (pi in the exemple) is smaller than epsilon.
-   * We can't do that for all evaluation as the user can operate on values as
-   * small as 1E-308 (in double) and most results still be correct. */
-  if (std::abs(input) !=  0 && std::fabs(result.real()/std::abs(input)) <= Expression::epsilon<T>()) {
-    result.real(0);
-  }
-  if (std::abs(input) !=  0 && std::fabs(result.imag()/std::abs(input)) <= Expression::epsilon<T>()) {
-    result.imag(0);
-  }
-  return result;
+  return approximate(input);
 }
 
 template<typename T>
-std::complex<T> Trigonometry::computeInverseOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, Approximation<T> approximate) {
+std::complex<T> Trigonometry::computeInverseOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, ComplexFunction<T> approximate) {
   std::complex<T> result = approximate(c);
   if (angleUnit == Expression::AngleUnit::Degree) {
     result *= 180/M_PI;
@@ -261,9 +247,9 @@ std::complex<T> Trigonometry::computeInverseOnComplex(const std::complex<T> c, E
   return result;
 }
 
-template std::complex<double> Trigonometry::computeDirectOnComplex<double>(const std::complex<double>, Expression::AngleUnit, Approximation<double>);
-template std::complex<float> Trigonometry::computeDirectOnComplex<float>(const std::complex<float>, Expression::AngleUnit, Approximation<float>);
-template std::complex<double> Trigonometry::computeInverseOnComplex<double>(const std::complex<double>, Expression::AngleUnit, Approximation<double>);
-template std::complex<float> Trigonometry::computeInverseOnComplex<float>(const std::complex<float>, Expression::AngleUnit, Approximation<float>);
+template std::complex<double> Trigonometry::computeDirectOnComplex<double>(const std::complex<double>, Expression::AngleUnit, ComplexFunction<double>);
+template std::complex<float> Trigonometry::computeDirectOnComplex<float>(const std::complex<float>, Expression::AngleUnit, ComplexFunction<float>);
+template std::complex<double> Trigonometry::computeInverseOnComplex<double>(const std::complex<double>, Expression::AngleUnit, ComplexFunction<double>);
+template std::complex<float> Trigonometry::computeInverseOnComplex<float>(const std::complex<float>, Expression::AngleUnit, ComplexFunction<float>);
 
 }

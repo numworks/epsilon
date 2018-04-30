@@ -9,6 +9,8 @@ class ExpressionLayout;
 
 class ExpressionLayoutCursor {
 public:
+  constexpr static KDCoordinate k_cursorWidth = 1;
+
   enum class Position {
     Left,
     Right

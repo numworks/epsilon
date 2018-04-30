@@ -32,7 +32,8 @@ void ExpressionLayoutField::ContentView::clearLayout() {
 }
 
 KDSize ExpressionLayoutField::ContentView::minimalSizeForOptimalDisplay() const {
-  return m_expressionView.minimalSizeForOptimalDisplay();
+  KDSize evSize = m_expressionView.minimalSizeForOptimalDisplay();
+  return KDSize(evSize.width(), evSize.height() + ExpressionLayoutCursor::k_cursorWidth);
 }
 
 View * ExpressionLayoutField::ContentView::subviewAtIndex(int index) {
@@ -65,5 +66,5 @@ void ExpressionLayoutField::ContentView::layoutCursorSubview() {
     cursorX += pointedLayout->size().width();
   }
   KDPoint cursorTopLeftPosition(cursorX, expressionViewOrigin.y() + cursoredExpressionViewOrigin.y() + pointedLayout->baseline() - m_cursor.baseline());
-  m_cursorView.setFrame(KDRect(cursorTopLeftPosition, 1, m_cursor.cursorHeight()));
+  m_cursorView.setFrame(KDRect(cursorTopLeftPosition, ExpressionLayoutCursor::k_cursorWidth, m_cursor.cursorHeight()));
 }

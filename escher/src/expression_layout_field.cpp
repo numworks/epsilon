@@ -36,7 +36,7 @@ void ExpressionLayoutField::scrollToCursor() {
   KDCoordinate underBaseline = m_contentView.cursorRect().height() - cursorBaseline;
   KDCoordinate minAroundBaseline = min(cursorBaseline, underBaseline);
   minAroundBaseline = min(minAroundBaseline, bounds().height() / 2);
-  KDRect balancedRect(0, m_contentView.cursorRect().y() + cursorBaseline - minAroundBaseline, 1, 2 * minAroundBaseline);
+  KDRect balancedRect(0, m_contentView.cursorRect().y() + cursorBaseline - minAroundBaseline, Poincare::ExpressionLayoutCursor::k_cursorWidth, 2 * minAroundBaseline);
   scrollToContentRect(balancedRect, true);
 }
 

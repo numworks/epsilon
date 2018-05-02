@@ -33,7 +33,7 @@ void ExpressionLayoutField::ContentView::clearLayout() {
 
 KDSize ExpressionLayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize evSize = m_expressionView.minimalSizeForOptimalDisplay();
-  return KDSize(evSize.width(), evSize.height() + ExpressionLayoutCursor::k_cursorWidth);
+  return KDSize(evSize.width() + ExpressionLayoutCursor::k_cursorWidth, evSize.height());
 }
 
 View * ExpressionLayoutField::ContentView::subviewAtIndex(int index) {

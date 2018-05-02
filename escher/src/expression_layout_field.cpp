@@ -52,6 +52,9 @@ bool ExpressionLayoutField::handleEvent(Ion::Events::Event event) {
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();
   bool moveEventChangedLayout = false;
   if (privateHandleMoveEvent(event, &moveEventChangedLayout)) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
     shouldRecomputeLayout = shouldRecomputeLayout || moveEventChangedLayout;
     didHandleEvent = true;
   } else if (privateHandleEvent(event)) {
@@ -137,35 +140,57 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Back && isEditing()) {
+    clearLayout();
     setEditing(false);
     m_delegate->expressionLayoutFieldDidAbortEditing(this);
     return true;
   }
   if (event == Ion::Events::Division) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
     m_contentView.cursor()->addFractionLayoutAndCollapseSiblings();
     return true;
   }
   if (event == Ion::Events::Exp) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
     m_contentView.cursor()->addEmptyExponentialLayout();
     return true;
   }
   if (event == Ion::Events::Power) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
     m_contentView.cursor()->addEmptyPowerLayout();
     return true;
   }
   if (event == Ion::Events::Sqrt) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
     m_contentView.cursor()->addEmptySquareRootLayout();
     return true;
   }
   if (event == Ion::Events::Square) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
     m_contentView.cursor()->addEmptySquarePowerLayout();
     return true;
   }
   if (event == Ion::Events::EE) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
     m_contentView.cursor()->addEmptyTenPowerLayout();
     return true;
   }
   if (event.hasText()) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
     const char * textToInsert = event.text();
     if (textToInsert[1] == 0) {
       if (textToInsert[0] == Ion::Charset::MultiplicationSign) {
@@ -182,6 +207,9 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace) {
+    if (!isEditing()) {
+      setEditing(true);
+    }
     m_contentView.cursor()->performBackspace();
     return true;
   }

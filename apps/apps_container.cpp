@@ -127,7 +127,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       } else {
         Ion::USB::enable();
       }
-      Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+      Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
     } else {
       Ion::USB::disable();
     }

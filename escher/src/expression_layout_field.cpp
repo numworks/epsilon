@@ -126,10 +126,7 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
     char buffer[bufferSize];
     m_contentView.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferSize);
     if (m_delegate->expressionLayoutFieldDidFinishEditing(this, buffer, event)) {
-      delete m_contentView.expressionView()->expressionLayout();
-      Poincare::ExpressionLayout * newLayout = new Poincare::HorizontalLayout();
-      m_contentView.editableExpressionView()->setExpressionLayout(newLayout);
-      m_contentView.cursor()->setPointedExpressionLayout(newLayout);
+      clearLayout();
     }
     return true;
   }

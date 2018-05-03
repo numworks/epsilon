@@ -15,6 +15,9 @@ QUIZ_CASE(poincare_logarithm_evaluate) {
   assert_parsed_expression_evaluates_to<double>("log(6,7+4*I)", "8.0843880717528E-1-2.0108238082167E-1*I");
   assert_parsed_expression_evaluates_to<float>("log(5+2*I)", "0.731199+0.1652518*I");
   assert_parsed_expression_evaluates_to<double>("ln(5+2*I)", "1.6836479149932+3.8050637711236E-1*I");
+
+  // WARNING: evaluate on branch cut can be multivalued
+  assert_parsed_expression_evaluates_to<double>("ln(-4)", "1.3862943611199+3.1415926535898*I");
 }
 
 QUIZ_CASE(poincare_logarithm_simplify) {
@@ -22,7 +25,7 @@ QUIZ_CASE(poincare_logarithm_simplify) {
   assert_parsed_expression_simplify_to("ln(12925)", "2*ln(5)+ln(11)+ln(47)");
   assert_parsed_expression_simplify_to("log(1742279/12925, 6)", "(-2*log(5,6))+log(7,6)+3*log(11,6)+log(17,6)-log(47,6)");
   assert_parsed_expression_simplify_to("ln(2/3)", "ln(2)-ln(3)");
-  assert_parsed_expression_simplify_to("log(1742279/12925, -6)", "undef");
+  assert_parsed_expression_simplify_to("log(1742279/12925, -6)", "log(158389/1175,-6)");
   assert_parsed_expression_simplify_to("ln(R(2))", "ln(2)/2");
   assert_parsed_expression_simplify_to("ln(X^3)", "3");
   assert_parsed_expression_simplify_to("log(10)", "1");

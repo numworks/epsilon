@@ -258,8 +258,10 @@ void DFUInterface::writeOnMemory() {
     /* We should check here that the destination is not the option bytes: it
      * won't happen for us. */
 
-    // Unlock the Flash and check that no memory operation is ongoing
+    // Unlock the Flash
     unlockFlashMemory();
+
+    // Activate Flash programming
     while (FLASH.SR()->getBSY()) {
     }
     FLASH.CR()->setPG(true);
@@ -270,9 +272,12 @@ void DFUInterface::writeOnMemory() {
       *destination++ = *source++;
     }
 
-    // Lock the Flash after all operations are done
+    // De-activate Flash programming
     while (FLASH.SR()->getBSY()) {
     }
+    FLASH.CR()->setPG(false);
+
+    // Lock the Flash
     lockFlashMemoryAndPurgeCaches();
   } else if (m_writeAddress >= k_sramStartAddress && m_writeAddress <= k_sramEndAddress) {
     // Write on SRAM

@@ -347,7 +347,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
         Expression * factor = m->editableOperand(i);
         if (factor->sign() == Sign::Negative) {
           m->replaceOperand(factor, new Rational(-1), false);
-          factor->setSign(Sign::Positive, context, angleUnit);
+          factor = factor->setSign(Sign::Positive, context, angleUnit);
         } else {
           m->removeOperand(factor, false);
         }

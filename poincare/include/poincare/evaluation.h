@@ -38,8 +38,15 @@ using ComplexFunction = std::complex<T> (*)(const std::complex<T>&);
 template<typename T>
 class Complex : public std::complex<T>, public Evaluation<T> {
 public:
-  Complex(T a, T b = -0.0) : std::complex<T>(a, b) {}
-  Complex(std::complex<T> c) : std::complex<T>(c) {}
+  Complex(T a, T b = 0.0) : std::complex<T>(a, b) {}
+  Complex(std::complex<T> c) : std::complex<T>(c) {
+    if (this->real() == -0) {
+      this->real(0);
+    }
+    if (this->imag() == -0) {
+      this->imag(0);
+    }
+  }
   static Complex Undefined() {
     return Complex(NAN, NAN);
   }

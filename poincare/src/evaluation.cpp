@@ -65,6 +65,12 @@ MatrixComplex<T>::MatrixComplex(std::complex<T> * operands, int numberOfRows, in
   m_operands = new std::complex<T> [numberOfRows*numberOfColumns];
   for (int i=0; i<numberOfRows*numberOfColumns; i++) {
     m_operands[i] = operands[i];
+    if (m_operands[i].real() == -0.0) {
+      m_operands[i].real(0.0);
+    }
+    if (m_operands[i].imag() == -0.0) {
+      m_operands[i].imag(0.0);
+    }
   }
 }
 

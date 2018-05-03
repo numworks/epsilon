@@ -8,6 +8,16 @@ extern "C" {
 
 namespace Poincare {
 
+/* acos, asin, arctan, acosh, asinh, arctanh and log have branch cuts on the
+ * complex plan.
+ * - acos, asin, atanh: ]-inf, -1[U]1, +inf[
+ * - atan, asinh: ]-inf*i, -i[U]i, +inf*i[
+ * - acosh: ]-inf, 1]
+ * - log: ]-inf, 0]
+ * They are then multivalued on these cuts. We followed the convention chosen
+ * by the lib c++ of llvm but it might differ from a calculator to another
+ * (ie acos(2) = -1.3169578969248*I or 1.3169578969248*I). */
+
 template<typename T>
 class Evaluation {
 public:

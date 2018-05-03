@@ -221,23 +221,27 @@ void DFUInterface::eraseMemoryIfNeeded() {
 
   // Unlock the Flash and check that no memory operation is ongoing
   unlockFlashMemory();
-  while (FLASH.SR()->getBSY()) {
-  }
 
   if (m_erasePage == k_flashMemorySectorsCount) {
     // Mass erase
+    while (FLASH.SR()->getBSY()) {
+    }
     FLASH.CR()->setMER(true);
   } else {
     // Sector erase
+    while (FLASH.SR()->getBSY()) {
+    }
     FLASH.CR()->setSER(true);
+    while (FLASH.SR()->getBSY()) {
+    }
     FLASH.CR()->setSNB(m_erasePage);
   }
   // Trigger the erase operation
+  while (FLASH.SR()->getBSY()) {
+  }
   FLASH.CR()->setSTRT(true);
 
   // Lock the Flash after all operations are done
-  while (FLASH.SR()->getBSY()) {
-  }
   lockFlashMemoryAndPurgeCaches();
 
   /* Put an out of range value in m_erasePage to indicate that no erase is
@@ -293,12 +297,12 @@ void DFUInterface::unlockFlashMemory() {
   /* After a reset, program and erase operations are forbidden on the flash.
    * They can be unlocked by writting the appropriate keys in the FLASH_KEY
    * register. */
-  while (FLASH.SR()->getBSY()) {
-  }
   if (FLASH.CR()->getLOCK()) {
     FLASH.KEYR()->set(0x45670123);
     FLASH.KEYR()->set(0xCDEF89AB);
     // Set the parallelism size
+    while (FLASH.SR()->getBSY()) {
+    }
     FLASH.CR()->setPSIZE(FLASH::CR::PSIZE::X32);
   }
 }

@@ -48,12 +48,12 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.0006102409*I", Radian);
   assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.0006102409*I", Degree);
 
-  assert_parsed_expression_evaluates_to<double>("acos(2)", "1.3169578969248*I", Radian);
-  assert_parsed_expression_evaluates_to<double>("acos(2)", "75.456129290217*I", Degree);
+  assert_parsed_expression_evaluates_to<double>("acos(0.5)", "1.0471975511966", Radian);
+  assert_parsed_expression_evaluates_to<double>("acos(0.5)", "60", Degree);
   assert_parsed_expression_evaluates_to<float>("acos(I-4)", "2.8894-2.0966*I", Radian, Cartesian, 5);
   assert_parsed_expression_evaluates_to<float>("acos(I-4)", "165.551-120.126*I", Degree, Cartesian, 6);
-  assert_parsed_expression_evaluates_to<double>("asin(2)", "1.5707963267949-1.3169578969248*I", Radian);
-  assert_parsed_expression_evaluates_to<double>("asin(2)", "90-75.456129290217*I", Degree);
+  assert_parsed_expression_evaluates_to<double>("asin(0.5)", "0.5235987755983", Radian);
+  assert_parsed_expression_evaluates_to<double>("asin(0.5)", "30", Degree);
   assert_parsed_expression_evaluates_to<float>("asin(I-4)", "(-1.3186)+2.0966*I", Radian, Cartesian, 5);
   assert_parsed_expression_evaluates_to<float>("asin(I-4)", "(-75.551)+120.13*I", Degree, Cartesian, 5);
   assert_parsed_expression_evaluates_to<double>("atan(2)", "1.1071487177941", Radian);
@@ -68,10 +68,21 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("asinh(2)", "1.4436354751788", Degree);
   assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "(-2.123)+0.2383*I", Radian, Cartesian, 4);
   assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "(-2.123)+0.2383*I", Degree, Cartesian, 4);
-  assert_parsed_expression_evaluates_to<double>("atanh(2)", "5.4930614433405E-1-1.5707963267949*I", Radian);
-  assert_parsed_expression_evaluates_to<double>("atanh(2)", "5.4930614433405E-1-1.5707963267949*I", Degree);
+  assert_parsed_expression_evaluates_to<double>("atanh(0.4)", "0.4236489301936", Radian);
+  assert_parsed_expression_evaluates_to<double>("atanh(0.4)", "0.4236489301936", Degree);
   assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Radian, Cartesian, 6);
   assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Degree, Cartesian, 6);
+
+  // WARNING: evaluate on branch cut can be multivalued
+  assert_parsed_expression_evaluates_to<double>("acos(2)", "-1.3169578969248*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("acos(2)", "-75.456129290217*I", Degree);
+  assert_parsed_expression_evaluates_to<double>("asin(2)", "1.5707963267949+1.3169578969248*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("asin(2)", "90+75.456129290217*I", Degree);
+  assert_parsed_expression_evaluates_to<double>("atanh(2)", "5.4930614433405E-1+1.5707963267949*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("atan(2I)", "1.5707963267949+5.4930614433405E-1*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("atan(2I)", "90+31.472923730945*I", Degree);
+  assert_parsed_expression_evaluates_to<double>("asinh(2I)", "1.3169578969248+1.5707963267949*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("acosh(-2)", "1.3169578969248+3.1415926535898*I", Radian);
 }
 
 QUIZ_CASE(poincare_trigo_simplify) {

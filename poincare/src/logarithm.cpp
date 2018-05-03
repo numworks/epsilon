@@ -36,9 +36,6 @@ std::complex<T> Logarithm::computeOnComplex(const std::complex<T> c, AngleUnit a
 
 Expression * Logarithm::simpleShallowReduce(Context & context, AngleUnit angleUnit) {
   Expression * op = editableOperand(0);
-  if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
-    return replaceWith(new Undefined(), true);
-  }
   // log(x,x)->1
   if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
     return replaceWith(new Rational(1), true);
@@ -75,6 +72,9 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
     return replaceWith(new Undefined(), true);
   }
 #endif
+  if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
+    return this;
+  }
   Expression * f = simpleShallowReduce(context, angleUnit);
   if (f != this) {
     return f;

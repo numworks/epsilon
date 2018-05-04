@@ -29,7 +29,6 @@ private:
     BufferTextView m_batteryLevelView;
     BufferTextView m_batteryChargingView;
   };
-  constexpr static float k_batteryThreshold = 3.7f;
   constexpr static const char * k_batteryOKText = "BATTERY: OK";
   constexpr static const char * k_batteryNeedChargingText = "BATTERY: NEED RECHARGE";
   void updateBatteryState(float batteryLevel, bool batteryCharging);

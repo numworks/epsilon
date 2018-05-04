@@ -23,9 +23,8 @@ View * BatteryTestController::view() {
 bool BatteryTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (strcmp(m_view.batteryStateTextView()->text(), k_batteryOKText) == 0) {
-      ModalViewController * modal = (ModalViewController *)parentResponder();
-      App * a = (App *)app();
-      modal->displayModalViewController(a->USBController(), 0.0f, 0.0f);
+      // Handled in WizardViewController
+      return false;
     }
   }
   updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());

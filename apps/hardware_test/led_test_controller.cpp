@@ -10,8 +10,7 @@ constexpr KDColor LEDTestController::k_LEDColors[k_numberOfColors];
 LEDTestController::LEDTestController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_view(),
-  m_LEDColorIndex(0),
-  m_batteryTestController(this)
+  m_LEDColorIndex(0)
 {
 }
 
@@ -23,8 +22,8 @@ bool LEDTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     setLEDColor(LEDColorAtIndex(m_LEDColorIndex++));
     if (m_LEDColorIndex == k_numberOfColors) {
-      ModalViewController * modal = (ModalViewController *)parentResponder();
-      modal->displayModalViewController(&m_batteryTestController, 0.0f, 0.0f);
+      // Next step, see WizardViewController
+      return false;
     }
   }
   return true;

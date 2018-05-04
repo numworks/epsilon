@@ -2,19 +2,18 @@
 #define HARDWARE_TEST_USB_TEST_CONTROLLER_H
 
 #include <escher.h>
-#include "reset_controller.h"
 #include "arrow_view.h"
 
 namespace HardwareTest {
 
-class USBTestController : public ViewController, public Timer {
+class USBTestController : public ViewController {
 public:
   USBTestController(Responder * parentResponder);
   View * view() override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event e) override;
 private:
-  bool fire() override;
+  //bool fire() override;
   class ContentView : public SolidColorView {
   public:
     ContentView();
@@ -40,7 +39,6 @@ private:
   constexpr static const char * k_USBUnplugText = "OK, UNPLUG USB";
   ContentView m_view;
   bool m_shouldPlugUSB;
-  ResetController m_resetController;
 };
 
 }

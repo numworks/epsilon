@@ -12,5 +12,4 @@ app_objs += $(addprefix apps/hardware_test/,\
   screen_test_controller.o\
   screen_test_controller.o\
   serial_number_controller.o\
-  usb_test_controller.o\
 )

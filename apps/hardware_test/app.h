@@ -6,7 +6,6 @@
 #include "screen_test_controller.h"
 #include "led_test_controller.h"
 #include "battery_test_controller.h"
-#include "usb_test_controller.h"
 #include "serial_number_controller.h"
 
 class AppsContainer;
@@ -32,7 +31,6 @@ private:
     ScreenTestController m_screenTestController;
     LEDTestController m_ledTestController;
     BatteryTestController m_batteryTestController;
-    USBTestController m_USBTestController;
     SerialNumberController m_serialNumberController;
   };
 

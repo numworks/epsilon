@@ -10,10 +10,8 @@ namespace HardwareTest {
 
 USBTestController::USBTestController(Responder * parentResponder) :
   ViewController(parentResponder),
-  Timer(1),
   m_view(),
-  m_shouldPlugUSB(true),
-  m_resetController(this)
+  m_shouldPlugUSB(true)
 {
 }
 
@@ -22,10 +20,6 @@ View * USBTestController::view() {
 }
 
 bool USBTestController::handleEvent(Ion::Events::Event e) {
-  return true;
-}
-
-bool USBTestController::fire() {
   if (Ion::USB::isPlugged() && m_shouldPlugUSB) {
     m_view.USBTextView()->setText(k_USBUnplugText);
     m_view.arrowView()->setDirection(false);
@@ -34,11 +28,10 @@ bool USBTestController::fire() {
     return true;
   }
   if (!Ion::USB::isPlugged() && !m_shouldPlugUSB) {
-    ModalViewController * modal = (ModalViewController *)parentResponder();
-    modal->displayModalViewController(&m_resetController, 0.0f, 0.0f);
-    return true;
+    // We're done, tell WizardViewController to go to the next step
+    return false;
   }
-  return false;
+  return true;
 }
 
 void USBTestController::viewWillAppear() {

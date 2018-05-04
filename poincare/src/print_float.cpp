@@ -142,7 +142,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
 
   // Correct the number of digits in mantissa after rounding
   int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == Mode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
-  if (std::floor(std::fabs((T)mantissa) * std::pow((T)10, - mantissaExponentInBase10)) > 0) {
+  if (IEEE754<T>::exponentBase10(mantissa) >= mantissaExponentInBase10) {
     mantissa = mantissa/10;
   }
 

@@ -15,6 +15,7 @@ objs += $(addprefix ion/src/shared/, \
 objs += $(addprefix ion/src/device/, \
   backlight.o \
   battery.o\
+  base64.o\
   console.o \
   device.o\
   display.o\

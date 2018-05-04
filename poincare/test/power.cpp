@@ -13,6 +13,11 @@ QUIZ_CASE(poincare_power_evaluate) {
   assert_parsed_expression_evaluates_to<float>("4^(3+I)", "11.74125+62.91378*I");
   assert_parsed_expression_evaluates_to<double>("(3+I)^(3+I)", "(-11.898191759852)+19.592921596609*I");
 
+  assert_parsed_expression_evaluates_to<double>("0^0", "undef");
+  assert_parsed_expression_evaluates_to<double>("0^2", "0");
+  assert_parsed_expression_evaluates_to<double>("0^(-2)", "undef");
+  assert_parsed_expression_evaluates_to<double>("(-2)^4.2", "14.8690638497+10.8030072384*I", Radian, Cartesian, 12);
+  assert_parsed_expression_evaluates_to<double>("(-0.1)^4", "0.0001", Radian, Cartesian, 12);
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("[[1,2][3,4]]^(-3)", "[[-14.75,6.75][10.125,-4.625]]", Degree, Cartesian, 6);
   assert_parsed_expression_evaluates_to<double>("[[1,2][3,4]]^3", "[[37,54][81,118]]");

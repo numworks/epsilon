@@ -8,7 +8,6 @@
 #include "battery_test_controller.h"
 #include "usb_test_controller.h"
 #include "serial_number_controller.h"
-#include "reset_controller.h"
 
 class AppsContainer;
 
@@ -35,7 +34,6 @@ private:
     BatteryTestController m_batteryTestController;
     USBTestController m_USBTestController;
     SerialNumberController m_serialNumberController;
-    ResetController m_resetController;
   };
 
   App(Container * container, Snapshot * snapshot);

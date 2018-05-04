@@ -16,7 +16,7 @@ void SerialNumberController::viewWillAppear() {
 }
 
 bool SerialNumberController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OnOff || event == Ion::Events::OK) {
+  if (event == Ion::Events::OnOff) {
     return false;
   }
   return true;

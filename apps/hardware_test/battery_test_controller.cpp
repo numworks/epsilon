@@ -32,8 +32,8 @@ bool BatteryTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void BatteryTestController::viewWillAppear() {
-  const char * text = Ion::Battery::voltage() < k_batteryThreshold ? k_batteryNeedChargingText : k_batteryOKText;
-  KDColor color = Ion::Battery::voltage() < k_batteryThreshold ? KDColorRed : KDColorGreen;
+  const char * text = Ion::Battery::level() !=  Ion::Battery::Charge::FULL ? k_batteryNeedChargingText : k_batteryOKText;
+  KDColor color = Ion::Battery::level() !=  Ion::Battery::Charge::FULL ? KDColorRed : KDColorGreen;
   m_view.setColor(color);
   m_view.batteryStateTextView()->setText(text);
   updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());

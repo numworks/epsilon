@@ -29,13 +29,12 @@ App::WizardViewController::WizardViewController(Responder * parentResponder) :
   m_ledTestController(this),
   m_batteryTestController(this),
   m_USBTestController(this),
-  m_serialNumberController(this),
-  m_resetController(this)
+  m_serialNumberController(this)
 {
 }
 
 int App::WizardViewController::numberOfChildren() {
-  return 7;
+  return 6;
 }
 
 ViewController * App::WizardViewController::childAtIndex(int i) {
@@ -45,8 +44,7 @@ ViewController * App::WizardViewController::childAtIndex(int i) {
     &m_ledTestController,
     &m_batteryTestController,
     &m_USBTestController,
-    &m_serialNumberController,
-    &m_resetController
+    &m_serialNumberController
   };
   return children[i];
 }

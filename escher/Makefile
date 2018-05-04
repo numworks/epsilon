@@ -3,6 +3,7 @@ SFLAGS += -Iescher/include
 objs += $(addprefix escher/src/,\
   alternate_empty_view_controller.o\
   app.o\
+  bank_view_controller.o\
   buffer_text_view.o\
   button.o\
   button_row_controller.o\

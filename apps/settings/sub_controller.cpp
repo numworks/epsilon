@@ -192,24 +192,13 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   }
   if (m_messageTreeModel->label() == I18n::Message::About) {
     myCell->setMessageFontSize(KDText::FontSize::Small);
-    const char * accessoryMessage = nullptr;
-    char serialNumber[Ion::SerialNumberLength+1];
-    switch (index) {
-      case 0:
-        accessoryMessage = Ion::softwareVersion();
-        break;
-      case 1:
-        Ion::getSerialNumber(serialNumber);
-        accessoryMessage = serialNumber;
-        break;
-      case 2:
-        accessoryMessage = Ion::fccId();
-        break;
-      default:
-        assert(false);
-        break;
-    }
-    myCell->setAccessoryText(accessoryMessage);
+    const char * messages[] = {
+      Ion::softwareVersion(),
+      Ion::serialNumber(),
+      Ion::fccId()
+    };
+    assert(index >= 0 && index < 3);
+    myCell->setAccessoryText(messages[index]);
   }
 }
 

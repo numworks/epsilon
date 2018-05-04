@@ -8,8 +8,7 @@ namespace HardwareTest {
 ScreenTestController::ScreenTestController(Responder * parentResponder) :
   ViewController(parentResponder),
   m_patternIndex(0),
-  m_view(),
-  m_ledTestController(this)
+  m_view()
 {
 }
 
@@ -22,8 +21,8 @@ bool ScreenTestController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (m_patternIndex == Pattern::numberOfPatterns()) {
-    ModalViewController * modal = (ModalViewController *)parentResponder();
-    modal->displayModalViewController(&m_ledTestController, 0.0f, 0.0f);
+    // Go to the next step - this will be handled by the WizardViewController
+    return false;
   } else {
     showNextPattern();
   }

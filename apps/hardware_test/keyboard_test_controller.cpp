@@ -10,8 +10,7 @@ namespace HardwareTest {
 
 KeyboardTestController::KeyboardTestController(Responder * parentResponder) :
   ViewController(parentResponder),
-  m_keyboardView(),
-  m_screenTestController(nullptr)
+  m_keyboardView()
 {
 }
 
@@ -25,8 +24,8 @@ bool KeyboardTestController::handleEvent(Ion::Events::Event event) {
   if (state == onlyKeyDown) {
     m_keyboardView.setTestedKeyIndex(m_keyboardView.testedKeyIndex()+1);
     if (m_keyboardView.testedKeyIndex() == Ion::Keyboard::NumberOfValidKeys) {
-      ModalViewController * modal = (ModalViewController *)parentResponder();
-      modal->displayModalViewController(&m_screenTestController, 0.0f, 0.0f);
+      // Returning false will go to the next step in the WizardViewController
+      return false;
     }
   }
   return true;

@@ -2,8 +2,13 @@
 #define HARDWARE_TEST_APP_H
 
 #include <escher.h>
-#include "usb_test_controller.h"
 #include "keyboard_test_controller.h"
+#include "screen_test_controller.h"
+#include "led_test_controller.h"
+#include "battery_test_controller.h"
+#include "usb_test_controller.h"
+#include "serial_number_controller.h"
+#include "reset_controller.h"
 
 class AppsContainer;
 
@@ -16,14 +21,25 @@ public:
     App * unpack(Container * container) override;
     Descriptor * descriptor() override;
   };
-  ViewController * USBController();
-  int numberOfTimers() override;
-  Timer * timerAtIndex(int i) override;
-  bool processEvent(Ion::Events::Event e) override;
 private:
+  class WizardViewController : public BankViewController {
+  public:
+    WizardViewController(Responder * parentResponder);
+    int numberOfChildren() override;
+    ViewController * childAtIndex(int i) override;
+    bool handleEvent(Ion::Events::Event event) override;
+  private:
+    KeyboardTestController m_keyboardController;
+    ScreenTestController m_screenTestController;
+    LEDTestController m_ledTestController;
+    BatteryTestController m_batteryTestController;
+    USBTestController m_USBTestController;
+    SerialNumberController m_serialNumberController;
+    ResetController m_resetController;
+  };
+
   App(Container * container, Snapshot * snapshot);
-  KeyboardTestController m_keyboardController;
-  USBTestController m_USBTestController;
+  WizardViewController m_wizardViewController;
 };
 
 }

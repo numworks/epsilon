@@ -116,7 +116,3 @@ void Ion::msleep(long ms) {
     }
   }
 }
-
-void Ion::getSerialNumber(char * buffer) {
-  strlcpy(buffer, "Simulator", Ion::SerialNumberLength+1);
-}

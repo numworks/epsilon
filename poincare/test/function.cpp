@@ -8,11 +8,12 @@
 using namespace Poincare;
 
 template<typename T>
-void assert_exp_is_bounded(Expression * exp, T lowBound, T upBound) {
+void assert_exp_is_bounded(Expression * exp, T lowBound, T upBound, bool upBoundIncluded = false) {
   GlobalContext globalContext;
   Expression * result = exp->approximate<T>(globalContext);
   assert(result->type() == Expression::Type::Complex);
-  assert(static_cast<const Complex<T> *>(result)->a() < upBound && static_cast<const Complex<T> *>(result)->a() >= lowBound);
+  assert(static_cast<const Complex<T> *>(result)->a() >= lowBound);
+  assert(static_cast<const Complex<T> *>(result)->a() < upBound || (static_cast<const Complex<T> *>(result)->a() == upBound && upBoundIncluded));
   delete result;
 }
 
@@ -286,8 +287,8 @@ QUIZ_CASE(poincare_function_evaluate) {
   delete exp;
 
   exp = parse_expression("randint(4,45)");
-  assert_exp_is_bounded(exp, 4.0f, 45.0f);
-  assert_exp_is_bounded(exp, 4.0, 45.0);
+  assert_exp_is_bounded(exp, 4.0f, 45.0f, true);
+  assert_exp_is_bounded(exp, 4.0, 45.0, true);
   delete exp;
 }
 

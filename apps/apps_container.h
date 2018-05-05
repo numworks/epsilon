@@ -65,7 +65,7 @@ private:
   PicViewApp m_picViewApp;
 #endif
   Poincare::GlobalContext m_globalContext;
-  MathToolbox* m_mathToolbox = NULL;
+  MathToolbox* m_mathToolbox;
   VariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
   OnBoarding::UpdateController m_updateController;

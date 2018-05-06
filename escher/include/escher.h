@@ -48,6 +48,7 @@
 #include <escher/modal_view_controller.h>
 #include <escher/palette.h>
 #include <escher/pointer_text_view.h>
+#include <escher/python_highlighter.h>
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 #include <escher/scroll_view_data_source.h>

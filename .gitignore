@@ -7,6 +7,8 @@
 *.d
 
 # No lex / yacc generated files.
+escher/src/highlight_lexer.cpp
+escher/src/highlight_lexer.hpp
 poincare/src/expression_lexer.cpp
 poincare/src/expression_lexer.hpp
 poincare/src/expression_parser.cpp

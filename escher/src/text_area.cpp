@@ -6,24 +6,37 @@
 #include <assert.h>
 #include <limits.h>
 
-
 static inline size_t min(size_t a, size_t b) {
   return (a>b ? b : a);
 }
 
-TextArea::Text::Text(char * buffer, size_t bufferSize) :
+TextArea::Text::Text(char * buffer, size_t bufferSize, PythonHighlighter highlighter) :
   m_buffer(buffer),
-  m_bufferSize(bufferSize)
+  m_bufferSize(bufferSize),
+  m_highlighter(highlighter)
 {
+  m_attr_buffer = new char[bufferSize]();
+  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
+}
+
+TextArea::Text::~Text() {
+  if (m_attr_buffer != nullptr) {
+    delete[] m_attr_buffer;
+    m_attr_buffer = nullptr;
+  }
 }
 
 void TextArea::Text::setText(char * buffer, size_t bufferSize) {
   m_buffer = buffer;
   m_bufferSize = bufferSize;
+  delete[] m_attr_buffer;
+  m_attr_buffer = new char[bufferSize]();
+  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
 }
 
-TextArea::Text::Line::Line(const char * text) :
+TextArea::Text::Line::Line(const char * text, const char * attr) :
   m_text(text),
+  m_attr(attr),
   m_length(0)
 {
   if (m_text != nullptr) {
@@ -40,7 +53,7 @@ bool TextArea::Text::Line::contains(const char * c) const {
 
 TextArea::Text::LineIterator & TextArea::Text::LineIterator::operator++() {
   const char * last = m_line.text() + m_line.length();
-  m_line = Line(*last == 0 ? nullptr : last+1);
+  m_line = Line(*last == 0 ? nullptr : last+1, *last == 0 ? nullptr : (m_line.attr() + m_line.length() + 1));
   return *this;
 }
 
@@ -80,6 +93,12 @@ TextArea::Text::Position TextArea::Text::positionAtIndex(size_t index) const {
   return Position(0, 0);
 }
 
+void TextArea::Text::setAttr(char a, size_t index) {
+  assert(m_attr_buffer != nullptr);
+  assert(index < m_bufferSize-1);
+  m_attr_buffer[index] = a;
+}
+
 void TextArea::Text::insertChar(char c, size_t index) {
   assert(m_buffer != nullptr);
   assert(index < m_bufferSize-1);
@@ -92,6 +111,7 @@ void TextArea::Text::insertChar(char c, size_t index) {
       break;
     }
   }
+  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
 }
 
 char TextArea::Text::removeChar(size_t index) {
@@ -104,6 +124,7 @@ char TextArea::Text::removeChar(size_t index) {
       break;
     }
   }
+  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
   return deletedChar;
 }
 
@@ -132,6 +153,7 @@ size_t TextArea::Text::removeRemainingLine(size_t index, int direction) {
     }
   }
   assert(false);
+  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
   return 0;
 }
 
@@ -150,9 +172,9 @@ TextArea::Text::Position TextArea::Text::span() const {
 
 /* TextArea::ContentView */
 
-TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
-  TextInput::ContentView(fontSize, textColor, backgroundColor),
-  m_text(textBuffer, textBufferSize)
+TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, PythonHighlighter highlighter) :
+  TextInput::ContentView(fontSize, KDColorBlack, KDColorWhite),
+  m_text(textBuffer, textBufferSize, highlighter)
 {
 }
 
@@ -169,8 +191,6 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
 
 
 void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, m_backgroundColor);
-
   KDSize charSize = KDText::charSize(m_fontSize);
 
   // We want to draw even partially visible characters. So we need to round
@@ -188,19 +208,33 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   size_t x = topLeft.column();
 
   for (Text::Line line : m_text) {
-    if (y >= topLeft.line() && y <= bottomRight.line() && topLeft.column() < (int)line.length()) {
-      //drawString(line.text(), 0, y*charHeight); // Naive version
-      ctx->drawString(
-        line.text() + topLeft.column(),
-        KDPoint(x*charSize.width(), y*charSize.height()),
-        m_fontSize,
-        m_textColor,
-        m_backgroundColor,
-        min(line.length() - topLeft.column(), bottomRight.column() - topLeft.column())
-      );
+    if (y >= topLeft.line() && y <= bottomRight.line()) {
+      if((int)line.length() < bottomRight.column()) {
+        ctx->fillRect(KDRect(
+          (int)line.length() * charSize.width(),
+          y * charSize.height(),
+          (bottomRight.column() - (int)line.length()) * charSize.width(),
+          charSize.height()
+        ), m_backgroundColor);
+      }
+      if(topLeft.column() < (int)line.length()) {
+        ctx->drawString(
+          line.text() + topLeft.column(),
+          KDPoint(x*charSize.width(), y*charSize.height()),
+          line.attr() + topLeft.column(),
+          m_fontSize,
+          min(line.length() - topLeft.column(), bottomRight.column() - topLeft.column())
+        );
+      }
     }
     y++;
   }
+  ctx->fillRect(KDRect(
+    topLeft.column(),
+    y * charSize.height(),
+    (bottomRight.column() - topLeft.column()) * charSize.width(),
+    (bottomRight.line() - y) * charSize.height()
+  ), m_backgroundColor);
 }
 
 void TextArea::TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {
@@ -282,10 +316,10 @@ void TextArea::TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
 /* TextArea */
 
 TextArea::TextArea(Responder * parentResponder, char * textBuffer,
-    size_t textBufferSize, TextAreaDelegate * delegate,
-    KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
+    size_t textBufferSize, PythonHighlighter highlighter, TextAreaDelegate * delegate,
+    KDText::FontSize fontSize) :
   TextInput(parentResponder, &m_contentView),
-  m_contentView(textBuffer, textBufferSize, fontSize, textColor, backgroundColor),
+  m_contentView(textBuffer, textBufferSize, fontSize, highlighter),
   m_delegate(delegate)
 {
   assert(textBufferSize < INT_MAX/2);

@@ -45,6 +45,7 @@ dfu_objs += ion/src/device/usb/boot.o
 dfu_objs += ion/src/device/keyboard.o
 dfu_objs += ion/src/device/device.o
 dfu_objs += ion/src/device/usb.o
+dfu_objs += ion/src/device/base64.o
 
 ion/src/device/usb/dfu.elf: LDFLAGS = --gc-sections -T ion/src/device/usb/dfu.ld
 ion/src/device/usb/dfu.elf: $(usb_objs) $(dfu_objs)

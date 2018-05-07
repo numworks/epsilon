@@ -16,6 +16,14 @@ void shutdownPeripherals();
 void initClocks();
 void shutdownClocks();
 
+/* The serial number is 96 bits long. That's equal to 16 digits in base 64. We
+ * expose a convenient "copySerialNumber" routine which can be called without
+ * using a static variable (and therefore without a .bss section). This is used
+ * in the RAM'ed DFU bootloader. */
+constexpr static int SerialNumberLength = 16;
+void copySerialNumber(char * buffer);
+
+
 /*  Pin | Role              | Mode                  | Function
  * -----+-------------------+-----------------------+----------
  *  PA0 | Battery sensing   |                       |

@@ -174,6 +174,9 @@ void ExpressionLayoutCursor::insertText(const char * text) {
   ExpressionLayout * newChild = nullptr;
   ExpressionLayout * pointedChild = nullptr;
   for (int i = 0; i < textLength; i++) {
+    if (text[i] == Ion::Charset::Empty) {
+      continue;
+    }
     if (text[i] == '(') {
       newChild = new LeftParenthesisLayout();
       if (pointedChild == nullptr) {

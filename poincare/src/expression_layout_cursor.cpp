@@ -177,7 +177,9 @@ void ExpressionLayoutCursor::insertText(const char * text) {
     if (text[i] == Ion::Charset::Empty) {
       continue;
     }
-    if (text[i] == '(') {
+    if (text[i] == Ion::Charset::MultiplicationSign) {
+      newChild = new CharLayout(Ion::Charset::MiddleDot);
+    } else if (text[i] == '(') {
       newChild = new LeftParenthesisLayout();
       if (pointedChild == nullptr) {
         pointedChild = newChild;

@@ -21,6 +21,7 @@ i18n_files += $(addprefix apps/calculation/,\
   base.es.i18n\
   base.fr.i18n\
   base.pt.i18n\
+  base.se.i18n\
 )
 
 tests += $(addprefix apps/calculation/test/,\
@@ -29,4 +30,3 @@ tests += $(addprefix apps/calculation/test/,\
 test_objs += $(addprefix apps/calculation/, calculation.o calculation_store.o)
 
 app_images += apps/calculation/calculation_icon.png
-

@@ -24,7 +24,13 @@ enum Charset : char {
   GreaterEqual = (char)146,
   MultiplicationSign = (char)147,
   MiddleDot = (char)148,
-  AlmostEqual = (char)149
+  AlmostEqual = (char)149,
+  SE_aa = (char)150, // å
+  SE_ae = (char)151, // ä
+  SE_oe = (char)152, // ö
+  SE_AA = (char)153, // Å
+  SE_AE = (char)154, // Ä
+  SE_OE = (char)155 // Ö
 };
 
 }

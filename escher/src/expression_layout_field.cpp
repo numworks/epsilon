@@ -189,16 +189,9 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
       setEditing(true);
     }
     const char * textToInsert = event.text();
-    if (textToInsert[1] == 0) {
-      if (textToInsert[0] == Ion::Charset::MultiplicationSign) {
-        const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
-        m_contentView.cursor()->insertText(middleDotString);
-        return true;
-      }
-      if (textToInsert[0] == '[' || textToInsert[0] == ']') {
-        m_contentView.cursor()->addEmptyMatrixLayout();
-        return true;
-      }
+    if (textToInsert[1] == 0 && (textToInsert[0] == '[' || textToInsert[0] == ']')) {
+      m_contentView.cursor()->addEmptyMatrixLayout();
+      return true;
     }
     m_contentView.cursor()->insertText(textToInsert);
     return true;

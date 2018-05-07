@@ -13,3 +13,5 @@ void PythonHighlighter::highlight(char * buffer, char * attr_buffer, size_t buff
     highlight_lexer_yy_delete_buffer(buf);
   }
 }
+
+PythonHighlighter pythonHighlighter = PythonHighlighter();

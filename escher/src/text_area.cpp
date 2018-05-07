@@ -10,13 +10,15 @@ static inline size_t min(size_t a, size_t b) {
   return (a>b ? b : a);
 }
 
-TextArea::Text::Text(char * buffer, size_t bufferSize, PythonHighlighter highlighter) :
+TextArea::Text::Text(char * buffer, size_t bufferSize, Highlighter * highlighter) :
   m_buffer(buffer),
   m_bufferSize(bufferSize),
   m_highlighter(highlighter)
 {
   m_attr_buffer = new char[bufferSize]();
-  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  if(m_highlighter != nullptr) {
+    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  }
 }
 
 TextArea::Text::~Text() {
@@ -31,7 +33,9 @@ void TextArea::Text::setText(char * buffer, size_t bufferSize) {
   m_bufferSize = bufferSize;
   delete[] m_attr_buffer;
   m_attr_buffer = new char[bufferSize]();
-  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  if(m_highlighter != nullptr) {
+    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  }
 }
 
 TextArea::Text::Line::Line(const char * text, const char * attr) :
@@ -111,7 +115,9 @@ void TextArea::Text::insertChar(char c, size_t index) {
       break;
     }
   }
-  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  if(m_highlighter != nullptr) {
+    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  }
 }
 
 char TextArea::Text::removeChar(size_t index) {
@@ -124,7 +130,9 @@ char TextArea::Text::removeChar(size_t index) {
       break;
     }
   }
-  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  if(m_highlighter != nullptr) {
+    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  }
   return deletedChar;
 }
 
@@ -153,7 +161,9 @@ size_t TextArea::Text::removeRemainingLine(size_t index, int direction) {
     }
   }
   assert(false);
-  m_highlighter.highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  if(m_highlighter != nullptr) {
+    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
+  }
   return 0;
 }
 
@@ -172,7 +182,7 @@ TextArea::Text::Position TextArea::Text::span() const {
 
 /* TextArea::ContentView */
 
-TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, PythonHighlighter highlighter) :
+TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, Highlighter * highlighter) :
   TextInput::ContentView(fontSize, KDColorBlack, KDColorWhite),
   m_text(textBuffer, textBufferSize, highlighter)
 {
@@ -316,7 +326,7 @@ void TextArea::TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
 /* TextArea */
 
 TextArea::TextArea(Responder * parentResponder, char * textBuffer,
-    size_t textBufferSize, PythonHighlighter highlighter, TextAreaDelegate * delegate,
+    size_t textBufferSize, Highlighter * highlighter, TextAreaDelegate * delegate,
     KDText::FontSize fontSize) :
   TextInput(parentResponder, &m_contentView),
   m_contentView(textBuffer, textBufferSize, fontSize, highlighter),

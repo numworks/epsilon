@@ -26,6 +26,7 @@
 #include <escher/expression_view.h>
 #include <escher/gauge_view.h>
 #include <escher/highlight_cell.h>
+#include <escher/highlighter.h>
 #include <escher/image.h>
 #include <escher/image_view.h>
 #include <escher/input_view_controller.h>

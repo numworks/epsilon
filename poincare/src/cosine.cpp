@@ -25,6 +25,13 @@ float Cosine::characteristicXRange(Context & context, AngleUnit angleUnit) const
   return Trigonometry::characteristicXRange(this, context, angleUnit);
 }
 
+template<typename T>
+std::complex<T> Cosine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
+  std::complex<T> res = std::cos(angleInput);
+  return Trigonometry::RoundToMeaningfulDigits(res);
+}
+
 Expression * Cosine::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {

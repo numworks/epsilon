@@ -25,9 +25,7 @@ private:
   /* Simplification */
   Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
   /* Evaluation */
-  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-    return Trigonometry::computeInverseOnComplex(c, angleUnit, std::asin);
-  }
+  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, AngleUnit angleUnit);
   Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return ApproximationEngine::map<float>(this, context, angleUnit, computeOnComplex<float>);
   }

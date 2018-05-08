@@ -25,8 +25,7 @@ public:
   constexpr static int k_maxPacketSize = 64;
   constexpr static int MaxTransferSize = 2048;
 
-  //constexpr Endpoint0(RequestRecipient * device, RequestRecipient * interface) :
-  Endpoint0(RequestRecipient * device, RequestRecipient * interface) :
+  constexpr Endpoint0(RequestRecipient * device, RequestRecipient * interface) :
     m_forceNAK(false),
     m_bufferOffset(0),
     m_transferBufferLength(0),

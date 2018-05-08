@@ -50,11 +50,11 @@ QUIZ_CASE(calculation_store) {
   store.push("1+3/4", &globalContext);
   store.push("ans+2/3", &globalContext);
   ::Calculation::Calculation * lastCalculation = store.calculationAtIndex(1);
-  assert(lastCalculation->shouldDisplayApproximateOutput(&globalContext) == false);
+  assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == false);
   assert(strcmp(lastCalculation->exactOutputText(),"29/12") == 0);
 
   store.push("ans+0.22", &globalContext);
   lastCalculation = store.calculationAtIndex(2);
-  assert(lastCalculation->shouldDisplayApproximateOutput(&globalContext) == true);
+  assert(lastCalculation->shouldOnlyDisplayApproximateOutput(&globalContext) == true);
   assert(strcmp(lastCalculation->approximateOutputText(),"2.6366666666667") == 0);
 }

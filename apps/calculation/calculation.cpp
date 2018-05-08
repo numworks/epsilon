@@ -184,7 +184,7 @@ ExpressionLayout * Calculation::approximateOutputLayout(Context * context) {
   return m_approximateOutputLayout;
 }
 
-bool Calculation::shouldDisplayApproximateOutput(Context * context) {
+bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     return true;
   }

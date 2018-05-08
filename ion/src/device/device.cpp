@@ -80,6 +80,10 @@ const char * Ion::serialNumber() {
   return serialNumber;
 }
 
+const char * Ion::fccId() {
+  return "2ALWP-N0100";
+}
+
 // Private Ion::Device methods
 
 namespace Ion {

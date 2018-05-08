@@ -37,7 +37,7 @@ void StackView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, height-1, width, 1), m_separatorColor);
   // Write title
   KDSize textSize = KDText::stringSize(m_controller->title(), KDText::FontSize::Small);
-  KDPoint origin(0.5f*(m_frame.width() - textSize.width()),0.5f*(m_frame.height() - textSize.height()));
+  KDPoint origin((m_frame.width() - textSize.width())/2,(m_frame.height() - textSize.height())/2);
   ctx->drawString(m_controller->title(), origin, KDText::FontSize::Small, m_textColor, m_backgroundColor);
 }
 

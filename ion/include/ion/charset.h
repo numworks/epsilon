@@ -24,7 +24,8 @@ enum Charset : char {
   GreaterEqual = (char)146,
   MultiplicationSign = (char)147,
   MiddleDot = (char)148,
-  AlmostEqual = (char)149
+  AlmostEqual = (char)149,
+  Empty = (char)150 // This char is used to be parsed into EmptyExpression.
 };
 
 }

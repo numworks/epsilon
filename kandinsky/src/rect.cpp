@@ -101,8 +101,57 @@ KDRect KDRect::unionedWith(const KDRect & other) const {
     );
 }
 
+KDRect KDRect::differencedWith(const KDRect & other) const {
+  if (this->isEmpty() || other.isEmpty()) {
+    return *this;
+  }
+
+  KDRect intersection = intersectedWith(other);
+  if (intersection.isEmpty()) {
+    return *this;
+  }
+
+  if (intersection == *this) {
+    return KDRectZero;
+  }
+
+  KDCoordinate resultLeft = left();
+  KDCoordinate resultTop = top();
+  KDCoordinate resultRight = right();
+  KDCoordinate resultBottom = bottom();
+
+  if (intersection.height() == height()) {
+    if (intersection.left() == left()) {
+      resultLeft = intersection.right() + 1;
+    } else if (intersection.right() == right()) {
+      resultRight = intersection.left() - 1;
+    }
+  } else if (intersection.width() == width()) {
+    if (intersection.top() == top()) {
+      resultTop = intersection.bottom() + 1;
+    } else if (intersection.bottom() == bottom()) {
+      resultBottom = intersection.top() - 1;
+    }
+  }
+
+  return KDRect(
+    resultLeft,
+    resultTop,
+    resultRight-resultLeft+1,
+    resultBottom-resultTop+1
+    );
+}
+
 bool KDRect::contains(KDPoint p) const {
   return (p.x() >= x() && p.x() <= right() && p.y() >= y() && p.y() <= bottom());
+}
+
+bool KDRect::isAbove(KDPoint p) const {
+  return (p.y() >= y());
+}
+
+bool KDRect::isUnder(KDPoint p) const {
+  return (p.y() <= bottom());
 }
 
 KDRect KDRect::translatedBy(KDPoint p) const {

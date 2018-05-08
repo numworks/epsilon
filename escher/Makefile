@@ -13,6 +13,7 @@ objs += $(addprefix escher/src/,\
   dynamic_view_controller.o\
   editable_text_cell.o\
   ellipsis_view.o\
+  expression_field.o\
   even_odd_cell.o\
   even_odd_cell_with_ellipsis.o\
   even_odd_buffer_text_cell.o\
@@ -49,6 +50,8 @@ objs += $(addprefix escher/src/,\
   scroll_view_data_source.o\
   scroll_view_indicator.o\
   scrollable_view.o\
+  expression_layout_field.o\
+  expression_layout_field_content_view.o\
   selectable_table_view.o\
   selectable_table_view_data_source.o\
   selectable_table_view_delegate.o\
@@ -74,7 +77,6 @@ objs += $(addprefix escher/src/,\
   tiled_view.o\
   timer.o\
   toolbox.o\
-  toolbox_message_tree.o\
   view.o\
   view_controller.o\
   warning_controller.o\

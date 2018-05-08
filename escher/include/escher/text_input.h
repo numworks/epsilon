@@ -12,8 +12,7 @@ public:
   TextInput(Responder * parentResponder, View * contentView);
   Toolbox * toolbox() override;
   const char * text() const { return nonEditableContentView()->text(); }
-  void setBackgroundColor(KDColor backgroundColor);
-  KDColor backgroundColor() const { return nonEditableContentView()->backgroundColor(); }
+  void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
   bool removeChar();
   size_t cursorLocation() const { return nonEditableContentView()->cursorLocation(); }

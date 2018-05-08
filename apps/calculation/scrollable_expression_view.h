@@ -9,7 +9,7 @@ class ScrollableExpressionView : public ScrollableView, public ScrollViewDataSou
 public:
   ScrollableExpressionView(Responder * parentResponder);
   void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
-  void setBackgroundColor(KDColor backgroundColor);
+  void setBackgroundColor(KDColor backgroundColor) override;
   KDSize minimalSizeForOptimalDisplay() const override;
 private:
   ExpressionView m_expressionView;

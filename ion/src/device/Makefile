@@ -19,7 +19,7 @@ objs += $(addprefix ion/src/device/, \
   console.o \
   device.o\
   display.o\
-  events_keyboard.o\
+  events.o\
   keyboard.o\
   led.o\
   power.o\

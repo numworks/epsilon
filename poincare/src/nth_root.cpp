@@ -49,7 +49,7 @@ Evaluation<T> * NthRoot::templatedApproximate(Context& context, AngleUnit angleU
   if (base->type() == Evaluation<T>::Type::Complex && index->type() == Evaluation<T>::Type::Complex) {
     Complex<T> * basec = static_cast<Complex<T> *>(base);
     Complex<T> * indexc = static_cast<Complex<T> *>(index);
-    result = Complex<T>::pow(*basec, std::complex<T>(1)/(*indexc));
+    result = Power::compute(*basec, std::complex<T>(1)/(*indexc));
   }
   delete base;
   delete index;

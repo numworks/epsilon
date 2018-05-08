@@ -15,7 +15,7 @@ ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer,
   m_textField.setBackgroundColor(KDColorWhite);
   m_textField.setColorsBackground(true);
   // Initialize layout field
-  m_expressionLayoutField.setMargins(k_verticalMargin, k_horizontalMargin, 0, k_horizontalMargin);
+  m_expressionLayoutField.setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
   m_expressionLayoutField.setBackgroundColor(KDColorWhite);
   m_expressionLayoutField.setColorsBackground(true);
 }
@@ -123,7 +123,7 @@ KDCoordinate ExpressionField::inputViewHeight() const {
   return k_separatorThickness
     + (editionIsInTextField() ? k_textFieldHeight :
         min(maximalHeight(),
-          max(k_textFieldHeight, m_expressionLayoutField.minimalSizeForOptimalDisplay().height())));
+          max(k_textFieldHeight, m_expressionLayoutField.minimalSizeForOptimalDisplay().height() + 2*k_verticalMargin )));
 }
 
 KDCoordinate ExpressionField::maximalHeight() const {

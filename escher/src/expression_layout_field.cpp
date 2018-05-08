@@ -10,7 +10,6 @@
 ExpressionLayoutField::ExpressionLayoutField(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ExpressionLayoutFieldDelegate * delegate) :
   ScrollableView(parentResponder, &m_contentView, this),
   m_contentView(expressionLayout),
-  m_verticalTopMargin(0),
   m_delegate(delegate)
 {
 }
@@ -81,7 +80,7 @@ bool ExpressionLayoutField::expressionLayoutFieldShouldFinishEditing(Ion::Events
 
 KDSize ExpressionLayoutField::minimalSizeForOptimalDisplay() const {
   KDSize contentViewSize = m_contentView.minimalSizeForOptimalDisplay();
-  return KDSize(contentViewSize.width(), contentViewSize.height() + m_verticalTopMargin);
+  return KDSize(contentViewSize.width(), contentViewSize.height());
 }
 
 bool ExpressionLayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
@@ -327,8 +326,4 @@ char ExpressionLayoutField::XNTChar() {
 void ExpressionLayoutField::setBackgroundColor(KDColor c) {
   ScrollableView::setBackgroundColor(c);
   m_contentView.setBackgroundColor(c);
-}
-
-void ExpressionLayoutField::setTopMargin(KDCoordinate m) {
-  m_verticalTopMargin = m;
 }

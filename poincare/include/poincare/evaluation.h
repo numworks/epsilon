@@ -5,6 +5,7 @@
 extern "C" {
 #include <stdint.h>
 }
+#include <poincare/expression.h>
 
 namespace Poincare {
 
@@ -29,6 +30,7 @@ public:
   virtual ~Evaluation() {}
   virtual bool isUndefined() const = 0;
   virtual T toScalar() const { return NAN; }
+  virtual Expression * complexToExpression(Expression::ComplexFormat complexFormat) const = 0;
   virtual std::complex<T> createTrace() const = 0;
   virtual std::complex<T> createDeterminant() const = 0;
   virtual Evaluation * createInverse() const = 0;
@@ -59,6 +61,7 @@ public:
     return (std::isnan(this->real()) && std::isnan(this->imag()));
   }
   T toScalar() const override;
+  Expression * complexToExpression(Expression::ComplexFormat complexFormat) const override;
   std::complex<T> createTrace() const override { return *this; }
   std::complex<T> createDeterminant() const override { return *this; }
   Complex<T> * createInverse() const override;
@@ -97,6 +100,7 @@ public:
   bool isUndefined() const override {
     return (numberOfRows() == 1 && numberOfColumns() == 1 && std::isnan(complexOperand(0).real()) && std::isnan(complexOperand(0).imag()));
   }
+  Expression * complexToExpression(Expression::ComplexFormat complexFormat) const override;
   std::complex<T> createTrace() const override;
   std::complex<T> createDeterminant() const override;
   MatrixComplex<T> * createInverse() const override;

@@ -19,6 +19,7 @@ constexpr CommandHandler handles[] = {
   CommandHandler("PING", Command::Ping),
   CommandHandler("PRINT", Command::Print),
   CommandHandler("SUSPEND", Command::Suspend),
+  CommandHandler("VBLANK", Command::VBlank),
   CommandHandler(nullptr, nullptr)
 };
 

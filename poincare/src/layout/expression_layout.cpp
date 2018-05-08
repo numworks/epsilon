@@ -91,7 +91,7 @@ bool ExpressionLayout::hasChild(const ExpressionLayout * child) const {
 }
 
 int ExpressionLayout::indexOfChild(const ExpressionLayout * child) const {
-  if (child == nullptr) {
+  if (child == nullptr || !hasChild(child)) {
     return -1;
   }
   for (int i = 0; i < numberOfChildren(); i++) {
@@ -99,6 +99,7 @@ int ExpressionLayout::indexOfChild(const ExpressionLayout * child) const {
       return i;
     }
   }
+  assert(false);
   return -1;
 }
 

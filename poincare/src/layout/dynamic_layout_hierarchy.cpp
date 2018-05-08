@@ -21,7 +21,7 @@ DynamicLayoutHierarchy::DynamicLayoutHierarchy(const ExpressionLayout * const * 
 {
   assert(children != nullptr);
   m_children = new const ExpressionLayout * [numberOfChildren];
-  for (int i=0; i<numberOfChildren; i++) {
+  for (int i = 0; i < numberOfChildren; i++) {
     assert(children[i] != nullptr);
     if (cloneChildren) {
       m_children[i] = children[i]->clone();
@@ -55,10 +55,10 @@ void DynamicLayoutHierarchy::addChildrenAtIndex(const ExpressionLayout * const *
   const ExpressionLayout ** newOperands = new const ExpressionLayout * [m_numberOfChildren+numberOfOperands];
   int currentIndex = 0;
   assert(indexForInsertion <= m_numberOfChildren);
-  for (int i=0; i<indexForInsertion; i++) {
+  for (int i = 0; i < indexForInsertion; i++) {
     newOperands[currentIndex++] = m_children[i];
   }
-  for (int i=0; i<numberOfOperands; i++) {
+  for (int i = 0; i < numberOfOperands; i++) {
     if (!removeEmptyChildren
         || !operands[i]->isEmpty()
         || (i < numberOfOperands-1 && operands[i+1]->mustHaveLeftSibling()))
@@ -67,7 +67,7 @@ void DynamicLayoutHierarchy::addChildrenAtIndex(const ExpressionLayout * const *
       newOperands[currentIndex++] = operands[i];
     }
   }
-  for (int i=indexForInsertion; i<m_numberOfChildren; i++) {
+  for (int i = indexForInsertion; i < m_numberOfChildren; i++) {
     newOperands[currentIndex++] = m_children[i];
   }
   if (m_children != nullptr) {
@@ -81,7 +81,7 @@ bool DynamicLayoutHierarchy::addChildAtIndex(ExpressionLayout * child, int index
   assert(index >= 0 && index <= m_numberOfChildren);
   const ExpressionLayout ** newChildren = new const ExpressionLayout * [m_numberOfChildren+1];
   int j = 0;
-  for (int i=0; i<=m_numberOfChildren; i++) {
+  for (int i = 0; i <= m_numberOfChildren; i++) {
     if (i == index) {
       child->setParent(this);
       newChildren[i] = child;

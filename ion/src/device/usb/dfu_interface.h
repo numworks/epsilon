@@ -1,13 +1,13 @@
 #ifndef ION_DEVICE_USB_DFU_INTERFACE_H
 #define ION_DEVICE_USB_DFU_INTERFACE_H
 
-#include "device.h"
-#include "interface.h"
-#include "endpoint0.h"
-#include "setup_packet.h"
-#include "stack/streamable.h"
-#include <stddef.h>
 #include <assert.h>
+#include <stddef.h>
+#include "stack/device.h"
+#include "stack/interface.h"
+#include "stack/endpoint0.h"
+#include "stack/setup_packet.h"
+#include "stack/streamable.h"
 
 namespace Ion {
 namespace USB {

@@ -1,7 +1,7 @@
 #ifndef ION_DEVICE_USB_DEVICE_H
 #define ION_DEVICE_USB_DEVICE_H
 
-#include "stack/descriptor.h"
+#include "descriptor/descriptor.h"
 #include "endpoint0.h"
 #include "interface.h"
 #include "request_recipient.h"

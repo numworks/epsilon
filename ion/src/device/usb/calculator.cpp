@@ -1,8 +1,8 @@
 #include "calculator.h"
-#include "../regs/regs.h"
-#include "../keyboard.h"
 #include <ion/usb.h>
-#include "../device.h"
+#include <ion/src/device/regs/regs.h>
+#include <ion/src/device/device.h>
+#include <ion/src/device/keyboard.h>
 
 namespace Ion {
 namespace USB {

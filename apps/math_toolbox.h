@@ -9,7 +9,6 @@ class MathToolbox : public Toolbox {
 public:
   MathToolbox();
 protected:
-  TextField * sender() override;
   bool selectLeaf(ToolboxMessageTree * selectedMessageTree) override;
   const ToolboxMessageTree * rootModel() override;
   MessageTableCellWithMessage * leafCellAtIndex(int index) override;

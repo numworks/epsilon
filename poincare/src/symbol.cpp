@@ -1,18 +1,23 @@
 #include <poincare/symbol.h>
+
 #include <poincare/context.h>
 #include <poincare/complex.h>
 #include <poincare/division.h>
-#include <poincare/layout_engine.h>
+#include <poincare/multiplication.h>
 #include <poincare/parenthesis.h>
 #include <poincare/power.h>
-#include <poincare/multiplication.h>
-#include "layout/baseline_relative_layout.h"
-#include "layout/string_layout.h"
+
+#include <poincare/layout_engine.h>
+#include "layout/char_layout.h"
+#include "layout/horizontal_layout.h"
+#include "layout/vertical_offset_layout.h"
+
 #include <ion.h>
+#include <cmath>
+
 extern "C" {
 #include <assert.h>
 }
-#include <cmath>
 
 namespace Poincare {
 
@@ -53,7 +58,6 @@ const char * Symbol::textForSpecialSymbols(char name) const {
       return nullptr;
   }
 }
-
 
 Symbol::SpecialSymbols Symbol::matrixSymbol(char index) {
   switch (index - '0') {
@@ -190,25 +194,49 @@ ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   if (m_name == SpecialSymbols::Ans) {
-    return new StringLayout("ans", 3);
+    return LayoutEngine::createStringLayout("ans", 3);
   }
   if (m_name == SpecialSymbols::un) {
-    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    return new HorizontalLayout(
+        new CharLayout('u'),
+        new VerticalOffsetLayout(
+          new CharLayout('n', KDText::FontSize::Small),
+          VerticalOffsetLayout::Type::Subscript,
+          false),
+        false);
   }
   if (m_name == SpecialSymbols::un1) {
-    return new BaselineRelativeLayout(new StringLayout("u", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    return new HorizontalLayout(
+      new CharLayout('u'),
+      new VerticalOffsetLayout(
+        LayoutEngine::createStringLayout("n+1", 3, KDText::FontSize::Small),
+        VerticalOffsetLayout::Type::Subscript,
+        false),
+      false);
   }
   if (m_name == SpecialSymbols::vn) {
-    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n",1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    return new HorizontalLayout(
+        new CharLayout('v'),
+        new VerticalOffsetLayout(
+          new CharLayout('n', KDText::FontSize::Small),
+          VerticalOffsetLayout::Type::Subscript,
+          false),
+        false);
   }
   if (m_name == SpecialSymbols::vn1) {
-    return new BaselineRelativeLayout(new StringLayout("v", 1), new StringLayout("n+1",3, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    return new HorizontalLayout(
+      new CharLayout('v'),
+      new VerticalOffsetLayout(
+        LayoutEngine::createStringLayout("n+1", 3, KDText::FontSize::Small),
+        VerticalOffsetLayout::Type::Subscript,
+        false),
+      false);
   }
   if (isMatrixSymbol()) {
     const char mi[] = { 'M', (char)(m_name-(char)SpecialSymbols::M0+'0') };
-    return new StringLayout(mi, sizeof(mi));
+    return LayoutEngine::createStringLayout(mi, sizeof(mi));
   }
-  return new StringLayout(&m_name, 1);
+  return LayoutEngine::createStringLayout(&m_name, 1);
 }
 
 int Symbol::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

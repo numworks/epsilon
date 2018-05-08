@@ -52,7 +52,7 @@ Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
 ExpressionLayout * SquareRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, complexFormat),nullptr);
+  return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
 }
 
 }

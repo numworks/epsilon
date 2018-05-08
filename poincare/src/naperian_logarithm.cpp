@@ -8,9 +8,6 @@ extern "C" {
 }
 #include <ion.h>
 #include <cmath>
-#include "layout/horizontal_layout.h"
-#include "layout/parenthesis_layout.h"
-#include "layout/string_layout.h"
 
 namespace Poincare {
 

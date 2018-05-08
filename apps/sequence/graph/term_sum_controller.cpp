@@ -1,12 +1,17 @@
 #include "term_sum_controller.h"
 #include "../../shared/text_field_delegate.h"
-#include "../../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../../poincare/src/layout/string_layout.h"
 #include "../app.h"
 
-#include <assert.h>
+#include "../../../poincare/src/layout/char_layout.h"
+#include "../../../poincare/src/layout/horizontal_layout.h"
+#include "../../../poincare/src/layout/vertical_offset_layout.h"
+
 #include <cmath>
+
+extern "C" {
+#include <assert.h>
 #include <stdlib.h>
+}
 
 using namespace Shared;
 using namespace Poincare;
@@ -46,7 +51,13 @@ double TermSumController::cursorNextStep(double x, int direction) {
 }
 
 ExpressionLayout * TermSumController::createFunctionLayout(const char * functionName) {
-  return new BaselineRelativeLayout(new StringLayout(functionName, 1, KDText::FontSize::Small), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  return new HorizontalLayout(
+      new CharLayout(functionName[0], KDText::FontSize::Small),
+      new VerticalOffsetLayout(
+        new CharLayout('n', KDText::FontSize::Small),
+        VerticalOffsetLayout::Type::Subscript,
+        false),
+      false);
 }
 
 }

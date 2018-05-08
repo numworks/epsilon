@@ -103,7 +103,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && m_sequence != nullptr) {
-    m_typeCell.setExpression(m_sequence->definitionName());
+    m_typeCell.setExpressionLayout(m_sequence->definitionName());
   }
   if (cell == &m_initialRankCell && m_sequence != nullptr) {
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;

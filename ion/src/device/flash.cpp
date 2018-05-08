@@ -31,16 +31,21 @@ static void close() {
   wait();
 
   // Lock the Flash configuration register
+  assert(!FLASH.CR()->getMER());
+  assert(!FLASH.CR()->getSER());
+  assert(!FLASH.CR()->getPG());
   FLASH.CR()->setLOCK(true);
 
   // Purge Data and instruction cache
   if (FLASH.ACR()->getDCEN()) {
     FLASH.ACR()->setDCEN(false);
     FLASH.ACR()->setDCRST(true);
+    FLASH.ACR()->setDCEN(true);
   }
   if (FLASH.ACR()->getICEN()) {
     FLASH.ACR()->setICEN(false);
     FLASH.ACR()->setICRST(true);
+    FLASH.ACR()->setICEN(true);
   }
 }
 

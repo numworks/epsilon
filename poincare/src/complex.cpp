@@ -48,7 +48,7 @@ Complex<T> Complex<T>::Polar(T r, T th)  {
 }
 
 template<typename T>
-Complex<T>::Complex(const Complex<T> & other) {
+Complex<T>::Complex(const Complex<T> & other) : StaticHierarchy<0>() {
   m_a = other.m_a;
   m_b = other.m_b;
 }

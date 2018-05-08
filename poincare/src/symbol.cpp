@@ -94,7 +94,7 @@ Symbol::Symbol(Symbol&& other) :
 }
 
 Symbol::Symbol(const Symbol& other) :
-  m_name(other.m_name)
+  StaticHierarchy<0>(), m_name(other.m_name)
 {
 }
 

@@ -90,6 +90,7 @@ HighlightCell * ListParameterController::reusableCell(int index) {
       if (hasInitialRankRow()) {
         return &m_initialRankCell;
       }
+      [[gnu::fallthrough]];
     default:
       return Shared::ListParameterController::reusableCell(index-1-hasInitialRankRow());
   }

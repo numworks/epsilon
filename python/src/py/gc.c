@@ -282,6 +282,7 @@ STATIC void gc_sweep(void) {
                 MP_STATE_MEM(gc_collected)++;
                 #endif
                 // fall through to free the head
+                __attribute__ ((fallthrough));
 
             case AT_TAIL:
                 if (free_tail) {

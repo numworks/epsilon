@@ -39,7 +39,7 @@ Rational::Rational(const Integer numerator) {
   m_denominator = Integer(1);
 }
 
-Rational::Rational(const Rational & other) {
+Rational::Rational(const Rational & other) : StaticHierarchy<0>() {
   m_numerator = other.m_numerator;
   m_denominator = other.m_denominator;
 }

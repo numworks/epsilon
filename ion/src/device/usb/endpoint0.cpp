@@ -141,17 +141,11 @@ void Endpoint0::processINpacket() {
 void Endpoint0::processOUTpacket() {
   switch (m_state) {
     case State::DataOut:
-      if (receiveSomeData() < 0) {
-        break;
-      }
       if ((m_request.wLength() - m_transferBufferLength) <= k_maxPacketSize) {
         m_state = State::LastDataOut;
       }
       break;
     case State::LastDataOut:
-      if (receiveSomeData() < 0) {
-        break;
-      }
       // Send the DATA1[] to the host.
       writePacket(NULL, 0);
       m_state = State::StatusIn;

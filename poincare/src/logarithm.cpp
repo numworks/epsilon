@@ -31,6 +31,9 @@ Expression * Logarithm::clone() const {
 
 template<typename T>
 std::complex<T> Logarithm::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
+   * followed the convention chosen by the lib c++ of llvm on ]-inf+0i, 0+0i]
+   * (warning: log takes the other side of the cut values on ]-inf-0i, 0-0i]). */
   return std::log10(c);
 }
 

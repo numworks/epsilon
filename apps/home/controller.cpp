@@ -53,7 +53,7 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container,
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
+    m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedColumn()*k_numberOfRows+m_selectionDataSource->selectedRow()+1));
     return true;
   }
 
@@ -81,11 +81,11 @@ View * Controller::view() {
 }
 
 int Controller::numberOfRows() {
-  return ((numberOfIcons()-1)/k_numberOfColumns)+1;
+  return k_numberOfRows;
 }
 
 int Controller::numberOfColumns() {
-  return k_numberOfColumns;
+  return ((numberOfIcons()-1)/k_numberOfRows)+1;
 }
 
 KDCoordinate Controller::cellHeight() {
@@ -106,12 +106,12 @@ int Controller::reusableCellCount() {
 
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = (AppCell *)cell;
-  int appIndex = (j*k_numberOfColumns+i)+1;
+  int appIndex = (i*k_numberOfRows+j)+1;
   if (appIndex >= m_container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
     appCell->setVisible(true);
-    ::App::Descriptor * descriptor = m_container->appSnapshotAtIndex((j*k_numberOfColumns+i)+1)->descriptor();
+    ::App::Descriptor * descriptor = m_container->appSnapshotAtIndex(appIndex)->descriptor();
     appCell->setAppDescriptor(descriptor);
   }
 }
@@ -130,7 +130,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * redrawing takes time and is visible at scrolling. Here, we avoid the
    * background complete redrawing but the code is a bit
    * clumsy. */
-  if (m_container->numberOfApps()%2 == 0 && t->selectedColumn() == k_numberOfColumns -1) {
+  if (m_container->numberOfApps()%2 == 0 && t->selectedColumn() == numberOfColumns() -1) {
     m_view.reloadBottomRightCorner(this);
   }
   /* To prevent the selectable table view to select cells that are unvisible,
@@ -138,7 +138,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * unvisible. This trick does not create an endless loop as we ensure not to
    * stay on a unvisible cell and to initialize the first cell on a visible one
    * (so the previous one is always visible). */
-  int appIndex = (t->selectedRow()*k_numberOfColumns+t->selectedColumn())+1;
+  int appIndex = (t->selectedColumn()*k_numberOfRows+t->selectedRow())+1;
   if (appIndex >= m_container->numberOfApps()) {
     t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
   }

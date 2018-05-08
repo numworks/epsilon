@@ -10,7 +10,7 @@ public:
   ScrollView(View * contentView, ScrollViewDataSource * dataSource);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
-  void setTopMargin(KDCoordinate m) { m_topMargin = m; }
+  virtual void setTopMargin(KDCoordinate m) { m_topMargin = m; }
   KDCoordinate topMargin() const { return m_topMargin; }
   void setRightMargin(KDCoordinate m) { m_rightMargin = m; }
   KDCoordinate rightMargin() const { return m_rightMargin; }

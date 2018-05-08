@@ -2,7 +2,7 @@
 #include "../init.h"
 #include "fltkkbd.h"
 #include "kbdimage_icon.h"
-
+#undef None // TODO: Remove me
 
 static const char* kCharForKey[Ion::Keyboard::NumberOfKeys] = {
   "\u25c1",   "\u25b3",     "\u25bd",   "\u25b7",  "OK",     "\u21ba",
@@ -33,7 +33,7 @@ static bool shouldRepeatKey(Ion::Keyboard::Key k) {
 }
 
 static void keyHandler(Fl_Widget *, long key) {
-  if (currentEvent == (uint8_t)Ion::Events::None) {
+  if (currentEvent == Ion::Events::None) {
     currentEvent = Ion::Events::Event((Ion::Keyboard::Key)key,
                                       Ion::Events::isShiftActive(),
                                       Ion::Events::isAlphaActive());

@@ -17,6 +17,7 @@ void ScrollableExpressionView::setExpressionLayout(ExpressionLayout * expression
 
 void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
   m_expressionView.setBackgroundColor(backgroundColor);
+  ScrollableView::setBackgroundColor(backgroundColor);
 }
 
 KDSize ScrollableExpressionView::minimalSizeForOptimalDisplay() const {

@@ -16,6 +16,9 @@ matrix:
     - env: PLATFORM=blackbox EXT=bin QUIZ_USE_CONSOLE=1
 
 os: linux
+install:
+- if [ "$PLATFORM" = "simulator" ]; then sudo apt-get install libfltk1.3-dev; fi
+
 script:
 - make clean && make epsilon.$EXT test.$EXT
 - if [ "$PLATFORM" = "blackbox" ]; then ./test.$EXT; fi

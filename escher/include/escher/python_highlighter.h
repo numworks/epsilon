@@ -7,9 +7,11 @@
 
 class PythonHighlighter : public Highlighter {
 public:
-  void highlight(char * buffer, char * attr_buffer, size_t bufferSize);
+  PythonHighlighter();
+  bool highlight(char * buffer, char * attr_buffer, size_t bufferSize);
+  bool cursorMoved(char * buffer, char * attr_buffer, size_t bufferSize, int location);
+private:
+  bool m_onParenthesis;
 };
-
-extern PythonHighlighter pythonHighlighter;
 
 #endif

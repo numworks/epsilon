@@ -5,7 +5,8 @@
 
 class Highlighter {
 public:
-  virtual void highlight(char * buffer, char * attr_buffer, size_t bufferSize) = 0;
+  virtual bool highlight(char * buffer, char * attr_buffer, size_t bufferSize) = 0;
+  virtual bool cursorMoved(char * buffer, char * attr_buffer, size_t bufferSize, int location) = 0;
 };
 
 #endif

@@ -7,6 +7,7 @@
 class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
   EditorView(Responder * parentResponder);
+  ~EditorView();
   void setTextAreaDelegate(TextAreaDelegate * delegate) {
     m_textArea.setDelegate(delegate);
   }
@@ -38,6 +39,7 @@ private:
     KDCoordinate m_offset;
   };
 
+  Highlighter * m_highlighter;
   TextArea m_textArea;
   GutterView m_gutterView;
 };

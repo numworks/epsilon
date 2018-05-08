@@ -14,6 +14,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   void setText(char * textBuffer, size_t textBufferSize);
+  bool setCursorLocation(int location);
 private:
   int indentationBeforeCursor() const;
   bool insertTextWithIndentation(const char * textBuffer, int location);
@@ -25,7 +26,7 @@ private:
     Text(char * buffer, size_t bufferSize, Highlighter * highlighter);
     ~Text();
     void setText(char * buffer, size_t bufferSize);
-    void highlight();
+    bool highlight(int location = -1);
     const char * text() const { return const_cast<const char *>(m_buffer); }
     const char * attr() const { return const_cast<const char *>(m_attr_buffer); }
     class Line {
@@ -97,7 +98,7 @@ private:
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
     const char * text() const override;
-    const Text * getText() const { return &m_text; }
+    Text * getText() { return &m_text; }
     size_t editedTextLength() const override {
       return m_text.textLength();
     }
@@ -106,6 +107,7 @@ private:
     bool removeChar() override;
     bool removeEndOfLine() override;
     bool removeStartOfLine();
+    void setCursorLocation(int cursorLocation);
   private:
     KDRect characterFrameAtIndex(size_t index) const override;
     Text m_text;

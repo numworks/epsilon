@@ -8,10 +8,16 @@
 EditorView::EditorView(Responder * parentResponder) :
   Responder(parentResponder),
   View(),
-  m_textArea(parentResponder, nullptr, 0, &pythonHighlighter),
+  m_highlighter(new PythonHighlighter()),
+  m_textArea(parentResponder, nullptr, 0, m_highlighter),
   m_gutterView(KDText::FontSize::Large)
 {
   m_textArea.setScrollViewDelegate(this);
+}
+
+EditorView::~EditorView() {
+  delete m_highlighter;
+  m_highlighter = nullptr;
 }
 
 void EditorView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {

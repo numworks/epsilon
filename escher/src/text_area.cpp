@@ -10,15 +10,39 @@ static inline size_t min(size_t a, size_t b) {
   return (a>b ? b : a);
 }
 
+bool TextArea::setCursorLocation(int location) {
+  bool result = TextInput::setCursorLocation(location);
+  if(m_contentView.getText()->highlight(cursorLocation())) {
+    markRectAsDirty(bounds());
+  }
+  return result;
+}
+
+void TextArea::TextArea::ContentView::setCursorLocation(int location) {
+  TextInput::ContentView::setCursorLocation(location);
+  if(m_text.highlight(cursorLocation())) {
+    markRectAsDirty(bounds());
+  }
+}
+
+bool TextArea::Text::highlight(int location) {
+  if(m_highlighter != nullptr) {
+    if(location < 0) {
+      return m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
+    } else {
+      return m_highlighter->cursorMoved(m_buffer, m_attr_buffer, m_bufferSize, location);
+    }
+  }
+  return false;
+}
+
 TextArea::Text::Text(char * buffer, size_t bufferSize, Highlighter * highlighter) :
   m_buffer(buffer),
   m_bufferSize(bufferSize),
   m_highlighter(highlighter)
 {
   m_attr_buffer = new char[bufferSize]();
-  if(m_highlighter != nullptr) {
-    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
-  }
+  highlight();
 }
 
 TextArea::Text::~Text() {
@@ -33,9 +57,7 @@ void TextArea::Text::setText(char * buffer, size_t bufferSize) {
   m_bufferSize = bufferSize;
   delete[] m_attr_buffer;
   m_attr_buffer = new char[bufferSize]();
-  if(m_highlighter != nullptr) {
-    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
-  }
+  highlight();
 }
 
 TextArea::Text::Line::Line(const char * text, const char * attr) :
@@ -115,9 +137,7 @@ void TextArea::Text::insertChar(char c, size_t index) {
       break;
     }
   }
-  if(m_highlighter != nullptr) {
-    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
-  }
+  highlight();
 }
 
 char TextArea::Text::removeChar(size_t index) {
@@ -130,9 +150,7 @@ char TextArea::Text::removeChar(size_t index) {
       break;
     }
   }
-  if(m_highlighter != nullptr) {
-    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
-  }
+  highlight();
   return deletedChar;
 }
 
@@ -161,9 +179,7 @@ size_t TextArea::Text::removeRemainingLine(size_t index, int direction) {
     }
   }
   assert(false);
-  if(m_highlighter != nullptr) {
-    m_highlighter->highlight(m_buffer, m_attr_buffer, m_bufferSize);
-  }
+  highlight();
   return 0;
 }
 

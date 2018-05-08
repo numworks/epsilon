@@ -11,7 +11,7 @@
 
 class ExpressionLayoutField : public ScrollableView, public ScrollViewDataSource {
 public:
-  ExpressionLayoutField(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ExpressionLayoutFieldDelegate * delegate = nullptr, KDColor backgroundColor = KDColorWhite);
+  ExpressionLayoutField(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ExpressionLayoutFieldDelegate * delegate = nullptr);
   void setDelegate(ExpressionLayoutFieldDelegate * delegate) { m_delegate = delegate; }
   bool isEditing() const;
   void setEditing(bool isEditing);
@@ -23,6 +23,7 @@ public:
   bool handleEventWithText(const char * text, bool indentation = false) override;
   Poincare::ExpressionLayout * expressionLayout();
   char XNTChar();
+  void setBackgroundColor(KDColor c) override;
 
   /* Responder */
   Toolbox * toolbox() override;
@@ -42,9 +43,10 @@ protected:
 private:
   class ContentView : public View {
   public:
-    ContentView(Poincare::ExpressionLayout * expressionLayout, KDColor backgroundColor);
+    ContentView(Poincare::ExpressionLayout * expressionLayout);
     bool isEditing() const { return m_isEditing; }
     void setEditing(bool isEditing);
+    void setBackgroundColor(KDColor c);
     void setCursor(Poincare::ExpressionLayoutCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged();
     KDRect cursorRect();

@@ -4,9 +4,9 @@
 
 using namespace Poincare;
 
-ExpressionLayoutField::ContentView::ContentView(ExpressionLayout * expressionLayout, KDColor backgroundColor) :
+ExpressionLayoutField::ContentView::ContentView(ExpressionLayout * expressionLayout) :
   m_cursor(expressionLayout, ExpressionLayoutCursor::Position::Right),
-  m_expressionView(0.0f, 0.5f, KDColorBlack, backgroundColor),
+  m_expressionView(0.0f, 0.5f, KDColorBlack, KDColorWhite),
   m_cursorView(),
   m_isEditing(false)
 {
@@ -17,6 +17,10 @@ void ExpressionLayoutField::ContentView::setEditing(bool isEditing) {
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
   layoutSubviews();
+}
+
+void ExpressionLayoutField::ContentView::setBackgroundColor(KDColor c) {
+  m_expressionView.setBackgroundColor(c);
 }
 
 void ExpressionLayoutField::ContentView::cursorPositionChanged() {

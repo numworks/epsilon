@@ -29,7 +29,7 @@ public:
   bool showsIndicators() const { return m_showsIndicators; }
   void setColorsBackground(bool c) { m_colorsBackground = c; }
   bool colorsBackground() const { return m_colorsBackground; }
-  void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
+  virtual void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
   KDColor backgroundColor() const { return m_backgroundColor; }
 
   ScrollViewIndicator * verticalScrollIndicator() { return &m_verticalScrollIndicator; }

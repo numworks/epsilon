@@ -7,9 +7,9 @@
 #include <assert.h>
 #include <string.h>
 
-ExpressionLayoutField::ExpressionLayoutField(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ExpressionLayoutFieldDelegate * delegate, KDColor backgroundColor) :
+ExpressionLayoutField::ExpressionLayoutField(Responder * parentResponder, Poincare::ExpressionLayout * expressionLayout, ExpressionLayoutFieldDelegate * delegate) :
   ScrollableView(parentResponder, &m_contentView, this),
-  m_contentView(expressionLayout, backgroundColor),
+  m_contentView(expressionLayout),
   m_delegate(delegate)
 {
 }
@@ -321,4 +321,9 @@ Poincare::ExpressionLayout * ExpressionLayoutField::expressionLayout() {
 
 char ExpressionLayoutField::XNTChar() {
   return m_contentView.cursor()->pointedExpressionLayout()->XNTChar();
+}
+
+void ExpressionLayoutField::setBackgroundColor(KDColor c) {
+  ScrollableView::setBackgroundColor(c);
+  m_contentView.setBackgroundColor(c);
 }

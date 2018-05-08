@@ -33,7 +33,7 @@ static bool shouldRepeatKey(Ion::Keyboard::Key k) {
 }
 
 static void keyHandler(Fl_Widget *, long key) {
-  if (currentEvent == Ion::Events::None) {
+  if (currentEvent == (uint8_t)Ion::Events::None) {
     currentEvent = Ion::Events::Event((Ion::Keyboard::Key)key,
                                       Ion::Events::isShiftActive(),
                                       Ion::Events::isAlphaActive());

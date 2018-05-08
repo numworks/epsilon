@@ -88,7 +88,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
   /* Both output expressions have to be updated at the same time. The
    * outputView points to deleted layouts and a call to
    * outputView()->layoutSubviews() is going to fail. */
-  Poincare::ExpressionLayout * outputExpressions[2] = {calculation->approximateOutputLayout(calculationApp->localContext()), calculation->shouldDisplayApproximateOutput(calculationApp->localContext()) ? nullptr : calculation->exactOutputLayout(calculationApp->localContext())};
+  Poincare::ExpressionLayout * outputExpressions[2] = {calculation->approximateOutputLayout(calculationApp->localContext()), calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext()) ? nullptr : calculation->exactOutputLayout(calculationApp->localContext())};
   m_scrollableOutputView.outputView()->setExpressions(outputExpressions);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.outputView()->setEqualMessage(equalMessage);

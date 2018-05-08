@@ -21,6 +21,7 @@ void MCUSerial(const char * input);
 void Ping(const char * input);
 void Print(const char * input);
 void Suspend(const char * input);
+void VBlank(const char * input);
 
 extern const char * const sOK;
 extern const char * const sKO;

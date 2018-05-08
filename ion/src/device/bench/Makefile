@@ -17,4 +17,5 @@ objs += $(addprefix ion/src/device/bench/command/, \
   ping.o \
   print.o \
   suspend.o \
+  vblank.o \
 )

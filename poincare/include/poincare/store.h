@@ -5,6 +5,7 @@
 #include <poincare/symbol.h>
 #include <poincare/static_hierarchy.h>
 #include <poincare/layout_engine.h>
+#include <poincare/evaluation.h>
 
 namespace Poincare {
 

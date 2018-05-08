@@ -5,6 +5,16 @@ extern "C" {
 }
 #include <poincare/evaluation.h>
 #include <poincare/expression.h>
+#include <poincare/undefined.h>
+#include <poincare/decimal.h>
+#include <poincare/multiplication.h>
+#include <poincare/opposite.h>
+#include <poincare/addition.h>
+#include <poincare/subtraction.h>
+#include <poincare/matrix.h>
+#include <poincare/power.h>
+#include <poincare/symbol.h>
+#include <ion.h>
 #include <cmath>
 
 namespace Poincare {
@@ -16,6 +26,87 @@ T Complex<T>::toScalar() const {
   }
   return NAN;
 }
+
+template <typename T>
+static Expression * CreateDecimal(T f) {
+  if (std::isnan(f) || std::isinf(f)) {
+    return new Undefined();
+  }
+  return new Decimal(f);
+}
+
+template<typename T>
+Expression * Complex<T>::complexToExpression(Expression::ComplexFormat complexFormat) const {
+  if (std::isnan(this->real()) || std::isnan(this->imag()) || std::isinf(this->real()) || std::isinf(this->imag())) {
+    return new Poincare::Undefined();
+  }
+
+  switch (complexFormat) {
+    case Expression::ComplexFormat::Cartesian:
+    {
+      Expression * real = nullptr;
+      Expression * imag = nullptr;
+      if (this->real() != 0 || this->imag() == 0) {
+        real = CreateDecimal(this->real());
+      }
+      if (this->imag() != 0) {
+        if (this->imag() == 1.0 || this->imag() == -1) {
+          imag = new Symbol(Ion::Charset::IComplex);
+        } else if (this->imag() > 0) {
+          imag = new Multiplication(CreateDecimal(this->imag()), new Symbol(Ion::Charset::IComplex), false);
+        } else {
+          imag = new Multiplication(CreateDecimal(-this->imag()), new Symbol(Ion::Charset::IComplex), false);
+        }
+      }
+      if (imag == nullptr) {
+        return real;
+      } else if (real == nullptr) {
+        if (this->imag() > 0) {
+          return imag;
+        } else {
+          return new Opposite(imag, false);
+        }
+        return imag;
+      } else if (this->imag() > 0) {
+        return new Addition(real, imag, false);
+      } else {
+        return new Subtraction(real, imag, false);
+      }
+    }
+    default:
+    {
+      assert(complexFormat == Expression::ComplexFormat::Polar);
+      Expression * norm = nullptr;
+      Expression * exp = nullptr;
+      T r = std::abs(*this);
+      T th = std::arg(*this);
+      if (r != 1 || th == 0) {
+        norm = CreateDecimal(r);
+      }
+      if (r != 0 && th != 0) {
+        Expression * arg = nullptr;
+        if (th == 1.0) {
+          arg = new Symbol(Ion::Charset::IComplex);
+        } else if (th == -1.0) {
+          arg = new Opposite(new Symbol(Ion::Charset::IComplex), false);
+        } else if (th > 0) {
+          arg = new Multiplication(CreateDecimal(th), new Symbol(Ion::Charset::IComplex), false);
+        } else {
+          arg = new Opposite(new Multiplication(CreateDecimal(-th), new Symbol(Ion::Charset::IComplex), false));
+        }
+        exp = new Power(new Symbol(Ion::Charset::Exponential), arg, false);
+      }
+      if (exp == nullptr) {
+        return norm;
+      } else if (norm == nullptr) {
+        return exp;
+      } else {
+        return new Multiplication(norm, exp, false);
+      }
+    }
+  }
+}
+
 
 template<typename T>
 std::complex<T> Complex<T>::pow(const std::complex<T> &c, const std::complex<T> &d) {
@@ -72,6 +163,17 @@ MatrixComplex<T>::MatrixComplex(std::complex<T> * operands, int numberOfRows, in
       m_operands[i].imag(0.0);
     }
   }
+}
+
+template<typename T>
+Expression * MatrixComplex<T>::complexToExpression(Expression::ComplexFormat complexFormat) const {
+  Expression ** operands = new Expression * [numberOfComplexOperands()];
+  for (int i = 0; i < numberOfComplexOperands(); i++) {
+    operands[i] = Complex<T>(complexOperand(i)).complexToExpression(complexFormat);
+  }
+  Expression * result = new Matrix(operands, numberOfRows(), numberOfColumns(), false);
+  delete[] operands;
+  return result;
 }
 
 template<typename T>

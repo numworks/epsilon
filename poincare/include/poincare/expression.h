@@ -3,7 +3,6 @@
 
 #include <poincare/expression_layout.h>
 #include <poincare/print_float.h>
-#include <poincare/evaluation.h>
 #include <complex>
 extern "C" {
 #include <assert.h>
@@ -13,6 +12,7 @@ namespace Poincare {
 
 class Context;
 class Rational;
+template<class T> class Evaluation;
 
 class Expression {
   template<typename T> friend class Complex;
@@ -288,8 +288,6 @@ private:
     return nullptr;
   }
   /* Evaluation Engine */
-  template<typename T> static Expression * CreateDecimal(T f);
-  template<typename T> static Expression * complexToExpression(std::complex<T> c, ComplexFormat complexFormat);
   virtual Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 

@@ -2,6 +2,7 @@
 #define POINCARE_GREAT_COMMON_DIVISOR_H
 
 #include <poincare/layout_engine.h>
+#include <poincare/evaluation.h>
 #include <poincare/static_hierarchy.h>
 
 namespace Poincare {

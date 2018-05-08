@@ -7,15 +7,7 @@
 #include <poincare/matrix_data.h>
 #include <poincare/undefined.h>
 #include <poincare/simplification_root.h>
-#include <poincare/rational.h>
-#include <poincare/matrix.h>
-#include <poincare/decimal.h>
-#include <poincare/ieee754.h>
-#include <poincare/addition.h>
-#include <poincare/multiplication.h>
-#include <poincare/subtraction.h>
-#include <poincare/power.h>
-#include <poincare/opposite.h>
+#include <poincare/evaluation.h>
 #include <ion.h>
 #include <cmath>
 #include "expression_parser.hpp"
@@ -315,19 +307,8 @@ Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {
 /* Evaluation */
 
 template<typename T> Expression * Expression::approximate(Context& context, AngleUnit angleUnit, ComplexFormat complexFormat) const {
-  Expression * result = nullptr;
   Evaluation<T> * e = privateApproximate(T(), context, angleUnit);
-  if (e->type() == Evaluation<T>::Type::Complex) {
-    result = complexToExpression(*(static_cast<Complex<T> *>(e)), complexFormat);
-  } else {
-    MatrixComplex<T> * matrix = static_cast<MatrixComplex<T> *>(e);
-    Expression ** operands = new Expression * [matrix->numberOfComplexOperands()];
-    for (int i = 0; i < matrix->numberOfComplexOperands(); i++) {
-      operands[i] = complexToExpression(matrix->complexOperand(i), complexFormat);
-    }
-    result = new Matrix(operands, matrix->numberOfRows(), matrix->numberOfColumns(), false);
-    delete[] operands;
-  }
+  Expression * result = e->complexToExpression(complexFormat);
   delete e;
   return result;
 }
@@ -354,85 +335,6 @@ template<typename T> T Expression::approximateToScalar(const char * text, Contex
 template<typename T> T Expression::epsilon() {
   static T epsilon = sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f;
   return epsilon;
-}
-
-template <typename T>
-Expression * Expression::CreateDecimal(T f) {
-  if (std::isnan(f) || std::isinf(f)) {
-    return new Undefined();
-  }
-  return new Decimal(f);
-}
-
-template<typename T> Expression * Expression::complexToExpression(std::complex<T> c, ComplexFormat complexFormat) {
-  if (std::isnan(c.real()) || std::isnan(c.imag()) || std::isinf(c.real()) || std::isinf(c.imag())) {
-    return new Undefined();
-  }
-
-  switch (complexFormat) {
-    case ComplexFormat::Cartesian:
-    {
-      Expression * real = nullptr;
-      Expression * imag = nullptr;
-      if (c.real() != 0 || c.imag() == 0) {
-        real = CreateDecimal(c.real());
-      }
-      if (c.imag() != 0) {
-        if (c.imag() == 1.0 || c.imag() == -1) {
-          imag = new Symbol(Ion::Charset::IComplex);
-        } else if (c.imag() > 0) {
-          imag = new Multiplication(CreateDecimal(c.imag()), new Symbol(Ion::Charset::IComplex), false);
-        } else {
-          imag = new Multiplication(CreateDecimal(-c.imag()), new Symbol(Ion::Charset::IComplex), false);
-        }
-      }
-      if (imag == nullptr) {
-        return real;
-      } else if (real == nullptr) {
-        if (c.imag() > 0) {
-          return imag;
-        } else {
-          return new Opposite(imag, false);
-        }
-        return imag;
-      } else if (c.imag() > 0) {
-        return new Addition(real, imag, false);
-      } else {
-        return new Subtraction(real, imag, false);
-      }
-    }
-    default:
-    {
-      assert(complexFormat == ComplexFormat::Polar);
-      Expression * norm = nullptr;
-      Expression * exp = nullptr;
-      T r = std::abs(c);
-      T th = std::arg(c);
-      if (r != 1 || th == 0) {
-        norm = CreateDecimal(r);
-      }
-      if (r != 0 && th != 0) {
-        Expression * arg = nullptr;
-        if (th == 1.0) {
-          arg = new Symbol(Ion::Charset::IComplex);
-        } else if (th == -1.0) {
-          arg = new Opposite(new Symbol(Ion::Charset::IComplex), false);
-        } else if (th > 0) {
-          arg = new Multiplication(CreateDecimal(th), new Symbol(Ion::Charset::IComplex), false);
-        } else {
-          arg = new Opposite(new Multiplication(CreateDecimal(-th), new Symbol(Ion::Charset::IComplex), false));
-        }
-        exp = new Power(new Symbol(Ion::Charset::Exponential), arg, false);
-      }
-      if (exp == nullptr) {
-        return norm;
-      } else if (norm == nullptr) {
-        return exp;
-      } else {
-        return new Multiplication(norm, exp, false);
-      }
-    }
-  }
 }
 
 }

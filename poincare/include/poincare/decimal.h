@@ -12,7 +12,6 @@ namespace Poincare {
  */
 
 class Decimal : public StaticHierarchy<0> {
-  friend class Expression;
 public:
   static int exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
   static Integer mantissa(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative);
@@ -24,6 +23,7 @@ public:
   Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   Sign sign() const override { return m_mantissa.isNegative() ? Sign::Negative : Sign::Positive; }
+  template <typename T> Decimal(T f);
 private:
   constexpr static double k_biggestMantissaFromDouble = 999999999999999;
   constexpr static int k_maxDoubleExponent = 308;
@@ -36,7 +36,6 @@ private:
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
-  template <typename T> Decimal(T f);
   Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const;

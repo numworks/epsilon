@@ -2,6 +2,7 @@
 #define POINCARE_APPROXIMATION_H
 
 #include <poincare/expression.h>
+#include <poincare/evaluation.h>
 
 namespace Poincare {
 

@@ -1,22 +1,22 @@
 #ifndef ION_DEVICE_USB_CALCULATOR_H
 #define ION_DEVICE_USB_CALCULATOR_H
 
-#include "device.h"
-#include "dfu_interface.h"
-#include "stack/bos_descriptor.h"
-#include "stack/configuration_descriptor.h"
-#include "stack/descriptor.h"
-#include "stack/device_descriptor.h"
-#include "stack/dfu_functional_descriptor.h"
-#include "stack/extended_compat_id_descriptor.h"
-#include "stack/interface_descriptor.h"
-#include "stack/language_id_string_descriptor.h"
-#include "stack/microsoft_os_string_descriptor.h"
-#include "stack/string_descriptor.h"
-#include "stack/url_descriptor.h"
-#include "stack/webusb_platform_descriptor.h"
 #include <stddef.h>
 #include <assert.h>
+#include "dfu_interface.h"
+#include "stack/device.h"
+#include "stack/descriptor/bos_descriptor.h"
+#include "stack/descriptor/configuration_descriptor.h"
+#include "stack/descriptor/descriptor.h"
+#include "stack/descriptor/device_descriptor.h"
+#include "stack/descriptor/dfu_functional_descriptor.h"
+#include "stack/descriptor/extended_compat_id_descriptor.h"
+#include "stack/descriptor/interface_descriptor.h"
+#include "stack/descriptor/language_id_string_descriptor.h"
+#include "stack/descriptor/microsoft_os_string_descriptor.h"
+#include "stack/descriptor/string_descriptor.h"
+#include "stack/descriptor/url_descriptor.h"
+#include "stack/descriptor/webusb_platform_descriptor.h"
 
 namespace Ion {
 namespace USB {

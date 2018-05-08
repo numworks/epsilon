@@ -1,14 +1,18 @@
 usb_objs += $(addprefix ion/src/device/usb/, \
   calculator.o \
-  device.o\
   dfu_interface.o\
+)
+
+usb_objs += $(addprefix ion/src/device/usb/stack/, \
+  device.o\
   endpoint0.o \
   interface.o\
   request_recipient.o\
   setup_packet.o\
+  streamable.o\
 )
 
-usb_objs += $(addprefix ion/src/device/usb/stack/, \
+usb_objs += $(addprefix ion/src/device/usb/stack/descriptor/, \
   bos_descriptor.o\
   configuration_descriptor.o \
   descriptor.o\
@@ -20,7 +24,6 @@ usb_objs += $(addprefix ion/src/device/usb/stack/, \
   language_id_string_descriptor.o \
   microsoft_os_string_descriptor.o\
   platform_device_capability_descriptor.o\
-  streamable.o\
   string_descriptor.o\
   url_descriptor.o\
   webusb_platform_descriptor.o\

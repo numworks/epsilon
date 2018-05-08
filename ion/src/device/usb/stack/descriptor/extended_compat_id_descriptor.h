@@ -1,7 +1,7 @@
 #ifndef ION_DEVICE_USB_STACK_EXTENDED_COMPAT_ID_DESCRIPTOR_H
 #define ION_DEVICE_USB_STACK_EXTENDED_COMPAT_ID_DESCRIPTOR_H
 
-#include "streamable.h"
+#include "../streamable.h"
 
 namespace Ion {
 namespace USB {

@@ -1,9 +1,9 @@
 #include "endpoint0.h"
+#include <string.h>
+#include <ion/src/device/regs/regs.h>
 #include "device.h"
 #include "interface.h"
 #include "request_recipient.h"
-#include "../regs/regs.h"
-#include <string.h>
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 

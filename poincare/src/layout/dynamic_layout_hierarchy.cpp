@@ -37,11 +37,15 @@ DynamicLayoutHierarchy::~DynamicLayoutHierarchy() {
 }
 
 void DynamicLayoutHierarchy::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren) {
+  int indexForInsertion = index;
   int indexOfEL = indexOfChild(eL);
   if (indexOfEL >= 0) {
     removeChildAtIndex(indexOfEL, false);
+    if (indexOfEL < index) {
+      indexForInsertion--;
+    }
   }
-  addChildrenAtIndex(eL->children(), eL->numberOfChildren(), index, removeEmptyChildren);
+  addChildrenAtIndex(eL->children(), eL->numberOfChildren(), indexForInsertion, removeEmptyChildren);
   eL->detachChildren();
   delete eL;
 }

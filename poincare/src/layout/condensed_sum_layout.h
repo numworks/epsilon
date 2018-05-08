@@ -1,28 +1,32 @@
 #ifndef POINCARE_CONDENSED_SUM_LAYOUT_H
 #define POINCARE_CONDENSED_SUM_LAYOUT_H
 
-#include <poincare/expression.h>
-#include <poincare/expression_layout.h>
+#include <poincare/static_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class CondensedSumLayout : public ExpressionLayout {
+class CondensedSumLayout : public StaticLayoutHierarchy<3> {
 public:
-  CondensedSumLayout(ExpressionLayout * baseLayout, ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout = nullptr);
-  ~CondensedSumLayout();
-  CondensedSumLayout(const CondensedSumLayout& other) = delete;
-  CondensedSumLayout(CondensedSumLayout&& other) = delete;
-  CondensedSumLayout& operator=(const CondensedSumLayout& other) = delete;
-  CondensedSumLayout& operator=(CondensedSumLayout&& other) = delete;
+  using StaticLayoutHierarchy::StaticLayoutHierarchy;
+  ExpressionLayout * clone() const override;
+  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+  ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "sum");
+  }
+  ExpressionLayout * layoutToPointWhenInserting() override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;
-  ExpressionLayout * child(uint16_t index) override;
+  void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
 private:
-  ExpressionLayout * m_baseLayout;
-  ExpressionLayout * m_subscriptLayout;
-  ExpressionLayout * m_superscriptLayout;
+  ExpressionLayout * baseLayout();
+  ExpressionLayout * subscriptLayout();
+  ExpressionLayout * superscriptLayout();
 };
 
 }

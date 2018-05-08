@@ -45,6 +45,8 @@ public:
   KDCoordinate left() const { return m_x; }
 
   KDPoint topLeft() const { return KDPoint(left(), top()); }
+  KDPoint topRight() const { return KDPoint(right(), top()); }
+  KDPoint bottomLeft() const { return KDPoint(left(), bottom()); }
   KDPoint bottomRight() const { return KDPoint(right(), bottom()); }
 
   bool operator ==(const KDRect &other) const {
@@ -60,7 +62,10 @@ public:
   bool intersects(const KDRect & other) const;
   KDRect intersectedWith(const KDRect & other) const;
   KDRect unionedWith(const KDRect & other) const; // Returns the smallest rectangle containing r1 and r2
+  KDRect differencedWith(const KDRect & other) const; // Returns the smallest rectangle containing r1\r2
   bool contains(KDPoint p) const;
+  bool isAbove(KDPoint p) const;
+  bool isUnder(KDPoint p) const;
   bool isEmpty() const;
 
 private:

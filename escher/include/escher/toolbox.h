@@ -12,7 +12,7 @@
 class Toolbox : public StackViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   Toolbox(Responder * parentResponder, const char * title = 0);
-  void setSender(Responder * sender);
+  void setSender(Responder * sender) { m_sender = sender; }
 
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
@@ -72,7 +72,7 @@ protected:
   bool handleEventForRow(Ion::Events::Event event, int selectedRow);
   bool selectSubMenu(ToolboxMessageTree * selectedMessageTree);
   bool returnToPreviousMenu();
-  virtual Responder * sender();
+  Responder * sender() { return m_sender; }
   virtual bool selectLeaf(ToolboxMessageTree * selectedMessageTree) = 0;
   virtual const ToolboxMessageTree * rootModel() = 0;
   virtual MessageTableCellWithMessage * leafCellAtIndex(int index) = 0;

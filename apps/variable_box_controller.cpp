@@ -10,7 +10,7 @@ using namespace Poincare;
 VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, GlobalContext * context) :
   ViewController(parentResponder),
   m_context(context),
-  m_textFieldCaller(nullptr),
+  m_sender(nullptr),
   m_firstSelectedRow(0),
   m_previousSelectedRow(0),
   m_currentPage(Page::RootMenu),
@@ -20,14 +20,13 @@ VariableBoxController::ContentViewController::ContentViewController(Responder * 
   m_selectableTableView.setShowsIndicators(false);
 }
 
-const char * VariableBoxController::ContentViewController::title() {
-  return I18n::translate(I18n::Message::Variables);
-}
-
 View * VariableBoxController::ContentViewController::view() {
   return &m_selectableTableView;
 }
 
+const char * VariableBoxController::ContentViewController::title() {
+  return I18n::translate(I18n::Message::Variables);
+}
 void VariableBoxController::ContentViewController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
   m_selectableTableView.scrollToCell(0,0);
@@ -67,7 +66,7 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     char label[3];
     putLabelAtIndexInBuffer(selectedRow(), label);
     const char * editedText = label;
-    m_textFieldCaller->handleEventWithText(editedText);
+    m_sender->handleEventWithText(editedText);
 #if MATRIX_VARIABLES
     m_selectableTableView.deselectTable();
     m_currentPage = Page::RootMenu;
@@ -198,34 +197,21 @@ int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
   return 0;
 }
 
-const Expression * VariableBoxController::ContentViewController::expressionForIndex(int index) {
-  if (m_currentPage == Page::Scalar) {
-    const Symbol symbol = Symbol('A'+index);
-    return m_context->expressionForSymbol(&symbol);
-  }
-  if (m_currentPage == Page::Matrix) {
-    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->expressionForSymbol(&symbol);
-  }
-#if LIST_VARIABLES
-  if (m_currentPage == Page::List) {
-    return nullptr;
-  }
-#endif
-  return nullptr;
+void VariableBoxController::ContentViewController::reloadData() {
+  m_selectableTableView.reloadData();
 }
 
-ExpressionLayout * VariableBoxController::ContentViewController::expressionLayoutForIndex(int index) {
-  if (m_currentPage == Page::Matrix) {
-    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->expressionLayoutForSymbol(&symbol);
-  }
-#if LIST_VARIABLES
-  if (m_currentPage == Page::List) {
-    return nullptr;
-  }
+void VariableBoxController::ContentViewController::resetPage() {
+#if MATRIX_VARIABLES
+  m_currentPage = Page::RootMenu;
+#else
+  m_currentPage = Page::Scalar;
 #endif
-  return nullptr;
+}
+
+void VariableBoxController::ContentViewController::viewDidDisappear() {
+  m_selectableTableView.deselectTable();
+  ViewController::viewDidDisappear();
 }
 
 VariableBoxController::ContentViewController::Page VariableBoxController::ContentViewController::pageAtIndex(int index) {
@@ -266,25 +252,34 @@ I18n::Message VariableBoxController::ContentViewController::nodeLabelAtIndex(int
   return labels[index];
 }
 
-void VariableBoxController::ContentViewController::setTextFieldCaller(TextField * textField) {
-  m_textFieldCaller = textField;
-}
-
-void VariableBoxController::ContentViewController::reloadData() {
-  m_selectableTableView.reloadData();
-}
-
-void VariableBoxController::ContentViewController::resetPage() {
-#if MATRIX_VARIABLES
-  m_currentPage = Page::RootMenu;
-#else
-  m_currentPage = Page::Scalar;
+const Expression * VariableBoxController::ContentViewController::expressionForIndex(int index) {
+  if (m_currentPage == Page::Scalar) {
+    const Symbol symbol = Symbol('A'+index);
+    return m_context->expressionForSymbol(&symbol);
+  }
+  if (m_currentPage == Page::Matrix) {
+    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
+    return m_context->expressionForSymbol(&symbol);
+  }
+#if LIST_VARIABLES
+  if (m_currentPage == Page::List) {
+    return nullptr;
+  }
 #endif
+  return nullptr;
 }
 
-void VariableBoxController::ContentViewController::viewDidDisappear() {
-  m_selectableTableView.deselectTable();
-  ViewController::viewDidDisappear();
+ExpressionLayout * VariableBoxController::ContentViewController::expressionLayoutForIndex(int index) {
+  if (m_currentPage == Page::Matrix) {
+    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
+    return m_context->expressionLayoutForSymbol(&symbol);
+  }
+#if LIST_VARIABLES
+  if (m_currentPage == Page::List) {
+    return nullptr;
+  }
+#endif
+  return nullptr;
 }
 
 VariableBoxController::VariableBoxController(GlobalContext * context) :
@@ -297,8 +292,8 @@ void VariableBoxController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_contentViewController);
 }
 
-void VariableBoxController::setTextFieldCaller(TextField * textField) {
-  m_contentViewController.setTextFieldCaller(textField);
+void VariableBoxController::setSender(Responder * sender) {
+  m_contentViewController.setSender(sender);
 }
 
 void VariableBoxController::viewWillAppear() {

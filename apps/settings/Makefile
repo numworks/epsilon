@@ -3,6 +3,7 @@ snapshot_headers += apps/settings/app.h
 
 app_objs += $(addprefix apps/settings/,\
   app.o\
+  helpers.o\
   language_controller.o\
   main_controller.o\
   settings_message_tree.o\

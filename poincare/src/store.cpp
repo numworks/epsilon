@@ -7,8 +7,8 @@ extern "C" {
 #include <ion.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
+#include "layout/char_layout.h"
 #include "layout/horizontal_layout.h"
-#include "layout/string_layout.h"
 
 namespace Poincare {
 
@@ -37,12 +37,11 @@ Expression * Store::shallowReduce(Context& context, AngleUnit angleUnit) {
 ExpressionLayout * Store::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * childrenLayouts[3];
-  childrenLayouts[0] = value()->createLayout(floatDisplayMode, complexFormat);
-  const char stoSymbol[2] = {Ion::Charset::Sto, 0};
-  childrenLayouts[1] = new StringLayout(stoSymbol, 1);
-  childrenLayouts[2] = symbol()->createLayout(floatDisplayMode, complexFormat);
-  return new HorizontalLayout(childrenLayouts, 3);
+  HorizontalLayout * result = new HorizontalLayout();
+  result->addOrMergeChildAtIndex(value()->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result->addChildAtIndex(new CharLayout(Ion::Charset::Sto), result->numberOfChildren());
+  result->addOrMergeChildAtIndex(symbol()->createLayout(floatDisplayMode, complexFormat), result->numberOfChildren(), false);
+  return result;
 }
 
 template<typename T>

@@ -2,7 +2,7 @@
 #include "../init.h"
 #include "fltkkbd.h"
 #include "kbdimage_icon.h"
-
+#undef None // TODO: Remove me
 
 static const char* kCharForKey[Ion::Keyboard::NumberOfKeys] = {
   "\u25c1",   "\u25b3",     "\u25bd",   "\u25b7",  "OK",     "\u21ba",

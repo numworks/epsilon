@@ -1,7 +1,7 @@
-#include "dfu_interface.h"
-#include "../regs/cm4.h"
-#include "../regs/flash.h"
 #include <string.h>
+#include <ion/src/device/regs/cm4.h>
+#include <ion/src/device/regs/flash.h>
+#include "dfu_interface.h"
 
 namespace Ion {
 namespace USB {

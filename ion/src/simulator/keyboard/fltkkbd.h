@@ -3,6 +3,7 @@
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Repeat_Button.H>
 #include <ion/keyboard.h>
 
 class FltkKbd : public Fl_Group {

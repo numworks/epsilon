@@ -24,7 +24,6 @@ public:
   Poincare::ExpressionLayout * expressionLayout();
   char XNTChar();
   void setBackgroundColor(KDColor c) override;
-  void setTopMargin(KDCoordinate m) override;
 
   /* Responder */
   Toolbox * toolbox() override;
@@ -72,7 +71,6 @@ private:
     bool m_isEditing;
   };
   ContentView m_contentView;
-  KDCoordinate m_verticalTopMargin;
   ExpressionLayoutFieldDelegate * m_delegate;
 };
 

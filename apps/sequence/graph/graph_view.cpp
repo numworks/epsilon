@@ -42,7 +42,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 float GraphView::samplingRatio() const {
-  return 5.0f;
+  return 2.0f;
 }
 
 }

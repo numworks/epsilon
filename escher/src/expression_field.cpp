@@ -10,9 +10,14 @@ ExpressionField::ExpressionField(Responder * parentResponder, char * textBuffer,
   m_textBuffer(textBuffer),
   m_textBufferLength(textBufferLength)
 {
+  // Initialize text field
   m_textField.setMargins(0, k_horizontalMargin, 0, k_horizontalMargin);
+  m_textField.setBackgroundColor(KDColorWhite);
+  m_textField.setColorsBackground(true);
+  // Initialize layout field
   m_expressionLayoutField.setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
   m_expressionLayoutField.setBackgroundColor(KDColorWhite);
+  m_expressionLayoutField.setColorsBackground(true);
 }
 
 void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {

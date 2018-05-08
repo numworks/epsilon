@@ -26,7 +26,14 @@ int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mod
 
 template<typename T>
 std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  return Complex<T>::sqrt(c);
+  std::complex<T> result = std::sqrt(c);
+  /* Openbsd trigonometric functions are numerical implementation and thus are
+   * approximative.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
+   * avoid weird results as sqrt(-1) = 6E-16+i, we compute the argument of
+   * the result of sqrt(c) and if arg ~ 0 [Pi], we discard the residual imaginary
+   * part and if arg ~ Pi/2 [Pi], we discard the residual real part. */
+  return ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument(result);
 }
 
 Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {

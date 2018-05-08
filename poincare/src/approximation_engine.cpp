@@ -8,6 +8,23 @@ extern "C" {
 
 namespace Poincare {
 
+template <typename T> T absMod(T a, T b) {
+  T result = std::fmod(std::fabs(a), b);
+  return result > b/2 ? b-result : result;
+}
+
+template <typename T> std::complex<T> ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument(std::complex<T> c) {
+  T arg = std::arg(c);
+  T precision = 10*Expression::epsilon<T>();
+  if (absMod<T>(arg, (T)M_PI) <= precision) {
+    c.imag(0);
+  }
+  if (absMod<T>(arg-(T)M_PI/2.0, (T)M_PI) <= precision) {
+    c.real(0);
+  }
+  return c;
+}
+
 template<typename T> Evaluation<T> * ApproximationEngine::map(const Expression * expression, Context& context, Expression::AngleUnit angleUnit, ComplexCompute<T> compute) {
   assert(expression->numberOfOperands() == 1);
   Evaluation<T> * input = expression->operand(0)->privateApproximate(T(), context, angleUnit);
@@ -92,6 +109,8 @@ template<typename T> MatrixComplex<T> ApproximationEngine::elementWiseOnComplexM
   return result;
 }
 
+template std::complex<float> Poincare::ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument<float>(std::complex<float>);
+template std::complex<double> Poincare::ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument<double>(std::complex<double>);
 template Poincare::Evaluation<float> * Poincare::ApproximationEngine::map(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Expression::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<float> compute);
 template Poincare::Evaluation<double> * Poincare::ApproximationEngine::map(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Expression::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<double> compute);
 template Poincare::Evaluation<float> * Poincare::ApproximationEngine::mapReduce(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Expression::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationEngine::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationEngine::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationEngine::MatrixAndMatrixReduction<float> computeOnMatrices);

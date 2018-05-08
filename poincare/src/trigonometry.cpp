@@ -229,27 +229,46 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
   return nullptr;
 }
 
+
 template <typename T>
-std::complex<T> Trigonometry::computeDirectOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, ComplexFunction<T> approximate) {
-  std::complex<T> input(c);
+std::complex<T> Trigonometry::ConvertToRadian(const std::complex<T> c, Expression::AngleUnit angleUnit) {
   if (angleUnit == Expression::AngleUnit::Degree) {
-    input = input*std::complex<T>(M_PI/180.0);
+    return c*std::complex<T>(M_PI/180.0);
   }
-  return approximate(input);
+  return c;
+}
+
+template <typename T>
+std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, Expression::AngleUnit angleUnit) {
+  if (angleUnit == Expression::AngleUnit::Degree) {
+    return c*std::complex<T>(180/M_PI);
+  }
+  return c;
 }
 
 template<typename T>
-std::complex<T> Trigonometry::computeInverseOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, ComplexFunction<T> approximate) {
-  std::complex<T> result = approximate(c);
-  if (angleUnit == Expression::AngleUnit::Degree) {
-    result *= 180/M_PI;
-  }
-  return result;
+T Trigonometry::RoundToMeaningfulDigits(T f) {
+  /* Cheat: openbsd trigonometric functions are numerical implementation and
+   * thus are approximative.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
+   * avoid weird results as acos(1) = 6E-17 or cos(Pi/2) = 4E-17, we keep only
+   * 15 (or 7) decimals.
+   * We can't do that for all evaluation as the user can operate on values as
+   * small as 1E-308 (in double) and most results still be correct. */
+  T precision = 10*Expression::epsilon<T>();
+  return std::round(f/precision)*precision;
 }
 
-template std::complex<double> Trigonometry::computeDirectOnComplex<double>(const std::complex<double>, Expression::AngleUnit, ComplexFunction<double>);
-template std::complex<float> Trigonometry::computeDirectOnComplex<float>(const std::complex<float>, Expression::AngleUnit, ComplexFunction<float>);
-template std::complex<double> Trigonometry::computeInverseOnComplex<double>(const std::complex<double>, Expression::AngleUnit, ComplexFunction<double>);
-template std::complex<float> Trigonometry::computeInverseOnComplex<float>(const std::complex<float>, Expression::AngleUnit, ComplexFunction<float>);
+template <typename T>
+std::complex<T> Trigonometry::RoundToMeaningfulDigits(const std::complex<T> c) {
+  return std::complex<T>(RoundToMeaningfulDigits(c.real()), RoundToMeaningfulDigits(c.imag()));
+}
+
+template std::complex<float> Trigonometry::ConvertToRadian<float>(std::complex<float>, Expression::AngleUnit);
+template std::complex<double> Trigonometry::ConvertToRadian<double>(std::complex<double>, Expression::AngleUnit);
+template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(std::complex<float>, Expression::AngleUnit);
+template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(std::complex<double>, Expression::AngleUnit);
+template std::complex<float> Trigonometry::RoundToMeaningfulDigits<float>(std::complex<float>);
+template std::complex<double> Trigonometry::RoundToMeaningfulDigits<double>(std::complex<double>);
 
 }

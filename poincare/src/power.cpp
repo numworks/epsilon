@@ -87,7 +87,14 @@ Expression * Power::setSign(Sign s, Context & context, AngleUnit angleUnit) {
 
 template<typename T>
 std::complex<T> Power::compute(const std::complex<T> c, const std::complex<T> d) {
-  return Complex<T>::pow(c, d);
+  /* Openbsd trigonometric functions are numerical implementation and thus are
+   * approximative.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
+   * avoid weird results as e(i*pi) = -1+6E-17*i, we compute the argument of
+   * the result of c^d and if arg ~ 0 [Pi], we discard the residual imaginary
+   * part and if arg ~ Pi/2 [Pi], we discard the residual real part. */
+  std::complex<T> result = std::pow(c, d);
+  return ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument(result);
 }
 
 template<typename T> MatrixComplex<T> Power::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {

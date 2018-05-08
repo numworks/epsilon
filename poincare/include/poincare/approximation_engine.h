@@ -9,6 +9,8 @@ namespace Poincare {
 
 class ApproximationEngine {
 public:
+  template <typename T> static std::complex<T> truncateRealOrImaginaryPartAccordingToArgument(std::complex<T> c);
+
   template <typename T> using ComplexCompute = std::complex<T>(*)(const std::complex<T>, Expression::AngleUnit angleUnit);
   template<typename T> static Evaluation<T> * map(const Expression * expression, Context& context, Expression::AngleUnit angleUnit, ComplexCompute<T> compute);
 

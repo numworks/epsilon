@@ -4,6 +4,7 @@
 #include <poincare/division.h>
 #include <poincare/opposite.h>
 #include <poincare/simplification_engine.h>
+#include <poincare/trigonometry.h>
 extern "C" {
 #include <assert.h>
 }
@@ -36,7 +37,7 @@ Expression * HyperbolicCosine::shallowReduce(Context& context, AngleUnit angleUn
 
 template<typename T>
 std::complex<T> HyperbolicCosine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  return std::cosh(c);
+  return Trigonometry::RoundToMeaningfulDigits(std::cosh(c));
 }
 
 }

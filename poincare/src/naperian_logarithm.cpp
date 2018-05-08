@@ -38,6 +38,9 @@ Expression * NaperianLogarithm::shallowReduce(Context& context, AngleUnit angleU
 
 template<typename T>
 std::complex<T> NaperianLogarithm::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  /* ln has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
+   * followed the convention chosen by the lib c++ of llvm on ]-inf+0i, 0+0i]
+   * (warning: ln takes the other side of the cut values on ]-inf-0i, 0-0i]). */
   return std::log(c);
 }
 

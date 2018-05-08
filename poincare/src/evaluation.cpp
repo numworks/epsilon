@@ -107,7 +107,6 @@ Expression * Complex<T>::complexToExpression(Expression::ComplexFormat complexFo
   }
 }
 
-
 template<typename T>
 std::complex<T> Complex<T>::pow(const std::complex<T> &c, const std::complex<T> &d) {
   std::complex<T> result = std::pow(c, d);

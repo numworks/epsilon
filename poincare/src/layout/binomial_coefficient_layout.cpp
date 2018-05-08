@@ -15,7 +15,8 @@ extern "C" {
 namespace Poincare {
 
 ExpressionLayout * BinomialCoefficientLayout::clone() const {
-  return new BinomialCoefficientLayout(const_cast<BinomialCoefficientLayout *>(this)->nLayout(), const_cast<BinomialCoefficientLayout *>(this)->kLayout(), true);
+  BinomialCoefficientLayout * layout = new BinomialCoefficientLayout(const_cast<BinomialCoefficientLayout *>(this)->nLayout(), const_cast<BinomialCoefficientLayout *>(this)->kLayout(), true);
+  return layout;
 }
 
 ExpressionLayoutCursor BinomialCoefficientLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {

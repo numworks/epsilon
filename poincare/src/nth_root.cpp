@@ -1,7 +1,8 @@
 #include <poincare/nth_root.h>
 #include <poincare/complex.h>
-#include <poincare/fraction.h>
+#include <poincare/division.h>
 #include <poincare/power.h>
+#include <poincare/undefined.h>
 #include "layout/nth_root_layout.h"
 
 extern "C" {
@@ -11,49 +12,60 @@ extern "C" {
 
 namespace Poincare {
 
-NthRoot::NthRoot() :
-  Function("root", 2)
-{
-}
-
 Expression::Type NthRoot::type() const {
   return Type::NthRoot;
 }
 
-Expression * NthRoot::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  NthRoot * r = new NthRoot();
-  r->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return r;
+Expression * NthRoot::clone() const {
+  NthRoot * a = new NthRoot(m_operands, true);  return a;
 }
 
-ExpressionLayout * NthRoot::privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != FloatDisplayMode::Default);
+Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
+    return replaceWith(new Undefined(), true);
+  }
+#endif
+  Power * invIndex = new Power(operand(1), new Rational(-1), false);
+  Power * p = new Power(operand(0), invIndex, false);
+  detachOperands();
+  invIndex->shallowReduce(context, angleUnit);
+  replaceWith(p, true);
+  return p->shallowReduce(context, angleUnit);
+}
+
+ExpressionLayout * NthRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new NthRootLayout(m_args[0]->createLayout(floatDisplayMode, complexFormat), m_args[1]->createLayout(floatDisplayMode, complexFormat));
+  return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));
 }
 
 template<typename T>
-Evaluation<T> * NthRoot::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * base = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * index = m_args[1]->evaluate<T>(context, angleUnit);
+Complex<T> NthRoot::compute(const Complex<T> c, const Complex<T> d) {
+  if (c.a() >= 0 && c.b() == 0 && d.b() == 0) {
+    return Complex<T>::Float(std::pow(c.a(), 1/d.a()));
+  }
+  Complex<T> invIndex = Division::compute(Complex<T>::Float(1), d);
+  return Power::compute(c, invIndex);
+}
+
+template<typename T>
+Expression * NthRoot::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * base = operand(0)->approximate<T>(context, angleUnit);
+  Expression * index = operand(1)->approximate<T>(context, angleUnit);
   Complex<T> result = Complex<T>::Float(NAN);
-  if (base->numberOfOperands() == 1 || index->numberOfOperands() == 1) {
-    result = compute(*(base->complexOperand(0)), *(index->complexOperand(0)));
+  if (base->type() == Type::Complex && index->type() == Type::Complex) {
+    Complex<T> * basec = static_cast<Complex<T> *>(base);
+    Complex<T> * indexc = static_cast<Complex<T> *>(index);
+    result = compute(*basec, *indexc);
   }
   delete base;
   delete index;
   return new Complex<T>(result);
-}
-
-template<typename T>
-Complex<T> NthRoot::compute(const Complex<T> c, const Complex<T> d) const {
-  if (c.a() >= 0 && c.b() == 0 && d.b() == 0) {
-    return Complex<T>::Float(std::pow(c.a(), 1/d.a()));
-  }
-  Complex<T> invIndex = Fraction::compute(Complex<T>::Float(1), d);
-  return Power::compute(c, invIndex);
 }
 
 }

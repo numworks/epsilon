@@ -86,22 +86,10 @@ void KDContext::blendRectWithMask(KDRect rect, KDColor color, const uint8_t * ma
   pushRect(absoluteRect, workingBuffer);
 }
 
-void KDContext::drawRect(KDRect rect, KDColor color) {
-  KDPoint p1 = rect.origin();
-  KDPoint p2 = KDPoint(rect.x(), rect.bottom()).translatedBy(KDPoint(1,0));
-  for (int i = 0; i<rect.width(); i++) {
-    setPixel(p1, color);
-    setPixel(p2, color);
-    p1 = p1.translatedBy(KDPoint(1,0));
-    p2 = p2.translatedBy(KDPoint(1,0));
-  }
-  p1 = rect.origin().translatedBy(KDPoint(0,1));
-  p2 = KDPoint(rect.right(), rect.y());
-  for (int i = 0; i<rect.height(); i++) {
-    setPixel(p1, color);
-    setPixel(p2, color);
-    p1 = p1.translatedBy(KDPoint(0,1));
-    p2 = p2.translatedBy(KDPoint(0,1));
-  }
+void KDContext::strokeRect(KDRect rect, KDColor color) {
+  fillRect(KDRect(rect.origin(), rect.width(), 1), color);
+  fillRect(KDRect(KDPoint(rect.x(), rect.bottom()), rect.width(), 1), color);
+  fillRect(KDRect(rect.origin(), 1, rect.height()), color);
+  fillRect(KDRect(KDPoint(rect.right(), rect.y()), 1, rect.height()), color);
 }
 

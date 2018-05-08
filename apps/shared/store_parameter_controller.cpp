@@ -10,8 +10,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_copyColumn(I18n::Message::CopyColumnInList),
   m_importList(I18n::Message::ImportList),
 #endif
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this, this, this),
   m_store(store),
   m_xColumnSelected(true)
 {

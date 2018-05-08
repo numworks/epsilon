@@ -13,7 +13,7 @@ BaselineRelativeLayout::BaselineRelativeLayout(ExpressionLayout * baseLayout, Ex
   m_baseLayout->setParent(this);
   m_indiceLayout->setParent(this);
   m_baseline = type == Type::Subscript ? m_baseLayout->baseline() :
-    m_indiceLayout->baseline() + m_baseLayout->baseline() - k_indiceHeight;
+    m_indiceLayout->size().height() + m_baseLayout->baseline() - k_indiceHeight;
 }
 
 BaselineRelativeLayout::~BaselineRelativeLayout() {
@@ -55,7 +55,7 @@ KDPoint BaselineRelativeLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate y = 0;
   if (child == m_baseLayout && m_type == Type::Superscript) {
     x = 0;
-    y = m_indiceLayout->baseline() - k_indiceHeight;
+    y = m_indiceLayout->size().height() - k_indiceHeight;
   }
   if (child == m_indiceLayout) {
     x = m_baseLayout->size().width();

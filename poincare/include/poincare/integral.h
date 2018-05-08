@@ -1,29 +1,38 @@
 #ifndef POINCARE_INTEGRAL_H
 #define POINCARE_INTEGRAL_H
 
-#include <poincare/function.h>
+#include <poincare/static_hierarchy.h>
 #include <poincare/variable_context.h>
+#include <poincare/layout_engine.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
-class Integral : public Function {
+class Integral : public StaticHierarchy<3> {
+  using StaticHierarchy<3>::StaticHierarchy;
 public:
-  Integral();
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-      int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
+  int polynomialDegree(char symbolName) const override;
 private:
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  /* Layout */
+  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "int");
+  }
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Complex<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
   template<typename T>
   struct DetailedResult
   {
     T integral;
     T absoluteError;
   };
-  constexpr static int k_maxNumberOfIterations = 100;
+  constexpr static int k_maxNumberOfIterations = 10;
 #ifdef LAGRANGE_METHOD
   template<typename T> T lagrangeGaussQuadrature(T a, T b, VariableContext<T> xContext, AngleUnit angleUnit) const;
 #else

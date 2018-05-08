@@ -3,13 +3,18 @@ extern "C" {
 }
 #include <escher/stack_view_controller.h>
 #include <escher/app.h>
+#include <escher/metric.h>
 
-StackViewController::ControllerView::ControllerView(bool displayFirstStackHeader) :
+StackViewController::ControllerView::ControllerView() :
   View(),
   m_contentView(nullptr),
   m_numberOfStacks(0),
-  m_displayFirstStackHeader(displayFirstStackHeader)
+  m_displayStackHeaders(true)
 {
+}
+
+void StackViewController::ControllerView::shouldDisplayStackHearders(bool shouldDisplay) {
+  m_displayStackHeaders = shouldDisplay;
 }
 
 void StackViewController::ControllerView::setContentView(View * view) {
@@ -33,23 +38,30 @@ void StackViewController::ControllerView::popStack() {
 
 void StackViewController::ControllerView::layoutSubviews() {
   KDCoordinate width = m_frame.width();
-  int indexFirstHeader = m_displayFirstStackHeader ? 0 : 1;
-  for (int i=indexFirstHeader; i<m_numberOfStacks; i++) {
-    m_stackViews[i].setFrame(KDRect(0, k_stackHeight*(i-indexFirstHeader), width, k_stackHeight + 1));
+  if (m_displayStackHeaders) {
+    for (int i=0; i<m_numberOfStacks; i++) {
+      m_stackViews[i].setFrame(KDRect(0, Metric::StackTitleHeight*i, width, Metric::StackTitleHeight + 1));
+    }
   }
   if (m_contentView) {
-    bool separatorHeight = m_displayFirstStackHeader + (m_numberOfStacks > 1);
-    KDRect contentViewFrame = KDRect( 0, (m_numberOfStacks-indexFirstHeader)*k_stackHeight + separatorHeight,
-        width, m_frame.height() - (m_numberOfStacks-indexFirstHeader)*k_stackHeight);
+    KDCoordinate separatorHeight = m_numberOfStacks > 0 ? 1 : 0;
+    KDRect contentViewFrame = KDRect( 0,
+        m_displayStackHeaders * (m_numberOfStacks * Metric::StackTitleHeight + separatorHeight),
+        width,
+        m_frame.height() - m_displayStackHeaders * m_numberOfStacks * Metric::StackTitleHeight);
     m_contentView->setFrame(contentViewFrame);
   }
 }
 
 int StackViewController::ControllerView::numberOfSubviews() const {
-  return m_numberOfStacks + (m_contentView == nullptr ? 0 : 1);
+  return (m_displayStackHeaders ? m_numberOfStacks : 0) + (m_contentView == nullptr ? 0 : 1);
 }
 
 View * StackViewController::ControllerView::subviewAtIndex(int index) {
+  if (!m_displayStackHeaders) {
+    assert(index == 0);
+    return m_contentView;
+  }
   if (index < m_numberOfStacks) {
     assert(index >= 0);
     return &m_stackViews[index];
@@ -65,10 +77,9 @@ const char * StackViewController::ControllerView::className() const {
 }
 #endif
 
-StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController,
-    bool displayFirstStackHeader, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
+StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
   ViewController(parentResponder),
-  m_view(displayFirstStackHeader),
+  m_view(),
   m_numberOfChildren(0),
   m_isVisible(false)
 {
@@ -88,8 +99,10 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
   if (!m_isVisible) {
     return;
   }
-  /* Load stack view */
-  m_view.pushStack(frame);
+  /* Load stack view if the View Controller has a title. */
+  if (vc->title() != nullptr && vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
+    m_view.pushStack(frame);
+  }
   setupActiveViewController();
   if (m_numberOfChildren > 1) {
     m_childrenFrame[m_numberOfChildren-2].viewController()->viewDidDisappear();
@@ -97,9 +110,11 @@ void StackViewController::push(ViewController * vc, KDColor textColor, KDColor b
 }
 
 void StackViewController::pop() {
-  m_view.popStack();
   assert(m_numberOfChildren > 0);
   ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
+  if (vc->title() != nullptr && vc->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
+    m_view.popStack();
+  }
   m_numberOfChildren--;
   setupActiveViewController();
   vc->setParentResponder(nullptr);
@@ -117,6 +132,7 @@ void StackViewController::pushModel(Frame frame) {
 void StackViewController::setupActiveViewController() {
   ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
   vc->setParentResponder(this);
+  m_view.shouldDisplayStackHearders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
   m_view.setContentView(vc->view());
   vc->viewWillAppear();
   vc->setParentResponder(this);
@@ -143,12 +159,16 @@ View * StackViewController::view() {
 void StackViewController::viewWillAppear() {
   /* Load the stack view */
   for (int i = 0; i < m_numberOfChildren; i++) {
-    m_view.pushStack(m_childrenFrame[i]);
+    ViewController * childrenVC = m_childrenFrame[i].viewController();
+    if (childrenVC->title() != nullptr && childrenVC->displayParameter() != ViewController::DisplayParameter::DoNotShowOwnTitle) {
+      m_view.pushStack(m_childrenFrame[i]);
+    }
   }
   /* Load the visible controller view */
   ViewController * vc = m_childrenFrame[m_numberOfChildren-1].viewController();
   if (m_numberOfChildren > 0 && vc) {
     m_view.setContentView(vc->view());
+    m_view.shouldDisplayStackHearders(vc->displayParameter() != ViewController::DisplayParameter::WantsMaximumSpace);
     vc->viewWillAppear();
   }
   m_isVisible = true;
@@ -159,7 +179,7 @@ void StackViewController::viewDidDisappear() {
   if (m_numberOfChildren > 0 && vc) {
     vc->viewDidDisappear();
   }
-  for (int i = 0; i < m_numberOfChildren; i++) {
+  for (int i = 0; i < m_view.numberOfStacks(); i++) {
     m_view.popStack();
   }
   m_isVisible = false;

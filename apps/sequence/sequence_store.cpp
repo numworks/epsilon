@@ -7,14 +7,14 @@ extern "C" {
 
 namespace Sequence {
 
-constexpr KDColor SequenceStore::k_defaultColors[k_maxNumberOfSequences];
-constexpr const char * SequenceStore::k_sequenceNames[k_maxNumberOfSequences];
+constexpr KDColor SequenceStore::k_defaultColors[MaxNumberOfSequences];
+constexpr const char * SequenceStore::k_sequenceNames[MaxNumberOfSequences];
 
 uint32_t SequenceStore::storeChecksum() {
-  size_t dataLengthInBytes = k_maxNumberOfSequences*sizeof(uint32_t);
+  size_t dataLengthInBytes = MaxNumberOfSequences*sizeof(uint32_t);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  uint32_t checksums[k_maxNumberOfSequences];
-  for (int i = 0; i < k_maxNumberOfSequences; i++) {
+  uint32_t checksums[MaxNumberOfSequences];
+  for (int i = 0; i < MaxNumberOfSequences; i++) {
     checksums[i] = m_sequences[i].checksum();
   }
   return Ion::crc32((uint32_t *)checksums, dataLengthInBytes/sizeof(uint32_t));
@@ -34,7 +34,7 @@ Sequence * SequenceStore::definedFunctionAtIndex(int i) {
 }
 
 Sequence * SequenceStore::addEmptyFunction() {
-  assert(m_numberOfFunctions < k_maxNumberOfSequences);
+  assert(m_numberOfFunctions < MaxNumberOfSequences);
   const char * name = firstAvailableName();
   KDColor color = firstAvailableColor();
   Sequence addedSequence(name, color);
@@ -59,7 +59,7 @@ void SequenceStore::removeFunction(Shared::Function * f) {
 }
 
 int SequenceStore::maxNumberOfFunctions() {
-  return k_maxNumberOfSequences;
+  return MaxNumberOfSequences;
 }
 
 char SequenceStore::symbol() const {
@@ -67,7 +67,7 @@ char SequenceStore::symbol() const {
 }
 
 const char *  SequenceStore::firstAvailableName() {
-  for (int k = 0; k < k_maxNumberOfSequences; k++) {
+  for (int k = 0; k < MaxNumberOfSequences; k++) {
     int j = 0;
     while  (j < m_numberOfFunctions) {
       if (m_sequences[j].name() == k_sequenceNames[k]) {
@@ -83,7 +83,7 @@ const char *  SequenceStore::firstAvailableName() {
 }
 
 const KDColor SequenceStore::firstAvailableColor() {
-  for (int k = 0; k < k_maxNumberOfSequences; k++) {
+  for (int k = 0; k < MaxNumberOfSequences; k++) {
     int j = 0;
     while  (j < m_numberOfFunctions) {
       if (m_sequences[j].color() == k_defaultColors[k]) {

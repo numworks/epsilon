@@ -4,15 +4,29 @@
 #include "global_preferences.h"
 #include <assert.h>
 
-ExamPopUpController::ExamPopUpController() :
+ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
   ViewController(nullptr),
   m_contentView(this),
-  m_isActivatingExamMode(false)
+  m_isActivatingExamMode(false),
+  m_delegate(delegate)
 {
+}
+
+void ExamPopUpController::setActivatingExamMode(bool activatingExamMode) {
+  if (m_isActivatingExamMode != activatingExamMode) {
+    m_isActivatingExamMode = activatingExamMode;
+    m_contentView.setMessages(activatingExamMode);
+  }
 }
 
 View * ExamPopUpController::view() {
   return &m_contentView;
+}
+
+void ExamPopUpController::viewDidDisappear() {
+  if (m_isActivatingExamMode == false) {
+    m_delegate->examDeactivatingPopUpIsDismissed();
+  }
 }
 
 void ExamPopUpController::didBecomeFirstResponder() {
@@ -29,17 +43,6 @@ bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
-}
-
-void ExamPopUpController::setActivatingExamMode(bool activatingExamMode) {
-  if (m_isActivatingExamMode != activatingExamMode) {
-    m_isActivatingExamMode = activatingExamMode;
-    m_contentView.setMessages(activatingExamMode);
-  }
-}
-
-bool ExamPopUpController::isActivatingExamMode() {
-  return m_isActivatingExamMode;
 }
 
 ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :

@@ -24,14 +24,11 @@ public:
   double cumulativeDistributiveInverseForProbability(double * probability) override;
 private:
   constexpr static double k_maxRatioMuSigma = 1000.0f;
-  /* Waissi & Rossin constants */
-  constexpr static double k_beta1 = -0.0004406;
-  constexpr static double k_beta2 = 0.0418198;
-  constexpr static double k_beta3 = 0.9;
-  constexpr static double k_boundStandardNormalDistribution = 3.291;
-  constexpr static double k_alpha1 = 22.0;
-  constexpr static double k_alpha2 = 41.0;
-  constexpr static double k_alpha3 = 10.0;
+  /* For the standard norma law, P(X < y) > 0.9999995  with y >= 4.892 so the
+   * value displayed is 1. But this is dependent on the fact that we display
+   * only 7 decimal values! */
+  static_assert(Constant::LargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
+  constexpr static double k_boundStandardNormalDistribution = 4.892;
   double standardNormalCumulativeDistributiveFunctionAtAbscissa(double abscissa) const;
   double standardNormalCumulativeDistributiveInverseForProbability(double probability);
 };

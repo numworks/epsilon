@@ -2,7 +2,6 @@
 #define HARDWARE_TEST_LED_TEST_CONTROLLER_H
 
 #include <escher.h>
-#include "battery_test_controller.h"
 #include "arrow_view.h"
 
 namespace HardwareTest {
@@ -37,7 +36,6 @@ private:
   static KDColor LEDColorAtIndex(int i);
   ContentView m_view;
   int m_LEDColorIndex;
-  BatteryTestController m_batteryTestController;
 };
 
 }

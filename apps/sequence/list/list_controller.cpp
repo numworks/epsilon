@@ -14,7 +14,7 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
   m_expressionCells{},
   m_parameterController(this, sequenceStore),
   m_typeParameterController(this, sequenceStore, this, TableCell::Layout::Vertical),
-  m_typeStackController(nullptr, &m_typeParameterController, true, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
+  m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
   m_sequenceToolbox()
 {
 }
@@ -23,8 +23,8 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::SequenceTab);
 }
 
-Toolbox * ListController::toolboxForTextField(TextField * textField) {
-  int recurrenceDepth = 0;
+Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
+  int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
   Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
   if (sequenceDefinition == 0) {
@@ -52,10 +52,10 @@ int ListController::numberOfRows() {
 
 KDCoordinate ListController::rowHeight(int j) {
   if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() && j == numberOfRows() - 1) {
-    return k_emptyRowHeight;
+    return Metric::StoreRowHeight;
   }
   Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
-  KDCoordinate defaultHeight = sequence->type() == Sequence::Type::Explicite ? k_emptyRowHeight : k_emptySubRowHeight;
+  KDCoordinate defaultHeight = sequence->type() == Sequence::Type::Explicit ? Metric::StoreRowHeight : k_emptySubRowHeight;
   ExpressionLayout * layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
     layout = sequence->firstInitialConditionLayout();
@@ -101,6 +101,8 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
   }
   App * myApp = (App *)app();
   InputViewController * inputController = myApp->inputViewController();
+  // Invalidate the sequences context cache
+  static_cast<App *>(app())->localContext()->resetCache();
   switch (sequenceDefinition) {
     case 0:
       inputController->edit(this, event, sequence, initialText,
@@ -135,6 +137,13 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
       [](void * context, void * sender){
     });
   }
+}
+
+bool ListController::removeFunctionRow(Function * function) {
+  m_functionStore->removeFunction(function);
+  // Invalidate the sequences context cache
+  static_cast<App *>(app())->localContext()->resetCache();
+  return true;
 }
 
 ListParameterController * ListController::parameterController() {
@@ -251,6 +260,8 @@ void ListController::editExpression(Shared::Function * function, Ion::Events::Ev
 }
 
 void ListController::reinitExpression(Shared::Function * function) {
+  // Invalidate the sequences context cache
+  static_cast<App *>(app())->localContext()->resetCache();
   Sequence * sequence = (Sequence *)function;
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:

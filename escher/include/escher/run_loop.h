@@ -8,6 +8,7 @@ class RunLoop {
 public:
   RunLoop();
   void run();
+  void runWhile(bool (*callback)(void * ctx), void * ctx);
 protected:
   virtual bool dispatchEvent(Ion::Events::Event e) = 0;
   virtual int numberOfTimers();

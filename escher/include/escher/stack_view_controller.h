@@ -9,7 +9,7 @@ constexpr uint8_t kMaxNumberOfStacks = 4;
 
 class StackViewController : public ViewController {
 public:
-  StackViewController(Responder * parentResponder, ViewController * rootViewController, bool displayFirstStackHeader = false,
+  StackViewController(Responder * parentResponder, ViewController * rootViewController,
     KDColor textColor = Palette::SubTab, KDColor backgroundColor = KDColorWhite, KDColor separatorColor = Palette::GreyBright);
 
   /* Push creates a new StackView and adds it */
@@ -43,7 +43,9 @@ private:
   };
   class ControllerView : public View {
   public:
-    ControllerView(bool displayFirstStackHeader);
+    ControllerView();
+    void shouldDisplayStackHearders(bool shouldDisplay);
+    int8_t numberOfStacks() const { return m_numberOfStacks; }
     void setContentView(View * view);
     void pushStack(Frame frame);
     void popStack();
@@ -52,7 +54,6 @@ private:
   const char * className() const override;
 #endif
   private:
-    static constexpr KDCoordinate k_stackHeight = 20;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
@@ -60,7 +61,7 @@ private:
     StackView m_stackViews[kMaxNumberOfStacks];
     View * m_contentView;
     int8_t m_numberOfStacks;
-    bool m_displayFirstStackHeader;
+    bool m_displayStackHeaders;
   };
   ControllerView m_view;
   void pushModel(Frame frame);

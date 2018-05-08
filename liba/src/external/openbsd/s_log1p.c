@@ -75,9 +75,7 @@
  *	 See HP-15C Advanced Functions Handbook, p.193.
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 static const double
@@ -157,7 +155,3 @@ log1p(double x)
 	if(k==0) return f-(hfsq-s*(hfsq+R)); else
 		 return k*ln2_hi-((hfsq-(s*(hfsq+R)+(k*ln2_lo+c)))-f);
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(log1pl, log1p);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

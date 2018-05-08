@@ -12,15 +12,12 @@ objs += $(addprefix liba/src/, \
   fpclassify.o \
   fpclassifyf.o \
   ieee754.o \
-  isnand.o \
-  isnanf.o \
-  isinfd.o \
-  isinff.o \
   malloc.o \
   memcmp.o \
   memcpy.o \
   memmove.o \
   memset.o \
+  nearbyint.o \
   nearbyintf.o \
   strcmp.o \
   strchr.o \
@@ -30,19 +27,26 @@ objs += $(addprefix liba/src/, \
 )
 
 objs += $(addprefix liba/src/external/openbsd/, \
+  b_exp__D.o \
+  b_log__D.o \
+  b_tgamma.o \
   e_acosf.o \
   e_acoshf.o \
   e_asinf.o \
   e_atanhf.o \
+  e_atan2.o \
   e_atan2f.o \
   e_coshf.o \
   e_expf.o \
+  e_fmod.o \
   e_fmodf.o \
   e_lgammaf_r.o \
   e_log10f.o \
+  e_log2.o \
   e_logf.o \
   e_powf.o \
   e_rem_pio2f.o \
+  e_scalb.o \
   e_sinhf.o \
   e_sqrtf.o \
   k_cosf.o \
@@ -54,16 +58,25 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_ceilf.o \
   s_copysignf.o \
   s_cosf.o \
+  s_erf.o \
   s_expm1f.o\
   s_fabsf.o \
   s_floorf.o \
+  s_frexpf.o \
+  s_frexp.o \
   s_log1pf.o \
+  s_logb.o \
+  s_modf.o \
+  s_modff.o \
+  s_rint.o \
   s_roundf.o \
   s_scalbnf.o \
   s_signgam.o \
   s_sinf.o \
   s_tanf.o \
   s_tanhf.o \
+  s_trunc.o \
+  s_truncf.o \
   w_lgammaf.o \
 )
 
@@ -94,7 +107,6 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_fabs.o \
   s_floor.o \
   s_log1p.o \
-  s_nan.o \
   s_round.o \
   s_scalbn.o \
   s_sin.o \
@@ -103,43 +115,15 @@ objs += $(addprefix liba/src/external/openbsd/, \
   w_lgamma.o \
 )
 
-liba/src/external/openbsd/%.o: CFLAGS += -Iliba/src/external/openbsd/include
-liba/src/external/openbsd/e_lgammaf_r.o: CFLAGS += -w
-liba/src/external/openbsd/s_log1pf.o: CFLAGS += -w
-liba/src/external/openbsd/s_scalbnf.o: CFLAGS += -w
-liba/src/external/openbsd/e_acosh.o: CFLAGS += -w
-liba/src/external/openbsd/e_atanh.o: CFLAGS += -w
-liba/src/external/openbsd/e_cosh.o: CFLAGS += -w
-liba/src/external/openbsd/e_exp.o: CFLAGS += -w
-liba/src/external/openbsd/e_log.o: CFLAGS += -w
-liba/src/external/openbsd/e_lgamma_r.o: CFLAGS += -w
-liba/src/external/openbsd/e_pow.o: CFLAGS += -w
-liba/src/external/openbsd/e_rem_pio2.o: CFLAGS += -w
-liba/src/external/openbsd/e_sinh.o: CFLAGS += -w
-liba/src/external/openbsd/k_rem_pio2.o: CFLAGS += -w
-liba/src/external/openbsd/k_rem_pio2f.o: CFLAGS += -w
-liba/src/external/openbsd/s_asinh.o: CFLAGS += -w
-liba/src/external/openbsd/s_log1p.o: CFLAGS += -w
-liba/src/external/openbsd/s_scalbn.o: CFLAGS += -w
-liba/src/external/openbsd/s_tanh.o: CFLAGS += -w
-liba/src/external/openbsd/w_lgamma.o: CFLAGS += -w
-# some openbsd classes are throwing implicit declaration warnings
-ifeq ($(DEBUG),1)
-# OpenBSD uses double constants ("0.5" instead of "0.5f") in single-precision
-# code. That's annoying because Clang rightfully decides to emit double-to-float
-# aeabi conversions when building in -O0 mode, and we really don't want to code
-# such functions. A simple workaround is to always build those files -Os.
-liba/src/external/openbsd/e_expf.o: CFLAGS += -Os
-liba/src/external/openbsd/s_expm1f.o: CFLAGS += -Os
-liba/src/external/openbsd/s_log1pf.o: CFLAGS += -Os
-liba/src/external/openbsd/s_roundf.o: CFLAGS += -Os
-endif
+liba/src/external/openbsd/%.o: SFLAGS := -Iliba/src/external/openbsd/include $(SFLAGS)
+liba/src/external/openbsd/%.o: CFLAGS += -w
 
 tests += $(addprefix liba/test/, \
   aeabi.c \
   double.c \
   ieee754.c \
   long.c \
+  math.c \
   setjmp.c \
   stddef.c \
   stdint.c \
@@ -202,4 +186,6 @@ objs += $(addprefix liba/src/external/softfloat/src/, \
   s_shortShiftRightJam64.o \
   s_subMagsF64.o \
   softfloat_state.o \
+  ui32_to_f64.o \
+  ui64_to_f64.o \
 )

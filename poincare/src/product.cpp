@@ -9,21 +9,17 @@ extern "C" {
 
 namespace Poincare {
 
-Product::Product() :
-  Sequence("product")
-{
-}
-
 Expression::Type Product::type() const {
   return Type::Product;
 }
 
-Expression * Product::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Product * p = new Product();
-  p->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return p;
+Expression * Product::clone() const {
+  Product * a = new Product(m_operands, true);
+  return a;
+}
+
+const char * Product::name() const {
+  return "product";
 }
 
 int Product::emptySequenceValue() const {
@@ -35,14 +31,23 @@ ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLa
 }
 
 template<typename T>
-Evaluation<T> * Product::templatedEvaluateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const {
-  if (a->numberOfOperands() == 1 && b->numberOfOperands() == 1) {
-    return new Complex<T>(Multiplication::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
+Expression * Product::templatedApproximateWithNextTerm(Expression * a, Expression * b) const {
+  if (a->type() == Type::Complex && b->type() == Type::Complex) {
+    Complex<T> * c = static_cast<Complex<T> *>(a);
+    Complex<T> * d = static_cast<Complex<T> *>(b);
+    return new Complex<T>(Multiplication::compute(*c, *d));
   }
-  if (a->numberOfOperands() == 1) {
-    return Multiplication::computeOnComplexAndMatrix(a->complexOperand(0), b);
+  if (a->type() == Type::Complex) {
+    Complex<T> * c = static_cast<Complex<T> *>(a);
+    assert(b->type() == Type::Matrix);
+    Matrix * m = static_cast<Matrix *>(b);
+    return Multiplication::computeOnComplexAndMatrix(c, m);
   }
-  return Multiplication::computeOnMatrices(a, b);
+  assert(a->type() == Type::Matrix);
+  assert(b->type() == Type::Matrix);
+  Matrix * m = static_cast<Matrix *>(a);
+  Matrix * n = static_cast<Matrix *>(b);
+  return Multiplication::computeOnMatrices<T>(m, n);
 }
 
 }

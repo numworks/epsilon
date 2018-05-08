@@ -1,6 +1,6 @@
 #include "zoom_parameter_controller.h"
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 
 namespace Shared {
 

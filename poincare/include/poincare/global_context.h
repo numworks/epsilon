@@ -2,8 +2,8 @@
 #define POINCARE_GLOBAL_CONTEXT_H
 
 #include <poincare/context.h>
+#include <poincare/matrix.h>
 #include <poincare/complex.h>
-#include <poincare/complex_matrix.h>
 
 namespace Poincare {
 
@@ -21,21 +21,22 @@ public:
   GlobalContext& operator=(GlobalContext&& other) = delete;
   /* The expression recorded in global context is already a expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
-  const Expression * expressionForSymbol(const Symbol * symbol) override {
-    return evaluationForSymbol(symbol);
-  }
-  const Evaluation<double> * evaluationForSymbol(const Symbol * symbol);
-  void setExpressionForSymbolName(Expression * expression, const Symbol * symbol) override;
+  const Expression * expressionForSymbol(const Symbol * symbol) override;
+  ExpressionLayout * expressionLayoutForSymbol(const Symbol * symbol);
+  void setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) override;
   static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
   static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
-  static Complex<double> * defaultExpression();
 private:
+  static Complex<double> * defaultExpression();
   int symbolIndex(const Symbol * symbol) const;
   Complex<double> * m_expressions[k_maxNumberOfScalarExpressions];
-  ComplexMatrix<double> * m_matrixExpressions[k_maxNumberOfMatrixExpressions];
+  Matrix * m_matrixExpressions[k_maxNumberOfMatrixExpressions];
+  /* Matrix layout memoization */
+  ExpressionLayout * m_matrixLayout[k_maxNumberOfMatrixExpressions];
   Complex<double> m_pi;
   Complex<double> m_e;
+  Complex<double> m_i;
 };
 
 }

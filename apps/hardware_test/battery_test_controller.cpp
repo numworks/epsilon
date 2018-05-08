@@ -23,9 +23,8 @@ View * BatteryTestController::view() {
 bool BatteryTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK) {
     if (strcmp(m_view.batteryStateTextView()->text(), k_batteryOKText) == 0) {
-      ModalViewController * modal = (ModalViewController *)parentResponder();
-      App * a = (App *)app();
-      modal->displayModalViewController(a->USBController(), 0.0f, 0.0f);
+      // Handled in WizardViewController
+      return false;
     }
   }
   updateBatteryState(Ion::Battery::voltage(), Ion::Battery::isCharging());
@@ -45,7 +44,7 @@ void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryC
   const char * legend = "Battery level: ";
   int legendLength = strlen(legend);
   strlcpy(bufferLevel, legend, legendLength+1);
-  Complex<float>::convertFloatToText(batteryLevel, bufferLevel+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  PrintFloat::convertFloatToText<float>(batteryLevel, bufferLevel+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_view.batteryLevelTextView()->setText(bufferLevel);
 
   char bufferCharging[ContentView::k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];

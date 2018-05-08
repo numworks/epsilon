@@ -43,9 +43,7 @@
  * shown.
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 static const double
@@ -82,7 +80,3 @@ log10(double x)
 	z  = y*log10_2lo + ivln10*log(x);
 	return  z+y*log10_2hi;
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(log10l, log10);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

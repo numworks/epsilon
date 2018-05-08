@@ -1,5 +1,6 @@
 #include "type_parameter_controller.h"
 #include "list_controller.h"
+#include "../app.h"
 #include <assert.h>
 #include "../../../poincare/src/layout/baseline_relative_layout.h"
 #include "../../../poincare/src/layout/string_layout.h"
@@ -11,15 +12,17 @@ namespace Sequence {
 TypeParameterController::TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list, TableCell::Layout cellLayout,
   KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   ViewController(parentResponder),
-  m_expliciteCell(I18n::Message::Explicite, cellLayout),
+  m_expliciteCell(I18n::Message::Explicit, cellLayout),
   m_singleRecurrenceCell(I18n::Message::SingleRecurrence, cellLayout),
   m_doubleRecurenceCell(I18n::Message::DoubleRecurrence, cellLayout),
   m_expressionLayouts{},
-  m_selectableTableView(this, this, 0, 1, topMargin, rightMargin, bottomMargin, leftMargin, this, nullptr, false),
+  m_selectableTableView(this),
   m_sequenceStore(sequenceStore),
   m_sequence(nullptr),
   m_listController(list)
 {
+  m_selectableTableView.setMargins(topMargin, rightMargin, bottomMargin, leftMargin);
+  m_selectableTableView.setShowsIndicators(false);
 }
 
 TypeParameterController::~TypeParameterController() {
@@ -42,6 +45,16 @@ View * TypeParameterController::view() {
   return &m_selectableTableView;
 }
 
+void TypeParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
+  m_selectableTableView.reloadData();
+}
+
+void TypeParameterController::viewDidDisappear() {
+  m_selectableTableView.deselectTable();
+  ViewController::viewDidDisappear();
+}
+
 void TypeParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
   app()->setFirstResponder(&m_selectableTableView);
@@ -53,7 +66,13 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
       Sequence::Type sequenceType = (Sequence::Type)selectedRow();
       if (m_sequence->type() != sequenceType) {
         m_listController->selectPreviousNewSequenceCell();
-        m_sequence->setType((Sequence::Type)selectedRow());
+        m_sequence->setType(sequenceType);
+        // Invalidate sequence context cache when changing sequence type
+        static_cast<App *>(app())->localContext()->resetCache();
+        // Reset the first index if the new type is "Explicit"
+        if (sequenceType == Sequence::Type::Explicit) {
+          m_sequence->setInitialRank(0);
+        }
       }
       StackViewController * stack = stackController();
       assert(stack->depth()>2);

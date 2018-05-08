@@ -26,7 +26,7 @@ void ChevronView::drawRect(KDContext * ctx, KDRect rect) const {
    * The heightCenter is the coordinate of the vertical middle of the view. That
    * way, (heightCenter-switchHalfHeight) indicates the top the chevron. */
   KDCoordinate width = bounds().width();
-  KDCoordinate heightCenter =  bounds().height()/2;
+  KDCoordinate heightCenter = bounds().height()/2;
   KDCoordinate chevronHalfHeight = k_chevronHeight/2;
   KDRect frame(width - k_chevronWidth, heightCenter -chevronHalfHeight, k_chevronWidth, k_chevronHeight);
   ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)chevronMask, s_workingBuffer);

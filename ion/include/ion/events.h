@@ -14,6 +14,7 @@ public:
   static constexpr Event ShiftAlphaKey(Keyboard::Key k) { return Event(3*PageSize+(int)k); }
   static constexpr Event Special(int i) { return Event(4*PageSize+i); }
 
+  constexpr Event() : m_id(4*PageSize){} // Return Ion::Event::None by default
   constexpr Event(int i) : m_id(i){} // TODO: Assert here that i>=0 && i<255
 #if DEBUG
   uint8_t id() const { return m_id; }
@@ -43,7 +44,6 @@ enum class ShiftAlphaStatus {
   Alpha,
   ShiftAlpha,
   AlphaLock,
-  AlphaLockShift,
   ShiftAlphaLock,
 };
 
@@ -115,8 +115,8 @@ constexpr Event EXE = Event::PlainKey(Keyboard::Key::I5);
 
 // Shift
 
-constexpr Event Origin  = Event::ShiftKey(Keyboard::Key::A1);
-constexpr Event End = Event::ShiftKey(Keyboard::Key::A4);
+constexpr Event ShiftLeft  = Event::ShiftKey(Keyboard::Key::A1);
+constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::A4);
 
 constexpr Event AlphaLock = Event::ShiftKey(Keyboard::Key::C2);
 constexpr Event Cut = Event::ShiftKey(Keyboard::Key::C3);
@@ -215,6 +215,8 @@ constexpr Event UpperZ = Event::ShiftAlphaKey(Keyboard::Key::H4);
 constexpr Event None = Event::Special(0);
 constexpr Event Termination = Event::Special(1);
 constexpr Event TimerFire = Event::Special(2);
+constexpr Event USBEnumeration = Event::Special(3);
+constexpr Event USBPlug = Event::Special(4);
 
 }
 }

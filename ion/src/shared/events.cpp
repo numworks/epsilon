@@ -31,6 +31,7 @@ static constexpr const char k_complexI[2] = {Ion::Charset::IComplex, 0};
 static constexpr const char k_exponential[5] = {Ion::Charset::Exponential, '^', '(', ')', 0};
 static constexpr const char k_sto[2] = {Ion::Charset::Sto, 0};
 static constexpr const char k_exponent[2] = {Ion::Charset::Exponent, 0};
+static constexpr const char k_multiplicationSign[2] = {Ion::Charset::MultiplicationSign, 0};
 
 static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 // Plain
@@ -40,7 +41,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   T(k_exponential), T("ln()"),  T("log()"), T(k_complexI), T(","), T("^"),
   T("sin()"), T("cos()"), T("tan()"), T(k_pi), T(k_root), T("^2"),
   T("7"), T("8"), T("9"), T("("), T(")"), U(),
-  T("4"), T("5"), T("6"), T("*"), T("/"), U(),
+  T("4"), T("5"), T("6"), T(k_multiplicationSign), T("/"), U(),
   T("1"), T("2"), T("3"), T("+"), T("-"), U(),
   T("0"), T("."), T(k_exponent), TL(), TL(), U(),
 // Shift
@@ -126,7 +127,7 @@ bool Event::isDefined() const {
   if (isKeyboardEvent()) {
     return s_dataForEvent[m_id].isDefined();
   } else {
-    return (*this == None || *this == Termination);
+    return (*this == None || *this == Termination || *this == USBEnumeration || *this == USBPlug);
   }
 }
 

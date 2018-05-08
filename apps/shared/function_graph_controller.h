@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "initialisation_parameter_controller.h"
+#include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
 #include "function_store.h"
 #include "function_graph_view.h"
@@ -10,21 +11,21 @@
 
 namespace Shared {
 
-class FunctionGraphController : public InteractiveCurveViewController, public InteractiveCurveViewRangeDelegate {
+class FunctionGraphController : public InteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public FunctionBannerDelegate {
 public:
-  FunctionGraphController(Responder * parentResponder, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Expression::AngleUnit * angleUnitVersion);
+  FunctionGraphController(Responder * parentResponder, ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Poincare::Expression::AngleUnit * angleUnitVersion);
   bool isEmpty() const override;
   ViewController * initialisationParameterController() override;
   void viewWillAppear() override;
 protected:
   constexpr static float k_cursorTopMarginRatio = 0.068f;   // (cursorHeight/2)/graphViewHeight
-  constexpr static float k_cursorRightMarginRatio = 0.04f; // (cursorWidth/2)/graphViewWidth
   constexpr static float k_cursorBottomMarginRatio = 0.15f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
-  constexpr static float k_cursorLeftMarginRatio = 0.04f;  // (cursorWidth/2)/graphViewWidth
-  constexpr static int k_maxNumberOfCharacters = 8;
   void reloadBannerView() override;
   bool handleEnter() override;
-  int m_indexFunctionSelectedByCursor;
+  int indexFunctionSelectedByCursor() const {
+    return *m_indexFunctionSelectedByCursor;
+  }
+  virtual void selectFunctionWithCursor(int functionIndex);
 private:
   /* When y auto is ticked, we use a display margin to be ensure that the user
    * can move the cursor along the curve without panning the window */
@@ -40,11 +41,13 @@ private:
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
   bool isCursorVisible() override;
-  virtual FunctionStore * functionStore() const = 0;
   virtual FunctionGraphView * functionGraphView() = 0;
+  virtual View * cursorView() = 0;
+  virtual FunctionStore * functionStore() const = 0;
   virtual FunctionCurveParameterController * curveParameterController() = 0;
   InitialisationParameterController m_initialisationParameterController;
   Poincare::Expression::AngleUnit * m_angleUnitVersion;
+  int * m_indexFunctionSelectedByCursor;
 };
 
 }

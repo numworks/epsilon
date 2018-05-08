@@ -3,6 +3,7 @@
 #include "../apps_container.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>
+#include <cmath>
 
 using namespace Poincare;
 
@@ -105,7 +106,7 @@ void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int
     return;
   }
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  Complex<float>::convertFloatToText(parameterAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+  PrintFloat::convertFloatToText<double>(parameterAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
   myCell->setAccessoryText(buffer);
 }
 
@@ -118,8 +119,8 @@ bool FloatParameterController::textFieldShouldFinishEditing(TextField * textFiel
 bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  double floatBody = Expression::approximate<double>(text, *globalContext);
-  if (isnan(floatBody) || isinf(floatBody)) {
+  double floatBody = Expression::approximateToScalar<double>(text, *globalContext);
+  if (std::isnan(floatBody) || std::isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
@@ -134,33 +135,6 @@ bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, 
     selectableTableView()->handleEvent(event);
   }
   return true;
-}
-
-bool FloatParameterController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Backspace && !textField->isEditing()) {
-    textField->setEditing(true);
-    return true;
-  }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
-}
-
-void FloatParameterController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (previousSelectedCellX == t->selectedColumn() && previousSelectedCellY == t->selectedRow()) {
-    return;
-  }
-  if (previousSelectedCellY >= 0 && previousSelectedCellY < numberOfRows()-1) {
-    MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-    myCell->setEditing(false);
-  }
-  if (t->selectedRow() == numberOfRows()-1) {
-    Button * myNewCell = (Button *)t->selectedCell();
-    app()->setFirstResponder(myNewCell);
-    return;
-  }
-  if (t->selectedRow() >= 0) {
-    MessageTableCellWithEditableText * myNewCell = (MessageTableCellWithEditableText *)t->selectedCell();
-    app()->setFirstResponder(myNewCell);
-  }
 }
 
 TextFieldDelegateApp * FloatParameterController::textFieldDelegateApp() {
@@ -189,7 +163,7 @@ I18n::Message FloatParameterController::okButtonText() {
 }
 
 View * FloatParameterController::loadView() {
-  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin, Metric::CommonBottomMargin, Metric::CommonLeftMargin, this, this);
+  SelectableTableView * tableView = new SelectableTableView(this, this, this);
   m_okButton = new ButtonWithSeparator(tableView, okButtonText(), Invocation([](void * context, void * sender) {
     FloatParameterController * parameterController = (FloatParameterController *) context;
     parameterController->buttonAction();

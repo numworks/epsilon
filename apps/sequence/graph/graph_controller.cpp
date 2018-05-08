@@ -6,8 +6,8 @@ using namespace Poincare;
 
 namespace Sequence {
 
-GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion, ButtonRowController * header) :
-  FunctionGraphController(parentResponder, header, graphRange, &m_view, cursor, modelVersion, rangeVersion, angleUnitVersion),
+GraphController::GraphController(Responder * parentResponder, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion, ButtonRowController * header) :
+  FunctionGraphController(parentResponder, header, graphRange, &m_view, cursor, indexFunctionSelectedByCursor, modelVersion, rangeVersion, angleUnitVersion),
   m_bannerView(),
   m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(graphRange),
@@ -16,14 +16,6 @@ GraphController::GraphController(Responder * parentResponder, SequenceStore * se
   m_sequenceStore(sequenceStore)
 {
   m_graphRange->setDelegate(this);
-}
-
-void GraphController::viewWillAppear() {
-  m_view.setVerticalCursor(false);
-  m_view.setCursorView(&m_cursorView);
-  m_view.setBannerView(&m_bannerView);
-  m_view.setHighlight(-1.0f, -1.0f);
-  FunctionGraphController::viewWillAppear();
 }
 
 I18n::Message GraphController::emptyMessage() {
@@ -42,7 +34,7 @@ BannerView * GraphController::bannerView() {
 }
 
 bool GraphController::handleEnter() {
-  m_termSumController.setSequence(m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor));
+  m_termSumController.setFunction(m_sequenceStore->activeFunctionAtIndex(indexFunctionSelectedByCursor()));
   return FunctionGraphController::handleEnter();
 }
 
@@ -61,7 +53,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   if (x < 0.0) {
     return false;
   }
-  Sequence * s = m_sequenceStore->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  Sequence * s = m_sequenceStore->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   double y = s->evaluateAtAbscissa(x, myApp->localContext());
   m_cursor->moveTo(x, y);
@@ -71,14 +63,14 @@ bool GraphController::moveCursorHorizontally(int direction) {
 
 void GraphController::initCursorParameters() {
   double x = std::round((interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0);
-  m_indexFunctionSelectedByCursor = 0;
+  selectFunctionWithCursor(0);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   int functionIndex = 0;
   double y = 0;
   do {
     Sequence * firstFunction = m_sequenceStore->activeFunctionAtIndex(functionIndex++);
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
-  } while (isnan(y) && functionIndex < m_sequenceStore->numberOfActiveFunctions());
+  } while (std::isnan(y) && functionIndex < m_sequenceStore->numberOfActiveFunctions());
   m_cursor->moveTo(x, y);
   m_graphRange->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }

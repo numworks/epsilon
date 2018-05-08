@@ -31,6 +31,7 @@ public:
   double mean();
   double variance();
   double standardDeviation();
+  double sampleStandardDeviation();
   double firstQuartile();
   double thirdQuartile();
   double quartileRange();
@@ -43,7 +44,7 @@ public:
   constexpr static float k_displayBottomMarginRatio = 0.4f;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 private:
-  double defaultValue(int i) override;
+  double defaultValue(int i, int j) override;
   double sumOfValuesBetween(double x1, double x2);
   double sortedElementNumber(int k);
   int minIndex(double * bufferValues, int bufferLength);

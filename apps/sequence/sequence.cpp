@@ -1,5 +1,6 @@
 #include "sequence.h"
-#include "local_context.h"
+#include "sequence_store.h"
+#include "cache_context.h"
 #include "../../poincare/src/layout/string_layout.h"
 #include "../../poincare/src/layout/baseline_relative_layout.h"
 #include <string.h>
@@ -12,9 +13,9 @@ namespace Sequence {
 
 Sequence::Sequence(const char * text, KDColor color) :
   Function(text, color),
-  m_type(Type::Explicite),
-  m_firstInitialConditionText(""),
-  m_secondInitialConditionText(""),
+  m_type(Type::Explicit),
+  m_firstInitialConditionText(),
+  m_secondInitialConditionText(),
   m_firstInitialConditionExpression(nullptr),
   m_secondInitialConditionExpression(nullptr),
   m_firstInitialConditionLayout(nullptr),
@@ -23,10 +24,7 @@ Sequence::Sequence(const char * text, KDColor color) :
   m_definitionName(nullptr),
   m_firstInitialConditionName(nullptr),
   m_secondInitialConditionName(nullptr),
-  m_indexBufferFloat{-1, -1},
-  m_indexBufferDouble{-1, -1},
-  m_bufferFloat{NAN, NAN},
-  m_bufferDouble{NAN, NAN}
+  m_initialRank(0)
 {
 }
 
@@ -74,10 +72,10 @@ Sequence& Sequence::operator=(const Sequence& other) {
   const char * secondInitialText = other.m_secondInitialConditionText;
   Function::operator=(other);
   setType(other.m_type);
+  setInitialRank(other.m_initialRank);
   setContent(contentText);
   setFirstInitialConditionContent(firstInitialText);
   setSecondInitialConditionContent(secondInitialText);
-  resetBuffer();
   return *this;
 }
 
@@ -86,9 +84,11 @@ uint32_t Sequence::checksum() {
   strlcpy(data, text(), TextField::maxBufferSize());
   strlcpy(data+TextField::maxBufferSize(), firstInitialConditionText(), TextField::maxBufferSize());
   strlcpy(data+2*TextField::maxBufferSize(), secondInitialConditionText(), TextField::maxBufferSize());
+  int * intAdress = (int *)(&data[3*TextField::maxBufferSize()]);
+  *intAdress = m_initialRank;
   data[k_dataLengthInBytes-3] = (char)m_type;
   data[k_dataLengthInBytes-2] = name()!= nullptr ? name()[0] : 0;
-  data[k_dataLengthInBytes-1] = isActive() ? 1 : 0;
+  data[k_dataLengthInBytes-1] = (char)(isActive() ? 1 : 0);
   return Ion::crc32((uint32_t *)data, k_dataLengthInBytes/sizeof(uint32_t));
 }
 
@@ -105,11 +105,14 @@ Sequence::Type Sequence::type() {
 }
 
 void Sequence::setType(Type type) {
+  if (m_type == Type::Explicit) {
+    setInitialRank(0);
+  }
   m_type = type;
   tidy();
   /* Reset all contents */
   switch (m_type) {
-    case Type::Explicite:
+    case Type::Explicit:
       setContent("");
       break;
     case Type::SingleRecurrence:
@@ -130,40 +133,58 @@ void Sequence::setType(Type type) {
   }
   setFirstInitialConditionContent("");
   setSecondInitialConditionContent("");
-  resetBuffer();
 }
 
-Poincare::Expression * Sequence::firstInitialConditionExpression() const {
+void Sequence::setInitialRank(int rank) {
+  m_initialRank = rank;
+  if (m_firstInitialConditionName != nullptr) {
+    delete m_firstInitialConditionName;
+    m_firstInitialConditionName = nullptr;
+  }
+  if (m_secondInitialConditionName != nullptr) {
+    delete m_secondInitialConditionName;
+    m_secondInitialConditionName = nullptr;
+  }
+}
+
+Poincare::Expression * Sequence::firstInitialConditionExpression(Context * context) const {
   if (m_firstInitialConditionExpression == nullptr) {
-    m_firstInitialConditionExpression = Poincare::Expression::parse(m_firstInitialConditionText);
+    m_firstInitialConditionExpression = Poincare::Expression::ParseAndSimplify(m_firstInitialConditionText, *context);
   }
   return m_firstInitialConditionExpression;
 }
 
-Poincare::Expression * Sequence::secondInitialConditionExpression() const {
+Poincare::Expression * Sequence::secondInitialConditionExpression(Context * context) const {
   if (m_secondInitialConditionExpression == nullptr) {
-    m_secondInitialConditionExpression = Poincare::Expression::parse(m_secondInitialConditionText);
+    m_secondInitialConditionExpression = Poincare::Expression::ParseAndSimplify(m_secondInitialConditionText, *context);
   }
   return m_secondInitialConditionExpression;
 }
 
 Poincare::ExpressionLayout * Sequence::firstInitialConditionLayout() {
-  if (m_firstInitialConditionLayout == nullptr && firstInitialConditionExpression() != nullptr) {
-    m_firstInitialConditionLayout = firstInitialConditionExpression()->createLayout(Expression::FloatDisplayMode::Decimal);
+  if (m_firstInitialConditionLayout == nullptr) {
+    Expression * nonSimplifedExpression = Expression::parse(m_firstInitialConditionText);
+    if (nonSimplifedExpression) {
+      m_firstInitialConditionLayout = nonSimplifedExpression->createLayout(PrintFloat::Mode::Decimal);
+      delete nonSimplifedExpression;
+    }
   }
   return m_firstInitialConditionLayout;
 }
 
 Poincare::ExpressionLayout * Sequence::secondInitialConditionLayout() {
-  if (m_secondInitialConditionLayout == nullptr && secondInitialConditionExpression()) {
-    m_secondInitialConditionLayout = secondInitialConditionExpression()->createLayout(Expression::FloatDisplayMode::Decimal);
+  if (m_secondInitialConditionLayout == nullptr) {
+    Expression * nonSimplifedExpression = Expression::parse(m_secondInitialConditionText);
+    if (nonSimplifedExpression) {
+      m_secondInitialConditionLayout = nonSimplifedExpression->createLayout(PrintFloat::Mode::Decimal);
+      delete nonSimplifedExpression;
+    }
   }
   return m_secondInitialConditionLayout;
 }
 
 void Sequence::setContent(const char * c) {
   Function::setContent(c);
-  resetBuffer();
 }
 
 void Sequence::setFirstInitialConditionContent(const char * c) {
@@ -176,7 +197,6 @@ void Sequence::setFirstInitialConditionContent(const char * c) {
     delete m_firstInitialConditionLayout;
     m_firstInitialConditionLayout = nullptr;
   }
-  resetBuffer();
 }
 
 void Sequence::setSecondInitialConditionContent(const char * c) {
@@ -189,7 +209,6 @@ void Sequence::setSecondInitialConditionContent(const char * c) {
     delete m_secondInitialConditionLayout;
     m_secondInitialConditionLayout = nullptr;
   }
-  resetBuffer();
 }
 
 char Sequence::symbol() const {
@@ -209,7 +228,7 @@ Poincare::ExpressionLayout * Sequence::nameLayout() {
 
 Poincare::ExpressionLayout * Sequence::definitionName() {
   if (m_definitionName == nullptr) {
-    if (m_type == Type::Explicite) {
+    if (m_type == Type::Explicit) {
       m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n ", 2, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
     }
     if (m_type == Type::SingleRecurrence) {
@@ -223,21 +242,25 @@ Poincare::ExpressionLayout * Sequence::definitionName() {
 }
 
 Poincare::ExpressionLayout * Sequence::firstInitialConditionName() {
+  char buffer[k_initialRankNumberOfDigits+1];
+  Integer(m_initialRank).writeTextInBuffer(buffer, k_initialRankNumberOfDigits+1);
   if (m_firstInitialConditionName == nullptr) {
     if (m_type == Type::SingleRecurrence) {
-      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
     }
     if (m_type == Type::DoubleRecurrence) {
-      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("0", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
     }
   }
   return m_firstInitialConditionName;
 }
 
 Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
+  char buffer[k_initialRankNumberOfDigits+1];
+  Integer(m_initialRank+1).writeTextInBuffer(buffer, k_initialRankNumberOfDigits+1);
   if (m_secondInitialConditionName == nullptr) {
     if (m_type == Type::DoubleRecurrence) {
-      m_secondInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("1", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_secondInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
 
     }
   }
@@ -246,7 +269,7 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
 
 bool Sequence::isDefined() {
   switch (m_type) {
-    case Type::Explicite:
+    case Type::Explicit:
       return strlen(text()) != 0;
     case Type::SingleRecurrence:
       return strlen(text()) != 0 && strlen(firstInitialConditionText()) != 0;
@@ -257,7 +280,7 @@ bool Sequence::isDefined() {
 
 bool Sequence::isEmpty() {
   switch (m_type) {
-    case Type::Explicite:
+    case Type::Explicit:
       return Function::isEmpty();
     case Type::SingleRecurrence:
       return Function::isEmpty() && strlen(m_firstInitialConditionText) == 0;
@@ -267,76 +290,74 @@ bool Sequence::isEmpty() {
 }
 
 template<typename T>
-T Sequence::templatedEvaluateAtAbscissa(T x, Poincare::Context * context) const {
+T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const {
   T n = std::round(x);
+  int sequenceIndex = name()[0] == SequenceStore::k_sequenceNames[0][0] ? 0 : 1;
+  if (sqctx->iterateUntilRank<T>(n)) {
+    return sqctx->valueOfSequenceAtPreviousRank<T>(sequenceIndex, 0);
+  }
+  return NAN;
+}
+
+template<typename T>
+T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
+  if (n < m_initialRank || n < 0) {
+    return NAN;
+  }
+  CacheContext<T> ctx = CacheContext<T>(sqctx);
+  T un = sqctx->valueOfSequenceAtPreviousRank<T>(0, 0);
+  T unm1 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 1);
+  T unm2 = sqctx->valueOfSequenceAtPreviousRank<T>(0, 2);
+  T vn = sqctx->valueOfSequenceAtPreviousRank<T>(1, 0);
+  T vnm1 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 1);
+  T vnm2 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 2);
+  Poincare::Symbol nSymbol(symbol());
+  Poincare::Symbol vnSymbol(Symbol::SpecialSymbols::vn);
+  Poincare::Symbol vn1Symbol(Symbol::SpecialSymbols::vn1);
+  Poincare::Symbol unSymbol(Symbol::SpecialSymbols::un);
+  Poincare::Symbol un1Symbol(Symbol::SpecialSymbols::un1);
   switch (m_type) {
-    case Type::Explicite:
-      if (n < 0) {
-        return NAN;
-      }
-      return Shared::Function::evaluateAtAbscissa(n, context);
+    case Type::Explicit:
+    {
+      ctx.setValueForSymbol(un, &unSymbol);
+      ctx.setValueForSymbol(vn, &vnSymbol);
+      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n);
+      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
+      return expression(sqctx)->template approximateToScalar<T>(ctx);
+    }
     case Type::SingleRecurrence:
     {
-      if (n < 0 || n > k_maxRecurrentRank) {
-        return NAN;
+      if (n == m_initialRank) {
+        return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
-      if (n == 0) {
-        setBufferIndexValue<T>(0,0);
-        setBufferValue(firstInitialConditionExpression()->approximate<T>(*context), 0);
-        return bufferValue<T>(0);
-      }
-      LocalContext<T> subContext = LocalContext<T>(context);
-      Poincare::Symbol nSymbol = Poincare::Symbol(symbol());
-      int start = indexBuffer<T>(0) < 0 || indexBuffer<T>(0) > n ? 0 : indexBuffer<T>(0);
-      T un = indexBuffer<T>(0) < 0 || indexBuffer<T>(0) > n ? firstInitialConditionExpression()->approximate<T>(*context) : bufferValue<T>(0);
-      for (int i = start; i < n; i++) {
-        subContext.setValueForSequenceRank(un, name(), 0);
-        Poincare::Complex<T> e = Poincare::Complex<T>::Float(i);
-        subContext.setExpressionForSymbolName(&e, &nSymbol);
-        un = expression()->approximate<T>(subContext);
-      }
-      setBufferValue(un, 0);
-      setBufferIndexValue<T>(n, 0);
-      return un;
+      ctx.setValueForSymbol(un, &un1Symbol);
+      ctx.setValueForSymbol(unm1, &unSymbol);
+      ctx.setValueForSymbol(vn, &vn1Symbol);
+      ctx.setValueForSymbol(vnm1, &vnSymbol);
+      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-1);
+      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
+      return expression(sqctx)->template approximateToScalar<T>(ctx);
     }
     default:
     {
-      if (n < 0 || n > k_maxRecurrentRank) {
-        return NAN;
+      if (n == m_initialRank) {
+        return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
-      if (n == 0) {
-        return firstInitialConditionExpression()->approximate<T>(*context);
+      if (n == m_initialRank+1) {
+        return secondInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
-      if (n == 1) {
-        setBufferIndexValue<T>(0, 0);
-        setBufferValue(firstInitialConditionExpression()->approximate<T>(*context), 0);
-        setBufferIndexValue<T>(1, 1);
-        setBufferValue(secondInitialConditionExpression()->approximate<T>(*context), 1);
-        return bufferValue<T>(1);
-      }
-      LocalContext<T> subContext = LocalContext<T>(context);
-      Poincare::Symbol nSymbol = Poincare::Symbol(symbol());
-      int start = indexBuffer<T>(0) >= 0 && indexBuffer<T>(0) < n && indexBuffer<T>(1) > 0 && indexBuffer<T>(1) <= n && indexBuffer<T>(0) + 1 == indexBuffer<T>(1) ? indexBuffer<T>(0) : 0;
-      T un = indexBuffer<T>(0) >= 0 && indexBuffer<T>(0) < n && indexBuffer<T>(1) > 0 && indexBuffer<T>(1) <= n && indexBuffer<T>(0) + 1 == indexBuffer<T>(1) ? bufferValue<T>(0) : firstInitialConditionExpression()->approximate<T>(*context);
-      T un1 = indexBuffer<T>(0) >= 0 && indexBuffer<T>(0) < n && indexBuffer<T>(1) > 0 && indexBuffer<T>(1) <= n && indexBuffer<T>(0) + 1 == indexBuffer<T>(1) ? bufferValue<T>(1) : secondInitialConditionExpression()->approximate<T>(*context);
-      for (int i = start; i < n-1; i++) {
-        subContext.setValueForSequenceRank(un, name(), 0);
-        subContext.setValueForSequenceRank(un1, name(), 1);
-        Poincare::Complex<T> e = Poincare::Complex<T>::Float(i);
-        subContext.setExpressionForSymbolName(&e, &nSymbol);
-        un = un1;
-        un1 = expression()->approximate<T>(subContext);
-      }
-      setBufferValue(un, 0);
-      setBufferIndexValue<T>(n-1, 0);
-      setBufferValue(un1, 1);
-      setBufferIndexValue<T>(n, 1);
-      return un1;
+      ctx.setValueForSymbol(unm1, &un1Symbol);
+      ctx.setValueForSymbol(unm2, &unSymbol);
+      ctx.setValueForSymbol(vnm1, &vn1Symbol);
+      ctx.setValueForSymbol(vnm2, &vnSymbol);
+      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-2);
+      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
+      return expression(sqctx)->template approximateToScalar<T>(ctx);
     }
   }
 }
 
-double Sequence::sumOfTermsBetweenAbscissa(double start, double end, Context * context) {
+double Sequence::sumBetweenBounds(double start, double end, Context * context) const {
   double result = 0.0;
   if (end-start > k_maxNumberOfTermsInSum || start + 1.0 == start) {
     return NAN;
@@ -388,11 +409,8 @@ void Sequence::tidy() {
   }
 }
 
-void Sequence::resetBuffer() const {
-  m_indexBufferFloat[0] = -1;
-  m_indexBufferFloat[1] = -1;
-  m_indexBufferDouble[0] = -1;
-  m_indexBufferDouble[1] = -1;
-}
-
+template double Sequence::templatedApproximateAtAbscissa<double>(double, SequenceContext*) const;
+template float Sequence::templatedApproximateAtAbscissa<float>(float, SequenceContext*) const;
+template double Sequence::approximateToNextRank<double>(int, SequenceContext*) const;
+template float Sequence::approximateToNextRank<float>(int, SequenceContext*) const;
 }

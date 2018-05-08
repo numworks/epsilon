@@ -123,7 +123,7 @@ Button * ValuesController::buttonAtIndex(int index, ButtonRowController::Positio
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Expression::FloatDisplayMode::Default);
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, PrintFloat::Mode::Default);
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
@@ -143,7 +143,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     // The cell is a value cell
     EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
     double x = m_interval->element(j-1);
-    Complex<double>::convertFloatToText(evaluationOfAbscissaAtColumn(x, i), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PrintFloat::convertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   myValueCell->setText(buffer);
   }
 }
@@ -304,7 +304,15 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
 }
 
 View * ValuesController::loadView() {
-  SelectableTableView * tableView = new SelectableTableView(this, this, 0, 0, k_topMargin, k_rightMargin, k_bottomMargin, k_leftMargin, this, this, true, true, Palette::WallScreenDark, 13, Palette::GreyDark, Palette::GreyMiddle);
+  SelectableTableView * tableView = new SelectableTableView(this);
+  tableView->setVerticalCellOverlap(0);
+  tableView->setTopMargin(k_topMargin);
+  tableView->setRightMargin(k_rightMargin);
+  tableView->setBottomMargin(k_bottomMargin);
+  tableView->setLeftMargin(k_leftMargin);
+  tableView->setBackgroundColor(Palette::WallScreenDark);
+  tableView->setIndicatorThickness(13);
+
   m_abscissaTitleCell = new EvenOddMessageTextCell(KDText::FontSize::Small);
   for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
     m_abscissaCells[i] = new EvenOddEditableTextCell(tableView, this, m_draftTextBuffer, KDText::FontSize::Small);

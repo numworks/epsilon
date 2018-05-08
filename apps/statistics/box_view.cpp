@@ -52,15 +52,10 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the main box
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, m_store->firstQuartile()));
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, m_store->thirdQuartile()));
-  KDCoordinate lowBoundPixel = floatToPixel(Axis::Vertical, upBound);
-  KDCoordinate upBoundPixel = floatToPixel(Axis::Vertical, lowBound);
+  KDCoordinate lowBoundPixel = std::round(floatToPixel(Axis::Vertical, upBound));
+  KDCoordinate upBoundPixel = std::round(floatToPixel(Axis::Vertical, lowBound));
   ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
     upBoundPixel-lowBoundPixel), Palette::GreyWhite);
-  // Add 'shadows' to the box
-  if (thirdQuartilePixels-firstQuartilePixels > 2) {
-    ctx->fillRect(KDRect(firstQuartilePixels, upBoundPixel-1, thirdQuartilePixels-firstQuartilePixels, 1), Palette::GreyBright);
-    ctx->fillRect(KDRect(firstQuartilePixels, upBoundPixel, thirdQuartilePixels-firstQuartilePixels, 1), Palette::GreyMiddle);
-  }
   // Draw the horizontal lines linking the box to the extreme bounds
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), Palette::GreyDark);
   drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->thirdQuartile(), m_store->maxValue(), Palette::GreyDark);

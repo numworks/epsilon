@@ -61,7 +61,7 @@ float BinomialLaw::yMin() {
 float BinomialLaw::yMax() {
   int maxAbscissa = m_parameter2 < 1.0f ? (m_parameter1+1)*m_parameter2 : m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
-  if (result <= 0.0f || isnan(result)) {
+  if (result <= 0.0f || std::isnan(result)) {
     result = 1.0f;
   }
   return result*(1.0f+ k_displayTopMarginRatio);
@@ -102,7 +102,7 @@ double BinomialLaw::rightIntegralInverseForProbability(double * probability) {
 }
 
 template<typename T>
-T BinomialLaw::templatedEvaluateAtAbscissa(T x) const {
+T BinomialLaw::templatedApproximateAtAbscissa(T x) const {
   if (m_parameter1 == 0) {
     if (m_parameter2 == 0 || m_parameter2 == 1) {
       return NAN;
@@ -134,5 +134,5 @@ T BinomialLaw::templatedEvaluateAtAbscissa(T x) const {
 
 }
 
-template float Probability::BinomialLaw::templatedEvaluateAtAbscissa(float x) const;
-template double Probability::BinomialLaw::templatedEvaluateAtAbscissa(double x) const;
+template float Probability::BinomialLaw::templatedApproximateAtAbscissa(float x) const;
+template double Probability::BinomialLaw::templatedApproximateAtAbscissa(double x) const;

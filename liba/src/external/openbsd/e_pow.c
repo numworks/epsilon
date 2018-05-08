@@ -24,13 +24,13 @@
  * Special cases:
  *	1.  (anything) ** 0  is 1
  *	2.  (anything) ** 1  is itself
- *	3.  (anything except 1) ** NAN is NAN
+ *	3.  (anything) ** NAN is NAN
  *	4.  NAN ** (anything except 0) is NAN
  *	5.  +-(|x| > 1) **  +INF is +INF
  *	6.  +-(|x| > 1) **  -INF is +0
  *	7.  +-(|x| < 1) **  +INF is +0
  *	8.  +-(|x| < 1) **  -INF is +INF
- *	9.  +-1         ** +-INF is 1
+ *	9.  +-1         ** +-INF is NAN
  *	10. +0 ** (+anything except 0, NAN)               is +0
  *	11. -0 ** (+anything except 0, NAN, odd integer)  is +0
  *	12. +0 ** (-anything except 0, NAN)               is +INF
@@ -55,9 +55,7 @@
  * to produce the hexadecimal values shown.
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 static const double
@@ -109,9 +107,6 @@ pow(double x, double y)
     /* y==zero: x**0 = 1 */
 	if((iy|ly)==0) return one;
 
-    /* x==1: 1**y = 1, even if y is NaN */
-	if (hx==0x3ff00000 && lx == 0) return one;
-
     /* +-NaN return x+y */
 	if(ix > 0x7ff00000 || ((ix==0x7ff00000)&&(lx!=0)) ||
 	   iy > 0x7ff00000 || ((iy==0x7ff00000)&&(ly!=0)))
@@ -141,7 +136,7 @@ pow(double x, double y)
 	if(ly==0) {
 	    if (iy==0x7ff00000) {	/* y is +-inf */
 	        if(((ix-0x3ff00000)|lx)==0)
-		    return  one;	/* (-1)**+-inf is 1 */
+		    return  y - y;	/* inf**+-1 is NaN */
 	        else if (ix >= 0x3ff00000)/* (|x|>1)**+-inf = inf,0 */
 		    return (hy>=0)? y: zero;
 	        else			/* (|x|<1)**-,+inf = inf,0 */
@@ -300,7 +295,3 @@ pow(double x, double y)
 	else SET_HIGH_WORD(z,j);
 	return s*z;
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(powl, pow);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

@@ -1,18 +1,18 @@
 #include "function_graph_controller.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 #include <float.h>
 
 using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion) :
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion) :
   InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
-  m_indexFunctionSelectedByCursor(0),
   m_initialisationParameterController(this, interactiveRange),
-  m_angleUnitVersion(angleUnitVersion)
+  m_angleUnitVersion(angleUnitVersion),
+  m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
 }
 
@@ -28,6 +28,10 @@ ViewController * FunctionGraphController::initialisationParameterController() {
 }
 
 void FunctionGraphController::viewWillAppear() {
+  functionGraphView()->setCursorView(cursorView());
+  functionGraphView()->setBannerView(bannerView());
+  functionGraphView()->setAreaHighlight(NAN,NAN);
+
   if (functionGraphView()->context() == nullptr) {
     TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
     functionGraphView()->setContext(myApp->localContext());
@@ -41,44 +45,23 @@ void FunctionGraphController::viewWillAppear() {
 }
 
 bool FunctionGraphController::handleEnter() {
-  Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  Function * f = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   curveParameterController()->setFunction(f);
   StackViewController * stack = stackController();
   stack->push(curveParameterController());
   return true;
 }
 
-void FunctionGraphController::reloadBannerView() {
-  char buffer[k_maxNumberOfCharacters+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  const char * legend = "0=";
-  int legendLength = strlen(legend);
-  int numberOfChar = 0;
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
-  buffer[0] = functionStore()->symbol();
-  numberOfChar += Complex<float>::convertFloatToText(m_cursor->x(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  legend = "   ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  bannerView()->setLegendAtIndex(buffer, 0);
+void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
+  *m_indexFunctionSelectedByCursor = functionIndex;
+}
 
-  numberOfChar = 0;
-  legend = "0(x)=";
-  legendLength = strlen(legend);
-  numberOfChar += legendLength;
-  strlcpy(buffer, legend, legendLength+1);
-  buffer[2] = functionStore()->symbol();
+void FunctionGraphController::reloadBannerView() {
   if (functionStore()->numberOfActiveFunctions() == 0) {
     return;
   }
-  assert(m_indexFunctionSelectedByCursor < functionStore()->numberOfActiveFunctions());
-  Function * f = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
-  buffer[0] = f->name()[0];
-  numberOfChar += Complex<float>::convertFloatToText(m_cursor->y(), buffer+legendLength, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  legend = "   ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  bannerView()->setLegendAtIndex(buffer, 1);
+  Function * f = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
+  reloadBannerViewForCursorOnFunction(m_cursor, f, functionStore()->symbol());
 }
 
 InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
@@ -87,7 +70,6 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   float max = -FLT_MAX;
   float xMin = interactiveCurveViewRange->xMin();
   float xMax = interactiveCurveViewRange->xMax();
-  float step = (xMax - xMin)/curveView()->resolution();
   if (functionStore()->numberOfActiveFunctions() <= 0) {
     InteractiveCurveViewRangeDelegate::Range range;
     range.min = xMin;
@@ -97,10 +79,10 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   for (int i=0; i<functionStore()->numberOfActiveFunctions(); i++) {
     Function * f = functionStore()->activeFunctionAtIndex(i);
     float y = 0.0f;
-    for (int i = 0; i <= curveView()->resolution(); i++) {
-      float x = xMin + i*step;
+    for (int j = 0; j <= curveView()->resolution(); j++) {
+      float x = xMin+(xMax-xMin)*j/curveView()->resolution();
       y = f->evaluateAtAbscissa(x, myApp->localContext());
-      if (!isnan(y) && !isinf(y)) {
+      if (!std::isnan(y) && !std::isinf(y)) {
         min = min < y ? min : y;
         max = max > y ? max : y;
       }
@@ -120,11 +102,11 @@ float FunctionGraphController::addMargin(float x, float range, bool isMin) {
 void FunctionGraphController::initRangeParameters() {
   interactiveCurveViewRange()->setDefault();
   initCursorParameters();
-  m_indexFunctionSelectedByCursor = 0;
+  selectFunctionWithCursor(0);
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {
-  Function * actualFunction = functionStore()->activeFunctionAtIndex(m_indexFunctionSelectedByCursor);
+  Function * actualFunction = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   double y = actualFunction->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
   Function * nextFunction = actualFunction;
@@ -134,7 +116,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
     double newY = f->evaluateAtAbscissa(m_cursor->x(), myApp->localContext());
     bool isNextFunction = direction > 0 ? (newY > y && newY < nextY) : (newY < y && newY > nextY);
     if (isNextFunction) {
-      m_indexFunctionSelectedByCursor = i;
+      selectFunctionWithCursor(i);
       nextY = newY;
       nextFunction = f;
     }

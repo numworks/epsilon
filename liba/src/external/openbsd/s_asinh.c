@@ -21,9 +21,7 @@
  *		 := sign(x)*log1p(|x| + x^2/(1 + sqrt(1+x^2)))  
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 static const double 
@@ -53,7 +51,3 @@ asinh(double x)
 	}
 	if(hx>0) return w; else return -w;
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(asinhl, asinh);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

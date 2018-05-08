@@ -126,6 +126,7 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
+  myCell->reloadCell();
 }
 
 int ListController::numberOfButtons(ButtonRowController::Position position) const {
@@ -291,15 +292,14 @@ void ListController::addEmptyFunction() {
   selectableTableView()->reloadData();
 }
 
-bool ListController::removeFunctionRow(Function * function) {
-  m_functionStore->removeFunction(function);
-  return true;
-}
-
 View * ListController::loadView() {
   m_emptyCell = new EvenOddCell();
   m_addNewFunction = new NewFunctionCell(m_addNewMessage);
-  return new SelectableTableView(this, this, 0, 0, 0, 0, 0, 0, this, this, false, true);
+  SelectableTableView * selectableTableView = new SelectableTableView(this, this, this, this);
+  selectableTableView->setMargins(0);
+  selectableTableView->setVerticalCellOverlap(0);
+  selectableTableView->setShowsIndicators(false);
+  return selectableTableView;
 }
 
 void ListController::unloadView(View * view) {

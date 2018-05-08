@@ -1,6 +1,6 @@
 #include "interactive_curve_view_controller.h"
 #include "text_field_delegate_app.h"
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 
 using namespace Poincare;
@@ -8,10 +8,8 @@ using namespace Poincare;
 namespace Shared {
 
 InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion) :
-  ViewController(parentResponder),
+  SimpleInteractiveCurveViewController(parentResponder, interactiveRange, curveView, cursor),
   ButtonRowDelegate(header, nullptr),
-  m_cursor(cursor),
-  m_cursorView(),
   m_modelVersion(modelVersion),
   m_rangeVersion(rangeVersion),
   m_rangeParameterController(this, interactiveRange),
@@ -38,10 +36,6 @@ const char * InteractiveCurveViewController::title() {
   return I18n::translate(I18n::Message::GraphTab);
 }
 
-View * InteractiveCurveViewController::view() {
-  return curveView();
-}
-
 bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (!curveView()->isMainViewSelected()) {
     if (event == Ion::Events::Down) {
@@ -59,24 +53,8 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
-  if (event == Ion::Events::Plus) {
-    interactiveCurveViewRange()->zoom(2.0f/3.0f, m_cursor->x(), m_cursor->y());
-    curveView()->reload();
+  if (SimpleInteractiveCurveViewController::handleEvent(event)) {
     return true;
-  }
-  if (event == Ion::Events::Minus) {
-    interactiveCurveViewRange()->zoom(3.0f/2.0f, m_cursor->x(), m_cursor->y());
-    curveView()->reload();
-    return true;
-  }
-  if (event == Ion::Events::Left || event == Ion::Events::Right) {
-    int direction = event == Ion::Events::Left ? -1 : 1;
-    if (moveCursorHorizontally(direction)) {
-      reloadBannerView();
-      curveView()->reload();
-      return true;
-    }
-    return false;
   }
   if (event == Ion::Events::Down || event == Ion::Events::Up) {
     int direction = event == Ion::Events::Down ? -1 : 1;
@@ -91,9 +69,6 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     curveView()->selectMainView(false);
     header()->setSelectedButton(0);
     return true;
-  }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    return handleEnter();
   }
   return false;
 }
@@ -171,7 +146,7 @@ void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirs
 }
 
 Responder * InteractiveCurveViewController::tabController() const{
-  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
+  return (stackController()->parentResponder());
 }
 
 StackViewController * InteractiveCurveViewController::stackController() const{

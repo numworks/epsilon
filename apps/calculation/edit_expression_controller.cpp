@@ -51,6 +51,7 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
   m_historyController(historyController),
   m_calculationStore(calculationStore)
 {
+  m_cacheBuffer[0] = 0;
 }
 
 const char * EditExpressionController::textBody() {
@@ -60,13 +61,13 @@ const char * EditExpressionController::textBody() {
 void EditExpressionController::insertTextBody(const char * text) {
   TextField * tf = ((ContentView *)view())->textField();
   tf->setEditing(true, false);
-  tf->insertTextAtLocation(text, tf->cursorLocation());
-  tf->setCursorLocation(tf->cursorLocation() + strlen(text));
+  tf->handleEventWithText(text);
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
+      m_cacheBuffer[0] = 0;
       ((ContentView *)view())->textField()->setEditing(false, false);
       app()->setFirstResponder(m_historyController);
     }
@@ -83,10 +84,14 @@ void EditExpressionController::didBecomeFirstResponder() {
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (textField->textFieldShouldFinishEditing(event) && textField->isEditing() && strlen(textField->text()) == 0 && m_calculationStore->numberOfCalculations() > 0) {
+  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event) && textField->draftTextLength() == 0 && m_cacheBuffer[0] != 0) {
     App * calculationApp = (App *)app();
-    const char * lastTextBody = m_calculationStore->calculationAtIndex(m_calculationStore->numberOfCalculations()-1)->inputText();
-    m_calculationStore->push(lastTextBody, calculationApp->localContext());
+    /* The input text store in m_cacheBuffer might have beed correct the first
+     * time but then be too long when replacing ans in another context */
+    if (!calculationApp->textInputIsCorrect(m_cacheBuffer)) {
+      return true;
+    }
+    m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
     m_historyController->reload();
     ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
     return true;
@@ -96,6 +101,7 @@ bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField,
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
   App * calculationApp = (App *)app();
+  strlcpy(m_cacheBuffer, textBody(), TextField::maxBufferSize());
   m_calculationStore->push(textBody(), calculationApp->localContext());
   m_historyController->reload();
   ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);

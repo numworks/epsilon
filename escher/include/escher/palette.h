@@ -13,6 +13,7 @@ public:
   constexpr static KDColor GreyBright = KDColor::RGB24(0xececec);
   constexpr static KDColor GreyMiddle = KDColor::RGB24(0xd9d9d9);
   constexpr static KDColor GreyDark = KDColor::RGB24(0xa7a7a7);
+  constexpr static KDColor GreyVeryDark = KDColor::RGB24(0x8c8c8c);
   constexpr static KDColor Select = KDColor::RGB24(0xd4d7e0);
   constexpr static KDColor SelectDark = KDColor::RGB24(0xb0b8d8);
   constexpr static KDColor WallScreen = KDColor::RGB24(0xf7f9fa);

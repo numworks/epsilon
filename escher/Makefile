@@ -3,6 +3,7 @@ SFLAGS += -Iescher/include
 objs += $(addprefix escher/src/,\
   alternate_empty_view_controller.o\
   app.o\
+  bank_view_controller.o\
   buffer_text_view.o\
   button.o\
   button_row_controller.o\
@@ -11,7 +12,9 @@ objs += $(addprefix escher/src/,\
   container.o\
   dynamic_view_controller.o\
   editable_text_cell.o\
+  ellipsis_view.o\
   even_odd_cell.o\
+  even_odd_cell_with_ellipsis.o\
   even_odd_buffer_text_cell.o\
   even_odd_editable_text_cell.o\
   even_odd_expression_cell.o\
@@ -36,8 +39,10 @@ objs += $(addprefix escher/src/,\
   message_table_cell_with_message.o\
   message_table_cell_with_switch.o\
   message_text_view.o\
+  message_tree.o\
   modal_view_controller.o\
   palette.o\
+  pointer_text_view.o\
   responder.o\
   run_loop.o\
   scroll_view.o\
@@ -63,10 +68,13 @@ objs += $(addprefix escher/src/,\
   text_cursor_view.o\
   text_area.o\
   text_field.o\
+  text_input.o\
+  text_input_helpers.o\
   text_view.o\
   tiled_view.o\
-  toolbox.o\
   timer.o\
+  toolbox.o\
+  toolbox_message_tree.o\
   view.o\
   view_controller.o\
   warning_controller.o\
@@ -77,11 +85,11 @@ INLINER := escher/image/inliner
 
 $(INLINER): escher/image/inliner.c
 	@echo "HOSTCC  $@"
-	@$(HOSTCC) -std=c99 `libpng-config --cflags` $< `libpng-config --ldflags` -o $@
+	$(Q) $(HOSTCC) -std=c99 `libpng-config --cflags` $< `libpng-config --ldflags` -o $@
 
 %.h %.cpp : %.png $(INLINER)
 	@echo "INLINER $@"
-	@$(INLINER) $<
+	$(Q) $(INLINER) $<
 
 INLINER_PRODUCTS = $(1:.png=.h) $(1:.png=.cpp) $(1:.png=.o)
 

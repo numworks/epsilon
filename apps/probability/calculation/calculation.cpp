@@ -1,6 +1,6 @@
 #include "calculation.h"
 #include <assert.h>
-#include <math.h>
+#include <cmath>
 
 namespace Probability {
 

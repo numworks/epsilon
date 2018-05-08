@@ -10,7 +10,6 @@ class TitleBarView : public View {
 public:
   TitleBarView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void reload();
   void setTitle(I18n::Message title);
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
@@ -18,9 +17,7 @@ public:
   bool setShiftAlphaLockStatus(Ion::Events::ShiftAlphaStatus status);
   void refreshPreferences();
 private:
-  constexpr static KDCoordinate k_batteryRightMargin = 5;
   constexpr static KDCoordinate k_alphaRightMargin = 5;
-  constexpr static KDCoordinate k_preferenceMargin = 3;
   constexpr static KDCoordinate k_examIconWidth = 18;
   constexpr static KDCoordinate k_examIconHeight = 9;
   constexpr static KDCoordinate k_examIconMargin = 93;

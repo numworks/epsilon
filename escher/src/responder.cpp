@@ -86,7 +86,3 @@ App * Responder::app() {
    assert(result->m_magic == App::Magic); // Poor man's RTTI
   return result;
 }
-
-Toolbox * Responder::toolbox() {
-  return nullptr;
-}

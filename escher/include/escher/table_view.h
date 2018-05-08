@@ -8,32 +8,34 @@
 
 class TableView : public ScrollView {
 public:
-  TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin = 0,
-    KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0,
-    bool showIndicators = true, bool colorBackground = true, KDColor backgroundColor = Palette::WallScreen,
-    KDCoordinate indicatorThickness = 20, KDColor indicatorColor = Palette::GreyDark,
-    KDColor backgroundIndicatorColor = Palette::GreyMiddle, KDCoordinate indicatorMargin = 14);
+  TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource);
+
+  void setHorizontalCellOverlap(KDCoordinate o) { m_contentView.setHorizontalCellOverlap(o); }
+  void setVerticalCellOverlap(KDCoordinate o) { m_contentView.setVerticalCellOverlap(o); }
 
   virtual void scrollToCell(int i, int j);
   HighlightCell * cellAtLocation(int i, int j);
-  virtual void reloadData();
   void reloadCellAtLocation(int i, int j);
-  KDSize size() const;
+  KDSize minimalSizeForOptimalDisplay() const override;
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
 #endif
   TableViewDataSource * dataSource();
+  void layoutSubviews() override;
   class ContentView : public View {
   public:
-    ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping);
+    ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlap, KDCoordinate verticalCellOverlap);
+    KDSize minimalSizeForOptimalDisplay() const override;
+
+    void setHorizontalCellOverlap(KDCoordinate o) { m_horizontalCellOverlap = o; }
+    void setVerticalCellOverlap(KDCoordinate o) { m_verticalCellOverlap = o; }
 
     void scrollToCell(int i, int j) const;
     void reloadCellAtLocation(int i, int j);
     HighlightCell * cellAtLocation(int i, int j);
     void resizeToFitContent();
     TableViewDataSource * dataSource();
-    KDSize minimalSizeForOptimalDisplay() const override;
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override;
@@ -65,12 +67,10 @@ protected:
     int typeIndexFromSubviewIndex(int index, int type) const;
     TableView * m_tableView;
     TableViewDataSource * m_dataSource;
-    KDCoordinate m_horizontalCellOverlapping;
-    KDCoordinate m_verticalCellOverlapping;
+    KDCoordinate m_horizontalCellOverlap;
+    KDCoordinate m_verticalCellOverlap;
   };
   ContentView m_contentView;
-private:
-  void layoutSubviews() override;
 };
 
 #endif

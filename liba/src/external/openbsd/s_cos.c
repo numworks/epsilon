@@ -41,6 +41,7 @@
  *	TRIG(x) returns trig(x) nearly rounded 
  */
 
+#include <sys/cdefs.h>
 #include <float.h>
 #include <math.h>
 
@@ -75,6 +76,8 @@ cos(double x)
 	}
 }
 
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(cosl, cos);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */
+#if LDBL_MANT_DIG == 53
+#ifdef __weak_alias
+__weak_alias(cosl, cos);
+#endif /* __weak_alias */
+#endif /* LDBL_MANT_DIG == 53 */

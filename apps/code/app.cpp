@@ -2,7 +2,7 @@
 #include "../apps_container.h"
 #include "code_icon.h"
 #include "../i18n.h"
-#include <assert.h>
+#include "helpers.h"
 
 namespace Code {
 
@@ -19,7 +19,10 @@ const Image * App::Descriptor::icon() {
 }
 
 App::Snapshot::Snapshot() :
-  m_program()
+#if EPSILON_GETOPT
+  m_lockOnConsole(false),
+#endif
+  m_scriptStore()
 {
 }
 
@@ -27,33 +30,70 @@ App * App::Snapshot::unpack(Container * container) {
   return new App(container, this);
 }
 
+void App::Snapshot::reset() {
+  m_scriptStore.deleteAllScripts();
+}
+
 App::Descriptor * App::Snapshot::descriptor() {
   static Descriptor descriptor;
   return &descriptor;
 }
 
-void App::Snapshot::reset() {
-  m_program.setContent("");
+ScriptStore * App::Snapshot::scriptStore() {
+  return &m_scriptStore;
 }
 
-Program * App::Snapshot::program() {
-  return &m_program;
+#if EPSILON_GETOPT
+bool App::Snapshot::lockOnConsole() const {
+  return m_lockOnConsole;
 }
 
-static I18n::Message sCodeMessages[] = {I18n::Message::BetaVersion, I18n::Message::BetaVersionMessage1, I18n::Message::BetaVersionMessage2, I18n::Message::BetaVersionMessage3, I18n::Message::BetaVersionMessage4};
-
-static KDColor sCodeColors[] = {KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack};
+void App::Snapshot::setOpt(const char * name, char * value) {
+  if (strcmp(name, "script") == 0) {
+      m_scriptStore.deleteAllScripts();
+      char * separator = strchr(value, ':');
+      if (!separator) {
+        return;
+      }
+      *separator = 0;
+      const char * scriptName = value;
+      const char * scriptContent = separator+1;
+      Code::ScriptTemplate script(scriptName, scriptContent);
+      m_scriptStore.addScriptFromTemplate(&script);
+      return;
+  }
+  if (strcmp(name, "lock-on-console") == 0) {
+    m_lockOnConsole = true;
+    return;
+  }
+}
+#endif
 
 App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_menuController, I18n::Message::Warning),
-  m_betaVersionController(sCodeMessages, sCodeColors),
-  m_menuController(this, snapshot->program())
+  ::App(container, snapshot, &m_codeStackViewController, I18n::Message::Warning),
+  m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
+  m_menuController(&m_listFooter, snapshot->scriptStore(), &m_listFooter
+#if EPSILON_GETOPT
+      , snapshot->lockOnConsole()
+#endif
+      ),
+  m_codeStackViewController(&m_modalViewController, &m_listFooter),
+  m_variableBoxController(&m_menuController, snapshot->scriptStore())
 {
 }
 
-void App::didBecomeActive(Window * window) {
-  ::App::didBecomeActive(window);
-  displayModalViewController(&m_betaVersionController, 0.5f, 0.5f);
+bool App::textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event) {
+  const char * pythonText = Helpers::PythonTextForEvent(event);
+  if (pythonText != nullptr) {
+    textInput->handleEventWithText(pythonText);
+    return true;
+  }
+  if (event == Ion::Events::Var) {
+    m_variableBoxController.setTextInputCaller(textInput);
+    displayModalViewController(&m_variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+    return true;
+  }
+  return false;
 }
 
 }

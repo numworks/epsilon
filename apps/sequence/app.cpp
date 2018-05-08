@@ -32,6 +32,9 @@ App * App::Snapshot::unpack(Container * container) {
 void App::Snapshot::reset() {
   FunctionApp::Snapshot::reset();
   m_graphRange.setDefault();
+  /* We do not need to invalidate the sequence context cache here as the
+   * context is not allocated yet when reset is call (from the application
+   * settings). */
   m_sequenceStore.removeAll();
 }
 
@@ -55,12 +58,12 @@ void App::Snapshot::tidy() {
 
 App::App(Container * container, Snapshot * snapshot) :
   FunctionApp(container, snapshot, &m_inputViewController),
-  m_nContext(((AppsContainer *)container)->globalContext()),
+  m_sequenceContext(((AppsContainer *)container)->globalContext(), snapshot->sequenceStore()),
   m_listController(&m_listFooter, snapshot->sequenceStore(), &m_listHeader, &m_listFooter),
   m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_listHeader(nullptr, &m_listFooter, &m_listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader),
-  m_graphController(&m_graphAlternateEmptyViewController, snapshot->sequenceStore(), snapshot->graphRange(), snapshot->cursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->angleUnitVersion(), &m_graphHeader),
+  m_graphController(&m_graphAlternateEmptyViewController, snapshot->sequenceStore(), snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), snapshot->modelVersion(), snapshot->rangeVersion(), snapshot->angleUnitVersion(), &m_graphHeader),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader),
@@ -77,11 +80,8 @@ InputViewController * App::inputViewController() {
   return &m_inputViewController;
 }
 
-Context * App::localContext() {
-  if (m_tabViewController.activeTab() == 0) {
-    return &m_nContext;
-  }
-  return TextFieldDelegateApp::localContext();
+SequenceContext * App::localContext() {
+  return &m_sequenceContext;
 }
 
 const char * App::XNT() {

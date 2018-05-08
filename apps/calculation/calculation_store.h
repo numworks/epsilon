@@ -14,6 +14,7 @@ public:
   void deleteAll();
   int numberOfCalculations();
   void tidy();
+  Poincare::Expression * ansExpression(Poincare::Context * context);
   static constexpr int k_maxNumberOfCalculations = 10;
 private:
   int m_startIndex;

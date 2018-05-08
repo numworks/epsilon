@@ -1,9 +1,7 @@
 #include "global_preferences.h"
 
-static GlobalPreferences s_globalPreferences;
-
 GlobalPreferences::GlobalPreferences() :
-  m_language(I18n::Language::French),
+  m_language(I18n::Language::EN),
   m_examMode(ExamMode::Desactivate),
   m_showUpdatePopUp(true),
   m_brightnessLevel(Ion::Backlight::MaxBrightness)
@@ -11,7 +9,8 @@ GlobalPreferences::GlobalPreferences() :
 }
 
 GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
-  return &s_globalPreferences;
+  static GlobalPreferences globalPreferences;
+  return &globalPreferences;
 }
 
 I18n::Language GlobalPreferences::language() const {

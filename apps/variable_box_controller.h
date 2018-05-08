@@ -50,13 +50,12 @@ private:
 #else
     constexpr static int k_numberOfMenuRows = 2;
 #endif
-    constexpr static KDCoordinate k_leafRowHeight = 40;
     constexpr static KDCoordinate k_leafMargin = 10;
-    constexpr static KDCoordinate k_nodeRowHeight = 40;
     Page pageAtIndex(int index);
     void putLabelAtIndexInBuffer(int index, char * buffer);
     I18n::Message nodeLabelAtIndex(int index);
-    const Poincare::Evaluation<double> * expressionForIndex(int index);
+    const Poincare::Expression * expressionForIndex(int index);
+    Poincare::ExpressionLayout * expressionLayoutForIndex(int index);
 
     Poincare::GlobalContext * m_context;
     TextField * m_textFieldCaller;

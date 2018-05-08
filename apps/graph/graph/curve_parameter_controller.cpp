@@ -1,4 +1,5 @@
 #include "curve_parameter_controller.h"
+#include "graph_controller.h"
 #include "../../i18n.h"
 #include <assert.h>
 
@@ -6,14 +7,13 @@ using namespace Shared;
 
 namespace Graph {
 
-CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor) :
+CurveParameterController::CurveParameterController(InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController, CartesianFunctionStore * functionStore) :
   FunctionCurveParameterController(graphRange, cursor),
   m_goToParameterController(this, graphRange, cursor, I18n::Message::X),
-  m_bannerView(bannerView),
-#if FUNCTION_CALCULATE_MENU
+  m_graphController(graphController),
   m_calculationCell(I18n::Message::Compute),
-#endif
-  m_derivativeCell(I18n::Message::DerivateNumber)
+  m_derivativeCell(I18n::Message::DerivateNumber),
+  m_calculationParameterController(this, graphView, bannerView, graphRange, cursor, functionStore)
 {
 }
 
@@ -24,7 +24,7 @@ const char * CurveParameterController::title() {
 void CurveParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_derivativeCell) {
     SwitchView * switchView = (SwitchView *)m_derivativeCell.accessoryView();
-    switchView->setState(m_bannerView->displayDerivative());
+    switchView->setState(m_graphController->displayDerivativeInBanner());
   }
 }
 
@@ -35,21 +35,18 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 0)) {
 #endif
     switch (selectedRow()) {
-#if FUNCTION_CALCULATE_MENU
       case 0:
-        return true;
-      case 1:
-#else
-      case 0:
-#endif
-        return handleGotoSelection();
-#if FUNCTION_CALCULATE_MENU
-      case 2:
-#else
-      case 1:
-#endif
       {
-        m_bannerView->setDisplayDerivative(!m_bannerView->displayDerivative());
+        m_calculationParameterController.setFunction(static_cast<CartesianFunction *>(m_function));
+        StackViewController * stack = (StackViewController *)parentResponder();
+        stack->push(&m_calculationParameterController);
+        return true;
+      }
+      case 1:
+        return handleGotoSelection();
+      case 2:
+      {
+        m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
         m_selectableTableView.reloadData();
         return true;
       }
@@ -67,11 +64,7 @@ int CurveParameterController::numberOfRows() {
 HighlightCell * CurveParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCells);
-#if FUNCTION_CALCULATE_MENU
   HighlightCell * cells[] = {&m_calculationCell, &m_goToCell, &m_derivativeCell};
-#else
-  HighlightCell * cells[] = {&m_goToCell, &m_derivativeCell};
-#endif
   return cells[index];
 }
 

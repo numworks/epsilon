@@ -2,9 +2,11 @@
 #define CODE_APP_H
 
 #include <escher.h>
+#include <ion/events.h>
 #include "menu_controller.h"
-#include "program.h"
-#include "../shared/message_controller.h"
+#include "script_store.h"
+#include "python_toolbox.h"
+#include "variable_box_controller.h"
 
 namespace Code {
 
@@ -22,15 +24,27 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    Program * program();
+    ScriptStore * scriptStore();
+#if EPSILON_GETOPT
+    bool lockOnConsole() const;
+    void setOpt(const char * name, char * value) override;
+#endif
   private:
-    Program m_program;
+#if EPSILON_GETOPT
+    bool m_lockOnConsole;
+#endif
+    ScriptStore m_scriptStore;
   };
-  void didBecomeActive(Window * window) override;
+  StackViewController * stackViewController() { return &m_codeStackViewController; }
+  PythonToolbox * pythonToolbox() { return &m_toolbox; }
+  bool textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event);
 private:
   App(Container * container, Snapshot * snapshot);
-  MessageController m_betaVersionController;
+  ButtonRowController m_listFooter;
   MenuController m_menuController;
+  StackViewController m_codeStackViewController;
+  PythonToolbox m_toolbox;
+  VariableBoxController m_variableBoxController;
 };
 
 }

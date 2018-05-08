@@ -28,9 +28,7 @@
  *
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 static const double one = 1.0, huge = 1e300;
@@ -57,7 +55,3 @@ atanh(double x)
 	    t = 0.5*log1p((x+x)/(one-x));
 	if(hx>=0) return t; else return -t;
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(atanhl, atanh);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

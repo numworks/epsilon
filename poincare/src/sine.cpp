@@ -1,7 +1,11 @@
 #include <poincare/sine.h>
+#include <poincare/trigonometry.h>
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/complex.h>
 #include <poincare/multiplication.h>
+#include <poincare/symbol.h>
+#include <poincare/simplification_engine.h>
+#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
@@ -9,25 +13,35 @@ extern "C" {
 
 namespace Poincare {
 
-Sine::Sine() :
-  Function("sin")
-{
-}
-
 Expression::Type Sine::type() const {
   return Expression::Type::Sine;
 }
 
-Expression * Sine::cloneWithDifferentOperands(Expression** newOperands,
-    int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Sine * s = new Sine();
-  s->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return s;
+Expression * Sine::clone() const {
+  Sine * a = new Sine(m_operands, true);
+  return a;
+}
+
+float Sine::characteristicXRange(Context & context, AngleUnit angleUnit) const {
+  return Trigonometry::characteristicXRange(this, context, angleUnit);
+}
+
+Expression * Sine::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  Expression * op = editableOperand(0);
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+#endif
+  return Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
 }
 
 template<typename T>
-Complex<T> Sine::compute(const Complex<T> c, AngleUnit angleUnit) {
+Complex<T> Sine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   if (c.b() == 0) {
     T input = c.a();
     if (angleUnit == AngleUnit::Degree) {
@@ -42,7 +56,7 @@ Complex<T> Sine::compute(const Complex<T> c, AngleUnit angleUnit) {
     return Complex<T>::Float(result);
   }
   Complex<T> arg = Complex<T>::Cartesian(-c.b(), c.a());
-  Complex<T> sinh = HyperbolicSine::compute(arg);
+  Complex<T> sinh = HyperbolicSine::computeOnComplex(arg, angleUnit);
   return Multiplication::compute(Complex<T>::Cartesian(0, -1), sinh);
 }
 

@@ -18,7 +18,7 @@ public:
   Responder * commonAncestorWith(Responder * responder);
   void setParentResponder(Responder * responder);
   App * app();
-  virtual Toolbox * toolbox();
+  virtual Toolbox * toolbox() { return nullptr; }
 private:
   Responder * m_parentResponder;
 };

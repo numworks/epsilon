@@ -132,6 +132,12 @@ double Store::standardDeviation() {
   return std::sqrt(variance());
 }
 
+double Store::sampleStandardDeviation() {
+  double n = sumOfColumn(1);
+  double s = std::sqrt(n/(n-1.0));
+  return s*standardDeviation();
+}
+
 double Store::firstQuartile() {
   int firstQuartileIndex = std::ceil(sumOfColumn(1)/4);
   return sortedElementNumber(firstQuartileIndex);
@@ -177,11 +183,12 @@ double Store::squaredValueSum() {
 
 /* private methods */
 
-double Store::defaultValue(int i) {
+double Store::defaultValue(int i, int j) {
   if (i == 0) {
-    return 0.0;
+    return FloatPairStore::defaultValue(i, j);
+  } else {
+    return 1.0;
   }
-  return 1.0;
 }
 
 double Store::sumOfValuesBetween(double x1, double x2) {

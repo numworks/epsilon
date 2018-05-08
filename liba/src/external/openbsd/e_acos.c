@@ -34,6 +34,7 @@
  * Function needed: sqrt
  */
 
+#include <sys/cdefs.h>
 #include <float.h>
 #include <math.h>
 
@@ -100,6 +101,8 @@ acos(double x)
 	}
 }
 
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(acosl, acos);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */
+#if LDBL_MANT_DIG == 53
+#ifdef __weak_alias
+__weak_alias(acosl, acos);
+#endif /* __weak_alias */
+#endif /* LDBL_MANT_DIG == 53 */

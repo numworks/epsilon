@@ -9,21 +9,17 @@ extern "C" {
 
 namespace Poincare {
 
-Sum::Sum() :
-  Sequence("sum")
-{
-}
-
 Expression::Type Sum::type() const {
   return Type::Sum;
 }
 
-Expression * Sum::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Sum * s = new Sum();
-  s->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return s;
+Expression * Sum::clone() const {
+  Sum * a = new Sum(m_operands, true);
+  return a;
+}
+
+const char * Sum::name() const {
+  return "sum";
 }
 
 int Sum::emptySequenceValue() const {
@@ -35,14 +31,23 @@ ExpressionLayout * Sum::createSequenceLayoutWithArgumentLayouts(ExpressionLayout
 }
 
 template<typename T>
-Evaluation<T> * Sum::templatedEvaluateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const {
-  if (a->numberOfOperands() == 1 && b->numberOfOperands() == 1) {
-    return new Complex<T>(Addition::compute(*(a->complexOperand(0)), *(b->complexOperand(0))));
+Expression * Sum::templatedApproximateWithNextTerm(Expression * a, Expression * b) const {
+  if (a->type() == Type::Complex && b->type() == Type::Complex) {
+    Complex<T> * c = static_cast<Complex<T> *>(a);
+    Complex<T> * d = static_cast<Complex<T> *>(b);
+    return new Complex<T>(Addition::compute(*c, *d));
   }
-  if (a->numberOfOperands() == 1) {
-    return Addition::computeOnComplexAndMatrix(a->complexOperand(0), b);
+  if (a->type() == Type::Complex) {
+    Complex<T> * c = static_cast<Complex<T> *>(a);
+    assert(b->type() == Type::Matrix);
+    Matrix * m = static_cast<Matrix *>(b);
+    return Addition::computeOnComplexAndMatrix(c, m);
   }
-  return Addition::computeOnMatrices(a, b);
+  assert(a->type() == Type::Matrix);
+  assert(b->type() == Type::Matrix);
+  Matrix * m = static_cast<Matrix *>(a);
+  Matrix * n = static_cast<Matrix *>(b);
+  return Addition::computeOnMatrices<T>(m, n);
 }
 
 }

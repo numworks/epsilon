@@ -11,11 +11,11 @@ ShiftAlphaStatus shiftAlphaStatus() {
 }
 
 bool isShiftActive() {
-  return sShiftAlphaStatus == ShiftAlphaStatus::Shift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLockShift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+  return sShiftAlphaStatus == ShiftAlphaStatus::Shift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 }
 
 bool isAlphaActive() {
-  return sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLockShift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+  return sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 ;
 }
 
@@ -24,6 +24,7 @@ void setShiftAlphaStatus(ShiftAlphaStatus s) {
 }
 
 void updateModifiersFromEvent(Event e) {
+  assert(e.isKeyboardEvent());
   switch (sShiftAlphaStatus) {
     case ShiftAlphaStatus::Default:
       if (e == Shift) {
@@ -61,20 +62,15 @@ void updateModifiersFromEvent(Event e) {
         break;
       case ShiftAlphaStatus::AlphaLock:
         if (e == Shift) {
-          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLockShift;
+          sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
         } else if (e == Alpha) {
           sShiftAlphaStatus = ShiftAlphaStatus::Default;
         }
         break;
-      case ShiftAlphaStatus::AlphaLockShift:
-        if (e == Alpha) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Shift;
-        } else {
-          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
-        }
-        break;
       case ShiftAlphaStatus::ShiftAlphaLock:
-        if (e == Alpha) {
+        if (e == Shift) {
+          sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+        } else if (e == Alpha) {
           sShiftAlphaStatus = ShiftAlphaStatus::Default;
         }
         break;

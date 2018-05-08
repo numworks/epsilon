@@ -1,5 +1,5 @@
 #include <ion.h>
 
 const char * Ion::serialNumber() {
-  return "UNKNOWN";
+  return "000000000000";
 }

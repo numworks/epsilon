@@ -6,8 +6,7 @@ namespace Shared {
 ValuesFunctionParameterController::ValuesFunctionParameterController(char symbol) :
   ViewController(nullptr),
   m_copyColumn(I18n::Message::CopyColumnInList),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this, this, this),
   m_function(nullptr),
   m_symbol(symbol)
 {
@@ -15,7 +14,7 @@ ValuesFunctionParameterController::ValuesFunctionParameterController(char symbol
 
 const char * ValuesFunctionParameterController::title() {
   strlcpy(m_pageTitle, I18n::translate(I18n::Message::FunctionColumn), k_maxNumberOfCharsInTitle);
-  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle; currentChar++) {
+  for (int currentChar = 0; currentChar < k_maxNumberOfCharsInTitle-1; currentChar++) {
     if (m_pageTitle[currentChar] == '(') {
       m_pageTitle[currentChar-1] = *m_function->name();
       m_pageTitle[currentChar+1] = m_symbol;

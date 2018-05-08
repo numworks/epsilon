@@ -20,9 +20,14 @@ double Law::cumulativeDistributiveFunctionAtAbscissa(double x) const {
     for (int k = 0; k <=end; k++) {
       result += evaluateAtDiscreteAbscissa(k);
       /* Avoid too long loop */
-      if (result > k_maxProbability || k > k_maxNumberOfOperations) {
+      if (k > k_maxNumberOfOperations) {
         break;
       }
+      if (result >= k_maxProbability) {
+        result = 1.0;
+        break;
+      }
+
     }
     return result;
   }
@@ -49,7 +54,11 @@ double Law::finiteIntegralBetweenAbscissas(double a, double b) const {
   for (int k = start; k <=end; k++) {
     result += evaluateAtDiscreteAbscissa(k);
     /* Avoid too long loop */
-    if (result > k_maxProbability || k-start > k_maxNumberOfOperations) {
+    if (k-start > k_maxNumberOfOperations) {
+      break;
+    }
+    if (result >= k_maxProbability) {
+      result = 1.0;
       break;
     }
   }
@@ -68,18 +77,25 @@ double Law::cumulativeDistributiveInverseForProbability(double * probability) {
   }
   double p = 0.0;
   int k = 0;
-  while (p < *probability && k < k_maxNumberOfOperations) {
+  double delta = 0.0;
+  do {
+    delta = std::fabs(*probability-p);
     p += evaluateAtDiscreteAbscissa(k++);
-  }
+    if (p >= k_maxProbability && std::fabs(*probability-1.0) <= delta) {
+      *probability = 1.0;
+      return k-1.0;
+    }
+  } while (std::fabs(*probability-p) <= delta && k < k_maxNumberOfOperations && p < 1.0);
+  p -= evaluateAtDiscreteAbscissa(--k);
   if (k == k_maxNumberOfOperations) {
     *probability = 1.0;
     return INFINITY;
   }
   *probability = p;
-  if (isnan(*probability)) {
+  if (std::isnan(*probability)) {
     return NAN;
   }
-  return k-1.0f;
+  return k-1.0;
 }
 
 double Law::rightIntegralInverseForProbability(double * probability) {
@@ -95,15 +111,21 @@ double Law::rightIntegralInverseForProbability(double * probability) {
   }
   double p = 0.0;
   int k = 0;
-  while (p < 1.0 - *probability && k < k_maxNumberOfOperations) {
+  double delta = 0.0;
+  do {
+    delta = std::fabs(1.0-*probability-p);
     p += evaluateAtDiscreteAbscissa(k++);
-  }
+    if (p >= k_maxProbability && std::fabs(1.0-*probability-p) <= delta) {
+      *probability = 0.0;
+      return k;
+    }
+  } while (std::fabs(1.0-*probability-p) <= delta && k < k_maxNumberOfOperations);
   if (k == k_maxNumberOfOperations) {
     *probability = 1.0;
     return INFINITY;
   }
   *probability = 1.0 - (p - evaluateAtDiscreteAbscissa(k-1));
-  if (isnan(*probability)) {
+  if (std::isnan(*probability)) {
     return NAN;
   }
   return k-1.0;

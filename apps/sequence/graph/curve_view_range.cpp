@@ -19,7 +19,7 @@ void CurveViewRange::roundAbscissa() {
   float xMax = m_xMax;
   float newXMin = clipped(std::round((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
   float newXMax = clipped(std::round((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
-  if (isnan(newXMin) || isnan(newXMax)) {
+  if (std::isnan(newXMin) || std::isnan(newXMax)) {
     return;
   }
   m_xMin = newXMin;
@@ -41,7 +41,7 @@ void CurveViewRange::normalize() {
   float yMax = m_yMax;
   float newXMin = clipped((xMin+xMax)/2 - 5.3f, false);
   float newXMax = clipped((xMin+xMax)/2 + 5.3f, true);
-  if (!isnan(newXMin) && !isnan(newXMax)) {
+  if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xMin = newXMin;
     m_xMax = newXMax;
     m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
@@ -53,7 +53,7 @@ void CurveViewRange::normalize() {
   m_yAuto = false;
   float newYMin = clipped((yMin+yMax)/2 - 3.1f, false);
   float newYMax = clipped((yMin+yMax)/2 + 3.1f, true);
-  if (!isnan(newYMin) && !isnan(newYMax)) {
+  if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yMin = newYMin;
     m_yMax = newYMax;
     m_yGridUnit = computeGridUnit(Axis::Y, m_yMin, m_yMax);
@@ -75,7 +75,10 @@ void CurveViewRange::setTrigonometric() {
 }
 
 void CurveViewRange::setDefault() {
-  m_xMax = 10.0f;
+  if (m_delegate == nullptr) {
+    return;
+  }
+  m_xMax = m_delegate->interestingXRange();
   m_xMin = -k_displayLeftMarginRatio*m_xMax;
   m_xGridUnit = computeGridUnit(Axis::X, m_xMin, m_xMax);
   setYAuto(true);

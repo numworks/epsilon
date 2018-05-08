@@ -18,22 +18,23 @@ Timer * RunLoop::timerAtIndex(int i) {
 }
 
 void RunLoop::run() {
-#ifdef __EMSCRIPTEN__
-  emscripten_set_main_loop_arg([](void * ctx){ ((RunLoop *)ctx)->step(); }, this, 0, 1);
-#else
-  while(step()) {
+  runWhile(nullptr, nullptr);
+}
+
+void RunLoop::runWhile(bool (*callback)(void * ctx), void * ctx) {
+  while ((callback == nullptr || callback(ctx)) && step()) {
   }
-#endif
 }
 
 bool RunLoop::step() {
   // Fetch the event, if any
   int eventDuration = Timer::TickDuration;
   int timeout = eventDuration;
+
   Ion::Events::Event event = Ion::Events::getEvent(&timeout);
   assert(event.isDefined());
-  eventDuration -= timeout;
 
+  eventDuration -= timeout;
   assert(eventDuration >= 0);
   assert(eventDuration <= Timer::TickDuration);
 
@@ -65,7 +66,7 @@ bool RunLoop::step() {
   Ion::Console::writeLine(name);
 #endif
 
-  if (event.isKeyboardEvent()) {
+  if (event != Ion::Events::None) {
     dispatchEvent(event);
   }
 

@@ -1,6 +1,5 @@
 #include <escher/button_row_controller.h>
 #include <escher/palette.h>
-#include <assert.h>
 #include <cmath>
 
 ButtonRowDelegate::ButtonRowDelegate(ButtonRowController * header, ButtonRowController * footer) :
@@ -9,30 +8,14 @@ ButtonRowDelegate::ButtonRowDelegate(ButtonRowController * header, ButtonRowCont
 {
 }
 
-int ButtonRowDelegate::numberOfButtons(ButtonRowController::Position position) const {
-  return 0;
-}
-
-Button * ButtonRowDelegate::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  assert(false);
-  return nullptr;
-}
-
-ButtonRowController * ButtonRowDelegate::footer() {
-  return m_footer;
-}
-
-ButtonRowController * ButtonRowDelegate::header() {
-  return m_header;
-}
-
-ButtonRowController::ContentView::ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style) :
+ButtonRowController::ContentView::ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style, Size size) :
   View(),
   m_mainViewController(mainViewController),
   m_selectedButton(-1),
   m_delegate(delegate),
   m_position(position),
-  m_style(style)
+  m_style(style),
+  m_size(size)
 {
 }
 
@@ -69,7 +52,12 @@ void ButtonRowController::ContentView::layoutSubviews() {
     m_mainViewController->view()->setFrame(mainViewFrame);
     return;
   }
-  KDCoordinate rowHeight = m_style == Style::PlainWhite ? k_plainStyleHeight : k_embossedStyleHeight;
+  KDCoordinate rowHeight;
+  if (m_style == Style::PlainWhite) {
+    rowHeight = k_plainStyleHeight;
+  } else {
+    rowHeight = m_size == Size::Small ? k_embossedStyleHeightSmall : k_embossedStyleHeightLarge;
+  }
   KDCoordinate frameOrigin = m_position == Position::Top ? rowHeight+1 : 0;
   KDRect mainViewFrame(0, frameOrigin, bounds().width(), bounds().height() - rowHeight - 1);
     m_mainViewController->view()->setFrame(mainViewFrame);
@@ -85,9 +73,9 @@ void ButtonRowController::ContentView::layoutSubviews() {
       Button * button = buttonAtIndex(i);
       totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
     }
-    widthMargin = std::round((float)((bounds().width() - totalButtonWidth)/(nbOfButtons+1)));
-    buttonHeightMargin = k_embossedStyleHeightMargin;
-    buttonHeight = rowHeight- 2*k_embossedStyleHeightMargin;
+    widthMargin = std::round(((float)(bounds().width() - totalButtonWidth))/((float)(nbOfButtons+1)));
+    buttonHeightMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall : k_embossedStyleHeightMarginLarge;
+    buttonHeight = rowHeight- 2*buttonHeightMargin;
   }
   KDCoordinate yOrigin = m_position == Position::Top ? buttonHeightMargin : bounds().height()-rowHeight+buttonHeightMargin;
   int currentXOrigin = widthMargin;
@@ -113,25 +101,27 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
       ctx->fillRect(KDRect(0, k_plainStyleHeight, bounds().width(), 1), Palette::GreyWhite);
     } else {
       ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight, bounds().width(), k_plainStyleHeight), KDColorWhite);
-      ctx->fillRect(KDRect(0,  bounds().height() - k_plainStyleHeight-1, bounds().width(), 1), Palette::GreyWhite);
+      ctx->fillRect(KDRect(0, bounds().height() - k_plainStyleHeight-1, bounds().width(), 1), Palette::GreyWhite);
     }
     return;
   }
+  int buttonHeight = m_size == Size::Small ? k_embossedStyleHeightSmall : k_embossedStyleHeightLarge;
+  int buttonMargin = m_size == Size::Small ? k_embossedStyleHeightMarginSmall : k_embossedStyleHeightMarginLarge;
   if (m_position == Position::Top) {
-    ctx->fillRect(KDRect(0, 0, bounds().width(), k_embossedStyleHeight), Palette::GreyWhite);
-    ctx->fillRect(KDRect(0, k_embossedStyleHeight, bounds().width(), 1), Palette::GreyMiddle);
+    ctx->fillRect(KDRect(0, 0, bounds().width(), buttonHeight), Palette::GreyWhite);
+    ctx->fillRect(KDRect(0, buttonHeight, bounds().width(), 1), Palette::GreyMiddle);
   } else {
-    ctx->fillRect(KDRect(0, bounds().height() - k_embossedStyleHeight, bounds().width(), k_embossedStyleHeight), Palette::GreyWhite);
-    ctx->fillRect(KDRect(0,  bounds().height() - k_embossedStyleHeight-1, bounds().width(), 1), Palette::GreyMiddle);
+    ctx->fillRect(KDRect(0, bounds().height() - buttonHeight, bounds().width(), buttonHeight), Palette::GreyWhite);
+    ctx->fillRect(KDRect(0,  bounds().height() - buttonHeight-1, bounds().width(), 1), Palette::GreyMiddle);
   }
-  KDCoordinate y0 = m_position == Position::Top ? k_embossedStyleHeightMargin-1 : bounds().height()-k_embossedStyleHeight+k_embossedStyleHeightMargin-1;
-  KDCoordinate y1 = m_position == Position::Top ? k_embossedStyleHeight-k_embossedStyleHeightMargin-2 : bounds().height()-k_embossedStyleHeightMargin;
+  KDCoordinate y0 = m_position == Position::Top ? buttonMargin-1 : bounds().height()-buttonHeight+buttonMargin-1;
+  KDCoordinate y1 = m_position == Position::Top ? buttonHeight-buttonMargin-2 : bounds().height()-buttonMargin;
   KDCoordinate totalButtonWidth = 0;
   for (int i = 0; i < numberOfButtons(); i++) {
     Button * button = buttonAtIndex(i);
     totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
   }
-  KDCoordinate widthMargin = std::round((float)((bounds().width() - totalButtonWidth)/(numberOfButtons()+1)));
+  KDCoordinate widthMargin = std::round(((float)(bounds().width() - totalButtonWidth))/((float)(numberOfButtons()+1)));
 
   int currentXOrigin = widthMargin-1;
   for (int i = 0; i < numberOfButtons(); i++) {
@@ -165,26 +155,10 @@ bool ButtonRowController::ContentView::setSelectedButton(int selectedButton, App
   return false;
 }
 
-int ButtonRowController::ContentView::selectedButton() {
-  return m_selectedButton;
-}
-
-ViewController * ButtonRowController::ContentView::mainViewController() const {
-  return m_mainViewController;
-}
-
-ButtonRowDelegate * ButtonRowController::ContentView::buttonRowDelegate() const {
-  return m_delegate;
-}
-
-ButtonRowController::ButtonRowController(Responder * parentResponder, ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style) :
+ButtonRowController::ButtonRowController(Responder * parentResponder, ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style, Size size) :
   ViewController(parentResponder),
-  m_contentView(mainViewController, delegate, position, style)
+  m_contentView(mainViewController, delegate, position, style, size)
 {
-}
-
-View * ButtonRowController::view() {
-  return &m_contentView;
 }
 
 const char * ButtonRowController::title() {
@@ -193,6 +167,10 @@ const char * ButtonRowController::title() {
 
 void ButtonRowController::didBecomeFirstResponder(){
   app()->setFirstResponder(m_contentView.mainViewController());
+}
+
+int ButtonRowController::selectedButton() {
+  return m_contentView.selectedButton();
 }
 
 bool ButtonRowController::setSelectedButton(int selectedButton) {

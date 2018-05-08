@@ -26,7 +26,7 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_stackViewController, I18n::Message::Warning),
+  Shared::TextFieldDelegateApp(container, snapshot, &m_stackViewController),
   m_mainController(&m_stackViewController),
   m_stackViewController(&m_modalViewController, &m_mainController)
 {

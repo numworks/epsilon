@@ -17,27 +17,44 @@ App::Descriptor * App::Snapshot::descriptor() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  ::App(container, snapshot, &m_keyboardController),
-  m_keyboardController(&m_modalViewController),
-  m_USBTestController(nullptr)
+  ::App(container, snapshot, &m_wizardViewController),
+  m_wizardViewController(&m_modalViewController)
 {
 }
 
-ViewController * App::USBController() {
-  return &m_USBTestController;
+App::WizardViewController::WizardViewController(Responder * parentResponder) :
+  BankViewController(parentResponder),
+  m_keyboardController(this),
+  m_screenTestController(this),
+  m_ledTestController(this),
+  m_batteryTestController(this),
+  m_serialNumberController(this)
+{
 }
 
-int App::numberOfTimers() {
-  return firstResponder() == &m_USBTestController;
+int App::WizardViewController::numberOfChildren() {
+  return 5;
 }
 
-Timer * App::timerAtIndex(int i) {
-  assert(i == 0);
-  return &m_USBTestController;
+ViewController * App::WizardViewController::childAtIndex(int i) {
+  ViewController * children[] = {
+    &m_keyboardController,
+    &m_screenTestController,
+    &m_ledTestController,
+    &m_batteryTestController,
+    &m_serialNumberController
+  };
+  return children[i];
 }
 
-bool App::processEvent(Ion::Events::Event e) {
-  ::App::processEvent(e);
+bool App::WizardViewController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::OnOff) {
+    return false;
+  }
+  if (activeIndex() >= numberOfChildren()) {
+    return false;
+  }
+  setActiveIndex(activeIndex() + 1);
   return true;
 }
 

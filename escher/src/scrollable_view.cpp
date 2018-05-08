@@ -4,9 +4,11 @@
 
 ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource) :
   Responder(parentResponder),
-  ScrollView(view, dataSource, 0, 0, 0, 0, false, false),
+  ScrollView(view, dataSource),
   m_manualScrollingOffset(KDPointZero)
 {
+  setShowsIndicators(false);
+  setColorsBackground(false);
 }
 
 bool ScrollableView::handleEvent(Ion::Events::Event event) {
@@ -43,9 +45,9 @@ bool ScrollableView::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ScrollableView::reloadScroll() {
+void ScrollableView::reloadScroll(bool forceReLayout) {
   m_manualScrollingOffset = KDPointZero;
-  setContentOffset(m_manualScrollingOffset);
+  setContentOffset(m_manualScrollingOffset, forceReLayout);
 }
 
 void ScrollableView::layoutSubviews() {

@@ -22,9 +22,3 @@ KDSize KDText::stringSize(const char * text, FontSize size) {
   }
   return stringSize;
 }
-
-KDSize KDText::charSize(FontSize size) {
-  if (size == FontSize::Large) {
-    return KDSize(BITMAP_LargeFont_CHARACTER_WIDTH, BITMAP_LargeFont_CHARACTER_HEIGHT);
-  }
-  return KDSize(BITMAP_SmallFont_CHARACTER_WIDTH, BITMAP_SmallFont_CHARACTER_HEIGHT);}

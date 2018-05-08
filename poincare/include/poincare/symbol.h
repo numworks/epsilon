@@ -1,11 +1,11 @@
 #ifndef POINCARE_SYMBOL_H
 #define POINCARE_SYMBOL_H
 
-#include <poincare/leaf_expression.h>
+#include <poincare/static_hierarchy.h>
 
 namespace Poincare {
 
-class Symbol : public LeafExpression {
+class Symbol : public StaticHierarchy<0> {
 public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
@@ -13,10 +13,10 @@ public:
     Ans = 1,
     un = 2,
     un1 = 3,
-    vn = 4,
-    vn1 = 5,
-    wn = 6,
-    wn1 = 7,
+    un2 = 4,
+    vn = 5,
+    vn1 = 6,
+    vn2 = 7,
     M0 = 8,
     M1 = 9,
     M2,
@@ -30,16 +30,32 @@ public:
   };
   static SpecialSymbols matrixSymbol(char index);
   Symbol(char name);
-  Type type() const override;
+  Symbol(Symbol&& other); // C++11 move constructor
+  Symbol(const Symbol& other); // C++11 copy constructor
   char name() const;
+  Type type() const override;
   Expression * clone() const override;
-  bool valueEquals(const Expression * e) const override;
+  int polynomialDegree(char symbolName) const override;
+  Sign sign() const override;
   bool isMatrixSymbol() const;
+  bool isScalarSymbol() const;
+  bool isApproximate(Context & context) const;
+  float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
+  bool hasAnExactRepresentation(Context & context) const;
 private:
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  const char * textForSpecialSymbols(char name) const;
+  Expression * replaceSymbolWithExpression(char symbol, Expression * expression) override;
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Comparison */
+  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
+  /* Layout */
+  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  /* Evaluation */
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
   const char m_name;
 };
 

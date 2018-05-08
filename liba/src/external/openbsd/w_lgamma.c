@@ -16,9 +16,7 @@
  * Method: call lgamma_r
  */
 
-#include <float.h>
-#include <math.h>
-
+#include "math.h"
 #include "math_private.h"
 
 extern int signgam;
@@ -28,7 +26,3 @@ lgamma(double x)
 {
 	return lgamma_r(x,&signgam);
 }
-
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(lgammal, lgamma);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */

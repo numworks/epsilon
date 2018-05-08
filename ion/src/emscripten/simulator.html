@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NumWorks graphing calculator</title>
+<style>
+.calculator {
+  position: relative;
+  display: inline-block;
+  text-align: left; }
+  .calculator > img {
+    /* Rely on the img content to set the dimensions */
+    max-height: 100vh;
+    max-width: 100%;
+    display: block; }
+  .calculator .screen {
+    position: absolute;
+    top: 10.3%;
+    left: 24.25%;
+    width: 52.1%;
+    height: 23.2%;
+    border: 0 none; }
+  .calculator .keyboard {
+    position: absolute;
+    top: 37%;
+    left: 19%;
+    width: 63%;
+    bottom: 14%; }
+    .calculator .keyboard span {
+      cursor: pointer;
+      border-radius: 40%;
+      display: block;
+      float: left; }
+    .calculator .keyboard span:hover {
+      background-color: rgba(0, 0, 0, 0.1); }
+    .calculator .keyboard span:active {
+      background-color: rgba(0, 0, 0, 0.2); }
+    .calculator .keyboard .nav {
+      position: absolute;
+      top: 0;
+      height: 27%;
+      width: 100%; }
+      .calculator .keyboard .nav span {
+        position: absolute; }
+      .calculator .keyboard .nav .left {
+        top: 36%;
+        left: 3%;
+        width: 15%;
+        height: 28%; }
+      .calculator .keyboard .nav .right {
+        top: 36%;
+        left: 17%;
+        width: 15%;
+        height: 28%; }
+      .calculator .keyboard .nav .top {
+        top: 7%;
+        left: 12.5%;
+        width: 10%;
+        height: 40%; }
+      .calculator .keyboard .nav .bottom {
+        top: 53%;
+        left: 12.5%;
+        width: 10%;
+        height: 40%; }
+      .calculator .keyboard .nav .home {
+        top: 12%;
+        left: 42%;
+        width: 16%;
+        height: 33%; }
+      .calculator .keyboard .nav .power {
+        top: 54%;
+        left: 42%;
+        width: 16%;
+        height: 33%; }
+      .calculator .keyboard .nav .ok {
+        top: 30%;
+        left: 68%;
+        width: 13%;
+        height: 38%; }
+      .calculator .keyboard .nav .back {
+        top: 30%;
+        left: 84%;
+        width: 13%;
+        height: 38%; }
+    .calculator .keyboard .functions {
+      position: absolute;
+      top: 26.75%;
+      left: 1%;
+      width: 98%; }
+      .calculator .keyboard .functions span {
+        margin: 1.7% 1%;
+        width: 14.65%;
+        height: 0;
+        padding-top: 10%; }
+    .calculator .keyboard .digits {
+      position: absolute;
+      top: 57%;
+      left: 0.5%;
+      width: 98%; }
+      .calculator .keyboard .digits span {
+        margin: 1.8% 2%;
+        width: 16%;
+        height: 0;
+        padding-top: 11%; }
+</style>
+  </head>
+  <body>
+    <div>
+      <p>NumWorks simulator - beta version - contact@numworks.com</p>
+    </div>
+    <div class="calculator">
+      <img src="background.jpg" alt="NumWorks Calculator">
+      <canvas id="screen" class="screen" oncontextmenu="event.preventDefault()"></canvas>
+      <div class="keyboard">
+        <div class="nav">
+          <span class="left" data-key="0"></span>
+          <span class="top" data-key="1"></span>
+          <span class="bottom" data-key="2"></span>
+          <span class="right" data-key="3"></span>
+          <span class="ok" data-key="4"></span>
+          <span class="back" data-key="5"></span>
+          <span class="home" data-key="6"></span>
+          <span class="power" data-key="7"></span>
+        </div>
+        <div class="functions">
+          <span data-key="12"></span>
+          <span data-key="13"></span>
+          <span data-key="14"></span>
+          <span data-key="15"></span>
+          <span data-key="16"></span>
+          <span data-key="17"></span>
+          <span data-key="18"></span>
+          <span data-key="19"></span>
+          <span data-key="20"></span>
+          <span data-key="21"></span>
+          <span data-key="22"></span>
+          <span data-key="23"></span>
+          <span data-key="24"></span>
+          <span data-key="25"></span>
+          <span data-key="26"></span>
+          <span data-key="27"></span>
+          <span data-key="28"></span>
+          <span data-key="29"></span>
+        </div>
+        <div class="digits">
+          <span data-key="30"></span>
+          <span data-key="31"></span>
+          <span data-key="32"></span>
+          <span data-key="33"></span>
+          <span data-key="34"></span>
+          <span data-key="36"></span>
+          <span data-key="37"></span>
+          <span data-key="38"></span>
+          <span data-key="39"></span>
+          <span data-key="40"></span>
+          <span data-key="42"></span>
+          <span data-key="43"></span>
+          <span data-key="44"></span>
+          <span data-key="45"></span>
+          <span data-key="46"></span>
+          <span data-key="48"></span>
+          <span data-key="49"></span>
+          <span data-key="50"></span>
+          <span data-key="51"></span>
+          <span data-key="52"></span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <a id="screenshot" href="#" target="_blank" download>Save screenshot</a>
+    </div>
+    <script src="epsilon.js"></script>
+    <script>
+var Module = {
+  arguments: ["--language", "fr"],
+  canvas: document.getElementById("screen")
+};
+Epsilon(Module);
+    </script>
+    <script>
+var spans = document.querySelectorAll(".calculator .keyboard span");
+for (var i=0; i< spans.length; i++) {
+  var span = spans[i];
+  span.addEventListener("click", function(e) {
+    Module._IonEventsEmscriptenPushKey(this.getAttribute("data-key"));
+  });
+}
+
+  window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+  }, false);
+
+  document.getElementById("screenshot").addEventListener("click", function(e) {
+    this.href = document.getElementById("screen").toDataURL("image/png");
+  });
+
+    </script>
+  </body>
+</html>

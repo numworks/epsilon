@@ -10,13 +10,14 @@ namespace Shared {
 
 class ListParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage);
+  ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate = nullptr);
 
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   virtual void setFunction(Function * function);
   void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   int numberOfRows() override;
   KDCoordinate cellHeight() override;
   HighlightCell * reusableCell(int index) override;

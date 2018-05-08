@@ -20,11 +20,13 @@ public:
     uint32_t * rangeVersion();
     Poincare::Expression::AngleUnit * angleUnitVersion();
     Interval * interval();
+    int * indexFunctionSelectedByCursor();
     void reset() override;
   protected:
     CurveViewCursor m_cursor;
     Interval m_interval;
   private:
+    int m_indexFunctionSelectedByCursor;
     uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
     Poincare::Expression::AngleUnit m_angleUnitVersion;

@@ -1,11 +1,11 @@
 include ion/src/device/boot/Makefile
 include ion/src/device/bench/Makefile
+include ion/src/device/usb/Makefile
 
-ion/src/shared/software_version.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
+ion/src/shared/platform_info.o: SFLAGS += -DHEADER_SECTION="__attribute__((section(\".header\")))"
 
 objs += $(addprefix ion/src/shared/, \
   console_line.o \
-  events_keyboard.o \
   events_modifier.o \
 )
 
@@ -15,10 +15,11 @@ objs += $(addprefix ion/src/shared/, \
 objs += $(addprefix ion/src/device/, \
   backlight.o \
   battery.o\
+  base64.o\
   console.o \
   device.o\
   display.o\
-  fcc_id.o\
+  events.o\
   keyboard.o\
   led.o\
   power.o\

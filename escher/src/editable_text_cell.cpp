@@ -4,19 +4,23 @@
 #include <assert.h>
 
 EditableTextCell::EditableTextCell(Responder * parentResponder, TextFieldDelegate * delegate, char * draftTextBuffer,
-   KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
+   KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
   HighlightCell(),
   Responder(parentResponder),
-  m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), delegate, true, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor)
+  m_textField(this, m_textBody, draftTextBuffer, TextField::maxBufferSize(), delegate, true, size, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  m_topMargin(topMargin),
+  m_rightMargin(rightMargin),
+  m_bottomMargin(bottomMargin),
+  m_leftMargin(leftMargin)
 {
+  m_textBody[0] = 0;
 }
 
-void EditableTextCell::setTextFieldDelegate(TextFieldDelegate * delegate) {
-  m_textField.setDelegate(delegate);
-}
-
-void EditableTextCell::setTextFieldDraftTextBuffer(char * draftTextBuffer) {
-  m_textField.setDraftTextBuffer(draftTextBuffer);
+void EditableTextCell::setMargins(KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) {
+  m_topMargin = topMargin;
+  m_rightMargin = rightMargin;
+  m_bottomMargin = bottomMargin;
+  m_leftMargin = leftMargin;
 }
 
 TextField * EditableTextCell::textField() {
@@ -29,14 +33,6 @@ void EditableTextCell::setHighlighted(bool highlight) {
   m_textField.setBackgroundColor(backgroundColor);
 }
 
-const char * EditableTextCell::text() const {
-  return m_textField.text();
-}
-
-void EditableTextCell::setText(const char * text) {
-  m_textField.setText(text);
-}
-
 int EditableTextCell::numberOfSubviews() const {
   return 1;
 }
@@ -47,19 +43,15 @@ View * EditableTextCell::subviewAtIndex(int index) {
 }
 
 void EditableTextCell::layoutSubviews() {
-  m_textField.setFrame(bounds());
+  KDRect cellBounds = bounds();
+  m_textField.setFrame(KDRect(cellBounds.x() + m_leftMargin,
+        cellBounds.y() + m_topMargin,
+        cellBounds.width() - m_leftMargin - m_rightMargin,
+        cellBounds.height() - m_topMargin - m_bottomMargin));
 }
 
 void EditableTextCell::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_textField);
-}
-
-bool EditableTextCell::isEditing() {
-  return m_textField.isEditing();
-}
-
-void EditableTextCell::setEditing(bool isEditing) {
-  m_textField.setEditing(isEditing);
 }
 
 KDSize EditableTextCell::minimalSizeForOptimalDisplay() const {

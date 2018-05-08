@@ -19,10 +19,9 @@ protected:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   constexpr static KDCoordinate k_separatorThickness = 1;
-private:
   constexpr static KDCoordinate k_labelMargin = 10;
   constexpr static KDCoordinate k_accessoryMargin = 10;
-  constexpr static KDCoordinate k_labelTopMargin = 3;
+private:
   constexpr static KDCoordinate k_accessoryBottomMargin = 3;
   Layout m_layout;
 };

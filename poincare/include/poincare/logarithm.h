@@ -1,29 +1,35 @@
 #ifndef POINCARE_LOGARITHM_H
 #define POINCARE_LOGARITHM_H
 
-#include <poincare/function.h>
+#include <poincare/layout_engine.h>
+#include <poincare/bounded_static_hierarchy.h>
+#include <poincare/integer.h>
 
 namespace Poincare {
 
-class Logarithm : public Function {
+class Logarithm : public BoundedStaticHierarchy<2>  {
+  using BoundedStaticHierarchy<2>::BoundedStaticHierarchy;
+  friend class NaperianLogarithm;
 public:
-  Logarithm();
-  bool hasValidNumberOfArguments() const override;
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-      int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
 private:
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  Complex<float> computeComplex(const Complex<float> c, AngleUnit angleUnit) const override {
-    return templatedComputeComplex(c);
+  /* Layout */
+  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "log");
   }
-  Complex<double> computeComplex(const Complex<double> c, AngleUnit angleUnit) const override {
-    return templatedComputeComplex(c);
-  }
-  template<typename T> Complex<T> templatedComputeComplex(const Complex<T> c) const;
+  /* Simplification */
+  Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
+  Expression * simpleShallowReduce(Context & context, AngleUnit angleUnit);
+  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
+  bool parentIsAPowerOfSameBase() const;
+  Expression * splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit);
+  /* Evaluation */
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
 };
 
 }

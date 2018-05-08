@@ -29,11 +29,23 @@ extern "C" {
 
 class ViewController : public Responder {
 public:
+  /* DisplayParameter is only used within StackViewController for now. It
+   * modifies the stack headers display. */
+  enum class DisplayParameter {
+    Default,
+    DoNotShowOwnTitle,
+    /* With DoNotShowOwnTitle, the title of the ViewController is not added to
+     * the stack headers. */
+    WantsMaximumSpace
+    /* With WantsMaximumSpace, no stack headers are displayed. */
+  };
+
   ViewController(Responder * parentResponder);
   virtual const char * title();
   virtual View * view() = 0;
   virtual void viewWillAppear();
   virtual void viewDidDisappear();
+  virtual DisplayParameter displayParameter() { return DisplayParameter::Default; }
 };
 
 #endif

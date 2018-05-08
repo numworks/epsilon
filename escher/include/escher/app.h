@@ -35,6 +35,9 @@ public:
     /* reset all instances to their initial values */
     virtual void reset();
     virtual Descriptor * descriptor() = 0;
+#if EPSILON_GETOPT
+    virtual void setOpt(const char * name, char * value) {}
+#endif
   private:
     /* tidy clean all dynamically-allocated data */
     virtual void tidy();
@@ -54,6 +57,7 @@ public:
 
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();
+  View * modalView();
   virtual int numberOfTimers();
   virtual Timer * timerAtIndex(int i);
 protected:

@@ -1,9 +1,7 @@
 #include <poincare/variable_context.h>
 #include <poincare/preferences.h>
 #include <assert.h>
-extern "C" {
-#include <math.h>
-}
+#include <cmath>
 
 namespace Poincare {
 
@@ -16,17 +14,18 @@ VariableContext<T>::VariableContext(char name, Context * parentContext) :
 }
 
 template<typename T>
-void VariableContext<T>::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+void VariableContext<T>::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
   if (symbol->name() == m_name) {
     if (expression == nullptr) {
       return;
     }
-    Evaluation<T> * evaluation = expression->evaluate<T>(*m_parentContext);
-    /* WARNING: We assume that the evaluation of expression is a real */
-    m_value = Complex<T>::Float(evaluation->toScalar());
-    delete evaluation;
+    if (expression->type() == Expression::Type::Complex) {
+      m_value = Complex<T>::Float(static_cast<const Complex<T> *>(expression)->toScalar());
+    } else {
+      m_value = Complex<T>::Float(NAN);
+    }
   } else {
-    m_parentContext->setExpressionForSymbolName(expression, symbol);
+    m_parentContext->setExpressionForSymbolName(expression, symbol, context);
   }
 }
 

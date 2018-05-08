@@ -53,37 +53,41 @@ ParenthesisLayout::ParenthesisLayout(ExpressionLayout * operandLayout) :
   ExpressionLayout(),
   m_operandLayout(operandLayout)
 {
-  m_operandLayout->setParent(this);
-  m_baseline = m_operandLayout->baseline();
+  if (m_operandLayout) {
+    m_operandLayout->setParent(this);
+    m_baseline = m_operandLayout->baseline();
+  } else {
+    m_baseline = (KDText::charSize(KDText::FontSize::Large).height()+1)/2;
+  }
 }
 
 ParenthesisLayout::~ParenthesisLayout() {
-  delete m_operandLayout;
+  if (m_operandLayout) {
+    delete m_operandLayout;
+  }
 }
 
 KDColor s_parenthesisWorkingBuffer[ParenthesisLayout::k_parenthesisCurveHeight*ParenthesisLayout::k_parenthesisCurveWidth];
 
 void ParenthesisLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  KDSize operandSize = m_operandLayout->size();
   KDRect frame(p.x()+k_externWidthMargin, p.y()+k_externHeightMargin, k_parenthesisCurveWidth, k_parenthesisCurveHeight);
   ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topLeftCurve, (KDColor *)s_parenthesisWorkingBuffer);
-  frame = KDRect(p.x()+k_externWidthMargin, p.y() + operandSize.height() - k_parenthesisCurveHeight - k_externHeightMargin,
+  frame = KDRect(p.x()+k_externWidthMargin, p.y() + operandSize().height() - k_parenthesisCurveHeight - k_externHeightMargin,
     k_parenthesisCurveWidth, k_parenthesisCurveHeight);
   ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomLeftCurve, (KDColor *)s_parenthesisWorkingBuffer);
-  frame = KDRect(p.x()+k_externWidthMargin + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + k_externHeightMargin,
+  frame = KDRect(p.x()+k_externWidthMargin + operandSize().width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + k_externHeightMargin,
     k_parenthesisCurveWidth, k_parenthesisCurveHeight);
   ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)topRightCurve, (KDColor *)s_parenthesisWorkingBuffer);
-  frame = KDRect(p.x() +k_externWidthMargin + operandSize.width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + operandSize.height() - k_parenthesisCurveHeight - k_externHeightMargin,
+  frame = KDRect(p.x() +k_externWidthMargin + operandSize().width() + 2*k_widthMargin + 2*k_lineThickness - k_parenthesisCurveWidth, p.y() + operandSize().height() - k_parenthesisCurveHeight - k_externHeightMargin,
     k_parenthesisCurveWidth, k_parenthesisCurveHeight);
   ctx->blendRectWithMask(frame, expressionColor, (const uint8_t *)bottomRightCurve, (KDColor *)s_parenthesisWorkingBuffer);
 
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_parenthesisCurveHeight+k_externHeightMargin, k_lineThickness, m_operandLayout->size().height() - 2*(k_parenthesisCurveHeight+k_externHeightMargin)), expressionColor);
-  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+operandSize.width()+2*k_widthMargin+k_lineThickness, p.y()+k_parenthesisCurveHeight+2, k_lineThickness, m_operandLayout->size().height()- 2*(k_parenthesisCurveHeight+k_externHeightMargin)), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_parenthesisCurveHeight+k_externHeightMargin, k_lineThickness, operandSize().height() - 2*(k_parenthesisCurveHeight+k_externHeightMargin)), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+operandSize().width()+2*k_widthMargin+k_lineThickness, p.y()+k_parenthesisCurveHeight+2, k_lineThickness, operandSize().height()- 2*(k_parenthesisCurveHeight+k_externHeightMargin)), expressionColor);
 }
 
 KDSize ParenthesisLayout::computeSize() {
-  KDSize operandSize = m_operandLayout->size();
-  return KDSize(operandSize.width() + 2*k_widthMargin + 2*k_lineThickness+2*k_externWidthMargin, operandSize.height());
+  return KDSize(operandSize().width() + 2*k_widthMargin + 2*k_lineThickness+2*k_externWidthMargin, operandSize().height());
 }
 
 ExpressionLayout * ParenthesisLayout::child(uint16_t index) {
@@ -95,6 +99,10 @@ ExpressionLayout * ParenthesisLayout::child(uint16_t index) {
 
 KDPoint ParenthesisLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(k_widthMargin+k_lineThickness+k_externWidthMargin, 0);
+}
+
+KDSize ParenthesisLayout::operandSize() {
+  return (m_operandLayout ? m_operandLayout->size() : KDSize(0, KDText::charSize(KDText::FontSize::Large).height()));
 }
 
 }

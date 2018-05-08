@@ -6,7 +6,7 @@
 
 class ListViewDataSource : public TableViewDataSource {
 public:
-  KDCoordinate cellWidth();
+  virtual KDCoordinate cellWidth();
   KDCoordinate columnWidth(int i) override;
   int numberOfColumns() override;
   void willDisplayCellAtLocation(HighlightCell * cell, int x, int y) override;

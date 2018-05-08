@@ -14,22 +14,22 @@ AppsContainer::AppsContainer() :
   m_emptyBatteryWindow(),
   m_globalContext(),
   m_variableBoxController(&m_globalContext),
-  m_examPopUpController(),
+  m_examPopUpController(this),
   m_updateController(),
   m_ledTimer(LedTimer()),
   m_batteryTimer(BatteryTimer(this)),
-  m_USBTimer(USBTimer(this)),
   m_suspendTimer(SuspendTimer(this)),
   m_backlightDimmingTimer(),
   m_homeSnapshot(),
   m_onBoardingSnapshot(),
-  m_hardwareTestSnapshot()
+  m_hardwareTestSnapshot(),
+  m_usbConnectedSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
   Poincare::Expression::setCircuitBreaker(AppsContainer::poincareCircuitBreaker);
 }
 
-bool AppsContainer::poincareCircuitBreaker(const Poincare::Expression * e) {
+bool AppsContainer::poincareCircuitBreaker() {
   Ion::Keyboard::State state = Ion::Keyboard::scan();
   return state.keyDown(Ion::Keyboard::Key::A6);
 }
@@ -40,6 +40,10 @@ App::Snapshot * AppsContainer::hardwareTestAppSnapshot() {
 
 App::Snapshot * AppsContainer::onBoardingAppSnapshot() {
   return &m_onBoardingSnapshot;
+}
+
+App::Snapshot * AppsContainer::usbConnectedAppSnapshot() {
+  return &m_usbConnectedSnapshot;
 }
 
 void AppsContainer::reset() {
@@ -63,8 +67,8 @@ VariableBoxController * AppsContainer::variableBoxController() {
 
 void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
   resetShiftAlphaStatus();
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
-  if (activeApp()->snapshot()!= onBoardingAppSnapshot() && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
+  if (activeApp()->snapshot()!= onBoardingAppSnapshot() && activeApp()->snapshot() != hardwareTestAppSnapshot() && GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp()) {
     activeApp()->displayModalViewController(&m_updateController, 0.f, 0.f);
   }
 #endif
@@ -78,9 +82,27 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
-  bool alphaLockWantsRedraw = m_window.updateAlphaLock();
+  bool alphaLockWantsRedraw = updateAlphaLock();
 
-  bool didProcessEvent = Container::dispatchEvent(event);
+  bool didProcessEvent = false;
+
+  if (event == Ion::Events::USBEnumeration) {
+    if (Ion::USB::isPlugged()) {
+      App::Snapshot * activeSnapshot = (activeApp() == nullptr ? appSnapshotAtIndex(0) : activeApp()->snapshot());
+      switchTo(usbConnectedAppSnapshot());
+      Ion::USB::DFU();
+      switchTo(activeSnapshot);
+      didProcessEvent = true;
+    } else {
+      /* Sometimes, the device gets an ENUMDNE interrupts when being unplugged
+       * from a non-USB communicating host (e.g. a USB charger). The interrupt
+       * must me cleared: if not the next enumeration attempts will not be
+       * detected. */
+      Ion::USB::clearEnumerationInterrupt();
+    }
+  } else {
+    didProcessEvent = Container::dispatchEvent(event);
+  }
 
   if (!didProcessEvent) {
     didProcessEvent = processEvent(event);
@@ -98,6 +120,19 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
 }
 
 bool AppsContainer::processEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::USBPlug) {
+    if (Ion::USB::isPlugged()) {
+      if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
+        displayExamModePopUp(false);
+      } else {
+        Ion::USB::enable();
+      }
+      Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
+    } else {
+      Ion::USB::disable();
+    }
+    return true;
+  }
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
     switchTo(appSnapshotAtIndex(0));
     return true;
@@ -126,11 +161,15 @@ void AppsContainer::switchTo(App::Snapshot * snapshot) {
 
 void AppsContainer::run() {
   window()->setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
-#if OS_WITH_ONBOARDING_APP
+  refreshPreferences();
+#if EPSILON_ONBOARDING_APP
   switchTo(onBoardingAppSnapshot());
 #else
-  refreshPreferences();
-  switchTo(appSnapshotAtIndex(0));
+  if (numberOfApps() == 2) {
+    switchTo(appSnapshotAtIndex(1));
+  } else {
+    switchTo(appSnapshotAtIndex(0));
+  }
 #endif
   Container::run();
   switchTo(nullptr);
@@ -163,12 +202,27 @@ void AppsContainer::shutdownDueToLowBattery() {
   window()->redraw(true);
 }
 
-void AppsContainer::reloadTitleBar() {
-  m_window.reloadTitleBar();
+void AppsContainer::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus) {
+  Ion::Events::setShiftAlphaStatus(newStatus);
+  updateAlphaLock();
+}
+
+bool AppsContainer::updateAlphaLock() {
+  return m_window.updateAlphaLock();
 }
 
 OnBoarding::UpdateController * AppsContainer::updatePopUpController() {
   return &m_updateController;
+}
+
+void AppsContainer::redrawWindow() {
+  m_window.redraw();
+}
+
+void AppsContainer::examDeactivatingPopUpIsDismissed() {
+  if (Ion::USB::isPlugged()) {
+    Ion::USB::enable();
+  }
 }
 
 Window * AppsContainer::window() {
@@ -176,15 +230,15 @@ Window * AppsContainer::window() {
 }
 
 int AppsContainer::numberOfContainerTimers() {
-  return 4+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
+  return 3+(GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate);
 }
 
 Timer * AppsContainer::containerTimerAtIndex(int i) {
-  Timer * timers[5] = {&m_batteryTimer, &m_USBTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer};
+  Timer * timers[4] = {&m_batteryTimer, &m_suspendTimer, &m_backlightDimmingTimer, &m_ledTimer};
   return timers[i];
 }
 
 void AppsContainer::resetShiftAlphaStatus() {
   Ion::Events::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
-  m_window.updateAlphaLock();
+  updateAlphaLock();
 }

@@ -1,18 +1,21 @@
 language: cpp
-sudo: required
+
+addons:
+  apt:
+    sources:
+    - sourceline: 'ppa:team-gcc-arm-embedded/ppa'
+    packages:
+    - gcc-arm-embedded
+    - libfltk1.3-dev
+
 matrix:
   include:
-    - compiler: gcc
-      env: PLATFORM=device EXT=elf
-    - compiler: clang
-      env: PLATFORM=simulator EXT=elf
-    - compiler: clang
-      env: PLATFORM=blackbox TOOLCHAIN=host-clang EXT=bin QUIZ_USE_CONSOLE=1
+    - env: PLATFORM=device EXT=elf
+    - env: PLATFORM=simulator EXT=elf
+    - env: PLATFORM=simulator EXT=elf TOOLCHAIN=host-clang
+    - env: PLATFORM=blackbox EXT=bin QUIZ_USE_CONSOLE=1
 
 os: linux
-install:
-- if [ "$PLATFORM" = "device" ]; then wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/6-2017q2/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 && tar xfj gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 && export PATH=gcc-arm-none-eabi-6-2017-q2-update/bin:$PATH; fi
-- if [ "$PLATFORM" = "simulator" ]; then sudo apt-get install libfltk1.3-dev; fi
 script:
-- make clean && make app.$EXT test.$EXT
+- make clean && make epsilon.$EXT test.$EXT
 - if [ "$PLATFORM" = "blackbox" ]; then ./test.$EXT; fi

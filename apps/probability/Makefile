@@ -9,9 +9,12 @@ app_objs += $(addprefix apps/probability/,\
   calculation/right_integral_calculation.o\
   calculation/finite_integral_calculation.o\
   calculation_controller.o\
+  calculation_cell.o\
+  calculation_type_controller.o\
   cell.o\
-  image_table_view.o\
+  image_cell.o\
   law/binomial_law.o\
+  law/erf_inv.o\
   law/exponential_law.o\
   law/law.o\
   law/normal_law.o\
@@ -22,7 +25,21 @@ app_objs += $(addprefix apps/probability/,\
   law_controller.o\
   law_curve_view.o\
   parameters_controller.o\
+  responder_image_cell.o\
 )
+
+i18n_files += $(addprefix apps/probability/,\
+  base.de.i18n\
+  base.en.i18n\
+  base.es.i18n\
+  base.fr.i18n\
+  base.pt.i18n\
+)
+
+tests += $(addprefix apps/probability/test/,\
+  erf_inv.cpp\
+)
+test_objs += $(addprefix apps/probability/law/, erf_inv.o)
 
 app_images += apps/probability/probability_icon.png
 

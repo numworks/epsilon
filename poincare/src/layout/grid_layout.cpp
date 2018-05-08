@@ -16,7 +16,7 @@ GridLayout::GridLayout(ExpressionLayout ** entryLayouts, int numberOfRows, int n
     m_entryLayouts[i] = entryLayouts[i];
     m_entryLayouts[i]->setParent(this);
   }
-  m_baseline = height()/2 + KDText::charSize().height()/2;
+  m_baseline = (height()+1)/2;
 }
 
 GridLayout::~GridLayout() {
@@ -79,7 +79,7 @@ KDSize GridLayout::computeSize() {
 }
 
 ExpressionLayout * GridLayout::child(uint16_t index) {
-  if (index >= 0 && index < m_numberOfColumns*m_numberOfRows) {
+  if (index < m_numberOfColumns*m_numberOfRows) {
     return m_entryLayouts[index];
   }
   return nullptr;

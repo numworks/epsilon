@@ -6,6 +6,14 @@
 #include "calculation/left_integral_calculation.h"
 #include "calculation/right_integral_calculation.h"
 #include "calculation/finite_integral_calculation.h"
+#include "images/calcul1_icon.h"
+#include "images/calcul2_icon.h"
+#include "images/calcul3_icon.h"
+#include "images/calcul4_icon.h"
+#include "images/focused_calcul1_icon.h"
+#include "images/focused_calcul2_icon.h"
+#include "images/focused_calcul3_icon.h"
+#include "images/focused_calcul4_icon.h"
 #include <assert.h>
 #include <cmath>
 
@@ -14,136 +22,79 @@ using namespace Shared;
 
 namespace Probability {
 
-CalculationController::ContentView::ContentView(Responder * parentResponder, CalculationController * calculationController, Calculation * calculation, Law * law) :
+CalculationController::ContentView::ContentView(SelectableTableView * selectableTableView, Law * law, Calculation * calculation) :
   m_titleView(KDText::FontSize::Small, I18n::Message::ComputeProbability, 0.5f, 0.5f, Palette::GreyDark, Palette::WallScreen),
-  m_lawCurveView(law, calculation),
-  m_imageTableView(parentResponder, law, calculation, calculationController),
-  m_draftTextBuffer{},
-  m_calculation(calculation)
+  m_selectableTableView(selectableTableView),
+  m_lawCurveView(law, calculation)
 {
-  for (int i = 0; i < k_maxNumberOfEditableFields; i++) {
-    m_calculationCell[i].setParentResponder(parentResponder);
-    m_calculationCell[i].setTextFieldDelegate(calculationController);
-    m_calculationCell[i].setTextFieldDraftTextBuffer(m_draftTextBuffer);
-  }
 }
 
 int CalculationController::ContentView::numberOfSubviews() const {
-  return 2*m_calculation->numberOfParameters() + 3;
+  return 3;
 }
 
 View * CalculationController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 9);
+  assert(index >= 0 && index < 3);
   if (index == 0) {
     return &m_titleView;
   }
   if (index == 1) {
-    return &m_lawCurveView;
+    return m_selectableTableView;
   }
-  if (index == 2) {
-    return &m_imageTableView;
-  }
-  if (index == 3) {
-    m_text[0].setMessage(m_calculation->legendForParameterAtIndex(0));
-    m_text[0].setAlignment(0.5f, 0.5f);
-    return &m_text[0];
-  }
-  if (index == 5) {
-    m_text[1].setMessage(m_calculation->legendForParameterAtIndex(1));
-    m_text[1].setAlignment(0.5f, 0.5f);
-    return &m_text[1];
-  }
-  if (index == 7) {
-    m_text[2].setMessage(m_calculation->legendForParameterAtIndex(2));
-    m_text[2].setAlignment(0.5f, 0.5f);
-    return &m_text[2];
-  }
-  if (index == 4 || index == 6 || index == 8) {
-    return &m_calculationCell[(index - 4)/2];
-  }
-  return nullptr;
-}
-
-void CalculationController::ContentView::willDisplayEditableCellAtIndex(int index) {
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  Complex<double>::convertFloatToText(m_calculation->parameterAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
-  m_calculationCell[index].setText(buffer);
-}
-
-void CalculationController::ContentView::layoutSubviews() {
-  markRectAsDirty(bounds());
-  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleHeightMargin;
-  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
-  KDSize charSize = KDText::charSize();
-  KDCoordinate xCoordinate = 0;
-  m_lawCurveView.setFrame(KDRect(0,  titleHeight+ImageTableView::k_oneCellHeight, bounds().width(), bounds().height() - ImageTableView::k_oneCellHeight-titleHeight));
-  KDSize tableSize = m_imageTableView.minimalSizeForOptimalDisplay();
-  m_imageTableView.setFrame(KDRect(xCoordinate, titleHeight, tableSize));
-  xCoordinate += tableSize.width() + k_textWidthMargin;
-  KDCoordinate numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(0)));
-  m_text[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
-  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-  m_calculationCell[0].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_largeTextFieldWidth, ImageCell::k_height));
-  xCoordinate += k_largeTextFieldWidth + k_textWidthMargin;
-  numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(1)));
-  m_text[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
-  xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-  m_calculationCell[1].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_largeTextFieldWidth, ImageCell::k_height));
-  xCoordinate += k_largeTextFieldWidth + k_textWidthMargin;
-  if (m_calculation->numberOfParameters() > 2) {
-    numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(2)));;
-    m_text[2].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, numberOfCharacters*charSize.width(), ImageCell::k_height));
-    xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-    m_calculationCell[2].setFrame(KDRect(xCoordinate, titleHeight+ImageTableView::k_totalMargin, k_textFieldWidth, ImageCell::k_height));
-  }
-  for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
-    willDisplayEditableCellAtIndex(k);
-  }
-}
-
-void CalculationController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleHeightMargin;
-  ctx->fillRect(KDRect(0,titleHeight, bounds().width(), ImageTableView::k_oneCellWidth), KDColorWhite);
-  KDSize charSize = KDText::charSize();
-  int numberOfCharacters;
-  KDCoordinate xCoordinate = ImageTableView::k_oneCellWidth + k_textWidthMargin;
-  KDCoordinate textFieldWidth = k_largeTextFieldWidth;
-  for (int i = 0; i < k_maxNumberOfEditableFields; i++) {
-    if (m_calculation->numberOfEditableParameters() == i) {
-      return;
-    }
-    if (i == 2) {
-      textFieldWidth = k_textFieldWidth;
-    }
-    numberOfCharacters = strlen(I18n::translate(m_calculation->legendForParameterAtIndex(i)));
-    xCoordinate += numberOfCharacters*charSize.width() + k_textWidthMargin;
-
-    ctx->drawRect(KDRect(xCoordinate-ImageTableView::k_outline, titleHeight+ImageTableView::k_margin, textFieldWidth+2*ImageTableView::k_outline, ImageCell::k_height+2*ImageTableView::k_outline), Palette::GreyMiddle);
-    xCoordinate += textFieldWidth + k_textWidthMargin;
-  }
-}
-
-LawCurveView * CalculationController::ContentView::lawCurveView() {
   return &m_lawCurveView;
 }
 
-ImageTableView * CalculationController::ContentView::imageTableView() {
-  return &m_imageTableView;
-}
-
-EditableTextCell * CalculationController::ContentView::calculationCellAtIndex(int index) {
-  return &m_calculationCell[index];
+void CalculationController::ContentView::layoutSubviews() {
+  KDCoordinate titleHeight = KDText::charSize(KDText::FontSize::Small).height()+k_titleHeightMargin;
+  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight));
+  KDCoordinate calculationHeight = ResponderImageCell::k_oneCellHeight+2*k_tableMargin;
+  m_selectableTableView->setFrame(KDRect(0,  titleHeight, bounds().width(), calculationHeight));
+  m_lawCurveView.setFrame(KDRect(0,  titleHeight+calculationHeight, bounds().width(), bounds().height() - calculationHeight - titleHeight));
 }
 
 CalculationController::CalculationController(Responder * parentResponder, Law * law, Calculation * calculation) :
   ViewController(parentResponder),
+  m_contentView(&m_selectableTableView, law, calculation),
+  m_selectableTableView(this),
+  m_imageCell(&m_selectableTableView, law, calculation, this),
+  m_draftTextBuffer{},
   m_calculation(calculation),
-  m_contentView(this, this, m_calculation, law),
-  m_law(law),
-  m_highlightedSubviewIndex(1)
+  m_law(law)
 {
   assert(law != nullptr);
   assert(calculation != nullptr);
+  m_selectableTableView.setMargins(k_tableMargin);
+  m_selectableTableView.setVerticalCellOverlap(0);
+  m_selectableTableView.setShowsIndicators(false);
+  m_selectableTableView.setBackgroundColor(KDColorWhite);
+
+
+  for (int i = 0; i < k_numberOfCalculationCells; i++) {
+    m_calculationCells[i].editableTextCell()->setParentResponder(&m_selectableTableView);
+    m_calculationCells[i].editableTextCell()->textField()->setDelegate(this);
+    m_calculationCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
+  }
+}
+
+void CalculationController::didEnterResponderChain(Responder * previousResponder) {
+  App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
+  snapshot->setActivePage(App::Snapshot::Page::Calculations);
+  updateTitle();
+  reloadLawCurveView();
+  m_selectableTableView.reloadData();
+}
+
+void CalculationController::didBecomeFirstResponder() {
+  app()->setFirstResponder(&m_selectableTableView);
+}
+
+bool CalculationController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Copy && selectedColumn() > 0) {
+    CalculationCell * myCell = static_cast<CalculationCell *>(m_selectableTableView.selectedCell());
+    Clipboard::sharedClipboard()->store(myCell->editableTextCell()->textField()->text());
+    return true;
+  }
+  return false;
 }
 
 View * CalculationController::view() {
@@ -154,9 +105,166 @@ const char * CalculationController::title() {
   return m_titleBuffer;
 }
 
-void CalculationController::reload() {
-  m_contentView.layoutSubviews();
+void CalculationController::viewWillAppear() {
+  ViewController::viewWillAppear();
+  selectCellAtLocation(1, 0);
+}
+
+void CalculationController::viewDidDisappear() {
+  m_selectableTableView.deselectTable();
+  ViewController::viewDidDisappear();
+}
+
+int CalculationController::numberOfRows() {
+  return 1;
+}
+
+int CalculationController::numberOfColumns() {
+  return m_calculation->numberOfParameters()+1;
+}
+
+/* WARNING: we set one type per cell to be able to deduce the column width from
+ * the cell minimalSizeForOptimalDisplay. Otherwise, we can not know which cell
+ * to interrogate to get the column width and we neither can call
+ * tableView->cellAtLocation as this function depends on the
+ * numberOfDisplaybleRows which depends on the column width! */
+
+KDCoordinate CalculationController::columnWidth(int i) {
+  if (i == 0) {
+    return m_imageCell.minimalSizeForOptimalDisplay().width();
+  }
+  // WARNING: that is possible only because we know which view cell corresponds to which cell
+  return m_calculationCells[i-1].minimalSizeForOptimalDisplay().width();
+}
+
+KDCoordinate CalculationController::rowHeight(int j) {
+  return ResponderImageCell::k_oneCellHeight;
+}
+
+KDCoordinate CalculationController::cumulatedWidthFromIndex(int j) {
+  int result = 0;
+  for (int k = 0; k < j; k++) {
+    result += columnWidth(k);
+  }
+  return result;
+}
+
+int CalculationController::indexFromCumulatedWidth(KDCoordinate offsetX) {
+  int result = 0;
+  int i = 0;
+  while (result < offsetX && i < numberOfColumns()) {
+    result += columnWidth(i++);
+  }
+  return (result < offsetX || offsetX == 0) ? i : i - 1;
+}
+
+KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
+  return rowHeight(0) * j;
+}
+
+int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  KDCoordinate height = rowHeight(0);
+  if (height == 0) {
+    return 0;
+  }
+  return (offsetY - 1) / height;
+}
+
+HighlightCell * CalculationController::reusableCell(int index, int type) {
+  assert(index == 0);
+  switch(type) {
+    case 0:
+      return &m_imageCell;
+    default:
+      return &m_calculationCells[type-1];
+  }
+}
+
+int CalculationController::reusableCellCount(int type) {
+  return 1;
+}
+
+int CalculationController::typeAtLocation(int i, int j) {
+  return i;
+}
+
+void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
+  if (i == 0) {
+    ResponderImageCell * myCell = static_cast<ResponderImageCell *>(cell);
+    const Image *  images[CalculationTypeController::k_numberOfImages] = {ImageStore::Calcul1Icon, ImageStore::Calcul2Icon, ImageStore::Calcul3Icon, ImageStore::Calcul4Icon};
+    const Image * focusedImages[CalculationTypeController::k_numberOfImages] = {ImageStore::FocusedCalcul1Icon, ImageStore::FocusedCalcul2Icon, ImageStore::FocusedCalcul3Icon, ImageStore::FocusedCalcul4Icon};
+    myCell->setImage(images[(int)m_calculation->type()], focusedImages[(int)m_calculation->type()]);
+  } else {
+    CalculationCell * myCell = static_cast<CalculationCell *>(cell);
+    myCell->messageTextView()->setMessage(m_calculation->legendForParameterAtIndex(i-1));
+    bool calculationCellIsResponder = true;
+    if ((m_law->type() != Law::Type::Normal && i == 3) || (m_calculation->type() == Calculation::Type::Discrete && i == 2)) {
+      calculationCellIsResponder = false;
+    }
+    myCell->setResponder(calculationCellIsResponder);
+    TextField * field = static_cast<CalculationCell *>(cell)->editableTextCell()->textField();
+    if (field->isEditing()) {
+      return;
+    }
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    PrintFloat::convertFloatToText<double>(m_calculation->parameterAtIndex(i-1), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
+    field->setText(buffer);
+  }
+}
+
+bool CalculationController::textFieldDidHandleEvent(::TextField * textField, bool returnValue, bool textHasChanged) {
+  if (returnValue && textHasChanged) {
+    /* We do not reload the responder because the first responder might be the
+     * toolbox (or the variable  box) and reloading the responder would corrupt
+     * the first responder. */
+    bool shouldUpdateFirstResponder = app()->firstResponder() == textField;
+    m_selectableTableView.reloadData(shouldUpdateFirstResponder);
+    // The textField frame might have increased which forces to reload the textField scroll
+    textField->scrollToCursor();
+  }
+  return returnValue;
+}
+
+bool CalculationController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
+       || (event == Ion::Events::Right && textField->cursorLocation() == textField->draftTextLength() && selectedColumn() < m_calculation->numberOfParameters())
+       || (event == Ion::Events::Left && textField->cursorLocation() == 0);
+}
+
+bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  App * probaApp = (App *)app();
+  Context * globalContext = probaApp->container()->globalContext();
+  double floatBody = Expression::approximateToScalar<double>(text, *globalContext);
+  if (std::isnan(floatBody) || std::isinf(floatBody)) {
+    app()->displayWarning(I18n::Message::UndefinedValue);
+    return false;
+  }
+  if (m_calculation->type() != Calculation::Type::FiniteIntegral && selectedColumn() == 2) {
+    if (floatBody < 0.0) {
+      floatBody = 0.0;
+    }
+    if (floatBody > 1.0) {
+      floatBody = 1.0;
+    }
+  }
+  if (!m_law->isContinuous() && (selectedColumn() == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {
+    floatBody = std::round(floatBody);
+  }
+  m_calculation->setParameterAtIndex(floatBody, selectedColumn()-1);
+  if (event == Ion::Events::Right || event == Ion::Events::Left) {
+    m_selectableTableView.handleEvent(event);
+  }
+  reload();
+  return true;
+}
+
+void CalculationController::reloadLawCurveView() {
   m_contentView.lawCurveView()->reload();
+}
+
+void CalculationController::reload() {
+  m_selectableTableView.reloadData();
+  reloadLawCurveView();
 }
 
 void CalculationController::setCalculationAccordingToIndex(int index, bool forceReinitialisation) {
@@ -183,101 +291,8 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
   m_calculation->setLaw(m_law);
 }
 
-bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::Left && m_highlightedSubviewIndex > 0) || (event == Ion::Events::Right && m_highlightedSubviewIndex < m_calculation->numberOfEditableParameters())) {
-    if (m_highlightedSubviewIndex == 0) {
-      m_contentView.imageTableView()->select(false);
-      m_contentView.imageTableView()->setHighlight(false);
-    } else {
-      EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
-      calculCell->setHighlighted(false);
-    }
-    m_highlightedSubviewIndex = event == Ion::Events::Left ? m_highlightedSubviewIndex - 1 : m_highlightedSubviewIndex + 1;
-    if (m_highlightedSubviewIndex > 0) {
-      EditableTextCell * newCalculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
-      newCalculCell->setHighlighted(true);
-      app()->setFirstResponder(newCalculCell);
-    } else {
-      m_contentView.imageTableView()->setHighlight(true);
-      app()->setFirstResponder(this);
-    }
-    return true;
-  }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Down) && m_highlightedSubviewIndex == 0) {
-    m_contentView.imageTableView()->select(true);
-    app()->setFirstResponder(m_contentView.imageTableView());
-    return true;
-  }
-  return false;
-}
-
-bool CalculationController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  return (event == Ion::Events::Right && m_highlightedSubviewIndex < m_calculation->numberOfEditableParameters()) || event == Ion::Events::Left || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
-}
-
-bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  App * probaApp = (App *)app();
-  Context * globalContext = probaApp->container()->globalContext();
-  double floatBody = Expression::approximate<double>(text, *globalContext);
-  if (isnan(floatBody) || isinf(floatBody)) {
-    app()->displayWarning(I18n::Message::UndefinedValue);
-    return false;
-  }
-  if (m_calculation->type() != Calculation::Type::FiniteIntegral && m_highlightedSubviewIndex == 2) {
-    if (floatBody < 0.0) {
-      floatBody = 0.0;
-    }
-    if (floatBody > 1.0) {
-      floatBody = 1.0;
-    }
-  }
-  if (!m_law->isContinuous() && (m_highlightedSubviewIndex == 1 || m_calculation->type() == Calculation::Type::FiniteIntegral)) {
-    floatBody = std::round(floatBody);
-  }
-  m_calculation->setParameterAtIndex(floatBody, m_highlightedSubviewIndex-1);
-  if (event == Ion::Events::Right || event == Ion::Events::Left) {
-    handleEvent(event);
-  }
-  for (int k = 0; k < m_calculation->numberOfParameters(); k++) {
-    m_contentView.willDisplayEditableCellAtIndex(k);
-  }
-  m_contentView.layoutSubviews();
-  return true;
-}
-
-bool CalculationController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Backspace && !textField->isEditing()) {
-    textField->setEditing(true);
-    return true;
-  }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
-}
-
-void CalculationController::viewWillAppear() {
-  reload();
-}
-
-void CalculationController::didBecomeFirstResponder() {
-  App::Snapshot * snapshot = (App::Snapshot *)app()->snapshot();
-  snapshot->setActivePage(App::Snapshot::Page::Calculations);
-  updateTitle();
-  for (int subviewIndex = 0; subviewIndex < ContentView::k_maxNumberOfEditableFields; subviewIndex++) {
-    EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(subviewIndex);
-    calculCell->setHighlighted(false);
-  }
-  if (m_highlightedSubviewIndex > 0) {
-    m_contentView.imageTableView()->select(false);
-    m_contentView.imageTableView()->setHighlight(false);
-    EditableTextCell * calculCell = m_contentView.calculationCellAtIndex(m_highlightedSubviewIndex-1);
-    calculCell->setHighlighted(true);
-    app()->setFirstResponder(calculCell);
-  } else {
-    m_contentView.imageTableView()->setHighlight(true);
-  }
-}
-
-void CalculationController::selectSubview(int subviewIndex) {
-  m_highlightedSubviewIndex = subviewIndex;
+TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
+  return (App *)app();
 }
 
 void CalculationController::updateTitle() {
@@ -287,16 +302,12 @@ void CalculationController::updateTitle() {
     strlcpy(m_titleBuffer+currentChar, " = ", 4);
     currentChar += 3;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-    Complex<double>::convertFloatToText(m_law->parameterValueAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Expression::FloatDisplayMode::Decimal);
+    PrintFloat::convertFloatToText<double>(m_law->parameterValueAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
     strlcpy(m_titleBuffer+currentChar, buffer, strlen(buffer)+1);
     currentChar += strlen(buffer);
     m_titleBuffer[currentChar++] = ' ';
   }
   m_titleBuffer[currentChar-1] = 0;
-}
-
-TextFieldDelegateApp * CalculationController::textFieldDelegateApp() {
-  return (App *)app();
 }
 
 }

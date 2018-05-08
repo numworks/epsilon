@@ -7,9 +7,6 @@ SFLAGS += -Ipython/port
 
 #BUILD = python/build
 
-PYTHON = python
-
-
 # How to write this makefile
 # // Copy PY_O_BASENAME from py.mk and add those to objs
 # // Add special-case optimizations
@@ -67,7 +64,6 @@ py_objs = $(addprefix python/src/py/,\
   runtime_utils.o \
   scheduler.o \
   nativeglue.o \
-  stackctrl.o \
   argcheck.o \
   warning.o \
   map.o \
@@ -139,6 +135,17 @@ py_objs = $(addprefix python/src/py/,\
 py_objs += python/src/py/emitnative.o
 python/src/py/emitnative.o: CFLAGS += -DN_THUMB
 
+
+extmod_objs += $(addprefix python/src/extmod/,\
+  modurandom.o \
+)
+
+# In order to change the name of the micropython module 'urandom' to 'random'
+# (without altering micropython files), we redefined the macro MP_QSTR_urandom
+# by DMP_QSTR_random.
+python/src/py/objmodule.o: SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
+python/src/extmod/modurandom.o: SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
+
 #extmod_objs += $(addprefix python/src/extmod/,\
   moductypes.o \
   modujson.o \
@@ -174,17 +181,33 @@ python/src/py/emitnative.o: CFLAGS += -DN_THUMB
 
 port_objs += $(addprefix python/port/,\
   port.o \
-  interrupt_helper.o \
+  builtins.o\
+  helpers.o \
   modkandinsky.o \
   modkandinsky_impl.o \
   mphalport.o \
+  stackctrl.o \
 )
+
+# Reduce optimization for the emscripten platform.
+# With optimization, register and stack variables might be held in a JavaScript
+# local variable, which breaks garbage collection. Indeed, these JavaScript
+# variables cannot be marked as root during garbage collection, which means that
+# the heap objects they depend on will likely be destroyed. When the Python
+# computing resumes, if necessary heap objects have been destroyed, the Python
+# program crashes.
+
+ifeq ($(PLATFORM),emscripten)
+$(py_objs): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
+endif
 
 # QSTR generation
 
+generated_headers += $(addprefix python/port/genhdr/, qstrdefs.generated.h)
+
 python/port/genhdr/qstrdefs.generated.h: python/port/genhdr/qstrdefs.in.h
 	@echo "QSTRDAT $@"
-	@$(PYTHON) python/src/py/makeqstrdata.py $< > $@
+	$(Q) $(PYTHON) python/src/py/makeqstrdata.py $< > $@
 
 products += python/port/genhdr/qstrdefs.generated.h
 
@@ -192,4 +215,4 @@ $(py_objs) $(extmod_objs) $(port_objs): python/port/genhdr/qstrdefs.generated.h
 
 # List all objects needed
 
-objs += $(py_objs) $(port_objs)
+objs += $(extmod_objs) $(py_objs) $(port_objs)

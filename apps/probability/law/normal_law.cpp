@@ -1,4 +1,5 @@
 #include "normal_law.h"
+#include "erf_inv.h"
 #include <assert.h>
 #include <cmath>
 #include <float.h>
@@ -62,7 +63,7 @@ float NormalLaw::yMin() {
 float NormalLaw::yMax() {
   float maxAbscissa = m_parameter1;
   float result = evaluateAtAbscissa(maxAbscissa);
-  if (isnan(result) || result <= 0.0f) {
+  if (std::isnan(result) || result <= 0.0f) {
     result = 1.0f;
   }
   return result*(1.0f+ k_displayTopMarginRatio);
@@ -116,8 +117,7 @@ double NormalLaw::standardNormalCumulativeDistributiveFunctionAtAbscissa(double 
   if (abscissa > k_boundStandardNormalDistribution) {
     return 1.0;
   }
-  /* Waissi & Rossin's formula (error less than 0.0001) */
-  return 1.0/(1.0+std::exp(-std::sqrt(M_PI)*(k_beta1*std::pow(abscissa,5.0)+k_beta2*std::pow(abscissa,3.0)+k_beta3*abscissa)));
+  return 0.5+0.5*std::erf(abscissa/std::sqrt(2.0));
 }
 
 double NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(double probability) {
@@ -130,9 +130,7 @@ double NormalLaw::standardNormalCumulativeDistributiveInverseForProbability(doub
   if (probability < 0.5) {
     return -standardNormalCumulativeDistributiveInverseForProbability(1-probability);
   }
-  /* Soranzo & Epure (error less than 0.001) */
-  return (k_alpha3/std::log(k_alpha2))*std::log(1.0 - std::log(-std::log(probability)/std::log(2.0))/std::log(k_alpha1));
+  return std::sqrt(2.0)*erfInv(2.0*probability-1.0);
 }
-
 
 }

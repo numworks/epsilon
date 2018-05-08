@@ -30,7 +30,6 @@ public:
   void willExitResponderChain(Responder * nextFirstResponder) override;
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
 protected:
-  static constexpr KDCoordinate k_emptyRowHeight = 50;
   StackViewController * stackController() const;
   void configureFunction(Function * function);
   virtual void reinitExpression(Function * function);
@@ -44,7 +43,7 @@ private:
   virtual int functionIndexForRow(int j);
   virtual const char * textForRow(int j);
   virtual void addEmptyFunction();
-  virtual bool removeFunctionRow(Function * function);
+  virtual bool removeFunctionRow(Function * function) = 0;
   virtual void editExpression(Function * function, Ion::Events::Event event) = 0;
   virtual ListParameterController * parameterController() = 0;
   virtual int maxNumberOfRows() = 0;

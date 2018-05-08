@@ -1,15 +1,13 @@
 #include <escher/selectable_table_view.h>
 #include <assert.h>
 
-SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlapping, KDCoordinate verticalCellOverlapping, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin,
-    SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate, bool showIndicators, bool colorBackground, KDColor backgroundColor,
-    KDCoordinate indicatorThickness, KDColor indicatorColor, KDColor backgroundIndicatorColor, KDCoordinate indicatorMargin) :
-  TableView(dataSource, selectionDataSource, horizontalCellOverlapping, verticalCellOverlapping, topMargin, rightMargin, bottomMargin, leftMargin, showIndicators, colorBackground, backgroundColor,
-    indicatorThickness, indicatorColor, backgroundIndicatorColor, indicatorMargin),
+SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
+  TableView(dataSource, selectionDataSource),
   Responder(parentResponder),
   m_selectionDataSource(selectionDataSource),
   m_delegate(delegate)
 {
+  setCommonMargins();
   assert(m_selectionDataSource != nullptr);
 }
 
@@ -29,19 +27,26 @@ void SelectableTableView::selectColumn(int i) {
   m_selectionDataSource->selectColumn(i);
 }
 
-void SelectableTableView::reloadData() {
+void SelectableTableView::reloadData(bool setFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();
   deselectTable();
-  TableView::reloadData();
-  selectCellAtLocation(col, row);
+  /* FIXME: The problem with calling deselectTable is that at this point in time
+   * the datasource's model is very likely to have changed. Therefore it's
+   * rather complicated to get a pointer to the currently selected cell (in
+   * order to deselect it). */
+  /* As a workaround, datasources can reset the highlighted state in their
+   * willDisplayCell callback. */
+  TableView::layoutSubviews();
+  selectCellAtLocation(col, row, setFirstResponder);
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
-  selectCellAtLocation(selectedColumn(), selectedRow());
-  if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, 0, -1);
-  }
+  int col = selectedColumn();
+  int row = selectedRow();
+  selectColumn(0);
+  selectRow(-1);
+  selectCellAtLocation(col, row);
 }
 
 void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
@@ -59,7 +64,7 @@ void SelectableTableView::deselectTable() {
   }
 }
 
-bool SelectableTableView::selectCellAtLocation(int i, int j) {
+bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder) {
   if (i < 0 || i >= dataSource()->numberOfColumns()) {
     return false;
   }
@@ -73,8 +78,18 @@ bool SelectableTableView::selectCellAtLocation(int i, int j) {
   selectRow(j);
   if (selectedRow() >= 0) {
     scrollToCell(i, j);
-    HighlightCell * cell = cellAtLocation(i, j);
+  }
+  HighlightCell * cell = selectedCell();
+  if (cell) {
     cell->setHighlighted(true);
+    // Update first responder
+    if ((i != previousX || j != previousY) && setFirstResponder) {
+      if (cell->responder()) {
+        app()->setFirstResponder(cell->responder());
+      } else {
+        app()->setFirstResponder(this);
+      }
+    }
   }
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, previousX, previousY);

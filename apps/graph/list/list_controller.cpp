@@ -2,6 +2,7 @@
 #include "../app.h"
 #include "../../i18n.h"
 #include <assert.h>
+#include <escher/metric.h>
 
 using namespace Shared;
 
@@ -28,14 +29,14 @@ int ListController::numberOfRows() {
 
 KDCoordinate ListController::rowHeight(int j) {
   if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() && j == numberOfRows() - 1) {
-    return k_emptyRowHeight;
+    return Metric::StoreRowHeight;
   }
   Function * function = m_functionStore->functionAtIndex(j);
   if (function->layout() == nullptr) {
-    return k_emptyRowHeight;
+    return Metric::StoreRowHeight;
   }
   KDCoordinate functionSize = function->layout()->size().height();
-  return functionSize + k_emptyRowHeight - KDText::charSize().height();
+  return functionSize + Metric::StoreRowHeight - KDText::charSize().height();
 }
 
 void ListController::editExpression(Function * function, Ion::Events::Event event) {

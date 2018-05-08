@@ -1,20 +1,32 @@
 #ifndef POINCARE_GREAT_COMMON_DIVISOR_H
 #define POINCARE_GREAT_COMMON_DIVISOR_H
 
-#include <poincare/function.h>
+#include <poincare/layout_engine.h>
+#include <poincare/static_hierarchy.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
-class GreatCommonDivisor : public Function {
+class GreatCommonDivisor : public StaticHierarchy<2> {
+  using StaticHierarchy<2>::StaticHierarchy;
 public:
-  GreatCommonDivisor();
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-    int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
 private:
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
+  /* Layout */
+  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
+    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
+  }
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, name());
+  }
+  const char * name() const { return "gcd"; }
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> Complex<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
 };
 
 }

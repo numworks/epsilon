@@ -7,8 +7,11 @@ class RCC {
 public:
   class CR : public Register32 {
   public:
-    REGS_BOOL_FIELD(PLLRDY, 25);
+    REGS_BOOL_FIELD(HSION, 0);
+    REGS_BOOL_FIELD(HSEON, 16);
+    REGS_BOOL_FIELD(HSERDY, 17);
     REGS_BOOL_FIELD(PLLON, 24);
+    REGS_BOOL_FIELD(PLLRDY, 25);
   };
 
   class PLLCFGR : public Register32 {
@@ -63,12 +66,13 @@ public:
   class AHB2ENR : Register32 {
   public:
     REGS_BOOL_FIELD(RNGEN, 6);
+    REGS_BOOL_FIELD(OTGFSEN, 7);
   };
 
   class AHB3ENR : Register32 {
   public:
     REGS_BOOL_FIELD(FSMCEN, 0);
-    REGS_BOOL_FIELD(QSPIEN, 0);
+    REGS_BOOL_FIELD(QSPIEN, 1);
   };
 
   class APB1ENR : public Register32 {
@@ -87,6 +91,7 @@ public:
     REGS_BOOL_FIELD(USART1EN, 4);
     REGS_BOOL_FIELD(ADC1EN, 8);
     REGS_BOOL_FIELD(SDIOEN, 11);
+    REGS_BOOL_FIELD(SPI1EN, 12);
     REGS_BOOL_FIELD(SYSCFGEN, 14);
   };
 

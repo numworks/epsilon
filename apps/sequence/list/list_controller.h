@@ -21,7 +21,7 @@ public:
   int numberOfRows() override;
   virtual KDCoordinate rowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
-  Toolbox * toolboxForTextField(TextField * textField) override;
+  Toolbox * toolboxForTextInput(TextInput * textInput) override;
   void selectPreviousNewSequenceCell();
 private:
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
@@ -37,11 +37,12 @@ private:
   int sequenceDefinitionForRow(int j);
   void addEmptyFunction() override;
   void editExpression(Shared::Function * function, Ion::Events::Event event) override;
+  bool removeFunctionRow(Shared::Function * function) override;
   void reinitExpression(Shared::Function * function) override;
   View * loadView() override;
   void unloadView(View * view) override;
   static constexpr KDCoordinate k_emptySubRowHeight = 30;
-  constexpr static int k_maxNumberOfRows = 3*SequenceStore::k_maxNumberOfSequences;
+  constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
   SequenceStore * m_sequenceStore;
   SequenceTitleCell * m_sequenceTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell * m_expressionCells[k_maxNumberOfRows];

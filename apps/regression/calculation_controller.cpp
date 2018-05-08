@@ -90,14 +90,6 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
       firstSubCellSelected = myPreviousCell->firstTextSelected();
     }
     myCell->selectFirstText(firstSubCellSelected);
-    app()->setFirstResponder(myCell);
-  } else {
-    if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
-      EvenOddDoubleBufferTextCell * myPreviousCell = (EvenOddDoubleBufferTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
-      if (app()->firstResponder()->commonAncestorWith(myPreviousCell) == myPreviousCell) {
-        app()->setFirstResponder(t);
-      }
-    }
   }
 }
 
@@ -157,9 +149,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     double calculation2 = (m_store->*calculationMethods[j-1])(1);
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex<double>::convertFloatToText(calculation1, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PrintFloat::convertFloatToText<double>(calculation1, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setFirstText(buffer);
-    Complex<double>::convertFloatToText(calculation2, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PrintFloat::convertFloatToText<double>(calculation2, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setSecondText(buffer);
     return;
   }
@@ -175,7 +167,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    Complex<double>::convertFloatToText(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setText(buffer);
     return;
   }
@@ -250,7 +242,10 @@ Responder * CalculationController::tabController() const {
 }
 
 View * CalculationController::loadView() {
-  SelectableTableView * tableView = (SelectableTableView *)TabTableController::loadView();
+  SelectableTableView * tableView = new SelectableTableView(this, this, this, this);
+  tableView->setVerticalCellOverlap(0);
+  tableView->setBackgroundColor(Palette::WallScreenDark);
+;
   m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
   m_columnTitleCell = new EvenOddDoubleBufferTextCell(tableView);
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {

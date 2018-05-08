@@ -3,11 +3,11 @@
 
 namespace Shared {
 
-ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage) :
+ListParameterController::ListParameterController(Responder * parentResponder, FunctionStore * functionStore, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :
   ViewController(parentResponder),
-  m_selectableTableView(this, this, 0, 1, Metric::CommonTopMargin, Metric::CommonRightMargin,
-    Metric::CommonBottomMargin, Metric::CommonLeftMargin, this),
+  m_selectableTableView(this, this, this, tableDelegate),
   m_functionStore(functionStore),
+  m_function(nullptr),
 #if FUNCTION_COLOR_CHOICE
   m_colorCell(functionColorMessage),
 #endif
@@ -25,13 +25,17 @@ View * ListParameterController::view() {
 }
 
 void ListParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
+  app()->setFirstResponder(&m_selectableTableView);
+}
+
+void ListParameterController::viewWillAppear() {
+  ViewController::viewWillAppear();
   if (selectedRow() == -1) {
     selectCellAtLocation(0, 0);
   } else {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
-  app()->setFirstResponder(&m_selectableTableView);
+  m_selectableTableView.reloadData();
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {

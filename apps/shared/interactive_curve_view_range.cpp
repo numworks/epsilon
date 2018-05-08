@@ -95,14 +95,14 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   }
   float newXMin = clipped(x*(1.0f-ratio)+ratio*xMin, false);
   float newXMax = clipped(x*(1.0f-ratio)+ratio*xMax, true);
-  if (!isnan(newXMin) && !isnan(newXMax)) {
+  if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xMax = newXMax;
     MemoizedCurveViewRange::setXMin(newXMin);
   }
   m_yAuto = false;
   float newYMin = clipped(y*(1.0f-ratio)+ratio*yMin, false);
   float newYMax = clipped(y*(1.0f-ratio)+ratio*yMax, true);
-  if (!isnan(newYMin) && !isnan(newYMax)) {
+  if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yMax = newYMax;
     MemoizedCurveViewRange::setYMin(newYMin);
   }
@@ -110,7 +110,7 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
 
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
   m_yAuto = false;
-  if (clipped(m_xMin + x, false) != m_xMin + x || clipped(m_xMax + x, true) != m_xMax + x || clipped(m_yMin + y, false) != m_yMin + y || clipped(m_yMax + y, true) != m_yMax + y || isnan(clipped(m_xMin + x, false)) || isnan(clipped(m_xMax + x, true)) || isnan(clipped(m_yMin + y, false)) || isnan(clipped(m_yMax + y, true))) {
+  if (clipped(m_xMin + x, false) != m_xMin + x || clipped(m_xMax + x, true) != m_xMax + x || clipped(m_yMin + y, false) != m_yMin + y || clipped(m_yMax + y, true) != m_yMax + y || std::isnan(clipped(m_xMin + x, false)) || std::isnan(clipped(m_xMax + x, true)) || std::isnan(clipped(m_yMin + y, false)) || std::isnan(clipped(m_yMax + y, true))) {
     return;
   }
   m_xMax = clipped(m_xMax + x, true);
@@ -124,7 +124,7 @@ void InteractiveCurveViewRange::roundAbscissa() {
   float xMax = m_xMax;
   float newXMin = clipped(std::round((xMin+xMax)/2) - (float)Ion::Display::Width/2.0f, false);
   float newXMax = clipped(std::round((xMin+xMax)/2) + (float)Ion::Display::Width/2.0f-1.0f, true);
-  if (isnan(newXMin) || isnan(newXMax)) {
+  if (std::isnan(newXMin) || std::isnan(newXMax)) {
     return;
   }
   m_xMax = newXMax;
@@ -141,14 +141,14 @@ void InteractiveCurveViewRange::normalize() {
   float yMax = m_yMax;
   float newXMin = clipped((xMin+xMax)/2 - 5.3f, false);
   float newXMax = clipped((xMin+xMax)/2 + 5.3f, true);
-  if (!isnan(newXMin) && !isnan(newXMax)) {
+  if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xMax = newXMax;
     MemoizedCurveViewRange::setXMin(newXMin);
   }
   m_yAuto = false;
   float newYMin = clipped((yMin+yMax)/2 - 3.1f, false);
   float newYMax = clipped((yMin+yMax)/2 + 3.1f, true);
-  if (!isnan(newYMin) && !isnan(newYMax)) {
+  if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yMax = newYMax;
     MemoizedCurveViewRange::setYMin(newYMin);
   }
@@ -167,13 +167,16 @@ void InteractiveCurveViewRange::setTrigonometric() {
 }
 
 void InteractiveCurveViewRange::setDefault() {
-  m_xMax = 10.0f;
-  MemoizedCurveViewRange::setXMin(-10.0f);
+  if (m_delegate == nullptr) {
+    return;
+  }
+  m_xMax = m_delegate->interestingXRange();
+  MemoizedCurveViewRange::setXMin(-m_xMax);
   setYAuto(true);
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
-  if (isnan(position)) {
+  if (std::isnan(position)) {
     return;
   }
   if (axis == Axis::X) {
@@ -197,24 +200,24 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
 void InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRation, float leftMarginRation) {
   float xRange = m_xMax - m_xMin;
   float yRange = m_yMax - m_yMin;
-  if (x < m_xMin + leftMarginRation*xRange && !isinf(x) && !isnan(x)) {
+  if (x < m_xMin + leftMarginRation*xRange && !std::isinf(x) && !std::isnan(x)) {
     float newXMin = clipped(x - leftMarginRation*xRange, false);
     m_xMax = clipped(newXMin + xRange, true);
     MemoizedCurveViewRange::setXMin(newXMin);
     m_yAuto = false;
   }
-  if (x > m_xMax - rightMarginRatio*xRange && !isinf(x) && !isnan(x)) {
+  if (x > m_xMax - rightMarginRatio*xRange && !std::isinf(x) && !std::isnan(x)) {
     m_xMax = clipped(x + rightMarginRatio*xRange, true);
     MemoizedCurveViewRange::setXMin(clipped(m_xMax - xRange, false));
     m_yAuto = false;
   }
-  if (y < m_yMin + bottomMarginRation*yRange && !isinf(y) && !isnan(y)) {
+  if (y < m_yMin + bottomMarginRation*yRange && !std::isinf(y) && !std::isnan(y)) {
     float newYMin = clipped(y - bottomMarginRation*yRange, false);
     m_yMax = clipped(newYMin + yRange, true);
     MemoizedCurveViewRange::setYMin(newYMin);
     m_yAuto = false;
   }
-  if (y > m_yMax - topMarginRatio*yRange && !isinf(y) && !isnan(y)) {
+  if (y > m_yMax - topMarginRatio*yRange && !std::isinf(y) && !std::isnan(y)) {
     m_yMax = clipped(y + topMarginRatio*yRange, true);
     MemoizedCurveViewRange::setYMin(clipped(m_yMax - yRange, false));
     m_yAuto = false;

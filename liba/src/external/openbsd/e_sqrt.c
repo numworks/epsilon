@@ -80,6 +80,7 @@
  *---------------
  */
 
+#include <sys/cdefs.h>
 #include <float.h>
 #include <math.h>
 
@@ -441,6 +442,8 @@ B.  sqrt(x) by Reciproot Iteration
  
  */
 
-#if	LDBL_MANT_DIG == DBL_MANT_DIG
-__strong_alias(sqrtl, sqrt);
-#endif	/* LDBL_MANT_DIG == DBL_MANT_DIG */
+#if LDBL_MANT_DIG == 53
+#ifdef __weak_alias
+__weak_alias(sqrtl, sqrt);
+#endif /* __weak_alias */
+#endif /* LDBL_MANT_DIG == 53 */

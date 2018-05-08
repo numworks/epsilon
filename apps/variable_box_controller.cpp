@@ -1,5 +1,6 @@
 #include "variable_box_controller.h"
 #include "constant.h"
+#include <escher/metric.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -9,11 +10,14 @@ using namespace Poincare;
 VariableBoxController::ContentViewController::ContentViewController(Responder * parentResponder, GlobalContext * context) :
   ViewController(parentResponder),
   m_context(context),
+  m_textFieldCaller(nullptr),
   m_firstSelectedRow(0),
   m_previousSelectedRow(0),
   m_currentPage(Page::RootMenu),
-  m_selectableTableView(this, this, 0, 1, 0, 0, 0, 0, this, nullptr, false)
+  m_selectableTableView(this)
 {
+  m_selectableTableView.setMargins(0);
+  m_selectableTableView.setShowsIndicators(false);
 }
 
 const char * VariableBoxController::ContentViewController::title() {
@@ -63,11 +67,7 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
     char label[3];
     putLabelAtIndexInBuffer(selectedRow(), label);
     const char * editedText = label;
-    if (!m_textFieldCaller->isEditing()) {
-      m_textFieldCaller->setEditing(true);
-    }
-    m_textFieldCaller->insertTextAtLocation(editedText, m_textFieldCaller->cursorLocation());
-    m_textFieldCaller->setCursorLocation(m_textFieldCaller->cursorLocation() + strlen(editedText));
+    m_textFieldCaller->handleEventWithText(editedText);
 #if MATRIX_VARIABLES
     m_selectableTableView.deselectTable();
     m_currentPage = Page::RootMenu;
@@ -77,12 +77,12 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
   }
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     if (m_currentPage == Page::Scalar) {
-      const Symbol symbol = Symbol('A'+selectedRow());
-      m_context->setExpressionForSymbolName(nullptr, &symbol);
+      const Symbol symbol('A'+selectedRow());
+      m_context->setExpressionForSymbolName(nullptr, &symbol, *m_context);
     }
     if (m_currentPage == Page::Matrix) {
       const Symbol symbol = Symbol::matrixSymbol('0'+(char)selectedRow());
-      m_context->setExpressionForSymbolName(nullptr, &symbol);
+      m_context->setExpressionForSymbolName(nullptr, &symbol, *m_context);
     }
     m_selectableTableView.reloadData();
     return true;
@@ -137,7 +137,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   char label[3];
   putLabelAtIndexInBuffer(index, label);
   myCell->setLabel(label);
-  const Evaluation<double> * evaluation = expressionForIndex(index);
+  const Expression * evaluation = expressionForIndex(index);
   if (m_currentPage == Page::Scalar) {
     myCell->displayExpression(false);
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
@@ -148,33 +148,30 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   myCell->displayExpression(true);
   if (evaluation) {
     /* TODO: implement list contexts */
-    myCell->setExpression(evaluation);
+    // TODO: handle matrix and scalar!
+    ExpressionLayout * layout = expressionLayoutForIndex(index);
+    const Matrix * matrixEvaluation = static_cast<const Matrix *>(evaluation);
+    myCell->setExpressionLayout(layout);
     char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
-    int numberOfChars = Complex<float>::convertFloatToText(evaluation->numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    int numberOfChars = PrintFloat::convertFloatToText<float>(matrixEvaluation->numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, PrintFloat::Mode::Decimal);
     buffer[numberOfChars++] = 'x';
-    Complex<float>::convertFloatToText(evaluation->numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Expression::FloatDisplayMode::Decimal);
+    PrintFloat::convertFloatToText<float>(matrixEvaluation->numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, PrintFloat::Mode::Decimal);
     myCell->setSubtitle(buffer);
   } else {
-    myCell->setExpression(nullptr);
+    myCell->setExpressionLayout(nullptr);
     myCell->setSubtitle(I18n::translate(I18n::Message::Empty));
   }
 }
 
 KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) {
-  if (m_currentPage == Page::RootMenu) {
-    return k_nodeRowHeight;
+  if (m_currentPage == Page::RootMenu || m_currentPage == Page::Scalar) {
+    return Metric::ToolboxRowHeight;
   }
-  if (m_currentPage == Page::Scalar) {
-    return k_leafRowHeight;
+  ExpressionLayout * expressionLayout = expressionLayoutForIndex(index);
+  if (expressionLayout) {
+    return expressionLayout->size().height()+k_leafMargin;
   }
-  const Evaluation<double> * expression = expressionForIndex(index);
-  if (expression) {
-    ExpressionLayout * layout = expression->createLayout();
-    KDCoordinate expressionHeight = layout->size().height();
-    delete layout;
-    return expressionHeight+k_leafMargin;
-  }
-  return k_leafRowHeight;
+  return Metric::ToolboxRowHeight;
 }
 
 KDCoordinate VariableBoxController::ContentViewController::cumulatedHeightFromIndex(int j) {
@@ -201,14 +198,27 @@ int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
   return 0;
 }
 
-const Evaluation<double> * VariableBoxController::ContentViewController::expressionForIndex(int index) {
+const Expression * VariableBoxController::ContentViewController::expressionForIndex(int index) {
   if (m_currentPage == Page::Scalar) {
     const Symbol symbol = Symbol('A'+index);
-    return m_context->evaluationForSymbol(&symbol);
+    return m_context->expressionForSymbol(&symbol);
   }
   if (m_currentPage == Page::Matrix) {
     const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->evaluationForSymbol(&symbol);
+    return m_context->expressionForSymbol(&symbol);
+  }
+#if LIST_VARIABLES
+  if (m_currentPage == Page::List) {
+    return nullptr;
+  }
+#endif
+  return nullptr;
+}
+
+ExpressionLayout * VariableBoxController::ContentViewController::expressionLayoutForIndex(int index) {
+  if (m_currentPage == Page::Matrix) {
+    const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
+    return m_context->expressionLayoutForSymbol(&symbol);
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {
@@ -278,7 +288,7 @@ void VariableBoxController::ContentViewController::viewDidDisappear() {
 }
 
 VariableBoxController::VariableBoxController(GlobalContext * context) :
-  StackViewController(nullptr, &m_contentViewController, true, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
+  StackViewController(nullptr, &m_contentViewController, KDColorWhite, Palette::PurpleBright, Palette::PurpleDark),
   m_contentViewController(this, context)
 {
 }

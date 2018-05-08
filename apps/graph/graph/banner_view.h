@@ -8,15 +8,18 @@ namespace Graph {
 class BannerView : public Shared::BannerView {
 public:
   BannerView();
-  void setDisplayDerivative(bool displayDerivative);
-  bool displayDerivative();
+  void setNumberOfSubviews(int numberOfSubviews);
 private:
   int numberOfSubviews() const override;
   TextView * textViewAtIndex(int i) const override;
+  MessageTextView * messageTextViewAtIndex(int i) const override;
   BufferTextView m_abscissaView;
   BufferTextView m_functionView;
   BufferTextView m_derivativeView;
-  bool m_displayDerivative;
+  MessageTextView m_tangentEquationView;
+  BufferTextView m_aView;
+  BufferTextView m_bView;
+  int m_numberOfSubviews;
 };
 
 }

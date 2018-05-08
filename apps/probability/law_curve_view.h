@@ -13,12 +13,13 @@ namespace Probability {
 class LawCurveView : public Shared::CurveView {
 public:
   LawCurveView(Law * law, Calculation * calculation);
+  void reload() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   char * label(Axis axis, int index) const override;
 private:
   char m_labels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  float evaluateModelWithParameter(Model * law, float abscissa) const override;
+  static float EvaluateAtAbscissa(float abscissa, void * model, void * context);
   Law * m_law;
   Calculation * m_calculation;
 };

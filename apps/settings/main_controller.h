@@ -3,7 +3,8 @@
 
 #include <escher.h>
 #include "sub_controller.h"
-#include "settings_node.h"
+#include "settings_message_tree.h"
+#include "language_controller.h"
 
 namespace Settings {
 
@@ -16,7 +17,6 @@ public:
   MainController& operator=(const MainController& other) = delete;
   MainController& operator=(MainController&& other) = delete;
   View * view() override;
-  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override;
@@ -30,7 +30,7 @@ public:
   void viewWillAppear() override;
 private:
   StackViewController * stackController() const;
-#if OS_WITH_SOFTWARE_UPDATE_PROMPT
+#if EPSILON_SOFTWARE_UPDATE_PROMPT
   constexpr static int k_totalNumberOfCell = 8;
   MessageTableCellWithSwitch m_updateCell;
 #else
@@ -42,8 +42,9 @@ private:
   MessageTableCellWithGauge m_brightnessCell;
   Poincare::ExpressionLayout * m_complexFormatLayout;
   SelectableTableView m_selectableTableView;
-  Node * m_nodeModel;
+  MessageTree * m_messageTreeModel;
   SubController m_subController;
+  LanguageController m_languageController;
 };
 
 }

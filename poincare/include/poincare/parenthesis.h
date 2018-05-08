@@ -1,31 +1,31 @@
 #ifndef POINCARE_PARENTHESIS_H
 #define POINCARE_PARENTHESIS_H
 
-#include <poincare/expression.h>
+#include <poincare/static_hierarchy.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class Parenthesis : public Expression {
+class Parenthesis : public StaticHierarchy<1> {
 public:
-  Parenthesis(Expression * operand, bool cloneOperands = true);
-  ~Parenthesis();
-  Parenthesis(const Parenthesis& other) = delete;
-  Parenthesis(Parenthesis&& other) = delete;
-  Parenthesis& operator=(const Parenthesis& other) = delete;
-  Parenthesis& operator=(Parenthesis&& other) = delete;
-  bool hasValidNumberOfArguments() const override;
-  const Expression * operand(int i) const override;
-  int numberOfOperands() const override;
+  using StaticHierarchy<1>::StaticHierarchy;
+public:
   Expression * clone() const override;
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression** newOperands,
-    int numnerOfOperands, bool cloneOperands = true) const override;
+  int polynomialDegree(char symbolName) const override;
 private:
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
-  Evaluation<float> * privateEvaluate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<float>(context, angleUnit); }
-  Evaluation<double> * privateEvaluate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedEvaluate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedEvaluate(Context& context, AngleUnit angleUnit) const;
-  Expression * m_operand;
+  /* Layout */
+  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "");
+  }
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+
 };
 
 }

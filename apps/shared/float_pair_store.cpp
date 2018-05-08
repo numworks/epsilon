@@ -1,5 +1,5 @@
 #include "float_pair_store.h"
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <stddef.h>
 #include <ion.h>
@@ -24,7 +24,7 @@ void FloatPairStore::set(double f, int i, int j) {
   m_data[i][j] = f;
   if (j >= m_numberOfPairs) {
     int otherI = i == 0 ? 1 : 0;
-    m_data[otherI][j] = defaultValue(otherI);
+    m_data[otherI][j] = defaultValue(otherI, j);
     m_numberOfPairs++;
   }
 }
@@ -56,7 +56,7 @@ void FloatPairStore::deleteAllPairs() {
 
 void FloatPairStore::resetColumn(int i) {
   for (int k = 0; k < m_numberOfPairs; k++) {
-    m_data[i][k] = defaultValue(i);
+    m_data[i][k] = defaultValue(i, k);
   }
 }
 
@@ -78,8 +78,12 @@ uint32_t FloatPairStore::storeChecksum() {
   return Ion::crc32((uint32_t *)m_data, dataLengthInBytes/sizeof(uint32_t));
 }
 
-double FloatPairStore::defaultValue(int i) {
-  return 0.0;
+double FloatPairStore::defaultValue(int i, int j) {
+  if(i == 0 && j > 1) {
+    return 2*m_data[i][j-1]-m_data[i][j-2];
+  } else {
+    return 0.0;
+  }
 }
 
 }

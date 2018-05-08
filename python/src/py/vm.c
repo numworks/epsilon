@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -29,13 +29,6 @@
 #include <string.h>
 #include <assert.h>
 
-/* TODO: We should rather not edit micropython file.
- * Begining of the edited part */
-#include "../../port/interrupt_helper.h"
-/* End of the edited part */
-
-#include "py/mpstate.h"
-#include "py/nlr.h"
 #include "py/emitglue.h"
 #include "py/objtype.h"
 #include "py/runtime.h"
@@ -1129,7 +1122,7 @@ unwind_return:
                             }
                         }
                         if (obj == MP_OBJ_NULL) {
-                            obj = mp_obj_new_exception_msg(&mp_type_RuntimeError, "No active exception to reraise");
+                            obj = mp_obj_new_exception_msg(&mp_type_RuntimeError, "no active exception to reraise");
                             RAISE(obj);
                         }
                     } else {
@@ -1283,12 +1276,6 @@ yield:
 
 pending_exception_check:
                 MICROPY_VM_HOOK_LOOP
-/* TODO: We should rather not edit micropython file. Find a way to call
- * shouldInterrupt every now and then in the loop executing byte code without
- * editing this file.
- * Begining of the edited part */
-                shouldInterrupt();
-/* End of the edited part */
 
                 #if MICROPY_ENABLE_SCHEDULER
                 // This is an inlined variant of mp_handle_pending

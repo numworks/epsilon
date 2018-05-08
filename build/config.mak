@@ -1,25 +1,26 @@
 # You can override those settings on the command line
 
 PLATFORM ?= device
-VERBOSE ?= 0
 DEBUG ?= 0
 
-# Do not edit below this
+EPSILON_VERSION ?= 1.4.1
+EPSILON_ONBOARDING_APP ?= 1
+EPSILON_SOFTWARE_UPDATE_PROMPT ?= 1
+EPSILON_APPS ?= calculation statistics graph probability sequence regression settings code
+EPSILON_I18N ?= en fr es de pt
+EPSILON_GETOPT ?= 0
 
-ifeq ($(DEBUG),1)
-OPTIM_SFLAGS ?= -O0 -g
-else
-OPTIM_SFLAGS ?= -Os
-endif
-
+include build/defaults.mak
 include build/platform.$(PLATFORM).mak
+ifndef USE_LIBA
+  $(error platform.mak should define USE_LIBA)
+endif
+ifndef EXE
+  $(error platform.mak should define EXE, the extension for executables)
+endif
 include build/toolchain.$(TOOLCHAIN).mak
 
-OS_WITH_ONBOARDING_APP ?= 1
-OS_WITH_SOFTWARE_UPDATE_PROMPT ?= 1
-QUIZ_USE_CONSOLE ?= 0
-
 SFLAGS += -DDEBUG=$(DEBUG)
-SFLAGS += -DOS_WITH_ONBOARDING_APP=$(OS_WITH_ONBOARDING_APP)
-SFLAGS += -DOS_WITH_SOFTWARE_UPDATE_PROMPT=$(OS_WITH_SOFTWARE_UPDATE_PROMPT)
-SFLAGS += -DQUIZ_USE_CONSOLE=$(QUIZ_USE_CONSOLE)
+SFLAGS += -DEPSILON_ONBOARDING_APP=$(EPSILON_ONBOARDING_APP)
+SFLAGS += -DEPSILON_SOFTWARE_UPDATE_PROMPT=$(EPSILON_SOFTWARE_UPDATE_PROMPT)
+SFLAGS += -DEPSILON_GETOPT=$(EPSILON_GETOPT)

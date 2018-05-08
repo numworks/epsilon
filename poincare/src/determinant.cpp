@@ -7,28 +7,42 @@ extern "C" {
 
 namespace Poincare {
 
-Determinant::Determinant() :
-  Function("det")
-{
-}
-
 Expression::Type Determinant::type() const {
   return Type::Determinant;
 }
 
-Expression * Determinant::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  Determinant * d = new Determinant();
-  d->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return d;
+Expression * Determinant::clone() const {
+  Determinant * a = new Determinant(m_operands, true);
+  return a;
 }
 
-template<typename T>
-Evaluation<T> * Determinant::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
+Expression * Determinant::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op = editableOperand(0);
+#if MATRIX_EXACT_REDUCING
+  if (!op->recursivelyMatches(Expression::IsMatrix)) {
+    return replaceWith(op, true);
+  }
+  return this;
+#else
+  return replaceWith(op, true);
+#endif
+}
 
-  Evaluation<T> * input = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * result = input->createDeterminant();
+// TODO: handle this exactly in shallowReduce for small dimensions.
+template<typename T>
+Expression * Determinant::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->approximate<T>(context, angleUnit);
+  Expression * result = nullptr;
+  if (input->type() == Type::Complex) {
+    result = input->clone();
+  } else {
+    assert(input->type() == Type::Matrix);
+    result = static_cast<Matrix *>(input)->createDeterminant<T>();
+  }
   delete input;
   return result;
 }

@@ -1,5 +1,8 @@
 #include <poincare/least_common_multiple.h>
 #include <poincare/complex.h>
+#include <poincare/rational.h>
+#include <poincare/undefined.h>
+#include <poincare/arithmetic.h>
 
 extern "C" {
 #include <assert.h>
@@ -8,33 +11,64 @@ extern "C" {
 
 namespace Poincare {
 
-LeastCommonMultiple::LeastCommonMultiple() :
-  Function("lcm", 2)
-{
-}
-
 Expression::Type LeastCommonMultiple::type() const {
   return Type::LeastCommonMultiple;
 }
 
-Expression * LeastCommonMultiple::cloneWithDifferentOperands(Expression** newOperands,
-        int numberOfOperands, bool cloneOperands) const {
-  assert(newOperands != nullptr);
-  LeastCommonMultiple * lcm = new LeastCommonMultiple();
-  lcm->setArgument(newOperands, numberOfOperands, cloneOperands);
-  return lcm;
+Expression * LeastCommonMultiple::clone() const {
+  LeastCommonMultiple * a = new LeastCommonMultiple(m_operands, true);
+  return a;
+}
+
+Expression * LeastCommonMultiple::shallowReduce(Context& context, AngleUnit angleUnit) {
+  Expression * e = Expression::shallowReduce(context, angleUnit);
+  if (e != this) {
+    return e;
+  }
+  Expression * op0 = editableOperand(0);
+  Expression * op1 = editableOperand(1);
+#if MATRIX_EXACT_REDUCING
+  if (op0->type() == Type::Matrix || op1->type() == Type::Matrix) {
+    return replaceWith(new Undefined(), true);
+  }
+#endif
+  if (op0->type() == Type::Rational) {
+    Rational * r0 = static_cast<Rational *>(op0);
+    if (!r0->denominator().isOne()) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  if (op1->type() == Type::Rational) {
+    Rational * r1 = static_cast<Rational *>(op1);
+    if (!r1->denominator().isOne()) {
+      return replaceWith(new Undefined(), true);
+    }
+  }
+  if (op0->type() != Type::Rational || op1->type() != Type::Rational) {
+    return this;
+  }
+  Rational * r0 = static_cast<Rational *>(op0);
+  Rational * r1 = static_cast<Rational *>(op1);
+
+  Integer a = r0->numerator();
+  Integer b = r1->numerator();
+  Integer lcm = Arithmetic::LCM(&a, &b);
+  return replaceWith(new Rational(lcm), true);
 }
 
 template<typename T>
-Evaluation<T> * LeastCommonMultiple::templatedEvaluate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * f1Input = m_args[0]->evaluate<T>(context, angleUnit);
-  Evaluation<T> * f2Input = m_args[1]->evaluate<T>(context, angleUnit);
-  T f1 = f1Input->toScalar();
-  T f2 = f2Input->toScalar();
+Complex<T> * LeastCommonMultiple::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * f1Input = operand(0)->approximate<T>(context, angleUnit);
+  Expression * f2Input = operand(1)->approximate<T>(context, angleUnit);
+  T f1 = f1Input->type() == Type::Complex ? static_cast<Complex<T> *>(f1Input)->toScalar() : NAN;
+  T f2 = f2Input->type() == Type::Complex ? static_cast<Complex<T> *>(f2Input)->toScalar() : NAN;
   delete f1Input;
   delete f2Input;
-  if (isnan(f1) || isnan(f2) || f1 != (int)f1 || f2 != (int)f2 || f1 == 0.0f || f2 == 0.0f) {
+  if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
     return new Complex<T>(Complex<T>::Float(NAN));
+  }
+  if (f1 == 0.0f || f2 == 0.0f) {
+    return new Complex<T>(Complex<T>::Float(0));
   }
   int a = (int)f2;
   int b = (int)f1;
@@ -49,7 +83,7 @@ Evaluation<T> * LeastCommonMultiple::templatedEvaluate(Context& context, AngleUn
     a = b;
     b = r;
   }
-  return new Complex<T>(Complex<T>::Float(std::round((T)(product/a))));
+  return new Complex<T>(Complex<T>::Float(product/a));
 }
 
 }

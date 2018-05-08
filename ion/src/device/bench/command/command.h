@@ -19,7 +19,9 @@ void Keyboard(const char * input);
 void LED(const char * input);
 void MCUSerial(const char * input);
 void Ping(const char * input);
+void Print(const char * input);
 void Suspend(const char * input);
+void VBlank(const char * input);
 
 extern const char * const sOK;
 extern const char * const sKO;
@@ -30,7 +32,7 @@ extern const char * const sOFF;
 void reply(const char * s);
 int8_t hexChar(char c);
 bool isHex(char c);
-uint32_t hexNumber(const char * s);
+uint32_t hexNumber(const char * s, int maxLength = -1);
 
 }
 }

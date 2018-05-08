@@ -2,13 +2,16 @@
 #define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 
 #include "../../shared/function_curve_parameter_controller.h"
+#include "calculation_parameter_controller.h"
 #include "banner_view.h"
 
 namespace Graph {
 
+class GraphController;
+
 class CurveParameterController : public Shared::FunctionCurveParameterController {
 public:
-  CurveParameterController(Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor);
+  CurveParameterController(Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController, CartesianFunctionStore * functionStore);
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() override;
@@ -18,14 +21,11 @@ public:
 private:
   Shared::FunctionGoToParameterController * goToParameterController() override;
   Shared::FunctionGoToParameterController m_goToParameterController;
-  BannerView * m_bannerView;
-#if FUNCTION_CALCULATE_MENU
+  GraphController * m_graphController;
   constexpr static int k_totalNumberOfCells = 3;
   MessageTableCellWithChevron m_calculationCell;
-#else
-  constexpr static int k_totalNumberOfCells = 2;
-#endif
   MessageTableCellWithSwitch m_derivativeCell;
+  CalculationParameterController m_calculationParameterController;
 };
 
 }

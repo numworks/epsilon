@@ -51,7 +51,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  if (isnan(x)) {
+  if (std::isnan(x)) {
     if (m_store->slope() < DBL_EPSILON && f == m_store->yIntercept()) {
       m_graphController->selectRegressionCurve();
       m_cursor->moveTo(m_cursor->x(), f);

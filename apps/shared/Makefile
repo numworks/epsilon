@@ -10,6 +10,7 @@ app_objs += $(addprefix apps/shared/,\
   float_parameter_controller.o\
   function.o\
   function_app.o\
+  function_banner_delegate.o\
   function_curve_parameter_controller.o\
   function_go_to_parameter_controller.o\
   function_graph_view.o\
@@ -24,21 +25,28 @@ app_objs += $(addprefix apps/shared/,\
   interactive_curve_view_range_delegate.o\
   interval.o\
   interval_parameter_controller.o\
+  language_controller.o\
   list_controller.o\
   list_parameter_controller.o\
   memoized_curve_view_range.o\
-  message_controller.o\
+  message_view.o\
   new_function_cell.o\
   ok_view.o\
+  parameter_text_field_delegate.o\
   range_parameter_controller.o\
   regular_table_view_data_source.o\
+  round_cursor_view.o\
+  simple_interactive_curve_view_controller.o\
   store_controller.o\
   store_parameter_controller.o\
+  sum_graph_controller.o\
   tab_table_controller.o\
   text_field_delegate.o\
   text_field_delegate_app.o\
+  toolbox_helpers.o\
   values_function_parameter_controller.o\
   values_parameter_controller.o\
   values_controller.o\
+  vertical_cursor_view.o\
   zoom_parameter_controller.o\
 )

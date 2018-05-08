@@ -1,5 +1,6 @@
 #include <poincare/global_context.h>
 #include <poincare/matrix.h>
+#include <poincare/matrix.h>
 #include <assert.h>
 #include <cmath>
 #include <ion.h>
@@ -8,13 +9,15 @@ namespace Poincare {
 
 GlobalContext::GlobalContext() :
   m_pi(Complex<double>::Float(M_PI)),
-  m_e(Complex<double>::Float(M_E))
+  m_e(Complex<double>::Float(M_E)),
+  m_i(Complex<double>::Cartesian(0.0, 1.0))
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
   }
   for (int i = 0; i < k_maxNumberOfMatrixExpressions ; i++) {
     m_matrixExpressions[i] = nullptr;
+    m_matrixLayout[i] = nullptr;
   }
 }
 
@@ -30,31 +33,42 @@ GlobalContext::~GlobalContext() {
       delete m_matrixExpressions[i];
     }
     m_matrixExpressions[i] = nullptr;
+    if (m_matrixLayout[i] != nullptr) {
+      delete m_matrixLayout[i];
+    }
+    m_matrixLayout[i] = nullptr;
   }
 }
 
 Complex<double> * GlobalContext::defaultExpression() {
-  static Complex<double> * defaultExpression = new Complex<double>(Complex<double>::Float(0.0));
-  return defaultExpression;
+  static Complex<double> defaultExpression(Complex<double>::Float(0.0));
+  return &defaultExpression;
 }
 
 int GlobalContext::symbolIndex(const Symbol * symbol) const {
-  int index = symbol->name() - 'A';
-  return index;
+  if (symbol->isMatrixSymbol()) {
+    return symbol->name() - (char)Symbol::SpecialSymbols::M0;
+  }
+  if (symbol->isScalarSymbol()) {
+    return symbol->name() - 'A';
+  }
+  return -1;
 }
 
-const Evaluation<double> * GlobalContext::evaluationForSymbol(const Symbol * symbol) {
+const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
   }
   if (symbol->name() == Ion::Charset::Exponential) {
     return &m_e;
   }
-  if (symbol->isMatrixSymbol()) {
-    int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
-    return m_matrixExpressions[indexMatrix];
+  if (symbol->name() == Ion::Charset::IComplex) {
+    return &m_i;
   }
   int index = symbolIndex(symbol);
+  if (symbol->isMatrixSymbol()) {
+    return m_matrixExpressions[index];
+  }
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return nullptr;
   }
@@ -64,43 +78,57 @@ const Evaluation<double> * GlobalContext::evaluationForSymbol(const Symbol * sym
   return m_expressions[index];
 }
 
-void GlobalContext::setExpressionForSymbolName(Expression * expression, const Symbol * symbol) {
+ExpressionLayout * GlobalContext::expressionLayoutForSymbol(const Symbol * symbol) {
   if (symbol->isMatrixSymbol()) {
+    int index = symbolIndex(symbol);
+    if (m_matrixLayout[index] == nullptr && m_matrixExpressions[index] != nullptr) {
+      m_matrixLayout[index] = m_matrixExpressions[index]->createLayout();
+    }
+    return m_matrixLayout[index];
+  }
+  return nullptr;
+}
+
+void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
+  int index = symbolIndex(symbol);
+ if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
+    Expression * evaluation = expression ? expression->approximate<double>(context) : nullptr; // evaluate before deleting anything (to be able to evaluate M1+2->M1)
     if (m_matrixExpressions[indexMatrix] != nullptr) {
       delete m_matrixExpressions[indexMatrix];
       m_matrixExpressions[indexMatrix] = nullptr;
     }
-    if (expression != nullptr) {
-      Evaluation<double> * evaluation = expression->evaluate<double>(*this);
-      if (evaluation->numberOfOperands() == 1) {
-        m_matrixExpressions[indexMatrix] = new ComplexMatrix<double>(evaluation->complexOperand(0), 1, 1);
-        delete evaluation;
+    if (m_matrixLayout[indexMatrix] != nullptr) {
+      delete m_matrixLayout[indexMatrix];
+      m_matrixLayout[indexMatrix] = nullptr;
+    }
+    if (evaluation != nullptr) {
+      if (evaluation->type() == Expression::Type::Complex) {
+        m_matrixExpressions[indexMatrix] = new Matrix(&evaluation, 1, 1, false);
       } else {
-        m_matrixExpressions[indexMatrix] = (ComplexMatrix<double> *)evaluation;
+        m_matrixExpressions[indexMatrix] = static_cast<Matrix *>(evaluation);
       }
     }
     return;
   }
-  int index = symbolIndex(symbol);
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return;
   }
+  Expression * evaluation = expression ? expression->approximate<double>(context) : nullptr; // evaluate before deleting anything (to be able to evaluate A+2->A)
   if (m_expressions[index] != nullptr) {
     delete m_expressions[index];
     m_expressions[index] = nullptr;
   }
-  if (expression == nullptr) {
+  if (evaluation == nullptr) {
     return;
   }
-  Evaluation<double> * evaluation = expression->evaluate<double>(*this);
-  if (evaluation->numberOfOperands() == 1) {
-    m_expressions[index] = new Complex<double>(*(evaluation->complexOperand(0)));
+  if (evaluation->type() == Expression::Type::Complex) {
+    m_expressions[index] = static_cast<Complex<double> *>(evaluation);
   } else {
     m_expressions[index] = new Complex<double>(Complex<double>::Float(NAN));
+    delete evaluation;
   }
-  delete evaluation;
 }
 
 }

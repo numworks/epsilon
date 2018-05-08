@@ -1,25 +1,33 @@
 #ifndef POINCARE_CONJUGATE_H
 #define POINCARE_CONJUGATE_H
 
-#include <poincare/function.h>
+#include <poincare/static_hierarchy.h>
+#include <poincare/approximation_engine.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class Conjugate : public Function {
+class Conjugate : public StaticHierarchy<1> {
+  using StaticHierarchy<1>::StaticHierarchy;
 public:
-  Conjugate();
   Type type() const override;
-  Expression * cloneWithDifferentOperands(Expression ** newOperands,
-    int numberOfOperands, bool cloneOperands = true) const override;
+  Expression * clone() const override;
 private:
-  Complex<float> computeComplex(const Complex<float> c, AngleUnit angleUnit) const override {
-    return templatedComputeComplex(c);
+  /* Layout */
+  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "conj");
   }
-  Complex<double> computeComplex(const Complex<double> c, AngleUnit angleUnit) const override {
-    return templatedComputeComplex(c);
+  /* Simplification */
+  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  /* Evaluation */
+  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
   }
-  template<typename T> Complex<T> templatedComputeComplex(const Complex<T> c) const;
-  ExpressionLayout * privateCreateLayout(FloatDisplayMode floatDisplayMode, ComplexFormat complexFormat) const override;
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+    return ApproximationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
+  }
 };
 
 }

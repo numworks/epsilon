@@ -183,7 +183,7 @@ void ExpressionLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChi
 }
 
 void ExpressionLayout::detachChild(const ExpressionLayout * e) {
-  assert(indexOfChild(e) >= 0);
+  assert(hasChild(e));
   detachChildAtIndex(indexOfChild(e));
 }
 

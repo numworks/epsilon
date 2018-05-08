@@ -54,7 +54,7 @@ void DynamicLayoutHierarchy::addChildrenAtIndex(const ExpressionLayout * const *
   assert(numberOfOperands > 0);
   const ExpressionLayout ** newOperands = new const ExpressionLayout * [m_numberOfChildren+numberOfOperands];
   int currentIndex = 0;
-  assert(indexForInsertion <= m_numberOfChildren);
+  assert(indexForInsertion >= 0 && indexForInsertion <= m_numberOfChildren);
   for (int i = 0; i < indexForInsertion; i++) {
     newOperands[currentIndex++] = m_children[i];
   }
@@ -96,6 +96,7 @@ bool DynamicLayoutHierarchy::addChildAtIndex(ExpressionLayout * child, int index
 }
 
 void DynamicLayoutHierarchy::removeChildAtIndex(int index, bool deleteAfterRemoval) {
+  assert(index >= 0 && index < m_numberOfChildren);
   if (deleteAfterRemoval) {
     delete m_children[index];
   } else {

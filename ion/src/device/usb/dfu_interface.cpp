@@ -1,7 +1,6 @@
-#include <string.h>
-#include <ion/src/device/regs/cm4.h>
-#include <ion/src/device/regs/flash.h>
 #include "dfu_interface.h"
+#include <string.h>
+#include <ion/src/device/flash.h>
 
 namespace Ion {
 namespace USB {
@@ -170,115 +169,55 @@ void DFUInterface::changeAddressPointerIfNeeded() {
 void DFUInterface::eraseCommand(uint8_t * transferBuffer, uint16_t transferBufferLength) {
   /* We determine whether the commands asks for a mass erase or which sector to
    * erase. The erase must be done after the next getStatus request. */
+  m_state = State::dfuDNLOADSYNC;
+
   if (transferBufferLength == 1) {
     // Mass erase
-    m_erasePage = k_flashMemorySectorsCount;
-  } else {
-    // Sector erase
-    assert(transferBufferLength == 5);
-    /* Find the sector number to erase. If the address is not a valid start of
-     * sector, return an error. */
-    uint32_t sectorAddresses[k_flashMemorySectorsCount] = {
-      0x08000000,
-      0x08004000,
-      0x08008000,
-      0x0800C000,
-      0x08010000,
-      0x08020000,
-      0x08040000,
-      0x08060000,
-      0x08080000,
-      0x080A0000,
-      0x080C0000,
-      0x080E0000
-    };
-    uint32_t eraseAddress = transferBuffer[1]
-      + (transferBuffer[2] << 8)
-      + (transferBuffer[3] << 16)
-      + (transferBuffer[4] << 24);
-    m_erasePage = k_flashMemorySectorsCount + 1;
-    for (uint8_t i = 0; i < k_flashMemorySectorsCount; i++) {
-      if (sectorAddresses[i] == eraseAddress) {
-        m_erasePage = i;
-        break;
-      }
-    }
-    if (m_erasePage == k_flashMemorySectorsCount + 1) {
-      m_state = State::dfuERROR;
-      m_status = Status::errTARGET;
-      return;
-    }
+    m_erasePage = Flash::Device::NumberOfSectors;
+    return;
   }
-  m_state = State::dfuDNLOADSYNC;
+
+  // Sector erase
+  assert(transferBufferLength == 5);
+
+  uint32_t eraseAddress = transferBuffer[1]
+    + (transferBuffer[2] << 8)
+    + (transferBuffer[3] << 16)
+    + (transferBuffer[4] << 24);
+
+  m_erasePage = Flash::Device::SectorAtAddress(eraseAddress);
+
+  if (m_erasePage < 0) {
+    // Unrecognized sector
+    m_state = State::dfuERROR;
+    m_status = Status::errTARGET;
+  }
 }
 
 
 void DFUInterface::eraseMemoryIfNeeded() {
-  if (m_erasePage == k_flashMemorySectorsCount + 1) {
+  if (m_erasePage < 0) {
     // There was no erase waiting.
     return;
   }
 
-  // Unlock the Flash and check that no memory operation is ongoing
-  unlockFlashMemory();
-
-  if (m_erasePage == k_flashMemorySectorsCount) {
-    // Mass erase
-    while (FLASH.SR()->getBSY()) {
-    }
-    FLASH.CR()->setMER(true);
+  if (m_erasePage == Ion::Flash::Device::NumberOfSectors) {
+    Flash::Device::MassErase();
   } else {
-    // Sector erase
-    while (FLASH.SR()->getBSY()) {
-    }
-    FLASH.CR()->setSER(true);
-    while (FLASH.SR()->getBSY()) {
-    }
-    FLASH.CR()->setSNB(m_erasePage);
+    Flash::Device::EraseSector(m_erasePage);
   }
-  // Trigger the erase operation
-  while (FLASH.SR()->getBSY()) {
-  }
-  FLASH.CR()->setSTRT(true);
-
-  // Lock the Flash after all operations are done
-  lockFlashMemoryAndPurgeCaches();
 
   /* Put an out of range value in m_erasePage to indicate that no erase is
    * waiting. */
-  m_erasePage = k_flashMemorySectorsCount + 1;
+  m_erasePage = -1;
   m_state = State::dfuDNLOADIDLE;
   m_status = Status::OK;
 }
 
 void DFUInterface::writeOnMemory() {
   if (m_writeAddress >= k_flashStartAddress && m_writeAddress <= k_flashEndAddress) {
-    // Write ont the Flash
-
-    /* We should check here that the destination is not the option bytes: it
-     * won't happen for us. */
-
-    // Unlock the Flash
-    unlockFlashMemory();
-
-    // Activate Flash programming
-    while (FLASH.SR()->getBSY()) {
-    }
-    FLASH.CR()->setPG(true);
-
-    uint32_t * source = reinterpret_cast<uint32_t *>(m_largeBuffer);
-    uint32_t * destination = reinterpret_cast<uint32_t *>(m_writeAddress);
-    for (uint16_t i=0; i<m_largeBufferLength/sizeof(uint32_t); i++) {
-      *destination++ = *source++;
-    }
-
-    // De-activate Flash programming
-    while (FLASH.SR()->getBSY()) {
-    }
-    FLASH.CR()->setPG(false);
-
-    // Lock the Flash
-    lockFlashMemoryAndPurgeCaches();
+    // Write to the Flash memory
+    Flash::Device::WriteMemory(m_largeBuffer, reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBufferLength);
   } else if (m_writeAddress >= k_sramStartAddress && m_writeAddress <= k_sramEndAddress) {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current instructions.
@@ -298,34 +237,6 @@ void DFUInterface::writeOnMemory() {
   m_status = Status::OK;
 }
 
-void DFUInterface::unlockFlashMemory() {
-  /* After a reset, program and erase operations are forbidden on the flash.
-   * They can be unlocked by writting the appropriate keys in the FLASH_KEY
-   * register. */
-  if (FLASH.CR()->getLOCK()) {
-    FLASH.KEYR()->set(0x45670123);
-    FLASH.KEYR()->set(0xCDEF89AB);
-    // Set the parallelism size
-    while (FLASH.SR()->getBSY()) {
-    }
-    FLASH.CR()->setPSIZE(FLASH::CR::PSIZE::X32);
-  }
-}
-
-void DFUInterface::lockFlashMemoryAndPurgeCaches() {
-  while (FLASH.SR()->getBSY()) {
-  }
-  FLASH.CR()->setLOCK(true);
-
-  if (FLASH.ACR()->getDCEN()) {
-    FLASH.ACR()->setDCEN(false);
-    FLASH.ACR()->setDCRST(true);
-  }
-  if (FLASH.ACR()->getICEN()) {
-    FLASH.ACR()->setICEN(false);
-    FLASH.ACR()->setICRST(true);
-  }
-}
 
 bool DFUInterface::getStatus(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
   // Change the status if needed

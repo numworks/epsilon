@@ -23,7 +23,7 @@ public:
     m_state(State::dfuIDLE),
     m_addressPointer(0),
     m_potentialNewAddressPointer(0),
-    m_erasePage(k_flashMemorySectorsCount+1),
+    m_erasePage(-1),
     m_largeBuffer{0},
     m_largeBufferLength(0),
     m_writeAddress(0),
@@ -124,8 +124,6 @@ private:
     uint8_t m_bState; // Current state of the device
   };
 
-  constexpr static uint8_t k_flashMemorySectorsCount = 12;
-
   /* The Flash and SRAM addresses are in flash.ld. However, dfu_interface is
    * linked with dfu.ld, so we cannot access the values. */
   constexpr static uint32_t k_flashStartAddress = 0x08000000;
@@ -160,7 +158,7 @@ private:
   State m_state;
   uint32_t m_addressPointer;
   uint32_t m_potentialNewAddressPointer;
-  uint32_t m_erasePage;
+  int32_t m_erasePage;
   uint8_t m_largeBuffer[Endpoint0::MaxTransferSize];
   uint16_t m_largeBufferLength;
   uint32_t m_writeAddress;

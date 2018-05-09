@@ -238,18 +238,15 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
 }
 
 void ExpressionLayoutField::insertLayoutFromTextAtCursor(const char * text) {
+  m_contentView.cursor()->showEmptyLayoutIfNeeded();
   Poincare::Expression * expression = Poincare::Expression::parse(text);
   if (expression != nullptr) {
     Poincare::ExpressionLayout * layout = expression->createLayout();
     delete expression;
-    m_contentView.cursor()->showEmptyLayoutIfNeeded();
     insertLayoutAtCursor(layout, layout);
-    m_contentView.cursor()->hideEmptyLayoutIfNeeded();
-    reload();
-    return;
+  } else {
+    m_contentView.cursor()->insertText(text);
   }
-  m_contentView.cursor()->showEmptyLayoutIfNeeded();
-  m_contentView.cursor()->insertText(text);
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();
   reload();
 }

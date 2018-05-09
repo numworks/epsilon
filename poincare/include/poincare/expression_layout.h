@@ -89,8 +89,8 @@ public:
   virtual ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) = 0;
   virtual ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
   virtual ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
-  virtual ExpressionLayoutCursor cursorInDescendantsAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
-  virtual ExpressionLayoutCursor cursorInDescendantsUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
+  ExpressionLayoutCursor cursorInDescendantsAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
+  ExpressionLayoutCursor cursorInDescendantsUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
 
   /* Expression Engine */
   virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
@@ -142,6 +142,7 @@ protected:
     int * resultScore);
   virtual void privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor);
   void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
+  virtual ExpressionLayoutCursor cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
   ExpressionLayout * m_parent;
   KDCoordinate m_baseline;
   /* m_baseline is the signed vertical distance from the top of the layout to
@@ -152,7 +153,6 @@ protected:
   bool m_positioned;
 private:
   void detachChildAtIndex(int i);
-  ExpressionLayoutCursor cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
   ExpressionLayoutCursor cursorInDescendantsVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
   KDRect m_frame;

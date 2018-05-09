@@ -94,9 +94,16 @@ bool ExpressionLayoutField::privateHandleMoveEvent(Ion::Events::Event event, boo
   } else if (event == Ion::Events::Down) {
     result = m_contentView.cursor()->cursorUnder(shouldRecomputeLayout);
   } else if (event == Ion::Events::ShiftLeft) {
+    *shouldRecomputeLayout = true;
+    if (m_contentView.cursor()->pointedExpressionLayout()->removeGreySquaresFromAllMatrixAncestors()) {
+      *shouldRecomputeLayout = true;
+    }
     result.setPointedExpressionLayout(m_contentView.expressionView()->expressionLayout());
     result.setPosition(Poincare::ExpressionLayoutCursor::Position::Left);
   } else if (event == Ion::Events::ShiftRight) {
+    if (m_contentView.cursor()->pointedExpressionLayout()->removeGreySquaresFromAllMatrixAncestors()) {
+      *shouldRecomputeLayout = true;
+    }
     result.setPointedExpressionLayout(m_contentView.expressionView()->expressionLayout());
     result.setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
   }

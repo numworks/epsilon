@@ -40,11 +40,13 @@ static void close() {
   if (FLASH.ACR()->getDCEN()) {
     FLASH.ACR()->setDCEN(false);
     FLASH.ACR()->setDCRST(true);
+    FLASH.ACR()->setDCRST(false);
     FLASH.ACR()->setDCEN(true);
   }
   if (FLASH.ACR()->getICEN()) {
     FLASH.ACR()->setICEN(false);
     FLASH.ACR()->setICRST(true);
+    FLASH.ACR()->setICRST(false);
     FLASH.ACR()->setICEN(true);
   }
 }

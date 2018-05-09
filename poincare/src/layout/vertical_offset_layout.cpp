@@ -254,7 +254,6 @@ void VerticalOffsetLayout::privateAddSibling(ExpressionLayoutCursor * cursor, Ex
     VerticalOffsetLayout * verticalOffsetSibling = static_cast<VerticalOffsetLayout *>(sibling);
     if (verticalOffsetSibling->type() == Type::Superscript) {
       assert(m_parent->isHorizontal());
-
       // Add the Left parenthesis
       int indexInParent = m_parent->indexOfChild(this);
       int leftParenthesisIndex = indexInParent;
@@ -266,7 +265,7 @@ void VerticalOffsetLayout::privateAddSibling(ExpressionLayoutCursor * cursor, Ex
         leftParenthesisIndex--;
       }
       m_parent->addChildAtIndex(leftParenthesis, leftParenthesisIndex);
-      indexInParent++;
+      indexInParent = m_parent->indexOfChild(this);
 
       // Add the Right parenthesis
       RightParenthesisLayout * rightParenthesis = new RightParenthesisLayout();

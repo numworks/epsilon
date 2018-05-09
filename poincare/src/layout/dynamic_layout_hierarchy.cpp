@@ -46,7 +46,7 @@ void DynamicLayoutHierarchy::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, i
     }
   }
   addChildrenAtIndex(eL->children(), eL->numberOfChildren(), indexForInsertion, removeEmptyChildren);
-  eL->detachChildren();
+  eL->removeDetachedChildren();
   delete eL;
 }
 
@@ -158,6 +158,16 @@ void DynamicLayoutHierarchy::removeAndDeleteChildren() {
   delete[] m_children;
   m_children = nullptr;
   m_numberOfChildren = 0;
+}
+
+void DynamicLayoutHierarchy::removeDetachedChildren() {
+  int currentIndex = 0;
+  for (int i = 0; i < m_numberOfChildren; i++) {
+    if (m_children[i] != nullptr && m_children[i]->parent() == this) {
+      m_children[currentIndex++] =  m_children[i];
+    }
+  }
+  m_numberOfChildren = currentIndex;
 }
 
 }

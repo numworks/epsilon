@@ -28,6 +28,7 @@ public:
   /* Special matrix method */
   void newRowOrColumnAtIndex(int index);
   void addGreySquares();
+  void removeGreySquares();
 
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
@@ -38,7 +39,6 @@ private:
   void childWasReplacedAtIndex(int index);
   bool isRowEmpty(int index) const;
   bool isColumnEmpty(int index) const;
-  void removeGreySquares();
   bool hasGreySquares() const;
 };
 

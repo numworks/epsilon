@@ -60,6 +60,7 @@
 #undef fabs
 #undef fmax
 #undef floor
+#undef fmod
 #undef hypot
 #undef lgamma
 #undef lgamma_r
@@ -108,6 +109,8 @@ static inline double fmax(double x, double y) { return __builtin_fmax(x, y); }
 static inline float fmax(float x, float y) { return __builtin_fmaxf(x, y); }
 static inline double floor(double x) { return __builtin_floor(x); }
 static inline float floor(float x) { return __builtin_floorf(x); }
+static inline double fmod(double x, double y) { return __builtin_fmod(x, y); }
+static inline float fmod(float x, float y) { return __builtin_fmodf(x, y); }
 static inline int fpclassify(double x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
 static inline int fpclassify(float x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
 static inline double hypot(double x, double y) { return __builtin_hypot(x, y); }

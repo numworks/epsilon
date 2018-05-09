@@ -65,7 +65,29 @@ namespace Ion {
 namespace Display {
 namespace Device {
 
-#define SEND_COMMAND(c, ...) {*CommandAddress = Command::c; uint8_t data[] = {__VA_ARGS__}; for (unsigned int i=0;i<sizeof(data);i++) { *DataAddress = data[i];};}
+static inline void send_data(uint16_t d) {
+  *DataAddress = d;
+}
+
+static inline uint16_t receive_data() {
+  return *DataAddress;
+}
+
+template<typename... Args>
+static inline void send_data(uint16_t d, Args... other) {
+  send_data(d);
+  send_data(other...);
+}
+
+static inline void send_command(Command c) {
+  *CommandAddress = c;
+}
+
+template<typename... Args>
+static inline void send_command(Command c, Args... d) {
+  send_command(c);
+  send_data(d...);
+}
 
 void init() {
 #if USE_DMA
@@ -224,23 +246,22 @@ void shutdownFSMC() {
 }
 
 void initPanel() {
-  *CommandAddress = Command::Reset;
+  send_command(Command::Reset);
   msleep(5);
 
-  *CommandAddress = Command::SleepOut;
+  send_command(Command::SleepOut);
   msleep(5);
 
-  SEND_COMMAND(PixelFormatSet, 0x05);
-  //SEND_COMMAND(MemoryAccessControl, 0xA0);
-  SEND_COMMAND(TearingEffectLineOn, 0x00);
-  SEND_COMMAND(FrameRateControl, 0x1E); // 40 Hz frame rate
+  send_command(Command::PixelFormatSet, 0x05);
+  send_command(Command::TearingEffectLineOn, 0x00);
+  send_command(Command::FrameRateControl, 0x1E); // 40 Hz frame rate
 
-  *CommandAddress = Command::DisplayOn;
+  send_command(Command::DisplayOn);
 }
 
 void shutdownPanel() {
-  *CommandAddress = Command::DisplayOff;
-  *CommandAddress = Command::SleepIn;
+  send_command(Command::DisplayOff);
+  send_command(Command::SleepIn);
   msleep(5);
 }
 
@@ -248,34 +269,38 @@ void setDrawingArea(KDRect r, Orientation o) {
   uint16_t x_start, x_end, y_start, y_end;
 
   if (o == Orientation::Landscape) {
-    SEND_COMMAND(MemoryAccessControl, 0xA0);
+    send_command(Command::MemoryAccessControl, 0xA0);
     x_start = r.x();
     x_end = r.x() + r.width() - 1;
     y_start = r.y();
     y_end = r.y() + r.height() - 1;
   } else {
-    SEND_COMMAND(MemoryAccessControl, 0x00);
+    send_command(Command::MemoryAccessControl, 0x00);
     x_start = r.y();
     x_end = r.y() + r.height() - 1;
     y_start = Ion::Display::Width - (r.x() + r.width());
     y_end = Ion::Display::Width - r.x() - 1;
   }
 
-  *CommandAddress  = Command::ColumnAddressSet;
-  *DataAddress = (x_start >> 8);
-  *DataAddress = (x_start & 0xFF);
-  *DataAddress = (x_end >> 8);
-  *DataAddress = (x_end & 0xFF);
+  send_command(
+    Command::ColumnAddressSet,
+    (x_start >> 8),
+    (x_start & 0xFF),
+    (x_end >> 8),
+    (x_end & 0xFF)
+  );
 
-  *CommandAddress  = Command::PageAddressSet;
-  *DataAddress = (y_start >> 8);
-  *DataAddress = (y_start & 0xFF);
-  *DataAddress = (y_end >> 8);
-  *DataAddress = (y_end & 0xFF);
+  send_command(
+    Command::PageAddressSet,
+    (y_start >> 8),
+    (y_start & 0xFF),
+    (y_end >> 8),
+    (y_end & 0xFF)
+  );
 }
 
 void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
-  *CommandAddress  = Command::MemoryWrite;
+  send_command(Command::MemoryWrite);
   /* Theoretically, we should not be able to use DMA here. Indeed, we have no
    * guarantee that the content at "pixels" will remain valid once we exit this
    * function call. In practice, we might be able to use DMA here because most
@@ -284,24 +309,24 @@ void pushPixels(const KDColor * pixels, size_t numberOfPixels) {
   startDMAUpload(pixels, true, numberOfPixels);
 #else
   while (numberOfPixels > 8) {
-    *DataAddress = *pixels++;
-    *DataAddress = *pixels++;
-    *DataAddress = *pixels++;
-    *DataAddress = *pixels++;
-    *DataAddress = *pixels++;
-    *DataAddress = *pixels++;
-    *DataAddress = *pixels++;
-    *DataAddress = *pixels++;
+    send_data(*pixels++);
+    send_data(*pixels++);
+    send_data(*pixels++);
+    send_data(*pixels++);
+    send_data(*pixels++);
+    send_data(*pixels++);
+    send_data(*pixels++);
+    send_data(*pixels++);
     numberOfPixels -= 8;
   }
   while (numberOfPixels--) {
-    *DataAddress = *pixels++;
+    send_data(*pixels++);
   }
 #endif
 }
 
 void pushColor(KDColor color, size_t numberOfPixels) {
-  *CommandAddress  = Command::MemoryWrite;
+  send_command(Command::MemoryWrite);
 #if USE_DMA_FOR_PUSH_COLOR
   /* The "color" variable lives on the stack. We cannot take its address because
    * it will stop being valid as soon as we return. An easy workaround is to
@@ -312,7 +337,7 @@ void pushColor(KDColor color, size_t numberOfPixels) {
   startDMAUpload(&staticColor, false, (numberOfPixels > 64000 ? 64000 : numberOfPixels));
 #else
   while (numberOfPixels--) {
-    *DataAddress = color;
+    send_data(color);
   }
 #endif
 }
@@ -321,15 +346,16 @@ void pullPixels(KDColor * pixels, size_t numberOfPixels) {
   if (numberOfPixels == 0) {
     return;
   }
-  SEND_COMMAND(PixelFormatSet, 0x06);
-  *CommandAddress  = Command::MemoryRead;
-  *DataAddress; // First read is dummy data, per datasheet
+  send_command(Command::PixelFormatSet, 0x06);
+  send_command(Command::MemoryRead);
+
+  receive_data(); // First read is dummy data, per datasheet
   while (true) {
     if (numberOfPixels == 0) {
       break;
     }
-    uint16_t one = *DataAddress;
-    uint16_t two = *DataAddress;
+    uint16_t one = receive_data();
+    uint16_t two = receive_data();
     uint16_t firstPixel  = (one & 0xF800) | (one & 0xFC) << 3 | (two & 0xF800) >> 11;
     *pixels++ = KDColor::RGB16(firstPixel);
     numberOfPixels--;
@@ -337,12 +363,12 @@ void pullPixels(KDColor * pixels, size_t numberOfPixels) {
     if (numberOfPixels == 0) {
       break;
     }
-    uint16_t three = *DataAddress;
+    uint16_t three = receive_data();
     uint16_t secondPixel = (two & 0xF8) << 8 | (three & 0xFC00) >> 5 | (three & 0xF8) >> 3;
     *pixels++ = KDColor::RGB16(secondPixel);
     numberOfPixels--;
   }
-  SEND_COMMAND(PixelFormatSet, 0x05);
+  send_command(Command::PixelFormatSet, 0x05);
 }
 
 }

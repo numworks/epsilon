@@ -12,20 +12,32 @@ public:
     Yellow,
     Grey
   };
+  // Constructor
   EmptyLayout(Color color = Color::Yellow, bool visible = true);
   ExpressionLayout * clone() const override;
-  void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
-  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
-  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
-  bool isEmpty() const override { return true; }
+
+  // EmptyLayout
   Color color() const { return m_color; }
   void setColor(Color color) { m_color = color; }
   bool isVisible() const { return m_isVisible; }
   void setVisible(bool visible) { m_isVisible = visible; }
+
+  // User input
+  void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
+
+  // Tree navigation
+  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+
+  // Serialization
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+
+  // Other
+  bool isEmpty() const override { return true; }
+
 protected:
-  virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  virtual KDSize computeSize() override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override {
     assert(false);

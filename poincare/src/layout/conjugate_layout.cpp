@@ -18,8 +18,9 @@ ExpressionLayout * ConjugateLayout::clone() const {
 void ConjugateLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {
   // If the operand layouts is not HorizontalLayouts, replace it with one.
   if (!operandLayout()->isHorizontal()) {
-    HorizontalLayout * horizontalOperandLayout = new HorizontalLayout(operandLayout(), false);
-    replaceChild(operandLayout(), horizontalOperandLayout, false);
+    ExpressionLayout * previousOperand = operandLayout();
+    HorizontalLayout * horizontalOperandLayout = new HorizontalLayout(previousOperand, false);
+    replaceChild(previousOperand, horizontalOperandLayout, false);
   }
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 0);
   cursor->setPointedExpressionLayout(operandLayout());

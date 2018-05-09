@@ -18,12 +18,14 @@ void FractionLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * curs
   /* If the numerator or denominator layouts are not HorizontalLayouts, replace
    * them with one. */
   if (!numeratorLayout()->isHorizontal()) {
-    HorizontalLayout * horizontalNumeratorLayout = new HorizontalLayout(numeratorLayout(), false);
-    replaceChild(numeratorLayout(), horizontalNumeratorLayout, false);
+    ExpressionLayout * previousNumerator = numeratorLayout();
+    HorizontalLayout * horizontalNumeratorLayout = new HorizontalLayout(previousNumerator, false);
+    replaceChild(previousNumerator, horizontalNumeratorLayout, false);
   }
   if (!denominatorLayout()->isHorizontal()) {
-    HorizontalLayout * horizontalDenominatorLayout = new HorizontalLayout(denominatorLayout(), false);
-    replaceChild(denominatorLayout(), horizontalDenominatorLayout, false);
+    ExpressionLayout * previousDenominator = denominatorLayout();
+    HorizontalLayout * horizontalDenominatorLayout = new HorizontalLayout(previousDenominator, false);
+    replaceChild(previousDenominator, horizontalDenominatorLayout, false);
   }
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 1);
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Left, 0);

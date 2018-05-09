@@ -10,12 +10,12 @@ namespace Code {
 
 EditorController::EditorController(MenuController * menuController) :
   ViewController(nullptr),
-  m_textArea(this),
+  m_editorView(this),
   m_areaBuffer(nullptr),
   m_script(Ion::Storage::Record()),
   m_menuController(menuController)
 {
-  m_textArea.setDelegate(this);
+  m_editorView.setTextAreaDelegate(this);
 }
 
 EditorController::~EditorController() {
@@ -31,7 +31,7 @@ void EditorController::setScript(Script script) {
   assert(m_areaBuffer == nullptr);
   m_areaBuffer = new char[availableScriptSize];
   strlcpy(m_areaBuffer, scriptBody, scriptBodySize);
-  m_textArea.setText(m_areaBuffer, availableScriptSize);
+  m_editorView.setText(m_areaBuffer, availableScriptSize);
 }
 
 // TODO: this should be done in textAreaDidFinishEditing maybe??
@@ -49,11 +49,11 @@ bool EditorController::handleEvent(Ion::Events::Event event) {
 }
 
 void EditorController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_textArea);
+  app()->setFirstResponder(&m_editorView);
 }
 
 void EditorController::viewWillAppear() {
-  m_textArea.setCursorLocation(strlen(m_textArea.text()));
+  m_editorView.setCursorLocation(strlen(m_editorView.text()));
 }
 
 void EditorController::viewDidDisappear() {

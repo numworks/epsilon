@@ -290,16 +290,11 @@ ExpressionLayout * ExpressionLayout::layoutToPointWhenInserting() {
 }
 
 bool ExpressionLayout::addGreySquaresToAllMatrixAncestors() {
-  bool addedSquares = false;
-  ExpressionLayout * currentAncestor = m_parent;
-  while (currentAncestor != nullptr) {
-    if (currentAncestor->isMatrix()) {
-      static_cast<MatrixLayout *>(currentAncestor)->addGreySquares();
-      addedSquares = true;
-    }
-    currentAncestor = currentAncestor->editableParent();
-  }
-  return addedSquares;
+  return changeGreySquaresOfAllMatrixAncestors(true);
+}
+
+bool ExpressionLayout::removeGreySquaresFromAllMatrixAncestors() {
+  return changeGreySquaresOfAllMatrixAncestors(false);
 }
 
 bool ExpressionLayout::hasText() const {
@@ -515,6 +510,23 @@ ExpressionLayout * ExpressionLayout::replaceWithJuxtapositionOf(ExpressionLayout
   layout->addChildAtIndex(leftChild, 0);
   layout->addChildAtIndex(rightChild, 1);
   return layout;
+}
+
+bool ExpressionLayout::changeGreySquaresOfAllMatrixAncestors(bool add) {
+  bool changedSquares = false;
+  ExpressionLayout * currentAncestor = m_parent;
+  while (currentAncestor != nullptr) {
+    if (currentAncestor->isMatrix()) {
+      if (add) {
+        static_cast<MatrixLayout *>(currentAncestor)->addGreySquares();
+      } else {
+        static_cast<MatrixLayout *>(currentAncestor)->removeGreySquares();
+      }
+      changedSquares = true;
+    }
+    currentAncestor = currentAncestor->editableParent();
+  }
+  return changedSquares;
 }
 
 }

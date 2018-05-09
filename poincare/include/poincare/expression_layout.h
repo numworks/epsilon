@@ -101,6 +101,7 @@ public:
   /* Other */
   virtual ExpressionLayout * layoutToPointWhenInserting();
   bool addGreySquaresToAllMatrixAncestors();
+  bool removeGreySquaresFromAllMatrixAncestors();
   bool hasText() const;
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a sibling fraction: should the layout be
@@ -155,6 +156,7 @@ private:
   void detachChildAtIndex(int i);
   ExpressionLayoutCursor cursorInDescendantsVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
   ExpressionLayout * replaceWithJuxtapositionOf(ExpressionLayout * leftChild, ExpressionLayout * rightChild, bool deleteAfterReplace);
+  bool changeGreySquaresOfAllMatrixAncestors(bool add);
   KDRect m_frame;
 };
 

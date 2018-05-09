@@ -398,19 +398,25 @@ KDPoint HorizontalLayout::positionOfChild(ExpressionLayout * child) {
 void HorizontalLayout::privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) {
   // Add the "sibling" as a child.
   if (cursor->position() == ExpressionLayoutCursor::Position::Left) {
-    // If the first child is empty, remove it before adding the layout.
+    int indexForInsertion = 0;
+    /* If the first child is empty, remove it before adding the layout, unless
+     * the new sibling needs the empty layout as a base. */
     if (numberOfChildren() > 0 && editableChild(0)->isEmpty()) {
-      removeChildAtIndex(0, true);
+      if (sibling->mustHaveLeftSibling()) {
+        indexForInsertion = 1;
+      } else {
+        removeChildAtIndex(0, true);
+      }
     }
     if (moveCursor) {
-      if (numberOfChildren() > 0) {
-        cursor->setPointedExpressionLayout(editableChild(0));
+      if (numberOfChildren() > indexForInsertion) {
+        cursor->setPointedExpressionLayout(editableChild(indexForInsertion));
       } else {
         cursor->setPointedExpressionLayout(this);
         cursor->setPosition(ExpressionLayoutCursor::Position::Right);
       }
     }
-    addOrMergeChildAtIndex(sibling, 0, false);
+    addOrMergeChildAtIndex(sibling, indexForInsertion, false);
     return;
   }
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);

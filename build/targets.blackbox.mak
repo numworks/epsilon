@@ -1,3 +1,5 @@
+# Compare
+
 products += $(wildcard ion/src/blackbox/library_*.o)
 
 ion/src/blackbox/library_%.o: SFLAGS += -D EPSILON_LIB_PREFIX=$(*F)
@@ -15,3 +17,23 @@ libepsilon_%.o: $(libepsilon_objs) $(app_objs) $(app_image_objs) ion/src/blackbo
 compare: ion/src/blackbox/compare.o libepsilon_first.o libepsilon_second.o
 	@echo "LD      $@"
 	$(Q) $(LD) $^ $(LDFLAGS) -L. -o $@
+
+# Integration tests
+
+.PHONY: tests/%.run
+tests/%.run: tests/%.esc epsilon.$(EXE)
+	@echo "RUN     $<"
+	@./epsilon.$(EXE) --logAfter 0 < $< > /dev/null
+
+.PHONY: tests/%.render
+tests/%.render: tests/%.esc epsilon.$(EXE)
+	@echo "RENDER  $<"
+	@rm -rf tests/$(*F)
+	@mkdir -p tests/$(*F)
+	@rm -f event*.png
+	@./epsilon.$(EXE) --logAfter 0 < $< > /dev/null
+	@mv event*.png tests/$(*F)
+
+scenarios = $(wildcard tests/*.esc)
+.PHONY: integration_tests
+integration_tests: $(scenarios:.esc=.run)

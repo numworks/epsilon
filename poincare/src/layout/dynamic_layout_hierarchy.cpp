@@ -59,6 +59,17 @@ void DynamicLayoutHierarchy::addChildrenAtIndex(const ExpressionLayout * const *
     newOperands[currentIndex++] = m_children[i];
   }
   for (int i = 0; i < numberOfOperands; i++) {
+    if (i == 0
+        && operands[0]->isEmpty()
+        && numberOfOperands > 1
+        && operands[1]->mustHaveLeftSibling()
+        && indexForInsertion > 0)
+    {
+      /* If the first added operand is Empty because its right sibling needs a
+       * left sibling, remove it if any previous child could be such a left
+       * sibling. */
+      continue;
+    }
     if (!removeEmptyChildren
         || !operands[i]->isEmpty()
         || (i < numberOfOperands-1 && operands[i+1]->mustHaveLeftSibling()))

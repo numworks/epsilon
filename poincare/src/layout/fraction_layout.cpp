@@ -71,9 +71,13 @@ void FractionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
     detachChild(numerator);
     detachChild(denominator);
     HorizontalLayout * newLayout = new HorizontalLayout();
-    newLayout->addOrMergeChildAtIndex(denominator, 0, true);
-    newLayout->addOrMergeChildAtIndex(numerator, 0, true);
     // Add the denominator before the numerator to have the right order.
+    if (!denominator->isEmpty()) {
+      newLayout->addOrMergeChildAtIndex(denominator, 0, true);
+    }
+    if (!numerator->isEmpty()) {
+      newLayout->addOrMergeChildAtIndex(numerator, 0, true);
+    }
     replaceWith(newLayout, true);
     cursor->setPointedExpressionLayout(nextPointedLayout);
     cursor->setPosition(nextPosition);

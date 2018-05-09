@@ -6,7 +6,7 @@
 
 class ScrollableView : public Responder, public ScrollView {
 public:
- ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource);
+  ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource);
   bool handleEvent(Ion::Events::Event event) override;
   void reloadScroll(bool forceRelayout = false);
 protected:

@@ -35,6 +35,8 @@ public:
 protected:
   const ExpressionLayout ** m_children;
   int m_numberOfChildren;
+private:
+  void removeDetachedChildren();
 };
 
 }

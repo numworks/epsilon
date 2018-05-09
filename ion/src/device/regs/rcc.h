@@ -37,14 +37,26 @@ public:
     };
     void setSW(SW s) volatile { setBitRange(1, 0, (uint8_t)s); }
     SW getSWS() volatile { return (SW)getBitRange(3,2); }
-    enum class AHBRatio {
-      One = 0,
-      DivideBy2 = 4,
-      DivideBy4 = 5,
-      DivideBy8 = 6,
-      DivideBy16 = 7
+    enum class AHBPrescaler {
+      SysClk = 0,
+      SysClkDividedBy2 = 8,
+      SysClkDividedBy4 = 9,
+      SysClkDividedBy8 = 10,
+      SysClkDividedBy16 = 11,
+      SysClkDividedBy64 = 12,
+      SysClkDividedBy128 = 13,
+      SysClkDividedBy256 = 14,
+      SysClkDividedBy512 = 15
     };
-    void setPPRE1(AHBRatio r) volatile { setBitRange(12, 10, (uint32_t)r); }
+    void setHPRE(AHBPrescaler p) volatile { setBitRange(7, 4, (uint32_t)p); }
+    enum class APBPrescaler{
+      AHB = 0,
+      AHBDividedBy2 = 4,
+      AHBDividedBy4 = 5,
+      AHBDividedBy8 = 6,
+      AHBDividedBy16 = 7
+    };
+    void setPPRE1(APBPrescaler p) volatile { setBitRange(12, 10, (uint32_t)p); }
   };
 
   class AHB1ENR : public Register32 {

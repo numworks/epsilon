@@ -73,34 +73,18 @@ ExpressionLayoutCursor MatrixLayout::cursorRightOf(ExpressionLayoutCursor cursor
   return GridLayout::cursorRightOf(cursor, shouldRecomputeLayout);
 }
 
-ExpressionLayoutCursor MatrixLayout::cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+ExpressionLayoutCursor MatrixLayout::cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   bool shouldRemoveGreySquares = false;
-  for (int childIndex = 0; childIndex < m_numberOfColumns; childIndex++) {
+  int firstIndex = direction == VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
+  int lastIndex = direction == VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
+  for (int childIndex = firstIndex; childIndex < lastIndex; childIndex++) {
     if (cursor.pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
       // The cursor is leaving the matrix, so remove the grey squares.
       shouldRemoveGreySquares = true;
       break;
     }
   }
-  ExpressionLayoutCursor resultCursor = GridLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-  if (resultCursor.isDefined() && shouldRemoveGreySquares) {
-    assert(hasGreySquares());
-    removeGreySquares();
-    *shouldRecomputeLayout = true;
-  }
-  return resultCursor;
-}
-
-ExpressionLayoutCursor MatrixLayout::cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  bool shouldRemoveGreySquares = false;
-  for (int childIndex = numberOfChildren() - m_numberOfColumns; childIndex < m_numberOfChildren; childIndex++) {
-    if (cursor.pointedExpressionLayout()->hasAncestor(child(childIndex), true)) {
-      // The cursor is leaving the matrix, so remove the grey squares.
-      shouldRemoveGreySquares = true;
-      break;
-    }
-  }
-  ExpressionLayoutCursor resultCursor = GridLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  ExpressionLayoutCursor resultCursor = GridLayout::cursorVerticalOf(direction, cursor, shouldRecomputeLayout, equivalentPositionVisited);
   if (resultCursor.isDefined() && shouldRemoveGreySquares) {
     assert(hasGreySquares());
     removeGreySquares();

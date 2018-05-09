@@ -416,7 +416,7 @@ void HorizontalLayout::privateAddSibling(ExpressionLayoutCursor * cursor, Expres
   assert(cursor->position() == ExpressionLayoutCursor::Position::Right);
   // If the last child is empty, remove it before adding the layout.
   int childrenCount = numberOfChildren();
-  if (childrenCount > 0 && editableChild(childrenCount - 1)->isEmpty()) {
+  if (childrenCount > 0 && editableChild(childrenCount - 1)->isEmpty() && !sibling->mustHaveLeftSibling()) {
     removeChildAtIndex(childrenCount - 1, true);
   }
   addOrMergeChildAtIndex(sibling, numberOfChildren(), false);

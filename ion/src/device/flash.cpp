@@ -21,15 +21,9 @@ static void open() {
 
   // Set the programming parallelism
   FLASH.CR()->setPSIZE(MemoryAccessWidth);
-
-  // Wait until the Flash is ready
-  wait();
 }
 
 static void close() {
-  // Wait for pending Flash operations to complete
-  wait();
-
   // Lock the Flash configuration register
   assert(!FLASH.CR()->getMER());
   assert(!FLASH.CR()->getSER());

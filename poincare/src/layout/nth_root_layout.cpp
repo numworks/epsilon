@@ -31,8 +31,9 @@ ExpressionLayout * NthRootLayout::clone() const {
 void NthRootLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) {
   // If the radicand layout is not an HorizontalLayout, replace it with one.
   if (!radicandLayout()->isHorizontal()) {
-    HorizontalLayout * horizontalRadicandLayout = new HorizontalLayout(radicandLayout(), false);
-    replaceChild(radicandLayout(), horizontalRadicandLayout, false);
+    ExpressionLayout * previousRadicand = radicandLayout();
+    HorizontalLayout * horizontalRadicandLayout = new HorizontalLayout(previousRadicand, false);
+    replaceChild(previousRadicand, horizontalRadicandLayout, false);
   }
   ExpressionLayout::collapseOnDirection(HorizontalDirection::Right, 0);
   cursor->setPointedExpressionLayout(radicandLayout());

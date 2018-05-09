@@ -8,6 +8,7 @@ app_objs += $(addprefix apps/code/,\
   console_line_cell.o\
   console_store.o\
   editor_controller.o\
+  editor_view.o\
   helpers.o\
   menu_controller.o\
   python_toolbox.o\

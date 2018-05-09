@@ -226,7 +226,7 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
   }
   bool layoutWillBeMerged = layout->isHorizontal();
   m_contentView.cursor()->addLayoutAndMoveCursor(layout);
-  if (pointedLayout != nullptr) {
+  if (pointedLayout != nullptr && (pointedLayout != layout || !layoutWillBeMerged)) {
     m_contentView.cursor()->setPointedExpressionLayout(pointedLayout);
     m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
   } else if (!layoutWillBeMerged) {
@@ -243,7 +243,7 @@ void ExpressionLayoutField::insertLayoutFromTextAtCursor(const char * text) {
     Poincare::ExpressionLayout * layout = expression->createLayout();
     delete expression;
     m_contentView.cursor()->showEmptyLayoutIfNeeded();
-    insertLayoutAtCursor(layout, nullptr);
+    insertLayoutAtCursor(layout, layout);
     m_contentView.cursor()->hideEmptyLayoutIfNeeded();
     reload();
     return;

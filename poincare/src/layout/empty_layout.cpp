@@ -45,23 +45,6 @@ ExpressionLayoutCursor EmptyLayout::cursorRightOf(ExpressionLayoutCursor cursor,
   return ExpressionLayoutCursor();
 }
 
-ExpressionLayoutCursor EmptyLayout::cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  /* The two cursor positions around an EmptyLayout are equivalent, so both
-   * should be checked. */
-  assert(cursor.pointedExpressionLayout() == this);
-  ExpressionLayoutCursor cursorResult = direction == VerticalDirection::Up ?
-    ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited) :
-    ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-  if (cursorResult.isDefined()) {
-    return cursorResult;
-  }
-  ExpressionLayoutCursor::Position newPosition = cursor.position() == ExpressionLayoutCursor::Position::Left ? ExpressionLayoutCursor::Position::Right : ExpressionLayoutCursor::Position::Left;
-  cursor.setPosition(newPosition);
-  return direction == VerticalDirection::Up ?
-    ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited) :
-    ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
 int EmptyLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
@@ -106,6 +89,23 @@ void EmptyLayout::privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionL
     // The parent is a MatrixLayout.
     static_cast<MatrixLayout *>(parent)->newRowOrColumnAtIndex(indexInParent);
   }
+}
+
+ExpressionLayoutCursor EmptyLayout::cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  /* The two cursor positions around an EmptyLayout are equivalent, so both
+   * should be checked. */
+  assert(cursor.pointedExpressionLayout() == this);
+  ExpressionLayoutCursor cursorResult = direction == VerticalDirection::Up ?
+    ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited) :
+    ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  if (cursorResult.isDefined()) {
+    return cursorResult;
+  }
+  ExpressionLayoutCursor::Position newPosition = cursor.position() == ExpressionLayoutCursor::Position::Left ? ExpressionLayoutCursor::Position::Right : ExpressionLayoutCursor::Position::Left;
+  cursor.setPosition(newPosition);
+  return direction == VerticalDirection::Up ?
+    ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited) :
+    ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
 }

@@ -17,33 +17,34 @@ public:
   ExpressionLayout * clone() const override;
   void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
 
-  /* Hierarchy */
+  // Replace
   void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) override;
   void replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) override;
   void addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren);
 
-  /* Navigation */
+  // Tree navigation
   ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
 
-  /* Dynamic layout */
+  // Dynamic layout
   void addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) override;
   bool addChildAtIndex(ExpressionLayout * operand, int index) override;
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
   void mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren) override;
 
-  /* Expression Engine */
+  // Serialization
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
-  /* Cursor */
+  // Cursor
   ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor cursor) override;
 
-  /* Other */
+  // Other
   bool isHorizontal() const override { return true; }
-  bool isEmpty() const override;
-  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
+  bool isEmpty() const override { return m_numberOfChildren == 1 && child(0)->isEmpty(); }
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return m_numberOfChildren != 0; }
+}
 protected:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;

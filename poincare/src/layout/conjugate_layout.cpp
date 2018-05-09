@@ -27,6 +27,24 @@ void ConjugateLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cur
   cursor->setPosition(ExpressionLayoutCursor::Position::Left);
 }
 
+void ConjugateLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
+  assert(oldChild == operandLayout());
+  if (newChild->isEmpty()) {
+    if (!deleteOldChild) {
+      detachChild(oldChild);
+    }
+    replaceWithAndMoveCursor(newChild, true, cursor);
+    return;
+  }
+  ExpressionLayout::replaceChildAndMoveCursor(oldChild, newChild, deleteOldChild, cursor);
+}
+
+void ConjugateLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
+  assert(index >= 0 && index < numberOfChildren());
+  assert(cursor->pointedExpressionLayout()->hasAncestor(child(index), true));
+  replaceChildAndMoveCursor(child(index), new EmptyLayout(), deleteAfterRemoval, cursor);
+}
+
 ExpressionLayoutCursor ConjugateLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {
   // Case: Left of the operand. Move Left.
   if (operandLayout()
@@ -71,24 +89,6 @@ ExpressionLayoutCursor ConjugateLayout::cursorRightOf(ExpressionLayoutCursor cur
   return ExpressionLayoutCursor();
 }
 
-void ConjugateLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) {
-  assert(oldChild == operandLayout());
-  if (newChild->isEmpty()) {
-    if (!deleteOldChild) {
-      detachChild(oldChild);
-    }
-    replaceWithAndMoveCursor(newChild, true, cursor);
-    return;
-  }
-  ExpressionLayout::replaceChildAndMoveCursor(oldChild, newChild, deleteOldChild, cursor);
-}
-
-void ConjugateLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {
-  assert(index >= 0 && index < numberOfChildren());
-  assert(cursor->pointedExpressionLayout()->hasAncestor(child(index), true));
-  replaceChildAndMoveCursor(child(index), new EmptyLayout(), deleteAfterRemoval, cursor);
-}
-
 void ConjugateLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, p.y(), operandLayout()->size().width()+2*Metric::FractionAndConjugateHorizontalOverflow, k_overlineWidth), expressionColor);
 }
@@ -105,10 +105,6 @@ void ConjugateLayout::computeBaseline() {
 
 KDPoint ConjugateLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(Metric::FractionAndConjugateHorizontalMargin+Metric::FractionAndConjugateHorizontalOverflow, k_overlineWidth+k_overlineVerticalMargin);
-}
-
-ExpressionLayout * ConjugateLayout::operandLayout() {
-  return editableChild(0);
 }
 
 }

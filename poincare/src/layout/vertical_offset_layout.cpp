@@ -201,18 +201,10 @@ int VerticalOffsetLayout::writeTextInBuffer(char * buffer, int bufferSize, int n
   return numberOfChar;
 }
 
-ExpressionLayout * VerticalOffsetLayout::indiceLayout() {
-  return editableChild(0);
-}
-
 ExpressionLayout * VerticalOffsetLayout::baseLayout() {
   int indexInParent = parent()->indexOfChild(this);
   assert(indexInParent > 0);
   return editableParent()->editableChild(indexInParent - 1);
-}
-
-void VerticalOffsetLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  // There is nothing to draw for a subscript/superscript, only the position of the child matters
 }
 
 KDSize VerticalOffsetLayout::computeSize() {

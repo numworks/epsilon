@@ -10,13 +10,23 @@ class FractionLayout : public StaticLayoutHierarchy<2> {
 public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
+
+  // Collapse
   void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) override;
+
+  // User input
   void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
+
+  // Tree navigation
   ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+
+  // Serialization
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+
+  // Other
   ExpressionLayout * layoutToPointWhenInserting() override;
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
   /* WARNING: We need to override this function, else 1/2 3/4 would be
@@ -32,8 +42,8 @@ protected:
 private:
   constexpr static KDCoordinate k_fractionLineMargin = 2;
   constexpr static KDCoordinate k_fractionLineHeight = 1;
-  ExpressionLayout * numeratorLayout();
-  ExpressionLayout * denominatorLayout();
+  ExpressionLayout * numeratorLayout() { return editableChild(0); }
+  ExpressionLayout * denominatorLayout() { return editableChild(1); }
 };
 
 }

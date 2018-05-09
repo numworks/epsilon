@@ -37,3 +37,14 @@ tests/%.render: tests/%.esc epsilon.$(EXE)
 scenarios = $(wildcard tests/*.esc)
 .PHONY: integration_tests
 integration_tests: $(scenarios:.esc=.run)
+
+# Fuzzing
+.PHONY: epsilon_fuzz
+ifeq ($(TOOLCHAIN),afl)
+epsilon_fuzz: epsilon.$(EXE)
+	@echo "FUZZ    $<"
+	@afl-fuzz -i tests -o afl ./epsilon.$(EXE)
+else
+epsilon_fuzz:
+	@echo "Fuzzing requires TOOLCHAIN=afl"
+endif

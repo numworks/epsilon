@@ -10,25 +10,25 @@ public:
   using GridLayout::GridLayout;
   ExpressionLayout * clone() const override;
 
-  /* Navigation */
+  // MatrixLayout
+  void newRowOrColumnAtIndex(int index);
+  void addGreySquares();
+  void removeGreySquares();
+
+  // Tree Navigation
   ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
 
-  /* Dynamic layout */
+  // Replace & remove
   void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) override;
   void replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) override;
   void removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) override;
 
-  /* Expression engine */
+  // Serialization
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
-  /* Other */
+  // Other
   bool isMatrix() const override { return true; }
-
-  /* Special matrix method */
-  void newRowOrColumnAtIndex(int index);
-  void addGreySquares();
-  void removeGreySquares();
 
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;

@@ -335,25 +335,6 @@ ExpressionLayoutCursor HorizontalLayout::equivalentCursor(ExpressionLayoutCursor
   return result;
 }
 
-bool HorizontalLayout::isEmpty() const {
-  if (m_numberOfChildren == 1 && child(0)->isEmpty())
-  {
-    return true;
-  }
-  return false;
-}
-
-bool HorizontalLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
-  if (m_numberOfChildren == 0) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-void HorizontalLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-}
-
 KDSize HorizontalLayout::computeSize() {
   KDCoordinate totalWidth = 0;
   int i = 0;

@@ -9,7 +9,6 @@ namespace Poincare {
 
 class BinomialCoefficientLayout : public StaticLayoutHierarchy<2> {
 public:
-  // Constructor
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
 

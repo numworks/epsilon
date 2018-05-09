@@ -68,13 +68,13 @@ ExpressionLayoutCursor SequenceLayout::cursorRightOf(ExpressionLayoutCursor curs
     return ExpressionLayoutCursor(this, ExpressionLayoutCursor::Position::Right);
   }
   assert(cursor.pointedExpressionLayout() == this);
-  // Case: Left. Go to the upper bound.
+  // Case: Left. Go to the upper bound
   if (cursor.position() == ExpressionLayoutCursor::Position::Left) {
     assert(upperBoundLayout() != nullptr);
     return ExpressionLayoutCursor(upperBoundLayout(), ExpressionLayoutCursor::Position::Left);
   }
   assert(cursor.position() == ExpressionLayoutCursor::Position::Right);
-  // Case: Right. Ask the parent.
+  // Case: Right. Ask the parent
   if (m_parent) {
     return m_parent->cursorRightOf(cursor, shouldRecomputeLayout);
   }
@@ -82,12 +82,12 @@ ExpressionLayoutCursor SequenceLayout::cursorRightOf(ExpressionLayoutCursor curs
 }
 
 ExpressionLayoutCursor SequenceLayout::cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  // If the cursor is inside the lower bound, move it to the upper bound.
+  // If the cursor is inside the lower bound, move it to the upper bound
   if (lowerBoundLayout() && cursor.pointedExpressionLayout()->hasAncestor(lowerBoundLayout(), true)) {
     assert(upperBoundLayout() != nullptr);
     return upperBoundLayout()->cursorInDescendantsAbove(cursor, shouldRecomputeLayout);
   }
-  // If the cursor is Left of the argument, move it to the upper bound.
+  // If the cursor is Left of the argument, move it to the upper bound
   if (argumentLayout()
       && cursor.isEquivalentTo(ExpressionLayoutCursor(argumentLayout(), ExpressionLayoutCursor::Position::Left)))
   {
@@ -98,12 +98,12 @@ ExpressionLayoutCursor SequenceLayout::cursorAbove(ExpressionLayoutCursor cursor
 }
 
 ExpressionLayoutCursor SequenceLayout::cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  // If the cursor is inside the upper bound, move it to the lower bound.
+  // If the cursor is inside the upper bound, move it to the lower bound
   if (upperBoundLayout() && cursor.pointedExpressionLayout()->hasAncestor(upperBoundLayout(), true)) {
     assert(lowerBoundLayout() != nullptr);
     return lowerBoundLayout()->cursorInDescendantsUnder(cursor, shouldRecomputeLayout);
   }
-  // If the cursor is Left of the argument, move it to the lower bound.
+  // If the cursor is Left of the argument, move it to the lower bound
   if (argumentLayout()
       && cursor.isEquivalentTo(ExpressionLayoutCursor(argumentLayout(), ExpressionLayoutCursor::Position::Left)))
   {
@@ -111,11 +111,6 @@ ExpressionLayoutCursor SequenceLayout::cursorUnder(ExpressionLayoutCursor cursor
     return lowerBoundLayout()->cursorInDescendantsUnder(cursor, shouldRecomputeLayout);
   }
   return ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-ExpressionLayout * SequenceLayout::layoutToPointWhenInserting() {
-  assert(lowerBoundLayout() != nullptr);
-  return lowerBoundLayout();
 }
 
 int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, int numberOfSignificantDigits) const {
@@ -159,18 +154,6 @@ int SequenceLayout::writeDerivedClassInBuffer(const char * operatorName, char * 
   return numberOfChar;
 }
 
-ExpressionLayout * SequenceLayout::upperBoundLayout() {
-  return editableChild(2);
-}
-
-ExpressionLayout * SequenceLayout::lowerBoundLayout() {
-  return editableChild(1);
-}
-
-ExpressionLayout * SequenceLayout::argumentLayout() {
-  return editableChild(0);
-}
-
 KDSize SequenceLayout::computeSize() {
   KDSize lowerBoundSizeWithNEquals = HorizontalLayout(new CharLayout('n'), new CharLayout('='), lowerBoundLayout()->clone(), false).size();
   LeftParenthesisLayout * dummyLeftParenthesis = new LeftParenthesisLayout();
@@ -211,14 +194,14 @@ KDPoint SequenceLayout::positionOfChild(ExpressionLayout * eL) {
 }
 
 void SequenceLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  // Render the "n=".
+  // Render the "n="
   CharLayout * dummyN = new CharLayout('n');
   ExpressionLayout * lowerBoundClone = lowerBoundLayout()->clone();
   HorizontalLayout dummyLayout(dummyN, new CharLayout('='), lowerBoundClone, false);
   KDPoint nEqualsPosition = positionOfChild(lowerBoundLayout()).translatedBy((dummyLayout.positionOfChild(lowerBoundClone)).opposite()).translatedBy(dummyLayout.positionOfChild(dummyN));
   ctx->drawString("n=", p.translatedBy(nEqualsPosition), dummyN->fontSize(), expressionColor, backgroundColor);
 
-  // Render the parentheses.
+  // Render the parentheses
   LeftParenthesisLayout * dummyLeftParenthesis = new LeftParenthesisLayout();
   RightParenthesisLayout * dummyRightParenthesis = new RightParenthesisLayout();
   HorizontalLayout dummyLayout2(dummyLeftParenthesis, argumentLayout()->clone(), dummyRightParenthesis, false);

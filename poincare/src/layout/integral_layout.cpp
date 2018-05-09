@@ -177,11 +177,6 @@ int IntegralLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberO
   return numberOfChar;
 }
 
-ExpressionLayout * IntegralLayout::layoutToPointWhenInserting() {
-  assert(lowerBoundLayout() != nullptr);
-  return lowerBoundLayout();
-}
-
 void IntegralLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   KDSize integrandSize = integrandLayout()->size();
   KDSize upperBoundSize = upperBoundLayout()->size();
@@ -239,18 +234,6 @@ KDPoint IntegralLayout::positionOfChild(ExpressionLayout * child) {
     assert(false);
   }
   return KDPoint(x,y);
-}
-
-ExpressionLayout * IntegralLayout::upperBoundLayout() {
-  return editableChild(2);
-}
-
-ExpressionLayout * IntegralLayout::lowerBoundLayout() {
-  return editableChild(1);
-}
-
-ExpressionLayout * IntegralLayout::integrandLayout() {
-  return editableChild(0);
 }
 
 }

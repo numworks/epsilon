@@ -254,12 +254,4 @@ KDPoint FractionLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(x, y);
 }
 
-ExpressionLayout * FractionLayout::numeratorLayout() {
-  return editableChild(0);
-}
-
-ExpressionLayout * FractionLayout::denominatorLayout() {
-  return editableChild(1);
-}
-
 }

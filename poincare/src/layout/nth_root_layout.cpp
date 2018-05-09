@@ -266,17 +266,6 @@ KDPoint NthRootLayout::positionOfChild(ExpressionLayout * child) {
   return KDPoint(x,y);
 }
 
-ExpressionLayout * NthRootLayout::radicandLayout() {
-  return editableChild(0);
-}
-
-ExpressionLayout * NthRootLayout::indexLayout() {
-  if (numberOfChildren() > 1) {
-    return editableChild(1);
-  }
-  return nullptr;
-}
-
 KDSize NthRootLayout::adjustedIndexSize() {
   return indexLayout() != nullptr ? KDSize(max(k_leftRadixWidth, indexLayout()->size().width()), indexLayout()->size().height()) : KDSize(k_leftRadixWidth,0);
 }

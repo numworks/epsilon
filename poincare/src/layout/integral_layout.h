@@ -3,6 +3,7 @@
 
 #include <poincare/static_layout_hierarchy.h>
 #include <poincare/layout_engine.h>
+#include <assert.h>
 
 namespace Poincare {
 
@@ -13,20 +14,23 @@ public:
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
 
-  /* Dynamic Layout*/
+  // Dynamic Layout
   void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
 
-  /* Tree navigation */
+  // Tree navigation
   ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
 
-  /* Expression Engine */
+  // Serialization
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
-  /* Other */
-  ExpressionLayout * layoutToPointWhenInserting() override;
+  // Other
+  ExpressionLayout * layoutToPointWhenInserting() override {
+    assert(lowerBoundLayout() != nullptr);
+    return lowerBoundLayout();
+  }
   char XNTChar() const override { return 'x'; }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
@@ -39,9 +43,9 @@ private:
   constexpr static KDCoordinate k_integrandWidthMargin = 2;
   constexpr static KDCoordinate k_integrandHeigthMargin = 2;
   constexpr static KDCoordinate k_lineThickness = 1;
-  ExpressionLayout * lowerBoundLayout();
-  ExpressionLayout * upperBoundLayout();
-  ExpressionLayout * integrandLayout();
+  ExpressionLayout * integrandLayout() { return editableChild(0); }
+  ExpressionLayout * lowerBoundLayout() { return editableChild(1); }
+  ExpressionLayout * upperBoundLayout() { return editableChild(2); }
 };
 
 }

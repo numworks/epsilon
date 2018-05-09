@@ -63,11 +63,6 @@ void CharLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDC
   ctx->drawString(string, p, m_fontSize, expressionColor, backgroundColor);
 }
 
-KDPoint CharLayout::positionOfChild(ExpressionLayout * child) {
-  assert(false);
-  return KDPointZero;
-}
-
 KDSize CharLayout::computeSize() {
   return KDText::charSize(m_fontSize);
 }

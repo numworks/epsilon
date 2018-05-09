@@ -271,10 +271,23 @@ bool ExpressionLayoutCursor::baseForNewPowerLayout() {
     if (m_pointedExpressionLayout->isHorizontal()) {
       return false;
     }
+    if (m_pointedExpressionLayout->isEmpty()) {
+      /* If the cursor is on the right of an EmptyLayout, move it to its right,
+       * make sure it is yellow, and this EmptyLayout will be the base of the
+       * new power layout. */
+      m_position = Position::Right;
+      if (static_cast<EmptyLayout *>(m_pointedExpressionLayout)->color() == EmptyLayout::Color::Grey) {
+        static_cast<EmptyLayout *>(m_pointedExpressionLayout)->setColor(EmptyLayout::Color::Yellow);
+        int indexInParent = m_pointedExpressionLayout->parent()->indexOfChild(m_pointedExpressionLayout);
+        assert(indexInParent >= 0);
+        static_cast<MatrixLayout *>(m_pointedExpressionLayout->editableParent())->newRowOrColumnAtIndex(indexInParent);
+      }
+      return true;
+    }
     ExpressionLayoutCursor equivalentLayoutCursor = m_pointedExpressionLayout->equivalentCursor(*this);
-    if (equivalentLayoutCursor.pointedExpressionLayout() != nullptr
-        && equivalentLayoutCursor.pointedExpressionLayout()->isHorizontal()
-        && equivalentLayoutCursor.position() == Position::Left)
+    if (equivalentLayoutCursor.pointedExpressionLayout() == nullptr
+        || ( equivalentLayoutCursor.pointedExpressionLayout()->isHorizontal()
+          && equivalentLayoutCursor.position() == Position::Left))
     {
       return false;
     }

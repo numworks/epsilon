@@ -101,10 +101,6 @@ int BracketPairLayout::writeTextInBuffer(char * buffer, int bufferSize, int numb
   return numberOfChar;
 }
 
-ExpressionLayout * BracketPairLayout::operandLayout()  {
-  return editableChild(0);
-}
-
 void BracketPairLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   const KDCoordinate k_widthMargin = widthMargin();
   const KDCoordinate k_externWidthMargin = externWidthMargin();

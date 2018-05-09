@@ -9,15 +9,24 @@ namespace Poincare {
 class BracketPairLayout : public StaticLayoutHierarchy<1> {
   friend class MatrixLayout;
 public:
+  // Constructor
   using StaticLayoutHierarchy::StaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
+
+  // Collapse
   void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) override;
+
+  // User input
   void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
+
+  // Tree navigation
   ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+
+  // Serialization
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 protected:
-  ExpressionLayout * operandLayout();
+  ExpressionLayout * operandLayout() { return editableChild(0); }
   KDCoordinate externWidthMargin() const { return 2; }
   virtual KDCoordinate widthMargin() const { return 5; }
   virtual KDCoordinate verticalExternMargin() const { return 0; }

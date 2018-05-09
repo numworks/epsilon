@@ -156,7 +156,7 @@ static constexpr const char * s_nameForEvent[255] = {
   "One", "Two", "Three", "Plus", "Minus", nullptr,
   "Zero", "Dot", "EE", "Ans", "EXE", nullptr,
   //Shift,
-  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  "ShiftLeft", "ShiftUp", "ShiftDown", "ShiftRight", nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, "AlphaLock", "Cut", "Copy", "Paste", "Clear",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Underscore", "Sto",

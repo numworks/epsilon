@@ -95,17 +95,13 @@ ExpressionLayoutCursor EmptyLayout::cursorVerticalOf(VerticalDirection direction
   /* The two cursor positions around an EmptyLayout are equivalent, so both
    * should be checked. */
   assert(cursor.pointedExpressionLayout() == this);
-  ExpressionLayoutCursor cursorResult = direction == VerticalDirection::Up ?
-    ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited) :
-    ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  ExpressionLayoutCursor cursorResult = ExpressionLayout::cursorVerticalOf(direction, cursor, shouldRecomputeLayout, equivalentPositionVisited);
   if (cursorResult.isDefined()) {
     return cursorResult;
   }
   ExpressionLayoutCursor::Position newPosition = cursor.position() == ExpressionLayoutCursor::Position::Left ? ExpressionLayoutCursor::Position::Right : ExpressionLayoutCursor::Position::Left;
   cursor.setPosition(newPosition);
-  return direction == VerticalDirection::Up ?
-    ExpressionLayout::cursorAbove(cursor, shouldRecomputeLayout, equivalentPositionVisited) :
-    ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  return ExpressionLayout::cursorVerticalOf(direction, cursor, shouldRecomputeLayout, false);
 }
 
 }

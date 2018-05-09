@@ -275,9 +275,11 @@ void HorizontalLayout::removeChildAtIndex(int index, bool deleteAfterRemoval) {
 }
 
 void HorizontalLayout::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren) {
-  /* If the layout to insert starts with a vertical offset layout, the child
-   * empty layout on the left of the inserted layout (if there is one) shoul not
-   * be reomved, as it wil be the base for the VerticalOffsetLayout. */
+  /* Before the merge, remove ay empty child that would be on the left or on the
+   * right of the inserted layout.
+   * If the layout to insert starts with a vertical offset layout, any empty
+   * layout child directly on the left of the inserted layout (if there is one)
+   * should not be removed: it will be the base for the VerticalOffsetLayout. */
   bool shouldRemoveOnLeft = eL->numberOfChildren() > 0 ? !(eL->child(0)->mustHaveLeftSibling()) : true;
   int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, shouldRemoveOnLeft);
   DynamicLayoutHierarchy::mergeChildrenAtIndex(eL, newIndex, removeEmptyChildren);

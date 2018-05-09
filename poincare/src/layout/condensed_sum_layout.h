@@ -3,7 +3,7 @@
 
 #include <poincare/static_layout_hierarchy.h>
 #include <poincare/layout_engine.h>
-#include <poincare/assert.h>
+#include <assert.h>
 
 namespace Poincare {
 

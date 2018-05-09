@@ -18,4 +18,4 @@ matrix:
 os: linux
 script:
 - make clean && make epsilon.$EXT test.$EXT
-- if [ "$PLATFORM" = "blackbox" ]; then ./test.$EXT; fi
+- if [ "$PLATFORM" = "blackbox" ]; then ./test.$EXT; PLATFORM=blackbox make integration_tests; fi

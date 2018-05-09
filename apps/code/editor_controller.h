@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "script.h"
+#include "editor_view.h"
 
 namespace Code {
 
@@ -16,7 +17,7 @@ public:
   void setScript(Script script);
 
   /* ViewController */
-  View * view() override { return &m_textArea; }
+  View * view() override { return &m_editorView; }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -30,7 +31,7 @@ public:
 private:
   static constexpr int k_indentationSpacesNumber = 2;
   StackViewController * stackController();
-  TextArea m_textArea;
+  EditorView m_editorView;
   char * m_areaBuffer;
   Script m_script;
   MenuController * m_menuController;

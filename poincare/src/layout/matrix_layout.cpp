@@ -109,30 +109,6 @@ ExpressionLayoutCursor MatrixLayout::cursorUnder(ExpressionLayoutCursor cursor, 
   return resultCursor;
 }
 
-ExpressionLayoutCursor MatrixLayout::cursorInDescendantsAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout)  {
-  ExpressionLayoutCursor result = GridLayout::cursorInDescendantsAbove(cursor, shouldRecomputeLayout);
-  if (result.isDefined() && cursor.pointedExpressionLayout() != this) {
-    // Add the grey squares if the cursor is pointing at a matrix descendant,
-    // not at the matrix itself.
-    assert(!hasGreySquares());
-    addGreySquares();
-    *shouldRecomputeLayout = true;
-  }
-  return result;
-}
-
-ExpressionLayoutCursor MatrixLayout::cursorInDescendantsUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout)  {
-  ExpressionLayoutCursor result = GridLayout::cursorInDescendantsUnder(cursor, shouldRecomputeLayout);
-  if (result.isDefined() && cursor.pointedExpressionLayout() != this) {
-    // Add the grey squares if the cursor is pointing at a matrix descendant,
-    // not at the matrix itself.
-    assert(!hasGreySquares());
-    addGreySquares();
-    *shouldRecomputeLayout = true;
-  }
-  return result;
-}
-
 void MatrixLayout::replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) {
   int oldChildIndex = indexOfChild(oldChild);
   GridLayout::replaceChild(oldChild, newChild, deleteOldChild);

@@ -152,8 +152,7 @@ void MatrixLayout::newRowOrColumnAtIndex(int index) {
   assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
   bool shouldAddNewRow = GridLayout::childIsBottomOfGrid(index);
   int correspondingRow = rowAtChildIndex(index);
-  // We need to compute this bool before modifying the layout.:w
-  //
+  // We need to compute this boolean before modifying the layout
   if (GridLayout::childIsRightOfGrid(index)) {
     // Color the grey EmptyLayouts of the column in yellow.
     int correspondingColumn = m_numberOfColumns - 1;

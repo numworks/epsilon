@@ -12,20 +12,30 @@ public:
     Superscript
   };
   VerticalOffsetLayout(ExpressionLayout * indice, Type type, bool cloneOperands);
-  Type type() const { return m_type; }
   ExpressionLayout * clone() const override;
+
+  // VerticalOffsetLayout
+  Type type() const { return m_type; }
+
+  // User input
   void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
+
+  // Tree navigation
   ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+
+  // Serialization
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+
+  // Other
   bool mustHaveLeftSibling() const override { return true; }
   bool isVerticalOffset() const override { return true; }
 protected:
-  ExpressionLayout * indiceLayout();
+  ExpressionLayout * indiceLayout() { return editableChild(0);}
   ExpressionLayout * baseLayout();
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
   KDSize computeSize() override;
   void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;

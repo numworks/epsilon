@@ -12,7 +12,6 @@ public:
     Yellow,
     Grey
   };
-  // Constructor
   EmptyLayout(Color color = Color::Yellow, bool visible = true);
   ExpressionLayout * clone() const override;
 

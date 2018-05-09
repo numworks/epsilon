@@ -13,19 +13,22 @@ public:
   using BoundedStaticLayoutHierarchy::BoundedStaticLayoutHierarchy;
   ExpressionLayout * clone() const override;
 
-  /* Dynamic Layout*/
+  // Collapse
   void collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * cursor) override;
+
+  // User input
   void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
 
-  /* Tree navigation */
+  // Tree navigation
   ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
 
-  /* Expression Engine */
+  // Serialization
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
+  // Other
   bool hasUpperLeftIndex() const override { return numberOfChildren() > 1; }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
@@ -39,9 +42,9 @@ private:
   constexpr static KDCoordinate k_heightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 2;
   constexpr static KDCoordinate k_radixLineThickness = 1;
-  ExpressionLayout * radicandLayout();
-  ExpressionLayout * indexLayout();
   KDSize adjustedIndexSize();
+  ExpressionLayout * radicandLayout() { return editableChild(0); }
+  ExpressionLayout * indexLayout() { return numberOfChildren() > 1 ? editableChild(1) : nullptr; }
 };
 
 }

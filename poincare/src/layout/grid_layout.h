@@ -12,18 +12,18 @@ public:
   GridLayout(const ExpressionLayout * const * entryLayouts, int numberOfRows, int numberOfColumns, bool cloneOperands);
   ExpressionLayout * clone() const override;
 
-  /* Navigation */
+  // Tree navigation
   ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
   ExpressionLayoutCursor cursorAbove(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   ExpressionLayoutCursor cursorUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
 
-  /* Dynamic layout */
+  // Remove
   void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
-  // This function replaces the child with an EmptyLayout. To delete the
-  // grid's children, do not call this function.
+  /* This function replaces the child with an EmptyLayout. To delete the grid's
+   * children, do not call this function. */
 
-  /* Expression engine */
+  // Serialization
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override { return 0; }
 
 protected:

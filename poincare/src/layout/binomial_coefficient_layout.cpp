@@ -116,12 +116,4 @@ KDPoint BinomialCoefficientLayout::positionOfChild(ExpressionLayout * child) {
   return dummyGridLayout->positionOfChild(dummyGridLayout->editableChild(1)).translatedBy(dummyLayout.positionOfChild(dummyGridLayout));
 }
 
-ExpressionLayout * BinomialCoefficientLayout::nLayout() {
-  return editableChild(0);
-}
-
-ExpressionLayout * BinomialCoefficientLayout::kLayout() {
-  return editableChild(1);
-}
-
 }

@@ -36,14 +36,14 @@ void EditorController::setScript(Script script) {
 
 // TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::Back) {
+  if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home) {
     Script::ErrorStatus err = m_script.writeContent(m_areaBuffer, strlen(m_areaBuffer)+1);
     if (err == Script::ErrorStatus::NotEnoughSpaceAvailable || err == Script::ErrorStatus::RecordDoesNotExist) {
       assert(false); // This should not happen as we set the text area according to the available space in the Kallax
     } else {
       stackController()->pop();
     }
-    return true;
+    return event != Ion::Events::Home;
   }
   return false;
 }

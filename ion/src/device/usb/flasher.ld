@@ -1,13 +1,22 @@
-/* Create a flash bridge.
- * Load it at address 0x20004000 and execute it from there
- * TODO: Explain the 16K offset (ST's DFU ROMed bootloader)
- */
+/* Create a USB DFU firmware that runs from RAM.
+ * Flashing using ST's ROMed DFU bootloader is reliable but very slow. To make
+ * flashing faster, we can leverage ST's bootloader to copy a small "flasher" in
+ * RAM, and run it from there.
+ * Caution: ST's bootloader uses some RAM, so we want to stay off of that memory
+ * region. Per AN2606, section 47, it's using 0x20003000 - 0x2003FFFF; We'll try
+ * to play safe and avoid the first 32KB of RAM. */
 
 MEMORY {
-  RAM_BUFFER (rw) : ORIGIN = 0x20000000 + 16K, LENGTH = 256K - 16K
+  RAM_BUFFER (rw) : ORIGIN = 0x20000000 + 32K, LENGTH = 256K - 32K
 }
 
-STACK_SIZE = 4K;
+/* The stack is quite large, and should really be equal to Epsilon's. Indeed,
+ * we're making the Calculator object live on the stack, and it's quite large
+ * (about 4K just for this single object). Using a stack too small will result
+ * in some memory being overwritten (for instance, vtables that live in the
+ * .rodata section).  */
+
+STACK_SIZE = 32K;
 
 SECTIONS {
   .isr_vector_table ORIGIN(RAM_BUFFER) : {

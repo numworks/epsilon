@@ -416,22 +416,25 @@ void ExpressionLayout::privateAddSibling(ExpressionLayoutCursor * cursor, Expres
     int siblingIndex = cursor->position() == ExpressionLayoutCursor::Position::Left ? indexInParent : indexInParent + 1;
 
     /* Special case: If the neighbour sibling is a VerticalOffsetLayout, let it
-     * handle the insertion of the new sibling. */
-    ExpressionLayout * neighbour = nullptr;
-    if (cursor->position() == ExpressionLayoutCursor::Position::Left && indexInParent > 0) {
-      neighbour = m_parent->editableChild(indexInParent - 1);
-    } else if (cursor->position() == ExpressionLayoutCursor::Position::Right && indexInParent < m_parent->numberOfChildren() - 1) {
-      neighbour = m_parent->editableChild(indexInParent + 1);
-    }
-    if (neighbour != nullptr && neighbour->isVerticalOffset()) {
-      cursor->setPointedExpressionLayout(neighbour);
-      cursor->setPosition(cursor->position() == ExpressionLayoutCursor::Position::Left ? ExpressionLayoutCursor::Position::Right : ExpressionLayoutCursor::Position::Left);
-      if (moveCursor) {
-        neighbour->addSiblingAndMoveCursor(cursor, sibling);
-      } else {
-        neighbour->addSibling(cursor, sibling);
+     * handle the insertion of the new sibling. Jump special case if this is a
+     * VerticalOffsetLayout to avoid infinite loop.*/
+    if (!isVerticalOffset()) {
+      ExpressionLayout * neighbour = nullptr;
+      if (cursor->position() == ExpressionLayoutCursor::Position::Left && indexInParent > 0) {
+        neighbour = m_parent->editableChild(indexInParent - 1);
+      } else if (cursor->position() == ExpressionLayoutCursor::Position::Right && indexInParent < m_parent->numberOfChildren() - 1) {
+        neighbour = m_parent->editableChild(indexInParent + 1);
       }
-      return;
+      if (neighbour != nullptr && neighbour->isVerticalOffset()) {
+        cursor->setPointedExpressionLayout(neighbour);
+        cursor->setPosition(cursor->position() == ExpressionLayoutCursor::Position::Left ? ExpressionLayoutCursor::Position::Right : ExpressionLayoutCursor::Position::Left);
+        if (moveCursor) {
+          neighbour->addSiblingAndMoveCursor(cursor, sibling);
+        } else {
+          neighbour->addSibling(cursor, sibling);
+        }
+        return;
+      }
     }
 
     // Else, let the parent add the sibling.

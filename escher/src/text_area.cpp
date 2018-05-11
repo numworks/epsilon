@@ -255,11 +255,13 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
     }
     y++;
   }
+
+  // TODO Clearing the bottom of the editor should be done better
   ctx->fillRect(KDRect(
-    topLeft.column(),
+    m_frame.x() + topLeft.column() * charSize.width() - charSize.width(),
     y * charSize.height(),
-    (bottomRight.column() - topLeft.column()) * charSize.width(),
-    (bottomRight.line() - y) * charSize.height()
+    m_frame.width() + 2*charSize.width(),
+    m_frame.height() - y * charSize.height()
   ), m_backgroundColor);
 }
 

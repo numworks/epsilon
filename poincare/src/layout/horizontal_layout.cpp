@@ -388,7 +388,10 @@ void HorizontalLayout::privateAddSibling(ExpressionLayoutCursor * cursor, Expres
       if (sibling->mustHaveLeftSibling()) {
         indexForInsertion = 1;
       } else {
-        removeChildAtIndex(0, true);
+        /* We force the removing of the child even followed by a neighbourg
+         * requiring a left sibling as we are about to add a sibling in first
+         * position anyway. */
+        privateRemoveChildAtIndex(0, true, true);
       }
     }
     if (moveCursor) {
@@ -406,7 +409,8 @@ void HorizontalLayout::privateAddSibling(ExpressionLayoutCursor * cursor, Expres
   // If the last child is empty, remove it before adding the layout.
   int childrenCount = numberOfChildren();
   if (childrenCount > 0 && editableChild(childrenCount - 1)->isEmpty() && !sibling->mustHaveLeftSibling()) {
-    removeChildAtIndex(childrenCount - 1, true);
+    /* Force remove the last child. */
+    privateRemoveChildAtIndex(childrenCount - 1, true, true);
   }
   addOrMergeChildAtIndex(sibling, numberOfChildren(), false);
   if (moveCursor) {
@@ -415,13 +419,17 @@ void HorizontalLayout::privateAddSibling(ExpressionLayoutCursor * cursor, Expres
 }
 
 void HorizontalLayout::privateRemoveChildAtIndex(int index, bool deleteAfterRemoval, bool forceRemove) {
+  /* Remove the child before potentially adding an EmptyLayout. Indeed, adding
+   * a new child would remove any EmptyLayout surrounding the new child and in
+   * the case the child to be removed was an Empty layout, it would result in
+   * removing it twice if we remove it afterwards. */
+  DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);
   /* If the child to remove is at index 0 and its right sibling must have a left
    * sibling (e.g. it is a VerticalOffsetLayout), replace the child with an
    * EmptyLayout instead of removing it. */
-  if (!forceRemove && index == 0 && numberOfChildren() > 1 && child(1)->mustHaveLeftSibling()) {
-    addChildAtIndex(new EmptyLayout(), index + 1);
+  if (!forceRemove && index == 0 && numberOfChildren() > 0 && child(0)->mustHaveLeftSibling()) {
+    addChildAtIndex(new EmptyLayout(), 0);
   }
-  DynamicLayoutHierarchy::removeChildAtIndex(index, deleteAfterRemoval);
 }
 
 int HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft) {

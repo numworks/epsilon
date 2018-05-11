@@ -54,6 +54,14 @@ void FractionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
     ExpressionLayout * nextPointedLayout = numeratorLayout();
     ExpressionLayoutCursor::Position  nextPosition = ExpressionLayoutCursor::Position::Right;
     if (numeratorLayout()->isEmpty()) {
+      /* If no numeratorLayout, place the cursor to the left of denominator (as
+       * both cannot be empty - case handled before). */
+      nextPointedLayout = denominatorLayout();
+      nextPosition = ExpressionLayoutCursor::Position::Left;
+      if (denominatorLayout()->isHorizontal()) {
+        nextPointedLayout = denominatorLayout()->editableChild(0);
+      }
+#if 0 // TODO: discard me if agreed
       int indexInParent = m_parent->indexOfChild(this);
       if (indexInParent > 0) {
         nextPointedLayout = m_parent->editableChild(indexInParent - 1);
@@ -61,6 +69,7 @@ void FractionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
         nextPointedLayout = m_parent;
         nextPosition = ExpressionLayoutCursor::Position::Left;
       }
+#endif
     } else if (numeratorLayout()->isHorizontal()) {
       nextPointedLayout = numeratorLayout()->editableChild(numeratorLayout()->numberOfChildren() - 1);
     }

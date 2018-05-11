@@ -301,6 +301,7 @@ bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentat
     return false;
   }
   Poincare::ExpressionLayout * resultLayout = resultExpression->createLayout();
+  delete resultExpression;
   // Find the pointed layout.
   Poincare::ExpressionLayout * pointedLayout = nullptr;
   if (resultLayout->isHorizontal()) {

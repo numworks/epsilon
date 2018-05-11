@@ -47,7 +47,8 @@ void EditExpressionController::ContentView::reload() {
 EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :
   DynamicViewController(parentResponder),
   m_historyController(historyController),
-  m_calculationStore(calculationStore)
+  m_calculationStore(calculationStore),
+  m_inputViewHeightIsMaximal(false)
 {
   m_cacheBuffer[0] = 0;
 }

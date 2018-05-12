@@ -58,7 +58,14 @@ Poincare::Context * AppsContainer::globalContext() {
 }
 
 MathToolbox * AppsContainer::mathToolbox() {
-  return &m_mathToolbox;
+  if(GlobalPreferences::sharedGlobalPreferences()->languageChanged || m_mathToolbox == nullptr){
+    GlobalPreferences::sharedGlobalPreferences()->languageChanged = false;
+    if(m_mathToolbox != nullptr){
+      delete(m_mathToolbox);
+    }
+    m_mathToolbox = new MathToolbox();
+  }
+  return m_mathToolbox;
 }
 
 VariableBoxController * AppsContainer::variableBoxController() {

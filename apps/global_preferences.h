@@ -20,6 +20,7 @@ public:
   int brightnessLevel() const;
   void setBrightnessLevel(int brightnessLevel);
   constexpr static int NumberOfBrightnessStates = 5;
+  bool languageChanged;
 private:
   I18n::Language m_language;
   ExamMode m_examMode;

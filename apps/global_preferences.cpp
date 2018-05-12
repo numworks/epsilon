@@ -20,6 +20,7 @@ I18n::Language GlobalPreferences::language() const {
 void GlobalPreferences::setLanguage(I18n::Language language) {
   if (language != m_language) {
     m_language = language;
+    languageChanged = true;
   }
 }
 

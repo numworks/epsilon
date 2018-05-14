@@ -166,9 +166,9 @@ void HorizontalLayout::privateReplaceChild(const ExpressionLayout * oldChild, Ex
 void HorizontalLayout::addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren) {
   if (eL->isHorizontal()) {
     mergeChildrenAtIndex(static_cast<HorizontalLayout *>(eL), index, removeEmptyChildren);
-    return;
+  } else {
+    addChildAtIndex(eL, index);
   }
-  addChildAtIndex(eL, index);
 }
 
 ExpressionLayoutCursor HorizontalLayout::cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) {

@@ -188,6 +188,9 @@ bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {
   if (strcmp(m_exactOutputText, m_approximateOutputText) == 0) {
     return true;
   }
+  if (strcmp(m_exactOutputText, "undef") == 0) {
+    return true;
+  }
   return input()->isApproximate(*context);
 }
 

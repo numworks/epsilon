@@ -27,6 +27,12 @@ QUIZ_CASE(poincare_power_evaluate) {
 
   Complex<double> f[1] = {Complex<double>::Float(std::exp(-M_PI_2))};
   assert_parsed_expression_evaluates_to("I^I", f);
+
+  Complex<float> g[1] = {Complex<float>::Float(1.489846)};
+  assert_parsed_expression_evaluates_to("1.006666666666667^60", g);
+
+  Complex<double> h[1] = {Complex<double>::Float(1.48984570830164)};
+  assert_parsed_expression_evaluates_to("1.006666666666667^60", h);
 }
 
 QUIZ_CASE(poincare_power_simplify) {
@@ -84,4 +90,5 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("(5*P+R(2))^(-5)", "1/(4*R(2)+100*P+500*R(2)*P^2+2500*P^3+3125*R(2)*P^4+3125*P^5)");
   assert_parsed_expression_simplify_to("(1+R(2)+R(3))^5", "296+224*R(2)+184*R(3)+120*R(6)");
   assert_parsed_expression_simplify_to("(P+R(2)+R(3)+x)^(-3)", "1/(11*R(2)+9*R(3)+15*x+6*R(6)*x+3*R(2)*x^2+3*R(3)*x^2+x^3+15*P+6*R(6)*P+6*R(2)*x*P+6*R(3)*x*P+3*x^2*P+3*R(2)*P^2+3*R(3)*P^2+3*x*P^2+P^3)");
+  assert_parsed_expression_simplify_to("1.006666666666667^60", "(1006666666666667/1000000000000000)^60");
 }

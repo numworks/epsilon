@@ -25,7 +25,7 @@ public:
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
-  constexpr static int k_maxIntegerPower = 100;
+  constexpr static int k_maxExactPowerMatrix = 100;
   /* Property */
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
   /* Layout */
@@ -52,10 +52,9 @@ private:
   static bool TermIsARationalSquareRootOrRational(const Expression * e);
   static const Rational * RadicandInExpression(const Expression * e);
   static const Rational * RationalFactorInExpression(const Expression * e);
-  static bool RationalExponentShouldNotBeReduced(const Rational * r);
+  static bool RationalExponentShouldNotBeReduced(const Rational * b, const Rational * r);
   /* Evaluation */
   constexpr static int k_maxApproximatePowerMatrix = 1000;
-  constexpr static int k_maxExactPowerMatrix = 100;
   template<typename T> static Matrix * computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * n) { return nullptr; }
   template<typename T> static Matrix * computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * d);
   template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n) { return nullptr; }

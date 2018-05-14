@@ -282,9 +282,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     // p^q with p, q rationals
     if (!letPowerAtRoot && operand(1)->type() == Type::Rational) {
       Rational * exp = static_cast<Rational *>(editableOperand(1));
-      /* First, we check that the simplification does not involve too complex power
-       * of integers (ie 3^999) that would take too much time to compute. */
-      if (RationalExponentShouldNotBeReduced(exp)) {
+      if (RationalExponentShouldNotBeReduced(a, exp)) {
         return this;
       }
       return simplifyRationalRationalPower(this, a, exp, context, angleUnit);
@@ -368,9 +366,9 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     Addition * a = static_cast<Addition *>(editableOperand(1));
     // Check is b is rational
     if (a->operand(0)->type() == Type::Rational) {
-      /* First, we check that the simplification does not involve too complex power
-       * of integers (ie 3^999) that would take too much time to compute. */
-      if (RationalExponentShouldNotBeReduced(static_cast<const Rational *>(a->operand(0)))) {
+      const Rational * rationalBase = static_cast<const Rational *>(operand(0));
+      const Rational * rationalIndex = static_cast<const Rational *>(a->operand(0));
+      if (RationalExponentShouldNotBeReduced(rationalBase, rationalIndex)) {
         return this;
       }
       Power * p1 = static_cast<Power *>(clone());
@@ -810,10 +808,25 @@ bool Power::isNthRootOfUnity() const {
   return false;
 }
 
-bool Power::RationalExponentShouldNotBeReduced(const Rational * r) {
+bool Power::RationalExponentShouldNotBeReduced(const Rational * b, const Rational * r) {
+  /* We check that the simplification does not involve too complex power of
+   * integers (ie 3^999, 120232323232^50) that would take too much time to
+   * compute:
+   *  - we cap the exponent at k_maxExactPowerMatrix
+   *  - we cap the resulting power at DBL_MAX
+   * The complexity of computing a power of rational is mainly due to computing
+   * the GCD of the resulting numerator and denominator. Euclide algorithm's
+   * complexity is apportionned to the number of decimal digits in the smallest
+   * integer. */
   Integer maxIntegerExponent = r->numerator();
   maxIntegerExponent.setNegative(false);
-  if (Integer::NaturalOrder(maxIntegerExponent, Integer(k_maxIntegerPower)) > 0) {
+  if (Integer::NaturalOrder(maxIntegerExponent, Integer(k_maxExactPowerMatrix)) > 0) {
+    return true;
+  }
+  double index = maxIntegerExponent.approximate<double>();
+  double powerNumerator = std::pow(std::fabs(b->numerator().approximate<double>()), index);
+  double powerDenominator = std::pow(std::fabs(b->denominator().approximate<double>()), index);
+  if (std::isnan(powerNumerator) || std::isnan(powerDenominator) || std::isinf(powerNumerator) || std::isinf(powerDenominator)) {
     return true;
   }
   return false;

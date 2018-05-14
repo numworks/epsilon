@@ -35,11 +35,12 @@ Expression * Round::shallowReduce(Context& context, AngleUnit angleUnit) {
     if (!r2->denominator().isOne()) {
       return replaceWith(new Undefined(), true);
     }
-    if (Power::RationalExponentShouldNotBeReduced(r2)) {
+    const Rational ten(10);
+    if (Power::RationalExponentShouldNotBeReduced(&ten, r2)) {
       return this;
     }
-    Rational err = Rational::Power(Rational(10), r2->numerator());
-    Rational mult = Rational::Multiplication(*r1, Rational(err));
+    Rational err = Rational::Power(ten, r2->numerator());
+    Rational mult = Rational::Multiplication(*r1, err);
     IntegerDivision d = Integer::Division(mult.numerator(), mult.denominator());
     Integer rounding = d.quotient;
     if (Rational::NaturalOrder(Rational(d.remainder, mult.denominator()), Rational(1,2)) >= 0) {

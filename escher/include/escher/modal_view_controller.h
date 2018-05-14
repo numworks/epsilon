@@ -13,10 +13,13 @@ public:
   void didBecomeFirstResponder() override;
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0,  KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
+  void reloadModalViewController();
   void dismissModalViewController();
   bool isDisplayingModal();
   void viewWillAppear() override;
   void viewDidDisappear() override;
+protected:
+  void reloadView();
 private:
   class ContentView : public View {
   public:
@@ -29,8 +32,9 @@ private:
       KDCoordinate topMargin, KDCoordinate leftMargin,  KDCoordinate bottomMargin, KDCoordinate rightMargin);
     void dismissModalView();
     bool isDisplayingModal() const;
+    void reload();
   private:
-    KDRect frame() const;
+    KDRect modalViewFrame() const;
     View * m_regularView;
     View * m_currentModalView;
     bool m_isDisplayingModal;

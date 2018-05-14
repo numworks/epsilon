@@ -1,8 +1,7 @@
 #include "sub_controller.h"
+#include "helpers.h"
 #include "../global_preferences.h"
 #include "../apps_container.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
 #include <cmath>
 
@@ -23,13 +22,10 @@ SubController::SubController(Responder * parentResponder) :
     m_cells[i].setAccessoryFontSize(KDText::FontSize::Small);
     m_cells[i].setAccessoryTextColor(Palette::GreyDark);
   }
-  const char text[] = {'a','+', Ion::Charset::IComplex, 'b', ' '};
-  m_complexFormatLayout[0] = new StringLayout(text, sizeof(text));
-  const char base[] = {'r', Ion::Charset::Exponential};
-  const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
-  m_complexFormatLayout[1] = new BaselineRelativeLayout(new StringLayout(base, sizeof(base)), new StringLayout(superscript, sizeof(superscript)), BaselineRelativeLayout::Type::Superscript);
+  m_complexFormatLayout[0] = Helpers::CartesianComplexFormat(KDText::FontSize::Large);
+  m_complexFormatLayout[1] = Helpers::PolarComplexFormat(KDText::FontSize::Large);
   for (int i = 0; i < 2; i++) {
-    m_complexFormatCells[i].setExpression(m_complexFormatLayout[i]);
+    m_complexFormatCells[i].setExpressionLayout(m_complexFormatLayout[i]);
   }
   m_editableCell.setMessage(I18n::Message::SignificantFigures);
   m_editableCell.setMessageFontSize(KDText::FontSize::Large);
@@ -74,7 +70,7 @@ bool SubController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    /* Behavious of "Exam mode" menu*/
+    /* Behaviour of "Exam mode" menu*/
     if (m_messageTreeModel->label() == I18n::Message::ExamMode) {
       if (GlobalPreferences::sharedGlobalPreferences()->examMode() == GlobalPreferences::ExamMode::Activate) {
         return false;
@@ -250,6 +246,9 @@ void SubController::setPreferenceWithValueIndex(I18n::Message message, int value
   if (message == I18n::Message::DisplayMode) {
     Preferences::sharedPreferences()->setDisplayMode((PrintFloat::Mode)valueIndex);
   }
+  if (message == I18n::Message::EditionMode) {
+    Preferences::sharedPreferences()->setEditionMode((Preferences::EditionMode)valueIndex);
+  }
   if (message == I18n::Message::ComplexFormat) {
     Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
   }
@@ -261,6 +260,9 @@ int SubController::valueIndexForPreference(I18n::Message message) {
   }
   if (message == I18n::Message::DisplayMode) {
     return (int)Preferences::sharedPreferences()->displayMode();
+  }
+  if (message == I18n::Message::EditionMode) {
+    return (int)Preferences::sharedPreferences()->editionMode();
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)Preferences::sharedPreferences()->complexFormat();

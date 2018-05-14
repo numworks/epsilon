@@ -26,6 +26,8 @@ objs += $(addprefix poincare/src/,\
   division_remainder.o\
   division.o\
   dynamic_hierarchy.o\
+  empty_expression.o\
+  expression_layout_cursor.o\
   expression_lexer.o\
   expression_parser.o\
   expression.o\
@@ -86,21 +88,34 @@ objs += $(addprefix poincare/src/,\
 )
 
 objs += $(addprefix poincare/src/layout/,\
-  baseline_relative_layout.o\
+  absolute_value_layout.o\
+  binomial_coefficient_layout.o\
+  bounded_static_layout_hierarchy.o\
   bracket_layout.o\
+  bracket_pair_layout.o\
+  ceiling_layout.o\
+  char_layout.o\
   condensed_sum_layout.o\
   conjugate_layout.o\
+  dynamic_layout_hierarchy.o\
+  empty_layout.o\
   expression_layout.o\
+  floor_layout.o\
   fraction_layout.o\
   grid_layout.o\
   horizontal_layout.o\
   integral_layout.o\
+  left_parenthesis_layout.o\
+  left_square_bracket_layout.o\
+  matrix_layout.o\
   nth_root_layout.o\
-  parenthesis_layout.o\
   product_layout.o\
+  right_parenthesis_layout.o\
+  right_square_bracket_layout.o\
   sequence_layout.o\
-  string_layout.o\
+  static_layout_hierarchy.o\
   sum_layout.o\
+  vertical_offset_layout.o\
 )
 
 tests += $(addprefix poincare/test/,\

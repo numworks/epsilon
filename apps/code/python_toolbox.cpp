@@ -291,10 +291,10 @@ bool PythonToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
   m_selectableTableView.deselectTable();
   ToolboxMessageTree * node = selectedMessageTree;
   const char * editedText = I18n::translate(node->insertedText());
-  char strippedEditedText[strlen(editedText)+1];
-  Shared::ToolboxHelpers::TextToInsertForCommandMessage(node->insertedText(), strippedEditedText);
-  TextInput * textInput = static_cast<TextInput *>(sender());
-  textInput->handleEventWithText(strippedEditedText, true);
+  int strippedEditedTextMaxLength = strlen(editedText)+1;
+  char strippedEditedText[strippedEditedTextMaxLength];
+  Shared::ToolboxHelpers::TextToInsertForCommandMessage(node->insertedText(), strippedEditedText, strippedEditedTextMaxLength, true);
+  sender()->handleEventWithText(strippedEditedText, true);
   app()->dismissModalViewController();
   return true;
 }

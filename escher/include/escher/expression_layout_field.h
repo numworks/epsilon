@@ -41,6 +41,9 @@ protected:
   virtual bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
 private:
+  void scrollRightOfLayout(Poincare::ExpressionLayout * layout);
+  void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
+
   class ContentView : public View {
   public:
     ContentView(Poincare::ExpressionLayout * expressionLayout);

@@ -27,16 +27,7 @@ void ExpressionLayoutField::clearLayout() {
 }
 
 void ExpressionLayoutField::scrollToCursor() {
-  // Show the whole cursor
-  scrollToContentRect(m_contentView.cursorRect(), true);
-  // Show the cursor area around its baseline
-  Poincare::ExpressionLayoutCursor * cursor = m_contentView.cursor();
-  KDCoordinate cursorBaseline = cursor->baseline();
-  KDCoordinate underBaseline = m_contentView.cursorRect().height() - cursorBaseline;
-  KDCoordinate minAroundBaseline = min(cursorBaseline, underBaseline);
-  minAroundBaseline = min(minAroundBaseline, bounds().height() / 2);
-  KDRect balancedRect(m_contentView.cursorRect().x(), m_contentView.cursorRect().y() + cursorBaseline - minAroundBaseline, Poincare::ExpressionLayoutCursor::k_cursorWidth, 2 * minAroundBaseline);
-  scrollToContentRect(balancedRect, true);
+  scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->baseline());
 }
 
 Toolbox * ExpressionLayoutField::toolbox() {
@@ -229,6 +220,7 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
   }
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
   bool layoutWillBeMerged = layout->isHorizontal();
+  Poincare::ExpressionLayout * lastMergedLayoutChild = layoutWillBeMerged ? layout->editableChild(layout->numberOfChildren()-1) : nullptr;
   m_contentView.cursor()->addLayoutAndMoveCursor(layout);
   if (pointedLayout != nullptr && (pointedLayout != layout || !layoutWillBeMerged)) {
     m_contentView.cursor()->setPointedExpressionLayout(pointedLayout);
@@ -240,6 +232,13 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
   m_contentView.cursor()->pointedExpressionLayout()->addGreySquaresToAllMatrixAncestors();
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();
   reload();
+  if (!layoutWillBeMerged) {
+    scrollRightOfLayout(layout);
+  } else {
+    assert(lastMergedLayoutChild != nullptr);
+    scrollRightOfLayout(lastMergedLayoutChild);
+  }
+  scrollToCursor();
 }
 
 void ExpressionLayoutField::insertLayoutFromTextAtCursor(const char * text) {
@@ -312,4 +311,19 @@ char ExpressionLayoutField::XNTChar() {
 void ExpressionLayoutField::setBackgroundColor(KDColor c) {
   ScrollableView::setBackgroundColor(c);
   m_contentView.setBackgroundColor(c);
+}
+
+void ExpressionLayoutField::scrollRightOfLayout(Poincare::ExpressionLayout * layout) {
+  KDRect layoutRect(layout->absoluteOrigin().translatedBy(m_contentView.expressionView()->drawingOrigin()), layout->size());
+  scrollToBaselinedRect(layoutRect, layout->baseline());
+}
+
+void ExpressionLayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
+  scrollToContentRect(rect, true);
+  // Show the rect area around its baseline
+  KDCoordinate underBaseline = rect.height() - baseline;
+  KDCoordinate minAroundBaseline = min(baseline, underBaseline);
+  minAroundBaseline = min(minAroundBaseline, bounds().height() / 2);
+  KDRect balancedRect(rect.x(), rect.y() + baseline - minAroundBaseline, rect.width(), 2 * minAroundBaseline);
+  scrollToContentRect(balancedRect, true);
 }

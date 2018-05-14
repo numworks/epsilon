@@ -52,7 +52,8 @@ void StaticLayoutHierarchy<T>::build(const ExpressionLayout * const * operands, 
   assert(operands != nullptr);
   assert(numberOfOperands <= T);
   for (int i = 0; i < numberOfOperands; i++) {
-    if (cloneOperands && operands[i] != nullptr) {
+    assert(operands[i] != nullptr);
+    if (cloneOperands) {
       m_children[i] = operands[i]->clone();
     } else {
       m_children[i] = operands[i];

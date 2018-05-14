@@ -318,18 +318,19 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation) {
       buffer[bufferIndex++] = '(';
     } else if (eventText[i] == '}') {
       buffer[bufferIndex++] = ')';
-    } else if (eventText[i] != '_') {
+    } else if (eventText[i] == '_') {
+    } else {
       buffer[bufferIndex++] = eventText[i];
     }
   }
 
   int cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(buffer);
 
-  bufferIndex = 0;
+  int newBufferIndex = 0;
   // Remove EmptyChars
-  for (size_t i = bufferIndex; i < eventTextSize; i++) {
+  for (size_t i = newBufferIndex; i < bufferIndex; i++) {
     if (buffer[i] != Ion::Charset::Empty) {
-      buffer[bufferIndex++] = buffer[i];
+      buffer[newBufferIndex++] = buffer[i];
     }
   }
 

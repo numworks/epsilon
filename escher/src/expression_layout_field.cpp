@@ -279,24 +279,7 @@ void ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
 }
 
 bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation) {
-  size_t textLength = strlen(text) + 1;
-  size_t textToInsertMaxLength = 2*textLength;
-  char textToInsert[textToInsertMaxLength];
-
-  size_t textToInsertIndex = 0;
-  // Add empty chars where arguments are needed
-  for (size_t i = textToInsertIndex; i < textLength; i++) {
-    textToInsert[textToInsertIndex++] = text[i];
-    if (((text[i] == '(' || text[i] == '[')
-          && text[i+1] == ',')
-        || (text[i] == ','
-          && (text[i+1] == ')' || text[i+1] == ']')))
-    {
-      textToInsert[textToInsertIndex++] = Ion::Charset::Empty;
-    }
-  }
-
-  Poincare::Expression * resultExpression = Poincare::Expression::parse(textToInsert);
+  Poincare::Expression * resultExpression = Poincare::Expression::parse(text);
   if (resultExpression == nullptr) {
     return false;
   }

@@ -2,8 +2,9 @@
 #include "app.h"
 #include "../apps_container.h"
 #include "../constant.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
+#include "../../poincare/src/layout/char_layout.h"
+#include "../../poincare/src/layout/horizontal_layout.h"
+#include "../../poincare/src/layout/vertical_offset_layout.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -15,8 +16,8 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
   Shared::StoreController(parentResponder, store, header),
   m_titleCells{}
 {
-  m_titleLayout[0] = new BaselineRelativeLayout(new StringLayout("X", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-  m_titleLayout[1] = new BaselineRelativeLayout(new StringLayout("Y", 1, KDText::FontSize::Small), new StringLayout("i", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+  m_titleLayout[0] = new HorizontalLayout(new CharLayout('X', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('i', KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false), false);
+  m_titleLayout[1] = new HorizontalLayout(new CharLayout('Y', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('i', KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false), false);
 }
 
 StoreController::~StoreController() {
@@ -34,7 +35,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     return;
   }
   EvenOddExpressionCell * mytitleCell = (EvenOddExpressionCell *)cell;
-  mytitleCell->setExpression(m_titleLayout[i]);
+  mytitleCell->setExpressionLayout(m_titleLayout[i]);
 }
 
 HighlightCell * StoreController::titleCells(int index) {

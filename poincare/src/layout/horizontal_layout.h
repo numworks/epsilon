@@ -1,27 +1,57 @@
 #ifndef POINCARE_HORIZONTAL_LAYOUT_H
 #define POINCARE_HORIZONTAL_LAYOUT_H
 
-#include <poincare/expression.h>
-#include <poincare/expression_layout.h>
+#include <poincare/dynamic_layout_hierarchy.h>
+#include <poincare/layout_engine.h>
+#include <poincare/expression_layout_cursor.h>
 
 namespace Poincare {
 
-class HorizontalLayout : public ExpressionLayout {
+class HorizontalLayout : public DynamicLayoutHierarchy {
+  friend class BinomialCoefficientLayout;
+  friend class IntegralLayout;
+  friend class MatrixLayout;
+  friend class SequenceLayout;
 public:
-  HorizontalLayout(ExpressionLayout ** layouts, int number_of_children);
-  ~HorizontalLayout();
-  HorizontalLayout(const HorizontalLayout& other) = delete;
-  HorizontalLayout(HorizontalLayout&& other) = delete;
-  HorizontalLayout& operator=(const HorizontalLayout& other) = delete;
-  HorizontalLayout& operator=(HorizontalLayout&& other) = delete;
+  using DynamicLayoutHierarchy::DynamicLayoutHierarchy;
+  ExpressionLayout * clone() const override;
+  void deleteBeforeCursor(ExpressionLayoutCursor * cursor) override;
+
+  // Replace
+  void replaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild) override;
+  void replaceChildAndMoveCursor(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor) override;
+  void addOrMergeChildAtIndex(ExpressionLayout * eL, int index, bool removeEmptyChildren);
+
+  // Tree navigation
+  ExpressionLayoutCursor cursorLeftOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+  ExpressionLayoutCursor cursorRightOf(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout) override;
+
+  // Dynamic layout
+  void addChildrenAtIndex(const ExpressionLayout * const * operands, int numberOfOperands, int indexForInsertion, bool removeEmptyChildren) override;
+  bool addChildAtIndex(ExpressionLayout * operand, int index) override;
+  void removeChildAtIndex(int index, bool deleteAfterRemoval) override;
+  void mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int index, bool removeEmptyChildren) override;
+
+  // Serialization
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+
+  // Cursor
+  ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor cursor) override;
+
+  // Other
+  bool isHorizontal() const override { return true; }
+  bool isEmpty() const override { return m_numberOfChildren == 1 && child(0)->isEmpty(); }
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return m_numberOfChildren != 0; }
 protected:
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
   KDSize computeSize() override;
-  ExpressionLayout * child(uint16_t index) override;
+  void computeBaseline() override;
   KDPoint positionOfChild(ExpressionLayout * child) override;
+  void privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) override;
 private:
-  int m_number_of_children;
-  ExpressionLayout ** m_children_layouts;
+  void privateReplaceChild(const ExpressionLayout * oldChild, ExpressionLayout * newChild, bool deleteOldChild, ExpressionLayoutCursor * cursor);
+  void privateRemoveChildAtIndex(int index, bool deleteAfterRemoval, bool forceRemove);
+  int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft);
 };
 
 }

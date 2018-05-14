@@ -146,7 +146,6 @@ void Expression::swapOperands(int i, int j) {
 }
 
 bool Expression::hasAncestor(const Expression * e) const {
-  assert(m_parent != this);
   if (m_parent == e) {
     return true;
   }

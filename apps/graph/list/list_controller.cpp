@@ -90,7 +90,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Function * f = m_functionStore->functionAtIndex(j);
-  myCell->setExpression(f->layout());
+  myCell->setExpressionLayout(f->layout());
   bool active = f->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
   myCell->setTextColor(textColor);

@@ -6,6 +6,7 @@ app_objs += $(addprefix apps/shared/,\
   curve_view_cursor.o\
   curve_view_range.o\
   editable_cell_table_view_controller.o\
+  expression_field_delegate_app.o\
   float_pair_store.o\
   float_parameter_controller.o\
   function.o\
@@ -37,6 +38,7 @@ app_objs += $(addprefix apps/shared/,\
   regular_table_view_data_source.o\
   round_cursor_view.o\
   simple_interactive_curve_view_controller.o\
+  expression_layout_field_delegate.o\
   store_controller.o\
   store_parameter_controller.o\
   sum_graph_controller.o\

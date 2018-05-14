@@ -18,7 +18,7 @@ void ExpressionTableCell::setHighlighted(bool highlight) {
   m_labelExpressionView.setBackgroundColor(backgroundColor);
 }
 
-void ExpressionTableCell::setExpression(Poincare::ExpressionLayout * expressionLayout) {
-  m_labelExpressionView.setExpression(expressionLayout);
+void ExpressionTableCell::setExpressionLayout(Poincare::ExpressionLayout * expressionLayout) {
+  m_labelExpressionView.setExpressionLayout(expressionLayout);
   layoutSubviews();
 }

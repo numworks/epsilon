@@ -1,74 +1,71 @@
 #include "edit_expression_controller.h"
-#include "../apps_container.h"
 #include "app.h"
+#include "../apps_container.h"
+#include <ion/display.h>
+#include <poincare/preferences.h>
 #include <assert.h>
 
 using namespace Shared;
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate) :
+EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_textField(parentResponder, m_textBody, TextField::maxBufferSize(), textFieldDelegate)
+  m_layout(new Poincare::HorizontalLayout()),
+  m_expressionField(parentResponder, m_textBody, k_bufferLength, m_layout, textFieldDelegate, expressionLayoutFieldDelegate)
 {
   m_textBody[0] = 0;
 }
 
-int EditExpressionController::ContentView::numberOfSubviews() const {
-  return 2;
+EditExpressionController::ContentView::~ContentView() {
+  delete m_layout;
 }
 
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {
-  View * views[2] = {m_mainView, &m_textField};
-  return views[index];
+  assert(index >= 0 && index < numberOfSubviews());
+  if (index == 0) {
+    return m_mainView;
+  }
+  assert(index == 1);
+  return &m_expressionField;
 }
 
 void EditExpressionController::ContentView::layoutSubviews() {
-  KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - k_textFieldHeight-k_separatorThickness);
+  KDCoordinate inputViewFrameHeight = m_expressionField.minimalSizeForOptimalDisplay().height();
+  KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - inputViewFrameHeight);
   m_mainView->setFrame(mainViewFrame);
-  KDRect inputViewFrame(k_textMargin, bounds().height() - k_textFieldHeight, bounds().width()-k_textMargin, k_textFieldHeight);
-  m_textField.setFrame(inputViewFrame);
+  KDRect inputViewFrame(0, bounds().height() - inputViewFrameHeight, bounds().width(), inputViewFrameHeight);
+  m_expressionField.setFrame(inputViewFrame);
 }
 
-void  EditExpressionController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  // Draw the separator
-  ctx->fillRect(KDRect(0, bounds().height() -k_textFieldHeight-k_separatorThickness, bounds().width(), k_separatorThickness), Palette::GreyMiddle);
-  // Color the margin
-  ctx->fillRect(KDRect(0, bounds().height() -k_textFieldHeight, k_textMargin, k_textFieldHeight), m_textField.backgroundColor());
-}
-
-TextField * EditExpressionController::ContentView::textField() {
-  return &m_textField;
-}
-
-TableView * EditExpressionController::ContentView::mainView() {
-  return m_mainView;
+void EditExpressionController::ContentView::reload() {
+  layoutSubviews();
+  markRectAsDirty(bounds());
 }
 
 EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :
   DynamicViewController(parentResponder),
   m_historyController(historyController),
-  m_calculationStore(calculationStore)
+  m_calculationStore(calculationStore),
+  m_inputViewHeightIsMaximal(false)
 {
   m_cacheBuffer[0] = 0;
 }
 
 const char * EditExpressionController::textBody() {
-  return ((ContentView *)view())->textField()->text();
+  return ((ContentView *)view())->expressionField()->text();
 }
 
 void EditExpressionController::insertTextBody(const char * text) {
-  TextField * tf = ((ContentView *)view())->textField();
-  tf->setEditing(true, false);
-  tf->handleEventWithText(text);
+  ((ContentView *)view())->expressionField()->insertText(text);
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
       m_cacheBuffer[0] = 0;
-      ((ContentView *)view())->textField()->setEditing(false, false);
+      ((ContentView *)view())->expressionField()->setEditing(false, false);
       app()->setFirstResponder(m_historyController);
     }
     return true;
@@ -79,53 +76,106 @@ bool EditExpressionController::handleEvent(Ion::Events::Event event) {
 void EditExpressionController::didBecomeFirstResponder() {
   int lastRow = m_calculationStore->numberOfCalculations() > 0 ? m_calculationStore->numberOfCalculations()-1 : 0;
   m_historyController->scrollToCell(0, lastRow);
-  ((ContentView *)view())->textField()->setEditing(true, false);
-  app()->setFirstResponder(((ContentView *)view())->textField());
+  ((ContentView *)view())->expressionField()->setEditing(true, false);
+  app()->setFirstResponder(((ContentView *)view())->expressionField());
 }
 
 bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->textFieldShouldFinishEditing(event) && textField->draftTextLength() == 0 && m_cacheBuffer[0] != 0) {
-    App * calculationApp = (App *)app();
-    /* The input text store in m_cacheBuffer might have beed correct the first
-     * time but then be too long when replacing ans in another context */
-    if (!calculationApp->textInputIsCorrect(m_cacheBuffer)) {
-      return true;
-    }
-    m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
-    m_historyController->reload();
-    ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-    return true;
+    return inputViewDidReceiveEvent(event);
   }
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
-  App * calculationApp = (App *)app();
-  strlcpy(m_cacheBuffer, textBody(), TextField::maxBufferSize());
-  m_calculationStore->push(textBody(), calculationApp->localContext());
-  m_historyController->reload();
-  ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
-  ((ContentView *)view())->textField()->setEditing(true);
-  ((ContentView *)view())->textField()->setText("");
-  return true;
+  return inputViewDidFinishEditing(text, event);
 }
 
-bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField, const char * text) {
-  ((ContentView *)view())->textField()->setEditing(true);
-  ((ContentView *)view())->textField()->setText(text);
-  return false;
+bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField) {
+  return inputViewDidAbortEditing(textField->text());
+}
+
+bool EditExpressionController::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event) && !expressionLayoutField->hasText() && m_calculationStore->numberOfCalculations() > 0) {
+    return inputViewDidReceiveEvent(event);
+  }
+  return expressionFieldDelegateApp()->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
+}
+
+bool EditExpressionController::expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) {
+  return inputViewDidFinishEditing(text, event);
+}
+
+bool EditExpressionController::expressionLayoutFieldDidAbortEditing(::ExpressionLayoutField * expressionLayoutField) {
+  return inputViewDidAbortEditing(nullptr);
+}
+
+void EditExpressionController::expressionLayoutFieldDidChangeSize(::ExpressionLayoutField * expressionLayoutField) {
+  /* Reload the view only if the ExpressionField height actually changes, i.e.
+   * not if the height is already maximal and stays maximal. */
+  if (view()) {
+    bool newInputViewHeightIsMaximal = static_cast<ContentView *>(view())->expressionField()->heightIsMaximal();
+    if (!m_inputViewHeightIsMaximal || !newInputViewHeightIsMaximal) {
+      m_inputViewHeightIsMaximal = newInputViewHeightIsMaximal;
+      reloadView();
+    }
+  }
 }
 
 TextFieldDelegateApp * EditExpressionController::textFieldDelegateApp() {
   return (App *)app();
 }
 
+ExpressionFieldDelegateApp * EditExpressionController::expressionFieldDelegateApp() {
+  return (App *)app();
+}
+
 View * EditExpressionController::loadView() {
-  return new ContentView(this, (TableView *)m_historyController->view(), this);
+  return new ContentView(this, (TableView *)m_historyController->view(), this, this);
 }
 
 void EditExpressionController::unloadView(View * view) {
   delete view;
+}
+
+void EditExpressionController::reloadView() {
+  ((ContentView *)view())->reload();
+  m_historyController->reload();
+  if (m_historyController->numberOfRows() > 0) {
+    ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
+  }
+}
+
+bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event) {
+  App * calculationApp = (App *)app();
+  /* The input text store in m_cacheBuffer might have beed correct the first
+   * time but then be too long when replacing ans in another context */
+  if (!calculationApp->textInputIsCorrect(m_cacheBuffer)) {
+    return true;
+  }
+  m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
+  m_historyController->reload();
+  ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
+  return true;
+}
+
+bool EditExpressionController::inputViewDidFinishEditing(const char * text, Ion::Events::Event event) {
+  App * calculationApp = (App *)app();
+  strlcpy(m_cacheBuffer, textBody(), TextField::maxBufferSize());
+  m_calculationStore->push(textBody(), calculationApp->localContext());
+  m_historyController->reload();
+  ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
+  ((ContentView *)view())->expressionField()->setEditing(true);
+  ((ContentView *)view())->expressionField()->setText("");
+  return true;
+}
+
+bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
+  if (text != nullptr) {
+    ((ContentView *)view())->expressionField()->setEditing(true, true);
+    ((ContentView *)view())->expressionField()->setText(text);
+  }
+  return false;
 }
 
 void EditExpressionController::viewDidDisappear() {

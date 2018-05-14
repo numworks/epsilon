@@ -1,8 +1,9 @@
 #include "calculation_controller.h"
 #include "../constant.h"
 #include "../apps_container.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
+#include "../../poincare/src/layout/char_layout.h"
+#include "../../poincare/src/layout/horizontal_layout.h"
+#include "../../poincare/src/layout/vertical_offset_layout.h"
 #include <poincare.h>
 #include <assert.h>
 
@@ -21,7 +22,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_calculationCells{},
   m_store(store)
 {
-  m_r2Layout = new BaselineRelativeLayout(new StringLayout("r", 1, KDText::FontSize::Small), new StringLayout("2", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
+  m_r2Layout = new HorizontalLayout(new CharLayout('r', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('2', KDText::FontSize::Small), VerticalOffsetLayout::Type::Superscript, false), false);
 }
 
 CalculationController::~CalculationController() {
@@ -129,7 +130,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   if (i == 0) {
     if (j == numberOfRows()-1) {
       EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
-      myCell->setExpression(m_r2Layout);
+      myCell->setExpressionLayout(m_r2Layout);
       return;
     }
     EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;

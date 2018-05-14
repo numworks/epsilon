@@ -1,18 +1,18 @@
 #ifndef POINCARE_FLOOR_LAYOUT_H
 #define POINCARE_FLOOR_LAYOUT_H
 
-#include "bracket_layout.h"
+#include "bracket_pair_layout.h"
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
 
-class FloorLayout : public BracketLayout {
+class FloorLayout : public BracketPairLayout {
 public:
-  FloorLayout(ExpressionLayout * operandLayout) : BracketLayout(operandLayout) {}
-  ~FloorLayout() {}
-  FloorLayout(const FloorLayout& other) = delete;
-  FloorLayout(FloorLayout&& other) = delete;
-  FloorLayout& operator=(const FloorLayout& other) = delete;
-  FloorLayout& operator=(FloorLayout&& other) = delete;
+  using BracketPairLayout::BracketPairLayout;
+  ExpressionLayout * clone() const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "floor");
+  }
 protected:
   bool renderTopBar() const override { return false; }
 };

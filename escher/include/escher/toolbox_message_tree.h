@@ -2,6 +2,7 @@
 #define ESCHER_TOOLBOX_MESSAGE_TREE_H
 
 #include <escher/message_tree.h>
+#include <poincare_layouts.h>
 
 class ToolboxMessageTree : public MessageTree {
 public:
@@ -12,9 +13,9 @@ public:
     m_insertedText(insertedText)
   {
   };
-  const MessageTree * children(int index) const override;
-  I18n::Message text() const;
-  I18n::Message insertedText() const;
+  const MessageTree * children(int index) const override { return &m_children[index]; }
+  I18n::Message text() const { return m_text; }
+  I18n::Message insertedText() const { return m_insertedText; }
 private:
   const ToolboxMessageTree * m_children;
   I18n::Message m_text;

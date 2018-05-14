@@ -96,10 +96,6 @@ Toolbox::Toolbox(Responder * parentResponder, const char * title) :
   m_selectableTableView.setShowsIndicators(false);
 }
 
-void Toolbox::setSender(Responder * sender) {
-  m_sender = sender;
-}
-
 bool Toolbox::handleEvent(Ion::Events::Event event) {
   return handleEventForRow(event, selectedRow());
 }
@@ -233,8 +229,4 @@ bool Toolbox::returnToPreviousMenu() {
   m_stack.pop();
   app()->setFirstResponder(&m_listController);
   return true;
-}
-
-Responder * Toolbox::sender() {
-  return m_sender;
 }

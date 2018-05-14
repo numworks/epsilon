@@ -7,7 +7,6 @@ extern "C" {
 }
 #include <poincare/arithmetic.h>
 #include <poincare/opposite.h>
-#include "layout/string_layout.h"
 #include "layout/fraction_layout.h"
 
 namespace Poincare {
@@ -158,7 +157,7 @@ ExpressionLayout * Rational::privateCreateLayout(PrintFloat::Mode floatDisplayMo
     return numeratorLayout;
   }
   ExpressionLayout * denominatorLayout = m_denominator.createLayout();
-  return new FractionLayout(numeratorLayout, denominatorLayout);
+  return new FractionLayout(numeratorLayout, denominatorLayout, false);
 }
 
 int Rational::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

@@ -1,8 +1,10 @@
 #include "sequence.h"
 #include "sequence_store.h"
 #include "cache_context.h"
-#include "../../poincare/src/layout/string_layout.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
+#include <poincare/layout_engine.h>
+#include "../../poincare/src/layout/char_layout.h"
+#include "../../poincare/src/layout/horizontal_layout.h"
+#include "../../poincare/src/layout/vertical_offset_layout.h"
 #include <string.h>
 #include <cmath>
 
@@ -221,7 +223,10 @@ int Sequence::numberOfElements() {
 
 Poincare::ExpressionLayout * Sequence::nameLayout() {
   if (m_nameLayout == nullptr) {
-    m_nameLayout = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n", 1, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+    m_nameLayout = new HorizontalLayout(
+        new CharLayout(name()[0], KDText::FontSize::Large),
+        new VerticalOffsetLayout(new CharLayout('n', KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        false);
   }
   return m_nameLayout;
 }
@@ -229,13 +234,22 @@ Poincare::ExpressionLayout * Sequence::nameLayout() {
 Poincare::ExpressionLayout * Sequence::definitionName() {
   if (m_definitionName == nullptr) {
     if (m_type == Type::Explicit) {
-      m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n ", 2, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_definitionName = new HorizontalLayout(
+        new CharLayout(name()[0], KDText::FontSize::Large),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout("n ", 2, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        false);
     }
     if (m_type == Type::SingleRecurrence) {
-      m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n+1 ", 4, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_definitionName = new HorizontalLayout(
+        new CharLayout(name()[0], KDText::FontSize::Large),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout("n+1 ", 4, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        false);
     }
     if (m_type == Type::DoubleRecurrence) {
-      m_definitionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout("n+2 ", 4, KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
+      m_definitionName = new HorizontalLayout(
+        new CharLayout(name()[0], KDText::FontSize::Large),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout("n+2 ", 4, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        false);
     }
   }
   return m_definitionName;
@@ -244,13 +258,14 @@ Poincare::ExpressionLayout * Sequence::definitionName() {
 Poincare::ExpressionLayout * Sequence::firstInitialConditionName() {
   char buffer[k_initialRankNumberOfDigits+1];
   Integer(m_initialRank).writeTextInBuffer(buffer, k_initialRankNumberOfDigits+1);
-  if (m_firstInitialConditionName == nullptr) {
-    if (m_type == Type::SingleRecurrence) {
-      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-    }
-    if (m_type == Type::DoubleRecurrence) {
-      m_firstInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-    }
+  if (m_firstInitialConditionName == nullptr
+      && (m_type == Type::SingleRecurrence
+       || m_type == Type::DoubleRecurrence))
+  {
+    m_firstInitialConditionName = new HorizontalLayout(
+        new CharLayout(name()[0], KDText::FontSize::Small),
+        new VerticalOffsetLayout(new CharLayout('0', KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        false);
   }
   return m_firstInitialConditionName;
 }
@@ -260,8 +275,10 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
   Integer(m_initialRank+1).writeTextInBuffer(buffer, k_initialRankNumberOfDigits+1);
   if (m_secondInitialConditionName == nullptr) {
     if (m_type == Type::DoubleRecurrence) {
-      m_secondInitialConditionName = new BaselineRelativeLayout(new StringLayout(name(), 1), new StringLayout(buffer, strlen(buffer), KDText::FontSize::Small), BaselineRelativeLayout::Type::Subscript);
-
+      m_secondInitialConditionName = new HorizontalLayout(
+        new CharLayout(name()[0], KDText::FontSize::Small),
+        new VerticalOffsetLayout(new CharLayout('1', KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        false);
     }
   }
   return m_secondInitialConditionName;

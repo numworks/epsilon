@@ -34,21 +34,21 @@ void FractionLayout::collapseSiblingsAndMoveCursor(ExpressionLayoutCursor * curs
 }
 
 void FractionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
-  // Case: Left of the denominator.
-  // Replace the fraction with a horizontal juxtaposition of the numerator and
-  // the denominator.
+  /* Case: Left of the denominator.
+   * Replace the fraction with a horizontal juxtaposition of the numerator and
+   * the denominator. */
   if (cursor->pointedExpressionLayout() == denominatorLayout()) {
     assert(cursor->position() == ExpressionLayoutCursor::Position::Left);
     if (numeratorLayout()->isEmpty() && denominatorLayout()->isEmpty()) {
-      // Case: Numerator and denominator are empty.
-      // Move the cursor then replace the fraction with an empty layout.
+      /* Case: Numerator and denominator are empty.
+       * Move the cursor then replace the fraction with an empty layout. */
       replaceWithAndMoveCursor(new EmptyLayout(), true, cursor);
       return;
     }
 
-    // Else, replace the fraction with a juxtaposition of the numerator and
-    // denominator. Place the cursor in the middle of the juxtaposition, which
-    // is right of the numerator.
+    /* Else, replace the fraction with a juxtaposition of the numerator and
+     * denominator. Place the cursor in the middle of the juxtaposition, which
+     * is right of the numerator. */
 
     // Juxtapose.
     ExpressionLayout * numerator = numeratorLayout();
@@ -94,8 +94,8 @@ void FractionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
     return;
   }
 
-  // Case: Right.
-  // Move Right of the denominator.
+  /* Case: Right.
+   * Move Right of the denominator. */
   if (cursor->pointedExpressionLayout() == this
       && cursor->position() == ExpressionLayoutCursor::Position::Right)
   {

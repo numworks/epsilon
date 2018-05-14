@@ -310,6 +310,7 @@ bool Storage::slideBuffer(char * position, int delta) {
 }
 
 Storage::RecordIterator & Storage::RecordIterator::operator++() {
+  assert(m_recordStart);
   record_size_t size = unalignedShort(m_recordStart);
   char * nextRecord = m_recordStart+size;
   record_size_t newRecordSize = unalignedShort(nextRecord);

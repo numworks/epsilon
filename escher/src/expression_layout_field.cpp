@@ -228,9 +228,6 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
     return;
   }
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
-  if (layout->isMatrix() && pointedLayout && pointedLayout->hasAncestor(layout)) {
-    static_cast<Poincare::MatrixLayout *>(layout)->addGreySquares();
-  }
   bool layoutWillBeMerged = layout->isHorizontal();
   m_contentView.cursor()->addLayoutAndMoveCursor(layout);
   if (pointedLayout != nullptr && (pointedLayout != layout || !layoutWillBeMerged)) {
@@ -240,6 +237,7 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
     m_contentView.cursor()->setPointedExpressionLayout(layout->layoutToPointWhenInserting());
     m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
   }
+  m_contentView.cursor()->pointedExpressionLayout()->addGreySquaresToAllMatrixAncestors();
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();
   reload();
 }

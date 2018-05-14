@@ -50,42 +50,39 @@ void FractionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
     // denominator. Place the cursor in the middle of the juxtaposition, which
     // is right of the numerator.
 
-    // Prepare the cursor position.
-    ExpressionLayout * nextPointedLayout = numeratorLayout();
-    ExpressionLayoutCursor::Position  nextPosition = ExpressionLayoutCursor::Position::Right;
-    if (numeratorLayout()->isEmpty()) {
-      /* If no numeratorLayout, place the cursor to the left of denominator (as
-       * both cannot be empty - case handled before). */
-      nextPointedLayout = denominatorLayout();
-      nextPosition = ExpressionLayoutCursor::Position::Left;
-      if (denominatorLayout()->isHorizontal()) {
-        nextPointedLayout = denominatorLayout()->editableChild(0);
-      }
-#if 0 // TODO: discard me if agreed
-      int indexInParent = m_parent->indexOfChild(this);
-      if (indexInParent > 0) {
-        nextPointedLayout = m_parent->editableChild(indexInParent - 1);
-      } else {
-        nextPointedLayout = m_parent;
-        nextPosition = ExpressionLayoutCursor::Position::Left;
-      }
-#endif
-    } else if (numeratorLayout()->isHorizontal()) {
-      nextPointedLayout = numeratorLayout()->editableChild(numeratorLayout()->numberOfChildren() - 1);
-    }
-
     // Juxtapose.
     ExpressionLayout * numerator = numeratorLayout();
     ExpressionLayout * denominator = denominatorLayout();
     detachChild(numerator);
     detachChild(denominator);
     HorizontalLayout * newLayout = new HorizontalLayout();
+    // Prepare the cursor position.
+    ExpressionLayout * nextPointedLayout = nullptr;
+    ExpressionLayoutCursor::Position nextPosition = ExpressionLayoutCursor::Position::Left;
     // Add the denominator before the numerator to have the right order.
     if (!denominator->isEmpty()) {
       newLayout->addOrMergeChildAtIndex(denominator, 0, true);
+      /* The cursor should point to the left of denominator. However, if the
+       * pointed expression is an empty layout, it might disappear when merging
+       * the numerator, we therefore point to the next child which is visually
+       * equivalent. */
+      int indexPointedLayout = newLayout->editableChild(0)->isEmpty() ? 1 : 0;
+      assert(newLayout->numberOfChildren() > indexPointedLayout);
+      nextPointedLayout = newLayout->editableChild(indexPointedLayout);
     }
     if (!numerator->isEmpty()) {
       newLayout->addOrMergeChildAtIndex(numerator, 0, true);
+      if (nextPointedLayout == nullptr) {
+        /* If nextPointedLayout is not defined yet, the denominator was empty
+         * and we want to point to the right of the numerator. It is asserted
+         * not to be empty because we previously handled the case of both
+         * numerator and denominator empty and the rightest child of a
+         * horizontal layout cannot be empty. */
+        assert(newLayout->numberOfChildren() > 0);
+        nextPointedLayout = newLayout->editableChild(newLayout->numberOfChildren() - 1);
+        nextPosition = ExpressionLayoutCursor::Position::Right;
+        assert(!nextPointedLayout->isEmpty());
+      }
     }
     replaceWith(newLayout, true);
     cursor->setPointedExpressionLayout(nextPointedLayout);

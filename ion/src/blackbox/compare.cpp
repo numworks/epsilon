@@ -1,8 +1,11 @@
-// Compare_main
-
-// make -j8 PLATFORM=blackbox libepsilon_first.dylib
-// make -j8 PLATFORM=blackbox libepsilon_second.dylib
-//
+/* Compare two Epsilon versions
+ *
+ * git checkout first_hash
+ * make -j8 PLATFORM=blackbox clean libepsilon_first.dylib
+ * git checkout second_hash
+ * make -j8 PLATFORM=blackbox clean libepsilon_second.dylib
+ * make PLATFORM=blackbox compare
+ */
 
 #undef EPSILON_LIB_PREFIX
 #define EPSILON_LIB_PREFIX first
@@ -15,12 +18,12 @@
 #include <thread>
 
 int main(int argc, char * argv[]) {
-
   std::thread first(first_epsilon_main);
   std::thread second(second_epsilon_main);
 
   const KDColor * firstFrameBuffer = first_epsilon_frame_buffer();
   const KDColor * secondFrameBuffer = second_epsilon_frame_buffer();
+
   int index = 0;
   while (true) {
     int e = getchar();
@@ -41,8 +44,6 @@ int main(int argc, char * argv[]) {
       first_epsilon_write_frame_buffer_to_file("epsilon_first.png");
       second_epsilon_write_frame_buffer_to_file("epsilon_second.png");
       exit(-1);
-    } else {
-      //printf("Framebuffer at %p and %p were the same\n", firstFrameBuffer, secondFrameBuffer);
     }
   }
 

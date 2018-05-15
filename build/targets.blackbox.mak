@@ -7,7 +7,7 @@ ion/src/blackbox/library_%.o: ion/src/blackbox/library.cpp
 	@echo "CXX     $@"
 	$(Q) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
-libepsilon_objs = $(filter-out $(add-prefix ion/src/blackbox/,boot.o events.o),$(objs))
+libepsilon_objs = $(filter-out $(addprefix ion/src/blackbox/,boot.o events.o),$(objs))
 
 libepsilon_%.o: LDFLAGS += -exported_symbols_list ion/src/blackbox/lib_export_list.txt
 libepsilon_%.o: $(libepsilon_objs) $(app_objs) $(app_image_objs) ion/src/blackbox/library_%.o

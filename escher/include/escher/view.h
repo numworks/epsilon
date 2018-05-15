@@ -23,6 +23,7 @@ class Window;
 class View {
   // We only want Window to be able to invoke View::redraw
   friend class Window;
+  friend class TransparentView;
 public:
   View();
   virtual ~View();
@@ -58,7 +59,7 @@ protected:
    *  - Moving a cursor -> In that case, there's really a much more efficient way
    *  - ... and that's all I can think of.
    */
-  void markRectAsDirty(KDRect rect);
+  virtual void markRectAsDirty(KDRect rect);
 #if ESCHER_VIEW_LOGGING
   virtual const char * className() const;
   virtual void logAttributes(std::ostream &os) const;

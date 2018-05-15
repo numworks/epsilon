@@ -77,6 +77,7 @@
 #include <escher/timer.h>
 #include <escher/toolbox.h>
 #include <escher/toolbox_message_tree.h>
+#include <escher/transparent_view.h>
 #include <escher/view.h>
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>

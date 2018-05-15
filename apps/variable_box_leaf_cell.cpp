@@ -54,7 +54,7 @@ void VariableBoxLeafCell::layoutSubviews() {
     return;
   }
   m_labelView.setFrame(KDRect(k_separatorThickness+k_widthMargin, k_separatorThickness, labelSize.width(), height-2*k_separatorThickness));
-  m_subtitleView.setFrame(KDRect(k_separatorThickness+k_widthMargin+labelSize.width(), k_separatorThickness, width-k_separatorThickness-k_widthMargin-labelSize.width(), height-2*k_separatorThickness));
+  m_subtitleView.setFrame(KDRect(k_separatorThickness+k_widthMargin+labelSize.width(), k_separatorThickness, width-k_separatorThickness-2*k_widthMargin-labelSize.width(), height-2*k_separatorThickness));
   m_subtitleView.setAlignment(1.0f, 0.5f);
   return;
 }

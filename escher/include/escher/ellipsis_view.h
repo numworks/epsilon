@@ -1,11 +1,10 @@
 #ifndef ESCHER_ELLIPSIS_VIEW_H
 #define ESCHER_ELLIPSIS_VIEW_H
 
-#include <escher/view.h>
+#include <escher/transparent_view.h>
 
-class EllipsisView : public View {
+class EllipsisView : public TransparentView {
 public:
-  EllipsisView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   /* k_ellipsisHeight and k_ellipsisWidth are the dimensions of the ellipsis. */

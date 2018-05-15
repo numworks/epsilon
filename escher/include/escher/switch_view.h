@@ -1,9 +1,9 @@
 #ifndef ESCHER_SWITCH_VIEW_H
 #define ESCHER_SWITCH_VIEW_H
 
-#include <escher/view.h>
+#include <escher/transparent_view.h>
 
-class SwitchView : public View {
+class SwitchView : public TransparentView {
 public:
   SwitchView();
   bool state();

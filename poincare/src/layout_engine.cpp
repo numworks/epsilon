@@ -104,7 +104,7 @@ int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expre
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
   int numberOfOperands = (expression != nullptr) ? expression->numberOfOperands() : expressionLayout->numberOfChildren();
-  assert(numberOfOperands > 0); //TODO MERGE SAISIEJOLIE 1 dans HEAD
+  assert(numberOfOperands > 0);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }

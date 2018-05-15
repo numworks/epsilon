@@ -159,14 +159,14 @@ QUIZ_CASE(poincare_decimal_to_text) {
   assert_expression_prints_to(&e11, "1");
   Decimal e12(0.9999999999999996);
   assert_expression_prints_to(&e12, "1");
-  Decimal e13(0.999999999999995);
-  assert_expression_prints_to(&e13, "9.99999999999995E-1");
-  Decimal e14(0.000000999999999999995);
-  assert_expression_prints_to(&e14, "9.99999999999995E-7");
-  Decimal e15(0.0000009999999999999995);
+  Decimal e13(0.99999999999995);
+  assert_expression_prints_to(&e13, "9.9999999999995E-1");
+  Decimal e14(0.00000099999999999995);
+  assert_expression_prints_to(&e14, "9.9999999999995E-7");
+  Decimal e15(0.000000999999999999995);
   assert_expression_prints_to(&e15, "0.000001");
-  Decimal e16(0.0000009999999999901200121020102010201201201021099995);
-  assert_expression_prints_to(&e16, "9.9999999999012E-7");
+  Decimal e16(0.000000999999999901200121020102010201201201021099995);
+  assert_expression_prints_to(&e16, "9.999999999012E-7");
 }
 
 QUIZ_CASE(poincare_complex_to_text) {

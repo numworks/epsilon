@@ -224,7 +224,7 @@ int Sequence::numberOfElements() {
 Poincare::ExpressionLayout * Sequence::nameLayout() {
   if (m_nameLayout == nullptr) {
     m_nameLayout = new HorizontalLayout(
-        new CharLayout(name()[0], KDText::FontSize::Large),
+        new CharLayout(name()[0], KDText::FontSize::Small),
         new VerticalOffsetLayout(new CharLayout('n', KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
         false);
   }

@@ -1,9 +1,9 @@
 #ifndef ESCHER_GAUGE_VIEW_H
 #define ESCHER_GAUGE_VIEW_H
 
-#include <escher/view.h>
+#include <escher/transparent_view.h>
 
-class GaugeView : public View {
+class GaugeView : public TransparentView {
 public:
   GaugeView();
   float level();

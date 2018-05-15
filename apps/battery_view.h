@@ -3,7 +3,7 @@
 
 #include <escher.h>
 
-class BatteryView : public View {
+class BatteryView : public TransparentView {
 public:
   BatteryView();
   bool setChargeState(Ion::Battery::Charge chargeState);

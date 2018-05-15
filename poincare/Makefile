@@ -121,16 +121,19 @@ objs += $(addprefix poincare/src/layout/,\
 tests += $(addprefix poincare/test/,\
   addition.cpp\
   arithmetic.cpp\
+  binomial_coefficient_layout.cpp\
   complex.cpp\
   convert_expression_to_text.cpp\
   division.cpp\
   factorial.cpp\
+  fraction_layout.cpp\
   function.cpp\
   helper.cpp\
   integer.cpp\
   logarithm.cpp\
   matrix.cpp\
   multiplication.cpp\
+  nth_root_layout.cpp\
   parser.cpp\
   power.cpp\
   properties.cpp\
@@ -140,6 +143,7 @@ tests += $(addprefix poincare/test/,\
   symbol.cpp\
   store.cpp\
   trigo.cpp\
+  vertical_offset_layout.cpp\
 )
 #  simplify_utils.cpp\
 

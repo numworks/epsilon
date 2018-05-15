@@ -1,5 +1,7 @@
 #include <poincare.h>
 
+// Expressions
+
 constexpr Poincare::Expression::AngleUnit Degree = Poincare::Expression::AngleUnit::Degree;
 constexpr Poincare::Expression::AngleUnit Radian = Poincare::Expression::AngleUnit::Radian;
 
@@ -15,3 +17,7 @@ void assert_parsed_expression_evaluates_to(const char * expression, Poincare::Co
   assert_parsed_expression_evaluates_to(expression, results, 0, 0, angleUnit);
 }
 void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::Expression::AngleUnit angleUnit = Poincare::Expression::AngleUnit::Radian);
+
+// Layouts
+void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout);
+void assert_expression_layout_serialize_to(Poincare::ExpressionLayout * layout, const char * serialization);

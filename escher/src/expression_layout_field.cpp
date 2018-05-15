@@ -1,4 +1,5 @@
 #include <escher/expression_layout_field.h>
+#include <apps/i18n.h>
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/expression.h>
@@ -284,7 +285,11 @@ bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentat
   delete resultExpression;
   // Find the pointed layout.
   Poincare::ExpressionLayout * pointedLayout = nullptr;
-  if (resultLayout->isHorizontal()) {
+  if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
+    /* Special case: if the text is "random()", the cursor should not be set
+     * inside the parentheses. */
+    pointedLayout = resultLayout;
+  } else if (resultLayout->isHorizontal()) {
     /* If the layout is horizontal, pick the first open parenthesis. For now,
      * all horizontal layouts in MathToolbox have parentheses. */
     for (int i = 0; i < resultLayout->numberOfChildren(); i++) {

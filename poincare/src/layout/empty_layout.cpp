@@ -6,15 +6,17 @@
 
 namespace Poincare {
 
-EmptyLayout::EmptyLayout(Color color, bool visible) :
+EmptyLayout::EmptyLayout(Color color, bool visible, KDText::FontSize size, bool margins) :
   StaticLayoutHierarchy(),
   m_isVisible(visible),
-  m_color(color)
+  m_color(color),
+  m_size(size),
+  m_margins(margins)
 {
 }
 
 ExpressionLayout * EmptyLayout::clone() const {
-  EmptyLayout * layout = new EmptyLayout(m_color, m_isVisible);
+  EmptyLayout * layout = new EmptyLayout(m_color, m_isVisible, m_size, m_margins);
   return layout;
 }
 
@@ -56,18 +58,18 @@ int EmptyLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSi
 void EmptyLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   if (m_isVisible) {
     KDColor fillColor = m_color == Color::Yellow ? Palette::YellowDark : Palette::GreyBright;
-    ctx->fillRect(KDRect(p.x()+k_marginWidth, p.y()+k_marginHeight, k_width, k_height), fillColor);
-    ctx->fillRect(KDRect(p.x()+k_marginWidth, p.y()+k_marginHeight, k_width, k_height), fillColor);
+    ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
+    ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
   }
 }
 
 KDSize EmptyLayout::computeSize() {
-  KDCoordinate width = m_isVisible ? k_width + 2*k_marginWidth : 0;
-  return KDSize(width, k_height + 2*k_marginHeight);
+  KDCoordinate sizeWidth = m_isVisible ? width() + 2*(m_margins ? k_marginWidth : 0) : 0;
+  return KDSize(sizeWidth, height() + 2*(m_margins ? k_marginHeight : 0));
 }
 
 void EmptyLayout::computeBaseline() {
-  m_baseline = k_marginHeight + k_height/2;
+  m_baseline = (m_margins ? k_marginHeight : 0) + height()/2;
   m_baselined = true;
 }
 

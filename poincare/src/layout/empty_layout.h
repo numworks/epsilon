@@ -2,6 +2,7 @@
 #define POINCARE_empty_layout_H
 
 #include <poincare/static_layout_hierarchy.h>
+#include <kandinsky/text.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -12,7 +13,7 @@ public:
     Yellow,
     Grey
   };
-  EmptyLayout(Color color = Color::Yellow, bool visible = true);
+  EmptyLayout(Color color = Color::Yellow, bool visible = true, KDText::FontSize size = KDText::FontSize::Large, bool margins = true);
   ExpressionLayout * clone() const override;
 
   // EmptyLayout
@@ -44,14 +45,16 @@ protected:
   }
   void privateAddSibling(ExpressionLayoutCursor * cursor, ExpressionLayout * sibling, bool moveCursor) override;
 private:
-  constexpr static KDCoordinate k_width = 7;
-  constexpr static KDCoordinate k_height = 12;
   constexpr static KDCoordinate k_marginWidth = 1;
   constexpr static KDCoordinate k_marginHeight = 3;
   constexpr static KDCoordinate k_lineThickness = 1;
   ExpressionLayoutCursor cursorVerticalOf(VerticalDirection direction, ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
+  KDCoordinate height() const { return KDText::charSize(m_size).height() - 2*k_marginHeight; }
+  KDCoordinate width() const { return KDText::charSize(m_size).width() - 2*k_marginWidth; }
   bool m_isVisible;
   Color m_color;
+  KDText::FontSize m_size;
+  bool m_margins;
 };
 
 }

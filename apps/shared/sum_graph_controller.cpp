@@ -251,7 +251,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     m_sumLayout = new CondensedSumLayout(
         LayoutEngine::createStringLayout(sigma, sizeof(sigma)),
         LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small),
-        new EmptyLayout(EmptyLayout::Color::Yellow, false),
+        new EmptyLayout(EmptyLayout::Color::Yellow, false, KDText::FontSize::Small, false),
         false);
   } else {
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];

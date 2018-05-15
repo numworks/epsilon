@@ -32,6 +32,7 @@ public:
   // Other
   bool mustHaveLeftSibling() const override { return true; }
   bool isVerticalOffset() const override { return true; }
+  bool childMightNeedParentheses() const override { return m_type == Type::Superscript; }
 protected:
   ExpressionLayout * indiceLayout() { return editableChild(0);}
   ExpressionLayout * baseLayout();

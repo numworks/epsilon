@@ -81,22 +81,22 @@ ExpressionLayout * LayoutEngine::createLogLayout(ExpressionLayout * argument, Ex
 }
 
 int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName) {
-  return writeInfixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize, numberOfDigits, operatorName, 0, -1, [](const char * operatorName) { return true; });
+  return writeInfixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize, numberOfDigits, operatorName, 0, -1);
 }
 
 int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName) {
   return writePrefixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize, numberOfDigits, operatorName);
 }
 
-int LayoutEngine::writeInfixExpressionLayoutTextInBuffer(const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis) {
-  return writeInfixExpressionOrExpressionLayoutTextInBuffer(nullptr, expressionLayout, buffer, bufferSize, numberOfDigits, operatorName, firstChildIndex, lastChildIndex, childNeedsParenthesis);
+int LayoutEngine::writeInfixExpressionLayoutTextInBuffer(const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex) {
+  return writeInfixExpressionOrExpressionLayoutTextInBuffer(nullptr, expressionLayout, buffer, bufferSize, numberOfDigits, operatorName, firstChildIndex, lastChildIndex);
 }
 
 int LayoutEngine::writePrefixExpressionLayoutTextInBuffer(const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, bool writeFirstChild) {
   return writePrefixExpressionOrExpressionLayoutTextInBuffer(nullptr, expressionLayout, buffer, bufferSize, numberOfDigits, operatorName, writeFirstChild);
 }
 
-int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis) {
+int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex) {
   assert(expression != nullptr || expressionLayout != nullptr);
   if (bufferSize == 0) {
     return -1;
@@ -109,37 +109,44 @@ int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expre
     return bufferSize-1;
   }
 
-  if ((expression != nullptr && expression->operand(firstChildIndex)->needParenthesisWithParent(expression))
-      || (expression == nullptr && childNeedsParenthesis(operatorName)))
-  {
-    buffer[numberOfChar++] = '(';
-    if (numberOfChar >= bufferSize-1) {
-      return bufferSize-1;
-    }
-  }
+  bool currentChildNeedsParentheses =
+    (expression != nullptr
+      && expression->operand(firstChildIndex)->needParenthesisWithParent(expression))
+    || (expression == nullptr
+        && expressionLayout->child(firstChildIndex)->needsParenthesesWithParent());
 
+  // Write first operand
+  if (currentChildNeedsParentheses){
+    buffer[numberOfChar++] = '(';
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+  }
   numberOfChar += (expression != nullptr) ? expression->operand(firstChildIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits) : expressionLayout->child(firstChildIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
-  if ((expression != nullptr && expression->operand(firstChildIndex)->needParenthesisWithParent(expression))
-      || (expression == nullptr && childNeedsParenthesis(operatorName)))
-  {
+  if (currentChildNeedsParentheses){
     buffer[numberOfChar++] = ')';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
+
   int lastIndex = lastChildIndex < 0 ? numberOfOperands - 1 : lastChildIndex;
   for (int i = firstChildIndex + 1; i < lastIndex+1; i++) {
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+
+    // Write operator
     numberOfChar += strlcpy(buffer+numberOfChar, operatorName, bufferSize-numberOfChar);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    if ((expression != nullptr && expression->operand(i)->needParenthesisWithParent(expression))
-      || (expression == nullptr && childNeedsParenthesis(operatorName)))
-    {
+
+    // Write next operand
+    currentChildNeedsParentheses =
+    (expression != nullptr
+      && expression->operand(i)->needParenthesisWithParent(expression))
+    || (expression == nullptr
+        && expressionLayout->child(i)->needsParenthesesWithParent());
+
+    if (currentChildNeedsParentheses) {
       buffer[numberOfChar++] = '(';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
     numberOfChar += (expression != nullptr) ? expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits) : expressionLayout->child(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
-    if ((expression != nullptr && expression->operand(i)->needParenthesisWithParent(expression))
-      || (expression == nullptr && childNeedsParenthesis(operatorName)))
-    {
+    if (currentChildNeedsParentheses) {
       buffer[numberOfChar++] = ')';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }

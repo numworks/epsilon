@@ -337,6 +337,19 @@ ExpressionLayoutCursor HorizontalLayout::equivalentCursor(ExpressionLayoutCursor
   return result;
 }
 
+bool HorizontalLayout::needsParenthesesWithParent() const {
+  if (!parent()->childMightNeedParentheses()) {
+    return false;
+  }
+  int numberOfOpenParenthesis = 0;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (!child(i)->isCollapsable(&numberOfOpenParenthesis, true)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 KDSize HorizontalLayout::computeSize() {
   KDCoordinate totalWidth = 0;
   int i = 0;

@@ -2,7 +2,7 @@
 
 void TransparentView::markRectAsDirty(KDRect rect) {
   if (m_superview) {
-    m_superview->markRectAsDirty(KDRect(m_superview->pointFromPointInView(this, rect.origin()), rect.size()));
+    m_superview->markRectAsDirty(KDRect(rect.translatedBy(m_frame.origin())));
   }
   View::markRectAsDirty(rect);
 }

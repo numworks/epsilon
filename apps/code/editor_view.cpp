@@ -47,7 +47,8 @@ void EditorView::layoutSubviews() {
 
 EditorView::GutterView::GutterView(KDText::FontSize fontSize) :
   View(),
-  m_fontSize(fontSize)
+  m_fontSize(fontSize),
+  m_offset(0)
 {
 }
 

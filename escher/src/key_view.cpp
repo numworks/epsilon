@@ -67,7 +67,6 @@ const uint8_t minusMask[KeyView::k_keySize][KeyView::k_keySize] = {
 };
 
 KeyView::KeyView(Type type) :
-  View(),
   m_type(type)
 {
 }

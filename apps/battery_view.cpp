@@ -23,7 +23,6 @@ const uint8_t tickMask[BatteryView::k_tickHeight][BatteryView::k_tickWidth] = {
 
 
 BatteryView::BatteryView() :
-  View(),
   m_chargeState(Ion::Battery::Charge::SOMEWHERE_INBETWEEN),
   m_isCharging(false),
   m_isPlugged(false)

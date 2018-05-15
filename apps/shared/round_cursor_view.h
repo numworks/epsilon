@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-class RoundCursorView : public View {
+class RoundCursorView : public TransparentView {
 public:
   RoundCursorView(KDColor color = KDColorBlack);
   void drawRect(KDContext * ctx, KDRect rect) const override;

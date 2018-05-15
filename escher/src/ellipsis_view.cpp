@@ -7,11 +7,6 @@ const uint8_t ellipsisMask[EllipsisView::k_ellipsisHeight][EllipsisView::k_ellip
   {0xFF, 0xD1, 0xA1, 0xC1, 0xFF, 0xFF, 0xFF, 0xD1, 0xA1, 0xC1, 0xFF, 0xFF, 0xFF, 0xD1, 0xA1, 0xC1, 0xFF},
 };
 
-EllipsisView::EllipsisView() :
-  View()
-{
-}
-
 KDColor s_ellipsisWorkingBuffer[EllipsisView::k_ellipsisWidth*EllipsisView::k_ellipsisHeight];
 
 void EllipsisView::drawRect(KDContext * ctx, KDRect rect) const {

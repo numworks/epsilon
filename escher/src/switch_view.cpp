@@ -33,7 +33,6 @@ const uint8_t onOffMask[SwitchView::k_onOffSize][SwitchView::k_onOffSize] = {
 };
 
 SwitchView::SwitchView() :
-View(),
 m_state(true)
 {
 }

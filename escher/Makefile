@@ -75,6 +75,7 @@ objs += $(addprefix escher/src/,\
   timer.o\
   toolbox.o\
   toolbox_message_tree.o\
+  transparent_view.o\
   view.o\
   view_controller.o\
   warning_controller.o\

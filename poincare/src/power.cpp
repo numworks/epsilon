@@ -151,13 +151,14 @@ ExpressionLayout * Power::privateCreateLayout(PrintFloat::Mode floatDisplayMode,
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = m_operands[1]->operand(0);
   }
-  return new HorizontalLayout(
-      m_operands[0]->createLayout(floatDisplayMode, complexFormat),
-      new VerticalOffsetLayout(
+  HorizontalLayout * result = new HorizontalLayout();
+  result->addOrMergeChildAtIndex(m_operands[0]->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result->addChildAtIndex(new VerticalOffsetLayout(
         indiceOperand->createLayout(floatDisplayMode, complexFormat),
         VerticalOffsetLayout::Type::Superscript,
         false),
-      false);
+      result->numberOfChildren());
+  return result;
 }
 
 int Power::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {

@@ -205,7 +205,7 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
     if (!isEditing()) {
       setEditing(true);
     }
-    insertLayoutFromTextAtCursor(Clipboard::sharedClipboard()->storedText());
+    handleEventWithText(Clipboard::sharedClipboard()->storedText());
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {
@@ -240,20 +240,6 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
     scrollRightOfLayout(lastMergedLayoutChild);
   }
   scrollToCursor();
-}
-
-void ExpressionLayoutField::insertLayoutFromTextAtCursor(const char * text) {
-  m_contentView.cursor()->showEmptyLayoutIfNeeded();
-  Poincare::Expression * expression = Poincare::Expression::parse(text);
-  if (expression != nullptr) {
-    Poincare::ExpressionLayout * layout = expression->createLayout();
-    delete expression;
-    insertLayoutAtCursor(layout, layout);
-  } else {
-    m_contentView.cursor()->insertText(text);
-  }
-  m_contentView.cursor()->hideEmptyLayoutIfNeeded();
-  reload();
 }
 
 void ExpressionLayoutField::reload() {

@@ -32,7 +32,6 @@ public:
   bool expressionLayoutFieldShouldFinishEditing(Ion::Events::Event event);
 
   void insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout);
-  void insertLayoutFromTextAtCursor(const char * text);
 
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;

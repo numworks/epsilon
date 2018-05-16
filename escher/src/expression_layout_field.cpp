@@ -221,6 +221,10 @@ bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentat
   }
   Poincare::ExpressionLayout * resultLayout = resultExpression->createLayout();
   delete resultExpression;
+  if (resultLayout->numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+    delete resultLayout;
+    return false;
+  }
   // Find the pointed layout.
   Poincare::ExpressionLayout * pointedLayout = nullptr;
   if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {

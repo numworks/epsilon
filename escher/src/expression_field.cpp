@@ -49,7 +49,7 @@ void ExpressionField::setText(const char * text) {
   }
   m_expressionLayoutField.clearLayout();
   if (strlen(text) > 0) {
-    m_expressionLayoutField.insertLayoutFromTextAtCursor(text);
+    m_expressionLayoutField.handleEventWithText(text);
   }
 }
 
@@ -58,7 +58,7 @@ void ExpressionField::insertText(const char * text) {
     m_textField.handleEventWithText(text);
   } else {
     m_expressionLayoutField.setEditing(true);
-    m_expressionLayoutField.insertLayoutFromTextAtCursor(text);
+    m_expressionLayoutField.handleEventWithText(text);
   }
 }
 

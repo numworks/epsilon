@@ -31,8 +31,6 @@ public:
 
   bool expressionLayoutFieldShouldFinishEditing(Ion::Events::Event event);
 
-  void insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout);
-
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;
 
@@ -42,6 +40,7 @@ protected:
 private:
   void scrollRightOfLayout(Poincare::ExpressionLayout * layout);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
+  void insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout);
 
   class ContentView : public View {
   public:

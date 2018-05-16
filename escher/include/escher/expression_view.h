@@ -21,6 +21,7 @@ public:
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
+  int numberOfLayouts() const;
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
   KDPoint absoluteDrawingOrigin() const;

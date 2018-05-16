@@ -5,6 +5,7 @@
 #include <escher/expression_layout_field_delegate.h>
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
+#include <escher/text_field.h>
 #include <kandinsky/point.h>
 #include <poincare/expression_layout.h>
 #include <poincare/expression_layout_cursor.h>
@@ -38,6 +39,8 @@ protected:
   virtual bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout);
 private:
+  constexpr static int k_maxNumberOfLayouts = 152;
+  static_assert(k_maxNumberOfLayouts == TextField::maxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");
   void scrollRightOfLayout(Poincare::ExpressionLayout * layout);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout);

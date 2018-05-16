@@ -140,58 +140,44 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
     m_delegate->expressionLayoutFieldDidAbortEditing(this);
     return true;
   }
-  if (event == Ion::Events::Division) {
+  if (event == Ion::Events::Division
+      || event == Ion::Events::Exp
+      || event == Ion::Events::Power
+      || event == Ion::Events::Sqrt
+      || event == Ion::Events::Square
+      || event == Ion::Events::EE
+      || event.hasText()
+      || event == Ion::Events::Paste)
+  {
     if (!isEditing()) {
       setEditing(true);
     }
-    m_contentView.cursor()->addFractionLayoutAndCollapseSiblings();
-    return true;
-  }
-  if (event == Ion::Events::Exp) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    m_contentView.cursor()->addEmptyExponentialLayout();
-    return true;
-  }
-  if (event == Ion::Events::Power) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    m_contentView.cursor()->addEmptyPowerLayout();
-    return true;
-  }
-  if (event == Ion::Events::Sqrt) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    m_contentView.cursor()->addEmptySquareRootLayout();
-    return true;
-  }
-  if (event == Ion::Events::Square) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    m_contentView.cursor()->addEmptySquarePowerLayout();
-    return true;
-  }
-  if (event == Ion::Events::EE) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    m_contentView.cursor()->addEmptyTenPowerLayout();
-    return true;
-  }
-  if (event.hasText()) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    const char * textToInsert = event.text();
-    if (textToInsert[1] == 0 && (textToInsert[0] == '[' || textToInsert[0] == ']')) {
-      m_contentView.cursor()->addEmptyMatrixLayout();
+    if (m_contentView.expressionView()->numberOfLayouts() >= k_maxNumberOfLayouts) {
       return true;
     }
-    m_contentView.cursor()->insertText(textToInsert);
+    if (event == Ion::Events::Division) {
+      m_contentView.cursor()->addFractionLayoutAndCollapseSiblings();
+    } else if (event == Ion::Events::Exp) {
+      m_contentView.cursor()->addEmptyExponentialLayout();
+    } else if (event == Ion::Events::Power) {
+      m_contentView.cursor()->addEmptyPowerLayout();
+    } else if (event == Ion::Events::Sqrt) {
+      m_contentView.cursor()->addEmptySquareRootLayout();
+    } else if (event == Ion::Events::Square) {
+      m_contentView.cursor()->addEmptySquarePowerLayout();
+    } else if (event == Ion::Events::EE) {
+      m_contentView.cursor()->addEmptyTenPowerLayout();
+    } else if (event.hasText()) {
+      const char * textToInsert = event.text();
+      if (textToInsert[1] == 0 && (textToInsert[0] == '[' || textToInsert[0] == ']')) {
+        m_contentView.cursor()->addEmptyMatrixLayout();
+      } else {
+        m_contentView.cursor()->insertText(textToInsert);
+      }
+    }
+    if (event == Ion::Events::Paste) {
+      handleEventWithText(Clipboard::sharedClipboard()->storedText());
+    }
     return true;
   }
   if (event == Ion::Events::Backspace) {
@@ -199,13 +185,6 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
       setEditing(true);
     }
     m_contentView.cursor()->performBackspace();
-    return true;
-  }
-  if (event == Ion::Events::Paste) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    handleEventWithText(Clipboard::sharedClipboard()->storedText());
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {

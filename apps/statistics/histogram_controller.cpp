@@ -152,22 +152,33 @@ Responder * HistogramController::tabController() const {
 void HistogramController::reloadBannerView() {
   char buffer[k_maxNumberOfCharacters+ PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2];
   int numberOfChar = 0;
+
+  // Add Interval Data
   const char * legend = " [";
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
+
+  // Add lower bound
   double lowerBound = m_store->startOfBarAtIndex(*m_selectedBarIndex);
   numberOfChar += PrintFloat::convertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+
   buffer[numberOfChar++] = ';';
+
+  // Add upper bound
   double upperBound = m_store->endOfBarAtIndex(*m_selectedBarIndex);
   numberOfChar += PrintFloat::convertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+
   buffer[numberOfChar++] = '[';
-  legend = "                                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+
+  // Padding
+  for (int i = numberOfChar; i < k_maxIntervalLegendLength; i++) {
+    buffer[numberOfChar++] = ' ';
+  }
   buffer[k_maxIntervalLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 1);
 
+  // Add Size Data
   numberOfChar = 0;
   legend = ": ";
   legendLength = strlen(legend);
@@ -175,12 +186,14 @@ void HistogramController::reloadBannerView() {
   numberOfChar += legendLength;
   double size = m_store->heightOfBarAtIndex(*m_selectedBarIndex);
   numberOfChar += PrintFloat::convertFloatToText<double>(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  legend = "                            ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  // Padding
+  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
+    buffer[numberOfChar++] = ' ';
+  }
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 3);
 
+  // Add Frequency Data
   numberOfChar = 0;
   legend = ": ";
   legendLength = strlen(legend);
@@ -188,9 +201,10 @@ void HistogramController::reloadBannerView() {
   numberOfChar += legendLength;
   double frequency = size/m_store->sumOfColumn(1);
   numberOfChar += PrintFloat::convertFloatToText<double>(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  legend = "                            ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  // Padding
+  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
+    buffer[numberOfChar++] = ' ';
+  }
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 5);
 }

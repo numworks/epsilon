@@ -304,6 +304,8 @@ bool TextArea::handleEventWithText(const char * text, bool indentation) {
   for (size_t i = bufferIndex; i < eventTextSize; i++) {
     if (text[i] != Ion::Charset::Empty) {
       buffer[bufferIndex++] = text[i];
+    } else if (i < cursorIndexInCommand) {
+      cursorIndexInCommand--;
     }
   }
 

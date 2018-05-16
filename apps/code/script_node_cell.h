@@ -4,6 +4,7 @@
 #include "script_node.h"
 #include "script_store.h"
 #include <escher/table_cell.h>
+#include <ion/charset.h>
 #include <kandinsky/coordinate.h>
 
 namespace Code {
@@ -22,6 +23,7 @@ public:
   void reloadCell() override;
 
   constexpr static char k_parentheses[] = "()";
+  constexpr static char k_parenthesesWithEmpty[] = {'(', Ion::Charset::Empty, ')', 0};
 protected:
   class ScriptNodeView : public HighlightCell {
   public:

@@ -161,7 +161,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
 
 bool EditExpressionController::inputViewDidFinishEditing(const char * text, Ion::Events::Event event) {
   App * calculationApp = (App *)app();
-  strlcpy(m_cacheBuffer, textBody(), TextField::maxBufferSize());
+  strlcpy(m_cacheBuffer, textBody(), Calculation::k_printedExpressionSize);
   m_calculationStore->push(textBody(), calculationApp->localContext());
   m_historyController->reload();
   ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);

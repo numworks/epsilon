@@ -272,8 +272,8 @@ bool ExpressionLayoutField::hasText() const {
   return m_contentView.expressionView()->expressionLayout()->hasText();
 }
 
-void ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
-  m_contentView.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferLength);
+int ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
+  return m_contentView.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferLength);
 }
 
 bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation) {

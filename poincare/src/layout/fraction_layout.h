@@ -34,7 +34,6 @@ public:
    * an omitted multiplication layout factor. We have the same problem with
    *  2^3 1/2 being serialized as 2^3**1/2, so must override the Right version
    * and not canBeOmittedMultiplicationLeftFactor. */
-  bool childMightNeedParentheses() const override { return true; }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDSize computeSize() override;

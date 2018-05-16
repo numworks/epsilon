@@ -10,13 +10,14 @@ ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder) 
 {
 }
 
-void ScrollableExpressionView::setExpression(ExpressionLayout * expressionLayout) {
-  m_expressionView.setExpression(expressionLayout);
+void ScrollableExpressionView::setExpressionLayout(ExpressionLayout * expressionLayout) {
+  m_expressionView.setExpressionLayout(expressionLayout);
   layoutSubviews();
 }
 
 void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
   m_expressionView.setBackgroundColor(backgroundColor);
+  ScrollableView::setBackgroundColor(backgroundColor);
 }
 
 KDSize ScrollableExpressionView::minimalSizeForOptimalDisplay() const {

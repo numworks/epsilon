@@ -79,6 +79,7 @@ class Expression {
   friend class LayoutEngine;
   friend class Complex<float>;
   friend class Complex<double>;
+  friend class EmptyExpression;
 
 public:
   enum class Type : uint8_t {
@@ -144,6 +145,7 @@ public:
     MatrixTranspose,
     PredictionInterval,
     SimplificationRoot,
+    EmptyExpression
   };
   enum class ComplexFormat {
     Cartesian = 0,

@@ -5,16 +5,17 @@
 #include "../sequence_title_cell.h"
 #include "../sequence_store.h"
 #include "../../shared/function_expression_cell.h"
-#include "type_parameter_controller.h"
-#include "../../shared/new_function_cell.h"
 #include "../../shared/list_controller.h"
+#include "../../shared/new_function_cell.h"
+#include "../../shared/expression_layout_field_delegate.h"
 #include "../../shared/text_field_delegate.h"
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"
+#include "type_parameter_controller.h"
 
 namespace Sequence {
 
-class ListController : public Shared::ListController, public Shared::TextFieldDelegate {
+class ListController : public Shared::ListController, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
 public:
   ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
@@ -22,9 +23,12 @@ public:
   virtual KDCoordinate rowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForTextInput(TextInput * textInput) override;
+  Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) override;
   void selectPreviousNewSequenceCell();
 private:
+  Toolbox * toolboxForSender(Responder * sender);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
+  Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
   ListParameterController * parameterController() override;
   int maxNumberOfRows() override;

@@ -1,10 +1,8 @@
 #include <poincare/sequence.h>
-#include <poincare/symbol.h>
 #include <poincare/complex.h>
-#include <poincare/variable_context.h>
+#include <poincare/symbol.h>
 #include <poincare/undefined.h>
-#include "layout/string_layout.h"
-#include "layout/horizontal_layout.h"
+#include <poincare/variable_context.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -16,10 +14,7 @@ namespace Poincare {
 ExpressionLayout * Sequence::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = new StringLayout("n=", 2);
-  childrenLayouts[1] = operand(1)->createLayout(floatDisplayMode, complexFormat);
-  return createSequenceLayoutWithArgumentLayouts(new HorizontalLayout(childrenLayouts, 2), operand(2)->createLayout(floatDisplayMode, complexFormat), operand(0)->createLayout(floatDisplayMode, complexFormat));
+  return createSequenceLayoutWithArgumentLayouts(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat), operand(2)->createLayout(floatDisplayMode, complexFormat));
 }
 
 template<typename T>

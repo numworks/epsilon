@@ -1,29 +1,34 @@
+#include <poincare/power.h>
+
+#include <poincare/addition.h>
+#include <poincare/arithmetic.h>
+#include <poincare/binomial_coefficient.h>
+#include <poincare/cosine.h>
+#include <poincare/division.h>
+#include <poincare/matrix.h>
+#include <poincare/matrix_inverse.h>
+#include <poincare/nth_root.h>
+#include <poincare/opposite.h>
+#include <poincare/parenthesis.h>
+#include <poincare/simplification_root.h>
+#include <poincare/sine.h>
+#include <poincare/square_root.h>
+#include <poincare/symbol.h>
+#include <poincare/subtraction.h>
+#include <poincare/undefined.h>
+
+#include "layout/horizontal_layout.h"
+#include "layout/vertical_offset_layout.h"
+
+#include <cmath>
+#include <math.h>
+#include <ion.h>
+
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-#include <cmath>
-#include <math.h>
-#include <ion.h>
-#include <poincare/binomial_coefficient.h>
-#include <poincare/matrix_inverse.h>
-#include <poincare/matrix.h>
-#include <poincare/power.h>
-#include <poincare/opposite.h>
-#include <poincare/parenthesis.h>
-#include <poincare/addition.h>
-#include <poincare/undefined.h>
-#include <poincare/square_root.h>
-#include <poincare/nth_root.h>
-#include <poincare/division.h>
-#include <poincare/matrix_inverse.h>
-#include <poincare/arithmetic.h>
-#include <poincare/symbol.h>
-#include <poincare/subtraction.h>
-#include <poincare/cosine.h>
-#include <poincare/sine.h>
-#include <poincare/simplification_root.h>
-#include "layout/baseline_relative_layout.h"
+
 
 namespace Poincare {
 
@@ -146,7 +151,14 @@ ExpressionLayout * Power::privateCreateLayout(PrintFloat::Mode floatDisplayMode,
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = m_operands[1]->operand(0);
   }
-  return new BaselineRelativeLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat),indiceOperand->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Superscript);
+  HorizontalLayout * result = new HorizontalLayout();
+  result->addOrMergeChildAtIndex(m_operands[0]->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result->addChildAtIndex(new VerticalOffsetLayout(
+        indiceOperand->createLayout(floatDisplayMode, complexFormat),
+        VerticalOffsetLayout::Type::Superscript,
+        false),
+      result->numberOfChildren());
+  return result;
 }
 
 int Power::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {

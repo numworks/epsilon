@@ -9,7 +9,7 @@
 
 namespace Calculation {
 
-class App : public Shared::TextFieldDelegateApp {
+class App : public Shared::ExpressionFieldDelegateApp {
 public:
   class Descriptor : public ::App::Descriptor {
   public:
@@ -29,6 +29,7 @@ public:
   };
   bool textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) override;
   bool textInputIsCorrect(const char * text);
+  bool expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
   const char * XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);

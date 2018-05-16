@@ -1,69 +1,41 @@
 #include "condensed_sum_layout.h"
+#include <poincare/expression_layout_cursor.h>
 #include <string.h>
 #include <assert.h>
 
 namespace Poincare {
 
-CondensedSumLayout::CondensedSumLayout(ExpressionLayout * baseLayout, ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout) :
-  ExpressionLayout(),
-  m_baseLayout(baseLayout),
-  m_subscriptLayout(subscriptLayout),
-  m_superscriptLayout(superscriptLayout)
-{
-  m_baseLayout->setParent(this);
-  m_subscriptLayout->setParent(this);
-  if (m_superscriptLayout) {
-    m_superscriptLayout->setParent(this);
-  }
-  KDSize superscriptSize = m_superscriptLayout == nullptr ? KDSizeZero : m_superscriptLayout->size();
-  m_baseline = m_baseLayout->baseline() + max(0, superscriptSize.height() - m_baseLayout->size().height()/2);
-}
-
-CondensedSumLayout::~CondensedSumLayout() {
-  delete m_baseLayout;
-  delete m_subscriptLayout;
-  if (m_superscriptLayout) {
-    delete m_superscriptLayout;
-  }
-}
-
-void CondensedSumLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  // Nothing to draw
+ExpressionLayout * CondensedSumLayout::clone() const {
+  CondensedSumLayout * layout = new CondensedSumLayout(const_cast<CondensedSumLayout *>(this)->baseLayout(), const_cast<CondensedSumLayout *>(this)->subscriptLayout(), const_cast<CondensedSumLayout *>(this)->superscriptLayout(), true);
+  return layout;
 }
 
 KDSize CondensedSumLayout::computeSize() {
-  KDSize baseSize = m_baseLayout->size();
-  KDSize subscriptSize = m_subscriptLayout->size();
-  KDSize superscriptSize = m_superscriptLayout == nullptr ? KDSizeZero : m_superscriptLayout->size();
+  KDSize baseSize = baseLayout()->size();
+  KDSize subscriptSize = subscriptLayout()->size();
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->size();
   return KDSize(baseSize.width() + max(subscriptSize.width(), superscriptSize.width()), max(baseSize.height()/2, subscriptSize.height()) + max(baseSize.height()/2, superscriptSize.height()));
 }
 
-ExpressionLayout * CondensedSumLayout::child(uint16_t index) {
-  switch (index) {
-    case 0:
-      return m_baseLayout;
-    case 1:
-      return m_subscriptLayout;
-    case 2:
-      return m_superscriptLayout;
-    default:
-      return nullptr;
-  }
+void CondensedSumLayout::computeBaseline() {
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->size();
+  m_baseline = baseLayout()->baseline() + max(0, superscriptSize.height() - baseLayout()->size().height()/2);
+  m_baselined = true;
 }
 
 KDPoint CondensedSumLayout::positionOfChild(ExpressionLayout * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
-  KDSize baseSize = m_baseLayout->size();
-  KDSize superscriptSize = m_superscriptLayout == nullptr ? KDSizeZero : m_superscriptLayout->size();
-  if (child == m_baseLayout) {
+  KDSize baseSize = baseLayout()->size();
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->size();
+  if (child == baseLayout()) {
     y = max(0, superscriptSize.height() - baseSize.height()/2);
   }
-  if (child == m_subscriptLayout) {
+  if (child == subscriptLayout()) {
     x = baseSize.width();
     y = max(baseSize.height()/2, superscriptSize.height());
   }
-  if (child == m_superscriptLayout) {
+  if (child == superscriptLayout()) {
     x = baseSize.width();
   }
   return KDPoint(x,y);

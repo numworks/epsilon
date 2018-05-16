@@ -44,7 +44,6 @@ public:
   // Other
   bool isHorizontal() const override { return true; }
   bool isEmpty() const override { return m_numberOfChildren == 1 && child(0)->isEmpty(); }
-  bool needsParenthesesWithParent() const override;
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return m_numberOfChildren != 0; }
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}

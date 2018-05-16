@@ -2,10 +2,11 @@
 #define ESCHER_TEXT_INPUT_HELPERS_H
 
 #include <escher/i18n.h>
+#include <stddef.h>
 
 namespace TextInputHelpers {
 
-int CursorIndexInCommand(const char * text);
+size_t CursorIndexInCommand(const char * text);
 /* Returns the index of the cursor position in a Command, which is the smallest
  * index between :
  *   - The first EmptyChar index (which is the position of the first argument)

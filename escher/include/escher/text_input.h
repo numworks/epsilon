@@ -12,14 +12,12 @@ public:
   TextInput(Responder * parentResponder, View * contentView);
   Toolbox * toolbox() override;
   const char * text() const { return nonEditableContentView()->text(); }
-  void setBackgroundColor(KDColor backgroundColor);
-  KDColor backgroundColor() const { return nonEditableContentView()->backgroundColor(); }
+  void setBackgroundColor(KDColor backgroundColor) override;
   void setTextColor(KDColor textColor);
   bool removeChar();
   size_t cursorLocation() const { return nonEditableContentView()->cursorLocation(); }
   bool setCursorLocation(int location);
   virtual void scrollToCursor();
-  virtual bool handleEventWithText(const char * text, bool indenting = false) = 0;
 protected:
   class ContentView : public View {
   public:

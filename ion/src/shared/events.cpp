@@ -25,21 +25,32 @@ private:
 #define U() EventData::Undefined()
 #define T(x) EventData::Text(x)
 
-static constexpr const char k_pi[2] = {Ion::Charset::SmallPi, 0};
-static constexpr const char k_root[4] = {Ion::Charset::Root, '(', ')', 0};
+static constexpr const char k_exponential[6] = {Ion::Charset::Exponential, '^', '(', Ion::Charset::Empty, ')', 0};
+static constexpr const char k_naperianLogarithm[6] = {'l', 'n', '(', Ion::Charset::Empty, ')', 0};
+static constexpr const char k_logarithm[7] = {'l', 'o', 'g', '(', Ion::Charset::Empty, ')', 0};
 static constexpr const char k_complexI[2] = {Ion::Charset::IComplex, 0};
-static constexpr const char k_exponential[5] = {Ion::Charset::Exponential, '^', '(', ')', 0};
-static constexpr const char k_sto[2] = {Ion::Charset::Sto, 0};
-static constexpr const char k_exponent[2] = {Ion::Charset::Exponent, 0};
+
+static constexpr const char k_sine[7] = {'s', 'i', 'n', '(', Ion::Charset::Empty, ')', 0};
+static constexpr const char k_cosine[7] = {'c', 'o', 's', '(', Ion::Charset::Empty, ')', 0};
+static constexpr const char k_tangent[7] = {'t', 'a', 'n', '(', Ion::Charset::Empty, ')', 0};
+static constexpr const char k_pi[2] = {Ion::Charset::SmallPi, 0};
+static constexpr const char k_root[5] = {Ion::Charset::Root, '(', Ion::Charset::Empty, ')', 0};
+
 static constexpr const char k_multiplicationSign[2] = {Ion::Charset::MultiplicationSign, 0};
+static constexpr const char k_exponent[2] = {Ion::Charset::Exponent, 0};
+static constexpr const char k_sto[2] = {Ion::Charset::Sto, 0};
+
+static constexpr const char k_arcSine[8] = {'a', 's', 'i', 'n', '(', Ion::Charset::Empty, ')', 0};
+static constexpr const char k_arcCosine[8] = {'a', 'c', 'o', 's', '(', Ion::Charset::Empty, ')', 0};
+static constexpr const char k_arcTangent[8] = {'a', 't', 'a', 'n', '(', Ion::Charset::Empty, ')', 0};
 
 static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
 // Plain
   TL(), TL(), TL(), TL(), TL(), TL(),
   TL(), TL(), U(),   U(),  U(),  U(),
   TL(), TL(), TL(), TL(), TL(), TL(),
-  T(k_exponential), T("ln()"),  T("log()"), T(k_complexI), T(","), T("^"),
-  T("sin()"), T("cos()"), T("tan()"), T(k_pi), T(k_root), T("^2"),
+  T(k_exponential), T(k_naperianLogarithm),  T(k_logarithm), T(k_complexI), T(","), T("^"),
+  T(k_sine), T(k_cosine), T(k_tangent), T(k_pi), T(k_root), T("^2"),
   T("7"), T("8"), T("9"), T("("), T(")"), U(),
   T("4"), T("5"), T("6"), T(k_multiplicationSign), T("/"), U(),
   T("1"), T("2"), T("3"), T("+"), T("-"), U(),
@@ -49,7 +60,7 @@ static constexpr EventData s_dataForEvent[4*Event::PageSize] = {
   U(), U(), U(), U(), U(), U(),
   U(), U(), TL(), TL(), TL(), TL(),
   T("["), T("]"), T("{"), T("}"), T("_"), T(k_sto),
-  T("asin()"), T("acos()"), T("atan()"), T("="), T("<"), T(">"),
+  T(k_arcSine), T(k_arcCosine), T(k_arcTangent), T("="), T("<"), T(">"),
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),
@@ -145,7 +156,7 @@ static constexpr const char * s_nameForEvent[255] = {
   "One", "Two", "Three", "Plus", "Minus", nullptr,
   "Zero", "Dot", "EE", "Ans", "EXE", nullptr,
   //Shift,
-  nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+  "ShiftLeft", "ShiftUp", "ShiftDown", "ShiftRight", nullptr, nullptr,
   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
   nullptr, "AlphaLock", "Cut", "Copy", "Paste", "Clear",
   "LeftBracket", "RightBracket", "LeftBrace", "RightBrace", "Underscore", "Sto",

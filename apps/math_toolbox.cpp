@@ -1,12 +1,16 @@
 #include "math_toolbox.h"
 #include "./shared/toolbox_helpers.h"
+#include <poincare/expression_layout_array.h>
 #include <assert.h>
 #include <string.h>
+
+using namespace Poincare;
 
 /* TODO: find a shorter way to initialize tree models
  * We create one model tree: each node keeps the label of the row it refers to
  * and the text which would be edited by clicking on the row. When the node is a
  * subtree, the edited text is set at I18n::Message::Default. */
+
 
 const ToolboxMessageTree calculChildren[4] = {
   ToolboxMessageTree(I18n::Message::DiffCommandWithArg, I18n::Message::DerivateNumber, I18n::Message::DiffCommandWithArg),
@@ -33,7 +37,8 @@ const ToolboxMessageTree arithmeticChildren[5] = {
   ToolboxMessageTree(I18n::Message::QuoCommandWithArg, I18n::Message::Quotient, I18n::Message::QuoCommandWithArg)};
 
 #if MATRICES_ARE_DEFINED
-const ToolboxMessageTree matricesChildren[5] = {
+const ToolboxMessageTree matricesChildren[6] = {
+  ToolboxMessageTree(I18n::Message::MatrixCommandWithArg, I18n::Message::NewMatrix, I18n::Message::MatrixCommand),
   ToolboxMessageTree(I18n::Message::InverseCommandWithArg, I18n::Message::Inverse, I18n::Message::InverseCommandWithArg),
   ToolboxMessageTree(I18n::Message::DeterminantCommandWithArg, I18n::Message::Determinant, I18n::Message::DeterminantCommandWithArg),
   ToolboxMessageTree(I18n::Message::TransposeCommandWithArg, I18n::Message::Transpose, I18n::Message::TransposeCommandWithArg),
@@ -72,12 +77,13 @@ const ToolboxMessageTree predictionChildren[3] = {
   ToolboxMessageTree(I18n::Message::ConfidenceCommandWithArg, I18n::Message::Confidence, I18n::Message::ConfidenceCommandWithArg)};
 
 #if LIST_ARE_DEFINED
-const ToolboxMessageTree menu[12] = {ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg),
+const ToolboxMessageTree menu[12] = {
 #elif MATRICES_ARE_DEFINED
-const ToolboxMessageTree menu[11] = {ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg),
+const ToolboxMessageTree menu[11] = {
 #else
-const ToolboxMessageTree menu[10] = {ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg),
+const ToolboxMessageTree menu[10] = {
 #endif
+  ToolboxMessageTree(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue, I18n::Message::AbsCommandWithArg),
   ToolboxMessageTree(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot, I18n::Message::RootCommandWithArg),
   ToolboxMessageTree(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm, I18n::Message::LogCommandWithArg),
   ToolboxMessageTree(I18n::Message::Calculation, I18n::Message::Default, I18n::Message::Default, calculChildren, 4),
@@ -85,7 +91,7 @@ const ToolboxMessageTree menu[10] = {ToolboxMessageTree(I18n::Message::AbsComman
   ToolboxMessageTree(I18n::Message::Probability, I18n::Message::Default, I18n::Message::Default, probabilityChildren, 2),
   ToolboxMessageTree(I18n::Message::Arithmetic, I18n::Message::Default, I18n::Message::Default, arithmeticChildren, 5),
 #if MATRICES_ARE_DEFINED
-  ToolboxMessageTree(I18n::Message::Matrices,  I18n::Message::Default, I18n::Message::Default, matricesChildren, 5),
+  ToolboxMessageTree(I18n::Message::Matrices,  I18n::Message::Default, I18n::Message::Default, matricesChildren, 6),
 #endif
 #if LIST_ARE_DEFINED
   ToolboxMessageTree(I18n::Message::Lists, I18n::Message::Default, I18n::Message::Default, listesChildren, 5),
@@ -101,21 +107,22 @@ const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbo
 const ToolboxMessageTree toolboxModel = ToolboxMessageTree(I18n::Message::Toolbox, I18n::Message::Default, I18n::Message::Default, menu, 10);
 #endif
 
-MathToolbox::MathToolbox() : Toolbox(nullptr, I18n::translate(rootModel()->label()))
+MathToolbox::MathToolbox() :
+  Toolbox(nullptr, I18n::translate(rootModel()->label()))
 {
 }
 
-TextField * MathToolbox::sender() {
-  return (TextField *)Toolbox::sender();
-}
-
 bool MathToolbox::selectLeaf(ToolboxMessageTree * selectedMessageTree) {
-  m_selectableTableView.deselectTable();
   ToolboxMessageTree * messageTree = selectedMessageTree;
-  const char * editedText = I18n::translate(messageTree->insertedText());
-  char strippedEditedText[strlen(editedText)];
-  Shared::ToolboxHelpers::TextToInsertForCommandMessage(messageTree->insertedText(), strippedEditedText);
-  sender()->handleEventWithText(strippedEditedText);
+  m_selectableTableView.deselectTable();
+
+  // Translate the message and remove the arguments
+  const char * text = I18n::translate(messageTree->insertedText());
+  int maxTextToInsertLength = strlen(text) + 1;
+  char textToInsert[maxTextToInsertLength];
+  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textToInsert, maxTextToInsertLength, true);
+
+  sender()->handleEventWithText(textToInsert);
   app()->dismissModalViewController();
   return true;
 }

@@ -1,13 +1,13 @@
 #include <poincare/ceiling.h>
 #include "layout/ceiling_layout.h"
+#include <cmath>
+#include <ion.h>
 #include <poincare/symbol.h>
 #include <poincare/simplification_engine.h>
 #include <poincare/rational.h>
-#include <ion.h>
 extern "C" {
 #include <assert.h>
 }
-#include <cmath>
 
 namespace Poincare {
 
@@ -62,7 +62,7 @@ Complex<T> Ceiling::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
 ExpressionLayout * Ceiling::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new CeilingLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat));
+  return new CeilingLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat), false);
 }
 
 }

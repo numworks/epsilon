@@ -1,25 +1,23 @@
 #include <poincare/logarithm.h>
-#include <poincare/division.h>
-#include <poincare/undefined.h>
-#include <poincare/rational.h>
+#include "layout/horizontal_layout.h"
+#include "layout/vertical_offset_layout.h"
 #include <poincare/addition.h>
-#include <poincare/multiplication.h>
-#include <poincare/symbol.h>
-#include <poincare/arithmetic.h>
-#include <poincare/power.h>
-#include <poincare/naperian_logarithm.h>
 #include <poincare/approximation_engine.h>
+#include <poincare/arithmetic.h>
+#include <poincare/division.h>
+#include <poincare/multiplication.h>
+#include <poincare/naperian_logarithm.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
 #include <poincare/simplification_engine.h>
+#include <poincare/symbol.h>
+#include <poincare/undefined.h>
 #include <cmath>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-#include "layout/baseline_relative_layout.h"
-#include "layout/horizontal_layout.h"
-#include "layout/parenthesis_layout.h"
-#include "layout/string_layout.h"
 
 namespace Poincare {
 
@@ -236,10 +234,7 @@ ExpressionLayout * Logarithm::privateCreateLayout(PrintFloat::Mode floatDisplayM
   if (numberOfOperands() == 1) {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
   }
-  ExpressionLayout * childrenLayouts[2];
-  childrenLayouts[0] = new BaselineRelativeLayout(new StringLayout("log", strlen("log")), operand(1)->createLayout(floatDisplayMode, complexFormat), BaselineRelativeLayout::Type::Subscript);
-  childrenLayouts[1] = new ParenthesisLayout(operand(0)->createLayout(floatDisplayMode, complexFormat));
-  return new HorizontalLayout(childrenLayouts, 2);
+  return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));
 }
 
 }

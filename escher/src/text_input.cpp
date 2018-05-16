@@ -70,6 +70,7 @@ Toolbox * TextInput::toolbox() {
 }
 
 void TextInput::setBackgroundColor(KDColor backgroundColor) {
+  ScrollView::setBackgroundColor(backgroundColor);
   contentView()->setBackgroundColor(backgroundColor);
 }
 

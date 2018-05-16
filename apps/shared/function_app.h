@@ -2,7 +2,7 @@
 #define SHARED_FUNCTION_APP_H
 
 #include <poincare.h>
-#include "text_field_delegate_app.h"
+#include "expression_field_delegate_app.h"
 #include "curve_view_cursor.h"
 #include "interval.h"
 
@@ -10,7 +10,7 @@ class AppsContainer;
 
 namespace Shared {
 
-class FunctionApp : public TextFieldDelegateApp {
+class FunctionApp : public ExpressionFieldDelegateApp {
 public:
   class Snapshot : public ::App::Snapshot, public TabViewDataSource {
   public:

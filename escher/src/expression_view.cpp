@@ -15,7 +15,7 @@ ExpressionLayout * ExpressionView::expressionLayout() const {
   return m_expressionLayout;
 }
 
-void ExpressionView::setExpression(ExpressionLayout * expressionLayout) {
+void ExpressionView::setExpressionLayout(ExpressionLayout * expressionLayout) {
   m_expressionLayout = expressionLayout;
   markRectAsDirty(bounds());
 }
@@ -41,19 +41,24 @@ void ExpressionView::setAlignment(float horizontalAlignment, float verticalAlign
 }
 
 KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
-  if (m_expressionLayout ==  nullptr) {
+  if (m_expressionLayout == nullptr) {
     return KDSizeZero;
   }
   return m_expressionLayout->size();
 }
 
+KDPoint ExpressionView::drawingOrigin() const {
+  KDSize expressionSize = m_expressionLayout->size();
+  return KDPoint(m_horizontalAlignment*(m_frame.width() - expressionSize.width()), max(0, (m_frame.height() - expressionSize.height())/2));
+}
+
+KDPoint ExpressionView::absoluteDrawingOrigin() const {
+  return drawingOrigin().translatedBy(m_frame.topLeft());
+}
+
 void ExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
   if (m_expressionLayout != nullptr) {
-    //Position the origin of expression
-    KDSize expressionSize = m_expressionLayout->size();
-    KDPoint origin(m_horizontalAlignment*(m_frame.width() - expressionSize.width()),
-      0.5f*(m_frame.height() - expressionSize.height()));
-    m_expressionLayout->draw(ctx, origin, m_textColor, m_backgroundColor);
+    m_expressionLayout->draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor);
   }
 }

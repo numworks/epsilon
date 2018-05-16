@@ -19,7 +19,7 @@ public:
   void scrollToCursor();
   void reload();
   bool hasText() const;
-  void writeTextInBuffer(char * buffer, int bufferLength);
+  int writeTextInBuffer(char * buffer, int bufferLength);
   bool handleEventWithText(const char * text, bool indentation = false) override;
   Poincare::ExpressionLayout * expressionLayout();
   char XNTChar();

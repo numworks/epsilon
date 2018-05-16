@@ -80,7 +80,6 @@ public:
   virtual void removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor);
 
   // User input
-  bool insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor);
   virtual void deleteBeforeCursor(ExpressionLayoutCursor * cursor);
 
   /* Tree navigation */

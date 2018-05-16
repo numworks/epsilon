@@ -215,6 +215,9 @@ int ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
 }
 
 bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation) {
+  if (m_contentView.expressionView()->numberOfLayouts() >= k_maxNumberOfLayouts) {
+    return true;
+  }
   Poincare::Expression * resultExpression = Poincare::Expression::parse(text);
   if (resultExpression == nullptr) {
     return false;

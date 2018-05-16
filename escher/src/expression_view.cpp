@@ -40,6 +40,10 @@ void ExpressionView::setAlignment(float horizontalAlignment, float verticalAlign
   markRectAsDirty(bounds());
 }
 
+int ExpressionView::numberOfLayouts() const {
+  return m_expressionLayout->numberOfDescendants(true);
+}
+
 KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
   if (m_expressionLayout == nullptr) {
     return KDSizeZero;

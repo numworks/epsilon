@@ -74,6 +74,14 @@ void ExpressionLayout::invalidAllSizesPositionsAndBaselines() {
   }
 }
 
+int ExpressionLayout::numberOfDescendants(bool includeSelf) const {
+  int result = includeSelf ? 1 : 0;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    result += child(i)->numberOfDescendants(true);
+  }
+  return result;
+}
+
 const ExpressionLayout * ExpressionLayout::child(int i) const {
   assert(i >= 0);
   if (i < numberOfChildren()) {

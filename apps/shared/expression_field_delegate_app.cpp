@@ -1,4 +1,5 @@
 #include "expression_field_delegate_app.h"
+#include <escher.h>
 #include "../i18n.h"
 #include "../apps_container.h"
 
@@ -30,12 +31,18 @@ bool ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(Expression
       expressionLayoutField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    int bufferSize = 256;
+    int bufferSize = TextField::maxBufferSize();
     char buffer[bufferSize];
-    expressionLayoutField->writeTextInBuffer(buffer, bufferSize);
+    int length = expressionLayoutField->writeTextInBuffer(buffer, bufferSize);
     Expression * exp = Expression::parse(buffer);
     if (exp != nullptr) {
       delete exp;
+    }
+    if (length >= bufferSize-1) {
+      /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
+       * escaped before printing utterly the expression. */
+      displayWarning(I18n::Message::SyntaxError);
+      return true;
     }
     if (exp == nullptr) {
       expressionLayoutField->app()->displayWarning(I18n::Message::SyntaxError);

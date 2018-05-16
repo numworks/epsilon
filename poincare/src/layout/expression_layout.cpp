@@ -214,12 +214,6 @@ void ExpressionLayout::removePointedChildAtIndexAndMoveCursor(int index, bool de
   cursor->setPointedExpressionLayout(editableChild(indexOfNewPointedLayout));
 }
 
-
-bool ExpressionLayout::insertLayoutAtCursor(ExpressionLayout * newChild, ExpressionLayoutCursor * cursor) {
-  cursor->pointedExpressionLayout()->addSibling(cursor, newChild);
-  return true;
-}
-
 void ExpressionLayout::deleteBeforeCursor(ExpressionLayoutCursor * cursor) {
   int indexOfPointedExpression = indexOfChild(cursor->pointedExpressionLayout());
   if (indexOfPointedExpression >= 0) {

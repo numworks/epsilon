@@ -43,7 +43,7 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Container * container, Snapshot * snapshot) :
-  TextFieldDelegateApp(container, snapshot, &m_editExpressionController),
+  ExpressionFieldDelegateApp(container, snapshot, &m_editExpressionController),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),
   m_editExpressionController(&m_modalViewController, &m_historyController, snapshot->calculationStore())
 {
@@ -58,6 +58,27 @@ bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event e
       return true;
     }
     if (!textInputIsCorrect(textField->text())) {
+      displayWarning(I18n::Message::SyntaxError);
+      return true;
+    }
+  }
+  return false;
+}
+
+bool App::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {
+    return true;
+  }
+  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event)) {
+    if (!expressionLayoutField->hasText()) {
+      return true;
+    }
+
+    int bufferLength = TextField::maxBufferSize();
+    char bufferForParsing[bufferLength];
+    expressionLayoutField->writeTextInBuffer(bufferForParsing, bufferLength);
+
+    if (!textInputIsCorrect(bufferForParsing)) {
       displayWarning(I18n::Message::SyntaxError);
       return true;
     }

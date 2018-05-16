@@ -34,6 +34,8 @@ QUIZ_CASE(poincare_addition_evaluate) {
 
 QUIZ_CASE(poincare_addition_simplify) {
   assert_parsed_expression_simplify_to("2+1", "3");
+  assert_parsed_expression_simplify_to("-2+6", "4");
+  assert_parsed_expression_simplify_to("-2-6", "-8");
   assert_parsed_expression_simplify_to("2+A", "2+A");
   assert_parsed_expression_simplify_to("1+2+3+4+5+6+7", "28");
   assert_parsed_expression_simplify_to("1+2+3+4+5+A+6+7", "28+A");

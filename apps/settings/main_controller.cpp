@@ -1,36 +1,40 @@
 #include "main_controller.h"
+#include "helpers.h"
 #include "../global_preferences.h"
 #include "../i18n.h"
-#include "../../poincare/src/layout/baseline_relative_layout.h"
-#include "../../poincare/src/layout/string_layout.h"
 #include <assert.h>
-#include <poincare.h>
 
 using namespace Poincare;
 
 namespace Settings {
 
 const SettingsMessageTree angleChildren[2] = {SettingsMessageTree(I18n::Message::Degres), SettingsMessageTree(I18n::Message::Radian)};
-const SettingsMessageTree FloatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Auto), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
+const SettingsMessageTree editionModeChildren[2] = {SettingsMessageTree(I18n::Message::EditionLinear), SettingsMessageTree(I18n::Message::Edition2D)};
+const SettingsMessageTree floatDisplayModeChildren[3] = {SettingsMessageTree(I18n::Message::Auto), SettingsMessageTree(I18n::Message::Scientific), SettingsMessageTree(I18n::Message::SignificantFigures)};
 const SettingsMessageTree complexFormatChildren[2] = {SettingsMessageTree(I18n::Message::Default), SettingsMessageTree(I18n::Message::Default)};
 const SettingsMessageTree examChildren[1] = {SettingsMessageTree(I18n::Message::ActivateExamMode)};
 const SettingsMessageTree aboutChildren[3] = {SettingsMessageTree(I18n::Message::SoftwareVersion), SettingsMessageTree(I18n::Message::SerialNumber), SettingsMessageTree(I18n::Message::FccId)};
 
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-const SettingsMessageTree menu[8] =
+const SettingsMessageTree menu[9] =
 #else
-const SettingsMessageTree menu[7] =
+const SettingsMessageTree menu[8] =
 #endif
-  {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2), SettingsMessageTree(I18n::Message::DisplayMode, FloatDisplayModeChildren, 3), SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 2),
-  SettingsMessageTree(I18n::Message::Brightness), SettingsMessageTree(I18n::Message::Language), SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
+  {SettingsMessageTree(I18n::Message::AngleUnit, angleChildren, 2),
+    SettingsMessageTree(I18n::Message::DisplayMode, floatDisplayModeChildren, 3),
+    SettingsMessageTree(I18n::Message::EditionMode, editionModeChildren, 2),
+    SettingsMessageTree(I18n::Message::ComplexFormat, complexFormatChildren, 2),
+    SettingsMessageTree(I18n::Message::Brightness),
+    SettingsMessageTree(I18n::Message::Language),
+    SettingsMessageTree(I18n::Message::ExamMode, examChildren, 1),
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
   SettingsMessageTree(I18n::Message::UpdatePopUp),
 #endif
   SettingsMessageTree(I18n::Message::About, aboutChildren, 3)};
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 9);
 #else
-const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 7);
+const SettingsMessageTree model = SettingsMessageTree(I18n::Message::SettingsApp, menu, 8);
 #endif
 
 MainController::MainController(Responder * parentResponder) :
@@ -150,14 +154,14 @@ int MainController::reusableCellCount(int type) {
 }
 
 int MainController::typeAtLocation(int i, int j) {
-  if (j == 2) {
+  if (j == 3) {
     return 1;
   }
-  if (j == 3) {
+  if (j == 4) {
     return 2;
   }
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-  if (j == 6) {
+  if (j == 7) {
     return 3;
   }
 #endif
@@ -168,36 +172,33 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCell * myCell = (MessageTableCell *)cell;
   myCell->setMessage(m_messageTreeModel->children(index)->label());
 
-  if (index == 2) {
+  if (index == 3) {
     if (m_complexFormatLayout) {
       delete m_complexFormatLayout;
       m_complexFormatLayout = nullptr;
     }
     if (Preferences::sharedPreferences()->complexFormat() == Expression::ComplexFormat::Cartesian) {
-      const char text[] = {'a','+', Ion::Charset::IComplex, 'b', ' '};
-      m_complexFormatLayout = new StringLayout(text, sizeof(text), KDText::FontSize::Small);
+      m_complexFormatLayout = Helpers::CartesianComplexFormat(KDText::FontSize::Small);
     } else {
-      const char base[] = {'r', Ion::Charset::Exponential};
-      const char superscript[] = {Ion::Charset::IComplex, Ion::Charset::SmallTheta, ' '};
-      m_complexFormatLayout = new BaselineRelativeLayout(new StringLayout(base, sizeof(base), KDText::FontSize::Small), new StringLayout(superscript, sizeof(superscript), KDText::FontSize::Small), BaselineRelativeLayout::Type::Superscript);
+      m_complexFormatLayout = Helpers::PolarComplexFormat(KDText::FontSize::Small);
     }
     MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
-    myExpCell->setExpression(m_complexFormatLayout);
+    myExpCell->setExpressionLayout(m_complexFormatLayout);
     return;
   }
-  if (index == 3) {
+  if (index == 4) {
     MessageTableCellWithGauge * myGaugeCell = (MessageTableCellWithGauge *)cell;
     GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
     return;
   }
-  if (index == 4) {
+  if (index == 5) {
     int index = (int)GlobalPreferences::sharedGlobalPreferences()->language()-1;
     static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[index]);
     return;
   }
 #if EPSILON_SOFTWARE_UPDATE_PROMPT
-  if (index == 6) {
+  if (index == 7) {
     MessageTableCellWithSwitch * mySwitchCell = (MessageTableCellWithSwitch *)cell;
     SwitchView * mySwitch = (SwitchView *)mySwitchCell->accessoryView();
     mySwitch->setState(GlobalPreferences::sharedGlobalPreferences()->showUpdatePopUp());
@@ -211,6 +212,9 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       break;
     case 1:
       myTextCell->setSubtitle(m_messageTreeModel->children(index)->children((int)Preferences::sharedPreferences()->displayMode())->label());
+      break;
+    case 2:
+      myTextCell->setSubtitle(m_messageTreeModel->children(index)->children((int)Preferences::sharedPreferences()->editionMode())->label());
       break;
     default:
       myTextCell->setSubtitle(I18n::Message::Default);

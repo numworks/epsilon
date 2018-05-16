@@ -10,7 +10,7 @@ public:
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
-  void setExpression(Poincare::ExpressionLayout * expressionLayout);
+  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   KDSize minimalSizeForOptimalDisplay() const override;

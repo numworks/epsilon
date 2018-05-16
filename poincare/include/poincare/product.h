@@ -13,7 +13,7 @@ public:
 private:
   const char * name() const override;
   int emptySequenceValue() const override;
-  ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const override;
+  ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * argumentLayout, ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout) const override;
   Expression * evaluateWithNextTerm(DoublePrecision p, Expression * a, Expression * b) const override {
     return templatedApproximateWithNextTerm<double>(a, b);
   }

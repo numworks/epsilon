@@ -1,14 +1,14 @@
 #include <poincare/integer.h>
+#include <poincare/complex.h>
+#include <poincare/ieee754.h>
+#include <poincare/layout_engine.h>
+#include <cmath>
+#include <utility>
 extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 }
-#include <cmath>
-#include <poincare/complex.h>
-#include <poincare/ieee754.h>
-#include "layout/string_layout.h"
-#include <utility>
 
 namespace Poincare {
 
@@ -603,7 +603,7 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
 ExpressionLayout * Integer::createLayout() const {
   char buffer[255];
   int numberOfChars = writeTextInBuffer(buffer, 255);
-  return new StringLayout(buffer, numberOfChars);
+  return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
 template float Poincare::Integer::approximate<float>() const;

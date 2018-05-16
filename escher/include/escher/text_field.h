@@ -8,8 +8,8 @@
 class TextField : public TextInput {
 public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
-    TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, KDText::FontSize size = KDText::FontSize::Large, float horizontalAlignment = 0.0f,
-    float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
+    TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, KDText::FontSize size = KDText::FontSize::Large,
+    float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setDelegate(TextFieldDelegate * delegate) { m_delegate = delegate; }
   void setDraftTextBuffer(char * draftTextBuffer);
   bool isEditing() const;

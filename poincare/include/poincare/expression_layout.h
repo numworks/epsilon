@@ -102,8 +102,6 @@ public:
   bool addGreySquaresToAllMatrixAncestors();
   bool removeGreySquaresFromAllMatrixAncestors();
   bool hasText() const;
-  virtual bool needsParenthesesWithParent() const { return false; }
-  virtual bool childMightNeedParentheses() const { return false; }
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a sibling fraction: should the layout be
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should

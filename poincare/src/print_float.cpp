@@ -59,7 +59,7 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
     adjustedNumberOfSignificantDigits = adjustedNumberOfSignificantDigits < 1 ? 1 : adjustedNumberOfSignificantDigits;
     requiredLength = convertFloatToTextPrivate(f, tempBuffer, adjustedNumberOfSignificantDigits, Mode::Scientific);
   }
-  requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize;
+  requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize-1;
   strlcpy(buffer, tempBuffer, bufferSize);
   return requiredLength;
 }

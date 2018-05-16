@@ -66,7 +66,7 @@ private:
 
     void insertChar(char c, size_t index);
     char removeChar(size_t index);
-    int removeRemainingLine(size_t index, int direction);
+    size_t removeRemainingLine(size_t index, int direction);
     char operator[](size_t index) {
       assert(index < m_bufferSize);
       return m_buffer[index];

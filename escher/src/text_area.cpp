@@ -107,14 +107,14 @@ char TextArea::Text::removeChar(size_t index) {
   return deletedChar;
 }
 
-int TextArea::Text::removeRemainingLine(size_t index, int direction) {
+size_t TextArea::Text::removeRemainingLine(size_t index, int direction) {
   assert(m_buffer != nullptr);
   assert(index < m_bufferSize);
   int jump = index;
   while (m_buffer[jump] != '\n' && m_buffer[jump] != 0 && jump >= 0) {
     jump += direction;
   }
-  int delta = direction > 0 ? jump - index : index - jump;
+  size_t delta = direction > 0 ? jump - index : index - jump;
   if (delta == 0) {
     return 0;
   }
@@ -240,7 +240,7 @@ bool TextArea::TextArea::ContentView::removeChar() {
 }
 
 bool TextArea::ContentView::removeEndOfLine() {
-  int removedLine = m_text.removeRemainingLine(cursorLocation(), 1);
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), 1);
   if (removedLine > 0) {
     layoutSubviews();
     reloadRectFromCursorPosition(cursorLocation(), false);
@@ -253,7 +253,7 @@ bool TextArea::ContentView::removeStartOfLine() {
   if (cursorLocation() <= 0) {
     return false;
   }
-  int removedLine = m_text.removeRemainingLine(cursorLocation()-1, -1);
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation()-1, -1);
   if (removedLine > 0) {
     assert(m_cursorIndex >= removedLine);
     setCursorLocation(cursorLocation()-removedLine);

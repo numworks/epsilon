@@ -93,15 +93,17 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   if (ratio*std::fabs(xMax-xMin) < k_minFloat || ratio*std::fabs(yMax-yMin) < k_minFloat) {
     return;
   }
-  float newXMin = clipped(x*(1.0f-ratio)+ratio*xMin, false);
-  float newXMax = clipped(x*(1.0f-ratio)+ratio*xMax, true);
+  float centerX = std::isnan(x) || std::isinf(x) ? (xMax+xMin)/2: x;
+  float centerY = std::isnan(y) || std::isinf(y) ? (yMax+yMin)/2: y;
+  float newXMin = clipped(centerX*(1.0f-ratio)+ratio*xMin, false);
+  float newXMax = clipped(centerX*(1.0f-ratio)+ratio*xMax, true);
   if (!std::isnan(newXMin) && !std::isnan(newXMax)) {
     m_xMax = newXMax;
     MemoizedCurveViewRange::setXMin(newXMin);
   }
   m_yAuto = false;
-  float newYMin = clipped(y*(1.0f-ratio)+ratio*yMin, false);
-  float newYMax = clipped(y*(1.0f-ratio)+ratio*yMax, true);
+  float newYMin = clipped(centerY*(1.0f-ratio)+ratio*yMin, false);
+  float newYMax = clipped(centerY*(1.0f-ratio)+ratio*yMax, true);
   if (!std::isnan(newYMin) && !std::isnan(newYMax)) {
     m_yMax = newYMax;
     MemoizedCurveViewRange::setYMin(newYMin);

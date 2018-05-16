@@ -20,13 +20,18 @@ private:
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, name());
   }
-  const char * name() const { return "confidence"; }
+  virtual const char * name() const { return "confidence"; }
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
   Expression * privateApproximate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Expression * privateApproximate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+};
+
+class SimplePredictionInterval : public ConfidenceInterval {
+private:
+  const char * name() const { return "prediction"; }
 };
 
 }

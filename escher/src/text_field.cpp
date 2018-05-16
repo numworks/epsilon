@@ -123,7 +123,7 @@ bool TextField::ContentView::removeChar() {
   if( m_horizontalAlignment == 0.0f) {
     reloadRectFromCursorPosition(cursorLocation());
   }
-  for (int k = cursorLocation(); k < (signed char)m_currentDraftTextLength; k ++) {
+  for (size_t k = cursorLocation(); k < m_currentDraftTextLength; k++) {
     m_draftTextBuffer[k] = m_draftTextBuffer[k+1];
   }
   m_draftTextBuffer[m_currentDraftTextLength] = 0;

@@ -4,9 +4,9 @@
 
 namespace TextInputHelpers {
 
-int CursorIndexInCommand(const char * text) {
-  int textLength = strlen(text);
-  for (int i = 0; i < textLength - 1; i++) {
+size_t CursorIndexInCommand(const char * text) {
+  size_t textLength = strlen(text);
+  for (size_t i = 0; i < textLength - 1; i++) {
     if (text[i] == '\'' &&  text[i+1] == '\'') {
       return i + 1;
     } else if (text[i] == Ion::Charset::Empty) {

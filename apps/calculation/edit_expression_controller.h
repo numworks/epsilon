@@ -64,7 +64,7 @@ private:
   bool inputViewDidAbortEditing(const char * text);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
-  char m_cacheBuffer[TextField::maxBufferSize()];
+  char m_cacheBuffer[Calculation::k_printedExpressionSize];
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
   bool m_inputViewHeightIsMaximal;

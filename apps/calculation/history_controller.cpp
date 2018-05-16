@@ -158,17 +158,8 @@ KDCoordinate HistoryController::rowHeight(int j) {
     return 0;
   }
   Calculation * calculation = m_calculationStore->calculationAtIndex(j);
-  KDCoordinate inputHeight = calculation->inputLayout()->size().height();
   App * calculationApp = (App *)app();
-  Poincare::ExpressionLayout * approximateLayout = calculation->approximateOutputLayout(calculationApp->localContext());
-  KDCoordinate approximateOutputHeight = approximateLayout->size().height();
-  if (calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
-    return inputHeight + approximateOutputHeight + 3*HistoryViewCell::k_digitVerticalMargin;
-  }
-  Poincare::ExpressionLayout * exactLayout = calculation->exactOutputLayout(calculationApp->localContext());
-  KDCoordinate exactOutputHeight = exactLayout->size().height();
-  KDCoordinate outputHeight = max(exactLayout->baseline(), approximateLayout->baseline()) + max(exactOutputHeight-exactLayout->baseline(), approximateOutputHeight-approximateLayout->baseline());
-  return inputHeight + outputHeight + 3*HistoryViewCell::k_digitVerticalMargin;
+  return calculation->height(calculationApp->localContext()) + 3*HistoryViewCell::k_digitVerticalMargin;
 }
 
 KDCoordinate HistoryController::cumulatedHeightFromIndex(int j) {

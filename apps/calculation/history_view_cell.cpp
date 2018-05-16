@@ -9,10 +9,28 @@ namespace Calculation {
 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
+  m_inputLayout(nullptr),
+  m_exactOutputLayout(nullptr),
+  m_approximateOutputLayout(nullptr),
   m_inputView(this),
   m_scrollableOutputView(this),
   m_selectedSubviewType(HistoryViewCell::SubviewType::Output)
 {
+}
+
+HistoryViewCell::~HistoryViewCell() {
+  if (m_inputLayout != nullptr) {
+    delete m_inputLayout;
+    m_inputLayout = nullptr;
+  }
+  if (m_exactOutputLayout != nullptr) {
+    delete m_exactOutputLayout;
+    m_exactOutputLayout = nullptr;
+  }
+  if (m_approximateOutputLayout != nullptr) {
+    delete m_approximateOutputLayout;
+    m_approximateOutputLayout = nullptr;
+  }
 }
 
 OutputExpressionsView * HistoryViewCell::outputView() {
@@ -83,12 +101,27 @@ void HistoryViewCell::layoutSubviews() {
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
-  m_inputView.setExpressionLayout(calculation->inputLayout());
+  if (m_inputLayout) {
+    delete m_inputLayout;
+  }
+  m_inputLayout = calculation->createInputLayout();
+  m_inputView.setExpressionLayout(m_inputLayout);
   App * calculationApp = (App *)app();
   /* Both output expressions have to be updated at the same time. The
    * outputView points to deleted layouts and a call to
    * outputView()->layoutSubviews() is going to fail. */
-  Poincare::ExpressionLayout * outputExpressions[2] = {calculation->approximateOutputLayout(calculationApp->localContext()), calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext()) ? nullptr : calculation->exactOutputLayout(calculationApp->localContext())};
+  if (m_exactOutputLayout) {
+    delete m_exactOutputLayout;
+    m_exactOutputLayout = nullptr;
+  }
+  if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
+    m_exactOutputLayout = calculation->createExactOutputLayout(calculationApp->localContext());
+  }
+  if (m_approximateOutputLayout) {
+    delete m_approximateOutputLayout;
+  }
+  m_approximateOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
+  Poincare::ExpressionLayout * outputExpressions[2] = {m_approximateOutputLayout, m_exactOutputLayout};
   m_scrollableOutputView.outputView()->setExpressions(outputExpressions);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.outputView()->setEqualMessage(equalMessage);

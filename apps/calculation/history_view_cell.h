@@ -15,6 +15,7 @@ public:
     Output
   };
   HistoryViewCell(Responder * parentResponder);
+  ~HistoryViewCell();
   void reloadCell() override;
   void reloadScroll();
   void setEven(bool even) override;
@@ -35,6 +36,9 @@ public:
   OutputExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
+  Poincare::ExpressionLayout * m_inputLayout;
+  Poincare::ExpressionLayout * m_exactOutputLayout;
+  Poincare::ExpressionLayout * m_approximateOutputLayout;
   ScrollableExpressionView m_inputView;
   ScrollableOutputExpressionsView m_scrollableOutputView;
   SubviewType m_selectedSubviewType;

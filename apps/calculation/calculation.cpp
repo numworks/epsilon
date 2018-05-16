@@ -11,20 +11,14 @@ Calculation::Calculation() :
   m_exactOutputText(),
   m_approximateOutputText(),
   m_input(nullptr),
-  m_inputLayout(nullptr),
   m_exactOutput(nullptr),
-  m_exactOutputLayout(nullptr),
   m_approximateOutput(nullptr),
-  m_approximateOutputLayout(nullptr),
+  m_height(-1),
   m_equalSign(EqualSign::Unknown)
 {
 }
 
 Calculation::~Calculation() {
-  if (m_inputLayout != nullptr) {
-    delete m_inputLayout;
-    m_inputLayout = nullptr;
-  }
   if (m_input != nullptr) {
     delete m_input;
     m_input = nullptr;
@@ -33,17 +27,9 @@ Calculation::~Calculation() {
     delete m_exactOutput;
     m_exactOutput = nullptr;
   }
-  if (m_exactOutputLayout != nullptr) {
-    delete m_exactOutputLayout;
-    m_exactOutputLayout = nullptr;
-  }
   if (m_approximateOutput != nullptr) {
     delete m_approximateOutput;
     m_approximateOutput = nullptr;
-  }
-  if (m_approximateOutputLayout != nullptr) {
-    delete m_approximateOutputLayout;
-    m_approximateOutputLayout = nullptr;
   }
 }
 
@@ -78,6 +64,27 @@ void Calculation::setContent(const char * c, Context * context, Expression * ans
   m_approximateOutput->writeTextInBuffer(m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
+KDCoordinate Calculation::height(Context * context) {
+  if (m_height < 0) {
+    ExpressionLayout * inputLayout = createInputLayout();
+    KDCoordinate inputHeight = inputLayout->size().height();
+    delete inputLayout;
+    Poincare::ExpressionLayout * approximateLayout = createApproximateOutputLayout(context);
+    KDCoordinate approximateOutputHeight = approximateLayout->size().height();
+    if (shouldOnlyDisplayApproximateOutput(context)) {
+      m_height = inputHeight+approximateOutputHeight;
+    } else {
+      Poincare::ExpressionLayout * exactLayout = createExactOutputLayout(context);
+      KDCoordinate exactOutputHeight = exactLayout->size().height();
+      KDCoordinate outputHeight = max(exactLayout->baseline(), approximateLayout->baseline()) + max(exactOutputHeight-exactLayout->baseline(), approximateOutputHeight-approximateLayout->baseline());
+      delete exactLayout;
+      m_height = inputHeight + outputHeight;
+    }
+    delete approximateLayout;
+  }
+  return m_height;
+}
+
 const char * Calculation::inputText() {
   return m_inputText;
 }
@@ -97,11 +104,11 @@ Expression * Calculation::input() {
   return m_input;
 }
 
-ExpressionLayout * Calculation::inputLayout() {
-  if (m_inputLayout == nullptr && input() != nullptr) {
-    m_inputLayout = input()->createLayout(PrintFloat::Mode::Decimal, Expression::ComplexFormat::Cartesian);
+ExpressionLayout * Calculation::createInputLayout() {
+  if (input() != nullptr) {
+    return input()->createLayout(PrintFloat::Mode::Decimal, Expression::ComplexFormat::Cartesian);
   }
-  return m_inputLayout;
+  return nullptr;
 }
 
 bool Calculation::isEmpty() {
@@ -123,26 +130,15 @@ void Calculation::tidy() {
     delete m_input;
   }
   m_input = nullptr;
-  if (m_inputLayout != nullptr) {
-    delete m_inputLayout;
-  }
-  m_inputLayout = nullptr;
   if (m_exactOutput != nullptr) {
     delete m_exactOutput;
   }
   m_exactOutput = nullptr;
-  if (m_exactOutputLayout != nullptr) {
-    delete m_exactOutputLayout;
-  }
-  m_exactOutputLayout = nullptr;
   if (m_approximateOutput != nullptr) {
     delete m_approximateOutput;
   }
   m_approximateOutput = nullptr;
-  if (m_approximateOutputLayout != nullptr) {
-    delete m_approximateOutputLayout;
-  }
-  m_approximateOutputLayout = nullptr;
+  m_height = -1;
   m_equalSign = EqualSign::Unknown;
 }
 
@@ -155,11 +151,11 @@ Expression * Calculation::exactOutput(Context * context) {
   return m_exactOutput;
 }
 
-ExpressionLayout * Calculation::exactOutputLayout(Context * context) {
-  if (m_exactOutputLayout == nullptr && exactOutput(context) != nullptr) {
-    m_exactOutputLayout = exactOutput(context)->createLayout();
+ExpressionLayout * Calculation::createExactOutputLayout(Context * context) {
+  if (exactOutput(context) != nullptr) {
+    return exactOutput(context)->createLayout();
   }
-  return m_exactOutputLayout;
+  return nullptr;
 }
 
 Expression * Calculation::approximateOutput(Context * context) {
@@ -177,11 +173,11 @@ Expression * Calculation::approximateOutput(Context * context) {
   return m_approximateOutput;
 }
 
-ExpressionLayout * Calculation::approximateOutputLayout(Context * context) {
-  if (m_approximateOutputLayout == nullptr && approximateOutput(context) != nullptr) {
-    m_approximateOutputLayout = approximateOutput(context)->createLayout();
+ExpressionLayout * Calculation::createApproximateOutputLayout(Context * context) {
+  if (approximateOutput(context) != nullptr) {
+    return approximateOutput(context)->createLayout();
   }
-  return m_approximateOutputLayout;
+  return nullptr;
 }
 
 bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {

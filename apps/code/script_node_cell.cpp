@@ -5,6 +5,7 @@
 namespace Code {
 
 constexpr char ScriptNodeCell::k_parentheses[];
+constexpr char ScriptNodeCell::k_parenthesesWithEmpty[];
 
 ScriptNodeCell::ScriptNodeView::ScriptNodeView() :
   HighlightCell(),

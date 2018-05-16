@@ -294,7 +294,7 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
 bool TextArea::handleEventWithText(const char * text, bool indentation) {
   int nextCursorLocation = cursorLocation();
 
-  int cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(text);
+  size_t cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(text);
 
   size_t eventTextSize = strlen(text) + 1;
   char buffer[eventTextSize];

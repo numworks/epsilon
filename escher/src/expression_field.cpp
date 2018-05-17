@@ -45,10 +45,8 @@ const char * ExpressionField::text() {
 void ExpressionField::setText(const char * text) {
   if (editionIsInTextField()) {
     m_textField.setText(text);
-    return;
-  }
-  m_expressionLayoutField.clearLayout();
-  if (strlen(text) > 0) {
+  } else {
+    m_expressionLayoutField.clearLayout();
     m_expressionLayoutField.handleEventWithText(text);
   }
 }

@@ -22,7 +22,7 @@ public:
   bool hasText() const;
   int writeTextInBuffer(char * buffer, int bufferLength);
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
-  Poincare::ExpressionLayout * expressionLayout();
+  Poincare::ExpressionLayout * expressionLayout() const;
   char XNTChar();
   void setBackgroundColor(KDColor c) override;
 

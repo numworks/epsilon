@@ -182,6 +182,11 @@ int ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
 }
 
 bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation) {
+  if (text[0] == 0) {
+    // The text is empty
+    return true;
+  }
+
   int currentNumberOfLayouts = m_contentView.expressionView()->numberOfLayouts();
   if (currentNumberOfLayouts >= k_maxNumberOfLayouts - 6) {
     /* We add -6 because in some cases (Ion::Events::Division,

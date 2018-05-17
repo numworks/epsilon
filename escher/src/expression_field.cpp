@@ -47,7 +47,7 @@ void ExpressionField::setText(const char * text) {
     m_textField.setText(text);
   } else {
     m_expressionLayoutField.clearLayout();
-    m_expressionLayoutField.handleEventWithText(text);
+    m_expressionLayoutField.handleEventWithText(text, false, true);
   }
 }
 
@@ -56,7 +56,7 @@ void ExpressionField::insertText(const char * text) {
     m_textField.handleEventWithText(text);
   } else {
     m_expressionLayoutField.setEditing(true);
-    m_expressionLayoutField.handleEventWithText(text);
+    m_expressionLayoutField.handleEventWithText(text, false, true);
   }
 }
 
@@ -109,11 +109,11 @@ bool ExpressionField::heightIsMaximal() const {
   return inputViewHeight() == k_separatorThickness + maximalHeight();
 }
 
-bool ExpressionField::handleEventWithText(const char * text, bool indentation) {
+bool ExpressionField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   if (editionIsInTextField()) {
-    return m_textField.handleEventWithText(text, indentation);
+    return m_textField.handleEventWithText(text, indentation, forceCursorRightOfText);
   } else {
-    return m_expressionLayoutField.handleEventWithText(text, indentation);
+    return m_expressionLayoutField.handleEventWithText(text, indentation, forceCursorRightOfText);
   }
 }
 

@@ -10,7 +10,7 @@ class ExpressionLayoutFieldDelegate : public ::ExpressionLayoutFieldDelegate {
 public:
   bool expressionLayoutFieldShouldFinishEditing(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
   bool expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
-  bool expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) override;
+  bool expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) override;
   bool expressionLayoutFieldDidAbortEditing(ExpressionLayoutField * expressionLayoutField) override;
   void expressionLayoutFieldDidChangeSize(ExpressionLayoutField * expressionLayoutField) override;
   Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) override;

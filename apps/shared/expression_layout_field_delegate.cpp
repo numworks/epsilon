@@ -12,8 +12,8 @@ bool ExpressionLayoutFieldDelegate::expressionLayoutFieldDidReceiveEvent(Express
   return expressionFieldDelegateApp()->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
 }
 
-bool ExpressionLayoutFieldDelegate::expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) {
-  return expressionFieldDelegateApp()->expressionLayoutFieldDidFinishEditing(expressionLayoutField, text, event);
+bool ExpressionLayoutFieldDelegate::expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, ExpressionLayout * layout, Ion::Events::Event event) {
+  return expressionFieldDelegateApp()->expressionLayoutFieldDidFinishEditing(expressionLayoutField, layout, event);
 }
 
 bool ExpressionLayoutFieldDelegate::expressionLayoutFieldDidAbortEditing(ExpressionLayoutField * expressionLayoutField) {

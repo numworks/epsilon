@@ -19,7 +19,6 @@ public:
   void didBecomeFirstResponder() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  const char * textBody();
   void insertTextBody(const char * text);
 
   /* TextFieldDelegate */
@@ -29,7 +28,7 @@ public:
 
   /* ExpressionLayoutFieldDelegate */
   bool expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
-  bool expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) override;
+  bool expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) override;
   bool expressionLayoutFieldDidAbortEditing(::ExpressionLayoutField * expressionLayoutField) override;
   void expressionLayoutFieldDidChangeSize(::ExpressionLayoutField * expressionLayoutField) override;
 
@@ -60,7 +59,7 @@ private:
   void unloadView(View * view) override;
   void reloadView();
   bool inputViewDidReceiveEvent(Ion::Events::Event event);
-  bool inputViewDidFinishEditing(const char * text, Ion::Events::Event event);
+  bool inputViewDidFinishEditing(const char * text, Poincare::ExpressionLayout * layout);
   bool inputViewDidAbortEditing(const char * text);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;

@@ -7,7 +7,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Ans) {
-    insertText("ans");
+    handleEventWithText("ans");
     return true;
   }
   if (isEditing() && isEmpty() &&
@@ -17,7 +17,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
        event == Ion::Events::Square ||
        event == Ion::Events::Division ||
        event == Ion::Events::Sto)) {
-    insertText("ans");
+    handleEventWithText("ans");
   }
   return(::ExpressionField::handleEvent(event));
 }

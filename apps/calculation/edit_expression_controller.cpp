@@ -58,7 +58,7 @@ const char * EditExpressionController::textBody() {
 }
 
 void EditExpressionController::insertTextBody(const char * text) {
-  ((ContentView *)view())->expressionField()->insertText(text);
+  ((ContentView *)view())->expressionField()->handleEventWithText(text, false, true);
 }
 
 bool EditExpressionController::handleEvent(Ion::Events::Event event) {

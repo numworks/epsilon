@@ -121,7 +121,9 @@ bool ListParameterController::textFieldShouldFinishEditing(TextField * textField
 }
 
 bool ListParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  static float maxFirstIndex = std::pow(10.0, Sequence::k_initialRankNumberOfDigits);
+  static float maxFirstIndex = std::pow(10.0f, Sequence::k_initialRankNumberOfDigits) - 1.0f;
+  /* -1 to take into account a double recursive sequence, which has
+   * SecondIndex = FirstIndex + 1 */
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
   float floatBody = Expression::approximateToScalar<float>(text, *globalContext);

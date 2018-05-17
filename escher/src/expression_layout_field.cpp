@@ -120,10 +120,7 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (isEditing() && expressionLayoutFieldShouldFinishEditing(event)) {
     setEditing(false);
-    int bufferSize = TextField::maxBufferSize();
-    char buffer[bufferSize];
-    m_contentView.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferSize);
-    if (m_delegate->expressionLayoutFieldDidFinishEditing(this, buffer, event)) {
+    if (m_delegate->expressionLayoutFieldDidFinishEditing(this, m_contentView.expressionView()->expressionLayout(), event)) {
       clearLayout();
     }
     return true;

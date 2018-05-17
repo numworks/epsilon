@@ -215,7 +215,8 @@ int ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
 }
 
 bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation) {
-  if (m_contentView.expressionView()->numberOfLayouts() >= k_maxNumberOfLayouts) {
+  int currentNumberOfLayouts = m_contentView.expressionView()->numberOfLayouts();
+  if (currentNumberOfLayouts >= k_maxNumberOfLayouts) {
     return true;
   }
   Poincare::Expression * resultExpression = Poincare::Expression::parse(text);
@@ -224,7 +225,7 @@ bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentat
   }
   Poincare::ExpressionLayout * resultLayout = resultExpression->createLayout();
   delete resultExpression;
-  if (resultLayout->numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+  if (currentNumberOfLayouts + resultLayout->numberOfDescendants(true) >= k_maxNumberOfLayouts) {
     delete resultLayout;
     return false;
   }

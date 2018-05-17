@@ -140,51 +140,18 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
     m_delegate->expressionLayoutFieldDidAbortEditing(this);
     return true;
   }
-  if (event == Ion::Events::Division
-      || event == Ion::Events::Exp
-      || event == Ion::Events::Power
-      || event == Ion::Events::Sqrt
-      || event == Ion::Events::Square
-      || event == Ion::Events::EE
-      || event.hasText()
-      || event == Ion::Events::Paste)
-  {
+  if (event.hasText() || event == Ion::Events::Paste || event == Ion::Events::Backspace) {
     if (!isEditing()) {
       setEditing(true);
     }
-    if (m_contentView.expressionView()->numberOfLayouts() >= k_maxNumberOfLayouts) {
-      return true;
-    }
-    if (event == Ion::Events::Division) {
-      m_contentView.cursor()->addFractionLayoutAndCollapseSiblings();
-    } else if (event == Ion::Events::Exp) {
-      m_contentView.cursor()->addEmptyExponentialLayout();
-    } else if (event == Ion::Events::Power) {
-      m_contentView.cursor()->addEmptyPowerLayout();
-    } else if (event == Ion::Events::Sqrt) {
-      m_contentView.cursor()->addEmptySquareRootLayout();
-    } else if (event == Ion::Events::Square) {
-      m_contentView.cursor()->addEmptySquarePowerLayout();
-    } else if (event == Ion::Events::EE) {
-      m_contentView.cursor()->addEmptyTenPowerLayout();
-    } else if (event.hasText()) {
-      const char * textToInsert = event.text();
-      if (textToInsert[1] == 0 && (textToInsert[0] == '[' || textToInsert[0] == ']')) {
-        m_contentView.cursor()->addEmptyMatrixLayout();
-      } else {
-        m_contentView.cursor()->insertText(textToInsert);
-      }
-    }
-    if (event == Ion::Events::Paste) {
+    if (event.hasText()) {
+      handleEventWithText(event.text());
+    } else if (event == Ion::Events::Paste) {
       handleEventWithText(Clipboard::sharedClipboard()->storedText());
+    } else {
+      assert(event == Ion::Events::Backspace);
+      m_contentView.cursor()->performBackspace();
     }
-    return true;
-  }
-  if (event == Ion::Events::Backspace) {
-    if (!isEditing()) {
-      setEditing(true);
-    }
-    m_contentView.cursor()->performBackspace();
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {
@@ -216,38 +183,60 @@ int ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
 
 bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation) {
   int currentNumberOfLayouts = m_contentView.expressionView()->numberOfLayouts();
-  if (currentNumberOfLayouts >= k_maxNumberOfLayouts) {
+  if (currentNumberOfLayouts >= k_maxNumberOfLayouts - 6) {
+    /* We add -6 because in some cases (Ion::Events::Division,
+     * Ion::Events::Exp...) we let the layout cursor handle the layout insertion
+     * and these events may add at most 6 layouts (e.g *10^•). */
     return true;
   }
-  Poincare::Expression * resultExpression = Poincare::Expression::parse(text);
-  if (resultExpression == nullptr) {
-    return true;
-  }
-  Poincare::ExpressionLayout * resultLayout = resultExpression->createLayout();
-  delete resultExpression;
-  if (currentNumberOfLayouts + resultLayout->numberOfDescendants(true) >= k_maxNumberOfLayouts) {
-    delete resultLayout;
-    return true;
-  }
-  // Find the pointed layout.
-  Poincare::ExpressionLayout * pointedLayout = nullptr;
-  if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
-    /* Special case: if the text is "random()", the cursor should not be set
-     * inside the parentheses. */
-    pointedLayout = resultLayout;
-  } else if (resultLayout->isHorizontal()) {
-    /* If the layout is horizontal, pick the first open parenthesis. For now,
-     * all horizontal layouts in MathToolbox have parentheses. */
-    for (int i = 0; i < resultLayout->numberOfChildren(); i++) {
-      if (resultLayout->editableChild(i)->isLeftParenthesis()) {
-        pointedLayout = resultLayout->editableChild(i);
-        break;
+
+  // Handle special cases
+  if (strcmp(text, Ion::Events::Division.text()) == 0) {
+    m_contentView.cursor()->addFractionLayoutAndCollapseSiblings();
+  } else if (strcmp(text, Ion::Events::Exp.text()) == 0) {
+    m_contentView.cursor()->addEmptyExponentialLayout();
+  } else if (strcmp(text, Ion::Events::Power.text()) == 0) {
+    m_contentView.cursor()->addEmptyPowerLayout();
+  } else if (strcmp(text, Ion::Events::Sqrt.text()) == 0) {
+    m_contentView.cursor()->addEmptySquareRootLayout();
+  } else if (strcmp(text, Ion::Events::Square.text()) == 0) {
+    m_contentView.cursor()->addEmptySquarePowerLayout();
+  } else if (strcmp(text, Ion::Events::EE.text()) == 0) {
+    m_contentView.cursor()->addEmptyTenPowerLayout();
+  } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
+    m_contentView.cursor()->addEmptyMatrixLayout();
+  } else {
+    Poincare::Expression * resultExpression = Poincare::Expression::parse(text);
+    if (resultExpression == nullptr) {
+      m_contentView.cursor()->insertText(text);
+      return true;
+    }
+    Poincare::ExpressionLayout * resultLayout = resultExpression->createLayout();
+    delete resultExpression;
+    if (currentNumberOfLayouts + resultLayout->numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+      delete resultLayout;
+      return true;
+    }
+    // Find the pointed layout.
+    Poincare::ExpressionLayout * pointedLayout = nullptr;
+    if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
+      /* Special case: if the text is "random()", the cursor should not be set
+       * inside the parentheses. */
+      pointedLayout = resultLayout;
+    } else if (resultLayout->isHorizontal()) {
+      /* If the layout is horizontal, pick the first open parenthesis. For now,
+       * all horizontal layouts in MathToolbox have parentheses. */
+      for (int i = 0; i < resultLayout->numberOfChildren(); i++) {
+        if (resultLayout->editableChild(i)->isLeftParenthesis()) {
+          pointedLayout = resultLayout->editableChild(i);
+          break;
+        }
       }
     }
+    /* Insert the layout. If pointedLayout is nullptr, the cursor will be on the
+     * right of the inserted layout. */
+    insertLayoutAtCursor(resultLayout, pointedLayout);
   }
-  /* Insert the layout. If pointedLayout is nullptr, the cursor will be on the
-   * right of the inserted layout. */
-  insertLayoutAtCursor(resultLayout, pointedLayout);
   return true;
 }
 

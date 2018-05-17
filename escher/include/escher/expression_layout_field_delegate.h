@@ -10,7 +10,7 @@ class ExpressionLayoutFieldDelegate {
 public:
   virtual bool expressionLayoutFieldShouldFinishEditing(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) = 0;
   virtual bool expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) = 0;
-  virtual bool expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) { return false; }
+  virtual bool expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) { return false; }
   virtual bool expressionLayoutFieldDidAbortEditing(ExpressionLayoutField * expressionLayoutField) { return false; }
   virtual void expressionLayoutFieldDidChangeSize(ExpressionLayoutField * expressionLayoutField) {}
   virtual Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) = 0;

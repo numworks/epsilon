@@ -6,6 +6,7 @@
 #include <assert.h>
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Calculation {
 
@@ -53,10 +54,6 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
   m_cacheBuffer[0] = 0;
 }
 
-const char * EditExpressionController::textBody() {
-  return ((ContentView *)view())->expressionField()->text();
-}
-
 void EditExpressionController::insertTextBody(const char * text) {
   ((ContentView *)view())->expressionField()->handleEventWithText(text, false, true);
 }
@@ -88,7 +85,7 @@ bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField,
 }
 
 bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
-  return inputViewDidFinishEditing(text, event);
+  return inputViewDidFinishEditing(text, nullptr);
 }
 
 bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField) {
@@ -102,8 +99,8 @@ bool EditExpressionController::expressionLayoutFieldDidReceiveEvent(::Expression
   return expressionFieldDelegateApp()->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
 }
 
-bool EditExpressionController::expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) {
-  return inputViewDidFinishEditing(text, event);
+bool EditExpressionController::expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, ExpressionLayout * layout, Ion::Events::Event event) {
+  return inputViewDidFinishEditing(nullptr, layout);
 }
 
 bool EditExpressionController::expressionLayoutFieldDidAbortEditing(::ExpressionLayoutField * expressionLayoutField) {
@@ -159,10 +156,17 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
   return true;
 }
 
-bool EditExpressionController::inputViewDidFinishEditing(const char * text, Ion::Events::Event event) {
+
+bool EditExpressionController::inputViewDidFinishEditing(const char * text, ExpressionLayout * layout) {
   App * calculationApp = (App *)app();
-  strlcpy(m_cacheBuffer, textBody(), Calculation::k_printedExpressionSize);
-  m_calculationStore->push(textBody(), calculationApp->localContext());
+  if (layout == nullptr) {
+    assert(text);
+    strlcpy(m_cacheBuffer, text, Calculation::k_printedExpressionSize);
+  } else {
+    assert(layout);
+    layout->writeTextInBuffer(m_cacheBuffer, Calculation::k_printedExpressionSize);
+  }
+  m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
   m_historyController->reload();
   ((ContentView *)view())->mainView()->scrollToCell(0, m_historyController->numberOfRows()-1);
   ((ContentView *)view())->expressionField()->setEditing(true);

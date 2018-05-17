@@ -78,7 +78,7 @@ bool InputViewController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutF
   return m_expressionLayoutFieldDelegate->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
 }
 
-bool InputViewController::expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, const char * text, Ion::Events::Event event) {
+bool InputViewController::expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) {
   return inputViewDidFinishEditing();
 }
 

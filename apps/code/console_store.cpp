@@ -148,7 +148,7 @@ void ConsoleStore::deleteLineAtIndex(int index) {
         nextLineStart++;
       }
       nextLineStart++;
-      memcpy(&m_history[i], &m_history[nextLineStart], (k_historySize - 1) - nextLineStart + 1);
+      memmove(&m_history[i], &m_history[nextLineStart], (k_historySize - 1) - nextLineStart + 1);
       return;
     }
   }

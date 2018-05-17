@@ -15,7 +15,6 @@ public:
   bool isEditing() const;
   const char * text();
   void setText(const char * text);
-  void insertText(const char * text);
   void reload();
   bool editionIsInTextField() const;
   bool isEmpty() const;

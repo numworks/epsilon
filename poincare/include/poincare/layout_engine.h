@@ -42,7 +42,7 @@ public:
       int firstChildIndex = 0,
       int lastChildIndex = -1,
       ChildNeedsParenthesis childNeedsParenthesis = [](const char * operatorName) {
-        return (operatorName[1] == 0 && (operatorName[0] == divideChar)); });
+        return (operatorName[0] != 0 && operatorName[1] == 0 && (operatorName[0] == divideChar)); });
   static int writePrefixExpressionLayoutTextInBuffer(
       const ExpressionLayout * expressionLayout,
       char * buffer,

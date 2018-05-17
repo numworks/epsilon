@@ -313,12 +313,18 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
    * such a subscript should be written using parentheses. For instance: "u_{n}"
    * should be inserted as "u(n)".
    * We thus remove underscores and changes brackets into parentheses. */
+  bool specialUnderScore = false;
   for (size_t i = bufferIndex; i < eventTextSize; i++) {
-    if (eventText[i] == '{') {
+    if (eventText[i] == '_') {
+      specialUnderScore = ((i < eventTextSize - 1) && (eventText[i+1] == '{')) ? true : false;
+      if (!specialUnderScore) {
+         buffer[bufferIndex++] = '_';
+      }
+    } else if (eventText[i] == '{' && specialUnderScore) {
       buffer[bufferIndex++] = '(';
-    } else if (eventText[i] == '}') {
+    } else if (eventText[i] == '}' && specialUnderScore) {
       buffer[bufferIndex++] = ')';
-    } else if (eventText[i] == '_') {
+      specialUnderScore = false;
     } else {
       buffer[bufferIndex++] = eventText[i];
     }

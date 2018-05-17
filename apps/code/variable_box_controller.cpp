@@ -62,6 +62,9 @@ void VariableBoxController::ContentViewController::viewWillAppear() {
 
 void VariableBoxController::ContentViewController::viewDidDisappear() {
   m_selectableTableView.deselectTable();
+  for (int i = 0; i < k_maxScriptNodesCount; i++) {
+    m_scriptNodes[i] = ScriptNode();
+  }
   ViewController::viewDidDisappear();
 }
 

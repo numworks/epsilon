@@ -105,13 +105,9 @@ void MatrixLayout::replaceChildAndMoveCursor(const ExpressionLayout * oldChild, 
   int columnIndex = columnAtChildIndex(oldChildIndex);
   replaceChild(oldChild, newChild, deleteOldChild);
   int newIndex = indexAtRowColumn(rowIndex, columnIndex);
-  if (newIndex < numberOfChildren()) {
-    cursor->setPointedExpressionLayout(editableChild(newIndex));
-    cursor->setPosition(ExpressionLayoutCursor::Position::Right);
-  } else {
-    cursor->setPointedExpressionLayout(editableChild(numberOfChildren()));
-    cursor->setPosition(ExpressionLayoutCursor::Position::Left);
-  }
+  assert(newIndex < numberOfChildren());
+  cursor->setPointedExpressionLayout(editableChild(newIndex));
+  cursor->setPosition(ExpressionLayoutCursor::Position::Right);
 }
 
 void MatrixLayout::removePointedChildAtIndexAndMoveCursor(int index, bool deleteAfterRemoval, ExpressionLayoutCursor * cursor) {

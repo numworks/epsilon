@@ -121,15 +121,16 @@ bool ListParameterController::textFieldShouldFinishEditing(TextField * textField
 }
 
 bool ListParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  static float maxFirstIndex = std::pow(10.0, Sequence::k_initialRankNumberOfDigits);
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  double floatBody = Expression::approximateToScalar<double>(text, *globalContext);
+  float floatBody = Expression::approximateToScalar<float>(text, *globalContext);
   int index = std::round(floatBody);
   if (std::isnan(floatBody) || std::isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  if (index < 0) {
+  if (index < 0  || floatBody >= maxFirstIndex) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }

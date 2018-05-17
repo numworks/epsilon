@@ -51,15 +51,6 @@ void ExpressionField::setText(const char * text) {
   }
 }
 
-void ExpressionField::insertText(const char * text) {
-  if (editionIsInTextField()) {
-    m_textField.handleEventWithText(text);
-  } else {
-    m_expressionLayoutField.setEditing(true);
-    m_expressionLayoutField.handleEventWithText(text, false, true);
-  }
-}
-
 View * ExpressionField::subviewAtIndex(int index) {
   assert(index == 0);
   if (editionIsInTextField()) {

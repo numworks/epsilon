@@ -147,7 +147,7 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
     if (event.hasText()) {
       handleEventWithText(event.text());
     } else if (event == Ion::Events::Paste) {
-      handleEventWithText(Clipboard::sharedClipboard()->storedText());
+      handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
     } else {
       assert(event == Ion::Events::Backspace);
       m_contentView.cursor()->performBackspace();
@@ -181,7 +181,7 @@ int ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
   return m_contentView.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferLength);
 }
 
-bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation) {
+bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   if (text[0] == 0) {
     // The text is empty
     return true;
@@ -240,7 +240,7 @@ bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentat
     }
     /* Insert the layout. If pointedLayout is nullptr, the cursor will be on the
      * right of the inserted layout. */
-    insertLayoutAtCursor(resultLayout, pointedLayout);
+    insertLayoutAtCursor(resultLayout, pointedLayout, forceCursorRightOfText);
   }
   return true;
 }
@@ -273,7 +273,7 @@ void ExpressionLayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate base
   scrollToContentRect(balancedRect, true);
 }
 
-void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout) {
+void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout, bool forceCursorRightOfLayout) {
   if (layout == nullptr) {
     return;
   }
@@ -281,10 +281,7 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
   bool layoutWillBeMerged = layout->isHorizontal();
   Poincare::ExpressionLayout * lastMergedLayoutChild = layoutWillBeMerged ? layout->editableChild(layout->numberOfChildren()-1) : nullptr;
   m_contentView.cursor()->addLayoutAndMoveCursor(layout);
-  if (!isEditing()) {
-    m_contentView.cursor()->setPointedExpressionLayout(expressionLayout());
-    m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
-  } else {
+  if (!forceCursorRightOfLayout) {
     if (pointedLayout != nullptr && (pointedLayout != layout || !layoutWillBeMerged)) {
       m_contentView.cursor()->setPointedExpressionLayout(pointedLayout);
       m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);

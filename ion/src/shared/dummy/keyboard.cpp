@@ -4,7 +4,7 @@ namespace Ion {
 namespace Keyboard {
 
 State scan() {
-  return 0xFFFFFFFFFFFFFF;
+  return 0x00000000000000;
 }
 
 }

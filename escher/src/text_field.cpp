@@ -301,7 +301,7 @@ void TextField::scrollToCursor() {
   return TextInput::scrollToCursor();
 }
 
-bool TextField::handleEventWithText(const char * eventText, bool indentation) {
+bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
   size_t previousTextLength = strlen(text());
 
   size_t eventTextSize = strlen(eventText) + 1;
@@ -342,7 +342,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation) {
     /* The cursor position depends on the text as we sometimes want to position
      * the cursor at the end of the text and sometimes after the first
      * parenthesis. */
-    nextCursorLocation = cursorLocation() + cursorIndexInCommand;
+    nextCursorLocation = cursorLocation() + (forceCursorRightOfText? strlen(buffer) : cursorIndexInCommand);
   }
   setCursorLocation(nextCursorLocation);
   return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);

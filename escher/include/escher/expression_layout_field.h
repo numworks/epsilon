@@ -21,7 +21,7 @@ public:
   void reload();
   bool hasText() const;
   int writeTextInBuffer(char * buffer, int bufferLength);
-  bool handleEventWithText(const char * text, bool indentation = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   Poincare::ExpressionLayout * expressionLayout();
   char XNTChar();
   void setBackgroundColor(KDColor c) override;
@@ -43,7 +43,7 @@ private:
   static_assert(k_maxNumberOfLayouts == TextField::maxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");
   void scrollRightOfLayout(Poincare::ExpressionLayout * layout);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout);
+  void insertLayoutAtCursor(Poincare::ExpressionLayout * layout, Poincare::ExpressionLayout * pointedLayout, bool forceCursorRightOfLayout = false);
 
   class ContentView : public View {
   public:

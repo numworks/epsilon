@@ -291,7 +291,7 @@ TextArea::TextArea(Responder * parentResponder, char * textBuffer,
   assert(textBufferSize < INT_MAX/2);
 }
 
-bool TextArea::handleEventWithText(const char * text, bool indentation) {
+bool TextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   int nextCursorLocation = cursorLocation();
 
   size_t cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(text);
@@ -310,7 +310,11 @@ bool TextArea::handleEventWithText(const char * text, bool indentation) {
   }
 
   if ((indentation && insertTextWithIndentation(buffer, cursorLocation())) || insertTextAtLocation(buffer, cursorLocation())) {
-    nextCursorLocation += cursorIndexInCommand;
+    if (forceCursorRightOfText) {
+      nextCursorLocation += strlen(buffer);
+    } else {
+      nextCursorLocation += cursorIndexInCommand;
+    }
   }
   setCursorLocation(nextCursorLocation);
   return true;

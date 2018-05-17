@@ -187,6 +187,7 @@ int VerticalOffsetLayout::writeTextInBuffer(char * buffer, int bufferSize, int n
   assert(m_type == Type::Superscript);
   // If the layout is a superscript, write "^(indice)"
   int numberOfChar = LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "^");
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Add a multiplication if omitted.
   int indexInParent = -1;

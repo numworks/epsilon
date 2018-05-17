@@ -90,13 +90,13 @@ bool ExpressionLayoutField::privateHandleMoveEvent(Ion::Events::Event event, boo
     if (m_contentView.cursor()->pointedExpressionLayout()->removeGreySquaresFromAllMatrixAncestors()) {
       *shouldRecomputeLayout = true;
     }
-    result.setPointedExpressionLayout(m_contentView.expressionView()->expressionLayout());
+    result.setPointedExpressionLayout(expressionLayout());
     result.setPosition(Poincare::ExpressionLayoutCursor::Position::Left);
   } else if (event == Ion::Events::ShiftRight) {
     if (m_contentView.cursor()->pointedExpressionLayout()->removeGreySquaresFromAllMatrixAncestors()) {
       *shouldRecomputeLayout = true;
     }
-    result.setPointedExpressionLayout(m_contentView.expressionView()->expressionLayout());
+    result.setPointedExpressionLayout(expressionLayout());
     result.setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
   }
   if (result.isDefined()) {
@@ -120,14 +120,14 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (isEditing() && expressionLayoutFieldShouldFinishEditing(event)) {
     setEditing(false);
-    if (m_delegate->expressionLayoutFieldDidFinishEditing(this, m_contentView.expressionView()->expressionLayout(), event)) {
+    if (m_delegate->expressionLayoutFieldDidFinishEditing(this, expressionLayout(), event)) {
       clearLayout();
     }
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     setEditing(true);
-    m_contentView.cursor()->setPointedExpressionLayout(m_contentView.expressionView()->expressionLayout());
+    m_contentView.cursor()->setPointedExpressionLayout(expressionLayout());
     m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
     return true;
   }
@@ -160,7 +160,7 @@ bool ExpressionLayoutField::privateHandleEvent(Ion::Events::Event event) {
 
 void ExpressionLayoutField::reload() {
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  m_contentView.expressionView()->expressionLayout()->invalidAllSizesPositionsAndBaselines();
+  expressionLayout()->invalidAllSizesPositionsAndBaselines();
   KDSize newSize = minimalSizeForOptimalDisplay();
   if (m_delegate && previousSize.height() != newSize.height()) {
     m_delegate->expressionLayoutFieldDidChangeSize(this);
@@ -171,11 +171,11 @@ void ExpressionLayoutField::reload() {
 }
 
 bool ExpressionLayoutField::hasText() const {
-  return m_contentView.expressionView()->expressionLayout()->hasText();
+  return expressionLayout()->hasText();
 }
 
 int ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
-  return m_contentView.expressionView()->expressionLayout()->writeTextInBuffer(buffer, bufferLength);
+  return expressionLayout()->writeTextInBuffer(buffer, bufferLength);
 }
 
 bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
@@ -242,7 +242,7 @@ bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentat
   return true;
 }
 
-Poincare::ExpressionLayout * ExpressionLayoutField::expressionLayout() {
+Poincare::ExpressionLayout * ExpressionLayoutField::expressionLayout() const {
   return m_contentView.expressionView()->expressionLayout();
 }
 

@@ -264,7 +264,7 @@ Poincare::ExpressionLayout * Sequence::firstInitialConditionName() {
   {
     ExpressionLayout * indexLayout = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     m_firstInitialConditionName = new HorizontalLayout(
-        new CharLayout(name()[0], KDText::FontSize::Small),
+        new CharLayout(name()[0], KDText::FontSize::Large),
         new VerticalOffsetLayout(indexLayout, VerticalOffsetLayout::Type::Subscript, false),
         false);
   }
@@ -278,7 +278,7 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
     if (m_type == Type::DoubleRecurrence) {
       ExpressionLayout * indexLayout = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
       m_secondInitialConditionName = new HorizontalLayout(
-        new CharLayout(name()[0], KDText::FontSize::Small),
+        new CharLayout(name()[0], KDText::FontSize::Large),
         new VerticalOffsetLayout(indexLayout, VerticalOffsetLayout::Type::Subscript, false),
         false);
     }

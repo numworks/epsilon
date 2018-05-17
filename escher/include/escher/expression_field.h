@@ -20,7 +20,7 @@ public:
   bool editionIsInTextField() const;
   bool isEmpty() const;
   bool heightIsMaximal() const;
-  bool handleEventWithText(const char * text, bool indentation = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
 
   /* View */
   int numberOfSubviews() const override { return 1; }

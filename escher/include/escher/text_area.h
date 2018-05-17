@@ -12,7 +12,7 @@ public:
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setDelegate(TextAreaDelegate * delegate) { m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
-  bool handleEventWithText(const char * text, bool indentation = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   void setText(char * textBuffer, size_t textBufferSize);
 private:
   int indentationBeforeCursor() const;

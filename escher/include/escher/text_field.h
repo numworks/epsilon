@@ -18,7 +18,7 @@ public:
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   virtual void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   KDSize minimalSizeForOptimalDisplay() const override;
-  bool handleEventWithText(const char * text, bool indenting = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   constexpr static int maxBufferSize() {
      return ContentView::k_maxBufferSize;

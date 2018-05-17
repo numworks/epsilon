@@ -281,12 +281,17 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
   bool layoutWillBeMerged = layout->isHorizontal();
   Poincare::ExpressionLayout * lastMergedLayoutChild = layoutWillBeMerged ? layout->editableChild(layout->numberOfChildren()-1) : nullptr;
   m_contentView.cursor()->addLayoutAndMoveCursor(layout);
-  if (pointedLayout != nullptr && (pointedLayout != layout || !layoutWillBeMerged)) {
-    m_contentView.cursor()->setPointedExpressionLayout(pointedLayout);
+  if (!isEditing()) {
+    m_contentView.cursor()->setPointedExpressionLayout(expressionLayout());
     m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
-  } else if (!layoutWillBeMerged) {
-    m_contentView.cursor()->setPointedExpressionLayout(layout->layoutToPointWhenInserting());
-    m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
+  } else {
+    if (pointedLayout != nullptr && (pointedLayout != layout || !layoutWillBeMerged)) {
+      m_contentView.cursor()->setPointedExpressionLayout(pointedLayout);
+      m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
+    } else if (!layoutWillBeMerged) {
+      m_contentView.cursor()->setPointedExpressionLayout(layout->layoutToPointWhenInserting());
+      m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
+    }
   }
   m_contentView.cursor()->pointedExpressionLayout()->addGreySquaresToAllMatrixAncestors();
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();

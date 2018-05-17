@@ -113,7 +113,7 @@ void ConsoleStore::push(const char marker, const char * text, size_t length) {
   }
   m_history[i] = marker;
   strlcpy(&m_history[i+1], text, textLength+1);
-  m_history[i+1+length+1] = 0;
+  m_history[i+1+textLength+1] = 0;
 }
 
 ConsoleLine::Type ConsoleStore::lineTypeForMarker(char marker) const {
@@ -148,6 +148,9 @@ void ConsoleStore::deleteLineAtIndex(int index) {
         nextLineStart++;
       }
       nextLineStart++;
+      if (nextLineStart > k_historySize - 1) {
+        return;
+      }
       memmove(&m_history[i], &m_history[nextLineStart], (k_historySize - 1) - nextLineStart + 1);
       return;
     }

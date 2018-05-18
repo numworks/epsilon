@@ -389,10 +389,14 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithPar
   float rectMaxUpperBound = firstBarAbscissa + (rectMaxBinNumber+1)*barWidth + barWidth;
   float pHighlightLowerBound = floatToPixel(Axis::Horizontal, highlightLowerBound);
   float pHighlightUpperBound = floatToPixel(Axis::Horizontal, highlightUpperBound);
-  for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += barWidth) {
-    /* When |rectMinLowerBound| >> barWidth, rectMinLowerBound + barWidth = rectMinLowerBound.
+  float step = barWidth;
+  if ((rectMaxUpperBound-rectMinLowerBound)/step > resolution()) {
+    step = (rectMaxUpperBound-rectMinLowerBound)/resolution();
+  }
+  for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += step) {
+    /* When |rectMinLowerBound| >> step, rectMinLowerBound + step = rectMinLowerBound.
      * In that case, quit the infinite loop. */
-    if (x == x-barWidth || x == x+barWidth) {
+    if (x == x-step || x == x+step) {
       return;
     }
     float centerX = fillBar ? x+barWidth/2.0f : x;

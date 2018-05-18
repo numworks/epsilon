@@ -127,8 +127,8 @@ T BinomialLaw::templatedApproximateAtAbscissa(T x) const {
   if (x > m_parameter1) {
     return 0;
   }
-  T lResult = std::lgamma(m_parameter1+1) - std::lgamma(std::floor(x)+1) - std::lgamma((T)m_parameter1 - std::floor(x)+1)+
-    std::floor(x)*std::log(m_parameter2) + (m_parameter1-std::floor(x))*std::log(1-m_parameter2);
+  T lResult = std::lgamma((T)(m_parameter1+1.0)) - std::lgamma(std::floor(x)+(T)1.0) - std::lgamma((T)m_parameter1 - std::floor(x)+(T)1.0)+
+    std::floor(x)*std::log((T)m_parameter2) + ((T)m_parameter1-std::floor(x))*std::log((T)(1.0-m_parameter2));
   return std::exp(lResult);
 }
 

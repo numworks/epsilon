@@ -138,7 +138,7 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
   int numberOfRequiredDigits = mantissaLength;
   if (!forceScientificMode) {
     numberOfRequiredDigits = mantissaLength > exponent ? mantissaLength : exponent;
-    numberOfRequiredDigits = exponent < 0 ? 1+mantissaLength-exponent : numberOfRequiredDigits;
+    numberOfRequiredDigits = exponent < 0 ? mantissaLength-exponent : numberOfRequiredDigits;
   }
   if (m_mantissa.isNegative()) {
     buffer[currentChar++] = '-';

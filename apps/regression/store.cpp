@@ -38,10 +38,12 @@ int Store::closestVerticalDot(int direction, float x) {
     }
   }
   // Compare with the mean dot
-  if (m_xMin <= meanOfColumn(0) && meanOfColumn(0) <= m_xMax &&
-      (std::fabs(meanOfColumn(0) - x) < std::fabs(nextX - x)) &&
-      ((meanOfColumn(1) - yValueForXValue(meanOfColumn(0)) >= 0) == (direction > 0))) {
-    if (nextX != meanOfColumn(0) || ((nextY - meanOfColumn(1) >= 0) == (direction > 0))) {
+  double meanX = meanOfColumn(0);
+  double meanY = meanOfColumn(1);
+  if (m_xMin <= meanX && meanX <= m_xMax &&
+      (std::fabs(meanX - x) < std::fabs(nextX - x)) &&
+      ((meanY - yValueForXValue(meanX) >= 0) == (direction > 0))) {
+    if (nextX != meanX || ((nextY - meanY >= 0) == (direction > 0))) {
       selectedDot = m_numberOfPairs;
     }
   }
@@ -51,7 +53,8 @@ int Store::closestVerticalDot(int direction, float x) {
 int Store::nextDot(int direction, int dot) {
   float nextX = INFINITY;
   int selectedDot = -1;
-  float x = meanOfColumn(0);
+  double meanX = meanOfColumn(0);
+  float x = meanX;
   if (dot >= 0 && dot < m_numberOfPairs) {
     x = get(0, dot);
   }
@@ -74,20 +77,20 @@ int Store::nextDot(int direction, int dot) {
       }
     }
     // Compare with the mean dot
-    if (std::fabs(meanOfColumn(0) - x) < std::fabs(nextX - x) &&
+    if (std::fabs(meanX - x) < std::fabs(nextX - x) &&
           (m_numberOfPairs != dot) &&
-          (meanOfColumn(0) >= x)) {
-      if (meanOfColumn(0) != x || (x > dot)) {
+          (meanX >= x)) {
+      if (meanX != x || (x > dot)) {
         selectedDot = m_numberOfPairs;
       }
     }
   } else {
     // Compare with the mean dot
-    if (std::fabs(meanOfColumn(0) - x) < std::fabs(nextX - x) &&
+    if (std::fabs(meanX - x) < std::fabs(nextX - x) &&
           (m_numberOfPairs != dot) &&
-          (meanOfColumn(0) <= x)) {
-      if (meanOfColumn(0) != x || (m_numberOfPairs < dot)) {
-        nextX = meanOfColumn(0);
+          (meanX <= x)) {
+      if (meanX != x || (m_numberOfPairs < dot)) {
+        nextX = meanX;
         selectedDot = m_numberOfPairs;
       }
     }
@@ -118,10 +121,6 @@ void Store::setDefault() {
 }
 
 /* Calculations */
-
-double Store::numberOfPairs() {
-  return m_numberOfPairs;
-}
 
 float Store::maxValueOfColumn(int i) {
   float max = -FLT_MAX;
@@ -160,10 +159,7 @@ double Store::columnProductSum() {
 }
 
 double Store::meanOfColumn(int i) {
-  if (m_numberOfPairs == 0) {
-    return 0;
-  }
-  return sumOfColumn(i)/m_numberOfPairs;
+  return m_numberOfPairs == 0 ? 0 : sumOfColumn(i)/m_numberOfPairs;
 }
 
 double Store::varianceOfColumn(int i) {
@@ -192,29 +188,20 @@ double Store::yValueForXValue(double x) {
 }
 
 double Store::xValueForYValue(double y) {
-  if (std::fabs(slope()) < DBL_EPSILON) {
-    return NAN;
-  }
-  return (y - yIntercept())/slope();
+  return std::fabs(slope()) < DBL_EPSILON ? NAN : (y - yIntercept())/slope();
 }
 
 double Store::correlationCoefficient() {
   double sd0 = standardDeviationOfColumn(0);
   double sd1 = standardDeviationOfColumn(1);
-  if (sd0 == 0.0 || sd1 == 0.0) {
-    return 1.0;
-  }
-  return covariance()/(sd0*sd1);
+  return (sd0 == 0.0 || sd1 == 0.0) ? 1.0 : covariance()/(sd0*sd1);
 }
 
 double Store::squaredCorrelationCoefficient() {
   double cov = covariance();
   double v0 = varianceOfColumn(0);
   double v1 = varianceOfColumn(1);
-  if (v0 == 0.0 || v1 == 0.0) {
-    return 1.0;
-  }
-  return cov*cov/(v0*v1);
+  return (v0 == 0.0 || v1 == 0.0) ? 1.0 : cov*cov/(v0*v1);
 }
 
 InteractiveCurveViewRangeDelegate::Range Store::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {

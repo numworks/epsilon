@@ -11,6 +11,7 @@ namespace Shared {
 class StoreController : public EditableCellTableViewController, public ButtonRowDelegate  {
 public:
   StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header);
+  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   const char * title() override;
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;

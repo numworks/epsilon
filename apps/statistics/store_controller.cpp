@@ -22,11 +22,16 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     return;
   }
   EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
-  if (i == 0) {
-    mytitleCell->setMessage(I18n::Message::Values);
-    return;
+  bool valuesColumn = i%k_numberOfColumnsPerSeries == 0;
+  int seriesIndex = i/k_numberOfColumnsPerSeries;
+  assert(seriesIndex >= 0 && seriesIndex < FloatPairStore::k_numberOfSeries);
+  if (valuesColumn) {
+    I18n::Message valuesMessages[] = {I18n::Message::Values1, I18n::Message::Values2, I18n::Message::Values3};
+    mytitleCell->setMessage(valuesMessages[seriesIndex]);
+  } else {
+    I18n::Message sizesMessages[] = {I18n::Message::Sizes1, I18n::Message::Sizes2, I18n::Message::Sizes3};
+    mytitleCell->setMessage(sizesMessages[seriesIndex]);
   }
-  mytitleCell->setMessage(I18n::Message::Sizes);
 }
 
 HighlightCell * StoreController::titleCells(int index) {

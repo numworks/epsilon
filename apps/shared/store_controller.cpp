@@ -61,7 +61,7 @@ int StoreController::typeAtLocation(int i, int j) {
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   // Handle empty cells
-  if (j > m_store->numberOfPairs(seriesAtColumn(i)) && j < numberOfRows() - 1) {
+  if (j > m_store->numberOfPairsOfSeries(seriesAtColumn(i)) && j < numberOfRows() - 1) {
     ((EvenOddCell *)cell)->setEven(j%2 == 0);
     assert(cellAtLocationIsEditable(i, j));
     ((EvenOddEditableTextCell *)cell)->editableTextCell()->textField()->setText("");
@@ -97,7 +97,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == 0 || selectedRow() == numberOfRows()-1) {
       return false;
     }
-    m_store->deletePairAtIndex(series, selectedRow()-1);
+    m_store->deletePairOfSeriesAtIndex(series, selectedRow()-1);
     selectableTableView()->reloadData();
     return true;
   }
@@ -125,7 +125,7 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 }
 
 int StoreController::numberOfElements() {
-  return m_store->numberOfPairsOfAllSeries();
+  return m_store->numberOfPairs();
 }
 
 int StoreController::maxNumberOfElements() const {

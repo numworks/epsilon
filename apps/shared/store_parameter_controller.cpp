@@ -32,7 +32,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
       {
         if (m_xColumnSelected) {
-          m_store->deleteAllPairs(m_series);
+          m_store->deleteAllPairsOfSeries(m_series);
         } else {
           m_store->resetColumn(m_series, !m_xColumnSelected);
         }

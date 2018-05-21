@@ -21,14 +21,14 @@ public:
     return m_data[series][i][j];
   }
   void set(double f, int series, int i, int j);
-  int numberOfPairsOfAllSeries() const;
-  int numberOfPairs(int series) const {
+  int numberOfPairs() const;
+  int numberOfPairsOfSeries(int series) const {
     assert(series >= 0 && series < k_numberOfSeries);
     return m_numberOfPairs[series];
   }
-  void deletePairAtIndex(int series, int j);
-  void deleteAllPairs(int series);
-  void deleteAllPairsOfAllSeries();
+  void deletePairOfSeriesAtIndex(int series, int j);
+  void deleteAllPairsOfSeries(int series);
+  void deleteAllPairs();
   void resetColumn(int series, int i);
   double sumOfColumn(int series, int i) const;
   uint32_t storeChecksum();

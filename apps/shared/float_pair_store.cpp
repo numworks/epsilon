@@ -19,7 +19,7 @@ void FloatPairStore::set(double f, int series, int i, int j) {
   }
 }
 
-int FloatPairStore::numberOfPairsOfAllSeries() const {
+int FloatPairStore::numberOfPairs() const {
   int result = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {
     result += m_numberOfPairs[i];
@@ -27,7 +27,7 @@ int FloatPairStore::numberOfPairsOfAllSeries() const {
   return result;
 }
 
-void FloatPairStore::deletePairAtIndex(int series, int j) {
+void FloatPairStore::deletePairOfSeriesAtIndex(int series, int j) {
   m_numberOfPairs[series]--;
   for (int k = j; k < m_numberOfPairs[series]; k++) {
     m_data[series][0][k] = m_data[series][0][k+1];
@@ -39,7 +39,7 @@ void FloatPairStore::deletePairAtIndex(int series, int j) {
   m_data[series][1][m_numberOfPairs[series]] = 0;
 }
 
-void FloatPairStore::deleteAllPairs(int series) {
+void FloatPairStore::deleteAllPairsOfSeries(int series) {
   assert(series >= 0 && series < k_numberOfSeries);
   /* We reset all values to 0 to ensure the correctness of the checksum.*/
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
@@ -49,9 +49,9 @@ void FloatPairStore::deleteAllPairs(int series) {
   m_numberOfPairs[series] = 0;
 }
 
-void FloatPairStore::deleteAllPairsOfAllSeries() {
+void FloatPairStore::deleteAllPairs() {
   for (int i = 0; i < k_numberOfSeries; i ++) {
-    deleteAllPairs(i);
+    deleteAllPairsOfSeries(i);
   }
 }
 

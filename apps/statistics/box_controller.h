@@ -19,7 +19,7 @@ public:
 
   // ViewController
   const char * title() override;
-  View * view() override;
+  View * view() override { return &m_view; }
   void viewWillAppear() override;
   ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::DoNotShowOwnTitle; }
 

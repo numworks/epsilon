@@ -51,10 +51,7 @@ void HistogramView::setHighlight(float start, float end) {
 }
 
 char * HistogramView::label(Axis axis, int index) const {
-  if (axis == Axis::Vertical) {
-    return nullptr;
-  }
-  return (char *)m_labels[index];
+  return axis == Axis::Vertical ? nullptr : (char *)m_labels[index];
 }
 
 float HistogramView::EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context) {

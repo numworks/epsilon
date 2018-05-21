@@ -16,6 +16,28 @@ StoreController::StoreController(Responder * parentResponder, FloatPairStore * s
 {
 }
 
+bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
+  Context * globalContext = appsContainer->globalContext();
+  double floatBody = Expression::approximateToScalar<double>(text, *globalContext);
+  if (std::isnan(floatBody) || std::isinf(floatBody)) {
+    app()->displayWarning(I18n::Message::UndefinedValue);
+    return false;
+  }
+  if (!setDataAtLocation(floatBody, selectedColumn(), selectedRow())) {
+    app()->displayWarning(I18n::Message::ForbiddenValue);
+    return false;
+  }
+  // FIXME Find out if redrawing errors can be suppressed without always reloading all the data
+  selectableTableView()->reloadData();
+  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
+    selectableTableView()->selectCellAtLocation(selectedColumn(), selectedRow()+1);
+  } else {
+    selectableTableView()->handleEvent(event);
+  }
+  return true;
+}
+
 const char * StoreController::title() {
   return I18n::translate(I18n::Message::DataTab);
 }
@@ -61,7 +83,7 @@ int StoreController::typeAtLocation(int i, int j) {
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   // Handle empty cells
-  if (j > m_store->numberOfPairsOfSeries(seriesAtColumn(i)) && j < numberOfRows() - 1) {
+  if (j > 0 && j > m_store->numberOfPairsOfSeries(seriesAtColumn(i)) && j < numberOfRows() - 1) {
     ((EvenOddCell *)cell)->setEven(j%2 == 0);
     assert(cellAtLocationIsEditable(i, j));
     ((EvenOddEditableTextCell *)cell)->editableTextCell()->textField()->setText("");
@@ -125,7 +147,11 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 }
 
 int StoreController::numberOfElements() {
-  return m_store->numberOfPairs();
+  int result = 0;
+  for (int i = 0; i < FloatPairStore::k_numberOfSeries; i++) {
+    result = max(result, m_store->numberOfPairsOfSeries(i));
+  }
+  return result;
 }
 
 int StoreController::maxNumberOfElements() const {

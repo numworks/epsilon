@@ -16,16 +16,8 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 {
 }
 
-void StoreParameterController::selectXColumn(bool xColumnSelected) {
-  m_xColumnSelected = xColumnSelected;
-}
-
 const char * StoreParameterController::title() {
   return I18n::translate(I18n::Message::ColumnOptions);
-}
-
-View * StoreParameterController::view() {
-  return &m_selectableTableView;
 }
 
 void StoreParameterController::didBecomeFirstResponder() {
@@ -62,23 +54,11 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int StoreParameterController::numberOfRows() {
-  return k_totalNumberOfCell;
-};
-
 HighlightCell * StoreParameterController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   HighlightCell * cells[] = {&m_deleteColumn};// {&m_deleteColumn, &m_copyColumn, &m_importList};
   return cells[index];
-}
-
-int StoreParameterController::reusableCellCount() {
-  return k_totalNumberOfCell;
-}
-
-KDCoordinate StoreParameterController::cellHeight() {
-  return Metric::ParameterCellHeight;
 }
 
 }

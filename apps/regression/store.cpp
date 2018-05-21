@@ -16,7 +16,7 @@ Store::Store() :
 
 /* Dots */
 
-int Store::closestVerticalDot(int direction, float x) {
+int Store::closestVerticalDot(int series, int direction, float x) {
   float nextX = INFINITY;
   float nextY = INFINITY;
   int selectedDot = -1;
@@ -25,26 +25,26 @@ int Store::closestVerticalDot(int direction, float x) {
   * - the next dot is the closest one in abscissa to x
   * - the next dot is above the regression curve if direction == 1 and below
   * otherwise */
-  for (int index = 0; index < m_numberOfPairs; index++) {
-    if ((m_xMin <= m_data[0][index] && m_data[0][index] <= m_xMax) &&
-        (std::fabs(m_data[0][index] - x) < std::fabs(nextX - x)) &&
-        ((m_data[1][index] - yValueForXValue(m_data[0][index]) >= 0) == (direction > 0))) {
+  for (int index = 0; index < m_numberOfPairs[series]; index++) {
+    if ((m_xMin <= m_data[series][0][index] && m_data[series][0][index] <= m_xMax) &&
+        (std::fabs(m_data[series][0][index] - x) < std::fabs(nextX - x)) &&
+        ((m_data[series][1][index] - yValueForXValue(m_data[series][0][index]) >= 0) == (direction > 0))) {
       // Handle edge case: if 2 dots have the same abscissa but different ordinates
-      if (nextX != m_data[0][index] || ((nextY - m_data[1][index] >= 0) == (direction > 0))) {
-        nextX = m_data[0][index];
-        nextY = m_data[1][index];
+      if (nextX != m_data[series][0][index] || ((nextY - m_data[series][1][index] >= 0) == (direction > 0))) {
+        nextX = m_data[series][0][index];
+        nextY = m_data[series][1][index];
         selectedDot = index;
       }
     }
   }
   // Compare with the mean dot
-  double meanX = meanOfColumn(0);
-  double meanY = meanOfColumn(1);
+  double meanX = meanOfColumn(series, 0);
+  double meanY = meanOfColumn(series, 1);
   if (m_xMin <= meanX && meanX <= m_xMax &&
       (std::fabs(meanX - x) < std::fabs(nextX - x)) &&
       ((meanY - yValueForXValue(meanX) >= 0) == (direction > 0))) {
     if (nextX != meanX || ((nextY - meanY >= 0) == (direction > 0))) {
-      selectedDot = m_numberOfPairs;
+      selectedDot = m_numberOfPairs[series];
     }
   }
   return selectedDot;
@@ -53,54 +53,54 @@ int Store::closestVerticalDot(int direction, float x) {
 int Store::nextDot(int direction, int dot) {
   float nextX = INFINITY;
   int selectedDot = -1;
-  double meanX = meanOfColumn(0);
+  double meanX = meanOfColumn(series, 0);
   float x = meanX;
-  if (dot >= 0 && dot < m_numberOfPairs) {
+  if (dot >= 0 && dot < m_numberOfPairs[series]) {
     x = get(0, dot);
   }
   /* We have to scan the Store in opposite ways for the 2 directions to ensure to
    * select all dots (even with equal abscissa) */
   if (direction > 0) {
-    for (int index = 0; index < m_numberOfPairs; index++) {
+    for (int index = 0; index < m_numberOfPairs[series]; index++) {
       /* The conditions to test are in this order:
        * - the next dot is the closest one in abscissa to x
        * - the next dot is not the same as the selected one
        * - the next dot is at the right of the selected one */
-      if (std::fabs(m_data[0][index] - x) < std::fabs(nextX - x) &&
+      if (std::fabs(m_date[series][0][index] - x) < std::fabs(nextX - x) &&
           (index != dot) &&
-          (m_data[0][index] >= x)) {
+          (m_date[series][0][index] >= x)) {
         // Handle edge case: 2 dots have same abscissa
-        if (m_data[0][index] != x || (index > dot)) {
-          nextX = m_data[0][index];
+        if (m_date[series][0][index] != x || (index > dot)) {
+          nextX = m_date[series][0][index];
           selectedDot = index;
         }
       }
     }
     // Compare with the mean dot
     if (std::fabs(meanX - x) < std::fabs(nextX - x) &&
-          (m_numberOfPairs != dot) &&
+          (m_numberOfPairs[series] != dot) &&
           (meanX >= x)) {
       if (meanX != x || (x > dot)) {
-        selectedDot = m_numberOfPairs;
+        selectedDot = m_numberOfPairs[series];
       }
     }
   } else {
     // Compare with the mean dot
     if (std::fabs(meanX - x) < std::fabs(nextX - x) &&
-          (m_numberOfPairs != dot) &&
+          (m_numberOfPairs[series] != dot) &&
           (meanX <= x)) {
-      if (meanX != x || (m_numberOfPairs < dot)) {
+      if (meanX != x || (m_numberOfPairs[series] < dot)) {
         nextX = meanX;
-        selectedDot = m_numberOfPairs;
+        selectedDot = m_numberOfPairs[series];
       }
     }
-    for (int index = m_numberOfPairs-1; index >= 0; index--) {
-      if (std::fabs(m_data[0][index] - x) < std::fabs(nextX - x) &&
+    for (int index = m_numberOfPairs[series]-1; index >= 0; index--) {
+      if (std::fabs(m_date[series][0][index] - x) < std::fabs(nextX - x) &&
           (index != dot) &&
-          (m_data[0][index] <= x)) {
+          (m_date[series][0][index] <= x)) {
         // Handle edge case: 2 dots have same abscissa
-        if (m_data[0][index] != x || (index < dot)) {
-          nextX = m_data[0][index];
+        if (m_date[series][0][index] != x || (index < dot)) {
+          nextX = m_date[series][0][index];
           selectedDot = index;
         }
       }
@@ -111,9 +111,9 @@ int Store::nextDot(int direction, int dot) {
 
 /* Window */
 
-void Store::setDefault() {
-  float min = minValueOfColumn(0);
-  float max = maxValueOfColumn(0);
+void Store::setDefault(int series) {
+  float min = minValueOfColumn(series, 0);
+  float max = maxValueOfColumn(series, 0);
   float range = max - min;
   setXMin(min - k_displayLeftMarginRatio*range);
   setXMax(max + k_displayRightMarginRatio*range);
@@ -122,98 +122,98 @@ void Store::setDefault() {
 
 /* Calculations */
 
-float Store::maxValueOfColumn(int i) {
+float Store::maxValueOfColumn(int series, int i) {
   float max = -FLT_MAX;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_data[i][k] > max) {
-      max = m_data[i][k];
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+    if (m_data[series][i][k] > max) {
+      max = m_data[series][i][k];
     }
   }
   return max;
 }
 
-float Store::minValueOfColumn(int i) {
+float Store::minValueOfColumn(int series, int i) {
   float min = FLT_MAX;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_data[i][k] < min) {
-      min = m_data[i][k];
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+    if (m_data[series][i][k] < min) {
+      min = m_data[series][i][k];
     }
   }
   return min;
 }
 
-double Store::squaredValueSumOfColumn(int i) {
+double Store::squaredValueSumOfColumn(int series, int i) {
   double result = 0;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    result += m_data[i][k]*m_data[i][k];
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+    result += m_data[series][i][k]*m_data[series][i][k];
   }
   return result;
 }
 
-double Store::columnProductSum() {
+double Store::columnProductSum(int series) {
   double result = 0;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    result += m_data[0][k]*m_data[1][k];
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+    result += m_date[series][0][k]*m_date[series][1][k];
   }
   return result;
 }
 
-double Store::meanOfColumn(int i) {
-  return m_numberOfPairs == 0 ? 0 : sumOfColumn(i)/m_numberOfPairs;
+double Store::meanOfColumn(int series, int i) {
+  return m_numberOfPairs[series] == 0 ? 0 : sumOfColumn(series, i)/m_numberOfPairs[series];
 }
 
-double Store::varianceOfColumn(int i) {
-  double mean = meanOfColumn(i);
-  return squaredValueSumOfColumn(i)/m_numberOfPairs - mean*mean;
+double Store::varianceOfColumn(int series, int i) {
+  double mean = meanOfColumn(series, i);
+  return squaredValueSumOfColumn(series, i)/m_numberOfPairs[series] - mean*mean;
 }
 
-double Store::standardDeviationOfColumn(int i) {
-  return std::sqrt(varianceOfColumn(i));
+double Store::standardDeviationOfColumn(int series, int i) {
+  return std::sqrt(varianceOfColumn(series, i));
 }
 
-double Store::covariance() {
-  return columnProductSum()/m_numberOfPairs - meanOfColumn(0)*meanOfColumn(1);
+double Store::covariance(int series) {
+  return columnProductSum(series)/m_numberOfPairs[series] - meanOfColumn(series, 0)*meanOfColumn(series, 1);
 }
 
-double Store::slope() {
-  return covariance()/varianceOfColumn(0);
+double Store::slope(int series) {
+  return covariance(series)/varianceOfColumn(series, 0);
 }
 
-double Store::yIntercept() {
-  return meanOfColumn(1) - slope()*meanOfColumn(0);
+double Store::yIntercept(int series) {
+  return meanOfColumn(series, 1) - slope(series)*meanOfColumn(series, 0);
 }
 
-double Store::yValueForXValue(double x) {
-  return slope()*x+yIntercept();
+double Store::yValueForXValue(int series, double x) {
+  return slope(series)*x+yIntercept(series);
 }
 
-double Store::xValueForYValue(double y) {
-  return std::fabs(slope()) < DBL_EPSILON ? NAN : (y - yIntercept())/slope();
+double Store::xValueForYValue(int series, double y) {
+  return std::fabs(slope(series)) < DBL_EPSILON ? NAN : (y - yIntercept(series))/slope(series);
 }
 
-double Store::correlationCoefficient() {
-  double sd0 = standardDeviationOfColumn(0);
-  double sd1 = standardDeviationOfColumn(1);
-  return (sd0 == 0.0 || sd1 == 0.0) ? 1.0 : covariance()/(sd0*sd1);
+double Store::correlationCoefficient(int series) {
+  double sd0 = standardDeviationOfColumn(series, 0);
+  double sd1 = standardDeviationOfColumn(series, 1);
+  return (sd0 == 0.0 || sd1 == 0.0) ? 1.0 : covariance(series)/(sd0*sd1);
 }
 
-double Store::squaredCorrelationCoefficient() {
-  double cov = covariance();
-  double v0 = varianceOfColumn(0);
-  double v1 = varianceOfColumn(1);
+double Store::squaredCorrelationCoefficient(int series) {
+  double cov = covariance(series);
+  double v0 = varianceOfColumn(series, 0);
+  double v1 = varianceOfColumn(series, 1);
   return (v0 == 0.0 || v1 == 0.0) ? 1.0 : cov*cov/(v0*v1);
 }
 
-InteractiveCurveViewRangeDelegate::Range Store::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
+InteractiveCurveViewRangeDelegate::Range Store::computeYRange(int series, InteractiveCurveViewRange * interactiveCurveViewRange) {
   float min = FLT_MAX;
   float max = -FLT_MAX;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    if (m_xMin <= m_data[0][k] && m_data[0][k] <= m_xMax) {
-      if (m_data[1][k] < min) {
-        min = m_data[1][k];
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+    if (m_xMin <= m_date[series][0][k] && m_date[series][0][k] <= m_xMax) {
+      if (m_date[series][1][k] < min) {
+        min = m_date[series][1][k];
       }
-      if (m_data[1][k] > max) {
-        max = m_data[1][k];
+      if (m_date[series][1][k] > max) {
+        max = m_date[series][1][k];
       }
     }
   }

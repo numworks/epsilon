@@ -47,30 +47,6 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-Store * App::Snapshot::store() {
-  return &m_store;
-}
-
-uint32_t * App::Snapshot::storeVersion() {
-  return &m_storeVersion;
-}
-
-uint32_t * App::Snapshot::barVersion() {
-  return &m_barVersion;
-}
-
-uint32_t * App::Snapshot::rangeVersion() {
-  return &m_rangeVersion;
-}
-
-int * App::Snapshot::selectedHistogramBarIndex() {
-  return &m_selectedHistogramBarIndex;
-}
-
-BoxView::Quantile * App::Snapshot::selectedBoxQuantile() {
-  return &m_selectedBoxQuantile;
-}
-
 App::App(Container * container, Snapshot * snapshot) :
   TextFieldDelegateApp(container, snapshot, &m_tabViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),

@@ -11,8 +11,8 @@ public:
   BoxRange(Store * store);
   float xMin() override;
   float xMax() override;
-  float yMin() override;
-  float yMax() override;
+  float yMin() override { return -k_displayBottomMarginRatio; }
+  float yMax() override { return 1.0f+k_displayTopMarginRatio; }
   float xGridUnit() override;
 private:
   constexpr static float k_displayTopMarginRatio = 0.05f;

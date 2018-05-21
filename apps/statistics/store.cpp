@@ -192,7 +192,7 @@ double Store::defaultValue(int i, int j) {
 }
 
 double Store::sumOfValuesBetween(double x1, double x2) {
-  int result = 0;
+  double result = 0;
   for (int k = 0; k < m_numberOfPairs; k++) {
     if (m_data[0][k] < x2 && x1 <= m_data[0][k]) {
       result += m_data[1][k];

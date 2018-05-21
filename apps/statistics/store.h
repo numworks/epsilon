@@ -15,38 +15,38 @@ public:
   void setBarWidth(double barWidth);
   double firstDrawnBarAbscissa() const { return m_firstDrawnBarAbscissa; }
   void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) { m_firstDrawnBarAbscissa = firstBarAbscissa;}
-  double heightOfBarAtIndex(int index);
-  double heightOfBarAtValue(double value);
-  double startOfBarAtIndex(int index);
-  double endOfBarAtIndex(int index);
-  double numberOfBars();
+  double heightOfBarAtIndex(int series, int index);
+  double heightOfBarAtValue(int series, double value);
+  double startOfBarAtIndex(int series, int index);
+  double endOfBarAtIndex(int series, int index);
+  double numberOfBars(int series);
   // return true if the window has scrolled
-  bool scrollToSelectedBarIndex(int index);
+  bool scrollToSelectedBarIndex(int series, int index);
 
   // Calculation
-  double sumOfOccurrences();
-  double maxValue();
-  double minValue();
-  double range();
-  double mean();
-  double variance();
-  double standardDeviation();
-  double sampleStandardDeviation();
-  double firstQuartile();
-  double thirdQuartile();
-  double quartileRange();
-  double median();
-  double sum();
-  double squaredValueSum();
+  double sumOfOccurrences(int series);
+  double maxValue(int series);
+  double minValue(int series);
+  double range(int series);
+  double mean(int series);
+  double variance(int series);
+  double standardDeviation(int series);
+  double sampleStandardDeviation(int series);
+  double firstQuartile(int series);
+  double thirdQuartile(int series);
+  double quartileRange(int series);
+  double median(int series);
+  double sum(int series);
+  double squaredValueSum(int series);
   constexpr static double k_maxNumberOfBars = 10000.0;
   constexpr static float k_displayTopMarginRatio = 0.1f;
   constexpr static float k_displayRightMarginRatio = 0.04f;
   constexpr static float k_displayBottomMarginRatio = 0.4f;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 private:
-  double defaultValue(int i, int j) override;
-  double sumOfValuesBetween(double x1, double x2);
-  double sortedElementNumber(int k);
+  double defaultValue(int series, int i, int j) override;
+  double sumOfValuesBetween(int series, double x1, double x2);
+  double sortedElementNumber(int series, int k);
   int minIndex(double * bufferValues, int bufferLength);
   // Histogram bars
   double m_barWidth;

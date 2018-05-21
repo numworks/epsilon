@@ -21,7 +21,7 @@ private:
   View * loadView() override;
   void unloadView(View * view) override;
   EvenOddExpressionCell * m_titleCells[k_numberOfTitleCells];
-  Poincare::ExpressionLayout * m_titleLayout[2];
+  Poincare::ExpressionLayout * m_titleLayout[k_numberOfTitleCells];
 };
 
 }

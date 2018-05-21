@@ -39,10 +39,10 @@ int StoreController::indexFromCumulatedWidth(KDCoordinate offsetX) {
 HighlightCell * StoreController::reusableCell(int index, int type) {
   assert(index >= 0);
   switch (type) {
-    case 0:
+    case k_titleCellType:
       assert(index < k_numberOfTitleCells);
       return titleCells(index);
-    case 1:
+    case k_editableCellType:
       assert(index < k_maxNumberOfEditableCells);
       return m_editableCells[index];
     default:
@@ -52,14 +52,14 @@ HighlightCell * StoreController::reusableCell(int index, int type) {
 }
 
 int StoreController::reusableCellCount(int type) {
-  if (type == 0) {
+  if (type == k_titleCellType) {
     return k_numberOfTitleCells;
   }
   return k_maxNumberOfEditableCells;
 }
 
 int StoreController::typeAtLocation(int i, int j) {
-  return j!=0;
+  return j == 0 ? k_titleCellType : k_editableCellType;
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

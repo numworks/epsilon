@@ -42,8 +42,6 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
     if (floatBody < 0) {
       return false;
     }
-    m_store->set(std::round(floatBody), columnIndex, rowIndex-1);
-    return true;
   }
   return Shared::StoreController::setDataAtLocation(floatBody, columnIndex, rowIndex);
 }

@@ -43,18 +43,62 @@ double HistogramParameterController::parameterAtIndex(int index) {
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex >= 0 && parameterIndex < k_numberOfCells);
   if (parameterIndex == 0) {
-    double newNumberOfBars = std::ceil((m_store->maxValue() - m_store->minValue())/f);
-    if (f <= 0.0f || newNumberOfBars > Store::k_maxNumberOfBars || m_store->firstDrawnBarAbscissa() > m_store->maxValue()+f) {
+    // The bar width cannot be negative
+    if (f <= 0.0f) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
+
+    // There should be at least one value in the drawn bin
+    for (int i = 0; i < FloatPairStore::k_numberOfSeries; i++) {
+      if (m_store->firstDrawnBarAbscissa() <= m_store->maxValue(i)+f) {
+        break;
+      } else if (i == FloatPairStore::k_numberOfSeries - 1) {
+        app()->displayWarning(I18n::Message::ForbiddenValue);
+        return false;
+      }
+    }
+
+    // The number of bars cannot be above the max
+    assert(FloatPairStore::k_numberOfSeries > 0);
+    double maxNewNumberOfBars = std::ceil((m_store->maxValue(0) - m_store->minValue(0))/f);
+    for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
+      double numberOfBars = std::ceil((m_store->maxValue(i) - m_store->minValue(i))/f);
+      if (maxNewNumberOfBars < numberOfBars) {
+        maxNewNumberOfBars = numberOfBars;
+      }
+    }
+    if (maxNewNumberOfBars > Store::k_maxNumberOfBars) {
+      app()->displayWarning(I18n::Message::ForbiddenValue);
+      return false;
+    }
+
+    // Set the bar width
     m_store->setBarWidth(f);
   } else {
-    double newNumberOfBars = ceilf((m_store->maxValue() - f)/m_store->barWidth());
-    if (newNumberOfBars > Store::k_maxNumberOfBars || f > m_store->maxValue()+m_store->barWidth()) {
+    // The number of bars cannot be above the max
+    assert(FloatPairStore::k_numberOfSeries > 0);
+    double maxNewNumberOfBars = ceilf((m_store->maxValue(0) - f)/m_store->barWidth());
+    for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
+      double numberOfBars = ceilf((m_store->maxValue(i) - f)/m_store->barWidth());
+      if (maxNewNumberOfBars < numberOfBars) {
+        maxNewNumberOfBars = numberOfBars;
+      }
+    }
+    if (maxNewNumberOfBars > Store::k_maxNumberOfBars) {
       app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
+    // There should be at least one value in the drawn bin
+    for (int i = 0; i < FloatPairStore::k_numberOfSeries; i++) {
+      if (f <= m_store->maxValue(i)+m_store->barWidth()) {
+        break;
+      } else if (i == FloatPairStore::k_numberOfSeries - 1) {
+        app()->displayWarning(I18n::Message::ForbiddenValue);
+        return false;
+      }
+    }
+    // Set the first drawn bar abscissa
     m_store->setFirstDrawnBarAbscissa(f);
   }
   return true;

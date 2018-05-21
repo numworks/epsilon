@@ -23,6 +23,7 @@ public:
   void reload() override;
   Quantile selectedQuantile();
   bool selectQuantile(int selectedQuantile);
+  void setSeries(int series) { m_series = series; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   char * label(Axis axis, int index) const override;
@@ -30,6 +31,7 @@ private:
   BoxRange m_boxRange;
   char m_labels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   Quantile * m_selectedQuantile;
+  int m_series;
 };
 
 }

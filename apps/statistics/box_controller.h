@@ -26,6 +26,7 @@ private:
   BoxBannerView m_boxBannerView;
   BoxView m_view;
   Store * m_store;
+  int m_selectedSeries;
 };
 
 }

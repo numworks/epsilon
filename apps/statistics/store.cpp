@@ -33,7 +33,7 @@ void Store::setBarWidth(double barWidth) {
 }
 
 double Store::heightOfBarAtIndex(int series, int index) {
-  return sumOfValuesBetween(startOfBarAtIndex(series, index), endOfBarAtIndex(series, index));
+  return sumOfValuesBetween(series, startOfBarAtIndex(series, index), endOfBarAtIndex(series, index));
 }
 
 double Store::heightOfBarAtValue(int series, double value) {
@@ -76,15 +76,48 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
   return false;
 }
 
+bool Store::isEmpty() {
+  for (int i = 0; i < k_numberOfSeries; i ++) {
+    if (sumOfOccurrences(i) > 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /* Calculation */
 
 double Store::sumOfOccurrences(int series) {
   return sumOfColumn(series, 1);
 }
 
+double Store::maxValueForAllSeries() {
+  assert(FloatPairStore::k_numberOfSeries > 0);
+  double result = maxValue(0);
+  for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
+    double maxCurrentSeries = maxValue(i);
+    if (result < maxCurrentSeries) {
+      result = maxCurrentSeries;
+    }
+  }
+  return result;
+}
+
+double Store::minValueForAllSeries() {
+  assert(FloatPairStore::k_numberOfSeries > 0);
+  double result = minValue(0);
+  for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
+    double minCurrentSeries = minValue(i);
+    if (result > minCurrentSeries) {
+      result = minCurrentSeries;
+    }
+  }
+  return result;
+}
+
 double Store::maxValue(int series) {
   double max = -DBL_MAX;
-  for (int k = 0; k < m_numberOfPairs; k++) {
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
     if (m_data[series][0][k] > max && m_data[series][1][k] > 0) {
       max = m_data[series][0][k];
     }
@@ -94,7 +127,7 @@ double Store::maxValue(int series) {
 
 double Store::minValue(int series) {
   double min = DBL_MAX;
-  for (int k = 0; k < m_numberOfPairs; k++) {
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
     if (m_data[series][0][k] < min && m_data[series][1][k] > 0) {
       min = m_data[series][0][k];
     }
@@ -136,7 +169,7 @@ double Store::thirdQuartile(int series) {
 }
 
 double Store::quartileRange(int series) {
-  return thirdQuartile()-firstQuartile();
+  return thirdQuartile(series)-firstQuartile(series);
 }
 
 double Store::median(int series) {
@@ -154,7 +187,7 @@ double Store::median(int series) {
 
 double Store::sum(int series) {
   double result = 0;
-  for (int k = 0; k < m_numberOfPairs; k++) {
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
     result += m_data[series][0][k]*m_data[series][1][k];
   }
   return result;
@@ -162,7 +195,7 @@ double Store::sum(int series) {
 
 double Store::squaredValueSum(int series) {
   double result = 0;
-  for (int k = 0; k < m_numberOfPairs; k++) {
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
     result += m_data[series][0][k]*m_data[series][0][k]*m_data[series][1][k];
   }
   return result;
@@ -174,7 +207,7 @@ double Store::defaultValue(int series, int i, int j) {
   return i == 0 ? FloatPairStore::defaultValue(series, i, j) : 1.0;
 }
 
-double Store::sumOfValuesBetween(double x1, double x2) {
+double Store::sumOfValuesBetween(int series, double x1, double x2) {
   double result = 0;
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
     if (m_data[series][0][k] < x2 && x1 <= m_data[series][0][k]) {

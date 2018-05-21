@@ -32,11 +32,12 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabels(ctx, rect, Axis::Horizontal, false);
   /* We memoize the total size to avoid recomputing it in double precision at
    * every call to EvaluateHistogramAtAbscissa() */
-  float totalSize = m_store->sumOfColumn(1);
+  float totalSize = m_store->sumOfColumn(0, 1); // TODO Draw all the histograms
+  float context[] = {totalSize, 0};
   if (isMainViewSelected()) {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, &totalSize, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::Select, Palette::YellowDark, m_highlightedBarStart, m_highlightedBarEnd);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::Select, Palette::YellowDark, m_highlightedBarStart, m_highlightedBarEnd);
   } else {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, &totalSize, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::GreyMiddle, Palette::YellowDark);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::GreyMiddle, Palette::YellowDark);
   }
 }
 
@@ -58,8 +59,9 @@ char * HistogramView::label(Axis axis, int index) const {
 
 float HistogramView::EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context) {
   Store * store = (Store *)model;
-  float * totalSize = (float *)context;
-  return store->heightOfBarAtValue(abscissa)/(*totalSize);
+  float totalSize = ((float *)context)[0];
+  int series = ((float *)context)[1];
+  return store->heightOfBarAtValue(series, abscissa)/(totalSize);
 }
 
 }

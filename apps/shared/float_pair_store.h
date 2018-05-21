@@ -21,11 +21,12 @@ public:
     return m_data[series][i][j];
   }
   void set(double f, int series, int i, int j);
-  int numberOfPairsOfSeries(int series) const { return m_numberOfPairs[series]; }
+  int numberOfPairs() const;
   void deletePairAtIndex(int series, int j);
   void deleteAllPairs(int series);
+  void deleteAllPairsOfAllSeries();
   void resetColumn(int series, int i);
-  double sumOfColumn(int series, int i);
+  double sumOfColumn(int series, int i) const;
   uint32_t storeChecksum();
 protected:
   virtual double defaultValue(int series, int i, int j);

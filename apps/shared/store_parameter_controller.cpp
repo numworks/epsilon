@@ -12,7 +12,8 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 #endif
   m_selectableTableView(this, this, this),
   m_store(store),
-  m_xColumnSelected(true)
+  m_xColumnSelected(true),
+  m_series(0)
 {
 }
 
@@ -31,9 +32,9 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       case 0:
       {
         if (m_xColumnSelected) {
-          m_store->deleteAllPairs();
+          m_store->deleteAllPairs(m_series);
         } else {
-          m_store->resetColumn(!m_xColumnSelected);
+          m_store->resetColumn(m_series, !m_xColumnSelected);
         }
         StackViewController * stack = ((StackViewController *)parentResponder());
         stack->pop();

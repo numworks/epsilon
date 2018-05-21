@@ -18,10 +18,6 @@ const char * HistogramParameterController::title() {
   return I18n::translate(I18n::Message::HistogramSet);
 }
 
-int HistogramParameterController::numberOfRows() {
-  return 1+k_numberOfCells;
-}
-
 void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == numberOfRows()-1) {
     return;
@@ -34,10 +30,7 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
 
 double HistogramParameterController::parameterAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfCells);
-  if (index == 0) {
-    return m_store->barWidth();
-  }
-  return m_store->firstDrawnBarAbscissa();
+  return index == 0 ? m_store->barWidth() : m_store->firstDrawnBarAbscissa();
 }
 
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double f) {
@@ -107,10 +100,6 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
 HighlightCell * HistogramParameterController::reusableParameterCell(int index, int type) {
   assert(index >= 0 && index < k_numberOfCells);
   return m_cells[index];
-}
-
-int HistogramParameterController::reusableParameterCellCount(int type) {
-  return k_numberOfCells;
 }
 
 View * HistogramParameterController::loadView() {

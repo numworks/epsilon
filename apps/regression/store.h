@@ -21,7 +21,7 @@ public:
   void setDefault() override;
 
   // Calculation
-  double numberOfPairs();
+  double numberOfPairs() const { return m_numberOfPairs; }
   double squaredValueSumOfColumn(int i);
   double columnProductSum();
   double meanOfColumn(int i);

@@ -19,7 +19,7 @@ void FloatPairStore::set(double f, int series, int i, int j) {
   }
 }
 
-int FloatPairStore::numberOfPairs() const {
+int FloatPairStore::numberOfPairsOfAllSeries() const {
   int result = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {
     result += m_numberOfPairs[i];

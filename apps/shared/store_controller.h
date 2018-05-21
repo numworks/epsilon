@@ -40,6 +40,7 @@ protected:
   int maxNumberOfElements() const override;
   virtual HighlightCell * titleCells(int index) = 0;
   char m_draftTextBuffer[TextField::maxBufferSize()];
+  int seriesAtColumn(int column) const { return column / k_numberOfColumnsPerSeries; }
   EvenOddEditableTextCell * m_editableCells[k_maxNumberOfEditableCells];
   FloatPairStore * m_store;
   StoreParameterController m_storeParameterController;

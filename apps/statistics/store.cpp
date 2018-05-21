@@ -107,12 +107,12 @@ double Store::range() {
 }
 
 double Store::mean() {
-  return sum()/sumOfColumn(1);
+  return sum()/sumOfOccurrences();
 }
 
 double Store::variance() {
   double m = mean();
-  return squaredValueSum()/sumOfColumn(1) - m*m;
+  return squaredValueSum()/sumOfOccurrences() - m*m;
 }
 
 double Store::standardDeviation() {
@@ -120,18 +120,18 @@ double Store::standardDeviation() {
 }
 
 double Store::sampleStandardDeviation() {
-  double n = sumOfColumn(1);
+  double n = sumOfOccurrences();
   double s = std::sqrt(n/(n-1.0));
   return s*standardDeviation();
 }
 
 double Store::firstQuartile() {
-  int firstQuartileIndex = std::ceil(sumOfColumn(1)/4);
+  int firstQuartileIndex = std::ceil(sumOfOccurrences()/4);
   return sortedElementNumber(firstQuartileIndex);
 }
 
 double Store::thirdQuartile() {
-  int thirdQuartileIndex = std::ceil(3*sumOfColumn(1)/4);
+  int thirdQuartileIndex = std::ceil(3*sumOfOccurrences()/4);
   return sortedElementNumber(thirdQuartileIndex);
 }
 
@@ -140,7 +140,7 @@ double Store::quartileRange() {
 }
 
 double Store::median() {
-  int total = sumOfColumn(1);
+  int total = sumOfOccurrences();
   int halfTotal = total/2;
   int totalMod2 = total - 2*halfTotal;
   if (totalMod2 == 0) {

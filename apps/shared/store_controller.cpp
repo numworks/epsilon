@@ -21,7 +21,7 @@ const char * StoreController::title() {
 }
 
 int StoreController::numberOfColumns() {
-  return k_numberOfColumnsPerSeries * k_numberOfSeries;
+  return k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;
 }
 
 KDCoordinate StoreController::columnWidth(int i) {
@@ -52,10 +52,7 @@ HighlightCell * StoreController::reusableCell(int index, int type) {
 }
 
 int StoreController::reusableCellCount(int type) {
-  if (type == k_titleCellType) {
-    return k_numberOfTitleCells;
-  }
-  return k_maxNumberOfEditableCells;
+  return type == k_titleCellType ? k_numberOfTitleCells : k_maxNumberOfEditableCells;
 }
 
 int StoreController::typeAtLocation(int i, int j) {
@@ -81,8 +78,10 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
+  int series = selectedColumn()/k_numberOfColumnsPerSeries;
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     m_storeParameterController.selectXColumn(selectedColumn()%k_numberOfColumnsPerSeries == 0);
+    m_storeParameterController.selectSeries(series);
     StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
     stack->push(&m_storeParameterController);
     return true;
@@ -91,7 +90,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == 0 || selectedRow() == numberOfRows()-1) {
       return false;
     }
-    m_store->deletePairAtIndex(selectedRow()-1);
+    m_store->deletePairAtIndex(series, selectedRow()-1);
     selectableTableView()->reloadData();
     return true;
   }
@@ -110,12 +109,12 @@ bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  m_store->set(floatBody, columnIndex, rowIndex-1);
+  m_store->set(floatBody, columnIndex/k_numberOfColumnsPerSeries, columnIndex%k_numberOfColumnsPerSeries, rowIndex-1);
   return true;
 }
 
 double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_store->get(columnIndex, rowIndex-1);
+  return m_store->get(columnIndex/k_numberOfColumnsPerSeries, columnIndex%k_numberOfColumnsPerSeries, rowIndex-1);
 }
 
 int StoreController::numberOfElements() {
@@ -123,7 +122,7 @@ int StoreController::numberOfElements() {
 }
 
 int StoreController::maxNumberOfElements() const {
-  return FloatPairStore::k_maxNumberOfPairs;
+  return FloatPairStore::k_numberOfSeries * FloatPairStore::k_maxNumberOfPairs;
 }
 
 View * StoreController::loadView() {

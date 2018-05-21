@@ -14,7 +14,7 @@ public:
   double barWidth() const { return m_barWidth; }
   void setBarWidth(double barWidth);
   double firstDrawnBarAbscissa() const { return m_firstDrawnBarAbscissa; }
-  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) { m_firstDrawnBarAbscissa = firstBarAbscissa;}
+  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) { m_firstDrawnBarAbscissa = firstDrawnBarAbscissa;}
   double heightOfBarAtIndex(int series, int index);
   double heightOfBarAtValue(int series, double value);
   double startOfBarAtIndex(int series, int index);
@@ -22,9 +22,12 @@ public:
   double numberOfBars(int series);
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
+  bool isEmpty();
 
   // Calculation
   double sumOfOccurrences(int series);
+  double maxValueForAllSeries();
+  double minValueForAllSeries();
   double maxValue(int series);
   double minValue(int series);
   double range(int series);
@@ -53,7 +56,7 @@ private:
   double m_firstDrawnBarAbscissa;
 };
 
-typedef double (Store::*CalculPointer)();
+typedef double (Store::*CalculPointer)(int);
 
 }
 

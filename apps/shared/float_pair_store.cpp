@@ -12,11 +12,19 @@ void FloatPairStore::set(double f, int series, int i, int j) {
     return;
   }
   m_data[series][i][j] = f;
-  if (j >= m_numberOfPairs) {
+  if (j >= m_numberOfPairs[series]) {
     int otherI = i == 0 ? 1 : 0;
-    m_data[series][otherI][j] = defaultValue(otherI, j);
+    m_data[series][otherI][j] = defaultValue(series, otherI, j);
     m_numberOfPairs[series]++;
   }
+}
+
+int FloatPairStore::numberOfPairs() const {
+  int result = 0;
+  for (int i = 0; i < k_numberOfSeries; i++) {
+    result += m_numberOfPairs[i];
+  }
+  return result;
 }
 
 void FloatPairStore::deletePairAtIndex(int series, int j) {
@@ -27,8 +35,8 @@ void FloatPairStore::deletePairAtIndex(int series, int j) {
   }
   /* We reset the values of the empty row to ensure the correctness of the
    * checksum. */
-  m_data[series][0][m_numberOfPairs] = 0;
-  m_data[series][1][m_numberOfPairs] = 0;
+  m_data[series][0][m_numberOfPairs[series]] = 0;
+  m_data[series][1][m_numberOfPairs[series]] = 0;
 }
 
 void FloatPairStore::deleteAllPairs(int series) {
@@ -41,15 +49,21 @@ void FloatPairStore::deleteAllPairs(int series) {
   m_numberOfPairs[series] = 0;
 }
 
+void FloatPairStore::deleteAllPairsOfAllSeries() {
+  for (int i = 0; i < k_numberOfSeries; i ++) {
+    deleteAllPairs(i);
+  }
+}
+
 void FloatPairStore::resetColumn(int series, int i) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
-    m_data[series][i][k] = defaultValue(i, k);
+    m_data[series][i][k] = defaultValue(series, i, k);
   }
 }
 
-double FloatPairStore::sumOfColumn(int series, int i) {
+double FloatPairStore::sumOfColumn(int series, int i) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
   double result = 0;
@@ -72,7 +86,7 @@ uint32_t FloatPairStore::storeChecksum() {
 double FloatPairStore::defaultValue(int series, int i, int j) {
   assert(series >= 0 && series < k_numberOfSeries);
   if(i == 0 && j > 1) {
-    return 2*m_data[series][i][j-1]-m_data[i][j-2];
+    return 2*m_data[series][i][j-1]-m_data[series][i][j-2];
   } else {
     return 0.0;
   }

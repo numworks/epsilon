@@ -33,7 +33,7 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  m_store.deleteAllPairs();
+  m_store.deleteAllPairsOfAllSeries();
   m_storeVersion = 0;
   m_barVersion = 0;
   m_rangeVersion = 0;

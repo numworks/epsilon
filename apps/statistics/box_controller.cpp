@@ -11,7 +11,8 @@ BoxController::BoxController(Responder * parentResponder, ButtonRowController * 
   ButtonRowDelegate(header, nullptr),
   m_boxBannerView(),
   m_view(store, &m_boxBannerView, selectedQuantile),
-  m_store(store)
+  m_store(store),
+  m_selectedSeries(0)
 {
 }
 
@@ -46,8 +47,10 @@ void BoxController::didBecomeFirstResponder() {
 }
 
 bool BoxController::isEmpty() const {
-  if (m_store->sumOfColumn(1) == 0) {
-    return true;
+  for (int i = 0; i < Shared::FloatPairStore::k_numberOfSeries; i++) {
+    if (m_store->sumOfOccurrences(i) == 0) {
+      return true;
+    }
   }
   return false;
 }
@@ -70,7 +73,7 @@ void BoxController::reloadBannerView() {
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
-  double calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])();
+  double calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])(m_selectedSeries);
   PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_boxBannerView.setLegendAtIndex(buffer, 1);
 }

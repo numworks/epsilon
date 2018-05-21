@@ -29,21 +29,41 @@ HistogramController::HistogramController(Responder * parentResponder, ButtonRowC
 {
 }
 
-const char * HistogramController::title() {
-  return I18n::translate(I18n::Message::HistogramTab);
-}
-
-View * HistogramController::view() {
-  return &m_view;
-}
-
 StackViewController * HistogramController::stackController() {
   StackViewController * stack = (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
   return stack;
 }
 
-HistogramParameterController * HistogramController::histogramParameterController() {
-  return &m_histogramParameterController;
+int HistogramController::numberOfButtons(ButtonRowController::Position) const {
+  return isEmpty() ? 0 : 1;
+}
+Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Position) const {
+  return (Button *)&m_settingButton;
+}
+
+bool HistogramController::isEmpty() const {
+  return m_store->isEmpty();
+}
+
+I18n::Message HistogramController::emptyMessage() {
+  return I18n::Message::NoDataToPlot;
+}
+
+Responder * HistogramController::defaultController() {
+  return tabController();
+}
+
+const char * HistogramController::title() {
+  return I18n::translate(I18n::Message::HistogramTab);
+}
+
+void HistogramController::viewWillAppear() {
+  if (!m_view.isMainViewSelected()) {
+    m_view.selectMainView(true);
+    header()->setSelectedButton(-1);
+  }
+  reloadBannerView();
+  m_view.reload();
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
@@ -102,37 +122,6 @@ void HistogramController::didBecomeFirstResponder() {
   } else {
     m_view.setHighlight(m_store->startOfBarAtIndex(0, *m_selectedBarIndex), m_store->endOfBarAtIndex(0, *m_selectedBarIndex)); //TODO
   }
-}
-
-int HistogramController::numberOfButtons(ButtonRowController::Position) const {
-  if (isEmpty()) {
-    return 0;
-  }
-  return 1;
-}
-Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Position) const {
-  return (Button *)&m_settingButton;
-}
-
-bool HistogramController::isEmpty() const {
-  return m_store->isEmpty();
-}
-
-I18n::Message HistogramController::emptyMessage() {
-  return I18n::Message::NoDataToPlot;
-}
-
-Responder * HistogramController::defaultController() {
-  return tabController();
-}
-
-void HistogramController::viewWillAppear() {
-  if (!m_view.isMainViewSelected()) {
-    m_view.selectMainView(true);
-    header()->setSelectedButton(-1);
-  }
-  reloadBannerView();
-  m_view.reload();
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {

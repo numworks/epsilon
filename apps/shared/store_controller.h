@@ -24,8 +24,11 @@ public:
   void didBecomeFirstResponder() override;
 protected:
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
-  constexpr static int k_maxNumberOfEditableCells = 22;
-  constexpr static int k_numberOfTitleCells = 2;
+  constexpr static int k_numberOfSeries = 3;
+  constexpr static int k_numberOfColumnsPerSeries = 2;
+  constexpr static int k_maxNumberOfEditableCells = 22 * k_numberOfSeries;
+  constexpr static int k_numberOfTitleCells = k_numberOfColumnsPerSeries * k_numberOfSeries;
+  // TODO Put finer number of cells
   static constexpr int k_titleCellType = 0;
   static constexpr int k_editableCellType = 1;
   Responder * tabController() const override;

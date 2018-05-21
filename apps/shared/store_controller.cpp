@@ -21,8 +21,8 @@ const char * StoreController::title() {
 }
 
 int StoreController::numberOfColumns() {
-  return 2;
-};
+  return k_numberOfColumnsPerSeries * k_numberOfSeries;
+}
 
 KDCoordinate StoreController::columnWidth(int i) {
   return k_cellWidth;
@@ -67,7 +67,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
 }
 
 void StoreController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
+  if (selectedRow() < 0 || selectedColumn() < 0) {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
@@ -80,8 +80,9 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
+  assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
-    m_storeParameterController.selectXColumn(selectedColumn() == 0);
+    m_storeParameterController.selectXColumn(selectedColumn()%k_numberOfColumnsPerSeries == 0);
     StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
     stack->push(&m_storeParameterController);
     return true;

@@ -26,23 +26,10 @@ uint32_t Store::barChecksum() {
 
 /* Histogram bars */
 
-double Store::barWidth() {
-  return m_barWidth;
-}
-
 void Store::setBarWidth(double barWidth) {
-  if (barWidth <= 0.0) {
-    return;
+  if (barWidth > 0.0) {
+    m_barWidth = barWidth;
   }
-  m_barWidth = barWidth;
-}
-
-double Store::firstDrawnBarAbscissa() {
-  return m_firstDrawnBarAbscissa;
-}
-
-void Store::setFirstDrawnBarAbscissa(double firstBarAbscissa) {
-  m_firstDrawnBarAbscissa = firstBarAbscissa;
 }
 
 double Store::heightOfBarAtIndex(int index) {
@@ -184,11 +171,7 @@ double Store::squaredValueSum() {
 /* private methods */
 
 double Store::defaultValue(int i, int j) {
-  if (i == 0) {
-    return FloatPairStore::defaultValue(i, j);
-  } else {
-    return 1.0;
-  }
+  return i == 0 ? FloatPairStore::defaultValue(i, j) : 1.0;
 }
 
 double Store::sumOfValuesBetween(double x1, double x2) {

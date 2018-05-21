@@ -11,10 +11,10 @@ public:
   Store();
   uint32_t barChecksum();
   // Histogram bars
-  double barWidth();
+  double barWidth() const { return m_barWidth; }
   void setBarWidth(double barWidth);
-  double firstDrawnBarAbscissa();
-  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa);
+  double firstDrawnBarAbscissa() const { return m_firstDrawnBarAbscissa; }
+  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) { m_firstDrawnBarAbscissa = firstBarAbscissa;}
   double heightOfBarAtIndex(int index);
   double heightOfBarAtValue(double value);
   double startOfBarAtIndex(int index);

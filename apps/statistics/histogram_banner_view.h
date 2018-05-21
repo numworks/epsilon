@@ -11,7 +11,8 @@ class HistogramBannerView : public Shared::BannerView {
 public:
   HistogramBannerView();
 private:
-  int numberOfSubviews() const override;
+  static constexpr int k_numberOfSubviews = 6;
+  int numberOfSubviews() const override { return k_numberOfSubviews; }
   TextView * textViewAtIndex(int i) const override;
   MessageTextView * messageTextViewAtIndex(int index) const override;
   MessageTextView m_intervalLegendView;

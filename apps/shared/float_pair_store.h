@@ -21,7 +21,11 @@ public:
     return m_data[series][i][j];
   }
   void set(double f, int series, int i, int j);
-  int numberOfPairs() const;
+  int numberOfPairsOfAllSeries() const;
+  int numberOfPairs(int series) const {
+    assert(series >= 0 && series < k_numberOfSeries);
+    return m_numberOfPairs[series];
+  }
   void deletePairAtIndex(int series, int j);
   void deleteAllPairs(int series);
   void deleteAllPairsOfAllSeries();

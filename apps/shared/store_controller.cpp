@@ -60,6 +60,13 @@ int StoreController::typeAtLocation(int i, int j) {
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
+  // Handle empty cells
+  if (j > m_store->numberOfPairs(seriesAtColumn(i)) && j < numberOfRows() - 1) {
+    ((EvenOddCell *)cell)->setEven(j%2 == 0);
+    assert(cellAtLocationIsEditable(i, j));
+    ((EvenOddEditableTextCell *)cell)->editableTextCell()->textField()->setText("");
+    return;
+  }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, PrintFloat::Mode::Decimal);
 }
 
@@ -78,7 +85,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
-  int series = selectedColumn()/k_numberOfColumnsPerSeries;
+  int series = seriesAtColumn(selectedColumn());
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     m_storeParameterController.selectXColumn(selectedColumn()%k_numberOfColumnsPerSeries == 0);
     m_storeParameterController.selectSeries(series);
@@ -109,16 +116,16 @@ bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  m_store->set(floatBody, columnIndex/k_numberOfColumnsPerSeries, columnIndex%k_numberOfColumnsPerSeries, rowIndex-1);
+  m_store->set(floatBody, seriesAtColumn(columnIndex), columnIndex%k_numberOfColumnsPerSeries, rowIndex-1);
   return true;
 }
 
 double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_store->get(columnIndex/k_numberOfColumnsPerSeries, columnIndex%k_numberOfColumnsPerSeries, rowIndex-1);
+  return m_store->get(seriesAtColumn(columnIndex), columnIndex%k_numberOfColumnsPerSeries, rowIndex-1);
 }
 
 int StoreController::numberOfElements() {
-  return m_store->numberOfPairs();
+  return m_store->numberOfPairsOfAllSeries();
 }
 
 int StoreController::maxNumberOfElements() const {

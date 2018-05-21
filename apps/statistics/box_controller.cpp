@@ -37,10 +37,6 @@ const char * BoxController::title() {
   return I18n::translate(I18n::Message::BoxTab);
 }
 
-View * BoxController::view() {
-  return &m_view;
-}
-
 void BoxController::viewWillAppear() {
   m_view.selectMainView(true);
   reloadBannerView();

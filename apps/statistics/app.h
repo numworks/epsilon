@@ -25,12 +25,12 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    Store * store();
-    uint32_t * storeVersion();
-    uint32_t * barVersion();
-    uint32_t * rangeVersion();
-    int * selectedHistogramBarIndex();
-    BoxView::Quantile * selectedBoxQuantile();
+    Store * store() { return &m_store; }
+    uint32_t * storeVersion() { return &m_storeVersion; }
+    uint32_t * barVersion() { return &m_barVersion; }
+    uint32_t * rangeVersion() { return &m_rangeVersion; }
+    int * selectedHistogramBarIndex() { return &m_selectedHistogramBarIndex; }
+    BoxView::Quantile * selectedBoxQuantile() { return &m_selectedBoxQuantile; }
   private:
     Store m_store;
     uint32_t m_storeVersion;

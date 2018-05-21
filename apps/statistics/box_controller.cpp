@@ -16,12 +16,35 @@ BoxController::BoxController(Responder * parentResponder, ButtonRowController * 
 {
 }
 
+bool BoxController::isEmpty() const {
+  for (int i = 0; i < Shared::FloatPairStore::k_numberOfSeries; i++) {
+    if (m_store->sumOfOccurrences(i) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+I18n::Message BoxController::emptyMessage() {
+  return I18n::Message::NoDataToPlot;
+}
+
+Responder * BoxController::defaultController() {
+  return tabController();
+}
+
 const char * BoxController::title() {
   return I18n::translate(I18n::Message::BoxTab);
 }
 
 View * BoxController::view() {
   return &m_view;
+}
+
+void BoxController::viewWillAppear() {
+  m_view.selectMainView(true);
+  reloadBannerView();
+  m_view.reload();
 }
 
 bool BoxController::handleEvent(Ion::Events::Event event) {
@@ -46,21 +69,11 @@ void BoxController::didBecomeFirstResponder() {
   m_view.reload();
 }
 
-bool BoxController::isEmpty() const {
-  for (int i = 0; i < Shared::FloatPairStore::k_numberOfSeries; i++) {
-    if (m_store->sumOfOccurrences(i) == 0) {
-      return true;
-    }
+void BoxController::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder == tabController()) {
+    m_view.selectMainView(false);
+    m_view.reload();
   }
-  return false;
-}
-
-I18n::Message BoxController::emptyMessage() {
-  return I18n::Message::NoDataToPlot;
-}
-
-Responder * BoxController::defaultController() {
-  return tabController();
 }
 
 Responder * BoxController::tabController() const {
@@ -76,19 +89,6 @@ void BoxController::reloadBannerView() {
   double calculation = (m_store->*calculationMethods[(int)m_view.selectedQuantile()])(m_selectedSeries);
   PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   m_boxBannerView.setLegendAtIndex(buffer, 1);
-}
-
-void BoxController::viewWillAppear() {
-  m_view.selectMainView(true);
-  reloadBannerView();
-  m_view.reload();
-}
-
-void BoxController::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    m_view.selectMainView(false);
-    m_view.reload();
-  }
 }
 
 }

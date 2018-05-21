@@ -11,26 +11,33 @@ class CalculationController : public Shared::TabTableController, public ButtonRo
 
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
-  const char * title() override;
-  bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
 
+  // AlternateEmptyViewDelegate
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   Responder * defaultController() override;
 
-  int numberOfRows() override;
-  int numberOfColumns() override;
+  // TableViewDataSource
+  int numberOfRows() override { return k_totalNumberOfRows; }
+  int numberOfColumns() override { return 2; }
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   KDCoordinate columnWidth(int i) override;
-  KDCoordinate rowHeight(int j) override;
+  KDCoordinate rowHeight(int j) override { return k_cellHeight; }
   KDCoordinate cumulatedHeightFromIndex(int j) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) override { return k_maxNumberOfDisplayableRows; }
   int typeAtLocation(int i, int j) override;
+
+  // ViewController
+  const char * title() override;
+  ViewController::DisplayParameter displayParameter() override { return ViewController::DisplayParameter::DoNotShowOwnTitle; }
+
+  // Responder
+  bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
 private:
   Responder * tabController() const override;
   View * loadView() override;

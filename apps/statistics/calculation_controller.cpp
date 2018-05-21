@@ -19,32 +19,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
 {
 }
 
-const char * CalculationController::title() {
-  return I18n::translate(I18n::Message::StatTab);
-}
-
-bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up) {
-    selectableTableView()->deselectTable();
-    app()->setFirstResponder(tabController());
-    return true;
-  }
-  if (event == Ion::Events::Copy && selectedColumn() == 1) {
-    EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
-    Clipboard::sharedClipboard()->store(myCell->text());
-    return true;
-  }
-  return false;
-}
-
-void CalculationController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
-  TabTableController::didBecomeFirstResponder();
-}
+// AlternateEmptyViewDelegate
 
 bool CalculationController::isEmpty() const {
   return m_store->isEmpty();
@@ -58,13 +33,7 @@ Responder * CalculationController::defaultController() {
   return tabController();
 }
 
-int CalculationController::numberOfRows() {
-  return k_totalNumberOfRows;
-}
-
-int CalculationController::numberOfColumns() {
-  return 2;
-}
+// TableViewDataSource
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * myCell = (EvenOddCell *)cell;
@@ -87,14 +56,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 }
 
 KDCoordinate CalculationController::columnWidth(int i) {
-  if (i == 0) {
-    return k_titleCellWidth;
-  }
-  return Ion::Display::Width - Metric::CommonRightMargin - Metric::CommonLeftMargin-k_titleCellWidth;
-}
-
-KDCoordinate CalculationController::rowHeight(int j) {
-  return k_cellHeight;
+  return i == 0 ? k_titleCellWidth : Ion::Display::Width - Metric::CommonRightMargin - Metric::CommonLeftMargin-k_titleCellWidth;
 }
 
 KDCoordinate CalculationController::cumulatedWidthFromIndex(int i) {
@@ -124,19 +86,43 @@ int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   assert(index < k_totalNumberOfRows);
-  if (type == 0) {
-    return m_titleCells[index];
-  }
-  return m_calculationCells[index];
-}
-
-int CalculationController::reusableCellCount(int type) {
-  return k_maxNumberOfDisplayableRows;
+  return type == 0 ? static_cast<HighlightCell *>(m_titleCells[index]) : static_cast<HighlightCell *>(m_calculationCells[index]);
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
   return i;
 }
+
+// ViewController
+const char * CalculationController::title() {
+  return I18n::translate(I18n::Message::StatTab);
+}
+
+// Responder
+bool CalculationController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Up) {
+    selectableTableView()->deselectTable();
+    app()->setFirstResponder(tabController());
+    return true;
+  }
+  if (event == Ion::Events::Copy && selectedColumn() == 1) {
+    EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
+    Clipboard::sharedClipboard()->store(myCell->text());
+    return true;
+  }
+  return false;
+}
+
+void CalculationController::didBecomeFirstResponder() {
+  if (selectedRow() == -1) {
+    selectCellAtLocation(0, 0);
+  } else {
+    selectCellAtLocation(selectedColumn(), selectedRow());
+  }
+  TabTableController::didBecomeFirstResponder();
+}
+
+// Private
 
 Responder * CalculationController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());

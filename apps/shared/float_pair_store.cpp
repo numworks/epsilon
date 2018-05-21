@@ -6,64 +6,55 @@
 
 namespace Shared {
 
-FloatPairStore::FloatPairStore() :
-  m_numberOfPairs(0),
-  m_data{}
-{
-}
-
-double FloatPairStore::get(int i, int j) {
-  assert(j < m_numberOfPairs);
-  return m_data[i][j];
-}
-
-void FloatPairStore::set(double f, int i, int j) {
+void FloatPairStore::set(double f, int series, int i, int j) {
+  assert(series >= 0 && series < k_numberOfSeries);
   if (j >= k_maxNumberOfPairs) {
     return;
   }
-  m_data[i][j] = f;
+  m_data[series][i][j] = f;
   if (j >= m_numberOfPairs) {
     int otherI = i == 0 ? 1 : 0;
-    m_data[otherI][j] = defaultValue(otherI, j);
-    m_numberOfPairs++;
+    m_data[series][otherI][j] = defaultValue(otherI, j);
+    m_numberOfPairs[series]++;
   }
 }
 
-int FloatPairStore::numberOfPairs() {
-  return m_numberOfPairs;
-}
-
-void FloatPairStore::deletePairAtIndex(int i) {
-  m_numberOfPairs--;
-  for (int k = i; k < m_numberOfPairs; k++) {
-    m_data[0][k] = m_data[0][k+1];
-    m_data[1][k] = m_data[1][k+1];
+void FloatPairStore::deletePairAtIndex(int series, int j) {
+  m_numberOfPairs[series]--;
+  for (int k = j; k < m_numberOfPairs[series]; k++) {
+    m_data[series][0][k] = m_data[series][0][k+1];
+    m_data[series][1][k] = m_data[series][1][k+1];
   }
   /* We reset the values of the empty row to ensure the correctness of the
    * checksum. */
-  m_data[0][m_numberOfPairs] = 0;
-  m_data[1][m_numberOfPairs] = 0;
+  m_data[series][0][m_numberOfPairs] = 0;
+  m_data[series][1][m_numberOfPairs] = 0;
 }
 
-void FloatPairStore::deleteAllPairs() {
+void FloatPairStore::deleteAllPairs(int series) {
+  assert(series >= 0 && series < k_numberOfSeries);
   /* We reset all values to 0 to ensure the correctness of the checksum.*/
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    m_data[0][k] = 0;
-    m_data[1][k] = 0;
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+    m_data[series][0][k] = 0;
+    m_data[series][1][k] = 0;
   }
-  m_numberOfPairs = 0;
+  m_numberOfPairs[series] = 0;
 }
 
-void FloatPairStore::resetColumn(int i) {
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    m_data[i][k] = defaultValue(i, k);
+void FloatPairStore::resetColumn(int series, int i) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  assert(i == 0 || i == 1);
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+    m_data[series][i][k] = defaultValue(i, k);
   }
 }
 
-double FloatPairStore::sumOfColumn(int i) {
+double FloatPairStore::sumOfColumn(int series, int i) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  assert(i == 0 || i == 1);
   double result = 0;
-  for (int k = 0; k < m_numberOfPairs; k++) {
-    result += m_data[i][k];
+  for (int k = 0; k < m_numberOfPairs[series]; k++) {
+    result += m_data[series][i][k];
   }
   return result;
 }
@@ -73,14 +64,15 @@ uint32_t FloatPairStore::storeChecksum() {
    * pairs. However, the two values of a pair are not stored consecutively. We
    * thus compute the checksum on all pairs and ensure to set the pair at 0
    * when removing them. */
-  size_t dataLengthInBytes = k_maxNumberOfPairs*2*sizeof(double);
+  size_t dataLengthInBytes = k_numberOfSeries*k_maxNumberOfPairs*2*sizeof(double);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   return Ion::crc32((uint32_t *)m_data, dataLengthInBytes/sizeof(uint32_t));
 }
 
-double FloatPairStore::defaultValue(int i, int j) {
+double FloatPairStore::defaultValue(int series, int i, int j) {
+  assert(series >= 0 && series < k_numberOfSeries);
   if(i == 0 && j > 1) {
-    return 2*m_data[i][j-1]-m_data[i][j-2];
+    return 2*m_data[series][i][j-1]-m_data[i][j-2];
   } else {
     return 0.0;
   }

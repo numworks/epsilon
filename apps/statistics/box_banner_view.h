@@ -11,7 +11,7 @@ class BoxBannerView : public Shared::BannerView {
 public:
   BoxBannerView();
 private:
-  int numberOfSubviews() const override;
+  int numberOfSubviews() const override { return 2; }
   TextView * textViewAtIndex(int i) const override;
   MessageTextView * messageTextViewAtIndex(int i) const override;
   MessageTextView m_calculationName;

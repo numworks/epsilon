@@ -8,20 +8,13 @@ BoxBannerView::BoxBannerView() :
 {
 }
 
-int BoxBannerView::numberOfSubviews() const {
-  return 2;
-}
-
 TextView * BoxBannerView::textViewAtIndex(int index) const {
   const TextView * textViews[2] = {&m_calculationName, &m_calculationValue};
   return (TextView *)textViews[index];
 }
 
 MessageTextView * BoxBannerView::messageTextViewAtIndex(int index) const {
-  if (index == 0) {
-    return (MessageTextView *)&m_calculationName;
-  }
-  return nullptr;
+  return index == 0 ? (MessageTextView *)&m_calculationName : nullptr;
 }
 
 }

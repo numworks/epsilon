@@ -26,6 +26,8 @@ protected:
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
   constexpr static int k_maxNumberOfEditableCells = 22;
   constexpr static int k_numberOfTitleCells = 2;
+  static constexpr int k_titleCellType = 0;
+  static constexpr int k_editableCellType = 1;
   Responder * tabController() const override;
   View * loadView() override;
   void unloadView(View * view) override;

@@ -11,7 +11,8 @@ BoxView::BoxView(Store * store, BannerView * bannerView, Quantile * selectedQuan
   m_store(store),
   m_boxRange(BoxRange(store)),
   m_labels{},
-  m_selectedQuantile(selectedQuantile)
+  m_selectedQuantile(selectedQuantile),
+  m_series(0)
 {
 }
 
@@ -19,7 +20,7 @@ void BoxView::reload() {
   CurveView::reload();
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
-  float calculation = (m_store->*calculationMethods[(int)*m_selectedQuantile])();
+  float calculation = (m_store->*calculationMethods[(int)*m_selectedQuantile])(m_series);
   float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
   float pixelLowerBound = floatToPixel(Axis::Vertical, 0.8)-1;
   float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculation)-1;
@@ -49,18 +50,23 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   drawLabels(ctx, rect, Axis::Horizontal, false);
   float lowBound = 0.35f;
   float upBound = 0.65f;
+  double minVal = m_store->minValue(m_series);
+  double firstQuart = m_store->firstQuartile(m_series);
+  double thirdQuart = m_store->thirdQuartile(m_series);
+  double maxVal = m_store->maxValue(m_series);
+
   // Draw the main box
-  KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, m_store->firstQuartile()));
-  KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, m_store->thirdQuartile()));
+  KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));
+  KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
   KDCoordinate lowBoundPixel = std::round(floatToPixel(Axis::Vertical, upBound));
   KDCoordinate upBoundPixel = std::round(floatToPixel(Axis::Vertical, lowBound));
   ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
     upBoundPixel-lowBoundPixel), Palette::GreyWhite);
   // Draw the horizontal lines linking the box to the extreme bounds
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->minValue(), m_store->firstQuartile(), Palette::GreyDark);
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, m_store->thirdQuartile(), m_store->maxValue(), Palette::GreyDark);
+  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, minVal, firstQuart, Palette::GreyDark);
+  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, thirdQuart, maxVal, Palette::GreyDark);
 
-  double calculations[5] = {m_store->minValue(), m_store->firstQuartile(), m_store->median(), m_store->thirdQuartile(), m_store->maxValue()};
+  double calculations[5] = {minVal, firstQuart, m_store->median(m_series), thirdQuart, maxVal};
   /* We then draw all the vertical lines of the box and then recolor the
    * the selected quantile (if there is one). As two quantiles can have the same
    * value, we cannot choose line colors and then color only once the vertical

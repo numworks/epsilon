@@ -11,6 +11,7 @@ class StoreParameterController : public ViewController, public SimpleListViewDat
 public:
   StoreParameterController(Responder * parentResponder, FloatPairStore * store);
   void selectXColumn(bool xColumnSelected) { m_xColumnSelected = xColumnSelected; }
+  void selectSeries(int series) { m_series = series; }
   View * view() override { return &m_selectableTableView; }
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -31,6 +32,7 @@ private:
   SelectableTableView m_selectableTableView;
   FloatPairStore * m_store;
   bool m_xColumnSelected;
+  int m_series;
 };
 
 }

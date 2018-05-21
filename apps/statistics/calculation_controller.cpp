@@ -47,10 +47,7 @@ void CalculationController::didBecomeFirstResponder() {
 }
 
 bool CalculationController::isEmpty() const {
-  if (m_store->sumOfColumn(1) == 0) {
-    return true;
-  }
-  return false;
+  return m_store->isEmpty();
 }
 
 I18n::Message CalculationController::emptyMessage() {
@@ -81,7 +78,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
       &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
       &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
-    double calculation = (m_store->*calculationMethods[j])();
+    double calculation = (m_store->*calculationMethods[j])(0); //TODO
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);

@@ -20,10 +20,14 @@ public:
     Max = 4
   };
   BoxView(Store * store, Shared::BannerView * bannerView, Quantile * selectedQuantile);
-  void reload() override;
-  Quantile selectedQuantile();
+  Quantile selectedQuantile() const { return *m_selectedQuantile; }
   bool selectQuantile(int selectedQuantile);
   void setSeries(int series) { m_series = series; }
+
+  // CurveView
+  void reload() override;
+
+  // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   char * label(Axis axis, int index) const override;

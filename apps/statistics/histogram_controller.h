@@ -14,20 +14,26 @@ class HistogramController : public ViewController, public ButtonRowDelegate, pub
 
 public:
   HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, uint32_t * m_storeVersion, uint32_t * m_barVersion, uint32_t * m_rangeVersion, int * m_selectedBarIndex);
-  const char * title() override;
-  View * view() override;
   StackViewController * stackController();
-  HistogramParameterController * histogramParameterController();
-  bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  HistogramParameterController * histogramParameterController() { return &m_histogramParameterController; }
 
+  // ButtonRowDelegate
   int numberOfButtons(ButtonRowController::Position) const override;
   Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
 
+  // AlternateEmptyViewDelegate
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   Responder * defaultController() override;
+
+  // ViewController
+  const char * title() override;
+  View * view() override { return &m_view; }
   void viewWillAppear() override;
+
+  // Responder
+  bool handleEvent(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;

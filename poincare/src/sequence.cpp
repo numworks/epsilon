@@ -43,6 +43,9 @@ Expression * Sequence::templatedApproximate(Context& context, AngleUnit angleUni
     delete result;
     delete expression;
     result = newResult;
+    if (result == nullptr) {
+      return new Complex<T>(Complex<T>::Float(NAN));
+    }
   }
   return result;
 }

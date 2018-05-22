@@ -17,14 +17,19 @@ public:
     Horizontal = 0,
     Vertical = 1
   };
-  CurveView(CurveViewRange * curveViewRange = nullptr, CurveViewCursor * curveViewCursor = nullptr,
-    BannerView * bannerView = nullptr, View * cursorView = nullptr, View * okView = nullptr);
+  CurveView(CurveViewRange * curveViewRange = nullptr,
+      CurveViewCursor * curveViewCursor = nullptr,
+      BannerView * bannerView = nullptr,
+      View * cursorView = nullptr,
+      View * okView = nullptr,
+      bool displayBanner = true);
   virtual void reload();
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);
   void setCursorView(View * cursorView);
   void setBannerView(View * bannerView);
+  void setDisplayBannerView(bool display) { m_displayBanner = display; }
   void setOkView(View * okView);
   float resolution() const;
 protected:
@@ -86,6 +91,7 @@ private:
   View * m_okView;
   bool m_mainViewSelected;
   uint32_t m_drawnRangeVersion;
+  bool m_displayBanner;
 };
 
 }

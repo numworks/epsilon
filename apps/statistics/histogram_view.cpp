@@ -1,4 +1,5 @@
 #include "histogram_view.h"
+#include "histogram_controller.h"
 #include <assert.h>
 #include <cmath>
 
@@ -6,12 +7,14 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramView::HistogramView(Store * store, BannerView * bannerView) :
+HistogramView::HistogramView(HistogramController * controller, Store * store, int series, Shared::BannerView * bannerView) :
   CurveView(store, nullptr, bannerView, nullptr),
+  m_controller(controller),
   m_store(store),
   m_labels{},
   m_highlightedBarStart(NAN),
-  m_highlightedBarEnd(NAN)
+  m_highlightedBarEnd(NAN),
+  m_series(series)
 {
 }
 
@@ -27,13 +30,14 @@ void HistogramView::reload() {
 }
 
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
+  m_controller->setCurrentDrawnSeries(m_series);
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
   drawLabels(ctx, rect, Axis::Horizontal, false);
   /* We memoize the total size to avoid recomputing it in double precision at
    * every call to EvaluateHistogramAtAbscissa() */
-  float totalSize = m_store->sumOfColumn(0, 1); // TODO Draw all the histograms
-  float context[] = {totalSize, 0};
+  float totalSize = m_store->sumOfOccurrences(m_series);
+  float context[] = {totalSize, static_cast<float>(m_series)};
   if (isMainViewSelected()) {
     drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::Select, Palette::YellowDark, m_highlightedBarStart, m_highlightedBarEnd);
   } else {

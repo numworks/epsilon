@@ -10,8 +10,10 @@ EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float ve
 }
 
 void EvenOddExpressionCell::setHighlighted(bool highlight) {
-  EvenOddCell::setHighlighted(highlight);
-  m_expressionView.setBackgroundColor(backgroundColor());
+  if (highlight != EvenOddCell::isHighlighted()) {
+    EvenOddCell::setHighlighted(highlight);
+    m_expressionView.setBackgroundColor(backgroundColor());
+  }
 }
 
 void EvenOddExpressionCell::setEven(bool even) {

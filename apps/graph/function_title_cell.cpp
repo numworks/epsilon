@@ -42,7 +42,7 @@ View * FunctionTitleCell::subviewAtIndex(int index) {
 void FunctionTitleCell::layoutSubviews() {
   KDRect textFrame(0, k_colorIndicatorThickness, bounds().width(), bounds().height() - k_colorIndicatorThickness);
   if (m_orientation == Orientation::VerticalIndicator){
-    textFrame = KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness, bounds().height()-k_separatorThickness);
+    textFrame = KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness-k_separatorThickness, bounds().height()-k_separatorThickness);
   }
   m_bufferTextView.setFrame(textFrame);
 }

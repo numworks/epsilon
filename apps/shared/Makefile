@@ -17,7 +17,6 @@ app_objs += $(addprefix apps/shared/,\
   function_graph_view.o\
   function_graph_controller.o\
   function_store.o\
-  function_expression_cell.o\
   function_title_cell.o\
   go_to_parameter_controller.o\
   initialisation_parameter_controller.o\
@@ -31,6 +30,7 @@ app_objs += $(addprefix apps/shared/,\
   list_parameter_controller.o\
   memoized_curve_view_range.o\
   message_view.o\
+  model_expression_cell.o\
   new_function_cell.o\
   ok_view.o\
   parameter_text_field_delegate.o\

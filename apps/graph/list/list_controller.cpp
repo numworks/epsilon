@@ -88,7 +88,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 }
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
-  FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
+  ModelExpressionCell * myCell = (ModelExpressionCell *)cell;
   Function * f = m_functionStore->functionAtIndex(j);
   myCell->setExpressionLayout(f->layout());
   bool active = f->isActive();
@@ -107,7 +107,7 @@ bool ListController::removeFunctionRow(Function * function) {
 View * ListController::loadView() {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_functionTitleCells[i] = new FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
-    m_expressionCells[i] = new FunctionExpressionCell();
+    m_expressionCells[i] = new ModelExpressionCell();
   }
   return Shared::ListController::loadView();
 }

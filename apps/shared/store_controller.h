@@ -11,8 +11,11 @@ namespace Shared {
 class StoreController : public EditableCellTableViewController, public ButtonRowDelegate  {
 public:
   StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header);
+
+  // TextFieldDelegate
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  const char * title() override;
+
+  // TableViewDataSource
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
@@ -21,8 +24,14 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
+
+  // ViewController
+  const char * title() override;
+
+  // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+
 protected:
   static constexpr KDCoordinate k_cellWidth = 80; //TODO
   constexpr static int k_numberOfColumnsPerSeries = 2;

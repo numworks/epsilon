@@ -38,10 +38,6 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
   return true;
 }
 
-const char * StoreController::title() {
-  return I18n::translate(I18n::Message::DataTab);
-}
-
 int StoreController::numberOfColumns() {
   return k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;
 }
@@ -92,11 +88,8 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, PrintFloat::Mode::Decimal);
 }
 
-void StoreController::didBecomeFirstResponder() {
-  if (selectedRow() < 0 || selectedColumn() < 0) {
-    selectCellAtLocation(0, 0);
-  }
-  EditableCellTableViewController::didBecomeFirstResponder();
+const char * StoreController::title() {
+  return I18n::translate(I18n::Message::DataTab);
 }
 
 bool StoreController::handleEvent(Ion::Events::Event event) {
@@ -124,6 +117,13 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+void StoreController::didBecomeFirstResponder() {
+  if (selectedRow() < 0 || selectedColumn() < 0) {
+    selectCellAtLocation(0, 0);
+  }
+  EditableCellTableViewController::didBecomeFirstResponder();
 }
 
 Responder * StoreController::tabController() const {

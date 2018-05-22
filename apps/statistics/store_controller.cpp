@@ -21,17 +21,19 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
-  EvenOddMessageTextCell * mytitleCell = (EvenOddMessageTextCell *)cell;
+  Shared::BufferFunctionTitleCell * mytitleCell = (Shared::BufferFunctionTitleCell *)cell;
   bool valuesColumn = i%k_numberOfColumnsPerSeries == 0;
   int seriesIndex = i/k_numberOfColumnsPerSeries;
   assert(seriesIndex >= 0 && seriesIndex < FloatPairStore::k_numberOfSeries);
   if (valuesColumn) {
     I18n::Message valuesMessages[] = {I18n::Message::Values1, I18n::Message::Values2, I18n::Message::Values3};
-    mytitleCell->setMessage(valuesMessages[seriesIndex]);
+    mytitleCell->setText(I18n::translate(valuesMessages[seriesIndex]));
   } else {
     I18n::Message sizesMessages[] = {I18n::Message::Sizes1, I18n::Message::Sizes2, I18n::Message::Sizes3};
-    mytitleCell->setMessage(sizesMessages[seriesIndex]);
+    mytitleCell->setText(I18n::translate(sizesMessages[seriesIndex]));
   }
+  KDColor colors[] = {Palette::Red, Palette::Blue, Palette::Green};
+  mytitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GreyDark : colors[seriesIndex]); // TODO Share GreyDark and other colors with graph/list_controller
 }
 
 HighlightCell * StoreController::titleCells(int index) {
@@ -53,7 +55,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
 
 View * StoreController::loadView() {
   for (int i = 0; i < k_numberOfTitleCells; i++) {
-    m_titleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
+    m_titleCells[i] = new Shared::BufferFunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
   }
   return Shared::StoreController::loadView();
 }

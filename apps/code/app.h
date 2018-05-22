@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include <ion/events.h>
+#include "console_controller.h"
 #include "menu_controller.h"
 #include "script_store.h"
 #include "python_toolbox.h"
@@ -36,10 +37,12 @@ public:
     ScriptStore m_scriptStore;
   };
   StackViewController * stackViewController() { return &m_codeStackViewController; }
+  ConsoleController * consoleController() { return &m_consoleController; }
   PythonToolbox * pythonToolbox() { return &m_toolbox; }
   bool textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event);
 private:
   App(Container * container, Snapshot * snapshot);
+  ConsoleController m_consoleController;
   ButtonRowController m_listFooter;
   MenuController m_menuController;
   StackViewController m_codeStackViewController;

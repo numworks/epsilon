@@ -78,12 +78,27 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
 
 bool Store::isEmpty() {
   for (int i = 0; i < k_numberOfSeries; i ++) {
-    if (sumOfOccurrences(i) > 0) {
+    if (!seriesIsEmpty(i)) {
       return false;
     }
   }
   return true;
 }
+
+int Store::numberOfNonEmptySeries() {
+  int result = 0;
+  for (int i = 0; i < k_numberOfSeries; i ++) {
+    if (!seriesIsEmpty(i)) {
+      result++;
+    }
+  }
+  return result;
+}
+
+bool Store::seriesIsEmpty(int i) {
+  return sumOfOccurrences(i) == 0;
+}
+
 
 /* Calculation */
 

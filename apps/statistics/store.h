@@ -23,6 +23,8 @@ public:
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
   bool isEmpty();
+  int numberOfNonEmptySeries();
+  bool seriesIsEmpty(int i);
 
   // Calculation
   double sumOfOccurrences(int series);
@@ -46,6 +48,7 @@ public:
   constexpr static float k_displayRightMarginRatio = 0.04f;
   constexpr static float k_displayBottomMarginRatio = 0.4f;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
+
 private:
   double defaultValue(int series, int i, int j) override;
   double sumOfValuesBetween(int series, double x1, double x2);

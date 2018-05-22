@@ -47,10 +47,11 @@ private:
     void reload() {}
     HistogramView * histogramViewAtIndex(int index);
     int seriesOfSubviewAtIndex(int index);
+    int indexOfSubviewAtSeries(int series);
     HistogramBannerView * bannerView() { return &m_bannerView; }
     void layoutSubviews() override;
-  private:
     int numberOfSubviews() const override;
+  private:
     View * subviewAtIndex(int index) override;
     HistogramView m_histogramView1;
     HistogramView m_histogramView2;

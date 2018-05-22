@@ -33,6 +33,22 @@ int HistogramController::ContentView::seriesOfSubviewAtIndex(int index) {
   return static_cast<HistogramView *>(subviewAtIndex(index))->series();
 }
 
+int HistogramController::ContentView::indexOfSubviewAtSeries(int series) {
+  int displayedSubviewIndex = 0;
+  for (int i = 0; i < 3; i++) {
+    if (!m_store->seriesIsEmpty(i)) {
+     if (i == series) {
+        return displayedSubviewIndex;
+     }
+     displayedSubviewIndex++;
+    } else if (i == series) {
+      return -1;
+    }
+  }
+  assert(false);
+  return -1;
+}
+
 void HistogramController::ContentView::layoutSubviews() {
   int numberSubviews = numberOfSubviews();
   KDCoordinate subviewHeight = bounds().height()/numberSubviews;
@@ -133,8 +149,21 @@ void HistogramController::viewWillAppear() {
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
-    if (!m_view.histogramViewAtIndex(m_selectedSeries)->isMainViewSelected()) {
+    bool newSelectedSeries = false;
+    if (m_selectedSeries < 0) {
       header()->setSelectedButton(-1);
+      m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
+      newSelectedSeries = true;
+    } else {
+      int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
+      if (currentSelectedSubview < m_view.numberOfSubviews() - 1) {
+        m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+        m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview+1);
+        *m_selectedBarIndex = 0;
+        newSelectedSeries = true;
+      }
+    }
+    if (newSelectedSeries) {
       m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
       reloadBannerView();
       m_view.reload();
@@ -144,16 +173,28 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Up) {
-    if (!m_view.histogramViewAtIndex(m_selectedSeries)->isMainViewSelected()) {
+    if (m_selectedSeries < 0) {
       header()->setSelectedButton(-1);
       app()->setFirstResponder(tabController());
       return true;
     }
     m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
-    header()->setSelectedButton(0);
+    int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
+    if (currentSelectedSubview > 0) {
+      assert(currentSelectedSubview > 0);
+      m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview-1);
+      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
+      *m_selectedBarIndex = 0;
+      reloadBannerView();
+      m_view.reload();
+      app()->setFirstResponder(this);
+    } else {
+      m_selectedSeries = -1;
+      header()->setSelectedButton(0);
+    }
     return true;
   }
-  if (m_view.histogramViewAtIndex(m_selectedSeries)->isMainViewSelected() && (event == Ion::Events::Left || event == Ion::Events::Right)) {
+  if (m_selectedSeries >= 0 && (event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = event == Ion::Events::Left ? -1 : 1;
     if (moveSelection(direction)) {
       reloadBannerView();
@@ -182,16 +223,19 @@ void HistogramController::didBecomeFirstResponder() {
     initBarSelection();
     reloadBannerView();
   }
-  if (!m_view.histogramViewAtIndex(m_selectedSeries)->isMainViewSelected()) {
+  if (m_selectedSeries < 0) {
     header()->setSelectedButton(0);
   } else {
-    m_view.histogramViewAtIndex(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex), m_store->endOfBarAtIndex(0, *m_selectedBarIndex));
+    m_view.histogramViewAtIndex(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex));
   }
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
-    m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+    if (m_selectedSeries >= 0) {
+      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+      m_selectedSeries = -1;
+    }
     header()->setSelectedButton(-1);
     m_view.reload();
   }

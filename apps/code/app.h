@@ -39,6 +39,7 @@ public:
   StackViewController * stackViewController() { return &m_codeStackViewController; }
   ConsoleController * consoleController() { return &m_consoleController; }
   PythonToolbox * pythonToolbox() { return &m_toolbox; }
+  bool handleEvent(Ion::Events::Event event) override;
   bool textInputDidReceiveEvent(TextInput * textInput, Ion::Events::Event event);
 private:
   App(Container * container, Snapshot * snapshot);

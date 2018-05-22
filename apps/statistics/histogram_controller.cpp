@@ -256,14 +256,18 @@ void HistogramController::reloadBannerView() {
   numberOfChar += legendLength;
 
   // Add lower bound
-  double lowerBound = m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex);
-  numberOfChar += PrintFloat::convertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  if (m_selectedSeries >= 0) {
+    double lowerBound = m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex);
+    numberOfChar += PrintFloat::convertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  }
 
   buffer[numberOfChar++] = ';';
 
   // Add upper bound
-  double upperBound = m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex);
-  numberOfChar += PrintFloat::convertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  if (m_selectedSeries >= 0) {
+    double upperBound = m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex);
+    numberOfChar += PrintFloat::convertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  }
 
   buffer[numberOfChar++] = '[';
 
@@ -280,8 +284,11 @@ void HistogramController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  double size = m_store->heightOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex);
-  numberOfChar += PrintFloat::convertFloatToText<double>(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  double size = 0;
+  if (m_selectedSeries >= 0) {
+    size = m_store->heightOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex);
+    numberOfChar += PrintFloat::convertFloatToText<double>(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  }
   // Padding
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
     buffer[numberOfChar++] = ' ';
@@ -295,8 +302,10 @@ void HistogramController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  double frequency = size/m_store->sumOfOccurrences(m_selectedSeries);
-  numberOfChar += PrintFloat::convertFloatToText<double>(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  if (m_selectedSeries >= 0) {
+    double frequency = size/m_store->sumOfOccurrences(m_selectedSeries);
+    numberOfChar += PrintFloat::convertFloatToText<double>(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  }
   // Padding
   for (int i = numberOfChar; i < k_maxLegendLength; i++) {
     buffer[numberOfChar++] = ' ';
@@ -372,6 +381,9 @@ void HistogramController::initBarParameters() {
 
 void HistogramController::initBarSelection() {
   *m_selectedBarIndex = 0;
+  if (m_selectedSeries < 0) {
+    return;
+  }
   while ((m_store->heightOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex) == 0 ||
       m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) && *m_selectedBarIndex < m_store->numberOfBars(m_selectedSeries)) {
     *m_selectedBarIndex = *m_selectedBarIndex+1;

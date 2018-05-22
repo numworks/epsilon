@@ -34,6 +34,7 @@ public:
 
 protected:
   static constexpr KDCoordinate k_cellWidth = 80; //TODO
+  static constexpr KDCoordinate k_margin = 8;
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static int k_maxNumberOfEditableCells = 22 * FloatPairStore::k_numberOfSeries;
   constexpr static int k_numberOfTitleCells = k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;

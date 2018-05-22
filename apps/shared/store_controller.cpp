@@ -163,6 +163,7 @@ View * StoreController::loadView() {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i] = new EvenOddEditableTextCell(tableView, this, m_draftTextBuffer);
   }
+  tableView->setMargins(k_margin);
   return tableView;
 }
 

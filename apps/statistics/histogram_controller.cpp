@@ -17,6 +17,9 @@ HistogramController::ContentView::ContentView(HistogramController * controller, 
   m_bannerView(),
   m_store(store)
 {
+  m_histogramView1.setDisplayBannerView(false);
+  m_histogramView2.setDisplayBannerView(false);
+  m_histogramView3.setDisplayBannerView(false);
 }
 
 HistogramView *  HistogramController::ContentView::histogramViewAtIndex(int index) {

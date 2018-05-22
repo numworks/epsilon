@@ -19,7 +19,7 @@ public:
       , bool m_lockOnConsole
 #endif
       );
-  ConsoleController * consoleController() { return &m_consoleController; }
+  ConsoleController * consoleController();
   StackViewController * stackViewController();
   void willExitResponderChain(Responder * nextFirstResponder) override;
   void renameSelectedScript();
@@ -107,7 +107,6 @@ private:
   EvenOddCell m_emptyCell;
   Button m_consoleButton;
   SelectableTableView m_selectableTableView;
-  ConsoleController m_consoleController;
   ScriptParameterController m_scriptParameterController;
   EditorController m_editorController;
   bool m_reloadConsoleWhenBecomingFirstResponder;

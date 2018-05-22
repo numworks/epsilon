@@ -71,6 +71,11 @@ void App::Snapshot::setOpt(const char * name, char * value) {
 
 App::App(Container * container, Snapshot * snapshot) :
   ::App(container, snapshot, &m_codeStackViewController, I18n::Message::Warning),
+  m_consoleController(nullptr, snapshot->scriptStore()
+#if EPSILON_GETOPT
+      , lockOnConsole
+#endif
+      ),
   m_listFooter(&m_codeStackViewController, &m_menuController, &m_menuController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey, ButtonRowController::Size::Large),
   m_menuController(&m_listFooter, snapshot->scriptStore(), &m_listFooter
 #if EPSILON_GETOPT

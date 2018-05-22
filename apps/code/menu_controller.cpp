@@ -1,4 +1,5 @@
 #include "menu_controller.h"
+#include "app.h"
 #include "../i18n.h"
 #include "../apps_container.h"
 #include <assert.h>
@@ -25,11 +26,6 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
     //TODO: Pop up warning message: not enough space to load Python
   }, this), KDText::FontSize::Large),
   m_selectableTableView(this, this, this, this),
-  m_consoleController(parentResponder, m_scriptStore
-#if EPSILON_GETOPT
-      , lockOnConsole
-#endif
-      ),
   m_scriptParameterController(nullptr, I18n::Message::ScriptOptions, this),
   m_editorController(this),
   m_reloadConsoleWhenBecomingFirstResponder(false),
@@ -44,6 +40,10 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
     m_scriptCells[i].editableTextCell()->textField()->setAlignment(0.0f, 0.5f);
     m_scriptCells[i].editableTextCell()->setMargins(0, 0, 0, Metric::HistoryHorizontalMargin);
   }
+}
+
+ConsoleController * MenuController::consoleController() {
+  return static_cast<App *>(app())->consoleController();
 }
 
 StackViewController * MenuController::stackViewController() {
@@ -145,19 +145,19 @@ void MenuController::deleteScript(Script script) {
 }
 
 void MenuController::reloadConsole() {
-  m_consoleController.unloadPythonEnvironment();
+  consoleController()->unloadPythonEnvironment();
   m_reloadConsoleWhenBecomingFirstResponder = false;
 }
 
 void MenuController::loadPythonIfNeeded() {
-  m_consoleController.loadPythonEnvironment(false);
+  consoleController()->loadPythonEnvironment(false);
 }
 
 void MenuController::openConsoleWithScript(Script script) {
   reloadConsole();
-  if (m_consoleController.loadPythonEnvironment(false)) {
-    stackViewController()->push(&m_consoleController);
-    m_consoleController.autoImportScript(script, true);
+  if (consoleController()->loadPythonEnvironment(false)) {
+    stackViewController()->push(consoleController());
+    consoleController()->autoImportScript(script, true);
   }
   m_reloadConsoleWhenBecomingFirstResponder = true;
 }

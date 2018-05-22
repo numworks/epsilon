@@ -128,8 +128,8 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
   }
   int mantissaLength = absMantissa.writeTextInBuffer(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
   if (strcmp(tempBuffer, "undef") == 0) {
-    strlcpy(buffer, tempBuffer, bufferSize);
-    return mantissaLength;
+    currentChar = strlcpy(buffer, tempBuffer, bufferSize);
+    return currentChar;
   }
   /* We force scientific mode if the number of digits before the dot is superior
    * to the number of significant digits (ie with 4 significant digits,
@@ -140,6 +140,7 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
     numberOfRequiredDigits = mantissaLength > exponent ? mantissaLength : exponent;
     numberOfRequiredDigits = exponent < 0 ? 1+mantissaLength-exponent : numberOfRequiredDigits;
   }
+  if (currentChar >= bufferSize-1) { return bufferSize-1; }
   if (m_mantissa.isNegative()) {
     buffer[currentChar++] = '-';
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
@@ -188,6 +189,7 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
     for (int i = currentChar-1; i > decimalMarkerPosition; i--) {
       buffer[i+1] = buffer[i];
     }
+    if (currentChar >= bufferSize-1) { return bufferSize-1; }
     buffer[decimalMarkerPosition+1] = '.';
     currentChar++;
   }
@@ -198,6 +200,7 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
       buffer[currentChar++] = '0';
     }
   }
+  if (currentChar >= bufferSize-1) { return bufferSize-1; }
   buffer[currentChar] = 0;
   return currentChar;
 }

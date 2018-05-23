@@ -19,7 +19,7 @@ mp_obj_t mp_builtin_input(size_t n_args, const mp_obj_t *args) {
   const char * result = mp_hal_input(prompt);
 
   // 3 - Log the prompt, result and flush a new line
-  mp_obj_t resultStr = mp_obj_new_str(result, strlen(result), false);
+  mp_obj_t resultStr = mp_obj_new_str(result, strlen(result));
   if (n_args == 1) {
     mp_obj_print(args[0], PRINT_STR);
   }

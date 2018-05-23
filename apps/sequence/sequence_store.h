@@ -30,12 +30,12 @@ public:
     return firstAvailableAttribute(k_sequenceNames, FunctionStore::name);
   }
 private:
+  Sequence * emptyModel() override;
+  Sequence * nullModel() override;
+  void setModelAtIndex(Shared::ExpressionModel * f, int i) override;
   static constexpr KDColor k_defaultColors[MaxNumberOfSequences] = {
     Palette::Red, Palette::Blue//, Palette::YellowDark
   };
-  Shared::Function * emptyModel() override;
-  Shared::Function * nullModel() override;
-  void setModelAtIndex(Shared::Function * f, int i) override;
   const KDColor firstAvailableColor() override {
     return firstAvailableAttribute(k_defaultColors, FunctionStore::color);
   }

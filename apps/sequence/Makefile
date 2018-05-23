@@ -35,6 +35,6 @@ tests += $(addprefix apps/sequence/test/,\
   sequence.cpp\
 )
 test_objs += $(addprefix apps/sequence/, sequence.o sequence_store.o sequence_context.o cache_context.o)
-test_objs += $(addprefix apps/shared/, expression_model.o function.o function_store.o model_store.o)
+test_objs += $(addprefix apps/shared/, expression_model.o  expression_model_store.o function.o function_store.o)
 
 app_images += apps/sequence/sequence_icon.png

@@ -2,7 +2,7 @@
 #define SHARED_FUNCTION_STORE_H
 
 #include "function.h"
-#include "model_store.h"
+#include "expression_model_store.h"
 #include <stdint.h>
 
 namespace Shared {
@@ -10,10 +10,11 @@ namespace Shared {
 /* FunctionStore is a dumb class.
  * Its only job is to store functions and to give them a color. */
 
-class FunctionStore : public ModelStore<Function> {
+class FunctionStore : public ExpressionModelStore {
 public:
   FunctionStore();
   virtual uint32_t storeChecksum() = 0;
+  virtual Function * modelAtIndex(int i) override = 0;
   virtual Function * activeFunctionAtIndex(int i);
   virtual Function * definedFunctionAtIndex(int i);
   // Functions can be undefined when they have a color and a name but no content
@@ -29,7 +30,6 @@ protected:
 private:
   virtual const char * firstAvailableName() = 0;
   virtual const KDColor firstAvailableColor() = 0;
-  void tidyModelAtIndex(int i) override;
 };
 
 }

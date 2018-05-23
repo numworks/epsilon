@@ -58,7 +58,7 @@ protected:
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
-  void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
+  void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false) const;
   View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
 private:

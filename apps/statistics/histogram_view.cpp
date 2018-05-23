@@ -17,7 +17,8 @@ HistogramView::HistogramView(HistogramController * controller, Store * store, in
   m_series(series),
   m_selectedHistogramColor(selectedHistogramColor),
   m_notSelectedHistogramColor(notSelectedHistogramColor),
-  m_selectedBarColor(selectedBarColor)
+  m_selectedBarColor(selectedBarColor),
+  m_displayLabels(true)
 {
 }
 
@@ -33,7 +34,7 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   m_controller->setCurrentDrawnSeries(m_series);
   ctx->fillRect(rect, KDColorWhite);
   drawAxes(ctx, rect, Axis::Horizontal);
-  drawLabels(ctx, rect, Axis::Horizontal, false);
+  drawLabels(ctx, rect, Axis::Horizontal, false, !m_displayLabels);
   /* We memoize the total size to avoid recomputing it in double precision at
    * every call to EvaluateHistogramAtAbscissa() */
   float totalSize = m_store->sumOfOccurrences(m_series);

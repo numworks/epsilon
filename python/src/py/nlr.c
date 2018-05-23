@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2013-2017 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,28 @@
  * THE SOFTWARE.
  */
 
-#include "py/obj.h"
-#include "py/builtin.h"
+#include "py/mpstate.h"
 
-STATIC mp_obj_t op_getitem(mp_obj_t self_in, mp_obj_t key_in) {
-    mp_obj_type_t *type = mp_obj_get_type(self_in);
-    return type->subscr(self_in, key_in, MP_OBJ_SENTINEL);
-}
-MP_DEFINE_CONST_FUN_OBJ_2(mp_op_getitem_obj, op_getitem);
+#if !MICROPY_NLR_SETJMP
+// When not using setjmp, nlr_push_tail is called from inline asm so needs special care
+#if MICROPY_NLR_X86 && MICROPY_NLR_OS_WINDOWS
+// On these 32-bit platforms make sure nlr_push_tail doesn't have a leading underscore
+unsigned int nlr_push_tail(nlr_buf_t *nlr) asm("nlr_push_tail");
+#else
+// LTO can't see inside inline asm functions so explicitly mark nlr_push_tail as used
+__attribute__((used)) unsigned int nlr_push_tail(nlr_buf_t *nlr);
+#endif
+#endif
 
-STATIC mp_obj_t op_setitem(mp_obj_t self_in, mp_obj_t key_in, mp_obj_t value_in) {
-    mp_obj_type_t *type = mp_obj_get_type(self_in);
-    return type->subscr(self_in, key_in, value_in);
+unsigned int nlr_push_tail(nlr_buf_t *nlr) {
+    nlr_buf_t **top = &MP_STATE_THREAD(nlr_top);
+    nlr->prev = *top;
+    MP_NLR_SAVE_PYSTACK(nlr);
+    *top = nlr;
+    return 0; // normal return
 }
-MP_DEFINE_CONST_FUN_OBJ_3(mp_op_setitem_obj, op_setitem);
 
-STATIC mp_obj_t op_delitem(mp_obj_t self_in, mp_obj_t key_in) {
-    mp_obj_type_t *type = mp_obj_get_type(self_in);
-    return type->subscr(self_in, key_in, MP_OBJ_NULL);
+void nlr_pop(void) {
+    nlr_buf_t **top = &MP_STATE_THREAD(nlr_top);
+    *top = (*top)->prev;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(mp_op_delitem_obj, op_delitem);
-
-STATIC mp_obj_t op_contains(mp_obj_t lhs_in, mp_obj_t rhs_in) {
-    mp_obj_type_t *type = mp_obj_get_type(lhs_in);
-    return type->binary_op(MP_BINARY_OP_CONTAINS, lhs_in, rhs_in);
-}
-MP_DEFINE_CONST_FUN_OBJ_2(mp_op_contains_obj, op_contains);

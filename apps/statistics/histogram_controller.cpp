@@ -22,6 +22,13 @@ HistogramController::ContentView::ContentView(HistogramController * controller, 
   m_histogramView3.setDisplayBannerView(false);
 }
 
+void HistogramController::ContentView::reload() {
+  layoutSubviews();
+  m_histogramView1.reload();
+  m_histogramView2.reload();
+  m_histogramView3.reload();
+}
+
 HistogramView *  HistogramController::ContentView::histogramViewAtIndex(int index) {
   assert(index >= 0 && index < 3);
   HistogramView * views[] = {&m_histogramView1, &m_histogramView2, &m_histogramView3};
@@ -29,7 +36,7 @@ HistogramView *  HistogramController::ContentView::histogramViewAtIndex(int inde
 }
 
 int HistogramController::ContentView::seriesOfSubviewAtIndex(int index) {
-  assert(index >= 0 && index < numberOfSubviews());
+  assert(index >= 0 && index < numberOfSubviews() - 1);
   return static_cast<HistogramView *>(subviewAtIndex(index))->series();
 }
 
@@ -50,8 +57,10 @@ int HistogramController::ContentView::indexOfSubviewAtSeries(int series) {
 }
 
 void HistogramController::ContentView::layoutSubviews() {
-  int numberSubviews = numberOfSubviews();
-  KDCoordinate subviewHeight = bounds().height()/numberSubviews;
+  int numberHistogramSubviews = m_store->numberOfNonEmptySeries();
+  assert(numberHistogramSubviews > 0);
+  KDCoordinate bannerHeight = m_bannerView.minimalSizeForOptimalDisplay().height();
+  KDCoordinate subviewHeight = (bounds().height() - bannerHeight)/numberHistogramSubviews;
   int displayedSubviewIndex = 0;
   for (int i = 0; i < 3; i++) {
     if (!m_store->seriesIsEmpty(i)) {
@@ -60,15 +69,20 @@ void HistogramController::ContentView::layoutSubviews() {
       displayedSubviewIndex++;
     }
   }
+  KDRect frame = KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight);
+  m_bannerView.setFrame(frame);
 }
 
 int HistogramController::ContentView::numberOfSubviews() const {
   int result = m_store->numberOfNonEmptySeries();
   assert(result <= Store::k_numberOfSeries);
-  return result;
+  return result + 1; // +1 for the banner view
 }
 
 View * HistogramController::ContentView::subviewAtIndex(int index) {
+  if (index == numberOfSubviews() -1) {
+    return &m_bannerView;
+  }
   int seriesIndex = 0;
   int nonEmptySeriesIndex = 0;
   while (nonEmptySeriesIndex < index && seriesIndex < Store::k_numberOfSeries) {
@@ -78,9 +92,7 @@ View * HistogramController::ContentView::subviewAtIndex(int index) {
     seriesIndex++;
   }
   if (nonEmptySeriesIndex == index) {
-    assert(seriesIndex >=0 && seriesIndex < 3);
-    View * views[] = {&m_histogramView1, &m_histogramView2, &m_histogramView3};
-    return views[seriesIndex];
+    return histogramViewAtIndex(seriesIndex);
   }
   assert(false);
   return nullptr;
@@ -135,9 +147,10 @@ void HistogramController::viewWillAppear() {
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
+  assert(m_selectedSeries >= 0);
   if (event == Ion::Events::Down) {
     int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
-    if (currentSelectedSubview < m_view.numberOfSubviews() - 1) {
+    if (currentSelectedSubview < m_view.numberOfSubviews() - 2) {
       m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
       m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview+1);
       *m_selectedBarIndex = 0;
@@ -177,6 +190,10 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramController::didBecomeFirstResponder() {
+  if (m_selectedSeries < 0) {
+    m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
+    m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
+  }
   uint32_t storeChecksum = m_store->storeChecksum();
   if (*m_storeVersion != storeChecksum) {
     *m_storeVersion = storeChecksum;
@@ -193,9 +210,6 @@ void HistogramController::didBecomeFirstResponder() {
     *m_rangeVersion = rangeChecksum;
     initBarSelection();
     reloadBannerView();
-  }
-  if (m_selectedSeries < 0) {
-    m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
   }
   m_view.histogramViewAtIndex(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex));
 }
@@ -285,15 +299,16 @@ void HistogramController::reloadBannerView() {
 
 bool HistogramController::moveSelection(int deltaIndex) {
   int newSelectedBarIndex = *m_selectedBarIndex;
-  if (deltaIndex > 0) {
-    do {
-      newSelectedBarIndex++;
-    } while (m_store->heightOfBarAtIndex(m_selectedSeries, newSelectedBarIndex) == 0 && newSelectedBarIndex < m_store->numberOfBars(m_selectedSeries));  } else {
-    do {
-      newSelectedBarIndex--;
-    } while (m_store->heightOfBarAtIndex(m_selectedSeries, newSelectedBarIndex) == 0 && newSelectedBarIndex >= 0);
-  }
-  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < m_store->numberOfBars(m_selectedSeries) && *m_selectedBarIndex != newSelectedBarIndex) {
+  do {
+    newSelectedBarIndex+=deltaIndex;
+  } while (m_store->heightOfBarAtIndex(m_selectedSeries, newSelectedBarIndex) == 0
+      && newSelectedBarIndex >= 0
+      && newSelectedBarIndex < m_store->numberOfBars(m_selectedSeries));
+
+  if (newSelectedBarIndex >= 0
+      && newSelectedBarIndex < m_store->numberOfBars(m_selectedSeries)
+      && *m_selectedBarIndex != newSelectedBarIndex)
+  {
     *m_selectedBarIndex = newSelectedBarIndex;
     m_view.histogramViewAtIndex(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex));
     m_store->scrollToSelectedBarIndex(m_selectedSeries, *m_selectedBarIndex);
@@ -303,6 +318,7 @@ bool HistogramController::moveSelection(int deltaIndex) {
 }
 
 void HistogramController::initRangeParameters() {
+  assert(m_selectedSeries >= 0 && m_store->sumOfOccurrences(m_selectedSeries) > 0);
   float min = m_store->firstDrawnBarAbscissa();
   float max = m_store->maxValue(m_selectedSeries);
   float barWidth = m_store->barWidth();
@@ -323,6 +339,7 @@ void HistogramController::initRangeParameters() {
 }
 
 void HistogramController::initYRangeParameters(int series) {
+  assert(series >= 0 && m_store->sumOfOccurrences(series) > 0);
   float yMax = -FLT_MAX;
   for (int index = 0; index < m_store->numberOfBars(series); index++) {
     float size = m_store->heightOfBarAtIndex(series, index);
@@ -337,6 +354,7 @@ void HistogramController::initYRangeParameters(int series) {
 }
 
 void HistogramController::initBarParameters() {
+  assert(m_selectedSeries >= 0 && m_store->sumOfOccurrences(m_selectedSeries) > 0);
   float min = m_store->minValue(m_selectedSeries);
   float max = m_store->maxValue(m_selectedSeries);
   max = min >= max ? min + std::pow(10.0f, std::floor(std::log10(std::fabs(min)))-1.0f) : max;
@@ -349,10 +367,8 @@ void HistogramController::initBarParameters() {
 }
 
 void HistogramController::initBarSelection() {
+  assert(m_selectedSeries >= 0 && m_store->sumOfOccurrences(m_selectedSeries) > 0);
   *m_selectedBarIndex = 0;
-  if (m_selectedSeries < 0) {
-    return;
-  }
   while ((m_store->heightOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex) == 0 ||
       m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) && *m_selectedBarIndex < m_store->numberOfBars(m_selectedSeries)) {
     *m_selectedBarIndex = *m_selectedBarIndex+1;

@@ -84,15 +84,15 @@ View * HistogramController::ContentView::subviewAtIndex(int index) {
     return &m_bannerView;
   }
   int seriesIndex = 0;
-  int nonEmptySeriesIndex = 0;
-  while (nonEmptySeriesIndex < index && seriesIndex < Store::k_numberOfSeries) {
+  int nonEmptySeriesIndex = -1;
+  while (seriesIndex < Store::k_numberOfSeries) {
     if (!m_store->seriesIsEmpty(seriesIndex)) {
       nonEmptySeriesIndex++;
+      if (nonEmptySeriesIndex == index) {
+        return histogramViewAtIndex(seriesIndex);
+      }
     }
     seriesIndex++;
-  }
-  if (nonEmptySeriesIndex == index) {
-    return histogramViewAtIndex(seriesIndex);
   }
   assert(false);
   return nullptr;
@@ -190,7 +190,10 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramController::didBecomeFirstResponder() {
-  if (m_selectedSeries < 0) {
+  if (m_selectedSeries < 0 || m_store->sumOfOccurrences(m_selectedSeries) == 0) {
+    if (m_selectedSeries >= 0) {
+      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+    }
     m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
     m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
   }

@@ -4,7 +4,7 @@
 namespace Shared {
 
 FunctionStore::FunctionStore() :
-  ModelStore<Function>()
+  ExpressionModelStore()
 {
 }
 
@@ -58,10 +58,6 @@ int FunctionStore::numberOfDefinedFunctions() {
     }
   }
   return result;
-}
-
-void FunctionStore::tidyModelAtIndex(int i) {
-  modelAtIndex(i)->tidy();
 }
 
 template<typename T>

@@ -1,24 +1,21 @@
-#include "model_store.h"
+#include "expression_model_store.h"
 #include "function.h"
 #include <assert.h>
 
 namespace Shared {
 
-template<typename T>
-ModelStore<T>::ModelStore() :
+ExpressionModelStore::ExpressionModelStore() :
   m_numberOfModels(0)
 {
 }
 
-template<typename T>
-T * ModelStore<T>::addEmptyModel() {
+ExpressionModel * ExpressionModelStore::addEmptyModel() {
   assert(m_numberOfModels < maxNumberOfModels());
   setModelAtIndex(emptyModel(), m_numberOfModels++);
   return modelAtIndex(m_numberOfModels-1);
 }
 
-template<typename T>
-void ModelStore<T>::removeModel(T * f) {
+void ExpressionModelStore::removeModel(ExpressionModel * f) {
   int i = 0;
   while (modelAtIndex(i) != f && i < m_numberOfModels) {
     i++;
@@ -31,21 +28,17 @@ void ModelStore<T>::removeModel(T * f) {
   m_numberOfModels--;
 }
 
-template<typename T>
-void ModelStore<T>::removeAll() {
+void ExpressionModelStore::removeAll() {
   for (int i = 0; i < m_numberOfModels; i++) {
     setModelAtIndex(nullModel(), i);
   }
   m_numberOfModels = 0;
 }
 
-template<typename T>
-void ModelStore<T>::tidy() {
+void ExpressionModelStore::tidy() {
   for (int i = 0; i < m_numberOfModels; i++) {
-    tidyModelAtIndex(i);
+    modelAtIndex(i)->tidy();
   }
 }
 
 }
-
-template class Shared::ModelStore<Shared::Function>;

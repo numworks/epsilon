@@ -24,18 +24,18 @@ char SequenceStore::symbol() const {
   return 'n';
 }
 
-Shared::Function * SequenceStore::emptyModel() {
+Sequence * SequenceStore::emptyModel() {
   static Sequence addedSequence("", KDColorBlack);
   addedSequence = Sequence(firstAvailableName(), firstAvailableColor());
   return &addedSequence;
 }
 
-Shared::Function * SequenceStore::nullModel() {
+Sequence * SequenceStore::nullModel() {
   static Sequence emptyFunction("", KDColorBlack);
   return &emptyFunction;
 }
 
-void SequenceStore::setModelAtIndex(Shared::Function * f, int i) {
+void SequenceStore::setModelAtIndex(Shared::ExpressionModel * f, int i) {
   assert(i>=0 && i<m_numberOfModels);
   m_sequences[i] = *(static_cast<Sequence *>(f));
 }

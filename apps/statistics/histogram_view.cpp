@@ -7,25 +7,25 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramView::HistogramView(HistogramController * controller, Store * store, int series, Shared::BannerView * bannerView) :
+HistogramView::HistogramView(HistogramController * controller, Store * store, int series, Shared::BannerView * bannerView, KDColor selectedHistogramColor, KDColor notSelectedHistogramColor, KDColor selectedBarColor) :
   CurveView(store, nullptr, bannerView, nullptr),
   m_controller(controller),
   m_store(store),
   m_labels{},
   m_highlightedBarStart(NAN),
   m_highlightedBarEnd(NAN),
-  m_series(series)
+  m_series(series),
+  m_selectedHistogramColor(selectedHistogramColor),
+  m_notSelectedHistogramColor(notSelectedHistogramColor),
+  m_selectedBarColor(selectedBarColor)
 {
 }
 
 void HistogramView::reload() {
   CurveView::reload();
-  float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedBarStart)-2;
-  float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedBarEnd)+2;
   /* We deliberately do not mark as dirty the frame of the banner view to avoid
    *unpleasant blinking of the drawing of the banner view. */
-  KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
-    bounds().height() - (displayBannerView() ? m_bannerView->bounds().height() : 0)));
+  KDRect dirtyZone(KDRect(0, 0, bounds().width(), bounds().height() - (displayBannerView() ? m_bannerView->bounds().height() : 0)));
   markRectAsDirty(dirtyZone);
 }
 
@@ -39,9 +39,9 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   float totalSize = m_store->sumOfOccurrences(m_series);
   float context[] = {totalSize, static_cast<float>(m_series)};
   if (isMainViewSelected()) {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::Select, Palette::YellowDark, m_highlightedBarStart, m_highlightedBarEnd);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, m_selectedHistogramColor, m_selectedBarColor, m_highlightedBarStart, m_highlightedBarEnd);
   } else {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, Palette::GreyMiddle, Palette::YellowDark);
+    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, m_notSelectedHistogramColor, m_selectedBarColor);
   }
 }
 

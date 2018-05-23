@@ -40,7 +40,7 @@ private:
   class ContentView : public View {
   public:
     ContentView(HistogramController * controller, Store * store);
-    void reload() {}
+    void reload();
     HistogramView * histogramViewAtIndex(int index);
     int seriesOfSubviewAtIndex(int index);
     int indexOfSubviewAtSeries(int series);

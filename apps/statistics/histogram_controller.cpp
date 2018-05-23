@@ -11,9 +11,10 @@ using namespace Shared;
 namespace Statistics {
 
 HistogramController::ContentView::ContentView(HistogramController * controller, Store * store) :
-  m_histogramView1(controller, store, 0, &m_bannerView),
-  m_histogramView2(controller, store, 1, &m_bannerView),
-  m_histogramView3(controller, store, 2, &m_bannerView),
+  m_histogramView1(controller, store, 0, &m_bannerView, Palette::Red),
+  m_histogramView2(controller, store, 1, &m_bannerView, Palette::Blue),
+  m_histogramView3(controller, store, 2, &m_bannerView, Palette::Green),
+  // TODO Share colors with stats/store_controller
   m_bannerView(),
   m_store(store)
 {

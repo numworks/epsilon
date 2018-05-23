@@ -18,10 +18,6 @@ public:
   HistogramParameterController * histogramParameterController() { return &m_histogramParameterController; }
   void setCurrentDrawnSeries(int series);
 
-  // ButtonRowDelegate
-  int numberOfButtons(ButtonRowController::Position) const override;
-  Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
-
   // AlternateEmptyViewDelegate
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
@@ -67,7 +63,6 @@ private:
   void initBarSelection();
   // return true if the window has scrolled
   bool moveSelection(int deltaIndex);
-  Button m_settingButton;
   Store * m_store;
   ContentView m_view;
   uint32_t * m_storeVersion;

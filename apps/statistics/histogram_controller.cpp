@@ -363,11 +363,16 @@ bool HistogramController::moveSelection(int deltaIndex) {
 
 void HistogramController::initRangeParameters() {
   assert(m_selectedSeries >= 0 && m_store->sumOfOccurrences(m_selectedSeries) > 0);
-  float min = m_store->firstDrawnBarAbscissa();
-  float max = m_store->maxValue(m_selectedSeries);
+  float minValue = m_store->firstDrawnBarAbscissa();
+  float maxValue = -FLT_MAX;
+  for (int i = 0; i < Store::k_numberOfSeries; i ++) {
+    if (!m_store->seriesIsEmpty(i)) {
+      maxValue = max(maxValue, m_store->maxValue(i));
+    }
+  }
   float barWidth = m_store->barWidth();
-  float xMin = min;
-  float xMax = max + barWidth;
+  float xMin = minValue;
+  float xMax = maxValue + barWidth;
   /* if a bar is represented by less than one pixel, we cap xMax */
   if ((xMax - xMin)/barWidth > k_maxNumberOfBarsPerWindow) {
     xMax = xMin + k_maxNumberOfBarsPerWindow*barWidth;
@@ -399,11 +404,17 @@ void HistogramController::initYRangeParameters(int series) {
 
 void HistogramController::initBarParameters() {
   assert(m_selectedSeries >= 0 && m_store->sumOfOccurrences(m_selectedSeries) > 0);
-  float min = m_store->minValue(m_selectedSeries);
-  float max = m_store->maxValue(m_selectedSeries);
-  max = min >= max ? min + std::pow(10.0f, std::floor(std::log10(std::fabs(min)))-1.0f) : max;
-  m_store->setFirstDrawnBarAbscissa(min);
-  float barWidth = m_store->computeGridUnit(CurveViewRange::Axis::X, min, max);
+  float minValue = -FLT_MAX;
+  float maxValue = FLT_MAX;
+  for (int i = 0; i < Store::k_numberOfSeries; i ++) {
+    if (!m_store->seriesIsEmpty(i)) {
+      minValue = min(minValue, m_store->minValue(i));
+      maxValue = max(maxValue, m_store->maxValue(i));
+    }
+  }
+  maxValue = minValue >= maxValue ? minValue + std::pow(10.0f, std::floor(std::log10(std::fabs(minValue)))-1.0f) : maxValue;
+  m_store->setFirstDrawnBarAbscissa(minValue);
+  float barWidth = m_store->computeGridUnit(CurveViewRange::Axis::X, minValue, maxValue);
   if (barWidth <= 0.0f) {
     barWidth = 1.0f;
   }

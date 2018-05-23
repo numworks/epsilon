@@ -294,7 +294,8 @@ void ListController::addEmptyFunction() {
 
 View * ListController::loadView() {
   m_emptyCell = new EvenOddCell();
-  m_addNewFunction = new NewFunctionCell(m_addNewMessage);
+  m_addNewFunction = new EvenOddMessageTextCell();
+  m_addNewFunction->setMessage(m_addNewMessage);
   SelectableTableView * selectableTableView = new SelectableTableView(this, this, this, this);
   selectableTableView->setMargins(0);
   selectableTableView->setVerticalCellOverlap(0);

@@ -5,7 +5,6 @@
 #include "../sequence_title_cell.h"
 #include "../sequence_store.h"
 #include "../../shared/list_controller.h"
-#include "../../shared/new_function_cell.h"
 #include "../../shared/model_expression_cell.h"
 #include "../../shared/expression_layout_field_delegate.h"
 #include "../../shared/text_field_delegate.h"

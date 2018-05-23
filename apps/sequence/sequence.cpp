@@ -185,10 +185,6 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionLayout() {
   return m_secondInitialConditionLayout;
 }
 
-void Sequence::setContent(const char * c) {
-  Function::setContent(c);
-}
-
 void Sequence::setFirstInitialConditionContent(const char * c) {
   strlcpy(m_firstInitialConditionText, c, sizeof(m_firstInitialConditionText));
   if (m_firstInitialConditionExpression != nullptr) {

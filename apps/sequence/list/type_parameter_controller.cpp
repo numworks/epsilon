@@ -82,7 +82,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
       stack->pop();
       return true;
     }
-    Sequence * newSequence = m_sequenceStore->addEmptyFunction();
+    Sequence * newSequence = static_cast<Sequence *>(m_sequenceStore->addEmptyModel());
     newSequence->setType((Sequence::Type)selectedRow());
     app()->dismissModalViewController();
     return true;

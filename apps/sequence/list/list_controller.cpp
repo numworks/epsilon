@@ -41,21 +41,21 @@ ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
 
 int ListController::numberOfRows() {
   int numberOfRows = 0;
-  for (int i = 0; i < m_sequenceStore->numberOfFunctions(); i++) {
-    Sequence * sequence = m_sequenceStore->functionAtIndex(i);
+  for (int i = 0; i < m_sequenceStore->numberOfModels(); i++) {
+    Sequence * sequence = m_sequenceStore->modelAtIndex(i);
     numberOfRows += sequence->numberOfElements();
   }
-  if (m_sequenceStore->numberOfFunctions() == m_sequenceStore->maxNumberOfFunctions()) {
+  if (m_sequenceStore->numberOfModels() == m_sequenceStore->maxNumberOfModels()) {
     return numberOfRows;
   }
   return 1 + numberOfRows;
 };
 
 KDCoordinate ListController::rowHeight(int j) {
-  if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() && j == numberOfRows() - 1) {
+  if (m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() && j == numberOfRows() - 1) {
     return Metric::StoreRowHeight;
   }
-  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
+  Sequence * sequence = m_sequenceStore->modelAtIndex(functionIndexForRow(j));
   KDCoordinate defaultHeight = sequence->type() == Sequence::Type::Explicit ? Metric::StoreRowHeight : k_emptySubRowHeight;
   ExpressionLayout * layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
@@ -87,7 +87,7 @@ Toolbox * ListController::toolboxForSender(Responder * sender) {
   // Set extra cells
   int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
-  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(selectedRow()));
+  Sequence * sequence = m_sequenceStore->modelAtIndex(functionIndexForRow(selectedRow()));
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
@@ -155,7 +155,7 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
 }
 
 bool ListController::removeFunctionRow(Function * function) {
-  m_functionStore->removeFunction(function);
+  m_functionStore->removeModel(function);
   // Invalidate the sequences context cache
   static_cast<App *>(app())->localContext()->resetCache();
   return true;
@@ -182,7 +182,7 @@ HighlightCell * ListController::expressionCells(int index) {
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
-  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
+  Sequence * sequence = m_sequenceStore->modelAtIndex(functionIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setExpressionLayout(sequence->definitionName());
   }
@@ -198,7 +198,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   ModelExpressionCell * myCell = (ModelExpressionCell *)cell;
-  Sequence * sequence = m_sequenceStore->functionAtIndex(functionIndexForRow(j));
+  Sequence * sequence = m_sequenceStore->modelAtIndex(functionIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setExpressionLayout(sequence->layout());
   }
@@ -217,7 +217,7 @@ int ListController::functionIndexForRow(int j) {
   if (j < 0) {
     return j;
   }
-  if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() &&
+  if (m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() &&
       j == numberOfRows() - 1) {
     return functionIndexForRow(j-1)+1;
   }
@@ -225,14 +225,14 @@ int ListController::functionIndexForRow(int j) {
   int sequenceIndex = -1;
   do {
     sequenceIndex++;
-    Sequence * sequence = m_sequenceStore->functionAtIndex(sequenceIndex);
+    Sequence * sequence = m_sequenceStore->modelAtIndex(sequenceIndex);
     rowIndex += sequence->numberOfElements();
   } while (rowIndex <= j);
   return sequenceIndex;
 }
 
 const char * ListController::textForRow(int j) {
-  Sequence * sequence = (Sequence *)m_functionStore->functionAtIndex(functionIndexForRow(j));
+  Sequence * sequence = ((SequenceStore *)m_functionStore)->modelAtIndex(functionIndexForRow(j));
   switch (sequenceDefinitionForRow(j)) {
     case 0:
      return sequence->text();
@@ -250,7 +250,7 @@ int ListController::sequenceDefinitionForRow(int j) {
   if (j < 0) {
     return j;
   }
-  if (m_sequenceStore->numberOfFunctions() < m_sequenceStore->maxNumberOfFunctions() &&
+  if (m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() &&
       j == numberOfRows() - 1) {
     return 0;
   }
@@ -259,7 +259,7 @@ int ListController::sequenceDefinitionForRow(int j) {
   Sequence * sequence = nullptr;
   do {
     sequenceIndex++;
-    sequence = m_sequenceStore->functionAtIndex(sequenceIndex);
+    sequence = m_sequenceStore->modelAtIndex(sequenceIndex);
     rowIndex += sequence->numberOfElements();
   } while (rowIndex <= j);
   return sequence->numberOfElements()-rowIndex+j;

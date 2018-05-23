@@ -25,7 +25,7 @@ void HistogramView::reload() {
   /* We deliberately do not mark as dirty the frame of the banner view to avoid
    *unpleasant blinking of the drawing of the banner view. */
   KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
-    bounds().height()-m_bannerView->bounds().height()));
+    bounds().height() - (displayBannerView() ? m_bannerView->bounds().height() : 0)));
   markRectAsDirty(dirtyZone);
 }
 

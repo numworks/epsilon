@@ -30,6 +30,7 @@ public:
   void setCursorView(View * cursorView);
   void setBannerView(View * bannerView);
   void setDisplayBannerView(bool display) { m_displayBanner = display; }
+  bool displayBannerView() const { return m_displayBanner; }
   void setOkView(View * okView);
   float resolution() const;
 protected:

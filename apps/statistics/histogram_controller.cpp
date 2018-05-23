@@ -10,6 +10,9 @@ using namespace Shared;
 
 namespace Statistics {
 
+static inline float min(float x, float y) { return (x<y ? x : y); }
+static inline float max(float x, float y) { return (x>y ? x : y); }
+
 HistogramController::ContentView::ContentView(HistogramController * controller, Store * store) :
   m_histogramView1(controller, store, 0, &m_bannerView, Palette::Red),
   m_histogramView2(controller, store, 1, &m_bannerView, Palette::Blue),
@@ -416,8 +419,8 @@ void HistogramController::initYRangeParameters(int series) {
 
 void HistogramController::initBarParameters() {
   assert(m_selectedSeries >= 0 && m_store->sumOfOccurrences(m_selectedSeries) > 0);
-  float minValue = -FLT_MAX;
-  float maxValue = FLT_MAX;
+  float minValue = FLT_MAX;
+  float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
     if (!m_store->seriesIsEmpty(i)) {
       minValue = min(minValue, m_store->minValue(i));

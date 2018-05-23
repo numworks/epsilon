@@ -21,17 +21,17 @@ const char * ListController::title() {
 }
 
 int ListController::numberOfRows() {
-  if (m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions()) {
-    return m_functionStore->numberOfFunctions();
+  if (m_functionStore->numberOfModels() == m_functionStore->maxNumberOfModels()) {
+    return m_functionStore->numberOfModels();
   }
-  return 1 + m_functionStore->numberOfFunctions();
+  return 1 + m_functionStore->numberOfModels();
 };
 
 KDCoordinate ListController::rowHeight(int j) {
-  if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() && j == numberOfRows() - 1) {
+  if (m_functionStore->numberOfModels() < m_functionStore->maxNumberOfModels() && j == numberOfRows() - 1) {
     return Metric::StoreRowHeight;
   }
-  Function * function = m_functionStore->functionAtIndex(j);
+  Function * function = m_functionStore->modelAtIndex(j);
   if (function->layout() == nullptr) {
     return Metric::StoreRowHeight;
   }
@@ -80,7 +80,7 @@ HighlightCell * ListController::expressionCells(int index) {
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
-  CartesianFunction * function = ((CartesianFunctionStore *)m_functionStore)->functionAtIndex(j);
+  CartesianFunction * function = ((CartesianFunctionStore *)m_functionStore)->modelAtIndex(j);
   char bufferName[5] = {*function->name(),'(', m_functionStore->symbol(),')', 0};
   myFunctionCell->setText(bufferName);
   KDColor functionNameColor = function->isActive() ? function->color() : Palette::GreyDark;
@@ -89,7 +89,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   ModelExpressionCell * myCell = (ModelExpressionCell *)cell;
-  Function * f = m_functionStore->functionAtIndex(j);
+  Function * f = m_functionStore->modelAtIndex(j);
   myCell->setExpressionLayout(f->layout());
   bool active = f->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
@@ -97,8 +97,8 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
 }
 
 bool ListController::removeFunctionRow(Function * function) {
-  if (m_functionStore->numberOfFunctions() > 1) {
-    m_functionStore->removeFunction(function);
+  if (m_functionStore->numberOfModels() > 1) {
+    m_functionStore->removeModel(function);
     return true;
   }
   return false;

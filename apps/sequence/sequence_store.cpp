@@ -20,90 +20,24 @@ uint32_t SequenceStore::storeChecksum() {
   return Ion::crc32((uint32_t *)checksums, dataLengthInBytes/sizeof(uint32_t));
 }
 
-Sequence * SequenceStore::functionAtIndex(int i) {
-  assert(i>=0 && i<m_numberOfFunctions);
-  return &m_sequences[i];
-}
-
-Sequence * SequenceStore::activeFunctionAtIndex(int i) {
-  return (Sequence *)Shared::FunctionStore::activeFunctionAtIndex(i);
-}
-
-Sequence * SequenceStore::definedFunctionAtIndex(int i) {
-  return (Sequence *)Shared::FunctionStore::definedFunctionAtIndex(i);
-}
-
-Sequence * SequenceStore::addEmptyFunction() {
-  assert(m_numberOfFunctions < MaxNumberOfSequences);
-  const char * name = firstAvailableName();
-  KDColor color = firstAvailableColor();
-  Sequence addedSequence(name, color);
-  m_sequences[m_numberOfFunctions] = addedSequence;
-  Sequence * result = &m_sequences[m_numberOfFunctions];
-  m_numberOfFunctions++;
-  return result;
-}
-
-void SequenceStore::removeFunction(Shared::Function * f) {
-  int i = 0;
-  while (&m_sequences[i] != f && i < m_numberOfFunctions) {
-    i++;
-  }
-  assert(i>=0 && i<m_numberOfFunctions);
-  m_numberOfFunctions--;
-  for (int j = i; j<m_numberOfFunctions; j++) {
-    m_sequences[j] = m_sequences[j+1];
-  }
-  Sequence emptySequence("", KDColorBlack);
-  m_sequences[m_numberOfFunctions] = emptySequence;
-}
-
-int SequenceStore::maxNumberOfFunctions() {
-  return MaxNumberOfSequences;
-}
-
 char SequenceStore::symbol() const {
   return 'n';
 }
 
-const char *  SequenceStore::firstAvailableName() {
-  for (int k = 0; k < MaxNumberOfSequences; k++) {
-    int j = 0;
-    while  (j < m_numberOfFunctions) {
-      if (m_sequences[j].name() == k_sequenceNames[k]) {
-        break;
-      }
-      j++;
-    }
-    if (j == m_numberOfFunctions) {
-      return k_sequenceNames[k];
-    }
-  }
-  return k_sequenceNames[0];
+Shared::Function * SequenceStore::emptyModel() {
+  static Sequence addedSequence("", KDColorBlack);
+  addedSequence = Sequence(firstAvailableName(), firstAvailableColor());
+  return &addedSequence;
 }
 
-const KDColor SequenceStore::firstAvailableColor() {
-  for (int k = 0; k < MaxNumberOfSequences; k++) {
-    int j = 0;
-    while  (j < m_numberOfFunctions) {
-      if (m_sequences[j].color() == k_defaultColors[k]) {
-        break;
-      }
-      j++;
-    }
-    if (j == m_numberOfFunctions) {
-      return k_defaultColors[k];
-    }
-  }
-  return k_defaultColors[0];
+Shared::Function * SequenceStore::nullModel() {
+  static Sequence emptyFunction("", KDColorBlack);
+  return &emptyFunction;
 }
 
-void SequenceStore::removeAll() {
-  for (int i = 0; i < m_numberOfFunctions; i++) {
-    Sequence emptySequence("", KDColorBlack);
-    m_sequences[i] = emptySequence;
-  }
-  m_numberOfFunctions = 0;
+void SequenceStore::setModelAtIndex(Shared::Function * f, int i) {
+  assert(i>=0 && i<m_numberOfModels);
+  m_sequences[i] = *(static_cast<Sequence *>(f));
 }
 
 }

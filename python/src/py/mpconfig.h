@@ -79,7 +79,7 @@
 //  - seeeeeee eeeeffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 64-bit fp, e != 0x7ff
 //  - s1111111 11110000 00000000 00000000 00000000 00000000 00000000 00000000 +/- inf
 //  - 01111111 11111000 00000000 00000000 00000000 00000000 00000000 00000000 normalised nan
-//  - 01111111 11111101 00000000 00000000 iiiiiiii iiiiiiii iiiiiiii iiiiiii1 small int
+//  - 01111111 11111101 iiiiiiii iiiiiiii iiiiiiii iiiiiiii iiiiiiii iiiiiii1 small int
 //  - 01111111 11111110 00000000 00000000 qqqqqqqq qqqqqqqq qqqqqqqq qqqqqqq1 str
 //  - 01111111 11111100 00000000 00000000 pppppppp pppppppp pppppppp pppppp00 ptr (4 byte alignment)
 // Stored as O = R + 0x8004000000000000, retrieved as R = O - 0x8004000000000000.
@@ -347,7 +347,7 @@
 #endif
 
 // Whether to enable optimisation of: a, b, c = d, e, f
-// Cost 156 bytes (Thumb2)
+// Requires MICROPY_COMP_DOUBLE_TUPLE_ASSIGN and costs 68 bytes (Thumb2)
 #ifndef MICROPY_COMP_TRIPLE_TUPLE_ASSIGN
 #define MICROPY_COMP_TRIPLE_TUPLE_ASSIGN (0)
 #endif
@@ -405,6 +405,13 @@
 /*****************************************************************************/
 /* Python internal features                                                  */
 
+// Whether to enable import of external modules
+// When disabled, only importing of built-in modules is supported
+// When enabled, a port must implement mp_import_stat (among other things)
+#ifndef MICROPY_ENABLE_EXTERNAL_IMPORT
+#define MICROPY_ENABLE_EXTERNAL_IMPORT (1)
+#endif
+
 // Whether to use the POSIX reader for importing files
 #ifndef MICROPY_READER_POSIX
 #define MICROPY_READER_POSIX (0)
@@ -439,6 +446,17 @@
 // Whether to enable finalisers in the garbage collector (ie call __del__)
 #ifndef MICROPY_ENABLE_FINALISER
 #define MICROPY_ENABLE_FINALISER (0)
+#endif
+
+// Whether to enable a separate allocator for the Python stack.
+// If enabled then the code must call mp_pystack_init before mp_init.
+#ifndef MICROPY_ENABLE_PYSTACK
+#define MICROPY_ENABLE_PYSTACK (0)
+#endif
+
+// Number of bytes that memory returned by mp_pystack_alloc will be aligned by.
+#ifndef MICROPY_PYSTACK_ALIGN
+#define MICROPY_PYSTACK_ALIGN (8)
 #endif
 
 // Whether to check C stack usage. C stack used for calling Python functions,
@@ -666,6 +684,13 @@ typedef double mp_float_t;
 /*****************************************************************************/
 /* Fine control over Python builtins, classes, modules, etc                  */
 
+// Whether to support multiple inheritance of Python classes.  Multiple
+// inheritance makes some C functions inherently recursive, and adds a bit of
+// code overhead.
+#ifndef MICROPY_MULTIPLE_INHERITANCE
+#define MICROPY_MULTIPLE_INHERITANCE (1)
+#endif
+
 // Whether to implement attributes on functions
 #ifndef MICROPY_PY_FUNCTION_ATTRS
 #define MICROPY_PY_FUNCTION_ATTRS (0)
@@ -686,6 +711,15 @@ typedef double mp_float_t;
 // Support for async/await/async for/async with
 #ifndef MICROPY_PY_ASYNC_AWAIT
 #define MICROPY_PY_ASYNC_AWAIT (1)
+#endif
+
+// Non-standard .pend_throw() method for generators, allowing for
+// Future-like behavior with respect to exception handling: an
+// exception set with .pend_throw() will activate on the next call
+// to generator's .send() or .__next__(). (This is useful to implement
+// async schedulers.)
+#ifndef MICROPY_PY_GENERATOR_PEND_THROW
+#define MICROPY_PY_GENERATOR_PEND_THROW (1)
 #endif
 
 // Issue a warning when comparing str and bytes objects
@@ -758,6 +792,14 @@ typedef double mp_float_t;
 // the "range" builtin type. Rarely used, and costs ~60 bytes (x86).
 #ifndef MICROPY_PY_BUILTINS_RANGE_ATTRS
 #define MICROPY_PY_BUILTINS_RANGE_ATTRS (1)
+#endif
+
+// Whether to support binary ops [only (in)equality is defined] between range
+// objects.  With this option disabled all range objects that are not exactly
+// the same object will compare as not-equal.  With it enabled the semantics
+// match CPython and ranges are equal if they yield the same sequence of items.
+#ifndef MICROPY_PY_BUILTINS_RANGE_BINOP
+#define MICROPY_PY_BUILTINS_RANGE_BINOP (0)
 #endif
 
 // Whether to support timeout exceptions (like socket.timeout)
@@ -865,6 +907,11 @@ typedef double mp_float_t;
 #define MICROPY_PY_MICROPYTHON_MEM_INFO (0)
 #endif
 
+// Whether to provide "micropython.stack_use" function
+#ifndef MICROPY_PY_MICROPYTHON_STACK_USE
+#define MICROPY_PY_MICROPYTHON_STACK_USE (MICROPY_PY_MICROPYTHON_MEM_INFO)
+#endif
+
 // Whether to provide "array" module. Note that large chunk of the
 // underlying code is shared with "bytearray" builtin type, so to
 // get real savings, it should be disabled too.
@@ -889,9 +936,19 @@ typedef double mp_float_t;
 #define MICROPY_PY_COLLECTIONS (1)
 #endif
 
+// Whether to provide "ucollections.deque" type
+#ifndef MICROPY_PY_COLLECTIONS_DEQUE
+#define MICROPY_PY_COLLECTIONS_DEQUE (0)
+#endif
+
 // Whether to provide "collections.OrderedDict" type
 #ifndef MICROPY_PY_COLLECTIONS_ORDEREDDICT
 #define MICROPY_PY_COLLECTIONS_ORDEREDDICT (0)
+#endif
+
+// Whether to provide the _asdict function for namedtuple
+#ifndef MICROPY_PY_COLLECTIONS_NAMEDTUPLE__ASDICT
+#define MICROPY_PY_COLLECTIONS_NAMEDTUPLE__ASDICT (0)
 #endif
 
 // Whether to provide "math" module
@@ -926,7 +983,11 @@ typedef double mp_float_t;
 
 // Whether to provide "uio.resource_stream()" function with
 // the semantics of CPython's pkg_resources.resource_stream()
-// (allows to access resources in frozen packages).
+// (allows to access binary resources in frozen source packages).
+// Note that the same functionality can be achieved in "pure
+// Python" by prepocessing binary resources into Python source
+// and bytecode-freezing it (with a simple helper module available
+// e.g. in micropython-lib).
 #ifndef MICROPY_PY_IO_RESOURCE_STREAM
 #define MICROPY_PY_IO_RESOURCE_STREAM (0)
 #endif
@@ -1291,6 +1352,26 @@ typedef double mp_float_t;
 // Condition is likely to be false, to help branch prediction
 #ifndef MP_UNLIKELY
 #define MP_UNLIKELY(x) __builtin_expect((x), 0)
+#endif
+
+#ifndef MP_HTOBE16
+#if MP_ENDIANNESS_LITTLE
+# define MP_HTOBE16(x) ((uint16_t)( (((x) & 0xff) << 8) | (((x) >> 8) & 0xff) ))
+# define MP_BE16TOH(x) MP_HTOBE16(x)
+#else
+# define MP_HTOBE16(x) (x)
+# define MP_BE16TOH(x) (x)
+#endif
+#endif
+
+#ifndef MP_HTOBE32
+#if MP_ENDIANNESS_LITTLE
+# define MP_HTOBE32(x) ((uint32_t)( (((x) & 0xff) << 24) | (((x) & 0xff00) << 8) | (((x) >> 8)  & 0xff00) | (((x) >> 24) & 0xff) ))
+# define MP_BE32TOH(x) MP_HTOBE32(x)
+#else
+# define MP_HTOBE32(x) (x)
+# define MP_BE32TOH(x) (x)
+#endif
 #endif
 
 #endif // MICROPY_INCLUDED_PY_MPCONFIG_H

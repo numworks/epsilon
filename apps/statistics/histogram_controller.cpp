@@ -398,8 +398,20 @@ void HistogramController::initYRangeParameters(int series) {
   }
   yMax = yMax/m_store->sumOfOccurrences(series);
   yMax = yMax < 0 ? 1 : yMax;
-  m_store->setYMin(-Store::k_displayBottomMarginRatio*yMax);
   m_store->setYMax(yMax*(1.0f+Store::k_displayTopMarginRatio));
+
+  /* Compute YMin:
+   *    ratioFloatPixel*(0-yMin) = k_bottomMargin
+   *    ratioFloatPixel*(yMax-yMin) = viewHeight
+   *
+   *    -ratioFloatPixel*yMin = k_bottomMargin
+   *    ratioFloatPixel*yMax-ratioFloatPixel*yMin = viewHeight
+   *
+   *    ratioFloatPixel = (viewHeight - k_bottomMargin)/yMax
+   *    yMin = -k_bottomMargin/ratioFloatPixel = yMax*k_bottomMargin/(k_bottomMargin - viewHeight)
+   * */
+
+  m_store->setYMin(m_store->yMax()*(float)Store::k_bottomMargin/((float)Store::k_bottomMargin - m_view.histogramViewAtIndex(series)->bounds().height()));
 }
 
 void HistogramController::initBarParameters() {

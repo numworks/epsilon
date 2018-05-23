@@ -4,15 +4,15 @@
 namespace Shared {
 
 FunctionStore::FunctionStore() :
-  m_numberOfFunctions(0)
+  ModelStore<Function>()
 {
 }
 
 Function * FunctionStore::activeFunctionAtIndex(int i) {
-  assert(i>=0 && i<m_numberOfFunctions);
+  assert(i>=0 && i<m_numberOfModels);
   int index = 0;
-  for (int k = 0; k < m_numberOfFunctions; k++) {
-    Function * function = functionAtIndex(k);
+  for (int k = 0; k < m_numberOfModels; k++) {
+    Function * function = modelAtIndex(k);
     if (function->isActive() && function->isDefined()) {
       if (i == index) {
         return function;
@@ -25,12 +25,12 @@ Function * FunctionStore::activeFunctionAtIndex(int i) {
 }
 
 Function * FunctionStore::definedFunctionAtIndex(int i) {
-  assert(i>=0 && i<m_numberOfFunctions);
+  assert(i>=0 && i<m_numberOfModels);
   int index = 0;
-  for (int k = 0; k < m_numberOfFunctions; k++) {
-    if (functionAtIndex(k)->isDefined()) {
+  for (int k = 0; k < m_numberOfModels; k++) {
+    if (modelAtIndex(k)->isDefined()) {
       if (i == index) {
-        return functionAtIndex(k);
+        return modelAtIndex(k);
       }
       index++;
     }
@@ -39,14 +39,10 @@ Function * FunctionStore::definedFunctionAtIndex(int i) {
   return nullptr;
 }
 
-int FunctionStore::numberOfFunctions() {
-  return m_numberOfFunctions;
-}
-
 int FunctionStore::numberOfActiveFunctions() {
   int result = 0;
-  for (int i = 0; i < m_numberOfFunctions; i++) {
-    Function * function = functionAtIndex(i);
+  for (int i = 0; i < m_numberOfModels; i++) {
+    Function * function = modelAtIndex(i);
     if (function->isDefined() && function->isActive()) {
       result++;
     }
@@ -56,18 +52,36 @@ int FunctionStore::numberOfActiveFunctions() {
 
 int FunctionStore::numberOfDefinedFunctions() {
   int result = 0;
-  for (int i = 0; i < m_numberOfFunctions; i++) {
-    if (functionAtIndex(i)->isDefined()) {
+  for (int i = 0; i < m_numberOfModels; i++) {
+    if (modelAtIndex(i)->isDefined()) {
       result++;
     }
   }
   return result;
 }
 
-void FunctionStore::tidy() {
-  for (int i = 0; i < m_numberOfFunctions; i++) {
-    functionAtIndex(i)->tidy();
+void FunctionStore::tidyModelAtIndex(int i) {
+  modelAtIndex(i)->tidy();
+}
+
+template<typename T>
+T FunctionStore::firstAvailableAttribute(T attributes[], AttributeGetter<T> attribute) {
+  for (int k = 0; k < maxNumberOfModels(); k++) {
+    int j = 0;
+    while  (j < m_numberOfModels) {
+      if (attribute(modelAtIndex(j)) == attributes[k]) {
+        break;
+      }
+      j++;
+    }
+    if (j == m_numberOfModels) {
+      return attributes[k];
+    }
   }
+  return attributes[0];
 }
 
 }
+
+template char const* const Shared::FunctionStore::firstAvailableAttribute<char const* const>(char const* const*, char const* const (*)(Shared::Function*));
+template KDColor const Shared::FunctionStore::firstAvailableAttribute<KDColor const>(KDColor const*, KDColor const (*)(Shared::Function*));

@@ -61,8 +61,8 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 #else
     if (selectedRowIndex == 2+hasAdditionalRow) {
 #endif
-      if (m_functionStore->numberOfFunctions() > 0) {
-        m_functionStore->removeFunction(m_function);
+      if (m_functionStore->numberOfModels() > 0) {
+        m_functionStore->removeModel(m_function);
         static_cast<App *>(app())->localContext()->resetCache();
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();

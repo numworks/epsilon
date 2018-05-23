@@ -83,7 +83,7 @@ int ListController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 }
 
 int ListController::typeAtLocation(int i, int j) {
-  if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions()
+  if (m_functionStore->numberOfModels() < m_functionStore->maxNumberOfModels()
       && j == numberOfRows() - 1) {
     return i + 2;
   }
@@ -116,7 +116,7 @@ int ListController::reusableCellCount(int type) {
 }
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  if (j < numberOfRows() - 1 || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions()) {
+  if (j < numberOfRows() - 1 || m_functionStore->numberOfModels() == m_functionStore->maxNumberOfModels()) {
     if (i == 0) {
       willDisplayTitleCellAtIndex(cell, j);
     } else {
@@ -182,21 +182,21 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       switch (selectedColumn()) {
       case 0:
       {
-        if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
+        if (m_functionStore->numberOfModels() < m_functionStore->maxNumberOfModels() &&
             selectedRow() == numberOfRows() - 1) {
           return true;
         }
-        configureFunction(m_functionStore->functionAtIndex(functionIndexForRow(selectedRow())));
+        configureFunction(m_functionStore->modelAtIndex(functionIndexForRow(selectedRow())));
         return true;
       }
       case 1:
       {
-        if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() &&
+        if (m_functionStore->numberOfModels() < m_functionStore->maxNumberOfModels() &&
             selectedRow() == numberOfRows() - 1) {
           addEmptyFunction();
           return true;
         }
-        Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectedRow()));
+        Shared::Function * function = m_functionStore->modelAtIndex(functionIndexForRow(selectedRow()));
         editExpression(function, event);
         return true;
       }
@@ -207,8 +207,8 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     }
   }
   if (event == Ion::Events::Backspace && selectedRow() >= 0 &&
-      (selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
-    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectedRow()));
+      (selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfModels()  == m_functionStore->maxNumberOfModels())) {
+    Shared::Function * function = m_functionStore->modelAtIndex(functionIndexForRow(selectedRow()));
     if (selectedColumn() == 1 && !function->isEmpty()) {
       reinitExpression(function);
     } else {
@@ -225,13 +225,13 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if ((event.hasText() || event == Ion::Events::XNT || event == Ion::Events::Paste || event == Ion::Events::Toolbox || event == Ion::Events::Var)
       && selectedColumn() == 1
       && (selectedRow() != numberOfRows() - 1
-        || m_functionStore->numberOfFunctions() == m_functionStore->maxNumberOfFunctions())) {
-    Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(selectedRow()));
+        || m_functionStore->numberOfModels() == m_functionStore->maxNumberOfModels())) {
+    Shared::Function * function = m_functionStore->modelAtIndex(functionIndexForRow(selectedRow()));
     editExpression(function, event);
     return true;
   }
   if (event == Ion::Events::Copy && selectedColumn() == 1 &&
-      (selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfFunctions()  == m_functionStore->maxNumberOfFunctions())) {
+      (selectedRow() < numberOfRows() - 1 || m_functionStore->numberOfModels()  == m_functionStore->maxNumberOfModels())) {
     Clipboard::sharedClipboard()->store(textForRow(selectedRow()));
     return true;
   }
@@ -250,7 +250,7 @@ void ListController::willExitResponderChain(Responder * nextFirstResponder) {
 }
 
 void ListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) {
-  if (m_functionStore->numberOfFunctions() < m_functionStore->maxNumberOfFunctions() && selectedRow() == numberOfRows() - 1 && selectedColumn() == 0) {
+  if (m_functionStore->numberOfModels() < m_functionStore->maxNumberOfModels() && selectedRow() == numberOfRows() - 1 && selectedColumn() == 0) {
     t->selectCellAtLocation(1, numberOfRows()-1);
   }
 }
@@ -283,12 +283,12 @@ int ListController::functionIndexForRow(int j) {
 }
 
 const char * ListController::textForRow(int j) {
-  Shared::Function * function = m_functionStore->functionAtIndex(functionIndexForRow(j));
+  Shared::Function * function = m_functionStore->modelAtIndex(functionIndexForRow(j));
   return function->text();
 }
 
 void ListController::addEmptyFunction() {
-  m_functionStore->addEmptyFunction();
+  m_functionStore->addEmptyModel();
   selectableTableView()->reloadData();
 }
 

@@ -32,6 +32,7 @@ app_objs += $(addprefix apps/shared/,\
   memoized_curve_view_range.o\
   message_view.o\
   model_expression_cell.o\
+  model_store.o\
   new_function_cell.o\
   ok_view.o\
   parameter_text_field_delegate.o\

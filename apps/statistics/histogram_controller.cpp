@@ -198,16 +198,15 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Up) {
-    m_view.deselectHistogram(m_selectedSeries);
     int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
     if (currentSelectedSubview > 0) {
+      m_view.deselectHistogram(m_selectedSeries);
       assert(currentSelectedSubview > 0);
       m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview-1);
       m_view.selectHistogram(m_selectedSeries);
       *m_selectedBarIndex = 0;
       app()->setFirstResponder(this);
     } else {
-      m_view.setDisplayBanner(false);
       app()->setFirstResponder(tabController());
     }
     reloadBannerView();
@@ -258,7 +257,7 @@ void HistogramController::didBecomeFirstResponder() {
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
     if (m_selectedSeries >= 0) {
-      m_view.deselectHistogram(m_selectedSeries);
+      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
       m_selectedSeries = -1;
       m_view.setDisplayBanner(false);
     }

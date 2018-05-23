@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2017 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,34 @@
  * THE SOFTWARE.
  */
 
-#include "py/obj.h"
-#include "py/builtin.h"
+#include <stdio.h>
 
-STATIC mp_obj_t op_getitem(mp_obj_t self_in, mp_obj_t key_in) {
-    mp_obj_type_t *type = mp_obj_get_type(self_in);
-    return type->subscr(self_in, key_in, MP_OBJ_SENTINEL);
-}
-MP_DEFINE_CONST_FUN_OBJ_2(mp_op_getitem_obj, op_getitem);
+#include "py/runtime.h"
 
-STATIC mp_obj_t op_setitem(mp_obj_t self_in, mp_obj_t key_in, mp_obj_t value_in) {
-    mp_obj_type_t *type = mp_obj_get_type(self_in);
-    return type->subscr(self_in, key_in, value_in);
-}
-MP_DEFINE_CONST_FUN_OBJ_3(mp_op_setitem_obj, op_setitem);
+#if MICROPY_ENABLE_PYSTACK
 
-STATIC mp_obj_t op_delitem(mp_obj_t self_in, mp_obj_t key_in) {
-    mp_obj_type_t *type = mp_obj_get_type(self_in);
-    return type->subscr(self_in, key_in, MP_OBJ_NULL);
+void mp_pystack_init(void *start, void *end) {
+    MP_STATE_THREAD(pystack_start) = start;
+    MP_STATE_THREAD(pystack_end) = end;
+    MP_STATE_THREAD(pystack_cur) = start;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(mp_op_delitem_obj, op_delitem);
 
-STATIC mp_obj_t op_contains(mp_obj_t lhs_in, mp_obj_t rhs_in) {
-    mp_obj_type_t *type = mp_obj_get_type(lhs_in);
-    return type->binary_op(MP_BINARY_OP_CONTAINS, lhs_in, rhs_in);
+void *mp_pystack_alloc(size_t n_bytes) {
+    n_bytes = (n_bytes + (MICROPY_PYSTACK_ALIGN - 1)) & ~(MICROPY_PYSTACK_ALIGN - 1);
+    #if MP_PYSTACK_DEBUG
+    n_bytes += MICROPY_PYSTACK_ALIGN;
+    #endif
+    if (MP_STATE_THREAD(pystack_cur) + n_bytes > MP_STATE_THREAD(pystack_end)) {
+        // out of memory in the pystack
+        nlr_raise(mp_obj_new_exception_arg1(&mp_type_RuntimeError,
+            MP_OBJ_NEW_QSTR(MP_QSTR_pystack_space_exhausted)));
+    }
+    void *ptr = MP_STATE_THREAD(pystack_cur);
+    MP_STATE_THREAD(pystack_cur) += n_bytes;
+    #if MP_PYSTACK_DEBUG
+    *(size_t*)(MP_STATE_THREAD(pystack_cur) - MICROPY_PYSTACK_ALIGN) = n_bytes;
+    #endif
+    return ptr;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(mp_op_contains_obj, op_contains);
+
+#endif

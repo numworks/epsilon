@@ -6,6 +6,7 @@
 #include "histogram_view.h"
 #include "histogram_banner_view.h"
 #include "histogram_parameter_controller.h"
+#include "../shared/ok_view.h"
 
 namespace Statistics {
 
@@ -59,6 +60,7 @@ private:
     HistogramView m_histogramView2;
     HistogramView m_histogramView3;
     HistogramBannerView m_bannerView;
+    Shared::OkView m_okView;
     bool m_displayBanner;
     Store * m_store; // TODO Do not duplicate this pointer
   };

@@ -17,6 +17,7 @@ CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveVie
   m_curveViewRange(curveViewRange),
   m_cursorView(cursorView),
   m_okView(okView),
+  m_forceOkDisplay(false),
   m_mainViewSelected(false),
   m_drawnRangeVersion(0),
   m_displayBanner(displayBanner)
@@ -553,13 +554,13 @@ KDRect CurveView::bannerFrame() {
 
 KDRect CurveView::okFrame() {
   KDRect okFrame = KDRectZero;
-  if (m_okView && m_mainViewSelected) {
+  if (m_okView && (m_mainViewSelected || m_forceOkDisplay)) {
     KDCoordinate bannerHeight = 0;
     if (m_bannerView != nullptr && m_displayBanner) {
       bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
     }
     KDSize okSize = m_okView->minimalSizeForOptimalDisplay();
-    okFrame = KDRect(bounds().width()- okSize.width()-k_okMargin, bounds().height()- bannerHeight-okSize.height()-k_okMargin, okSize);
+    okFrame = KDRect(bounds().width()- okSize.width()-k_okHorizontalMargin, bounds().height()- bannerHeight-okSize.height()-k_okVerticalMargin, okSize);
   }
   return okFrame;
 }

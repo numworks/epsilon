@@ -19,15 +19,16 @@ HistogramController::ContentView::ContentView(HistogramController * controller, 
   m_histogramView3(controller, store, 2, nullptr, Palette::Green),
   // TODO Share colors with stats/store_controller
   m_bannerView(),
+  m_okView(),
   m_displayBanner(false),
   m_store(store)
 {
-  m_histogramView1.setDisplayBannerView(false);
-  m_histogramView1.setDisplayLabels(false);
-  m_histogramView2.setDisplayBannerView(false);
-  m_histogramView2.setDisplayLabels(false);
-  m_histogramView3.setDisplayBannerView(false);
-  m_histogramView3.setDisplayLabels(false);
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    HistogramView * histView = histogramViewAtIndex(i);
+    histView->setDisplayBannerView(false);
+    histView->setDisplayLabels(false);
+    histView->setForceOkDisplay(true);
+  }
 }
 
 void HistogramController::ContentView::reload() {
@@ -117,9 +118,11 @@ void HistogramController::ContentView::layoutSubviews() {
   int displayedSubviewIndex = 0;
   for (int i = 0; i < 3; i++) {
     if (!m_store->seriesIsEmpty(i)) {
+      HistogramView * histView = histogramViewAtIndex(i);
       KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
-      subviewAtIndex(displayedSubviewIndex)->setFrame(frame);
+      histView->setFrame(frame);
       displayedSubviewIndex++;
+      histView->setOkView(displayedSubviewIndex == numberHistogramSubviews ? &m_okView : nullptr);
     }
   }
   if (m_displayBanner) {
@@ -261,6 +264,7 @@ void HistogramController::willExitResponderChain(Responder * nextFirstResponder)
   if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
     if (m_selectedSeries >= 0) {
       m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+      m_view.histogramViewAtIndex(m_selectedSeries)->setForceOkDisplay(false);
       m_selectedSeries = -1;
       m_view.setDisplayBanner(false);
     }

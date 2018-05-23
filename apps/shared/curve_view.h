@@ -32,16 +32,18 @@ public:
   void setDisplayBannerView(bool display) { m_displayBanner = display; }
   bool displayBannerView() const { return m_displayBanner; }
   void setOkView(View * okView);
+  void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float resolution() const;
 protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
   virtual float samplingRatio() const;
-  constexpr static KDCoordinate k_labelMargin =  4;
-  constexpr static KDCoordinate k_okMargin =  10;
-  constexpr static KDCoordinate k_labelGraduationLength =  6;
+  constexpr static KDCoordinate k_labelMargin = 4;
+  constexpr static KDCoordinate k_okVerticalMargin = 23;
+  constexpr static KDCoordinate k_okHorizontalMargin = 10;
+  constexpr static KDCoordinate k_labelGraduationLength = 6;
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
-  constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;
+  constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static int k_externRectMargin = 2;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
@@ -90,6 +92,7 @@ private:
   CurveViewRange * m_curveViewRange;
   View * m_cursorView;
   View * m_okView;
+  bool m_forceOkDisplay;
   bool m_mainViewSelected;
   uint32_t m_drawnRangeVersion;
   bool m_displayBanner;

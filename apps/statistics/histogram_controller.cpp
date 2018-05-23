@@ -89,11 +89,6 @@ View * HistogramController::ContentView::subviewAtIndex(int index) {
 HistogramController::HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, int series, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex) :
   ViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_settingButton(this, I18n::Message::HistogramSet, Invocation([](void * context, void * sender) {
-    HistogramController * histogramController = (HistogramController *) context;
-    StackViewController * stack = ((StackViewController *)histogramController->stackController());
-    stack->push(histogramController->histogramParameterController());
-  }, this)),
   m_store(store),
   m_view(this, store),
   m_storeVersion(storeVersion),
@@ -112,13 +107,6 @@ StackViewController * HistogramController::stackController() {
 
 void HistogramController::setCurrentDrawnSeries(int series) {
   initYRangeParameters(series);
-}
-
-int HistogramController::numberOfButtons(ButtonRowController::Position) const {
-  return isEmpty() ? 0 : 1;
-}
-Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Position) const {
-  return (Button *)&m_settingButton;
 }
 
 bool HistogramController::isEmpty() const {
@@ -141,7 +129,6 @@ void HistogramController::viewWillAppear() {
   if (m_selectedSeries < 0) {
     m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
     m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
-    header()->setSelectedButton(-1);
   }
   reloadBannerView();
   m_view.reload();
@@ -149,21 +136,11 @@ void HistogramController::viewWillAppear() {
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
-    bool newSelectedSeries = false;
-    if (m_selectedSeries < 0) {
-      header()->setSelectedButton(-1);
-      m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
-      newSelectedSeries = true;
-    } else {
-      int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
-      if (currentSelectedSubview < m_view.numberOfSubviews() - 1) {
-        m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
-        m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview+1);
-        *m_selectedBarIndex = 0;
-        newSelectedSeries = true;
-      }
-    }
-    if (newSelectedSeries) {
+    int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
+    if (currentSelectedSubview < m_view.numberOfSubviews() - 1) {
+      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+      m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview+1);
+      *m_selectedBarIndex = 0;
       m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
       reloadBannerView();
       m_view.reload();
@@ -173,11 +150,6 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Up) {
-    if (m_selectedSeries < 0) {
-      header()->setSelectedButton(-1);
-      app()->setFirstResponder(tabController());
-      return true;
-    }
     m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
     int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
     if (currentSelectedSubview > 0) {
@@ -185,13 +157,12 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
       m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview-1);
       m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
       *m_selectedBarIndex = 0;
-      reloadBannerView();
-      m_view.reload();
       app()->setFirstResponder(this);
     } else {
-      m_selectedSeries = -1;
-      header()->setSelectedButton(0);
+      app()->setFirstResponder(tabController());
     }
+    reloadBannerView();
+    m_view.reload();
     return true;
   }
   if (m_selectedSeries >= 0 && (event == Ion::Events::Left || event == Ion::Events::Right)) {
@@ -224,10 +195,9 @@ void HistogramController::didBecomeFirstResponder() {
     reloadBannerView();
   }
   if (m_selectedSeries < 0) {
-    header()->setSelectedButton(0);
-  } else {
-    m_view.histogramViewAtIndex(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex));
+    m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
   }
+  m_view.histogramViewAtIndex(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex));
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
@@ -236,7 +206,6 @@ void HistogramController::willExitResponderChain(Responder * nextFirstResponder)
       m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
       m_selectedSeries = -1;
     }
-    header()->setSelectedButton(-1);
     m_view.reload();
   }
 }

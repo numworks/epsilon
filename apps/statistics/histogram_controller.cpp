@@ -227,6 +227,10 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
+  if (event == Ion::Events::OK) {
+    stackController()->push(histogramParameterController());
+    return true;
+  }
   return false;
 }
 

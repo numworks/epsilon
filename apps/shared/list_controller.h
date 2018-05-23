@@ -4,7 +4,6 @@
 #include <escher.h>
 #include "function_store.h"
 #include "list_parameter_controller.h"
-#include "new_function_cell.h"
 #include "../i18n.h"
 
 namespace Shared {
@@ -53,7 +52,7 @@ private:
   virtual void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) = 0;
   EvenOddCell * m_emptyCell;
   I18n::Message m_addNewMessage;
-  NewFunctionCell * m_addNewFunction;
+  EvenOddMessageTextCell * m_addNewFunction;
   Button m_plotButton;
   Button m_valuesButton;
 };

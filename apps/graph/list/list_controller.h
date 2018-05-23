@@ -4,7 +4,6 @@
 #include <escher.h>
 #include "../function_title_cell.h"
 #include "../cartesian_function_store.h"
-#include "../../shared/new_function_cell.h"
 #include "../../shared/model_expression_cell.h"
 #include "../../shared/list_controller.h"
 #include "../../shared/list_parameter_controller.h"

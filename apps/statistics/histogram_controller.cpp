@@ -20,8 +20,11 @@ HistogramController::ContentView::ContentView(HistogramController * controller, 
   m_store(store)
 {
   m_histogramView1.setDisplayBannerView(false);
+  m_histogramView1.setDisplayLabels(false);
   m_histogramView2.setDisplayBannerView(false);
+  m_histogramView2.setDisplayLabels(false);
   m_histogramView3.setDisplayBannerView(false);
+  m_histogramView3.setDisplayLabels(false);
 }
 
 void HistogramController::ContentView::reload() {
@@ -56,6 +59,14 @@ int HistogramController::ContentView::indexOfSubviewAtSeries(int series) {
   }
   assert(false);
   return -1;
+}
+
+void HistogramController::ContentView::selectHistogram(int index) {
+  changeHistogramSelection(index, true);
+}
+
+void HistogramController::ContentView::deselectHistogram(int index) {
+  changeHistogramSelection(index, false);
 }
 
 void HistogramController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -101,24 +112,24 @@ void HistogramController::ContentView::layoutSubviews() {
   KDCoordinate bannerHeight = bannerFrame().height();
   KDCoordinate subviewHeight = (bounds().height() - bannerHeight)/numberHistogramSubviews;
   int displayedSubviewIndex = 0;
-  int bottomSeriesDisplayed = -1;
   for (int i = 0; i < 3; i++) {
     if (!m_store->seriesIsEmpty(i)) {
-      histogramViewAtIndex(i)->setDisplayLabels(false);
       KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
       subviewAtIndex(displayedSubviewIndex)->setFrame(frame);
       displayedSubviewIndex++;
-      bottomSeriesDisplayed = i;
     }
   }
-  assert(bottomSeriesDisplayed >= 0);
-  histogramViewAtIndex(bottomSeriesDisplayed)->setDisplayLabels(true);
   if (m_displayBanner) {
     m_bannerView.setFrame(bannerFrame());
   } else {
     KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), 0);
     m_bannerView.setFrame(frame);
   }
+}
+
+void HistogramController::ContentView::changeHistogramSelection(int index, bool select) {
+  histogramViewAtIndex(index)->selectMainView(select);
+  histogramViewAtIndex(index)->setDisplayLabels(select);
 }
 
 HistogramController::HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, int series, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex) :
@@ -164,7 +175,7 @@ void HistogramController::viewWillAppear() {
   m_view.setDisplayBanner(true);
   if (m_selectedSeries < 0) {
     m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
-    m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
+    m_view.selectHistogram(m_selectedSeries);
   }
   reloadBannerView();
   m_view.reload();
@@ -175,10 +186,10 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
     if (currentSelectedSubview < m_view.numberOfSubviews() - 2) {
-      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+      m_view.deselectHistogram(m_selectedSeries);
       m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview+1);
       *m_selectedBarIndex = 0;
-      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
+      m_view.selectHistogram(m_selectedSeries);
       reloadBannerView();
       m_view.reload();
       app()->setFirstResponder(this);
@@ -187,12 +198,12 @@ bool HistogramController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Up) {
-    m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+    m_view.deselectHistogram(m_selectedSeries);
     int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
     if (currentSelectedSubview > 0) {
       assert(currentSelectedSubview > 0);
       m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview-1);
-      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
+      m_view.selectHistogram(m_selectedSeries);
       *m_selectedBarIndex = 0;
       app()->setFirstResponder(this);
     } else {
@@ -218,10 +229,10 @@ void HistogramController::didBecomeFirstResponder() {
   m_view.setDisplayBanner(true);
   if (m_selectedSeries < 0 || m_store->sumOfOccurrences(m_selectedSeries) == 0) {
     if (m_selectedSeries >= 0) {
-      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+      m_view.deselectHistogram(m_selectedSeries);
     }
     m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
-    m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(true);
+    m_view.selectHistogram(m_selectedSeries);
     m_view.reload();
   }
   uint32_t storeChecksum = m_store->storeChecksum();
@@ -247,7 +258,7 @@ void HistogramController::didBecomeFirstResponder() {
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
     if (m_selectedSeries >= 0) {
-      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
+      m_view.deselectHistogram(m_selectedSeries);
       m_selectedSeries = -1;
       m_view.setDisplayBanner(false);
     }

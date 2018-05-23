@@ -144,7 +144,7 @@ void CurveView::computeLabels(Axis axis) {
   }
 }
 
-void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const {
+void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly) const {
   float step = gridUnit(axis);
   float start = 2.0f*step*(std::ceil(min(axis)/(2.0f*step)));
   float end = max(axis);
@@ -155,18 +155,22 @@ void CurveView::drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOr
     if (x == x-step || x == x+step) {
       return;
     }
-    KDSize textSize = KDText::stringSize(label(axis, i), KDText::FontSize::Small);
-    KDPoint origin(std::round(floatToPixel(Axis::Horizontal, x)) - textSize.width()/2, std::round(floatToPixel(Axis::Vertical, 0.0f))  + k_labelMargin);
     KDRect graduation(std::round(floatToPixel(Axis::Horizontal, x)), std::round(floatToPixel(Axis::Vertical, 0.0f)) -(k_labelGraduationLength-2)/2, 1, k_labelGraduationLength);
     if (axis == Axis::Vertical) {
-      origin = KDPoint(std::round(floatToPixel(Axis::Horizontal, 0.0f)) + k_labelMargin, std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2);
       graduation = KDRect(std::round(floatToPixel(Axis::Horizontal, 0.0f))-(k_labelGraduationLength-2)/2, std::round(floatToPixel(Axis::Vertical, x)), k_labelGraduationLength, 1);
     }
-    if (-step < x && x < step && shiftOrigin) {
-      origin = KDPoint(std::round(floatToPixel(Axis::Horizontal, 0.0f)) + k_labelMargin, std::round(floatToPixel(Axis::Vertical, 0.0f)) + k_labelMargin);
-    }
-    if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i), KDText::FontSize::Small)))) {
-      ctx->blendString(label(axis, i), origin, KDText::FontSize::Small, KDColorBlack);
+    if (!graduationOnly) {
+      KDSize textSize = KDText::stringSize(label(axis, i), KDText::FontSize::Small);
+      KDPoint origin(std::round(floatToPixel(Axis::Horizontal, x)) - textSize.width()/2, std::round(floatToPixel(Axis::Vertical, 0.0f)) + k_labelMargin);
+      if (axis == Axis::Vertical) {
+        origin = KDPoint(std::round(floatToPixel(Axis::Horizontal, 0.0f)) + k_labelMargin, std::round(floatToPixel(Axis::Vertical, x)) - textSize.height()/2);
+      }
+      if (-step < x && x < step && shiftOrigin) {
+        origin = KDPoint(std::round(floatToPixel(Axis::Horizontal, 0.0f)) + k_labelMargin, std::round(floatToPixel(Axis::Vertical, 0.0f)) + k_labelMargin);
+      }
+      if (rect.intersects(KDRect(origin, KDText::stringSize(label(axis, i), KDText::FontSize::Small)))) {
+        ctx->blendString(label(axis, i), origin, KDText::FontSize::Small, KDColorBlack);
+      }
     }
     ctx->fillRect(graduation, KDColorBlack);
     i++;

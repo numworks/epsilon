@@ -101,13 +101,18 @@ void HistogramController::ContentView::layoutSubviews() {
   KDCoordinate bannerHeight = bannerFrame().height();
   KDCoordinate subviewHeight = (bounds().height() - bannerHeight)/numberHistogramSubviews;
   int displayedSubviewIndex = 0;
+  int bottomSeriesDisplayed = -1;
   for (int i = 0; i < 3; i++) {
     if (!m_store->seriesIsEmpty(i)) {
+      histogramViewAtIndex(i)->setDisplayLabels(false);
       KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
       subviewAtIndex(displayedSubviewIndex)->setFrame(frame);
       displayedSubviewIndex++;
+      bottomSeriesDisplayed = i;
     }
   }
+  assert(bottomSeriesDisplayed >= 0);
+  histogramViewAtIndex(bottomSeriesDisplayed)->setDisplayLabels(true);
   if (m_displayBanner) {
     m_bannerView.setFrame(bannerFrame());
   } else {

@@ -17,6 +17,7 @@ public:
   void reload() override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setHighlight(float start, float end);
+  void setDisplayLabels(bool display) { m_displayLabels = display; }
 private:
   char * label(Axis axis, int index) const override;
   HistogramController * m_controller;
@@ -29,6 +30,7 @@ private:
   KDColor m_selectedHistogramColor;
   KDColor m_notSelectedHistogramColor;
   KDColor m_selectedBarColor;
+  bool m_displayLabels;
 };
 
 }

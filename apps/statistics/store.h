@@ -46,7 +46,7 @@ public:
   constexpr static double k_maxNumberOfBars = 10000.0;
   constexpr static float k_displayTopMarginRatio = 0.1f;
   constexpr static float k_displayRightMarginRatio = 0.04f;
-  constexpr static float k_displayBottomMarginRatio = 0.4f;
+  constexpr static int k_bottomMargin = 20;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 
 private:

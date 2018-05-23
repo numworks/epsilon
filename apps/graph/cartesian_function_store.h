@@ -28,9 +28,9 @@ private:
   static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {
     "f", "g", "h", "p",
   };
-  Shared::Function * emptyModel() override;
-  Shared::Function * nullModel() override;
-  void setModelAtIndex(Shared::Function * f, int i) override;
+  CartesianFunction * emptyModel() override;
+  CartesianFunction * nullModel() override;
+  void setModelAtIndex(Shared::ExpressionModel * f, int i) override;
   const char * firstAvailableName() override {
     return firstAvailableAttribute(k_functionNames, FunctionStore::name);
   }

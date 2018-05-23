@@ -37,20 +37,20 @@ void CartesianFunctionStore::removeAll() {
   addEmptyModel();
 }
 
-Shared::Function * CartesianFunctionStore::emptyModel() {
+CartesianFunction * CartesianFunctionStore::emptyModel() {
   static CartesianFunction addedFunction("", KDColorBlack);
   addedFunction = CartesianFunction(firstAvailableName(), firstAvailableColor());
   return &addedFunction;
 }
 
-Shared::Function * CartesianFunctionStore::nullModel() {
+CartesianFunction * CartesianFunctionStore::nullModel() {
   static CartesianFunction emptyFunction("", KDColorBlack);
   return &emptyFunction;
 }
 
-void CartesianFunctionStore::setModelAtIndex(Shared::Function * f, int i) {
+void CartesianFunctionStore::setModelAtIndex(Shared::ExpressionModel * e, int i) {
   assert(i>=0 && i<m_numberOfModels);
-  m_functions[i] = *(static_cast<CartesianFunction *>(f));
+  m_functions[i] = *(static_cast<CartesianFunction *>(e));
 }
 
 }

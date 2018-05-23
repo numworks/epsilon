@@ -8,6 +8,7 @@ app_objs += $(addprefix apps/shared/,\
   editable_cell_table_view_controller.o\
   expression_field_delegate_app.o\
   expression_model.o\
+  expression_model_store.o\
   float_pair_store.o\
   float_parameter_controller.o\
   function.o\
@@ -32,7 +33,6 @@ app_objs += $(addprefix apps/shared/,\
   memoized_curve_view_range.o\
   message_view.o\
   model_expression_cell.o\
-  model_store.o\
   new_function_cell.o\
   ok_view.o\
   parameter_text_field_delegate.o\

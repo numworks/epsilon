@@ -45,14 +45,19 @@ private:
     int seriesOfSubviewAtIndex(int index);
     int indexOfSubviewAtSeries(int series);
     HistogramBannerView * bannerView() { return &m_bannerView; }
-    void layoutSubviews() override;
+    void setDisplayBanner(bool display) { m_displayBanner = display; }
+    // View
+    void drawRect(KDContext * ctx, KDRect rect) const override;
     int numberOfSubviews() const override;
   private:
+    KDRect bannerFrame() const;
     View * subviewAtIndex(int index) override;
+    void layoutSubviews() override;
     HistogramView m_histogramView1;
     HistogramView m_histogramView2;
     HistogramView m_histogramView3;
     HistogramBannerView m_bannerView;
+    bool m_displayBanner;
     Store * m_store; // TODO Do not duplicate this pointer
   };
   Responder * tabController() const;

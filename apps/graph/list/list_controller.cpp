@@ -9,7 +9,7 @@ using namespace Shared;
 namespace Graph {
 
 ListController::ListController(Responder * parentResponder, CartesianFunctionStore * functionStore, ButtonRowController * header, ButtonRowController * footer) :
-  Shared::ListController(parentResponder, functionStore, header, footer, I18n::Message::AddFunction),
+  Shared::FunctionListController(parentResponder, functionStore, header, footer, I18n::Message::AddFunction),
   m_functionTitleCells{},
   m_expressionCells{},
   m_parameterController(this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction)
@@ -18,45 +18,6 @@ ListController::ListController(Responder * parentResponder, CartesianFunctionSto
 
 const char * ListController::title() {
   return I18n::translate(I18n::Message::FunctionTab);
-}
-
-int ListController::numberOfRows() {
-  if (m_functionStore->numberOfModels() == m_functionStore->maxNumberOfModels()) {
-    return m_functionStore->numberOfModels();
-  }
-  return 1 + m_functionStore->numberOfModels();
-};
-
-KDCoordinate ListController::rowHeight(int j) {
-  if (m_functionStore->numberOfModels() < m_functionStore->maxNumberOfModels() && j == numberOfRows() - 1) {
-    return Metric::StoreRowHeight;
-  }
-  Function * function = m_functionStore->modelAtIndex(j);
-  if (function->layout() == nullptr) {
-    return Metric::StoreRowHeight;
-  }
-  KDCoordinate functionSize = function->layout()->size().height();
-  return functionSize + Metric::StoreRowHeight - KDText::charSize().height();
-}
-
-void ListController::editExpression(Function * function, Ion::Events::Event event) {
-  char * initialText = nullptr;
-  char initialTextContent[TextField::maxBufferSize()];
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    strlcpy(initialTextContent, function->text(), sizeof(initialTextContent));
-    initialText = initialTextContent;
-  }
-  App * myApp = (App *)app();
-  InputViewController * inputController = myApp->inputViewController();
-  inputController->edit(this, event, function, initialText,
-    [](void * context, void * sender){
-    Shared::Function * myFunction = (Shared::Function *)context;
-    InputViewController * myInputViewController = (InputViewController *)sender;
-    const char * textBody = myInputViewController->textBody();
-    myFunction->setContent(textBody);
-    },
-    [](void * context, void * sender){
-    });
 }
 
 ListParameterController * ListController::parameterController() {
@@ -88,18 +49,17 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 }
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
+  Shared::FunctionListController::willDisplayExpressionCellAtIndex(cell, j);
   ModelExpressionCell * myCell = (ModelExpressionCell *)cell;
   Function * f = m_functionStore->modelAtIndex(j);
-  myCell->setExpressionLayout(f->layout());
   bool active = f->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
   myCell->setTextColor(textColor);
 }
 
-bool ListController::removeFunctionRow(Function * function) {
+bool ListController::removeModelRow(ExpressionModel * model) {
   if (m_functionStore->numberOfModels() > 1) {
-    m_functionStore->removeModel(function);
-    return true;
+    return Shared::FunctionListController::removeModelRow(model);
   }
   return false;
 }
@@ -109,7 +69,7 @@ View * ListController::loadView() {
     m_functionTitleCells[i] = new FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
     m_expressionCells[i] = new ModelExpressionCell();
   }
-  return Shared::ListController::loadView();
+  return Shared::FunctionListController::loadView();
 }
 
 void ListController::unloadView(View * view) {
@@ -119,7 +79,7 @@ void ListController::unloadView(View * view) {
     delete m_expressionCells[i];
     m_expressionCells[i] = nullptr;
   }
-  Shared::ListController::unloadView(view);
+  Shared::FunctionListController::unloadView(view);
 }
 
 }

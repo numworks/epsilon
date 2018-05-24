@@ -8,7 +8,7 @@ using namespace Poincare;
 namespace Sequence {
 
 ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
-  Shared::ListController(parentResponder, sequenceStore, header, footer, I18n::Message::AddSequence),
+  Shared::FunctionListController(parentResponder, sequenceStore, header, footer, I18n::Message::AddSequence),
   m_sequenceStore(sequenceStore),
   m_sequenceTitleCells{},
   m_expressionCells{},
@@ -39,7 +39,7 @@ ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
   return (App *)app();
 }
 
-int ListController::numberOfRows() {
+int ListController::numberOfExpressionRows() {
   int numberOfRows = 0;
   for (int i = 0; i < m_sequenceStore->numberOfModels(); i++) {
     Sequence * sequence = m_sequenceStore->modelAtIndex(i);
@@ -51,11 +51,11 @@ int ListController::numberOfRows() {
   return 1 + numberOfRows;
 };
 
-KDCoordinate ListController::rowHeight(int j) {
+KDCoordinate ListController::expressionRowHeight(int j) {
   if (m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() && j == numberOfRows() - 1) {
     return Metric::StoreRowHeight;
   }
-  Sequence * sequence = m_sequenceStore->modelAtIndex(functionIndexForRow(j));
+  Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   KDCoordinate defaultHeight = sequence->type() == Sequence::Type::Explicit ? Metric::StoreRowHeight : k_emptySubRowHeight;
   ExpressionLayout * layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
@@ -72,9 +72,9 @@ KDCoordinate ListController::rowHeight(int j) {
 }
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  Shared::ListController::willDisplayCellAtLocation(cell, i, j);
+  Shared::FunctionListController::willDisplayCellAtLocation(cell, i, j);
   EvenOddCell * myCell = (EvenOddCell *)cell;
-  myCell->setEven(functionIndexForRow(j)%2 == 0);
+  myCell->setEven(modelIndexForRow(j)%2 == 0);
 }
 
 void ListController::selectPreviousNewSequenceCell() {
@@ -87,7 +87,7 @@ Toolbox * ListController::toolboxForSender(Responder * sender) {
   // Set extra cells
   int recurrenceDepth = -1;
   int sequenceDefinition = sequenceDefinitionForRow(selectedRow());
-  Sequence * sequence = m_sequenceStore->modelAtIndex(functionIndexForRow(selectedRow()));
+  Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(selectedRow()));
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
@@ -154,8 +154,8 @@ void ListController::editExpression(Sequence * sequence, int sequenceDefinition,
   }
 }
 
-bool ListController::removeFunctionRow(Function * function) {
-  m_functionStore->removeModel(function);
+bool ListController::removeModelRow(ExpressionModel * model) {
+  Shared::FunctionListController::removeModelRow(model);
   // Invalidate the sequences context cache
   static_cast<App *>(app())->localContext()->resetCache();
   return true;
@@ -182,7 +182,7 @@ HighlightCell * ListController::expressionCells(int index) {
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
-  Sequence * sequence = m_sequenceStore->modelAtIndex(functionIndexForRow(j));
+  Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setExpressionLayout(sequence->definitionName());
   }
@@ -198,7 +198,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   ModelExpressionCell * myCell = (ModelExpressionCell *)cell;
-  Sequence * sequence = m_sequenceStore->modelAtIndex(functionIndexForRow(j));
+  Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setExpressionLayout(sequence->layout());
   }
@@ -213,13 +213,12 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   myCell->setTextColor(textColor);
 }
 
-int ListController::functionIndexForRow(int j) {
+int ListController::modelIndexForRow(int j) {
   if (j < 0) {
     return j;
   }
-  if (m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() &&
-      j == numberOfRows() - 1) {
-    return functionIndexForRow(j-1)+1;
+  if (isAddEmptyRow(j)) {
+    return modelIndexForRow(j-1)+1;
   }
   int rowIndex = 0;
   int sequenceIndex = -1;
@@ -231,8 +230,12 @@ int ListController::functionIndexForRow(int j) {
   return sequenceIndex;
 }
 
+bool ListController::isAddEmptyRow(int j) {
+  return m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() && j == numberOfRows() - 1;
+}
+
 const char * ListController::textForRow(int j) {
-  Sequence * sequence = ((SequenceStore *)m_functionStore)->modelAtIndex(functionIndexForRow(j));
+  Sequence * sequence = ((SequenceStore *)m_functionStore)->modelAtIndex(modelIndexForRow(j));
   switch (sequenceDefinitionForRow(j)) {
     case 0:
      return sequence->text();
@@ -250,8 +253,7 @@ int ListController::sequenceDefinitionForRow(int j) {
   if (j < 0) {
     return j;
   }
-  if (m_sequenceStore->numberOfModels() < m_sequenceStore->maxNumberOfModels() &&
-      j == numberOfRows() - 1) {
+  if (isAddEmptyRow(j)) {
     return 0;
   }
   int rowIndex = 0;
@@ -265,19 +267,19 @@ int ListController::sequenceDefinitionForRow(int j) {
   return sequence->numberOfElements()-rowIndex+j;
 }
 
-void ListController::addEmptyFunction() {
+void ListController::addEmptyModel() {
   app()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::TabHeight+Metric::ModalTopMargin, Metric::CommonRightMargin, Metric::ModalBottomMargin, Metric::CommonLeftMargin);
 }
 
-void ListController::editExpression(Shared::Function * function, Ion::Events::Event event) {
-  Sequence * sequence = (Sequence *)function;
+void ListController::editExpression(Shared::ExpressionModel * model, Ion::Events::Event event) {
+  Sequence * sequence = static_cast<Sequence *>(model);
   editExpression(sequence, sequenceDefinitionForRow(selectedRow()), event);
 }
 
-void ListController::reinitExpression(Shared::Function * function) {
+void ListController::reinitExpression(Shared::ExpressionModel * model) {
   // Invalidate the sequences context cache
   static_cast<App *>(app())->localContext()->resetCache();
-  Sequence * sequence = (Sequence *)function;
+  Sequence * sequence = static_cast<Sequence *>(model);
   switch (sequenceDefinitionForRow(selectedRow())) {
     case 1:
       if (strlen(sequence->firstInitialConditionText()) == 0) {
@@ -306,7 +308,7 @@ View * ListController::loadView() {
     m_sequenceTitleCells[i] = new SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
     m_expressionCells[i] = new ModelExpressionCell();
   }
-  return Shared::ListController::loadView();
+  return Shared::FunctionListController::loadView();
 }
 
 void ListController::unloadView(View * view) {
@@ -316,7 +318,7 @@ void ListController::unloadView(View * view) {
     delete m_expressionCells[i];
     m_expressionCells[i] = nullptr;
   }
-  Shared::ListController::unloadView(view);
+  Shared::FunctionListController::unloadView(view);
 }
 
 }

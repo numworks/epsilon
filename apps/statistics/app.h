@@ -38,6 +38,7 @@ public:
     uint32_t m_rangeVersion;
     int m_selectedHistogramBarIndex;
     BoxView::Quantile m_selectedBoxQuantile;
+    // TODO add selected Series for both histogram and box
   };
 private:
   App(Container * container, Snapshot * snapshot);

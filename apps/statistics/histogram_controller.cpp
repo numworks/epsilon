@@ -14,17 +14,18 @@ static inline float min(float x, float y) { return (x<y ? x : y); }
 static inline float max(float x, float y) { return (x>y ? x : y); }
 
 HistogramController::HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex) :
-  ViewController(parentResponder),
+  MultipleDataViewController(parentResponder, store, selectedBarIndex),
   ButtonRowDelegate(header, nullptr),
-  m_store(store),
   m_view(this, store),
   m_storeVersion(storeVersion),
   m_barVersion(barVersion),
   m_rangeVersion(rangeVersion),
-  m_selectedSeries(-1),
-  m_selectedBarIndex(selectedBarIndex),
   m_histogramParameterController(nullptr, store)
 {
+}
+
+void HistogramController::setCurrentDrawnSeries(int series) {
+  initYRangeParameters(series);
 }
 
 StackViewController * HistogramController::stackController() {
@@ -32,93 +33,22 @@ StackViewController * HistogramController::stackController() {
   return stack;
 }
 
-void HistogramController::setCurrentDrawnSeries(int series) {
-  initYRangeParameters(series);
-}
-
-bool HistogramController::isEmpty() const {
-  return m_store->isEmpty();
-}
-
-I18n::Message HistogramController::emptyMessage() {
-  return I18n::Message::NoDataToPlot;
-}
-
-Responder * HistogramController::defaultController() {
-  return tabController();
-}
-
 const char * HistogramController::title() {
   return I18n::translate(I18n::Message::HistogramTab);
 }
 
-void HistogramController::viewWillAppear() {
-  m_view.setDisplayBanner(true);
-  if (m_selectedSeries < 0) {
-    m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
-    m_view.selectHistogram(m_selectedSeries);
-  }
-  reloadBannerView();
-  m_view.reload();
-}
-
 bool HistogramController::handleEvent(Ion::Events::Event event) {
-  assert(m_selectedSeries >= 0);
-  if (event == Ion::Events::Down) {
-    int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
-    if (currentSelectedSubview < m_view.numberOfSubviews() - 2) {
-      m_view.deselectHistogram(m_selectedSeries);
-      m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview+1);
-      *m_selectedBarIndex = 0;
-      m_view.selectHistogram(m_selectedSeries);
-      reloadBannerView();
-      m_view.reload();
-      app()->setFirstResponder(this);
-      return true;
-    }
-    return false;
-  }
-  if (event == Ion::Events::Up) {
-    int currentSelectedSubview = m_view.indexOfSubviewAtSeries(m_selectedSeries);
-    if (currentSelectedSubview > 0) {
-      m_view.deselectHistogram(m_selectedSeries);
-      assert(currentSelectedSubview > 0);
-      m_selectedSeries = m_view.seriesOfSubviewAtIndex(currentSelectedSubview-1);
-      m_view.selectHistogram(m_selectedSeries);
-      *m_selectedBarIndex = 0;
-      app()->setFirstResponder(this);
-    } else {
-      app()->setFirstResponder(tabController());
-    }
-    reloadBannerView();
-    m_view.reload();
-    return true;
-  }
-  if (m_selectedSeries >= 0 && (event == Ion::Events::Left || event == Ion::Events::Right)) {
-    int direction = event == Ion::Events::Left ? -1 : 1;
-    if (moveSelection(direction)) {
-      reloadBannerView();
-      m_view.reload();
-    }
-    return true;
-  }
+  assert(selectedSeries() >= 0);
   if (event == Ion::Events::OK) {
     stackController()->push(histogramParameterController());
     return true;
   }
-  return false;
+  return MultipleDataViewController::handleEvent(event);
 }
 
 void HistogramController::didBecomeFirstResponder() {
-  m_view.setDisplayBanner(true);
-  if (m_selectedSeries < 0 || m_store->sumOfOccurrences(m_selectedSeries) == 0) {
-    if (m_selectedSeries >= 0) {
-      m_view.deselectHistogram(m_selectedSeries);
-    }
-    m_selectedSeries = m_view.seriesOfSubviewAtIndex(0);
-    m_view.selectHistogram(m_selectedSeries);
-    m_view.reload();
-  }
+  MultipleDataViewController::didBecomeFirstResponder();
+
   uint32_t storeChecksum = m_store->storeChecksum();
   if (*m_storeVersion != storeChecksum) {
     *m_storeVersion = storeChecksum;
@@ -136,19 +66,17 @@ void HistogramController::didBecomeFirstResponder() {
     initBarSelection();
     reloadBannerView();
   }
-  m_view.histogramViewAtIndex(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex));
+  HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.dataViewAtIndex(selectedSeries()));
+  selectedHistogramView->setHighlight(m_store->startOfBarAtIndex(selectedSeries(), *m_selectedBarIndex), m_store->endOfBarAtIndex(selectedSeries(), *m_selectedBarIndex));
 }
 
 void HistogramController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
-    if (m_selectedSeries >= 0) {
-      m_view.histogramViewAtIndex(m_selectedSeries)->selectMainView(false);
-      m_view.histogramViewAtIndex(m_selectedSeries)->setForceOkDisplay(false);
-      m_selectedSeries = -1;
-      m_view.setDisplayBanner(false);
+    if (selectedSeries() >= 0) {
+      m_view.dataViewAtIndex(selectedSeries())->setForceOkDisplay(false);
     }
-    m_view.reload();
   }
+  MultipleDataViewController::willExitResponderChain(nextFirstResponder);
 }
 
 Responder * HistogramController::tabController() const {
@@ -156,7 +84,7 @@ Responder * HistogramController::tabController() const {
 }
 
 void HistogramController::reloadBannerView() {
-  if (m_selectedSeries < 0) {
+  if (selectedSeries() < 0) {
     return;
   }
   char buffer[k_maxNumberOfCharacters+ PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)*2];
@@ -169,16 +97,16 @@ void HistogramController::reloadBannerView() {
   numberOfChar += legendLength;
 
   // Add lower bound
-  if (m_selectedSeries >= 0) {
-    double lowerBound = m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex);
+  if (selectedSeries() >= 0) {
+    double lowerBound = m_store->startOfBarAtIndex(selectedSeries(), *m_selectedBarIndex);
     numberOfChar += PrintFloat::convertFloatToText<double>(lowerBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
 
   buffer[numberOfChar++] = ';';
 
   // Add upper bound
-  if (m_selectedSeries >= 0) {
-    double upperBound = m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex);
+  if (selectedSeries() >= 0) {
+    double upperBound = m_store->endOfBarAtIndex(selectedSeries(), *m_selectedBarIndex);
     numberOfChar += PrintFloat::convertFloatToText<double>(upperBound, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
 
@@ -189,7 +117,7 @@ void HistogramController::reloadBannerView() {
     buffer[numberOfChar++] = ' ';
   }
   buffer[k_maxIntervalLegendLength] = 0;
-  m_view.bannerView()->setLegendAtIndex(buffer, 1);
+  m_view.editableBannerView()->setLegendAtIndex(buffer, 1);
 
   // Add Size Data
   numberOfChar = 0;
@@ -198,8 +126,8 @@ void HistogramController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   double size = 0;
-  if (m_selectedSeries >= 0) {
-    size = m_store->heightOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex);
+  if (selectedSeries() >= 0) {
+    size = m_store->heightOfBarAtIndex(selectedSeries(), *m_selectedBarIndex);
     numberOfChar += PrintFloat::convertFloatToText<double>(size, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
   // Padding
@@ -207,7 +135,7 @@ void HistogramController::reloadBannerView() {
     buffer[numberOfChar++] = ' ';
   }
   buffer[k_maxLegendLength] = 0;
-  m_view.bannerView()->setLegendAtIndex(buffer, 3);
+  m_view.editableBannerView()->setLegendAtIndex(buffer, 3);
 
   // Add Frequency Data
   numberOfChar = 0;
@@ -215,8 +143,8 @@ void HistogramController::reloadBannerView() {
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  if (m_selectedSeries >= 0) {
-    double frequency = size/m_store->sumOfOccurrences(m_selectedSeries);
+  if (selectedSeries() >= 0) {
+    double frequency = size/m_store->sumOfOccurrences(selectedSeries());
     numberOfChar += PrintFloat::convertFloatToText<double>(frequency, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   }
   // Padding
@@ -224,31 +152,31 @@ void HistogramController::reloadBannerView() {
     buffer[numberOfChar++] = ' ';
   }
   buffer[k_maxLegendLength] = 0;
-  m_view.bannerView()->setLegendAtIndex(buffer, 5);
+  m_view.editableBannerView()->setLegendAtIndex(buffer, 5);
 }
 
-bool HistogramController::moveSelection(int deltaIndex) {
+bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
   int newSelectedBarIndex = *m_selectedBarIndex;
   do {
     newSelectedBarIndex+=deltaIndex;
-  } while (m_store->heightOfBarAtIndex(m_selectedSeries, newSelectedBarIndex) == 0
+  } while (m_store->heightOfBarAtIndex(selectedSeries(), newSelectedBarIndex) == 0
       && newSelectedBarIndex >= 0
-      && newSelectedBarIndex < m_store->numberOfBars(m_selectedSeries));
+      && newSelectedBarIndex < m_store->numberOfBars(selectedSeries()));
 
   if (newSelectedBarIndex >= 0
-      && newSelectedBarIndex < m_store->numberOfBars(m_selectedSeries)
+      && newSelectedBarIndex < m_store->numberOfBars(selectedSeries())
       && *m_selectedBarIndex != newSelectedBarIndex)
   {
     *m_selectedBarIndex = newSelectedBarIndex;
-    m_view.histogramViewAtIndex(m_selectedSeries)->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex), m_store->endOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex));
-    m_store->scrollToSelectedBarIndex(m_selectedSeries, *m_selectedBarIndex);
+    m_view.dataViewAtIndex(selectedSeries())->setHighlight(m_store->startOfBarAtIndex(selectedSeries(), *m_selectedBarIndex), m_store->endOfBarAtIndex(selectedSeries(), *m_selectedBarIndex));
+    m_store->scrollToSelectedBarIndex(selectedSeries(), *m_selectedBarIndex);
     return true;
   }
   return false;
 }
 
 void HistogramController::initRangeParameters() {
-  assert(m_selectedSeries >= 0 && m_store->sumOfOccurrences(m_selectedSeries) > 0);
+  assert(selectedSeries() >= 0 && m_store->sumOfOccurrences(selectedSeries()) > 0);
   float minValue = m_store->firstDrawnBarAbscissa();
   float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
@@ -270,7 +198,7 @@ void HistogramController::initRangeParameters() {
   m_store->setXMin(xMin - Store::k_displayLeftMarginRatio*(xMax-xMin));
   m_store->setXMax(xMax + Store::k_displayRightMarginRatio*(xMax-xMin));
 
-  initYRangeParameters(m_selectedSeries);
+  initYRangeParameters(selectedSeries());
 }
 
 void HistogramController::initYRangeParameters(int series) {
@@ -297,11 +225,11 @@ void HistogramController::initYRangeParameters(int series) {
    *    yMin = -k_bottomMargin/ratioFloatPixel = yMax*k_bottomMargin/(k_bottomMargin - viewHeight)
    * */
 
-  m_store->setYMin(m_store->yMax()*(float)Store::k_bottomMargin/((float)Store::k_bottomMargin - m_view.histogramViewAtIndex(series)->bounds().height()));
+  m_store->setYMin(m_store->yMax()*(float)Store::k_bottomMargin/((float)Store::k_bottomMargin - m_view.dataViewAtIndex(series)->bounds().height()));
 }
 
 void HistogramController::initBarParameters() {
-  assert(m_selectedSeries >= 0 && m_store->sumOfOccurrences(m_selectedSeries) > 0);
+  assert(selectedSeries() >= 0 && m_store->sumOfOccurrences(selectedSeries()) > 0);
   float minValue = FLT_MAX;
   float maxValue = -FLT_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
@@ -320,20 +248,20 @@ void HistogramController::initBarParameters() {
 }
 
 void HistogramController::initBarSelection() {
-  assert(m_selectedSeries >= 0 && m_store->sumOfOccurrences(m_selectedSeries) > 0);
+  assert(selectedSeries() >= 0 && m_store->sumOfOccurrences(selectedSeries()) > 0);
   *m_selectedBarIndex = 0;
-  while ((m_store->heightOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex) == 0 ||
-      m_store->startOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) && *m_selectedBarIndex < m_store->numberOfBars(m_selectedSeries)) {
+  while ((m_store->heightOfBarAtIndex(selectedSeries(), *m_selectedBarIndex) == 0 ||
+      m_store->startOfBarAtIndex(selectedSeries(), *m_selectedBarIndex) < m_store->firstDrawnBarAbscissa()) && *m_selectedBarIndex < m_store->numberOfBars(selectedSeries())) {
     *m_selectedBarIndex = *m_selectedBarIndex+1;
   }
-  if (*m_selectedBarIndex >= m_store->numberOfBars(m_selectedSeries)) {
+  if (*m_selectedBarIndex >= m_store->numberOfBars(selectedSeries())) {
     /* No bar is after m_firstDrawnBarAbscissa, so we select the first bar */
     *m_selectedBarIndex = 0;
-    while (m_store->heightOfBarAtIndex(m_selectedSeries, *m_selectedBarIndex) == 0 && *m_selectedBarIndex < m_store->numberOfBars(m_selectedSeries)) {
+    while (m_store->heightOfBarAtIndex(selectedSeries(), *m_selectedBarIndex) == 0 && *m_selectedBarIndex < m_store->numberOfBars(selectedSeries())) {
       *m_selectedBarIndex = *m_selectedBarIndex+1;
     }
   }
-  m_store->scrollToSelectedBarIndex(m_selectedSeries, *m_selectedBarIndex);
+  m_store->scrollToSelectedBarIndex(selectedSeries(), *m_selectedBarIndex);
 }
 
 }

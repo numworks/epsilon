@@ -4,12 +4,14 @@
 #include <escher.h>
 #include "../shared/expression_model_list_controller.h"
 #include "../shared/model_expression_cell.h"
+#include "../shared/expression_layout_field_delegate.h"
+#include "../shared/text_field_delegate.h"
 #include "equation_store.h"
 #include "../i18n.h"
 
 namespace Solver {
 
-class ListController : public Shared::ExpressionModelListController, public ButtonRowDelegate, public ListViewDataSource {
+class ListController : public Shared::ExpressionModelListController, public ButtonRowDelegate, public ListViewDataSource, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
 public:
   ListController(Responder * parentResponder, EquationStore * equationStore, ButtonRowController * footer);
   /* ButtonRowDelegate */
@@ -36,6 +38,11 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
+  /* Text/ExpressionLayout Field Delegate */
+  Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
+  Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
+  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+  bool expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
 private:
   constexpr static int k_maxNumberOfRows = 5; // Ion::Display::Height / Metric::StoreRowHeight = 4.8;
   View * loadView() override;

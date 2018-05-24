@@ -47,7 +47,7 @@ App::App(Container * container, Snapshot * snapshot) :
   m_listController(&m_stackViewController, snapshot->equationStore(), &m_listFooter),
   m_listFooter(&m_stackViewController, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGrey),
   m_stackViewController(&m_inputViewController, &m_listFooter),
-  m_inputViewController(&m_modalViewController, &m_stackViewController, this, this)
+  m_inputViewController(&m_modalViewController, &m_stackViewController, &m_listController, &m_listController)
 {
 }
 

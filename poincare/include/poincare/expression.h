@@ -40,6 +40,7 @@ class Expression {
   friend class Determinant;
   friend class DivisionQuotient;
   friend class DivisionRemainder;
+  friend class Equal;
   friend class Floor;
   friend class FracPart;
   friend class GreatCommonDivisor;
@@ -92,6 +93,7 @@ public:
     Factorial,
     Division,
     Store,
+    Equal,
     Sine,
     Cosine,
     Tangent,

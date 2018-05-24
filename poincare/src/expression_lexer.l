@@ -147,6 +147,7 @@ inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED;
 \x8b { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8f { return STO; }
+= { return EQUAL; }
 \+ { return PLUS; }
 \- { return MINUS; }
 \x93 { return MULTIPLY; }

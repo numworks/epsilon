@@ -28,6 +28,8 @@ public:
 
   // Other
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
+  bool canBeOmittedMultiplicationLeftFactor() const override;
+  bool canBeOmittedMultiplicationRightFactor() const override;
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   KDPoint positionOfChild(ExpressionLayout * child) override {

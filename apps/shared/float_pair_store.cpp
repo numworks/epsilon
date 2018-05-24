@@ -78,7 +78,7 @@ uint32_t FloatPairStore::storeChecksum() {
    * pairs. However, the two values of a pair are not stored consecutively. We
    * thus compute the checksum on all pairs and ensure to set the pair at 0
    * when removing them. */
-  size_t dataLengthInBytes = k_numberOfSeries*k_maxNumberOfPairs*2*sizeof(double);
+  size_t dataLengthInBytes = k_numberOfSeries*k_maxNumberOfPairs*k_numberOfColumnsPerSeries*sizeof(double);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
   return Ion::crc32((uint32_t *)m_data, dataLengthInBytes/sizeof(uint32_t));
 }

@@ -4,8 +4,8 @@
 namespace Shared {
 
 void StoreTitleCell::setSeparatorRight(bool separator) {
-  if (m_separatorRight != separator) {
-    m_separatorRight = separator;
+  if (separatorRight() != separator) {
+    StoreSeparatorCell::setSeparatorRight(separator);
     reloadCell();
   }
 }
@@ -13,8 +13,8 @@ void StoreTitleCell::setSeparatorRight(bool separator) {
 void StoreTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
   BufferFunctionTitleCell::drawRect(ctx, rect);
   // Draw the separator
-  KDRect separatorRect(bounds().width() - k_separatorThickness, m_separatorRight ? 0 : k_colorIndicatorThickness, k_separatorThickness, bounds().height());
-  if (m_separatorRight) {
+  KDRect separatorRect(bounds().width() - StoreSeparatorCell::k_separatorThickness, separatorRight() ? 0 : k_colorIndicatorThickness, StoreSeparatorCell::k_separatorThickness, bounds().height());
+  if (separatorRight()) {
     ctx->fillRect(separatorRect, HideableEvenOddEditableTextCell::hideColor());
   } else {
     ctx->fillRect(separatorRect, backgroundColor());
@@ -23,7 +23,7 @@ void StoreTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
 
 void StoreTitleCell::layoutSubviews() {
   KDRect textFrame = bufferTextViewFrame();
-  bufferTextView()->setFrame(KDRect(textFrame.topLeft(), textFrame.width() - k_separatorThickness, textFrame.height() ));
+  bufferTextView()->setFrame(KDRect(textFrame.topLeft(), textFrame.width() - StoreSeparatorCell::k_separatorThickness, textFrame.height() ));
 }
 
 }

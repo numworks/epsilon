@@ -3,8 +3,8 @@
 namespace Shared {
 
 void StoreCell::setSeparatorRight(bool separator) {
-  if (m_separatorRight != separator) {
-    m_separatorRight = separator;
+  if (separatorRight() != separator) {
+    StoreSeparatorCell::setSeparatorRight(separator);
     reloadCell();
   }
 }
@@ -12,7 +12,7 @@ void StoreCell::setSeparatorRight(bool separator) {
 void StoreCell::drawRect(KDContext * ctx, KDRect rect) const {
   HideableEvenOddEditableTextCell::drawRect(ctx, rect);
   // Draw the separator
-  if (m_separatorRight) {
+  if (separatorRight()) {
     ctx->fillRect(KDRect(bounds().width() - k_separatorThickness, 0, k_separatorThickness, bounds().height()), HideableEvenOddEditableTextCell::hideColor());
   }
 }

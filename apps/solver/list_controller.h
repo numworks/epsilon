@@ -7,6 +7,7 @@
 #include "../shared/expression_layout_field_delegate.h"
 #include "../shared/text_field_delegate.h"
 #include "equation_store.h"
+#include "equation_models_parameter_controller.h"
 #include "../i18n.h"
 
 namespace Solver {
@@ -45,6 +46,7 @@ public:
   bool expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
 private:
   constexpr static int k_maxNumberOfRows = 5; // Ion::Display::Height / Metric::StoreRowHeight = 4.8;
+  void addEmptyModel() override;
   View * loadView() override;
   void unloadView(View * view) override;
   Shared::ExpressionModelStore * modelStore() override { return m_equationStore; }
@@ -55,6 +57,8 @@ private:
   EquationStore * m_equationStore;
   Shared::ModelExpressionCell * m_expressionCells[k_maxNumberOfRows];
   Button m_resolveButton;
+  EquationModelsParameterController m_modelsParameterController;
+  StackViewController m_modelsStackController;
 };
 
 }

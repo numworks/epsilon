@@ -6,10 +6,11 @@
 
 namespace Solver {
 
+class ListController;
 
 class EquationModelsParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
-  EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore);
+  EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore, ListController * listController);
   ~EquationModelsParameterController();
   EquationModelsParameterController(const EquationModelsParameterController& other) = delete;
   EquationModelsParameterController(EquationModelsParameterController&& other) = delete;
@@ -39,6 +40,7 @@ private:
   Poincare::ExpressionLayout * m_expressionLayouts[k_numberOfExpressionCells];
   SelectableTableView m_selectableTableView;
   EquationStore * m_equationStore;
+  ListController * m_listController;
 };
 
 }

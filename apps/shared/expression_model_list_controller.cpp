@@ -95,8 +95,9 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
 }
 
 void ExpressionModelListController::addEmptyModel() {
-  modelStore()->addEmptyModel();
+  ExpressionModel * e = modelStore()->addEmptyModel();
   selectableTableView()->reloadData();
+  editExpression(e, Ion::Events::OK);
 }
 
 void ExpressionModelListController::reinitExpression(ExpressionModel * model) {

@@ -2,10 +2,10 @@
 #define SHARED_STORE_CONTROLLER_H
 
 #include <escher.h>
+#include "editable_cell_table_view_controller.h"
 #include "float_pair_store.h"
 #include "hideable_even_odd_editable_text_cell.h"
 #include "store_parameter_controller.h"
-#include "editable_cell_table_view_controller.h"
 
 namespace Shared {
 

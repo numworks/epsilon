@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "store.h"
 #include "../shared/store_controller.h"
-#include "../shared/buffer_function_title_cell.h"
+#include "../shared/store_title_cell.h"
 
 namespace Statistics {
 
@@ -17,7 +17,7 @@ private:
   HighlightCell * titleCells(int index) override;
   View * loadView() override;
   void unloadView(View * view) override;
-  Shared::BufferFunctionTitleCell * m_titleCells[k_numberOfTitleCells];
+  Shared::StoreTitleCell * m_titleCells[k_numberOfTitleCells];
 };
 
 }

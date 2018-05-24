@@ -79,9 +79,14 @@ int StoreController::typeAtLocation(int i, int j) {
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
+  // Handle the separator
+  if (cellAtLocationIsEditable(i, j)) {
+    bool shoudHaveRightSeparator = i % FloatPairStore::k_numberOfColumnsPerSeries == 1;
+    static_cast<StoreCell *>(cell)->setSeparatorRight(shoudHaveRightSeparator);
+  }
   // Handle empty cells
   if (j > 0 && j > m_store->numberOfPairsOfSeries(seriesAtColumn(i)) && j < numberOfRows()) {
-    HideableEvenOddEditableTextCell * myCell = static_cast<HideableEvenOddEditableTextCell *>(cell);
+    StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
     if (cellShouldBeTransparent(i,j)) {
       myCell->setHide(true);
@@ -92,7 +97,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     return;
   }
   if (cellAtLocationIsEditable(i, j)) {
-    static_cast<HideableEvenOddEditableTextCell *>(cell)->setHide(false);
+    static_cast<StoreCell *>(cell)->setHide(false);
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, PrintFloat::Mode::Decimal);
 }
@@ -173,7 +178,7 @@ View * StoreController::loadView() {
   tableView->setVerticalCellOverlap(0);
 
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
-    m_editableCells[i] = new HideableEvenOddEditableTextCell(tableView, this, m_draftTextBuffer);
+    m_editableCells[i] = new StoreCell(tableView, this, m_draftTextBuffer);
   }
   tableView->setMargins(k_margin);
   return tableView;

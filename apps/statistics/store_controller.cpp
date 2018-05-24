@@ -21,7 +21,8 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
-  Shared::BufferFunctionTitleCell * mytitleCell = (Shared::BufferFunctionTitleCell *)cell;
+  Shared::StoreTitleCell * mytitleCell = static_cast<Shared::StoreTitleCell *>(cell);
+  mytitleCell->setSeparatorRight(i % Store::k_numberOfColumnsPerSeries == 1);
   int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
   bool valuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
   assert(seriesIndex >= 0 && seriesIndex < FloatPairStore::k_numberOfSeries);
@@ -55,7 +56,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
 
 View * StoreController::loadView() {
   for (int i = 0; i < k_numberOfTitleCells; i++) {
-    m_titleCells[i] = new Shared::BufferFunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
+    m_titleCells[i] = new Shared::StoreTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
   }
   return Shared::StoreController::loadView();
 }

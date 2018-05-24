@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "editable_cell_table_view_controller.h"
 #include "float_pair_store.h"
-#include "hideable_even_odd_editable_text_cell.h"
+#include "store_cell.h"
 #include "store_parameter_controller.h"
 
 namespace Shared {
@@ -51,7 +51,7 @@ protected:
   virtual HighlightCell * titleCells(int index) = 0;
   char m_draftTextBuffer[TextField::maxBufferSize()];
   int seriesAtColumn(int column) const { return column / FloatPairStore::k_numberOfColumnsPerSeries; }
-  HideableEvenOddEditableTextCell * m_editableCells[k_maxNumberOfEditableCells];
+  StoreCell * m_editableCells[k_maxNumberOfEditableCells];
   FloatPairStore * m_store;
   StoreParameterController m_storeParameterController;
 private:

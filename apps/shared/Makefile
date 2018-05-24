@@ -8,6 +8,7 @@ app_objs += $(addprefix apps/shared/,\
   editable_cell_table_view_controller.o\
   expression_field_delegate_app.o\
   expression_model.o\
+  expression_model_list_controller.o\
   expression_model_store.o\
   float_pair_store.o\
   float_parameter_controller.o\
@@ -18,6 +19,7 @@ app_objs += $(addprefix apps/shared/,\
   function_go_to_parameter_controller.o\
   function_graph_view.o\
   function_graph_controller.o\
+  function_list_controller.o\
   function_store.o\
   function_title_cell.o\
   go_to_parameter_controller.o\
@@ -28,7 +30,6 @@ app_objs += $(addprefix apps/shared/,\
   interval.o\
   interval_parameter_controller.o\
   language_controller.o\
-  list_controller.o\
   list_parameter_controller.o\
   memoized_curve_view_range.o\
   message_view.o\

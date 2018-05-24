@@ -13,7 +13,7 @@ namespace Statistics {
 static inline float min(float x, float y) { return (x<y ? x : y); }
 static inline float max(float x, float y) { return (x>y ? x : y); }
 
-HistogramController::HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, int series, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex) :
+HistogramController::HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, uint32_t * storeVersion, uint32_t * barVersion, uint32_t * rangeVersion, int * selectedBarIndex) :
   ViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_store(store),

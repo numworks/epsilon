@@ -105,6 +105,41 @@ void ListController::didEnterResponderChain(Responder * previousFirstResponder) 
   selectableTableView()->reloadData();
 }
 
+bool textRepresentsAnEquality(const char * text) {
+  if (strchr(text, '=')) {
+    return true;
+  }
+  return false;
+}
+
+bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+  if (Shared::TextFieldDelegate::textFieldDidReceiveEvent(textField, event)) {
+    return true;
+  }
+  if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
+    if (!textRepresentsAnEquality(textField->text())) {
+      app()->displayWarning(I18n::Message::RequireEquation);
+      return true;
+    }
+  }
+  return false;
+}
+
+bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+  if (Shared::ExpressionLayoutFieldDelegate::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {
+    return true;
+  }
+  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event)) {
+    char buffer[TextField::maxBufferSize()];
+    expressionLayoutField->writeTextInBuffer(buffer, TextField::maxBufferSize());
+    if (!textRepresentsAnEquality(buffer)) {
+      app()->displayWarning(I18n::Message::RequireEquation);
+      return true;
+    }
+  }
+  return false;
+}
+
 View * ListController::loadView() {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i] = new ModelExpressionCell();
@@ -118,6 +153,14 @@ void ListController::unloadView(View * view) {
     m_expressionCells[i] = nullptr;
   }
   Shared::ExpressionModelListController::unloadView(view);
+}
+
+Shared::TextFieldDelegateApp * ListController::textFieldDelegateApp() {
+  return static_cast<App *>(app());
+}
+
+Shared::ExpressionFieldDelegateApp * ListController::expressionFieldDelegateApp() {
+  return static_cast<App *>(app());
 }
 
 StackViewController * ListController::stackController() const {

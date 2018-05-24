@@ -107,7 +107,7 @@ public:
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
    * become 1+ 2/3 - 4 when pressing "Divide": a CharLayout is collapsable if
    * its char is not +, -, or *. */
-  bool canBeOmittedMultiplicationLeftFactor() const;
+  virtual bool canBeOmittedMultiplicationLeftFactor() const;
   virtual bool canBeOmittedMultiplicationRightFactor() const;
   /* canBeOmittedMultiplicationLeftFactor and RightFactor return true if the
    * layout, next to another layout, might be the factor of a multiplication

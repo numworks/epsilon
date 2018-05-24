@@ -6,7 +6,7 @@ DEBUG ?= 0
 EPSILON_VERSION ?= 1.5.0
 EPSILON_ONBOARDING_APP ?= 1
 EPSILON_SOFTWARE_UPDATE_PROMPT ?= 1
-EPSILON_APPS ?= calculation statistics graph probability sequence regression settings code
+EPSILON_APPS ?= calculation statistics graph probability sequence regression settings code solver
 EPSILON_I18N ?= en fr es de pt
 EPSILON_GETOPT ?= 0
 

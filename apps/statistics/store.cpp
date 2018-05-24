@@ -174,12 +174,12 @@ double Store::sampleStandardDeviation(int series) {
 }
 
 double Store::firstQuartile(int series) {
-  int firstQuartileIndex = std::ceil(sumOfOccurrences(series)/4);
+  double firstQuartileIndex = sumOfOccurrences(series)/4.0f;
   return sortedElementNumber(series, firstQuartileIndex);
 }
 
 double Store::thirdQuartile(int series) {
-  int thirdQuartileIndex = std::ceil(3*sumOfOccurrences(series)/4);
+  double thirdQuartileIndex = 3*sumOfOccurrences(series)/4.0f;
   return sortedElementNumber(series, thirdQuartileIndex);
 }
 
@@ -188,15 +188,15 @@ double Store::quartileRange(int series) {
 }
 
 double Store::median(int series) {
-  int total = sumOfOccurrences(series);
-  int halfTotal = total/2;
+  double total = sumOfOccurrences(series);
+  double halfTotal = total/2;
   int totalMod2 = total - 2*halfTotal;
   if (totalMod2 == 0) {
     double minusMedian = sortedElementNumber(series, halfTotal);
-    double maxMedian = sortedElementNumber(series, halfTotal+1);
+    double maxMedian = sortedElementNumber(series, halfTotal+1.0);
     return (minusMedian+maxMedian)/2.0;
   } else {
-    return sortedElementNumber(series, halfTotal+1);
+    return sortedElementNumber(series, halfTotal+1.0);
   }
 }
 
@@ -232,7 +232,7 @@ double Store::sumOfValuesBetween(int series, double x1, double x2) {
   return result;
 }
 
-double Store::sortedElementNumber(int series, int k) {
+double Store::sortedElementNumber(int series, double k) {
   // TODO: use an other algorithm (ex quickselect) to avoid quadratic complexity
   double bufferValues[m_numberOfPairs[series]];
   memcpy(bufferValues, m_data[series][0], m_numberOfPairs[series]*sizeof(double));

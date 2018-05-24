@@ -3,27 +3,23 @@
 
 #include <escher.h>
 #include "store.h"
+#include "multiple_data_view_controller.h"
 #include "multiple_histograms_view.h"
 
 namespace Statistics {
 
-class HistogramController : public ViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
+class HistogramController : public MultipleDataViewController, public ButtonRowDelegate {
 
 public:
   HistogramController(Responder * parentResponder, ButtonRowController * header, Store * store, uint32_t * m_storeVersion, uint32_t * m_barVersion, uint32_t * m_rangeVersion, int * m_selectedBarIndex);
-  StackViewController * stackController();
+
   HistogramParameterController * histogramParameterController() { return &m_histogramParameterController; }
   void setCurrentDrawnSeries(int series);
-
-  // AlternateEmptyViewDelegate
-  bool isEmpty() const override;
-  I18n::Message emptyMessage() override;
-  Responder * defaultController() override;
+  StackViewController * stackController();
 
   // ViewController
   const char * title() override;
-  View * view() override { return &m_view; }
-  void viewWillAppear() override;
+  MultipleDataView * multipleDataView() override { return &m_view; }
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -34,21 +30,18 @@ private:
   constexpr static int k_maxIntervalLegendLength = 33;
   constexpr static int k_maxLegendLength = 13;
   constexpr static int k_maxNumberOfCharacters = 30;
-  Responder * tabController() const;
-  void reloadBannerView();
+  Responder * tabController() const override;
+  void reloadBannerView() override;
   void initRangeParameters();
   void initYRangeParameters(int series);
   void initBarParameters();
   void initBarSelection();
   // return true if the window has scrolled
-  bool moveSelection(int deltaIndex);
-  Store * m_store;
+  bool moveSelectionHorizontally(int deltaIndex) override;
   MultipleHistogramsView m_view;
   uint32_t * m_storeVersion;
   uint32_t * m_barVersion;
   uint32_t * m_rangeVersion;
-  int m_selectedSeries;
-  int * m_selectedBarIndex;
   HistogramParameterController m_histogramParameterController;
 };
 

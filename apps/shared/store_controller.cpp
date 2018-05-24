@@ -1,4 +1,5 @@
 #include "store_controller.h"
+#include "store_selectable_table_view.h"
 #include "../apps_container.h"
 #include "../constant.h"
 #include <assert.h>
@@ -167,7 +168,10 @@ int StoreController::maxNumberOfElements() const {
 }
 
 View * StoreController::loadView() {
-  SelectableTableView * tableView = (SelectableTableView*)EditableCellTableViewController::loadView();
+  StoreSelectableTableView * tableView = new StoreSelectableTableView(m_store, this, this, this);
+  tableView->setBackgroundColor(Palette::WallScreenDark);
+  tableView->setVerticalCellOverlap(0);
+
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i] = new HideableEvenOddEditableTextCell(tableView, this, m_draftTextBuffer);
   }

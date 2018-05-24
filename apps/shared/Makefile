@@ -43,6 +43,7 @@ app_objs += $(addprefix apps/shared/,\
   expression_layout_field_delegate.o\
   store_controller.o\
   store_parameter_controller.o\
+  store_selectable_table_view.o\
   sum_graph_controller.o\
   tab_table_controller.o\
   text_field_delegate.o\

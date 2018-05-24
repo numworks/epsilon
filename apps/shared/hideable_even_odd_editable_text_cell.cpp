@@ -4,7 +4,7 @@ namespace Shared {
 
 KDColor HideableEvenOddEditableTextCell::backgroundColor() const {
   if (m_hide) {
-    return Palette::WallScreenDark;
+    return hideColor();
   }
   return EvenOddEditableTextCell::backgroundColor();
 }

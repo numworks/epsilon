@@ -17,13 +17,13 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  ::StoreController::willDisplayCellAtLocation(cell, i, j);
+  Shared::StoreController::willDisplayCellAtLocation(cell, i, j);
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
   Shared::BufferFunctionTitleCell * mytitleCell = (Shared::BufferFunctionTitleCell *)cell;
-  bool valuesColumn = i%k_numberOfColumnsPerSeries == 0;
   int seriesIndex = i/k_numberOfColumnsPerSeries;
+  bool valuesColumn = i%k_numberOfColumnsPerSeries == 0;
   assert(seriesIndex >= 0 && seriesIndex < FloatPairStore::k_numberOfSeries);
   if (valuesColumn) {
     I18n::Message valuesMessages[] = {I18n::Message::Values1, I18n::Message::Values2, I18n::Message::Values3};

@@ -16,7 +16,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
     // TODO
     //stackController->push(list->solutionPage ??)
   }, this), KDText::FontSize::Small, Palette::PurpleBright),
-  m_modelsParameterController(this, equationStore),
+  m_modelsParameterController(this, equationStore, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)
 {
 }

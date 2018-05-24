@@ -1,0 +1,4 @@
+SolverApp = "Equation"
+SolverAppCapital = "EQUATION"
+AddEquation = "Ajouter une équation"
+Resolve = "Résoudre"

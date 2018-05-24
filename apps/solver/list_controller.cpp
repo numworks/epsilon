@@ -15,7 +15,9 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
     StackViewController * stackController = list->stackController();
     // TODO
     //stackController->push(list->solutionPage ??)
-  }, this), KDText::FontSize::Small, Palette::PurpleBright)
+  }, this), KDText::FontSize::Small, Palette::PurpleBright),
+  m_modelsParameterController(this, equationStore),
+  m_modelsStackController(nullptr, &m_modelsParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)
 {
 }
 
@@ -138,6 +140,10 @@ bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField 
     }
   }
   return false;
+}
+
+void ListController::addEmptyModel() {
+  app()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::CommonTopMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
 }
 
 View * ListController::loadView() {

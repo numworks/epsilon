@@ -39,7 +39,7 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
 }
 
 int StoreController::numberOfColumns() {
-  return k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;
+  return FloatPairStore::k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;
 }
 
 KDCoordinate StoreController::columnWidth(int i) {
@@ -110,7 +110,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
   int series = seriesAtColumn(selectedColumn());
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
-    m_storeParameterController.selectXColumn(selectedColumn()%k_numberOfColumnsPerSeries == 0);
+    m_storeParameterController.selectXColumn(selectedColumn()%FloatPairStore::k_numberOfColumnsPerSeries == 0);
     m_storeParameterController.selectSeries(series);
     StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
     stack->push(&m_storeParameterController);
@@ -146,12 +146,12 @@ bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  m_store->set(floatBody, seriesAtColumn(columnIndex), columnIndex%k_numberOfColumnsPerSeries, rowIndex-1);
+  m_store->set(floatBody, seriesAtColumn(columnIndex), columnIndex%FloatPairStore::k_numberOfColumnsPerSeries, rowIndex-1);
   return true;
 }
 
 double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_store->get(seriesAtColumn(columnIndex), columnIndex%k_numberOfColumnsPerSeries, rowIndex-1);
+  return m_store->get(seriesAtColumn(columnIndex), columnIndex%FloatPairStore::k_numberOfColumnsPerSeries, rowIndex-1);
 }
 
 int StoreController::numberOfElements() {
@@ -184,7 +184,7 @@ void StoreController::unloadView(View * view) {
 }
 
 bool StoreController::cellShouldBeTransparent(int i, int j) {
-  int seriesIndex = i/k_numberOfColumnsPerSeries;
+  int seriesIndex = i/FloatPairStore::k_numberOfColumnsPerSeries;
   return j > 1 + m_store->numberOfPairsOfSeries(seriesIndex);
 }
 

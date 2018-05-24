@@ -55,7 +55,7 @@ App::App(Container * container, Snapshot * snapshot) :
   m_boxController(&m_boxAlternateEmptyViewController, &m_boxHeader, snapshot->store(), snapshot->selectedBoxQuantile()),
   m_boxAlternateEmptyViewController(&m_boxHeader, &m_boxController, &m_boxController),
   m_boxHeader(&m_tabViewController, &m_boxAlternateEmptyViewController, &m_boxController),
-  m_histogramController(&m_histogramAlternateEmptyViewController, &m_histogramHeader, snapshot->store(), 0, snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex()),
+  m_histogramController(&m_histogramAlternateEmptyViewController, &m_histogramHeader, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex()),
   m_histogramAlternateEmptyViewController(&m_histogramHeader, &m_histogramController, &m_histogramController),
   m_histogramHeader(&m_histogramStackViewController, &m_histogramAlternateEmptyViewController, &m_histogramController),
   m_histogramStackViewController(&m_tabViewController, &m_histogramHeader),

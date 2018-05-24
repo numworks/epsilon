@@ -21,6 +21,7 @@ app_objs += $(addprefix apps/shared/,\
   function_expression_cell.o\
   function_title_cell.o\
   go_to_parameter_controller.o\
+  hideable_even_odd_editable_text_cell.o\
   initialisation_parameter_controller.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\

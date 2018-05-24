@@ -52,7 +52,7 @@ public:
 private:
   double defaultValue(int series, int i, int j) override;
   double sumOfValuesBetween(int series, double x1, double x2);
-  double sortedElementNumber(int series, int k);
+  double sortedElementNumber(int series, double k);
   int minIndex(double * bufferValues, int bufferLength);
   // Histogram bars
   double m_barWidth;

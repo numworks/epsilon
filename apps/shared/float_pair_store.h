@@ -9,6 +9,7 @@ namespace Shared {
 class FloatPairStore {
 public:
   constexpr static int k_numberOfSeries = 3;
+  constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static int k_maxNumberOfPairs = 100;
   FloatPairStore() :
     m_numberOfPairs{},
@@ -35,7 +36,7 @@ public:
 protected:
   virtual double defaultValue(int series, int i, int j);
   int m_numberOfPairs[k_numberOfSeries];
-  double m_data[k_numberOfSeries][2][k_maxNumberOfPairs];
+  double m_data[k_numberOfSeries][k_numberOfColumnsPerSeries][k_maxNumberOfPairs];
 };
 
 }

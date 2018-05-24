@@ -36,10 +36,8 @@ public:
 protected:
   static constexpr KDCoordinate k_cellWidth = 80; //TODO
   static constexpr KDCoordinate k_margin = 8;
-  constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static int k_maxNumberOfEditableCells = 22 * FloatPairStore::k_numberOfSeries;
-  constexpr static int k_numberOfTitleCells = k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;
-  // TODO Put finer number of cells
+  constexpr static int k_numberOfTitleCells = FloatPairStore::k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;  // TODO Put finer number of cells
   static constexpr int k_titleCellType = 0;
   static constexpr int k_editableCellType = 1;
   Responder * tabController() const override;
@@ -52,7 +50,7 @@ protected:
   int maxNumberOfElements() const override;
   virtual HighlightCell * titleCells(int index) = 0;
   char m_draftTextBuffer[TextField::maxBufferSize()];
-  int seriesAtColumn(int column) const { return column / k_numberOfColumnsPerSeries; }
+  int seriesAtColumn(int column) const { return column / FloatPairStore::k_numberOfColumnsPerSeries; }
   HideableEvenOddEditableTextCell * m_editableCells[k_maxNumberOfEditableCells];
   FloatPairStore * m_store;
   StoreParameterController m_storeParameterController;

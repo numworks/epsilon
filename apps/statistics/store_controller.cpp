@@ -22,8 +22,8 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     return;
   }
   Shared::BufferFunctionTitleCell * mytitleCell = (Shared::BufferFunctionTitleCell *)cell;
-  int seriesIndex = i/k_numberOfColumnsPerSeries;
-  bool valuesColumn = i%k_numberOfColumnsPerSeries == 0;
+  int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
+  bool valuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
   assert(seriesIndex >= 0 && seriesIndex < FloatPairStore::k_numberOfSeries);
   if (valuesColumn) {
     I18n::Message valuesMessages[] = {I18n::Message::Values1, I18n::Message::Values2, I18n::Message::Values3};

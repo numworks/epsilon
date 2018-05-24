@@ -24,11 +24,11 @@ public:
   Toolbox * toolboxForTextInput(TextInput * textInput) override;
   Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) override;
   void selectPreviousNewSequenceCell();
+  void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
 private:
   Toolbox * toolboxForSender(Responder * sender);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
-  void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
   ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
   HighlightCell * titleCells(int index) override;

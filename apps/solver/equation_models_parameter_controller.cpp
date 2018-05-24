@@ -1,4 +1,5 @@
 #include "equation_models_parameter_controller.h"
+#include "list_controller.h"
 #include <assert.h>
 #include <poincare/layout_engine.h>
 #include "../i18n.h"
@@ -9,12 +10,13 @@ namespace Solver {
 
 constexpr const char * EquationModelsParameterController::k_models[k_numberOfModels];
 
-EquationModelsParameterController::EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore) :
+EquationModelsParameterController::EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore, ListController * listController) :
   ViewController(parentResponder),
   m_emptyModelCell(I18n::Message::Empty, KDText::FontSize::Large),
   m_expressionLayouts{},
   m_selectableTableView(this),
-  m_equationStore(equationStore)
+  m_equationStore(equationStore),
+  m_listController(listController)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setShowsIndicators(false);
@@ -57,6 +59,7 @@ bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {
     Equation * newEquation = static_cast<Equation *>(m_equationStore->addEmptyModel());
     newEquation->setContent(k_models[selectedRow()]);
     app()->dismissModalViewController();
+    m_listController->editExpression(newEquation, Ion::Events::OK);
     return true;
   }
   return false;

@@ -9,6 +9,8 @@
 
 namespace Statistics {
 
+class BoxController;
+
 class BoxView : public Shared::CurveView {
 public:
   enum class Quantile : int {
@@ -19,7 +21,7 @@ public:
     ThirdQuartile = 3,
     Max = 4
   };
-  BoxView(Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color);
+  BoxView(BoxController * controller, Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color);
   Quantile selectedQuantile() const { return *m_selectedQuantile; }
   bool selectQuantile(int selectedQuantile);
   int series() const { return m_series; }
@@ -35,6 +37,7 @@ private:
   KDCoordinate boxUpperBoundPixel() const;
   char * label(Axis axis, int index) const override { return nullptr; }
   Store * m_store;
+  BoxController * m_boxController;
   BoxRange m_boxRange;
   int m_series;
   Quantile * m_selectedQuantile;

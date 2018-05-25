@@ -1,4 +1,5 @@
 #include "box_view.h"
+#include "box_controller.h"
 #include <assert.h>
 #include <cmath>
 
@@ -6,9 +7,10 @@ using namespace Shared;
 
 namespace Statistics {
 
-BoxView::BoxView(Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color) :
+BoxView::BoxView(BoxController * controller, Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color) :
   CurveView(&m_boxRange, nullptr, bannerView, nullptr),
   m_store(store),
+  m_boxController(controller),
   m_boxRange(BoxRange(store)),
   m_series(series),
   m_selectedQuantile(selectedQuantile),
@@ -35,9 +37,19 @@ void BoxView::reload() {
   float calculation = (m_store->*calculationMethods[(int)*m_selectedQuantile])(m_series);
   float pixelUpperBound = boxUpperBoundPixel();
   float pixelLowerBound = boxLowerBoundPixel();
+
+  // Dirty the selected vertical bar
   float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculation)-1;
   KDRect dirtyZone(KDRect(selectedValueInPixels, pixelLowerBound, 4, pixelUpperBound - pixelLowerBound));
   markRectAsDirty(dirtyZone);
+
+  // Dirty the colored horizontal bar
+  double minVal = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series)));
+  double firstQuart = std::round(floatToPixel(Axis::Horizontal, m_store->firstQuartile(m_series)));
+  double thirdQuart = std::round(floatToPixel(Axis::Horizontal, m_store->thirdQuartile(m_series)));
+  double maxVal = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series)));
+  markRectAsDirty(KDRect(minVal, (pixelUpperBound + pixelUpperBound)/2, firstQuart - minVal, 1));
+  markRectAsDirty(KDRect(thirdQuart, (pixelUpperBound + pixelUpperBound)/2, maxVal - thirdQuart, 1));
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -57,10 +69,12 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
   ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
     upBoundPixel-lowBoundPixel), Palette::GreyWhite);
+
   // Draw the horizontal lines linking the box to the extreme bounds
+  KDColor horizontalColor = m_boxController->selectedSeries() == m_series ? m_selectedHistogramColor : Palette::GreyDark;
   float segmentOrd = (lowBound + upBound)/ 2.0f;
-  drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, minVal, firstQuart, Palette::GreyDark);
-  drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, maxVal, Palette::GreyDark);
+  drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, minVal, firstQuart, horizontalColor);
+  drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, maxVal, horizontalColor);
 
   double calculations[5] = {minVal, firstQuart, m_store->median(m_series), thirdQuart, maxVal};
   /* We then draw all the vertical lines of the box and then recolor the

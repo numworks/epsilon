@@ -10,9 +10,11 @@
 
 namespace Statistics {
 
+class BoxController;
+
 class MultipleBoxesView : public MultipleDataView {
 public:
-  MultipleBoxesView(Store * store, BoxView::Quantile * selectedQuantile);
+  MultipleBoxesView(BoxController * controller, Store * store, BoxView::Quantile * selectedQuantile);
   // MultipleDataView
   int seriesOfSubviewAtIndex(int index) override;
   const BoxBannerView * bannerView() const override { return &m_bannerView; }

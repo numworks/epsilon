@@ -11,8 +11,8 @@ namespace Statistics {
 class MultipleDataView : public View {
 public:
   MultipleDataView(Store * store) :
-    m_displayBanner(false),
-    m_store(store)
+    m_store(store),
+    m_displayBanner(false)
   {}
   // Data views
   void selectDataView(int index);
@@ -33,13 +33,15 @@ public:
 protected:
   virtual const Shared::BannerView * bannerView() const = 0;
   void layoutSubviews() override;
+  virtual void layoutDataSubviews();
   View * subviewAtIndex(int index) override;
   virtual void changeDataViewSelection(int index, bool select);
-private:
-  void drawRect(KDContext * ctx, KDRect rect) const override;
   KDRect bannerFrame() const;
-  bool m_displayBanner;
   Store * m_store;
+private:
+  void layoutBanner();
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+  bool m_displayBanner;
 };
 
 }

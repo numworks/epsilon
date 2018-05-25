@@ -123,7 +123,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    if (selectedRow() == 0 || selectedRow() == numberOfRows()-1) {
+    if (selectedRow() == 0 || selectedRow() > m_store->numberOfPairsOfSeries(selectedColumn()/FloatPairStore::k_numberOfColumnsPerSeries)) {
       return false;
     }
     m_store->deletePairOfSeriesAtIndex(series, selectedRow()-1);

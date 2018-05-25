@@ -40,7 +40,7 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
   assert(m_selectedSeries >= 0);
   if (event == Ion::Events::Down) {
     int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(m_selectedSeries);
-    if (currentSelectedSubview < multipleDataView()->numberOfSubviews() - 2) {
+    if (currentSelectedSubview < m_store->numberOfNonEmptySeries() - 1) {
       multipleDataView()->deselectDataView(m_selectedSeries);
       m_selectedSeries = multipleDataView()->seriesOfSubviewAtIndex(currentSelectedSubview+1);
       *m_selectedBarIndex = 0;

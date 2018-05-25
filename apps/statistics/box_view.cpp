@@ -6,13 +6,14 @@ using namespace Shared;
 
 namespace Statistics {
 
-BoxView::BoxView(Store * store, BannerView * bannerView, Quantile * selectedQuantile) :
+BoxView::BoxView(Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color) :
   CurveView(&m_boxRange, nullptr, bannerView, nullptr),
   m_store(store),
   m_boxRange(BoxRange(store)),
   m_labels{},
+  m_series(series),
   m_selectedQuantile(selectedQuantile),
-  m_series(0)
+  m_selectedHistogramColor(color)
 {
 }
 

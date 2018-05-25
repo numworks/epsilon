@@ -14,10 +14,6 @@ MultipleDataViewController::MultipleDataViewController(Responder * parentRespond
 {
 }
 
-MultipleDataView * MultipleDataViewController::multipleDataView() {
-  return static_cast<MultipleDataView *>(view());
-}
-
 bool MultipleDataViewController::isEmpty() const {
   return m_store->isEmpty();
 }

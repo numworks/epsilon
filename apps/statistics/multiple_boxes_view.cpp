@@ -44,7 +44,7 @@ void MultipleBoxesView::layoutDataSubviews() {
       displayedSubviewIndex++;
     }
   }
-  m_axisView.setFrame(KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), k_axisViewHeight));
+  m_axisView.setFrame(KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), bounds().height() - bannerHeight - displayedSubviewIndex*subviewHeight));
 }
 
 void MultipleBoxesView::reload() {

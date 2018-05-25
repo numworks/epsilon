@@ -77,3 +77,28 @@ QUIZ_CASE(poincare_characteristic_range) {
   assert_parsed_expression_has_characteristic_range("log(cos(40*x))", 9.0f);
   assert_parsed_expression_has_characteristic_range("cos(cos(x))", 360.0f);
 }
+
+void assert_parsed_expression_has_variables(const char * expression, const char * variables) {
+  Expression * e = parse_expression(expression);
+  char variableBuffer[Expression::k_maxNumberOfVariables+1] = {0};
+  int numberOfVariables = e->getVariables(variableBuffer);
+  if (variables == nullptr) {
+    assert(numberOfVariables == -1);
+  } else {
+    assert(numberOfVariables == strlen(variables));
+    char * currentChar = variableBuffer;
+    while (*variables != 0) {
+      assert(*currentChar++ == *variables++);
+    }
+  }
+  delete e;
+}
+
+QUIZ_CASE(poincare_get_variables) {
+  assert_parsed_expression_has_variables("x+y", "xy");
+  assert_parsed_expression_has_variables("x+y+z+2*t", "xyzt");
+  assert_parsed_expression_has_variables("abcdef", "abcdef");
+  assert_parsed_expression_has_variables("abcdefg", nullptr);
+  assert_parsed_expression_has_variables("abcde", "abcde");
+  assert_parsed_expression_has_variables("x^2+2*y+k!*A+w", "xykw");
+}

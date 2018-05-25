@@ -215,6 +215,17 @@ public:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */
   virtual int polynomialDegree(char symbolName) const;
+  /* getVariables fills the table variables with the variable present in the
+   * expression and returns the number of entries in filled in variables.
+   * For instance getVariables('x+y+2*w/cos(4)') would result in
+   * variables = ['x', 'y', 'w'] and would return 3. If the final number of
+   * variables would overflow the maxNumberOfVariables, getVariables return -1 */
+  static constexpr int k_maxNumberOfVariables = 6;
+  virtual int getVariables(char * variables) const;
+  /* getPolynomialCoefficients fill the table coefficients with the expressions
+   * of the first 4 polynomial coefficients. coefficients is null-terminated
+   * and has up to 4 entries. */
+  //virtual void getPolynomialCoefficients(char symbolName, Expression ** coefficients) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have

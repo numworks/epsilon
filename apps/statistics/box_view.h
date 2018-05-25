@@ -23,6 +23,7 @@ public:
   Quantile selectedQuantile() const { return *m_selectedQuantile; }
   bool selectQuantile(int selectedQuantile);
   int series() const { return m_series; }
+  void setDisplayAxis(bool display) { m_displayAxis = display; }
 
   // CurveView
   void reload() override;
@@ -37,6 +38,7 @@ private:
   int m_series;
   Quantile * m_selectedQuantile;
   KDColor m_selectedHistogramColor;
+  bool m_displayAxis;
 };
 
 }

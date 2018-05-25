@@ -16,6 +16,7 @@ public:
   int seriesOfSubviewAtIndex(int index) override;
   const BoxBannerView * bannerView() const override { return &m_bannerView; }
   BoxView * dataViewAtIndex(int index) override;
+  void layoutSubviews() override;
 private:
   BoxView m_boxView1;
   BoxView m_boxView2;

@@ -16,7 +16,7 @@ MultipleBoxesView::MultipleBoxesView(Store * store, BoxView::Quantile * selected
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     BoxView * boxView = dataViewAtIndex(i);
     boxView->setDisplayBannerView(false);
-    //histView->setDisplayLabels(false); //TODO
+    boxView->setDisplayAxis(false);
   }
 }
 
@@ -29,6 +29,15 @@ BoxView *  MultipleBoxesView::dataViewAtIndex(int index) {
 int MultipleBoxesView::seriesOfSubviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews() - 1);
   return static_cast<BoxView *>(subviewAtIndex(index))->series();
+}
+
+void MultipleBoxesView::layoutSubviews() {
+  MultipleDataView::layoutSubviews();
+  int numberOfDataSubviews = numberOfSubviews() - 1;
+  assert(numberOfDataSubviews > 0);
+  for (int i = 0; i < numberOfDataSubviews; i++) {
+    static_cast<BoxView *>(subviewAtIndex(i))->setDisplayAxis(i == numberOfDataSubviews - 1);
+  }
 }
 
 }

@@ -13,7 +13,8 @@ BoxView::BoxView(Store * store, int series, Shared::BannerView * bannerView, Qua
   m_labels{},
   m_series(series),
   m_selectedQuantile(selectedQuantile),
-  m_selectedHistogramColor(color)
+  m_selectedHistogramColor(color),
+  m_displayAxis(true)
 {
 }
 
@@ -43,8 +44,12 @@ void BoxView::reload() {
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
-  drawAxes(ctx, rect, Axis::Horizontal);
-  drawLabels(ctx, rect, Axis::Horizontal, false);
+  if (m_displayAxis) {
+    drawAxes(ctx, rect, Axis::Horizontal);
+    drawLabels(ctx, rect, Axis::Horizontal, false);
+  }
+
+  // TODO : recompute drawing position without axis
   float lowBound = 0.35f;
   float upBound = 0.65f;
   double minVal = m_store->minValue(m_series);

@@ -36,22 +36,10 @@ void MultipleDataView::deselectDataView(int index) {
   changeDataViewSelection(index, false);
 }
 
-void MultipleDataView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (!m_displayBanner) {
-    ctx->fillRect(bannerFrame(), KDColorWhite);
-  }
-}
-
 int MultipleDataView::numberOfSubviews() const {
   int result = m_store->numberOfNonEmptySeries();
   assert(result <= Store::k_numberOfSeries);
   return result + 1; // +1 for the banner view
-}
-
-KDRect MultipleDataView::bannerFrame() const {
-  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
-  KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), bannerHeight);
-  return frame;
 }
 
 View * MultipleDataView::subviewAtIndex(int index) {
@@ -74,6 +62,11 @@ View * MultipleDataView::subviewAtIndex(int index) {
 }
 
 void MultipleDataView::layoutSubviews() {
+  layoutDataSubviews();
+  layoutBanner();
+}
+
+void MultipleDataView::layoutDataSubviews() {
   int numberDataSubviews = m_store->numberOfNonEmptySeries();
   assert(numberDataSubviews > 0);
   KDCoordinate bannerHeight = bannerFrame().height();
@@ -87,6 +80,20 @@ void MultipleDataView::layoutSubviews() {
       displayedSubviewIndex++;
     }
   }
+}
+
+void MultipleDataView::changeDataViewSelection(int index, bool select) {
+  dataViewAtIndex(index)->selectMainView(select);
+}
+
+KDRect MultipleDataView::bannerFrame() const {
+  KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
+  KDRect frame = KDRect(0, bounds().height() - bannerHeight, bounds().width(), bannerHeight);
+  return frame;
+}
+
+void MultipleDataView::layoutBanner() {
+  KDCoordinate bannerHeight = bannerFrame().height();
   if (m_displayBanner) {
     editableBannerView()->setFrame(bannerFrame());
   } else {
@@ -95,8 +102,10 @@ void MultipleDataView::layoutSubviews() {
   }
 }
 
-void MultipleDataView::changeDataViewSelection(int index, bool select) {
-  dataViewAtIndex(index)->selectMainView(select);
+void MultipleDataView::drawRect(KDContext * ctx, KDRect rect) const {
+  if (!m_displayBanner) {
+    ctx->fillRect(bannerFrame(), KDColorWhite);
+  }
 }
 
 }

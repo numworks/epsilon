@@ -31,12 +31,23 @@ int MultipleBoxesView::seriesOfSubviewAtIndex(int index) {
   return static_cast<BoxView *>(subviewAtIndex(index))->series();
 }
 
-void MultipleBoxesView::layoutSubviews() {
-  MultipleDataView::layoutSubviews();
-  int numberOfDataSubviews = numberOfSubviews() - 1;
+void MultipleBoxesView::layoutDataSubviews() {
+  int numberOfDataSubviews = m_store->numberOfNonEmptySeries();
   assert(numberOfDataSubviews > 0);
-  for (int i = 0; i < numberOfDataSubviews; i++) {
-    static_cast<BoxView *>(subviewAtIndex(i))->setDisplayAxis(i == numberOfDataSubviews - 1);
+  KDCoordinate bannerHeight = bannerFrame().height();
+  KDCoordinate axisHeight = 30;
+  KDCoordinate subviewHeight = (bounds().height() - bannerHeight - axisHeight)/numberOfDataSubviews;
+  int displayedSubviewIndex = 0;
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    if (!m_store->seriesIsEmpty(i)) {
+      BoxView * boxView = dataViewAtIndex(i);
+      bool displaysAxis = displayedSubviewIndex == numberOfDataSubviews - 1;
+      boxView->setDisplayAxis(displaysAxis);
+      KDCoordinate currentSubviewHeight = subviewHeight + (displaysAxis ? axisHeight : 0);
+      KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), currentSubviewHeight);
+      boxView->setFrame(frame);
+      displayedSubviewIndex++;
+    }
   }
 }
 

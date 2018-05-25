@@ -19,10 +19,10 @@ public:
     ThirdQuartile = 3,
     Max = 4
   };
-  BoxView(Store * store, Shared::BannerView * bannerView, Quantile * selectedQuantile);
+  BoxView(Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color);
   Quantile selectedQuantile() const { return *m_selectedQuantile; }
   bool selectQuantile(int selectedQuantile);
-  void setSeries(int series) { m_series = series; }
+  int series() const { return m_series; }
 
   // CurveView
   void reload() override;
@@ -34,8 +34,9 @@ private:
   Store * m_store;
   BoxRange m_boxRange;
   char m_labels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
-  Quantile * m_selectedQuantile;
   int m_series;
+  Quantile * m_selectedQuantile;
+  KDColor m_selectedHistogramColor;
 };
 
 }

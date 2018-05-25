@@ -83,7 +83,7 @@ using namespace Poincare;
    * starting with \x. */
 
 [0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
-[A-Zxyztn] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+[A-Za-z] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 M[0-9] { poincare_expression_yylval.character = Symbol::matrixSymbol(yytext[1]); return SYMBOL; }
 u\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un; return SYMBOL; }
 u\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un1; return SYMBOL; }

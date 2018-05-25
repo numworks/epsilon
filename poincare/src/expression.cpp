@@ -207,6 +207,18 @@ int Expression::polynomialDegree(char symbolName) const {
   return 0;
 }
 
+int Expression::getVariables(char * variables) const {
+  int numberOfVariables = 0;
+  for (int i = 0; i < numberOfOperands(); i++) {
+    int n = operand(i)->getVariables(variables);
+    if (n < 0) {
+      return -1;
+    }
+    numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
+  }
+  return numberOfVariables;
+}
+
 bool Expression::isOfType(Type * types, int length) const {
   for (int i = 0; i < length; i++) {
     if (type() == types[i]) {

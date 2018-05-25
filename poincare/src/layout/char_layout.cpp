@@ -59,13 +59,6 @@ bool CharLayout::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) co
   return true;
 }
 
-bool CharLayout::canBeOmittedMultiplicationLeftFactor() const {
-  return m_char != Ion::Charset::Sto;
-}
-bool CharLayout::canBeOmittedMultiplicationRightFactor() const {
-  return m_char != Ion::Charset::Sto;
-}
-
 void CharLayout::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   char string[2] = {m_char, 0};
   ctx->drawString(string, p, m_fontSize, expressionColor, backgroundColor);

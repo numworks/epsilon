@@ -43,7 +43,7 @@ int MultipleDataView::numberOfSubviews() const {
 }
 
 View * MultipleDataView::subviewAtIndex(int index) {
-  if (index == numberOfSubviews() -1) {
+  if (index == MultipleDataView::numberOfSubviews() -1) {
     return editableBannerView();
   }
   int seriesIndex = 0;

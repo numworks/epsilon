@@ -10,11 +10,9 @@ BoxView::BoxView(Store * store, int series, Shared::BannerView * bannerView, Qua
   CurveView(&m_boxRange, nullptr, bannerView, nullptr),
   m_store(store),
   m_boxRange(BoxRange(store)),
-  m_labels{},
   m_series(series),
   m_selectedQuantile(selectedQuantile),
-  m_selectedHistogramColor(color),
-  m_displayAxis(true)
+  m_selectedHistogramColor(color)
 {
 }
 
@@ -44,10 +42,6 @@ void BoxView::reload() {
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
-  if (m_displayAxis) {
-    drawAxes(ctx, rect, Axis::Horizontal);
-    drawLabels(ctx, rect, Axis::Horizontal, false);
-  }
 
   // TODO : recompute drawing position without axis
   float lowBound = 0.35f;
@@ -65,14 +59,15 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
     upBoundPixel-lowBoundPixel), Palette::GreyWhite);
   // Draw the horizontal lines linking the box to the extreme bounds
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, minVal, firstQuart, Palette::GreyDark);
-  drawSegment(ctx, rect, Axis::Horizontal, 0.5f, thirdQuart, maxVal, Palette::GreyDark);
+  float segmentOrd = (lowBound + upBound)/ 2.0f;
+  drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, minVal, firstQuart, Palette::GreyDark);
+  drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, maxVal, Palette::GreyDark);
 
   double calculations[5] = {minVal, firstQuart, m_store->median(m_series), thirdQuart, maxVal};
   /* We then draw all the vertical lines of the box and then recolor the
    * the selected quantile (if there is one). As two quantiles can have the same
    * value, we cannot choose line colors and then color only once the vertical
-   * lines. This solution could hide the highlighed line by coloring the next
+   * lines. This solution could hide the highlighted line by coloring the next
    * quantile if it has the same value. */
   for (int k = 0; k < 5; k++) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, 2);
@@ -80,10 +75,6 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   if (isMainViewSelected()) {
     drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, 2);
   }
-}
-
-char * BoxView::label(Axis axis, int index) const {
-  return axis == Axis::Vertical ? nullptr : (char *)m_labels[index];
 }
 
 }

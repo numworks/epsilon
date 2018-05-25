@@ -3,6 +3,7 @@ snapshot_headers += apps/statistics/app.h
 
 app_objs += $(addprefix apps/statistics/,\
   app.o\
+  box_axis_view.o\
   box_banner_view.o\
   box_controller.o\
   box_range.o\

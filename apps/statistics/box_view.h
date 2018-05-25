@@ -23,7 +23,6 @@ public:
   Quantile selectedQuantile() const { return *m_selectedQuantile; }
   bool selectQuantile(int selectedQuantile);
   int series() const { return m_series; }
-  void setDisplayAxis(bool display) { m_displayAxis = display; }
 
   // CurveView
   void reload() override;
@@ -31,14 +30,12 @@ public:
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  char * label(Axis axis, int index) const override;
+  char * label(Axis axis, int index) const override { return nullptr; }
   Store * m_store;
   BoxRange m_boxRange;
-  char m_labels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
   int m_series;
   Quantile * m_selectedQuantile;
   KDColor m_selectedHistogramColor;
-  bool m_displayAxis;
 };
 
 }

@@ -11,12 +11,12 @@ MultipleBoxesView::MultipleBoxesView(Store * store, BoxView::Quantile * selected
   m_boxView2(store, 1, nullptr, selectedQuantile, Palette::Blue),
   m_boxView3(store, 2, nullptr, selectedQuantile, Palette::Green),
   // TODO Share colors with stats/store_controller
+  m_axisView(store),
   m_bannerView()
 {
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     BoxView * boxView = dataViewAtIndex(i);
     boxView->setDisplayBannerView(false);
-    boxView->setDisplayAxis(false);
   }
 }
 
@@ -35,20 +35,33 @@ void MultipleBoxesView::layoutDataSubviews() {
   int numberOfDataSubviews = m_store->numberOfNonEmptySeries();
   assert(numberOfDataSubviews > 0);
   KDCoordinate bannerHeight = bannerFrame().height();
-  KDCoordinate axisHeight = 30;
-  KDCoordinate subviewHeight = (bounds().height() - bannerHeight - axisHeight)/numberOfDataSubviews;
+  KDCoordinate subviewHeight = (bounds().height() - bannerHeight - k_axisViewHeight)/numberOfDataSubviews;
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (!m_store->seriesIsEmpty(i)) {
-      BoxView * boxView = dataViewAtIndex(i);
-      bool displaysAxis = displayedSubviewIndex == numberOfDataSubviews - 1;
-      boxView->setDisplayAxis(displaysAxis);
-      KDCoordinate currentSubviewHeight = subviewHeight + (displaysAxis ? axisHeight : 0);
-      KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), currentSubviewHeight);
-      boxView->setFrame(frame);
+      KDRect frame = KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), subviewHeight);
+      dataViewAtIndex(i)->setFrame(frame);
       displayedSubviewIndex++;
     }
   }
+  m_axisView.setFrame(KDRect(0, displayedSubviewIndex*subviewHeight, bounds().width(), k_axisViewHeight));
 }
+
+void MultipleBoxesView::reload() {
+  MultipleDataView::reload();
+  m_axisView.reload();
+}
+
+int MultipleBoxesView::numberOfSubviews() const {
+  return MultipleDataView::numberOfSubviews() + 1; // +1 for the axis view
+}
+
+View *  MultipleBoxesView::subviewAtIndex(int index) {
+  if (index == numberOfSubviews() - 1) {
+    return &m_axisView;
+  }
+  return MultipleDataView::subviewAtIndex(index);
+}
+
 
 }

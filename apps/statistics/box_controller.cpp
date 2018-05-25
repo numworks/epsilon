@@ -38,9 +38,15 @@ void BoxController::reloadBannerView() {
 
   int selectedQuantile = (int)m_view.dataViewAtIndex(selectedSeries())->selectedQuantile();
 
+  // Set series name
+  char seriesChar = '0' + selectedSeries() + 1;
+  char bufferName[] = {'V', seriesChar, '/', 'N', seriesChar, 0};
+  m_view.editableBannerView()->setLegendAtIndex(bufferName, 0);
+
+
   // Set calculation name
   I18n::Message calculationName[5] = {I18n::Message::Minimum, I18n::Message::FirstQuartile, I18n::Message::Median, I18n::Message::ThirdQuartile, I18n::Message::Maximum};
-  m_view.editableBannerView()->setMessageAtIndex(calculationName[selectedQuantile], 0);
+  m_view.editableBannerView()->setMessageAtIndex(calculationName[selectedQuantile], 1);
 
   // Set calculation result
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
@@ -48,7 +54,7 @@ void BoxController::reloadBannerView() {
     &Store::maxValue};
   double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeries());
   PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  m_view.editableBannerView()->setLegendAtIndex(buffer, 1);
+  m_view.editableBannerView()->setLegendAtIndex(buffer, 2);
 }
 
 }

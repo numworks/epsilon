@@ -26,7 +26,7 @@ public:
 
   // Display
   void setDisplayBanner(bool display) { m_displayBanner = display; }
-  void reload();
+  virtual void reload();
 
   // View
   int numberOfSubviews() const override;

@@ -30,6 +30,9 @@ public:
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
+  static constexpr KDCoordinate k_boxHeight = 40;
+  KDCoordinate boxLowerBoundPixel() const;
+  KDCoordinate boxUpperBoundPixel() const;
   char * label(Axis axis, int index) const override { return nullptr; }
   Store * m_store;
   BoxRange m_boxRange;

@@ -25,7 +25,7 @@ public:
   View * subviewAtIndex(int index) override;
 
 private:
-  static constexpr KDCoordinate k_axisViewHeight = 20;
+  static constexpr KDCoordinate k_axisViewHeight = 21;
   BoxView m_boxView1;
   BoxView m_boxView2;
   BoxView m_boxView3;

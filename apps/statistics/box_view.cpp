@@ -33,8 +33,8 @@ void BoxView::reload() {
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   float calculation = (m_store->*calculationMethods[(int)*m_selectedQuantile])(m_series);
-  float pixelUpperBound = floatToPixel(Axis::Vertical, 0.2f)+1;
-  float pixelLowerBound = floatToPixel(Axis::Vertical, 0.8)-1;
+  float pixelUpperBound = boxUpperBoundPixel();
+  float pixelLowerBound = boxLowerBoundPixel();
   float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculation)-1;
   KDRect dirtyZone(KDRect(selectedValueInPixels, pixelLowerBound, 4, pixelUpperBound - pixelLowerBound));
   markRectAsDirty(dirtyZone);
@@ -43,9 +43,10 @@ void BoxView::reload() {
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, KDColorWhite);
 
-  // TODO : recompute drawing position without axis
-  float lowBound = 0.35f;
-  float upBound = 0.65f;
+  KDCoordinate lowBoundPixel = boxLowerBoundPixel();
+  KDCoordinate upBoundPixel = boxUpperBoundPixel();
+  float lowBound = pixelToFloat(Axis::Vertical, upBoundPixel);
+  float upBound = pixelToFloat(Axis::Vertical, lowBoundPixel);
   double minVal = m_store->minValue(m_series);
   double firstQuart = m_store->firstQuartile(m_series);
   double thirdQuart = m_store->thirdQuartile(m_series);
@@ -54,8 +55,6 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the main box
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
-  KDCoordinate lowBoundPixel = std::round(floatToPixel(Axis::Vertical, upBound));
-  KDCoordinate upBoundPixel = std::round(floatToPixel(Axis::Vertical, lowBound));
   ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
     upBoundPixel-lowBoundPixel), Palette::GreyWhite);
   // Draw the horizontal lines linking the box to the extreme bounds
@@ -76,5 +75,14 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
     drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, 2);
   }
 }
+
+KDCoordinate BoxView::boxLowerBoundPixel() const {
+  return bounds().height() / 2 - k_boxHeight / 2;
+}
+
+KDCoordinate BoxView::boxUpperBoundPixel() const {
+  return bounds().height() / 2 + k_boxHeight / 2;
+}
+
 
 }

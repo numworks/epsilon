@@ -174,13 +174,11 @@ double Store::sampleStandardDeviation(int series) {
 }
 
 double Store::firstQuartile(int series) {
-  double firstQuartileIndex = sumOfOccurrences(series)/4.0f;
-  return sortedElementNumber(series, firstQuartileIndex);
+  return sortedElementAtCumulatedFrequency(series, 1.0/4.0);
 }
 
 double Store::thirdQuartile(int series) {
-  double thirdQuartileIndex = 3*sumOfOccurrences(series)/4.0f;
-  return sortedElementNumber(series, thirdQuartileIndex);
+  return sortedElementAtCumulatedFrequency(series, 3.0/4.0);
 }
 
 double Store::quartileRange(int series) {
@@ -188,15 +186,13 @@ double Store::quartileRange(int series) {
 }
 
 double Store::median(int series) {
-  double total = sumOfOccurrences(series);
-  double halfTotal = total/2;
-  int totalMod2 = total - 2*halfTotal;
-  if (totalMod2 == 0) {
-    double minusMedian = sortedElementNumber(series, halfTotal);
-    double maxMedian = sortedElementNumber(series, halfTotal+1.0);
+  bool exactElement = true;
+  double maxMedian = sortedElementAtCumulatedFrequency(series, 1.0/2.0, &exactElement);
+  if (!exactElement) {
+    double minusMedian = sortedElementAfter(series, maxMedian);
     return (minusMedian+maxMedian)/2.0;
   } else {
-    return sortedElementNumber(series, halfTotal+1.0);
+    return maxMedian;
   }
 }
 
@@ -232,18 +228,38 @@ double Store::sumOfValuesBetween(int series, double x1, double x2) {
   return result;
 }
 
-double Store::sortedElementNumber(int series, double k) {
+double Store::sortedElementAtCumulatedFrequency(int series, double k, bool * exactElement) {
   // TODO: use an other algorithm (ex quickselect) to avoid quadratic complexity
+  assert(k >= 0.0 && k <= 1.0);
+  double totalNumberOfElements = sumOfOccurrences(series);
   double bufferValues[m_numberOfPairs[series]];
   memcpy(bufferValues, m_data[series][0], m_numberOfPairs[series]*sizeof(double));
   int sortedElementIndex = 0;
-  double cumulatedSize = 0.0;
-  while (cumulatedSize < k) {
+  double cumulatedFrequency = 0.0;
+  while (cumulatedFrequency < k) {
     sortedElementIndex = minIndex(bufferValues, m_numberOfPairs[series]);
     bufferValues[sortedElementIndex] = DBL_MAX;
-    cumulatedSize += m_data[series][1][sortedElementIndex];
+    cumulatedFrequency += m_data[series][1][sortedElementIndex] / totalNumberOfElements;
+    if (exactElement != nullptr && cumulatedFrequency == k) {
+      *exactElement = false;
+    }
   }
   return m_data[series][0][sortedElementIndex];
+}
+
+double Store::sortedElementAfter(int series, double k) {
+  assert(m_numberOfPairs[series] > 0);
+  double result = DBL_MAX;
+  bool foundResult = false;
+  for (int i = 0; i < m_numberOfPairs[series]; i++) {
+    double currentElement = m_data[series][0][i];
+    if (currentElement > k && currentElement < result) {
+      result = currentElement;
+      foundResult = true;
+    }
+  }
+  assert(foundResult);
+  return result;
 }
 
 int Store::minIndex(double * bufferValues, int bufferLength) {

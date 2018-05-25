@@ -113,6 +113,26 @@ int Symbol::polynomialDegree(char symbol) const {
   return 0;
 }
 
+int Symbol::getVariables(char * variables) const {
+  size_t variablesLength = strlen(variables);
+  if (m_name >= 'a' && m_name <= 'z') {
+    char * currentChar = variables;
+    while (*currentChar != 0) {
+      if (*currentChar == m_name) {
+        return variablesLength;
+      }
+      currentChar++;
+    }
+    if (variablesLength < k_maxNumberOfVariables) {
+      variables[variablesLength] = m_name;
+      variables[variablesLength+1] = 0;
+      return variablesLength+1;
+    }
+    return -1;
+  }
+  return variablesLength;
+}
+
 Expression * Symbol::replaceSymbolWithExpression(char symbol, Expression * expression) {
   if (m_name == symbol) {
     Expression * value = expression->clone();

@@ -21,7 +21,7 @@ private:
     return emptyModel();
   }
   void setModelAtIndex(Shared::ExpressionModel * f, int i) override;
-  static constexpr int k_maxNumberOfEquations = 6;
+  static constexpr int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
   Equation m_equations[k_maxNumberOfEquations];;
 };
 

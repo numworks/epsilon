@@ -1,5 +1,4 @@
 #include "store_controller.h"
-#include "store_selectable_table_view.h"
 #include "../apps_container.h"
 #include "../constant.h"
 #include <escher/metric.h>
@@ -8,6 +7,35 @@
 using namespace Poincare;
 
 namespace Shared {
+
+StoreController::ContentView::ContentView(FloatPairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate) :
+  View(),
+  Responder(parentResponder),
+  m_dataView(store, this, dataSource, selectionDataSource),
+  m_formulaInputView(this, textFieldDelegate),
+  m_displayInputFormulaView(false)
+{
+  m_dataView.setBackgroundColor(Palette::WallScreenDark);
+  m_dataView.setVerticalCellOverlap(0);
+  m_dataView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+}
+
+void StoreController::ContentView::didBecomeFirstResponder() {
+  app()->setFirstResponder(&m_dataView);
+}
+
+View * StoreController::ContentView::subviewAtIndex(int index) {
+  assert(index >= 0 && index < numberOfSubviews());
+  View * views[] = {&m_dataView, &m_formulaInputView};
+  return views[index];
+}
+
+void StoreController::ContentView::layoutSubviews() {
+  KDRect dataViewFrame(0, 0, bounds().width(), bounds().height() - (m_displayInputFormulaView ? BufferTextViewWithTextField::k_height : 0));
+  m_dataView.setFrame(dataViewFrame);
+  KDRect formulaFrame(0, bounds().height() - BufferTextViewWithTextField::k_height, bounds().width(), m_displayInputFormulaView ? BufferTextViewWithTextField::k_height : 0);
+  m_formulaInputView.setFrame(formulaFrame);
+}
 
 StoreController::StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
@@ -143,10 +171,15 @@ void StoreController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
+  app()->setFirstResponder(static_cast<ContentView *>(view()));
 }
 
 Responder * StoreController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
+}
+
+SelectableTableView * StoreController::selectableTableView() {
+  return static_cast<ContentView *>(view())->dataView();
 }
 
 bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
@@ -178,15 +211,11 @@ int StoreController::maxNumberOfElements() const {
 }
 
 View * StoreController::loadView() {
-  StoreSelectableTableView * tableView = new StoreSelectableTableView(m_store, this, this, this);
-  tableView->setBackgroundColor(Palette::WallScreenDark);
-  tableView->setVerticalCellOverlap(0);
-
+  ContentView * contentView = new ContentView(m_store, this, this, this, this);
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
-    m_editableCells[i] = new StoreCell(tableView, this, m_draftTextBuffer);
+    m_editableCells[i] = new StoreCell(contentView->dataView(), this, m_draftTextBuffer);
   }
-  tableView->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin - Metric::TableSeparatorThickness);
-  return tableView;
+  return contentView;
 }
 
 void StoreController::unloadView(View * view) {
@@ -194,7 +223,7 @@ void StoreController::unloadView(View * view) {
     delete m_editableCells[i];
     m_editableCells[i] = nullptr;
   }
-  EditableCellTableViewController::unloadView(view);
+  delete view;
 }
 
 bool StoreController::cellShouldBeTransparent(int i, int j) {

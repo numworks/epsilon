@@ -1,6 +1,7 @@
 app_objs += $(addprefix apps/shared/,\
   banner_view.o\
   buffer_function_title_cell.o\
+  buffer_text_view_with_text_field.o\
   button_with_separator.o\
   cursor_view.o\
   curve_view.o\

@@ -110,8 +110,8 @@ KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
 int CalculationController::indexFromCumulatedWidth(KDCoordinate offsetX) {
   int result = 0;
   int i = 0;
-  while (result < offsetX && i < numberOfRows()) {
-    result += rowHeight(i++);
+  while (result < offsetX && i < numberOfColumns()) {
+    result += columnWidth(i++);
   }
   return (result < offsetX || offsetX == 0) ? i : i - 1;
 }
@@ -150,6 +150,8 @@ int CalculationController::reusableCellCount(int type) {
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
+  assert(i >= 0 && i < numberOfColumns());
+  assert(j >= 0 && j < numberOfRows());
   if (i == 0 && j == 0) {
     return k_hideableCellType;
   }

@@ -2,10 +2,12 @@
 #define SHARED_STORE_CONTROLLER_H
 
 #include <escher.h>
+#include "buffer_text_view_with_text_field.h"
 #include "editable_cell_table_view_controller.h"
 #include "float_pair_store.h"
 #include "store_cell.h"
 #include "store_parameter_controller.h"
+#include "store_selectable_table_view.h"
 
 namespace Shared {
 
@@ -43,7 +45,26 @@ protected:
   constexpr static int k_numberOfTitleCells = 4;
   static constexpr int k_titleCellType = 0;
   static constexpr int k_editableCellType = 1;
+
+  class ContentView : public View , public Responder {
+  public:
+    ContentView(FloatPairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate);
+   StoreSelectableTableView * dataView() { return &m_dataView; }
+  // Responder
+  void didBecomeFirstResponder() override;
+  private:
+    static constexpr KDCoordinate k_margin = 8;
+    static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
+    int numberOfSubviews() const override { return 1 + m_displayInputFormulaView; }
+    View * subviewAtIndex(int index) override;
+    void layoutSubviews() override;
+    StoreSelectableTableView m_dataView;
+    BufferTextViewWithTextField m_formulaInputView;
+    bool m_displayInputFormulaView;
+  };
+
   Responder * tabController() const override;
+  SelectableTableView * selectableTableView() override;
   View * loadView() override;
   void unloadView(View * view) override;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
@@ -59,7 +80,6 @@ protected:
   StoreParameterController m_storeParameterController;
 private:
   bool cellShouldBeTransparent(int i, int j);
-
 };
 
 }

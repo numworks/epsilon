@@ -7,14 +7,15 @@ using namespace Shared;
 
 namespace Statistics {
 
-BoxView::BoxView(BoxController * controller, Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color) :
+BoxView::BoxView(BoxController * controller, Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color, KDColor lightColor) :
   CurveView(&m_boxRange, nullptr, bannerView, nullptr),
   m_store(store),
   m_boxController(controller),
   m_boxRange(BoxRange(store)),
   m_series(series),
   m_selectedQuantile(selectedQuantile),
-  m_selectedHistogramColor(color)
+  m_selectedHistogramColor(color),
+  m_selectedHistogramLightColor(lightColor)
 {
 }
 
@@ -64,14 +65,16 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   double thirdQuart = m_store->thirdQuartile(m_series);
   double maxVal = m_store->maxValue(m_series);
 
+  bool isSelected = m_boxController->selectedSeries() == m_series;
+  KDColor boxColor = isSelected ? m_selectedHistogramLightColor : Palette::GreyWhite;
   // Draw the main box
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
   ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
-    upBoundPixel-lowBoundPixel), Palette::GreyWhite);
+    upBoundPixel-lowBoundPixel), boxColor);
 
   // Draw the horizontal lines linking the box to the extreme bounds
-  KDColor horizontalColor = m_boxController->selectedSeries() == m_series ? m_selectedHistogramColor : Palette::GreyDark;
+  KDColor horizontalColor = isSelected ? m_selectedHistogramColor : Palette::GreyDark;
   float segmentOrd = (lowBound + upBound)/ 2.0f;
   drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, minVal, firstQuart, horizontalColor);
   drawSegment(ctx, rect, Axis::Horizontal, segmentOrd, thirdQuart, maxVal, horizontalColor);

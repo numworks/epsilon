@@ -13,6 +13,8 @@ class StoreController : public EditableCellTableViewController, public ButtonRow
 public:
   StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header);
 
+  void displayFormulaInput();
+
   // TextFieldDelegate
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
 
@@ -57,6 +59,7 @@ protected:
   StoreParameterController m_storeParameterController;
 private:
   bool cellShouldBeTransparent(int i, int j);
+
 };
 
 }

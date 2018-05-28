@@ -3,15 +3,15 @@
 namespace Shared {
 
 KDColor HideableEvenOddEditableTextCell::backgroundColor() const {
-  if (m_hide) {
+  if (hidden()) {
     return hideColor();
   }
   return EvenOddEditableTextCell::backgroundColor();
 }
 
 void HideableEvenOddEditableTextCell::setHide(bool hide) {
-  if (m_hide != hide) {
-    m_hide = hide;
+  if (hidden() != hide) {
+    Hideable::setHide(hide);
     editableTextCell()->textField()->setBackgroundColor(backgroundColor());
     reloadCell();
   }

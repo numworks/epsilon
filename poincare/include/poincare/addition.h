@@ -20,6 +20,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int polynomialDegree(char symbolName) const override;
+  int getPolynomialCoefficients(char symbolName, Expression ** coefficients) const override;
   /* Evaluation */
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
   template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n) {

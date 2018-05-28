@@ -79,6 +79,33 @@ int Power::polynomialDegree(char symbolName) const {
   return -1;
 }
 
+int Power::getPolynomialCoefficients(char symbolName, Expression ** coefficients) const {
+  int deg = polynomialDegree(symbolName);
+  if (deg <= 0) {
+    return deg;
+  }
+  /* Here we only consider the case x^4 as getPolynomialCoefficients is
+   * supposed to be called after reducing the expression. */
+  if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == symbolName && operand(1)->type() == Type::Rational) {
+    const Rational * r = static_cast<const Rational *>(operand(1));
+    if (!r->denominator().isOne() || r->sign() == Sign::Negative) {
+      return -1;
+    }
+    if (Integer::NaturalOrder(r->numerator(), Integer(Integer::k_maxExtractableInteger)) > 0) {
+      return -1;
+    }
+    int n = r->numerator().extractedInt();
+    if (n < k_maxNumberOfPolynomialCoefficients) {
+      for (int i = 0; i < n; i++) {
+        coefficients[i] = new Rational(0);
+      }
+      coefficients[n] = new Rational(1);
+      return n;
+    }
+  }
+  return -1;
+}
+
 Expression * Power::setSign(Sign s, Context & context, AngleUnit angleUnit) {
   assert(s == Sign::Positive);
   assert(operand(0)->sign() == Sign::Negative);

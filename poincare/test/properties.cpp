@@ -102,3 +102,30 @@ QUIZ_CASE(poincare_get_variables) {
   assert_parsed_expression_has_variables("abcde", "abcde");
   assert_parsed_expression_has_variables("x^2+2*y+k!*A+w", "xykw");
 }
+
+void assert_parsed_expression_has_polynomial_coefficient(const char * expression, char symbolName, const char ** coefficients, Expression::AngleUnit angleUnit = Expression::AngleUnit::Degree) {
+  GlobalContext globalContext;
+  Expression * e = parse_expression(expression);
+  Expression::Reduce(&e, globalContext, angleUnit);
+  Expression * coefficientBuffer[Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
+  int d = e->getPolynomialCoefficients(symbolName, coefficientBuffer);
+  for (int i = 0; i <= d; i++) {
+    Expression * f = parse_expression(coefficients[i]);
+    Expression::Reduce(&coefficientBuffer[i], globalContext, angleUnit);
+    Expression::Reduce(&f, globalContext, angleUnit);
+    assert(coefficientBuffer[i]->isIdenticalTo(f));
+    delete f;
+    delete coefficientBuffer[i];
+  }
+  assert(coefficients[d+1] == 0);
+  delete e;
+}
+
+QUIZ_CASE(poincare_get_polynomial_coefficients) {
+  const char * coefficient0[] = {"2", "1", "1", 0};
+  assert_parsed_expression_has_polynomial_coefficient("x^2+x+2", 'x', coefficient0);
+  const char * coefficient1[] = {"12+(-6)*P", "12", "3", 0}; //3*x^2+12*x-6*π+12
+  assert_parsed_expression_has_polynomial_coefficient("3*(x+2)^2-6*P", 'x', coefficient1);
+  const char * coefficient2[] = {"2+32*x", "2", "6", "2", 0}; //2*n^3+6*n^2-2*n+2+32*x
+  assert_parsed_expression_has_polynomial_coefficient("2*(n+1)^3-4n+32*x", 'n', coefficient2);
+}

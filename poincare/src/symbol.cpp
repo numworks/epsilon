@@ -133,6 +133,16 @@ int Symbol::getVariables(char * variables) const {
   return variablesLength;
 }
 
+int Symbol::getPolynomialCoefficients(char symbolName, Expression ** coefficients) const {
+  if (m_name == symbolName) {
+    coefficients[0] = new Rational(0);
+    coefficients[1] = new Rational(1);
+    return 1;
+  }
+  coefficients[0] = clone();
+  return 0;
+}
+
 Expression * Symbol::replaceSymbolWithExpression(char symbol, Expression * expression) {
   if (m_name == symbol) {
     Expression * value = expression->clone();

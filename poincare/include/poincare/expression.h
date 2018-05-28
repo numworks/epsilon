@@ -222,10 +222,12 @@ public:
    * variables would overflow the maxNumberOfVariables, getVariables return -1 */
   static constexpr int k_maxNumberOfVariables = 6;
   virtual int getVariables(char * variables) const;
-  /* getPolynomialCoefficients fill the table coefficients with the expressions
-   * of the first 4 polynomial coefficients. coefficients is null-terminated
-   * and has up to 4 entries. */
-  //virtual void getPolynomialCoefficients(char symbolName, Expression ** coefficients) const;
+  /* getPolynomialCoefficients fills the table coefficients with the expressions
+   * of the first 5 polynomial coefficients and return polynomialDegree.
+   * coefficients has up to 5 entries. It supposed to be called on Reduced
+   * expression. */
+  static constexpr int k_maxNumberOfPolynomialCoefficients = 4+1;
+  virtual int getPolynomialCoefficients(char symbolName, Expression ** coefficients) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -244,6 +246,7 @@ public:
   /* Simplification */
   static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit = AngleUnit::Default);
   static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
+  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively = true);
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
@@ -293,7 +296,6 @@ private:
   /* Layout Engine */
   virtual ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Simplification */
-  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively = true);
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);
   Expression * deepReduce(Context & context, AngleUnit angleUnit);
   // TODO: should be virtual pure

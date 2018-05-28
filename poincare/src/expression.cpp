@@ -219,6 +219,15 @@ int Expression::getVariables(char * variables) const {
   return numberOfVariables;
 }
 
+int Expression::getPolynomialCoefficients(char symbolName, Expression ** coefficients) const {
+  int deg = polynomialDegree(symbolName);
+  if (deg == 0) {
+    coefficients[0] = clone();
+    return 0;
+  }
+  return -1;
+}
+
 bool Expression::isOfType(Type * types, int length) const {
   for (int i = 0; i < length; i++) {
     if (type() == types[i]) {

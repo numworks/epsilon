@@ -43,6 +43,33 @@ int Multiplication::polynomialDegree(char symbolName) const {
   return degree;
 }
 
+int Multiplication::getPolynomialCoefficients(char symbolName, Expression ** coefficients) const {
+  int deg = polynomialDegree(symbolName);
+  if (deg < 0 || deg + 1 > k_maxNumberOfPolynomialCoefficients) {
+    return -1;
+  }
+  int degA = operand(0)->getPolynomialCoefficients(symbolName, coefficients);
+  assert(degA + 1 <= k_maxNumberOfPolynomialCoefficients);
+  Expression * intermediateCoefficients[k_maxNumberOfPolynomialCoefficients];
+  for (int i = 1; i < numberOfOperands(); i++) {
+    int degB = operand(i)->getPolynomialCoefficients(symbolName, intermediateCoefficients);
+    assert(degB + 1 <= k_maxNumberOfPolynomialCoefficients);
+    for (int j = deg; j > 0; j--) {
+      Addition * a = new Addition();
+      for (int l = 0; l <= j; l++) {
+        if (l <= degB && j-l <= degA) {
+          a->addOperand(new Multiplication(intermediateCoefficients[l], coefficients[j-l], true));
+        }
+      }
+      if (j <= degA) { delete coefficients[j]; };
+      if (j <= degB) { delete intermediateCoefficients[j]; };
+      coefficients[j] = a;
+    }
+    coefficients[0] = new Multiplication(coefficients[0], intermediateCoefficients[0], false);
+  }
+  return deg;
+}
+
 bool Multiplication::needParenthesisWithParent(const Expression * e) const {
   Type types[] = {Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 3);

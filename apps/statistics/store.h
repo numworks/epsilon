@@ -25,6 +25,7 @@ public:
   bool isEmpty();
   int numberOfNonEmptySeries();
   bool seriesIsEmpty(int i);
+  int indexOfKthNonEmptySeries(int k);
 
   // Calculation
   double sumOfOccurrences(int series);

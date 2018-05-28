@@ -99,6 +99,20 @@ bool Store::seriesIsEmpty(int i) {
   return sumOfOccurrences(i) == 0;
 }
 
+int Store::indexOfKthNonEmptySeries(int k) {
+  assert(k >= 0 && k < numberOfNonEmptySeries());
+  int nonEmptySeriesCount = 0;
+  for (int i = 0; i < k_numberOfSeries; i++) {
+    if (!seriesIsEmpty(i)) {
+      if (nonEmptySeriesCount == k) {
+        return i;
+      }
+      nonEmptySeriesCount++;
+    }
+  }
+  assert(false);
+  return 0;
+}
 
 /* Calculation */
 

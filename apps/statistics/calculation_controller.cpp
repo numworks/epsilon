@@ -1,7 +1,8 @@
 #include "calculation_controller.h"
+#include "app.h"
+#include "calculation_selectable_table_view.h"
 #include "../constant.h"
 #include "../apps_container.h"
-#include "app.h"
 #include <poincare.h>
 #include <assert.h>
 
@@ -214,10 +215,12 @@ View * CalculationController::loadView() {
   }
   m_hideableCell = new HideableEvenOddCell();
   m_hideableCell->setHide(true);
-  View * result = TabTableController::loadView();
-  SelectableTableView * casterResult = static_cast<SelectableTableView *>(result);
-  casterResult->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  return result;
+
+  CalculationSelectableTableView * selectableTableView = new CalculationSelectableTableView(this, this, this);
+  selectableTableView->setBackgroundColor(Palette::WallScreenDark);
+  selectableTableView->setVerticalCellOverlap(0);
+  selectableTableView->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  return selectableTableView;
 }
 
 

@@ -169,7 +169,7 @@ int StoreController::numberOfElements() {
 }
 
 int StoreController::maxNumberOfElements() const {
-  return FloatPairStore::k_numberOfSeries * FloatPairStore::k_maxNumberOfPairs;
+  return FloatPairStore::k_maxNumberOfPairs;
 }
 
 View * StoreController::loadView() {

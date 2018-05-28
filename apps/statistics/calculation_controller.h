@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "store.h"
+#include "calculation_cell.h"
 #include "../shared/hideable_even_odd_cell.h"
 #include "../shared/store_title_cell.h"
 #include "../shared/tab_table_controller.h"
@@ -60,7 +61,7 @@ private:
 
   Shared::StoreTitleCell * m_seriesTitleCells[k_numberOfSeriesTitleCells];
   EvenOddMessageTextCell * m_calculationTitleCells[k_numberOfCalculationTitleCells];
-  EvenOddBufferTextCell * m_calculationCells[k_numberOfCalculationCells];
+  CalculationCell * m_calculationCells[k_numberOfCalculationCells];
   Shared::HideableEvenOddCell * m_hideableCell;
   Store * m_store;
 };

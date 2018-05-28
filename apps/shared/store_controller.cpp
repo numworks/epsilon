@@ -81,8 +81,8 @@ int StoreController::typeAtLocation(int i, int j) {
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   // Handle the separator
   if (cellAtLocationIsEditable(i, j)) {
-    bool shoudHaveRightSeparator = i % FloatPairStore::k_numberOfColumnsPerSeries == 1;
-    static_cast<StoreCell *>(cell)->setSeparatorRight(shoudHaveRightSeparator);
+    bool shouldHaveLeftSeparator = i % FloatPairStore::k_numberOfColumnsPerSeries == 0;
+    static_cast<StoreCell *>(cell)->setSeparatorLeft(shouldHaveLeftSeparator);
   }
   // Handle empty cells
   if (j > 0 && j > m_store->numberOfPairsOfSeries(seriesAtColumn(i)) && j < numberOfRows()) {

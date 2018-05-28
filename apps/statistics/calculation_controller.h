@@ -53,7 +53,7 @@ private:
   static constexpr int k_hideableCellType = 3;
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_calculationTitleCellWidth = 175;
-  static constexpr KDCoordinate k_calculationCellWidth = 50;
+  static constexpr KDCoordinate k_calculationCellWidth = 70;
   static constexpr KDCoordinate k_margin = 8;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
 

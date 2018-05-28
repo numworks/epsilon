@@ -180,7 +180,7 @@ View * StoreController::loadView() {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i] = new StoreCell(tableView, this, m_draftTextBuffer);
   }
-  tableView->setMargins(k_margin);
+  tableView->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   return tableView;
 }
 

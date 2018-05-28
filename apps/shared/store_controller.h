@@ -36,6 +36,7 @@ public:
 protected:
   static constexpr KDCoordinate k_cellWidth = 80; //TODO
   static constexpr KDCoordinate k_margin = 8;
+  static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
   constexpr static int k_maxNumberOfEditableCells = 22 * FloatPairStore::k_numberOfSeries;
   constexpr static int k_numberOfTitleCells = FloatPairStore::k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;  // TODO Put finer number of cells
   static constexpr int k_titleCellType = 0;

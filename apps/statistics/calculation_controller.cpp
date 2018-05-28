@@ -200,14 +200,14 @@ Responder * CalculationController::tabController() const {
 View * CalculationController::loadView() {
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
     m_seriesTitleCells[i] = new StoreTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
-    m_seriesTitleCells[i]->setSeparatorRight(true);
+    m_seriesTitleCells[i]->setSeparatorLeft(true);
   }
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
     m_calculationTitleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
     m_calculationTitleCells[i]->setAlignment(1.0f, 0.5f);
   }
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
-    m_calculationCells[i] = new EvenOddBufferTextCell(KDText::FontSize::Small);
+    m_calculationCells[i] = new CalculationCell(KDText::FontSize::Small);
     m_calculationCells[i]->setTextColor(Palette::GreyDark);
   }
   m_hideableCell = new HideableEvenOddCell();

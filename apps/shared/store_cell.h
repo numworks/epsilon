@@ -2,19 +2,20 @@
 #define APPS_SHARED_STORE_CELL_H
 
 #include "hideable_even_odd_editable_text_cell.h"
-#include "store_separator_cell.h"
 
 namespace Shared {
 
-class StoreCell : public HideableEvenOddEditableTextCell, public StoreSeparatorCell {
+class StoreCell : public HideableEvenOddEditableTextCell {
 public:
   StoreCell(Responder * parentResponder = nullptr, TextFieldDelegate * delegate = nullptr, char * draftTextBuffer = nullptr) :
     HideableEvenOddEditableTextCell(parentResponder, delegate, draftTextBuffer),
-    StoreSeparatorCell()
+    m_separatorLeft(false)
   {}
-  void setSeparatorRight(bool separator) override;
+  void setSeparatorLeft(bool separator);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews() override;
+private:
+  bool m_separatorLeft;
 };
 
 }

@@ -22,7 +22,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     return;
   }
   Shared::StoreTitleCell * mytitleCell = static_cast<Shared::StoreTitleCell *>(cell);
-  mytitleCell->setSeparatorRight(i % Store::k_numberOfColumnsPerSeries == 1);
+  mytitleCell->setSeparatorLeft(i % Store::k_numberOfColumnsPerSeries == 0);
   int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
   bool valuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
   assert(seriesIndex >= 0 && seriesIndex < FloatPairStore::k_numberOfSeries);

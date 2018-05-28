@@ -46,7 +46,7 @@ QUIZ_CASE(poincare_polynomial_degree) {
   assert_parsed_expression_polynomial_degree("[[1,2][3,4]]", -1);
   assert_parsed_expression_polynomial_degree("(x^2+2)*(x+1)", 3);
   assert_parsed_expression_polynomial_degree("-(x+1)", 1);
-  assert_parsed_expression_polynomial_degree("(x^2+2)^(3/2)", 3);
+  assert_parsed_expression_polynomial_degree("(x^2+2)^(3)", 6);
   assert_parsed_expression_polynomial_degree("prediction(0.2,10)+1", -1);
   assert_parsed_expression_polynomial_degree("2-x-x^3", 3);
   assert_parsed_expression_polynomial_degree("P*x", 1);

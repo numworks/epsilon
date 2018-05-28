@@ -13,7 +13,9 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int polynomialDegree(char symbolName) const override;
+  int solve(Expression ** solutions, Expression ** delta, Context & context, AngleUnit angleUnit) const;
 private:
+  int oneDimensialPolynomialSolve(Expression ** coefficients, int degree, Expression ** solutions, Expression ** delta, Context & context, AngleUnit angleUnit) const;
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Layout */

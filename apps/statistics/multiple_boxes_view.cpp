@@ -7,9 +7,9 @@ namespace Statistics {
 
 MultipleBoxesView::MultipleBoxesView(BoxController * controller, Store * store, BoxView::Quantile * selectedQuantile) :
   MultipleDataView(store),
-  m_boxView1(controller, store, 0, nullptr, selectedQuantile, Palette::Red),
-  m_boxView2(controller, store, 1, nullptr, selectedQuantile, Palette::Blue),
-  m_boxView3(controller, store, 2, nullptr, selectedQuantile, Palette::Green),
+  m_boxView1(controller, store, 0, nullptr, selectedQuantile, Palette::Red, Palette::RedLight),
+  m_boxView2(controller, store, 1, nullptr, selectedQuantile, Palette::Blue, Palette::BlueLight),
+  m_boxView3(controller, store, 2, nullptr, selectedQuantile, Palette::Green, Palette::GreenLight),
   // TODO Share colors with stats/store_controller
   m_axisView(store),
   m_bannerView()

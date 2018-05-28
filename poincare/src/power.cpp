@@ -61,19 +61,20 @@ Expression::Sign Power::sign() const {
 }
 
 int Power::polynomialDegree(char symbolName) const {
-  Rational op0Deg = Rational(operand(0)->polynomialDegree(symbolName));
-  if (op0Deg.sign() == Sign::Negative) {
+  int op0Deg = operand(0)->polynomialDegree(symbolName);
+  if (op0Deg < 0) {
     return -1;
   }
   if (operand(1)->type() == Type::Rational) {
-    op0Deg = Rational::Multiplication(op0Deg, *(static_cast<const Rational *>(operand(1))));
-    if (!op0Deg.denominator().isOne()) {
+    const Rational * r = static_cast<const Rational *>(operand(1));
+    if (!r->denominator().isOne() || r->sign() == Sign::Negative) {
       return -1;
     }
-    if (Integer::NaturalOrder(op0Deg.numerator(), Integer(Integer::k_maxExtractableInteger)) > 0) {
+    if (Integer::NaturalOrder(r->numerator(), Integer(Integer::k_maxExtractableInteger)) > 0) {
       return -1;
     }
-    return op0Deg.numerator().extractedInt();
+    op0Deg *= r->numerator().extractedInt();
+    return op0Deg;
   }
   return -1;
 }

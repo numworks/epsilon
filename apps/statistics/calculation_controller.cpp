@@ -212,7 +212,9 @@ View * CalculationController::loadView() {
   }
   m_hideableCell = new HideableEvenOddCell();
   m_hideableCell->setHide(true);
-  View * result =  TabTableController::loadView();
+  View * result = TabTableController::loadView();
+  SelectableTableView * casterResult = static_cast<SelectableTableView *>(result);
+  casterResult->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   return result;
 }
 

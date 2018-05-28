@@ -14,8 +14,12 @@ StoreController::StoreController(Responder * parentResponder, FloatPairStore * s
   ButtonRowDelegate(header, nullptr),
   m_editableCells{},
   m_store(store),
-  m_storeParameterController(this, store)
+  m_storeParameterController(this, store, this)
 {
+}
+
+void StoreController::displayFormulaInput() {
+
 }
 
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {

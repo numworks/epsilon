@@ -7,9 +7,11 @@
 
 namespace Shared {
 
+class StoreController;
+
 class StoreParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  StoreParameterController(Responder * parentResponder, FloatPairStore * store);
+  StoreParameterController(Responder * parentResponder, FloatPairStore * store, StoreController * storeController);
   void selectXColumn(bool xColumnSelected) { m_xColumnSelected = xColumnSelected; }
   void selectSeries(int series) { m_series = series; }
   View * view() override { return &m_selectableTableView; }
@@ -22,15 +24,17 @@ public:
   int reusableCellCount() override { return k_totalNumberOfCell; }
 private:
 #if COPY_IMPORT_LIST
-  constexpr static int k_totalNumberOfCell = 3;
+  constexpr static int k_totalNumberOfCell = 4;
   MessageTableCellWithChevron m_copyColumn;
   MessageTableCellWithChevron m_importList;
 #else
-  constexpr static int k_totalNumberOfCell = 1;
+  constexpr static int k_totalNumberOfCell = 2;
 #endif
   MessageTableCell m_deleteColumn;
+  MessageTableCell m_fillWithFormula;
   SelectableTableView m_selectableTableView;
   FloatPairStore * m_store;
+  StoreController * m_storeController;
   bool m_xColumnSelected;
   int m_series;
 };

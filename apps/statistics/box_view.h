@@ -21,7 +21,7 @@ public:
     ThirdQuartile = 3,
     Max = 4
   };
-  BoxView(BoxController * controller, Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color);
+  BoxView(BoxController * controller, Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color, KDColor lightColor);
   Quantile selectedQuantile() const { return *m_selectedQuantile; }
   bool selectQuantile(int selectedQuantile);
   int series() const { return m_series; }
@@ -42,6 +42,7 @@ private:
   int m_series;
   Quantile * m_selectedQuantile;
   KDColor m_selectedHistogramColor;
+  KDColor m_selectedHistogramLightColor;
 };
 
 }

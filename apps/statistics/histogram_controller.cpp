@@ -169,7 +169,9 @@ bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
   {
     *m_selectedBarIndex = newSelectedBarIndex;
     m_view.dataViewAtIndex(selectedSeries())->setHighlight(m_store->startOfBarAtIndex(selectedSeries(), *m_selectedBarIndex), m_store->endOfBarAtIndex(selectedSeries(), *m_selectedBarIndex));
-    m_store->scrollToSelectedBarIndex(selectedSeries(), *m_selectedBarIndex);
+    if (m_store->scrollToSelectedBarIndex(selectedSeries(), *m_selectedBarIndex)) {
+      multipleDataView()->reload();
+    }
     return true;
   }
   return false;

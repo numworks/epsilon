@@ -8,7 +8,6 @@ extern "C" {
 namespace Graph {
 
 constexpr int CartesianFunctionStore::k_maxNumberOfFunctions;
-constexpr KDColor CartesianFunctionStore::k_defaultColors[k_maxNumberOfFunctions];
 constexpr const char * CartesianFunctionStore::k_functionNames[k_maxNumberOfFunctions];
 
 CartesianFunctionStore::CartesianFunctionStore() :
@@ -87,22 +86,6 @@ const char *  CartesianFunctionStore::firstAvailableName() {
     }
   }
   return k_functionNames[0];
-}
-
-const KDColor  CartesianFunctionStore::firstAvailableColor() {
-  for (int k = 0; k < k_maxNumberOfFunctions; k++) {
-    int j = 0;
-    while  (j < m_numberOfFunctions) {
-      if (m_functions[j].color() == k_defaultColors[k]) {
-        break;
-      }
-      j++;
-    }
-    if (j == m_numberOfFunctions) {
-      return k_defaultColors[k];
-    }
-  }
-  return k_defaultColors[0];
 }
 
 void CartesianFunctionStore::removeAll() {

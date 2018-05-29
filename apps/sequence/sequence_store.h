@@ -29,9 +29,6 @@ public:
   };
 private:
   const KDColor firstAvailableColor() override;
-  static constexpr KDColor k_defaultColors[MaxNumberOfSequences] = {
-    Palette::Red, Palette::Blue//, Palette::YellowDark
-  };
   Sequence m_sequences[MaxNumberOfSequences];
 };
 

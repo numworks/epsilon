@@ -7,10 +7,9 @@ namespace Statistics {
 
 MultipleHistogramsView::MultipleHistogramsView(HistogramController * controller, Store * store) :
   MultipleDataView(store),
-  m_histogramView1(controller, store, 0, nullptr, Palette::Red),
-  m_histogramView2(controller, store, 1, nullptr, Palette::Blue),
-  m_histogramView3(controller, store, 2, nullptr, Palette::Green),
-  // TODO Share colors with stats/store_controller
+  m_histogramView1(controller, store, 0, nullptr, FloatPairStore::colorOfSeriesAtIndex(0)),
+  m_histogramView2(controller, store, 1, nullptr, FloatPairStore::colorOfSeriesAtIndex(1)),
+  m_histogramView3(controller, store, 2, nullptr, FloatPairStore::colorOfSeriesAtIndex(2)),
   m_bannerView(),
   m_okView()
 {

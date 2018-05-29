@@ -30,6 +30,8 @@ public:
   constexpr static KDColor Orange = KDColor::RGB24(0xfe871f);
   constexpr static KDColor Green = KDColor::RGB24(0x50c102);
   constexpr static KDColor GreenLight = KDColor::RGB24(0x52db8f);
+  constexpr static KDColor DataColor[] = {Red, Blue, Green, YellowDark};
+  constexpr static KDColor DataColorLight[] = {RedLight, BlueLight, GreenLight, YellowLight};
 };
 
 #endif

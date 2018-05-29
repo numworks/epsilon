@@ -33,24 +33,7 @@ bool BoxView::selectQuantile(int selectedQuantile) {
 
 void BoxView::reload() {
   CurveView::reload();
-  CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
-    &Store::maxValue};
-  float calculation = (m_store->*calculationMethods[(int)*m_selectedQuantile])(m_series);
-  float pixelUpperBound = boxUpperBoundPixel();
-  float pixelLowerBound = boxLowerBoundPixel();
-
-  // Dirty the selected vertical bar
-  float selectedValueInPixels = floatToPixel(Axis::Horizontal, calculation)-1;
-  KDRect dirtyZone(KDRect(selectedValueInPixels, pixelLowerBound, 4, pixelUpperBound - pixelLowerBound));
-  markRectAsDirty(dirtyZone);
-
-  // Dirty the colored horizontal bar
-  double minVal = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series)));
-  double firstQuart = std::round(floatToPixel(Axis::Horizontal, m_store->firstQuartile(m_series)));
-  double thirdQuart = std::round(floatToPixel(Axis::Horizontal, m_store->thirdQuartile(m_series)));
-  double maxVal = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series)));
-  markRectAsDirty(KDRect(minVal, (pixelUpperBound + pixelUpperBound)/2, firstQuart - minVal, 1));
-  markRectAsDirty(KDRect(thirdQuart, (pixelUpperBound + pixelUpperBound)/2, maxVal - thirdQuart, 1));
+  markRectAsDirty(bounds());
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {

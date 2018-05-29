@@ -9,6 +9,7 @@ public:
   constexpr static KDCoordinate k_height = 50; //TODO
   BufferTextViewWithTextField(Responder * parentResponder, TextFieldDelegate * delegate = nullptr, KDText::FontSize size = KDText::FontSize::Large);
   KDSize minimalSizeForOptimalDisplay() const override;
+  TextField * textField() { return &m_textField; }
   void setBufferText(const char * text);
   void setTextFieldText(const char * text);
 
@@ -16,7 +17,7 @@ public:
   void didBecomeFirstResponder() override;
 private:
   constexpr static int k_textFieldBufferSize = TextField::maxBufferSize();
-  constexpr static KDCoordinate k_bufferTextWidth = 70; //TODO
+  constexpr static KDCoordinate k_bufferTextWidth = 50; //TODO
   int numberOfSubviews() const override { return 2; }
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

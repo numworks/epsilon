@@ -9,6 +9,7 @@ BufferTextViewWithTextField::BufferTextViewWithTextField(Responder * parentRespo
   m_textField(this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, delegate, false, size, 0.0f, 0.5f),
   m_textFieldBuffer{}
 {
+  m_bufferTextView.setText("TODO");
 }
 
 KDSize BufferTextViewWithTextField::minimalSizeForOptimalDisplay() const {
@@ -21,6 +22,8 @@ void BufferTextViewWithTextField::setBufferText(const char * text) {
 
 void BufferTextViewWithTextField::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_textField);
+  m_textField.setEditing(true, true);
+  markRectAsDirty(bounds());
 }
 
 View * BufferTextViewWithTextField::subviewAtIndex(int index) {
@@ -31,7 +34,7 @@ View * BufferTextViewWithTextField::subviewAtIndex(int index) {
 
 void BufferTextViewWithTextField::layoutSubviews() {
   m_bufferTextView.setFrame(KDRect(0, 0, k_height, k_bufferTextWidth));
-  m_textField.setFrame(KDRect(k_bufferTextWidth, 0, k_height, bounds().width() - k_bufferTextWidth));
+  m_textField.setFrame(KDRect(k_bufferTextWidth, 0, bounds().width() - k_bufferTextWidth, k_height));
 }
 
 }

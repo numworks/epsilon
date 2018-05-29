@@ -33,8 +33,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     I18n::Message sizesMessages[] = {I18n::Message::Sizes1, I18n::Message::Sizes2, I18n::Message::Sizes3};
     mytitleCell->setText(I18n::translate(sizesMessages[seriesIndex]));
   }
-  KDColor colors[] = {Palette::Red, Palette::Blue, Palette::Green};
-  mytitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GreyDark : colors[seriesIndex]); // TODO Share GreyDark and other colors with graph/list_controller
+  mytitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GreyDark : Store::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GreyDark with graph/list_controller
 }
 
 HighlightCell * StoreController::titleCells(int index) {

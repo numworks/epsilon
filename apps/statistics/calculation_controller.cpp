@@ -53,10 +53,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     // Display a series title cell
     int seriesNumber = m_store->indexOfKthNonEmptySeries(i-1);
     char titleBuffer[] = {'V', static_cast<char>('0'+seriesNumber), '/', 'N', static_cast<char>('0'+seriesNumber), 0};
-    KDColor colors[] = {Palette::Red, Palette::Blue, Palette::Green};
     StoreTitleCell * storeTitleCell = static_cast<StoreTitleCell *>(cell);
     storeTitleCell->setText(titleBuffer);
-    storeTitleCell->setColor(colors[seriesNumber]);
+    storeTitleCell->setColor(FloatPairStore::colorOfSeriesAtIndex(seriesNumber));
     return;
   }
   if (i == 0) {

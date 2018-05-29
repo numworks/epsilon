@@ -23,10 +23,6 @@ public:
   static constexpr int k_maxNumberOfFunctions = 4;
 private:
   const char * firstAvailableName() override;
-  const KDColor firstAvailableColor() override;
-  static constexpr KDColor k_defaultColors[k_maxNumberOfFunctions] = {
-    Palette::Red, Palette::Blue,  Palette::Green, Palette::YellowDark,
-  };
   static constexpr const char * k_functionNames[k_maxNumberOfFunctions] = {
     "f", "g", "h", "p",
   };

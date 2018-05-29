@@ -9,11 +9,14 @@ using namespace Shared;
 
 namespace Statistics {
 
+static_assert(Store::k_numberOfSeries == 3, "The constructor of Statistics::Store should be changed");
+
 Store::Store() :
   MemoizedCurveViewRange(),
   FloatPairStore(),
   m_barWidth(1.0),
-  m_firstDrawnBarAbscissa(0.0)
+  m_firstDrawnBarAbscissa(0.0),
+  m_seriesEmpty{true, true, true}
 {
 }
 
@@ -96,7 +99,7 @@ int Store::numberOfNonEmptySeries() const {
 }
 
 bool Store::seriesIsEmpty(int i) const {
-  return sumOfOccurrences(i) == 0;
+  return m_seriesEmpty[i];
 }
 
 int Store::indexOfKthNonEmptySeries(int k) const {
@@ -224,6 +227,21 @@ double Store::squaredValueSum(int series) const {
     result += m_data[series][0][k]*m_data[series][0][k]*m_data[series][1][k];
   }
   return result;
+}
+
+void Store::set(double f, int series, int i, int j) {
+  FloatPairStore::set(f, series, i, j);
+  m_seriesEmpty[series] = sumOfOccurrences(series) == 0;
+}
+
+void Store::deletePairOfSeriesAtIndex(int series, int j) {
+  FloatPairStore::deletePairOfSeriesAtIndex(series, j);
+  m_seriesEmpty[series] = sumOfOccurrences(series) == 0;
+}
+
+void Store::deleteAllPairsOfSeries(int series) {
+  FloatPairStore::deleteAllPairsOfSeries(series);
+  m_seriesEmpty[series] = true;
 }
 
 /* Private methods */

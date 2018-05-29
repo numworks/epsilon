@@ -26,7 +26,13 @@ public:
     M6,
     M7,
     M8,
-    M9 = 17
+    M9 = 17,
+    V1,
+    N1,
+    V2,
+    N2,
+    V3,
+    N3 = 23
   };
   static SpecialSymbols matrixSymbol(char index);
   Symbol(char name);
@@ -39,6 +45,7 @@ public:
   Sign sign() const override;
   bool isMatrixSymbol() const;
   bool isScalarSymbol() const;
+  bool isSeriesSymbol() const;
   bool isApproximate(Context & context) const;
   float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
   bool hasAnExactRepresentation(Context & context) const;

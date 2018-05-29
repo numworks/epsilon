@@ -53,6 +53,18 @@ const char * Symbol::textForSpecialSymbols(char name) const {
       return "M8";
     case SpecialSymbols::M9:
       return "M9";
+    case SpecialSymbols::V1:
+      return "V1";
+    case SpecialSymbols::N1:
+      return "N1";
+    case SpecialSymbols::V2:
+      return "V2";
+    case SpecialSymbols::N2:
+      return "N2";
+    case SpecialSymbols::V3:
+      return "V3";
+    case SpecialSymbols::N3:
+      return "N3";
     default:
       assert(false);
       return nullptr;
@@ -232,9 +244,8 @@ ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode
         false),
       false);
   }
-  if (isMatrixSymbol()) {
-    const char mi[] = { 'M', (char)(m_name-(char)SpecialSymbols::M0+'0') };
-    return LayoutEngine::createStringLayout(mi, sizeof(mi));
+  if (isMatrixSymbol() || isSeriesSymbol()) {
+    return LayoutEngine::createStringLayout(textForSpecialSymbols(m_name), 2);
   }
   return LayoutEngine::createStringLayout(&m_name, 1);
 }
@@ -265,6 +276,13 @@ bool Symbol::isMatrixSymbol() const {
 
 bool Symbol::isScalarSymbol() const {
   if (m_name >= 'A' && m_name <= 'Z') {
+    return true;
+  }
+  return false;
+}
+
+bool Symbol::isSeriesSymbol() const {
+  if (m_name >= (char)SpecialSymbols::V1 && m_name <= (char)SpecialSymbols::N3) {
     return true;
   }
   return false;

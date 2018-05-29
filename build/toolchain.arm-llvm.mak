@@ -12,3 +12,5 @@ else
 SFLAGS += -fdata-sections -ffunction-sections
 LDFLAGS += --gc-sections
 endif
+
+ARCH = armv7m

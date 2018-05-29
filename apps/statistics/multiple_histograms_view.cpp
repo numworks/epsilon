@@ -33,6 +33,19 @@ int MultipleHistogramsView::seriesOfSubviewAtIndex(int index) {
   return static_cast<HistogramView *>(subviewAtIndex(index))->series();
 }
 
+void MultipleHistogramsView::layoutSubviews() {
+  MultipleDataView::layoutSubviews();
+  int numberHistogramSubviews = m_store->numberOfNonEmptySeries();
+  assert(numberHistogramSubviews > 0);
+  int displayedSubviewIndex = 0;
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    if (!m_store->seriesIsEmpty(i)) {
+      dataViewAtIndex(i)->setOkView(displayedSubviewIndex == numberHistogramSubviews - 1 ? &m_okView : nullptr);
+      displayedSubviewIndex++;
+    }
+  }
+}
+
 void MultipleHistogramsView::changeDataViewSelection(int index, bool select) {
   MultipleDataView::changeDataViewSelection(index, select);
   dataViewAtIndex(index)->setDisplayLabels(select);

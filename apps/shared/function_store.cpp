@@ -70,4 +70,20 @@ void FunctionStore::tidy() {
   }
 }
 
+const KDColor FunctionStore::firstAvailableColor() {
+  for (int k = 0; k < maxNumberOfFunctions(); k++) {
+    int j = 0;
+    while  (j < m_numberOfFunctions) {
+      if (functionAtIndex(j)->color() == Palette::DataColor[k]) {
+        break;
+      }
+      j++;
+    }
+    if (j == m_numberOfFunctions) {
+      return Palette::DataColor[k];
+    }
+  }
+  return Palette::DataColor[0];
+}
+
 }

@@ -7,7 +7,6 @@ extern "C" {
 
 namespace Sequence {
 
-constexpr KDColor SequenceStore::k_defaultColors[MaxNumberOfSequences];
 constexpr const char * SequenceStore::k_sequenceNames[MaxNumberOfSequences];
 
 uint32_t SequenceStore::storeChecksum() {
@@ -80,22 +79,6 @@ const char *  SequenceStore::firstAvailableName() {
     }
   }
   return k_sequenceNames[0];
-}
-
-const KDColor SequenceStore::firstAvailableColor() {
-  for (int k = 0; k < MaxNumberOfSequences; k++) {
-    int j = 0;
-    while  (j < m_numberOfFunctions) {
-      if (m_sequences[j].color() == k_defaultColors[k]) {
-        break;
-      }
-      j++;
-    }
-    if (j == m_numberOfFunctions) {
-      return k_defaultColors[k];
-    }
-  }
-  return k_defaultColors[0];
 }
 
 void SequenceStore::removeAll() {

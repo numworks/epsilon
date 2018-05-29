@@ -1,6 +1,8 @@
 #ifndef SHARED_FLOAT_PAIR_STORE_H
 #define SHARED_FLOAT_PAIR_STORE_H
 
+#include <kandinsky/color.h>
+#include <escher/palette.h>
 #include <stdint.h>
 #include <assert.h>
 
@@ -33,6 +35,15 @@ public:
   void resetColumn(int series, int i);
   double sumOfColumn(int series, int i) const;
   uint32_t storeChecksum();
+
+  static KDColor colorOfSeriesAtIndex(int i) {
+    assert(i >= 0 && i < k_numberOfSeries);
+    return Palette::DataColor[i];
+  }
+  static KDColor colorLightOfSeriesAtIndex(int i) {
+    assert(i >= 0 && i < k_numberOfSeries);
+    return Palette::DataColorLight[i];
+  }
 protected:
   virtual double defaultValue(int series, int i, int j);
   int m_numberOfPairs[k_numberOfSeries];

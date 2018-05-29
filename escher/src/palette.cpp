@@ -25,3 +25,5 @@ constexpr KDColor Palette::BlueLight;
 constexpr KDColor Palette::Orange;
 constexpr KDColor Palette::Green;
 constexpr KDColor Palette::GreenLight;
+constexpr KDColor Palette::DataColor[];
+constexpr KDColor Palette::DataColorLight[];

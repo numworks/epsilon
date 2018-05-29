@@ -10,6 +10,7 @@ namespace Statistics {
 
 class MultipleDataView : public View {
 public:
+  static constexpr int k_defaultSelectedBar = 0;
   MultipleDataView(Store * store) :
     m_store(store),
     m_displayBanner(false)

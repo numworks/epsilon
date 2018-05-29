@@ -86,6 +86,7 @@ void MultipleDataView::layoutDataSubviews() {
 
 void MultipleDataView::changeDataViewSelection(int index, bool select) {
   dataViewAtIndex(index)->selectMainView(select);
+  dataViewAtIndex(index)->reload();
 }
 
 KDRect MultipleDataView::bannerFrame() const {

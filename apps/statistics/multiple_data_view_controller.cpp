@@ -46,7 +46,6 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
       *m_selectedBarIndex = 0;
       multipleDataView()->selectDataView(m_selectedSeries);
       reloadBannerView();
-      multipleDataView()->reload();
       app()->setFirstResponder(this);
       return true;
     }
@@ -65,7 +64,6 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
       app()->setFirstResponder(tabController());
     }
     reloadBannerView();
-    multipleDataView()->reload();
     return true;
   }
   if (m_selectedSeries >= 0 && (event == Ion::Events::Left || event == Ion::Events::Right)) {
@@ -97,7 +95,6 @@ void MultipleDataViewController::willExitResponderChain(Responder * nextFirstRes
       m_selectedSeries = -1;
       multipleDataView()->setDisplayBanner(false);
     }
-    multipleDataView()->reload();
   }
 }
 

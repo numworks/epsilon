@@ -67,9 +67,7 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
   }
   if (m_selectedSeries >= 0 && (event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = event == Ion::Events::Left ? -1 : 1;
-    if (moveSelectionHorizontally(direction)) {
-      reloadBannerView();
-    }
+    moveSelectionHorizontally(direction);
     return true;
   }
   return false;

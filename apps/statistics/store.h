@@ -50,6 +50,11 @@ public:
   constexpr static int k_bottomMargin = 20;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 
+  // FloatPairStore
+  void set(double f, int series, int i, int j) override;
+  void deletePairOfSeriesAtIndex(int series, int j) override;
+  void deleteAllPairsOfSeries(int series) override;
+
 private:
   double defaultValue(int series, int i, int j) const override;
   double sumOfValuesBetween(int series, double x1, double x2) const;
@@ -59,6 +64,7 @@ private:
   // Histogram bars
   double m_barWidth;
   double m_firstDrawnBarAbscissa;
+  bool m_seriesEmpty[k_numberOfSeries];
 };
 
 typedef double (Store::*CalculPointer)(int) const;

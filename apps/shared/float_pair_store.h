@@ -23,14 +23,14 @@ public:
     assert(j < m_numberOfPairs[series]);
     return m_data[series][i][j];
   }
-  void set(double f, int series, int i, int j);
+  virtual void set(double f, int series, int i, int j);
   int numberOfPairs() const;
   int numberOfPairsOfSeries(int series) const {
     assert(series >= 0 && series < k_numberOfSeries);
     return m_numberOfPairs[series];
   }
-  void deletePairOfSeriesAtIndex(int series, int j);
-  void deleteAllPairsOfSeries(int series);
+  virtual void deletePairOfSeriesAtIndex(int series, int j);
+  virtual void deleteAllPairsOfSeries(int series);
   void deleteAllPairs();
   void resetColumn(int series, int i);
   double sumOfColumn(int series, int i) const;

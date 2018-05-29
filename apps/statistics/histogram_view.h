@@ -15,6 +15,7 @@ public:
   HistogramView(HistogramController * controller, Store * store, int series, Shared::BannerView * bannerView, KDColor selectedHistogramColor = Palette::Select, KDColor notSelectedHistogramColor = Palette::GreyMiddle, KDColor selectedBarColor = Palette::YellowDark);
   int series() const { return m_series; }
   void reload() override;
+  void reloadSelectedBar();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setHighlight(float start, float end);
   void setDisplayLabels(bool display) { m_displayLabels = display; }

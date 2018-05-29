@@ -72,7 +72,6 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
     int direction = event == Ion::Events::Left ? -1 : 1;
     if (moveSelectionHorizontally(direction)) {
       reloadBannerView();
-      multipleDataView()->reload();
     }
     return true;
   }

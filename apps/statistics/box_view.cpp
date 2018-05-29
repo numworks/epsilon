@@ -24,16 +24,32 @@ bool BoxView::selectQuantile(int selectedQuantile) {
     return false;
   }
   if ((int)*m_selectedQuantile != selectedQuantile) {
-    reload();
+    reloadQuantile();
     *m_selectedQuantile = (Quantile)selectedQuantile;
-    reload();
+    reloadQuantile();
   }
   return true;
 }
 
+void BoxView::reloadQuantile() {
+  CurveView::reload();
+  KDCoordinate minY = boxLowerBoundPixel();
+  KDCoordinate maxY = boxUpperBoundPixel();
+  CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile, &Store::maxValue};
+  double calculation = (m_store->*calculationMethods[(int)*m_selectedQuantile])(m_series);
+  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation));
+  KDRect dirtyRect = KDRect(minX, minY, k_quantileBarWidth, maxY - minY);
+  markRectAsDirty(dirtyRect);
+}
+
 void BoxView::reload() {
   CurveView::reload();
-  markRectAsDirty(bounds());
+  KDCoordinate minY = boxLowerBoundPixel();
+  KDCoordinate maxY = boxUpperBoundPixel();
+  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series)));
+  KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series)));
+  KDRect dirtyRect = KDRect(minX, minY, maxX - minX + k_quantileBarWidth, maxY - minY + k_quantileBarWidth);
+  markRectAsDirty(dirtyRect);
 }
 
 void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -69,10 +85,10 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
    * lines. This solution could hide the highlighted line by coloring the next
    * quantile if it has the same value. */
   for (int k = 0; k < 5; k++) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, 2);
+    drawSegment(ctx, rect, Axis::Vertical, calculations[k], lowBound, upBound, Palette::GreyMiddle, k_quantileBarWidth);
   }
   if (isMainViewSelected()) {
-    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, 2);
+    drawSegment(ctx, rect, Axis::Vertical, calculations[(int)*m_selectedQuantile], lowBound, upBound, Palette::YellowDark, k_quantileBarWidth);
   }
 }
 

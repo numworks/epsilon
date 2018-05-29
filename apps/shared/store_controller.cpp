@@ -13,15 +13,23 @@ StoreController::ContentView::ContentView(FloatPairStore * store, Responder * pa
   Responder(parentResponder),
   m_dataView(store, this, dataSource, selectionDataSource),
   m_formulaInputView(this, textFieldDelegate),
-  m_displayInputFormulaView(false)
+  m_displayFormulaInputView(false)
 {
   m_dataView.setBackgroundColor(Palette::WallScreenDark);
   m_dataView.setVerticalCellOverlap(0);
   m_dataView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
 }
 
+void StoreController::ContentView::displayFormulaInput(bool display) {
+  if (m_displayFormulaInputView != display) {
+    m_displayFormulaInputView = display;
+    layoutSubviews();
+    markRectAsDirty(bounds());
+  }
+}
+
 void StoreController::ContentView::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_dataView);
+  app()->setFirstResponder(m_displayFormulaInputView ? static_cast<Responder *>(&m_formulaInputView) : static_cast<Responder *>(&m_dataView));
 }
 
 View * StoreController::ContentView::subviewAtIndex(int index) {
@@ -31,10 +39,13 @@ View * StoreController::ContentView::subviewAtIndex(int index) {
 }
 
 void StoreController::ContentView::layoutSubviews() {
-  KDRect dataViewFrame(0, 0, bounds().width(), bounds().height() - (m_displayInputFormulaView ? BufferTextViewWithTextField::k_height : 0));
+  KDRect dataViewFrame(0, 0, bounds().width(), bounds().height() - (m_displayFormulaInputView ? BufferTextViewWithTextField::k_height : 0));
   m_dataView.setFrame(dataViewFrame);
-  KDRect formulaFrame(0, bounds().height() - BufferTextViewWithTextField::k_height, bounds().width(), m_displayInputFormulaView ? BufferTextViewWithTextField::k_height : 0);
-  m_formulaInputView.setFrame(formulaFrame);
+  m_formulaInputView.setFrame(formulaFrame());
+}
+
+KDRect StoreController::ContentView::formulaFrame() const {
+  return KDRect(0, bounds().height() - BufferTextViewWithTextField::k_height, bounds().width(), m_displayFormulaInputView ? BufferTextViewWithTextField::k_height : 0);
 }
 
 StoreController::StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header) :
@@ -47,10 +58,16 @@ StoreController::StoreController(Responder * parentResponder, FloatPairStore * s
 }
 
 void StoreController::displayFormulaInput() {
-
+  contentView()->displayFormulaInput(true);
 }
 
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  if (textField == contentView()->formulaInputView()->textField()) {
+    // Handle formula input
+    contentView()->displayFormulaInput(false);
+    app()->setFirstResponder(contentView());
+    return true;
+  }
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
   double floatBody = Expression::approximateToScalar<double>(text, *globalContext);

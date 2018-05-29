@@ -50,17 +50,20 @@ protected:
   public:
     ContentView(FloatPairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate);
    StoreSelectableTableView * dataView() { return &m_dataView; }
+   BufferTextViewWithTextField * formulaInputView() { return &m_formulaInputView; }
+   void displayFormulaInput(bool display);
   // Responder
   void didBecomeFirstResponder() override;
   private:
     static constexpr KDCoordinate k_margin = 8;
     static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
-    int numberOfSubviews() const override { return 1 + m_displayInputFormulaView; }
+    int numberOfSubviews() const override { return 1 + m_displayFormulaInputView; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;
+    KDRect formulaFrame() const;
     StoreSelectableTableView m_dataView;
     BufferTextViewWithTextField m_formulaInputView;
-    bool m_displayInputFormulaView;
+    bool m_displayFormulaInputView;
   };
 
   Responder * tabController() const override;

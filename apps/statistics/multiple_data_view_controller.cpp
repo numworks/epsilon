@@ -55,10 +55,9 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
     int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(m_selectedSeries);
     if (currentSelectedSubview > 0) {
       multipleDataView()->deselectDataView(m_selectedSeries);
-      assert(currentSelectedSubview > 0);
       m_selectedSeries = multipleDataView()->seriesOfSubviewAtIndex(currentSelectedSubview-1);
-      multipleDataView()->selectDataView(m_selectedSeries);
       *m_selectedBarIndex = 0;
+      multipleDataView()->selectDataView(m_selectedSeries);
       app()->setFirstResponder(this);
     } else {
       app()->setFirstResponder(tabController());

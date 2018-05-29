@@ -157,6 +157,10 @@ bool Expression::hasAncestor(const Expression * e) const {
 
 /* Properties */
 
+bool Expression::isRationalZero() const {
+  return type() == Type::Rational && static_cast<const Rational*>(this)->isZero();
+}
+
 bool Expression::recursivelyMatches(ExpressionTest test, Context & context) const {
   if (test(this, context)) {
     return true;
@@ -219,7 +223,58 @@ int Expression::getVariables(char * variables) const {
   return numberOfVariables;
 }
 
-int Expression::getPolynomialCoefficients(char symbolName, Expression ** coefficients) const {
+bool Expression::getLinearCoefficients(char * variables, Expression * coefficients[], Expression ** constant, Context & context) const {
+  char * x = variables;
+  while (*x != 0) {
+    int degree = polynomialDegree(*x);
+    if (degree > 1 || degree < 0) {
+      return false;
+    }
+    x++;
+  }
+  Expression * equation = clone();
+  x = variables;
+  int index = 0;
+  Expression * polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
+  while (*x != 0) {
+    int degree = equation->getPolynomialCoefficients(*x, polynomialCoefficients);
+    if (degree == 1) {
+      coefficients[index] = polynomialCoefficients[1];
+    } else {
+      assert(degree == 0);
+      coefficients[index] = new Rational(0);
+    }
+    delete equation;
+    equation = polynomialCoefficients[0];
+    x++;
+    index++;
+  }
+  *constant = equation;
+  // xy = 0?
+  bool isMultivariablePolynomial = (*constant)->recursivelyMatches([](const Expression * e, Context & context) {
+    return e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isVariableSymbol();
+  }, context);
+  for (int i = 0; i < index; i++) {
+    if (isMultivariablePolynomial) {
+      break;
+    }
+    isMultivariablePolynomial |= coefficients[i]->recursivelyMatches([](const Expression * e, Context & context) {
+    return e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isVariableSymbol();
+  }, context);
+  }
+  if (isMultivariablePolynomial) {
+    for (int i = 0; i < index; i++) {
+      delete coefficients[i];
+      coefficients[i] = nullptr;
+    }
+    delete *constant;
+    *constant = nullptr;
+    return false;
+  }
+  return true;
+}
+
+int Expression::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg == 0) {
     coefficients[0] = clone();

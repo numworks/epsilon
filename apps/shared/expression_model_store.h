@@ -18,7 +18,7 @@ public:
   virtual void removeAll();
   int numberOfModels() const { return m_numberOfModels; };
   virtual int maxNumberOfModels() const = 0;
-  void tidy();
+  virtual void tidy();
 protected:
   virtual ExpressionModel * emptyModel() = 0;
   virtual ExpressionModel * nullModel() = 0;

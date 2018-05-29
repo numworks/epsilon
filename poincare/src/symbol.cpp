@@ -115,7 +115,7 @@ int Symbol::polynomialDegree(char symbol) const {
 
 int Symbol::getVariables(char * variables) const {
   size_t variablesLength = strlen(variables);
-  if (m_name >= 'a' && m_name <= 'z') {
+  if (isVariableSymbol()) {
     char * currentChar = variables;
     while (*currentChar != 0) {
       if (*currentChar == m_name) {
@@ -133,7 +133,7 @@ int Symbol::getVariables(char * variables) const {
   return variablesLength;
 }
 
-int Symbol::getPolynomialCoefficients(char symbolName, Expression ** coefficients) const {
+int Symbol::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   if (m_name == symbolName) {
     coefficients[0] = new Rational(0);
     coefficients[1] = new Rational(1);
@@ -295,6 +295,13 @@ bool Symbol::isMatrixSymbol() const {
 
 bool Symbol::isScalarSymbol() const {
   if (m_name >= 'A' && m_name <= 'Z') {
+    return true;
+  }
+  return false;
+}
+
+bool Symbol::isVariableSymbol() const {
+  if (m_name >= 'a' && m_name <= 'z') {
     return true;
   }
   return false;

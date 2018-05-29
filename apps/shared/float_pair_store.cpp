@@ -73,7 +73,7 @@ double FloatPairStore::sumOfColumn(int series, int i) const {
   return result;
 }
 
-uint32_t FloatPairStore::storeChecksum() {
+uint32_t FloatPairStore::storeChecksum() const {
   /* Ideally, we would only compute the checksum of the first m_numberOfPairs
    * pairs. However, the two values of a pair are not stored consecutively. We
    * thus compute the checksum on all pairs and ensure to set the pair at 0
@@ -83,7 +83,7 @@ uint32_t FloatPairStore::storeChecksum() {
   return Ion::crc32((uint32_t *)m_data, dataLengthInBytes/sizeof(uint32_t));
 }
 
-double FloatPairStore::defaultValue(int series, int i, int j) {
+double FloatPairStore::defaultValue(int series, int i, int j) const {
   assert(series >= 0 && series < k_numberOfSeries);
   if(i == 0 && j > 1) {
     return 2*m_data[series][i][j-1]-m_data[series][i][j-2];

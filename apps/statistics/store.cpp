@@ -17,7 +17,7 @@ Store::Store() :
 {
 }
 
-uint32_t Store::barChecksum() {
+uint32_t Store::barChecksum() const {
   double data[2] = {m_barWidth, m_firstDrawnBarAbscissa};
   size_t dataLengthInBytes = 2*sizeof(double);
   assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
@@ -32,11 +32,11 @@ void Store::setBarWidth(double barWidth) {
   }
 }
 
-double Store::heightOfBarAtIndex(int series, int index) {
+double Store::heightOfBarAtIndex(int series, int index) const {
   return sumOfValuesBetween(series, startOfBarAtIndex(series, index), endOfBarAtIndex(series, index));
 }
 
-double Store::heightOfBarAtValue(int series, double value) {
+double Store::heightOfBarAtValue(int series, double value) const {
   double width = barWidth();
   int barNumber = std::floor((value - m_firstDrawnBarAbscissa)/width);
   double lowerBound = m_firstDrawnBarAbscissa + barNumber*width;
@@ -44,16 +44,16 @@ double Store::heightOfBarAtValue(int series, double value) {
   return sumOfValuesBetween(series, lowerBound, upperBound);
 }
 
-double Store::startOfBarAtIndex(int series, int index) {
+double Store::startOfBarAtIndex(int series, int index) const {
   double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue(series)- m_firstDrawnBarAbscissa)/m_barWidth);
   return firstBarAbscissa + index * m_barWidth;
 }
 
-double Store::endOfBarAtIndex(int series, int index) {
+double Store::endOfBarAtIndex(int series, int index) const {
   return startOfBarAtIndex(series, index+1);
 }
 
-double Store::numberOfBars(int series) {
+double Store::numberOfBars(int series) const {
   double firstBarAbscissa = m_firstDrawnBarAbscissa + m_barWidth*std::floor((minValue(series)- m_firstDrawnBarAbscissa)/m_barWidth);
   return std::ceil((maxValue(series) - firstBarAbscissa)/m_barWidth)+1;
 }
@@ -76,7 +76,7 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
   return false;
 }
 
-bool Store::isEmpty() {
+bool Store::isEmpty() const {
   for (int i = 0; i < k_numberOfSeries; i ++) {
     if (!seriesIsEmpty(i)) {
       return false;
@@ -85,7 +85,7 @@ bool Store::isEmpty() {
   return true;
 }
 
-int Store::numberOfNonEmptySeries() {
+int Store::numberOfNonEmptySeries() const {
   int result = 0;
   for (int i = 0; i < k_numberOfSeries; i ++) {
     if (!seriesIsEmpty(i)) {
@@ -95,11 +95,11 @@ int Store::numberOfNonEmptySeries() {
   return result;
 }
 
-bool Store::seriesIsEmpty(int i) {
+bool Store::seriesIsEmpty(int i) const {
   return sumOfOccurrences(i) == 0;
 }
 
-int Store::indexOfKthNonEmptySeries(int k) {
+int Store::indexOfKthNonEmptySeries(int k) const {
   assert(k >= 0 && k < numberOfNonEmptySeries());
   int nonEmptySeriesCount = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {
@@ -116,11 +116,11 @@ int Store::indexOfKthNonEmptySeries(int k) {
 
 /* Calculation */
 
-double Store::sumOfOccurrences(int series) {
+double Store::sumOfOccurrences(int series) const {
   return sumOfColumn(series, 1);
 }
 
-double Store::maxValueForAllSeries() {
+double Store::maxValueForAllSeries() const {
   assert(FloatPairStore::k_numberOfSeries > 0);
   double result = maxValue(0);
   for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
@@ -132,7 +132,7 @@ double Store::maxValueForAllSeries() {
   return result;
 }
 
-double Store::minValueForAllSeries() {
+double Store::minValueForAllSeries() const {
   assert(FloatPairStore::k_numberOfSeries > 0);
   double result = minValue(0);
   for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
@@ -144,7 +144,7 @@ double Store::minValueForAllSeries() {
   return result;
 }
 
-double Store::maxValue(int series) {
+double Store::maxValue(int series) const {
   double max = -DBL_MAX;
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
     if (m_data[series][0][k] > max && m_data[series][1][k] > 0) {
@@ -154,7 +154,7 @@ double Store::maxValue(int series) {
   return max;
 }
 
-double Store::minValue(int series) {
+double Store::minValue(int series) const {
   double min = DBL_MAX;
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
     if (m_data[series][0][k] < min && m_data[series][1][k] > 0) {
@@ -164,42 +164,42 @@ double Store::minValue(int series) {
   return min;
 }
 
-double Store::range(int series) {
+double Store::range(int series) const {
   return maxValue(series)-minValue(series);
 }
 
-double Store::mean(int series) {
+double Store::mean(int series) const {
   return sum(series)/sumOfOccurrences(series);
 }
 
-double Store::variance(int series) {
+double Store::variance(int series) const {
   double m = mean(series);
   return squaredValueSum(series)/sumOfOccurrences(series) - m*m;
 }
 
-double Store::standardDeviation(int series) {
+double Store::standardDeviation(int series) const {
   return std::sqrt(variance(series));
 }
 
-double Store::sampleStandardDeviation(int series) {
+double Store::sampleStandardDeviation(int series) const {
   double n = sumOfOccurrences(series);
   double s = std::sqrt(n/(n-1.0));
   return s*standardDeviation(series);
 }
 
-double Store::firstQuartile(int series) {
+double Store::firstQuartile(int series) const {
   return sortedElementAtCumulatedFrequency(series, 1.0/4.0);
 }
 
-double Store::thirdQuartile(int series) {
+double Store::thirdQuartile(int series) const {
   return sortedElementAtCumulatedFrequency(series, 3.0/4.0);
 }
 
-double Store::quartileRange(int series) {
+double Store::quartileRange(int series) const {
   return thirdQuartile(series)-firstQuartile(series);
 }
 
-double Store::median(int series) {
+double Store::median(int series) const {
   bool exactElement = true;
   double maxMedian = sortedElementAtCumulatedFrequency(series, 1.0/2.0, &exactElement);
   if (!exactElement) {
@@ -210,7 +210,7 @@ double Store::median(int series) {
   }
 }
 
-double Store::sum(int series) {
+double Store::sum(int series) const {
   double result = 0;
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
     result += m_data[series][0][k]*m_data[series][1][k];
@@ -218,7 +218,7 @@ double Store::sum(int series) {
   return result;
 }
 
-double Store::squaredValueSum(int series) {
+double Store::squaredValueSum(int series) const {
   double result = 0;
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
     result += m_data[series][0][k]*m_data[series][0][k]*m_data[series][1][k];
@@ -228,11 +228,11 @@ double Store::squaredValueSum(int series) {
 
 /* Private methods */
 
-double Store::defaultValue(int series, int i, int j) {
+double Store::defaultValue(int series, int i, int j) const {
   return i == 0 ? FloatPairStore::defaultValue(series, i, j) : 1.0;
 }
 
-double Store::sumOfValuesBetween(int series, double x1, double x2) {
+double Store::sumOfValuesBetween(int series, double x1, double x2) const {
   double result = 0;
   for (int k = 0; k < m_numberOfPairs[series]; k++) {
     if (m_data[series][0][k] < x2 && x1 <= m_data[series][0][k]) {
@@ -242,7 +242,7 @@ double Store::sumOfValuesBetween(int series, double x1, double x2) {
   return result;
 }
 
-double Store::sortedElementAtCumulatedFrequency(int series, double k, bool * exactElement) {
+double Store::sortedElementAtCumulatedFrequency(int series, double k, bool * exactElement) const {
   // TODO: use an other algorithm (ex quickselect) to avoid quadratic complexity
   assert(k >= 0.0 && k <= 1.0);
   double totalNumberOfElements = sumOfOccurrences(series);
@@ -261,7 +261,7 @@ double Store::sortedElementAtCumulatedFrequency(int series, double k, bool * exa
   return m_data[series][0][sortedElementIndex];
 }
 
-double Store::sortedElementAfter(int series, double k) {
+double Store::sortedElementAfter(int series, double k) const {
   assert(m_numberOfPairs[series] > 0);
   double result = DBL_MAX;
   bool foundResult = false;
@@ -276,7 +276,7 @@ double Store::sortedElementAfter(int series, double k) {
   return result;
 }
 
-int Store::minIndex(double * bufferValues, int bufferLength) {
+int Store::minIndex(double * bufferValues, int bufferLength) const {
   int index = 0;
   for (int i = 1; i < bufferLength; i++) {
     if (bufferValues[index] > bufferValues[i]) {

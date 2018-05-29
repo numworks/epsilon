@@ -34,7 +34,7 @@ public:
   void deleteAllPairs();
   void resetColumn(int series, int i);
   double sumOfColumn(int series, int i) const;
-  uint32_t storeChecksum();
+  uint32_t storeChecksum() const;
 
   static KDColor colorOfSeriesAtIndex(int i) {
     assert(i >= 0 && i < k_numberOfSeries);
@@ -45,7 +45,7 @@ public:
     return Palette::DataColorLight[i];
   }
 protected:
-  virtual double defaultValue(int series, int i, int j);
+  virtual double defaultValue(int series, int i, int j) const;
   int m_numberOfPairs[k_numberOfSeries];
   double m_data[k_numberOfSeries][k_numberOfColumnsPerSeries][k_maxNumberOfPairs];
 };

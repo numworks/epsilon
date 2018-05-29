@@ -35,7 +35,7 @@ int Addition::polynomialDegree(char symbolName) const {
   return degree;
 }
 
-int Addition::getPolynomialCoefficients(char symbolName, Expression ** coefficients) const {
+int Addition::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg < 0 || deg > k_maxNumberOfPolynomialCoefficients-1) {
     return -1;

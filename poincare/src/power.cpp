@@ -79,7 +79,7 @@ int Power::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-int Power::getPolynomialCoefficients(char symbolName, Expression ** coefficients) const {
+int Power::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg <= 0) {
     return deg;

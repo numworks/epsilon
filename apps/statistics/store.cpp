@@ -16,7 +16,8 @@ Store::Store() :
   FloatPairStore(),
   m_barWidth(1.0),
   m_firstDrawnBarAbscissa(0.0),
-  m_seriesEmpty{true, true, true}
+  m_seriesEmpty{true, true, true},
+  m_numberOfNonEmptySeries(0)
 {
 }
 
@@ -89,13 +90,7 @@ bool Store::isEmpty() const {
 }
 
 int Store::numberOfNonEmptySeries() const {
-  int result = 0;
-  for (int i = 0; i < k_numberOfSeries; i ++) {
-    if (!seriesIsEmpty(i)) {
-      result++;
-    }
-  }
-  return result;
+  return m_numberOfNonEmptySeries;
 }
 
 bool Store::seriesIsEmpty(int i) const {
@@ -232,16 +227,29 @@ double Store::squaredValueSum(int series) const {
 void Store::set(double f, int series, int i, int j) {
   FloatPairStore::set(f, series, i, j);
   m_seriesEmpty[series] = sumOfOccurrences(series) == 0;
+  updateNonEmptySeriesCount();
 }
 
 void Store::deletePairOfSeriesAtIndex(int series, int j) {
   FloatPairStore::deletePairOfSeriesAtIndex(series, j);
   m_seriesEmpty[series] = sumOfOccurrences(series) == 0;
+  updateNonEmptySeriesCount();
 }
 
 void Store::deleteAllPairsOfSeries(int series) {
   FloatPairStore::deleteAllPairsOfSeries(series);
   m_seriesEmpty[series] = true;
+  updateNonEmptySeriesCount();
+}
+
+void Store::updateNonEmptySeriesCount() {
+  int nonEmptySeriesCount = 0;
+  for (int i = 0; i< k_numberOfSeries; i++) {
+    if (!m_seriesEmpty[i]) {
+      nonEmptySeriesCount++;
+    }
+  }
+  m_numberOfNonEmptySeries = nonEmptySeriesCount;
 }
 
 /* Private methods */

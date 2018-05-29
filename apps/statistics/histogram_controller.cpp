@@ -172,6 +172,7 @@ bool HistogramController::moveSelectionHorizontally(int deltaIndex) {
     if (m_store->scrollToSelectedBarIndex(selectedSeries(), *m_selectedBarIndex)) {
       multipleDataView()->reload();
     }
+    reloadBannerView();
     return true;
   }
   return false;

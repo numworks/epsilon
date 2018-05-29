@@ -48,7 +48,7 @@ void BoxView::reload() {
   KDCoordinate maxY = boxUpperBoundPixel();
   KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series)));
   KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series)));
-  KDRect dirtyRect = KDRect(minX, minY, maxX - minX + k_quantileBarWidth, maxY - minY + k_quantileBarWidth);
+  KDRect dirtyRect = KDRect(minX, minY, maxX - minX + k_quantileBarWidth, maxY - minY);
   markRectAsDirty(dirtyRect);
 }
 

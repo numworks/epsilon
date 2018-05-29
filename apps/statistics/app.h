@@ -4,9 +4,9 @@
 #include <escher.h>
 #include "box_controller.h"
 #include "calculation_controller.h"
+#include "histogram_controller.h"
 #include "store.h"
 #include "store_controller.h"
-#include "histogram_controller.h"
 #include "../shared/text_field_delegate_app.h"
 
 namespace Statistics {

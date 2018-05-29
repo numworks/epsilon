@@ -55,6 +55,8 @@ public:
   void deletePairOfSeriesAtIndex(int series, int j) override;
   void deleteAllPairsOfSeries(int series) override;
 
+  void updateNonEmptySeriesCount();
+
 private:
   double defaultValue(int series, int i, int j) const override;
   double sumOfValuesBetween(int series, double x1, double x2) const;
@@ -65,6 +67,7 @@ private:
   double m_barWidth;
   double m_firstDrawnBarAbscissa;
   bool m_seriesEmpty[k_numberOfSeries];
+  int m_numberOfNonEmptySeries;
 };
 
 typedef double (Store::*CalculPointer)(int) const;

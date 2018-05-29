@@ -30,8 +30,8 @@ generated_headers += $(addprefix kandinsky/src/, small_font.h large_font.h)
 small_font_files = $(addprefix kandinsky/src/, small_font.h small_font.c)
 large_font_files = $(addprefix kandinsky/src/, large_font.h large_font.c)
 
-RASTERIZER_CFLAGS := -std=c99 `freetype-config --cflags`
-RASTERIZER_LDFLAGS := `freetype-config --libs`
+RASTERIZER_CFLAGS := -std=c99 `pkg-config freetype2 --cflags`
+RASTERIZER_LDFLAGS := `pkg-config freetype2 --libs`
 
 ifdef LIBPNG_PATH
   small_font_files += kandinsky/src/small_font.png

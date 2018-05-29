@@ -264,15 +264,13 @@ double Store::sortedElementAtCumulatedFrequency(int series, double k, bool * exa
 double Store::sortedElementAfter(int series, double k) const {
   assert(m_numberOfPairs[series] > 0);
   double result = DBL_MAX;
-  bool foundResult = false;
   for (int i = 0; i < m_numberOfPairs[series]; i++) {
     double currentElement = m_data[series][0][i];
     if (currentElement > k && currentElement < result) {
       result = currentElement;
-      foundResult = true;
     }
   }
-  assert(foundResult);
+  assert(result < DBL_MAX);
   return result;
 }
 

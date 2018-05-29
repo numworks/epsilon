@@ -84,6 +84,7 @@ void HistogramController::didBecomeFirstResponder() {
   if (*m_storeVersion != storeChecksum) {
     *m_storeVersion = storeChecksum;
     initBarParameters();
+    initRangeParameters();
   }
   uint32_t barChecksum = m_store->barChecksum();
   if (*m_barVersion != barChecksum) {

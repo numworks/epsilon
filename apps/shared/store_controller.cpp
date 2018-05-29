@@ -171,7 +171,7 @@ void StoreController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
-  app()->setFirstResponder(static_cast<ContentView *>(view()));
+  app()->setFirstResponder(contentView());
 }
 
 Responder * StoreController::tabController() const {
@@ -179,7 +179,7 @@ Responder * StoreController::tabController() const {
 }
 
 SelectableTableView * StoreController::selectableTableView() {
-  return static_cast<ContentView *>(view())->dataView();
+  return contentView()->dataView();
 }
 
 bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {

@@ -62,6 +62,8 @@ View * MultipleDataView::subviewAtIndex(int index) {
 }
 
 void MultipleDataView::layoutSubviews() {
+  // We need to set the banner width first, so its height can be computed
+  editableBannerView()->setFrame(KDRect(0, 0, bounds().width(), 0));
   layoutDataSubviews();
   layoutBanner();
 }

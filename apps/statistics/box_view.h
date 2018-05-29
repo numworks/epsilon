@@ -25,6 +25,7 @@ public:
   Quantile selectedQuantile() const { return *m_selectedQuantile; }
   bool selectQuantile(int selectedQuantile);
   int series() const { return m_series; }
+  void reloadQuantile();
 
   // CurveView
   void reload() override;
@@ -33,6 +34,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   static constexpr KDCoordinate k_boxHeight = 40;
+  static constexpr KDCoordinate k_quantileBarWidth = 2;
   KDCoordinate boxLowerBoundPixel() const;
   KDCoordinate boxUpperBoundPixel() const;
   char * label(Axis axis, int index) const override { return nullptr; }

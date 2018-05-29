@@ -196,6 +196,7 @@ public:
     Unknown = 0,
     Positive = 1
   };
+  bool isRationalZero() const;
   virtual Sign sign() const { return Sign::Unknown; }
   typedef bool (*ExpressionTest)(const Expression * e, Context & context);
   bool recursivelyMatches(ExpressionTest test, Context & context) const;
@@ -222,12 +223,18 @@ public:
    * variables would overflow the maxNumberOfVariables, getVariables return -1 */
   static constexpr int k_maxNumberOfVariables = 6;
   virtual int getVariables(char * variables) const;
+  /* getLinearCoefficients return false if the expression is not linear with
+   * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
+   * the coefficients of the variables hold in 'variables' (following the same
+   * order) and 'constant' with the constant of the expression. */
+  bool getLinearCoefficients(char * variables, Expression * coefficients[], Expression * constant[], Context & context) const;
   /* getPolynomialCoefficients fills the table coefficients with the expressions
    * of the first 5 polynomial coefficients and return polynomialDegree.
    * coefficients has up to 5 entries. It supposed to be called on Reduced
    * expression. */
-  static constexpr int k_maxNumberOfPolynomialCoefficients = 4+1;
-  virtual int getPolynomialCoefficients(char symbolName, Expression ** coefficients) const;
+  static constexpr int k_maxPolynomialDegree = 2;
+  static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
+  virtual int getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -246,7 +253,7 @@ public:
   /* Simplification */
   static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit = AngleUnit::Default);
   static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
-  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively = true);
+  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default, bool recursively = true);
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.

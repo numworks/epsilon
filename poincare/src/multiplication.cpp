@@ -43,7 +43,7 @@ int Multiplication::polynomialDegree(char symbolName) const {
   return degree;
 }
 
-int Multiplication::getPolynomialCoefficients(char symbolName, Expression ** coefficients) const {
+int Multiplication::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg < 0 || deg + 1 > k_maxNumberOfPolynomialCoefficients) {
     return -1;

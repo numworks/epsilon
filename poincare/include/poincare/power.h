@@ -22,7 +22,7 @@ public:
   Expression * clone() const override;
   Sign sign() const override;
   int polynomialDegree(char symbolName) const override;
-  int getPolynomialCoefficients(char symbolName, Expression ** coefficients) const override;
+  int getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
   template<typename T> static Complex<T> compute(const Complex<T> c, const Complex<T> d);
 private:
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;

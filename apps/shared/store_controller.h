@@ -80,6 +80,7 @@ protected:
   StoreParameterController m_storeParameterController;
 private:
   bool cellShouldBeTransparent(int i, int j);
+  ContentView * contentView() { return static_cast<ContentView *>(view()); }
 };
 
 }

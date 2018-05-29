@@ -30,6 +30,17 @@ void HistogramView::reload() {
   markRectAsDirty(dirtyZone);
 }
 
+void HistogramView::reloadSelectedBar() {
+  CurveView::reload();
+  float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedBarStart)-2;
+  float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedBarEnd)+2;
+  /* We deliberately do not mark as dirty the frame of the banner view to avoid
+   *unpleasant blinking of the drawing of the banner view. */
+  KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
+    bounds().height() - (displayBannerView() ? m_bannerView->bounds().height() : 0)));
+  markRectAsDirty(dirtyZone);
+}
+
 void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
   m_controller->setCurrentDrawnSeries(m_series);
   ctx->fillRect(rect, KDColorWhite);
@@ -48,10 +59,10 @@ void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
 
 void HistogramView::setHighlight(float start, float end) {
   if (m_highlightedBarStart != start || m_highlightedBarEnd != end) {
-    reload();
+    reloadSelectedBar();
     m_highlightedBarStart = start;
     m_highlightedBarEnd = end;
-    reload();
+    reloadSelectedBar();
   }
 }
 

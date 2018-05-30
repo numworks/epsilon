@@ -16,22 +16,6 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
   Shared::StoreController(parentResponder, store, header),
   m_titleCells{}
 {
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    /* If the index is too big, the layout creation should take into account the
-     * possibility of a two-digits index. */
-    assert(Store::k_numberOfSeries < 10);
-    m_titleLayout[Store::k_numberOfColumnsPerSeries*i] = new HorizontalLayout(new CharLayout('X', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('0'+ i, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false), false);
-    m_titleLayout[Store::k_numberOfColumnsPerSeries*i+1] = new HorizontalLayout(new CharLayout('Y', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('0' + i, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false), false);
-  }
-}
-
-StoreController::~StoreController() {
-  for (int i = 0; i < k_numberOfTitleCells; i++) {
-    if (m_titleLayout[i]) {
-      delete m_titleLayout[i];
-      m_titleLayout[i] = nullptr;
-    }
-  }
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -39,8 +23,13 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
-  EvenOddExpressionCell * mytitleCell = (EvenOddExpressionCell *)cell;
-  mytitleCell->setExpressionLayout(m_titleLayout[i]);
+  Shared::StoreTitleCell * mytitleCell = static_cast<Shared::StoreTitleCell *>(cell);
+  bool isValuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
+  mytitleCell->setSeparatorLeft(isValuesColumn);
+  int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
+  mytitleCell->setColor(m_store->numberOfPairsOfSeries(seriesIndex) == 0 ? Palette::GreyDark : Store::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GreyDark with graph/list_controller and statistics/store_controller
+  char name[] = {isValuesColumn ? 'X' : 'Y', static_cast<char>('1' + seriesIndex), 0};
+  mytitleCell->setText(name);
 }
 
 HighlightCell * StoreController::titleCells(int index) {
@@ -50,7 +39,7 @@ HighlightCell * StoreController::titleCells(int index) {
 
 View * StoreController::loadView() {
   for (int i = 0; i < k_numberOfTitleCells; i++) {
-    m_titleCells[i] = new EvenOddExpressionCell(0.5f, 0.5f);
+    m_titleCells[i] = new Shared::StoreTitleCell();
   }
   return Shared::StoreController::loadView();
 }

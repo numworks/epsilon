@@ -90,7 +90,7 @@ int Store::nextDot(int series, int direction, int dot) {
     if (std::fabs(meanX - x) < std::fabs(nextX - x) &&
           (numberOfPairsOfSeries(series) != dot) &&
           (meanX >= x)) {
-      if (meanX != x || (x > dot)) {
+      if (meanX != x || (numberOfPairsOfSeries(series) > dot)) {
         selectedDot = numberOfPairsOfSeries(series);
       }
     }
@@ -99,7 +99,7 @@ int Store::nextDot(int series, int direction, int dot) {
     if (std::fabs(meanX - x) < std::fabs(nextX - x) &&
           (numberOfPairsOfSeries(series) != dot) &&
           (meanX <= x)) {
-      if (meanX != x || (numberOfPairsOfSeries(series) < dot)) {
+      if ((meanX != x) || (numberOfPairsOfSeries(series) < dot)) {
         nextX = meanX;
         selectedDot = numberOfPairsOfSeries(series);
       }

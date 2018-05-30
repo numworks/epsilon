@@ -1,4 +1,4 @@
-objs += $(addprefix ion/src/hp-prime/boot/, rt0.o)
+objs += $(addprefix ion/src/hp-prime/boot/, crt0.o rt0.o)
 
 objs += $(addprefix ion/src/shared/, \
   crc32.o \

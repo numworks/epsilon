@@ -8,8 +8,6 @@ longjmp:
   // General purpose registers
   ldmia  r0!, { r4-r11, ip, lr }
 
-  // XXX: we don't restore VFP state
-
   mov  sp, ip
   /* Put the return value in the integer result register, but return 1 if it is
      in fact zero. */

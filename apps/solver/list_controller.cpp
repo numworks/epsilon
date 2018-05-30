@@ -12,9 +12,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   m_equationStore(equationStore),
   m_resolveButton(this, I18n::Message::Resolve, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
-    StackViewController * stackController = list->stackController();
-    // TODO
-    //stackController->push(list->solutionPage ??)
+    list->resolveEquations();
   }, this), KDText::FontSize::Small, Palette::PurpleBright),
   m_modelsParameterController(this, equationStore, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)
@@ -140,6 +138,27 @@ bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField 
     }
   }
   return false;
+}
+
+void ListController::resolveEquations() {
+  EquationStore::Error e = m_equationStore->exactSolve(static_cast<App *>(app())->localContext());
+  switch (e) {
+    case EquationStore::Error::TooManyVariables:
+      app()->displayWarning(I18n::Message::TooManyVariables);
+      return;
+    case EquationStore::Error::NonLinearSystem:
+      app()->displayWarning(I18n::Message::NonLinearSystem);
+      return;
+    case EquationStore::Error::RequireApproximateSolution:
+      return;
+    default:
+    {
+      assert(e == EquationStore::Error::NoError);
+      StackViewController * stack = stackController();
+      App * solverApp = static_cast<App *>(app());
+      stack->push(solverApp->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+    }
+ }
 }
 
 void ListController::addEmptyModel() {

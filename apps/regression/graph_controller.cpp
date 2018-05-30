@@ -26,10 +26,15 @@ ViewController * GraphController::initialisationParameterController() {
 }
 
 bool GraphController::isEmpty() const {
-  if (m_store->numberOfPairs() < 2 || std::isinf(m_store->slope()) || std::isnan(m_store->slope())) {
+  if (m_store->isEmpty()) {
     return true;
   }
-  return false;
+  for (int series = 0; series < FloatPairStore::k_numberOfSeries; series++) {
+    if (!m_store->seriesIsEmpty(series) && !std::isinf(m_store->slope(series)) && (std::isnan(m_store->slope(series)))) {
+      return false;
+    }
+  }
+  return true;
 }
 
 I18n::Message GraphController::emptyMessage() {

@@ -7,8 +7,8 @@ namespace Shared {
 
 class StoreTitleCell : public BufferFunctionTitleCell {
 public:
-  StoreTitleCell(Orientation orientation, KDText::FontSize size = KDText::FontSize::Large) :
-    BufferFunctionTitleCell(orientation, size),
+  StoreTitleCell() :
+    BufferFunctionTitleCell(Orientation::HorizontalIndicator, KDText::FontSize::Small),
     m_separatorLeft(false)
   {}
   void setSeparatorLeft(bool separator);

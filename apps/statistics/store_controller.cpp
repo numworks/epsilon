@@ -55,7 +55,7 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
 
 View * StoreController::loadView() {
   for (int i = 0; i < k_numberOfTitleCells; i++) {
-    m_titleCells[i] = new Shared::StoreTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
+    m_titleCells[i] = new Shared::StoreTitleCell();
   }
   return Shared::StoreController::loadView();
 }

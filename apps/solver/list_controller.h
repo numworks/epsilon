@@ -45,6 +45,8 @@ public:
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
+  /* Specific to Solver */
+  void resolveEquations();
 private:
   constexpr static int k_maxNumberOfRows = 5; // Ion::Display::Height / Metric::StoreRowHeight = 4.8;
   void addEmptyModel() override;

@@ -61,7 +61,7 @@ I18n::Message SolutionsController::emptyMessage() {
 }
 
 Responder * SolutionsController::defaultController() {
-  return parentResponder();
+  return parentResponder()->parentResponder();
 }
 
 /* TableViewDataSource */

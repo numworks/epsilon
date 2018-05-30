@@ -22,11 +22,11 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     return;
   }
   Shared::StoreTitleCell * mytitleCell = static_cast<Shared::StoreTitleCell *>(cell);
-  mytitleCell->setSeparatorLeft(i % Store::k_numberOfColumnsPerSeries == 0);
+  bool isValuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
+  mytitleCell->setSeparatorLeft(isValuesColumn);
   int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
-  bool valuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
   assert(seriesIndex >= 0 && seriesIndex < FloatPairStore::k_numberOfSeries);
-  if (valuesColumn) {
+  if (isValuesColumn) {
     I18n::Message valuesMessages[] = {I18n::Message::Values1, I18n::Message::Values2, I18n::Message::Values3};
     mytitleCell->setText(I18n::translate(valuesMessages[seriesIndex]));
   } else {

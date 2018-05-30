@@ -3,6 +3,8 @@
 #include "../apps_container.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Calculation {
 
 HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
@@ -47,8 +49,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     if (subviewType == HistoryViewCell::SubviewType::Input) {
       editController->insertTextBody(calculation->inputText());
     } else {
-      OutputExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
-      if (outputSubviewType == OutputExpressionsView::SubviewType::ExactOutput) {
+      ScrollableExactApproximateExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
+      if (outputSubviewType == ScrollableExactApproximateExpressionsView::SubviewType::ExactOutput) {
         editController->insertTextBody(calculation->exactOutputText());
       } else {
         editController->insertTextBody(calculation->approximateOutputText());
@@ -102,8 +104,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     if (subviewType == HistoryViewCell::SubviewType::Input) {
       Clipboard::sharedClipboard()->store(calculation->inputText());
     } else {
-      OutputExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
-      if (outputSubviewType == OutputExpressionsView::SubviewType::ExactOutput) {
+      ScrollableExactApproximateExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
+      if (outputSubviewType == ScrollableExactApproximateExpressionsView::SubviewType::ExactOutput) {
         Clipboard::sharedClipboard()->store(calculation->exactOutputText());
       } else {
         Clipboard::sharedClipboard()->store(calculation->approximateOutputText());

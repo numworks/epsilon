@@ -1,5 +1,5 @@
 #include "store_cell.h"
-#include "escher/metric.h"
+#include <escher/metric.h>
 
 namespace Shared {
 

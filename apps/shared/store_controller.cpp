@@ -2,6 +2,7 @@
 #include "store_selectable_table_view.h"
 #include "../apps_container.h"
 #include "../constant.h"
+#include <escher/metric.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -180,7 +181,7 @@ View * StoreController::loadView() {
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
     m_editableCells[i] = new StoreCell(tableView, this, m_draftTextBuffer);
   }
-  tableView->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  tableView->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin - Metric::TableSeparatorThickness);
   return tableView;
 }
 

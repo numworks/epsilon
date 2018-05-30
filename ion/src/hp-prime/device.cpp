@@ -4,6 +4,8 @@ extern "C" {
 #include <assert.h>
 }
 #include <ion.h>
+#include "display.h"
+
 
 // Public Ion methods
 
@@ -24,6 +26,10 @@ void Ion::usleep(long us) {
 
 namespace Ion {
 namespace Device {
+
+void init() {
+  Ion::Display::Device::init();
+}
 
 }
 }

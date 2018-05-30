@@ -4,6 +4,7 @@ extern "C" {
 #include <stdint.h>
 #include <string.h>
 #include <ion.h>
+#include "../device.h"
 
 typedef void (*cxx_constructor)();
 
@@ -50,6 +51,8 @@ void start() {
     abort();
   }
 #endif
+
+  Ion::Device::init();
 
   ion_main(0, nullptr);
 

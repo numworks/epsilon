@@ -4,6 +4,8 @@
 namespace Ion {
 namespace Device {
 
+void init();
+
 }
 }
 

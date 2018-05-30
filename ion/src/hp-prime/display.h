@@ -11,6 +11,8 @@ namespace Ion {
 namespace Display {
 namespace Device {
 
+void init();
+
 }
 }
 }

@@ -95,7 +95,7 @@ int Power::getPolynomialCoefficients(char symbolName, Expression * coefficients[
       return -1;
     }
     int n = r->numerator().extractedInt();
-    if (n < k_maxNumberOfPolynomialCoefficients) {
+    if (n <= k_maxPolynomialDegree) {
       for (int i = 0; i < n; i++) {
         coefficients[i] = new Rational(0);
       }

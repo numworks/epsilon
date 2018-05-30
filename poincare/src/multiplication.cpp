@@ -45,15 +45,15 @@ int Multiplication::polynomialDegree(char symbolName) const {
 
 int Multiplication::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
-  if (deg < 0 || deg + 1 > k_maxNumberOfPolynomialCoefficients) {
+  if (deg < 0 || deg > k_maxPolynomialDegree) {
     return -1;
   }
   int degA = operand(0)->getPolynomialCoefficients(symbolName, coefficients);
-  assert(degA + 1 <= k_maxNumberOfPolynomialCoefficients);
+  assert(degA <= k_maxPolynomialDegree);
   Expression * intermediateCoefficients[k_maxNumberOfPolynomialCoefficients];
   for (int i = 1; i < numberOfOperands(); i++) {
     int degB = operand(i)->getPolynomialCoefficients(symbolName, intermediateCoefficients);
-    assert(degB + 1 <= k_maxNumberOfPolynomialCoefficients);
+    assert(degB <= k_maxPolynomialDegree);
     for (int j = deg; j > 0; j--) {
       Addition * a = new Addition();
       for (int l = 0; l <= j; l++) {

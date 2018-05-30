@@ -37,7 +37,7 @@ int Addition::polynomialDegree(char symbolName) const {
 
 int Addition::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
-  if (deg < 0 || deg > k_maxNumberOfPolynomialCoefficients-1) {
+  if (deg < 0 || deg > k_maxPolynomialDegree) {
     return -1;
   }
   for (int k = 0; k < deg+1; k++) {
@@ -46,7 +46,7 @@ int Addition::getPolynomialCoefficients(char symbolName, Expression * coefficien
   Expression * intermediateCoefficients[k_maxNumberOfPolynomialCoefficients];
   for (int i = 0; i < numberOfOperands(); i++) {
     int d = operand(i)->getPolynomialCoefficients(symbolName, intermediateCoefficients);
-    assert(d < k_maxNumberOfPolynomialCoefficients-1);
+    assert(d < k_maxNumberOfPolynomialCoefficients);
     for (int j = 0; j < d+1; j++) {
       static_cast<Addition *>(coefficients[j])->addOperand(intermediateCoefficients[j]);
     }

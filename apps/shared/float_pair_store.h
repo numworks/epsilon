@@ -14,8 +14,8 @@ public:
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static int k_maxNumberOfPairs = 100;
   FloatPairStore() :
-    m_numberOfPairs{},
-    m_data{}
+    m_data{},
+    m_numberOfPairs{}
   {}
   // Delete the implicit copy constructor: the object is heavy
   FloatPairStore(const FloatPairStore&) = delete;
@@ -46,8 +46,9 @@ public:
   }
 protected:
   virtual double defaultValue(int series, int i, int j) const;
-  int m_numberOfPairs[k_numberOfSeries];
   double m_data[k_numberOfSeries][k_numberOfColumnsPerSeries][k_maxNumberOfPairs];
+private:
+  int m_numberOfPairs[k_numberOfSeries];
 };
 
 }

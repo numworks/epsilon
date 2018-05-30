@@ -11,6 +11,7 @@ app_objs += $(addprefix apps/statistics/,\
   calculation_cell.o\
   calculation_controller.o\
   calculation_selectable_table_view.o\
+  calculation_title_cell.o\
   histogram_banner_view.o\
   histogram_controller.o\
   histogram_parameter_controller.o\

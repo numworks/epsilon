@@ -13,7 +13,7 @@ void CalculationCell::drawRect(KDContext * ctx, KDRect rect) const {
 
 void CalculationCell::layoutSubviews() {
   KDRect boundsThis = bounds();
-  m_bufferTextView.setFrame(KDRect(boundsThis.left() + Metric::TableSeparatorThickness, boundsThis.top(), boundsThis.width() - Metric::TableSeparatorThickness, boundsThis.height()));
+  m_bufferTextView.setFrame(KDRect(boundsThis.left() + Metric::TableSeparatorThickness, boundsThis.top(), boundsThis.width() - Metric::TableSeparatorThickness - k_rightMargin, boundsThis.height()));
 }
 
 }

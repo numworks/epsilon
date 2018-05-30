@@ -75,8 +75,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       I18n::Message::Sum,
       I18n::Message::SquareSum,
       I18n::Message::SampleStandardDeviationS};
-    EvenOddMessageTextCell * evenOddMessageCell = static_cast<EvenOddMessageTextCell *>(cell);
-    evenOddMessageCell->setMessage(titles[j-1]);
+    CalculationTitleCell * calcTitleCell = static_cast<CalculationTitleCell *>(cell);
+    calcTitleCell->setMessage(titles[j-1]);
     return;
   }
   // Display a calculation cell
@@ -205,7 +205,7 @@ View * CalculationController::loadView() {
     m_seriesTitleCells[i]->setSeparatorLeft(true);
   }
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
-    m_calculationTitleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
+    m_calculationTitleCells[i] = new CalculationTitleCell(KDText::FontSize::Small);
     m_calculationTitleCells[i]->setAlignment(1.0f, 0.5f);
   }
   for (int i = 0; i < k_numberOfCalculationCells; i++) {

@@ -5,10 +5,10 @@ using namespace Poincare;
 namespace Solver {
 
 EquationStore::EquationStore() :
-  m_equations{},
-  m_form(Form::LinearSystem),
+  m_type(Type::LinearSystem),
   m_numberOfSolutions(0),
-  m_exactSolutions{nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}
+  m_exactSolutionExactLayouts{},
+  m_exactSolutionApproximateLayouts{}
 {
 }
 
@@ -30,12 +30,26 @@ void EquationStore::tidy() {
   tidySolution();
 }
 
+Poincare::ExpressionLayout * EquationStore::exactSolutionLayoutAtIndex(int i, bool exactLayout) {
+  assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
+  if (exactLayout) {
+    return m_exactSolutionExactLayouts[i];
+  } else {
+    return m_exactSolutionApproximateLayouts[i];
+  }
+}
+
+double EquationStore::approximateSolutionAtIndex(int i) {
+  assert(m_type == Type::Monovariable && i >= 0 && i < m_numberOfSolutions);
+  return m_approximateSolutions[i];
+}
+
 EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   tidySolution();
-  char variables[Expression::k_maxNumberOfVariables+1] = {0};
-  int numberOfVariables;
+  m_variables[0] = 0;
+  int numberOfVariables = 0;
   for (int i = 0; i < numberOfModels(); i++) {
-    numberOfVariables = m_equations[i].standardForm(context)->getVariables(variables);
+    numberOfVariables = m_equations[i].standardForm(context)->getVariables(m_variables);
     if (numberOfVariables < 0) {
       return Error::TooManyVariables;
     }
@@ -48,7 +62,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   Expression * constants[k_maxNumberOfEquations];
   bool success = true;
   for (int i = 0; i < numberOfModels(); i++) {
-    success = success && m_equations[i].standardForm(context)->getLinearCoefficients(variables, coefficients[i], &constants[i], *context);
+    success = success && m_equations[i].standardForm(context)->getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context);
     if (!success) {
       for (int j = 0; j < i; j++) {
         for (int k = 0; k < numberOfVariables; k++) {
@@ -63,6 +77,11 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       }
     }
   }
+  Expression * exactSolutions[k_maxNumberOfExactSolutions];
+  for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
+   exactSolutions[i] = nullptr;
+  }
+  EquationStore::Error error;
   if (success) {
     for (int i = 0; i < numberOfModels(); i++) {
       for (int k = 0; k < numberOfVariables; k++) {
@@ -70,49 +89,62 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       }
       Expression::Reduce(&constants[i], *context);
     }
-    m_form = Form::LinearSystem;
-    return resolveLinearSystem(coefficients, constants, context);
+    m_type = Type::LinearSystem;
+    error = resolveLinearSystem(exactSolutions, coefficients, constants, context);
+  } else {
+    assert(numberOfVariables == 1 && numberOfModels() == 1);
+    char x = m_variables[0];
+    Expression * polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+    int degree = m_equations[0].standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients);
+    if (degree < 0) {
+      m_type = Type::Monovariable;
+      return Error::RequireApproximateSolution;
+    } else {
+      m_type = Type::PolynomialMonovariable;
+      for (int i = 0; i <= degree; i++) {
+        Expression::Reduce(&polynomialCoefficients[i], *context);
+      }
+      error = oneDimensialPolynomialSolve(exactSolutions, polynomialCoefficients, degree, context);
+    }
   }
-  assert(numberOfVariables == 1 && numberOfModels() == 1);
-  char x = variables[0];
-  Expression * polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  int degree = m_equations[0].standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients);
-  if (degree < 0) {
-    m_form = Form::Monovariable;
-    return Error::RequireApproximateSolution;
+  for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
+    if (exactSolutions[i]) {
+      m_exactSolutionExactLayouts[i] = exactSolutions[i]->createLayout();
+      Expression * approximate = exactSolutions[i]->approximate<double>(*context);
+      m_exactSolutionApproximateLayouts[i] = approximate->createLayout();
+      delete approximate;
+      delete exactSolutions[i];
+    }
   }
-  m_form = Form::PolynomialMonovariable;
-  for (int i = 0; i <= degree; i++) {
-    Expression::Reduce(&polynomialCoefficients[i], *context);
-  }
-  return oneDimensialPolynomialSolve(polynomialCoefficients, degree, context);
+  return error;
 }
 
-EquationStore::Error EquationStore::resolveLinearSystem(Expression * coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression * constants[k_maxNumberOfEquations], Context * context) {
-  m_numberOfSolutions = 5;
-  m_exactSolutions[0] = new Rational(1);
-  m_exactSolutions[1] = new Rational(2);
-  m_exactSolutions[2] = new Rational(3);
-  m_exactSolutions[3] = new Rational(4);
-  m_exactSolutions[4] = new Rational(5);
+EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSolutions[k_maxNumberOfExactSolutions], Expression * coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression * constants[k_maxNumberOfEquations], Context * context) {
+  m_numberOfSolutions = strlen(m_variables);
+  for (int k = 0; k < m_numberOfSolutions; k++) {
+    exactSolutions[k] = new Rational(k);
+  }
   return Error::NoError;
 }
 
-EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * coefficients[Expression::k_maxNumberOfPolynomialCoefficients], int degree, Context * context) {
+EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * exactSolutions[k_maxNumberOfExactSolutions], Expression * coefficients[Expression::k_maxNumberOfPolynomialCoefficients], int degree, Context * context) {
   assert(degree == 2);
   Expression * deltaDenominator[3] = {new Rational(4), coefficients[0]->clone(), coefficients[2]->clone()};
   Expression * delta = new Subtraction(new Power(coefficients[1]->clone(), new Rational(2), false), new Multiplication(deltaDenominator, 3, false), false);
   Expression::Simplify(&delta, *context);
   if (delta->isRationalZero()) {
-    m_exactSolutions[0] = new Division(new Opposite(coefficients[1], false), new Multiplication(new Rational(2), coefficients[2]), false);
+    exactSolutions[0] = new Division(new Opposite(coefficients[1], false), new Multiplication(new Rational(2), coefficients[2]), false);
     m_numberOfSolutions = 1;
   } else {
-    m_exactSolutions[0] = new Division(new Subtraction(new Opposite(coefficients[1]->clone(), false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]->clone()), false);
-    m_exactSolutions[1] = new Division(new Addition(new Opposite(coefficients[1], false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]), false);
+    exactSolutions[0] = new Division(new Subtraction(new Opposite(coefficients[1]->clone(), false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]->clone()), false);
+    exactSolutions[1] = new Division(new Addition(new Opposite(coefficients[1], false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]), false);
     m_numberOfSolutions = 2;
   }
-  m_exactSolutions[m_numberOfSolutions] = delta;
+  exactSolutions[m_numberOfSolutions] = delta;
   delete coefficients[0];
+  for (int i = 0; i < m_numberOfSolutions; i++) {
+    Expression::Simplify(&exactSolutions[i], *context);
+  }
   return Error::NoError;
 #if 0
   if (degree == 3) {
@@ -182,9 +214,13 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * coe
 
 void EquationStore::tidySolution() {
   for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
-    if (m_exactSolutions[i]) {
-      delete m_exactSolutions[i];
-      m_exactSolutions[i] = nullptr;
+    if (m_exactSolutionExactLayouts[i]) {
+      delete m_exactSolutionExactLayouts[i];
+      m_exactSolutionExactLayouts[i] = nullptr;
+    }
+    if (m_exactSolutionApproximateLayouts[i]) {
+      delete m_exactSolutionApproximateLayouts[i];
+      m_exactSolutionApproximateLayouts[i] = nullptr;
     }
   }
 }

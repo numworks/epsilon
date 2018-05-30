@@ -23,7 +23,9 @@ public:
 
   // Series
   bool isEmpty() const;
+  int numberOfNonEmptySeries() const;
   bool seriesIsEmpty(int series) const;
+  int indexOfKthNonEmptySeries(int k) const;
 
   // Calculation
   double doubleCastedNumberOfPairsOfSeries(int series) const;

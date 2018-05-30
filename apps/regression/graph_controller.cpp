@@ -17,7 +17,7 @@ GraphController::GraphController(Responder * parentResponder, ButtonRowControlle
   m_initialisationParameterController(this, m_store),
   m_predictionParameterController(this, m_store, m_cursor, this),
   m_selectedDotIndex(selectedDotIndex),
-  m_selectedSeries(0) // TODO -1
+  m_selectedSeries(-1)
 {
   m_store->setCursor(m_cursor);
 }
@@ -191,7 +191,7 @@ void GraphController::initRangeParameters() {
 }
 
 void GraphController::initCursorParameters() {
-  assert(m_selectedSeries >= 0);
+  m_selectedSeries = m_store->indexOfKthNonEmptySeries(0);
   double x = m_store->meanOfColumn(m_selectedSeries, 0);
   double y = m_store->meanOfColumn(m_selectedSeries, 1);
   m_cursor->moveTo(x, y);

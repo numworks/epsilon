@@ -137,7 +137,7 @@ void Store::setDefault() {
 }
 
 bool Store::isEmpty() const {
-  for (int i = 0; i < k_numberOfSeries; i ++) {
+  for (int i = 0; i < k_numberOfSeries; i++) {
     if (!seriesIsEmpty(i)) {
       return false;
     }
@@ -145,8 +145,35 @@ bool Store::isEmpty() const {
   return true;
 }
 
+int Store::numberOfNonEmptySeries() const {
+  // TODO Share with stats in FLoatPairStore
+  int nonEmptySeriesCount = 0;
+  for (int i = 0; i< k_numberOfSeries; i++) {
+    if (!seriesIsEmpty(i)) {
+      nonEmptySeriesCount++;
+    }
+  }
+  return nonEmptySeriesCount;
+}
+
 bool Store::seriesIsEmpty(int series) const {
   return numberOfPairsOfSeries(series) < 2;
+}
+
+int Store::indexOfKthNonEmptySeries(int k) const {
+  // TODO put in FloatPairStore (it is also in stats/store)
+  assert(k >= 0 && k < numberOfNonEmptySeries());
+  int nonEmptySeriesCount = 0;
+  for (int i = 0; i < k_numberOfSeries; i++) {
+    if (!seriesIsEmpty(i)) {
+      if (nonEmptySeriesCount == k) {
+        return i;
+      }
+      nonEmptySeriesCount++;
+    }
+  }
+  assert(false);
+  return 0;
 }
 
 /* Calculations */

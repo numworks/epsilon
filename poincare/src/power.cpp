@@ -821,6 +821,9 @@ bool Power::isNthRootOfUnity() const {
 }
 
 bool Power::RationalExponentShouldNotBeReduced(const Rational * b, const Rational * r) {
+  if (r->isMinusOne()) {
+    return false;
+  }
   /* We check that the simplification does not involve too complex power of
    * integers (ie 3^999, 120232323232^50) that would take too much time to
    * compute:

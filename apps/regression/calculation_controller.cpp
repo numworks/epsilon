@@ -163,7 +163,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   if (i == 1 && j > k_totalNumberOfDoubleBufferRows) {
     assert(j != 9);
-    CalculPointer calculationMethods[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows] = {&Store::numberOfPairs, &Store::covariance,
+    CalculPointer calculationMethods[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance,
       &Store::columnProductSum, nullptr, &Store::slope, &Store::yIntercept, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
     double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])();
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;

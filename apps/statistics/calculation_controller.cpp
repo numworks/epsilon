@@ -201,7 +201,7 @@ Responder * CalculationController::tabController() const {
 
 View * CalculationController::loadView() {
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
-    m_seriesTitleCells[i] = new StoreTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
+    m_seriesTitleCells[i] = new StoreTitleCell();
     m_seriesTitleCells[i]->setSeparatorLeft(true);
   }
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {

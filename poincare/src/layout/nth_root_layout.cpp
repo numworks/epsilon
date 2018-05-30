@@ -149,7 +149,7 @@ ExpressionLayoutCursor NthRootLayout::cursorUnder(ExpressionLayoutCursor cursor,
   return ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-static_assert('\x90' == Ion::Charset::Root, "Unicode error");
+static_assert('\x91' == Ion::Charset::Root, "Unicode error");
 int NthRootLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   // Case: root(x,n)
   if (numberOfChildren() == 2
@@ -160,7 +160,7 @@ int NthRootLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOf
   }
   // Case: squareRoot(x)
   if (numberOfChildren() == 1) {
-    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "\x90");
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "\x91");
   }
   // Case: root(x,empty)
   // Write "'SquareRootSymbol'('radicandLayout')".
@@ -171,7 +171,7 @@ int NthRootLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOf
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
 
-  buffer[numberOfChar++] = '\x90';
+  buffer[numberOfChar++] = '\x91';
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }

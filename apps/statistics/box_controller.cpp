@@ -40,7 +40,7 @@ void BoxController::reloadBannerView() {
 
   // Set series name
   char seriesChar = '0' + selectedSeries() + 1;
-  char bufferName[] = {'V', seriesChar, '/', 'N', seriesChar, 0};
+  char bufferName[] = {' ', 'V', seriesChar, '/', 'N', seriesChar, 0};
   m_view.editableBannerView()->setLegendAtIndex(bufferName, 0);
 
 
@@ -49,11 +49,13 @@ void BoxController::reloadBannerView() {
   m_view.editableBannerView()->setMessageAtIndex(calculationName[selectedQuantile], 1);
 
   // Set calculation result
-  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+  char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits) + 1];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
   double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeries());
-  PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  int numberOfChar = PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+  buffer[numberOfChar++] = ' ';
+  buffer[numberOfChar] = 0;
   m_view.editableBannerView()->setLegendAtIndex(buffer, 2);
 }
 

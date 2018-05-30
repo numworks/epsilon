@@ -21,7 +21,7 @@ void StoreCell::drawRect(KDContext * ctx, KDRect rect) const {
 
 void StoreCell::layoutSubviews() {
   KDRect boundsThis = bounds();
-  editableTextCell()->setFrame(KDRect(boundsThis.left() + Metric::TableSeparatorThickness, boundsThis.top(), boundsThis.width() - Metric::TableSeparatorThickness, boundsThis.height()));
+  editableTextCell()->setFrame(KDRect(boundsThis.left() + Metric::TableSeparatorThickness, boundsThis.top(), boundsThis.width() - Metric::TableSeparatorThickness - k_rightMargin, boundsThis.height()));
 }
 
 }

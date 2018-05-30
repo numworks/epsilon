@@ -39,6 +39,7 @@ app_objs += $(addprefix apps/shared/,\
   range_parameter_controller.o\
   regular_table_view_data_source.o\
   round_cursor_view.o\
+  scrollable_exact_approximate_expressions_view.o\
   simple_interactive_curve_view_controller.o\
   expression_layout_field_delegate.o\
   store_controller.o\

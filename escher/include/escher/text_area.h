@@ -99,10 +99,27 @@ private:
     bool removeChar() override;
     bool removeEndOfLine() override;
     bool removeStartOfLine();
+    class LineDrawingContext {
+    public:
+      LineDrawingContext(KDContext * ctx, const ContentView * contentView, int lineNumber) :
+        m_ctx(ctx), m_contentView(contentView), m_lineNumber(lineNumber) {}
+      void drawString(const char * text, size_t length, int column) const {
+        drawString(text, length, column, m_contentView->m_textColor, m_contentView->m_backgroundColor);
+      }
+      void drawString(const char * text, size_t length, int column, KDColor textColor, KDColor backgroundColor) const;
+    private:
+      KDContext * m_ctx;
+      const ContentView * m_contentView;
+      int m_lineNumber;
+    };
+    typedef void (*LineRenderer)(const LineDrawingContext lineContext, Text::Line line, int leftColumn, int rightColumn);
+    static void DefaultLineRenderer(TextArea::ContentView::LineDrawingContext lineContext, TextArea::Text::Line line, int leftColumn, int rightColumn);
   private:
     KDRect characterFrameAtIndex(size_t index) const override;
     Text m_text;
+    LineRenderer m_textRenderer;
   };
+
   const ContentView * nonEditableContentView() const override { return &m_contentView; }
   ContentView m_contentView;
   TextAreaDelegate * m_delegate;

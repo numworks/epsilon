@@ -152,7 +152,8 @@ TextArea::Text::Position TextArea::Text::span() const {
 
 TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
   TextInput::ContentView(fontSize, textColor, backgroundColor),
-  m_text(textBuffer, textBufferSize)
+  m_text(textBuffer, textBufferSize),
+  m_textRenderer(DefaultLineRenderer)
 {
 }
 
@@ -166,7 +167,6 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
     charSize.height() * span.line()
   );
 }
-
 
 void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
@@ -185,22 +185,37 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   );
 
   int y = 0;
-  size_t x = topLeft.column();
 
   for (Text::Line line : m_text) {
-    if (y >= topLeft.line() && y <= bottomRight.line() && topLeft.column() < (int)line.length()) {
-      //drawString(line.text(), 0, y*charHeight); // Naive version
-      ctx->drawString(
-        line.text() + topLeft.column(),
-        KDPoint(x*charSize.width(), y*charSize.height()),
-        m_fontSize,
-        m_textColor,
-        m_backgroundColor,
-        min(line.length() - topLeft.column(), bottomRight.column() - topLeft.column())
-      );
+    if (y >= topLeft.line() && y <= bottomRight.line()) {
+      LineDrawingContext lineDrawingContext(ctx, this, y);
+      m_textRenderer(lineDrawingContext, line, topLeft.column(), bottomRight.column());
     }
     y++;
   }
+}
+
+void TextArea::ContentView::DefaultLineRenderer(const LineDrawingContext lineContext, Text::Line line, int leftColumn, int rightColumn) {
+  if (leftColumn > line.length()) {
+    return;
+  }
+  lineContext.drawString(
+    line.text() + leftColumn,
+    min(line.length() - leftColumn, rightColumn - leftColumn),
+    leftColumn
+  );
+}
+
+void TextArea::ContentView::LineDrawingContext::drawString(const char * text, size_t length, int column, KDColor textColor, KDColor backgroundColor) const {
+  KDSize charSize = KDText::charSize(m_contentView->m_fontSize);
+  m_ctx->drawString(
+    text,
+    KDPoint(column*charSize.width(), m_lineNumber*charSize.height()),
+    m_contentView->m_fontSize,
+    textColor,
+    backgroundColor,
+    length
+  );
 }
 
 void TextArea::TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {

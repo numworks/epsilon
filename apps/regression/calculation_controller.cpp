@@ -121,12 +121,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
-  if (j == 0 && i > 0) {
-    EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
-    myCell->setFirstText("x");
-    myCell->setSecondText("y");
-    return;
-  }
+
+  // Calculation title
   if (i == 0) {
     if (j == numberOfRows()-1) {
       EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
@@ -143,11 +139,25 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     myCell->setMessage(titles[j-1]);
     return;
   }
+
+  int seriesNumber = i - 1;;
+  assert(i >= 0 && seriesNumber < FloatPairStore::k_numberOfSeries);
+
+  // Coordinate and series title
+  if (j == 0 && i > 0) {
+    EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
+    char buffer[] = {'x', static_cast<char>('0' + seriesNumber), 0};
+    myCell->setFirstText(buffer);
+    buffer[0] = 'y';
+    myCell->setSecondText(buffer);
+    return;
+  }
+
+  // Calculation cell
   if (i == 1 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
-    ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn,
-      &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
-    double calculation1 = (m_store->*calculationMethods[j-1])(0);
-    double calculation2 = (m_store->*calculationMethods[j-1])(1);
+    ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn, &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
+    double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0);
+    double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1);
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(calculation1, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
@@ -163,9 +173,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   if (i == 1 && j > k_totalNumberOfDoubleBufferRows) {
     assert(j != 9);
-    CalculPointer calculationMethods[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance,
-      &Store::columnProductSum, nullptr, &Store::slope, &Store::yIntercept, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
-    double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])();
+    CalculPointer calculationMethods[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance, &Store::columnProductSum, nullptr, &Store::slope, &Store::yIntercept, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
+    double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])(seriesNumber);
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
@@ -197,12 +206,12 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
     return m_columnTitleCell;
   }
   if (type == 3) {
-    assert(index < k_totalNumberOfDoubleBufferRows);
+    assert(index < k_numberOfDoubleCalculationCells);
     assert(m_doubleCalculationCells[index] != nullptr);
     return m_doubleCalculationCells[index];
   }
-  assert(index < k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows);
-    assert(m_calculationCells[index] != nullptr);
+  assert(index < k_numberOfCalculationCells);
+  assert(m_calculationCells[index] != nullptr);
   return m_calculationCells[index];
 }
 
@@ -217,9 +226,9 @@ int CalculationController::reusableCellCount(int type) {
     return 1;
   }
   if (type == 3) {
-    return k_totalNumberOfDoubleBufferRows;
+    return k_numberOfDoubleCalculationCells;
   }
-  return k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows;
+  return k_numberOfCalculationCells;
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
@@ -252,12 +261,12 @@ View * CalculationController::loadView() {
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_titleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
   }
-  for (int i = 0; i < k_totalNumberOfDoubleBufferRows; i++) {
+  for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
     m_doubleCalculationCells[i] = new EvenOddDoubleBufferTextCell();
     m_doubleCalculationCells[i]->setTextColor(Palette::GreyDark);
     m_doubleCalculationCells[i]->setParentResponder(tableView);
   }
-  for (int i = 0; i < k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows;i++) {
+  for (int i = 0; i < k_numberOfCalculationCells;i++) {
     m_calculationCells[i] = new EvenOddBufferTextCell(KDText::FontSize::Small);
     m_calculationCells[i]->setTextColor(Palette::GreyDark);
   }
@@ -269,11 +278,11 @@ void CalculationController::unloadView(View * view) {
   m_r2TitleCell = nullptr;
   delete m_columnTitleCell;
   m_columnTitleCell = nullptr;
-  for (int i = 0; i < k_totalNumberOfDoubleBufferRows; i++) {
+  for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
     delete m_doubleCalculationCells[i];
     m_doubleCalculationCells[i] = nullptr;
   }
-  for (int i = 0; i < k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows;i++) {
+  for (int i = 0; i < k_numberOfCalculationCells;i++) {
     delete m_calculationCells[i];
     m_calculationCells[i] = nullptr;
   }

@@ -13,7 +13,7 @@ public:
   // Dots
   /* Return the closest dot to abscissa x above the regression curve if
    * direction > 0, below otherwise */
-  int closestVerticalDot(int direction, float x);
+  int closestVerticalDot(int direction, float x, int * nextSeries);
   /* Return the closest dot to given dot, on the right if direction > 0,
    * on the left otherwise */
   int nextDot(int series, int direction, int dot);
@@ -51,7 +51,7 @@ private:
 };
 
 typedef double (Store::*ArgCalculPointer)(int, int) const;
-typedef double (Store::*CalculPointer)();
+typedef double (Store::*CalculPointer)(int) const;
 typedef void (Store::*RangeMethodPointer)();
 
 }

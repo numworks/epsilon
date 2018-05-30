@@ -19,7 +19,7 @@ Store::Store() :
 
 /* Dots */
 
-int Store::closestVerticalDot(int direction, float x) {
+int Store::closestVerticalDot(int direction, float x, int * nextSeries) {
   float nextX = INFINITY;
   float nextY = INFINITY;
   int selectedDot = -1;
@@ -39,6 +39,7 @@ int Store::closestVerticalDot(int direction, float x) {
             nextX = m_data[series][0][index];
             nextY = m_data[series][1][index];
             selectedDot = index;
+            *nextSeries = series;
           }
         }
       }
@@ -51,6 +52,7 @@ int Store::closestVerticalDot(int direction, float x) {
         ((meanY - yValueForXValue(series, meanX) >= 0) == (direction > 0))) {
       if (nextX != meanX || ((nextY - meanY >= 0) == (direction > 0))) {
         selectedDot = numberOfPairsOfSeries(series);
+        *nextSeries = series;
       }
     }
 

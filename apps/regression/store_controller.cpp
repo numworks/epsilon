@@ -16,12 +16,12 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
   Shared::StoreController(parentResponder, store, header),
   m_titleCells{}
 {
-  for (int i = 0; i < k_numberOfSeries; i++) {
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
     /* If the index is too big, the layout creation should take into account the
      * possibility of a two-digits index. */
-    assert(k_numberOfSeries < 10);
-    m_titleLayout[k_numberOfColumnsPerSeries*i] = new HorizontalLayout(new CharLayout('X', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('0'+ i, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false), false);
-    m_titleLayout[k_numberOfColumnsPerSeries*i+1] = new HorizontalLayout(new CharLayout('Y', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('0' + i, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false), false);
+    assert(Store::k_numberOfSeries < 10);
+    m_titleLayout[Store::k_numberOfColumnsPerSeries*i] = new HorizontalLayout(new CharLayout('X', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('0'+ i, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false), false);
+    m_titleLayout[Store::k_numberOfColumnsPerSeries*i+1] = new HorizontalLayout(new CharLayout('Y', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('0' + i, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false), false);
   }
 }
 

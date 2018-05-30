@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "store.h"
 #include "calculation_cell.h"
+#include "calculation_title_cell.h"
 #include "../shared/hideable_even_odd_cell.h"
 #include "../shared/store_title_cell.h"
 #include "../shared/tab_table_controller.h"
@@ -53,7 +54,7 @@ private:
   static constexpr int k_hideableCellType = 3;
   static constexpr KDCoordinate k_cellHeight = 20;
   static constexpr KDCoordinate k_calculationTitleCellWidth = 175;
-  static constexpr KDCoordinate k_calculationCellWidth = 70;
+  static constexpr KDCoordinate k_calculationCellWidth = 84;
   static constexpr KDCoordinate k_margin = 8;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
 
@@ -62,7 +63,7 @@ private:
   void unloadView(View * view) override;
 
   Shared::StoreTitleCell * m_seriesTitleCells[k_numberOfSeriesTitleCells];
-  EvenOddMessageTextCell * m_calculationTitleCells[k_numberOfCalculationTitleCells];
+  CalculationTitleCell * m_calculationTitleCells[k_numberOfCalculationTitleCells];
   CalculationCell * m_calculationCells[k_numberOfCalculationCells];
   Shared::HideableEvenOddCell * m_hideableCell;
   Store * m_store;

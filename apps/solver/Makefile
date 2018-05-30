@@ -7,6 +7,7 @@ app_objs += $(addprefix apps/solver/,\
   equation.o\
   equation_store.o\
   list_controller.o\
+  solutions_controller.o\
 )
 
 i18n_files += $(addprefix apps/solver/,\

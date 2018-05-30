@@ -12,6 +12,10 @@ bool canRepeatEvent(Event e) {
 }
 
 Event getEvent(int * timeout) {
+  // XXX: Hack to get things moving
+  if (*timeout) {
+    (*timeout)--;
+  }
   return Events::None;
 }
 

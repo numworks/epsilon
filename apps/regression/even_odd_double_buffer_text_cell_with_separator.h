@@ -8,7 +8,7 @@ namespace Regression {
 
 class EvenOddDoubleBufferTextCellWithSeparator : public EvenOddCell, public Responder{
 public:
-  EvenOddDoubleBufferTextCellWithSeparator(Responder * parentResponder = nullptr);
+  EvenOddDoubleBufferTextCellWithSeparator(Responder * parentResponder = nullptr, float horizontalAlignment = 1.0f, float verticalAlignment = 0.5f);
   const char * firstText();
   const char * secondText();
   void reloadCell() override;

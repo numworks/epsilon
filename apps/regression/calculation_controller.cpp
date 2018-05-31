@@ -266,7 +266,7 @@ View * CalculationController::loadView() {
   SelectableTableView * tableView = new SelectableTableView(this, this, this, this);
   tableView->setVerticalCellOverlap(0);
   tableView->setBackgroundColor(Palette::WallScreenDark);
-;
+  tableView->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   m_r2TitleCell = new EvenOddExpressionCellWithMargin(1.0f, 0.5f);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     m_columnTitleCells[i] = new ColumnTitleCell(tableView);

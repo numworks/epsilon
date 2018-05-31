@@ -42,9 +42,6 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 private:
-  Responder * tabController() const override;
-  View * loadView() override;
-  void unloadView(View * view) override;
   constexpr static int k_totalNumberOfRows = 14;
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static int k_totalNumberOfDoubleBufferRows = 5;
@@ -60,6 +57,12 @@ private:
 
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
+  static constexpr KDCoordinate k_margin = 8;
+  static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
+
+  Responder * tabController() const override;
+  View * loadView() override;
+  void unloadView(View * view) override;
   Shared::MarginEvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddExpressionCellWithMargin * m_r2TitleCell;
   Poincare::ExpressionLayout * m_r2Layout;

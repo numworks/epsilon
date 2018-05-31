@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "store.h"
+#include "column_title_cell.h"
 #include "even_odd_double_buffer_text_cell_with_separator.h"
 #include "even_odd_expression_cell_with_margin.h"
 #include "../shared/margin_even_odd_message_text_cell.h"
@@ -60,7 +61,7 @@ private:
   Shared::MarginEvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddExpressionCellWithMargin * m_r2TitleCell;
   Poincare::ExpressionLayout * m_r2Layout;
-  EvenOddDoubleBufferTextCellWithSeparator * m_columnTitleCells[Store::k_numberOfSeries];
+  ColumnTitleCell * m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator * m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Shared::SeparatorEvenOddBufferTextCell * m_calculationCells[k_numberOfCalculationCells];
   Store * m_store;

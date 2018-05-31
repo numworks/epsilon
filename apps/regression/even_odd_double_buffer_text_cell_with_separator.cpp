@@ -5,12 +5,12 @@
 
 namespace Regression {
 
-EvenOddDoubleBufferTextCellWithSeparator::EvenOddDoubleBufferTextCellWithSeparator(Responder * parentResponder) :
+EvenOddDoubleBufferTextCellWithSeparator::EvenOddDoubleBufferTextCellWithSeparator(Responder * parentResponder, float horizontalAlignment, float verticalAlignment) :
   EvenOddCell(),
   Responder(parentResponder),
   m_firstTextSelected(true),
-  m_firstBufferTextView(KDText::FontSize::Small),
-  m_secondBufferTextView(KDText::FontSize::Small)
+  m_firstBufferTextView(KDText::FontSize::Small, horizontalAlignment, verticalAlignment),
+  m_secondBufferTextView(KDText::FontSize::Small, horizontalAlignment, verticalAlignment)
 {
 }
 

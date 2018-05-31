@@ -47,7 +47,7 @@ void SolutionsController::viewWillAppear() {
 /* AlternateEmptyRowDelegate */
 
 bool SolutionsController::isEmpty() const {
-  if (m_equationStore->numberOfSolutions() == 0 || m_equationStore->numberOfSolutions() == INT_MAX) {
+  if (m_equationStore->numberOfModels() == 0 || m_equationStore->numberOfSolutions() == 0 || m_equationStore->numberOfSolutions() == INT_MAX) {
     return true;
   }
   return false;

@@ -24,7 +24,6 @@ protected:
   const char * className() const override;
 #endif
   KDText::FontSize m_fontSize;
-private:
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDColor m_textColor;

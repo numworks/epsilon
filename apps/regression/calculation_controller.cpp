@@ -17,7 +17,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   ButtonRowDelegate(header, nullptr),
   m_titleCells{},
   m_r2TitleCell(nullptr),
-  m_columnTitleCell(nullptr),
+  m_columnTitleCells{},
   m_doubleCalculationCells{},
   m_calculationCells{},
   m_store(store)
@@ -83,7 +83,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
       t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
     }
   }
-  if (t->selectedColumn() == 1 && t->selectedRow() >= 0 && t->selectedRow() <= k_totalNumberOfDoubleBufferRows) {
+  if (t->selectedColumn() > 0 && t->selectedRow() >= 0 && t->selectedRow() <= k_totalNumberOfDoubleBufferRows) {
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)t->selectedCell();
     bool firstSubCellSelected = true;
     if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
@@ -192,59 +192,60 @@ KDCoordinate CalculationController::rowHeight(int j) {
 }
 
 HighlightCell * CalculationController::reusableCell(int index, int type) {
-  if (type == 0) {
-    assert(index < k_maxNumberOfDisplayableRows);
+  if (type == k_standardCalculationTitleCellType) {
+    assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
     assert(m_titleCells[index] != nullptr);
     return m_titleCells[index];
   }
-  if (type == 1) {
+  if (type == k_r2CellType) {
     assert(index == 0);
     return m_r2TitleCell;
   }
-  if (type == 2) {
-    assert(index == 0);
-    return m_columnTitleCell;
+  if (type == k_columnTitleCellType) {
+    assert(index >= 0 && index < Store::k_numberOfSeries);
+    return m_columnTitleCells[index];
   }
-  if (type == 3) {
-    assert(index < k_numberOfDoubleCalculationCells);
+  if (type == k_doubleBufferCalculationCellType) {
+    assert(index >= 0 && index < k_numberOfDoubleCalculationCells);
     assert(m_doubleCalculationCells[index] != nullptr);
     return m_doubleCalculationCells[index];
   }
-  assert(index < k_numberOfCalculationCells);
+  assert(index >= 0 && index < k_numberOfCalculationCells);
   assert(m_calculationCells[index] != nullptr);
   return m_calculationCells[index];
 }
 
 int CalculationController::reusableCellCount(int type) {
-  if (type == 0) {
+  if (type == k_standardCalculationTitleCellType) {
     return k_maxNumberOfDisplayableRows;
   }
-  if (type == 1) {
+  if (type == k_r2CellType) {
     return 1;
   }
-  if (type == 2) {
-    return 1;
+  if (type == k_columnTitleCellType) {
+    return Store::k_numberOfSeries;
   }
-  if (type == 3) {
+  if (type == k_doubleBufferCalculationCellType) {
     return k_numberOfDoubleCalculationCells;
   }
+  assert(type == k_standardCalculationCellType);
   return k_numberOfCalculationCells;
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
   if (i == 0 && j == k_totalNumberOfRows-1) {
-    return 1;
+    return k_r2CellType;
   }
   if (i == 0) {
-    return 0;
+    return k_standardCalculationTitleCellType;
   }
   if (j == 0) {
-    return 2;
+    return k_columnTitleCellType;
   }
   if (j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
-    return 3;
+    return k_doubleBufferCalculationCellType;
   }
-  return 4;
+  return k_standardCalculationCellType;
 }
 
 Responder * CalculationController::tabController() const {
@@ -257,7 +258,9 @@ View * CalculationController::loadView() {
   tableView->setBackgroundColor(Palette::WallScreenDark);
 ;
   m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
-  m_columnTitleCell = new EvenOddDoubleBufferTextCell(tableView);
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    m_columnTitleCells[i] = new EvenOddDoubleBufferTextCell(tableView);
+  }
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_titleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
   }
@@ -276,8 +279,10 @@ View * CalculationController::loadView() {
 void CalculationController::unloadView(View * view) {
   delete m_r2TitleCell;
   m_r2TitleCell = nullptr;
-  delete m_columnTitleCell;
-  m_columnTitleCell = nullptr;
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    delete m_columnTitleCells[i];
+    m_columnTitleCells[i] = nullptr;
+  }
   for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
     delete m_doubleCalculationCells[i];
     m_doubleCalculationCells[i] = nullptr;

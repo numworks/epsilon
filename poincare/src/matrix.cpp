@@ -7,6 +7,9 @@ extern "C" {
 #include <poincare/addition.h>
 #include <poincare/decimal.h>
 #include <poincare/undefined.h>
+#include <poincare/division.h>
+#include <poincare/subtraction.h>
+#include <poincare/multiplication.h>
 #include "layout/matrix_layout.h"
 #include <cmath>
 #include <float.h>
@@ -96,6 +99,57 @@ int Matrix::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignifi
 
 int Matrix::polynomialDegree(char symbolName) const {
   return -1;
+}
+
+void Matrix::rowCanonize(Context & context, AngleUnit angleUnit) {
+  int m = numberOfRows();
+  int n = numberOfColumns();
+
+  int h = 0; // row pivot
+  int k = 0; // column pivot
+
+  while (h < m && k < n) {
+    // Find the first non-null pivot
+    int iPivot = h;
+    while (iPivot < m && matrixOperand(iPivot, k)->isRationalZero()) {
+      iPivot++;
+    }
+    if (iPivot == m) {
+      // No non-null coefficient in this column, skip
+      k++;
+    } else {
+      // Swap row h and iPivot
+      if (iPivot != h) {
+        for (int col = h; col < n; col++) {
+          swapOperands(iPivot*n+col, h*n+col);
+        }
+      }
+      /* Set to 1 M[h][k] by linear combination */
+      Expression * divisor = matrixOperand(h, k);
+      for (int j = k+1; j < n; j++) {
+        Expression * opHJ = matrixOperand(h, j);
+        Expression * newOpHJ = new Division(opHJ, divisor->clone(), false);
+        replaceOperand(opHJ, newOpHJ, false);
+        newOpHJ->deepReduce(context, angleUnit);
+      }
+      matrixOperand(h, k)->replaceWith(new Rational(1), true);
+
+      /* Set to 0 all M[i][j] i != h, j > k by linear combination */
+      for (int i = 0; i < m; i++) {
+        if (i == h) { continue; }
+        Expression * factor = matrixOperand(i, k);
+        for (int j = k+1; j < n; j++) {
+          Expression * opIJ = matrixOperand(i, j);
+          Expression * newOpIJ = new Subtraction(opIJ, new Multiplication(matrixOperand(h, j), factor, true), false);
+          replaceOperand(opIJ, newOpIJ, false);
+          newOpIJ->deepReduce(context, angleUnit);
+        }
+        matrixOperand(i, k)->replaceWith(new Rational(0), true);
+      }
+      h++;
+      k++;
+    }
+  }
 }
 
 ExpressionLayout * Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {

@@ -6,6 +6,7 @@
 #include "column_title_cell.h"
 #include "even_odd_double_buffer_text_cell_with_separator.h"
 #include "even_odd_expression_cell_with_margin.h"
+#include "../shared/hideable_even_odd_cell.h"
 #include "../shared/margin_even_odd_message_text_cell.h"
 #include "../shared/tab_table_controller.h"
 #include "../shared/regular_table_view_data_source.h"
@@ -55,6 +56,7 @@ private:
   constexpr static int k_columnTitleCellType = 2;
   constexpr static int k_doubleBufferCalculationCellType = 3;
   constexpr static int k_standardCalculationCellType = 4;
+  static constexpr int k_hideableCellType = 5;
 
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
@@ -64,6 +66,7 @@ private:
   ColumnTitleCell * m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator * m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Shared::SeparatorEvenOddBufferTextCell * m_calculationCells[k_numberOfCalculationCells];
+  Shared::HideableEvenOddCell * m_hideableCell;
   Store * m_store;
 };
 

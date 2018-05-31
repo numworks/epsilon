@@ -492,7 +492,10 @@ void ExpressionLayout::collapseOnDirection(HorizontalDirection direction, int ab
     }
     int siblingIndex = direction == HorizontalDirection::Right ? indexInParent+1 : indexInParent-1;
     sibling = editableParent()->editableChild(siblingIndex);
-    if (forceCollapse || sibling->isCollapsable(&numberOfOpenParenthesis, direction == HorizontalDirection::Left)) {
+    /* Even if forceCollapse is true, isCollapsable should be called to update
+     * the number of open parentheses. */
+    bool shouldCollapse = sibling->isCollapsable(&numberOfOpenParenthesis, direction == HorizontalDirection::Left);
+    if (shouldCollapse || forceCollapse) {
       /* If the collapse direction is Left and the next sibling to be collapsed
        * must have a left sibling, force the collapsing of this needed left
        * sibling. */

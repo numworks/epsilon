@@ -6,6 +6,8 @@
 #include "calculation_cell.h"
 #include "calculation_title_cell.h"
 #include "../shared/hideable_even_odd_cell.h"
+#include "../shared/margin_even_odd_message_text_cell.h"
+#include "../shared/separator_even_odd_buffer_text_cell.h"
 #include "../shared/store_title_cell.h"
 #include "../shared/tab_table_controller.h"
 
@@ -63,8 +65,8 @@ private:
   void unloadView(View * view) override;
 
   Shared::StoreTitleCell * m_seriesTitleCells[k_numberOfSeriesTitleCells];
-  CalculationTitleCell * m_calculationTitleCells[k_numberOfCalculationTitleCells];
-  CalculationCell * m_calculationCells[k_numberOfCalculationCells];
+  Shared::MarginEvenOddMessageTextCell * m_calculationTitleCells[k_numberOfCalculationTitleCells];
+  Shared::SeparatorEvenOddBufferTextCell * m_calculationCells[k_numberOfCalculationCells];
   Shared::HideableEvenOddCell * m_hideableCell;
   Store * m_store;
 };

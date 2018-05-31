@@ -3,9 +3,12 @@
 
 #include <escher.h>
 #include "store.h"
-#include "even_odd_double_buffer_text_cell.h"
+#include "even_odd_double_buffer_text_cell_with_separator.h"
+#include "../shared/margin_even_odd_message_text_cell.h"
 #include "../shared/tab_table_controller.h"
 #include "../shared/regular_table_view_data_source.h"
+#include "../shared/separator_even_odd_buffer_text_cell.h"
+#include "../shared/store_cell.h"
 
 namespace Regression {
 
@@ -53,12 +56,12 @@ private:
 
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
-  EvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
+  Shared::MarginEvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddExpressionCell * m_r2TitleCell;
   Poincare::ExpressionLayout * m_r2Layout;
-  EvenOddDoubleBufferTextCell * m_columnTitleCells[Store::k_numberOfSeries];
-  EvenOddDoubleBufferTextCell * m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
-  EvenOddBufferTextCell * m_calculationCells[k_numberOfCalculationCells];
+  EvenOddDoubleBufferTextCellWithSeparator * m_columnTitleCells[Store::k_numberOfSeries];
+  EvenOddDoubleBufferTextCellWithSeparator * m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
+  Shared::SeparatorEvenOddBufferTextCell * m_calculationCells[k_numberOfCalculationCells];
   Store * m_store;
 };
 

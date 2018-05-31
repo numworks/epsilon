@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "store.h"
 #include "even_odd_double_buffer_text_cell_with_separator.h"
+#include "even_odd_expression_cell_with_margin.h"
 #include "../shared/margin_even_odd_message_text_cell.h"
 #include "../shared/tab_table_controller.h"
 #include "../shared/regular_table_view_data_source.h"
@@ -57,7 +58,7 @@ private:
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
   Shared::MarginEvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
-  EvenOddExpressionCell * m_r2TitleCell;
+  EvenOddExpressionCellWithMargin * m_r2TitleCell;
   Poincare::ExpressionLayout * m_r2Layout;
   EvenOddDoubleBufferTextCellWithSeparator * m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator * m_doubleCalculationCells[k_numberOfDoubleCalculationCells];

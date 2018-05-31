@@ -10,6 +10,7 @@ class Matrix : public DynamicHierarchy {
 public:
   Matrix(MatrixData * matrixData); // pilfer the operands of matrixData
   Matrix(const Expression * const * operands, int numberOfRows, int numberOfColumns, bool cloneOperands = true);
+  Expression * matrixOperand(int i, int j) { return editableOperand(i*numberOfColumns()+j); }
   int numberOfRows() const;
   int numberOfColumns() const;
 
@@ -24,6 +25,7 @@ public:
    * matrix of complex expressions. createDeterminant and createTrace return
    * a complex expression and createInverse returns a matrix of complex
    * expressions or nullptr if the inverse could not be computed. */
+  void rowCanonize(Context & context, AngleUnit angleUnit);
   template<typename T> Complex<T> * createTrace() const;
   template<typename T> Complex<T> * createDeterminant() const;
   template<typename T> Matrix * createInverse() const;

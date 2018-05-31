@@ -36,6 +36,7 @@ void translate_in_ASCII_chars(char * expression) {
       case Ion::Charset::Root: *c = 'R'; break;
       case Ion::Charset::SmallPi: *c = 'P'; break;
       case Ion::Charset::MultiplicationSign: *c = '*'; break;
+      case Ion::Charset::MiddleDot: *c = '*'; break;
       case Ion::Charset::Sto: *c = '>'; break;
     }
   }

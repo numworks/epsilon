@@ -119,7 +119,7 @@ int CalculationController::numberOfColumns() {
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  if (i == 0 & j == 0) {
+  if (i == 0 && j == 0) {
     return;
   }
   EvenOddCell * myCell = (EvenOddCell *)cell;

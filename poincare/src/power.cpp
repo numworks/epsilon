@@ -61,6 +61,10 @@ Expression::Sign Power::sign() const {
 }
 
 int Power::polynomialDegree(char symbolName) const {
+  int deg = Expression::polynomialDegree(symbolName);
+  if (deg == 0) {
+    return deg;
+  }
   int op0Deg = operand(0)->polynomialDegree(symbolName);
   if (op0Deg < 0) {
     return -1;
@@ -82,7 +86,7 @@ int Power::polynomialDegree(char symbolName) const {
 int Power::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg <= 0) {
-    return deg;
+    return Expression::getPolynomialCoefficients(symbolName, coefficients);
   }
   /* Here we only consider the case x^4 as getPolynomialCoefficients is
    * supposed to be called after reducing the expression. */

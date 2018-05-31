@@ -40,7 +40,6 @@ private:
   View * loadView() override;
   void unloadView(View * view) override;
   constexpr static int k_totalNumberOfRows = 14;
-  constexpr static int k_totalNumberOfColumns = 1 + Store::k_numberOfSeries;;
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static int k_totalNumberOfDoubleBufferRows = 5;
   constexpr static int k_numberOfDoubleCalculationCells = Store::k_numberOfSeries * k_totalNumberOfDoubleBufferRows;

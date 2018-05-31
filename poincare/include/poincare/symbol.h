@@ -49,8 +49,8 @@ public:
   bool isApproximate(Context & context) const;
   float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
   bool hasAnExactRepresentation(Context & context) const;
+  static const char * textForSpecialSymbols(char name);
 private:
-  const char * textForSpecialSymbols(char name) const;
   Expression * replaceSymbolWithExpression(char symbol, Expression * expression) override;
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;

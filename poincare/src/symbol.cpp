@@ -21,7 +21,7 @@ extern "C" {
 
 namespace Poincare {
 
-const char * Symbol::textForSpecialSymbols(char name) const {
+const char * Symbol::textForSpecialSymbols(char name) {
   switch (name) {
     case SpecialSymbols::Ans:
       return "ans";

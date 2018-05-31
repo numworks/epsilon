@@ -8,6 +8,7 @@ app_objs += $(addprefix apps/shared/,\
   curve_view_range.o\
   editable_cell_table_view_controller.o\
   expression_field_delegate_app.o\
+  expression_layout_field_delegate.o\
   float_pair_store.o\
   float_parameter_controller.o\
   function.o\
@@ -32,6 +33,7 @@ app_objs += $(addprefix apps/shared/,\
   language_controller.o\
   list_controller.o\
   list_parameter_controller.o\
+  margin_even_odd_message_text_cell.o\
   memoized_curve_view_range.o\
   message_view.o\
   new_function_cell.o\
@@ -40,8 +42,8 @@ app_objs += $(addprefix apps/shared/,\
   range_parameter_controller.o\
   regular_table_view_data_source.o\
   round_cursor_view.o\
+  separator_even_odd_buffer_text_cell.o\
   simple_interactive_curve_view_controller.o\
-  expression_layout_field_delegate.o\
   store_cell.o\
   store_controller.o\
   store_parameter_controller.o\

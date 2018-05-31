@@ -44,14 +44,14 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Copy && selectedColumn() == 1 && selectedRow() > 0) {
     if (selectedRow() <= k_totalNumberOfDoubleBufferRows) {
-      EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)selectableTableView()->selectedCell();
+      EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)selectableTableView()->selectedCell();
       if (myCell->firstTextSelected()) {
         Clipboard::sharedClipboard()->store(myCell->firstText());
       } else {
         Clipboard::sharedClipboard()->store(myCell->secondText());
       }
     } else {
-      EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
+      SeparatorEvenOddBufferTextCell * myCell = (SeparatorEvenOddBufferTextCell *)selectableTableView()->selectedCell();
       Clipboard::sharedClipboard()->store(myCell->text());
     }
     return true;
@@ -84,10 +84,10 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
     }
   }
   if (t->selectedColumn() > 0 && t->selectedRow() >= 0 && t->selectedRow() <= k_totalNumberOfDoubleBufferRows) {
-    EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)t->selectedCell();
+    EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->selectedCell();
     bool firstSubCellSelected = true;
     if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
-      EvenOddDoubleBufferTextCell * myPreviousCell = (EvenOddDoubleBufferTextCell *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
+      EvenOddDoubleBufferTextCellWithSeparator * myPreviousCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
       firstSubCellSelected = myPreviousCell->firstTextSelected();
     }
     myCell->selectFirstText(firstSubCellSelected);
@@ -129,7 +129,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       myCell->setExpressionLayout(m_r2Layout);
       return;
     }
-    EvenOddMessageTextCell * myCell = (EvenOddMessageTextCell *)cell;
+    MarginEvenOddMessageTextCell * myCell = (MarginEvenOddMessageTextCell *)cell;
     if (j == 0) {
       myCell->setMessage(I18n::Message::Default);
       return;
@@ -145,7 +145,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
   // Coordinate and series title
   if (j == 0 && i > 0) {
-    EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
+    EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)cell;
     char buffer[] = {'X', static_cast<char>('0' + seriesNumber), 0};
     myCell->setFirstText(buffer);
     buffer[0] = 'Y';
@@ -158,7 +158,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn, &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
     double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0);
     double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1);
-    EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
+    EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(calculation1, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setFirstText(buffer);
@@ -167,7 +167,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
   if (i > 0 && j == 9) {
-    EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
+    SeparatorEvenOddBufferTextCell * myCell = (SeparatorEvenOddBufferTextCell *)cell;
     myCell->setText("ax+b");
     return;
   }
@@ -175,7 +175,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     assert(j != 9);
     CalculPointer calculationMethods[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance, &Store::columnProductSum, nullptr, &Store::slope, &Store::yIntercept, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
     double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])(seriesNumber);
-    EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
+    SeparatorEvenOddBufferTextCell * myCell = (SeparatorEvenOddBufferTextCell *)cell;
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     myCell->setText(buffer);
@@ -259,18 +259,18 @@ View * CalculationController::loadView() {
 ;
   m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    m_columnTitleCells[i] = new EvenOddDoubleBufferTextCell(tableView);
+    m_columnTitleCells[i] = new EvenOddDoubleBufferTextCellWithSeparator(tableView);
   }
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
-    m_titleCells[i] = new EvenOddMessageTextCell(KDText::FontSize::Small);
+    m_titleCells[i] = new MarginEvenOddMessageTextCell(KDText::FontSize::Small);
   }
   for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
-    m_doubleCalculationCells[i] = new EvenOddDoubleBufferTextCell();
+    m_doubleCalculationCells[i] = new EvenOddDoubleBufferTextCellWithSeparator();
     m_doubleCalculationCells[i]->setTextColor(Palette::GreyDark);
     m_doubleCalculationCells[i]->setParentResponder(tableView);
   }
   for (int i = 0; i < k_numberOfCalculationCells;i++) {
-    m_calculationCells[i] = new EvenOddBufferTextCell(KDText::FontSize::Small);
+    m_calculationCells[i] = new SeparatorEvenOddBufferTextCell(KDText::FontSize::Small);
     m_calculationCells[i]->setTextColor(Palette::GreyDark);
   }
   return tableView;

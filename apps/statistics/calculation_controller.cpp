@@ -75,7 +75,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       I18n::Message::Sum,
       I18n::Message::SquareSum,
       I18n::Message::SampleStandardDeviationS};
-    CalculationTitleCell * calcTitleCell = static_cast<CalculationTitleCell *>(cell);
+    MarginEvenOddMessageTextCell * calcTitleCell = static_cast<MarginEvenOddMessageTextCell *>(cell);
     calcTitleCell->setMessage(titles[j-1]);
     return;
   }
@@ -205,11 +205,11 @@ View * CalculationController::loadView() {
     m_seriesTitleCells[i]->setSeparatorLeft(true);
   }
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
-    m_calculationTitleCells[i] = new CalculationTitleCell(KDText::FontSize::Small);
+    m_calculationTitleCells[i] = new MarginEvenOddMessageTextCell(KDText::FontSize::Small);
     m_calculationTitleCells[i]->setAlignment(1.0f, 0.5f);
   }
   for (int i = 0; i < k_numberOfCalculationCells; i++) {
-    m_calculationCells[i] = new CalculationCell(KDText::FontSize::Small);
+    m_calculationCells[i] = new SeparatorEvenOddBufferTextCell(KDText::FontSize::Small);
     m_calculationCells[i]->setTextColor(Palette::GreyDark);
   }
   m_hideableCell = new HideableEvenOddCell();

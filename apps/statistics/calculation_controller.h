@@ -3,8 +3,6 @@
 
 #include <escher.h>
 #include "store.h"
-#include "calculation_cell.h"
-#include "calculation_title_cell.h"
 #include "../shared/hideable_even_odd_cell.h"
 #include "../shared/margin_even_odd_message_text_cell.h"
 #include "../shared/separator_even_odd_buffer_text_cell.h"

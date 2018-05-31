@@ -28,7 +28,6 @@ public:
     "u", "v"//, "w"
   };
 private:
-  const KDColor firstAvailableColor() override;
   Sequence m_sequences[MaxNumberOfSequences];
 };
 

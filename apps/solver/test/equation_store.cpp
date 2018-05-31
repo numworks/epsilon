@@ -11,12 +11,15 @@ using namespace Poincare;
 namespace Solver {
 
 void assert_equation_system_exact_solve_to(const char * equations[], EquationStore::Error error, EquationStore::Type type, const char * variables, const char * solutions[], int numberOfSolutions) {
+  char buffer[200];
   GlobalContext globalContext;
   EquationStore equationStore;
   int index = 0;
   while (equations[index] != 0) {
     Shared::ExpressionModel * e = equationStore.addEmptyModel();
-    e->setContent(equations[index++]);
+    strlcpy(buffer, equations[index++], 200);
+    translate_in_special_chars(buffer);
+    e->setContent(buffer);
   }
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
   assert(err == error);
@@ -35,7 +38,6 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
   } else {
     assert(equationStore.variableAtIndex(0) == variables[0]);
   }
-  char buffer[200];
   int n = type == EquationStore::Type::PolynomialMonovariable ? numberOfSolutions+1 : numberOfSolutions; // Check Delta for PolynomialMonovariable
   for (int i = 0; i < n; i++) {
     equationStore.exactSolutionLayoutAtIndex(i, true)->writeTextInBuffer(buffer, 200);
@@ -77,7 +79,7 @@ QUIZ_CASE(equation_solve) {
   //assert_equation_system_exact_solve_to(equations7,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "x", {"1/2"}, 1);
 
   // 3x^2-4x+4=2
-  const char * equations8[] = {"3x^2-4x+4=2", 0};
+  const char * equations8[] = {"3*x^2-4x+4=2", 0};
   const char * solutions8[] = {"(2-R(2)*I)/(3)","(2+R(2)*I)/(3)", "-8"};
   assert_equation_system_exact_solve_to(equations8, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, "x", solutions8, 2);
 
@@ -91,6 +93,10 @@ QUIZ_CASE(equation_solve) {
   const char * solutions10[] = {"1", "0"};
   assert_equation_system_exact_solve_to(equations10, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, "x", solutions10, 1);
 
+  // x^2+x+1=3*x^2+pi*x-R(5)
+  const char * equations11[] = {"x^2+x+1=3*x^2+P*x-R(5)", 0};
+  const char * solutions11[] = {"(1-P+R(9+8*R(5)-2*P+P^(2)))/(4)", "(1-P-R(9+8*R(5)-2*P+P^(2)))/(4)", "9+8*R(5)-2*P+P^(2)"};
+  assert_equation_system_exact_solve_to(equations11, EquationStore::Error::NoError, EquationStore::Type::PolynomialMonovariable, "x", solutions11, 2);
 
   // TODO
   // x^3 - 4x^2 + 6x - 24 = 0

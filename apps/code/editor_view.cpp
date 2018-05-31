@@ -1,4 +1,5 @@
 #include "editor_view.h"
+#include "python_highlighter.h"
 #include <poincare.h>
 #include <escher/app.h>
 
@@ -11,6 +12,7 @@ EditorView::EditorView(Responder * parentResponder) :
   m_gutterView(KDText::FontSize::Large)
 {
   m_textArea.setScrollViewDelegate(this);
+  m_textArea.setRenderer(Code::PythonHighlighter);
 }
 
 void EditorView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {

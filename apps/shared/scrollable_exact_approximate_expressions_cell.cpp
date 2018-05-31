@@ -13,9 +13,11 @@ ScrollableExactApproximateExpressionsCell::ScrollableExactApproximateExpressions
 void ScrollableExactApproximateExpressionsCell::setHighlighted(bool highlight) {
   m_view.evenOddCell()->setHighlighted(highlight);
 }
+
 void ScrollableExactApproximateExpressionsCell::setEven(bool even) {
   m_view.evenOddCell()->setEven(even);
 }
+
 void ScrollableExactApproximateExpressionsCell::reloadCell() {
   m_view.evenOddCell()->reloadCell();
 }

@@ -125,7 +125,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   // Calculation title
   if (i == 0) {
     if (j == numberOfRows()-1) {
-      EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
+      EvenOddExpressionCellWithMargin * myCell = (EvenOddExpressionCellWithMargin *)cell;
       myCell->setExpressionLayout(m_r2Layout);
       return;
     }
@@ -257,7 +257,7 @@ View * CalculationController::loadView() {
   tableView->setVerticalCellOverlap(0);
   tableView->setBackgroundColor(Palette::WallScreenDark);
 ;
-  m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
+  m_r2TitleCell = new EvenOddExpressionCellWithMargin(1.0f, 0.5f);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     m_columnTitleCells[i] = new EvenOddDoubleBufferTextCellWithSeparator(tableView);
   }

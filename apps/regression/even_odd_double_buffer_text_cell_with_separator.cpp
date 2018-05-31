@@ -3,6 +3,8 @@
 #include "escher/metric.h"
 #include <assert.h>
 
+namespace Regression {
+
 EvenOddDoubleBufferTextCellWithSeparator::EvenOddDoubleBufferTextCellWithSeparator(Responder * parentResponder) :
   EvenOddCell(),
   Responder(parentResponder),
@@ -107,3 +109,4 @@ bool EvenOddDoubleBufferTextCellWithSeparator::handleEvent(Ion::Events::Event ev
   return false;
 }
 
+}

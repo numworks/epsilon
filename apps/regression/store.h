@@ -3,6 +3,9 @@
 
 #include "../shared/interactive_curve_view_range.h"
 #include "../shared/float_pair_store.h"
+extern "C" {
+#include <float.h>
+}
 
 namespace Regression {
 
@@ -10,10 +13,14 @@ class Store : public Shared::InteractiveCurveViewRange, public Shared::FloatPair
 public:
   Store();
 
+  // Regression
+  /* Return the series index of the closest regression at abscissa x, above
+   * ordinate y if direction > 0, below otherwise */
+  int closestVerticalRegression(int direction, float x, float y, int currentRegressionSeries);
   // Dots
   /* Return the closest dot to abscissa x above the regression curve if
    * direction > 0, below otherwise */
-  int closestVerticalDot(int direction, float x, int * nextSeries);
+  int closestVerticalDot(int direction, float x, float y, int currentSeries, int currentDot, int * nextSeries);
   /* Return the closest dot to given dot, on the right if direction > 0,
    * on the left otherwise */
   int nextDot(int series, int direction, int dot);

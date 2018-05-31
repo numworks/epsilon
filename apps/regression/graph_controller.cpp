@@ -225,34 +225,79 @@ bool GraphController::moveCursorHorizontally(int direction) {
 }
 
 bool GraphController::moveCursorVertically(int direction) {
-  double yRegressionCurve = m_store->yValueForXValue(m_selectedSeries, m_cursor->x());
-  if (*m_selectedDotIndex >= 0) {
-    if ((yRegressionCurve - m_cursor->y() > 0) == (direction > 0)) {
-      selectRegressionCurve();
-      m_cursor->moveTo(m_cursor->x(), yRegressionCurve);
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
-      return true;
-    } else {
-      return false;
-    }
+  volatile int closestRegressionSeries = -1;
+  int closestDotSeries = -1;
+  volatile int dotSelected = -1;
+
+  if (*m_selectedDotIndex == -1) {
+    // The current cursor is on a regression
+    // Check the closest regression
+    closestRegressionSeries = m_store->closestVerticalRegression(direction, m_cursor->x(), m_cursor->y(), m_selectedSeries);
+    // Check the closest dot
+    dotSelected = m_store->closestVerticalDot(direction, m_cursor->x(), direction > 0 ? -FLT_MAX : FLT_MAX, m_selectedSeries, *m_selectedDotIndex, &closestDotSeries);
   } else {
-    int selectedSeries = -1;
-    int dotSelected = m_store->closestVerticalDot(direction, m_cursor->x(), &selectedSeries);
-    if (dotSelected >= 0 && dotSelected <= m_store->numberOfPairsOfSeries(selectedSeries)) {
-      m_view.setCursorView(&m_crossCursorView);
-      m_selectedSeries = selectedSeries;
-      *m_selectedDotIndex = dotSelected;
-      if (dotSelected == m_store->numberOfPairsOfSeries(m_selectedSeries)) {
-        m_cursor->moveTo(m_store->meanOfColumn(m_selectedSeries, 0), m_store->meanOfColumn(m_selectedSeries, 1));
-        m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
-        return true;
+    // The current cursor is on a dot
+    // Check the closest regression
+    closestRegressionSeries = m_store->closestVerticalRegression(direction, m_cursor->x(), m_cursor->y(), -1);
+    // Check the closest dot
+    dotSelected = m_store->closestVerticalDot(direction, m_cursor->x(), m_cursor->y(), m_selectedSeries, *m_selectedDotIndex, &closestDotSeries);
+  }
+
+  bool validRegression = closestRegressionSeries > -1;
+  bool validDot = dotSelected >= 0 && dotSelected <= m_store->numberOfPairsOfSeries(closestDotSeries);
+
+  if (validRegression && validDot) {
+    /* Compare the abscissa distances to select either the dot or the
+     * regression. If they are equal, compare the ordinate distances. */
+    double dotDistanceX = -1;
+    if (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) {
+      dotDistanceX = std::fabs(m_store->meanOfColumn(closestDotSeries, 0) - m_cursor->x());
+    } else {
+      dotDistanceX = std::fabs(m_store->get(closestDotSeries, 0, dotSelected) - m_cursor->x());
+    }
+    if (dotDistanceX != 0) {
+      /* The regression X distance to the point is 0, so it is closer than the
+       * dot. */
+      validDot = false;
+    } else {
+      // Compare the y distances
+      double regressionDistanceY = std::fabs(m_store->yValueForXValue(closestRegressionSeries, m_cursor->x()) - m_cursor->y());
+      double dotDistanceY = -1;
+      if (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) {
+        dotDistanceY = std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - m_cursor->y());
+      } else {
+        dotDistanceY = std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - m_cursor->y());
       }
-      m_cursor->moveTo(m_store->get(m_selectedSeries, 0, *m_selectedDotIndex), m_store->get(m_selectedSeries, 1, *m_selectedDotIndex));
+      if (regressionDistanceY <= dotDistanceY) {
+        validDot = false;
+      } else {
+        validRegression = false;
+      }
+    }
+  }
+  if (!validDot && validRegression) {
+    // Select the regression
+    m_selectedSeries = closestRegressionSeries;
+    selectRegressionCurve();
+    m_cursor->moveTo(m_cursor->x(), m_store->yValueForXValue(m_selectedSeries, m_cursor->x()));
+    m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+    return true;
+  }
+
+  if (validDot && !validRegression) {
+    m_view.setCursorView(&m_crossCursorView);
+    m_selectedSeries = closestDotSeries;
+    *m_selectedDotIndex = dotSelected;
+    if (dotSelected == m_store->numberOfPairsOfSeries(m_selectedSeries)) {
+      m_cursor->moveTo(m_store->meanOfColumn(m_selectedSeries, 0), m_store->meanOfColumn(m_selectedSeries, 1));
       m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
       return true;
     }
-    return false;
+    m_cursor->moveTo(m_store->get(m_selectedSeries, 0, *m_selectedDotIndex), m_store->get(m_selectedSeries, 1, *m_selectedDotIndex));
+    m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+    return true;
   }
+  return false;
 }
 
 uint32_t GraphController::modelVersion() {

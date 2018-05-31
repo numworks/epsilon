@@ -145,11 +145,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
   // Coordinate and series title
   if (j == 0 && i > 0) {
-    EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)cell;
+    ColumnTitleCell * myCell = (ColumnTitleCell *)cell;
     char buffer[] = {'X', static_cast<char>('0' + seriesNumber), 0};
     myCell->setFirstText(buffer);
     buffer[0] = 'Y';
     myCell->setSecondText(buffer);
+    myCell->setColor(Palette::DataColor[seriesNumber]);
     return;
   }
 
@@ -259,7 +260,7 @@ View * CalculationController::loadView() {
 ;
   m_r2TitleCell = new EvenOddExpressionCellWithMargin(1.0f, 0.5f);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    m_columnTitleCells[i] = new EvenOddDoubleBufferTextCellWithSeparator(tableView);
+    m_columnTitleCells[i] = new ColumnTitleCell(tableView);
   }
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_titleCells[i] = new MarginEvenOddMessageTextCell(KDText::FontSize::Small);

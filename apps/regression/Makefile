@@ -5,6 +5,7 @@ app_objs += $(addprefix apps/regression/,\
   app.o\
   banner_view.o\
   calculation_controller.o\
+  column_title_cell.o\
   even_odd_buffer_text_cell_with_margin.o\
   even_odd_double_buffer_text_cell_with_separator.o\
   even_odd_expression_cell_with_margin.o\

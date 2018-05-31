@@ -140,7 +140,6 @@ tests += $(addprefix poincare/test/,\
   properties.cpp\
   rational.cpp\
   simplify_mix.cpp\
-  solver.cpp\
   subtraction.cpp\
   symbol.cpp\
   store.cpp\

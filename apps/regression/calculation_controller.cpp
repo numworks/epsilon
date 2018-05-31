@@ -42,7 +42,7 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
-  if (event == Ion::Events::Copy && selectedColumn() == 1 && selectedRow() > 0) {
+  if (event == Ion::Events::Copy && selectedColumn() > 0 && selectedRow() > 0) {
     if (selectedRow() <= k_totalNumberOfDoubleBufferRows) {
       EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)selectableTableView()->selectedCell();
       if (myCell->firstTextSelected()) {
@@ -86,7 +86,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
   if (t->selectedColumn() > 0 && t->selectedRow() >= 0 && t->selectedRow() <= k_totalNumberOfDoubleBufferRows) {
     EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->selectedCell();
     bool firstSubCellSelected = true;
-    if (previousSelectedCellX == 1 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
+    if (previousSelectedCellX > 0 && previousSelectedCellY >= 0 && previousSelectedCellY <= k_totalNumberOfDoubleBufferRows) {
       EvenOddDoubleBufferTextCellWithSeparator * myPreviousCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->cellAtLocation(previousSelectedCellX, previousSelectedCellY);
       firstSubCellSelected = myPreviousCell->firstTextSelected();
     }

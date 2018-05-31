@@ -1,11 +1,11 @@
-#ifndef REGRESSION_EVEN_ODD_DOUBLE_BUFFER_TEXT_CELL_H
-#define REGRESSION_EVEN_ODD_DOUBLE_BUFFER_TEXT_CELL_H
+#ifndef REGRESSION_EVEN_ODD_DOUBLE_BUFFER_TEXT_CELL_WITH_SEPARATOR_H
+#define REGRESSION_EVEN_ODD_DOUBLE_BUFFER_TEXT_CELL_WITH_SEPARATOR_H
 
 #include <escher.h>
 
-class EvenOddDoubleBufferTextCell : public EvenOddCell, public Responder{
+class EvenOddDoubleBufferTextCellWithSeparator : public EvenOddCell, public Responder{
 public:
-  EvenOddDoubleBufferTextCell(Responder * parentResponder = nullptr);
+  EvenOddDoubleBufferTextCellWithSeparator(Responder * parentResponder = nullptr);
   const char * firstText();
   const char * secondText();
   void reloadCell() override;
@@ -19,6 +19,7 @@ public:
   void setFirstText(const char * textContent);
   void setSecondText(const char * textContent);
   void setTextColor(KDColor textColor);
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

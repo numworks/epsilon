@@ -1,11 +1,11 @@
-#ifndef APPS_STATISTICS_CALCULATION_CELL_H
-#define APPS_STATISTICS_CALCULATION_CELL_H
+#ifndef APPS_SHARED_SEPARATOR_EVEN_ODD_CELL_H
+#define APPS_SHARED_SEPARATOR_EVEN_ODD_CELL_H
 
 #include <escher/even_odd_buffer_text_cell.h>
 
-namespace Statistics {
+namespace Shared {
 
-class CalculationCell : public EvenOddBufferTextCell {
+class SeparatorEvenOddBufferTextCell : public EvenOddBufferTextCell {
 public:
   using EvenOddBufferTextCell::EvenOddBufferTextCell;
   void drawRect(KDContext * ctx, KDRect rect) const override;

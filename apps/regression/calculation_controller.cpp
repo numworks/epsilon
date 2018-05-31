@@ -114,7 +114,7 @@ int CalculationController::numberOfRows() {
 }
 
 int CalculationController::numberOfColumns() {
-  return k_totalNumberOfColumns;
+  return 1 + m_store->numberOfNonEmptySeries();
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -140,21 +140,21 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
 
-  int seriesNumber = i - 1;;
+  int seriesNumber = m_store->indexOfKthNonEmptySeries(i - 1);
   assert(i >= 0 && seriesNumber < FloatPairStore::k_numberOfSeries);
 
   // Coordinate and series title
   if (j == 0 && i > 0) {
     EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)cell;
-    char buffer[] = {'x', static_cast<char>('0' + seriesNumber), 0};
+    char buffer[] = {'X', static_cast<char>('0' + seriesNumber), 0};
     myCell->setFirstText(buffer);
-    buffer[0] = 'y';
+    buffer[0] = 'Y';
     myCell->setSecondText(buffer);
     return;
   }
 
   // Calculation cell
-  if (i == 1 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
+  if (i > 0 && j > 0 && j <= k_totalNumberOfDoubleBufferRows) {
     ArgCalculPointer calculationMethods[k_totalNumberOfDoubleBufferRows] = {&Store::meanOfColumn, &Store::sumOfColumn, &Store::squaredValueSumOfColumn, &Store::standardDeviationOfColumn, &Store::varianceOfColumn};
     double calculation1 = (m_store->*calculationMethods[j-1])(seriesNumber, 0);
     double calculation2 = (m_store->*calculationMethods[j-1])(seriesNumber, 1);
@@ -166,12 +166,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     myCell->setSecondText(buffer);
     return;
   }
-  if (i == 1 && j == 9) {
+  if (i > 0 && j == 9) {
     EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)cell;
     myCell->setText("ax+b");
     return;
   }
-  if (i == 1 && j > k_totalNumberOfDoubleBufferRows) {
+  if (i > 0 && j > k_totalNumberOfDoubleBufferRows) {
     assert(j != 9);
     CalculPointer calculationMethods[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance, &Store::columnProductSum, nullptr, &Store::slope, &Store::yIntercept, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
     double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])(seriesNumber);

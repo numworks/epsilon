@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <limits.h>
 
-
 static inline size_t min(size_t a, size_t b) {
   return (a>b ? b : a);
 }
@@ -153,7 +152,7 @@ TextArea::Text::Position TextArea::Text::span() const {
 TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
   TextInput::ContentView(fontSize, textColor, backgroundColor),
   m_text(textBuffer, textBufferSize),
-  m_textRenderer(DefaultLineRenderer)
+  m_renderer(DefaultTextAreaRenderer)
 {
 }
 
@@ -187,26 +186,25 @@ void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   int y = 0;
 
   for (Text::Line line : m_text) {
-    if (y >= topLeft.line() && y <= bottomRight.line()) {
+    if (y >= topLeft.line() && y <= bottomRight.line() && topLeft.column() < (int)line.length()) {
       LineDrawingContext lineDrawingContext(ctx, this, y);
-      m_textRenderer(lineDrawingContext, line, topLeft.column(), bottomRight.column());
+      m_renderer(&lineDrawingContext, line.text(), line.length(), topLeft.column(), bottomRight.column());
     }
     y++;
   }
 }
 
-void TextArea::ContentView::DefaultLineRenderer(const LineDrawingContext lineContext, Text::Line line, int leftColumn, int rightColumn) {
-  if (leftColumn > line.length()) {
-    return;
-  }
-  lineContext.drawString(
-    line.text() + leftColumn,
-    min(line.length() - leftColumn, rightColumn - leftColumn),
-    leftColumn
+void TextArea::ContentView::DefaultTextAreaRenderer(const TextAreaRenderingContext * context, const char * text, size_t length, int fromColumn, int toColumn) {
+  context->drawLineChunk(
+    text + fromColumn,
+    min(length - fromColumn, toColumn - fromColumn),
+    fromColumn,
+    KDColorRed,
+    KDColorBlack
   );
 }
 
-void TextArea::ContentView::LineDrawingContext::drawString(const char * text, size_t length, int column, KDColor textColor, KDColor backgroundColor) const {
+void TextArea::ContentView::LineDrawingContext::drawLineChunk(const char * text, size_t length, int column, KDColor textColor, KDColor backgroundColor) const {
   KDSize charSize = KDText::charSize(m_contentView->m_fontSize);
   m_ctx->drawString(
     text,

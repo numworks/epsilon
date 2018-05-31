@@ -20,6 +20,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_columnTitleCells{},
   m_doubleCalculationCells{},
   m_calculationCells{},
+  m_hideableCell(nullptr),
   m_store(store)
 {
   m_r2Layout = new HorizontalLayout(new CharLayout('r', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('2', KDText::FontSize::Small), VerticalOffsetLayout::Type::Superscript, false), false);
@@ -118,6 +119,9 @@ int CalculationController::numberOfColumns() {
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
+  if (i == 0 & j == 0) {
+    return;
+  }
   EvenOddCell * myCell = (EvenOddCell *)cell;
   myCell->setEven(j%2 == 0);
   myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
@@ -130,10 +134,6 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       return;
     }
     MarginEvenOddMessageTextCell * myCell = (MarginEvenOddMessageTextCell *)cell;
-    if (j == 0) {
-      myCell->setMessage(I18n::Message::Default);
-      return;
-    }
     myCell->setAlignment(1.0f, 0.5f);
     I18n::Message titles[k_totalNumberOfRows-1] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression, I18n::Message::A, I18n::Message::B, I18n::Message::R, I18n::Message::Default};
     myCell->setMessage(titles[j-1]);
@@ -211,6 +211,9 @@ HighlightCell * CalculationController::reusableCell(int index, int type) {
     assert(m_doubleCalculationCells[index] != nullptr);
     return m_doubleCalculationCells[index];
   }
+  if (type == k_hideableCellType) {
+    return m_hideableCell;
+  }
   assert(index >= 0 && index < k_numberOfCalculationCells);
   assert(m_calculationCells[index] != nullptr);
   return m_calculationCells[index];
@@ -229,11 +232,17 @@ int CalculationController::reusableCellCount(int type) {
   if (type == k_doubleBufferCalculationCellType) {
     return k_numberOfDoubleCalculationCells;
   }
+  if (type == k_hideableCellType) {
+    return 1;
+  }
   assert(type == k_standardCalculationCellType);
   return k_numberOfCalculationCells;
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
+  if (i == 0 && j == 0) {
+    return k_hideableCellType;
+  }
   if (i == 0 && j == k_totalNumberOfRows-1) {
     return k_r2CellType;
   }
@@ -274,6 +283,8 @@ View * CalculationController::loadView() {
     m_calculationCells[i] = new SeparatorEvenOddBufferTextCell(KDText::FontSize::Small);
     m_calculationCells[i]->setTextColor(Palette::GreyDark);
   }
+  m_hideableCell = new HideableEvenOddCell();
+  m_hideableCell->setHide(true);
   return tableView;
 }
 
@@ -296,6 +307,8 @@ void CalculationController::unloadView(View * view) {
     delete m_titleCells[i];
     m_titleCells[i] = nullptr;
   }
+  delete m_hideableCell;
+  m_hideableCell = nullptr;
   TabTableController::unloadView(view);
 }
 

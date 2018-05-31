@@ -81,7 +81,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
       selectableTableView()->deselectTable();
       app()->setFirstResponder(tabController());
     } else {
-      t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
+      t->selectCellAtLocation(0, 1);
     }
   }
   if (t->selectedColumn() > 0 && t->selectedRow() >= 0 && t->selectedRow() <= k_totalNumberOfDoubleBufferRows) {

@@ -69,7 +69,7 @@ void HistoryViewCell::reloadScroll() {
 }
 
 KDColor HistoryViewCell::backgroundColor() const {
-  KDColor background = m_even ? Palette::WallScreen : KDColorWhite;
+  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
   return background;
 }
 

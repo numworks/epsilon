@@ -238,6 +238,15 @@ public:
   template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
+
+  /* getVariables fills the table variables with the variable present in the
+   * expression and returns the number of entries in filled in variables.
+   * For instance getVariables('x+y+2*w/cos(4)') would result in
+   * variables = « xyw »  and would return 3. If the final number of
+   * variables would overflow the maxNumberOfVariables, getVariables return -1 */
+  static constexpr int k_maxNumberOfVariables = 6;
+  typedef bool (*isVariableTest)(char c);
+  virtual int getVariables(isVariableTest isVariable, char * variables) const;
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}

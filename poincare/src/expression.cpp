@@ -371,6 +371,20 @@ template<typename T> T Expression::epsilon() {
   return epsilon;
 }
 
+/* Get variables */
+
+int Expression::getVariables(isVariableTest isVariable, char * variables) const {
+ int numberOfVariables = 0;
+ for (int i = 0; i < numberOfOperands(); i++) {
+   int n = operand(i)->getVariables(isVariable, variables);
+   if (n < 0) {
+     return -1;
+   }
+   numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
+ }
+ return numberOfVariables;
+}
+
 }
 
 template Poincare::Expression * Poincare::Expression::approximate<double>(Context& context, AngleUnit angleUnit) const;

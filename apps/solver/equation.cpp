@@ -37,7 +37,14 @@ void Equation::tidy() {
 
 Expression * Equation::standardForm(Context * context) const {
   if (m_standardForm == nullptr) {
-    m_standardForm = static_cast<const Equal *>(expression(context))->standardEquation(*context);
+    Expression * e = expression(context);
+    if (e->type() == Expression::Type::Equal) {
+      m_standardForm = static_cast<const Equal *>(e)->standardEquation(*context);
+    } else {
+      // The equality was reduced which means the equality was always true.
+      assert(e->type() == Expression::Type::Rational && static_cast<Rational *>(e)->isOne());
+      m_standardForm = new Rational(0);
+    }
   }
   return m_standardForm;
 }

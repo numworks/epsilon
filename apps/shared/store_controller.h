@@ -21,6 +21,7 @@ public:
 
   // TextFieldDelegate
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(TextField * textField) override;
 
   // TableViewDataSource
   int numberOfColumns() override;

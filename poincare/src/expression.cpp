@@ -224,6 +224,10 @@ int Expression::getVariables(char * variables) const {
   return numberOfVariables;
 }
 
+bool dependsOnVariables(const Expression * e, Context & context) {
+  return e->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e)->isVariableSymbol();
+}
+
 bool Expression::getLinearCoefficients(char * variables, Expression * coefficients[], Expression ** constant, Context & context) const {
   char * x = variables;
   while (*x != 0) {
@@ -252,16 +256,12 @@ bool Expression::getLinearCoefficients(char * variables, Expression * coefficien
   }
   *constant = new Opposite(equation, false);
   // xy = 0?
-  bool isMultivariablePolynomial = (*constant)->recursivelyMatches([](const Expression * e, Context & context) {
-    return e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isVariableSymbol();
-  }, context);
+  bool isMultivariablePolynomial = (*constant)->recursivelyMatches(dependsOnVariables, context);
   for (int i = 0; i < index; i++) {
     if (isMultivariablePolynomial) {
       break;
     }
-    isMultivariablePolynomial |= coefficients[i]->recursivelyMatches([](const Expression * e, Context & context) {
-    return e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isVariableSymbol();
-  }, context);
+    isMultivariablePolynomial |= coefficients[i]->recursivelyMatches(dependsOnVariables, context);
   }
   if (isMultivariablePolynomial) {
     for (int i = 0; i < index; i++) {

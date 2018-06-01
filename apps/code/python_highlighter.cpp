@@ -51,7 +51,13 @@ static int TokenLength(mp_lexer_t * lex) {
   }
 }
 
+#include <stdio.h>
+
 void PythonHighlighter(const TextAreaRenderingContext * context, const char * text, size_t length, int fromColumn, int toColumn) {
+
+
+
+  //printf("Drawing %.*s\n", length, text);
 
   char m_pythonHeap[4096];
 
@@ -59,14 +65,23 @@ void PythonHighlighter(const TextAreaRenderingContext * context, const char * te
 
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
+    /* We're using the MicroPython lexer to do syntax highlighting on a per-line
+     * basis. This can work, however the MicroPython lexer won't accept a line
+     * starting with a whitespace. So we're discarding leading whitespaces
+     * beforehand. */
+    int whitespaceOffset = 0;
+    while (text[whitespaceOffset] == ' ' && whitespaceOffset < length) {
+      whitespaceOffset++;
+    }
 
-    mp_lexer_t * lex = mp_lexer_new_from_str_len(0, text, length, 0);
+    mp_lexer_t * lex = mp_lexer_new_from_str_len(0, text + whitespaceOffset, length - whitespaceOffset, 0);
 
     int drawFrom = 0;
     int drawLength = 0;
     KDColor drawColor = KDColorBlack;
 
     while (lex->tok_kind != MP_TOKEN_END && drawFrom <= toColumn) {
+      //printf("Drawing from %d to %d\n", drawFrom, drawFrom+drawLength);
 
       // Draw text from drawFrom to drawLength using drawColor
       if (drawFrom + drawLength >= fromColumn) {
@@ -83,19 +98,20 @@ void PythonHighlighter(const TextAreaRenderingContext * context, const char * te
 
       // Let's prepare the next draw call.
       // We have a token in front of us. Two possibilities:
-      int tokenPosition = lex->tok_kind == MP_TOKEN_NEWLINE ? length : lex->tok_column - 1;
+      int tokenPosition = lex->tok_kind == MP_TOKEN_NEWLINE ? length : whitespaceOffset + lex->tok_column - 1;
       if (drawFrom == tokenPosition) {
         // Either the token is immediatly in front of us, so we'll draw it next
         drawLength = TokenLength(lex);
         drawColor = TokenColor(lex->tok_kind);
+        //printf("Setting color from %d\n", lex->tok_kind);
         // So let's pop a new token
         mp_lexer_to_next(lex);
-        //printf("Did pop token of kind %d\n", lex->tok_kind);
       } else {
         // Or we're not at the token yet, so let's draw what's before first
         assert(drawFrom < tokenPosition);
         drawLength = tokenPosition - drawFrom;
         drawColor = CommentColor;
+        //printf("Setting color to comment\n");
       }
     }
 

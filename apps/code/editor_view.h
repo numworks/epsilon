@@ -2,7 +2,9 @@
 #define CODE_EDITOR_VIEW_H
 
 #include <escher/view.h>
-#include <escher/solid_text_area.h>
+#include "python_text_area.h"
+
+namespace Code {
 
 class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
@@ -38,8 +40,10 @@ private:
     KDCoordinate m_offset;
   };
 
-  SolidTextArea m_textArea;
+  PythonTextArea m_textArea;
   GutterView m_gutterView;
 };
+
+}
 
 #endif

@@ -3,7 +3,7 @@
 
 #include <escher/text_area.h>
 
-/* SimpleTextArea is a text area that draws text in a single solid color over a
+/* SolidTextArea is a text area that draws text in a single solid color over a
  * solid background. */
 
 class SolidTextArea : public TextArea {
@@ -15,8 +15,8 @@ public:
 protected:
   class ContentView : public TextArea::ContentView {
   public:
-    ContentView(KDText::FontSize size, KDColor textColor, KDColor backgroundColor) :
-      TextArea::ContentView(size),
+    ContentView(KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
+      TextArea::ContentView(fontSize),
       m_textColor(textColor),
       m_backgroundColor(backgroundColor)
     {

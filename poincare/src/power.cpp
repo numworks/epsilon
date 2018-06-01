@@ -83,12 +83,12 @@ int Power::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-int Power::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+int Power::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg <= 0) {
-    return Expression::getPolynomialCoefficients(symbolName, coefficients);
+    return Expression::privateGetPolynomialCoefficients(symbolName, coefficients);
   }
-  /* Here we only consider the case x^4 as getPolynomialCoefficients is
+  /* Here we only consider the case x^4 as privateGetPolynomialCoefficients is
    * supposed to be called after reducing the expression. */
   if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == symbolName && operand(1)->type() == Type::Rational) {
     const Rational * r = static_cast<const Rational *>(operand(1));

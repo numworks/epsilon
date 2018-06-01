@@ -133,7 +133,7 @@ int Symbol::getVariables(char * variables) const {
   return variablesLength;
 }
 
-int Symbol::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+int Symbol::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   if (m_name == symbolName) {
     coefficients[0] = new Rational(0);
     coefficients[1] = new Rational(1);

@@ -106,7 +106,7 @@ ExpressionLayout * Division::privateCreateLayout(PrintFloat::Mode floatDisplayMo
 }
 
 template<typename T> Matrix * Division::computeOnComplexAndMatrix(const Complex<T> * c, const Matrix * n) {
-  Matrix * inverse = n->createInverse<T>();
+  Matrix * inverse = n->createApproximateInverse<T>();
   if (inverse == nullptr) {
     return nullptr;
   }
@@ -119,7 +119,7 @@ template<typename T> Matrix * Division::computeOnMatrices(const Matrix * m, cons
   if (m->numberOfColumns() != n->numberOfColumns()) {
     return nullptr;
   }
-  Matrix * inverse = n->createInverse<T>();
+  Matrix * inverse = n->createApproximateInverse<T>();
   if (inverse == nullptr) {
     return nullptr;
   }

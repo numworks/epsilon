@@ -71,6 +71,26 @@ const char * Symbol::textForSpecialSymbols(char name) {
   }
 }
 
+int Symbol::getVariables(isVariableTest isVariable, char * variables) const {
+ size_t variablesLength = strlen(variables);
+ if (isVariable(m_name)) {
+   char * currentChar = variables;
+   while (*currentChar != 0) {
+     if (*currentChar == m_name) {
+       return variablesLength;
+     }
+     currentChar++;
+   }
+   if (variablesLength < k_maxNumberOfVariables) {
+     variables[variablesLength] = m_name;
+     variables[variablesLength+1] = 0;
+     return variablesLength+1;
+   }
+   return -1;
+ }
+ return variablesLength;
+}
+
 Symbol::SpecialSymbols Symbol::matrixSymbol(char index) {
   switch (index - '0') {
     case 0:
@@ -244,7 +264,7 @@ ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode
         false),
       false);
   }
-  if (isMatrixSymbol() || isSeriesSymbol()) {
+  if (isMatrixSymbol() || isSeriesSymbol(m_name)) {
     return LayoutEngine::createStringLayout(textForSpecialSymbols(m_name), 2);
   }
   return LayoutEngine::createStringLayout(&m_name, 1);
@@ -281,8 +301,8 @@ bool Symbol::isScalarSymbol() const {
   return false;
 }
 
-bool Symbol::isSeriesSymbol() const {
-  if (m_name >= (char)SpecialSymbols::V1 && m_name <= (char)SpecialSymbols::N3) {
+bool Symbol::isSeriesSymbol(char c) {
+  if (c >= (char)SpecialSymbols::V1 && c <= (char)SpecialSymbols::N3) {
     return true;
   }
   return false;

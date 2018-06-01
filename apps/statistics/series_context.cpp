@@ -13,7 +13,7 @@ void SeriesContext::setExpressionForSymbolName(const Expression * expression, co
 }
 
 const Expression * SeriesContext::expressionForSymbol(const Symbol * symbol) {
-  if (symbol->isSeriesSymbol()) {
+  if (Symbol::isSeriesSymbol(symbol->name())) {
     const char * seriesName = Symbol::textForSpecialSymbols(symbol->name());
     assert(strlen(seriesName) == 2);
 

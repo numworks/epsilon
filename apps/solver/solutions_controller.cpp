@@ -12,15 +12,27 @@ namespace Solver {
 SolutionsController::SolutionsController(Responder * parentResponder, EquationStore * equationStore) :
   ViewController(parentResponder),
   m_equationStore(equationStore),
+  m_deltaCell(0.5f, 0.5f),
+  m_delta2Layout(nullptr),
   m_selectableTableView(this)
 {
   m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
   m_selectableTableView.setVerticalCellOverlap(0);
+
+  m_delta2Layout = new HorizontalLayout(new VerticalOffsetLayout(new CharLayout('2', KDText::FontSize::Small), VerticalOffsetLayout::Type::Superscript, false), LayoutEngine::createStringLayout("-4ac", 4, KDText::FontSize::Small), false);
+  static_cast<HorizontalLayout *>(m_delta2Layout)->addOrMergeChildAtIndex(new CharLayout('b', KDText::FontSize::Small), 0, false);
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].setParentResponder(&m_selectableTableView);
   }
   for (int i = 0; i < EquationStore::k_maxNumberOfSolutions; i++) {
     m_symbolCells[i].setAlignment(0.5f, 0.5f);
+  }
+}
+
+SolutionsController::~SolutionsController() {
+  if (m_delta2Layout) {
+    delete m_delta2Layout;
+    m_delta2Layout = nullptr;
   }
 }
 
@@ -81,27 +93,26 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
   if (i == 0) {
-    EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
-    symbolCell->setFontSize(KDText::FontSize::Large);
-    char bufferSymbol[10]; // hold at maximum Delta = b^2-4ac
-    switch (m_equationStore->type()) {
-      case EquationStore::Type::LinearSystem:
-        bufferSymbol[0] = m_equationStore->variableAtIndex(j);
-        bufferSymbol[1] = 0;
-        break;
-      case EquationStore::Type::PolynomialMonovariable:
-        if (j == m_equationStore->numberOfSolutions()) {
-          symbolCell->setFontSize(KDText::FontSize::Small);
-          strlcpy(bufferSymbol, I18n::translate(I18n::Message::DiscriminantFormulaDegree2), 10);
+    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()) {
+      EvenOddExpressionCell * deltaCell = static_cast<EvenOddExpressionCell *>(cell);
+      deltaCell->setExpressionLayout(m_delta2Layout);
+    } else {
+      EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
+      symbolCell->setFontSize(KDText::FontSize::Large);
+      char bufferSymbol[10]; // hold at maximum Delta = b^2-4ac
+      switch (m_equationStore->type()) {
+        case EquationStore::Type::LinearSystem:
+          bufferSymbol[0] = m_equationStore->variableAtIndex(j);
+          bufferSymbol[1] = 0;
           break;
-        }
-      default:
-        bufferSymbol[0] = m_equationStore->variableAtIndex(0);
-        bufferSymbol[1] = j+'0';
-        bufferSymbol[2] = 0;
-        break;
+        default:
+          bufferSymbol[0] = m_equationStore->variableAtIndex(0);
+          bufferSymbol[1] = j+'0';
+          bufferSymbol[2] = 0;
+          break;
+      }
+      symbolCell->setText(bufferSymbol);
     }
-    symbolCell->setText(bufferSymbol);
   } else {
     if (m_equationStore->type() == EquationStore::Type::Monovariable) {
       EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
@@ -184,6 +195,8 @@ HighlightCell * SolutionsController::reusableCell(int index, int type) {
   if (type == 0) {
     return &m_symbolCells[index];
   } else if (type == 1) {
+    return &m_deltaCell;
+  } else if (type == 2) {
     return &m_exactValueCells[index];
   }
   return &m_approximateValueCells[index];
@@ -194,6 +207,8 @@ int SolutionsController::reusableCellCount(int type) {
     case 0:
       return EquationStore::k_maxNumberOfSolutions;
     case 1:
+      return 1;
+    case 2:
       return EquationStore::k_maxNumberOfExactSolutions;
     default:
       return EquationStore::k_maxNumberOfApproximateSolutions;
@@ -202,9 +217,12 @@ int SolutionsController::reusableCellCount(int type) {
 
 int SolutionsController::typeAtLocation(int i, int j) {
   if (i == 0) {
+    if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()) {
+      return 1;
+    }
     return 0;
   }
-  return m_equationStore->type() == EquationStore::Type::Monovariable ? 2 : 1;
+  return m_equationStore->type() == EquationStore::Type::Monovariable ? 3 : 2;
 }
 
 void SolutionsController::didBecomeFirstResponder() {

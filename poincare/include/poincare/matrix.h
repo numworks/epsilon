@@ -23,6 +23,7 @@ public:
   int polynomialDegree(char symbolName) const override;
 
   /* Operation on matrix */
+  int rank(Context & context, AngleUnit angleUnit, bool inPlace);
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
   Expression * createInverse(Context & context, AngleUnit angleUnit) const;
   /* createDeterminant and createTrace can only be called on a matrix of complex

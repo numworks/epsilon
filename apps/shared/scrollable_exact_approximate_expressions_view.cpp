@@ -119,7 +119,7 @@ bool ScrollableExactApproximateExpressionsView::handleEvent(Ion::Events::Event e
   }
   bool rightExpressionIsVisible = minimalSizeForOptimalDisplay().width() - m_contentCell.approximateExpressionView()->minimalSizeForOptimalDisplay().width() - m_manualScrollingOffset.x() < bounds().width()
 ;
-  bool leftExpressionIsVisible = m_contentCell.exactExpressionView()->minimalSizeForOptimalDisplay().width() - m_manualScrollingOffset.x() < bounds().width();
+  bool leftExpressionIsVisible = m_contentCell.exactExpressionView()->minimalSizeForOptimalDisplay().width() - m_manualScrollingOffset.x() > 0;
   if ((event == Ion::Events::Right && selectedSubviewType() == SubviewType::ExactOutput && rightExpressionIsVisible) ||
     (event == Ion::Events::Left && selectedSubviewType() == SubviewType::ApproximativeOutput && leftExpressionIsVisible)) {
     SubviewType otherSubviewType = selectedSubviewType() == SubviewType::ExactOutput ? SubviewType::ApproximativeOutput : SubviewType::ExactOutput;

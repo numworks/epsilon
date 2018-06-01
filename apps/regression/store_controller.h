@@ -11,8 +11,8 @@ namespace Regression {
 class StoreController : public Shared::StoreController {
 public:
   StoreController(Responder * parentResponder, Store * store, ButtonRowController * header);
-  void setFormulaLabel() override {} //TODO
-  void fillColumnWithFormula(Poincare::Expression * formula) override {} //TODO
+  void setFormulaLabel() override;
+  void fillColumnWithFormula(Poincare::Expression * formula) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 private:
   HighlightCell * titleCells(int index) override;

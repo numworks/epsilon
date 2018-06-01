@@ -1,5 +1,6 @@
 #include "store_controller.h"
 #include "app.h"
+#include "regression_context.h"
 #include "../apps_container.h"
 #include "../constant.h"
 #include "../../poincare/src/layout/char_layout.h"
@@ -16,6 +17,47 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
   Shared::StoreController(parentResponder, store, header),
   m_titleCells{}
 {
+}
+
+void StoreController::setFormulaLabel() {
+  int series = selectedColumn() / Store::k_numberOfColumnsPerSeries;
+  int isXColumn = selectedColumn() % Store::k_numberOfColumnsPerSeries == 0;
+  char text[] = {isXColumn ? 'X' : 'Y', static_cast<char>('1' + series), '=', 0};
+  static_cast<ContentView *>(view())->formulaInputView()->setBufferText(text);
+}
+
+void StoreController::fillColumnWithFormula(Expression * formula) {
+  int currentColumn = selectedColumn();
+  // Fetch the series used in the formula to compute the size of the filled in series
+  char variables[7] = {0, 0, 0, 0, 0, 0, 0};
+  formula->getVariables(Symbol::isRegressionSymbol, variables);
+  int numberOfValuesToCompute = -1;
+  int index = 0;
+  while (variables[index] != 0) {
+    const char * seriesName = Symbol::textForSpecialSymbols(variables[index]);
+    assert(strlen(seriesName) == 2);
+    int series = (int)(seriesName[1] - '0') - 1;
+    assert(series >= 0 && series < FloatPairStore::k_numberOfSeries);
+    if (numberOfValuesToCompute == -1) {
+      numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
+    } else {
+      numberOfValuesToCompute = min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
+    }
+    index++;
+  }
+  if (numberOfValuesToCompute == -1) {
+    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedColumn()/FloatPairStore::k_numberOfColumnsPerSeries);
+  }
+
+  RegressionContext regressionContext(m_store, const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
+  for (int j = 0; j < numberOfValuesToCompute; j++) {
+    // Set the context
+    regressionContext.setSeriesPairIndex(j);
+    // Compute the new value using the formula
+    double evaluation = formula->approximateToScalar<double>(regressionContext);
+    setDataAtLocation(evaluation, currentColumn, j + 1);
+  }
+  selectableTableView()->reloadData();
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

@@ -16,6 +16,7 @@ public:
   StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header);
 
   void displayFormulaInput();
+  virtual void fillColumnWithFormula(Poincare::Expression * formula) = 0;
 
   // TextFieldDelegate
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;

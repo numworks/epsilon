@@ -238,7 +238,7 @@ bool Expression::getLinearCoefficients(char * variables, Expression * coefficien
   int index = 0;
   Expression * polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
   while (*x != 0) {
-    int degree = equation->getPolynomialCoefficients(*x, polynomialCoefficients);
+    int degree = equation->getPolynomialCoefficients(*x, polynomialCoefficients, context);
     if (degree == 1) {
       coefficients[index] = polynomialCoefficients[1];
     } else {
@@ -275,7 +275,15 @@ bool Expression::getLinearCoefficients(char * variables, Expression * coefficien
   return true;
 }
 
-int Expression::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+int Expression::getPolynomialCoefficients(char symbolName, Expression * coefficients[], Context & context) const {
+  int degree = privateGetPolynomialCoefficients(symbolName, coefficients);
+  for (int i = 0; i <= degree; i++) {
+    Reduce(&coefficients[i], context);
+  }
+  return degree;
+}
+
+int Expression::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg == 0) {
     coefficients[0] = clone();

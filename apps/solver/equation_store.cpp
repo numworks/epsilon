@@ -84,27 +84,18 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   }
   EquationStore::Error error;
   if (success) {
-    for (int i = 0; i < numberOfModels(); i++) {
-      for (int k = 0; k < numberOfVariables; k++) {
-        Expression::Reduce(&coefficients[i][k], *context);
-      }
-      Expression::Reduce(&constants[i], *context);
-    }
     m_type = Type::LinearSystem;
     error = resolveLinearSystem(exactSolutions, coefficients, constants, context);
   } else {
     assert(numberOfVariables == 1 && numberOfModels() == 1);
     char x = m_variables[0];
     Expression * polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = m_equations[0].standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients);
+    int degree = m_equations[0].standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients, *context);
     if (degree < 0) {
       m_type = Type::Monovariable;
       return Error::RequireApproximateSolution;
     } else {
       m_type = Type::PolynomialMonovariable;
-      for (int i = 0; i <= degree; i++) {
-        Expression::Reduce(&polynomialCoefficients[i], *context);
-      }
       error = oneDimensialPolynomialSolve(exactSolutions, polynomialCoefficients, degree, context);
     }
   }

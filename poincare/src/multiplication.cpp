@@ -43,7 +43,7 @@ int Multiplication::polynomialDegree(char symbolName) const {
   return degree;
 }
 
-int Multiplication::getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+int Multiplication::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg < 0 || deg > k_maxPolynomialDegree) {
     return -1;
@@ -58,7 +58,7 @@ int Multiplication::getPolynomialCoefficients(char symbolName, Expression * coef
   // Let's note result = a(0)+a(1)*X+a(2)*X^2+a(3)*x^3+..
   for (int i = 0; i < numberOfOperands(); i++) {
     // operand(i) = b(0)+b(1)*X+b(2)*X^2+b(3)*x^3+...
-    int degI = operand(i)->getPolynomialCoefficients(symbolName, intermediateCoefficients);
+    int degI = operand(i)->privateGetPolynomialCoefficients(symbolName, intermediateCoefficients);
     assert(degI <= k_maxPolynomialDegree);
     for (int j = deg; j > 0; j--) {
       // new coefficients[j] = b(0)*a(j)+b(1)*a(j-1)+b(2)*a(j-2)+...

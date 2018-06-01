@@ -65,6 +65,18 @@ const char * Symbol::textForSpecialSymbols(char name) {
       return "V3";
     case SpecialSymbols::N3:
       return "N3";
+    case SpecialSymbols::X1:
+      return "X1";
+    case SpecialSymbols::Y1:
+      return "Y1";
+    case SpecialSymbols::X2:
+      return "X2";
+    case SpecialSymbols::Y2:
+      return "Y2";
+    case SpecialSymbols::X3:
+      return "X3";
+    case SpecialSymbols::Y3:
+      return "Y3";
     default:
       assert(false);
       return nullptr;
@@ -303,6 +315,13 @@ bool Symbol::isScalarSymbol() const {
 
 bool Symbol::isSeriesSymbol(char c) {
   if (c >= (char)SpecialSymbols::V1 && c <= (char)SpecialSymbols::N3) {
+    return true;
+  }
+  return false;
+}
+
+bool Symbol::isRegressionSymbol(char c) {
+  if (c >= (char)SpecialSymbols::X1 && c <= (char)SpecialSymbols::Y3) {
     return true;
   }
   return false;

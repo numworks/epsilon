@@ -32,7 +32,13 @@ public:
     V2,
     N2,
     V3,
-    N3 = 23
+    N3 = 23,
+    X1 = 24,
+    Y1,
+    X2,
+    Y2,
+    X3,
+    Y3 = 29
   };
   static SpecialSymbols matrixSymbol(char index);
   Symbol(char name);
@@ -46,6 +52,7 @@ public:
   bool isMatrixSymbol() const;
   bool isScalarSymbol() const;
   static bool isSeriesSymbol(char c);
+  static bool isRegressionSymbol(char c);
   bool isApproximate(Context & context) const;
   float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
   bool hasAnExactRepresentation(Context & context) const;

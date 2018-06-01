@@ -5,6 +5,7 @@ namespace Ion {
 namespace Device {
 
 void init();
+void initPeripherals();
 
 }
 }

@@ -11,12 +11,24 @@ bool canRepeatEvent(Event e) {
   return (e == Events::Left || e == Events::Up || e == Events::Down || e == Events::Right || e == Events::Backspace);
 }
 
-Event getEvent(int * timeout) {
-  // XXX: Hack to get things moving
-  if (*timeout) {
-    (*timeout)--;
+static bool sleepWithTimeout(int duration, int * timeout) {
+  if (*timeout >= duration) {
+    msleep(duration);
+    *timeout -= duration;
+    return false;
+  } else {
+    msleep(*timeout);
+    *timeout = 0;
+    return true;
   }
-  return Events::None;
+}
+
+Event getEvent(int * timeout) {
+  while (true) {
+    if (sleepWithTimeout(10, timeout)) {
+      return Events::None;
+    }
+  }
 }
 
 }

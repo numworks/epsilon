@@ -16,6 +16,7 @@ public:
   StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header);
 
   void displayFormulaInput();
+  virtual void setFormulaLabel() = 0;
   virtual void fillColumnWithFormula(Poincare::Expression * formula) = 0;
 
   // TextFieldDelegate

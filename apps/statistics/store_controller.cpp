@@ -19,12 +19,18 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
 {
 }
 
+void StoreController::setFormulaLabel() {
+  int series = selectedColumn() / Store::k_numberOfColumnsPerSeries;
+  int isValueColumn = selectedColumn() % Store::k_numberOfColumnsPerSeries == 0;
+  char text[] = {isValueColumn ? 'V' : 'N', static_cast<char>('1' + series), '=', 0};
+  static_cast<ContentView *>(view())->formulaInputView()->setBufferText(text);
+}
+
 void StoreController::fillColumnWithFormula(Expression * formula) {
   int currentColumn = selectedColumn();
   // Fetch the series used in the formula to compute the size of the filled in series
   char variables[7] = {0, 0, 0, 0, 0, 0, 0};
-  int numberOfVariables = formula->getVariables(Symbol::isSeriesSymbol, variables);
-  assert(numberOfVariables >= 0);
+  formula->getVariables(Symbol::isSeriesSymbol, variables);
   int numberOfValuesToCompute = -1;
   int index = 0;
   while (variables[index] != 0) {

@@ -5,11 +5,10 @@ namespace Shared {
 BufferTextViewWithTextField::BufferTextViewWithTextField(Responder * parentResponder, TextFieldDelegate * delegate, KDText::FontSize size) :
   View(),
   Responder(parentResponder),
-  m_bufferTextView(size, 0.0f, 0.5f),
+  m_bufferTextView(size, 1.0f, 0.5f),
   m_textField(this, m_textFieldBuffer, m_textFieldBuffer, k_textFieldBufferSize, delegate, false, size, 0.0f, 0.5f),
   m_textFieldBuffer{}
 {
-  m_bufferTextView.setText("TODO");
 }
 
 KDSize BufferTextViewWithTextField::minimalSizeForOptimalDisplay() const {

@@ -58,6 +58,7 @@ StoreController::StoreController(Responder * parentResponder, FloatPairStore * s
 }
 
 void StoreController::displayFormulaInput() {
+  setFormulaLabel();
   contentView()->displayFormulaInput(true);
 }
 

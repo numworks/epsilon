@@ -12,6 +12,7 @@ app_objs += $(addprefix apps/code/,\
   helpers.o\
   menu_controller.o\
   python_toolbox.o\
+  python_text_area.o\
   sandbox_controller.o\
   script.o\
   script_node_cell.o\

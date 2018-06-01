@@ -2,13 +2,17 @@
 #include <poincare.h>
 #include <escher/app.h>
 
+namespace Code {
+
 /* EditorView */
+
+constexpr KDText::FontSize editorFontSize = KDText::FontSize::Large;
 
 EditorView::EditorView(Responder * parentResponder) :
   Responder(parentResponder),
   View(),
-  m_textArea(parentResponder),
-  m_gutterView(KDText::FontSize::Large)
+  m_textArea(parentResponder, editorFontSize),
+  m_gutterView(editorFontSize)
 {
   m_textArea.setScrollViewDelegate(this);
 }
@@ -91,4 +95,6 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
 KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
   int numberOfChars = 2; // TODO: Could be computed
   return KDSize(2 * k_margin + numberOfChars * KDText::charSize(m_fontSize).width(), 0);
+}
+
 }

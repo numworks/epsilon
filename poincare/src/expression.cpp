@@ -10,6 +10,7 @@
 #include <poincare/rational.h>
 #include <poincare/matrix.h>
 #include <poincare/complex.h>
+#include <poincare/opposite.h>
 #include <cmath>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
@@ -249,7 +250,7 @@ bool Expression::getLinearCoefficients(char * variables, Expression * coefficien
     x++;
     index++;
   }
-  *constant = equation;
+  *constant = new Opposite(equation, false);
   // xy = 0?
   bool isMultivariablePolynomial = (*constant)->recursivelyMatches([](const Expression * e, Context & context) {
     return e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isVariableSymbol();

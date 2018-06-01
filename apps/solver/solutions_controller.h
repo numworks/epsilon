@@ -35,8 +35,8 @@ public:
   /* Responder */
   void didBecomeFirstResponder() override;
 private:
-  constexpr static int k_symbolCellWidth = 100;
-  constexpr static int k_valueCellWidth = 180;
+  constexpr static int k_symbolCellWidth = 90;
+  constexpr static int k_valueCellWidth = 190;
   constexpr static KDCoordinate k_defaultCellHeight = 20;
   EquationStore * m_equationStore;
   EvenOddBufferTextCell m_symbolCells[EquationStore::k_maxNumberOfSolutions];

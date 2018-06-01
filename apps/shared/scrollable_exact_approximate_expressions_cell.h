@@ -23,6 +23,7 @@ public:
     return this;
   }
   void didBecomeFirstResponder() override;
+  constexpr static KDCoordinate k_margin = 5;
 private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

@@ -176,6 +176,29 @@ ExpressionLayout * Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode
   return layout;
 }
 
+int Matrix::rank(Context & context, AngleUnit angleUnit, bool inPlace) {
+  Matrix * m = inPlace ? this : static_cast<Matrix *>(clone());
+  m->rowCanonize(context, angleUnit);
+  int rank = m->numberOfRows();
+  int i = rank-1;
+  while (i >= 0) {
+    int j = m->numberOfColumns()-1;
+    while (j >= i && matrixOperand(i,j)->isRationalZero()) {
+      j--;
+    }
+    if (j == i-1) {
+      rank--;
+    } else {
+      break;
+    }
+    i--;
+  }
+  if (!inPlace) {
+    delete m;
+  }
+  return rank;
+}
+
 template<typename T>
 Complex<T> * Matrix::createTrace() const {
   if (numberOfRows() != numberOfColumns()) {

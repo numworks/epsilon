@@ -1,12 +1,5 @@
 #include <escher/solid_text_area.h>
 
-SolidTextArea::ContentView::ContentView(KDText::FontSize size, KDColor textColor, KDColor backgroundColor) :
-  TextArea::ContentView(size),
-  m_textColor(textColor),
-  m_backgroundColor(backgroundColor)
-{
-}
-
 void SolidTextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
 

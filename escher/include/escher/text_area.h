@@ -23,8 +23,15 @@ protected:
 
   class Text {
   public:
-    Text(char * buffer, size_t bufferSize);
-    void setText(char * buffer, size_t bufferSize);
+    Text(char * buffer, size_t bufferSize) :
+      m_buffer(buffer),
+      m_bufferSize(bufferSize)
+    {
+    }
+    void setText(char * buffer, size_t bufferSize) {
+      m_buffer = buffer;
+      m_bufferSize = bufferSize;
+    }
     const char * text() const { return const_cast<const char *>(m_buffer); }
 
     class Line {
@@ -86,11 +93,15 @@ protected:
 
   class ContentView : public TextInput::ContentView {
   public:
-    ContentView(KDText::FontSize fontSize);
+    ContentView(KDText::FontSize fontSize) :
+      TextInput::ContentView(fontSize),
+      m_text(nullptr, 0)
+    {
+    }
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
-    const char * text() const override;
-    size_t editedTextLength() const override;
+    const char * text() const override { return m_text.text(); }
+    size_t editedTextLength() const override { return m_text.textLength(); }
     const Text * getText() const { return &m_text; }
     bool insertTextAtLocation(const char * text, int location) override;
     void moveCursorGeo(int deltaX, int deltaY);
@@ -106,14 +117,5 @@ protected:
 private:
   TextAreaDelegate * m_delegate;
 };
-/*
-class TextAreaConcrete : public TextArea {
-public:
-  TextAreaConcrete(Responder * parentResponder) : TextArea(parentResponder), m_contentView( {}
-private:
-  const ContentView * nonEditableContentView() const override { return &m_contentView; }
-  ContentView m_contentView;
-};
-*/
 
 #endif

@@ -3,24 +3,12 @@
 
 /* TextInput::ContentView */
 
-TextInput::ContentView::ContentView(KDText::FontSize size, KDColor textColor, KDColor backgroundColor) :
+TextInput::ContentView::ContentView(KDText::FontSize size) :
   View(),
   m_cursorView(),
   m_fontSize(size),
-  m_textColor(textColor),
-  m_backgroundColor(backgroundColor),
   m_cursorIndex(0)
 {
-}
-
-void TextInput::ContentView::setBackgroundColor(KDColor backgroundColor) {
-  m_backgroundColor = backgroundColor;
-  markRectAsDirty(bounds());
-}
-
-void TextInput::ContentView::setTextColor(KDColor textColor) {
-  m_textColor = textColor;
-  markRectAsDirty(bounds());
 }
 
 void TextInput::ContentView::setCursorLocation(int location) {
@@ -67,15 +55,6 @@ Toolbox * TextInput::toolbox() {
     return delegate()->toolboxForTextInput(this);
   }
   return nullptr;
-}
-
-void TextInput::setBackgroundColor(KDColor backgroundColor) {
-  ScrollView::setBackgroundColor(backgroundColor);
-  contentView()->setBackgroundColor(backgroundColor);
-}
-
-void TextInput::setTextColor(KDColor textColor) {
-  contentView()->setTextColor(textColor);
 }
 
 bool TextInput::removeChar() {

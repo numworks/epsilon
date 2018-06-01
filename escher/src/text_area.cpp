@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <limits.h>
 
-
 static inline size_t min(size_t a, size_t b) {
   return (a>b ? b : a);
 }
@@ -150,9 +149,9 @@ TextArea::Text::Position TextArea::Text::span() const {
 
 /* TextArea::ContentView */
 
-TextArea::ContentView::ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
-  TextInput::ContentView(fontSize, textColor, backgroundColor),
-  m_text(textBuffer, textBufferSize)
+TextArea::ContentView::ContentView(KDText::FontSize fontSize) :
+  TextInput::ContentView(fontSize),
+  m_text(nullptr, 0)
 {
 }
 
@@ -165,42 +164,6 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
     charSize.width() * (span.column()+1),
     charSize.height() * span.line()
   );
-}
-
-
-void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, m_backgroundColor);
-
-  KDSize charSize = KDText::charSize(m_fontSize);
-
-  // We want to draw even partially visible characters. So we need to round
-  // down for the top left corner and up for the bottom right one.
-  Text::Position topLeft(
-    rect.x()/charSize.width(),
-    rect.y()/charSize.height()
-  );
-  Text::Position bottomRight(
-    rect.right()/charSize.width() + 1,
-    rect.bottom()/charSize.height() + 1
-  );
-
-  int y = 0;
-  size_t x = topLeft.column();
-
-  for (Text::Line line : m_text) {
-    if (y >= topLeft.line() && y <= bottomRight.line() && topLeft.column() < (int)line.length()) {
-      //drawString(line.text(), 0, y*charHeight); // Naive version
-      ctx->drawString(
-        line.text() + topLeft.column(),
-        KDPoint(x*charSize.width(), y*charSize.height()),
-        m_fontSize,
-        m_textColor,
-        m_backgroundColor,
-        min(line.length() - topLeft.column(), bottomRight.column() - topLeft.column())
-      );
-    }
-    y++;
-  }
 }
 
 void TextArea::TextArea::ContentView::setText(char * textBuffer, size_t textBufferSize) {
@@ -239,6 +202,10 @@ bool TextArea::TextArea::ContentView::removeChar() {
   return true;
 }
 
+size_t TextArea::ContentView::editedTextLength() const {
+  return m_text.textLength();
+}
+
 bool TextArea::ContentView::removeEndOfLine() {
   size_t removedLine = m_text.removeRemainingLine(cursorLocation(), 1);
   if (removedLine > 0) {
@@ -263,7 +230,7 @@ bool TextArea::ContentView::removeStartOfLine() {
   return false;
 }
 
-KDRect TextArea::TextArea::ContentView::characterFrameAtIndex(size_t index) const {
+KDRect TextArea::ContentView::characterFrameAtIndex(size_t index) const {
   KDSize charSize = KDText::charSize(m_fontSize);
   Text::Position p = m_text.positionAtIndex(index);
   return KDRect(
@@ -274,21 +241,17 @@ KDRect TextArea::TextArea::ContentView::characterFrameAtIndex(size_t index) cons
   );
 }
 
-void TextArea::TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
+void TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
   Text::Position p = m_text.positionAtIndex(m_cursorIndex);
   setCursorLocation(m_text.indexAtPosition(Text::Position(p.column() + deltaX, p.line() + deltaY)));
 }
 
 /* TextArea */
 
-TextArea::TextArea(Responder * parentResponder, char * textBuffer,
-    size_t textBufferSize, TextAreaDelegate * delegate,
-    KDText::FontSize fontSize, KDColor textColor, KDColor backgroundColor) :
-  TextInput(parentResponder, &m_contentView),
-  m_contentView(textBuffer, textBufferSize, fontSize, textColor, backgroundColor),
-  m_delegate(delegate)
+TextArea::TextArea(Responder * parentResponder, View * contentView, KDText::FontSize fontSize) :
+  TextInput(parentResponder, contentView),
+  m_delegate(nullptr)
 {
-  assert(textBufferSize < INT_MAX/2);
 }
 
 bool TextArea::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
@@ -331,13 +294,13 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Right) {
     return setCursorLocation(cursorLocation()+1);
   } else if (event == Ion::Events::Up) {
-    m_contentView.moveCursorGeo(0, -1);
+    contentView()->moveCursorGeo(0, -1);
   } else if (event == Ion::Events::Down) {
-    m_contentView.moveCursorGeo(0, 1);
+    contentView()->moveCursorGeo(0, 1);
   } else if (event == Ion::Events::ShiftLeft) {
-    m_contentView.moveCursorGeo(-INT_MAX/2, 0);
+    contentView()->moveCursorGeo(-INT_MAX/2, 0);
   } else if (event == Ion::Events::ShiftRight) {
-    m_contentView.moveCursorGeo(INT_MAX/2, 0);
+    contentView()->moveCursorGeo(INT_MAX/2, 0);
   } else if (event == Ion::Events::Backspace) {
     return removeChar();
   } else if (event.hasText()) {
@@ -345,8 +308,8 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::EXE) {
     return handleEventWithText("\n");
   } else if (event == Ion::Events::Clear) {
-    if (!m_contentView.removeEndOfLine()) {
-      m_contentView.removeStartOfLine();
+    if (!contentView()->removeEndOfLine()) {
+      contentView()->removeStartOfLine();
     }
   } else if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText());
@@ -358,8 +321,8 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
 }
 
 void TextArea::setText(char * textBuffer, size_t textBufferSize) {
-  m_contentView.setText(textBuffer, textBufferSize);
-  m_contentView.moveCursorGeo(0, 0);
+  contentView()->setText(textBuffer, textBufferSize);
+  contentView()->moveCursorGeo(0, 0);
 }
 
 bool TextArea::insertTextWithIndentation(const char * textBuffer, int location) {
@@ -377,7 +340,7 @@ bool TextArea::insertTextWithIndentation(const char * textBuffer, int location) 
       totalIndentationSize+=spaceStringSize;
     }
   }
-  if (m_contentView.getText()->textLength() + textSize + totalIndentationSize >= m_contentView.getText()->bufferSize() || textSize == 0) {
+  if (contentView()->getText()->textLength() + textSize + totalIndentationSize >= contentView()->getText()->bufferSize() || textSize == 0) {
     return false;
   }
   int currentLocation = location;
@@ -395,8 +358,8 @@ bool TextArea::insertTextWithIndentation(const char * textBuffer, int location) 
 int TextArea::indentationBeforeCursor() const {
   int charIndex = cursorLocation()-1;
   int indentationSize = 0;
-  while (charIndex >= 0 && m_contentView.text()[charIndex] != '\n') {
-    if (m_contentView.text()[charIndex] == ' ') {
+  while (charIndex >= 0 && nonEditableContentView()->text()[charIndex] != '\n') {
+    if (nonEditableContentView()->text()[charIndex] == ' ') {
       indentationSize++;
     } else {
       indentationSize = 0;

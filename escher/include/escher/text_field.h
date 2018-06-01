@@ -10,6 +10,8 @@ public:
   TextField(Responder * parentResponder, char * textBuffer, char * draftTextBuffer, size_t textBufferSize,
     TextFieldDelegate * delegate = nullptr, bool hasTwoBuffers = true, KDText::FontSize size = KDText::FontSize::Large,
     float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void setBackgroundColor(KDColor backgroundColor) override;
+  void setTextColor(KDColor textColor);
   void setDelegate(TextFieldDelegate * delegate) { m_delegate = delegate; }
   void setDraftTextBuffer(char * draftTextBuffer);
   bool isEditing() const;
@@ -29,6 +31,9 @@ protected:
   class ContentView : public TextInput::ContentView {
   public:
     ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, KDText::FontSize size, float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f, KDColor textColor = KDColorBlack, KDColor = KDColorWhite);
+    void setBackgroundColor(KDColor backgroundColor);
+    KDColor backgroundColor() const { return m_backgroundColor; }
+    void setTextColor(KDColor textColor);
     void setDraftTextBuffer(char * draftTextBuffer);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     bool isEditing() const { return m_isEditing; }
@@ -64,6 +69,8 @@ protected:
     size_t m_textBufferSize;
     float m_horizontalAlignment;
     float m_verticalAlignment;
+    KDColor m_textColor;
+    KDColor m_backgroundColor;
   };
   const ContentView * nonEditableContentView() const override { return &m_contentView; }
   ContentView m_contentView;

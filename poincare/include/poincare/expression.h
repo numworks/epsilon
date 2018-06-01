@@ -234,7 +234,7 @@ public:
    * expression. */
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
-  virtual int getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const;
+  int getPolynomialCoefficients(char symbolName, Expression * coefficients[], Context & context) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -290,6 +290,7 @@ private:
   virtual Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
   bool isOfType(Type * types, int length) const;
   virtual bool needParenthesisWithParent(const Expression * e) const;
+  virtual int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const;
   /* Comparison */
   /* In the simplification order, most expressions are compared by only
    * comparing their types. However hierarchical expressions of same type would

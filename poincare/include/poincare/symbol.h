@@ -37,7 +37,7 @@ public:
   Expression * clone() const override;
   int polynomialDegree(char symbolName) const override;
   int getVariables(char * variables) const override;
-  int getPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
+  int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
   Sign sign() const override;
   bool isMatrixSymbol() const;
   bool isScalarSymbol() const;

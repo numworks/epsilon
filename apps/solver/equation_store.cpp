@@ -1,4 +1,5 @@
 #include "equation_store.h"
+#include <limits.h>
 
 using namespace Poincare;
 
@@ -120,10 +121,47 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
 }
 
 EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSolutions[k_maxNumberOfExactSolutions], Expression * coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression * constants[k_maxNumberOfEquations], Context * context) {
-  m_numberOfSolutions = strlen(m_variables);
-  for (int k = 0; k < m_numberOfSolutions; k++) {
-    exactSolutions[k] = new Rational(k);
+  Expression::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  int n = strlen(m_variables); // n unknown variables
+  int m = numberOfModels(); // m equations
+  const Expression ** operandsAb = new const Expression * [(n+1)*m];
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      operandsAb[i*(n+1)+j] = coefficients[i][j];
+    }
+    operandsAb[i*(n+1)+n] = constants[i];
   }
+  Matrix * Ab = new Matrix(operandsAb, m, n+1, false);
+  delete [] operandsAb;
+  int rankAb = Ab->rank(*context, angleUnit, true);
+
+  // Infinite number of solutions
+  m_numberOfSolutions = INT_MAX;
+  // Inconsistency?
+  for (int j = m-1; j >= 0; j--) {
+    bool rowWithNullCoefficients = true;
+    for (int i = 0; i < n; i++) {
+      if (!Ab->matrixOperand(j, i)->isRationalZero()) {
+        rowWithNullCoefficients = false;
+        break;
+      }
+    }
+    if (rowWithNullCoefficients && !Ab->matrixOperand(j, n)->isRationalZero()) {
+      m_numberOfSolutions = 0;
+    }
+  }
+  if (m_numberOfSolutions > 0) {
+    if (rankAb == n && n > 0) {
+      m_numberOfSolutions = n;
+      for (int i = 0; i < m_numberOfSolutions; i++) {
+        Expression * sol = Ab->matrixOperand(i,n);
+        exactSolutions[i] = sol;
+        Ab->detachOperand(sol);
+        Expression::Simplify(&exactSolutions[i], *context);
+      }
+    }
+  }
+  delete Ab;
   return Error::NoError;
 }
 

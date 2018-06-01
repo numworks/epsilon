@@ -30,7 +30,7 @@ public:
   Type type() const {
     return m_type;
   }
-  char variableAtIndex(int i) {
+  char variableAtIndex(size_t i) {
     assert(i < strlen(m_variables));
     return m_variables[i];
   }

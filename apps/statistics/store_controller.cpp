@@ -21,12 +21,30 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
 
 void StoreController::fillColumnWithFormula(Expression * formula) {
   int currentColumn = selectedColumn();
-  // Fetch the series used in the formula to:
-  // - Make sure the current filled column is not inside
-  // - Compute the size of the filled in series
+  // Fetch the series used in the formula to compute the size of the filled in series
+  char variables[7] = {0, 0, 0, 0, 0, 0, 0};
+  int numberOfVariables = formula->getVariables(Symbol::isSeriesSymbol, variables);
+  assert(numberOfVariables >= 0);
+  int numberOfValuesToCompute = -1;
+  int index = 0;
+  while (variables[index] != 0) {
+    const char * seriesName = Symbol::textForSpecialSymbols(variables[index]);
+    assert(strlen(seriesName) == 2);
+    int series = (int)(seriesName[1] - '0') - 1;
+    assert(series >= 0 && series < FloatPairStore::k_numberOfSeries);
+    if (numberOfValuesToCompute == -1) {
+      numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
+    } else {
+      numberOfValuesToCompute = min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
+    }
+    index++;
+  }
+  if (numberOfValuesToCompute == -1) {
+    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedColumn()/FloatPairStore::k_numberOfColumnsPerSeries);
+  }
 
   SeriesContext seriesContext(m_store, const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
-  for (int j = 0; j < 2; j++) {
+  for (int j = 0; j < numberOfValuesToCompute; j++) {
     // Set the context
     seriesContext.setSeriesPairIndex(j);
     // Compute the new value using the formula

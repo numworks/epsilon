@@ -45,11 +45,12 @@ public:
   Sign sign() const override;
   bool isMatrixSymbol() const;
   bool isScalarSymbol() const;
-  bool isSeriesSymbol() const;
+  static bool isSeriesSymbol(char c);
   bool isApproximate(Context & context) const;
   float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
   bool hasAnExactRepresentation(Context & context) const;
   static const char * textForSpecialSymbols(char name);
+  int getVariables(isVariableTest isVariable, char * variables) const override;
 private:
   Expression * replaceSymbolWithExpression(char symbol, Expression * expression) override;
   /* Simplification */

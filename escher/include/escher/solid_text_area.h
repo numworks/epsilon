@@ -15,7 +15,12 @@ public:
 protected:
   class ContentView : public TextArea::ContentView {
   public:
-    ContentView(KDText::FontSize size, KDColor textColor, KDColor backgroundColor);
+    ContentView(KDText::FontSize size, KDColor textColor, KDColor backgroundColor) :
+      TextArea::ContentView(size),
+      m_textColor(textColor),
+      m_backgroundColor(backgroundColor)
+    {
+    }
     void drawRect(KDContext * ctx, KDRect rect) const override;
   private:
     KDColor m_textColor;

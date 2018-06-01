@@ -2,7 +2,7 @@
 #define CODE_EDITOR_VIEW_H
 
 #include <escher/view.h>
-#include <escher/text_area.h>
+#include <escher/solid_text_area.h>
 
 class EditorView : public Responder, public View, public ScrollViewDelegate {
 public:
@@ -38,7 +38,7 @@ private:
     KDCoordinate m_offset;
   };
 
-  TextArea m_textArea;
+  SolidTextArea m_textArea;
   GutterView m_gutterView;
 };
 

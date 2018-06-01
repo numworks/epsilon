@@ -58,6 +58,7 @@ objs += $(addprefix escher/src/,\
   simple_list_view_data_source.o\
   simple_table_view_data_source.o\
   solid_color_view.o\
+  solid_text_area.o\
   stack_view.o\
   stack_view_controller.o\
   switch_view.o\

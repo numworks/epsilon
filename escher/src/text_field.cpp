@@ -7,16 +7,28 @@
 /* TextField::ContentView */
 
 TextField::ContentView::ContentView(char * textBuffer, char * draftTextBuffer, size_t textBufferSize, KDText::FontSize size, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
-  TextInput::ContentView(size, textColor, backgroundColor),
+  TextInput::ContentView(size),
   m_isEditing(false),
   m_textBuffer(textBuffer),
   m_draftTextBuffer(draftTextBuffer),
   m_currentDraftTextLength(0),
   m_textBufferSize(textBufferSize),
   m_horizontalAlignment(horizontalAlignment),
-  m_verticalAlignment(verticalAlignment)
+  m_verticalAlignment(verticalAlignment),
+  m_textColor(textColor),
+  m_backgroundColor(backgroundColor)
 {
   assert(m_textBufferSize <= k_maxBufferSize);
+}
+
+void TextField::ContentView::setBackgroundColor(KDColor backgroundColor) {
+  m_backgroundColor = backgroundColor;
+  markRectAsDirty(bounds());
+}
+
+void TextField::ContentView::setTextColor(KDColor textColor) {
+  m_textColor = textColor;
+  markRectAsDirty(bounds());
 }
 
 void TextField::ContentView::setDraftTextBuffer(char * draftTextBuffer) {
@@ -167,6 +179,15 @@ TextField::TextField(Responder * parentResponder, char * textBuffer, char * draf
   m_hasTwoBuffers(hasTwoBuffers),
   m_delegate(delegate)
 {
+}
+
+void TextField::setBackgroundColor(KDColor backgroundColor) {
+  ScrollView::setBackgroundColor(backgroundColor);
+  m_contentView.setBackgroundColor(backgroundColor);
+}
+
+void TextField::setTextColor(KDColor textColor) {
+  m_contentView.setTextColor(textColor);
 }
 
 void TextField::setDraftTextBuffer(char * draftTextBuffer) {

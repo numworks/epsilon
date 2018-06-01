@@ -41,7 +41,7 @@ Expression * Determinant::templatedApproximate(Context& context, AngleUnit angle
     result = input->clone();
   } else {
     assert(input->type() == Type::Matrix);
-    result = static_cast<Matrix *>(input)->createDeterminant<T>();
+    result = static_cast<Matrix *>(input)->createDeterminant<T>(context, angleUnit);
   }
   delete input;
   return result;

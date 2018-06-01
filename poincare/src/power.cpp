@@ -147,7 +147,7 @@ template<typename T> Matrix * Power::computeOnMatrixAndComplex(const Matrix * m,
     return nullptr;
   }
   if (power < 0) {
-    Matrix * inverse = m->createInverse<T>();
+    Matrix * inverse = m->createApproximateInverse<T>();
     if (inverse == nullptr) {
       return nullptr;
     }

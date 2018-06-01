@@ -64,7 +64,14 @@ void StoreController::displayFormulaInput() {
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (textField == contentView()->formulaInputView()->textField()) {
     // Handle formula input
+    Expression * expression = Expression::parse(textField->text());
+    if (expression == nullptr) {
+      app()->displayWarning(I18n::Message::SyntaxError);
+      return false;
+    }
     contentView()->displayFormulaInput(false);
+    fillColumnWithFormula(expression);
+    delete expression;
     app()->setFirstResponder(contentView());
     return true;
   }

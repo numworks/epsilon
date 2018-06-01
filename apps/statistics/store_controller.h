@@ -11,6 +11,7 @@ namespace Statistics {
 class StoreController : public Shared::StoreController {
 public:
   StoreController(Responder * parentResponder, Store * store, ButtonRowController * header);
+  void fillColumnWithFormula(Poincare::Expression * formula) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 private:
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
@@ -18,6 +19,7 @@ private:
   View * loadView() override;
   void unloadView(View * view) override;
   Shared::StoreTitleCell * m_titleCells[k_numberOfTitleCells];
+  Store * m_store;
 };
 
 }

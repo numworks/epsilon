@@ -1,4 +1,5 @@
 #include "store_controller.h"
+#include "series_context.h"
 #include "app.h"
 #include "../apps_container.h"
 #include "../constant.h"
@@ -6,14 +7,33 @@
 #include <float.h>
 #include <cmath>
 
+using namespace Poincare;
 using namespace Shared;
 
 namespace Statistics {
 
 StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
   Shared::StoreController(parentResponder, store, header),
-  m_titleCells{}
+  m_titleCells{},
+  m_store(store)
 {
+}
+
+void StoreController::fillColumnWithFormula(Expression * formula) {
+  int currentColumn = selectedColumn();
+  // Fetch the series used in the formula to:
+  // - Make sure the current filled column is not inside
+  // - Compute the size of the filled in series
+
+  SeriesContext seriesContext(m_store, const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
+  for (int j = 0; j < 2; j++) {
+    // Set the context
+    seriesContext.setSeriesPairIndex(j);
+    // Compute the new value using the formula
+    double evaluation = formula->approximateToScalar<double>(seriesContext);
+    setDataAtLocation(evaluation, currentColumn, j + 1);
+  }
+  selectableTableView()->reloadData();
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

@@ -97,6 +97,16 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
   return true;
 }
 
+bool StoreController::textFieldDidAbortEditing(TextField * textField) {
+  if (textField == contentView()->formulaInputView()->textField()) {
+    contentView()->displayFormulaInput(false);
+    app()->setFirstResponder(contentView());
+    return true;
+  }
+  return EditableCellTableViewController::textFieldDidAbortEditing(textField);
+}
+
+
 int StoreController::numberOfColumns() {
   return FloatPairStore::k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;
 }

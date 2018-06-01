@@ -12,9 +12,11 @@ ScrollableExactApproximateExpressionsCell::ScrollableExactApproximateExpressions
 
 void ScrollableExactApproximateExpressionsCell::setHighlighted(bool highlight) {
   m_view.evenOddCell()->setHighlighted(highlight);
+  reloadScroll();
 }
 
 void ScrollableExactApproximateExpressionsCell::setEven(bool even) {
+  EvenOddCell::setEven(even);
   m_view.evenOddCell()->setEven(even);
 }
 
@@ -39,7 +41,7 @@ View * ScrollableExactApproximateExpressionsCell::subviewAtIndex(int index) {
 }
 
 void ScrollableExactApproximateExpressionsCell::layoutSubviews() {
-  m_view.setFrame(bounds());
+  m_view.setFrame(KDRect(k_margin,k_margin, bounds().width()-2*k_margin, bounds().height()-2*k_margin));
 }
 
 }

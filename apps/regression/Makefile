@@ -16,6 +16,7 @@ app_objs += $(addprefix apps/regression/,\
   prediction_parameter_controller.o\
   store.o\
   store_controller.o\
+  regression_context.o\
 )
 
 i18n_files += $(addprefix apps/regression/,\

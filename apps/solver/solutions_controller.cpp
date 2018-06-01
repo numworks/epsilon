@@ -80,7 +80,6 @@ int SolutionsController::numberOfColumns() {
 void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
-  evenOddCell->reloadCell();
   if (i == 0) {
     EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
     symbolCell->setFontSize(KDText::FontSize::Large);
@@ -103,19 +102,20 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
         break;
     }
     symbolCell->setText(bufferSymbol);
-    return;
-  }
-  if (m_equationStore->type() == EquationStore::Type::Monovariable) {
-    EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
-    char bufferValue[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    PrintFloat::convertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    valueCell->setText(bufferValue);
   } else {
-    Shared::ScrollableExactApproximateExpressionsCell * valueCell = static_cast<ScrollableExactApproximateExpressionsCell *>(cell);
-  Poincare::ExpressionLayout * exactSolutionLayouts[2] = {m_equationStore->exactSolutionLayoutAtIndex(j, false), m_equationStore->exactSolutionLayoutAtIndex(j, true)};
-    valueCell->setExpressions(exactSolutionLayouts);
-    valueCell->setEqualMessage(I18n::Message::AlmostEqual);// TODO: true equal when possible?
+    if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+      EvenOddBufferTextCell * valueCell = static_cast<EvenOddBufferTextCell *>(cell);
+      char bufferValue[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+      PrintFloat::convertFloatToText<double>(m_equationStore->approximateSolutionAtIndex(j), bufferValue, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+      valueCell->setText(bufferValue);
+    } else {
+      Shared::ScrollableExactApproximateExpressionsCell * valueCell = static_cast<ScrollableExactApproximateExpressionsCell *>(cell);
+      Poincare::ExpressionLayout * exactSolutionLayouts[2] = {m_equationStore->exactSolutionLayoutAtIndex(j, false), m_equationStore->exactSolutionLayoutAtIndex(j, true)};
+      valueCell->setExpressions(exactSolutionLayouts);
+      valueCell->setEqualMessage(I18n::Message::AlmostEqual);// TODO: true equal when possible?
+    }
   }
+  evenOddCell->reloadCell();
 }
 
 KDCoordinate SolutionsController::columnWidth(int i) {

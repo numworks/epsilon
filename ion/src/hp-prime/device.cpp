@@ -5,6 +5,7 @@ extern "C" {
 }
 #include <ion.h>
 #include "display.h"
+#include "keyboard.h"
 
 
 // Public Ion methods
@@ -26,7 +27,7 @@ void Ion::msleep(long ms) {
 
 void Ion::usleep(long us) {
   // XXX: calibrate loop
-  for (volatile long i=0; i<25*us; i++) {
+  for (volatile long i=0; i<250*us; i++) {
     __asm volatile("nop");
   }
 }
@@ -47,6 +48,7 @@ void init() {
 
 void initPeripherals() {
   Ion::Display::Device::init();
+  Ion::Keyboard::Device::init();
 }
 
 }

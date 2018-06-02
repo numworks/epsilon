@@ -9,6 +9,9 @@ namespace Ion {
 namespace Keyboard {
 namespace Device {
 
+void init();
+uint64_t scan();
+
 }
 }
 }

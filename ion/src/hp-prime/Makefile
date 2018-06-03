@@ -21,3 +21,7 @@ objs += $(addprefix ion/src/hp-prime/, \
 )
 
 LDFLAGS += -T ion/src/hp-prime/boot/flash.ld
+
+%.bin: %.$(EXE)
+	@echo "OBJCOPY $@"
+	$(Q) $(OBJCOPY) -O binary --pad-to 0x30100000 $< $@

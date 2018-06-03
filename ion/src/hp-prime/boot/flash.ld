@@ -18,6 +18,7 @@ STACK_SIZE = 32K;
 
 SECTIONS {
   .text : {
+    *(.header)
     . = ALIGN(4);
     *(.text)
     *(.text.*)

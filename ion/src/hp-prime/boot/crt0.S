@@ -1,5 +1,16 @@
 .syntax unified
 
+.section .header
+.word _entry                                // entry
+.word 0                                     // padding
+.word 0x100000                              // size ?
+.word 0x30000000                            // load addr
+.word 0x100000                              // size ?
+.string "V5J"                               // cpu family?
+soc_str:
+.string "2416"                              // soc family?
+.zero (8+soc_str-.)
+
 .section .text
 .global _entry
 _entry:

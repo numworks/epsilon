@@ -1,5 +1,6 @@
 #include "interval_controller.h"
 #include "app.h"
+#include "../i18n.h"
 #include <assert.h>
 #include <string.h>
 
@@ -49,7 +50,7 @@ IntervalController::IntervalController(Responder * parentResponder, EquationStor
 }
 
 const char * IntervalController::title() {
-  return I18n::translate(I18n::Message::ApproximateSolution);
+  return I18n::translate(I18n::Message::SearchInverval);
 }
 
 int IntervalController::numberOfRows() {
@@ -96,8 +97,7 @@ bool IntervalController::textFieldDidFinishEditing(TextField * textField, const 
 void IntervalController::buttonAction() {
   StackViewController * stack = stackController();
   App * solverApp = static_cast<App *>(app());
-  stack->pop();
-  stack->push(solverApp->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
+  stack->push(solverApp->solutionsControllerStack(), KDColorWhite, Palette::SubTab, Palette::SubTab);
 }
 
 I18n::Message IntervalController::okButtonText() {

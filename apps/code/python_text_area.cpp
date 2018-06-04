@@ -92,8 +92,8 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
       fromColumn,
       text + fromColumn,
       min(length - fromColumn, toColumn - fromColumn),
-      KDColorBlack,
-      KDColorWhite
+      StringColor,
+      BackgroundColor
     );
     return;
   }
@@ -129,7 +129,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
         text + tokenFrom, // text
         tokenLength, // length
         tokenColor,
-        KDColorWhite
+        BackgroundColor
       );
 
       mp_lexer_to_next(lex);
@@ -144,7 +144,7 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
           text + tokenFrom, // text
           length - tokenFrom, // length
           CommentColor,
-          KDColorWhite
+          BackgroundColor
         );
     }
 

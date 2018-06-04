@@ -5,6 +5,7 @@
 #include "../shared/expression_field_delegate_app.h"
 #include "list_controller.h"
 #include "equation_store.h"
+#include "interval_controller.h"
 #include "solutions_controller.h"
 
 namespace Solver {
@@ -30,11 +31,13 @@ public:
   };
   InputViewController * inputViewController() { return &m_inputViewController; }
   ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
+  ViewController * intervalController() { return &m_intervalController; }
   void willBecomeInactive() override;
   const char * XNT() override;
 private:
   App(Container * container, Snapshot * snapshot);
   SolutionsController m_solutionsController;
+  IntervalController m_intervalController;
   AlternateEmptyViewController m_alternateEmptyViewController;
   ListController m_listController;
   ButtonRowController m_listFooter;

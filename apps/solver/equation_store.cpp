@@ -40,6 +40,16 @@ Poincare::ExpressionLayout * EquationStore::exactSolutionLayoutAtIndex(int i, bo
   }
 }
 
+double EquationStore::intervalBound(int index) const {
+  assert(m_type == Type::Monovariable && index >= 0 && index < 2);
+  return m_intervalApproximateSolutions[index];
+}
+
+void EquationStore::setIntervalBound(int index, double value) {
+  assert(m_type == Type::Monovariable && index >= 0 && index < 2);
+  m_intervalApproximateSolutions[index] = value;
+}
+
 double EquationStore::approximateSolutionAtIndex(int i) {
   assert(m_type == Type::Monovariable && i >= 0 && i < m_numberOfSolutions);
   return m_approximateSolutions[i];
@@ -101,6 +111,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     if (degree < 0) {
       /* 3- Monovariable non-polynomial */
       m_type = Type::Monovariable;
+      m_intervalApproximateSolutions[0] = -10;
+      m_intervalApproximateSolutions[1] = 10;
       return Error::RequireApproximateSolution;
     } else {
       m_type = Type::PolynomialMonovariable;

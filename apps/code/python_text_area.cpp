@@ -5,7 +5,7 @@ extern "C" {
 #include "py/lexer.h"
 }
 #include <python/port/port.h>
-
+#include <stdlib.h>
 
 namespace Code {
 
@@ -58,6 +58,18 @@ static inline int TokenLength(mp_lexer_t * lex) {
   }
 }
 
+PythonTextArea::ContentView::ContentView(KDText::FontSize fontSize) :
+  TextArea::ContentView(fontSize)
+{
+  m_pythonHeap = static_cast<char *>(malloc(k_pythonHeapSize));
+}
+
+PythonTextArea::ContentView::~ContentView() {
+  if (m_pythonHeap) {
+    free(m_pythonHeap);
+  }
+}
+
 void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, BackgroundColor);
 }
@@ -73,9 +85,20 @@ void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const 
 void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const {
   LOG_DRAW("Drawing \"%.*s\"\n", length, text);
 
-  char m_pythonHeap[4096];
+  if (!m_pythonHeap) {
+    drawStringAt(
+      ctx,
+      line,
+      fromColumn,
+      text + fromColumn,
+      min(length - fromColumn, toColumn - fromColumn),
+      KDColorBlack,
+      KDColorWhite
+    );
+    return;
+  }
 
-  MicroPython::init(m_pythonHeap, m_pythonHeap + 4096);
+  MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
 
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {

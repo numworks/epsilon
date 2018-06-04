@@ -69,7 +69,13 @@ I18n::Message SolutionsController::emptyMessage() {
   if (m_equationStore->numberOfSolutions() == INT_MAX) {
     return I18n::Message::InfiniteNumberOfSolutions;
   }
-  return I18n::Message::NoSolution;
+  if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+    return I18n::Message::NoSolutionInterval;
+  }
+  if (m_equationStore->numberOfModels() <= 1) {
+    return I18n::Message::NoSolutionEquation;
+  }
+  return I18n::Message::NoSolutionSystem;
 }
 
 Responder * SolutionsController::defaultController() {

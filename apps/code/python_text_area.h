@@ -12,11 +12,18 @@ public:
     m_contentView(fontSize)
   {
   }
+  void loadSyntaxHighlighter() { m_contentView.loadSyntaxHighlighter(); }
+  void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
 protected:
   class ContentView : public TextArea::ContentView {
   public:
-    ContentView(KDText::FontSize fontSize);
-    ~ContentView();
+    ContentView(KDText::FontSize fontSize) :
+      TextArea::ContentView(fontSize),
+      m_pythonHeap(nullptr)
+    {
+    }
+    void loadSyntaxHighlighter();
+    void unloadSyntaxHighlighter();
     void clearRect(KDContext * ctx, KDRect rect) const override;
     void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const override;
     KDRect dirtyRectFromCursorPosition(size_t index, bool lineBreak) const override;
@@ -27,7 +34,6 @@ protected:
 private:
   const ContentView * nonEditableContentView() const override { return &m_contentView; }
   ContentView m_contentView;
-  char * m_pythonHeap;
 };
 
 }

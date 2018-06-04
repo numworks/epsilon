@@ -9,20 +9,66 @@ using namespace Shared;
 
 namespace Solver {
 
+SolutionsController::ContentView::ContentView(SolutionsController * controller) :
+  m_warningMessageView0(KDText::FontSize::Small, I18n::Message::OnlyFirstSolutionsDisplayed0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
+  m_warningMessageView1(KDText::FontSize::Small, I18n::Message::OnlyFirstSolutionsDisplayed1, 0.5f, 0.5f, KDColorBlack, Palette::WallScreenDark),
+  m_selectableTableView(controller),
+  m_displayWarningMoreSolutions(false)
+{
+  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_selectableTableView.setVerticalCellOverlap(0);
+}
+
+void SolutionsController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
+  if (m_displayWarningMoreSolutions) {
+    ctx->fillRect(KDRect(0, 0, bounds().width(), k_topMargin), Palette::WallScreenDark);
+  }
+}
+
+void SolutionsController::ContentView::setWarningMoreSolutions(bool warning) {
+  m_displayWarningMoreSolutions = warning;
+  m_selectableTableView.setTopMargin(m_displayWarningMoreSolutions ? 0 : Metric::CommonTopMargin);
+  layoutSubviews();
+  markRectAsDirty(bounds());
+}
+
+int SolutionsController::ContentView::numberOfSubviews() const {
+  return 1+2*m_displayWarningMoreSolutions;
+}
+
+View * SolutionsController::ContentView::subviewAtIndex(int index) {
+  assert(index >= 0 && index < 1+2*m_displayWarningMoreSolutions);
+  if (index == 0 && m_displayWarningMoreSolutions) {
+    return &m_warningMessageView0;
+  }
+  if (index == 1 && m_displayWarningMoreSolutions) {
+    return &m_warningMessageView1;
+  }
+  return &m_selectableTableView;
+}
+
+void SolutionsController::ContentView::layoutSubviews() {
+  if (m_displayWarningMoreSolutions) {
+    KDCoordinate textHeight = KDText::charSize(KDText::FontSize::Small).height();
+    m_warningMessageView0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight));
+    m_warningMessageView1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight));
+    m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin));
+  } else {
+    m_selectableTableView.setFrame(bounds());
+  }
+}
+
 SolutionsController::SolutionsController(Responder * parentResponder, EquationStore * equationStore) :
   ViewController(parentResponder),
   m_equationStore(equationStore),
   m_deltaCell(0.5f, 0.5f),
   m_delta2Layout(nullptr),
-  m_selectableTableView(this)
+  m_contentView(this)
 {
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_selectableTableView.setVerticalCellOverlap(0);
-
   m_delta2Layout = new HorizontalLayout(new VerticalOffsetLayout(new CharLayout('2', KDText::FontSize::Small), VerticalOffsetLayout::Type::Superscript, false), LayoutEngine::createStringLayout("-4ac", 4, KDText::FontSize::Small), false);
   static_cast<HorizontalLayout *>(m_delta2Layout)->addOrMergeChildAtIndex(new CharLayout('b', KDText::FontSize::Small), 0, false);
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
-    m_exactValueCells[i].setParentResponder(&m_selectableTableView);
+    m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }
   for (int i = 0; i < EquationStore::k_maxNumberOfApproximateSolutions; i++) {
     m_approximateValueCells[i].setFontSize(KDText::FontSize::Large);
@@ -48,12 +94,14 @@ const char * SolutionsController::title() {
 }
 
 View * SolutionsController::view() {
-  return &m_selectableTableView;
+  return &m_contentView;
 }
 
 void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
-  m_selectableTableView.reloadData();
+  App * solverApp = static_cast<App *>(app());
+  m_contentView.setWarningMoreSolutions(m_equationStore->haveMoreApproximationSolutions(solverApp->localContext()));
+  m_contentView.selectableTableView()->reloadData();
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
@@ -235,7 +283,7 @@ int SolutionsController::typeAtLocation(int i, int j) {
 }
 
 void SolutionsController::didBecomeFirstResponder() {
-  app()->setFirstResponder(&m_selectableTableView);
+  app()->setFirstResponder(m_contentView.selectableTableView());
 }
 
 }

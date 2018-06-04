@@ -25,7 +25,7 @@ private:
   void unloadView(View * view) override;
   class ContentView : public View {
   public:
-    ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);
+    ContentView(SelectableTableView * selectableTableView);
     void drawRect(KDContext * ctx, KDRect rect) const override;
   private:
     constexpr static KDCoordinate k_topMargin = 50;

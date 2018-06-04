@@ -35,7 +35,26 @@ public:
   int typeAtLocation(int i, int j) override;
   /* Responder */
   void didBecomeFirstResponder() override;
+
 private:
+  class ContentView : public View {
+  public:
+    ContentView(SolutionsController * controller);
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+    void setWarningMoreSolutions(bool warning);
+    SelectableTableView * selectableTableView() {
+      return &m_selectableTableView;
+    }
+  private:
+    constexpr static KDCoordinate k_topMargin = 50;
+    int numberOfSubviews() const override;
+    View * subviewAtIndex(int index) override;
+    void layoutSubviews() override;
+    MessageTextView m_warningMessageView0;
+    MessageTextView m_warningMessageView1;
+    SelectableTableView m_selectableTableView;
+    bool m_displayWarningMoreSolutions;
+  };
   constexpr static int k_symbolCellWidth = 90;
   constexpr static int k_valueCellWidth = 190;
   constexpr static KDCoordinate k_defaultCellHeight = 20;
@@ -45,7 +64,7 @@ private:
   Poincare::ExpressionLayout * m_delta2Layout;
   Shared::ScrollableExactApproximateExpressionsCell m_exactValueCells[EquationStore::k_maxNumberOfExactSolutions];
   EvenOddBufferTextCell m_approximateValueCells[EquationStore::k_maxNumberOfApproximateSolutions];
-  SelectableTableView m_selectableTableView;
+  ContentView m_contentView;
 };
 
 }

@@ -6,7 +6,7 @@
 
 namespace Solver {
 
-IntervalController::ContentView::ContentView(Responder * parentResponder, SelectableTableView * selectableTableView) :
+IntervalController::ContentView::ContentView(SelectableTableView * selectableTableView) :
   m_instructions0(KDText::FontSize::Small, I18n::Message::ApproximateSolutionIntervalInstruction0, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_instructions1(KDText::FontSize::Small, I18n::Message::ApproximateSolutionIntervalInstruction1, 0.5f, 0.5f, KDColorBlack, Palette::WallScreen),
   m_selectableTableView(selectableTableView)
@@ -111,7 +111,7 @@ View * IntervalController::loadView() {
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_intervalCell[i] = new MessageTableCellWithEditableText(m_selectableTableView, this, m_draftTextBuffer);
   }
-  ContentView * contentView = (ContentView *)new ContentView(this, m_selectableTableView);
+  ContentView * contentView = (ContentView *)new ContentView(m_selectableTableView);
   return contentView;
 }
 

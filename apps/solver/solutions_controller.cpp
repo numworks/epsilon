@@ -24,6 +24,9 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].setParentResponder(&m_selectableTableView);
   }
+  for (int i = 0; i < EquationStore::k_maxNumberOfApproximateSolutions; i++) {
+    m_approximateValueCells[i].setFontSize(KDText::FontSize::Large);
+  }
   for (int i = 0; i < EquationStore::k_maxNumberOfSolutions; i++) {
     m_symbolCells[i].setAlignment(0.5f, 0.5f);
   }

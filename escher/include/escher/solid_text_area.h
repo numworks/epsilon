@@ -21,7 +21,8 @@ protected:
       m_backgroundColor(backgroundColor)
     {
     }
-    void drawRect(KDContext * ctx, KDRect rect) const override;
+    void clearRect(KDContext * ctx, KDRect rect) const override;
+    void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const override;
   private:
     KDColor m_textColor;
     KDColor m_backgroundColor;

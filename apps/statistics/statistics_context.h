@@ -1,14 +1,14 @@
-#ifndef STATISTICS_SERIES_CONTEXT_H
-#define STATISTICS_SERIES_CONTEXT_H
+#ifndef STATISTICS_STATISTICS_CONTEXT_H
+#define STATISTICS_STATISTICS_CONTEXT_H
 
 #include <poincare/context.h>
 #include "../shared/double_pair_store.h"
 
 namespace Statistics {
 
-class SeriesContext : public Poincare::Context {
+class StatisticsContext : public Poincare::Context {
 public:
-  SeriesContext(Shared::DoublePairStore * store, Poincare::Context * parentContext = nullptr) :
+  StatisticsContext(Shared::DoublePairStore * store, Poincare::Context * parentContext = nullptr) :
     Poincare::Context(),
     m_store(store),
     m_seriesPairIndex(-1),

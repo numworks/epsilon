@@ -1,4 +1,4 @@
-#include "series_context.h"
+#include "statistics_context.h"
 #include <poincare/decimal.h>
 #include <assert.h>
 #include <string.h>
@@ -8,11 +8,11 @@ using namespace Shared;
 
 namespace Statistics {
 
-void SeriesContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
+void StatisticsContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
   m_parentContext->setExpressionForSymbolName(expression, symbol, context);
 }
 
-const Expression * SeriesContext::expressionForSymbol(const Symbol * symbol) {
+const Expression * StatisticsContext::expressionForSymbol(const Symbol * symbol) {
   if (Symbol::isSeriesSymbol(symbol->name())) {
     const char * seriesName = Symbol::textForSpecialSymbols(symbol->name());
     assert(strlen(seriesName) == 2);

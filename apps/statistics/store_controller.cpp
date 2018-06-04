@@ -1,5 +1,5 @@
 #include "store_controller.h"
-#include "series_context.h"
+#include "statistics_context.h"
 #include "app.h"
 #include "../apps_container.h"
 #include "../constant.h"
@@ -49,7 +49,7 @@ void StoreController::fillColumnWithFormula(Expression * formula) {
     numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedColumn()/DoublePairStore::k_numberOfColumnsPerSeries);
   }
 
-  SeriesContext seriesContext(m_store, const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
+  StatisticsContext seriesContext(m_store, const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
   for (int j = 0; j < numberOfValuesToCompute; j++) {
     // Set the context
     seriesContext.setSeriesPairIndex(j);

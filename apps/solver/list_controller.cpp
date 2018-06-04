@@ -141,6 +141,10 @@ bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField 
 }
 
 void ListController::resolveEquations() {
+  if (m_equationStore->numberOfModels() == 0) {
+    app()->displayWarning(I18n::Message::EnterEquation);
+    return;
+  }
   EquationStore::Error e = m_equationStore->exactSolve(static_cast<App *>(app())->localContext());
   switch (e) {
     case EquationStore::Error::TooManyVariables:

@@ -30,7 +30,7 @@ bool GraphController::isEmpty() const {
   if (m_store->isEmpty()) {
     return true;
   }
-  for (int series = 0; series < FloatPairStore::k_numberOfSeries; series++) {
+  for (int series = 0; series < DoublePairStore::k_numberOfSeries; series++) {
     if (!m_store->seriesIsEmpty(series) && !std::isinf(m_store->slope(series)) && !std::isnan(m_store->slope(series))) {
       return false;
     }

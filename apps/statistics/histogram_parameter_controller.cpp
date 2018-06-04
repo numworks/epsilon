@@ -43,19 +43,19 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
     }
 
     // There should be at least one value in the drawn bin
-    for (int i = 0; i < FloatPairStore::k_numberOfSeries; i++) {
+    for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
       if (m_store->firstDrawnBarAbscissa() <= m_store->maxValue(i)+f) {
         break;
-      } else if (i == FloatPairStore::k_numberOfSeries - 1) {
+      } else if (i == DoublePairStore::k_numberOfSeries - 1) {
         app()->displayWarning(I18n::Message::ForbiddenValue);
         return false;
       }
     }
 
     // The number of bars cannot be above the max
-    assert(FloatPairStore::k_numberOfSeries > 0);
+    assert(DoublePairStore::k_numberOfSeries > 0);
     double maxNewNumberOfBars = std::ceil((m_store->maxValue(0) - m_store->minValue(0))/f);
-    for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
+    for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
       double numberOfBars = std::ceil((m_store->maxValue(i) - m_store->minValue(i))/f);
       if (maxNewNumberOfBars < numberOfBars) {
         maxNewNumberOfBars = numberOfBars;
@@ -70,9 +70,9 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
     m_store->setBarWidth(f);
   } else {
     // The number of bars cannot be above the max
-    assert(FloatPairStore::k_numberOfSeries > 0);
+    assert(DoublePairStore::k_numberOfSeries > 0);
     double maxNewNumberOfBars = ceilf((m_store->maxValue(0) - f)/m_store->barWidth());
-    for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
+    for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
       double numberOfBars = ceilf((m_store->maxValue(i) - f)/m_store->barWidth());
       if (maxNewNumberOfBars < numberOfBars) {
         maxNewNumberOfBars = numberOfBars;
@@ -83,10 +83,10 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
       return false;
     }
     // There should be at least one value in the drawn bin
-    for (int i = 0; i < FloatPairStore::k_numberOfSeries; i++) {
+    for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
       if (f <= m_store->maxValue(i)+m_store->barWidth()) {
         break;
-      } else if (i == FloatPairStore::k_numberOfSeries - 1) {
+      } else if (i == DoublePairStore::k_numberOfSeries - 1) {
         app()->displayWarning(I18n::Message::ForbiddenValue);
         return false;
       }

@@ -141,7 +141,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
 
   int seriesNumber = m_store->indexOfKthNonEmptySeries(i - 1);
-  assert(i >= 0 && seriesNumber < FloatPairStore::k_numberOfSeries);
+  assert(i >= 0 && seriesNumber < DoublePairStore::k_numberOfSeries);
 
   // Coordinate and series title
   if (j == 0 && i > 0) {

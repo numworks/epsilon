@@ -3,6 +3,7 @@
 
 #include <escher/text_input.h>
 #include <escher/text_area_delegate.h>
+#include <escher/text_area_renderer.h>
 #include <assert.h>
 #include <string.h>
 
@@ -11,6 +12,7 @@ public:
   TextArea(Responder * parentResponder, char * textBuffer = nullptr, size_t textBufferSize = 0, TextAreaDelegate * delegate = nullptr, KDText::FontSize fontSize = KDText::FontSize::Large,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   void setDelegate(TextAreaDelegate * delegate) { m_delegate = delegate; }
+  void setRenderer(TextAreaRenderer renderer) { m_contentView.setRenderer(renderer); }
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   void setText(char * textBuffer, size_t textBufferSize);
@@ -86,6 +88,7 @@ private:
   public:
     ContentView(char * textBuffer, size_t textBufferSize, KDText::FontSize size,
       KDColor textColor, KDColor backgroundColor);
+    void setRenderer(TextAreaRenderer renderer) { m_renderer = renderer; }
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
@@ -99,10 +102,26 @@ private:
     bool removeChar() override;
     bool removeEndOfLine() override;
     bool removeStartOfLine();
+    class LineDrawingContext : public TextAreaRenderingContext {
+    public:
+      LineDrawingContext(KDContext * ctx, const ContentView * contentView, int lineNumber) :
+        m_ctx(ctx), m_contentView(contentView), m_lineNumber(lineNumber) {}
+      void drawLineChunk(const char * text, size_t length, int column) const {
+        drawLineChunk(text, length, column, m_contentView->m_textColor, m_contentView->m_backgroundColor);
+      }
+      void drawLineChunk(const char * text, size_t length, int column, KDColor textColor, KDColor backgroundColor) const override;
+    private:
+      KDContext * m_ctx;
+      const ContentView * m_contentView;
+      int m_lineNumber;
+    };
+    static void DefaultTextAreaRenderer(const TextAreaRenderingContext * context, const char * text, size_t length, int fromColumn, int toColumn);
   private:
     KDRect characterFrameAtIndex(size_t index) const override;
     Text m_text;
+    TextAreaRenderer m_renderer;
   };
+
   const ContentView * nonEditableContentView() const override { return &m_contentView; }
   ContentView m_contentView;
   TextAreaDelegate * m_delegate;

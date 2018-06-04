@@ -58,15 +58,19 @@ static inline int TokenLength(mp_lexer_t * lex) {
   }
 }
 
-PythonTextArea::ContentView::ContentView(KDText::FontSize fontSize) :
-  TextArea::ContentView(fontSize)
-{
+void PythonTextArea::ContentView::loadSyntaxHighlighter() {
+  assert(m_pythonHeap == nullptr);
   m_pythonHeap = static_cast<char *>(malloc(k_pythonHeapSize));
+  if (m_pythonHeap != nullptr) {
+    MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
+  }
 }
 
-PythonTextArea::ContentView::~ContentView() {
-  if (m_pythonHeap) {
+void PythonTextArea::ContentView::unloadSyntaxHighlighter() {
+  if (m_pythonHeap != nullptr) {
+    MicroPython::deinit();
     free(m_pythonHeap);
+    m_pythonHeap = nullptr;
   }
 }
 
@@ -85,7 +89,7 @@ void PythonTextArea::ContentView::clearRect(KDContext * ctx, KDRect rect) const 
 void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const {
   LOG_DRAW("Drawing \"%.*s\"\n", length, text);
 
-  if (!m_pythonHeap) {
+  if (m_pythonHeap == nullptr) {
     drawStringAt(
       ctx,
       line,
@@ -97,8 +101,6 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     );
     return;
   }
-
-  MicroPython::init(m_pythonHeap, m_pythonHeap + k_pythonHeapSize);
 
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
@@ -151,8 +153,6 @@ void PythonTextArea::ContentView::drawLine(KDContext * ctx, int line, const char
     mp_lexer_free(lex);
     nlr_pop();
   }
-
-  MicroPython::deinit();
 }
 
 KDRect PythonTextArea::ContentView::dirtyRectFromCursorPosition(size_t index, bool lineBreak) const {

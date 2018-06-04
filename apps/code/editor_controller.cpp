@@ -53,6 +53,7 @@ void EditorController::didBecomeFirstResponder() {
 }
 
 void EditorController::viewWillAppear() {
+  m_editorView.loadSyntaxHighlighter();
   m_editorView.setCursorLocation(strlen(m_editorView.text()));
 }
 
@@ -60,6 +61,7 @@ void EditorController::viewDidDisappear() {
   m_menuController->scriptContentEditionDidFinish();
   delete[] m_areaBuffer;
   m_areaBuffer = nullptr;
+  m_editorView.unloadSyntaxHighlighter();
 }
 
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {

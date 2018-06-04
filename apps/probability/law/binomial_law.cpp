@@ -77,7 +77,7 @@ bool BinomialLaw::authorizedValueAtIndex(float x, int index) const {
      *  this cap, we should implement the explicite formula of the cumulative
      *  probability (which depends on an incomplete beta function) to make the
      *  comlexity O(1). */
-    if (x != (int)x || x < 0.0f || x > 9999.0f) {
+    if (x != (int)x || x < 0.0f || x > 99999.0f) {
       return false;
     }
     return true;

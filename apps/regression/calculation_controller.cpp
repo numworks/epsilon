@@ -6,6 +6,7 @@
 #include "../../poincare/src/layout/vertical_offset_layout.h"
 #include <poincare.h>
 #include <assert.h>
+#include "levenberg_marquardt.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -47,6 +48,9 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
 }
 
 void CalculationController::didBecomeFirstResponder() {
+  LevenbergMarquartd lm(m_store);
+  double modelCoefficients[] = {1.0, 1.0, 1.0, 1.0, 1.0};
+  lm.fit(modelCoefficients, const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
   if (selectedRow() == -1) {
     selectCellAtLocation(1, 0);
   } else {

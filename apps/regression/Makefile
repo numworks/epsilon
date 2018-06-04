@@ -12,10 +12,23 @@ app_objs += $(addprefix apps/regression/,\
   graph_controller.o\
   graph_view.o\
   initialisation_parameter_controller.o\
+  levenberg_marquardt.o\
   prediction_parameter_controller.o\
+  regression_context.o\
   store.o\
   store_controller.o\
-  regression_context.o\
+)
+
+app_objs += $(addprefix apps/regression/model/,\
+  cubic_model.o\
+  exponential_model.o\
+  linear_model.o\
+  logarithmic_model.o\
+  logistic_model.o\
+  power_model.o\
+  quadratic_model.o\
+  quartic_model.o\
+  trigonometric_model.o\
 )
 
 i18n_files += $(addprefix apps/regression/,\

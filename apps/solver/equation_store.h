@@ -43,6 +43,7 @@ public:
   double approximateSolutionAtIndex(int i);
   void tidy() override;
   Error exactSolve(Poincare::Context * context);
+  bool approximateSolve(Poincare::Context * context);
   static constexpr int k_maxNumberOfExactSolutions = Poincare::Expression::k_maxNumberOfVariables > Poincare::Expression::k_maxPolynomialDegree + 1? Poincare::Expression::k_maxNumberOfVariables : Poincare::Expression::k_maxPolynomialDegree + 1;
   static constexpr int k_maxNumberOfApproximateSolutions = 10;
   static constexpr int k_maxNumberOfSolutions = k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions ? k_maxNumberOfExactSolutions : k_maxNumberOfApproximateSolutions;

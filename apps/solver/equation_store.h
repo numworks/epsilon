@@ -42,12 +42,14 @@ public:
   void setIntervalBound(int index, double value);
   double approximateSolutionAtIndex(int i);
   void tidy() override;
+  void approximateSolve(Poincare::Context * context);
+  bool haveMoreApproximationSolutions(Poincare::Context * context) const;
   Error exactSolve(Poincare::Context * context);
-  bool approximateSolve(Poincare::Context * context);
   static constexpr int k_maxNumberOfExactSolutions = Poincare::Expression::k_maxNumberOfVariables > Poincare::Expression::k_maxPolynomialDegree + 1? Poincare::Expression::k_maxNumberOfVariables : Poincare::Expression::k_maxPolynomialDegree + 1;
   static constexpr int k_maxNumberOfApproximateSolutions = 10;
   static constexpr int k_maxNumberOfSolutions = k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions ? k_maxNumberOfExactSolutions : k_maxNumberOfApproximateSolutions;
 private:
+  static constexpr double k_precision = 0.0001;
   static constexpr int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
   Equation * emptyModel() override;
   Equation * nullModel() override {

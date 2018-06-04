@@ -23,8 +23,8 @@ protected:
   BannerView * bannerView() override { return m_bannerView; }
   virtual void reloadBannerView();
   bool moveCursor(int direction);
-  CartesianFunction::Point computeNewPointOfInteresetFromAbscissa(double start, int direction);
-  virtual CartesianFunction::Point computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;
+  Poincare::Expression::Coordinate2D computeNewPointOfInteresetFromAbscissa(double start, int direction);
+  virtual Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) = 0;
   GraphView * m_graphView;
   BannerView * m_bannerView;
   Shared::InteractiveCurveViewRange * m_graphRange;

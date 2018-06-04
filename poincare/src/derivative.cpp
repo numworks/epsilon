@@ -48,16 +48,9 @@ template<typename T>
 Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
-  VariableContext<T> xContext = VariableContext<T>('x', &context);
   Symbol xSymbol('x');
-  Expression * xInput = operand(1)->approximate<T>(context, angleUnit);
-  T x = xInput->type() == Type::Complex ? static_cast<Complex<T> *>(xInput)->toScalar() : NAN;
-  delete xInput;
-  Complex<T> e = Complex<T>::Float(x);
-  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  Expression * fInput = operand(0)->approximate<T>(xContext, angleUnit);
-  T functionValue = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
-  delete fInput;
+  T x = operand(1)->approximateToScalar<T>(context, angleUnit);
+  T functionValue = operand(0)->approximateWithValueForSymbol('x', x, context);
 
   // No complex/matrix version of Derivative
   if (std::isnan(x) || std::isnan(functionValue)) {
@@ -67,7 +60,7 @@ Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleU
   T error, result;
   T h = k_minInitialRate;
   do {
-    result = riddersApproximation(xContext, angleUnit, x, h, &error);
+    result = riddersApproximation(context, angleUnit, x, h, &error);
     h /= 10.0;
   } while ((std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) && h >= epsilon);
 
@@ -83,23 +76,14 @@ Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleU
 }
 
 template<typename T>
-T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const {
-  Symbol xSymbol('x');
-  Complex<T> e = Complex<T>::Float(x + h);
-  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  Expression * fInput = operand(0)->approximate<T>(xContext, angleUnit);
-  T expressionPlus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
-  delete fInput;
-  e = Complex<T>::Float(x-h);
-  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  fInput = operand(0)->approximate<T>(xContext, angleUnit);
-  T expressionMinus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
-  delete fInput;
+T Derivative::growthRateAroundAbscissa(T x, T h, Context & context, AngleUnit angleUnit) const {
+  T expressionPlus = operand(0)->approximateWithValueForSymbol('x', x+h, context);
+  T expressionMinus = operand(0)->approximateWithValueForSymbol('x', x-h, context);
   return (expressionPlus - expressionMinus)/(2*h);
 }
 
 template<typename T>
-T Derivative::riddersApproximation(VariableContext<T> xContext, AngleUnit angleUnit, T x, T h, T * error) const {
+T Derivative::riddersApproximation(Context & context, AngleUnit angleUnit, T x, T h, T * error) const {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Engineering Software, vol. 4, no. 2,
@@ -119,7 +103,7 @@ T Derivative::riddersApproximation(VariableContext<T> xContext, AngleUnit angleU
       a[i][j] = 1;
     }
   }
-  a[0][0] = growthRateAroundAbscissa(x, hh, xContext, angleUnit);
+  a[0][0] = growthRateAroundAbscissa(x, hh, context, angleUnit);
   T ans = 0;
   T errt = 0;
   /* Loop on i: change the step size */
@@ -128,7 +112,7 @@ T Derivative::riddersApproximation(VariableContext<T> xContext, AngleUnit angleU
     /* Make hh an exactly representable number */
     volatile T temp =  x+hh;
     hh = temp - x;
-    a[0][i] = growthRateAroundAbscissa(x, hh, xContext, angleUnit);
+    a[0][i] = growthRateAroundAbscissa(x, hh, context, angleUnit);
     T fac = k_rateStepSize*k_rateStepSize;
     /* Loop on j: compute extrapolation for several orders */
     for (int j = 1; j < 10; j++) {

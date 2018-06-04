@@ -18,7 +18,7 @@ app_objs += $(addprefix apps/statistics/,\
   multiple_data_view.o\
   multiple_data_view_controller.o\
   multiple_histograms_view.o\
-  series_context.o\
+  statistics_context.o\
   store.o\
   store_controller.o\
 )

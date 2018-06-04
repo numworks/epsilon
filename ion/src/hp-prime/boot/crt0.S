@@ -14,6 +14,14 @@ soc_str:
 .section .text
 .global _entry
 _entry:
+  // Invalidate ICache
+  mcr p15, 0, r0, c7, c5, 0
+
+  // Flush and invalidate DCache
+_dcache_loop:
+  mrc p15, 0, r15, c7, c14, 3
+  bne _dcache_loop
+
   // Disable interrupts right away
   ldr r0, =0xffffffff
   ldr r1, =0x4a000000

@@ -34,13 +34,17 @@ void TextInput::ContentView::layoutSubviews() {
   m_cursorView.setFrame(cursorRect());
 }
 
-void TextInput::ContentView::reloadRectFromCursorPosition(size_t index, bool lineBreak) {
+KDRect TextInput::ContentView::dirtyRectFromCursorPosition(size_t index, bool lineBreak) const {
   KDRect charRect = characterFrameAtIndex(index);
   KDRect dirtyRect = KDRect(charRect.x(), charRect.y(), bounds().width() - charRect.x(), charRect.height());
   if (lineBreak) {
       dirtyRect = dirtyRect.unionedWith(KDRect(0, charRect.bottom()+1, bounds().width(), bounds().height()-charRect.bottom()-1));
   }
-  markRectAsDirty(dirtyRect);
+  return dirtyRect;
+}
+
+void TextInput::ContentView::reloadRectFromCursorPosition(size_t index, bool lineBreak) {
+  markRectAsDirty(dirtyRectFromCursorPosition(index, lineBreak));
 }
 
 /* TextInput */

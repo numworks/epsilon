@@ -269,6 +269,45 @@ TextArea::Text::Position TextArea::Text::span() const {
 
 /* TextArea::ContentView */
 
+void TextArea::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
+  // TODO: We're clearing areas we'll draw text over. It's not needed.
+  clearRect(ctx, rect);
+
+  KDSize charSize = KDText::charSize(m_fontSize);
+
+  // We want to draw even partially visible characters. So we need to round
+  // down for the top left corner and up for the bottom right one.
+  Text::Position topLeft(
+    rect.x()/charSize.width(),
+    rect.y()/charSize.height()
+  );
+  Text::Position bottomRight(
+    rect.right()/charSize.width() + 1,
+    rect.bottom()/charSize.height() + 1
+  );
+
+  int y = 0;
+
+  for (Text::Line line : m_text) {
+    if (y >= topLeft.line() && y <= bottomRight.line() && topLeft.column() < (int)line.length()) {
+      drawLine(ctx, y, line.text(), line.length(), topLeft.column(), bottomRight.column());
+    }
+    y++;
+  }
+}
+
+void TextArea::ContentView::drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor) const {
+  KDSize charSize = KDText::charSize(m_fontSize);
+  ctx->drawString(
+    text,
+    KDPoint(column*charSize.width(), line*charSize.height()),
+    m_fontSize,
+    textColor,
+    backgroundColor,
+    length
+  );
+}
+
 KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize charSize = KDText::charSize(m_fontSize);
   Text::Position span = m_text.span();

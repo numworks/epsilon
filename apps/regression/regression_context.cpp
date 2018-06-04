@@ -18,7 +18,7 @@ const Expression * RegressionContext::expressionForSymbol(const Symbol * symbol)
     assert(strlen(seriesName) == 2);
 
     int series = (int)(seriesName[1] - '0') - 1;
-    assert(series >= 0 && series < FloatPairStore::k_numberOfSeries);
+    assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
 
     assert((seriesName[0] == 'X') || (seriesName[0] == 'Y'));
     int storeI = seriesName[0] == 'X' ? 0 : 1;

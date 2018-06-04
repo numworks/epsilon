@@ -37,7 +37,7 @@ void StoreController::fillColumnWithFormula(Expression * formula) {
     const char * seriesName = Symbol::textForSpecialSymbols(variables[index]);
     assert(strlen(seriesName) == 2);
     int series = (int)(seriesName[1] - '0') - 1;
-    assert(series >= 0 && series < FloatPairStore::k_numberOfSeries);
+    assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
     if (numberOfValuesToCompute == -1) {
       numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
     } else {
@@ -46,7 +46,7 @@ void StoreController::fillColumnWithFormula(Expression * formula) {
     index++;
   }
   if (numberOfValuesToCompute == -1) {
-    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedColumn()/FloatPairStore::k_numberOfColumnsPerSeries);
+    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedColumn()/DoublePairStore::k_numberOfColumnsPerSeries);
   }
 
   SeriesContext seriesContext(m_store, const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
@@ -69,7 +69,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   bool isValuesColumn = i%Store::k_numberOfColumnsPerSeries == 0;
   mytitleCell->setSeparatorLeft(isValuesColumn);
   int seriesIndex = i/Store::k_numberOfColumnsPerSeries;
-  assert(seriesIndex >= 0 && seriesIndex < FloatPairStore::k_numberOfSeries);
+  assert(seriesIndex >= 0 && seriesIndex < DoublePairStore::k_numberOfSeries);
   if (isValuesColumn) {
     I18n::Message valuesMessages[] = {I18n::Message::Values1, I18n::Message::Values2, I18n::Message::Values3};
     mytitleCell->setText(I18n::translate(valuesMessages[seriesIndex]));

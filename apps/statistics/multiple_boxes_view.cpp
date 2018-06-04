@@ -7,9 +7,9 @@ namespace Statistics {
 
 MultipleBoxesView::MultipleBoxesView(BoxController * controller, Store * store, BoxView::Quantile * selectedQuantile) :
   MultipleDataView(store),
-  m_boxView1(controller, store, 0, nullptr, selectedQuantile, FloatPairStore::colorOfSeriesAtIndex(0), FloatPairStore::colorLightOfSeriesAtIndex(0)),
-  m_boxView2(controller, store, 1, nullptr, selectedQuantile, FloatPairStore::colorOfSeriesAtIndex(1), FloatPairStore::colorLightOfSeriesAtIndex(1)),
-  m_boxView3(controller, store, 2, nullptr, selectedQuantile, FloatPairStore::colorOfSeriesAtIndex(2), FloatPairStore::colorLightOfSeriesAtIndex(2)),
+  m_boxView1(controller, store, 0, nullptr, selectedQuantile, DoublePairStore::colorOfSeriesAtIndex(0), DoublePairStore::colorLightOfSeriesAtIndex(0)),
+  m_boxView2(controller, store, 1, nullptr, selectedQuantile, DoublePairStore::colorOfSeriesAtIndex(1), DoublePairStore::colorLightOfSeriesAtIndex(1)),
+  m_boxView3(controller, store, 2, nullptr, selectedQuantile, DoublePairStore::colorOfSeriesAtIndex(2), DoublePairStore::colorLightOfSeriesAtIndex(2)),
   m_axisView(store),
   m_bannerView()
 {

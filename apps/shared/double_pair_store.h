@@ -1,5 +1,5 @@
-#ifndef SHARED_FLOAT_PAIR_STORE_H
-#define SHARED_FLOAT_PAIR_STORE_H
+#ifndef SHARED_DOUBLE_PAIR_STORE_H
+#define SHARED_DOUBLE_PAIR_STORE_H
 
 #include <kandinsky/color.h>
 #include <escher/palette.h>
@@ -8,17 +8,17 @@
 
 namespace Shared {
 
-class FloatPairStore {
+class DoublePairStore {
 public:
   constexpr static int k_numberOfSeries = 3;
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static int k_maxNumberOfPairs = 100;
-  FloatPairStore() :
+  DoublePairStore() :
     m_data{},
     m_numberOfPairs{}
   {}
   // Delete the implicit copy constructor: the object is heavy
-  FloatPairStore(const FloatPairStore&) = delete;
+  DoublePairStore(const DoublePairStore&) = delete;
   double get(int series, int i, int j) const {
     assert(j < m_numberOfPairs[series]);
     return m_data[series][i][j];

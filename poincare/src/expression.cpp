@@ -460,14 +460,14 @@ template<typename T> T Expression::epsilon() {
 
 /* Expression roots/extrema solver*/
 
-Expression::Point Expression::nextMinimum(char symbol, double start, double step, double max, Context & context) const {
+Expression::Coordinate2D Expression::nextMinimum(char symbol, double start, double step, double max, Context & context) const {
   return nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, const Expression * expression0, const Expression * expression1 = nullptr) {
         return expression0->approximateWithValueForSymbol(symbol, x, context);
       }, context);
 }
 
-Expression::Point Expression::nextMaximum(char symbol, double start, double step, double max, Context & context) const {
-  Point minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, const Expression * expression0, const Expression * expression1 = nullptr) {
+Expression::Coordinate2D Expression::nextMaximum(char symbol, double start, double step, double max, Context & context) const {
+  Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, const Expression * expression0, const Expression * expression1 = nullptr) {
         return -expression0->approximateWithValueForSymbol(symbol, x, context);
       }, context);
   return {.abscissa = minimumOfOpposite.abscissa, .value = -minimumOfOpposite.value};
@@ -479,20 +479,20 @@ double Expression::nextRoot(char symbol, double start, double step, double max, 
       }, context, nullptr);
 }
 
-Expression::Point Expression::nextIntersection(char symbol, double start, double step, double max, Poincare::Context & context, const Expression * expression) const {
+Expression::Coordinate2D Expression::nextIntersection(char symbol, double start, double step, double max, Poincare::Context & context, const Expression * expression) const {
   double resultAbscissa = nextIntersectionWithExpression(symbol, start, step, max, [](char symbol, double x, Context & context, const Expression * expression0, const Expression * expression1) {
         return expression0->approximateWithValueForSymbol(symbol, x, context)-expression1->approximateWithValueForSymbol(symbol, x, context);
       }, context, expression);
-  Expression::Point result = {.abscissa = resultAbscissa, .value = approximateWithValueForSymbol(symbol, resultAbscissa, context)};
+  Expression::Coordinate2D result = {.abscissa = resultAbscissa, .value = approximateWithValueForSymbol(symbol, resultAbscissa, context)};
   if (std::fabs(result.value) < step*k_solverPrecision) {
     result.value = 0.0;
   }
   return result;
 }
 
-Expression::Point Expression::nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluate, Context & context, const Expression * expression, bool lookForRootMinimum) const {
+Expression::Coordinate2D Expression::nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluate, Context & context, const Expression * expression, bool lookForRootMinimum) const {
   double bracket[3];
-  Point result = {.abscissa = NAN, .value = NAN};
+  Coordinate2D result = {.abscissa = NAN, .value = NAN};
   double x = start;
   bool endCondition = false;
   do {
@@ -519,7 +519,7 @@ Expression::Point Expression::nextMinimumOfExpression(char symbol, double start,
 }
 
 void Expression::bracketMinimum(char symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluate, Context & context, const Expression * expression) const {
-  Point p[3];
+  Coordinate2D p[3];
   p[0] = {.abscissa = start, .value = evaluate(symbol, start, context, this, expression)};
   p[1] = {.abscissa = start+step, .value = evaluate(symbol, start+step, context, this, expression)};
   double x = start+2.0*step;
@@ -543,7 +543,7 @@ void Expression::bracketMinimum(char symbol, double start, double step, double m
   result[2] = NAN;
 }
 
-Expression::Point Expression::brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluate, Context & context, const Expression * expression) const {
+Expression::Coordinate2D Expression::brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluate, Context & context, const Expression * expression) const {
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
    * functions without calculating derivatives */
   if (ax > bx) {
@@ -572,7 +572,7 @@ Expression::Point Expression::brentMinimum(char symbol, double ax, double bx, Ev
       double fa = evaluate(symbol, a, context, this, expression);
       double fb = evaluate(symbol, b, context, this, expression);
       if (middleFax-fa <= k_sqrtEps && fx-middleFax <= k_sqrtEps && fx-middleFbx <= k_sqrtEps && middleFbx-fb <= k_sqrtEps) {
-        Point result = {.abscissa = x, .value = fx};
+        Coordinate2D result = {.abscissa = x, .value = fx};
         return result;
       }
     }
@@ -633,7 +633,7 @@ Expression::Point Expression::brentMinimum(char symbol, double ax, double bx, Ev
       }
     }
   }
-  Point result = {.abscissa = NAN, .value = NAN};
+  Coordinate2D result = {.abscissa = NAN, .value = NAN};
   return result;
 }
 
@@ -649,7 +649,7 @@ double Expression::nextIntersectionWithExpression(char symbol, double start, dou
   } while (std::isnan(result) && (step > 0.0 ? x <= max : x >= max));
 
   double extremumMax = std::isnan(result) ? max : result;
-  Point resultExtremum[2] = {
+  Coordinate2D resultExtremum[2] = {
     nextMinimumOfExpression(symbol, start, step, extremumMax, [](char symbol, double x, Context & context, const Expression * expression0, const Expression * expression1) {
         if (expression1) {
           return expression0->approximateWithValueForSymbol(symbol, x, context)-expression1->approximateWithValueForSymbol(symbol, x, context);

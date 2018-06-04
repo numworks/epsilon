@@ -264,14 +264,14 @@ public:
   template<typename T> T approximateWithValueForSymbol(char symbol, T x, Context & context) const;
 
   /* Expression roots/extrema solver*/
-  struct Point {
+  struct Coordinate2D {
     double abscissa;
     double value;
   };
-  Point nextMinimum(char symbol, double start, double step, double max, Context & context) const;
-  Point nextMaximum(char symbol, double start, double step, double max, Context & context) const;
+  Coordinate2D nextMinimum(char symbol, double start, double step, double max, Context & context) const;
+  Coordinate2D nextMaximum(char symbol, double start, double step, double max, Context & context) const;
   double nextRoot(char symbol, double start, double step, double max, Context & context) const;
-  Point nextIntersection(char symbol, double start, double step, double max, Context & context, const Expression * expression) const;
+  Coordinate2D nextIntersection(char symbol, double start, double step, double max, Context & context, const Expression * expression) const;
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}
@@ -334,9 +334,9 @@ private:
   constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
   constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
   typedef double (*EvaluationAtAbscissa)(char symbol, double abscissa, Context & context, const Expression * expression0, const Expression * expression1);
-  Point nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr, bool lookForRootMinimum = false) const;
+  Coordinate2D nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr, bool lookForRootMinimum = false) const;
   void bracketMinimum(char symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr) const;
-  Point brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr) const;
+  Coordinate2D brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr) const;
   double nextIntersectionWithExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression) const;
   void bracketRoot(char symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, const Expression * expression) const;
   double brentRoot(char symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression) const;

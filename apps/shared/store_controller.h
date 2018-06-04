@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "buffer_text_view_with_text_field.h"
 #include "editable_cell_table_view_controller.h"
-#include "float_pair_store.h"
+#include "double_pair_store.h"
 #include "store_cell.h"
 #include "store_parameter_controller.h"
 #include "store_selectable_table_view.h"
@@ -13,7 +13,7 @@ namespace Shared {
 
 class StoreController : public EditableCellTableViewController, public ButtonRowDelegate  {
 public:
-  StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header);
+  StoreController(Responder * parentResponder, DoublePairStore * store, ButtonRowController * header);
 
   void displayFormulaInput();
   virtual void setFormulaLabel() = 0;
@@ -44,14 +44,14 @@ protected:
   static constexpr KDCoordinate k_cellWidth = 116;
   static constexpr KDCoordinate k_margin = 8;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
-  constexpr static int k_maxNumberOfEditableCells = 22 * FloatPairStore::k_numberOfSeries;
+  constexpr static int k_maxNumberOfEditableCells = 22 * DoublePairStore::k_numberOfSeries;
   constexpr static int k_numberOfTitleCells = 4;
   static constexpr int k_titleCellType = 0;
   static constexpr int k_editableCellType = 1;
 
   class ContentView : public View , public Responder {
   public:
-    ContentView(FloatPairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate);
+    ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate);
    StoreSelectableTableView * dataView() { return &m_dataView; }
    BufferTextViewWithTextField * formulaInputView() { return &m_formulaInputView; }
    void displayFormulaInput(bool display);
@@ -80,9 +80,9 @@ protected:
   int maxNumberOfElements() const override;
   virtual HighlightCell * titleCells(int index) = 0;
   char m_draftTextBuffer[TextField::maxBufferSize()];
-  int seriesAtColumn(int column) const { return column / FloatPairStore::k_numberOfColumnsPerSeries; }
+  int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   StoreCell * m_editableCells[k_maxNumberOfEditableCells];
-  FloatPairStore * m_store;
+  DoublePairStore * m_store;
   StoreParameterController m_storeParameterController;
 private:
   bool cellShouldBeTransparent(int i, int j);

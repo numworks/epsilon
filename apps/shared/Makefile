@@ -10,7 +10,7 @@ app_objs += $(addprefix apps/shared/,\
   editable_cell_table_view_controller.o\
   expression_field_delegate_app.o\
   expression_layout_field_delegate.o\
-  float_pair_store.o\
+  double_pair_store.o\
   float_parameter_controller.o\
   function.o\
   function_app.o\

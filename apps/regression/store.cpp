@@ -13,7 +13,7 @@ static inline float min(float x, float y) { return (x<y ? x : y); }
 
 Store::Store() :
   InteractiveCurveViewRange(nullptr, this),
-  FloatPairStore()
+  DoublePairStore()
 {
 }
 
@@ -196,7 +196,7 @@ bool Store::seriesIsEmpty(int series) const {
 }
 
 int Store::indexOfKthNonEmptySeries(int k) const {
-  // TODO put in FloatPairStore (it is also in stats/store)
+  // TODO put in DoublePairStore (it is also in stats/store)
   assert(k >= 0 && k < numberOfNonEmptySeries());
   int nonEmptySeriesCount = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {
@@ -214,7 +214,7 @@ int Store::indexOfKthNonEmptySeries(int k) const {
 /* Calculations */
 
 double Store::doubleCastedNumberOfPairsOfSeries(int series) const {
-  return FloatPairStore::numberOfPairsOfSeries(series);
+  return DoublePairStore::numberOfPairsOfSeries(series);
 }
 
 float Store::maxValueOfColumn(int series, int i) const {

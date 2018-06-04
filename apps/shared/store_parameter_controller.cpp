@@ -4,7 +4,7 @@
 
 namespace Shared {
 
-StoreParameterController::StoreParameterController(Responder * parentResponder, FloatPairStore * store, StoreController * storeController) :
+StoreParameterController::StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController) :
   ViewController(parentResponder),
   m_deleteColumn(I18n::Message::ClearColumn),
   m_fillWithFormula(I18n::Message::FillWithFormula),

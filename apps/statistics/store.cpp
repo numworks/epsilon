@@ -13,7 +13,7 @@ static_assert(Store::k_numberOfSeries == 3, "The constructor of Statistics::Stor
 
 Store::Store() :
   MemoizedCurveViewRange(),
-  FloatPairStore(),
+  DoublePairStore(),
   m_barWidth(1.0),
   m_firstDrawnBarAbscissa(0.0),
   m_seriesEmpty{true, true, true},
@@ -119,9 +119,9 @@ double Store::sumOfOccurrences(int series) const {
 }
 
 double Store::maxValueForAllSeries() const {
-  assert(FloatPairStore::k_numberOfSeries > 0);
+  assert(DoublePairStore::k_numberOfSeries > 0);
   double result = maxValue(0);
-  for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
+  for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
     double maxCurrentSeries = maxValue(i);
     if (result < maxCurrentSeries) {
       result = maxCurrentSeries;
@@ -131,9 +131,9 @@ double Store::maxValueForAllSeries() const {
 }
 
 double Store::minValueForAllSeries() const {
-  assert(FloatPairStore::k_numberOfSeries > 0);
+  assert(DoublePairStore::k_numberOfSeries > 0);
   double result = minValue(0);
-  for (int i = 1; i < FloatPairStore::k_numberOfSeries; i++) {
+  for (int i = 1; i < DoublePairStore::k_numberOfSeries; i++) {
     double minCurrentSeries = minValue(i);
     if (result > minCurrentSeries) {
       result = minCurrentSeries;
@@ -225,19 +225,19 @@ double Store::squaredValueSum(int series) const {
 }
 
 void Store::set(double f, int series, int i, int j) {
-  FloatPairStore::set(f, series, i, j);
+  DoublePairStore::set(f, series, i, j);
   m_seriesEmpty[series] = sumOfOccurrences(series) == 0;
   updateNonEmptySeriesCount();
 }
 
 void Store::deletePairOfSeriesAtIndex(int series, int j) {
-  FloatPairStore::deletePairOfSeriesAtIndex(series, j);
+  DoublePairStore::deletePairOfSeriesAtIndex(series, j);
   m_seriesEmpty[series] = sumOfOccurrences(series) == 0;
   updateNonEmptySeriesCount();
 }
 
 void Store::deleteAllPairsOfSeries(int series) {
-  FloatPairStore::deleteAllPairsOfSeries(series);
+  DoublePairStore::deleteAllPairsOfSeries(series);
   m_seriesEmpty[series] = true;
   updateNonEmptySeriesCount();
 }
@@ -255,7 +255,7 @@ void Store::updateNonEmptySeriesCount() {
 /* Private methods */
 
 double Store::defaultValue(int series, int i, int j) const {
-  return i == 0 ? FloatPairStore::defaultValue(series, i, j) : 1.0;
+  return i == 0 ? DoublePairStore::defaultValue(series, i, j) : 1.0;
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2) const {

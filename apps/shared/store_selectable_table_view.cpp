@@ -2,7 +2,7 @@
 
 namespace Shared {
 
-StoreSelectableTableView::StoreSelectableTableView(FloatPairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
+StoreSelectableTableView::StoreSelectableTableView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
   SelectableTableView(parentResponder, dataSource, selectionDataSource, delegate),
   m_store(store)
 {
@@ -31,7 +31,7 @@ bool StoreSelectableTableView::selecNonHiddenCellAtLocation(int i, int j) {
   if (j < 0 || j >= dataSource()->numberOfRows()) {
     return false;
   }
-  int seriesIndex = i/FloatPairStore::k_numberOfColumnsPerSeries;
+  int seriesIndex = i/DoublePairStore::k_numberOfColumnsPerSeries;
   int numberOfPairsOfCurrentSeries = m_store->numberOfPairsOfSeries(seriesIndex);
   if (j > 1 + numberOfPairsOfCurrentSeries) {
     return selectCellAtLocation(i, 1 + numberOfPairsOfCurrentSeries);

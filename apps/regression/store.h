@@ -2,14 +2,14 @@
 #define REGRESSION_STORE_H
 
 #include "../shared/interactive_curve_view_range.h"
-#include "../shared/float_pair_store.h"
+#include "../shared/double_pair_store.h"
 extern "C" {
 #include <float.h>
 }
 
 namespace Regression {
 
-class Store : public Shared::InteractiveCurveViewRange, public Shared::FloatPairStore, public Shared::InteractiveCurveViewRangeDelegate {
+class Store : public Shared::InteractiveCurveViewRange, public Shared::DoublePairStore, public Shared::InteractiveCurveViewRangeDelegate {
 public:
   Store();
 

@@ -2,7 +2,7 @@
 #define SHARED_STORE_PARAM_CONTROLLER_H
 
 #include <escher.h>
-#include "float_pair_store.h"
+#include "double_pair_store.h"
 #include "../i18n.h"
 
 namespace Shared {
@@ -11,7 +11,7 @@ class StoreController;
 
 class StoreParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  StoreParameterController(Responder * parentResponder, FloatPairStore * store, StoreController * storeController);
+  StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController);
   void selectXColumn(bool xColumnSelected) { m_xColumnSelected = xColumnSelected; }
   void selectSeries(int series) { m_series = series; }
   View * view() override { return &m_selectableTableView; }
@@ -33,7 +33,7 @@ private:
   MessageTableCell m_deleteColumn;
   MessageTableCell m_fillWithFormula;
   SelectableTableView m_selectableTableView;
-  FloatPairStore * m_store;
+  DoublePairStore * m_store;
   StoreController * m_storeController;
   bool m_xColumnSelected;
   int m_series;

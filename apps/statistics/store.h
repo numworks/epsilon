@@ -2,11 +2,11 @@
 #define STATISTICS_STORE_H
 
 #include "../shared/memoized_curve_view_range.h"
-#include "../shared/float_pair_store.h"
+#include "../shared/double_pair_store.h"
 
 namespace Statistics {
 
-class Store : public Shared::MemoizedCurveViewRange, public Shared::FloatPairStore {
+class Store : public Shared::MemoizedCurveViewRange, public Shared::DoublePairStore {
 public:
   Store();
   uint32_t barChecksum() const;
@@ -50,7 +50,7 @@ public:
   constexpr static int k_bottomMargin = 20;
   constexpr static float k_displayLeftMarginRatio = 0.04f;
 
-  // FloatPairStore
+  // DoublePairStore
   void set(double f, int series, int i, int j) override;
   void deletePairOfSeriesAtIndex(int series, int j) override;
   void deleteAllPairsOfSeries(int series) override;

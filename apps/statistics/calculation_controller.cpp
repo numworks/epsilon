@@ -55,7 +55,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     char titleBuffer[] = {'V', static_cast<char>('0'+seriesNumber), '/', 'N', static_cast<char>('0'+seriesNumber), 0};
     StoreTitleCell * storeTitleCell = static_cast<StoreTitleCell *>(cell);
     storeTitleCell->setText(titleBuffer);
-    storeTitleCell->setColor(FloatPairStore::colorOfSeriesAtIndex(seriesNumber));
+    storeTitleCell->setColor(DoublePairStore::colorOfSeriesAtIndex(seriesNumber));
     return;
   }
   if (i == 0) {

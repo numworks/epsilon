@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-StoreController::ContentView::ContentView(FloatPairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate) :
+StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate) :
   View(),
   Responder(parentResponder),
   m_dataView(store, this, dataSource, selectionDataSource),
@@ -48,7 +48,7 @@ KDRect StoreController::ContentView::formulaFrame() const {
   return KDRect(0, bounds().height() - BufferTextViewWithTextField::k_height, bounds().width(), m_displayFormulaInputView ? BufferTextViewWithTextField::k_height : 0);
 }
 
-StoreController::StoreController(Responder * parentResponder, FloatPairStore * store, ButtonRowController * header) :
+StoreController::StoreController(Responder * parentResponder, DoublePairStore * store, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_editableCells{},
@@ -108,7 +108,7 @@ bool StoreController::textFieldDidAbortEditing(TextField * textField) {
 
 
 int StoreController::numberOfColumns() {
-  return FloatPairStore::k_numberOfColumnsPerSeries * FloatPairStore::k_numberOfSeries;
+  return DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_numberOfSeries;
 }
 
 KDCoordinate StoreController::columnWidth(int i) {
@@ -149,7 +149,7 @@ int StoreController::typeAtLocation(int i, int j) {
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   // Handle the separator
   if (cellAtLocationIsEditable(i, j)) {
-    bool shouldHaveLeftSeparator = i % FloatPairStore::k_numberOfColumnsPerSeries == 0;
+    bool shouldHaveLeftSeparator = i % DoublePairStore::k_numberOfColumnsPerSeries == 0;
     static_cast<StoreCell *>(cell)->setSeparatorLeft(shouldHaveLeftSeparator);
   }
   // Handle empty cells
@@ -184,14 +184,14 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
   int series = seriesAtColumn(selectedColumn());
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
-    m_storeParameterController.selectXColumn(selectedColumn()%FloatPairStore::k_numberOfColumnsPerSeries == 0);
+    m_storeParameterController.selectXColumn(selectedColumn()%DoublePairStore::k_numberOfColumnsPerSeries == 0);
     m_storeParameterController.selectSeries(series);
     StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
     stack->push(&m_storeParameterController);
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    if (selectedRow() == 0 || selectedRow() > m_store->numberOfPairsOfSeries(selectedColumn()/FloatPairStore::k_numberOfColumnsPerSeries)) {
+    if (selectedRow() == 0 || selectedRow() > m_store->numberOfPairsOfSeries(selectedColumn()/DoublePairStore::k_numberOfColumnsPerSeries)) {
       return false;
     }
     m_store->deletePairOfSeriesAtIndex(series, selectedRow()-1);
@@ -225,24 +225,24 @@ bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
-  m_store->set(floatBody, seriesAtColumn(columnIndex), columnIndex%FloatPairStore::k_numberOfColumnsPerSeries, rowIndex-1);
+  m_store->set(floatBody, seriesAtColumn(columnIndex), columnIndex%DoublePairStore::k_numberOfColumnsPerSeries, rowIndex-1);
   return true;
 }
 
 double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
-  return m_store->get(seriesAtColumn(columnIndex), columnIndex%FloatPairStore::k_numberOfColumnsPerSeries, rowIndex-1);
+  return m_store->get(seriesAtColumn(columnIndex), columnIndex%DoublePairStore::k_numberOfColumnsPerSeries, rowIndex-1);
 }
 
 int StoreController::numberOfElements() {
   int result = 0;
-  for (int i = 0; i < FloatPairStore::k_numberOfSeries; i++) {
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
     result = max(result, m_store->numberOfPairsOfSeries(i));
   }
   return result;
 }
 
 int StoreController::maxNumberOfElements() const {
-  return FloatPairStore::k_maxNumberOfPairs;
+  return DoublePairStore::k_maxNumberOfPairs;
 }
 
 View * StoreController::loadView() {
@@ -262,7 +262,7 @@ void StoreController::unloadView(View * view) {
 }
 
 bool StoreController::cellShouldBeTransparent(int i, int j) {
-  int seriesIndex = i/FloatPairStore::k_numberOfColumnsPerSeries;
+  int seriesIndex = i/DoublePairStore::k_numberOfColumnsPerSeries;
   return j > 1 + m_store->numberOfPairsOfSeries(seriesIndex);
 }
 

@@ -336,9 +336,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     {
       ctx.setValueForSymbol(un, &unSymbol);
       ctx.setValueForSymbol(vn, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
-      return expression(sqctx)->template approximateToScalar<T>(ctx);
+      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)n, ctx);
     }
     case Type::SingleRecurrence:
     {
@@ -349,9 +347,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm1, &unSymbol);
       ctx.setValueForSymbol(vn, &vn1Symbol);
       ctx.setValueForSymbol(vnm1, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-1);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
-      return expression(sqctx)->template approximateToScalar<T>(ctx);
+      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)(n-1), ctx);
     }
     default:
     {
@@ -365,9 +361,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm2, &unSymbol);
       ctx.setValueForSymbol(vnm1, &vn1Symbol);
       ctx.setValueForSymbol(vnm2, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-2);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
-      return expression(sqctx)->template approximateToScalar<T>(ctx);
+      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)(n-2), ctx);
     }
   }
 }

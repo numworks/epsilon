@@ -1,16 +1,23 @@
 #include "editor_view.h"
 #include <poincare.h>
 #include <escher/app.h>
+#include <escher/python_highlighter.h>
 
 /* EditorView */
 
 EditorView::EditorView(Responder * parentResponder) :
   Responder(parentResponder),
   View(),
-  m_textArea(parentResponder),
+  m_highlighter(new PythonHighlighter()),
+  m_textArea(parentResponder, nullptr, 0, m_highlighter),
   m_gutterView(KDText::FontSize::Large)
 {
   m_textArea.setScrollViewDelegate(this);
+}
+
+EditorView::~EditorView() {
+  delete m_highlighter;
+  m_highlighter = nullptr;
 }
 
 void EditorView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {

@@ -47,12 +47,7 @@ void TextInput::ContentView::layoutSubviews() {
 }
 
 void TextInput::ContentView::reloadRectFromCursorPosition(size_t index, bool lineBreak) {
-  KDRect charRect = characterFrameAtIndex(index);
-  KDRect dirtyRect = KDRect(charRect.x(), charRect.y(), bounds().width() - charRect.x(), charRect.height());
-  if (lineBreak) {
-      dirtyRect = dirtyRect.unionedWith(KDRect(0, charRect.bottom()+1, bounds().width(), bounds().height()-charRect.bottom()-1));
-  }
-  markRectAsDirty(dirtyRect);
+  markRectAsDirty(bounds());
 }
 
 /* TextInput */

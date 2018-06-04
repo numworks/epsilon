@@ -26,6 +26,7 @@
 #include <escher/expression_view.h>
 #include <escher/gauge_view.h>
 #include <escher/highlight_cell.h>
+#include <escher/highlighter.h>
 #include <escher/image.h>
 #include <escher/image_view.h>
 #include <escher/input_view_controller.h>
@@ -48,6 +49,7 @@
 #include <escher/modal_view_controller.h>
 #include <escher/palette.h>
 #include <escher/pointer_text_view.h>
+#include <escher/python_highlighter.h>
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
 #include <escher/scroll_view_data_source.h>

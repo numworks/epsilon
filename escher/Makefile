@@ -24,6 +24,7 @@ objs += $(addprefix escher/src/,\
   expression_table_cell_with_pointer.o\
   expression_view.o\
   highlight_cell.o\
+  highlight_lexer.o\
   gauge_view.o\
   image_view.o\
   invocation.o\
@@ -44,6 +45,7 @@ objs += $(addprefix escher/src/,\
   modal_view_controller.o\
   palette.o\
   pointer_text_view.o\
+  python_highlighter.o\
   responder.o\
   run_loop.o\
   scroll_view.o\
@@ -96,4 +98,12 @@ $(INLINER): escher/image/inliner.c
 
 INLINER_PRODUCTS = $(1:.png=.h) $(1:.png=.cpp) $(1:.png=.o)
 
-products += $(INLINER)
+lexer_files = $(addprefix escher/src/, highlight_lexer.cpp highlight_lexer.hpp)
+escher/src/highlight_lexer.hpp: escher/src/highlight_lexer.cpp
+escher/src/highlight_lexer.cpp: escher/src/highlight_lexer.l
+	@echo "FLEX    $(lexer_files)"
+	$(Q) flex -Phighlight_lexer_yy --header-file=escher/src/highlight_lexer.hpp -o escher/src/highlight_lexer.cpp $<
+
+escher/src/highlight_lexer.o: CXXFLAGS += -Wno-deprecated-register -Wno-unused-value -Wno-unused-function
+
+products += $(INLINER) $(lexer_files)

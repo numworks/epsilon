@@ -70,7 +70,7 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
   }
   if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
     ExpressionModel * model = modelStore()->modelAtIndex(modelIndexForRow(selectedRow()));
-    if (!model->isEmpty()) {
+    if (model->shouldBeClearedBeforeRemove()) {
       reinitExpression(model);
     } else {
       if (removeModelRow(model)) {

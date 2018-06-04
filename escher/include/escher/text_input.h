@@ -29,6 +29,7 @@ protected:
     KDRect cursorRect();
   protected:
     virtual void layoutSubviews() override;
+    virtual KDRect dirtyRectFromCursorPosition(size_t index, bool lineBreak) const;
     void reloadRectFromCursorPosition(size_t index, bool lineBreak = false);
     virtual KDRect characterFrameAtIndex(size_t index) const = 0;
     TextCursorView m_cursorView;

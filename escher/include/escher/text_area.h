@@ -98,6 +98,10 @@ protected:
       m_text(nullptr, 0)
     {
     }
+    void drawRect(KDContext * ctx, KDRect rect) const override;
+    void drawStringAt(KDContext * ctx, int line, int column, const char * text, size_t length, KDColor textColor, KDColor backgroundColor) const;
+    virtual void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const = 0;
+    virtual void clearRect(KDContext * ctx, KDRect rect) const = 0;
     KDSize minimalSizeForOptimalDisplay() const override;
     void setText(char * textBuffer, size_t textBufferSize);
     const char * text() const override { return m_text.text(); }

@@ -47,6 +47,8 @@ double EquationStore::approximateSolutionAtIndex(int i) {
 
 EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   tidySolution();
+
+  /* 0- Get unknown variables */
   m_variables[0] = 0;
   int numberOfVariables = 0;
   for (int i = 0; i < numberOfModels(); i++) {
@@ -56,15 +58,16 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     }
   }
 
-  // 1-- Linear System
+  /* 1- Linear System? */
   /* Create matrix coefficients and vector constants as:
    * coefficients*(x y z ...) = constants */
   Expression * coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables];
   Expression * constants[k_maxNumberOfEquations];
-  bool success = true;
+  bool isLinear = true; // Invalid the linear system if one equation is non-linear
   for (int i = 0; i < numberOfModels(); i++) {
-    success = success && m_equations[i].standardForm(context)->getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context);
-    if (!success) {
+    isLinear = isLinear && m_equations[i].standardForm(context)->getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context);
+    // Clean allocated memory if the system is not linear
+    if (!isLinear) {
       for (int j = 0; j < i; j++) {
         for (int k = 0; k < numberOfVariables; k++) {
           delete coefficients[j][k];
@@ -78,20 +81,25 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       }
     }
   }
+
+  /* Initialize result */
   Expression * exactSolutions[k_maxNumberOfExactSolutions];
   for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
    exactSolutions[i] = nullptr;
   }
   EquationStore::Error error;
-  if (success) {
+
+  if (isLinear) {
     m_type = Type::LinearSystem;
     error = resolveLinearSystem(exactSolutions, coefficients, constants, context);
   } else {
+    /* 2- Polynomial & Monovariable? */
     assert(numberOfVariables == 1 && numberOfModels() == 1);
     char x = m_variables[0];
     Expression * polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
     int degree = m_equations[0].standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients, *context);
     if (degree < 0) {
+      /* 3- Monovariable non-polynomial */
       m_type = Type::Monovariable;
       return Error::RequireApproximateSolution;
     } else {
@@ -99,6 +107,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       error = oneDimensialPolynomialSolve(exactSolutions, polynomialCoefficients, degree, context);
     }
   }
+  /* Turn the results in layouts */
   for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
     if (exactSolutions[i]) {
       m_exactSolutionExactLayouts[i] = exactSolutions[i]->createLayout();
@@ -115,6 +124,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSoluti
   Expression::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   int n = strlen(m_variables); // n unknown variables
   int m = numberOfModels(); // m equations
+  /* Create the matrix (A | b) for the equation Ax=b */
   const Expression ** operandsAb = new const Expression * [(n+1)*m];
   for (int i = 0; i < m; i++) {
     for (int j = 0; j < n; j++) {
@@ -124,11 +134,13 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSoluti
   }
   Matrix * Ab = new Matrix(operandsAb, m, n+1, false);
   delete [] operandsAb;
+  // Compute the rank of (A | b)
   int rankAb = Ab->rank(*context, angleUnit, true);
 
-  // Infinite number of solutions
+  // Initialize the number of solutions
   m_numberOfSolutions = INT_MAX;
-  // Inconsistency?
+  /* If the matrix has one null row except the last column, the system is
+   * inconsistent (equivalent to 0 = x with x non-null */
   for (int j = m-1; j >= 0; j--) {
     bool rowWithNullCoefficients = true;
     for (int i = 0; i < n; i++) {
@@ -142,7 +154,9 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSoluti
     }
   }
   if (m_numberOfSolutions > 0) {
+    // if rank(A | b) < n, the system has an infinite number of solutions
     if (rankAb == n && n > 0) {
+      // Otherwise, the system has n solutions which correspond to the last column
       m_numberOfSolutions = n;
       for (int i = 0; i < m_numberOfSolutions; i++) {
         Expression * sol = Ab->matrixOperand(i,n);
@@ -157,15 +171,21 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSoluti
 }
 
 EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * exactSolutions[k_maxNumberOfExactSolutions], Expression * coefficients[Expression::k_maxNumberOfPolynomialCoefficients], int degree, Context * context) {
+  /* Equation ax^2+bx+c = 0 */
   assert(degree == 2);
-  Expression * deltaDenominator[3] = {new Rational(4), coefficients[0]->clone(), coefficients[2]->clone()};
-  Expression * delta = new Subtraction(new Power(coefficients[1]->clone(), new Rational(2), false), new Multiplication(deltaDenominator, 3, false), false);
+  // Compute 4ac
+  Expression * deltaSubOperand[3] = {new Rational(4), coefficients[0]->clone(), coefficients[2]->clone()};
+  // Compute delta = b*b-4ac
+  Expression * delta = new Subtraction(new Power(coefficients[1]->clone(), new Rational(2), false), new Multiplication(deltaSubOperand, 3, false), false);
   Expression::Simplify(&delta, *context);
   if (delta->isRationalZero()) {
+    // if delta = 0, x0=x1= -b/(2a)
     exactSolutions[0] = new Division(new Opposite(coefficients[1], false), new Multiplication(new Rational(2), coefficients[2]), false);
     m_numberOfSolutions = 1;
   } else {
+    // x0 = (-b-sqrt(delta))/(2a)
     exactSolutions[0] = new Division(new Subtraction(new Opposite(coefficients[1]->clone(), false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]->clone()), false);
+    // x1 = (-b+sqrt(delta))/(2a)
     exactSolutions[1] = new Division(new Addition(new Opposite(coefficients[1], false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]), false);
     m_numberOfSolutions = 2;
   }

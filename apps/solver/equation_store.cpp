@@ -55,6 +55,26 @@ double EquationStore::approximateSolutionAtIndex(int i) {
   return m_approximateSolutions[i];
 }
 
+bool EquationStore::approximateSolve(Poincare::Context * context) {
+  assert(m_variables[0] != 0 && m_variables[1] == 0);
+  m_numberOfSolutions = 0;
+  double start = m_intervalApproximateSolutions[0];
+  double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])/100.0;
+  for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
+    m_approximateSolutions[i] = m_equations[0].standardForm(context)->nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context);
+    if (std::isnan(m_approximateSolutions[i])) {
+      break;
+    } else {
+      start = m_approximateSolutions[i];
+      m_numberOfSolutions++;
+    }
+  }
+  if (m_numberOfSolutions < k_maxNumberOfEquations) {
+    return true;
+  }
+  return std::isnan(m_equations[0].standardForm(context)->nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context));
+}
+
 EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   tidySolution();
 

@@ -38,6 +38,8 @@ public:
     return m_numberOfSolutions;
   }
   Poincare::ExpressionLayout * exactSolutionLayoutAtIndex(int i, bool exactLayout);
+  double intervalBound(int index) const;
+  void setIntervalBound(int index, double value);
   double approximateSolutionAtIndex(int i);
   void tidy() override;
   Error exactSolve(Poincare::Context * context);
@@ -61,6 +63,7 @@ private:
   int m_numberOfSolutions;
   Poincare::ExpressionLayout * m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
   Poincare::ExpressionLayout * m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
+  double m_intervalApproximateSolutions[2];
   double m_approximateSolutions[k_maxNumberOfApproximateSolutions];
 };
 

@@ -150,7 +150,12 @@ void ListController::resolveEquations() {
       app()->displayWarning(I18n::Message::NonLinearSystem);
       return;
     case EquationStore::Error::RequireApproximateSolution:
+    {
+      StackViewController * stack = stackController();
+      App * solverApp = static_cast<App *>(app());
+      stack->push(solverApp->intervalController(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
       return;
+    }
     default:
     {
       assert(e == EquationStore::Error::NoError);

@@ -15,6 +15,9 @@ public:
   Equation(Equation&& other) = delete;
   void setContent(const char * c) override;
   void tidy() override;
+  bool shouldBeClearedBeforeRemove() override {
+    return false;
+  }
   Poincare::Expression * standardForm(Poincare::Context * context) const;
 private:
   mutable Poincare::Expression * m_standardForm;

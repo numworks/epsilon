@@ -20,6 +20,9 @@ public:
   Poincare::ExpressionLayout * layout();
   virtual bool isDefined();
   virtual bool isEmpty();
+  virtual bool shouldBeClearedBeforeRemove() {
+    return !isEmpty();
+  }
   virtual void setContent(const char * c);
   virtual void tidy();
 private:

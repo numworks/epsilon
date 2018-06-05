@@ -14,11 +14,7 @@ class ScriptParameterController;
 
 class MenuController : public ViewController, public TableViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public TextFieldDelegate, public ButtonRowDelegate {
 public:
-  MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer
-#if EPSILON_GETOPT
-      , bool m_lockOnConsole
-#endif
-      );
+  MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer);
   ConsoleController * consoleController();
   StackViewController * stackViewController();
   void willExitResponderChain(Responder * nextFirstResponder) override;

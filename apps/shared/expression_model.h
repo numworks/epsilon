@@ -25,10 +25,11 @@ public:
   }
   virtual void setContent(const char * c);
   virtual void tidy();
+  constexpr static int k_expressionBufferSize = TextField::maxBufferSize();
 private:
   constexpr static size_t k_dataLengthInBytes = (TextField::maxBufferSize())*sizeof(char);
   static_assert((k_dataLengthInBytes & 0x3) == 0, "The expression model data size is not a multiple of 4 bytes (cannot compute crc)"); // Assert that dataLengthInBytes is a multiple of 4
-  char m_text[TextField::maxBufferSize()];
+  char m_text[k_expressionBufferSize];
   mutable Poincare::Expression * m_expression;
   mutable Poincare::ExpressionLayout * m_layout;
 };

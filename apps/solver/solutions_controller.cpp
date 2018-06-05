@@ -180,7 +180,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       Shared::ScrollableExactApproximateExpressionsCell * valueCell = static_cast<ScrollableExactApproximateExpressionsCell *>(cell);
       Poincare::ExpressionLayout * exactSolutionLayouts[2] = {m_equationStore->exactSolutionLayoutAtIndex(j, false), m_equationStore->exactSolutionLayoutAtIndex(j, true)};
       valueCell->setExpressions(exactSolutionLayouts);
-      valueCell->setEqualMessage(I18n::Message::AlmostEqual);// TODO: true equal when possible?
+      valueCell->setEqualMessage(m_equationStore->equalSignBetweenExactSolutionAtIndex(j) ? I18n::Message::Equal : I18n::Message::AlmostEqual);
     }
   }
   evenOddCell->reloadCell();

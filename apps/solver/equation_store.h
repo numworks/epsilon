@@ -38,7 +38,14 @@ public:
     return m_numberOfSolutions;
   }
   Poincare::ExpressionLayout * exactSolutionLayoutAtIndex(int i, bool exactLayout);
-  bool equalSignBetweenExactSolutionAtIndex(int i);
+  bool exactSolutionLayoutsAtIndexAreIdentical(int i) {
+    assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
+    return m_exactSolutionIdentity[i];
+  }
+  bool exactSolutionLayoutsAtIndexAreEqual(int i) {
+    assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
+    return m_exactSolutionEquality[i];
+  }
   double intervalBound(int index) const;
   void setIntervalBound(int index, double value);
   double approximateSolutionAtIndex(int i);
@@ -67,6 +74,7 @@ private:
   int m_numberOfSolutions;
   Poincare::ExpressionLayout * m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
   Poincare::ExpressionLayout * m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
+  bool m_exactSolutionIdentity[k_maxNumberOfExactSolutions];
   bool m_exactSolutionEquality[k_maxNumberOfExactSolutions];
   double m_intervalApproximateSolutions[2];
   double m_approximateSolutions[k_maxNumberOfApproximateSolutions];

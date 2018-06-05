@@ -108,7 +108,7 @@ void assert_parsed_expression_has_polynomial_coefficient(const char * expression
   Expression * e = parse_expression(expression);
   Expression::Reduce(&e, globalContext, angleUnit);
   Expression * coefficientBuffer[Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
-  int d = e->getPolynomialCoefficients(symbolName, coefficientBuffer);
+  int d = e->getPolynomialCoefficients(symbolName, coefficientBuffer, globalContext);
   for (int i = 0; i <= d; i++) {
     Expression * f = parse_expression(coefficients[i]);
     Expression::Reduce(&coefficientBuffer[i], globalContext, angleUnit);

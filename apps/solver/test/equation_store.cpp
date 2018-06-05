@@ -46,6 +46,27 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
   }
 }
 
+void assert_equation_approximate_solve_to(const char * equations, double xMin, double xMax, const char variable, double solutions[], int numberOfSolutions, bool hasMoreSolutions) {
+  char buffer[200];
+  GlobalContext globalContext;
+  EquationStore equationStore;
+  Shared::ExpressionModel * e = equationStore.addEmptyModel();
+  strlcpy(buffer, equations, 200);
+  translate_in_special_chars(buffer);
+  e->setContent(buffer);
+  EquationStore::Error err = equationStore.exactSolve(&globalContext);
+  assert(err == EquationStore::Error::RequireApproximateSolution);
+  equationStore.setIntervalBound(0, xMin);
+  equationStore.setIntervalBound(1, xMax);
+  equationStore.approximateSolve(&globalContext);
+  assert(equationStore.numberOfSolutions() == numberOfSolutions);
+  assert(equationStore.variableAtIndex(0) == variable);
+  for (int i = 0; i < numberOfSolutions; i++) {
+    assert(std::fabs(equationStore.approximateSolutionAtIndex(i) - solutions[i]) < 1E-5);
+  }
+  assert(equationStore.haveMoreApproximationSolutions(&globalContext) == hasMoreSolutions);
+}
+
 QUIZ_CASE(equation_solve) {
   // x+y+z+a+b+c+d = 0
   const char * equations0[] = {"x+y+z+a+b+c+d=0", 0};
@@ -61,22 +82,23 @@ QUIZ_CASE(equation_solve) {
 
   // 2 = 0
   const char * equations3[] = {"2=0", 0};
-  //assert_equation_system_exact_solve_to("2=0",  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "", nullptr, 0);
+  assert_equation_system_exact_solve_to(equations3,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "", nullptr, 0);
   // 0 = 0
   const char * equations4[] = {"0=0", 0};
-  //assert_equation_system_exact_solve_to(equations4,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "", nullptr, INT_MAX);
+  assert_equation_system_exact_solve_to(equations4,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "", nullptr, INT_MAX);
 
   // x-x+2 = 0
   const char * equations5[] = {"x-x+2=0", 0};
-  //assert_equation_system_exact_solve_to(equations5,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "", nullptr, 0);
+  assert_equation_system_exact_solve_to(equations5,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "", nullptr, 0);
 
   // x-x= 0
   const char * equations6[] = {"x-x=0", 0};
-  //assert_equation_system_exact_solve_to(equations5,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "", nullptr, INT_MAX);
+  assert_equation_system_exact_solve_to(equations6,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "", nullptr, INT_MAX);
 
   // 2x+3=4
   const char * equations7[] = {"2x+3=4", 0};
-  //assert_equation_system_exact_solve_to(equations7,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "x", {"1/2"}, 1);
+  const char * solutions7[] = {"(1)/(2)"};
+  assert_equation_system_exact_solve_to(equations7,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "x", solutions7, 1);
 
   // 3x^2-4x+4=2
   const char * equations8[] = {"3*x^2-4x+4=2", 0};
@@ -107,6 +129,26 @@ QUIZ_CASE(equation_solve) {
   // x^3-3x-2=0
 
   // Linear System
+  const char * equations12[] = {"x+y=0", 0};
+  assert_equation_system_exact_solve_to(equations12,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "", nullptr, INT_MAX);
+
+  const char * equations13[] = {"x+y=0", "3x+y=-5", 0};
+  const char * solutions13[] = {"-(5)/(2)", "(5)/(2)"};
+  assert_equation_system_exact_solve_to(equations13,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "xy", solutions13, 2);
+
+  const char * equations14[] = {"x+y=0", "3x+y+z=-5", "4z-P=0", 0};
+  const char * solutions14[] = {"(-20-P)/(8)", "(20+P)/(8)", "(P)/(4)"};
+  assert_equation_system_exact_solve_to(equations14,  EquationStore::Error::NoError, EquationStore::Type::LinearSystem, "xyz", solutions14, 3);
+
+  // Monovariable non-polynomial equation
+  double solutions15[] = {-90.0, 90.0};
+  assert_equation_approximate_solve_to("cos(x)=0", -100.0, 100.0, 'x', solutions15, 2, false);
+
+  double solutions16[] = {-810.0, -630.0, -450.0, -270.0, -90.0, 90.0, 270.0, 450.0, 630.0, 810.0};
+  assert_equation_approximate_solve_to("cos(x)=0", -900.0, 1000.0, 'x', solutions16, 10, true);
+
+  double solutions17[] = {0};
+  assert_equation_approximate_solve_to("R(y)=0", -900.0, 1000.0, 'y', solutions17, 1, false);
 }
 
 }

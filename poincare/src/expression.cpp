@@ -517,21 +517,27 @@ Expression::Coordinate2D Expression::nextMinimumOfExpression(char symbol, double
     bracketMinimum(symbol, x, step, max, bracket, evaluate, context, expression);
     result = brentMinimum(symbol, bracket[0], bracket[2], evaluate, context, expression);
     x = bracket[1];
+    // Because of float approximation, exact zero is never reached
+    if (std::fabs(result.abscissa) < std::fabs(step)*k_solverPrecision) {
+      result.abscissa = 0;
+      result.value = evaluate(symbol, 0, context, this, expression);
+    }
+    /* Ignore extremum whose value is undefined or too big because they are
+     * really unlikely to be local extremum. */
+    if (std::isnan(result.value) || std::fabs(result.value) > k_maxFloat) {
+      result.abscissa = NAN;
+    }
+    // Idem, exact 0 never reached
+    if (std::fabs(result.value) < std::fabs(step)*k_solverPrecision) {
+      result.value = 0;
+    }
     endCondition = std::isnan(result.abscissa) && (step > 0.0 ? x <= max : x >= max);
     if (lookForRootMinimum) {
-      endCondition |= std::fabs(result.value) >= k_sqrtEps && (step > 0.0 ? x <= max : x >= max);
+      endCondition |= std::fabs(result.value) > 0 && (step > 0.0 ? x <= max : x >= max);
     }
   } while (endCondition);
-
-  if (std::fabs(result.abscissa) < step*k_solverPrecision) {
-    result.abscissa = 0;
-    result.value = evaluate(symbol, 0, context, this, expression);
-  }
-  if (std::fabs(result.value) < step*k_solverPrecision) {
-    result.value = 0;
-  }
   if (lookForRootMinimum) {
-    result.abscissa = std::fabs(result.value) >= k_sqrtEps ? NAN : result.abscissa;
+    result.abscissa = std::fabs(result.value) > 0 ? NAN : result.abscissa;
   }
   return result;
 }
@@ -543,7 +549,7 @@ void Expression::bracketMinimum(char symbol, double start, double step, double m
   double x = start+2.0*step;
   while (step > 0.0 ? x <= max : x >= max) {
     p[2] = {.abscissa = x, .value = evaluate(symbol, x, context, this, expression)};
-    if (p[0].value > p[1].value && p[2].value > p[1].value) {
+    if ((p[0].value > p[1].value || std::isnan(p[0].value)) && (p[2].value > p[1].value || std::isnan(p[2].value)) && (!std::isnan(p[0].value) || !std::isnan(p[2].value))) {
       result[0] = p[0].abscissa;
       result[1] = p[1].abscissa;
       result[2] = p[2].abscissa;
@@ -651,7 +657,7 @@ Expression::Coordinate2D Expression::brentMinimum(char symbol, double ax, double
       }
     }
   }
-  Coordinate2D result = {.abscissa = NAN, .value = NAN};
+  Coordinate2D result = {.abscissa = x, .value = fx};
   return result;
 }
 
@@ -690,7 +696,7 @@ double Expression::nextIntersectionWithExpression(char symbol, double start, dou
       result = resultExtremum[i].abscissa;
     }
   }
-  if (std::fabs(result) < step*k_solverPrecision) {
+  if (std::fabs(result) < std::fabs(step)*k_solverPrecision) {
     result = 0;
   }
   return result;

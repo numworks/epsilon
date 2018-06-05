@@ -60,6 +60,7 @@ protected:
   private:
     static constexpr KDCoordinate k_margin = 8;
     static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
+    static constexpr KDCoordinate k_formulaInputHeight = 31;
     int numberOfSubviews() const override { return 1 + m_displayFormulaInputView; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;

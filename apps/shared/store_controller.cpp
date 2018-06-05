@@ -39,13 +39,13 @@ View * StoreController::ContentView::subviewAtIndex(int index) {
 }
 
 void StoreController::ContentView::layoutSubviews() {
-  KDRect dataViewFrame(0, 0, bounds().width(), bounds().height() - (m_displayFormulaInputView ? BufferTextViewWithTextField::k_height : 0));
+  KDRect dataViewFrame(0, 0, bounds().width(), bounds().height() - (m_displayFormulaInputView ? k_formulaInputHeight : 0));
   m_dataView.setFrame(dataViewFrame);
   m_formulaInputView.setFrame(formulaFrame());
 }
 
 KDRect StoreController::ContentView::formulaFrame() const {
-  return KDRect(0, bounds().height() - BufferTextViewWithTextField::k_height, bounds().width(), m_displayFormulaInputView ? BufferTextViewWithTextField::k_height : 0);
+  return KDRect(0, bounds().height() - k_formulaInputHeight, bounds().width(), m_displayFormulaInputView ? k_formulaInputHeight : 0);
 }
 
 StoreController::StoreController(Responder * parentResponder, DoublePairStore * store, ButtonRowController * header) :

@@ -50,7 +50,7 @@ public:
   static constexpr int k_maxNumberOfApproximateSolutions = 10;
   static constexpr int k_maxNumberOfSolutions = k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions ? k_maxNumberOfExactSolutions : k_maxNumberOfApproximateSolutions;
 private:
-  static constexpr double k_precision = 0.0001;
+  static constexpr double k_precision = 0.01;
   static constexpr int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
   Equation * emptyModel() override;
   Equation * nullModel() override {

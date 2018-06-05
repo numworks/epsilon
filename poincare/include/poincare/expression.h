@@ -245,6 +245,7 @@ public:
      * order on expresssions. */
     return SimplificationOrder(this, e, true) == 0;
   }
+  bool isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, int numberOfSignificantDigits, Context & context);
 
   /* Layout Engine */
   ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted

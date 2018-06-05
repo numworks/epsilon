@@ -20,6 +20,7 @@ public:
   virtual void fillColumnWithFormula(Poincare::Expression * formula) = 0;
 
   // TextFieldDelegate
+  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
 

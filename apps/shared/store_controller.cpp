@@ -62,6 +62,13 @@ void StoreController::displayFormulaInput() {
   contentView()->displayFormulaInput(true);
 }
 
+bool StoreController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+  if (textField == contentView()->formulaInputView()->textField()) {
+    return event == Ion::Events::OK || event == Ion::Events::EXE;
+  }
+  return EditableCellTableViewController::textFieldShouldFinishEditing(textField, event);
+}
+
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (textField == contentView()->formulaInputView()->textField()) {
     // Handle formula input

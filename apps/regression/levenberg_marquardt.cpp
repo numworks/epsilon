@@ -15,12 +15,15 @@ void LevenbergMarquartd::fit(double * modelCoefficients, Context * context) {
   int iterationCount = 0;
   while (smallChi2ChangeCounts < k_consecutiveSmallChi2ChangesLimit && iterationCount < k_maxIterations) {
     // Compute modelCoefficients step
-    // Create the alpha matrix
+    // Create the alpha prime matrix (it is symmetric)
     Expression * coefficientsAPrime[RegressionModel::k_maxNumberOfCoefficients][RegressionModel::k_maxNumberOfCoefficients]; // TODO find a way not to use so much space, we only need Expression * coefficientsAPrime[n][n]
-    // TODO compute only half the matrix, it is symmetric.
     for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        coefficientsAPrime[i][j] = new Complex<double>(Complex<double>::Float((alphaPrimeCoefficient(modelCoefficients, i, j, lambda))));
+      for (int j = i; j < n; j++) {
+        Complex<double> alphaPrime = Complex<double>::Float(alphaPrimeCoefficient(modelCoefficients, i, j, lambda));
+        coefficientsAPrime[i][j] = new Complex<double>(alphaPrime);
+        if (i != j) {
+          coefficientsAPrime[j][i] = new Complex<double>(alphaPrime);
+        }
       }
     }
     // Create the beta matrix

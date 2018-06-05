@@ -40,6 +40,11 @@ Poincare::ExpressionLayout * EquationStore::exactSolutionLayoutAtIndex(int i, bo
   }
 }
 
+bool EquationStore::equalSignBetweenExactSolutionAtIndex(int i) {
+  assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
+  return m_exactSolutionEquality[i];
+}
+
 double EquationStore::intervalBound(int index) const {
   assert(m_type == Type::Monovariable && index >= 0 && index < 2);
   return m_intervalApproximateSolutions[index];
@@ -156,6 +161,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       m_exactSolutionExactLayouts[i] = exactSolutions[i]->createLayout();
       Expression * approximate = exactSolutions[i]->approximate<double>(*context);
       m_exactSolutionApproximateLayouts[i] = approximate->createLayout();
+      m_exactSolutionEquality[i] = exactSolutions[i]->isEqualToItsApproximationLayout(approximate, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
       delete approximate;
       delete exactSolutions[i];
     }

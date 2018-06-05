@@ -334,6 +334,7 @@ private:
   constexpr static double k_solverPrecision = 1.0E-5;
   constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
   constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
+  constexpr static double k_maxFloat = 1e100;
   typedef double (*EvaluationAtAbscissa)(char symbol, double abscissa, Context & context, const Expression * expression0, const Expression * expression1);
   Coordinate2D nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr, bool lookForRootMinimum = false) const;
   void bracketMinimum(char symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr) const;

@@ -8,11 +8,7 @@
 
 namespace Code {
 
-MenuController::MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer
-#if EPSILON_GETOPT
-      , bool lockOnConsole
-#endif
-    ) :
+MenuController::MenuController(Responder * parentResponder, ScriptStore * scriptStore, ButtonRowController * footer) :
   ViewController(parentResponder),
   ButtonRowDelegate(nullptr, footer),
   m_scriptStore(scriptStore),

@@ -144,9 +144,11 @@ void Calculation::tidy() {
 
 Expression * Calculation::exactOutput(Context * context) {
   if (m_exactOutput == nullptr) {
-    /* To ensure that the expression 'm_exactOutput' is a simplified, we
-     * call 'ParseAndSimplify'. */
-    m_exactOutput = Expression::ParseAndSimplify(m_exactOutputText, *context);
+    /* Because the angle unit might have changed, we do not simplify again. We
+     * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
+     * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
+     * 'cos(pi/4) = 0.999906' (which is true in degree). */
+    m_exactOutput = Expression::parse(m_exactOutputText);
   }
   return m_exactOutput;
 }

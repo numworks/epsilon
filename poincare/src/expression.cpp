@@ -491,8 +491,11 @@ Expression::Coordinate2D Expression::nextIntersection(char symbol, double start,
 }
 
 Expression::Coordinate2D Expression::nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluate, Context & context, const Expression * expression, bool lookForRootMinimum) const {
-  double bracket[3];
   Coordinate2D result = {.abscissa = NAN, .value = NAN};
+  if (start == max || step == 0.0) {
+    return result;
+  }
+  double bracket[3];
   double x = start;
   bool endCondition = false;
   do {
@@ -638,6 +641,9 @@ Expression::Coordinate2D Expression::brentMinimum(char symbol, double ax, double
 }
 
 double Expression::nextIntersectionWithExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression) const {
+  if (start == max || step == 0.0) {
+    return NAN;
+  }
   double bracket[2];
   double result = NAN;
   static double precisionByGradUnit = 1E6;

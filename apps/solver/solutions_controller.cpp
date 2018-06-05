@@ -178,9 +178,12 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       valueCell->setText(bufferValue);
     } else {
       Shared::ScrollableExactApproximateExpressionsCell * valueCell = static_cast<ScrollableExactApproximateExpressionsCell *>(cell);
-      Poincare::ExpressionLayout * exactSolutionLayouts[2] = {m_equationStore->exactSolutionLayoutAtIndex(j, false), m_equationStore->exactSolutionLayoutAtIndex(j, true)};
+      Poincare::ExpressionLayout * exactLayout = m_equationStore->exactSolutionLayoutsAtIndexAreIdentical(j) ? nullptr : m_equationStore->exactSolutionLayoutAtIndex(j, true);
+      Poincare::ExpressionLayout * exactSolutionLayouts[2] = {m_equationStore->exactSolutionLayoutAtIndex(j, false), exactLayout};
       valueCell->setExpressions(exactSolutionLayouts);
-      valueCell->setEqualMessage(m_equationStore->equalSignBetweenExactSolutionAtIndex(j) ? I18n::Message::Equal : I18n::Message::AlmostEqual);
+      if (exactLayout) {
+        valueCell->setEqualMessage(m_equationStore->exactSolutionLayoutsAtIndexAreEqual(j) ? I18n::Message::Equal : I18n::Message::AlmostEqual);
+      }
     }
   }
   evenOddCell->reloadCell();

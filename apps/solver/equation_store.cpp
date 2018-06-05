@@ -48,6 +48,13 @@ double EquationStore::intervalBound(int index) const {
 void EquationStore::setIntervalBound(int index, double value) {
   assert(m_type == Type::Monovariable && index >= 0 && index < 2);
   m_intervalApproximateSolutions[index] = value;
+  if (m_intervalApproximateSolutions[0] > m_intervalApproximateSolutions[1]) {
+    if (index == 0) {
+      m_intervalApproximateSolutions[1] = m_intervalApproximateSolutions[0]+1;
+    } else {
+      m_intervalApproximateSolutions[0] = m_intervalApproximateSolutions[1]-1;
+    }
+  }
 }
 
 double EquationStore::approximateSolutionAtIndex(int i) {

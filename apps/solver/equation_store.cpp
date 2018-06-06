@@ -62,12 +62,12 @@ double EquationStore::approximateSolutionAtIndex(int i) {
   return m_approximateSolutions[i];
 }
 
-bool EquationStore::haveMoreApproximationSolutions(Context * context) const {
+bool EquationStore::haveMoreApproximationSolutions(Context * context) {
   if (m_numberOfSolutions < k_maxNumberOfEquations) {
     return false;
   }
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  return !std::isnan(m_equations[0].standardForm(context)->nextRoot(m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context));
+  return !std::isnan(definedModelAtIndex(0)->standardForm(context)->nextRoot(m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context));
 }
 
 void EquationStore::approximateSolve(Poincare::Context * context) {
@@ -76,7 +76,7 @@ void EquationStore::approximateSolve(Poincare::Context * context) {
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
   for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateSolutions[i] = m_equations[0].standardForm(context)->nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context);
+    m_approximateSolutions[i] = definedModelAtIndex(0)->standardForm(context)->nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context);
     if (std::isnan(m_approximateSolutions[i])) {
       break;
     } else {
@@ -92,8 +92,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   /* 0- Get unknown variables */
   m_variables[0] = 0;
   int numberOfVariables = 0;
-  for (int i = 0; i < numberOfModels(); i++) {
-    numberOfVariables = m_equations[i].standardForm(context)->getVariables(m_variables);
+  for (int i = 0; i < numberOfDefinedModels(); i++) {
+    numberOfVariables = definedModelAtIndex(i)->standardForm(context)->getVariables(m_variables);
     if (numberOfVariables < 0) {
       return Error::TooManyVariables;
     }
@@ -105,8 +105,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   Expression * coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables];
   Expression * constants[k_maxNumberOfEquations];
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
-  for (int i = 0; i < numberOfModels(); i++) {
-    isLinear = isLinear && m_equations[i].standardForm(context)->getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context);
+  for (int i = 0; i < numberOfDefinedModels(); i++) {
+    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context)->getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context);
     // Clean allocated memory if the system is not linear
     if (!isLinear) {
       for (int j = 0; j < i; j++) {
@@ -115,7 +115,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
         }
         delete constants[j];
       }
-      if (numberOfModels() > 1 || numberOfVariables > 1) {
+      if (numberOfDefinedModels() > 1 || numberOfVariables > 1) {
         return Error::NonLinearSystem;
       } else {
         break;
@@ -135,10 +135,10 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     error = resolveLinearSystem(exactSolutions, coefficients, constants, context);
   } else {
     /* 2- Polynomial & Monovariable? */
-    assert(numberOfVariables == 1 && numberOfModels() == 1);
+    assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     char x = m_variables[0];
     Expression * polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = m_equations[0].standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients, *context);
+    int degree = definedModelAtIndex(0)->standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients, *context);
     if (degree < 0) {
       /* 3- Monovariable non-polynomial */
       m_type = Type::Monovariable;
@@ -176,7 +176,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
 EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSolutions[k_maxNumberOfExactSolutions], Expression * coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression * constants[k_maxNumberOfEquations], Context * context) {
   Expression::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   int n = strlen(m_variables); // n unknown variables
-  int m = numberOfModels(); // m equations
+  int m = numberOfDefinedModels(); // m equations
   /* Create the matrix (A | b) for the equation Ax=b */
   const Expression ** operandsAb = new const Expression * [(n+1)*m];
   for (int i = 0; i < m; i++) {

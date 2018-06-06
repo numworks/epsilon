@@ -105,7 +105,7 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
         stack->pop();
         return true;
       } else {
-        if (m_functionStore->numberOfDefinedFunctions() == 1) {
+        if (m_functionStore->numberOfDefinedModels() == 1) {
           Function * f = m_functionStore->definedFunctionAtIndex(0);
           f->setContent("");
           StackViewController * stack = (StackViewController *)(parentResponder());

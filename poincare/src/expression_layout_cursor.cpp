@@ -172,6 +172,7 @@ void ExpressionLayoutCursor::insertText(const char * text) {
   }
   ExpressionLayout * newChild = nullptr;
   ExpressionLayout * pointedChild = nullptr;
+  bool specialUnderScore = false;
   for (int i = 0; i < textLength; i++) {
     if (text[i] == Ion::Charset::Empty) {
       continue;
@@ -185,8 +186,19 @@ void ExpressionLayoutCursor::insertText(const char * text) {
       }
     } else if (text[i] == ')') {
       newChild = new RightParenthesisLayout();
+    } else if (text[i] == '_') {
+      specialUnderScore = ((i < textLength) && (text[i+1] == '{')) ? true : false;
+      if (!specialUnderScore) {
+         newChild = new CharLayout('_');
+      } else {
+        continue;
+      }
+    } else if (text[i] == '{' && specialUnderScore) {
+      newChild = new CharLayout('(');
+    } else if (text[i] == '}' && specialUnderScore) {
+      newChild = new CharLayout(')');
+      specialUnderScore = false;
     }
-
     /* We never insert text with brackets for now. Removing this code saves the
      * binary file 2K. */
 #if 0

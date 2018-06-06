@@ -15,6 +15,9 @@ Store::Store() :
   InteractiveCurveViewRange(nullptr, this),
   DoublePairStore()
 {
+  for (int i = 0; i < k_numberOfSeries; i++) {
+    m_regressionTypes[i] = Model::Type::Linear;
+  }
 }
 
 /* Regressions */

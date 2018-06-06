@@ -111,7 +111,7 @@ void SolutionsController::viewWillAppear() {
 /* AlternateEmptyRowDelegate */
 
 bool SolutionsController::isEmpty() const {
-  if (m_equationStore->numberOfModels() == 0 || m_equationStore->numberOfSolutions() == 0 || m_equationStore->numberOfSolutions() == INT_MAX) {
+  if (m_equationStore->numberOfDefinedModels() == 0 || m_equationStore->numberOfSolutions() == 0 || m_equationStore->numberOfSolutions() == INT_MAX) {
     return true;
   }
   return false;
@@ -124,7 +124,7 @@ I18n::Message SolutionsController::emptyMessage() {
   if (m_equationStore->type() == EquationStore::Type::Monovariable) {
     return I18n::Message::NoSolutionInterval;
   }
-  if (m_equationStore->numberOfModels() <= 1) {
+  if (m_equationStore->numberOfDefinedModels() <= 1) {
     return I18n::Message::NoSolutionEquation;
   }
   return I18n::Message::NoSolutionSystem;

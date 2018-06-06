@@ -19,7 +19,7 @@ GraphController::GraphController(Responder * parentResponder, SequenceStore * se
 }
 
 I18n::Message GraphController::emptyMessage() {
-  if (m_sequenceStore->numberOfDefinedFunctions() == 0) {
+  if (m_sequenceStore->numberOfDefinedModels() == 0) {
     return I18n::Message::NoSequence;
   }
   return I18n::Message::NoActivatedSequence;

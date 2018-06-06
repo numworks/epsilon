@@ -17,6 +17,8 @@ public:
   void removeModel(ExpressionModel * f);
   virtual void removeAll();
   int numberOfModels() const { return m_numberOfModels; };
+  virtual ExpressionModel * definedModelAtIndex(int i);
+  int numberOfDefinedModels();
   virtual int maxNumberOfModels() const = 0;
   virtual void tidy();
 protected:

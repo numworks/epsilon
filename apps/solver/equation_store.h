@@ -26,6 +26,7 @@ public:
     assert(i>=0 && i<m_numberOfModels);
     return &m_equations[i];
   }
+  Equation * definedModelAtIndex(int i) override { return static_cast<Equation *>(Shared::ExpressionModelStore::definedModelAtIndex(i)); }
   int maxNumberOfModels() const override { return k_maxNumberOfEquations; }
   Type type() const {
     return m_type;
@@ -51,7 +52,7 @@ public:
   double approximateSolutionAtIndex(int i);
   void tidy() override;
   void approximateSolve(Poincare::Context * context);
-  bool haveMoreApproximationSolutions(Poincare::Context * context) const;
+  bool haveMoreApproximationSolutions(Poincare::Context * context);
   Error exactSolve(Poincare::Context * context);
   static constexpr int k_maxNumberOfExactSolutions = Poincare::Expression::k_maxNumberOfVariables > Poincare::Expression::k_maxPolynomialDegree + 1? Poincare::Expression::k_maxNumberOfVariables : Poincare::Expression::k_maxPolynomialDegree + 1;
   static constexpr int k_maxNumberOfApproximateSolutions = 10;

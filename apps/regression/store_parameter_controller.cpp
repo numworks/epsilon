@@ -13,6 +13,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == numberOfRows() - 1) {
+    m_regressionController.setSeries(selectedColumn() % Store::k_numberOfColumnsPerSeries);
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->push(&m_regressionController);
     return true;

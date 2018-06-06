@@ -15,6 +15,7 @@ app_objs += $(addprefix apps/regression/,\
   levenberg_marquardt.o\
   prediction_parameter_controller.o\
   regression_context.o\
+  regression_controller.o\
   store.o\
   store_controller.o\
   store_parameter_controller.o\

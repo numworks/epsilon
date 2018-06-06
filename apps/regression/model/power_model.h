@@ -1,13 +1,13 @@
 #ifndef REGRESSION_POWER_MODEL_H
 #define REGRESSION_POWER_MODEL_H
 
-#include "regression_model.h"
+#include "model.h"
 
 namespace Regression {
 
-class PowerModel : public RegressionModel {
+class PowerModel : public Model {
 public:
-  using RegressionModel::RegressionModel;
+  using Model::Model;
   double evaluate(double * modelCoefficients, double x) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   double numberOfCoefficients() const override { return 2; }

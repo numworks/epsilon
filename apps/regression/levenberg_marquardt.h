@@ -7,10 +7,10 @@
 #include "model/linear_model.h"
 #include "model/logarithmic_model.h"
 #include "model/logistic_model.h"
+#include "model/model.h"
 #include "model/power_model.h"
 #include "model/quadratic_model.h"
 #include "model/quartic_model.h"
-#include "model/regression_model.h"
 #include "model/trigonometric_model.h"
 #include "store.h"
 
@@ -36,7 +36,7 @@ private:
   double alphaPrimeCoefficient(double * modelCoefficients, int k, int l, double lambda) const;
   double alphaCoefficient(double * modelCoefficients, int k, int l) const;
   double betaCoefficient(double * modelCoefficients, int k) const;
-  void solveLinearSystem(double * solutions, Poincare::Expression * coefficients[RegressionModel::k_maxNumberOfCoefficients][RegressionModel::k_maxNumberOfCoefficients], Poincare::Expression * * constants, int solutionDimension, Poincare::Context * context);
+  void solveLinearSystem(double * solutions, Poincare::Expression * coefficients[Model::k_maxNumberOfCoefficients][Model::k_maxNumberOfCoefficients], Poincare::Expression * * constants, int solutionDimension, Poincare::Context * context);
 
   Store * m_store;
   int m_series; //TODO put as argument

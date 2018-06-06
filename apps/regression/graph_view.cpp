@@ -1,15 +1,19 @@
 #include "graph_view.h"
+#include "model/model.h"
+#include <apps/apps_container.h>
+#include <poincare/context.h>
 #include <assert.h>
 
 using namespace Shared;
 
 namespace Regression {
 
-GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, View * cursorView) :
+GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, View * cursorView, Responder * controller) :
   CurveView(store, cursor, bannerView, cursorView),
   m_store(store),
   m_xLabels{},
-  m_yLabels{}
+  m_yLabels{},
+  m_controller(controller)
 {
 }
 
@@ -23,12 +27,16 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
     if (!m_store->seriesIsEmpty(series)) {
       KDColor color = Palette::DataColor[series];
-      float regressionParameters[2] = {(float)m_store->slope(series), (float)m_store->yIntercept(series)};
+      Model * seriesModel = m_store->modelForSeries(series);
+      double coefficients[Model::k_maxNumberOfCoefficients];
+      Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(m_controller->app()->container()))->globalContext();
+      seriesModel->fit(m_store, series, coefficients, globContext);
       drawCurve(ctx, rect, [](float abscissa, void * model, void * context) {
-          float * params = (float *)model;
-          return params[0]*abscissa+params[1];
+          Model * regressionModel = static_cast<Model *>(model);
+          double * regressionCoefficients = static_cast<double *>(context);
+          return (float)regressionModel->evaluate(regressionCoefficients, abscissa);
           },
-          regressionParameters, nullptr, color);
+          seriesModel, coefficients, color);
       for (int index = 0; index < m_store->numberOfPairsOfSeries(series); index++) {
         drawDot(ctx, rect, m_store->get(series, 0, index), m_store->get(series, 1, index), color);
       }

@@ -36,7 +36,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
 }
 
 I18n::Message ValuesController::emptyMessage() {
-  if (m_sequenceStore->numberOfDefinedFunctions() == 0) {
+  if (m_sequenceStore->numberOfDefinedModels() == 0) {
     return I18n::Message::NoSequence;
   }
   return I18n::Message::NoActivatedSequence;

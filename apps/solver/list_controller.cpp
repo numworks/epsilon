@@ -141,7 +141,7 @@ bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField 
 }
 
 void ListController::resolveEquations() {
-  if (m_equationStore->numberOfModels() == 0) {
+  if (m_equationStore->numberOfDefinedModels() == 0) {
     app()->displayWarning(I18n::Message::EnterEquation);
     return;
   }

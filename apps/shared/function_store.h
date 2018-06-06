@@ -16,9 +16,7 @@ public:
   virtual uint32_t storeChecksum() = 0;
   virtual Function * modelAtIndex(int i) override = 0;
   virtual Function * activeFunctionAtIndex(int i);
-  virtual Function * definedFunctionAtIndex(int i);
-  // Functions can be undefined when they have a color and a name but no content
-  int numberOfDefinedFunctions();
+  virtual Function * definedFunctionAtIndex(int i) { return static_cast<Function *>(definedModelAtIndex(i)); }
   // An active function must be defined to be counted
   int numberOfActiveFunctions();
   virtual char symbol() const = 0;

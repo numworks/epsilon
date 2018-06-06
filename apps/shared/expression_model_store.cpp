@@ -35,6 +35,31 @@ void ExpressionModelStore::removeAll() {
   m_numberOfModels = 0;
 }
 
+ExpressionModel * ExpressionModelStore::definedModelAtIndex(int i) {
+  assert(i>=0 && i<m_numberOfModels);
+  int index = 0;
+  for (int k = 0; k < m_numberOfModels; k++) {
+    if (modelAtIndex(k)->isDefined()) {
+      if (i == index) {
+        return modelAtIndex(k);
+      }
+      index++;
+    }
+  }
+  assert(false);
+  return nullptr;
+}
+
+int ExpressionModelStore::numberOfDefinedModels() {
+  int result = 0;
+  for (int i = 0; i < m_numberOfModels; i++) {
+    if (modelAtIndex(i)->isDefined()) {
+      result++;
+    }
+  }
+  return result;
+}
+
 void ExpressionModelStore::tidy() {
   for (int i = 0; i < m_numberOfModels; i++) {
     modelAtIndex(i)->tidy();

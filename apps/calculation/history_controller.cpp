@@ -96,23 +96,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(editController);
     return true;
   }
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
-    HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
-    int focusRow = selectedRow();
-    Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
-    if (subviewType == HistoryViewCell::SubviewType::Input) {
-      Clipboard::sharedClipboard()->store(calculation->inputText());
-    } else {
-      ScrollableExactApproximateExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
-      if (outputSubviewType == ScrollableExactApproximateExpressionsView::SubviewType::ExactOutput) {
-        Clipboard::sharedClipboard()->store(calculation->exactOutputText());
-      } else {
-        Clipboard::sharedClipboard()->store(calculation->approximateOutputText());
-      }
-    }
-    return true;
-  }
   return false;
 }
 

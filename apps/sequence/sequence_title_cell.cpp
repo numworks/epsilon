@@ -13,10 +13,7 @@ SequenceTitleCell::SequenceTitleCell(Orientation orientation) :
 }
 
 void SequenceTitleCell::setExpressionLayout(Poincare::ExpressionLayout * expressionLayout) {
-  if (expressionLayout) {
-    m_titleTextView.setExpressionLayout(expressionLayout);
-    expressionLayout->writeTextInBuffer(m_storedText, k_maxStoredTextSize);
-  }
+  m_titleTextView.setExpressionLayout(expressionLayout);
 }
 
 void SequenceTitleCell::setHighlighted(bool highlight) {

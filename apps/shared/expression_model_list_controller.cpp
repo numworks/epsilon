@@ -87,10 +87,6 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
     editExpression(model, event);
     return true;
   }
-  if ((event == Ion::Events::Copy || event == Ion::Events::Cut) && !isAddEmptyRow(selectedRow())) {
-    Clipboard::sharedClipboard()->store(textForRow(selectedRow()));
-    return true;
-  }
   return false;
 }
 
@@ -135,11 +131,6 @@ int ExpressionModelListController::modelIndexForRow(int j) {
 
 bool ExpressionModelListController::isAddEmptyRow(int j) {
   return j == modelStore()->numberOfModels();
-}
-
-const char * ExpressionModelListController::textForRow(int j) {
-  ExpressionModel * model = modelStore()->modelAtIndex(modelIndexForRow(j));
-  return model->text();
 }
 
 SelectableTableView * ExpressionModelListController::selectableTableView() {

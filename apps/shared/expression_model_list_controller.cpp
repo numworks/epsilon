@@ -30,23 +30,6 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
   return modelSize + Metric::StoreRowHeight - KDText::charSize().height();
 }
 
-KDCoordinate ExpressionModelListController::cumulatedExpressionHeightFromIndex(int j) {
-  int result = 0;
-  for (int k = 0; k < j; k++) {
-    result += expressionRowHeight(k);
-  }
-  return result;
-}
-
-int ExpressionModelListController::indexFromCumulatedExpressionHeight(KDCoordinate offsetY) {
-  int result = 0;
-  int j = 0;
-  while (result < offsetY && j < numberOfExpressionRows()) {
-    result += expressionRowHeight(j++);
-  }
-  return (result < offsetY || offsetY == 0) ? j : j - 1;
-}
-
 void ExpressionModelListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
   ExpressionModel * m = modelStore()->modelAtIndex(j);

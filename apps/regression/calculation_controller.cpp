@@ -42,20 +42,6 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
-  if (event == Ion::Events::Copy && selectedColumn() == 1 && selectedRow() > 0) {
-    if (selectedRow() <= k_totalNumberOfDoubleBufferRows) {
-      EvenOddDoubleBufferTextCell * myCell = (EvenOddDoubleBufferTextCell *)selectableTableView()->selectedCell();
-      if (myCell->firstTextSelected()) {
-        Clipboard::sharedClipboard()->store(myCell->firstText());
-      } else {
-        Clipboard::sharedClipboard()->store(myCell->secondText());
-      }
-    } else {
-      EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
-      Clipboard::sharedClipboard()->store(myCell->text());
-    }
-    return true;
-  }
   return false;
 }
 

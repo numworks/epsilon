@@ -14,11 +14,14 @@ public:
   virtual Responder * responder() override {
     return this;
   }
+  const char * text() const override {
+    return m_editableCell.text();
+  }
+  void didBecomeFirstResponder() override;
+private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-  void didBecomeFirstResponder() override;
-private:
   EditableTextCell m_editableCell;
 };
 

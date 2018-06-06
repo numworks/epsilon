@@ -96,7 +96,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(editController);
     return true;
   }
-  if (event == Ion::Events::Copy) {
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
     HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
     int focusRow = selectedRow();

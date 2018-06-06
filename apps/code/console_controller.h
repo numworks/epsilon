@@ -88,7 +88,6 @@ private:
   void emptyOutputAccumulationBuffer();
   size_t firstNewLineCharIndex(const char * text, size_t length);
   StackViewController * stackViewController();
-  bool copyCurrentLineToClipboard();
   int m_rowHeight;
   bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;

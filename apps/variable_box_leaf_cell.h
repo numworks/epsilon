@@ -13,6 +13,9 @@ public:
   void setSubtitle(const char * text);
   void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  const char * text() const override {
+    return m_labelView.text();
+  }
 private:
   constexpr static KDCoordinate k_separatorThickness = 1;
   constexpr static KDCoordinate k_widthMargin = 10;

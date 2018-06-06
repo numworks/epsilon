@@ -7,7 +7,7 @@ EvenOddBufferTextCell::EvenOddBufferTextCell(KDText::FontSize size, float horizo
 {
 }
 
-const char * EvenOddBufferTextCell::text() {
+const char * EvenOddBufferTextCell::text() const {
   return m_bufferTextView.text();
 }
 

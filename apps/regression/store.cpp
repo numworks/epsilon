@@ -1,4 +1,13 @@
 #include "store.h"
+#include "model/cubic_model.h"
+#include "model/exponential_model.h"
+#include "model/linear_model.h"
+#include "model/logarithmic_model.h"
+#include "model/logistic_model.h"
+#include "model/power_model.h"
+#include "model/quadratic_model.h"
+#include "model/quartic_model.h"
+#include "model/trigonometric_model.h"
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -11,12 +20,29 @@ namespace Regression {
 static inline float max(float x, float y) { return (x>y ? x : y); }
 static inline float min(float x, float y) { return (x<y ? x : y); }
 
+static_assert(Model::k_numberOfModels == 9, "Number of models changed, Regression::Store() needs to adapt");
+
 Store::Store() :
   InteractiveCurveViewRange(nullptr, this),
   DoublePairStore()
 {
   for (int i = 0; i < k_numberOfSeries; i++) {
     m_regressionTypes[i] = Model::Type::Linear;
+  }
+  m_regressionModels[0] = new LinearModel();
+  m_regressionModels[1] = new QuadraticModel();
+  m_regressionModels[2] = new CubicModel();
+  m_regressionModels[3] = new QuarticModel();
+  m_regressionModels[4] = new LogarithmicModel();
+  m_regressionModels[5] = new ExponentialModel();
+  m_regressionModels[6] = new PowerModel();
+  m_regressionModels[7] = new TrigonometricModel();
+  m_regressionModels[8] = new LogisticModel();
+}
+
+Store::~Store() {
+  for (int i = 0; i < Model::k_numberOfModels; i++) {
+    delete m_regressionModels[i];
   }
 }
 

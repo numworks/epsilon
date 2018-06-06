@@ -24,6 +24,7 @@ public:
   };
   static constexpr int k_numberOfModels = 9;
   static constexpr int k_maxNumberOfCoefficients = 5;
+  virtual ~Model() = default;
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
 private:

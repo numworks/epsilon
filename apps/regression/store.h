@@ -13,11 +13,21 @@ namespace Regression {
 class Store : public Shared::InteractiveCurveViewRange, public Shared::DoublePairStore, public Shared::InteractiveCurveViewRangeDelegate {
 public:
   Store();
+  ~Store();
+  Store(const Store & other) = delete;
+  Store(Store && other) = delete;
+  Store& operator=(const Store & other) = delete;
+  Store& operator=(Store && other) = delete;
 
   // Regression
   void setSeriesRegressionType(int series, Model::Type type) {
     assert(series >= 0 && series < k_numberOfSeries);
     m_regressionTypes[series] = type;
+  }
+  Model * modelForSeries(int series) {
+    assert(series >= 0 && series < k_numberOfSeries);
+    assert((int)m_regressionTypes[series] >= 0 && (int)m_regressionTypes[series] < Model::k_numberOfModels);
+    return m_regressionModels[(int)m_regressionTypes[series]];
   }
   /* Return the series index of the closest regression at abscissa x, above
    * ordinate y if direction > 0, below otherwise */
@@ -60,6 +70,7 @@ private:
   float maxValueOfColumn(int series, int i) const;
   float minValueOfColumn(int series, int i) const;
   Model::Type m_regressionTypes[k_numberOfSeries];
+  Model * m_regressionModels[Model::k_numberOfModels];
 };
 
 typedef double (Store::*ArgCalculPointer)(int, int) const;

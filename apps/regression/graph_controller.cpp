@@ -12,7 +12,7 @@ GraphController::GraphController(Responder * parentResponder, ButtonRowControlle
   m_crossCursorView(),
   m_roundCursorView(),
   m_bannerView(),
-  m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
+  m_view(store, m_cursor, &m_bannerView, &m_crossCursorView, this),
   m_store(store),
   m_initialisationParameterController(this, m_store),
   m_predictionParameterController(this, m_store, m_cursor, this),

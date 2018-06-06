@@ -21,6 +21,7 @@ public:
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
   void reloadCell() override;
+  const char * text() const override { return m_scriptNodeView.text(); }
 
   constexpr static char k_parentheses[] = "()";
   constexpr static char k_parenthesesWithEmpty[] = {'(', Ion::Charset::Empty, ')', 0};
@@ -32,6 +33,9 @@ protected:
     void setScriptStore(ScriptStore * scriptStore);
     void drawRect(KDContext * ctx, KDRect rect) const override;
     virtual KDSize minimalSizeForOptimalDisplay() const override;
+    const char * text() const override {
+      return m_scriptStore->scriptAtIndex(m_scriptNode->scriptIndex()).name();
+    }
   private:
     constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Small;
     constexpr static KDCoordinate k_verticalMargin = 7;

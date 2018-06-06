@@ -88,15 +88,6 @@ void CalculationController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Copy && selectedColumn() > 0) {
-    CalculationCell * myCell = static_cast<CalculationCell *>(m_selectableTableView.selectedCell());
-    Clipboard::sharedClipboard()->store(myCell->editableTextCell()->textField()->text());
-    return true;
-  }
-  return false;
-}
-
 View * CalculationController::view() {
   return &m_contentView;
 }

@@ -13,6 +13,9 @@ public:
   virtual Responder * responder() {
     return nullptr;
   }
+  virtual const char * text() const {
+    return nullptr;
+  }
 protected:
   bool m_highlighted;
 };

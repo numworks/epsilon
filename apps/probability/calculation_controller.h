@@ -17,7 +17,6 @@ public:
   /* Responder */
   void didEnterResponderChain(Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
 
   /* ViewController */
   View * view() override;

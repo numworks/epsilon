@@ -48,6 +48,14 @@ void EvenOddDoubleBufferTextCell::setHighlighted(bool highlight) {
   reloadCell();
 }
 
+const char * EvenOddDoubleBufferTextCell::text() const {
+  if (m_firstTextSelected) {
+    return m_firstBufferTextView.text();
+  } else {
+    return m_secondBufferTextView.text();
+  }
+}
+
 void EvenOddDoubleBufferTextCell::setEven(bool even) {
   m_firstBufferTextView.setEven(even);
   m_secondBufferTextView.setEven(even);

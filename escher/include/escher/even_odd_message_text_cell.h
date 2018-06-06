@@ -12,10 +12,10 @@ public:
   void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message textContent, KDColor textColor = KDColorBlack);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
+protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-protected:
   MessageTextView m_messageTextView;
 };
 

@@ -41,6 +41,8 @@ void LanguageController::viewWillAppear() {
 bool LanguageController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     GlobalPreferences::sharedGlobalPreferences()->setLanguage((I18n::Language)(selectedRow()+1));
+    AppsContainer * myContainer = (AppsContainer * )app()->container();
+    myContainer->refreshPreferences();
     return true;
   }
   return false;

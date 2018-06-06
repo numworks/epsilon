@@ -1,9 +1,17 @@
 #include "trigonometric_model.h"
 #include <math.h>
 #include <poincare/preferences.h>
+#include <poincare/layout_engine.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Regression {
+
+ExpressionLayout * TrigonometricModel::Layout() {
+  static ExpressionLayout * layout = LayoutEngine::createStringLayout("asin(bX+c)", 10, KDText::FontSize::Small);
+  return layout;
+}
 
 double TrigonometricModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];

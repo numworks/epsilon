@@ -1,8 +1,16 @@
 #include "logarithmic_model.h"
 #include <math.h>
+#include <poincare/layout_engine.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Regression {
+
+ExpressionLayout * LogarithmicModel::Layout() {
+  static ExpressionLayout * layout = LayoutEngine::createStringLayout("aln(X)+b", 8, KDText::FontSize::Small);
+  return layout;
+}
 
 double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];

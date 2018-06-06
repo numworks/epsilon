@@ -22,7 +22,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 
 HighlightCell * StoreParameterController::reusableCell(int index) {
   assert(index >= 0);
-  assert(index < reusableCellCount() - 1);
+  assert(index < reusableCellCount());
   if (index == reusableCellCount() - 1) {
     return &m_changeRegression;
   }

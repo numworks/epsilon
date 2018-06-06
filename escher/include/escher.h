@@ -39,6 +39,7 @@
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_chevron_and_expression.h>
 #include <escher/message_table_cell_with_editable_text.h>
+#include <escher/message_table_cell_with_expression.h>
 #include <escher/message_table_cell_with_gauge.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/message_table_cell_with_switch.h>

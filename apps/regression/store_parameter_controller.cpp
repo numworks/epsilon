@@ -4,15 +4,17 @@
 
 namespace Regression {
 
-StoreParameterController::StoreParameterController(Responder * parentResponder, Shared::DoublePairStore * store, StoreController * storeController) :
+StoreParameterController::StoreParameterController(Responder * parentResponder, Store * store, StoreController * storeController) :
   Shared::StoreParameterController(parentResponder, store, storeController),
-  m_changeRegression(I18n::Message::ChangeRegression)
+  m_changeRegression(I18n::Message::ChangeRegression),
+  m_regressionController(this, store)
 {
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == numberOfRows() - 1) {
-    //TODO
+    StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+    stack->push(&m_regressionController);
     return true;
   }
   return Shared::StoreParameterController::handleEvent(event);

@@ -1,6 +1,7 @@
 #ifndef REGRESSION_STORE_H
 #define REGRESSION_STORE_H
 
+#include "model/model.h"
 #include "../shared/interactive_curve_view_range.h"
 #include "../shared/double_pair_store.h"
 extern "C" {
@@ -14,6 +15,10 @@ public:
   Store();
 
   // Regression
+  void setSeriesRegressionType(int series, Model::Type type) {
+    assert(series >= 0 && series < k_maxNumberOfSeries);
+    m_regressionTypes[series] = type;
+  }
   /* Return the series index of the closest regression at abscissa x, above
    * ordinate y if direction > 0, below otherwise */
   int closestVerticalRegression(int direction, float x, float y, int currentRegressionSeries);
@@ -54,6 +59,7 @@ private:
   float addMargin(float x, float range, bool isMin) override;
   float maxValueOfColumn(int series, int i) const;
   float minValueOfColumn(int series, int i) const;
+  Model::Type m_regressionTypes[k_numberOfSeries];
 };
 
 typedef double (Store::*ArgCalculPointer)(int, int) const;

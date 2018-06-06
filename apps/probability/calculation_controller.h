@@ -29,9 +29,7 @@ public:
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

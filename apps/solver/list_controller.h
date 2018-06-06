@@ -22,12 +22,6 @@ public:
   int numberOfRows() override {
     return numberOfExpressionRows();
   }
-  KDCoordinate cumulatedHeightFromIndex(int j) override {
-    return cumulatedExpressionHeightFromIndex(j);
-  }
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override {
-    return indexFromCumulatedExpressionHeight(offsetY);
-  }
   KDCoordinate rowHeight(int j) override {
     return expressionRowHeight(j);
   }

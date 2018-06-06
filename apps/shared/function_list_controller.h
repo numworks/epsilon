@@ -23,13 +23,7 @@ public:
     return expressionRowHeight(j);
   }
   KDCoordinate columnWidth(int i) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override {
-    return cumulatedExpressionHeightFromIndex(j);
-  }
   KDCoordinate cumulatedWidthFromIndex(int i) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override {
-    return indexFromCumulatedExpressionHeight(offsetY);
-  }
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int typeAtLocation(int i, int j) override;
   HighlightCell * reusableCell(int index, int type) override;

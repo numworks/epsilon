@@ -14,8 +14,6 @@ protected:
   /* Table Data Source */
   virtual int numberOfExpressionRows();
   virtual KDCoordinate expressionRowHeight(int j);
-  KDCoordinate cumulatedExpressionHeightFromIndex(int j);
-  int indexFromCumulatedExpressionHeight(KDCoordinate offsetY);
   virtual void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j);
   /* Responder */
   bool handleEventOnExpression(Ion::Events::Event event);

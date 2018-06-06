@@ -13,14 +13,14 @@ public:
   virtual KDCoordinate rowHeight(int j) = 0;
   /* return the number of pixels to include in offset to display the column i at
   the top */
-  virtual KDCoordinate cumulatedWidthFromIndex(int i) = 0;
-  virtual KDCoordinate cumulatedHeightFromIndex(int j) = 0;
+  virtual KDCoordinate cumulatedWidthFromIndex(int i);
+  virtual KDCoordinate cumulatedHeightFromIndex(int j);
   /* return the number of columns (starting with first ones) that can be fully
    * displayed in offsetX pixels.
    * Caution: if the offset is exactly the size of n columns, the function
    * returns n-1. */
-  virtual int indexFromCumulatedWidth(KDCoordinate offsetX) = 0;
-  virtual int indexFromCumulatedHeight(KDCoordinate offsetY) = 0;
+  virtual int indexFromCumulatedWidth(KDCoordinate offsetX);
+  virtual int indexFromCumulatedHeight(KDCoordinate offsetY);
   virtual HighlightCell * reusableCell(int index, int type) = 0;
   virtual int reusableCellCount(int type) = 0;
   virtual int typeAtLocation(int i, int j) = 0;

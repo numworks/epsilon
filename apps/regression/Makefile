@@ -17,6 +17,7 @@ app_objs += $(addprefix apps/regression/,\
   regression_context.o\
   store.o\
   store_controller.o\
+  store_parameter_controller.o\
 )
 
 app_objs += $(addprefix apps/regression/model/,\

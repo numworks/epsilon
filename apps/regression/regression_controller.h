@@ -7,7 +7,7 @@
 
 namespace Regression {
 
-class RegressionController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class RegressionController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   RegressionController(Responder * parentResponder, Store * store);
   void setSeries(int series) { m_series = series; }
@@ -19,19 +19,20 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
-  // SimpleListViewDataSource
-  KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override { return k_numberOfCells; }
-
-  // TableViewDataSource
+  // ListViewDataSource
+  KDCoordinate rowHeight(int j) override;
+  KDCoordinate cumulatedHeightFromIndex(int j) override;
+  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override { return k_numberOfCells; }
+  int typeAtLocation(int i, int j) override { return 0; }
   int numberOfRows() override { return k_numberOfRows; }
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 private:
+  constexpr static KDCoordinate k_logisticCellHeight = 47;
   constexpr static int k_numberOfRows = 9;
   constexpr static int k_numberOfCells = 6; // (240 - 70) / 35
   MessageTableCellWithExpression m_regressionCells[k_numberOfCells];
-  //Poincare::ExpressionLayout * m_regressionLayouts[k_numberOfRows];
   SelectableTableView m_selectableTableView;
   Store * m_store;
   int m_series;

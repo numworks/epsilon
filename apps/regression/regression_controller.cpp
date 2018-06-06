@@ -16,7 +16,7 @@ namespace Regression {
 
 RegressionController::RegressionController(Responder * parentResponder, Store * store) :
   ViewController(parentResponder),
-  SimpleListViewDataSource(),
+  ListViewDataSource(),
   SelectableTableViewDataSource(),
   m_selectableTableView(this, this, this),
   m_store(store),
@@ -42,9 +42,32 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
+
+}
+KDCoordinate RegressionController::rowHeight(int j) {
+  assert (j >= 0 && j < numberOfRows());
+  return j == numberOfRows() -1 ? k_logisticCellHeight : Metric::ParameterCellHeight;
 }
 
-HighlightCell * RegressionController::reusableCell(int index) {
+KDCoordinate RegressionController::cumulatedHeightFromIndex(int j) {
+  assert (j >= 0 && j <= numberOfRows());
+  KDCoordinate result = 0;
+  for (int i = 0; i < j; i++) {
+    result+= rowHeight(i);
+  }
+  return result;
+}
+
+int RegressionController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  int result = 0;
+  int j = 0;
+  while (result < offsetY && j < numberOfRows()) {
+    result += rowHeight(j++);
+  }
+  return (result < offsetY || offsetY == 0) ? j : j - 1;
+}
+
+HighlightCell * RegressionController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_numberOfCells);
   return &m_regressionCells[index];

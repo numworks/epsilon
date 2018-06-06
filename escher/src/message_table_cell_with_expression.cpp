@@ -7,7 +7,7 @@ MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message mes
 {
 }
 
-View * MessageTableCellWithExpression::subAccessoryView() const {
+View * MessageTableCellWithExpression::accessoryView() const {
   return (View *)&m_subtitleView;
 }
 

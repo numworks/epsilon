@@ -16,7 +16,7 @@ void LevenbergMarquartd::fit(double * modelCoefficients, Context * context) {
   while (smallChi2ChangeCounts < k_consecutiveSmallChi2ChangesLimit && iterationCount < k_maxIterations) {
     // Compute modelCoefficients step
     // Create the alpha prime matrix (it is symmetric)
-    Expression * coefficientsAPrime[RegressionModel::k_maxNumberOfCoefficients][RegressionModel::k_maxNumberOfCoefficients]; // TODO find a way not to use so much space, we only need Expression * coefficientsAPrime[n][n]
+    Expression * coefficientsAPrime[Model::k_maxNumberOfCoefficients][Model::k_maxNumberOfCoefficients]; // TODO find a way not to use so much space, we only need Expression * coefficientsAPrime[n][n]
     for (int i = 0; i < n; i++) {
       for (int j = i; j < n; j++) {
         Complex<double> alphaPrime = Complex<double>::Float(alphaPrimeCoefficient(modelCoefficients, i, j, lambda));
@@ -102,7 +102,7 @@ double LevenbergMarquartd::betaCoefficient(double * modelCoefficients, int k) co
 
 
 // TODO should return an error if no solution ?
-void LevenbergMarquartd::solveLinearSystem(double * solutions, Expression * coefficients[RegressionModel::k_maxNumberOfCoefficients][RegressionModel::k_maxNumberOfCoefficients], Expression * * constants, int solutionDimension, Context * context) {
+void LevenbergMarquartd::solveLinearSystem(double * solutions, Expression * coefficients[Model::k_maxNumberOfCoefficients][Model::k_maxNumberOfCoefficients], Expression * * constants, int solutionDimension, Context * context) {
   int n = solutionDimension;
   const Expression ** operandsA = new const Expression * [n*n];
   for (int i = 0; i < n; i++) {

@@ -16,7 +16,8 @@ StoreController::StoreController(Responder * parentResponder, Store * store, But
   Shared::StoreController(parentResponder, store, header),
   m_titleCells{},
   m_store(store),
-  m_statisticsContext(m_store)
+  m_statisticsContext(m_store),
+  m_storeParameterController(this, store, this)
 {
 }
 

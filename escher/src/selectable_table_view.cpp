@@ -128,6 +128,11 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       Clipboard::sharedClipboard()->store(text);
       return true;
     }
+    Poincare::ExpressionLayout * layout = cell->expressionLayout();
+    if (layout) {
+      Clipboard::sharedClipboard()->store(layout);
+      return true;
+    }
   }
   return false;
 }

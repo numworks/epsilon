@@ -57,6 +57,14 @@ void HistoryViewCell::setHighlighted(bool highlight) {
   reloadScroll();
 }
 
+Poincare::ExpressionLayout * HistoryViewCell::expressionLayout() const {
+  if (m_selectedSubviewType == SubviewType::Input) {
+    return m_inputLayout;
+  } else {
+    return m_scrollableOutputView.expressionLayout();
+  }
+}
+
 void HistoryViewCell::reloadCell() {
   m_scrollableOutputView.evenOddCell()->reloadCell();
   layoutSubviews();

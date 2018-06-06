@@ -3,6 +3,7 @@
 
 #include <escher/view.h>
 #include <escher/responder.h>
+#include <poincare.h>
 
 class HighlightCell : public View {
 public:
@@ -14,6 +15,9 @@ public:
     return nullptr;
   }
   virtual const char * text() const {
+    return nullptr;
+  }
+  virtual Poincare::ExpressionLayout * expressionLayout() const {
     return nullptr;
   }
 protected:

@@ -61,6 +61,14 @@ void ScrollableExactApproximateExpressionsView::ContentCell::setSelectedSubviewT
   setHighlighted(isHighlighted());
 }
 
+Poincare::ExpressionLayout * ScrollableExactApproximateExpressionsView::ContentCell::expressionLayout() const {
+  if (m_selectedSubviewType == SubviewType::ExactOutput) {
+    return m_exactExpressionView.expressionLayout();
+  } else {
+    return m_approximateExpressionView.expressionLayout();
+  }
+}
+
 int ScrollableExactApproximateExpressionsView::ContentCell::numberOfSubviews() const {
   if (m_exactExpressionView.expressionLayout() != nullptr) {
     return 3;

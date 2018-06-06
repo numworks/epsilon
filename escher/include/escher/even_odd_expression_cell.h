@@ -15,10 +15,11 @@ public:
   void setTextColor(KDColor textColor);
   KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment);
+  Poincare::ExpressionLayout * expressionLayout() const override { return m_expressionView.expressionLayout(); }
+protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-protected:
   ExpressionView m_expressionView;
 };
 

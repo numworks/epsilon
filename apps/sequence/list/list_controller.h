@@ -37,7 +37,6 @@ private:
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
   int modelIndexForRow(int j) override;
   bool isAddEmptyRow(int j) override;
-  const char * textForRow(int j) override;
   int sequenceDefinitionForRow(int j);
   void addEmptyModel() override;
   void reinitExpression(Shared::ExpressionModel * model) override;

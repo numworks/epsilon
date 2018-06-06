@@ -22,6 +22,7 @@ public:
   Responder * responder() override {
     return this;
   }
+  Poincare::ExpressionLayout * expressionLayout() const override { return m_view.expressionLayout(); }
   void didBecomeFirstResponder() override;
   constexpr static KDCoordinate k_margin = 5;
 private:

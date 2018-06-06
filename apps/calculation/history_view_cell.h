@@ -23,6 +23,7 @@ public:
   Responder * responder() override {
     return this;
   }
+  Poincare::ExpressionLayout * expressionLayout() const override;
   KDColor backgroundColor() const override;
   void setCalculation(Calculation * calculation);
   int numberOfSubviews() const override;

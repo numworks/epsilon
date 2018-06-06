@@ -25,7 +25,6 @@ protected:
   virtual bool removeModelRow(ExpressionModel * function);
   virtual int modelIndexForRow(int j);
   virtual bool isAddEmptyRow(int j);
-  virtual const char * textForRow(int j);
   /* Dynamic View Controller */
   SelectableTableView * selectableTableView();
   View * loadView() override;

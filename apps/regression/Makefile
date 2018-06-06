@@ -12,7 +12,6 @@ app_objs += $(addprefix apps/regression/,\
   graph_controller.o\
   graph_view.o\
   initialisation_parameter_controller.o\
-  levenberg_marquardt.o\
   prediction_parameter_controller.o\
   regression_context.o\
   regression_controller.o\
@@ -27,6 +26,7 @@ app_objs += $(addprefix apps/regression/model/,\
   linear_model.o\
   logarithmic_model.o\
   logistic_model.o\
+  model.o\
   power_model.o\
   quadratic_model.o\
   quartic_model.o\

@@ -1,5 +1,8 @@
-#include "levenberg_marquardt.h"
+#include "model.h"
+#include "../store.h"
 #include <poincare/complex.h>
+#include <poincare/matrix.h>
+#include <poincare/multiplication.h>
 #include <math.h>
 
 using namespace Poincare;
@@ -7,10 +10,14 @@ using namespace Shared;
 
 namespace Regression {
 
-void LevenbergMarquartd::fit(double * modelCoefficients, Context * context) {
-  double currentChi2 = chi2(modelCoefficients);
+void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
+  fitLevenbergMarquardt(store, series, modelCoefficients, context);
+}
+
+void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {
+  double currentChi2 = chi2(store, series, modelCoefficients);
   double lambda = k_initialLambda;
-  int n = m_model.numberOfCoefficients(); // n unknown coefficients
+  int n = numberOfCoefficients(); // n unknown coefficients
   int smallChi2ChangeCounts = 0;
   int iterationCount = 0;
   while (smallChi2ChangeCounts < k_consecutiveSmallChi2ChangesLimit && iterationCount < k_maxIterations) {
@@ -19,7 +26,7 @@ void LevenbergMarquartd::fit(double * modelCoefficients, Context * context) {
     Expression * coefficientsAPrime[Model::k_maxNumberOfCoefficients][Model::k_maxNumberOfCoefficients]; // TODO find a way not to use so much space, we only need Expression * coefficientsAPrime[n][n]
     for (int i = 0; i < n; i++) {
       for (int j = i; j < n; j++) {
-        Complex<double> alphaPrime = Complex<double>::Float(alphaPrimeCoefficient(modelCoefficients, i, j, lambda));
+        Complex<double> alphaPrime = Complex<double>::Float(alphaPrimeCoefficient(store, series, modelCoefficients, i, j, lambda));
         coefficientsAPrime[i][j] = new Complex<double>(alphaPrime);
         if (i != j) {
           coefficientsAPrime[j][i] = new Complex<double>(alphaPrime);
@@ -29,7 +36,7 @@ void LevenbergMarquartd::fit(double * modelCoefficients, Context * context) {
     // Create the beta matrix
     Expression ** operandsB = new Expression * [n];
     for (int j = 0; j < n; j++) {
-      operandsB[j] = new Complex<double>(Complex<double>::Float(betaCoefficient(modelCoefficients, j)));
+      operandsB[j] = new Complex<double>(Complex<double>::Float(betaCoefficient(store, series, modelCoefficients, j)));
     }
     double modelCoefficientSteps[n];
     solveLinearSystem(modelCoefficientSteps, coefficientsAPrime, operandsB, n, context);
@@ -39,7 +46,7 @@ void LevenbergMarquartd::fit(double * modelCoefficients, Context * context) {
     for (int i = 0; i < n; i++) {
       newModelCoefficients[i] = modelCoefficients[i] + modelCoefficientSteps[i];
     }
-    double newChi2 = chi2(newModelCoefficients);
+    double newChi2 = chi2(store, series, newModelCoefficients);
     smallChi2ChangeCounts = (fabs(currentChi2 - newChi2) > k_chi2ChangeCondition) ? 0 : smallChi2ChangeCounts + 1;
     if (newChi2 >= currentChi2) {
       lambda*= k_lambdaFactor;
@@ -54,12 +61,12 @@ void LevenbergMarquartd::fit(double * modelCoefficients, Context * context) {
   }
 }
 
-double LevenbergMarquartd::chi2(double * modelCoefficients) const {
+double Model::chi2(Store * store, int series, double * modelCoefficients) const {
   double result = 0.0;
-  for (int i = 0; i < m_store->numberOfPairsOfSeries(m_series); i++) {
-    double xi = m_store->get(m_series, 0, i);
-    double yi = m_store->get(m_series, 1, i);
-    double difference = yi - m_model.evaluate(modelCoefficients, xi);
+  for (int i = 0; i < store->numberOfPairsOfSeries(series); i++) {
+    double xi = store->get(series, 0, i);
+    double yi = store->get(series, 1, i);
+    double difference = yi - evaluate(modelCoefficients, xi);
     result += difference * difference;
   }
   return result;
@@ -67,42 +74,42 @@ double LevenbergMarquartd::chi2(double * modelCoefficients) const {
 
 // a'(k,k) = a(k,k) * (1 + lambda)
 // a'(k,l) = a(l,k) when (k != l)
-double LevenbergMarquartd::alphaPrimeCoefficient(double * modelCoefficients, int k, int l, double lambda) const {
-  assert(k >= 0 && k < m_model.numberOfCoefficients());
-  assert(l >= 0 && l < m_model.numberOfCoefficients());
-  double result = k == l ? alphaCoefficient(modelCoefficients, k, l)*(1+lambda) : alphaCoefficient(modelCoefficients, l, k);
+double Model::alphaPrimeCoefficient(Store * store, int series, double * modelCoefficients, int k, int l, double lambda) const {
+  assert(k >= 0 && k < numberOfCoefficients());
+  assert(l >= 0 && l < numberOfCoefficients());
+  double result = k == l ? alphaCoefficient(store, series, modelCoefficients, k, l)*(1+lambda) : alphaCoefficient(store, series, modelCoefficients, l, k);
   return result;
 }
 
 // a(k,l) = sum(0, N-1, derivate(y(xi|a), ak) * derivate(y(xi|a), a))
-double LevenbergMarquartd::alphaCoefficient(double * modelCoefficients, int k, int l) const {
-  assert(k >= 0 && k < m_model.numberOfCoefficients());
-  assert(l >= 0 && l < m_model.numberOfCoefficients());
+double Model::alphaCoefficient(Store * store, int series, double * modelCoefficients, int k, int l) const {
+  assert(k >= 0 && k < numberOfCoefficients());
+  assert(l >= 0 && l < numberOfCoefficients());
   double result = 0.0;
-  int m = m_store->numberOfPairsOfSeries(m_series);
+  int m = store->numberOfPairsOfSeries(series);
   for (int i = 0; i < m; i++) {
-    double xi = m_store->get(m_series, 0, i);
-    result += m_model.partialDerivate(modelCoefficients, k, xi) * m_model.partialDerivate(modelCoefficients, l, xi);
+    double xi = store->get(series, 0, i);
+    result += partialDerivate(modelCoefficients, k, xi) * partialDerivate(modelCoefficients, l, xi);
   }
   return result;
 }
 
 // b(k) = sum(0, N-1, (yi - y(xi|a)) * derivate(y(xi|a), ak))
-double LevenbergMarquartd::betaCoefficient(double * modelCoefficients, int k) const {
-  assert(k >= 0 && k < m_model.numberOfCoefficients());
+double Model::betaCoefficient(Store * store, int series, double * modelCoefficients, int k) const {
+  assert(k >= 0 && k < numberOfCoefficients());
   double result = 0.0;
-  int m = m_store->numberOfPairsOfSeries(m_series); // m equations
+  int m = store->numberOfPairsOfSeries(series); // m equations
   for (int i = 0; i < m; i++) {
-    double xi = m_store->get(m_series, 0, i);
-    double yi = m_store->get(m_series, 1, i);
-    result += (yi - m_model.evaluate(modelCoefficients, xi)) * m_model.partialDerivate(modelCoefficients, k, xi);
+    double xi = store->get(series, 0, i);
+    double yi = store->get(series, 1, i);
+    result += (yi - evaluate(modelCoefficients, xi)) * partialDerivate(modelCoefficients, k, xi);
   }
   return result;
 }
 
 
 // TODO should return an error if no solution ?
-void LevenbergMarquartd::solveLinearSystem(double * solutions, Expression * coefficients[Model::k_maxNumberOfCoefficients][Model::k_maxNumberOfCoefficients], Expression * * constants, int solutionDimension, Context * context) {
+void Model::solveLinearSystem(double * solutions, Expression * coefficients[Model::k_maxNumberOfCoefficients][Model::k_maxNumberOfCoefficients], Expression * * constants, int solutionDimension, Context * context) {
   int n = solutionDimension;
   const Expression ** operandsA = new const Expression * [n*n];
   for (int i = 0; i < n; i++) {
@@ -134,3 +141,4 @@ void LevenbergMarquartd::solveLinearSystem(double * solutions, Expression * coef
 }
 
 }
+

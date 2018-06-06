@@ -16,7 +16,7 @@ public:
 
   // Regression
   void setSeriesRegressionType(int series, Model::Type type) {
-    assert(series >= 0 && series < k_maxNumberOfSeries);
+    assert(series >= 0 && series < k_numberOfSeries);
     m_regressionTypes[series] = type;
   }
   /* Return the series index of the closest regression at abscissa x, above

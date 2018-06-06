@@ -52,8 +52,7 @@ StoreController::StoreController(Responder * parentResponder, DoublePairStore * 
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_editableCells{},
-  m_store(store),
-  m_storeParameterController(this, store, this)
+  m_store(store)
 {
 }
 
@@ -192,10 +191,10 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   assert(selectedColumn() >= 0 && selectedColumn() < numberOfColumns());
   int series = seriesAtColumn(selectedColumn());
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
-    m_storeParameterController.selectXColumn(selectedColumn()%DoublePairStore::k_numberOfColumnsPerSeries == 0);
-    m_storeParameterController.selectSeries(series);
+    storeParameterController()->selectXColumn(selectedColumn()%DoublePairStore::k_numberOfColumnsPerSeries == 0);
+    storeParameterController()->selectSeries(series);
     StackViewController * stack = ((StackViewController *)parentResponder()->parentResponder());
-    stack->push(&m_storeParameterController);
+    stack->push(storeParameterController());
     return true;
   }
   if (event == Ion::Events::Backspace) {

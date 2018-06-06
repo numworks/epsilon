@@ -20,8 +20,10 @@ private:
   HighlightCell * titleCells(int index) override;
   View * loadView() override;
   void unloadView(View * view) override;
+  Shared::StoreParameterController * storeParameterController() override { return &m_storeParameterController; }
   Shared::StoreTitleCell * m_titleCells[k_numberOfTitleCells];
   RegressionContext m_regressionContext;
+  Shared::StoreParameterController m_storeParameterController;
 };
 
 }

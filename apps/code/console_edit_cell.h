@@ -28,7 +28,7 @@ public:
 
   // Edit cell
   void setEditing(bool isEditing, bool reinitDraftBuffer = false);
-  const char * text() const { return m_textField.text(); }
+  const char * text() const override { return m_textField.text(); }
   void setText(const char * text);
   bool insertText(const char * text);
   void setPrompt(const char * prompt);

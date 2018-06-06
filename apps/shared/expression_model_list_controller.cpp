@@ -87,7 +87,7 @@ bool ExpressionModelListController::handleEventOnExpression(Ion::Events::Event e
     editExpression(model, event);
     return true;
   }
-  if (event == Ion::Events::Copy && !isAddEmptyRow(selectedRow())) {
+  if ((event == Ion::Events::Copy || event == Ion::Events::Cut) && !isAddEmptyRow(selectedRow())) {
     Clipboard::sharedClipboard()->store(textForRow(selectedRow()));
     return true;
   }

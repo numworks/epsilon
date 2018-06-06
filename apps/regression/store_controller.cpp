@@ -16,7 +16,8 @@ namespace Regression {
 StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
   Shared::StoreController(parentResponder, store, header),
   m_titleCells{},
-  m_regressionContext(store)
+  m_regressionContext(store),
+  m_storeParameterController(this, store, this)
 {
 }
 

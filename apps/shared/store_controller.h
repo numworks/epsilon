@@ -86,9 +86,9 @@ protected:
   char m_draftTextBuffer[TextField::maxBufferSize()];
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   bool privateFillColumnWithFormula(Poincare::Expression * formula, Poincare::Expression::isVariableTest isVariable);
+  virtual StoreParameterController * storeParameterController() = 0;
   StoreCell * m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
-  StoreParameterController m_storeParameterController;
 private:
   bool cellShouldBeTransparent(int i, int j);
   ContentView * contentView() { return static_cast<ContentView *>(view()); }

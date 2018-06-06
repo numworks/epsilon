@@ -24,7 +24,6 @@ bool LanguageController::handleEvent(Ion::Events::Event event) {
     app()->displayModalViewController(m_updateController, 0.5f, 0.5f);
 #else
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
-    appsContainer->refreshPreferences();
     appsContainer->switchTo(appsContainer->appSnapshotAtIndex(0));
 #endif
     return true;

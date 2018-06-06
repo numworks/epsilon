@@ -4,6 +4,7 @@
 #include <escher.h>
 #include "store.h"
 #include "regression_context.h"
+#include "store_parameter_controller.h"
 #include "../shared/store_controller.h"
 #include "../shared/store_title_cell.h"
 
@@ -23,7 +24,7 @@ private:
   Shared::StoreParameterController * storeParameterController() override { return &m_storeParameterController; }
   Shared::StoreTitleCell * m_titleCells[k_numberOfTitleCells];
   RegressionContext m_regressionContext;
-  Shared::StoreParameterController m_storeParameterController;
+  StoreParameterController m_storeParameterController;
 };
 
 }

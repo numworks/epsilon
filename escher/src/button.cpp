@@ -11,6 +11,10 @@ Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation i
 {
 }
 
+void Button::setMessage(I18n::Message message) {
+  m_messageTextView.setMessage(message);
+}
+
 int Button::numberOfSubviews() const {
   return 1;
 }

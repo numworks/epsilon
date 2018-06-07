@@ -10,6 +10,7 @@
 class Button : public HighlightCell, public Responder {
 public:
   Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDText::FontSize size = KDText::FontSize::Small, KDColor textColor = KDColorBlack);
+  void setMessage(I18n::Message message);
   bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;
   Responder * responder() override {

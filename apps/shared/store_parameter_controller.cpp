@@ -8,13 +8,13 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   ViewController(parentResponder),
   m_store(store),
   m_series(0),
+  m_selectableTableView(this, this, this),
   m_deleteColumn(I18n::Message::ClearColumn),
   m_fillWithFormula(I18n::Message::FillWithFormula),
 #if COPY_IMPORT_LIST
   m_copyColumn(I18n::Message::CopyColumnInList),
   m_importList(I18n::Message::ImportList),
 #endif
-  m_selectableTableView(this, this, this),
   m_storeController(storeController),
   m_xColumnSelected(true)
 {

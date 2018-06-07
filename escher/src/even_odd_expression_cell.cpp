@@ -5,7 +5,8 @@ using namespace Poincare;
 EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   EvenOddCell(),
-  m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor)
+  m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+  m_margin(0)
 {
 }
 
@@ -34,7 +35,18 @@ void EvenOddExpressionCell::setTextColor(KDColor textColor) {
 }
 
 KDSize EvenOddExpressionCell::minimalSizeForOptimalDisplay() const {
-  return m_expressionView.minimalSizeForOptimalDisplay();
+  KDSize expressionSize = m_expressionView.minimalSizeForOptimalDisplay();
+  return KDSize(m_margin+expressionSize.width(), expressionSize.height());
+}
+
+void EvenOddExpressionCell::setMargin(KDCoordinate margin) {
+  m_margin = margin;
+  layoutSubviews();
+}
+
+void EvenOddExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
+  // Color the margin
+  ctx->fillRect(KDRect(0, 0, m_margin, bounds().height()), backgroundColor());
 }
 
 int EvenOddExpressionCell::numberOfSubviews() const {
@@ -47,5 +59,5 @@ View * EvenOddExpressionCell::subviewAtIndex(int index) {
 }
 
 void EvenOddExpressionCell::layoutSubviews() {
-  m_expressionView.setFrame(bounds());
+  m_expressionView.setFrame(KDRect(m_margin, 0, bounds().width()-m_margin, bounds().height()));
 }

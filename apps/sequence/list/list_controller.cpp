@@ -197,7 +197,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 }
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
-  ModelExpressionCell * myCell = (ModelExpressionCell *)cell;
+  FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
     myCell->setExpressionLayout(sequence->layout());
@@ -291,7 +291,8 @@ void ListController::reinitExpression(Shared::ExpressionModel * model) {
 View * ListController::loadView() {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_sequenceTitleCells[i] = new SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
-    m_expressionCells[i] = new ModelExpressionCell();
+    m_expressionCells[i] = new FunctionExpressionCell();
+    m_expressionCells[i]->setMargin(k_expressionMargin);
   }
   return Shared::FunctionListController::loadView();
 }

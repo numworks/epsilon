@@ -3,7 +3,6 @@
 
 #include <escher.h>
 #include "../shared/expression_model_list_controller.h"
-#include "../shared/model_expression_cell.h"
 #include "../shared/expression_layout_field_delegate.h"
 #include "../shared/text_field_delegate.h"
 #include "equation_store.h"
@@ -55,7 +54,7 @@ private:
   StackViewController * stackController() const;
   InputViewController * inputController() override;
   EquationStore * m_equationStore;
-  Shared::ModelExpressionCell * m_expressionCells[k_maxNumberOfRows];
+  EvenOddExpressionCell * m_expressionCells[k_maxNumberOfRows];
   Button m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
   StackViewController m_modelsStackController;

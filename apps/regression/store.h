@@ -20,6 +20,9 @@ public:
 
   // Regression
   void setSeriesRegressionType(int series, Model::Type type);
+  Model::Type seriesRegressionType(int series) {
+    return m_regressionTypes[series];
+  }
   Model * modelForSeries(int series) {
     assert(series >= 0 && series < k_numberOfSeries);
     assert((int)m_regressionTypes[series] >= 0 && (int)m_regressionTypes[series] < Model::k_numberOfModels);

@@ -6,6 +6,8 @@ namespace Shared {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController) :
   ViewController(parentResponder),
+  m_store(store),
+  m_series(0),
   m_deleteColumn(I18n::Message::ClearColumn),
   m_fillWithFormula(I18n::Message::FillWithFormula),
 #if COPY_IMPORT_LIST
@@ -13,10 +15,8 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_importList(I18n::Message::ImportList),
 #endif
   m_selectableTableView(this, this, this),
-  m_store(store),
   m_storeController(storeController),
-  m_xColumnSelected(true),
-  m_series(0)
+  m_xColumnSelected(true)
 {
 }
 
@@ -66,7 +66,26 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-HighlightCell * StoreParameterController::reusableCell(int index) {
+KDCoordinate StoreParameterController::cumulatedHeightFromIndex(int j) {
+  assert (j >= 0 && j <= numberOfRows());
+  KDCoordinate result = 0;
+  for (int i = 0; i < j; i++) {
+    result+= rowHeight(i);
+  }
+  return result;
+}
+
+int StoreParameterController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  int result = 0;
+  int j = 0;
+  while (result < offsetY && j < numberOfRows()) {
+    result += rowHeight(j++);
+  }
+  return (result < offsetY || offsetY == 0) ? j : j - 1;
+}
+
+HighlightCell * StoreParameterController::reusableCell(int index, int type) {
+  assert(type == k_standardCellType);
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   HighlightCell * cells[] = {&m_deleteColumn, &m_fillWithFormula};// {&m_deleteColumn, &m_fillWithFormula, &m_copyColumn, &m_importList};

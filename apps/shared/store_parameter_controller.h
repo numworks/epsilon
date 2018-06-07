@@ -9,7 +9,7 @@ namespace Shared {
 
 class StoreController;
 
-class StoreParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class StoreParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   StoreParameterController(Responder * parentResponder, DoublePairStore * store, StoreController * storeController);
   void selectXColumn(bool xColumnSelected) { m_xColumnSelected = xColumnSelected; }
@@ -19,9 +19,19 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() override { return k_totalNumberOfCell; }
-  KDCoordinate cellHeight() override { return Metric::ParameterCellHeight; }
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override { return k_totalNumberOfCell; }
+  KDCoordinate rowHeight(int j) override { return Metric::ParameterCellHeight; }
+  KDCoordinate cumulatedHeightFromIndex(int j) override;
+  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+  HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override {
+    assert(type == k_standardCellType);
+    return k_totalNumberOfCell;
+  }
+  int typeAtLocation(int i, int j) override { return k_standardCellType; }
+protected:
+  static constexpr int k_standardCellType = 0;
+  DoublePairStore * m_store;
+  int m_series;
 private:
 #if COPY_IMPORT_LIST
   constexpr static int k_totalNumberOfCell = 4;
@@ -33,10 +43,8 @@ private:
   MessageTableCell m_deleteColumn;
   MessageTableCell m_fillWithFormula;
   SelectableTableView m_selectableTableView;
-  DoublePairStore * m_store;
   StoreController * m_storeController;
   bool m_xColumnSelected;
-  int m_series;
 };
 
 }

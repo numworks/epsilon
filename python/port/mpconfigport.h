@@ -44,9 +44,6 @@
 // Whether to support bytearray object
 #define MICROPY_PY_BUILTINS_BYTEARRAY (0)
 
-// Whether to support set object
-#define MICROPY_PY_BUILTINS_SET (0)
-
 // Whether to support property object
 #define MICROPY_PY_BUILTINS_PROPERTY (0)
 

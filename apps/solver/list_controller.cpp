@@ -147,6 +147,9 @@ void ListController::resolveEquations() {
   }
   EquationStore::Error e = m_equationStore->exactSolve(static_cast<App *>(app())->localContext());
   switch (e) {
+    case EquationStore::Error::EquationUndefined:
+      app()->displayWarning(I18n::Message::UndefinedEquation);
+      return;
     case EquationStore::Error::TooManyVariables:
       app()->displayWarning(I18n::Message::TooManyVariables);
       return;

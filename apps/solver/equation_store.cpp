@@ -72,6 +72,7 @@ bool EquationStore::haveMoreApproximationSolutions(Context * context) {
 
 void EquationStore::approximateSolve(Poincare::Context * context) {
   assert(m_variables[0] != 0 && m_variables[1] == 0);
+  assert(m_type == Type::Monovariable);
   m_numberOfSolutions = 0;
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
@@ -93,6 +94,9 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   m_variables[0] = 0;
   int numberOfVariables = 0;
   for (int i = 0; i < numberOfDefinedModels(); i++) {
+    if (definedModelAtIndex(i)->standardForm(context) == nullptr) {
+      return Error::EquationUndefined;
+    }
     numberOfVariables = definedModelAtIndex(i)->standardForm(context)->getVariables(m_variables);
     if (numberOfVariables < 0) {
       return Error::TooManyVariables;

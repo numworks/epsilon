@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Regression {
 
-ExpressionLayout * TrigonometricModel::Layout() {
+ExpressionLayout * TrigonometricModel::layout() {
   static ExpressionLayout * layout = LayoutEngine::createStringLayout("asin(bX+c)", 10, KDText::FontSize::Small);
   return layout;
 }

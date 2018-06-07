@@ -9,7 +9,7 @@ namespace Regression {
 class ExponentialModel : public Model {
 public:
   using Model::Model;
-  static Poincare::ExpressionLayout * Layout();
+  Poincare::ExpressionLayout * layout() override;
   double evaluate(double * modelCoefficients, double x) const override;
   double levelSet(double * modelCoefficients, double y) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;

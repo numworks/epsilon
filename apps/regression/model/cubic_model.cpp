@@ -7,7 +7,7 @@ using namespace Poincare;
 
 namespace Regression {
 
-ExpressionLayout * CubicModel::Layout() {
+ExpressionLayout * CubicModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {

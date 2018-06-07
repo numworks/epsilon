@@ -35,6 +35,9 @@ public:
   /* Return the closest dot to given dot, on the right if direction > 0,
    * on the left otherwise */
   int nextDot(int series, int direction, int dot);
+  Model * regressionModel(Model::Type type) {
+    return m_regressionModels[(int) type];
+  }
 
   // Window
   void setDefault() override;

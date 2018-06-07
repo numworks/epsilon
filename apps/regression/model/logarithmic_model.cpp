@@ -7,7 +7,7 @@ using namespace Poincare;
 
 namespace Regression {
 
-ExpressionLayout * LogarithmicModel::Layout() {
+ExpressionLayout * LogarithmicModel::layout() {
   static ExpressionLayout * layout = LayoutEngine::createStringLayout("aln(X)+b", 8, KDText::FontSize::Small);
   return layout;
 }

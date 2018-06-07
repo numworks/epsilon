@@ -13,6 +13,7 @@ class StoreParameterController : public Shared::StoreParameterController {
 public:
   StoreParameterController(Responder * parentResponder, Store * store, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
+  void viewWillAppear() override;
   // ListViewDataSource
   int numberOfRows() override { return Shared::StoreParameterController::numberOfRows() + 1; }
   KDCoordinate rowHeight(int j) override;

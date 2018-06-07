@@ -28,15 +28,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     if (!m_store->seriesIsEmpty(series)) {
       KDColor color = Palette::DataColor[series];
       Model * seriesModel = m_store->modelForSeries(series);
-      double coefficients[Model::k_maxNumberOfCoefficients];
       Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(m_controller->app()->container()))->globalContext();
-      seriesModel->fit(m_store, series, coefficients, globContext);
       drawCurve(ctx, rect, [](float abscissa, void * model, void * context) {
           Model * regressionModel = static_cast<Model *>(model);
           double * regressionCoefficients = static_cast<double *>(context);
           return (float)regressionModel->evaluate(regressionCoefficients, abscissa);
           },
-          seriesModel, coefficients, color);
+          seriesModel, m_store->coefficientsForSeries(series, globContext), color);
       for (int index = 0; index < m_store->numberOfPairsOfSeries(series); index++) {
         drawDot(ctx, rect, m_store->get(series, 0, index), m_store->get(series, 1, index), color);
       }

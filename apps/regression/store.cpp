@@ -8,6 +8,7 @@
 #include "model/quadratic_model.h"
 #include "model/quartic_model.h"
 #include "model/trigonometric_model.h"
+#include "apps/apps_container.h"
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -21,13 +22,16 @@ static inline float max(float x, float y) { return (x>y ? x : y); }
 static inline float min(float x, float y) { return (x<y ? x : y); }
 
 static_assert(Model::k_numberOfModels == 9, "Number of models changed, Regression::Store() needs to adapt");
+static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regression::Store() needs to adapt (m_seriesChecksum)");
 
 Store::Store() :
   InteractiveCurveViewRange(nullptr, this),
-  DoublePairStore()
+  DoublePairStore(),
+  m_seriesChecksum{0, 0, 0}
 {
   for (int i = 0; i < k_numberOfSeries; i++) {
     m_regressionTypes[i] = Model::Type::Linear;
+    m_regressionChanged[i] = false;
   }
   m_regressionModels[0] = new LinearModel();
   m_regressionModels[1] = new QuadraticModel();
@@ -47,6 +51,13 @@ Store::~Store() {
 }
 
 /* Regressions */
+void Store::setSeriesRegressionType(int series, Model::Type type) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  if (m_regressionTypes[series] != type) {
+    m_regressionTypes[series] = type;
+    m_regressionChanged[series] = true;
+  }
+}
 
 int Store::closestVerticalRegression(int direction, float x, float y, int currentRegressionSeries) {
   int regressionSeries = -1;
@@ -207,6 +218,19 @@ bool Store::seriesIsEmpty(int series) const {
 }
 
 /* Calculations */
+
+double * Store::coefficientsForSeries(int series, Poincare::Context * globalContext) {
+  assert(series >= 0 && series <= k_numberOfSeries);
+  assert(!seriesIsEmpty(series));
+  uint32_t storeChecksumSeries = storeChecksumForSeries(series);
+  if (m_regressionChanged[series] || (m_seriesChecksum[series] != storeChecksumSeries)) {
+    Model * seriesModel = modelForSeries(series);
+    seriesModel->fit(this, series, m_regressionCoefficients[series], globalContext);
+    m_regressionChanged[series] = false;
+    m_seriesChecksum[series] = storeChecksumSeries;
+  }
+  return m_regressionCoefficients[series];
+}
 
 double Store::doubleCastedNumberOfPairsOfSeries(int series) const {
   return DoublePairStore::numberOfPairsOfSeries(series);

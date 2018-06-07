@@ -4,9 +4,8 @@
 #include "model/model.h"
 #include "../shared/interactive_curve_view_range.h"
 #include "../shared/double_pair_store.h"
-extern "C" {
+#include <escher/responder.h>
 #include <float.h>
-}
 
 namespace Regression {
 
@@ -20,10 +19,7 @@ public:
   Store& operator=(Store && other) = delete;
 
   // Regression
-  void setSeriesRegressionType(int series, Model::Type type) {
-    assert(series >= 0 && series < k_numberOfSeries);
-    m_regressionTypes[series] = type;
-  }
+  void setSeriesRegressionType(int series, Model::Type type);
   Model * modelForSeries(int series) {
     assert(series >= 0 && series < k_numberOfSeries);
     assert((int)m_regressionTypes[series] >= 0 && (int)m_regressionTypes[series] < Model::k_numberOfModels);
@@ -47,6 +43,7 @@ public:
   bool seriesIsEmpty(int series) const override;
 
   // Calculation
+  double * coefficientsForSeries(int series, Poincare::Context * globalContext);
   double doubleCastedNumberOfPairsOfSeries(int series) const;
   double squaredValueSumOfColumn(int series, int i) const;
   double columnProductSum(int series) const;
@@ -69,8 +66,11 @@ private:
   float addMargin(float x, float range, bool isMin) override;
   float maxValueOfColumn(int series, int i) const;
   float minValueOfColumn(int series, int i) const;
+  uint32_t m_seriesChecksum[k_numberOfSeries];
   Model::Type m_regressionTypes[k_numberOfSeries];
   Model * m_regressionModels[Model::k_numberOfModels];
+  double m_regressionCoefficients[k_numberOfSeries][Model::k_maxNumberOfCoefficients];
+  bool m_regressionChanged[k_numberOfSeries];
 };
 
 typedef double (Store::*ArgCalculPointer)(int, int) const;

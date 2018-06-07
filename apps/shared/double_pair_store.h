@@ -49,6 +49,7 @@ public:
   // Calculations
   double sumOfColumn(int series, int i) const;
   uint32_t storeChecksum() const;
+  uint32_t storeChecksumForSeries(int series) const;
 
   // Colors
   static KDColor colorOfSeriesAtIndex(int i) {

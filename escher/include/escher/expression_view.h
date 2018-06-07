@@ -21,6 +21,7 @@ public:
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
+  void setHorizontalMargin(KDCoordinate horizontalMargin) { m_horizontalMargin = horizontalMargin; }
   int numberOfLayouts() const;
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
@@ -36,6 +37,7 @@ private:
   float m_verticalAlignment;
   KDColor m_textColor;
   KDColor m_backgroundColor;
+  KDCoordinate m_horizontalMargin;
 };
 
 #endif

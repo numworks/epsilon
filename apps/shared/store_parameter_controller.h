@@ -32,6 +32,7 @@ protected:
   static constexpr int k_standardCellType = 0;
   DoublePairStore * m_store;
   int m_series;
+  SelectableTableView m_selectableTableView;
 private:
 #if COPY_IMPORT_LIST
   constexpr static int k_totalNumberOfCell = 4;
@@ -42,7 +43,6 @@ private:
 #endif
   MessageTableCell m_deleteColumn;
   MessageTableCell m_fillWithFormula;
-  SelectableTableView m_selectableTableView;
   StoreController * m_storeController;
   bool m_xColumnSelected;
 };

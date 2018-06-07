@@ -7,7 +7,8 @@ ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignmen
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
   m_textColor(textColor),
-  m_backgroundColor(backgroundColor)
+  m_backgroundColor(backgroundColor),
+  m_horizontalMargin(0)
 {
 }
 
@@ -48,12 +49,13 @@ KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
   if (m_expressionLayout == nullptr) {
     return KDSizeZero;
   }
-  return m_expressionLayout->size();
+  KDSize expressionSize = m_expressionLayout->size();
+  return KDSize(expressionSize.width() + 2*m_horizontalMargin, expressionSize.height());
 }
 
 KDPoint ExpressionView::drawingOrigin() const {
   KDSize expressionSize = m_expressionLayout->size();
-  return KDPoint(m_horizontalAlignment*(m_frame.width() - expressionSize.width()), max(0, (m_frame.height() - expressionSize.height())/2));
+  return KDPoint(m_horizontalMargin + m_horizontalAlignment*(m_frame.width() - 2*m_horizontalMargin - expressionSize.width()), max(0, (m_frame.height() - expressionSize.height())/2));
 }
 
 KDPoint ExpressionView::absoluteDrawingOrigin() const {

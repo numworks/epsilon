@@ -9,6 +9,12 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_changeRegressionCell(I18n::Message::ChangeRegression),
   m_regressionController(this, store)
 {
+  static_cast<ExpressionView *>(m_changeRegressionCell.subAccessoryView())->setHorizontalMargin(5);
+}
+
+void StoreParameterController::viewWillAppear() {
+  m_selectableTableView.reloadData();
+  Shared::StoreParameterController::viewWillAppear();
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
@@ -56,10 +62,10 @@ int StoreParameterController::typeAtLocation(int i, int j) {
 }
 
 void StoreParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  Shared::StoreParameterController::willDisplayCellForIndex(cell, index);
-  if (index == numberOfRows() - 1) {
+  if (index == numberOfRows() -1) {
     m_changeRegressionCell.setExpressionLayout(static_cast<Store *>(m_store)->modelForSeries(m_series)->layout());
   }
+  Shared::StoreParameterController::willDisplayCellForIndex(cell, index);
 }
 
 }

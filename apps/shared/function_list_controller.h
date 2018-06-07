@@ -53,8 +53,6 @@ private:
     FunctionApp * myApp = static_cast<FunctionApp *>(app());
     return myApp->inputViewController();
   }
-  TableViewDataSource * tableDataSource() override { return this; }
-  SelectableTableViewDelegate * selectableTableDelegate() override { return this; }
   virtual ListParameterController * parameterController() = 0;
   virtual int maxNumberOfRows() = 0;
   virtual HighlightCell * titleCells(int index) = 0;

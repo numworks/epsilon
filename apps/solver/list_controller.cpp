@@ -191,19 +191,26 @@ void ListController::addEmptyModel() {
   app()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::CommonTopMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
 }
 
+SelectableTableView * ListController::selectableTableView() {
+  return static_cast<EquationListView *>(view())->selectableTableView();
+}
+
 View * ListController::loadView() {
+  loadAddModelCell();
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i] = new ModelExpressionCell();
   }
-  return Shared::ExpressionModelListController::loadView();
+  EquationListView * listView = new EquationListView(this, this, this);
+  return listView;
 }
 
 void ListController::unloadView(View * view) {
+  unloadAddModelCell();
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     delete m_expressionCells[i];
     m_expressionCells[i] = nullptr;
   }
-  Shared::ExpressionModelListController::unloadView(view);
+  delete view;
 }
 
 Shared::TextFieldDelegateApp * ListController::textFieldDelegateApp() {

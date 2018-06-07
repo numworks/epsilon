@@ -7,7 +7,8 @@ namespace Regression {
 StoreParameterController::StoreParameterController(Responder * parentResponder, Store * store, StoreController * storeController) :
   Shared::StoreParameterController(parentResponder, store, storeController),
   m_changeRegressionCell(I18n::Message::ChangeRegression),
-  m_regressionController(this, store)
+  m_regressionController(this, store),
+  m_lastSelectionIsRegression(false)
 {
   static_cast<ExpressionView *>(m_changeRegressionCell.subAccessoryView())->setHorizontalMargin(5);
 }
@@ -22,9 +23,20 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
     m_regressionController.setSeries(m_series);
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->push(&m_regressionController);
+    m_lastSelectionIsRegression = true;
     return true;
   }
   return Shared::StoreParameterController::handleEvent(event);
+}
+
+void StoreParameterController::didBecomeFirstResponder() {
+  if (m_lastSelectionIsRegression) {
+    selectCellAtLocation(0, 2);
+  } else {
+    selectCellAtLocation(0, 0);
+  }
+  m_lastSelectionIsRegression = false;
+  app()->setFirstResponder(&m_selectableTableView);
 }
 
 HighlightCell * StoreParameterController::reusableCell(int index, int type) {

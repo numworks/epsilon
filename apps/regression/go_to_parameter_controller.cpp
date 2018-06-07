@@ -44,21 +44,15 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
     return false;
   }
   Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
-  double x = m_store->xValueForYValue(m_graphController->selectedSeriesIndex(), f, globContext);
-  if (m_xPrediction) {
-    x = m_store->yValueForXValue(m_graphController->selectedSeriesIndex(), f, globContext);
-  }
+  double x = m_xPrediction ?
+    m_store->yValueForXValue(m_graphController->selectedSeriesIndex(), f, globContext) :
+    m_store->xValueForYValue(m_graphController->selectedSeriesIndex(), f, globContext);
   if (std::fabs(x) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   if (std::isnan(x)) {
-    if (m_store->slope(m_graphController->selectedSeriesIndex()) < DBL_EPSILON && f == m_store->yIntercept(m_graphController->selectedSeriesIndex())) {
-      m_graphController->selectRegressionCurve();
-      m_cursor->moveTo(m_cursor->x(), f);
-      return true;
-    }
-    app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
+    app()->displayWarning(I18n::Message::ValueNotReachedByRegression); //TODO
     return false;
   }
   m_graphController->selectRegressionCurve();

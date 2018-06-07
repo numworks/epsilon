@@ -1,4 +1,5 @@
 #include "store_parameter_controller.h"
+#include "app.h"
 #include "store_controller.h"
 #include <assert.h>
 
@@ -7,10 +8,9 @@ namespace Regression {
 StoreParameterController::StoreParameterController(Responder * parentResponder, Store * store, StoreController * storeController) :
   Shared::StoreParameterController(parentResponder, store, storeController),
   m_changeRegressionCell(I18n::Message::ChangeRegression),
-  m_regressionController(this, store),
   m_lastSelectionIsRegression(false)
 {
-  static_cast<ExpressionView *>(m_changeRegressionCell.subAccessoryView())->setHorizontalMargin(5);
+  static_cast<ExpressionView *>(m_changeRegressionCell.subAccessoryView())->setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);
 }
 
 void StoreParameterController::viewWillAppear() {
@@ -20,9 +20,10 @@ void StoreParameterController::viewWillAppear() {
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && selectedRow() == numberOfRows() - 1) {
-    m_regressionController.setSeries(m_series);
+    RegressionController * regressionController = static_cast<Regression::App *>(app())->regressionController();
+    regressionController->setSeries(m_series);
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-    stack->push(&m_regressionController);
+    stack->push(regressionController);
     m_lastSelectionIsRegression = true;
     return true;
   }

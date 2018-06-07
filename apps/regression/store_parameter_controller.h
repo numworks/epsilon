@@ -25,7 +25,6 @@ public:
 private:
   static constexpr int k_regressionCellType = 1;
   MessageTableCellWithChevronAndExpression m_changeRegressionCell;
-  RegressionController m_regressionController;
   bool m_lastSelectionIsRegression;
 };
 

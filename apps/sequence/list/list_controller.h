@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "../sequence_title_cell.h"
 #include "../sequence_store.h"
-#include "../../shared/model_expression_cell.h"
+#include "../../shared/function_expression_cell.h"
 #include "../../shared/function_list_controller.h"
 #include "../../shared/expression_layout_field_delegate.h"
 #include "../../shared/text_field_delegate.h"
@@ -48,7 +48,7 @@ private:
   constexpr static int k_maxNumberOfRows = 3*MaxNumberOfSequences;
   SequenceStore * m_sequenceStore;
   SequenceTitleCell * m_sequenceTitleCells[k_maxNumberOfRows];
-  Shared::ModelExpressionCell * m_expressionCells[k_maxNumberOfRows];
+  Shared::FunctionExpressionCell * m_expressionCells[k_maxNumberOfRows];
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   StackViewController m_typeStackController;

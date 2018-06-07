@@ -11,6 +11,7 @@ class ExpressionModelListController : public DynamicViewController, public Selec
 public:
   ExpressionModelListController(Responder * parentResponder, I18n::Message text);
 protected:
+  static constexpr KDCoordinate k_expressionMargin = 5;
   /* Table Data Source */
   virtual int numberOfExpressionRows();
   virtual KDCoordinate expressionRowHeight(int j);

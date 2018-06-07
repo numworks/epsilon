@@ -12,6 +12,7 @@ public:
   Poincare::ExpressionLayout * layout() override;
   double evaluate(double * modelCoefficients, double x) const override;
   double levelSet(double * modelCoefficients, double y) const override;
+  virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   double numberOfCoefficients() const override { return 2; }
 };

@@ -59,7 +59,7 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
   }
 }
 
-int Store::closestVerticalRegression(int direction, float x, float y, int currentRegressionSeries) {
+int Store::closestVerticalRegression(int direction, float x, float y, int currentRegressionSeries, Poincare::Context * globalContext) {
   int regressionSeries = -1;
   float closestDistance = INFINITY;
   /* The conditions to test on all the regressions are in this order:
@@ -69,7 +69,7 @@ int Store::closestVerticalRegression(int direction, float x, float y, int curren
    * - it is above y if direction > 0 and below otherwise */
   for (int series = 0; series < k_numberOfSeries; series ++) {
     if (!seriesIsEmpty(series) && series != currentRegressionSeries) {
-      double regressionY = yValueForXValue(series, x);
+      double regressionY = yValueForXValue(series, x, globalContext);
       if ((m_yMin <= regressionY && regressionY <= m_yMax)
           && (std::fabs(regressionY - y) < closestDistance)
           && (regressionY - y > 0) == (direction > 0)) {
@@ -83,7 +83,7 @@ int Store::closestVerticalRegression(int direction, float x, float y, int curren
 
 /* Dots */
 
-int Store::closestVerticalDot(int direction, float x, float y, int currentSeries, int currentDot, int * nextSeries) {
+int Store::closestVerticalDot(int direction, float x, float y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
   float nextX = INFINITY;
   float nextY = INFINITY;
   int selectedDot = -1;
@@ -104,7 +104,7 @@ int Store::closestVerticalDot(int direction, float x, float y, int currentSeries
           double currentDataY = m_data[series][1][index];
           if ((m_xMin <= currentDataX && currentDataX <= m_xMax) &&
               (std::fabs(currentDataX - x) <= std::fabs(nextX - x)) &&
-              ((currentDataY - yValueForXValue(currentSeries, currentDataX) >= 0) == (direction > 0)) &&
+              ((currentDataY - yValueForXValue(currentSeries, currentDataX, globalContext) >= 0) == (direction > 0)) &&
               ((currentDataY > y) == (direction > 0))) {
             // Handle edge case: if 2 dots have the same abscissa but different ordinates
             if (nextX != currentDataX || ((nextY - currentDataY >= 0) == (direction > 0))) {
@@ -122,7 +122,7 @@ int Store::closestVerticalDot(int direction, float x, float y, int currentSeries
         double meanY = meanOfColumn(series, 1);
         if (m_xMin <= meanX && meanX <= m_xMax &&
             (std::fabs(meanX - x) <= std::fabs(nextX - x)) &&
-            ((meanY - yValueForXValue(currentSeries, meanX) >= 0) == (direction > 0)) &&
+            ((meanY - yValueForXValue(currentSeries, meanX, globalContext) >= 0) == (direction > 0)) &&
             ((meanY > y) == (direction > 0))) {
           if (nextX != meanX || ((nextY - meanY >= 0) == (direction > 0))) {
             selectedDot = numberOfPairsOfSeries(series);
@@ -293,12 +293,16 @@ double Store::yIntercept(int series) const {
   return meanOfColumn(series, 1) - slope(series)*meanOfColumn(series, 0);
 }
 
-double Store::yValueForXValue(int series, double x) const {
-  return slope(series)*x+yIntercept(series);
+double Store::yValueForXValue(int series, double x, Poincare::Context * globalContext) {
+  Model * model = m_regressionModels[(int)m_regressionTypes[series]];
+  double * coefficients = coefficientsForSeries(series, globalContext);
+  return model->evaluate(coefficients, x);
 }
 
-double Store::xValueForYValue(int series, double y) const {
-  return std::fabs(slope(series)) < DBL_EPSILON ? NAN : (y - yIntercept(series))/slope(series);
+double Store::xValueForYValue(int series, double y, Poincare::Context * globalContext) {
+  Model * model = m_regressionModels[(int)m_regressionTypes[series]];
+  double * coefficients = coefficientsForSeries(series, globalContext);
+  return model->levelSet(coefficients, y);
 }
 
 double Store::correlationCoefficient(int series) const {

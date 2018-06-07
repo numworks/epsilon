@@ -29,6 +29,15 @@ double PowerModel::evaluate(double * modelCoefficients, double x) const {
   return a*pow(x,b);
 }
 
+double PowerModel::levelSet(double * modelCoefficients, double y) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  if (a == 0 || b == 0 || y/a <= 0) {
+    return NAN;
+  }
+  return exp(log(y/a)/b);
+}
+
 double PowerModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];

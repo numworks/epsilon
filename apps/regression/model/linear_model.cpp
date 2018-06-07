@@ -18,6 +18,15 @@ double LinearModel::evaluate(double * modelCoefficients, double x) const {
   return a*x+b;
 }
 
+double LinearModel::levelSet(double * modelCoefficients, double y) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  if (a == 0) {
+    return NAN;
+  }
+  return (y-b)/a;
+}
+
 double LinearModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
     // Derivate: x

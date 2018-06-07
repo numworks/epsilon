@@ -35,6 +35,10 @@ double QuadraticModel::evaluate(double * modelCoefficients, double x) const {
   return a*x*x+b*x+c;
 }
 
+double QuadraticModel::levelSet(double * modelCoefficients, double y) const {
+  return NAN;
+}
+
 double QuadraticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
     // Derivate: x^2

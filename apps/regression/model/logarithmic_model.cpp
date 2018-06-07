@@ -18,6 +18,15 @@ double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {
   return a*log(x)+b;
 }
 
+double LogarithmicModel::levelSet(double * modelCoefficients, double y) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  if (a == 0) {
+    return NAN;
+  }
+  return exp((y-b)/a);
+}
+
 double LogarithmicModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
     // Derivate: ln(x)

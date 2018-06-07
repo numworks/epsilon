@@ -43,6 +43,10 @@ double CubicModel::evaluate(double * modelCoefficients, double x) const {
   return a*x*x*x+b*x*x+c*x+d;
 }
 
+double CubicModel::levelSet(double * modelCoefficients, double y) const {
+  return NAN;
+}
+
 double CubicModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
     // Derivate: x^3

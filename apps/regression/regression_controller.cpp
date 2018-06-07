@@ -79,39 +79,7 @@ void RegressionController::willDisplayCellAtLocation(HighlightCell * cell, int i
   I18n::Message messages[k_numberOfRows] = {I18n::Message::Linear, I18n::Message::Quadratic, I18n::Message::Cubic, I18n::Message::Quartic, I18n::Message::Logarithmic, I18n::Message::Exponential, I18n::Message::Power, I18n::Message::Trigonometric, I18n::Message::Logistic};
   MessageTableCellWithExpression * castedCell = static_cast<MessageTableCellWithExpression *>(cell);
   castedCell->setMessage(messages[j]);
-  switch ((Model::Type) j) {
-    // TODO virtualize ?
-    case Model::Type::Linear:
-      castedCell->setExpressionLayout(LinearModel::Layout());
-      break;
-    case Model::Type::Quadratic:
-      castedCell->setExpressionLayout(QuadraticModel::Layout());
-      break;
-    case Model::Type::Cubic:
-      castedCell->setExpressionLayout(CubicModel::Layout());
-      break;
-    case Model::Type::Quartic:
-      castedCell->setExpressionLayout(QuarticModel::Layout());
-      break;
-    case Model::Type::Logarithmic:
-      castedCell->setExpressionLayout(LogarithmicModel::Layout());
-      break;
-    case Model::Type::Exponential:
-      castedCell->setExpressionLayout(ExponentialModel::Layout());
-      break;
-    case Model::Type::Power:
-      castedCell->setExpressionLayout(PowerModel::Layout());
-      break;
-    case Model::Type::Trigonometric:
-      castedCell->setExpressionLayout(TrigonometricModel::Layout());
-      break;
-    case Model::Type::Logistic:
-      castedCell->setExpressionLayout(LogisticModel::Layout());
-      break;
-    default:
-      assert(false);
-      break;
-  }
+  castedCell->setExpressionLayout(m_store->regressionModel((Model::Type) j)->layout());
 }
 
 }

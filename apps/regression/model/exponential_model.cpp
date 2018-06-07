@@ -7,7 +7,7 @@ using namespace Poincare;
 
 namespace Regression {
 
-ExpressionLayout * ExponentialModel::Layout() {
+ExpressionLayout * ExponentialModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {

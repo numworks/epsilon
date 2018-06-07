@@ -9,6 +9,7 @@ namespace Regression {
 
 class RegressionController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
+  constexpr static KDCoordinate k_logisticCellHeight = 47;
   RegressionController(Responder * parentResponder, Store * store);
   void setSeries(int series) { m_series = series; }
   // ViewController
@@ -29,7 +30,6 @@ public:
   int numberOfRows() override { return k_numberOfRows; }
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 private:
-  constexpr static KDCoordinate k_logisticCellHeight = 47;
   constexpr static int k_numberOfRows = 9;
   constexpr static int k_numberOfCells = 6; // (240 - 70) / 35
   MessageTableCellWithExpression m_regressionCells[k_numberOfCells];

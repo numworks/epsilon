@@ -13,11 +13,16 @@ class StoreParameterController : public Shared::StoreParameterController {
 public:
   StoreParameterController(Responder * parentResponder, Store * store, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
+  // ListViewDataSource
   int numberOfRows() override { return Shared::StoreParameterController::numberOfRows() + 1; }
-  HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() override { return Shared::StoreParameterController::reusableCellCount() + 1; }
+  KDCoordinate rowHeight(int j) override;
+  HighlightCell * reusableCell(int index, int type) override;
+  int reusableCellCount(int type) override;
+  int typeAtLocation(int i, int j) override;
+  void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
-  MessageTableCell m_changeRegression;
+  static constexpr int k_regressionCellType = 1;
+  MessageTableCellWithChevronAndExpression m_changeRegressionCell;
   RegressionController m_regressionController;
 };
 

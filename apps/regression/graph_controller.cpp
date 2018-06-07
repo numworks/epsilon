@@ -82,8 +82,8 @@ void GraphController::reloadBannerView() {
     return;
   }
 
-  m_bannerView.setMessageAtIndex(I18n::Message::RegressionFormula, 3);
-
+  Model * model = m_store->modelForSeries(selectedSeriesIndex());
+  m_bannerView.setMessageAtIndex(model->formulaMessage(), 3);
   char buffer[k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   int numberOfChar = 0;
   const char * legend = " P(";

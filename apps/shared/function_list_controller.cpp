@@ -213,14 +213,20 @@ TabViewController * FunctionListController::tabController() const{
 }
 
 View * FunctionListController::loadView() {
+  loadAddModelCell();
   m_emptyCell = new EvenOddCell();
-  return ExpressionModelListController::loadView();
+  SelectableTableView * selectableTableView = new SelectableTableView(this, this, this, this);
+  selectableTableView->setMargins(0);
+  selectableTableView->setVerticalCellOverlap(0);
+  selectableTableView->setShowsIndicators(false);
+  return selectableTableView;
 }
 
 void FunctionListController::unloadView(View * view) {
+  unloadAddModelCell();
   delete m_emptyCell;
   m_emptyCell = nullptr;
-  Shared::ExpressionModelListController::unloadView(view);
+  delete view;
 }
 
 }

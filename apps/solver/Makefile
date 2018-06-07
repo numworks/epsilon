@@ -5,6 +5,7 @@ app_objs += $(addprefix apps/solver/,\
   app.o\
   equation_models_parameter_controller.o\
   equation.o\
+  equation_list_view.o\
   equation_store.o\
   interval_controller.o\
   list_controller.o\

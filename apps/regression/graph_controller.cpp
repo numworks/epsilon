@@ -47,6 +47,9 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   InteractiveCurveViewController::viewWillAppear();
+  if (m_selectedSeries < 0) {
+    m_selectedSeries = m_store->indexOfKthNonEmptySeries(0);
+  }
   if (*m_selectedDotIndex >= 0) {
     m_view.setCursorView(static_cast<View *>(&m_crossCursorView));
   } else {

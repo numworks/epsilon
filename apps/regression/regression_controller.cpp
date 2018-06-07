@@ -41,6 +41,11 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
     stack->pop();
     return true;
   }
+  if (event == Ion::Events::Left) {
+    StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+    stack->pop();
+    return true;
+  }
   return false;
 
 }

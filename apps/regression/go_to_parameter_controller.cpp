@@ -43,9 +43,10 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  double x = m_store->xValueForYValue(m_graphController->selectedSeriesIndex(), f);
+  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  double x = m_store->xValueForYValue(m_graphController->selectedSeriesIndex(), f, globContext);
   if (m_xPrediction) {
-    x = m_store->yValueForXValue(m_graphController->selectedSeriesIndex(), f);
+    x = m_store->yValueForXValue(m_graphController->selectedSeriesIndex(), f, globContext);
   }
   if (std::fabs(x) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);

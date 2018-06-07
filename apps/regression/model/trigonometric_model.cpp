@@ -21,6 +21,10 @@ double TrigonometricModel::evaluate(double * modelCoefficients, double x) const 
   return a*sin(b*radianX+c);
 }
 
+double TrigonometricModel::levelSet(double * modelCoefficients, double y) const {
+  return NAN;
+}
+
 double TrigonometricModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];

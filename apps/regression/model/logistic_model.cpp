@@ -38,6 +38,20 @@ double LogisticModel::evaluate(double * modelCoefficients, double x) const {
   return c/(1.0+a*exp(-b*x));
 }
 
+double LogisticModel::levelSet(double * modelCoefficients, double y) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  if (a == 0 || b == 0 || c == 0 || y == 0) {
+    return NAN;
+  }
+  double lnArgument = (c/y - 1)/a;
+  if (lnArgument <= 0) {
+    return NAN;
+  }
+  return -log(lnArgument)/b;
+}
+
 double LogisticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];

@@ -14,6 +14,7 @@ public:
   StoreParameterController(Responder * parentResponder, Store * store, StoreController * storeController);
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
+  void didBecomeFirstResponder() override;
   // ListViewDataSource
   int numberOfRows() override { return Shared::StoreParameterController::numberOfRows() + 1; }
   KDCoordinate rowHeight(int j) override;
@@ -25,6 +26,7 @@ private:
   static constexpr int k_regressionCellType = 1;
   MessageTableCellWithChevronAndExpression m_changeRegressionCell;
   RegressionController m_regressionController;
+  bool m_lastSelectionIsRegression;
 };
 
 }

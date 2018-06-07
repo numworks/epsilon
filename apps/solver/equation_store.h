@@ -16,9 +16,10 @@ public:
   };
   enum class Error : int16_t {
     NoError = 0,
-    TooManyVariables = -1,
-    NonLinearSystem = -2,
-    RequireApproximateSolution = -3
+    EquationUndefined = -1,
+    TooManyVariables = -2,
+    NonLinearSystem = -3,
+    RequireApproximateSolution = -4
   };
   EquationStore();
   ~EquationStore();

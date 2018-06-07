@@ -102,7 +102,7 @@ void IntervalController::buttonAction() {
 }
 
 I18n::Message IntervalController::okButtonText() {
-  return I18n::Message::Resolve;
+  return I18n::Message::ResolveEquation;
 }
 
 View * IntervalController::loadView() {

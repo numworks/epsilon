@@ -27,11 +27,11 @@ public:
   }
   /* Return the series index of the closest regression at abscissa x, above
    * ordinate y if direction > 0, below otherwise */
-  int closestVerticalRegression(int direction, float x, float y, int currentRegressionSeries);
+  int closestVerticalRegression(int direction, float x, float y, int currentRegressionSeries, Poincare::Context * globalContext);
   // Dots
   /* Return the closest dot to abscissa x above the regression curve if
    * direction > 0, below otherwise */
-  int closestVerticalDot(int direction, float x, float y, int currentSeries, int currentDot, int * nextSeries);
+  int closestVerticalDot(int direction, float x, float y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext);
   /* Return the closest dot to given dot, on the right if direction > 0,
    * on the left otherwise */
   int nextDot(int series, int direction, int dot);
@@ -53,8 +53,8 @@ public:
   double covariance(int series) const;
   double slope(int series) const;
   double yIntercept(int series) const;
-  double yValueForXValue(int series, double x) const;
-  double xValueForYValue(int series, double y) const;
+  double yValueForXValue(int series, double x, Poincare::Context * globalContext);
+  double xValueForYValue(int series, double y, Poincare::Context * globalContext);
   double correlationCoefficient(int series) const;
   double squaredCorrelationCoefficient(int series) const;
 private:

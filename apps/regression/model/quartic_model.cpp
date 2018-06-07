@@ -51,6 +51,10 @@ double QuarticModel::evaluate(double * modelCoefficients, double x) const {
   return a*x*x*x*x+b*x*x*x+c*x*x+d*x+e;
 }
 
+double QuarticModel::levelSet(double * modelCoefficients, double y) const {
+  return NAN;
+}
+
 double QuarticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
     // Derivate: x^4

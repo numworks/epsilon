@@ -48,14 +48,14 @@ bool Multiplication::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 3);
 }
 
-ExpressionLayout * Multiplication::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * Multiplication::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
-  return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, middleDotString);
+  return LayoutEngine::createInfixLayout(this, floatDisplayMode, numberOfSignificantDigits, middleDotString);
 }
 
-int Multiplication::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Multiplication::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   const char multiplicationString[] = {Ion::Charset::MultiplicationSign, 0};
-  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, multiplicationString);
+  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, multiplicationString);
 }
 
 Expression::Sign Multiplication::sign() const {
@@ -77,30 +77,26 @@ Expression * Multiplication::setSign(Sign s, Context & context, AngleUnit angleU
 }
 
 template<typename T>
-Complex<T> Multiplication::compute(const Complex<T> c, const Complex<T> d) {
-  return Complex<T>::Cartesian(c.a()*d.a()-c.b()*d.b(), c.b()*d.a() + c.a()*d.b());
+std::complex<T> Multiplication::compute(const std::complex<T> c, const std::complex<T> d) {
+  return c*d;
 }
 
 template<typename T>
-Matrix * Multiplication::computeOnMatrices(const Matrix * m, const Matrix * n) {
-  if (m->numberOfColumns() != n->numberOfRows()) {
-    return nullptr;
+MatrixComplex<T> Multiplication::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
+  if (m.numberOfColumns() != n.numberOfRows()) {
+    return MatrixComplex<T>::Undefined();
   }
-  Expression ** operands = new Expression * [m->numberOfRows()*n->numberOfColumns()];
-  for (int i = 0; i < m->numberOfRows(); i++) {
-    for (int j = 0; j < n->numberOfColumns(); j++) {
-      T a = 0.0f;
-      T b = 0.0f;
-      for (int k = 0; k < m->numberOfColumns(); k++) {
-        const Complex<T> * mEntry = static_cast<const Complex<T> *>(m->operand(i*m->numberOfColumns()+k));
-        const Complex<T> * nEntry = static_cast<const Complex<T> *>(n->operand(k*n->numberOfColumns()+j));
-        a += mEntry->a()*nEntry->a() - mEntry->b()*nEntry->b();
-        b += mEntry->b()*nEntry->a() + mEntry->a()*nEntry->b();
+  std::complex<T> * operands = new std::complex<T> [m.numberOfRows()*n.numberOfColumns()];
+  for (int i = 0; i < m.numberOfRows(); i++) {
+    for (int j = 0; j < n.numberOfColumns(); j++) {
+      std::complex<T> c(0.0);
+      for (int k = 0; k < m.numberOfColumns(); k++) {
+        c += m.complexOperand(i*m.numberOfColumns()+k)*n.complexOperand(k*n.numberOfColumns()+j);
       }
-      operands[i*n->numberOfColumns()+j] = new Complex<T>(Complex<T>::Cartesian(a, b));
+      operands[i*n.numberOfColumns()+j] = c;
     }
   }
-  Matrix * result = new Matrix(operands, m->numberOfRows(), n->numberOfColumns(), false);
+  MatrixComplex<T> result = MatrixComplex<T>(operands, m.numberOfRows(), n.numberOfColumns());
   delete[] operands;
   return result;
 }
@@ -678,9 +674,9 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, A
   sortOperands(SimplificationOrder, false);
 }
 
-template Matrix * Multiplication::computeOnComplexAndMatrix<float>(Complex<float> const*, const Matrix*);
-template Matrix * Multiplication::computeOnComplexAndMatrix<double>(Complex<double> const*, const Matrix*);
-template Complex<float> Multiplication::compute<float>(Complex<float>, Complex<float>);
-template Complex<double> Multiplication::compute<double>(Complex<double>, Complex<double>);
+template MatrixComplex<float> Multiplication::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>);
+template MatrixComplex<double> Multiplication::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>);
+template std::complex<float> Multiplication::compute<float>(const std::complex<float>, const std::complex<float>);
+template std::complex<double> Multiplication::compute<double>(const std::complex<double>, const std::complex<double>);
 
 }

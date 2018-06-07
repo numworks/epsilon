@@ -77,31 +77,29 @@ Expression * Factorial::shallowBeautify(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  T n = c.a();
-  if (c.b() != 0 || std::isnan(n) || n != (int)n || n < 0) {
-    return Complex<T>::Float(NAN);
+std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  T n = c.real();
+  if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
+    return Complex<T>::Undefined();
   }
   T result = 1;
   for (int i = 1; i <= (int)n; i++) {
     result *= (T)i;
     if (std::isinf(result)) {
-      return Complex<T>::Float(result);
+      return Complex<T>(result);
     }
   }
-  return Complex<T>::Float(std::round(result));
+  return Complex<T>(std::round(result));
 }
 
-ExpressionLayout * Factorial::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Factorial::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result->addChildAtIndex(new CharLayout('!'), result->numberOfChildren());
   return result;
 }
 
-int Factorial::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Factorial::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -111,7 +109,7 @@ int Factorial::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSign
     buffer[numberOfChar++] = '(';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
-  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
+  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (operand(0)->needParenthesisWithParent(this)) {
     buffer[numberOfChar++] = ')';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }

@@ -1,10 +1,10 @@
 #include <poincare/hyperbolic_sine.h>
-#include <poincare/complex.h>
 #include <poincare/subtraction.h>
 #include <poincare/power.h>
 #include <poincare/division.h>
 #include <poincare/opposite.h>
 #include <poincare/simplification_engine.h>
+#include <poincare/trigonometry.h>
 extern "C" {
 #include <assert.h>
 }
@@ -36,15 +36,8 @@ Expression * HyperbolicSine::shallowReduce(Context& context, AngleUnit angleUnit
 }
 
 template<typename T>
-Complex<T> HyperbolicSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() == 0) {
-    return Complex<T>::Float(std::sinh(c.a()));
-  }
-  Complex<T> e = Complex<T>::Float(M_E);
-  Complex<T> exp1 = Power::compute(e, c);
-  Complex<T> exp2 = Power::compute(e, Complex<T>::Cartesian(-c.a(), -c.b()));
-  Complex<T> sub = Subtraction::compute(exp1, exp2);
-  return Division::compute(sub, Complex<T>::Float(2));
+std::complex<T> HyperbolicSine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  return Trigonometry::RoundToMeaningfulDigits(std::sinh(c));
 }
 
 }

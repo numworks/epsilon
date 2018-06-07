@@ -21,16 +21,16 @@ int Undefined::polynomialDegree(char symbolName) const {
 }
 
 template<typename T> Complex<T> * Undefined::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  return new Complex<T>(Complex<T>::Float(NAN));
+  return new Complex<T>(Complex<T>::Undefined());
 }
 
-ExpressionLayout * Undefined::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * Undefined::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[16];
   int numberOfChars = PrintFloat::convertFloatToText<float>(NAN, buffer, 16, 1, floatDisplayMode);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
-int Undefined::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Undefined::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

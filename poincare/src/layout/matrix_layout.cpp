@@ -116,7 +116,7 @@ void MatrixLayout::removePointedChildAtIndexAndMoveCursor(int index, bool delete
   replaceChildAndMoveCursor(child(index), new EmptyLayout(), deleteAfterRemoval, cursor);
 }
 
-int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   // The grid is a matrix.
   if (bufferSize == 0) {
     return -1;
@@ -134,7 +134,7 @@ int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfS
     buffer[numberOfChar++] = '[';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-    numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
+    numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
 
     buffer[numberOfChar++] = ']';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }

@@ -2,6 +2,7 @@
 #include "text_field_delegate_app.h"
 #include "../constant.h"
 #include "../apps_container.h"
+#include "poincare_helpers.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -123,7 +124,7 @@ Button * ValuesController::buttonAtIndex(int index, ButtonRowController::Positio
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, PrintFloat::Mode::Default);
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
   if (cellAtLocationIsEditable(i, j)) {
     return;
   }
@@ -143,7 +144,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     // The cell is a value cell
     EvenOddBufferTextCell * myValueCell = (EvenOddBufferTextCell *)cell;
     double x = m_interval->element(j-1);
-    PrintFloat::convertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PoincareHelpers::ConvertFloatToText<double>(evaluationOfAbscissaAtColumn(x, i), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   myValueCell->setText(buffer);
   }
 }

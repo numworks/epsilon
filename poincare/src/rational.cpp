@@ -140,7 +140,7 @@ int Rational::simplificationOrderSameType(const Expression * e, bool canBeInterr
 template<typename T> Complex<T> * Rational::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   T n = m_numerator.approximate<T>();
   T d = m_denominator.approximate<T>();
-  return new Complex<T>(Complex<T>::Float(n/d));
+  return new Complex<T>(n/d);
 }
 
 bool Rational::needParenthesisWithParent(const Expression * e) const {
@@ -151,7 +151,7 @@ bool Rational::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 3);
 }
 
-ExpressionLayout * Rational::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * Rational::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   ExpressionLayout * numeratorLayout = m_numerator.createLayout();
   if (m_denominator.isOne()) {
     return numeratorLayout;
@@ -160,7 +160,7 @@ ExpressionLayout * Rational::privateCreateLayout(PrintFloat::Mode floatDisplayMo
   return new FractionLayout(numeratorLayout, denominatorLayout, false);
 }
 
-int Rational::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Rational::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   buffer[bufferSize-1] = 0;
   int numberOfChar = m_numerator.writeTextInBuffer(buffer, bufferSize);
   if (m_denominator.isOne()) {

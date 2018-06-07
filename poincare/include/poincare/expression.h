@@ -3,6 +3,7 @@
 
 #include <poincare/expression_layout.h>
 #include <poincare/print_float.h>
+#include <complex>
 extern "C" {
 #include <assert.h>
 }
@@ -10,10 +11,11 @@ extern "C" {
 namespace Poincare {
 
 class Context;
-template<class T> class Complex;
 class Rational;
+template<class T> class Evaluation;
 
 class Expression {
+  template<typename T> friend class Complex;
   friend class Undefined;
   friend class Rational;
   friend class Decimal;
@@ -77,15 +79,14 @@ class Expression {
   friend class ApproximationEngine;
   friend class SimplificationEngine;
   friend class LayoutEngine;
-  friend class Complex<float>;
-  friend class Complex<double>;
   friend class EmptyExpression;
-
+  friend class Randint;
 public:
   enum class Type : uint8_t {
     Undefined = 0,
     Rational = 1,
     Decimal,
+    Approximation,
     Multiplication,
     Power,
     Addition,
@@ -137,7 +138,6 @@ public:
     Sum,
     Symbol,
 
-    Complex,
     Matrix,
     ConfidenceInterval,
     MatrixDimension,
@@ -150,12 +150,10 @@ public:
   enum class ComplexFormat {
     Cartesian = 0,
     Polar = 1,
-    Default = 2
   };
   enum class AngleUnit {
     Degree = 0,
     Radian = 1,
-    Default = 2
   };
 
   /* Constructor & Destructor */
@@ -206,7 +204,7 @@ public:
    * the return value is NAN.
    * NB: so far, we consider that the only way of building a periodic function
    * is to use sin/tan/cos(f(x)) with f a linear function. */
-  virtual float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const;
+  virtual float characteristicXRange(Context & context, AngleUnit angleUnit) const;
   static bool IsMatrix(const Expression * e, Context & context);
 
   /* polynomialDegree returns:
@@ -225,19 +223,19 @@ public:
   }
 
   /* Layout Engine */
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
-  virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
+  virtual ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const = 0; // Returned object must be deleted
+  virtual int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Simplification */
-  static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit = AngleUnit::Default);
-  static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
+  static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit);
+  static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit);
 
-  /* Evaluation Engine
-   * The function evaluate creates a new expression and thus mallocs memory.
+  /* Evaluation Engine */
+  /* The function approximate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
-  template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
-  template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
+  template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit, ComplexFormat complexFormat) const;
+  template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit) const;
+  template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit);
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}
@@ -277,8 +275,6 @@ private:
   virtual int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const { return -1; }
   //TODO: What should be the implementation for complex?
   virtual int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const { return 0; }
-  /* Layout Engine */
-  virtual ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Simplification */
   static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively = true);
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);
@@ -292,8 +288,8 @@ private:
     return nullptr;
   }
   /* Evaluation Engine */
-  virtual Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  virtual Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
 
   Expression * m_parent;
 };

@@ -1,9 +1,11 @@
 #include "variable_box_controller.h"
+#include "shared/poincare_helpers.h"
 #include "constant.h"
 #include <escher/metric.h>
 #include <assert.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 /* ContentViewController */
 
@@ -140,7 +142,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   if (m_currentPage == Page::Scalar) {
     myCell->displayExpression(false);
     char buffer[PrintFloat::k_maxComplexBufferLength];
-    evaluation->writeTextInBuffer(buffer, PrintFloat::k_maxComplexBufferLength, Constant::ShortNumberOfSignificantDigits);
+    PoincareHelpers::WriteTextInBuffer(evaluation, buffer, PrintFloat::k_maxComplexBufferLength, Constant::ShortNumberOfSignificantDigits);
     myCell->setSubtitle(buffer);
     return;
   }
@@ -272,7 +274,7 @@ const Expression * VariableBoxController::ContentViewController::expressionForIn
 ExpressionLayout * VariableBoxController::ContentViewController::expressionLayoutForIndex(int index) {
   if (m_currentPage == Page::Matrix) {
     const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->expressionLayoutForSymbol(&symbol);
+    return m_context->expressionLayoutForSymbol(&symbol, Constant::ShortNumberOfSignificantDigits);
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {

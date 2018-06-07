@@ -14,7 +14,6 @@ objs += $(addprefix poincare/src/,\
   binomial_coefficient.o\
   bounded_static_hierarchy.o\
   ceiling.o\
-  complex.o\
   complex_argument.o\
   confidence_interval.o\
   conjugate.o\
@@ -28,6 +27,7 @@ objs += $(addprefix poincare/src/,\
   dynamic_hierarchy.o\
   empty_expression.o\
   expression_layout_cursor.o\
+  evaluation.o\
   expression_lexer.o\
   expression_parser.o\
   expression.o\
@@ -122,7 +122,7 @@ tests += $(addprefix poincare/test/,\
   addition.cpp\
   arithmetic.cpp\
   binomial_coefficient_layout.cpp\
-  complex.cpp\
+  complex_to_expression.cpp\
   convert_expression_to_text.cpp\
   division.cpp\
   factorial.cpp\
@@ -139,9 +139,9 @@ tests += $(addprefix poincare/test/,\
   properties.cpp\
   rational.cpp\
   simplify_mix.cpp\
+  store.cpp\
   subtraction.cpp\
   symbol.cpp\
-  store.cpp\
   trigo.cpp\
   vertical_offset_layout.cpp\
 )

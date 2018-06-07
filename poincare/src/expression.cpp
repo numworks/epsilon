@@ -7,9 +7,8 @@
 #include <poincare/matrix_data.h>
 #include <poincare/undefined.h>
 #include <poincare/simplification_root.h>
-#include <poincare/rational.h>
-#include <poincare/matrix.h>
-#include <poincare/complex.h>
+#include <poincare/evaluation.h>
+#include <ion.h>
 #include <cmath>
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
@@ -171,14 +170,11 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context) cons
 
 bool Expression::isApproximate(Context & context) const {
   return recursivelyMatches([](const Expression * e, Context & context) {
-        return e->type() == Expression::Type::Decimal || e->type() == Expression::Type::Complex || Expression::IsMatrix(e, context) || (e->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e)->isApproximate(context));
+        return e->type() == Expression::Type::Decimal || Expression::IsMatrix(e, context) || (e->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e)->isApproximate(context));
     }, context);
 }
 
 float Expression::characteristicXRange(Context & context, AngleUnit angleUnit) const {
-  if (angleUnit == AngleUnit::Default) {
-    angleUnit = Preferences::sharedPreferences()->angleUnit();
-  }
   /* A expression has a characteristic range if at least one of its operand has
    * one and the other are x-independant. We keep the biggest interesting range
    * among the operand interesting ranges. */
@@ -238,27 +234,6 @@ int Expression::SimplificationOrder(const Expression * e1, const Expression * e2
   }
 }
 
-/* Layout */
-
-ExpressionLayout * Expression::createLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  switch (floatDisplayMode) {
-    case PrintFloat::Mode::Default:
-      switch (complexFormat) {
-        case ComplexFormat::Default:
-          return privateCreateLayout(Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->complexFormat());
-        default:
-          return privateCreateLayout(Preferences::sharedPreferences()->displayMode(), complexFormat);
-      }
-    default:
-      switch (complexFormat) {
-        case ComplexFormat::Default:
-          return privateCreateLayout(floatDisplayMode, Preferences::sharedPreferences()->complexFormat());
-        default:
-          return privateCreateLayout(floatDisplayMode, complexFormat);
-      }
-  }
-}
-
 /* Simplification */
 
 Expression * Expression::ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit) {
@@ -275,9 +250,6 @@ Expression * Expression::ParseAndSimplify(const char * text, Context & context, 
 
 void Expression::Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit) {
   sSimplificationHasBeenInterrupted = false;
-  if (angleUnit == AngleUnit::Default) {
-    angleUnit = Preferences::sharedPreferences()->angleUnit();
-  }
 #if MATRIX_EXACT_REDUCING
 #else
   if ((*expressionAddress)->recursivelyMatches(IsMatrix, context)) {
@@ -334,22 +306,16 @@ Expression * Expression::deepBeautify(Context & context, AngleUnit angleUnit) {
 
 /* Evaluation */
 
-template<typename T> Expression * Expression::approximate(Context& context, AngleUnit angleUnit) const {
-  switch (angleUnit) {
-    case AngleUnit::Default:
-      return privateApproximate(T(), context, Preferences::sharedPreferences()->angleUnit());
-    default:
-      return privateApproximate(T(), context, angleUnit);
-  }
+template<typename T> Expression * Expression::approximate(Context& context, AngleUnit angleUnit, ComplexFormat complexFormat) const {
+  Evaluation<T> * e = privateApproximate(T(), context, angleUnit);
+  Expression * result = e->complexToExpression(complexFormat);
+  delete e;
+  return result;
 }
 
 template<typename T> T Expression::approximateToScalar(Context& context, AngleUnit angleUnit) const {
-  Expression * evaluation = approximate<T>(context, angleUnit);
-  assert(evaluation->type() == Type::Complex || evaluation->type() == Type::Matrix);
-  T result = NAN;
-  if (evaluation->type() == Type::Complex) {
-    result = static_cast<const Complex<T> *>(evaluation)->toScalar();
-  }
+  Evaluation<T> * evaluation = privateApproximate(T(), context, angleUnit);
+  T result = evaluation->toScalar();
   /*if (evaluation->type() == Type::Matrix) {
     if (numberOfOperands() == 1) {
       result = static_cast<const Complex<T> *>(operand(0))->toScalar();
@@ -373,8 +339,8 @@ template<typename T> T Expression::epsilon() {
 
 }
 
-template Poincare::Expression * Poincare::Expression::approximate<double>(Context& context, AngleUnit angleUnit) const;
-template Poincare::Expression * Poincare::Expression::approximate<float>(Context& context, AngleUnit angleUnit) const;
+template Poincare::Expression * Poincare::Expression::approximate<double>(Context& context, AngleUnit angleUnit, ComplexFormat complexFormat) const;
+template Poincare::Expression * Poincare::Expression::approximate<float>(Context& context, AngleUnit angleUnit, ComplexFormat complexFormat) const;
 template double Poincare::Expression::approximateToScalar<double>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
 template float Poincare::Expression::approximateToScalar<float>(char const*, Poincare::Context&, Poincare::Expression::AngleUnit);
 template double Poincare::Expression::approximateToScalar<double>(Poincare::Context&, Poincare::Expression::AngleUnit) const;

@@ -11,8 +11,8 @@ class AbsoluteValueLayout : public BracketPairLayout {
 public:
   using BracketPairLayout::BracketPairLayout;
   ExpressionLayout * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "abs");
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "abs");
   }
 protected:
   KDCoordinate widthMargin() const override { return 2; }

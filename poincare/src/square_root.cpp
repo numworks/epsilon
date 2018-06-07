@@ -1,5 +1,4 @@
 #include <poincare/square_root.h>
-#include <poincare/complex.h>
 #include <poincare/power.h>
 #include <poincare/simplification_engine.h>
 #include "layout/nth_root_layout.h"
@@ -21,16 +20,20 @@ Expression * SquareRoot::clone() const {
 }
 
 static_assert('\x90' == Ion::Charset::Root, "Unicode error");
-int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
-  return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "\x90");
+int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x90");
 }
 
 template<typename T>
-Complex<T> SquareRoot::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() == 0 && c.a() >= 0) {
-    return Complex<T>::Float(std::sqrt(c.a()));
-  }
-  return Power::compute(c, Complex<T>::Float(0.5));
+std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  std::complex<T> result = std::sqrt(c);
+  /* Openbsd trigonometric functions are numerical implementation and thus are
+   * approximative.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
+   * avoid weird results as sqrt(-1) = 6E-16+i, we compute the argument of
+   * the result of sqrt(c) and if arg ~ 0 [Pi], we discard the residual imaginary
+   * part and if arg ~ Pi/2 [Pi], we discard the residual real part. */
+  return ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument(result);
 }
 
 Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
@@ -49,10 +52,8 @@ Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   return p->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * SquareRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
+ExpressionLayout * SquareRoot::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
 }

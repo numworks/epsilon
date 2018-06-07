@@ -1,8 +1,10 @@
 #include "cartesian_function.h"
+#include "../shared/poincare_helpers.h"
 #include <float.h>
 #include <cmath>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Graph {
 
@@ -21,24 +23,24 @@ void CartesianFunction::setDisplayDerivative(bool display) {
 }
 
 double CartesianFunction::approximateDerivative(double x, Poincare::Context * context) const {
-  Poincare::Complex<double> abscissa = Poincare::Complex<double>::Float(x);
-  Poincare::Expression * args[2] = {expression(context), &abscissa};
-  Poincare::Derivative derivative(args, true);
+  Poincare::Expression * abscissa = new Poincare::Approximation<double>(x);
+  Poincare::Expression * args[2] = {expression(context)->clone(), abscissa};
+  Poincare::Derivative derivative(args, false); // derivative takes ownership of abscissa and the clone of expression
   /* TODO: when we will simplify derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
-  return derivative.approximateToScalar<double>(*context);
+  return PoincareHelpers::ApproximateToScalar<double>(&derivative, *context);
 }
 
 double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
-  Poincare::Complex<double> x = Poincare::Complex<double>::Float(start);
-  Poincare::Complex<double> y = Poincare::Complex<double>::Float(end);
-  Poincare::Expression * args[3] = {expression(context), &x, &y};
-  Poincare::Integral integral(args, true);
+  Poincare::Expression * x = new Poincare::Approximation<double>(start);
+  Poincare::Expression * y = new Poincare::Approximation<double>(end);
+  Poincare::Expression * args[3] = {expression(context)->clone(), x, y};
+  Poincare::Integral integral(args, false); // Integral takes ownership of args
   /* TODO: when we will simplify integral, we might want to simplify the
    * integral here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
-  return integral.approximateToScalar<double>(*context);
+  return PoincareHelpers::ApproximateToScalar<double>(&integral, *context);
 }
 
 CartesianFunction::Point CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {

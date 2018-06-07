@@ -2,6 +2,7 @@
 #include "list_controller.h"
 #include "../app.h"
 #include "../../apps_container.h"
+#include "../../shared/poincare_helpers.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -126,7 +127,7 @@ bool ListParameterController::textFieldDidFinishEditing(TextField * textField, c
    * SecondIndex = FirstIndex + 1 */
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  float floatBody = Expression::approximateToScalar<float>(text, *globalContext);
+  float floatBody = PoincareHelpers::ApproximateToScalar<float>(text, *globalContext);
   int index = std::round(floatBody);
   if (std::isnan(floatBody) || std::isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);

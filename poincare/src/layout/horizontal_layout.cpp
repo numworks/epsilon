@@ -285,7 +285,7 @@ void HorizontalLayout::mergeChildrenAtIndex(DynamicLayoutHierarchy * eL, int ind
   DynamicLayoutHierarchy::mergeChildrenAtIndex(eL, newIndex, removeEmptyChildren);
 }
 
-int HorizontalLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int HorizontalLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
   if (numberOfChildren() == 0) {
     if (bufferSize == 0) {
       return -1;
@@ -293,7 +293,7 @@ int HorizontalLayout::writeTextInBuffer(char * buffer, int bufferSize, int numbe
     buffer[0] = 0;
     return 0;
   }
-  return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "");
+  return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "");
 }
 
 ExpressionLayoutCursor HorizontalLayout::equivalentCursor(ExpressionLayoutCursor cursor) {

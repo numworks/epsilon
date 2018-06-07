@@ -2,7 +2,6 @@
 #include "layout/char_layout.h"
 #include "layout/horizontal_layout.h"
 #include <cmath>
-#include <poincare/complex.h>
 #include <poincare/layout_engine.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
@@ -45,8 +44,8 @@ bool Opposite::needParenthesisWithParent(const Expression * e) const {
 }
 
 template<typename T>
-Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
-  return Complex<T>::Cartesian(-c.a(), -c.b());
+std::complex<T> Opposite::compute(const std::complex<T> c, AngleUnit angleUnit) {
+  return -c;
 }
 
 Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
@@ -66,20 +65,17 @@ Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
   return m->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * Opposite::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Opposite::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayout * result = new HorizontalLayout(new CharLayout('-'), false);
   if (operand(0)->type() == Type::Opposite) {
-    result->addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false), 1, false);
+    result->addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
   } else {
-    result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 1, false);
+    result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, false);
   }
   return result;
-
 }
 
-int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Opposite::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -87,12 +83,12 @@ int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSigni
   int numberOfChar = 0;
   if (bufferSize == 1) { return 0; }
   buffer[numberOfChar++] = '-';
-  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
+  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }
 
 }
 
-template Poincare::Complex<float> Poincare::Opposite::compute<float>(Poincare::Complex<float>, AngleUnit angleUnit);
-template Poincare::Complex<double> Poincare::Opposite::compute<double>(Poincare::Complex<double>, AngleUnit angleUnit);
+template std::complex<float> Poincare::Opposite::compute<float>(const std::complex<float>, AngleUnit angleUnit);
+template std::complex<double> Poincare::Opposite::compute<double>(const std::complex<double>, AngleUnit angleUnit);

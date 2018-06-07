@@ -1,5 +1,4 @@
 #include <poincare/tangent.h>
-#include <poincare/complex.h>
 #include <poincare/sine.h>
 #include <poincare/cosine.h>
 #include <poincare/division.h>
@@ -27,6 +26,13 @@ float Tangent::characteristicXRange(Context & context, AngleUnit angleUnit) cons
   return Trigonometry::characteristicXRange(this, context, angleUnit);
 }
 
+template<typename T>
+std::complex<T> Tangent::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
+  std::complex<T> res = std::tan(angleInput);
+  return Trigonometry::RoundToMeaningfulDigits(res);
+}
+
 Expression * Tangent::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
@@ -48,16 +54,6 @@ Expression * Tangent::shallowReduce(Context& context, AngleUnit angleUnit) {
     return newExpression->shallowReduce(context, angleUnit);
   }
   return newExpression;
-}
-
-template<typename T>
-Complex<T> Tangent::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  Complex<T> result = Division::compute(Sine::computeOnComplex(c, angleUnit), Cosine::computeOnComplex(c, angleUnit));
-  if (!std::isnan(result.a()) && !std::isnan(result.b())) {
-    return result;
-  }
-  Complex<T> tanh = HyperbolicTangent::computeOnComplex(Multiplication::compute(Complex<T>::Cartesian(0, -1), c), angleUnit);
-  return Multiplication::compute(Complex<T>::Cartesian(0, 1), tanh);
 }
 
 }

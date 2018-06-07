@@ -13,16 +13,16 @@ Expression * EmptyExpression::clone() const {
   return new EmptyExpression();
 }
 
-int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, Ion::Charset::Empty);
 }
 
-ExpressionLayout * EmptyExpression::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * EmptyExpression::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   return new EmptyLayout();
 }
 
 template<typename T> Complex<T> * EmptyExpression::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  return new Complex<T>(Complex<T>::Float(NAN));
+  return new Complex<T>(Complex<T>::Undefined());
 }
 
 }

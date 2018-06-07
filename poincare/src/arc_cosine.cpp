@@ -31,16 +31,18 @@ Expression * ArcCosine::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> ArcCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  assert(angleUnit != AngleUnit::Default);
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+std::complex<T> ArcCosine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  std::complex<T> result = std::acos(c);
+  /* acos has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued on
+   * this cut. We followed the convention chosen by the lib c++ of llvm on
+   * ]-inf+0i, -1+0i[ (warning: acos takes the other side of the cut values on
+   * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply with
+   * acos(-x) = Pi - acos(x) and tan(arccos(x)) = sqrt(1-x^2)/x. */
+  if (c.imag() == 0 && c.real() > 1) {
+    result.imag(-result.imag()); // other side of the cut
   }
-  T result = std::acos(c.a());
-  if (angleUnit == AngleUnit::Degree) {
-    return Complex<T>::Float(result*180/M_PI);
-  }
-  return Complex<T>::Float(result);
+  result = Trigonometry::RoundToMeaningfulDigits(result);
+  return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
 }
 
 }

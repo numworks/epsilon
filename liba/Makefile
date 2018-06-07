@@ -34,12 +34,11 @@ objs += $(addprefix liba/src/external/openbsd/, \
   e_acoshf.o \
   e_asinf.o \
   e_atanhf.o \
-  e_atan2.o \
   e_atan2f.o \
   e_coshf.o \
   e_expf.o \
-  e_fmod.o \
   e_fmodf.o \
+  e_hypotf.o \
   e_lgammaf_r.o \
   e_log10f.o \
   e_log2.o \
@@ -61,6 +60,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_erf.o \
   s_expm1f.o\
   s_fabsf.o \
+  s_fmaxf.o \
   s_floorf.o \
   s_frexpf.o \
   s_frexp.o \
@@ -85,8 +85,11 @@ objs += $(addprefix liba/src/external/openbsd/, \
   e_acosh.o \
   e_asin.o \
   e_atanh.o \
+  e_atan2.o \
   e_cosh.o \
   e_exp.o \
+  e_fmod.o \
+  e_hypot.o \
   e_lgamma_r.o \
   e_log.o \
   e_log10.o \
@@ -105,6 +108,7 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_cos.o \
   s_expm1.o \
   s_fabs.o \
+  s_fmax.o \
   s_floor.o \
   s_log1p.o \
   s_round.o \

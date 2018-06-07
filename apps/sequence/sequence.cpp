@@ -5,6 +5,7 @@
 #include "../../poincare/src/layout/char_layout.h"
 #include "../../poincare/src/layout/horizontal_layout.h"
 #include "../../poincare/src/layout/vertical_offset_layout.h"
+#include "../shared/poincare_helpers.h"
 #include <string.h>
 #include <cmath>
 
@@ -151,14 +152,14 @@ void Sequence::setInitialRank(int rank) {
 
 Poincare::Expression * Sequence::firstInitialConditionExpression(Context * context) const {
   if (m_firstInitialConditionExpression == nullptr) {
-    m_firstInitialConditionExpression = Poincare::Expression::ParseAndSimplify(m_firstInitialConditionText, *context);
+    m_firstInitialConditionExpression = PoincareHelpers::ParseAndSimplify(m_firstInitialConditionText, *context);
   }
   return m_firstInitialConditionExpression;
 }
 
 Poincare::Expression * Sequence::secondInitialConditionExpression(Context * context) const {
   if (m_secondInitialConditionExpression == nullptr) {
-    m_secondInitialConditionExpression = Poincare::Expression::ParseAndSimplify(m_secondInitialConditionText, *context);
+    m_secondInitialConditionExpression = PoincareHelpers::ParseAndSimplify(m_secondInitialConditionText, *context);
   }
   return m_secondInitialConditionExpression;
 }
@@ -167,7 +168,7 @@ Poincare::ExpressionLayout * Sequence::firstInitialConditionLayout() {
   if (m_firstInitialConditionLayout == nullptr) {
     Expression * nonSimplifedExpression = Expression::parse(m_firstInitialConditionText);
     if (nonSimplifedExpression) {
-      m_firstInitialConditionLayout = nonSimplifedExpression->createLayout(PrintFloat::Mode::Decimal);
+      m_firstInitialConditionLayout = PoincareHelpers::CreateLayout(nonSimplifedExpression);
       delete nonSimplifedExpression;
     }
   }
@@ -178,7 +179,7 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionLayout() {
   if (m_secondInitialConditionLayout == nullptr) {
     Expression * nonSimplifedExpression = Expression::parse(m_secondInitialConditionText);
     if (nonSimplifedExpression) {
-      m_secondInitialConditionLayout = nonSimplifedExpression->createLayout(PrintFloat::Mode::Decimal);
+      m_secondInitialConditionLayout = PoincareHelpers::CreateLayout(nonSimplifedExpression);
       delete nonSimplifedExpression;
     }
   }
@@ -330,7 +331,6 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
   T vn = sqctx->valueOfSequenceAtPreviousRank<T>(1, 0);
   T vnm1 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 1);
   T vnm2 = sqctx->valueOfSequenceAtPreviousRank<T>(1, 2);
-  Poincare::Symbol nSymbol(symbol());
   Poincare::Symbol vnSymbol(Symbol::SpecialSymbols::vn);
   Poincare::Symbol vn1Symbol(Symbol::SpecialSymbols::vn1);
   Poincare::Symbol unSymbol(Symbol::SpecialSymbols::un);
@@ -340,38 +340,35 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     {
       ctx.setValueForSymbol(un, &unSymbol);
       ctx.setValueForSymbol(vn, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
-      return expression(sqctx)->template approximateToScalar<T>(ctx);
+      ctx.setApproximationForVariable((T)n);
+      return PoincareHelpers::ApproximateToScalar<T>(expression(sqctx), ctx);
     }
     case Type::SingleRecurrence:
     {
       if (n == m_initialRank) {
-        return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
+        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpression(sqctx), *sqctx);
       }
       ctx.setValueForSymbol(un, &un1Symbol);
       ctx.setValueForSymbol(unm1, &unSymbol);
       ctx.setValueForSymbol(vn, &vn1Symbol);
       ctx.setValueForSymbol(vnm1, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-1);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
-      return expression(sqctx)->template approximateToScalar<T>(ctx);
+      ctx.setApproximationForVariable((T)n-1);
+      return PoincareHelpers::ApproximateToScalar<T>(expression(sqctx), ctx);
     }
     default:
     {
       if (n == m_initialRank) {
-        return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
+        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpression(sqctx), *sqctx);
       }
       if (n == m_initialRank+1) {
-        return secondInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
+        return PoincareHelpers::ApproximateToScalar<T>(secondInitialConditionExpression(sqctx), *sqctx);
       }
       ctx.setValueForSymbol(unm1, &un1Symbol);
       ctx.setValueForSymbol(unm2, &unSymbol);
       ctx.setValueForSymbol(vnm1, &vn1Symbol);
       ctx.setValueForSymbol(vnm2, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-2);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
-      return expression(sqctx)->template approximateToScalar<T>(ctx);
+      ctx.setApproximationForVariable((T)n-2);
+      return PoincareHelpers::ApproximateToScalar<T>(expression(sqctx), ctx);
     }
   }
 }

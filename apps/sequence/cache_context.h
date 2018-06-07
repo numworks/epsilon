@@ -15,7 +15,7 @@ public:
 private:
   int nameIndexForSymbol(const Poincare::Symbol * symbol);
   int rankIndexForSymbol(const Poincare::Symbol * symbol);
-  Poincare::Complex<T> m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
+  Poincare::Approximation<T> m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
 };
 
 }

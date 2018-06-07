@@ -1,8 +1,11 @@
 #include "calculation.h"
 #include "calculation_store.h"
+#include "../shared/poincare_helpers.h"
 #include <string.h>
 #include <cmath>
+
 using namespace Poincare;
+using namespace Shared;
 
 namespace Calculation {
 
@@ -57,11 +60,11 @@ void Calculation::setContent(const char * c, Context * context, Expression * ans
   Expression::ReplaceSymbolWithExpression(&m_input, Symbol::SpecialSymbols::Ans, ansExpression);
   /* We do not store directly the text enter by the user because we do not want
    * to keep Ans symbol in the calculation store. */
-  m_input->writeTextInBuffer(m_inputText, sizeof(m_inputText));
-  m_exactOutput = Expression::ParseAndSimplify(m_inputText, *context);
-  m_exactOutput->writeTextInBuffer(m_exactOutputText, sizeof(m_exactOutputText));
-  m_approximateOutput = m_exactOutput->approximate<double>(*context);
-  m_approximateOutput->writeTextInBuffer(m_approximateOutputText, sizeof(m_approximateOutputText));
+  PoincareHelpers::WriteTextInBuffer(m_input, m_inputText, sizeof(m_inputText));
+  m_exactOutput = PoincareHelpers::ParseAndSimplify(m_inputText, *context);
+  PoincareHelpers::WriteTextInBuffer(m_exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
+  m_approximateOutput = PoincareHelpers::Approximate<double>(m_exactOutput, *context);
+  PoincareHelpers::WriteTextInBuffer(m_approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
 KDCoordinate Calculation::height(Context * context) {
@@ -106,7 +109,7 @@ Expression * Calculation::input() {
 
 ExpressionLayout * Calculation::createInputLayout() {
   if (input() != nullptr) {
-    return input()->createLayout(PrintFloat::Mode::Decimal, Expression::ComplexFormat::Cartesian);
+    return input()->createLayout(PrintFloat::Mode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
   }
   return nullptr;
 }
@@ -146,14 +149,14 @@ Expression * Calculation::exactOutput(Context * context) {
   if (m_exactOutput == nullptr) {
     /* To ensure that the expression 'm_exactOutput' is a simplified, we
      * call 'ParseAndSimplify'. */
-    m_exactOutput = Expression::ParseAndSimplify(m_exactOutputText, *context);
+    m_exactOutput = PoincareHelpers::ParseAndSimplify(m_exactOutputText, *context);
   }
   return m_exactOutput;
 }
 
 ExpressionLayout * Calculation::createExactOutputLayout(Context * context) {
   if (exactOutput(context) != nullptr) {
-    return exactOutput(context)->createLayout();
+    return PoincareHelpers::CreateLayout(exactOutput(context));
   }
   return nullptr;
 }
@@ -164,10 +167,10 @@ Expression * Calculation::approximateOutput(Context * context) {
      * call 'evaluate'. */
     Expression * exp = Expression::parse(m_approximateOutputText);
     if (exp != nullptr) {
-      m_approximateOutput = exp->approximate<double>(*context);
+      m_approximateOutput = PoincareHelpers::Approximate<double>(exp, *context);
       delete exp;
     } else {
-      m_approximateOutput = new Complex<double>(Complex<double>::Float(NAN));
+      m_approximateOutput = new Undefined();
     }
   }
   return m_approximateOutput;
@@ -175,7 +178,7 @@ Expression * Calculation::approximateOutput(Context * context) {
 
 ExpressionLayout * Calculation::createApproximateOutputLayout(Context * context) {
   if (approximateOutput(context) != nullptr) {
-    return approximateOutput(context)->createLayout();
+    return PoincareHelpers::CreateLayout(approximateOutput(context));
   }
   return nullptr;
 }
@@ -195,13 +198,13 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
     return m_equalSign;
   }
   char buffer[k_printedExpressionSize];
-  approximateOutput(context)->writeTextInBuffer(buffer, k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
+  PoincareHelpers::WriteTextInBuffer(approximateOutput(context), buffer, k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
   /* Warning: we cannot use directly the m_approximateOutputText but we have to
    * re-serialize the approximateOutput because the number of stored
    * significative numbers and the number of displayed significative numbers
    * are not identical. (For example, 0.000025 might be displayed "0.00003"
    * which requires in an approximative equal) */
-  Expression * approximateOutput = Expression::ParseAndSimplify(buffer, *context);
+  Expression * approximateOutput = PoincareHelpers::ParseAndSimplify(buffer, *context);
   m_equalSign = approximateOutput->isIdenticalTo(exactOutput(context)) ? EqualSign::Equal : EqualSign::Approximation;
   delete approximateOutput;
   return m_equalSign;

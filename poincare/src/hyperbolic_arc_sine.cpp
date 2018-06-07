@@ -1,5 +1,6 @@
 #include <poincare/hyperbolic_arc_sine.h>
 #include <poincare/simplification_engine.h>
+#include <poincare/trigonometry.h>
 extern "C" {
 #include <assert.h>
 }
@@ -31,11 +32,17 @@ Expression * HyperbolicArcSine::shallowReduce(Context& context, AngleUnit angleU
 }
 
 template<typename T>
-Complex<T> HyperbolicArcSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
+std::complex<T> HyperbolicArcSine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  std::complex<T> result = std::asinh(c);
+  /* asinh has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then multivalued
+   * on this cut. We followed the convention chosen by the lib c++ of llvm on
+   * ]+i+0, +i*inf+0[ (warning: atanh takes the other side of the cut values on
+   * ]+i-0, +i*inf+0[) and choose the values on ]-inf*i, -i[ to comply with
+   * asinh(-x) = -asinh(x). */
+  if (c.real() == 0 && c.imag() < 1) {
+    result.real(-result.real()); // other side of the cut
   }
-  return Complex<T>::Float(std::asinh(c.a()));
+  return Trigonometry::RoundToMeaningfulDigits(result);
 }
 
 }

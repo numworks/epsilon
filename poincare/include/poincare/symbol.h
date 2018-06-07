@@ -6,6 +6,7 @@
 namespace Poincare {
 
 class Symbol : public StaticHierarchy<0> {
+  friend class Store;
 public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
@@ -40,7 +41,7 @@ public:
   bool isMatrixSymbol() const;
   bool isScalarSymbol() const;
   bool isApproximate(Context & context) const;
-  float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
+  float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
   bool hasAnExactRepresentation(Context & context) const;
 private:
   const char * textForSpecialSymbols(char name) const;
@@ -50,12 +51,12 @@ private:
   /* Comparison */
   int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   /* Layout */
-  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Evaluation<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
   const char m_name;
 };
 

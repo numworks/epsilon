@@ -1,12 +1,13 @@
 #include <poincare/trigonometry.h>
 #include <poincare/hyperbolic_cosine.h>
-#include <poincare/complex.h>
 #include <poincare/symbol.h>
+#include <poincare/preferences.h>
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
 #include <poincare/subtraction.h>
 #include <poincare/derivative.h>
+#include <poincare/decimal.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -18,9 +19,6 @@ namespace Poincare {
 
 float Trigonometry::characteristicXRange(const Expression * e, Context & context, Expression::AngleUnit angleUnit) {
   assert(e->numberOfOperands() == 1);
-  if (angleUnit == Expression::AngleUnit::Default) {
-    angleUnit = Preferences::sharedPreferences()->angleUnit();
-  }
   const Expression * op = e->operand(0);
   int d = op->polynomialDegree('x');
   // op is not linear so we cannot not easily find an interesting range
@@ -35,10 +33,10 @@ float Trigonometry::characteristicXRange(const Expression * e, Context & context
   assert(d == 1);
   /* To compute a, the slope of the expression op, we compute the derivative of
    * op for any x value. */
-  Poincare::Complex<float> x = Poincare::Complex<float>::Float(1.0f);
+  Poincare::Approximation<float> x(1.0f);
   const Poincare::Expression * args[2] = {op, &x};
   Poincare::Derivative derivative(args, true);
-  float a = derivative.approximateToScalar<float>(context);
+  float a = derivative.approximateToScalar<float>(context, angleUnit);
   float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180.0f;
   return 2.0f*pi/std::fabs(a);
 }
@@ -51,10 +49,7 @@ Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& 
   }
   Expression::Type correspondingType = e->type() == Expression::Type::Cosine ? Expression::Type::ArcCosine : (e->type() == Expression::Type::Sine ? Expression::Type::ArcSine : Expression::Type::ArcTangent);
   if (e->operand(0)->type() == correspondingType) {
-    float trigoOp = e->operand(0)->operand(0)->approximateToScalar<float>(context, angleUnit);
-    if (e->type() == Expression::Type::Tangent || (trigoOp >= -1.0f && trigoOp <= 1.0f)) {
-      return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
-    }
+    return e->replaceWith(e->editableOperand(0)->editableOperand(0), true);
   }
   if (e->operand(0)->sign() == Expression::Sign::Negative) {
     Expression * op = e->editableOperand(0);
@@ -111,12 +106,6 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression * e) {
 
 Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine || e->type() == Expression::Type::ArcTangent);
-  if (e->type() != Expression::Type::ArcTangent) {
-    float approxOp = e->operand(0)->approximateToScalar<float>(context, angleUnit);
-    if (approxOp > 1.0f || approxOp < -1.0f) {
-      return e->replaceWith(new Undefined(), true);
-    }
-  }
   Expression::Type correspondingType = e->type() == Expression::Type::ArcCosine ? Expression::Type::Cosine : (e->type() == Expression::Type::ArcSine ? Expression::Type::Sine : Expression::Type::Tangent);
   float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180;
   if (e->operand(0)->type() == correspondingType) {
@@ -239,5 +228,47 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
   }
   return nullptr;
 }
+
+
+template <typename T>
+std::complex<T> Trigonometry::ConvertToRadian(const std::complex<T> c, Expression::AngleUnit angleUnit) {
+  if (angleUnit == Expression::AngleUnit::Degree) {
+    return c*std::complex<T>(M_PI/180.0);
+  }
+  return c;
+}
+
+template <typename T>
+std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, Expression::AngleUnit angleUnit) {
+  if (angleUnit == Expression::AngleUnit::Degree) {
+    return c*std::complex<T>(180/M_PI);
+  }
+  return c;
+}
+
+template<typename T>
+T Trigonometry::RoundToMeaningfulDigits(T f) {
+  /* Cheat: openbsd trigonometric functions are numerical implementation and
+   * thus are approximative.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
+   * avoid weird results as acos(1) = 6E-17 or cos(Pi/2) = 4E-17, we keep only
+   * 15 (or 7) decimals.
+   * We can't do that for all evaluation as the user can operate on values as
+   * small as 1E-308 (in double) and most results still be correct. */
+  T precision = 10*Expression::epsilon<T>();
+  return std::round(f/precision)*precision;
+}
+
+template <typename T>
+std::complex<T> Trigonometry::RoundToMeaningfulDigits(const std::complex<T> c) {
+  return std::complex<T>(RoundToMeaningfulDigits(c.real()), RoundToMeaningfulDigits(c.imag()));
+}
+
+template std::complex<float> Trigonometry::ConvertToRadian<float>(std::complex<float>, Expression::AngleUnit);
+template std::complex<double> Trigonometry::ConvertToRadian<double>(std::complex<double>, Expression::AngleUnit);
+template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(std::complex<float>, Expression::AngleUnit);
+template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(std::complex<double>, Expression::AngleUnit);
+template std::complex<float> Trigonometry::RoundToMeaningfulDigits<float>(std::complex<float>);
+template std::complex<double> Trigonometry::RoundToMeaningfulDigits<double>(std::complex<double>);
 
 }

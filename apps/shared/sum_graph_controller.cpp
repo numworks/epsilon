@@ -1,6 +1,7 @@
 #include "sum_graph_controller.h"
 #include "../apps_container.h"
 #include <poincare/layout_engine.h>
+#include "poincare_helpers.h"
 #include "../../poincare/src/layout/condensed_sum_layout.h"
 
 #include <assert.h>
@@ -126,7 +127,7 @@ void SumGraphController::setFunction(Function * function) {
 bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  double floatBody = Expression::approximateToScalar<double>(text, *globalContext);
+  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
   if (std::isnan(floatBody) || std::isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
@@ -266,7 +267,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
         false);
     ExpressionLayout * childrenLayouts[3];
     strlcpy(buffer, "= ", 3);
-    PrintFloat::convertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    PoincareHelpers::ConvertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     childrenLayouts[2] = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     childrenLayouts[1] = functionLayout;
     childrenLayouts[0] = m_sumLayout;

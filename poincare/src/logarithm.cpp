@@ -30,18 +30,15 @@ Expression * Logarithm::clone() const {
 }
 
 template<typename T>
-Complex<T> Logarithm::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  if (c.b() != 0) {
-    return Complex<T>::Float(NAN);
-  }
-  return Complex<T>::Float(std::log10(c.a()));
+std::complex<T> Logarithm::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
+   * followed the convention chosen by the lib c++ of llvm on ]-inf+0i, 0+0i]
+   * (warning: log takes the other side of the cut values on ]-inf-0i, 0-0i]). */
+  return std::log10(c);
 }
 
 Expression * Logarithm::simpleShallowReduce(Context & context, AngleUnit angleUnit) {
   Expression * op = editableOperand(0);
-  if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
-    return replaceWith(new Undefined(), true);
-  }
   // log(x,x)->1
   if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
     return replaceWith(new Rational(1), true);
@@ -78,6 +75,9 @@ Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
     return replaceWith(new Undefined(), true);
   }
 #endif
+  if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
+    return this;
+  }
   Expression * f = simpleShallowReduce(context, angleUnit);
   if (f != this) {
     return f;
@@ -211,14 +211,14 @@ Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) 
 }
 
 template<typename T>
-Expression * Logarithm::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * Logarithm::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   if (numberOfOperands() == 1) {
     return ApproximationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }
-  Expression * x = operand(0)->approximate<T>(context, angleUnit);
-  Expression * n = operand(1)->approximate<T>(context, angleUnit);
-  Complex<T> result = Complex<T>::Float(NAN);
-  if (x->type() == Type::Complex && n->type() == Type::Complex) {
+  Evaluation<T> * x = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * n = operand(1)->privateApproximate(T(), context, angleUnit);
+  std::complex<T> result = std::complex<T>(NAN, NAN);
+  if (x->type() == Evaluation<T>::Type::Complex && n->type() == Evaluation<T>::Type::Complex) {
     Complex<T> * xc = static_cast<Complex<T> *>(x);
     Complex<T> * nc = static_cast<Complex<T> *>(n);
     result = Division::compute<T>(computeOnComplex(*xc, angleUnit), computeOnComplex(*nc, angleUnit));
@@ -228,13 +228,11 @@ Expression * Logarithm::templatedApproximate(Context& context, AngleUnit angleUn
   return new Complex<T>(result);
 }
 
-ExpressionLayout * Logarithm::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Logarithm::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (numberOfOperands() == 1) {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
+    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, "log");
   }
-  return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));
+  return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 }

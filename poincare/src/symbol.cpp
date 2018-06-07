@@ -1,7 +1,6 @@
 #include <poincare/symbol.h>
 
 #include <poincare/context.h>
-#include <poincare/complex.h>
 #include <poincare/division.h>
 #include <poincare/multiplication.h>
 #include <poincare/parenthesis.h>
@@ -154,9 +153,6 @@ float Symbol::characteristicXRange(Context & context, AngleUnit angleUnit) const
 }
 
 bool Symbol::hasAnExactRepresentation(Context & context) const {
-  if (m_name == Ion::Charset::IComplex) {
-    return true;
-  }
   // TODO: so far, no symbols can be exact but A, ..Z should be able to hold exact values later.
   return false;
 }
@@ -175,11 +171,14 @@ Expression * Symbol::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Expression * Symbol::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  if (context.expressionForSymbol(this) != nullptr) {
-    return context.expressionForSymbol(this)->approximate<T>(context, angleUnit);
+Evaluation<T> * Symbol::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  if (m_name == Ion::Charset::IComplex) {
+    return new Complex<T>(0.0, 1.0);
   }
-  return new Complex<T>(Complex<T>::Float(NAN));
+  if (context.expressionForSymbol(this) != nullptr) {
+    return context.expressionForSymbol(this)->privateApproximate(T(), context, angleUnit);
+  }
+  return new Complex<T>(Complex<T>::Undefined());
 }
 
 Expression::Type Symbol::type() const {
@@ -190,9 +189,7 @@ char Symbol::name() const {
   return m_name;
 }
 
-ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name == SpecialSymbols::Ans) {
     return LayoutEngine::createStringLayout("ans", 3);
   }
@@ -239,7 +236,7 @@ ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode
   return LayoutEngine::createStringLayout(&m_name, 1);
 }
 
-int Symbol::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+int Symbol::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

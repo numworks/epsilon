@@ -1,5 +1,4 @@
 #include <poincare/decimal.h>
-#include <poincare/complex.h>
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/ieee754.h>
@@ -75,9 +74,10 @@ Decimal::Decimal(Integer mantissa, int exponent) :
 {
 }
 
-Decimal::Decimal(double f) {
-  m_exponent = IEEE754<double>::exponentBase10(f);
-  int64_t mantissaf = std::round(f * std::pow(10.0, -m_exponent+PrintFloat::k_numberOfStoredSignificantDigits+1));
+template <typename T>
+Decimal::Decimal(T f) {
+  m_exponent = IEEE754<T>::exponentBase10(f);
+  int64_t mantissaf = std::round((double)f * std::pow((double)10.0, (double)(-m_exponent+PrintFloat::k_numberOfStoredSignificantDigits+1)));
   m_mantissa = Integer(mantissaf);
 }
 
@@ -89,10 +89,10 @@ Expression * Decimal::clone() const {
   return new Decimal(m_mantissa, m_exponent);
 }
 
-template<typename T> Expression * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
+template<typename T> Evaluation<T> * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
   int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
-  return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));
+  return new Complex<T>(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1)));
 }
 
 int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode, int numberOfSignificantDigits) const {
@@ -138,7 +138,7 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
   int numberOfRequiredDigits = mantissaLength;
   if (!forceScientificMode) {
     numberOfRequiredDigits = mantissaLength > exponent ? mantissaLength : exponent;
-    numberOfRequiredDigits = exponent < 0 ? 1+mantissaLength-exponent : numberOfRequiredDigits;
+    numberOfRequiredDigits = exponent < 0 ? mantissaLength-exponent : numberOfRequiredDigits;
   }
   if (currentChar >= bufferSize-1) { return bufferSize-1; }
   if (m_mantissa.isNegative()) {
@@ -205,8 +205,8 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
   return currentChar;
 }
 
-int Decimal::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
-  return convertToText(buffer, bufferSize, PrintFloat::Mode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
+int Decimal::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return convertToText(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
 bool Decimal::needParenthesisWithParent(const Expression * e) const {
@@ -217,7 +217,7 @@ bool Decimal::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 7);
 }
 
-ExpressionLayout * Decimal::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+ExpressionLayout * Decimal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, PrintFloat::k_numberOfStoredSignificantDigits);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
@@ -274,5 +274,8 @@ int Decimal::simplificationOrderSameType(const Expression * e, bool canBeInterru
   }
   return ((int)sign())*unsignedComparison;
 }
+
+template Decimal::Decimal(double);
+template Decimal::Decimal(float);
 
 }

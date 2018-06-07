@@ -9,8 +9,8 @@ class LayoutEngine {
 
 public:
   /* Expression to ExpressionLayout */
-  static ExpressionLayout * createInfixLayout(const Expression * expression,  PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
-  static ExpressionLayout * createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
+  static ExpressionLayout * createInfixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  static ExpressionLayout * createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
 
   /* Create special layouts */
   static ExpressionLayout * createParenthesedLayout(ExpressionLayout * layout, bool cloneLayout);
@@ -22,12 +22,14 @@ public:
       const Expression * expression,
       char * buffer,
       int bufferSize,
+      PrintFloat::Mode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName);
   static int writePrefixExpressionTextInBuffer(
       const Expression * expression,
       char * buffer,
       int bufferSize,
+      PrintFloat::Mode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName);
 
@@ -37,7 +39,6 @@ public:
       const ExpressionLayout * expressionLayout,
       char * buffer,
       int bufferSize,
-      int numberOfDigits,
       const char * operatorName,
       int firstChildIndex = 0,
       int lastChildIndex = -1,
@@ -47,7 +48,6 @@ public:
       const ExpressionLayout * expressionLayout,
       char * buffer,
       int bufferSize,
-      int numberOfDigits,
       const char * operatorName,
       bool writeFirstChild = true);
 
@@ -57,8 +57,8 @@ public:
 private:
   static constexpr char divideChar = '/';
   // These two functions return the index of the null-terminating char.
-  static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis);
-  static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
+  static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis);
+  static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
 };
 
 }

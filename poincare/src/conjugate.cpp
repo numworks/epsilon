@@ -1,5 +1,4 @@
 #include <poincare/conjugate.h>
-#include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
 #include "layout/conjugate_layout.h"
 
@@ -19,10 +18,8 @@ Expression * Conjugate::clone() const {
   return a;
 }
 
-ExpressionLayout * Conjugate::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return new ConjugateLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
+ExpressionLayout * Conjugate::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return new ConjugateLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
 Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {
@@ -43,8 +40,8 @@ Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Conjugate::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  return c.conjugate();
+std::complex<T> Conjugate::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  return std::conj(c);
 }
 
 }

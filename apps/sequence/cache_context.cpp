@@ -8,8 +8,8 @@ namespace Sequence {
 template<typename T>
 CacheContext<T>::CacheContext(Context * parentContext) :
   VariableContext<T>('n', parentContext),
-  m_values{{Complex<T>::Float(NAN), Complex<T>::Float(NAN)},
-    {Complex<T>::Float(NAN), Complex<T>::Float(NAN)}}
+  m_values{{Approximation<T>(NAN), Approximation<T>(NAN)},
+    {Approximation<T>(NAN), Approximation<T>(NAN)}}
 {
 }
 
@@ -24,7 +24,7 @@ const Expression * CacheContext<T>::expressionForSymbol(const Symbol * symbol) {
 
 template<typename T>
 void CacheContext<T>::setValueForSymbol(T value, const Poincare::Symbol * symbol) {
-  m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = Complex<T>::Float(value);
+  m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = Approximation<T>(value);
 }
 
 template<typename T>

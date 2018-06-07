@@ -5,7 +5,6 @@
 #include <poincare/power.h>
 #include <poincare/undefined.h>
 #include <poincare/division.h>
-#include <poincare/complex.h>
 extern "C" {
 #include <assert.h>
 }
@@ -72,23 +71,20 @@ Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angle
 }
 
 template<typename T>
-Expression * PredictionInterval::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * pInput = operand(0)->approximate<T>(context, angleUnit);
-  Expression * nInput = operand(1)->approximate<T>(context, angleUnit);
-  if (pInput->type() != Type::Complex || nInput->type() != Type::Complex) {
-    return new Complex<T>(Complex<T>::Float(NAN));
-  }
+Evaluation<T> * PredictionInterval::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * pInput = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * nInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T p = static_cast<Complex<T> *>(pInput)->toScalar();
   T n = static_cast<Complex<T> *>(nInput)->toScalar();
   delete pInput;
   delete nInput;
   if (std::isnan(p) || std::isnan(n) || n != (int)n || n < 0 || p < 0 || p > 1) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Undefined());
   }
-  Expression * operands[2];
-  operands[0] = new Complex<T>(Complex<T>::Float(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n)));
-  operands[1] = new Complex<T>(Complex<T>::Float(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n)));
-  return new Matrix(operands, 1, 2, false);
+  std::complex<T> operands[2];
+  operands[0] = std::complex<T>(p - 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
+  operands[1] = std::complex<T>(p + 1.96*std::sqrt(p*(1.0-p))/std::sqrt(n));
+  return new MatrixComplex<T>(operands, 1, 2);
 }
 
 }

@@ -86,56 +86,48 @@ Expression * Power::setSign(Sign s, Context & context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> Power::compute(const Complex<T> c, const Complex<T> d) {
-  // c == c.r * e^(c.th*i)
-  // d == d.a + d.b*i
-  // c^d == e^(ln(c^d))
-  //     == e^(ln(c) * d)
-  //     == e^(ln(c.r * e^(c.th*i))  *  (d.a + d.b*i))
-  //     == e^((ln(c.r) + ln(e^(c.th*i)))  *  (d.a + d.b*i))
-  //     == e^((ln(c.r) + c.th*i)  *  (d.a + d.b*i))
-  //     == e^(ln(c.r)*d.a + ln(c.r)*d.b*i + c.th*i*d.a + c.th*i*d.b*i)
-  //     == e^((ln(c.r^d.a) + ln(e^(c.th*d.b*i^2)))  +  (ln(c.r)*d.b + c.th*d.a)*i)
-  //     == e^(ln(c.r^d.a * e^(-c.th*d.b)))  *  e^((ln(c.r)*d.b + c.th*d.a)*i)
-  //     == c.r^d.a*e^(-c.th*d.b) * e^((ln(c.r)*d.b + c.th*d.a)*i)
-  if (c.a() == 0 && c.b() == 0) { // ln(c.r) and c.th are undefined
-    return Complex<T>::Float(d.a() > 0 ? 0 : NAN);
-  }
-  T radius = std::pow(c.r(), d.a()) * std::exp(-c.th() * d.b());
-  T theta = std::log(c.r())*d.b() + c.th()*d.a();
-  return Complex<T>::Polar(radius, theta);
+std::complex<T> Power::compute(const std::complex<T> c, const std::complex<T> d) {
+  /* Openbsd trigonometric functions are numerical implementation and thus are
+   * approximative.
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
+   * avoid weird results as e(i*pi) = -1+6E-17*i, we compute the argument of
+   * the result of c^d and if arg ~ 0 [Pi], we discard the residual imaginary
+   * part and if arg ~ Pi/2 [Pi], we discard the residual real part. */
+  std::complex<T> result = std::pow(c, d);
+  return ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument(result);
 }
 
-template<typename T> Matrix * Power::computeOnMatrixAndComplex(const Matrix * m, const Complex<T> * d) {
- if (m->numberOfRows() != m->numberOfColumns()) {
-    return nullptr;
+template<typename T> MatrixComplex<T> Power::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {
+  return MatrixComplex<T>::Undefined();
+}
+
+template<typename T> MatrixComplex<T> Power::computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d) {
+ if (m.numberOfRows() != m.numberOfColumns()) {
+    return MatrixComplex<T>::Undefined();
   }
-  T power = d->toScalar();
+  T power = Complex<T>(d).toScalar();
   if (std::isnan(power) || std::isinf(power) || power != (int)power || std::fabs(power) > k_maxApproximatePowerMatrix) {
-    return nullptr;
+    return MatrixComplex<T>::Undefined();
   }
   if (power < 0) {
-    Matrix * inverse = m->createInverse<T>();
-    if (inverse == nullptr) {
-      return nullptr;
-    }
-    Complex<T> minusC = Opposite::compute(*d, AngleUnit::Default);
-    Matrix * result = Power::computeOnMatrixAndComplex(inverse, &minusC);
-    delete inverse;
+    MatrixComplex<T> inverse = m.createInverse();
+    Complex<T> minusC = Complex<T>(-d);
+    MatrixComplex<T> result = Power::computeOnMatrixAndComplex(inverse, minusC);
     return result;
   }
-  Matrix * result = Matrix::createApproximateIdentity<T>(m->numberOfRows());
+  MatrixComplex<T> result = MatrixComplex<T>::createIdentity(m.numberOfRows());
   // TODO: implement a quick exponentiation
   for (int k = 0; k < (int)power; k++) {
     if (shouldStopProcessing()) {
-      delete result;
-      return nullptr;
+      return MatrixComplex<T>::Undefined();
     }
-    Matrix * mult = Multiplication::computeOnMatrices<T>(result, m);
-    delete result;
-    result = mult;
+    result = Multiplication::computeOnMatrices<T>(result, m);
   }
   return result;
+}
+
+template<typename T> MatrixComplex<T> Power::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
+  return MatrixComplex<T>::Undefined();
 }
 
 bool Power::needParenthesisWithParent(const Expression * e) const {
@@ -143,18 +135,16 @@ bool Power::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 2);
 }
 
-ExpressionLayout * Power::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
+ExpressionLayout * Power::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   const Expression * indiceOperand = m_operands[1];
   // Delete eventual parentheses of the indice in the pretty print
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = m_operands[1]->operand(0);
   }
   HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(m_operands[0]->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result->addOrMergeChildAtIndex(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result->addChildAtIndex(new VerticalOffsetLayout(
-        indiceOperand->createLayout(floatDisplayMode, complexFormat),
+        indiceOperand->createLayout(floatDisplayMode, numberOfSignificantDigits),
         VerticalOffsetLayout::Type::Superscript,
         false),
       result->numberOfChildren());
@@ -225,13 +215,13 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
 
   /* Step 0: if both operands are true complexes, the result is undefined.
    * We can assert that evaluations is a complex as matrix are not simplified */
-  Complex<float> * op0 = static_cast<Complex<float> *>(operand(0)->approximate<float>(context, angleUnit));
-  Complex<float> * op1 = static_cast<Complex<float> *>(operand(1)->approximate<float>(context, angleUnit));
-  bool bothOperandsComplexes = op0->b() != 0 && op1->b() != 0;
+  Complex<float> * op0 = static_cast<Complex<float> *>(operand(0)->privateApproximate(float(), context, angleUnit));
+  Complex<float> * op1 = static_cast<Complex<float> *>(operand(1)->privateApproximate(float(), context, angleUnit));
+  bool bothOperandsComplexes = op0->imag() != 0 && op1->imag() != 0;
   delete op0;
   delete op1;
   if (bothOperandsComplexes) {
-    return replaceWith(new Undefined(), true);
+    return this;
   }
 
   /* Step 1: We handle simple cases as x^0, x^1, 0^x and 1^x first for 2 reasons:
@@ -847,6 +837,6 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational * b, const Rationa
   return false;
 }
 
-template Complex<float> Power::compute<float>(Complex<float>, Complex<float>);
-template Complex<double> Power::compute<double>(Complex<double>, Complex<double>);
+template std::complex<float> Power::compute<float>(std::complex<float>, std::complex<float>);
+template std::complex<double> Power::compute<double>(std::complex<double>, std::complex<double>);
 }

@@ -10,8 +10,8 @@ class CeilingLayout : public BracketPairLayout {
 public:
   using BracketPairLayout::BracketPairLayout;
   ExpressionLayout * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "ceil");
+  int writeTextInBuffer(char * buffer, int bufferSize) const override {
+    return LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "ceil");
   }
 protected:
   bool renderBottomBar() const override { return false; }

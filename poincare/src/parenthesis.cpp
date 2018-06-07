@@ -21,10 +21,8 @@ int Parenthesis::polynomialDegree(char symbolName) const {
   return operand(0)->polynomialDegree(symbolName);
 }
 
-ExpressionLayout * Parenthesis::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
-  assert(complexFormat != ComplexFormat::Default);
-  return LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
+ExpressionLayout * Parenthesis::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
 Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {
@@ -36,8 +34,8 @@ Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Expression * Parenthesis::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  return operand(0)->approximate<T>(context, angleUnit);
+Evaluation<T> * Parenthesis::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  return operand(0)->privateApproximate(T(), context, angleUnit);
 }
 
 }

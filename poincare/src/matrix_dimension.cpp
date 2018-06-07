@@ -40,18 +40,18 @@ Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUni
 }
 
 template<typename T>
-Expression * MatrixDimension::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * input = operand(0)->approximate<T>(context, angleUnit);
-  Expression * operands[2];
-  if (input->type() == Type::Matrix) {
-    operands[0] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfRows()));
-    operands[1] = new Complex<T>(Complex<T>::Float((T)static_cast<Matrix *>(input)->numberOfColumns()));
+Evaluation<T> * MatrixDimension::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
+  std::complex<T> operands[2];
+  if (input->type() == Evaluation<T>::Type::MatrixComplex) {
+    operands[0] = std::complex<T>(static_cast<MatrixComplex<T> *>(input)->numberOfRows());
+    operands[1] = std::complex<T>(static_cast<MatrixComplex<T> *>(input)->numberOfColumns());
   } else {
-    operands[0] = new Complex<T>(Complex<T>::Float(1.0));
-    operands[1] = new Complex<T>(Complex<T>::Float(1.0));
+    operands[0] = std::complex<T>(1.0);
+    operands[1] = std::complex<T>(1.0);
   }
   delete input;
-  return new Matrix(operands, 1, 2, false);
+  return new MatrixComplex<T>(operands, 1, 2);
 }
 
 

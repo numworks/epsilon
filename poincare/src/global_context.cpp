@@ -1,6 +1,7 @@
 #include <poincare/global_context.h>
 #include <poincare/matrix.h>
-#include <poincare/matrix.h>
+#include <poincare/undefined.h>
+#include <poincare/preferences.h>
 #include <assert.h>
 #include <cmath>
 #include <ion.h>
@@ -8,9 +9,9 @@
 namespace Poincare {
 
 GlobalContext::GlobalContext() :
-  m_pi(Complex<double>::Float(M_PI)),
-  m_e(Complex<double>::Float(M_E)),
-  m_i(Complex<double>::Cartesian(0.0, 1.0))
+  m_pi(M_PI),
+  m_e(M_E),
+  m_i(0.0, 1.0)
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
@@ -40,8 +41,8 @@ GlobalContext::~GlobalContext() {
   }
 }
 
-Complex<double> * GlobalContext::defaultExpression() {
-  static Complex<double> defaultExpression(Complex<double>::Float(0.0));
+Decimal * GlobalContext::defaultExpression() {
+  static Decimal defaultExpression(Integer(0), 0);
   return &defaultExpression;
 }
 
@@ -56,14 +57,14 @@ int GlobalContext::symbolIndex(const Symbol * symbol) const {
 }
 
 const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
+  if (symbol->name() == Ion::Charset::IComplex) {
+    return &m_i;
+  }
   if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
   }
   if (symbol->name() == Ion::Charset::Exponential) {
     return &m_e;
-  }
-  if (symbol->name() == Ion::Charset::IComplex) {
-    return &m_i;
   }
   int index = symbolIndex(symbol);
   if (symbol->isMatrixSymbol()) {
@@ -78,11 +79,11 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   return m_expressions[index];
 }
 
-ExpressionLayout * GlobalContext::expressionLayoutForSymbol(const Symbol * symbol) {
+ExpressionLayout * GlobalContext::expressionLayoutForSymbol(const Symbol * symbol, int numberOfSignificantDigits) {
   if (symbol->isMatrixSymbol()) {
     int index = symbolIndex(symbol);
     if (m_matrixLayout[index] == nullptr && m_matrixExpressions[index] != nullptr) {
-      m_matrixLayout[index] = m_matrixExpressions[index]->createLayout();
+      m_matrixLayout[index] = m_matrixExpressions[index]->createLayout(PrintFloat::Mode::Decimal, numberOfSignificantDigits);
     }
     return m_matrixLayout[index];
   }
@@ -94,7 +95,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
  if (symbol->isMatrixSymbol()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
-    Expression * evaluation = expression ? expression->approximate<double>(context) : nullptr; // evaluate before deleting anything (to be able to evaluate M1+2->M1)
+    Expression * evaluation = expression ? expression->approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()) : nullptr; // evaluate before deleting anything (to be able to evaluate M1+2->M1)
     if (m_matrixExpressions[indexMatrix] != nullptr) {
       delete m_matrixExpressions[indexMatrix];
       m_matrixExpressions[indexMatrix] = nullptr;
@@ -104,7 +105,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
       m_matrixLayout[indexMatrix] = nullptr;
     }
     if (evaluation != nullptr) {
-      if (evaluation->type() == Expression::Type::Complex) {
+      if (evaluation->type() != Expression::Type::Matrix) {
         m_matrixExpressions[indexMatrix] = new Matrix(&evaluation, 1, 1, false);
       } else {
         m_matrixExpressions[indexMatrix] = static_cast<Matrix *>(evaluation);
@@ -115,7 +116,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return;
   }
-  Expression * evaluation = expression ? expression->approximate<double>(context) : nullptr; // evaluate before deleting anything (to be able to evaluate A+2->A)
+  Expression * evaluation = expression ? expression->approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()) : nullptr; // evaluate before deleting anything (to be able to evaluate A+2->A)
   if (m_expressions[index] != nullptr) {
     delete m_expressions[index];
     m_expressions[index] = nullptr;
@@ -123,11 +124,11 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   if (evaluation == nullptr) {
     return;
   }
-  if (evaluation->type() == Expression::Type::Complex) {
-    m_expressions[index] = static_cast<Complex<double> *>(evaluation);
-  } else {
-    m_expressions[index] = new Complex<double>(Complex<double>::Float(NAN));
+  if (evaluation->type() == Expression::Type::Matrix) {
+    m_expressions[index] = new Undefined();
     delete evaluation;
+  } else {
+    m_expressions[index] = evaluation;
   }
 }
 

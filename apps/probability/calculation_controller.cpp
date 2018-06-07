@@ -1,6 +1,7 @@
 #include "calculation_controller.h"
 #include "../constant.h"
 #include "../apps_container.h"
+#include "../shared/poincare_helpers.h"
 #include "app.h"
 #include "calculation/discrete_calculation.h"
 #include "calculation/left_integral_calculation.h"
@@ -234,7 +235,7 @@ bool CalculationController::textFieldShouldFinishEditing(TextField * textField, 
 bool CalculationController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   App * probaApp = (App *)app();
   Context * globalContext = probaApp->container()->globalContext();
-  double floatBody = Expression::approximateToScalar<double>(text, *globalContext);
+  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
   if (std::isnan(floatBody) || std::isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;

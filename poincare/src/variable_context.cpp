@@ -8,9 +8,14 @@ namespace Poincare {
 template<typename T>
 VariableContext<T>::VariableContext(char name, Context * parentContext) :
   m_name(name),
-  m_value(Complex<T>::Float(NAN)),
+  m_value(Approximation<T>(NAN)),
   m_parentContext(parentContext)
 {
+}
+
+template<typename T>
+void VariableContext<T>::setApproximationForVariable(T value) {
+  m_value = Approximation<T>(value);
 }
 
 template<typename T>
@@ -19,11 +24,7 @@ void VariableContext<T>::setExpressionForSymbolName(const Expression * expressio
     if (expression == nullptr) {
       return;
     }
-    if (expression->type() == Expression::Type::Complex) {
-      m_value = Complex<T>::Float(static_cast<const Complex<T> *>(expression)->toScalar());
-    } else {
-      m_value = Complex<T>::Float(NAN);
-    }
+    m_value = Approximation<T>(expression->approximateToScalar<T>(context, Preferences::sharedPreferences()->angleUnit()));
   } else {
     m_parentContext->setExpressionForSymbolName(expression, symbol, context);
   }

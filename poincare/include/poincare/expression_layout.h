@@ -92,7 +92,7 @@ public:
   ExpressionLayoutCursor cursorInDescendantsUnder(ExpressionLayoutCursor cursor, bool * shouldRecomputeLayout);
 
   /* Expression Engine */
-  virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
+  virtual int writeTextInBuffer(char * buffer, int bufferSize) const = 0;
 
   /* Cursor */
   virtual ExpressionLayoutCursor equivalentCursor(ExpressionLayoutCursor cursor);

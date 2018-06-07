@@ -2,10 +2,12 @@
 #include "helpers.h"
 #include "../global_preferences.h"
 #include "../apps_container.h"
+#include "../shared/poincare_helpers.h"
 #include <assert.h>
 #include <cmath>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Settings {
 
@@ -217,7 +219,7 @@ bool SubController::textFieldShouldFinishEditing(TextField * textField, Ion::Eve
 
 bool SubController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   Context * globalContext = textFieldDelegateApp()->localContext();
-  float floatBody = Expression::approximateToScalar<float>(text, *globalContext);
+  float floatBody = PoincareHelpers::ApproximateToScalar<float>(text, *globalContext);
   if (std::isnan(floatBody) || std::isinf(floatBody)) {
     floatBody = PrintFloat::k_numberOfPrintedSignificantDigits;
   }

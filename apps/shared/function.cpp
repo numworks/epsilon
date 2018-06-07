@@ -1,4 +1,5 @@
 #include "function.h"
+#include "poincare_helpers.h"
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -71,7 +72,7 @@ const char * Function::name() const {
 
 Poincare::Expression * Function::expression(Poincare::Context * context) const {
   if (m_expression == nullptr) {
-    m_expression = Expression::ParseAndSimplify(m_text, *context);
+    m_expression = PoincareHelpers::ParseAndSimplify(m_text, *context);
   }
   return m_expression;
 }
@@ -80,7 +81,7 @@ Poincare::ExpressionLayout * Function::layout() {
   if (m_layout == nullptr) {
     Expression * nonSimplifiedExpression = Expression::parse(m_text);
     if (nonSimplifiedExpression != nullptr) {
-      m_layout = nonSimplifiedExpression->createLayout(PrintFloat::Mode::Decimal);
+      m_layout = PoincareHelpers::CreateLayout(nonSimplifiedExpression);
       delete nonSimplifiedExpression;
     }
   }
@@ -106,10 +107,8 @@ bool Function::isEmpty() {
 template<typename T>
 T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
   Poincare::VariableContext<T> variableContext = Poincare::VariableContext<T>(symbol(), context);
-  Poincare::Symbol xSymbol(symbol());
-  Poincare::Complex<T> e = Poincare::Complex<T>::Float(x);
-  variableContext.setExpressionForSymbolName(&e, &xSymbol, variableContext);
-  return expression(context)->approximateToScalar<T>(variableContext);
+  variableContext.setApproximationForVariable(x);
+  return PoincareHelpers::ApproximateToScalar<T>(expression(context), variableContext);
 }
 
 void Function::tidy() {

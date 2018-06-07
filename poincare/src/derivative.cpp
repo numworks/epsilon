@@ -1,6 +1,5 @@
 #include <poincare/derivative.h>
 #include <poincare/symbol.h>
-#include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -45,23 +44,21 @@ Expression * Derivative::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * Derivative::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   VariableContext<T> xContext = VariableContext<T>('x', &context);
-  Symbol xSymbol('x');
-  Expression * xInput = operand(1)->approximate<T>(context, angleUnit);
-  T x = xInput->type() == Type::Complex ? static_cast<Complex<T> *>(xInput)->toScalar() : NAN;
+  Evaluation<T> * xInput = operand(1)->privateApproximate(T(), context, angleUnit);
+  T x = xInput->toScalar();
   delete xInput;
-  Complex<T> e = Complex<T>::Float(x);
-  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  Expression * fInput = operand(0)->approximate<T>(xContext, angleUnit);
-  T functionValue = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
+  xContext.setApproximationForVariable(x);
+  Evaluation<T> * fInput = operand(0)->privateApproximate(T(), xContext, angleUnit);
+  T functionValue = fInput->toScalar();
   delete fInput;
 
   // No complex/matrix version of Derivative
   if (std::isnan(x) || std::isnan(functionValue)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Undefined());
   }
 
   T error, result;
@@ -73,27 +70,25 @@ Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleU
 
   /* if the error is too big regarding the value, do not return the answer */
   if (std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Undefined());
   }
   if (std::fabs(error) < min) {
-    return new Complex<T>(Complex<T>::Float(result));
+    return new Complex<T>(result);
   }
   error = std::pow((T)10, std::floor(std::log10(std::fabs(error)))+2);
-  return new Complex<T>(Complex<T>::Float(std::round(result/error)*error));
+  return new Complex<T>(std::round(result/error)*error);
 }
 
 template<typename T>
 T Derivative::growthRateAroundAbscissa(T x, T h, VariableContext<T> xContext, AngleUnit angleUnit) const {
   Symbol xSymbol('x');
-  Complex<T> e = Complex<T>::Float(x + h);
-  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  Expression * fInput = operand(0)->approximate<T>(xContext, angleUnit);
-  T expressionPlus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
+  xContext.setApproximationForVariable(x + h);
+  Evaluation<T> * fInput = operand(0)->privateApproximate(T(), xContext, angleUnit);
+  T expressionPlus = fInput->toScalar();
   delete fInput;
-  e = Complex<T>::Float(x-h);
-  xContext.setExpressionForSymbolName(&e, &xSymbol, xContext);
-  fInput = operand(0)->approximate<T>(xContext, angleUnit);
-  T expressionMinus = fInput->type() == Type::Complex ? static_cast<Complex<T> *>(fInput)->toScalar() : NAN;
+  xContext.setApproximationForVariable(x - h);
+  fInput = operand(0)->privateApproximate(T(), xContext, angleUnit);
+  T expressionMinus = fInput->toScalar();
   delete fInput;
   return (expressionPlus - expressionMinus)/(2*h);
 }

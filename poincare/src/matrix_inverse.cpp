@@ -1,6 +1,5 @@
 #include <poincare/matrix_inverse.h>
 #include <poincare/matrix.h>
-#include <poincare/complex.h>
 #include <poincare/division.h>
 #include <poincare/undefined.h>
 #include <poincare/power.h>
@@ -46,19 +45,17 @@ Expression * MatrixInverse::shallowReduce(Context& context, AngleUnit angleUnit)
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
-Expression * MatrixInverse::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * input = operand(0)->approximate<T>(context, angleUnit);
-  Expression * result = nullptr;
-  if (input->type() == Type::Complex) {
+Evaluation<T> * MatrixInverse::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * result = nullptr;
+  if (input->type() == Evaluation<T>::Type::Complex) {
     Complex<T> * c = static_cast<Complex<T> *>(input);
-    result = new Complex<T>(Division::compute(Complex<T>::Cartesian(1, 0), *c));
+    result = new Complex<T>(Division::compute(std::complex<T>(1.0), *c));
   } else {
-    assert(input->type() == Type::Matrix);
-    result = static_cast<Matrix *>(input)->createInverse<T>();
+    assert(input->type() == Evaluation<T>::Type::MatrixComplex);
+    result = new MatrixComplex<T>(static_cast<MatrixComplex<T> *>(input)->createInverse());
   }
-  if (result == nullptr) {
-    result = new Complex<T>(Complex<T>::Float(NAN));
-  }
+  assert(result != nullptr);
   delete input;
   return result;
 }

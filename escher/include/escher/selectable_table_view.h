@@ -20,6 +20,7 @@ public:
   SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
       SelectableTableViewDataSource * selectionDataSource = nullptr, SelectableTableViewDelegate * delegate = nullptr);
   template <typename T> SelectableTableView(T * p) : SelectableTableView(p, p, p) {};
+  void setDelegate(SelectableTableViewDelegate * delegate) { m_delegate = delegate; }
   int selectedRow();
   int selectedColumn();
   void selectRow(int j);

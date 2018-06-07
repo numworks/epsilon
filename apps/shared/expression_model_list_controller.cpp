@@ -120,20 +120,14 @@ SelectableTableView * ExpressionModelListController::selectableTableView() {
   return (SelectableTableView *)view();
 }
 
-View * ExpressionModelListController::loadView() {
+void ExpressionModelListController::loadAddModelCell() {
   m_addNewModel = new EvenOddMessageTextCell();
   m_addNewModel->setMessage(m_addNewMessage);
-  SelectableTableView * selectableTableView = new SelectableTableView(this, tableDataSource(), this, selectableTableDelegate());
-  selectableTableView->setMargins(0);
-  selectableTableView->setVerticalCellOverlap(0);
-  selectableTableView->setShowsIndicators(false);
-  return selectableTableView;
 }
 
-void ExpressionModelListController::unloadView(View * view) {
+void ExpressionModelListController::unloadAddModelCell() {
   delete m_addNewModel;
   m_addNewModel = nullptr;
-  delete view;
 }
 
 }

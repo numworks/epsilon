@@ -7,6 +7,7 @@
 #include "../shared/expression_layout_field_delegate.h"
 #include "../shared/text_field_delegate.h"
 #include "equation_store.h"
+#include "equation_list_view.h"
 #include "equation_models_parameter_controller.h"
 #include "../i18n.h"
 
@@ -45,6 +46,7 @@ public:
   void resolveEquations();
 private:
   constexpr static int k_maxNumberOfRows = 5; // Ion::Display::Height / Metric::StoreRowHeight = 4.8;
+  SelectableTableView * selectableTableView() override;
   void reloadButtonMessage();
   void addEmptyModel() override;
   View * loadView() override;
@@ -52,8 +54,6 @@ private:
   Shared::ExpressionModelStore * modelStore() override { return m_equationStore; }
   StackViewController * stackController() const;
   InputViewController * inputController() override;
-  TableViewDataSource * tableDataSource() override { return this; }
-  SelectableTableViewDelegate * selectableTableDelegate() override { return nullptr; }
   EquationStore * m_equationStore;
   Shared::ModelExpressionCell * m_expressionCells[k_maxNumberOfRows];
   Button m_resolveButton;

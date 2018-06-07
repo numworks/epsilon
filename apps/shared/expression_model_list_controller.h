@@ -24,13 +24,11 @@ protected:
   virtual int modelIndexForRow(int j);
   virtual bool isAddEmptyRow(int j);
   /* Dynamic View Controller */
-  SelectableTableView * selectableTableView();
-  View * loadView() override;
-  void unloadView(View * view) override;
+  virtual SelectableTableView * selectableTableView();
+  void loadAddModelCell();
+  void unloadAddModelCell();
   virtual ExpressionModelStore * modelStore() = 0;
   virtual InputViewController * inputController() = 0;
-  virtual TableViewDataSource * tableDataSource() = 0;
-  virtual SelectableTableViewDelegate * selectableTableDelegate() = 0;
   I18n::Message m_addNewMessage;
   EvenOddMessageTextCell * m_addNewModel;
 };

@@ -9,7 +9,9 @@ namespace Regression {
 class BannerView : public Shared::BannerView {
 public:
   BannerView();
+  int numberOfTextviews() const { return k_numberOfTextViews; }
 private:
+  static constexpr int k_numberOfTextViews = 9;
   int numberOfSubviews() const override;
   TextView * textViewAtIndex(int i) const override;
   MessageTextView * messageTextViewAtIndex(int i) const override;
@@ -17,10 +19,11 @@ private:
   BufferTextView m_xView;
   BufferTextView m_yView;
   MessageTextView m_regressionTypeView;
-  BufferTextView m_slopeView;
-  BufferTextView m_yInterceptView;
-  BufferTextView m_rView;
-  BufferTextView m_r2View;
+  BufferTextView m_subText1;
+  BufferTextView m_subText2;
+  BufferTextView m_subText3;
+  BufferTextView m_subText4;
+  BufferTextView m_subText5;
 };
 
 }

@@ -47,8 +47,8 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   InteractiveCurveViewController::viewWillAppear();
-  if (m_selectedSeries < 0) {
-    m_selectedSeries = m_store->indexOfKthNonEmptySeries(0);
+  if (*m_selectedSeriesIndex < 0) {
+    *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
   }
   if (*m_selectedDotIndex >= 0) {
     m_view.setCursorView(static_cast<View *>(&m_crossCursorView));
@@ -82,8 +82,7 @@ void GraphController::reloadBannerView() {
     return;
   }
 
-  Model * model = m_store->modelForSeries(selectedSeriesIndex());
-  m_bannerView.setMessageAtIndex(model->formulaMessage(), 3);
+  // Set point equals: "P(...) ="
   char buffer[k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
   int numberOfChar = 0;
   const char * legend = " P(";
@@ -109,6 +108,8 @@ void GraphController::reloadBannerView() {
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 0);
 
+
+  // Set "x=..." or "xmean=..."
   numberOfChar = 0;
   legend = "x=";
   double x = m_cursor->x();
@@ -122,12 +123,13 @@ void GraphController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   numberOfChar += PrintFloat::convertFloatToText<double>(x, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
+    buffer[numberOfChar++] = ' ';
+  }
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 1);
 
+  // Set "y=..." or "ymean=..."
   numberOfChar = 0;
   legend = "y=";
   double y = m_cursor->y();
@@ -140,63 +142,67 @@ void GraphController::reloadBannerView() {
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
   numberOfChar += PrintFloat::convertFloatToText<double>(y, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
-  legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
+  for (int i = numberOfChar; i < k_maxLegendLength; i++) {
+    buffer[numberOfChar++] = ' ';
+  }
   buffer[k_maxLegendLength] = 0;
   m_bannerView.setLegendAtIndex(buffer, 2);
 
-  numberOfChar = 0;
-  legend = " a=";
-  double slope = m_store->slope(*m_selectedSeriesIndex);
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
-  numberOfChar += PrintFloat::convertFloatToText<double>(slope, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  buffer[k_maxLegendLength] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 4);
+  // Set formula
+  Model * model = m_store->modelForSeries(selectedSeriesIndex());
+  m_bannerView.setMessageAtIndex(model->formulaMessage(), 3);
 
-  numberOfChar = 0;
-  legend = " b=";
-  double yIntercept = m_store->yIntercept(*m_selectedSeriesIndex);
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
-  numberOfChar += PrintFloat::convertFloatToText<double>(yIntercept, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  buffer[k_maxLegendLength] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 5);
+  // Get the coefficients
+  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globContext);
+  char coefficientName = 'a';
+  for (int i = 0; i < model->numberOfCoefficients(); i++) {
+    numberOfChar = 0;
+    char leg[] = {' ', coefficientName, '=', 0};
+    legend = leg;
+    legendLength = strlen(legend);
+    strlcpy(buffer, legend, legendLength+1);
+    numberOfChar += legendLength;
+    numberOfChar += PrintFloat::convertFloatToText<double>(coefficients[i], buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    buffer[k_maxLegendLength] = 0;
+    m_bannerView.setLegendAtIndex(buffer, 4 + i);
+    coefficientName++;
+  }
 
-  numberOfChar = 0;
-  legend = "           r=";
-  double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
-  numberOfChar += PrintFloat::convertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  buffer[k_maxLegendLength+10] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 6);
+  if (m_store->seriesRegressionType(selectedSeriesIndex()) == Model::Type::Linear) {
+    // Set "r=..."
+    numberOfChar = 0;
+    legend = " r=";
+    double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
+    legendLength = strlen(legend);
+    strlcpy(buffer, legend, legendLength+1);
+    numberOfChar += legendLength;
+    numberOfChar += PrintFloat::convertFloatToText<double>(r, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    buffer[k_maxLegendLength+10] = 0;
+    m_bannerView.setLegendAtIndex(buffer, 6);
 
-  numberOfChar = 0;
-  legend = " r2=";
-  double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
-  legendLength = strlen(legend);
-  strlcpy(buffer, legend, legendLength+1);
-  numberOfChar += legendLength;
-  numberOfChar += PrintFloat::convertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-  legend = "                  ";
-  legendLength = strlen(legend);
-  strlcpy(buffer+numberOfChar, legend, legendLength+1);
-  buffer[k_maxLegendLength] = 0;
-  m_bannerView.setLegendAtIndex(buffer, 7);
+    // Set "r2=..."
+    numberOfChar = 0;
+    legend = " r2=";
+    double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
+    legendLength = strlen(legend);
+    strlcpy(buffer, legend, legendLength+1);
+    numberOfChar += legendLength;
+    numberOfChar += PrintFloat::convertFloatToText<double>(r2, buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    buffer[k_maxLegendLength] = 0;
+    m_bannerView.setLegendAtIndex(buffer, 7);
+
+    // Clean the last subview
+    buffer[0] = 0;
+    m_bannerView.setLegendAtIndex(buffer, 8);
+
+  } else {
+    // Empty all non used subviews
+    for (int i = 4+model->numberOfCoefficients(); i < m_bannerView.numberOfTextviews(); i++) {
+      buffer[0] = 0;
+      m_bannerView.setLegendAtIndex(buffer, i);
+    }
+  }
 }
 
 void GraphController::initRangeParameters() {

@@ -10,9 +10,9 @@ app_objs += $(addprefix apps/regression/,\
   even_odd_double_buffer_text_cell_with_separator.o\
   go_to_parameter_controller.o\
   graph_controller.o\
+  graph_options_controller.o\
   graph_view.o\
   initialisation_parameter_controller.o\
-  prediction_parameter_controller.o\
   regression_context.o\
   regression_controller.o\
   store.o\

@@ -15,7 +15,7 @@ GraphController::GraphController(Responder * parentResponder, ButtonRowControlle
   m_view(store, m_cursor, &m_bannerView, &m_crossCursorView, this),
   m_store(store),
   m_initialisationParameterController(this, m_store),
-  m_predictionParameterController(this, m_store, m_cursor, this),
+  m_graphOptionsController(this, m_store, m_cursor, this),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex)
 {
@@ -73,7 +73,7 @@ InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
 }
 
 bool GraphController::handleEnter() {
-  stackController()->push(&m_predictionParameterController);
+  stackController()->push(&m_graphOptionsController);
   return true;
 }
 

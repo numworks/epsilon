@@ -4,9 +4,9 @@
 #include <escher.h>
 #include "banner_view.h"
 #include "store.h"
+#include "graph_options_controller.h"
 #include "graph_view.h"
 #include "initialisation_parameter_controller.h"
-#include "prediction_parameter_controller.h"
 #include "../shared/interactive_curve_view_controller.h"
 #include "../shared/curve_view_cursor.h"
 #include "../shared/cursor_view.h"
@@ -46,7 +46,7 @@ private:
   GraphView m_view;
   Store * m_store;
   InitialisationParameterController m_initialisationParameterController;
-  PredictionParameterController m_predictionParameterController;
+  GraphOptionsController m_graphOptionsController;
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;

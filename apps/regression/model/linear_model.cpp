@@ -1,4 +1,5 @@
 #include "linear_model.h"
+#include "../store.h"
 #include <math.h>
 #include <poincare/layout_engine.h>
 #include <assert.h>
@@ -25,6 +26,11 @@ double LinearModel::levelSet(double * modelCoefficients, double y) const {
     return NAN;
   }
   return (y-b)/a;
+}
+
+void LinearModel::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
+  modelCoefficients[0] = store->slope(series);
+  modelCoefficients[1] = store->yIntercept(series);
 }
 
 double LinearModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {

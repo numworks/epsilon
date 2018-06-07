@@ -10,6 +10,7 @@ class LinearModel : public Model {
 public:
   using Model::Model;
   Poincare::ExpressionLayout * layout() override;
+  I18n::Message formulaMessage() const override { return I18n::Message::LinearRegressionFormula; }
   double evaluate(double * modelCoefficients, double x) const override;
   double levelSet(double * modelCoefficients, double y) const override;
   virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override;

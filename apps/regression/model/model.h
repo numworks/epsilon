@@ -2,6 +2,7 @@
 #define REGRESSION_MODEL_H
 
 #include <stdint.h>
+#include "../../i18n.h"
 #include <poincare/context.h>
 #include <poincare/expression.h>
 
@@ -26,6 +27,7 @@ public:
   static constexpr int k_maxNumberOfCoefficients = 5;
   virtual ~Model() = default;
   virtual Poincare::ExpressionLayout * layout() = 0;
+  virtual I18n::Message formulaMessage() const = 0;
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual double levelSet(double * modelCoefficients, double y) const = 0;
   virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);

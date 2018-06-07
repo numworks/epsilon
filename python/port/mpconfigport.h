@@ -47,9 +47,6 @@
 // Whether to support property object
 #define MICROPY_PY_BUILTINS_PROPERTY (0)
 
-// Whether to support enumerate function(type)
-#define MICROPY_PY_BUILTINS_ENUMERATE (0)
-
 // Whether to support filter function(type)
 #define MICROPY_PY_BUILTINS_FILTER (0)
 

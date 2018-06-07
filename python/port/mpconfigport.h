@@ -20,9 +20,6 @@
 // Whether to provide the mp_kbd_exception object, and micropython.kbd_intr function
 #define MICROPY_KBD_EXCEPTION (1)
 
-// Whether to include REPL helper function
-#define MICROPY_HELPER_REPL (1)
-
 // Long int implementation
 #define MICROPY_LONGINT_IMPL (MICROPY_LONGINT_IMPL_MPZ)
 

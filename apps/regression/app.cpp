@@ -57,7 +57,8 @@ App::App(Container * container, Snapshot * snapshot) :
   m_storeController(&m_storeHeader, snapshot->store(), &m_storeHeader),
   m_storeHeader(&m_storeStackViewController, &m_storeController, &m_storeController),
   m_storeStackViewController(&m_tabViewController, &m_storeHeader),
-  m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_graphStackViewController, &m_calculationHeader)
+  m_tabViewController(&m_modalViewController, snapshot, &m_storeStackViewController, &m_graphStackViewController, &m_calculationHeader),
+  m_regressionController(nullptr, snapshot->store())
 {
 }
 

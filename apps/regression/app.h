@@ -3,10 +3,11 @@
 
 #include <escher.h>
 #include "../shared/text_field_delegate_app.h"
+#include "calculation_controller.h"
+#include "graph_controller.h"
+#include "regression_controller.h"
 #include "store.h"
 #include "store_controller.h"
-#include "graph_controller.h"
-#include "calculation_controller.h"
 
 namespace Regression {
 
@@ -37,7 +38,8 @@ public:
     uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
     int m_selectedSeriesIndex;
- };
+  };
+  RegressionController * regressionController() { return &m_regressionController; }
 private:
   App(Container * container, Snapshot * snapshot);
   CalculationController m_calculationController;
@@ -51,6 +53,7 @@ private:
   ButtonRowController m_storeHeader;
   StackViewController m_storeStackViewController;
   TabViewController m_tabViewController;
+  RegressionController m_regressionController;
 };
 
 }

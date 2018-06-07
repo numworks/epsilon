@@ -238,9 +238,9 @@ bool GraphController::moveCursorHorizontally(int direction) {
 }
 
 bool GraphController::moveCursorVertically(int direction) {
-  volatile int closestRegressionSeries = -1;
+  int closestRegressionSeries = -1;
   int closestDotSeries = -1;
-  volatile int dotSelected = -1;
+  int dotSelected = -1;
 
   if (*m_selectedDotIndex == -1) {
     // The current cursor is on a regression

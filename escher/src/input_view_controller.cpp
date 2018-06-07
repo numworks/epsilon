@@ -55,11 +55,15 @@ bool InputViewController::textFieldShouldFinishEditing(TextField * textField, Io
 }
 
 bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  return inputViewDidFinishEditing();
+  inputViewDidFinishEditing();
+  m_textFieldDelegate->textFieldDidFinishEditing(textField, text, event);
+  return true;
 }
 
 bool InputViewController::textFieldDidAbortEditing(TextField * textField) {
-  return inputViewDidAbortEditing();
+  inputViewDidAbortEditing();
+  m_textFieldDelegate->textFieldDidAbortEditing(textField);
+  return true;
 }
 
 bool InputViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
@@ -79,11 +83,15 @@ bool InputViewController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutF
 }
 
 bool InputViewController::expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) {
-  return inputViewDidFinishEditing();
+  inputViewDidFinishEditing();
+  m_expressionLayoutFieldDelegate->expressionLayoutFieldDidFinishEditing(expressionLayoutField, layout, event);
+  return true;
 }
 
 bool InputViewController::expressionLayoutFieldDidAbortEditing(ExpressionLayoutField * expressionLayoutField) {
-  return inputViewDidAbortEditing();
+  inputViewDidAbortEditing();
+  m_expressionLayoutFieldDelegate->expressionLayoutFieldDidAbortEditing(expressionLayoutField);
+  return true;
 }
 
 void InputViewController::expressionLayoutFieldDidChangeSize(ExpressionLayoutField * expressionLayoutField) {
@@ -100,14 +108,12 @@ Toolbox * InputViewController::toolboxForExpressionLayoutField(ExpressionLayoutF
   return m_expressionLayoutFieldDelegate->toolboxForExpressionLayoutField(expressionLayoutField);
 }
 
-bool InputViewController::inputViewDidFinishEditing() {
+void InputViewController::inputViewDidFinishEditing() {
   m_successAction.perform(this);
   dismissModalViewController();
-  return true;
 }
 
-bool InputViewController::inputViewDidAbortEditing() {
+void InputViewController::inputViewDidAbortEditing() {
   m_failureAction.perform(this);
   dismissModalViewController();
-  return true;
 }

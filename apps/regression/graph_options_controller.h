@@ -1,5 +1,5 @@
-#ifndef REGRESSION_PREDICTION_PARAMETER_CONTROLLER_H
-#define REGRESSION_PREDICTION_PARAMETER_CONTROLLER_H
+#ifndef REGRESSION_GRAPH_OPTIONS_CONTROLLER_H
+#define REGRESSION_GRAPH_OPTIONS_CONTROLLER_H
 
 #include <escher.h>
 #include "store.h"
@@ -10,9 +10,9 @@ namespace Regression {
 
 class GraphController;
 
-class PredictionParameterController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
+class GraphOptionsController : public ViewController, public SimpleListViewDataSource, public SelectableTableViewDataSource {
 public:
-  PredictionParameterController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
+  GraphOptionsController(Responder * parentResponder, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;

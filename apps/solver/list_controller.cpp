@@ -10,7 +10,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
   m_equationStore(equationStore),
-  m_resolveButton(this, I18n::Message::Resolve, Invocation([](void * context, void * sender) {
+  m_resolveButton(this, I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     list->resolveEquations();
   }, this), KDText::FontSize::Small, Palette::PurpleBright),
@@ -140,6 +140,16 @@ bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField 
   return false;
 }
 
+bool ListController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+  reloadButtonMessage();
+  return true;
+}
+
+bool ListController::expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) {
+  reloadButtonMessage();
+  return true;
+}
+
 void ListController::resolveEquations() {
   if (m_equationStore->numberOfDefinedModels() == 0) {
     app()->displayWarning(I18n::Message::EnterEquation);
@@ -171,6 +181,10 @@ void ListController::resolveEquations() {
       stack->push(solverApp->solutionsControllerStack(), KDColorWhite, Palette::PurpleBright, Palette::PurpleBright);
     }
  }
+}
+
+void ListController::reloadButtonMessage() {
+  m_resolveButton.setMessage(m_equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation);
 }
 
 void ListController::addEmptyModel() {

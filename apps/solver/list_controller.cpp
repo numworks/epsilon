@@ -65,9 +65,7 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index != m_equationStore->numberOfModels()) {
     willDisplayExpressionCellAtIndex(cell, index);
   }
-  EvenOddCell * myCell = (EvenOddCell *)cell;
-  myCell->setEven(index%2 == 0);
-  myCell->setHighlighted(index == selectedRow());
+  cell->setHighlighted(index == selectedRow());
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {
@@ -198,7 +196,9 @@ SelectableTableView * ListController::selectableTableView() {
 View * ListController::loadView() {
   loadAddModelCell();
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_expressionCells[i] = new ModelExpressionCell();
+    m_expressionCells[i] = new EvenOddExpressionCell();
+    m_expressionCells[i]->setMargin(EquationListView::k_braceTotalWidth+k_expressionMargin);
+    m_expressionCells[i]->setEven(true);
   }
   EquationListView * listView = new EquationListView(this, this, this);
   return listView;

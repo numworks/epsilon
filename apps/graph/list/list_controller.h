@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "../function_title_cell.h"
 #include "../cartesian_function_store.h"
-#include "../../shared/model_expression_cell.h"
+#include "../../shared/function_expression_cell.h"
 #include "../../shared/function_list_controller.h"
 #include "../../shared/list_parameter_controller.h"
 
@@ -26,7 +26,7 @@ private:
   void unloadView(View * view) override;
   constexpr static int k_maxNumberOfRows = 5;
   FunctionTitleCell * m_functionTitleCells[k_maxNumberOfRows];
-  Shared::ModelExpressionCell * m_expressionCells[k_maxNumberOfRows];
+  Shared::FunctionExpressionCell * m_expressionCells[k_maxNumberOfRows];
   Shared::ListParameterController m_parameterController;
 };
 

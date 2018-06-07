@@ -50,7 +50,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   Shared::FunctionListController::willDisplayExpressionCellAtIndex(cell, j);
-  ModelExpressionCell * myCell = (ModelExpressionCell *)cell;
+  FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Function * f = m_functionStore->modelAtIndex(j);
   bool active = f->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;
@@ -67,7 +67,8 @@ bool ListController::removeModelRow(ExpressionModel * model) {
 View * ListController::loadView() {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_functionTitleCells[i] = new FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
-    m_expressionCells[i] = new ModelExpressionCell();
+    m_expressionCells[i] = new FunctionExpressionCell();
+    m_expressionCells[i]->setMargin(k_expressionMargin);
   }
   return Shared::FunctionListController::loadView();
 }

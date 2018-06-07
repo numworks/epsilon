@@ -182,7 +182,7 @@ const char * StoreController::title() {
 }
 
 bool StoreController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Up) {
+  if (event == Ion::Events::Up && !static_cast<ContentView *>(view())->formulaInputView()->textField()->isEditing()) {
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);
     app()->setFirstResponder(tabController());

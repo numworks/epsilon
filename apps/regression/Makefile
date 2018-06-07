@@ -39,6 +39,7 @@ i18n_files += $(addprefix apps/regression/,\
   base.es.i18n\
   base.fr.i18n\
   base.pt.i18n\
+  base.universal.i18n\
 )
 
 app_images += apps/regression/regression_icon.png

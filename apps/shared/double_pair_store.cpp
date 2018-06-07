@@ -118,6 +118,12 @@ uint32_t DoublePairStore::storeChecksum() const {
   return Ion::crc32((uint32_t *)m_data, dataLengthInBytes/sizeof(uint32_t));
 }
 
+uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
+  size_t dataLengthInBytes = k_maxNumberOfPairs*k_numberOfColumnsPerSeries*sizeof(double);
+  assert((dataLengthInBytes & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
+  return Ion::crc32((uint32_t *)m_data[series], dataLengthInBytes/sizeof(uint32_t));
+}
+
 double DoublePairStore::defaultValue(int series, int i, int j) const {
   assert(series >= 0 && series < k_numberOfSeries);
   if(i == 0 && j > 1) {

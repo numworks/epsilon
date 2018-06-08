@@ -113,29 +113,27 @@ bool textRepresentsAnEquality(const char * text) {
 }
 
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
-  if (Shared::TextFieldDelegate::textFieldDidReceiveEvent(textField, event)) {
-    return true;
-  }
   if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
     if (!textRepresentsAnEquality(textField->text())) {
-      app()->displayWarning(I18n::Message::RequireEquation);
-      return true;
+      textField->handleEventWithText("=0");
     }
+  }
+  if (Shared::TextFieldDelegate::textFieldDidReceiveEvent(textField, event)) {
+    return true;
   }
   return false;
 }
 
 bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
-  if (Shared::ExpressionLayoutFieldDelegate::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {
-    return true;
-  }
   if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event)) {
     char buffer[TextField::maxBufferSize()];
     expressionLayoutField->writeTextInBuffer(buffer, TextField::maxBufferSize());
     if (!textRepresentsAnEquality(buffer)) {
-      app()->displayWarning(I18n::Message::RequireEquation);
-      return true;
+      expressionLayoutField->handleEventWithText("=0");
     }
+  }
+  if (Shared::ExpressionLayoutFieldDelegate::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {
+    return true;
   }
   return false;
 }

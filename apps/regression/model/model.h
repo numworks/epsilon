@@ -31,7 +31,7 @@ public:
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual double levelSet(double * modelCoefficients, double y) const = 0;
   virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
-  virtual double numberOfCoefficients() const = 0;
+  virtual int numberOfCoefficients() const = 0;
 private:
   // Model attributes
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;

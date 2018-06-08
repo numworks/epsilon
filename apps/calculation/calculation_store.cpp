@@ -95,15 +95,15 @@ Expression * CalculationStore::ansExpression(Context * context) {
     return &defaultExpression;
   }
   Calculation * lastCalculation = calculationAtIndex(numberOfCalculations()-1);
-  /* Special case: the exact output is a Store expression.
-   * Remark: Store expressions are always reduced but if the simplification
-   * process was interrupted, the exact output is identical to the input.
-   * To avoid turning 'ans->A' in '2->A->A' (which cannot be parsed), ans
-   * is replaced by the approximation output in that special case.*/
-  bool exactOuptutInvolvesStore = lastCalculation->exactOutput(context)->recursivelyMatches([](const Expression * e, Context & context) {
-          return e->type() == Expression::Type::Store;
+  /* Special case: the exact output is a Store/Equal expression.
+   * Store/Equal expression must be final root of an expression.
+   * To avoid turning 'ans->A' in '2->A->A' (or 2->A=A) which cannot be parsed),
+   * ans is replaced by the approximation output in when any Store or Equal
+   * expression appears.*/
+  bool exactOuptutInvolvesStoreEqual = lastCalculation->exactOutput(context)->recursivelyMatches([](const Expression * e, Context & context) {
+          return e->type() == Expression::Type::Store || e->type() == Expression::Type::Equal;
         }, *context);
-  if (lastCalculation->input()->isApproximate(*context) || exactOuptutInvolvesStore) {
+  if (lastCalculation->input()->isApproximate(*context) || exactOuptutInvolvesStoreEqual) {
     return lastCalculation->approximateOutput(context);
   }
   return lastCalculation->exactOutput(context);

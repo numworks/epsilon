@@ -13,7 +13,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   m_resolveButton(this, I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     list->resolveEquations();
-  }, this), KDText::FontSize::Small, Palette::PurpleBright),
+  }, this), KDText::FontSize::Large, Palette::PurpleBright),
   m_modelsParameterController(this, equationStore, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark)
 {

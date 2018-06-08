@@ -101,6 +101,8 @@ void ListController::didBecomeFirstResponder() {
 
 void ListController::didEnterResponderChain(Responder * previousFirstResponder) {
   selectableTableView()->reloadData();
+  // Reload brace if the model store has evolved
+  reloadBrace();
 }
 
 bool textRepresentsAnEquality(const char * text) {
@@ -187,6 +189,18 @@ void ListController::reloadButtonMessage() {
 
 void ListController::addEmptyModel() {
   app()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::CommonTopMargin, Metric::CommonRightMargin, 0, Metric::CommonLeftMargin);
+}
+
+bool ListController::removeModelRow(ExpressionModel * model) {
+  ExpressionModelListController::removeModelRow(model);
+  reloadBrace();
+  return true;
+}
+
+void ListController::reloadBrace() {
+  EquationListView * listView = static_cast<EquationListView *>(view());
+  listView->displayBrace(m_equationStore->numberOfModels() > 1);
+  listView->layoutSubviews();
 }
 
 SelectableTableView * ListController::selectableTableView() {

@@ -7,7 +7,7 @@ BannerView::BannerView() :
   m_abscissaView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_functionView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_derivativeView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_tangentEquationView(KDText::FontSize::Small, I18n::Message::RegressionFormula, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
+  m_tangentEquationView(KDText::FontSize::Small, I18n::Message::LinearRegressionFormula, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_aView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_bView(KDText::FontSize::Small, 0.5f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_numberOfSubviews(2)

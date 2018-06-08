@@ -14,8 +14,8 @@ public:
   SelectableTableView * selectableTableView() {
     return &m_listView;
   }
-  constexpr static KDCoordinate k_braceTotalWidth = 30;
   constexpr static KDCoordinate k_margin = 10;
+  constexpr static KDCoordinate k_braceTotalWidth = 30;//2*k_margin+BraceView::k_braceWidth;
   void layoutSubviews() override;
 private:
   int numberOfSubviews() const override;

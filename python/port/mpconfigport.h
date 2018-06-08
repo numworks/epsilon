@@ -50,9 +50,6 @@
 // Whether to support property object
 #define MICROPY_PY_BUILTINS_PROPERTY (0)
 
-// Whether to support filter function(type)
-#define MICROPY_PY_BUILTINS_FILTER (0)
-
 // Whether to support reversed function(type)
 #define MICROPY_PY_BUILTINS_REVERSED (0)
 

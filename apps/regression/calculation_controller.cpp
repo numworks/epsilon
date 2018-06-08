@@ -12,6 +12,8 @@ using namespace Shared;
 
 namespace Regression {
 
+static inline int max(int x, int y) { return (x>y ? x : y); }
+
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
   TabTableController(parentResponder, this),
   ButtonRowDelegate(header, nullptr),
@@ -97,7 +99,7 @@ Responder * CalculationController::defaultController() {
 }
 
 int CalculationController::numberOfRows() {
-  return k_totalNumberOfRows;
+  return 1 + k_totalNumberOfDoubleBufferRows + 4 + maxNumberOfCoefficients() + hasLinearRegression() * 2;
 }
 
 int CalculationController::numberOfColumns() {
@@ -114,15 +116,26 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 
   // Calculation title
   if (i == 0) {
-    if (j == numberOfRows()-1) {
-      EvenOddExpressionCell * myCell = static_cast<EvenOddExpressionCell *>(cell);
+    bool shouldDisplayRAndR2 = hasLinearRegression();
+    int numberRows = numberOfRows();
+    if (shouldDisplayRAndR2 && j == numberRows-1) {
+      EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
       myCell->setExpressionLayout(m_r2Layout);
       return;
     }
     MarginEvenOddMessageTextCell * myCell = (MarginEvenOddMessageTextCell *)cell;
     myCell->setAlignment(1.0f, 0.5f);
-    I18n::Message titles[k_totalNumberOfRows-1] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression, I18n::Message::A, I18n::Message::B, I18n::Message::R, I18n::Message::Default};
-    myCell->setMessage(titles[j-1]);
+    if (j <= k_regressionCellIndex) {
+      I18n::Message titles[k_regressionCellIndex] = {I18n::Message::Mean, I18n::Message::Sum, I18n::Message::SquareSum, I18n::Message::StandardDeviation, I18n::Message::Deviation, I18n::Message::NumberOfDots, I18n::Message::Covariance, I18n::Message::Sxy, I18n::Message::Regression};
+      myCell->setMessage(titles[j-1]);
+      return;
+    }
+    if (shouldDisplayRAndR2 && j == numberRows - 2) {
+      myCell->setMessage(I18n::Message::R);
+      return;
+    }
+    I18n::Message titles[5] = {I18n::Message::A, I18n::Message::B, I18n::Message::C, I18n::Message::D, I18n::Message::E};
+    myCell->setMessage(titles[j - k_regressionCellIndex - 1]);
     return;
   }
 
@@ -153,21 +166,59 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     myCell->setSecondText(buffer);
     return;
   }
-  if (i > 0 && j == 9) {
-    SeparatorEvenOddBufferTextCell * myCell = (SeparatorEvenOddBufferTextCell *)cell;
-    myCell->setText("ax+b");
+  SeparatorEvenOddBufferTextCell * bufferCell = (SeparatorEvenOddBufferTextCell *)cell;
+  if (i > 0 && j == k_regressionCellIndex) {
+    Model * model = m_store->modelForSeries(seriesNumber);
+    // The formula is written as " y=...", we just want the "..." part
+    const char * formula = I18n::translate(model->formulaMessage());
+    bufferCell->setText(formula+3);
+    return;
+  }
+  if (i > 0 && j > k_totalNumberOfDoubleBufferRows && j < k_regressionCellIndex) {
+    assert(j != k_regressionCellIndex);
+    CalculPointer calculationMethods[] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance, &Store::columnProductSum};
+    double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])(seriesNumber);
+    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+    PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+    bufferCell->setText(buffer);
     return;
   }
   if (i > 0 && j > k_totalNumberOfDoubleBufferRows) {
-    assert(j != 9);
-    CalculPointer calculationMethods[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows] = {&Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance, &Store::columnProductSum, nullptr, &Store::slope, &Store::yIntercept, &Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
-    double calculation = (m_store->*calculationMethods[j-k_totalNumberOfDoubleBufferRows-1])(seriesNumber);
-    SeparatorEvenOddBufferTextCell * myCell = (SeparatorEvenOddBufferTextCell *)cell;
-    char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    myCell->setText(buffer);
-    return;
+    assert(j > k_regressionCellIndex);
+    int maxNumberCoefficients = maxNumberOfCoefficients();
+    Model::Type modelType =  m_store->seriesRegressionType(seriesNumber);
+    if (j > k_regressionCellIndex + maxNumberCoefficients) {
+      // Fill r and r2 if needed
+      if (modelType == Model::Type::Linear) {
+        CalculPointer calculationMethods[2] = {&Store::correlationCoefficient, &Store::squaredCorrelationCoefficient};
+        double calculation = (m_store->*calculationMethods[j - k_regressionCellIndex - maxNumberCoefficients - 1])(seriesNumber);
+        char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+        PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+        bufferCell->setText(buffer);
+        return;
+      } else {
+        char buffer[] = {0};
+        bufferCell->setText(buffer);
+        return;
+      }
+    } else {
+      // Fill the current coefficient if needed
+      int currentNumberOfCoefs = m_store->modelForSeries(seriesNumber)->numberOfCoefficients();
+      if (j > k_regressionCellIndex + currentNumberOfCoefs) {
+        char buffer[] = {0};
+        bufferCell->setText(buffer);
+        return;
+      } else {
+        Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+        double * coefficients = m_store->coefficientsForSeries(seriesNumber, globContext);
+        char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
+        PrintFloat::convertFloatToText<double>(coefficients[j - k_regressionCellIndex - 1], buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
+        bufferCell->setText(buffer);
+        return;
+      }
+    }
   }
+
 }
 
 KDCoordinate CalculationController::columnWidth(int i) {
@@ -229,7 +280,9 @@ int CalculationController::typeAtLocation(int i, int j) {
   if (i == 0 && j == 0) {
     return k_hideableCellType;
   }
-  if (i == 0 && j == k_totalNumberOfRows-1) {
+  bool shouldDisplayRAndR2 = hasLinearRegression();
+  int numberRows = numberOfRows();
+  if (shouldDisplayRAndR2 && i == 0 && j == numberRows-1) {
     return k_r2CellType;
   }
   if (i == 0) {
@@ -297,6 +350,26 @@ void CalculationController::unloadView(View * view) {
   delete m_hideableCell;
   m_hideableCell = nullptr;
   TabTableController::unloadView(view);
+}
+
+bool CalculationController::hasLinearRegression() const {
+  int numberOfDefinedSeries = m_store->numberOfNonEmptySeries();
+  for (int i = 0; i < numberOfDefinedSeries; i++) {
+    if (m_store->seriesRegressionType(m_store->indexOfKthNonEmptySeries(i)) == Model::Type::Linear) {
+      return true;
+    }
+  }
+  return false;
+}
+
+int CalculationController::maxNumberOfCoefficients() const {
+  int maxNumberCoefficients = 0;
+  int numberOfDefinedSeries = m_store->numberOfNonEmptySeries();
+  for (int i = 0; i < numberOfDefinedSeries; i++) {
+    int currentNumberOfCoefs = m_store->modelForSeries(m_store->indexOfKthNonEmptySeries(i))->numberOfCoefficients();
+    maxNumberCoefficients = max(maxNumberCoefficients, currentNumberOfCoefs);
+  }
+  return maxNumberCoefficients;
 }
 
 }

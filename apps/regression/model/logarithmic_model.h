@@ -16,6 +16,8 @@ public:
   double levelSet(double * modelCoefficients, double y) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 2; }
+protected:
+  virtual bool dataSuitableForFit(Store * store, int series) const override;
 };
 
 }

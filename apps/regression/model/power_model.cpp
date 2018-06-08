@@ -1,4 +1,5 @@
 #include "power_model.h"
+#include "../store.h"
 #include <math.h>
 #include <assert.h>
 #include "../../poincare/include/poincare_layouts.h"
@@ -65,5 +66,19 @@ double PowerModel::partialDerivate(double * modelCoefficients, int derivateCoeff
   assert(false);
   return 0.0;
 }
+
+bool PowerModel::dataSuitableForFit(Store * store, int series) const {
+  if (!Model::dataSuitableForFit(store, series)) {
+    return false;
+  }
+  int numberOfPairs = store->numberOfPairsOfSeries(series);
+  for (int j = 0; j < numberOfPairs; j++) {
+    if (store->get(series, 0, j) < 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
 
 }

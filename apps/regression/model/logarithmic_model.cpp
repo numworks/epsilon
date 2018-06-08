@@ -1,4 +1,5 @@
 #include "logarithmic_model.h"
+#include "../store.h"
 #include <math.h>
 #include <poincare/layout_engine.h>
 #include <assert.h>
@@ -35,6 +36,7 @@ double LogarithmicModel::levelSet(double * modelCoefficients, double y) const {
 double LogarithmicModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
   if (derivateCoefficientIndex == 0) {
     // Derivate: ln(x)
+    assert(x >0);
     return log(x);
   }
   if (derivateCoefficientIndex == 1) {
@@ -43,6 +45,19 @@ double LogarithmicModel::partialDerivate(double * modelCoefficients, int derivat
   }
   assert(false);
   return 0.0;
+}
+
+bool LogarithmicModel::dataSuitableForFit(Store * store, int series) const {
+  if (!Model::dataSuitableForFit(store, series)) {
+    return false;
+  }
+  int numberOfPairs = store->numberOfPairsOfSeries(series);
+  for (int j = 0; j < numberOfPairs; j++) {
+    if (store->get(series, 0, j) <= 0) {
+      return false;
+    }
+  }
+  return true;
 }
 
 }

@@ -12,6 +12,7 @@ public:
   Poincare::ExpressionLayout * layout() override;
   I18n::Message formulaMessage() const override { return I18n::Message::LinearRegressionFormula; }
   double evaluate(double * modelCoefficients, double x) const override;
+  bool levelSetAvailable(double * modelCoefficients) const override { return true; }
   double levelSet(double * modelCoefficients, double y) const override;
   virtual void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;

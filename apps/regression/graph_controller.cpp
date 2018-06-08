@@ -144,6 +144,22 @@ void GraphController::reloadBannerView() {
   // Get the coefficients
   Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
   double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globContext);
+  bool coefficientsAreDefined = true;
+  for (int i = 0; i < model->numberOfCoefficients(); i++) {
+    if (std::isnan(coefficients[i])) {
+      coefficientsAreDefined = false;
+      break;
+    }
+  }
+  if (!coefficientsAreDefined) {
+    const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
+     m_bannerView.setLegendAtIndex(const_cast<char *>(dataNotSuitableMessage), 4);
+     for (int i = 5; i < m_bannerView.numberOfTextviews(); i++) {
+        char empty[] = {0};
+        m_bannerView.setLegendAtIndex(empty, i);
+     }
+     return;
+  }
   char coefficientName = 'a';
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
     numberOfChar = 0;

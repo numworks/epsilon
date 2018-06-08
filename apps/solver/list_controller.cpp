@@ -209,6 +209,7 @@ SelectableTableView * ListController::selectableTableView() {
 
 View * ListController::loadView() {
   loadAddModelCell();
+  m_addNewModel->setAlignment(0.3f, 0.5f); // (EquationListView::k_braceTotalWidth+k_expressionMargin) / (Ion::Display::Width-m_addNewModel.text().size()) = (30+5)/(320-200)
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i] = new EvenOddExpressionCell();
     m_expressionCells[i]->setMargin(EquationListView::k_braceTotalWidth+k_expressionMargin);

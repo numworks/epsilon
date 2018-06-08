@@ -39,6 +39,7 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
     m_store->setSeriesRegressionType(m_series, (Model::Type)selectedRow());
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->pop();
+    stack->pop();
     return true;
   }
   if (event == Ion::Events::Left) {

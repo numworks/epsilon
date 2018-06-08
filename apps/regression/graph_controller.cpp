@@ -27,22 +27,11 @@ ViewController * GraphController::initialisationParameterController() {
 }
 
 bool GraphController::isEmpty() const {
-  if (m_store->isEmpty()) {
-    return true;
-  }
-  for (int series = 0; series < DoublePairStore::k_numberOfSeries; series++) {
-    if (!m_store->seriesIsEmpty(series) && !std::isinf(m_store->slope(series)) && !std::isnan(m_store->slope(series))) {
-      return false;
-    }
-  }
-  return true;
+  return m_store->isEmpty();
 }
 
 I18n::Message GraphController::emptyMessage() {
-  if (m_store->numberOfPairs() == 0) {
-    return I18n::Message::NoDataToPlot;
-  }
-  return I18n::Message::NoEnoughDataForRegression;
+  return I18n::Message::NoDataToPlot;
 }
 
 void GraphController::viewWillAppear() {

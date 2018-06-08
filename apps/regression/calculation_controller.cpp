@@ -84,10 +84,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
 }
 
 bool CalculationController::isEmpty() const {
-  if (m_store->numberOfPairs() == 0) {
-    return true;
-  }
-  return false;
+  return m_store->isEmpty();
 }
 
 I18n::Message CalculationController::emptyMessage() {

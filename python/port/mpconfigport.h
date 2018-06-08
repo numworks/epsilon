@@ -44,6 +44,9 @@
 // Whether to support bytearray object
 #define MICROPY_PY_BUILTINS_BYTEARRAY (0)
 
+// Whether to support frozenset object
+#define MICROPY_PY_BUILTINS_FROZENSET (1)
+
 // Whether to support property object
 #define MICROPY_PY_BUILTINS_PROPERTY (0)
 

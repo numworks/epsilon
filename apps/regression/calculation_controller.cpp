@@ -169,9 +169,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   SeparatorEvenOddBufferTextCell * bufferCell = (SeparatorEvenOddBufferTextCell *)cell;
   if (i > 0 && j == k_regressionCellIndex) {
     Model * model = m_store->modelForSeries(seriesNumber);
-    // The formula is written as " y=...", we just want the "..." part
     const char * formula = I18n::translate(model->formulaMessage());
-    bufferCell->setText(formula+3);
+    bufferCell->setText(formula);
     return;
   }
   if (i > 0 && j > k_totalNumberOfDoubleBufferRows && j < k_regressionCellIndex) {
@@ -197,16 +196,14 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
         bufferCell->setText(buffer);
         return;
       } else {
-        char buffer[] = {0};
-        bufferCell->setText(buffer);
+        bufferCell->setText(I18n::translate(I18n::Message::Dash));
         return;
       }
     } else {
       // Fill the current coefficient if needed
       int currentNumberOfCoefs = m_store->modelForSeries(seriesNumber)->numberOfCoefficients();
       if (j > k_regressionCellIndex + currentNumberOfCoefs) {
-        char buffer[] = {0};
-        bufferCell->setText(buffer);
+        bufferCell->setText(I18n::translate(I18n::Message::Dash));
         return;
       } else {
         Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
@@ -218,7 +215,6 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       }
     }
   }
-
 }
 
 KDCoordinate CalculationController::columnWidth(int i) {

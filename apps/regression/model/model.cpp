@@ -11,7 +11,17 @@ using namespace Shared;
 namespace Regression {
 
 void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
-  fitLevenbergMarquardt(store, series, modelCoefficients, context);
+  if (dataSuitableForFit(store, series)) {
+    fitLevenbergMarquardt(store, series, modelCoefficients, context);
+  } else {
+    for (int i = 0; i < numberOfCoefficients(); i++) {
+      modelCoefficients[i] = NAN; //TODO undef /inf ?
+    }
+  }
+}
+
+bool Model::dataSuitableForFit(Store * store, int series) const {
+  return !store->seriesIsEmpty(series) && !std::isinf(store->slope(series)) && !std::isnan(store->slope(series));
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {

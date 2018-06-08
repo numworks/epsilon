@@ -48,6 +48,8 @@ private:
   SelectableTableView * selectableTableView() override;
   void reloadButtonMessage();
   void addEmptyModel() override;
+  bool removeModelRow(Shared::ExpressionModel * function) override;
+  void reloadBrace();
   View * loadView() override;
   void unloadView(View * view) override;
   Shared::ExpressionModelStore * modelStore() override { return m_equationStore; }

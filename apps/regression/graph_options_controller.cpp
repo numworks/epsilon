@@ -2,6 +2,7 @@
 #include "app.h"
 #include "graph_controller.h"
 #include "regression_controller.h"
+#include <apps/apps_container.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -56,7 +57,11 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
 }
 
 int GraphOptionsController::numberOfRows() {
-  return k_numberOfParameterCells + 1;
+  int series = m_graphController->selectedSeriesIndex();
+  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  double * coefs = m_store->coefficientsForSeries(series, globContext);
+  int numberOfParameterCells = m_store->modelForSeries(series)->levelSetAvailable(coefs) ? k_numberOfParameterCells : k_numberOfParameterCells - 1;
+  return numberOfParameterCells + 1;
 }
 
 KDCoordinate GraphOptionsController::rowHeight(int j) {
@@ -80,7 +85,8 @@ KDCoordinate GraphOptionsController::cumulatedHeightFromIndex(int j) {
 int GraphOptionsController::indexFromCumulatedHeight(KDCoordinate offsetY) {
   int result = 0;
   int j = 0;
-  while (result < offsetY && j < numberOfRows()) {
+  int numberRows = numberOfRows();
+  while (result < offsetY && j < numberRows) {
     result += rowHeight(j++);
   }
   return (result < offsetY || offsetY == 0) ? j : j - 1;
@@ -113,14 +119,14 @@ int GraphOptionsController::typeAtLocation(int i, int j) {
 }
 
 void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index < k_numberOfParameterCells) {
-    MessageTableCellWithChevron * myCell = (MessageTableCellWithChevron *)cell;
-    I18n::Message  titles[k_numberOfParameterCells] = {I18n::Message::XPrediction, I18n::Message::YPrediction};
-    myCell->setMessage(titles[index]);
-  } else {
-    assert(index == numberOfRows() - 1);
+  if (index == numberOfRows() - 1) {
     m_changeRegressionCell.setExpressionLayout(static_cast<Store *>(m_store)->modelForSeries(m_graphController->selectedSeriesIndex())->layout());
+    return;
   }
+  assert(index >=0 && index < k_numberOfParameterCells);
+  MessageTableCellWithChevron * myCell = (MessageTableCellWithChevron *)cell;
+  I18n::Message titles[k_numberOfParameterCells] = {I18n::Message::XPrediction, I18n::Message::YPrediction};
+  myCell->setMessage(titles[index]);
 }
 
 }

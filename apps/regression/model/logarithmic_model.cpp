@@ -18,12 +18,17 @@ double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {
   return a*log(x)+b;
 }
 
-double LogarithmicModel::levelSet(double * modelCoefficients, double y) const {
+bool LogarithmicModel::levelSetAvailable(double * modelCoefficients) const {
   double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  if (a == 0) {
+  return a != 0;
+}
+
+double LogarithmicModel::levelSet(double * modelCoefficients, double y) const {
+  if (!levelSetAvailable(modelCoefficients)) {
     return NAN;
   }
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
   return exp((y-b)/a);
 }
 

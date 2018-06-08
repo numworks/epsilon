@@ -11,8 +11,9 @@ ExpressionLayout * LogisticModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
-      new CharLayout('a', KDText::FontSize::Small),
+      new CharLayout('1', KDText::FontSize::Small),
       new CharLayout('+', KDText::FontSize::Small),
+      new CharLayout('a', KDText::FontSize::Small),
       new CharLayout('e', KDText::FontSize::Small),
       new VerticalOffsetLayout(
           new HorizontalLayout(
@@ -25,7 +26,7 @@ ExpressionLayout * LogisticModel::layout() {
     };
     layout = new FractionLayout(
        new CharLayout('c', KDText::FontSize::Small),
-       new HorizontalLayout(layoutChildren, 4, false),
+       new HorizontalLayout(layoutChildren, 5, false),
        false);
   }
   return layout;

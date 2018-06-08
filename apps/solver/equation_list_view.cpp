@@ -7,6 +7,7 @@ namespace Solver {
 EquationListView::EquationListView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource) :
   Responder(parentResponder),
   View(),
+  m_displayBrace(false),
   m_listView(this, dataSource, selectionDataSource),
   m_braceView(),
   m_scrollBraceView(&m_braceView, this)
@@ -18,6 +19,13 @@ EquationListView::EquationListView(Responder * parentResponder, TableViewDataSou
   m_scrollBraceView.setMargins(k_margin, k_margin, k_margin, k_margin);
   m_scrollBraceView.setShowsIndicators(false);
   m_scrollBraceView.setBackgroundColor(KDColorWhite);
+}
+
+void EquationListView::displayBrace(bool displayBrace) {
+  if (m_displayBrace != displayBrace) {
+    m_displayBrace = displayBrace;
+    layoutSubviews();
+  }
 }
 
 void EquationListView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
@@ -39,33 +47,20 @@ void EquationListView::didBecomeFirstResponder() {
 }
 
 void EquationListView::layoutSubviews() {
-  KDCoordinate braceWidth = m_braceView.minimalSizeForOptimalDisplay().width();
-  m_braceView.setSize(KDSize(braceWidth, m_listView.minimalSizeForOptimalDisplay().height()-Metric::StoreRowHeight-2*k_margin));
   m_listView.setFrame(KDRect(0, 0, bounds().width(), bounds().height()));
-  m_scrollBraceView.setFrame(KDRect(0, 0, k_braceTotalWidth, m_listView.minimalSizeForOptimalDisplay().height()-Metric::StoreRowHeight-offset().y()));
+  if (m_displayBrace) {
+    KDCoordinate braceWidth = m_braceView.minimalSizeForOptimalDisplay().width();
+    m_braceView.setSize(KDSize(braceWidth, m_listView.minimalSizeForOptimalDisplay().height()-Metric::StoreRowHeight-2*k_margin));
+    m_scrollBraceView.setFrame(KDRect(0, 0, k_braceTotalWidth, m_listView.minimalSizeForOptimalDisplay().height()-Metric::StoreRowHeight-offset().y()));
+  } else {
+    m_scrollBraceView.setFrame(KDRectZero);
+  }
 }
 
 /* EquationListView::BraceWidth */
 
-EquationListView::BraceView::BraceView() :
-  View(),
-  m_displayBrace(false)
-{
-}
-
-void EquationListView::BraceView::displayBrace(bool displayBrace) {
-  if (m_displayBrace != displayBrace) {
-    m_displayBrace = displayBrace;
-    markRectAsDirty(bounds());
-  }
-}
-
 void EquationListView::BraceView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (m_displayBrace) {
-    ctx->fillRect(bounds(), KDColorRed);
-  } else {
-    ctx->fillRect(bounds(), KDColorWhite);
-  }
+  ctx->fillRect(bounds(), KDColorRed);
 }
 
 KDSize EquationListView::BraceView::minimalSizeForOptimalDisplay() const {

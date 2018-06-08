@@ -8,9 +8,7 @@ namespace Solver {
 class EquationListView : public Responder, public View, public ScrollViewDelegate, public ScrollViewDataSource {
 public:
   EquationListView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource);
-  void displayBrace(bool displayBrace) {
-    m_braceView.displayBrace(displayBrace);
-  }
+  void displayBrace(bool displayBrace);
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
   SelectableTableView * selectableTableView() {
@@ -25,15 +23,11 @@ private:
 
   class BraceView : public View {
   public:
-    BraceView();
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
-    void displayBrace(bool displayBrace);
     constexpr static KDCoordinate k_braceWidth = 10;
-  private:
-    bool m_displayBrace;
   };
-
+  bool m_displayBrace;
   SelectableTableView m_listView;
   BraceView m_braceView;
   ScrollView m_scrollBraceView;

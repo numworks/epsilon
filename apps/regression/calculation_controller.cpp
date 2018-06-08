@@ -182,7 +182,24 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   if (i > 0 && j > k_totalNumberOfDoubleBufferRows) {
     assert(j > k_regressionCellIndex);
     int maxNumberCoefficients = maxNumberOfCoefficients();
-    Model::Type modelType =  m_store->seriesRegressionType(seriesNumber);
+    Model::Type modelType = m_store->seriesRegressionType(seriesNumber);
+
+    // Put dashes if regression is not defined
+    Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+    double * coefficients = m_store->coefficientsForSeries(seriesNumber, globContext);
+    bool coefficientsAreDefined = true;
+    int numberOfCoefs = m_store->modelForSeries(seriesNumber)->numberOfCoefficients();
+    for (int i = 0; i < numberOfCoefs; i++) {
+      if (std::isnan(coefficients[i])) {
+        coefficientsAreDefined = false;
+        break;
+      }
+    }
+    if (!coefficientsAreDefined) {
+       bufferCell->setText(I18n::translate(I18n::Message::Dash));
+       return;
+    }
+
     if (j > k_regressionCellIndex + maxNumberCoefficients) {
       // Fill r and r2 if needed
       if (modelType == Model::Type::Linear) {
@@ -203,8 +220,6 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
         bufferCell->setText(I18n::translate(I18n::Message::Dash));
         return;
       } else {
-        Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
-        double * coefficients = m_store->coefficientsForSeries(seriesNumber, globContext);
         char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
         PrintFloat::convertFloatToText<double>(coefficients[j - k_regressionCellIndex - 1], buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
         bufferCell->setText(buffer);

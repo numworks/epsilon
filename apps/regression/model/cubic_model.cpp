@@ -12,6 +12,7 @@ ExpressionLayout * CubicModel::layout() {
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
       new CharLayout('a', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       new CharLayout('X', KDText::FontSize::Small),
       new VerticalOffsetLayout(
           new CharLayout('3', KDText::FontSize::Small),
@@ -19,6 +20,7 @@ ExpressionLayout * CubicModel::layout() {
           false),
       new CharLayout('+', KDText::FontSize::Small),
       new CharLayout('b', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       new CharLayout('X', KDText::FontSize::Small),
       new VerticalOffsetLayout(
           new CharLayout('2', KDText::FontSize::Small),
@@ -26,11 +28,12 @@ ExpressionLayout * CubicModel::layout() {
           false),
       new CharLayout('+', KDText::FontSize::Small),
       new CharLayout('c', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       new CharLayout('X', KDText::FontSize::Small),
       new CharLayout('+', KDText::FontSize::Small),
       new CharLayout('d', KDText::FontSize::Small),
     };
-    layout = new HorizontalLayout(layoutChildren, 12, false);
+    layout = new HorizontalLayout(layoutChildren, 15, false);
   }
   return layout;
 }

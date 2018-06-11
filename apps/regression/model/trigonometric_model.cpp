@@ -1,7 +1,7 @@
 #include "trigonometric_model.h"
+#include "../../poincare/include/poincare_layouts.h"
 #include <math.h>
 #include <poincare/preferences.h>
-#include <poincare/layout_engine.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -9,7 +9,24 @@ using namespace Poincare;
 namespace Regression {
 
 ExpressionLayout * TrigonometricModel::layout() {
-  static ExpressionLayout * layout = LayoutEngine::createStringLayout("asin(bX+c)", 10, KDText::FontSize::Small);
+  static ExpressionLayout * layout = nullptr;
+  if (layout == nullptr) {
+    const ExpressionLayout * layoutChildren[] = {
+      new CharLayout('a', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      new CharLayout('s', KDText::FontSize::Small),
+      new CharLayout('i', KDText::FontSize::Small),
+      new CharLayout('n', KDText::FontSize::Small),
+      new CharLayout('(', KDText::FontSize::Small),
+      new CharLayout('b', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      new CharLayout('X', KDText::FontSize::Small),
+      new CharLayout('+', KDText::FontSize::Small),
+      new CharLayout('c', KDText::FontSize::Small),
+      new CharLayout(')', KDText::FontSize::Small)
+    };
+    layout = new HorizontalLayout(layoutChildren, 12, false);
+  }
   return layout;
 }
 

@@ -1,7 +1,7 @@
 #include "logarithmic_model.h"
 #include "../store.h"
+#include "../../poincare/include/poincare_layouts.h"
 #include <math.h>
-#include <poincare/layout_engine.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -9,7 +9,21 @@ using namespace Poincare;
 namespace Regression {
 
 ExpressionLayout * LogarithmicModel::layout() {
-  static ExpressionLayout * layout = LayoutEngine::createStringLayout("aln(X)+b", 8, KDText::FontSize::Small);
+  static ExpressionLayout * layout = nullptr;
+  if (layout == nullptr) {
+    const ExpressionLayout * layoutChildren[] = {
+      new CharLayout('a', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      new CharLayout('l', KDText::FontSize::Small),
+      new CharLayout('n', KDText::FontSize::Small),
+      new CharLayout('(', KDText::FontSize::Small),
+      new CharLayout('X', KDText::FontSize::Small),
+      new CharLayout(')', KDText::FontSize::Small),
+      new CharLayout('+', KDText::FontSize::Small),
+      new CharLayout('b', KDText::FontSize::Small)
+    };
+    layout = new HorizontalLayout(layoutChildren, 9, false);
+  }
   return layout;
 }
 

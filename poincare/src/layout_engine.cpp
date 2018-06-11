@@ -4,9 +4,7 @@
 #include "layout/left_parenthesis_layout.h"
 #include "layout/right_parenthesis_layout.h"
 #include "layout/vertical_offset_layout.h"
-extern "C" {
 #include<assert.h>
-}
 
 namespace Poincare {
 

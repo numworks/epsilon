@@ -10,23 +10,26 @@ namespace Regression {
 ExpressionLayout * LogisticModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
+    const ExpressionLayout * exponentLayoutChildren[] = {
+      new CharLayout('-', KDText::FontSize::Small),
+      new CharLayout('b', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      new CharLayout('X', KDText::FontSize::Small)
+    };
     const ExpressionLayout * layoutChildren[] = {
       new CharLayout('1', KDText::FontSize::Small),
       new CharLayout('+', KDText::FontSize::Small),
       new CharLayout('a', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       new CharLayout('e', KDText::FontSize::Small),
       new VerticalOffsetLayout(
-          new HorizontalLayout(
-            new CharLayout('-', KDText::FontSize::Small),
-            new CharLayout('b', KDText::FontSize::Small),
-            new CharLayout('X', KDText::FontSize::Small),
-            false),
+          new HorizontalLayout(exponentLayoutChildren, 4, false),
           VerticalOffsetLayout::Type::Superscript,
           false)
     };
     layout = new FractionLayout(
        new CharLayout('c', KDText::FontSize::Small),
-       new HorizontalLayout(layoutChildren, 5, false),
+       new HorizontalLayout(layoutChildren, 6, false),
        false);
   }
   return layout;

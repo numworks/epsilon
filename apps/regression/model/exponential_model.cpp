@@ -12,16 +12,18 @@ ExpressionLayout * ExponentialModel::layout() {
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
       new CharLayout('a', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       new CharLayout('e', KDText::FontSize::Small),
       new VerticalOffsetLayout(
           new HorizontalLayout(
             new CharLayout('b', KDText::FontSize::Small),
+            new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
             new CharLayout('X', KDText::FontSize::Small),
             false),
           VerticalOffsetLayout::Type::Superscript,
           false)
     };
-    layout = new HorizontalLayout(layoutChildren, 3, false);
+    layout = new HorizontalLayout(layoutChildren, 4, false);
   }
   return layout;
 }

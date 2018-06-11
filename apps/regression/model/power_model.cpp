@@ -13,13 +13,14 @@ ExpressionLayout * PowerModel::layout() {
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
       new CharLayout('a', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       new CharLayout('X', KDText::FontSize::Small),
       new VerticalOffsetLayout(
           new CharLayout('b', KDText::FontSize::Small),
           VerticalOffsetLayout::Type::Superscript,
           false),
       };
-    layout = new HorizontalLayout(layoutChildren, 3, false);
+    layout = new HorizontalLayout(layoutChildren, 4, false);
   }
   return layout;
 }

@@ -17,13 +17,13 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
-  GraphController(Responder * parentResponder, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex);
+  GraphController(Responder * parentResponder, ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex);
   ViewController * initialisationParameterController() override;
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
   void selectRegressionCurve();
-  int selectedSeries() const { return m_selectedSeries; }
+  int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
 private:
   constexpr static float k_cursorTopMarginRatio = 0.07f;    // (cursorHeight/2)/graphViewHeight
   constexpr static float k_cursorBottomMarginRatio = 0.3f;  // (cursorHeight/2+bannerHeigh)/graphViewHeight
@@ -50,7 +50,7 @@ private:
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;
-  int m_selectedSeries; // TODO store in the Snapshot
+  int * m_selectedSeriesIndex;
 };
 
 }

@@ -6,17 +6,17 @@ using namespace Poincare;
 
 namespace Statistics {
 
-BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Store * store, BoxView::Quantile * selectedQuantile) :
-  MultipleDataViewController(parentResponder, store, (int *)(selectedQuantile)),
+BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Store * store, BoxView::Quantile * selectedQuantile, int * selectedSeriesIndex) :
+  MultipleDataViewController(parentResponder, store, (int *)(selectedQuantile), selectedSeriesIndex),
   ButtonRowDelegate(header, nullptr),
   m_view(this, store, selectedQuantile)
 {
 }
 
 bool BoxController::moveSelectionHorizontally(int deltaIndex) {
-  int selectedQuantile = (int)m_view.dataViewAtIndex(selectedSeries())->selectedQuantile();
+  int selectedQuantile = (int)m_view.dataViewAtIndex(selectedSeriesIndex())->selectedQuantile();
   int nextSelectedQuantile = selectedQuantile + deltaIndex;
-  if (m_view.dataViewAtIndex(selectedSeries())->selectQuantile(nextSelectedQuantile)) {
+  if (m_view.dataViewAtIndex(selectedSeriesIndex())->selectQuantile(nextSelectedQuantile)) {
     reloadBannerView();
     return true;
   }
@@ -32,14 +32,14 @@ Responder * BoxController::tabController() const {
 }
 
 void BoxController::reloadBannerView() {
-  if (selectedSeries() < 0) {
+  if (selectedSeriesIndex() < 0) {
     return;
   }
 
-  int selectedQuantile = (int)m_view.dataViewAtIndex(selectedSeries())->selectedQuantile();
+  int selectedQuantile = (int)m_view.dataViewAtIndex(selectedSeriesIndex())->selectedQuantile();
 
   // Set series name
-  char seriesChar = '0' + selectedSeries() + 1;
+  char seriesChar = '0' + selectedSeriesIndex() + 1;
   char bufferName[] = {' ', 'V', seriesChar, '/', 'N', seriesChar, 0};
   m_view.editableBannerView()->setLegendAtIndex(bufferName, 0);
 
@@ -52,7 +52,7 @@ void BoxController::reloadBannerView() {
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits) + 1];
   CalculPointer calculationMethods[5] = {&Store::minValue, &Store::firstQuartile, &Store::median, &Store::thirdQuartile,
     &Store::maxValue};
-  double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeries());
+  double calculation = (m_store->*calculationMethods[selectedQuantile])(selectedSeriesIndex());
   int numberOfChar = PrintFloat::convertFloatToText<double>(calculation, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
   buffer[numberOfChar++] = ' ';
   buffer[numberOfChar] = 0;

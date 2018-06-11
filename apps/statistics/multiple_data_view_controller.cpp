@@ -6,10 +6,10 @@ using namespace Shared;
 
 namespace Statistics {
 
-MultipleDataViewController::MultipleDataViewController(Responder * parentResponder, Store * store, int * selectedBarIndex) :
+MultipleDataViewController::MultipleDataViewController(Responder * parentResponder, Store * store, int * selectedBarIndex, int * selectedSeriesIndex) :
   ViewController(parentResponder),
   m_store(store),
-  m_selectedSeries(-1),
+  m_selectedSeriesIndex(selectedSeriesIndex),
   m_selectedBarIndex(selectedBarIndex)
 {
 }
@@ -28,23 +28,23 @@ Responder * MultipleDataViewController::defaultController() {
 
 void MultipleDataViewController::viewWillAppear() {
   multipleDataView()->setDisplayBanner(true);
-  if (m_selectedSeries < 0) {
-    m_selectedSeries = multipleDataView()->seriesOfSubviewAtIndex(0);
-    multipleDataView()->selectDataView(m_selectedSeries);
+  if (*m_selectedSeriesIndex < 0) {
+    *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(0);
+    multipleDataView()->selectDataView(*m_selectedSeriesIndex);
   }
   reloadBannerView();
   multipleDataView()->reload();
 }
 
 bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
-  assert(m_selectedSeries >= 0);
+  assert(*m_selectedSeriesIndex >= 0);
   if (event == Ion::Events::Down) {
-    int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(m_selectedSeries);
+    int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(*m_selectedSeriesIndex);
     if (currentSelectedSubview < m_store->numberOfNonEmptySeries() - 1) {
-      multipleDataView()->deselectDataView(m_selectedSeries);
-      m_selectedSeries = multipleDataView()->seriesOfSubviewAtIndex(currentSelectedSubview+1);
+      multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
+      *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(currentSelectedSubview+1);
       *m_selectedBarIndex = MultipleDataView::k_defaultSelectedBar;
-      multipleDataView()->selectDataView(m_selectedSeries);
+      multipleDataView()->selectDataView(*m_selectedSeriesIndex);
       reloadBannerView();
       app()->setFirstResponder(this);
       return true;
@@ -52,12 +52,12 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Up) {
-    int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(m_selectedSeries);
+    int currentSelectedSubview = multipleDataView()->indexOfSubviewAtSeries(*m_selectedSeriesIndex);
     if (currentSelectedSubview > 0) {
-      multipleDataView()->deselectDataView(m_selectedSeries);
-      m_selectedSeries = multipleDataView()->seriesOfSubviewAtIndex(currentSelectedSubview-1);
+      multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
+      *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(currentSelectedSubview-1);
       *m_selectedBarIndex = MultipleDataView::k_defaultSelectedBar;
-      multipleDataView()->selectDataView(m_selectedSeries);
+      multipleDataView()->selectDataView(*m_selectedSeriesIndex);
       app()->setFirstResponder(this);
     } else {
       app()->setFirstResponder(tabController());
@@ -65,7 +65,7 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
     reloadBannerView();
     return true;
   }
-  if (m_selectedSeries >= 0 && (event == Ion::Events::Left || event == Ion::Events::Right)) {
+  if (*m_selectedSeriesIndex >= 0 && (event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = event == Ion::Events::Left ? -1 : 1;
     moveSelectionHorizontally(direction);
     return true;
@@ -75,21 +75,21 @@ bool MultipleDataViewController::handleEvent(Ion::Events::Event event) {
 
 void MultipleDataViewController::didBecomeFirstResponder() {
   multipleDataView()->setDisplayBanner(true);
-  if (m_selectedSeries < 0 || m_store->sumOfOccurrences(m_selectedSeries) == 0) {
-    if (m_selectedSeries >= 0) {
-      multipleDataView()->deselectDataView(m_selectedSeries);
+  if (*m_selectedSeriesIndex < 0 || m_store->sumOfOccurrences(*m_selectedSeriesIndex) == 0) {
+    if (*m_selectedSeriesIndex >= 0) {
+      multipleDataView()->deselectDataView(*m_selectedSeriesIndex);
     }
-    m_selectedSeries = multipleDataView()->seriesOfSubviewAtIndex(0);
-    multipleDataView()->selectDataView(m_selectedSeries);
+    *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(0);
+    multipleDataView()->selectDataView(*m_selectedSeriesIndex);
     multipleDataView()->reload();
   }
 }
 
 void MultipleDataViewController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
-    if (m_selectedSeries >= 0) {
-      multipleDataView()->dataViewAtIndex(m_selectedSeries)->selectMainView(false);
-      m_selectedSeries = -1;
+    if (*m_selectedSeriesIndex >= 0) {
+      multipleDataView()->dataViewAtIndex(*m_selectedSeriesIndex)->selectMainView(false);
+      *m_selectedSeriesIndex = -1;
       multipleDataView()->setDisplayBanner(false);
     }
   }

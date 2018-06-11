@@ -115,6 +115,7 @@ bool textRepresentsAnEquality(const char * text) {
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
     if (!textRepresentsAnEquality(textField->text())) {
+      textField->handleEvent(Ion::Events::ShiftRight);
       textField->handleEventWithText("=0");
     }
   }
@@ -129,6 +130,7 @@ bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField 
     char buffer[TextField::maxBufferSize()];
     expressionLayoutField->writeTextInBuffer(buffer, TextField::maxBufferSize());
     if (!textRepresentsAnEquality(buffer)) {
+      expressionLayoutField->handleEvent(Ion::Events::ShiftRight);
       expressionLayoutField->handleEventWithText("=0");
     }
   }

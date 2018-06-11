@@ -149,6 +149,9 @@ Expression * Calculation::exactOutput(Context * context) {
      * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
      * 'cos(pi/4) = 0.999906' (which is true in degree). */
     m_exactOutput = Expression::parse(m_exactOutputText);
+    if (m_exactOutput == nullptr) {
+      m_exactOutput = new Undefined();
+    }
   }
   return m_exactOutput;
 }

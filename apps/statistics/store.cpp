@@ -199,12 +199,15 @@ double Store::quartileRange(int series) const {
 
 double Store::median(int series) const {
   bool exactElement = true;
-  double maxMedian = sortedElementAtCumulatedFrequency(series, 1.0/2.0, &exactElement);
+  double minMedian = sortedElementAtCumulatedFrequency(series, 1.0/2.0, &exactElement);
   if (!exactElement) {
-    double minusMedian = sortedElementAfter(series, maxMedian);
-    return (minusMedian+maxMedian)/2.0;
+    double maxMedian = sortedElementAfter(series, minMedian);
+    if (maxMedian == DBL_MAX) {
+      return minMedian;
+    }
+    return (minMedian + maxMedian)/2.0;
   } else {
-    return maxMedian;
+    return minMedian;
   }
 }
 
@@ -296,7 +299,6 @@ double Store::sortedElementAfter(int series, double k) const {
       result = currentElement;
     }
   }
-  assert(result < DBL_MAX);
   return result;
 }
 

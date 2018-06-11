@@ -276,7 +276,7 @@ ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode
         false),
       false);
   }
-  if (isMatrixSymbol() || isSeriesSymbol(m_name)) {
+  if (isMatrixSymbol() || isSeriesSymbol(m_name) || isRegressionSymbol(m_name)) {
     return LayoutEngine::createStringLayout(textForSpecialSymbols(m_name), 2);
   }
   return LayoutEngine::createStringLayout(&m_name, 1);

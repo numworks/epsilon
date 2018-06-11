@@ -32,8 +32,8 @@ void StoreController::setFormulaLabel() {
   static_cast<ContentView *>(view())->formulaInputView()->setBufferText(text);
 }
 
-void StoreController::fillColumnWithFormula(Expression * formula) {
-  privateFillColumnWithFormula(formula, Symbol::isRegressionSymbol);
+bool StoreController::fillColumnWithFormula(Expression * formula) {
+  return privateFillColumnWithFormula(formula, Symbol::isRegressionSymbol);
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

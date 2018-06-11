@@ -39,7 +39,7 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
   assert(cursor1.isEquivalentTo(ExpressionLayoutCursor(layout1->editableChild(1), ExpressionLayoutCursor::Position::Right)));
   delete layout1;
 
-  /*      •
+  /*      ø
    * 1 + --- -> "BackSpace" -> 1+|3
    *     |3
    * */

@@ -7,7 +7,7 @@ namespace Regression {
 
 StoreParameterController::StoreParameterController(Responder * parentResponder, Store * store, StoreController * storeController) :
   Shared::StoreParameterController(parentResponder, store, storeController),
-  m_changeRegressionCell(I18n::Message::ChangeRegression),
+  m_changeRegressionCell(I18n::Message::Regression),
   m_lastSelectionIsRegression(false)
 {
   static_cast<ExpressionView *>(m_changeRegressionCell.subAccessoryView())->setHorizontalMargin(Metric::ExpressionViewHorizontalMargin);

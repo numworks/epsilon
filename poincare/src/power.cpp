@@ -260,6 +260,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
   Complex<float> * op0 = static_cast<Complex<float> *>(operand(0)->approximate<float>(context, angleUnit));
   Complex<float> * op1 = static_cast<Complex<float> *>(operand(1)->approximate<float>(context, angleUnit));
   bool bothOperandsComplexes = op0->b() != 0 && op1->b() != 0;
+  bool nonComplexNegativeOperand0 = op0->b() == 0 && op0->a() < 0;
   delete op0;
   delete op1;
   if (bothOperandsComplexes) {
@@ -331,6 +332,19 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       }
       return simplifyRationalRationalPower(this, a, exp, context, angleUnit);
     }
+  }
+  // (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
+  if (!letPowerAtRoot && nonComplexNegativeOperand0 && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->numerator().isOne() && static_cast<const Rational *>(operand(1))->denominator().isTwo()) {
+    Expression * o0 = editableOperand(0);
+    Expression * m0 = new Multiplication(new Rational(-1), o0, false);
+    replaceOperand(o0, m0, false);
+    m0->shallowReduce(context, angleUnit);
+    Multiplication * m1 = new Multiplication();
+    replaceWith(m1, false);
+    m1->addOperand(new Symbol(Ion::Charset::IComplex));
+    m1->addOperand(this);
+    shallowReduce(context, angleUnit);
+    return m1->shallowReduce(context, angleUnit);
   }
   // e^(i*Pi*r) with r rational
   if (!letPowerAtRoot && isNthRootOfUnity()) {

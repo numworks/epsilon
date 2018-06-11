@@ -14,7 +14,7 @@ ion_special_characters = {
     u'σ': "Ion::Charset::SmallSigma",
     u'≤': "Ion::Charset::LessEqual",
     u'≈': "Ion::Charset::AlmostEqual",
-    u'•': "Ion::Charset::Empty"
+    u'ø': "Ion::Charset::Empty"
 }
 
 def ion_char(i18n_letter):

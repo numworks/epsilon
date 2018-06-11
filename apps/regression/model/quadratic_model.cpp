@@ -12,6 +12,7 @@ ExpressionLayout * QuadraticModel::layout() {
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
       new CharLayout('a', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       new CharLayout('X', KDText::FontSize::Small),
       new VerticalOffsetLayout(
           new CharLayout('2', KDText::FontSize::Small),
@@ -19,11 +20,12 @@ ExpressionLayout * QuadraticModel::layout() {
           false),
       new CharLayout('+', KDText::FontSize::Small),
       new CharLayout('b', KDText::FontSize::Small),
+      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       new CharLayout('X', KDText::FontSize::Small),
       new CharLayout('+', KDText::FontSize::Small),
       new CharLayout('c', KDText::FontSize::Small),
     };
-    layout = new HorizontalLayout(layoutChildren, 8, false);
+    layout = new HorizontalLayout(layoutChildren, 10, false);
   }
   return layout;
 }

@@ -10,7 +10,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
   m_equationStore(equationStore),
-  m_resolveButton(this, I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
+  m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation([](void * context, void * sender) {
     ListController * list = (ListController *)context;
     list->resolveEquations();
   }, this), KDText::FontSize::Large, Palette::PurpleBright),
@@ -182,7 +182,7 @@ void ListController::resolveEquations() {
 }
 
 void ListController::reloadButtonMessage() {
-  m_resolveButton.setMessage(m_equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation);
+  footer()->setMessageOfButtonAtIndex(m_equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, 0);
 }
 
 void ListController::addEmptyModel() {
@@ -191,6 +191,7 @@ void ListController::addEmptyModel() {
 
 bool ListController::removeModelRow(ExpressionModel * model) {
   ExpressionModelListController::removeModelRow(model);
+  reloadButtonMessage();
   reloadBrace();
   return true;
 }

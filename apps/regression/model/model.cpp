@@ -21,7 +21,10 @@ void Model::fit(Store * store, int series, double * modelCoefficients, Poincare:
 }
 
 bool Model::dataSuitableForFit(Store * store, int series) const {
-  return !store->seriesIsEmpty(series) && !std::isinf(store->slope(series)) && !std::isnan(store->slope(series));
+  if (!store->seriesNumberOfAbscissaeGreaterOrEqualTo(series, numberOfCoefficients())) {
+    return false;
+  }
+  return !store->seriesIsEmpty(series);
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {

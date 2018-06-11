@@ -108,6 +108,28 @@ double DoublePairStore::sumOfColumn(int series, int i) const {
   return result;
 }
 
+bool DoublePairStore::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const {
+  assert(series >= 0 && series < k_numberOfSeries);
+  int count = 0;
+  for (int j = 0; j < m_numberOfPairs[series]; j++) {
+    if (count >= i) {
+      return true;
+    }
+    double currentAbsissa = m_data[series][0][j];
+    bool firstOccurence = true;
+    for (int k = 0; k < j; k++) {
+      if (m_data[series][0][k] == currentAbsissa) {
+        firstOccurence = false;
+        break;
+      }
+    }
+    if (firstOccurence) {
+      count++;
+    }
+  }
+  return count >= i;
+}
+
 uint32_t DoublePairStore::storeChecksum() const {
   /* Ideally, we would only compute the checksum of the first m_numberOfPairs
    * pairs. However, the two values of a pair are not stored consecutively. We

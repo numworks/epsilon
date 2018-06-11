@@ -268,6 +268,40 @@ void StoreController::unloadView(View * view) {
   delete view;
 }
 
+void StoreController::privateFillColumnWithFormula(Expression * formula, Expression::isVariableTest isVariable) {
+  int currentColumn = selectedColumn();
+  // Fetch the series used in the formula to compute the size of the filled in series
+  char variables[7] = {0, 0, 0, 0, 0, 0, 0};
+  formula->getVariables(isVariable, variables);
+  int numberOfValuesToCompute = -1;
+  int index = 0;
+  while (variables[index] != 0) {
+    const char * seriesName = Symbol::textForSpecialSymbols(variables[index]);
+    assert(strlen(seriesName) == 2);
+    int series = (int)(seriesName[1] - '0') - 1;
+    assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
+    if (numberOfValuesToCompute == -1) {
+      numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
+    } else {
+      numberOfValuesToCompute = min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
+    }
+    index++;
+  }
+  if (numberOfValuesToCompute == -1) {
+    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedColumn()/DoublePairStore::k_numberOfColumnsPerSeries);
+  }
+
+  StoreContext * store = storeContext();
+  for (int j = 0; j < numberOfValuesToCompute; j++) {
+    // Set the context
+    store->setSeriesPairIndex(j);
+    // Compute the new value using the formula
+    double evaluation = formula->approximateToScalar<double>(*store);
+    setDataAtLocation(evaluation, currentColumn, j + 1);
+  }
+  selectableTableView()->reloadData();
+}
+
 bool StoreController::cellShouldBeTransparent(int i, int j) {
   int seriesIndex = i/DoublePairStore::k_numberOfColumnsPerSeries;
   return j > 1 + m_store->numberOfPairsOfSeries(seriesIndex);

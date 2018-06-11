@@ -3,6 +3,7 @@
 
 #include <escher.h>
 #include "store.h"
+#include "statistics_context.h"
 #include "../shared/store_controller.h"
 #include "../shared/store_title_cell.h"
 
@@ -11,6 +12,7 @@ namespace Statistics {
 class StoreController : public Shared::StoreController {
 public:
   StoreController(Responder * parentResponder, Store * store, ButtonRowController * header);
+  Shared::StoreContext * storeContext() override;
   void setFormulaLabel() override;
   void fillColumnWithFormula(Poincare::Expression * formula) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
@@ -21,6 +23,7 @@ private:
   void unloadView(View * view) override;
   Shared::StoreTitleCell * m_titleCells[k_numberOfTitleCells];
   Store * m_store;
+  StatisticsContext m_statisticsContext;
 };
 
 }

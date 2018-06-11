@@ -8,10 +8,6 @@ using namespace Shared;
 
 namespace Regression {
 
-void RegressionContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
-  m_parentContext->setExpressionForSymbolName(expression, symbol, context);
-}
-
 const Expression * RegressionContext::expressionForSymbol(const Symbol * symbol) {
   if (Symbol::isRegressionSymbol(symbol->name())) {
     const char * seriesName = Symbol::textForSpecialSymbols(symbol->name());

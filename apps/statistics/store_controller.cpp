@@ -15,8 +15,14 @@ namespace Statistics {
 StoreController::StoreController(Responder * parentResponder, Store * store, ButtonRowController * header) :
   Shared::StoreController(parentResponder, store, header),
   m_titleCells{},
-  m_store(store)
+  m_store(store),
+  m_statisticsContext(m_store)
 {
+}
+
+StoreContext * StoreController::storeContext() {
+  m_statisticsContext.setParentContext(const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
+  return &m_statisticsContext;
 }
 
 void StoreController::setFormulaLabel() {
@@ -27,37 +33,7 @@ void StoreController::setFormulaLabel() {
 }
 
 void StoreController::fillColumnWithFormula(Expression * formula) {
-  int currentColumn = selectedColumn();
-  // Fetch the series used in the formula to compute the size of the filled in series
-  char variables[7] = {0, 0, 0, 0, 0, 0, 0};
-  formula->getVariables(Symbol::isSeriesSymbol, variables);
-  int numberOfValuesToCompute = -1;
-  int index = 0;
-  while (variables[index] != 0) {
-    const char * seriesName = Symbol::textForSpecialSymbols(variables[index]);
-    assert(strlen(seriesName) == 2);
-    int series = (int)(seriesName[1] - '0') - 1;
-    assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
-    if (numberOfValuesToCompute == -1) {
-      numberOfValuesToCompute = m_store->numberOfPairsOfSeries(series);
-    } else {
-      numberOfValuesToCompute = min(numberOfValuesToCompute, m_store->numberOfPairsOfSeries(series));
-    }
-    index++;
-  }
-  if (numberOfValuesToCompute == -1) {
-    numberOfValuesToCompute = m_store->numberOfPairsOfSeries(selectedColumn()/DoublePairStore::k_numberOfColumnsPerSeries);
-  }
-
-  StatisticsContext seriesContext(m_store, const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext());
-  for (int j = 0; j < numberOfValuesToCompute; j++) {
-    // Set the context
-    seriesContext.setSeriesPairIndex(j);
-    // Compute the new value using the formula
-    double evaluation = formula->approximateToScalar<double>(seriesContext);
-    setDataAtLocation(evaluation, currentColumn, j + 1);
-  }
-  selectableTableView()->reloadData();
+  privateFillColumnWithFormula(formula, Symbol::isSeriesSymbol);
 }
 
 void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

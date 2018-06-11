@@ -160,6 +160,8 @@ View * TableView::ContentView::subviewAtIndex(int index) {
 }
 
 void TableView::ContentView::layoutSubviews() {
+  /* The number of subviews might change during the layouting so it needs to be
+   * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfSubviews(); index++) {
     View * cell = subview(index);
     int i = absoluteColumnNumberFromSubviewIndex(index);

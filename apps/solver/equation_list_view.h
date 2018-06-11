@@ -7,8 +7,13 @@ namespace Solver {
 
 class EquationListView : public Responder, public View, public ScrollViewDelegate, public ScrollViewDataSource {
 public:
+  enum class BraceStyle {
+    None,
+    OneRowShort,
+    Full
+  };
   EquationListView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource);
-  void displayBrace(bool displayBrace);
+  void setBraceStyle(BraceStyle style);
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
   SelectableTableView * selectableTableView() {
@@ -27,7 +32,7 @@ private:
     KDSize minimalSizeForOptimalDisplay() const override;
     constexpr static KDCoordinate k_braceWidth = 10;
   };
-  bool m_displayBrace;
+  BraceStyle m_braceStyle;
   SelectableTableView m_listView;
   BraceView m_braceView;
   ScrollView m_scrollBraceView;

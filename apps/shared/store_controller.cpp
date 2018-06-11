@@ -301,7 +301,7 @@ bool StoreController::privateFillColumnWithFormula(Expression * formula, Express
     // Compute the new value using the formula
     double evaluation = formula->approximateToScalar<double>(*store);
     if (std::isnan(evaluation) || std::isinf(evaluation)) {
-      app()->displayWarning(I18n::Message::UndefinedValue);
+      app()->displayWarning(I18n::Message::NonCompliantFormula);
       return false;
     }
   }

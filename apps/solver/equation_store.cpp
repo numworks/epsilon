@@ -237,13 +237,13 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * exa
   Expression::Simplify(&delta, *context);
   if (delta->isRationalZero()) {
     // if delta = 0, x0=x1= -b/(2a)
-    exactSolutions[0] = new Division(new Opposite(coefficients[1], false), new Multiplication(new Rational(2), coefficients[2]), false);
+    exactSolutions[0] = new Division(new Opposite(coefficients[1], false), new Multiplication(new Rational(2), coefficients[2], false), false);
     m_numberOfSolutions = 1;
   } else {
     // x0 = (-b-sqrt(delta))/(2a)
-    exactSolutions[0] = new Division(new Subtraction(new Opposite(coefficients[1]->clone(), false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]->clone()), false);
+    exactSolutions[0] = new Division(new Subtraction(new Opposite(coefficients[1]->clone(), false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]->clone(), false), false);
     // x1 = (-b+sqrt(delta))/(2a)
-    exactSolutions[1] = new Division(new Addition(new Opposite(coefficients[1], false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]), false);
+    exactSolutions[1] = new Division(new Addition(new Opposite(coefficients[1], false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2], false), false);
     m_numberOfSolutions = 2;
   }
   exactSolutions[m_numberOfSolutions] = delta;

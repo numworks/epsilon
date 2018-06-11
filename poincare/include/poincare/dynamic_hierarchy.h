@@ -10,8 +10,8 @@ namespace Poincare {
 class DynamicHierarchy : public Expression {
 public:
   DynamicHierarchy();
-  DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands = true);
-  DynamicHierarchy(const Expression * operand1, const Expression * operand2, bool cloneOperands = true) :
+  DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands);
+  DynamicHierarchy(const Expression * operand1, const Expression * operand2, bool cloneOperands) :
     DynamicHierarchy(ExpressionArray(operand1, operand2).array(), 2, cloneOperands) {}
   ~DynamicHierarchy();
   DynamicHierarchy(const DynamicHierarchy & other) = delete;

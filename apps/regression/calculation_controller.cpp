@@ -146,7 +146,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   // Coordinate and series title
   if (j == 0 && i > 0) {
     ColumnTitleCell * myCell = (ColumnTitleCell *)cell;
-    char buffer[] = {'X', static_cast<char>('0' + seriesNumber), 0};
+    char buffer[] = {'X', static_cast<char>('1' + seriesNumber), 0};
     myCell->setFirstText(buffer);
     buffer[0] = 'Y';
     myCell->setSecondText(buffer);

@@ -23,7 +23,8 @@ App::Snapshot::Snapshot() :
   m_cursor(),
   m_graphSelectedDotIndex(-1),
   m_modelVersion(0),
-  m_rangeVersion(0)
+  m_rangeVersion(0),
+  m_selectedSeriesIndex(-1)
 {
 }
 

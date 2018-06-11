@@ -7,7 +7,7 @@ using namespace Shared;
 
 namespace Regression {
 
-GraphController::GraphController(Responder * parentResponder, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex) :
+GraphController::GraphController(Responder * parentResponder, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
   InteractiveCurveViewController(parentResponder, header, store, &m_view, cursor, modelVersion, rangeVersion),
   m_crossCursorView(),
   m_roundCursorView(Palette::YellowDark),
@@ -17,7 +17,7 @@ GraphController::GraphController(Responder * parentResponder, ButtonRowControlle
   m_initialisationParameterController(this, m_store),
   m_predictionParameterController(this, m_store, m_cursor, this),
   m_selectedDotIndex(selectedDotIndex),
-  m_selectedSeries(-1)
+  m_selectedSeriesIndex(selectedSeriesIndex)
 {
   m_store->setCursor(m_cursor);
 }
@@ -69,7 +69,7 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
-  if (m_selectedSeries < 0) {
+  if (*m_selectedSeriesIndex < 0) {
     return;
   }
 
@@ -81,7 +81,7 @@ void GraphController::reloadBannerView() {
   int legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
-  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(m_selectedSeries)) {
+  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     legend = I18n::translate(I18n::Message::MeanDot);
     legendLength = strlen(legend);
     strlcpy(buffer+numberOfChar, legend, legendLength+1);
@@ -104,10 +104,10 @@ void GraphController::reloadBannerView() {
   legend = "x=";
   double x = m_cursor->x();
   // Display a specific legend if the mean dot is selected
-  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(m_selectedSeries)) {
+  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     constexpr static char legX[] = {Ion::Charset::XBar, '=', 0};
     legend = legX;
-    x = m_store->meanOfColumn(m_selectedSeries, 0);
+    x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
@@ -122,10 +122,10 @@ void GraphController::reloadBannerView() {
   numberOfChar = 0;
   legend = "y=";
   double y = m_cursor->y();
-  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(m_selectedSeries)) {
+  if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
     constexpr static char legY[] = {Ion::Charset::YBar, '=', 0};
     legend = legY;
-    y = m_store->meanOfColumn(m_selectedSeries, 1);
+    y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   }
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
@@ -139,7 +139,7 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = " a=";
-  double slope = m_store->slope(m_selectedSeries);
+  double slope = m_store->slope(*m_selectedSeriesIndex);
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
@@ -152,7 +152,7 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = " b=";
-  double yIntercept = m_store->yIntercept(m_selectedSeries);
+  double yIntercept = m_store->yIntercept(*m_selectedSeriesIndex);
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
@@ -165,7 +165,7 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = "           r=";
-  double r = m_store->correlationCoefficient(m_selectedSeries);
+  double r = m_store->correlationCoefficient(*m_selectedSeriesIndex);
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
@@ -178,7 +178,7 @@ void GraphController::reloadBannerView() {
 
   numberOfChar = 0;
   legend = " r2=";
-  double r2 = m_store->squaredCorrelationCoefficient(m_selectedSeries);
+  double r2 = m_store->squaredCorrelationCoefficient(*m_selectedSeriesIndex);
   legendLength = strlen(legend);
   strlcpy(buffer, legend, legendLength+1);
   numberOfChar += legendLength;
@@ -195,26 +195,26 @@ void GraphController::initRangeParameters() {
 }
 
 void GraphController::initCursorParameters() {
-  m_selectedSeries = m_store->indexOfKthNonEmptySeries(0);
-  double x = m_store->meanOfColumn(m_selectedSeries, 0);
-  double y = m_store->meanOfColumn(m_selectedSeries, 1);
+  *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
+  double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
+  double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   m_cursor->moveTo(x, y);
   m_store->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
-  *m_selectedDotIndex = m_store->numberOfPairsOfSeries(m_selectedSeries);
+  *m_selectedDotIndex = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
 }
 
 bool GraphController::moveCursorHorizontally(int direction) {
   if (*m_selectedDotIndex >= 0) {
-    int dotSelected = m_store->nextDot(m_selectedSeries, direction, *m_selectedDotIndex);
-    if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(m_selectedSeries)) {
+    int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex);
+    if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
-      m_cursor->moveTo(m_store->get(m_selectedSeries, 0, *m_selectedDotIndex), m_store->get(m_selectedSeries, 1, *m_selectedDotIndex));
+      m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
       m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
       return true;
     }
-    if (dotSelected == m_store->numberOfPairsOfSeries(m_selectedSeries)) {
+    if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
-      m_cursor->moveTo(m_store->meanOfColumn(m_selectedSeries, 0), m_store->meanOfColumn(m_selectedSeries, 1));
+      m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
       m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
       return true;
     }
@@ -222,7 +222,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   }
   double x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
   m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
-  double y = m_store->yValueForXValue(m_selectedSeries, x);
+  double y = m_store->yValueForXValue(*m_selectedSeriesIndex, x);
   m_cursor->moveTo(x, y);
   m_store->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
   return true;
@@ -236,15 +236,15 @@ bool GraphController::moveCursorVertically(int direction) {
   if (*m_selectedDotIndex == -1) {
     // The current cursor is on a regression
     // Check the closest regression
-    closestRegressionSeries = m_store->closestVerticalRegression(direction, m_cursor->x(), m_cursor->y(), m_selectedSeries);
+    closestRegressionSeries = m_store->closestVerticalRegression(direction, m_cursor->x(), m_cursor->y(), *m_selectedSeriesIndex);
     // Check the closest dot
-    dotSelected = m_store->closestVerticalDot(direction, m_cursor->x(), direction > 0 ? -FLT_MAX : FLT_MAX, m_selectedSeries, *m_selectedDotIndex, &closestDotSeries);
+    dotSelected = m_store->closestVerticalDot(direction, m_cursor->x(), direction > 0 ? -FLT_MAX : FLT_MAX, *m_selectedSeriesIndex, *m_selectedDotIndex, &closestDotSeries);
   } else {
     // The current cursor is on a dot
     // Check the closest regression
     closestRegressionSeries = m_store->closestVerticalRegression(direction, m_cursor->x(), m_cursor->y(), -1);
     // Check the closest dot
-    dotSelected = m_store->closestVerticalDot(direction, m_cursor->x(), m_cursor->y(), m_selectedSeries, *m_selectedDotIndex, &closestDotSeries);
+    dotSelected = m_store->closestVerticalDot(direction, m_cursor->x(), m_cursor->y(), *m_selectedSeriesIndex, *m_selectedDotIndex, &closestDotSeries);
   }
 
   bool validRegression = closestRegressionSeries > -1;
@@ -281,23 +281,23 @@ bool GraphController::moveCursorVertically(int direction) {
   }
   if (!validDot && validRegression) {
     // Select the regression
-    m_selectedSeries = closestRegressionSeries;
+    *m_selectedSeriesIndex = closestRegressionSeries;
     selectRegressionCurve();
-    m_cursor->moveTo(m_cursor->x(), m_store->yValueForXValue(m_selectedSeries, m_cursor->x()));
+    m_cursor->moveTo(m_cursor->x(), m_store->yValueForXValue(*m_selectedSeriesIndex, m_cursor->x()));
     m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
     return true;
   }
 
   if (validDot && !validRegression) {
     m_view.setCursorView(&m_crossCursorView);
-    m_selectedSeries = closestDotSeries;
+    *m_selectedSeriesIndex = closestDotSeries;
     *m_selectedDotIndex = dotSelected;
-    if (dotSelected == m_store->numberOfPairsOfSeries(m_selectedSeries)) {
-      m_cursor->moveTo(m_store->meanOfColumn(m_selectedSeries, 0), m_store->meanOfColumn(m_selectedSeries, 1));
+    if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
+      m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
       m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
       return true;
     }
-    m_cursor->moveTo(m_store->get(m_selectedSeries, 0, *m_selectedDotIndex), m_store->get(m_selectedSeries, 1, *m_selectedDotIndex));
+    m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
     m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
     return true;
   }

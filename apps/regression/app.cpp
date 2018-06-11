@@ -45,26 +45,6 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-Store * App::Snapshot::store() {
-  return &m_store;
-}
-
-CurveViewCursor * App::Snapshot::cursor() {
-  return &m_cursor;
-}
-
-int * App::Snapshot::graphSelectedDotIndex() {
-  return &m_graphSelectedDotIndex;
-}
-
-uint32_t * App::Snapshot::modelVersion() {
-  return &m_modelVersion;
-}
-
-uint32_t * App::Snapshot::rangeVersion() {
-  return &m_rangeVersion;
-}
-
 App::App(Container * container, Snapshot * snapshot) :
   TextFieldDelegateApp(container, snapshot, &m_tabViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),

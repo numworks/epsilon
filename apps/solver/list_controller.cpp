@@ -200,7 +200,8 @@ bool ListController::removeModelRow(ExpressionModel * model) {
 
 void ListController::reloadBrace() {
   EquationListView * listView = static_cast<EquationListView *>(view());
-  listView->displayBrace(m_equationStore->numberOfModels() > 1);
+  EquationListView::BraceStyle braceStyle = m_equationStore->numberOfModels() <= 1 ? EquationListView::BraceStyle::None : (m_equationStore->numberOfModels() == m_equationStore->maxNumberOfModels() ? EquationListView::BraceStyle::Full : EquationListView::BraceStyle::OneRowShort);
+  listView->setBraceStyle(braceStyle);
   listView->layoutSubviews();
 }
 

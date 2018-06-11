@@ -7,7 +7,7 @@ namespace Solver {
 EquationListView::EquationListView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource) :
   Responder(parentResponder),
   View(),
-  m_displayBrace(false),
+  m_braceStyle(BraceStyle::None),
   m_listView(this, dataSource, selectionDataSource),
   m_braceView(),
   m_scrollBraceView(&m_braceView, this)
@@ -21,9 +21,9 @@ EquationListView::EquationListView(Responder * parentResponder, TableViewDataSou
   m_scrollBraceView.setBackgroundColor(KDColorWhite);
 }
 
-void EquationListView::displayBrace(bool displayBrace) {
-  if (m_displayBrace != displayBrace) {
-    m_displayBrace = displayBrace;
+void EquationListView::setBraceStyle(BraceStyle style) {
+  if (m_braceStyle != style) {
+    m_braceStyle = style;
     layoutSubviews();
   }
 }
@@ -48,10 +48,14 @@ void EquationListView::didBecomeFirstResponder() {
 
 void EquationListView::layoutSubviews() {
   m_listView.setFrame(KDRect(0, 0, bounds().width(), bounds().height()));
-  if (m_displayBrace) {
+  if (m_braceStyle != BraceStyle::None) {
     KDCoordinate braceWidth = m_braceView.minimalSizeForOptimalDisplay().width();
-    m_braceView.setSize(KDSize(braceWidth, m_listView.minimalSizeForOptimalDisplay().height()-Metric::StoreRowHeight-2*k_margin));
-    m_scrollBraceView.setFrame(KDRect(0, 0, k_braceTotalWidth, m_listView.minimalSizeForOptimalDisplay().height()-Metric::StoreRowHeight-offset().y()));
+    KDCoordinate braceHeight = m_listView.minimalSizeForOptimalDisplay().height()-2*k_margin;
+    braceHeight = m_braceStyle == BraceStyle::OneRowShort ? braceHeight - Metric::StoreRowHeight : braceHeight;
+    m_braceView.setSize(KDSize(braceWidth, braceHeight));
+    KDCoordinate scrollBraceHeight = m_listView.minimalSizeForOptimalDisplay().height()-offset().y();
+    scrollBraceHeight = m_braceStyle == BraceStyle::OneRowShort ? scrollBraceHeight - Metric::StoreRowHeight : scrollBraceHeight;
+    m_scrollBraceView.setFrame(KDRect(0, 0, k_braceTotalWidth, scrollBraceHeight));
   } else {
     m_scrollBraceView.setFrame(KDRectZero);
   }

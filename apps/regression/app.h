@@ -27,6 +27,7 @@ public:
     Store * store();
     Shared::CurveViewCursor * cursor();
     int * graphSelectedDotIndex();
+    int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
     uint32_t * modelVersion();
     uint32_t * rangeVersion();
   private:
@@ -35,6 +36,7 @@ public:
     int m_graphSelectedDotIndex;
     uint32_t m_modelVersion;
     uint32_t m_rangeVersion;
+    int m_selectedSeriesIndex;
  };
 private:
   App(Container * container, Snapshot * snapshot);

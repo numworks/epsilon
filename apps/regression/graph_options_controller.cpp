@@ -11,7 +11,7 @@ namespace Regression {
 
 GraphOptionsController::GraphOptionsController(Responder * parentResponder, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
   ViewController(parentResponder),
-  m_changeRegressionCell(I18n::Message::ChangeRegression),
+  m_changeRegressionCell(I18n::Message::Regression),
   m_selectableTableView(this),
   m_goToParameterController(this, store, cursor, graphController),
   m_store(store),

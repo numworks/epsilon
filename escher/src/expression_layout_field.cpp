@@ -188,7 +188,7 @@ bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentat
   if (currentNumberOfLayouts >= k_maxNumberOfLayouts - 6) {
     /* We add -6 because in some cases (Ion::Events::Division,
      * Ion::Events::Exp...) we let the layout cursor handle the layout insertion
-     * and these events may add at most 6 layouts (e.g *10^•). */
+     * and these events may add at most 6 layouts (e.g *10^ø). */
     return true;
   }
 

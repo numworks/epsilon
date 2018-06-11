@@ -69,6 +69,10 @@ bool GraphController::handleEnter() {
 }
 
 void GraphController::reloadBannerView() {
+  if (m_selectedSeries < 0) {
+    return;
+  }
+
   m_bannerView.setMessageAtIndex(I18n::Message::RegressionFormula, 3);
 
   char buffer[k_maxNumberOfCharacters + PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];

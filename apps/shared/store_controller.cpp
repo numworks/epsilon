@@ -78,9 +78,10 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
       return false;
     }
     contentView()->displayFormulaInput(false);
-    fillColumnWithFormula(expression);
+    if (fillColumnWithFormula(expression)) {
+      app()->setFirstResponder(contentView());
+    }
     delete expression;
-    app()->setFirstResponder(contentView());
     return true;
   }
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
@@ -268,7 +269,7 @@ void StoreController::unloadView(View * view) {
   delete view;
 }
 
-void StoreController::privateFillColumnWithFormula(Expression * formula, Expression::isVariableTest isVariable) {
+bool StoreController::privateFillColumnWithFormula(Expression * formula, Expression::isVariableTest isVariable) {
   int currentColumn = selectedColumn();
   // Fetch the series used in the formula to compute the size of the filled in series
   char variables[7] = {0, 0, 0, 0, 0, 0, 0};
@@ -292,14 +293,27 @@ void StoreController::privateFillColumnWithFormula(Expression * formula, Express
   }
 
   StoreContext * store = storeContext();
+
+  // Make sure no value is undef, else display an error
   for (int j = 0; j < numberOfValuesToCompute; j++) {
     // Set the context
     store->setSeriesPairIndex(j);
     // Compute the new value using the formula
     double evaluation = formula->approximateToScalar<double>(*store);
+    if (std::isnan(evaluation) || std::isinf(evaluation)) {
+      app()->displayWarning(I18n::Message::UndefinedValue);
+      return false;
+    }
+  }
+
+  // Fill in the table with the formula values
+  for (int j = 0; j < numberOfValuesToCompute; j++) {
+    store->setSeriesPairIndex(j);
+    double evaluation = formula->approximateToScalar<double>(*store);
     setDataAtLocation(evaluation, currentColumn, j + 1);
   }
   selectableTableView()->reloadData();
+  return true;
 }
 
 bool StoreController::cellShouldBeTransparent(int i, int j) {

@@ -70,7 +70,9 @@ _mp_hal_input \
 _mp_import_name \
 _mp_parse_compile_execute
 
-EMFLAGS = -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST='[$(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)]'
+EMTERPRETIFY_WHITELIST = $(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",),
+
+EMFLAGS = -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST='[$(EMTERPRETIFY_WHITELIST:,,=)]'
 
 ifeq ($(DEBUG),1)
 EMFLAGS += --profiling-funcs

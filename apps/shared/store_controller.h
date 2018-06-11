@@ -6,6 +6,7 @@
 #include "editable_cell_table_view_controller.h"
 #include "double_pair_store.h"
 #include "store_cell.h"
+#include "store_context.h"
 #include "store_parameter_controller.h"
 #include "store_selectable_table_view.h"
 
@@ -15,6 +16,7 @@ class StoreController : public EditableCellTableViewController, public ButtonRow
 public:
   StoreController(Responder * parentResponder, DoublePairStore * store, ButtonRowController * header);
 
+  virtual StoreContext * storeContext() = 0;
   void displayFormulaInput();
   virtual void setFormulaLabel() = 0;
   virtual void fillColumnWithFormula(Poincare::Expression * formula) = 0;
@@ -83,6 +85,7 @@ protected:
   virtual HighlightCell * titleCells(int index) = 0;
   char m_draftTextBuffer[TextField::maxBufferSize()];
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
+  void privateFillColumnWithFormula(Poincare::Expression * formula, Poincare::Expression::isVariableTest isVariable);
   StoreCell * m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
   StoreParameterController m_storeParameterController;

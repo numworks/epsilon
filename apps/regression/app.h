@@ -24,12 +24,12 @@ public:
     App * unpack(Container * container) override;
     void reset() override;
     Descriptor * descriptor() override;
-    Store * store();
-    Shared::CurveViewCursor * cursor();
-    int * graphSelectedDotIndex();
+    Store * store() { return &m_store; }
+    Shared::CurveViewCursor * cursor() { return &m_cursor; }
+    int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
-    uint32_t * modelVersion();
-    uint32_t * rangeVersion();
+    uint32_t * modelVersion() { return &m_modelVersion; }
+    uint32_t * rangeVersion() { return &m_rangeVersion; }
   private:
     Store m_store;
     Shared::CurveViewCursor m_cursor;

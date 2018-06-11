@@ -52,7 +52,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   if (j == 0) {
     // Display a series title cell
     int seriesNumber = m_store->indexOfKthNonEmptySeries(i-1);
-    char titleBuffer[] = {'V', static_cast<char>('0'+seriesNumber), '/', 'N', static_cast<char>('0'+seriesNumber), 0};
+    char titleBuffer[] = {'V', static_cast<char>('1'+seriesNumber), '/', 'N', static_cast<char>('1'+seriesNumber), 0};
     StoreTitleCell * storeTitleCell = static_cast<StoreTitleCell *>(cell);
     storeTitleCell->setText(titleBuffer);
     storeTitleCell->setColor(DoublePairStore::colorOfSeriesAtIndex(seriesNumber));

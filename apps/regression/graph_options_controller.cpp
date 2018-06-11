@@ -21,7 +21,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Stor
 }
 
 const char * GraphOptionsController::title() {
-  return I18n::translate(I18n::Message::RegressionSlope);
+  return I18n::translate(I18n::Message::RegressionCurve);
 }
 
 View * GraphOptionsController::view() {

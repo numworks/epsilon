@@ -10,7 +10,7 @@ namespace Statistics {
 
 class BoxController : public MultipleDataViewController, public ButtonRowDelegate {
 public:
-  BoxController(Responder * parentResponder, ButtonRowController * header, Store * store, BoxView::Quantile * selectedQuantile);
+  BoxController(Responder * parentResponder, ButtonRowController * header, Store * store, BoxView::Quantile * selectedQuantile, int * selectedSeriesIndex);
 
   MultipleDataView * multipleDataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;

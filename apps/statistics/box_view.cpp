@@ -64,7 +64,7 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   double thirdQuart = m_store->thirdQuartile(m_series);
   double maxVal = m_store->maxValue(m_series);
 
-  bool isSelected = m_boxController->selectedSeries() == m_series;
+  bool isSelected = m_boxController->selectedSeriesIndex() == m_series;
   KDColor boxColor = isSelected ? m_selectedHistogramLightColor : Palette::GreyWhite;
   // Draw the main box
   KDCoordinate firstQuartilePixels = std::round(floatToPixel(Axis::Horizontal, firstQuart));

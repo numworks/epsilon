@@ -10,9 +10,9 @@ namespace Statistics {
 class MultipleDataViewController : public ViewController, public AlternateEmptyViewDelegate {
 
 public:
-  MultipleDataViewController(Responder * parentResponder, Store * store, int * m_selectedBarIndex);
+  MultipleDataViewController(Responder * parentResponder, Store * store, int * m_selectedBarIndex, int * selectedSeriesIndex);
   virtual MultipleDataView * multipleDataView() = 0;
-  int selectedSeries() const { return m_selectedSeries; }
+  int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
   // AlternateEmptyViewDelegate
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
@@ -31,7 +31,7 @@ protected:
   virtual void reloadBannerView() = 0;
   virtual bool moveSelectionHorizontally(int deltaIndex) = 0;
   Store * m_store;
-  int m_selectedSeries;
+  int * m_selectedSeriesIndex;
   int * m_selectedBarIndex;
 };
 

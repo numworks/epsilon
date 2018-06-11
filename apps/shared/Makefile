@@ -46,6 +46,7 @@ app_objs += $(addprefix apps/shared/,\
   separator_even_odd_buffer_text_cell.o\
   simple_interactive_curve_view_controller.o\
   store_cell.o\
+  store_context.o\
   store_controller.o\
   store_parameter_controller.o\
   store_selectable_table_view.o\

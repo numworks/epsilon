@@ -155,23 +155,6 @@ void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   myCell->setMessage(messageTree->label());
 }
 
-KDCoordinate Toolbox::cumulatedHeightFromIndex(int j) {
-  int result = 0;
-  for (int k = 0; k < j; k++) {
-    result += rowHeight(k);
-  }
-  return result;
-}
-
-int Toolbox::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  int result = 0;
-  int j = 0;
-  while (result < offsetY && j < numberOfRows()) {
-    result += rowHeight(j++);
-  }
-  return (result < offsetY || offsetY == 0) ? j : j - 1;
-}
-
 int Toolbox::typeAtLocation(int i, int j) {
   MessageTree * messageTree = (MessageTree *)m_messageTreeModel->children(j);
   if (messageTree->numberOfChildren() == 0) {

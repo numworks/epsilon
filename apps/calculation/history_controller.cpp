@@ -147,23 +147,6 @@ KDCoordinate HistoryController::rowHeight(int j) {
   return calculation->height(calculationApp->localContext()) + 3*HistoryViewCell::k_digitVerticalMargin;
 }
 
-KDCoordinate HistoryController::cumulatedHeightFromIndex(int j) {
-  int result = 0;
-  for (int k = 0; k < j; k++) {
-    result += rowHeight(k);
-  }
-  return result;
-}
-
-int HistoryController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  int result = 0;
-  int j = 0;
-  while (result < offsetY && j < numberOfRows()) {
-    result += rowHeight(j++);
-  }
-  return (result < offsetY || offsetY == 0) ? j : j - 1;
-}
-
 int HistoryController::typeAtLocation(int i, int j) {
   return 0;
 }

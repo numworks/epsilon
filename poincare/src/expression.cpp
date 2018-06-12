@@ -257,7 +257,10 @@ bool Expression::getLinearCoefficients(char * variables, Expression * coefficien
     index++;
   }
   *constant = new Opposite(equation, false);
-  // xy = 0?
+  Reduce(constant, context);
+  /* The expression can be linear on all coefficients taken one by one but
+   * non-linear (ex: xy = 2). We delete the results and return false if one of
+   * the coefficients contains a variable. */
   bool isMultivariablePolynomial = (*constant)->recursivelyMatches(dependsOnVariables, context);
   for (int i = 0; i < index; i++) {
     if (isMultivariablePolynomial) {

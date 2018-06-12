@@ -18,6 +18,10 @@ public:
   const char * text() const;
   Poincare::Expression * expression(Poincare::Context * context) const;
   Poincare::ExpressionLayout * layout();
+  /* Here, isDefined is the exact contrary of isEmpty. However, for Sequence
+   * inheriting from ExpressionModel, isEmpty and isDefined have not exactly
+   * opposite meaning. For instance, u(n+1)=u(n) & u(0) = ... is not empty and
+   * not defined. We thus have to keep both methods. */
   virtual bool isDefined();
   virtual bool isEmpty();
   virtual bool shouldBeClearedBeforeRemove() {

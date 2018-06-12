@@ -15,6 +15,8 @@ ExpressionModel::ExpressionModel() :
 }
 
 ExpressionModel::~ExpressionModel() {
+  /* We cannot call tidy here because tidy is a virtual function and does not
+   * do the same thing for all children class. */
   if (m_layout != nullptr) {
     delete m_layout;
     m_layout = nullptr;
@@ -63,6 +65,9 @@ bool ExpressionModel::isEmpty() {
 
 void ExpressionModel::setContent(const char * c) {
   strlcpy(m_text, c, sizeof(m_text));
+  /* We cannot call tidy here because tidy is a virtual function and does not
+   * do the same thing for all children class. And here we want to delete only
+   * the m_layout and m_expression. */
   if (m_layout != nullptr) {
     delete m_layout;
     m_layout = nullptr;

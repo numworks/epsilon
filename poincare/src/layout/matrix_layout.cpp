@@ -135,7 +135,7 @@ int MatrixLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfS
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
     numberOfChar += LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
-
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     buffer[numberOfChar++] = ']';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }

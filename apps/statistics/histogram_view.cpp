@@ -24,10 +24,7 @@ HistogramView::HistogramView(HistogramController * controller, Store * store, in
 
 void HistogramView::reload() {
   CurveView::reload();
-  /* We deliberately do not mark as dirty the frame of the banner view to avoid
-   *unpleasant blinking of the drawing of the banner view. */
-  KDRect dirtyZone(KDRect(0, 0, bounds().width(), bounds().height() - (displayBannerView() ? m_bannerView->bounds().height() : 0)));
-  markRectAsDirty(dirtyZone);
+  markRectAsDirty(bounds());
 }
 
 void HistogramView::reloadSelectedBar() {
@@ -37,7 +34,7 @@ void HistogramView::reloadSelectedBar() {
   /* We deliberately do not mark as dirty the frame of the banner view to avoid
    *unpleasant blinking of the drawing of the banner view. */
   KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
-    bounds().height() - (displayBannerView() ? m_bannerView->bounds().height() : 0)));
+    bounds().height()));
   markRectAsDirty(dirtyZone);
 }
 

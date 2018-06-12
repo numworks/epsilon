@@ -8,7 +8,7 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_vertical_offset_layout_serialize) {
-  assert_parsed_expression_layout_serialize_to_self("2^3");
+  assert_parsed_expression_layout_serialize_to_self("(2)^(3)");
 
   HorizontalLayout * layout = new HorizontalLayout(
       new CharLayout('2'),

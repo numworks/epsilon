@@ -119,6 +119,7 @@ int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expre
   }
 
   numberOfChar += (expression != nullptr) ? expression->operand(firstChildIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits) : expressionLayout->child(firstChildIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
+  if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   if ((expression != nullptr && expression->operand(firstChildIndex)->needParenthesisWithParent(expression))
       || (expression == nullptr && childNeedsParenthesis(operatorName)))
   {
@@ -137,6 +138,7 @@ int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expre
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
     numberOfChar += (expression != nullptr) ? expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits) : expressionLayout->child(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     if ((expression != nullptr && expression->operand(i)->needParenthesisWithParent(expression))
       || (expression == nullptr && childNeedsParenthesis(operatorName)))
     {
@@ -171,13 +173,13 @@ int LayoutEngine::writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expr
     }
     int firstOperandIndex = writeFirstChild ? 0 : 1;
     numberOfChar += (expression != nullptr) ? expression->operand(firstOperandIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits) : expressionLayout->child(firstOperandIndex)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     for (int i = firstOperandIndex + 1; i < numberOfOperands; i++) {
-      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
       buffer[numberOfChar++] = ',';
       if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
       numberOfChar += (expression != nullptr) ? expression->operand(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar) : expressionLayout->child(i)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+      if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     }
-    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
   buffer[numberOfChar++] = ')';
   buffer[numberOfChar] = 0;

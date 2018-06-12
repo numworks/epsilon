@@ -1,16 +1,19 @@
 app_objs += $(addprefix apps/shared/,\
   banner_view.o\
+  buffer_function_title_cell.o\
+  buffer_text_view_with_text_field.o\
   button_with_separator.o\
   cursor_view.o\
   curve_view.o\
   curve_view_cursor.o\
   curve_view_range.o\
+  double_pair_store.o\
   editable_cell_table_view_controller.o\
   expression_field_delegate_app.o\
+  expression_layout_field_delegate.o\
   expression_model.o\
   expression_model_list_controller.o\
   expression_model_store.o\
-  float_pair_store.o\
   float_parameter_controller.o\
   function.o\
   function_app.o\
@@ -24,6 +27,8 @@ app_objs += $(addprefix apps/shared/,\
   function_store.o\
   function_title_cell.o\
   go_to_parameter_controller.o\
+  hideable_even_odd_cell.o\
+  hideable_even_odd_editable_text_cell.o\
   initialisation_parameter_controller.o\
   interactive_curve_view_controller.o\
   interactive_curve_view_range.o\
@@ -32,6 +37,7 @@ app_objs += $(addprefix apps/shared/,\
   interval_parameter_controller.o\
   language_controller.o\
   list_parameter_controller.o\
+  margin_even_odd_message_text_cell.o\
   memoized_curve_view_range.o\
   message_view.o\
   ok_view.o\
@@ -41,10 +47,14 @@ app_objs += $(addprefix apps/shared/,\
   round_cursor_view.o\
   scrollable_exact_approximate_expressions_cell.o\
   scrollable_exact_approximate_expressions_view.o\
+  separator_even_odd_buffer_text_cell.o\
   simple_interactive_curve_view_controller.o\
-  expression_layout_field_delegate.o\
+  store_cell.o\
+  store_context.o\
   store_controller.o\
   store_parameter_controller.o\
+  store_selectable_table_view.o\
+  store_title_cell.o\
   sum_graph_controller.o\
   tab_table_controller.o\
   text_field_delegate.o\

@@ -26,7 +26,19 @@ public:
     M6,
     M7,
     M8,
-    M9 = 17
+    M9 = 17,
+    V1,
+    N1,
+    V2,
+    N2,
+    V3,
+    N3 = 23,
+    X1 = 24,
+    Y1,
+    X2,
+    Y2,
+    X3,
+    Y3 = 29
   };
   static SpecialSymbols matrixSymbol(char index);
   Symbol(char name);
@@ -36,17 +48,19 @@ public:
   Type type() const override;
   Expression * clone() const override;
   int polynomialDegree(char symbolName) const override;
-  int getVariables(char * variables) const override;
   int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
   Sign sign() const override;
   bool isMatrixSymbol() const;
   bool isScalarSymbol() const;
-  bool isVariableSymbol() const;
+  static bool isVariableSymbol(char c);
+  static bool isSeriesSymbol(char c);
+  static bool isRegressionSymbol(char c);
   bool isApproximate(Context & context) const;
   float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
   bool hasAnExactRepresentation(Context & context) const;
+  static const char * textForSpecialSymbols(char name);
+  int getVariables(isVariableTest isVariable, char * variables) const override;
 private:
-  const char * textForSpecialSymbols(char name) const;
   Expression * replaceSymbolWithExpression(char symbol, Expression * expression) override;
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;

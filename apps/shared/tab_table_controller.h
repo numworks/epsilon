@@ -15,7 +15,7 @@ public:
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
-  SelectableTableView * selectableTableView();
+  virtual SelectableTableView * selectableTableView();
   virtual View * loadView() override;
   void unloadView(View * view) override;
   virtual Responder * tabController() const = 0;

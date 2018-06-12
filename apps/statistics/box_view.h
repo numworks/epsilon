@@ -9,6 +9,8 @@
 
 namespace Statistics {
 
+class BoxController;
+
 class BoxView : public Shared::CurveView {
 public:
   enum class Quantile : int {
@@ -19,17 +21,30 @@ public:
     ThirdQuartile = 3,
     Max = 4
   };
-  BoxView(Store * store, Shared::BannerView * bannerView, Quantile * selectedQuantile);
-  void reload() override;
-  Quantile selectedQuantile();
+  BoxView(BoxController * controller, Store * store, int series, Shared::BannerView * bannerView, Quantile * selectedQuantile, KDColor color, KDColor lightColor);
+  Quantile selectedQuantile() const { return *m_selectedQuantile; }
   bool selectQuantile(int selectedQuantile);
+  int series() const { return m_series; }
+  void reloadQuantile();
+
+  // CurveView
+  void reload() override;
+
+  // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
-  char * label(Axis axis, int index) const override;
+  static constexpr KDCoordinate k_boxHeight = 40;
+  static constexpr KDCoordinate k_quantileBarWidth = 2;
+  KDCoordinate boxLowerBoundPixel() const;
+  KDCoordinate boxUpperBoundPixel() const;
+  char * label(Axis axis, int index) const override { return nullptr; }
   Store * m_store;
+  BoxController * m_boxController;
   BoxRange m_boxRange;
-  char m_labels[k_maxNumberOfXLabels][Poincare::PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits)];
+  int m_series;
   Quantile * m_selectedQuantile;
+  KDColor m_selectedHistogramColor;
+  KDColor m_selectedHistogramLightColor;
 };
 
 }

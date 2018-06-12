@@ -1,13 +1,13 @@
-#ifndef GRAPH_FUNCTION_TITLE_CELL_H
-#define GRAPH_FUNCTION_TITLE_CELL_H
+#ifndef SHARED_BUFFER_FUNCTION_TITLE_CELL_H
+#define SHARED_BUFFER_FUNCTION_TITLE_CELL_H
 
-#include "../shared/function_title_cell.h"
+#include "function_title_cell.h"
 
-namespace Graph {
+namespace Shared {
 
-class FunctionTitleCell : public Shared::FunctionTitleCell {
+class BufferFunctionTitleCell : public FunctionTitleCell {
 public:
-  FunctionTitleCell(Orientation orientation, KDText::FontSize size = KDText::FontSize::Large);
+  BufferFunctionTitleCell(Orientation orientation, KDText::FontSize size = KDText::FontSize::Large);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
@@ -15,10 +15,13 @@ public:
   const char * text() const override {
     return m_bufferTextView.text();
   }
-private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
+protected:
+  KDRect bufferTextViewFrame() const;
+  EvenOddBufferTextCell * bufferTextView() { return &m_bufferTextView; }
+private:
   EvenOddBufferTextCell m_bufferTextView;
 };
 

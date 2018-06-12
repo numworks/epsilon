@@ -25,9 +25,11 @@ protected:
   static KDColor const color(Shared::Function * f) { return f->color(); }
   template<typename T> using AttributeGetter = T (*)(Function * f);
   template<typename T> T firstAvailableAttribute(T attributes[], AttributeGetter<T> attribute);
+  const KDColor firstAvailableColor() {
+    return firstAvailableAttribute(Palette::DataColor, FunctionStore::color);
+  }
 private:
   virtual const char * firstAvailableName() = 0;
-  virtual const KDColor firstAvailableColor() = 0;
 };
 
 }

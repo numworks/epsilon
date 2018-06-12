@@ -7,7 +7,6 @@ extern "C" {
 
 namespace Sequence {
 
-constexpr KDColor SequenceStore::k_defaultColors[MaxNumberOfSequences];
 constexpr const char * SequenceStore::k_sequenceNames[MaxNumberOfSequences];
 
 uint32_t SequenceStore::storeChecksum() {

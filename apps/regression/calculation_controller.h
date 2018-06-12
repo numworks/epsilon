@@ -3,9 +3,15 @@
 
 #include <escher.h>
 #include "store.h"
-#include "even_odd_double_buffer_text_cell.h"
+#include "column_title_cell.h"
+#include "even_odd_double_buffer_text_cell_with_separator.h"
+#include "even_odd_expression_cell_with_margin.h"
+#include "../shared/hideable_even_odd_cell.h"
+#include "../shared/margin_even_odd_message_text_cell.h"
 #include "../shared/tab_table_controller.h"
 #include "../shared/regular_table_view_data_source.h"
+#include "../shared/separator_even_odd_buffer_text_cell.h"
+#include "../shared/store_cell.h"
 
 namespace Regression {
 
@@ -36,21 +42,34 @@ public:
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
 private:
+  constexpr static int k_totalNumberOfRows = 14;
+  constexpr static int k_maxNumberOfDisplayableRows = 11;
+  constexpr static int k_totalNumberOfDoubleBufferRows = 5;
+  constexpr static int k_numberOfDoubleCalculationCells = Store::k_numberOfSeries * k_totalNumberOfDoubleBufferRows;
+  constexpr static int k_numberOfCalculationCells = Store::k_numberOfSeries * k_totalNumberOfRows - k_numberOfDoubleCalculationCells;
+
+  constexpr static int k_standardCalculationTitleCellType = 0;
+  constexpr static int k_r2CellType = 1;
+  constexpr static int k_columnTitleCellType = 2;
+  constexpr static int k_doubleBufferCalculationCellType = 3;
+  constexpr static int k_standardCalculationCellType = 4;
+  static constexpr int k_hideableCellType = 5;
+
+  static constexpr KDCoordinate k_cellHeight = 25;
+  static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
+  static constexpr KDCoordinate k_margin = 8;
+  static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
+
   Responder * tabController() const override;
   View * loadView() override;
   void unloadView(View * view) override;
-  constexpr static int k_totalNumberOfRows = 14;
-  constexpr static int k_totalNumberOfColumns = 2;
-  constexpr static int k_maxNumberOfDisplayableRows = 11;
-  constexpr static int k_totalNumberOfDoubleBufferRows = 5;
-  static constexpr KDCoordinate k_cellHeight = 25;
-  static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
-  EvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
-  EvenOddExpressionCell * m_r2TitleCell;
+  Shared::MarginEvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
+  EvenOddExpressionCellWithMargin * m_r2TitleCell;
   Poincare::ExpressionLayout * m_r2Layout;
-  EvenOddDoubleBufferTextCell * m_columnTitleCell;
-  EvenOddDoubleBufferTextCell * m_doubleCalculationCells[k_totalNumberOfDoubleBufferRows];
-  EvenOddBufferTextCell * m_calculationCells[k_totalNumberOfRows-k_totalNumberOfDoubleBufferRows];
+  ColumnTitleCell * m_columnTitleCells[Store::k_numberOfSeries];
+  EvenOddDoubleBufferTextCellWithSeparator * m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
+  Shared::SeparatorEvenOddBufferTextCell * m_calculationCells[k_numberOfCalculationCells];
+  Shared::HideableEvenOddCell * m_hideableCell;
   Store * m_store;
 };
 

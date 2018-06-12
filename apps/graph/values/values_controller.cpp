@@ -37,7 +37,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
   // The cell is a function title cell:
   if (j == 0 && i > 0) {
-    FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
+    Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
     CartesianFunction * function = functionAtColumn(i);
     char bufferName[6] = {0, 0, '(', 'x', ')', 0};
     const char * name = nullptr;
@@ -122,7 +122,7 @@ int ValuesController::maxNumberOfFunctions() {
   return k_maxNumberOfFunctions;
 }
 
-FunctionTitleCell * ValuesController::functionTitleCells(int j) {
+Shared::BufferFunctionTitleCell * ValuesController::functionTitleCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfFunctions);
   return m_functionTitleCells[j];
 }
@@ -151,7 +151,7 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
 
 View * ValuesController::loadView() {
   for (int i = 0; i < k_maxNumberOfFunctions; i++) {
-    m_functionTitleCells[i] = new FunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
+    m_functionTitleCells[i] = new Shared::BufferFunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
   }
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_floatCells[i] = new EvenOddBufferTextCell();

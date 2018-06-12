@@ -40,7 +40,7 @@ HighlightCell * ListController::expressionCells(int index) {
 
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
-  FunctionTitleCell * myFunctionCell = (FunctionTitleCell *)cell;
+  Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
   CartesianFunction * function = ((CartesianFunctionStore *)m_functionStore)->modelAtIndex(j);
   char bufferName[5] = {*function->name(),'(', m_functionStore->symbol(),')', 0};
   myFunctionCell->setText(bufferName);
@@ -66,7 +66,7 @@ bool ListController::removeModelRow(ExpressionModel * model) {
 
 View * ListController::loadView() {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_functionTitleCells[i] = new FunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
+    m_functionTitleCells[i] = new Shared::BufferFunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
     m_expressionCells[i] = new FunctionExpressionCell();
     m_expressionCells[i]->setMargin(k_expressionMargin);
   }

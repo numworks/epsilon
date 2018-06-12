@@ -219,10 +219,11 @@ public:
   /* getVariables fills the table variables with the variable present in the
    * expression and returns the number of entries in filled in variables.
    * For instance getVariables('x+y+2*w/cos(4)') would result in
-   * variables = ['x', 'y', 'w'] and would return 3. If the final number of
+   * variables = « xyw »  and would return 3. If the final number of
    * variables would overflow the maxNumberOfVariables, getVariables return -1 */
   static constexpr int k_maxNumberOfVariables = 6;
-  virtual int getVariables(char * variables) const;
+  typedef bool (*isVariableTest)(char c);
+  virtual int getVariables(isVariableTest isVariable, char * variables) const;
   /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same

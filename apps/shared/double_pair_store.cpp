@@ -63,6 +63,41 @@ void DoublePairStore::resetColumn(int series, int i) {
   }
 }
 
+bool DoublePairStore::isEmpty() const {
+  for (int i = 0; i < k_numberOfSeries; i++) {
+    if (!seriesIsEmpty(i)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+int DoublePairStore::numberOfNonEmptySeries() const {
+  int nonEmptySeriesCount = 0;
+  for (int i = 0; i< k_numberOfSeries; i++) {
+    if (!seriesIsEmpty(i)) {
+      nonEmptySeriesCount++;
+    }
+  }
+  return nonEmptySeriesCount;
+}
+
+
+int DoublePairStore::indexOfKthNonEmptySeries(int k) const {
+  assert(k >= 0 && k < numberOfNonEmptySeries());
+  int nonEmptySeriesCount = 0;
+  for (int i = 0; i < k_numberOfSeries; i++) {
+    if (!seriesIsEmpty(i)) {
+      if (nonEmptySeriesCount == k) {
+        return i;
+      }
+      nonEmptySeriesCount++;
+    }
+  }
+  assert(false);
+  return 0;
+}
+
 double DoublePairStore::sumOfColumn(int series, int i) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);

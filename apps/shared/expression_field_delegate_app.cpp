@@ -31,8 +31,8 @@ bool ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(Expression
       expressionLayoutField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
+    char buffer[TextField::maxBufferSize()];
     int bufferSize = TextField::maxBufferSize();
-    char buffer[bufferSize];
     int length = expressionLayoutField->writeTextInBuffer(buffer, bufferSize);
     Expression * exp = Expression::parse(buffer);
     if (exp != nullptr) {

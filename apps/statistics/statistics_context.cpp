@@ -1,5 +1,4 @@
 #include "statistics_context.h"
-#include <poincare/decimal.h>
 #include <assert.h>
 #include <string.h>
 
@@ -21,10 +20,8 @@ const Expression * StatisticsContext::expressionForSymbol(const Symbol * symbol)
 
     assert(m_seriesPairIndex >= 0);
     assert(m_seriesPairIndex < m_store->numberOfPairsOfSeries(series));
-
-    Expression * result = new Decimal(m_store->get(series, storeI, m_seriesPairIndex));
-    assert(result != nullptr);
-    return result;
+    m_value = Complex<double>::Float(m_store->get(series, storeI, m_seriesPairIndex));
+    return &m_value;
   } else {
     return m_parentContext->expressionForSymbol(symbol);
   }

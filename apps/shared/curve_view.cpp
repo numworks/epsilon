@@ -19,8 +19,7 @@ CurveView::CurveView(CurveViewRange * curveViewRange, CurveViewCursor * curveVie
   m_okView(okView),
   m_forceOkDisplay(false),
   m_mainViewSelected(false),
-  m_drawnRangeVersion(0),
-  m_displayBanner(displayBanner)
+  m_drawnRangeVersion(0)
 {
 }
 
@@ -29,7 +28,7 @@ void CurveView::reload() {
   if (m_drawnRangeVersion != rangeVersion) {
     // FIXME: This should also be called if the *curve* changed
     m_drawnRangeVersion = rangeVersion;
-    KDCoordinate bannerHeight = (m_bannerView != nullptr && m_displayBanner) ? m_bannerView->bounds().height() : 0;
+    KDCoordinate bannerHeight = (m_bannerView != nullptr) ? m_bannerView->bounds().height() : 0;
     markRectAsDirty(KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight));
     if (label(Axis::Horizontal, 0) != nullptr) {
       computeLabels(Axis::Horizontal);
@@ -522,7 +521,7 @@ void CurveView::layoutSubviews() {
   if (m_curveViewCursor != nullptr && m_cursorView != nullptr) {
     m_cursorView->setFrame(cursorFrame());
   }
-  if (m_bannerView != nullptr && m_displayBanner) {
+  if (m_bannerView != nullptr) {
     m_bannerView->setFrame(bannerFrame());
   }
   if (m_okView != nullptr) {
@@ -538,7 +537,7 @@ KDRect CurveView::cursorFrame() {
     KDCoordinate yCursorPixelPosition = std::round(floatToPixel(Axis::Vertical, m_curveViewCursor->y()));
     cursorFrame = KDRect(xCursorPixelPosition - (cursorSize.width()-1)/2, yCursorPixelPosition - (cursorSize.height()-1)/2, cursorSize.width(), cursorSize.height());
     if (cursorSize.height() == 0) {
-      KDCoordinate bannerHeight = (m_bannerView != nullptr && m_displayBanner) ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;
+      KDCoordinate bannerHeight = (m_bannerView != nullptr) ? m_bannerView->minimalSizeForOptimalDisplay().height() : 0;
       cursorFrame = KDRect(xCursorPixelPosition - (cursorSize.width()-1)/2, 0, cursorSize.width(),bounds().height()-bannerHeight);
     }
   }
@@ -547,7 +546,7 @@ KDRect CurveView::cursorFrame() {
 
 KDRect CurveView::bannerFrame() {
   KDRect bannerFrame = KDRectZero;
-  if (m_bannerView && m_displayBanner && m_mainViewSelected) {
+  if (m_bannerView && m_mainViewSelected) {
     KDCoordinate bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
     bannerFrame = KDRect(0, bounds().height()- bannerHeight, bounds().width(), bannerHeight);
   }
@@ -558,7 +557,7 @@ KDRect CurveView::okFrame() {
   KDRect okFrame = KDRectZero;
   if (m_okView && (m_mainViewSelected || m_forceOkDisplay)) {
     KDCoordinate bannerHeight = 0;
-    if (m_bannerView != nullptr && m_displayBanner) {
+    if (m_bannerView != nullptr) {
       bannerHeight = m_bannerView->minimalSizeForOptimalDisplay().height();
     }
     KDSize okSize = m_okView->minimalSizeForOptimalDisplay();
@@ -568,7 +567,7 @@ KDRect CurveView::okFrame() {
 }
 
 int CurveView::numberOfSubviews() const {
-  return (m_bannerView != nullptr && m_displayBanner) + (m_cursorView != nullptr) + (m_okView != nullptr);
+  return (m_bannerView != nullptr) + (m_cursorView != nullptr) + (m_okView != nullptr);
 };
 
 View * CurveView::subviewAtIndex(int index) {
@@ -580,12 +579,12 @@ View * CurveView::subviewAtIndex(int index) {
     if (m_okView != nullptr) {
       return m_okView;
     } else {
-      if (m_bannerView != nullptr && m_displayBanner) {
+      if (m_bannerView != nullptr) {
         return m_bannerView;
       }
     }
   }
-  if (index == 1 && m_bannerView != nullptr && m_displayBanner && m_okView != nullptr) {
+  if (index == 1 && m_bannerView != nullptr && m_okView != nullptr) {
     return m_bannerView;
   }
   return m_cursorView;

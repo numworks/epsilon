@@ -15,7 +15,6 @@ MultipleHistogramsView::MultipleHistogramsView(HistogramController * controller,
 {
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     HistogramView * histView = dataViewAtIndex(i);
-    histView->setDisplayBannerView(false);
     histView->setDisplayLabels(false);
     histView->setForceOkDisplay(true);
   }

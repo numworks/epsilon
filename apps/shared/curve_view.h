@@ -29,8 +29,6 @@ public:
   void selectMainView(bool mainViewSelected);
   void setCursorView(View * cursorView);
   void setBannerView(View * bannerView);
-  void setDisplayBannerView(bool display) { m_displayBanner = display; }
-  bool displayBannerView() const { return m_displayBanner; }
   void setOkView(View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float resolution() const;
@@ -95,7 +93,6 @@ private:
   bool m_forceOkDisplay;
   bool m_mainViewSelected;
   uint32_t m_drawnRangeVersion;
-  bool m_displayBanner;
 };
 
 }

@@ -13,10 +13,6 @@ MultipleBoxesView::MultipleBoxesView(BoxController * controller, Store * store, 
   m_axisView(store),
   m_bannerView()
 {
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    BoxView * boxView = dataViewAtIndex(i);
-    boxView->setDisplayBannerView(false);
-  }
 }
 
 BoxView *  MultipleBoxesView::dataViewAtIndex(int index) {

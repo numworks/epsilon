@@ -16,14 +16,12 @@ Equation& Equation::operator=(const Equation& other) {
 }
 
 Equation::~Equation() {
-  if (m_standardForm) {
-    delete m_standardForm;
-    m_standardForm = nullptr;
-  }
+  tidyStandardForm();
 }
 
 void Equation::setContent(const char * c) {
-  tidy();
+  /* ExpressionModel::setContent takes care of tidying m_expression and m_layout. */
+  tidyStandardForm();
   ExpressionModel::setContent(c);
 }
 
@@ -49,6 +47,13 @@ Expression * Equation::standardForm(Context * context) const {
     }
   }
   return m_standardForm;
+}
+
+void Equation::tidyStandardForm() {
+  if (m_standardForm) {
+    delete m_standardForm;
+    m_standardForm = nullptr;
+  }
 }
 
 }

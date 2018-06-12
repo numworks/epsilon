@@ -24,6 +24,7 @@ public:
   }
   virtual void printText(const char * text, size_t length) {
   }
+  void interrupt();
 protected:
   bool m_sandboxIsDisplayed;
 };

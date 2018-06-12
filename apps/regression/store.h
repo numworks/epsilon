@@ -29,10 +29,7 @@ public:
   void setDefault() override;
 
   // Series
-  bool isEmpty() const;
-  int numberOfNonEmptySeries() const;
-  bool seriesIsEmpty(int series) const;
-  int indexOfKthNonEmptySeries(int k) const;
+  bool seriesIsEmpty(int series) const override;
 
   // Calculation
   double doubleCastedNumberOfPairsOfSeries(int series) const;

@@ -3,15 +3,22 @@ snapshot_headers += apps/statistics/app.h
 
 app_objs += $(addprefix apps/statistics/,\
   app.o\
+  box_axis_view.o\
   box_banner_view.o\
   box_controller.o\
   box_range.o\
   box_view.o\
   calculation_controller.o\
+  calculation_selectable_table_view.o\
   histogram_banner_view.o\
   histogram_controller.o\
   histogram_parameter_controller.o\
   histogram_view.o\
+  multiple_boxes_view.o\
+  multiple_data_view.o\
+  multiple_data_view_controller.o\
+  multiple_histograms_view.o\
+  statistics_context.o\
   store.o\
   store_controller.o\
 )

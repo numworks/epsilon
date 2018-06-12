@@ -2,7 +2,7 @@
 #define GRAPH_VALUES_CONTROLLER_H
 
 #include "../cartesian_function_store.h"
-#include "../function_title_cell.h"
+#include "../../shared/buffer_function_title_cell.h"
 #include "../../shared/values_controller.h"
 #include "../../shared/interval_parameter_controller.h"
 #include "derivative_parameter_controller.h"
@@ -27,8 +27,8 @@ private:
   double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;
   constexpr static int k_maxNumberOfCells = 50;
   constexpr static int k_maxNumberOfFunctions = 5;
-  FunctionTitleCell * m_functionTitleCells[k_maxNumberOfFunctions];
-  FunctionTitleCell * functionTitleCells(int j) override;
+  Shared::BufferFunctionTitleCell * m_functionTitleCells[k_maxNumberOfFunctions];
+  Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   EvenOddBufferTextCell * m_floatCells[k_maxNumberOfCells];
   EvenOddBufferTextCell * floatCells(int j) override;
   CartesianFunctionStore * m_functionStore;

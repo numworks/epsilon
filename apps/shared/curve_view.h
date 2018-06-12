@@ -17,25 +17,33 @@ public:
     Horizontal = 0,
     Vertical = 1
   };
-  CurveView(CurveViewRange * curveViewRange = nullptr, CurveViewCursor * curveViewCursor = nullptr,
-    BannerView * bannerView = nullptr, View * cursorView = nullptr, View * okView = nullptr);
+  CurveView(CurveViewRange * curveViewRange = nullptr,
+      CurveViewCursor * curveViewCursor = nullptr,
+      BannerView * bannerView = nullptr,
+      View * cursorView = nullptr,
+      View * okView = nullptr,
+      bool displayBanner = true);
   virtual void reload();
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);
   void setCursorView(View * cursorView);
   void setBannerView(View * bannerView);
+  void setDisplayBannerView(bool display) { m_displayBanner = display; }
+  bool displayBannerView() const { return m_displayBanner; }
   void setOkView(View * okView);
+  void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }
   float resolution() const;
 protected:
   void setCurveViewRange(CurveViewRange * curveViewRange);
   // Drawing methods
   virtual float samplingRatio() const;
-  constexpr static KDCoordinate k_labelMargin =  4;
-  constexpr static KDCoordinate k_okMargin =  10;
-  constexpr static KDCoordinate k_labelGraduationLength =  6;
+  constexpr static KDCoordinate k_labelMargin = 4;
+  constexpr static KDCoordinate k_okVerticalMargin = 23;
+  constexpr static KDCoordinate k_okHorizontalMargin = 10;
+  constexpr static KDCoordinate k_labelGraduationLength = 6;
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
-  constexpr static int k_maxNumberOfYLabels =  CurveViewRange::k_maxNumberOfYGridUnits;
+  constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
   constexpr static int k_externRectMargin = 2;
   float pixelToFloat(Axis axis, KDCoordinate p) const;
   float floatToPixel(Axis axis, float f) const;
@@ -52,7 +60,7 @@ protected:
   void drawHistogram(KDContext * ctx, KDRect rect, EvaluateModelWithParameter evaluation, void * model, void * context, float firstBarAbscissa, float barWidth,
     bool fillBar, KDColor defaultColor, KDColor highlightColor,  float highlightLowerBound = INFINITY, float highlightUpperBound = -INFINITY) const;
   void computeLabels(Axis axis);
-  void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin) const;
+  void drawLabels(KDContext * ctx, KDRect rect, Axis axis, bool shiftOrigin, bool graduationOnly = false, bool fixCoordinate = false, KDCoordinate fixedCoordinate = 0) const;
   View * m_bannerView;
   CurveViewCursor * m_curveViewCursor;
 private:
@@ -84,8 +92,10 @@ private:
   CurveViewRange * m_curveViewRange;
   View * m_cursorView;
   View * m_okView;
+  bool m_forceOkDisplay;
   bool m_mainViewSelected;
   uint32_t m_drawnRangeVersion;
+  bool m_displayBanner;
 };
 
 }

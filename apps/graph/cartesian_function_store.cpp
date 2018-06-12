@@ -8,7 +8,6 @@ extern "C" {
 namespace Graph {
 
 constexpr int CartesianFunctionStore::k_maxNumberOfFunctions;
-constexpr KDColor CartesianFunctionStore::k_defaultColors[k_maxNumberOfFunctions];
 constexpr const char * CartesianFunctionStore::k_functionNames[k_maxNumberOfFunctions];
 
 CartesianFunctionStore::CartesianFunctionStore() :

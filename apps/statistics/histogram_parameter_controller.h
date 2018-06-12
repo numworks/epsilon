@@ -11,17 +11,17 @@ class HistogramParameterController : public Shared::FloatParameterController {
 public:
   HistogramParameterController(Responder * parentResponder, Store * store);
   const char * title() override;
-  int numberOfRows() override;
+  int numberOfRows() override { return 1+k_numberOfCells; }
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
+  constexpr static int k_numberOfCells = 2;
   HighlightCell * reusableParameterCell(int index, int type) override;
-  int reusableParameterCellCount(int type) override;
+  int reusableParameterCellCount(int type) override { return k_numberOfCells; }
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   View * loadView() override;
   void unloadView(View * view) override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
-  constexpr static int k_numberOfCells = 2;
   MessageTableCellWithEditableText * m_cells[k_numberOfCells];
   Store * m_store;
 };

@@ -33,12 +33,6 @@ private:
   Sequence * emptyModel() override;
   Sequence * nullModel() override;
   void setModelAtIndex(Shared::ExpressionModel * f, int i) override;
-  static constexpr KDColor k_defaultColors[MaxNumberOfSequences] = {
-    Palette::Red, Palette::Blue//, Palette::YellowDark
-  };
-  const KDColor firstAvailableColor() override {
-    return firstAvailableAttribute(k_defaultColors, FunctionStore::color);
-  }
   Sequence m_sequences[MaxNumberOfSequences];
 };
 

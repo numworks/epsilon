@@ -9,8 +9,8 @@ EvenOddCell::EvenOddCell() :
 
 void EvenOddCell::setEven(bool even) {
   if (even != m_even) {
-  m_even = even;
-  reloadCell();
+    m_even = even;
+    reloadCell();
   }
 }
 

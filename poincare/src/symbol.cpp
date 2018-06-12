@@ -21,7 +21,7 @@ extern "C" {
 
 namespace Poincare {
 
-const char * Symbol::textForSpecialSymbols(char name) const {
+const char * Symbol::textForSpecialSymbols(char name) {
   switch (name) {
     case SpecialSymbols::Ans:
       return "ans";
@@ -53,10 +53,54 @@ const char * Symbol::textForSpecialSymbols(char name) const {
       return "M8";
     case SpecialSymbols::M9:
       return "M9";
+    case SpecialSymbols::V1:
+      return "V1";
+    case SpecialSymbols::N1:
+      return "N1";
+    case SpecialSymbols::V2:
+      return "V2";
+    case SpecialSymbols::N2:
+      return "N2";
+    case SpecialSymbols::V3:
+      return "V3";
+    case SpecialSymbols::N3:
+      return "N3";
+    case SpecialSymbols::X1:
+      return "X1";
+    case SpecialSymbols::Y1:
+      return "Y1";
+    case SpecialSymbols::X2:
+      return "X2";
+    case SpecialSymbols::Y2:
+      return "Y2";
+    case SpecialSymbols::X3:
+      return "X3";
+    case SpecialSymbols::Y3:
+      return "Y3";
     default:
       assert(false);
       return nullptr;
   }
+}
+
+int Symbol::getVariables(isVariableTest isVariable, char * variables) const {
+ size_t variablesLength = strlen(variables);
+ if (isVariable(m_name)) {
+   char * currentChar = variables;
+   while (*currentChar != 0) {
+     if (*currentChar == m_name) {
+       return variablesLength;
+     }
+     currentChar++;
+   }
+   if (variablesLength < k_maxNumberOfVariables) {
+     variables[variablesLength] = m_name;
+     variables[variablesLength+1] = 0;
+     return variablesLength+1;
+   }
+   return -1;
+ }
+ return variablesLength;
 }
 
 Symbol::SpecialSymbols Symbol::matrixSymbol(char index) {
@@ -111,26 +155,6 @@ int Symbol::polynomialDegree(char symbol) const {
     return 1;
   }
   return 0;
-}
-
-int Symbol::getVariables(char * variables) const {
-  size_t variablesLength = strlen(variables);
-  if (isVariableSymbol()) {
-    char * currentChar = variables;
-    while (*currentChar != 0) {
-      if (*currentChar == m_name) {
-        return variablesLength;
-      }
-      currentChar++;
-    }
-    if (variablesLength < k_maxNumberOfVariables) {
-      variables[variablesLength] = m_name;
-      variables[variablesLength+1] = 0;
-      return variablesLength+1;
-    }
-    return -1;
-  }
-  return variablesLength;
 }
 
 int Symbol::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
@@ -262,9 +286,8 @@ ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode
         false),
       false);
   }
-  if (isMatrixSymbol()) {
-    const char mi[] = { 'M', (char)(m_name-(char)SpecialSymbols::M0+'0') };
-    return LayoutEngine::createStringLayout(mi, sizeof(mi));
+  if (isMatrixSymbol() || isSeriesSymbol(m_name) || isRegressionSymbol(m_name)) {
+    return LayoutEngine::createStringLayout(textForSpecialSymbols(m_name), 2);
   }
   return LayoutEngine::createStringLayout(&m_name, 1);
 }
@@ -300,8 +323,22 @@ bool Symbol::isScalarSymbol() const {
   return false;
 }
 
-bool Symbol::isVariableSymbol() const {
-  if (m_name >= 'a' && m_name <= 'z') {
+bool Symbol::isVariableSymbol(char c)  {
+  if (c >= 'a' && c <= 'z') {
+    return true;
+  }
+  return false;
+}
+
+bool Symbol::isSeriesSymbol(char c) {
+  if (c >= (char)SpecialSymbols::V1 && c <= (char)SpecialSymbols::N3) {
+    return true;
+  }
+  return false;
+}
+
+bool Symbol::isRegressionSymbol(char c) {
+  if (c >= (char)SpecialSymbols::X1 && c <= (char)SpecialSymbols::Y3) {
     return true;
   }
   return false;

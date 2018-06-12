@@ -23,7 +23,9 @@ App::Snapshot::Snapshot() :
   m_storeVersion(0),
   m_barVersion(0),
   m_rangeVersion(0),
+  m_selectedHistogramSeriesIndex(-1),
   m_selectedHistogramBarIndex(0),
+  m_selectedBoxSeriesIndex(-1),
   m_selectedBoxQuantile(BoxView::Quantile::Min)
 {
 }
@@ -47,39 +49,15 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
-Store * App::Snapshot::store() {
-  return &m_store;
-}
-
-uint32_t * App::Snapshot::storeVersion() {
-  return &m_storeVersion;
-}
-
-uint32_t * App::Snapshot::barVersion() {
-  return &m_barVersion;
-}
-
-uint32_t * App::Snapshot::rangeVersion() {
-  return &m_rangeVersion;
-}
-
-int * App::Snapshot::selectedHistogramBarIndex() {
-  return &m_selectedHistogramBarIndex;
-}
-
-BoxView::Quantile * App::Snapshot::selectedBoxQuantile() {
-  return &m_selectedBoxQuantile;
-}
-
 App::App(Container * container, Snapshot * snapshot) :
   TextFieldDelegateApp(container, snapshot, &m_tabViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_boxController(&m_boxAlternateEmptyViewController, &m_boxHeader, snapshot->store(), snapshot->selectedBoxQuantile()),
+  m_boxController(&m_boxAlternateEmptyViewController, &m_boxHeader, snapshot->store(), snapshot->selectedBoxQuantile(), snapshot->selectedBoxSeriesIndex()),
   m_boxAlternateEmptyViewController(&m_boxHeader, &m_boxController, &m_boxController),
   m_boxHeader(&m_tabViewController, &m_boxAlternateEmptyViewController, &m_boxController),
-  m_histogramController(&m_histogramAlternateEmptyViewController, &m_histogramHeader, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex()),
+  m_histogramController(&m_histogramAlternateEmptyViewController, &m_histogramHeader, snapshot->store(), snapshot->storeVersion(), snapshot->barVersion(), snapshot->rangeVersion(), snapshot->selectedHistogramBarIndex(), snapshot->selectedHistogramSeriesIndex()),
   m_histogramAlternateEmptyViewController(&m_histogramHeader, &m_histogramController, &m_histogramController),
   m_histogramHeader(&m_histogramStackViewController, &m_histogramAlternateEmptyViewController, &m_histogramController),
   m_histogramStackViewController(&m_tabViewController, &m_histogramHeader),

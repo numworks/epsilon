@@ -36,12 +36,12 @@ void IntersectionGraphController::reloadBannerView() {
   bannerView()->setLegendAtIndex(buffer, 1);
 }
 
-CartesianFunction::Point IntersectionGraphController::computeNewPointOfInterest(double start, double step, double max, Context * context) {
-  CartesianFunction::Point result = {.abscissa = NAN, .value = NAN};
+Expression::Coordinate2D IntersectionGraphController::computeNewPointOfInterest(double start, double step, double max, Context * context) {
+  Expression::Coordinate2D result = {.abscissa = NAN, .value = NAN};
   for (int i = 0; i < m_functionStore->numberOfActiveFunctions(); i++) {
     Function * f = m_functionStore->activeFunctionAtIndex(i);
     if (f != m_function) {
-      CartesianFunction::Point intersection = m_function->nextIntersectionFrom(start, step, max, context, f);
+      Expression::Coordinate2D intersection = m_function->nextIntersectionFrom(start, step, max, context, f);
       if ((std::isnan(result.abscissa) || std::fabs(intersection.abscissa-start) < std::fabs(result.abscissa-start)) && !std::isnan(intersection.abscissa)) {
         m_intersectedFunction = f;
         result = (std::isnan(result.abscissa) || std::fabs(intersection.abscissa-start) < std::fabs(result.abscissa-start)) ? intersection : result;

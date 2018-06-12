@@ -99,13 +99,13 @@ bool ListParameterController::handleEnterOnRow(int rowIndex) {
       case 1:
 #endif
     {
-      if (m_functionStore->numberOfFunctions() > 1) {
-        m_functionStore->removeFunction(m_function);
+      if (m_functionStore->numberOfModels() > 1) {
+        m_functionStore->removeModel(m_function);
         StackViewController * stack = (StackViewController *)(parentResponder());
         stack->pop();
         return true;
       } else {
-        if (m_functionStore->numberOfDefinedFunctions() == 1) {
+        if (m_functionStore->numberOfDefinedModels() == 1) {
           Function * f = m_functionStore->definedFunctionAtIndex(0);
           f->setContent("");
           StackViewController * stack = (StackViewController *)(parentResponder());

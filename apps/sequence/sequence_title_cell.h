@@ -12,10 +12,13 @@ public:
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
+  Poincare::ExpressionLayout * expressionLayout() const override {
+    return m_titleTextView.expressionLayout();
+  }
+private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-private:
   EvenOddExpressionCell m_titleTextView;
 };
 

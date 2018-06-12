@@ -20,9 +20,9 @@ Expression * SquareRoot::clone() const {
   return a;
 }
 
-static_assert('\x90' == Ion::Charset::Root, "Unicode error");
+static_assert('\x91' == Ion::Charset::Root, "Unicode error");
 int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
-  return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "\x90");
+  return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "\x91");
 }
 
 template<typename T>

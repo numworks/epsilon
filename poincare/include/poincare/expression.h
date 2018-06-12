@@ -40,6 +40,7 @@ class Expression {
   friend class Determinant;
   friend class DivisionQuotient;
   friend class DivisionRemainder;
+  friend class Equal;
   friend class Floor;
   friend class FracPart;
   friend class GreatCommonDivisor;
@@ -92,6 +93,7 @@ public:
     Factorial,
     Division,
     Store,
+    Equal,
     Sine,
     Cosine,
     Tangent,
@@ -194,6 +196,7 @@ public:
     Unknown = 0,
     Positive = 1
   };
+  bool isRationalZero() const;
   virtual Sign sign() const { return Sign::Unknown; }
   typedef bool (*ExpressionTest)(const Expression * e, Context & context);
   bool recursivelyMatches(ExpressionTest test, Context & context) const;
@@ -213,6 +216,25 @@ public:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */
   virtual int polynomialDegree(char symbolName) const;
+  /* getVariables fills the table variables with the variable present in the
+   * expression and returns the number of entries in filled in variables.
+   * For instance getVariables('x+y+2*w/cos(4)') would result in
+   * variables = ['x', 'y', 'w'] and would return 3. If the final number of
+   * variables would overflow the maxNumberOfVariables, getVariables return -1 */
+  static constexpr int k_maxNumberOfVariables = 6;
+  virtual int getVariables(char * variables) const;
+  /* getLinearCoefficients return false if the expression is not linear with
+   * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
+   * the coefficients of the variables hold in 'variables' (following the same
+   * order) and 'constant' with the constant of the expression. */
+  bool getLinearCoefficients(char * variables, Expression * coefficients[], Expression * constant[], Context & context) const;
+  /* getPolynomialCoefficients fills the table coefficients with the expressions
+   * of the first 5 polynomial coefficients and return polynomialDegree.
+   * coefficients has up to 5 entries. It supposed to be called on Reduced
+   * expression. */
+  static constexpr int k_maxPolynomialDegree = 2;
+  static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
+  int getPolynomialCoefficients(char symbolName, Expression * coefficients[], Context & context) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -223,6 +245,7 @@ public:
      * order on expresssions. */
     return SimplificationOrder(this, e, true) == 0;
   }
+  bool isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, int numberOfSignificantDigits, Context & context);
 
   /* Layout Engine */
   ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
@@ -231,6 +254,7 @@ public:
   /* Simplification */
   static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit = AngleUnit::Default);
   static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default);
+  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit = AngleUnit::Default, bool recursively = true);
 
   /* Evaluation Engine
    * The function evaluate creates a new expression and thus mallocs memory.
@@ -238,6 +262,17 @@ public:
   template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit = AngleUnit::Default) const;
   template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit = AngleUnit::Default);
+  template<typename T> T approximateWithValueForSymbol(char symbol, T x, Context & context) const;
+
+  /* Expression roots/extrema solver*/
+  struct Coordinate2D {
+    double abscissa;
+    double value;
+  };
+  Coordinate2D nextMinimum(char symbol, double start, double step, double max, Context & context) const;
+  Coordinate2D nextMaximum(char symbol, double start, double step, double max, Context & context) const;
+  double nextRoot(char symbol, double start, double step, double max, Context & context) const;
+  Coordinate2D nextIntersection(char symbol, double start, double step, double max, Context & context, const Expression * expression) const;
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}
@@ -267,6 +302,7 @@ private:
   virtual Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
   bool isOfType(Type * types, int length) const;
   virtual bool needParenthesisWithParent(const Expression * e) const;
+  virtual int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const;
   /* Comparison */
   /* In the simplification order, most expressions are compared by only
    * comparing their types. However hierarchical expressions of same type would
@@ -280,7 +316,6 @@ private:
   /* Layout Engine */
   virtual ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Simplification */
-  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively = true);
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);
   Expression * deepReduce(Context & context, AngleUnit angleUnit);
   // TODO: should be virtual pure
@@ -294,6 +329,19 @@ private:
   /* Evaluation Engine */
   virtual Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
   virtual Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+
+  /* Expression roots/extrema solver*/
+  constexpr static double k_solverPrecision = 1.0E-5;
+  constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
+  constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
+  constexpr static double k_maxFloat = 1e100;
+  typedef double (*EvaluationAtAbscissa)(char symbol, double abscissa, Context & context, const Expression * expression0, const Expression * expression1);
+  Coordinate2D nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr, bool lookForRootMinimum = false) const;
+  void bracketMinimum(char symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr) const;
+  Coordinate2D brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression = nullptr) const;
+  double nextIntersectionWithExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression) const;
+  void bracketRoot(char symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, const Expression * expression) const;
+  double brentRoot(char symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, const Expression * expression) const;
 
   Expression * m_parent;
 };

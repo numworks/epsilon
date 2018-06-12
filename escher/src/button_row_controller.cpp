@@ -27,6 +27,10 @@ Button * ButtonRowController::ContentView::buttonAtIndex(int index) const {
   return m_delegate->buttonAtIndex(index, m_position);
 }
 
+void ButtonRowController::ContentView::reload() {
+  markRectAsDirty(bounds());
+}
+
 int ButtonRowController::ContentView::numberOfSubviews() const {
   return numberOfButtons() + 1;
 }
@@ -176,6 +180,14 @@ int ButtonRowController::selectedButton() {
 bool ButtonRowController::setSelectedButton(int selectedButton) {
   App * application = app();
   return m_contentView.setSelectedButton(selectedButton, application);
+}
+
+void ButtonRowController::setMessageOfButtonAtIndex(I18n::Message message, int index) {
+  if (m_contentView.numberOfButtons() > index) {
+    m_contentView.buttonAtIndex(0)->setMessage(message);
+    m_contentView.layoutSubviews();
+    m_contentView.reload();
+  }
 }
 
 bool ButtonRowController::handleEvent(Ion::Events::Event event) {

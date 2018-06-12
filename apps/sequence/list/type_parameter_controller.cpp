@@ -82,9 +82,10 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
       stack->pop();
       return true;
     }
-    Sequence * newSequence = m_sequenceStore->addEmptyFunction();
+    Sequence * newSequence = static_cast<Sequence *>(m_sequenceStore->addEmptyModel());
     newSequence->setType((Sequence::Type)selectedRow());
     app()->dismissModalViewController();
+    m_listController->editExpression(newSequence, 0, Ion::Events::OK);
     return true;
   }
   if (event == Ion::Events::Left && m_sequence) {

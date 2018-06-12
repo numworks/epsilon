@@ -52,8 +52,8 @@ private:
     char m_textBuffer[k_bufferLength];
     ExpressionField m_expressionField;
   };
-  bool inputViewDidFinishEditing();
-  bool inputViewDidAbortEditing();
+  void inputViewDidFinishEditing();
+  void inputViewDidAbortEditing();
   ExpressionFieldController m_expressionFieldController;
   Invocation m_successAction;
   Invocation m_failureAction;

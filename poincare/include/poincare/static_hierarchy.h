@@ -10,8 +10,8 @@ template<int T>
 class StaticHierarchy : public Expression {
 public:
   StaticHierarchy();
-  StaticHierarchy(const Expression * const * operands, bool cloneOperands = true);
-  StaticHierarchy(const Expression * expression, bool cloneOperands = true); // Specialized constructor for StaticHierarchy<1>
+  StaticHierarchy(const Expression * const * operands, bool cloneOperands);
+  StaticHierarchy(const Expression * expression, bool cloneOperands); // Specialized constructor for StaticHierarchy<1>
   StaticHierarchy(const Expression * expression1, const Expression * expression2, bool cloneOperands = true); // Specialized constructor for StaticHierarchy<2>
   ~StaticHierarchy();
   StaticHierarchy(const StaticHierarchy & other) = delete;

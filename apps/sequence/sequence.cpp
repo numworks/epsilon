@@ -185,10 +185,6 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionLayout() {
   return m_secondInitialConditionLayout;
 }
 
-void Sequence::setContent(const char * c) {
-  Function::setContent(c);
-}
-
 void Sequence::setFirstInitialConditionContent(const char * c) {
   strlcpy(m_firstInitialConditionText, c, sizeof(m_firstInitialConditionText));
   if (m_firstInitialConditionExpression != nullptr) {
@@ -236,19 +232,19 @@ Poincare::ExpressionLayout * Sequence::definitionName() {
     if (m_type == Type::Explicit) {
       m_definitionName = new HorizontalLayout(
         new CharLayout(name()[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout("n ", 2, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout("n", 1, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
         false);
     }
     if (m_type == Type::SingleRecurrence) {
       m_definitionName = new HorizontalLayout(
         new CharLayout(name()[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout("n+1 ", 4, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout("n+1", 3, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
         false);
     }
     if (m_type == Type::DoubleRecurrence) {
       m_definitionName = new HorizontalLayout(
         new CharLayout(name()[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout("n+2 ", 4, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout("n+2", 3, KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
         false);
     }
   }
@@ -340,9 +336,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     {
       ctx.setValueForSymbol(un, &unSymbol);
       ctx.setValueForSymbol(vn, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
-      return expression(sqctx)->template approximateToScalar<T>(ctx);
+      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)n, ctx);
     }
     case Type::SingleRecurrence:
     {
@@ -353,9 +347,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm1, &unSymbol);
       ctx.setValueForSymbol(vn, &vn1Symbol);
       ctx.setValueForSymbol(vnm1, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-1);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
-      return expression(sqctx)->template approximateToScalar<T>(ctx);
+      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)(n-1), ctx);
     }
     default:
     {
@@ -369,9 +361,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
       ctx.setValueForSymbol(unm2, &unSymbol);
       ctx.setValueForSymbol(vnm1, &vn1Symbol);
       ctx.setValueForSymbol(vnm2, &vnSymbol);
-      Poincare::Complex<T> e = Poincare::Complex<T>::Float(n-2);
-      ctx.setExpressionForSymbolName(&e, &nSymbol, *sqctx);
-      return expression(sqctx)->template approximateToScalar<T>(ctx);
+      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)(n-2), ctx);
     }
   }
 }

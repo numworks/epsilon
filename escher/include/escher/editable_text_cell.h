@@ -16,6 +16,12 @@ public:
   Responder * responder() override {
     return this;
   }
+  const char * text() const override {
+    if (!m_textField.isEditing()) {
+      return m_textField.text();
+    }
+    return nullptr;
+  }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;

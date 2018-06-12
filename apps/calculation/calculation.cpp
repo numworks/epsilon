@@ -199,16 +199,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
   }
-  char buffer[k_printedExpressionSize];
-  approximateOutput(context)->writeTextInBuffer(buffer, k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
-  /* Warning: we cannot use directly the m_approximateOutputText but we have to
-   * re-serialize the approximateOutput because the number of stored
-   * significative numbers and the number of displayed significative numbers
-   * are not identical. (For example, 0.000025 might be displayed "0.00003"
-   * which requires in an approximative equal) */
-  Expression * approximateOutput = Expression::ParseAndSimplify(buffer, *context);
-  m_equalSign = approximateOutput->isIdenticalTo(exactOutput(context)) ? EqualSign::Equal : EqualSign::Approximation;
-  delete approximateOutput;
+  m_equalSign = exactOutput(context)->isEqualToItsApproximationLayout(approximateOutput(context), k_printedExpressionSize, Preferences::sharedPreferences()->numberOfSignificantDigits(), *context) ? EqualSign::Equal : EqualSign::Approximation;
   return m_equalSign;
 }
 

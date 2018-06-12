@@ -12,10 +12,13 @@ public:
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
   void setText(const char * textContent);
+  const char * text() const override {
+    return m_bufferTextView.text();
+  }
+private:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
-private:
   EvenOddBufferTextCell m_bufferTextView;
 };
 

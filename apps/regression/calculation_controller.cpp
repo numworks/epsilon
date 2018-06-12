@@ -24,6 +24,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_store(store)
 {
   m_r2Layout = new HorizontalLayout(new CharLayout('r', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('2', KDText::FontSize::Small), VerticalOffsetLayout::Type::Superscript, false), false);
+  m_r2TitleCell->setRightMargin(k_r2CellMargin);
 }
 
 CalculationController::~CalculationController() {
@@ -115,7 +116,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   // Calculation title
   if (i == 0) {
     if (j == numberOfRows()-1) {
-      EvenOddExpressionCellWithMargin * myCell = (EvenOddExpressionCellWithMargin *)cell;
+      EvenOddExpressionCell * myCell = static_cast<EvenOddExpressionCell *>(cell);
       myCell->setExpressionLayout(m_r2Layout);
       return;
     }
@@ -253,7 +254,7 @@ View * CalculationController::loadView() {
   tableView->setVerticalCellOverlap(0);
   tableView->setBackgroundColor(Palette::WallScreenDark);
   tableView->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  m_r2TitleCell = new EvenOddExpressionCellWithMargin(1.0f, 0.5f);
+  m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     m_columnTitleCells[i] = new ColumnTitleCell(tableView);
   }

@@ -55,7 +55,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
 }
 
 I18n::Message ValuesController::emptyMessage() {
-  if (m_functionStore->numberOfDefinedFunctions() == 0) {
+  if (m_functionStore->numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
   }
   return I18n::Message::NoActivatedFunction;
@@ -68,7 +68,7 @@ IntervalParameterController * ValuesController::intervalParameterController() {
 CartesianFunction * ValuesController::functionAtColumn(int i) {
   assert(i > 0);
   int index = 1;
-  for (int k = 0; k < m_functionStore->numberOfDefinedFunctions(); k++) {
+  for (int k = 0; k < m_functionStore->numberOfDefinedModels(); k++) {
     if (m_functionStore->definedFunctionAtIndex(k)->isActive()) {
       if (i == index) {
         return m_functionStore->definedFunctionAtIndex(k);
@@ -89,7 +89,7 @@ CartesianFunction * ValuesController::functionAtColumn(int i) {
 bool ValuesController::isDerivativeColumn(int i) {
   assert(i >= 1);
   int index = 1;
-  for (int k = 0; k < m_functionStore->numberOfDefinedFunctions(); k++) {
+  for (int k = 0; k < m_functionStore->numberOfDefinedModels(); k++) {
     if (m_functionStore->definedFunctionAtIndex(k)->isActive()) {
       if (i == index) {
         return false;

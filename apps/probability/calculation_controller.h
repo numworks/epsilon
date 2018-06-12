@@ -17,7 +17,6 @@ public:
   /* Responder */
   void didEnterResponderChain(Responder * previousResponder) override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
 
   /* ViewController */
   View * view() override;
@@ -30,9 +29,7 @@ public:
   int numberOfColumns() override;
   KDCoordinate columnWidth(int i) override;
   KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
   KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

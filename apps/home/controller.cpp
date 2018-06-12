@@ -10,10 +10,9 @@ Controller::ContentView::ContentView(Controller * controller, SelectableTableVie
   m_selectableTableView(controller, controller, selectionDataSource, controller)
 {
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setMargins(0, k_sideMargin, 0, k_sideMargin);
+  m_selectableTableView.setMargins(0, k_sideMargin, k_bottomMargin, k_sideMargin);
   m_selectableTableView.setColorsBackground(false);
   m_selectableTableView.setIndicatorThickness(k_indicatorThickness);
-  m_selectableTableView.horizontalScrollIndicator()->setMargin(k_indicatorMargin);
   m_selectableTableView.verticalScrollIndicator()->setMargin(k_indicatorMargin);
 }
 
@@ -53,13 +52,20 @@ Controller::Controller(Responder * parentResponder, ::AppsContainer * container,
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedColumn()*k_numberOfRows+m_selectionDataSource->selectedRow()+1));
+    m_container->switchTo(m_container->appSnapshotAtIndex(m_selectionDataSource->selectedRow()*k_numberOfColumns+m_selectionDataSource->selectedColumn()+1));
     return true;
   }
 
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
     return m_view.selectableTableView()->selectCellAtLocation(0,0);
-  } 
+  }
+
+  if (event == Ion::Events::Right && m_selectionDataSource->selectedRow() < numberOfRows()) {
+    return m_view.selectableTableView()->selectCellAtLocation(0, m_selectionDataSource->selectedRow()+1);
+  }
+  if (event == Ion::Events::Left && m_selectionDataSource->selectedRow() > 0) {
+    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns()-1, m_selectionDataSource->selectedRow()-1);
+  }
 
   return false;
 }
@@ -81,11 +87,11 @@ View * Controller::view() {
 }
 
 int Controller::numberOfRows() {
-  return k_numberOfRows;
+  return ((numberOfIcons()-1)/k_numberOfColumns)+1;
 }
 
 int Controller::numberOfColumns() {
-  return ((numberOfIcons()-1)/k_numberOfRows)+1;
+  return k_numberOfColumns;
 }
 
 KDCoordinate Controller::cellHeight() {
@@ -106,7 +112,7 @@ int Controller::reusableCellCount() {
 
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = (AppCell *)cell;
-  int appIndex = (i*k_numberOfRows+j)+1;
+  int appIndex = (j*k_numberOfColumns+i)+1;
   if (appIndex >= m_container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
@@ -130,7 +136,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * redrawing takes time and is visible at scrolling. Here, we avoid the
    * background complete redrawing but the code is a bit
    * clumsy. */
-  if (m_container->numberOfApps()%2 == 0 && t->selectedColumn() == numberOfColumns() -1) {
+  if (m_container->numberOfApps()%2 == 1 && t->selectedRow() == numberOfRows() -1) {
     m_view.reloadBottomRightCorner(this);
   }
   /* To prevent the selectable table view to select cells that are unvisible,
@@ -138,7 +144,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * unvisible. This trick does not create an endless loop as we ensure not to
    * stay on a unvisible cell and to initialize the first cell on a visible one
    * (so the previous one is always visible). */
-  int appIndex = (t->selectedColumn()*k_numberOfRows+t->selectedRow())+1;
+  int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
   if (appIndex >= m_container->numberOfApps()) {
     t->selectCellAtLocation(previousSelectedCellX, previousSelectedCellY);
   }

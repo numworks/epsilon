@@ -17,7 +17,7 @@ public:
   Sequence(const char * text = nullptr, KDColor color = KDColorBlack);
   ~Sequence();
   Sequence& operator=(const Sequence& other);
-  Sequence& operator=(Sequence&& other) = delete;
+  //Sequence& operator=(Sequence&& other) = delete;
   Sequence(const Sequence& other) = delete;
   Sequence(Sequence&& other) = delete;
   uint32_t checksum() override;
@@ -36,7 +36,6 @@ public:
    * invalidate the cache because the sequences evaluations might have changed. */
   void setType(Type type);
   void setInitialRank(int rank);
-  void setContent(const char * c) override;
   void setFirstInitialConditionContent(const char * c);
   void setSecondInitialConditionContent(const char * c);
   int numberOfElements();

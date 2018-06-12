@@ -17,7 +17,7 @@ void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, cons
   Sequence * u = nullptr;
   Sequence * v = nullptr;
   if (definitionU) {
-    u = store.addEmptyFunction();
+    u = static_cast<Sequence *>(store.addEmptyModel());
     assert(u->name()[0] == 'u');
     u->setType(typeU);
     u->setContent(definitionU);
@@ -29,14 +29,14 @@ void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, cons
     }
   }
   if (definitionV) {
-    if (store.numberOfFunctions() == 0) {
-      Sequence * tempU = store.addEmptyFunction();
-      v = store.addEmptyFunction();
-      store.removeFunction(tempU);
-      v = store.functionAtIndex(0);
+    if (store.numberOfModels() == 0) {
+      Sequence * tempU = static_cast<Sequence *>(store.addEmptyModel());
+      v = static_cast<Sequence *>(store.addEmptyModel());
+      store.removeModel(tempU);
+      v = store.modelAtIndex(0);
     } else {
-      assert(store.numberOfFunctions() == 1);
-      v = store.addEmptyFunction();
+      assert(store.numberOfModels() == 1);
+      v = static_cast<Sequence *>(store.addEmptyModel());
     }
     v->setType(typeV);
     v->setContent(definitionV);

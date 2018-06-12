@@ -5,8 +5,7 @@
 #include "../sequence_title_cell.h"
 #include "../sequence_store.h"
 #include "../../shared/function_expression_cell.h"
-#include "../../shared/list_controller.h"
-#include "../../shared/new_function_cell.h"
+#include "../../shared/function_list_controller.h"
 #include "../../shared/expression_layout_field_delegate.h"
 #include "../../shared/text_field_delegate.h"
 #include "list_parameter_controller.h"
@@ -15,34 +14,34 @@
 
 namespace Sequence {
 
-class ListController : public Shared::ListController, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
+class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
 public:
   ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
-  int numberOfRows() override;
-  virtual KDCoordinate rowHeight(int j) override;
+  int numberOfExpressionRows() override;
+  KDCoordinate expressionRowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForTextInput(TextInput * textInput) override;
   Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) override;
   void selectPreviousNewSequenceCell();
+  void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
 private:
   Toolbox * toolboxForSender(Responder * sender);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
-  void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
   ListParameterController * parameterController() override;
   int maxNumberOfRows() override;
   HighlightCell * titleCells(int index) override;
   HighlightCell * expressionCells(int index) override;
   void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) override;
   void willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) override;
-  int functionIndexForRow(int j) override;
-  const char * textForRow(int j) override;
+  int modelIndexForRow(int j) override;
+  bool isAddEmptyRow(int j) override;
   int sequenceDefinitionForRow(int j);
-  void addEmptyFunction() override;
-  void editExpression(Shared::Function * function, Ion::Events::Event event) override;
-  bool removeFunctionRow(Shared::Function * function) override;
-  void reinitExpression(Shared::Function * function) override;
+  void addEmptyModel() override;
+  void reinitExpression(Shared::ExpressionModel * model) override;
+  void editExpression(Shared::ExpressionModel * model, Ion::Events::Event event) override;
+  bool removeModelRow(Shared::ExpressionModel * model) override;
   View * loadView() override;
   void unloadView(View * view) override;
   static constexpr KDCoordinate k_emptySubRowHeight = 30;

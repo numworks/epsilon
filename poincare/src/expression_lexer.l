@@ -83,7 +83,7 @@ using namespace Poincare;
    * starting with \x. */
 
 [0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
-[A-Zxn] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+[A-Za-z] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 M[0-9] { poincare_expression_yylval.character = Symbol::matrixSymbol(yytext[1]); return SYMBOL; }
 u\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un; return SYMBOL; }
 u\(n\+1\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un1; return SYMBOL; }
@@ -141,16 +141,17 @@ trace { poincare_expression_yylval.expression = new MatrixTrace(); return FUNCTI
 transpose { poincare_expression_yylval.expression = new MatrixTranspose(); return FUNCTION; }
 undef { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED; }
 inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED; }
-\x89 { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-\x8c { return EE; }
-\x90 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
-\x8b { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-\x8e { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-\x8f { return STO; }
+\x8a { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\x8d { return EE; }
+\x91 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
+\x8c { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\x8f { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
+\x90 { return STO; }
+= { return EQUAL; }
 \+ { return PLUS; }
 \- { return MINUS; }
-\x93 { return MULTIPLY; }
 \x94 { return MULTIPLY; }
+\x95 { return MULTIPLY; }
 \* { return MULTIPLY; }
 \/ { return DIVIDE; }
 \^ { return POW; }
@@ -164,7 +165,7 @@ inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED;
 \, { return COMMA; }
 \. { return DOT; }
 \_ { return UNDERSCORE; }
-\x96 { poincare_expression_yylval.expression = new EmptyExpression(); return EMPTY; }
+\x97 { poincare_expression_yylval.expression = new EmptyExpression(); return EMPTY; }
 [ ]+ /* Ignore whitespaces */
 . { return UNDEFINED_SYMBOL; }
 

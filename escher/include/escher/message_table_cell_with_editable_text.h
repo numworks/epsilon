@@ -17,6 +17,12 @@ public:
   Responder * responder() override {
     return this;
   }
+  const char * text() const override {
+    if (!m_textField.isEditing()) {
+      return m_textField.text();
+    }
+    return nullptr;
+  }
   void setAccessoryText(const char * text);
   void setTextColor(KDColor color) override;
   constexpr static int k_bufferLength = TextField::maxBufferSize();

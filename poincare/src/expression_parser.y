@@ -71,6 +71,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 %token DOT
 %token EE
 %token STO
+%token EQUAL
 %token UNDEFINED_SYMBOL
 
 /* Make the operators left associative.
@@ -90,6 +91,7 @@ void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, char 
 /* Note that in bison, precedence of parsing depend on the order they are defined in here, the last
  * one has the highest precedence. */
 
+%nonassoc EQUAL
 %nonassoc STO
 %left PLUS
 %left MINUS
@@ -220,6 +222,7 @@ exp    : pow                { $$ = $1; }
 
 final_exp : exp             { $$ = $1; }
           | exp STO symb   { if ($3->name() == Poincare::Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Store(terms, false); }
+          | exp EQUAL exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Equal(terms, false); }
           ;
 %%
 

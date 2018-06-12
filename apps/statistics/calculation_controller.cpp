@@ -29,11 +29,6 @@ bool CalculationController::handleEvent(Ion::Events::Event event) {
     app()->setFirstResponder(tabController());
     return true;
   }
-  if (event == Ion::Events::Copy && selectedColumn() == 1) {
-    EvenOddBufferTextCell * myCell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
-    Clipboard::sharedClipboard()->store(myCell->text());
-    return true;
-  }
   return false;
 }
 
@@ -100,25 +95,9 @@ KDCoordinate CalculationController::rowHeight(int j) {
   return k_cellHeight;
 }
 
-KDCoordinate CalculationController::cumulatedWidthFromIndex(int i) {
-  int result = 0;
-  for (int k = 0; k < i; k++) {
-    result += columnWidth(k);
-  }
-  return result;
-}
 
 KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
   return j*rowHeight(0);
-}
-
-int CalculationController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  int result = 0;
-  int i = 0;
-  while (result < offsetX && i < numberOfRows()) {
-    result += rowHeight(i++);
-  }
-  return (result < offsetX || offsetX == 0) ? i : i - 1;
 }
 
 int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {

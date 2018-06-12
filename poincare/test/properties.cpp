@@ -46,7 +46,7 @@ QUIZ_CASE(poincare_polynomial_degree) {
   assert_parsed_expression_polynomial_degree("[[1,2][3,4]]", -1);
   assert_parsed_expression_polynomial_degree("(x^2+2)*(x+1)", 3);
   assert_parsed_expression_polynomial_degree("-(x+1)", 1);
-  assert_parsed_expression_polynomial_degree("(x^2+2)^(3/2)", 3);
+  assert_parsed_expression_polynomial_degree("(x^2+2)^(3)", 6);
   assert_parsed_expression_polynomial_degree("prediction(0.2,10)+1", -1);
   assert_parsed_expression_polynomial_degree("2-x-x^3", 3);
   assert_parsed_expression_polynomial_degree("P*x", 1);
@@ -76,4 +76,59 @@ QUIZ_CASE(poincare_characteristic_range) {
   assert_parsed_expression_has_characteristic_range("cos(3)+2", 0.0f);
   assert_parsed_expression_has_characteristic_range("log(cos(40*x))", 9.0f);
   assert_parsed_expression_has_characteristic_range("cos(cos(x))", 360.0f);
+}
+
+void assert_parsed_expression_has_variables(const char * expression, const char * variables) {
+  Expression * e = parse_expression(expression);
+  char variableBuffer[Expression::k_maxNumberOfVariables+1] = {0};
+  int numberOfVariables = e->getVariables(variableBuffer);
+  if (variables == nullptr) {
+    assert(numberOfVariables == -1);
+  } else {
+    assert(numberOfVariables == strlen(variables));
+    char * currentChar = variableBuffer;
+    while (*variables != 0) {
+      assert(*currentChar++ == *variables++);
+    }
+  }
+  delete e;
+}
+
+QUIZ_CASE(poincare_get_variables) {
+  assert_parsed_expression_has_variables("x+y", "xy");
+  assert_parsed_expression_has_variables("x+y+z+2*t", "xyzt");
+  assert_parsed_expression_has_variables("abcdef", "abcdef");
+  assert_parsed_expression_has_variables("abcdefg", nullptr);
+  assert_parsed_expression_has_variables("abcde", "abcde");
+  assert_parsed_expression_has_variables("x^2+2*y+k!*A+w", "xykw");
+}
+
+void assert_parsed_expression_has_polynomial_coefficient(const char * expression, char symbolName, const char ** coefficients, Expression::AngleUnit angleUnit = Expression::AngleUnit::Degree) {
+  GlobalContext globalContext;
+  Expression * e = parse_expression(expression);
+  Expression::Reduce(&e, globalContext, angleUnit);
+  Expression * coefficientBuffer[Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
+  int d = e->getPolynomialCoefficients(symbolName, coefficientBuffer, globalContext);
+  for (int i = 0; i <= d; i++) {
+    Expression * f = parse_expression(coefficients[i]);
+    Expression::Reduce(&coefficientBuffer[i], globalContext, angleUnit);
+    Expression::Reduce(&f, globalContext, angleUnit);
+    assert(coefficientBuffer[i]->isIdenticalTo(f));
+    delete f;
+    delete coefficientBuffer[i];
+  }
+  assert(coefficients[d+1] == 0);
+  delete e;
+}
+
+QUIZ_CASE(poincare_get_polynomial_coefficients) {
+  const char * coefficient0[] = {"2", "1", "1", 0};
+  assert_parsed_expression_has_polynomial_coefficient("x^2+x+2", 'x', coefficient0);
+  const char * coefficient1[] = {"12+(-6)*P", "12", "3", 0}; //3*x^2+12*x-6*π+12
+  assert_parsed_expression_has_polynomial_coefficient("3*(x+2)^2-6*P", 'x', coefficient1);
+  // TODO: decomment when enable 3-degree polynomes
+  //const char * coefficient2[] = {"2+32*x", "2", "6", "2", 0}; //2*n^3+6*n^2+2*n+2+32*x
+  //assert_parsed_expression_has_polynomial_coefficient("2*(n+1)^3-4n+32*x", 'n', coefficient2);
+  const char * coefficient3[] = {"1", "-P", "1", 0}; //x^2-Pi*x+1
+  assert_parsed_expression_has_polynomial_coefficient("x^2-P*x+1", 'x', coefficient3);
 }

@@ -14,6 +14,9 @@ public:
   void setTextColor(KDColor color) override;
   void setAccessoryTextColor(KDColor color);
   void setAccessoryFontSize(KDText::FontSize fontSize);
+  const char * text() const override {
+    return m_accessoryView.text();
+  }
 protected:
   BufferTextView m_accessoryView;
 };

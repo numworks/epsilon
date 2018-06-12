@@ -61,19 +61,51 @@ Expression::Sign Power::sign() const {
 }
 
 int Power::polynomialDegree(char symbolName) const {
-  Rational op0Deg = Rational(operand(0)->polynomialDegree(symbolName));
-  if (op0Deg.sign() == Sign::Negative) {
+  int deg = Expression::polynomialDegree(symbolName);
+  if (deg == 0) {
+    return deg;
+  }
+  int op0Deg = operand(0)->polynomialDegree(symbolName);
+  if (op0Deg < 0) {
     return -1;
   }
   if (operand(1)->type() == Type::Rational) {
-    op0Deg = Rational::Multiplication(op0Deg, *(static_cast<const Rational *>(operand(1))));
-    if (!op0Deg.denominator().isOne()) {
+    const Rational * r = static_cast<const Rational *>(operand(1));
+    if (!r->denominator().isOne() || r->sign() == Sign::Negative) {
       return -1;
     }
-    if (Integer::NaturalOrder(op0Deg.numerator(), Integer(Integer::k_maxExtractableInteger)) > 0) {
+    if (Integer::NaturalOrder(r->numerator(), Integer(Integer::k_maxExtractableInteger)) > 0) {
       return -1;
     }
-    return op0Deg.numerator().extractedInt();
+    op0Deg *= r->numerator().extractedInt();
+    return op0Deg;
+  }
+  return -1;
+}
+
+int Power::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+  int deg = polynomialDegree(symbolName);
+  if (deg <= 0) {
+    return Expression::privateGetPolynomialCoefficients(symbolName, coefficients);
+  }
+  /* Here we only consider the case x^4 as privateGetPolynomialCoefficients is
+   * supposed to be called after reducing the expression. */
+  if (operand(0)->type() == Type::Symbol && static_cast<const Symbol *>(operand(0))->name() == symbolName && operand(1)->type() == Type::Rational) {
+    const Rational * r = static_cast<const Rational *>(operand(1));
+    if (!r->denominator().isOne() || r->sign() == Sign::Negative) {
+      return -1;
+    }
+    if (Integer::NaturalOrder(r->numerator(), Integer(Integer::k_maxExtractableInteger)) > 0) {
+      return -1;
+    }
+    int n = r->numerator().extractedInt();
+    if (n <= k_maxPolynomialDegree) {
+      for (int i = 0; i < n; i++) {
+        coefficients[i] = new Rational(0);
+      }
+      coefficients[n] = new Rational(1);
+      return n;
+    }
   }
   return -1;
 }
@@ -115,7 +147,7 @@ template<typename T> Matrix * Power::computeOnMatrixAndComplex(const Matrix * m,
     return nullptr;
   }
   if (power < 0) {
-    Matrix * inverse = m->createInverse<T>();
+    Matrix * inverse = m->createApproximateInverse<T>();
     if (inverse == nullptr) {
       return nullptr;
     }
@@ -228,6 +260,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
   Complex<float> * op0 = static_cast<Complex<float> *>(operand(0)->approximate<float>(context, angleUnit));
   Complex<float> * op1 = static_cast<Complex<float> *>(operand(1)->approximate<float>(context, angleUnit));
   bool bothOperandsComplexes = op0->b() != 0 && op1->b() != 0;
+  bool nonComplexNegativeOperand0 = op0->b() == 0 && op0->a() < 0;
   delete op0;
   delete op1;
   if (bothOperandsComplexes) {
@@ -299,6 +332,19 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       }
       return simplifyRationalRationalPower(this, a, exp, context, angleUnit);
     }
+  }
+  // (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
+  if (!letPowerAtRoot && nonComplexNegativeOperand0 && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->numerator().isOne() && static_cast<const Rational *>(operand(1))->denominator().isTwo()) {
+    Expression * o0 = editableOperand(0);
+    Expression * m0 = new Multiplication(new Rational(-1), o0, false);
+    replaceOperand(o0, m0, false);
+    m0->shallowReduce(context, angleUnit);
+    Multiplication * m1 = new Multiplication();
+    replaceWith(m1, false);
+    m1->addOperand(new Symbol(Ion::Charset::IComplex));
+    m1->addOperand(this);
+    shallowReduce(context, angleUnit);
+    return m1->shallowReduce(context, angleUnit);
   }
   // e^(i*Pi*r) with r rational
   if (!letPowerAtRoot && isNthRootOfUnity()) {

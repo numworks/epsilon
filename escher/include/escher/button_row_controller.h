@@ -32,6 +32,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int selectedButton();
   bool setSelectedButton(int selectedButton);
+  void setMessageOfButtonAtIndex(I18n::Message message, int index);
   void viewWillAppear() override;
   void viewDidDisappear() override;
   ViewController::DisplayParameter displayParameter() override { return DisplayParameter::DoNotShowOwnTitle; }
@@ -41,6 +42,7 @@ private:
     ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style, Size size);
     int numberOfButtons() const;
     Button * buttonAtIndex(int index) const;
+    void reload();
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews() override;

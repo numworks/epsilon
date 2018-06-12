@@ -12,7 +12,7 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
   ViewController(parentResponder),
   ButtonRowDelegate(nullptr, footer),
   m_scriptStore(scriptStore),
-  m_addNewScriptCell(I18n::Message::AddScript),
+  m_addNewScriptCell(),
   m_consoleButton(this, I18n::Message::Console, Invocation([](void * context, void * sender) {
     MenuController * menu = (MenuController *)context;
     if (menu->consoleController()->loadPythonEnvironment()) {
@@ -29,6 +29,7 @@ MenuController::MenuController(Responder * parentResponder, ScriptStore * script
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setShowsIndicators(false);
+  m_addNewScriptCell.setMessage(I18n::Message::AddScript);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
     m_scriptCells[i].editableTextCell()->textField()->setDelegate(this);

@@ -4,7 +4,7 @@
 #include <escher.h>
 #include "calculation.h"
 #include "scrollable_expression_view.h"
-#include "scrollable_output_expressions_view.h"
+#include "../shared/scrollable_exact_approximate_expressions_view.h"
 
 namespace Calculation {
 
@@ -23,6 +23,7 @@ public:
   Responder * responder() override {
     return this;
   }
+  Poincare::ExpressionLayout * expressionLayout() const override;
   KDColor backgroundColor() const override;
   void setCalculation(Calculation * calculation);
   int numberOfSubviews() const override;
@@ -33,14 +34,14 @@ public:
   constexpr static KDCoordinate k_digitVerticalMargin = 5;
   SubviewType selectedSubviewType();
   void setSelectedSubviewType(HistoryViewCell::SubviewType subviewType);
-  OutputExpressionsView * outputView();
+  Shared::ScrollableExactApproximateExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
   Poincare::ExpressionLayout * m_inputLayout;
   Poincare::ExpressionLayout * m_exactOutputLayout;
   Poincare::ExpressionLayout * m_approximateOutputLayout;
   ScrollableExpressionView m_inputView;
-  ScrollableOutputExpressionsView m_scrollableOutputView;
+  Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   SubviewType m_selectedSubviewType;
 };
 

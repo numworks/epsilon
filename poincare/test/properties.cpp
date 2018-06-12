@@ -81,7 +81,7 @@ QUIZ_CASE(poincare_characteristic_range) {
 void assert_parsed_expression_has_variables(const char * expression, const char * variables) {
   Expression * e = parse_expression(expression);
   char variableBuffer[Expression::k_maxNumberOfVariables+1] = {0};
-  int numberOfVariables = e->getVariables(variableBuffer);
+  int numberOfVariables = e->getVariables(Poincare::Symbol::isVariableSymbol, variableBuffer);
   if (variables == nullptr) {
     assert(numberOfVariables == -1);
   } else {

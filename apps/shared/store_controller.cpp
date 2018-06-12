@@ -272,7 +272,8 @@ void StoreController::unloadView(View * view) {
 bool StoreController::privateFillColumnWithFormula(Expression * formula, Expression::isVariableTest isVariable) {
   int currentColumn = selectedColumn();
   // Fetch the series used in the formula to compute the size of the filled in series
-  char variables[7] = {0, 0, 0, 0, 0, 0, 0};
+  char variables[Expression::k_maxNumberOfVariables];
+  variables[0] = 0;
   formula->getVariables(isVariable, variables);
   int numberOfValuesToCompute = -1;
   int index = 0;

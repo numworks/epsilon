@@ -153,8 +153,6 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
       app()->setFirstResponder(&m_editCell);
       return m_editCell.insertText(text);
     }
-  } else if (event == Ion::Events::Copy) {
-    return copyCurrentLineToClipboard();
   } else if (event == Ion::Events::Clear) {
     m_selectableTableView.deselectTable();
     m_consoleStore.clear();
@@ -390,15 +388,6 @@ size_t ConsoleController::firstNewLineCharIndex(const char * text, size_t length
 
 StackViewController * ConsoleController::stackViewController() {
  return static_cast<StackViewController *>(parentResponder());
-}
-
-bool ConsoleController::copyCurrentLineToClipboard() {
-  int row = m_selectableTableView.selectedRow();
-  if (row < m_consoleStore.numberOfLines()) {
-    Clipboard::sharedClipboard()->store(m_consoleStore.lineAtIndex(row).text());
-    return true;
-  }
-  return false;
 }
 
 }

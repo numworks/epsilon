@@ -13,6 +13,7 @@ public:
   Responder * responder() override {
     return this;
   }
+  const char * text() const override;
   void setEven(bool even) override;
   bool firstTextSelected();
   void selectFirstText(bool selectFirstText);

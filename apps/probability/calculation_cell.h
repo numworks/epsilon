@@ -15,6 +15,9 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   EditableTextCell * editableTextCell();
   MessageTextView * messageTextView();
+  const char * text() const override {
+    return m_calculation.text();
+  }
 private:
   constexpr static KDCoordinate k_margin = 5;
   constexpr static KDCoordinate k_minTextFieldWidth = 4*KDText::charSize().width()+TextCursorView::k_width;

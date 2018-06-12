@@ -19,7 +19,7 @@ GraphController::GraphController(Responder * parentResponder, CartesianFunctionS
 }
 
 I18n::Message GraphController::emptyMessage() {
-  if (m_functionStore->numberOfDefinedFunctions() == 0) {
+  if (m_functionStore->numberOfDefinedModels() == 0) {
     return I18n::Message::NoFunction;
   }
   return I18n::Message::NoActivatedFunction;

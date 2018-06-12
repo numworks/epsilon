@@ -35,6 +35,25 @@ int Addition::polynomialDegree(char symbolName) const {
   return degree;
 }
 
+int Addition::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+  int deg = polynomialDegree(symbolName);
+  if (deg < 0 || deg > k_maxPolynomialDegree) {
+    return -1;
+  }
+  for (int k = 0; k < deg+1; k++) {
+    coefficients[k] = new Addition();
+  }
+  Expression * intermediateCoefficients[k_maxNumberOfPolynomialCoefficients];
+  for (int i = 0; i < numberOfOperands(); i++) {
+    int d = operand(i)->privateGetPolynomialCoefficients(symbolName, intermediateCoefficients);
+    assert(d < k_maxNumberOfPolynomialCoefficients);
+    for (int j = 0; j < d+1; j++) {
+      static_cast<Addition *>(coefficients[j])->addOperand(intermediateCoefficients[j]);
+    }
+  }
+  return deg;
+}
+
 /* Layout */
 
 bool Addition::needParenthesisWithParent(const Expression * e) const {

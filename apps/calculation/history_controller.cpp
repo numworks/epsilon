@@ -3,6 +3,8 @@
 #include "../apps_container.h"
 #include <assert.h>
 
+using namespace Shared;
+
 namespace Calculation {
 
 HistoryController::HistoryController(Responder * parentResponder, CalculationStore * calculationStore) :
@@ -47,8 +49,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     if (subviewType == HistoryViewCell::SubviewType::Input) {
       editController->insertTextBody(calculation->inputText());
     } else {
-      OutputExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
-      if (outputSubviewType == OutputExpressionsView::SubviewType::ExactOutput) {
+      ScrollableExactApproximateExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
+      if (outputSubviewType == ScrollableExactApproximateExpressionsView::SubviewType::ExactOutput) {
         editController->insertTextBody(calculation->exactOutputText());
       } else {
         editController->insertTextBody(calculation->approximateOutputText());
@@ -92,23 +94,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     EditExpressionController * editController = (EditExpressionController *)parentResponder();
     selectableTableView()->deselectTable();
     app()->setFirstResponder(editController);
-    return true;
-  }
-  if (event == Ion::Events::Copy) {
-    HistoryViewCell * selectedCell = (HistoryViewCell *)selectableTableView()->selectedCell();
-    HistoryViewCell::SubviewType subviewType = selectedCell->selectedSubviewType();
-    int focusRow = selectedRow();
-    Calculation * calculation = m_calculationStore->calculationAtIndex(focusRow);
-    if (subviewType == HistoryViewCell::SubviewType::Input) {
-      Clipboard::sharedClipboard()->store(calculation->inputText());
-    } else {
-      OutputExpressionsView::SubviewType outputSubviewType = selectedCell->outputView()->selectedSubviewType();
-      if (outputSubviewType == OutputExpressionsView::SubviewType::ExactOutput) {
-        Clipboard::sharedClipboard()->store(calculation->exactOutputText());
-      } else {
-        Clipboard::sharedClipboard()->store(calculation->approximateOutputText());
-      }
-    }
     return true;
   }
   return false;

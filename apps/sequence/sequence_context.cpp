@@ -49,9 +49,9 @@ void TemplatedSequenceContext<T>::step(SequenceStore * sequenceStore, SequenceCo
   }
 
   /* Evaluate new u(n) and v(n) */
-  Sequence * u = sequenceStore->numberOfFunctions() > 0 ? sequenceStore->functionAtIndex(0) : nullptr;
+  Sequence * u = sequenceStore->numberOfModels() > 0 ? sequenceStore->modelAtIndex(0) : nullptr;
   u = u && u->isDefined() ? u : nullptr;
-  Sequence * v = sequenceStore->numberOfFunctions() > 1 ? sequenceStore->functionAtIndex(1) : nullptr;
+  Sequence * v = sequenceStore->numberOfModels() > 1 ? sequenceStore->modelAtIndex(1) : nullptr;
   v = v && v->isDefined() ? v : nullptr;
   /* Switch u & v  if the name of u is v */
   if (u != nullptr && u->name()[0] ==  SequenceStore::k_sequenceNames[1][0]) {

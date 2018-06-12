@@ -1,4 +1,5 @@
 #include <escher/selectable_table_view.h>
+#include <escher/clipboard.h>
 #include <assert.h>
 
 SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
@@ -116,6 +117,22 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Right) {
     return selectCellAtLocation(selectedColumn()+1, selectedRow());
+  }
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
+    HighlightCell * cell = selectedCell();
+    if (cell == nullptr) {
+      return false;
+    }
+    const char * text = cell->text();
+    if (text) {
+      Clipboard::sharedClipboard()->store(text);
+      return true;
+    }
+    Poincare::ExpressionLayout * layout = cell->expressionLayout();
+    if (layout) {
+      Clipboard::sharedClipboard()->store(layout);
+      return true;
+    }
   }
   return false;
 }

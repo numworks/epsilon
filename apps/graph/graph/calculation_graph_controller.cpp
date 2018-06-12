@@ -24,7 +24,7 @@ View * CalculationGraphController::view() {
 
 void CalculationGraphController::viewWillAppear() {
   assert(m_function != nullptr);
-  CartesianFunction::Point pointOfInterest = computeNewPointOfInteresetFromAbscissa(m_graphRange->xMin(), 1);
+  Expression::Coordinate2D pointOfInterest = computeNewPointOfInteresetFromAbscissa(m_graphRange->xMin(), 1);
   if (std::isnan(pointOfInterest.abscissa)) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
@@ -67,7 +67,7 @@ void CalculationGraphController::reloadBannerView() {
 }
 
 bool CalculationGraphController::moveCursor(int direction) {
-  CartesianFunction::Point newPointOfInterest = computeNewPointOfInteresetFromAbscissa(m_cursor->x(), direction);
+  Expression::Coordinate2D newPointOfInterest = computeNewPointOfInteresetFromAbscissa(m_cursor->x(), direction);
   if (std::isnan(newPointOfInterest.abscissa)) {
     return false;
   }
@@ -76,7 +76,7 @@ bool CalculationGraphController::moveCursor(int direction) {
   return true;
 }
 
-CartesianFunction::Point CalculationGraphController::computeNewPointOfInteresetFromAbscissa(double start, int direction) {
+Expression::Coordinate2D CalculationGraphController::computeNewPointOfInteresetFromAbscissa(double start, int direction) {
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   double step = m_graphRange->xGridUnit()/10.0;
   step = direction < 0 ? -step : step;

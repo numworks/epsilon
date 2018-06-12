@@ -85,11 +85,6 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (selectedRow() == -1) {
     return header()->handleEvent(event);
   }
-  if (event == Ion::Events::Copy && selectedRow() > 0 && selectedColumn() > 0) {
-    EvenOddBufferTextCell * cell = (EvenOddBufferTextCell *)selectableTableView()->selectedCell();
-    Clipboard::sharedClipboard()->store(cell->text());
-    return true;
-  }
   return false;
 }
 

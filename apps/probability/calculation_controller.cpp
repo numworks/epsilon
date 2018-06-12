@@ -88,15 +88,6 @@ void CalculationController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_selectableTableView);
 }
 
-bool CalculationController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Copy && selectedColumn() > 0) {
-    CalculationCell * myCell = static_cast<CalculationCell *>(m_selectableTableView.selectedCell());
-    Clipboard::sharedClipboard()->store(myCell->editableTextCell()->textField()->text());
-    return true;
-  }
-  return false;
-}
-
 View * CalculationController::view() {
   return &m_contentView;
 }
@@ -139,23 +130,6 @@ KDCoordinate CalculationController::columnWidth(int i) {
 
 KDCoordinate CalculationController::rowHeight(int j) {
   return ResponderImageCell::k_oneCellHeight;
-}
-
-KDCoordinate CalculationController::cumulatedWidthFromIndex(int j) {
-  int result = 0;
-  for (int k = 0; k < j; k++) {
-    result += columnWidth(k);
-  }
-  return result;
-}
-
-int CalculationController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  int result = 0;
-  int i = 0;
-  while (result < offsetX && i < numberOfColumns()) {
-    result += columnWidth(i++);
-  }
-  return (result < offsetX || offsetX == 0) ? i : i - 1;
 }
 
 KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {

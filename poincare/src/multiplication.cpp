@@ -43,6 +43,43 @@ int Multiplication::polynomialDegree(char symbolName) const {
   return degree;
 }
 
+int Multiplication::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+  int deg = polynomialDegree(symbolName);
+  if (deg < 0 || deg > k_maxPolynomialDegree) {
+    return -1;
+  }
+  // Initialization of coefficients
+  for (int i = 1; i <= deg; i++) {
+    coefficients[i] = new Rational(0);
+  }
+  coefficients[0] = new Rational(1);
+
+  Expression * intermediateCoefficients[k_maxNumberOfPolynomialCoefficients];
+  // Let's note result = a(0)+a(1)*X+a(2)*X^2+a(3)*x^3+..
+  for (int i = 0; i < numberOfOperands(); i++) {
+    // operand(i) = b(0)+b(1)*X+b(2)*X^2+b(3)*x^3+...
+    int degI = operand(i)->privateGetPolynomialCoefficients(symbolName, intermediateCoefficients);
+    assert(degI <= k_maxPolynomialDegree);
+    for (int j = deg; j > 0; j--) {
+      // new coefficients[j] = b(0)*a(j)+b(1)*a(j-1)+b(2)*a(j-2)+...
+      Addition * a = new Addition();
+      int jbis = j > degI ? degI : j;
+      for (int l = 0; l <= jbis ; l++) {
+        // Always copy the a and b coefficients are they are used multiple times
+        a->addOperand(new Multiplication(intermediateCoefficients[l], coefficients[j-l], true));
+      }
+      /* a(j) and b(j) are used only to compute coefficient at rank >= j, we
+       * can delete them as we compute new coefficient by decreasing ranks. */
+      delete coefficients[j];
+      if (j <= degI) { delete intermediateCoefficients[j]; };
+      coefficients[j] = a;
+    }
+    // new coefficients[0] = a(0)*b(0)
+    coefficients[0] = new Multiplication(coefficients[0], intermediateCoefficients[0], false);
+  }
+  return deg;
+}
+
 bool Multiplication::needParenthesisWithParent(const Expression * e) const {
   Type types[] = {Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 3);

@@ -11,7 +11,7 @@ public:
   const char * title() override;
 private:
   void reloadBannerView() override;
-  CartesianFunction::Point computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
+  Poincare::Expression::Coordinate2D computeNewPointOfInterest(double start, double step, double max, Poincare::Context * context) override;
   Shared::Function * m_intersectedFunction;
   CartesianFunctionStore * m_functionStore;
 };

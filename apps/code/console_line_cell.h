@@ -24,7 +24,9 @@ public:
   Responder * responder() override {
     return this;
   }
-
+  const char * text() const override {
+    return m_line.text();
+  }
   /* View */
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

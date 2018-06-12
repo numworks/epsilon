@@ -143,15 +143,16 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     char x = m_variables[0];
     Expression * polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
     int degree = definedModelAtIndex(0)->standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients, *context);
-    if (degree < 0) {
-      /* 3- Monovariable non-polynomial */
+    if (degree == 2) {
+      /* Polynomial degree <= 2*/
+      m_type = Type::PolynomialMonovariable;
+      error = oneDimensialPolynomialSolve(exactSolutions, polynomialCoefficients, degree, context);
+    } else {
+      /* 3- Monovariable non-polynomial or polynomial with degree > 2 */
       m_type = Type::Monovariable;
       m_intervalApproximateSolutions[0] = -10;
       m_intervalApproximateSolutions[1] = 10;
       return Error::RequireApproximateSolution;
-    } else {
-      m_type = Type::PolynomialMonovariable;
-      error = oneDimensialPolynomialSolve(exactSolutions, polynomialCoefficients, degree, context);
     }
   }
   /* Turn the results in layouts */

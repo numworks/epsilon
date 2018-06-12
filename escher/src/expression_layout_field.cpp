@@ -286,6 +286,9 @@ void ExpressionLayoutField::insertLayoutAtCursor(Poincare::ExpressionLayout * la
       m_contentView.cursor()->setPointedExpressionLayout(layout->layoutToPointWhenInserting());
       m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
     }
+  } else if (!layoutWillBeMerged) {
+    m_contentView.cursor()->setPointedExpressionLayout(layout);
+    m_contentView.cursor()->setPosition(Poincare::ExpressionLayoutCursor::Position::Right);
   }
   m_contentView.cursor()->pointedExpressionLayout()->addGreySquaresToAllMatrixAncestors();
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();

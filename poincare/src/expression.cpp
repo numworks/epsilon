@@ -214,20 +214,20 @@ int Expression::polynomialDegree(char symbolName) const {
   return 0;
 }
 
-int Expression::getVariables(char * variables) const {
-  int numberOfVariables = 0;
-  for (int i = 0; i < numberOfOperands(); i++) {
-    int n = operand(i)->getVariables(variables);
-    if (n < 0) {
-      return -1;
-    }
-    numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
-  }
-  return numberOfVariables;
+int Expression::getVariables(isVariableTest isVariable, char * variables) const {
+ int numberOfVariables = 0;
+ for (int i = 0; i < numberOfOperands(); i++) {
+   int n = operand(i)->getVariables(isVariable, variables);
+   if (n < 0) {
+     return -1;
+   }
+   numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
+ }
+ return numberOfVariables;
 }
 
 bool dependsOnVariables(const Expression * e, Context & context) {
-  return e->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e)->isVariableSymbol();
+  return e->type() == Expression::Type::Symbol && Symbol::isVariableSymbol(static_cast<const Symbol *>(e)->name());
 }
 
 bool Expression::getLinearCoefficients(char * variables, Expression * coefficients[], Expression ** constant, Context & context) const {

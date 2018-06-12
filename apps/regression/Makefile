@@ -5,7 +5,10 @@ app_objs += $(addprefix apps/regression/,\
   app.o\
   banner_view.o\
   calculation_controller.o\
-  even_odd_double_buffer_text_cell.o\
+  column_title_cell.o\
+  even_odd_buffer_text_cell_with_margin.o\
+  even_odd_double_buffer_text_cell_with_separator.o\
+  even_odd_expression_cell_with_margin.o\
   go_to_parameter_controller.o\
   graph_controller.o\
   graph_view.o\
@@ -13,6 +16,7 @@ app_objs += $(addprefix apps/regression/,\
   prediction_parameter_controller.o\
   store.o\
   store_controller.o\
+  regression_context.o\
 )
 
 i18n_files += $(addprefix apps/regression/,\

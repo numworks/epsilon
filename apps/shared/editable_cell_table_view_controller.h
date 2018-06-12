@@ -9,7 +9,7 @@
 
 namespace Shared {
 
-class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource , public TextFieldDelegate {
+class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource, public TextFieldDelegate {
 public:
   EditableCellTableViewController(Responder * parentResponder);
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;

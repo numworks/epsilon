@@ -97,7 +97,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     if (definedModelAtIndex(i)->standardForm(context) == nullptr) {
       return Error::EquationUndefined;
     }
-    numberOfVariables = definedModelAtIndex(i)->standardForm(context)->getVariables(m_variables);
+    numberOfVariables = definedModelAtIndex(i)->standardForm(context)->getVariables(Symbol::isVariableSymbol, m_variables);
     if (numberOfVariables < 0) {
       return Error::TooManyVariables;
     }

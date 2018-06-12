@@ -10,6 +10,7 @@ public:
   TreePool() : m_lastIdentifier(0), m_cursor(m_buffer) {}
 
   int generateIdentifier() {
+    printf("Generating identifier %d\n", m_lastIdentifier);
     /* For now we're not bothering with making sure the identifiers are indeed
      * unique. We're just assuming we'll never overflow... */
     //assert(node(m_lastIdentifier) == nullptr);

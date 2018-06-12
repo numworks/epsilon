@@ -6,9 +6,6 @@
 
 class AdditionNode : public ExpressionNode {
 public:
-  AdditionNode() : ExpressionNode() {
-    printf("Create Addition\n");
-  }
 #if TREE_LOGGING
   const char * description() const override {
     return "Addition";
@@ -21,6 +18,10 @@ public:
     }
     return result;
   }
+
+  int numberOfChildren() const override {
+    return 2;
+  }
 /*
   Expression simplify() override {
     // Scan operands, merge constants
@@ -31,17 +32,13 @@ public:
   */
 };
 
-#include "end_node.h"
-
 class Addition : public ExpressionReference<AdditionNode> {
 public:
   Addition(Expression e1, Expression e2) :
     ExpressionReference<AdditionNode>()
   {
-    ExpressionReference<EndNode> end;
-    ExpressionNode::Pool()->log();
-    addOperand(end);
-    ExpressionNode::Pool()->log();
+    addOperand(e2);
+    addOperand(e1);
   }
 };
 

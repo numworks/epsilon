@@ -13,8 +13,6 @@ void poolTest() {
 
   AdditionNode * h = new AdditionNode();
 
-  EndNode * i = new EndNode();
-
   ExpressionNode::Pool()->log();
 
   delete g;
@@ -26,17 +24,20 @@ Expression buildAddition() {
   Float smallFloat(0.2f);
   Float bigFloat(3.4f);
 
-  ExpressionNode::Pool()->log();
-
   Addition a(smallFloat, bigFloat);
 
   ExpressionNode::Pool()->log();
+  printf("EXITING\n");
+  printf("smallFloat ref = %d\n", smallFloat.identifier());
+  printf("bigFloat ref = %d\n", bigFloat.identifier());
   return a;
 }
 
 int main() {
   printf("Hello\n");
-  buildAddition();
+  Expression a = buildAddition();
+  printf("HAS RETURNED\n");
+  ExpressionNode::Pool()->log();
 
 
 

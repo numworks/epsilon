@@ -13,37 +13,14 @@ public:
     m_pool(tr.m_pool),
     m_identifier(tr.m_identifier)
   {
-    printf("TreeReference copy\n");
+    printf("TreeReference copy of %d\n", m_identifier);
     node()->retain();
   }
 
   ~TreeReference() {
-    TreeNode * node = this->node();
-    node->release();
-#if 0
-    if (node->retainCount() == 0) {
-
-
-      // Here we deal with removing a node.
-      // It's not as easy as one may think.
-      // -> When a node is not needed anymore
-
-
-      printf("Discarding node %d(%p)\n", node->identifier(), node);
-
-      // Here the static_cast should fail if T is not a subclass of TreeNode
-      size_t deepNodeSize = node->deepSize();
-#if 0
-      // Here, if needed, call reclaimIdentifier
-      for (TreeNode * child : node->depthFirstChildren()) {
-        m_pool->reclaimIdentifier(child->identifier());
-      }
-      m_pool->reclaimIdentifier(node->identifier());
-#endif
-      static_cast<T*>(node)->~T();
-      m_pool->dealloc(node, deepNodeSize);
-    }
-#endif
+    printf("TreeRef destroy of %d\n", m_identifier);
+    assert(node()->m_identifier == m_identifier);
+    node()->release();
   }
 
   operator TreeReference<TreeNode>() const {
@@ -83,12 +60,15 @@ public:
     return static_cast<T*>(m_pool->node(m_identifier));
   }
 
+  int identifier() const { return m_identifier; }
+
 protected:
   TreeReference(TreePool * pool) :
    m_pool(pool)
   {
     TreeNode * node = new T();
     m_identifier = node->identifier();
+    printf("TreeNode orig build of %d\n", m_identifier);
   }
 
 private:
@@ -97,6 +77,7 @@ private:
     m_identifier(node->identifier())
     //m_cachedNode(node)
   {
+    printf("TreeNode build of %d\n", m_identifier);
     node->retain();
   }
 

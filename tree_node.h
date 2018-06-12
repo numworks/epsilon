@@ -58,7 +58,7 @@ public:
         return *this;
       }
     };
-    Iterator begin() const { return Iterator(m_node); }
+    Iterator begin() const { return Iterator(m_node->next()); }
     Iterator end() const { return Iterator(m_node->nextSibling()); }
   private:
     TreeNode * m_node;
@@ -93,23 +93,8 @@ public:
     return m_referenceCounter;
   }
 
-  virtual bool hasVariableNumberOfChildren() const {
-    return false;
-  }
-
-  int numberOfChildren() const {
-    if (hasVariableNumberOfChildren()) {
-      int numberOfChildren = 0;
-      TreeNode * child = next();
-      while (!child->isEndMarker()) {
-        child = child->nextSibling();
-        numberOfChildren++;
-      }
-      return numberOfChildren;
-    } else {
-      // TODO: Make this function virtual
-      return 0;
-    }
+  virtual int numberOfChildren() const {
+    return 0;
   }
 
   TreeNode * childAtIndex(int i) const {
@@ -119,19 +104,10 @@ public:
     while (i>0) {
       child = child->nextSibling();
       assert(child != nullptr);
-      assert(!child->isEndMarker());
       i--;
     }
     return child;
   }
-
-  /*
-  void addChild(TreeNode * node) {
-    // This will move node in the pool so that it becomes
-    // a children of this
-    pool->move(node, this + size());
-  }
-  */
 
 //private:
 
@@ -142,21 +118,6 @@ public:
   {
   }
 
-  constexpr static int EmptyIdentifier = 0;
-  constexpr static int EndMarkerIdentifier = 1;
-
-  bool isEndMarker() const {
-    return (m_identifier == EndMarkerIdentifier);
-  }
-
-  bool isEmpty() const {
-    return (m_identifier == EmptyIdentifier);
-  }
-
-  void markAsEmpty() {
-    m_identifier = EmptyIdentifier;
-  }
-
   TreeNode * next() const {
     // Simple version would be "return this + 1;", with pointer arithmetics taken care of by the compiler.
     // Unfortunately, we want TreeNode to have a VARIABLE size
@@ -164,22 +125,14 @@ public:
   }
 
   TreeNode * nextSibling() const {
-    TreeNode * n = const_cast<TreeNode *>(this);
-    int depth = 0;
+    TreeNode * node = const_cast<TreeNode *>(this);
+    int remainingNodesToVisit = 0;
     do {
-      if (n->hasVariableNumberOfChildren()) {
-        depth++;
-      }
-      /*
-      if (n->isEndMarker()) {
-        depth--;
-      }
-      */
-      n = n->next();
-      // TODO: Return nullptr if n overflows the pool!
-      assert(depth >= 0);
-    } while(depth != 0);
-    return n;
+      remainingNodesToVisit += node->numberOfChildren();
+      node = node->next();
+      remainingNodesToVisit--;
+    } while (remainingNodesToVisit > 0);
+    return node;
   }
 
   size_t deepSize() const {

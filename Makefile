@@ -5,7 +5,7 @@ test: $(OBJS)
 	clang++ $(CXXFLAGS) $^ -o $@
 
 clean:
-	rm -f $(OBJS)
+	rm -f $(OBJS) test
 
 %.o: %.cpp
 	clang++ $(CXXFLAGS) -c $< -o $@

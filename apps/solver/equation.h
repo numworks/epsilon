@@ -20,6 +20,7 @@ public:
   }
   Poincare::Expression * standardForm(Poincare::Context * context) const;
 private:
+  void tidyStandardForm();
   mutable Poincare::Expression * m_standardForm;
 };
 

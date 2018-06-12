@@ -173,23 +173,6 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
   return Metric::ToolboxRowHeight;
 }
 
-KDCoordinate VariableBoxController::ContentViewController::cumulatedHeightFromIndex(int j) {
-  int result = 0;
-  for (int k = 0; k < j; k++) {
-    result += rowHeight(k);
-  }
-  return result;
-}
-
-int VariableBoxController::ContentViewController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  int result = 0;
-  int j = 0;
-  while (result < offsetY && j < numberOfRows()) {
-    result += rowHeight(j++);
-  }
-  return (result < offsetY || offsetY == 0) ? j : j - 1;
-}
-
 int VariableBoxController::ContentViewController::typeAtLocation(int i, int j) {
   if (m_currentPage == Page::RootMenu) {
     return 1;

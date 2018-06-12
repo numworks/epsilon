@@ -230,8 +230,8 @@ public:
    * order) and 'constant' with the constant of the expression. */
   bool getLinearCoefficients(char * variables, Expression * coefficients[], Expression * constant[], Context & context) const;
   /* getPolynomialCoefficients fills the table coefficients with the expressions
-   * of the first 5 polynomial coefficients and return polynomialDegree.
-   * coefficients has up to 5 entries. It supposed to be called on Reduced
+   * of the first 3 polynomial coefficients and return polynomialDegree.
+   * coefficients has up to 3 entries. It supposed to be called on Reduced
    * expression. */
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;

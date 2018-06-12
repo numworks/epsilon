@@ -22,10 +22,9 @@ public:
   double numberOfBars(int series) const;
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
-  bool isEmpty() const;
-  int numberOfNonEmptySeries() const;
-  bool seriesIsEmpty(int i) const;
-  int indexOfKthNonEmptySeries(int k) const;
+  bool isEmpty() const override;
+  bool seriesIsEmpty(int i) const override;
+  int numberOfNonEmptySeries() const override;
 
   // Calculation
   double sumOfOccurrences(int series) const;

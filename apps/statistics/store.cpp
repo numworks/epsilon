@@ -81,35 +81,15 @@ bool Store::scrollToSelectedBarIndex(int series, int index) {
 }
 
 bool Store::isEmpty() const {
-  for (int i = 0; i < k_numberOfSeries; i ++) {
-    if (!seriesIsEmpty(i)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-int Store::numberOfNonEmptySeries() const {
-  return m_numberOfNonEmptySeries;
+  return numberOfNonEmptySeries() == 0;
 }
 
 bool Store::seriesIsEmpty(int i) const {
   return m_seriesEmpty[i];
 }
 
-int Store::indexOfKthNonEmptySeries(int k) const {
-  assert(k >= 0 && k < numberOfNonEmptySeries());
-  int nonEmptySeriesCount = 0;
-  for (int i = 0; i < k_numberOfSeries; i++) {
-    if (!seriesIsEmpty(i)) {
-      if (nonEmptySeriesCount == k) {
-        return i;
-      }
-      nonEmptySeriesCount++;
-    }
-  }
-  assert(false);
-  return 0;
+int Store::numberOfNonEmptySeries() const {
+  return m_numberOfNonEmptySeries;
 }
 
 /* Calculation */

@@ -21,6 +21,7 @@ public:
     NonLinearSystem = -3,
     RequireApproximateSolution = -4
   };
+  /* EquationStore */
   EquationStore();
   ~EquationStore();
   Equation * modelAtIndex(int i) override {
@@ -39,7 +40,18 @@ public:
   int numberOfSolutions() const {
     return m_numberOfSolutions;
   }
+  /* Exact resolution */
+  Error exactSolve(Poincare::Context * context);
+  /* The exact solutions are displayed in a table with 2 layouts: an exact
+   * Layout and an approximate layout. For example, 'sqrt(2)' and '1.414213'.
+   * The boolean exactLayout indicates if we want the exact layout or the
+   * approximate one. */
   Poincare::ExpressionLayout * exactSolutionLayoutAtIndex(int i, bool exactLayout);
+  /* Exact layout and approximate layout of an exact solution can be:
+   * - identical: for instance, 5 and 5
+   * - equal: for instance 1/2 and 0.5
+   * - non-equal: for instance 1/3 and 0.333.
+   */
   bool exactSolutionLayoutsAtIndexAreIdentical(int i) {
     assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
     return m_exactSolutionIdentity[i];
@@ -48,13 +60,14 @@ public:
     assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
     return m_exactSolutionEquality[i];
   }
+  /* Approximate resolution */
   double intervalBound(int index) const;
   void setIntervalBound(int index, double value);
   double approximateSolutionAtIndex(int i);
-  void tidy() override;
   void approximateSolve(Poincare::Context * context);
   bool haveMoreApproximationSolutions(Poincare::Context * context);
-  Error exactSolve(Poincare::Context * context);
+
+  void tidy() override;
   static constexpr int k_maxNumberOfExactSolutions = Poincare::Expression::k_maxNumberOfVariables > Poincare::Expression::k_maxPolynomialDegree + 1? Poincare::Expression::k_maxNumberOfVariables : Poincare::Expression::k_maxPolynomialDegree + 1;
   static constexpr int k_maxNumberOfApproximateSolutions = 10;
   static constexpr int k_maxNumberOfSolutions = k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions ? k_maxNumberOfExactSolutions : k_maxNumberOfApproximateSolutions;

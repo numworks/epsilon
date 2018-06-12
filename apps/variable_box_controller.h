@@ -28,8 +28,6 @@ private:
     int reusableCellCount(int type) override;
     void willDisplayCellForIndex(HighlightCell * cell, int index) override;
     KDCoordinate rowHeight(int j) override;
-    KDCoordinate cumulatedHeightFromIndex(int j) override;
-    int indexFromCumulatedHeight(KDCoordinate offsetY) override;
     int typeAtLocation(int i, int j) override;
     void setSender(Responder * responder) { m_sender = responder; }
     void reloadData();

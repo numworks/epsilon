@@ -10,7 +10,7 @@ namespace Regression {
 GraphController::GraphController(Responder * parentResponder, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
   InteractiveCurveViewController(parentResponder, header, store, &m_view, cursor, modelVersion, rangeVersion),
   m_crossCursorView(),
-  m_roundCursorView(Palette::YellowDark),
+  m_roundCursorView(),
   m_bannerView(),
   m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
   m_store(store),
@@ -47,12 +47,18 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   InteractiveCurveViewController::viewWillAppear();
-  m_view.setCursorView(*m_selectedDotIndex >= 0 ? static_cast<View *>(&m_crossCursorView): static_cast<View *>(&m_roundCursorView));
+  if (*m_selectedDotIndex >= 0) {
+    m_view.setCursorView(static_cast<View *>(&m_crossCursorView));
+  } else {
+    m_view.setCursorView(static_cast<View *>(&m_roundCursorView));
+    m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
+  }
 }
 
 void GraphController::selectRegressionCurve() {
   *m_selectedDotIndex = -1;
   m_view.setCursorView(&m_roundCursorView);
+  m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
 }
 
 CurveView * GraphController::curveView() {

@@ -2,12 +2,23 @@
 #define EXPRESSION_NODE_H
 
 #include "tree_node.h"
-
-class TreePool;
+#include "tree_pool.h"
 
 class ExpressionNode : public TreeNode {
 public:
-  ExpressionNode(int identifier) : TreeNode(identifier) {}
+  ExpressionNode() : TreeNode(Pool()->generateIdentifier()) {}
+
+  // TODO: operator new and delte
+  // this behavior is the same for every TreeNode
+  // Find a way to define it on the TreeNode
+
+  void * operator new(size_t count) {
+    return Pool()->alloc(count);
+  }
+
+  void operator delete(void * ptr) {
+    Pool()->dealloc(ptr);
+  }
 
   static TreePool * Pool() {
     static TreePool pool;
@@ -20,3 +31,9 @@ public:
 };
 
 #endif
+
+/* Code I want to write:
+ *
+ *   ExpressionNode * n = new AdditionNode();
+ *   delete n;
+ */

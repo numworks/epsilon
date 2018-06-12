@@ -6,7 +6,7 @@
 
 class AdditionNode : public ExpressionNode {
 public:
-  AdditionNode(int identifier) : ExpressionNode(identifier) {
+  AdditionNode() : ExpressionNode() {
     printf("Create Addition\n");
   }
 #if TREE_LOGGING
@@ -31,12 +31,17 @@ public:
   */
 };
 
+#include "end_node.h"
+
 class Addition : public ExpressionReference<AdditionNode> {
 public:
   Addition(Expression e1, Expression e2) :
     ExpressionReference<AdditionNode>()
   {
-    // Ok, here I want to take e1 and e2 as operands
+    ExpressionReference<EndNode> end;
+    ExpressionNode::Pool()->log();
+    addOperand(end);
+    ExpressionNode::Pool()->log();
   }
 };
 

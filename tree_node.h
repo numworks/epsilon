@@ -16,7 +16,6 @@ public:
   virtual ~TreeNode() {
   }
 
-
   // Iterators
 
   class Iterator {
@@ -28,6 +27,25 @@ public:
     TreeNode * m_node;
   };
 
+  class Direct {
+  public:
+    Direct(TreeNode * node) : m_node(node) {}
+    class Iterator : public TreeNode::Iterator {
+    public:
+      using TreeNode::Iterator::Iterator;
+      Iterator & operator++() {
+        m_node = m_node->nextSibling();
+        return *this;
+      }
+    };
+    Iterator begin() const { return Iterator(m_node->next()); }
+    Iterator end() const { return Iterator(m_node->nextSibling()); }
+  private:
+    TreeNode * m_node;
+  };
+
+  Direct directChildren() { return Direct(this); }
+
   class DepthFirst {
   public:
     DepthFirst(TreeNode * node) : m_node(node) {}
@@ -35,7 +53,7 @@ public:
     public:
       using TreeNode::Iterator::Iterator;
       Iterator & operator++() {
-        printf("  Iterating from %d(%p) to %d(%p)\n", m_node->m_identifier, m_node, m_node->next()->m_identifier, m_node->next());
+        // printf("  Iterating from %d(%p) to %d(%p)\n", m_node->m_identifier, m_node, m_node->next()->m_identifier, m_node->next());
         m_node = m_node->next();
         return *this;
       }
@@ -64,8 +82,11 @@ public:
   void retain() {
     m_referenceCounter++;
   }
-  void release() {
-    m_referenceCounter--;
+  void release();
+
+  void rename(int identifier) {
+    m_identifier = identifier;
+    m_referenceCounter = 1;
   }
 
   int retainCount() {

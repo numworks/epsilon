@@ -20,8 +20,17 @@ public:
   ~TreeReference() {
     TreeNode * node = this->node();
     node->release();
+#if 0
     if (node->retainCount() == 0) {
+
+
+      // Here we deal with removing a node.
+      // It's not as easy as one may think.
+      // -> When a node is not needed anymore
+
+
       printf("Discarding node %d(%p)\n", node->identifier(), node);
+
       // Here the static_cast should fail if T is not a subclass of TreeNode
       size_t deepNodeSize = node->deepSize();
 #if 0
@@ -34,6 +43,13 @@ public:
       static_cast<T*>(node)->~T();
       m_pool->dealloc(node, deepNodeSize);
     }
+#endif
+  }
+
+  operator TreeReference<TreeNode>() const {
+    // TODO: make sure this is kosher
+    // static_assert(sizeof(ExpressionReference<T>) == sizeof(ExpressionReference<ExpressionNode>), "All ExpressionReference are supposed to have the same size");
+    return *(reinterpret_cast<const TreeReference<TreeNode> *>(this));
   }
 
   int numberOfChildren() const {
@@ -44,32 +60,37 @@ public:
     return TreeReference(node()->childAtIndex(i));
   }
 
-  void addOperand(TreeReference<TreeNode> t) {
-    assert(t.m_pool == m_pool);
-    /*
+  void addChild(TreeReference<TreeNode> t) {
+    //assert(t.m_pool == m_pool);
+    //t.node()->retain();
+    TreeNode * deepCopy = m_pool->deepCopy(t.node());
     m_pool->move(
-      t->node(),
-      t->next()
+      deepCopy,
+      node()->next()
     );
-    */
   }
 
-protected:
-  TreeReference(TreePool * pool) :
-   m_pool(pool)
-  {
-    int identifier = pool->generateIdentifier();
-    void * area = pool->alloc(sizeof(T));
-    TreeNode * n = new (area) T(identifier);
-    m_identifier = n->identifier();
-    assert(m_identifier == identifier);
-    //m_cachedNode = n;
+  void removeChild(TreeReference<TreeNode> t) {
+    m_pool->move(
+        t.node(),
+        m_pool->last()
+    );
+    t.node()->release();
   }
 
   T * node() const {
     // TODO: Here, assert that the node type is indeed T
     return static_cast<T*>(m_pool->node(m_identifier));
   }
+
+protected:
+  TreeReference(TreePool * pool) :
+   m_pool(pool)
+  {
+    TreeNode * node = new T();
+    m_identifier = node->identifier();
+  }
+
 private:
   TreeReference(TreePool * pool, TreeNode * node) :
     m_pool(pool),

@@ -22,6 +22,10 @@ public:
     return *(reinterpret_cast<const ExpressionReference<ExpressionNode> *>(this));
   }
 
+  void addOperand(ExpressionReference<ExpressionNode> e) {
+    TreeReference<T>::addChild(e);
+  }
+
   float approximate() const {
     return this->node()->approximate();
   }

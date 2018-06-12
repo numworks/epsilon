@@ -15,7 +15,8 @@ public:
   void setTextColor(KDColor textColor);
   KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  void setMargin(KDCoordinate margin);
+  void setLeftMargin(KDCoordinate margin);
+  void setRightMargin(KDCoordinate margin);
   Poincare::ExpressionLayout * expressionLayout() const override { return m_expressionView.expressionLayout(); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
@@ -23,7 +24,8 @@ protected:
   View * subviewAtIndex(int index) override;
   void layoutSubviews() override;
   ExpressionView m_expressionView;
-  KDCoordinate m_margin;
+  KDCoordinate m_leftMargin;
+  KDCoordinate m_rightMargin;
 };
 
 #endif

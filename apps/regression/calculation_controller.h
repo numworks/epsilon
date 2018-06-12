@@ -5,7 +5,6 @@
 #include "store.h"
 #include "column_title_cell.h"
 #include "even_odd_double_buffer_text_cell_with_separator.h"
-#include "even_odd_expression_cell_with_margin.h"
 #include "../shared/hideable_even_odd_cell.h"
 #include "../shared/margin_even_odd_message_text_cell.h"
 #include "../shared/tab_table_controller.h"
@@ -58,13 +57,14 @@ private:
   static constexpr KDCoordinate k_cellHeight = 25;
   static constexpr KDCoordinate k_cellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
   static constexpr KDCoordinate k_margin = 8;
+  static constexpr KDCoordinate k_r2CellMargin = 2;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
 
   Responder * tabController() const override;
   View * loadView() override;
   void unloadView(View * view) override;
   Shared::MarginEvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
-  EvenOddExpressionCellWithMargin * m_r2TitleCell;
+  EvenOddExpressionCell * m_r2TitleCell;
   Poincare::ExpressionLayout * m_r2Layout;
   ColumnTitleCell * m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator * m_doubleCalculationCells[k_numberOfDoubleCalculationCells];

@@ -68,7 +68,7 @@ View * ListController::loadView() {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_functionTitleCells[i] = new Shared::BufferFunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
     m_expressionCells[i] = new FunctionExpressionCell();
-    m_expressionCells[i]->setMargin(k_expressionMargin);
+    m_expressionCells[i]->setLeftMargin(k_expressionMargin);
   }
   return Shared::FunctionListController::loadView();
 }

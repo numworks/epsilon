@@ -17,6 +17,7 @@ extern "C" {
 #include "py/repl.h"
 #include "py/runtime.h"
 #include "py/stackctrl.h"
+#include "mphalport.h"
 }
 
 static MicroPython::ScriptProvider * sScriptProvider = nullptr;
@@ -82,6 +83,10 @@ void MicroPython::ExecutionEnvironment::runCode(const char * str) {
 
   assert(sCurrentExecutionEnvironment == this);
   sCurrentExecutionEnvironment = nullptr;
+}
+
+void MicroPython::ExecutionEnvironment::interrupt() {
+  mp_keyboard_interrupt();
 }
 
 extern "C" {

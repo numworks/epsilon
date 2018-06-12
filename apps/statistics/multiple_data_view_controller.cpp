@@ -82,6 +82,8 @@ void MultipleDataViewController::didBecomeFirstResponder() {
     *m_selectedSeriesIndex = multipleDataView()->seriesOfSubviewAtIndex(0);
     multipleDataView()->selectDataView(*m_selectedSeriesIndex);
     multipleDataView()->reload();
+  } else {
+    multipleDataView()->dataViewAtIndex(*m_selectedSeriesIndex)->selectMainView(true);
   }
 }
 
@@ -89,7 +91,6 @@ void MultipleDataViewController::willExitResponderChain(Responder * nextFirstRes
   if (nextFirstResponder == nullptr || nextFirstResponder == tabController()) {
     if (*m_selectedSeriesIndex >= 0) {
       multipleDataView()->dataViewAtIndex(*m_selectedSeriesIndex)->selectMainView(false);
-      *m_selectedSeriesIndex = -1;
       multipleDataView()->setDisplayBanner(false);
     }
   }

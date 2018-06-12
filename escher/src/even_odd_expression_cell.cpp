@@ -6,7 +6,8 @@ EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float ve
     KDColor textColor, KDColor backgroundColor) :
   EvenOddCell(),
   m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor),
-  m_margin(0)
+  m_leftMargin(0),
+  m_rightMargin(0)
 {
 }
 
@@ -36,17 +37,23 @@ void EvenOddExpressionCell::setTextColor(KDColor textColor) {
 
 KDSize EvenOddExpressionCell::minimalSizeForOptimalDisplay() const {
   KDSize expressionSize = m_expressionView.minimalSizeForOptimalDisplay();
-  return KDSize(m_margin+expressionSize.width(), expressionSize.height());
+  return KDSize(m_leftMargin + expressionSize.width() + m_rightMargin, expressionSize.height());
 }
 
-void EvenOddExpressionCell::setMargin(KDCoordinate margin) {
-  m_margin = margin;
+void EvenOddExpressionCell::setLeftMargin(KDCoordinate margin) {
+  m_leftMargin = margin;
+  layoutSubviews();
+}
+
+void EvenOddExpressionCell::setRightMargin(KDCoordinate margin) {
+  m_rightMargin = margin;
   layoutSubviews();
 }
 
 void EvenOddExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
-  // Color the margin
-  ctx->fillRect(KDRect(0, 0, m_margin, bounds().height()), backgroundColor());
+  // Color the margins
+  ctx->fillRect(KDRect(0, 0, m_leftMargin, bounds().height()), backgroundColor());
+  ctx->fillRect(KDRect(bounds().width() - m_rightMargin, 0, m_rightMargin, bounds().height()), backgroundColor());
 }
 
 int EvenOddExpressionCell::numberOfSubviews() const {
@@ -59,5 +66,5 @@ View * EvenOddExpressionCell::subviewAtIndex(int index) {
 }
 
 void EvenOddExpressionCell::layoutSubviews() {
-  m_expressionView.setFrame(KDRect(m_margin, 0, bounds().width()-m_margin, bounds().height()));
+  m_expressionView.setFrame(KDRect(m_leftMargin, 0, bounds().width() - m_leftMargin - m_rightMargin, bounds().height()));
 }

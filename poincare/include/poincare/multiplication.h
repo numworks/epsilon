@@ -30,6 +30,7 @@ public:
     return ApproximationEngine::elementWiseOnComplexAndComplexMatrix(c, m, compute<T>);
   }
   template<typename T> static Matrix * computeOnMatrices(const Matrix * m, const Matrix * n);
+  template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
 private:
   /* Property */
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;

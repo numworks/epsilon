@@ -33,13 +33,17 @@ public:
   template<typename T> Complex<T> * createDeterminant(Context & context, AngleUnit angleUnit) const;
   /* createApproximateInverse has to be called on a matrix of complex and will
    * return a matrix of complex if possible and nullptr otherwise. */
+  // TODO: createApproximateInverse should rather use ArrayInverse with T=complex<T>
   template<typename T> Matrix * createApproximateInverse() const;
+  // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
+  template<typename T> static int ArrayInverse(T ** array, int numberOfRows, int numberOfColumns);
   Matrix * createTranspose() const;
   static Matrix * createIdentity(int dim);
   template<typename T> static Matrix * createApproximateIdentity(int dim);
 private:
   /* rowCanonize turns a matrix in its reduced row echelon form. */
   void rowCanonize(Context & context, AngleUnit angleUnit, Multiplication * m = nullptr);
+  template<typename T> static void ArrayRowCanonize(T ** array, int numberOfRows, int numberOfColumns);
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
   /* Evaluation */

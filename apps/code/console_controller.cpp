@@ -170,6 +170,10 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
   }
 #if EPSILON_GETOPT
   if (m_locked && (event == Ion::Events::Home || event == Ion::Events::Back)) {
+    if (inputRunLoopActive()) {
+      askInputRunLoopTermination();
+      interrupt();
+    }
     return true;
   }
 #endif

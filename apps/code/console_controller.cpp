@@ -286,7 +286,12 @@ bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
     askInputRunLoopTermination();
   } else {
 #if EPSILON_GETOPT
-    if (!m_locked) {
+    /* In order to lock the console controller, we disable poping controllers
+     * below the console controller included. The stack should only hold:
+     * - the menu controller
+     * - the console controller
+     * The depth of the stack controller must always be above or equal to 2. */
+    if (!m_locked || stackViewController()->depth() > 2) {
 #endif
       stackViewController()->pop();
 #if EPSILON_GETOPT

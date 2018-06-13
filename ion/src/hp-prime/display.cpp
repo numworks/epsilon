@@ -43,6 +43,26 @@ void waitForVBlank() {
 }
 }
 
+// Public Ion::Backlight methods
+
+namespace Ion {
+namespace Backlight {
+
+void setBrightness(uint8_t b) {
+  PWM.TCNTB1()->set(256/8);
+  PWM.TCMPB1()->set(b/8);
+
+  PWM.TCON()->setTimer(1, PWM::TCON::AUTORELOAD|PWM::TCON::MANUAL_UPDATE);
+  PWM.TCON()->setTimer(1, PWM::TCON::AUTORELOAD|PWM::TCON::ENABLE);
+}
+
+uint8_t brightness() {
+  return PWM.TCMPB1()->get() * 8;
+}
+
+}
+}
+
 // Private Ion::Display::Device methods
 
 namespace Ion {
@@ -75,9 +95,12 @@ void init() {
   // Enable video circuits
   FIMD.VIDCON0()->setENVID(FIMD::VIDCON0::ENVID::Enable);
 
+  // TIM1 is the PWM for the display
+  PWM.TCFG1()->setMode(1, PWM::TCFG1::Mode::MUX_1_16);
+
   // Enable backlight
-  GPIO.GPBCON()->setMode(1, GPIO::GPBCON::Mode::Output);
-  GPIO.GPBDAT()->setBitRange(1, 1, true);
+  GPIO.GPBCON()->setMode(1, GPIO::GPBCON::Mode::Alternate0);
+  Ion::Backlight::setBrightness(255);
 }
 
 }

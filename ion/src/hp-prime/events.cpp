@@ -87,6 +87,7 @@ static Event mapEvent(int inKey, bool inShift, bool inAlpha) {
 }
 
 Event sLastEvent = Events::None;
+Event sStackedEvent = Events::None;
 uint64_t sLastKeyboardState;
 bool sEventIsRepeating = 0;
 
@@ -96,6 +97,12 @@ Event getEvent(int * timeout) {
   int time = 0;
   uint64_t keysSeenUp = 0;
   uint64_t keysSeenTransitionningFromUpToDown = 0;
+
+  if (sStackedEvent != Events::None) {
+    Event stackedEvent = sStackedEvent;
+    sStackedEvent = Events::None;
+    return stackedEvent;
+  }
 
   while (true) {
     uint64_t state = Ion::Keyboard::Device::scan();
@@ -115,6 +122,18 @@ Event getEvent(int * timeout) {
         updateModifiersFromEvent(event);
         sLastEvent = event;
         sLastKeyboardState = state;
+
+        // Stack another event in case we don't have the complementary key
+        if (event == LeftParenthesis) {
+            sStackedEvent = RightParenthesis;
+        }
+        else if (event == LeftBrace) {
+            sStackedEvent = RightBrace;
+        }
+        else if (event == LeftBracket) {
+            sStackedEvent = RightBracket;
+        }
+
         return event;
       }
     }

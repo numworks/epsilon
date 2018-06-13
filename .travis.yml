@@ -15,7 +15,10 @@ matrix:
     - env: PLATFORM=simulator EXT=elf TOOLCHAIN=host-clang
     - env: PLATFORM=blackbox EXT=bin QUIZ_USE_CONSOLE=1
 
-os: linux
+os:
+  - linux
+  - osx
+  
 script:
 - make clean && make epsilon.$EXT test.$EXT
 - if [ "$PLATFORM" = "blackbox" ]; then ./test.$EXT; PLATFORM=blackbox make integration_tests; fi

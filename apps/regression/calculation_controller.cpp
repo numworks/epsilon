@@ -230,11 +230,19 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 }
 
 KDCoordinate CalculationController::columnWidth(int i) {
-  return k_cellWidth;
+  return i == 0 ? k_calculationTitleCellWidth : k_calculationCellWidth;
 }
 
 KDCoordinate CalculationController::rowHeight(int j) {
   return k_cellHeight;
+}
+
+KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
+  return j*rowHeight(0);
+}
+
+int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
+  return (offsetY-1) / rowHeight(0);
 }
 
 HighlightCell * CalculationController::reusableCell(int index, int type) {

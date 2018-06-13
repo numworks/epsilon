@@ -1,7 +1,6 @@
 RegressionApp = "Regresion"
 RegressionAppCapital = "REGRESION"
 Regression = "Regresion"
-NoEnoughDataForRegression = "Escasez de datos para la regresion"
 Reg = "reg"
 MeanDot = "media"
 RegressionCurve = "Curva de regresión"

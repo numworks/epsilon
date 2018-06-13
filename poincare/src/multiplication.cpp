@@ -142,6 +142,19 @@ Matrix * Multiplication::computeOnMatrices(const Matrix * m, const Matrix * n) {
   return result;
 }
 
+template<typename T>
+void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns) {
+  for (int i = 0; i < mNumberOfRows; i++) {
+    for (int j = 0; j < nNumberOfColumns; j++) {
+      T res = 0.0f;
+      for (int k = 0; k < mNumberOfColumns; k++) {
+        res+= m[i*mNumberOfColumns+k]*n[k*nNumberOfColumns+j];
+      }
+      result[i*nNumberOfColumns+j] = res;
+    }
+  }
+}
+
 bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Expression * e2) {
   int numberOfNonRationalFactors1 = e1->operand(0)->type() == Type::Rational ? e1->numberOfOperands()-1 : e1->numberOfOperands();
   int numberOfNonRationalFactors2 = e2->operand(0)->type() == Type::Rational ? e2->numberOfOperands()-1 : e2->numberOfOperands();
@@ -719,5 +732,6 @@ template Matrix * Multiplication::computeOnComplexAndMatrix<float>(Complex<float
 template Matrix * Multiplication::computeOnComplexAndMatrix<double>(Complex<double> const*, const Matrix*);
 template Complex<float> Multiplication::compute<float>(Complex<float>, Complex<float>);
 template Complex<double> Multiplication::compute<double>(Complex<double>, Complex<double>);
+template void Multiplication::computeOnArrays<double>(double * m, double * n, double * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
 
 }

@@ -44,7 +44,8 @@ private:
   static constexpr double k_maxIterations = 1000;
   static constexpr double k_initialLambda = 0.001;
   static constexpr double k_lambdaFactor = 10;
-  static constexpr double k_chi2ChangeCondition = 0.0005;
+  static constexpr double k_chi2ChangeCondition = 0.001;
+  static constexpr double k_initialCoefficientValue = 1.0;
   static constexpr int k_consecutiveSmallChi2ChangesLimit = 10;
   void fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
   double chi2(Store * store, int series, double * modelCoefficients) const;

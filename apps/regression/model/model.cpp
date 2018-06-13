@@ -12,10 +12,13 @@ namespace Regression {
 
 void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   if (dataSuitableForFit(store, series)) {
+    for (int i = 0; i < numberOfCoefficients(); i++) {
+      modelCoefficients[i] = k_initialCoefficientValue;
+    }
     fitLevenbergMarquardt(store, series, modelCoefficients, context);
   } else {
     for (int i = 0; i < numberOfCoefficients(); i++) {
-      modelCoefficients[i] = NAN; //TODO undef /inf ?
+      modelCoefficients[i] = NAN;
     }
   }
 }
@@ -90,7 +93,27 @@ double Model::chi2(Store * store, int series, double * modelCoefficients) const 
 double Model::alphaPrimeCoefficient(Store * store, int series, double * modelCoefficients, int k, int l, double lambda) const {
   assert(k >= 0 && k < numberOfCoefficients());
   assert(l >= 0 && l < numberOfCoefficients());
+  // TODO Choose which formula to use
+#if 0
+  // Levenberg method
   double result = k == l ? alphaCoefficient(store, series, modelCoefficients, k, l)*(1+lambda) : alphaCoefficient(store, series, modelCoefficients, l, k);
+#else
+#if 0
+  // Marquardt method
+  double result = k == l ? alphaCoefficient(store, series, modelCoefficients, k, l)+lambda : alphaCoefficient(store, series, modelCoefficients, l, k);
+#else
+  // Mixed method to prevent non invertible matrices
+  double result = 0.0;
+  if (k == l) {
+    result = alphaCoefficient(store, series, modelCoefficients, k, l)*(1.0+lambda);
+    if (result == 0) {
+      result = lambda;
+    }
+  } else {
+    result = alphaCoefficient(store, series, modelCoefficients, l, k);
+  }
+#endif
+#endif
   return result;
 }
 

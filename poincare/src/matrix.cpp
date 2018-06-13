@@ -164,6 +164,52 @@ void Matrix::rowCanonize(Context & context, AngleUnit angleUnit, Multiplication 
   }
 }
 
+template<typename T>
+void Matrix::ArrayRowCanonize(T ** array, int numberOfRows, int numberOfColumns) {
+  int h = 0; // row pivot
+  int k = 0; // column pivot
+
+  while (h < numberOfRows && k < numberOfColumns) {
+    // Find the first non-null pivot
+    int iPivot = h;
+    while (iPivot < numberOfRows && std::fabs(array[iPivot][k]) < Expression::epsilon<T>()) {
+      iPivot++;
+    }
+    if (iPivot == numberOfRows) {
+      // No non-null coefficient in this column, skip
+      k++;
+    } else {
+      // Swap row h and iPivot
+      if (iPivot != h) {
+        for (int col = h; col < numberOfColumns; col++) {
+          // Swap array[iPivot, col] and array[h, col]
+          T temp = array[iPivot][col];
+          array[iPivot][col] = array[h][col];
+          array[h][col] = temp;
+        }
+      }
+      /* Set to 1 array[h][k] by linear combination */
+      T divisor = array[h][k];
+      for (int j = k+1; j < numberOfColumns; j++) {
+        array[h][j] /= divisor;
+      }
+      array[h][k] = 1;
+
+      /* Set to 0 all M[i][j] i != h, j > k by linear combination */
+      for (int i = 0; i < numberOfRows; i++) {
+        if (i == h) { continue; }
+        T factor = array[i][k];
+        for (int j = k+1; j < numberOfColumns; j++) {
+          array[i][j] -= array[h][j]*factor;
+        }
+        array[i][k] = 0;
+      }
+      h++;
+      k++;
+    }
+  }
+}
+
 ExpressionLayout * Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
@@ -291,6 +337,44 @@ Matrix * Matrix::createApproximateInverse() const {
   return nullptr;
 }
 
+template<typename T>
+int Matrix::ArrayInverse(T ** array, int numberOfRows, int numberOfColumns) {
+  if (numberOfRows != numberOfColumns) {
+    return -1;
+  }
+  int dim = numberOfRows;
+  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
+  T ** operands = new T *[dim];
+  for (int i = 0; i < dim; i++) {
+    operands[i] = new T [2*dim];
+  }
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      operands[i][j] = array[i][j];
+    }
+    for (int j = dim; j < 2*dim; j++) {
+      operands[i][j] = j-dim == i ? 1 : 0;
+    }
+  }
+  ArrayRowCanonize(operands, dim, 2*dim);
+  // Check inversibility
+  for (int i = 0; i < dim; i++) {
+    if (operands[i][i] != 1) {
+      return -2;
+    }
+  }
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      array[i][j] = operands[i][j+dim];
+    }
+  }
+  for (int i = 0; i < dim; i++) {
+    delete [] operands[i];
+  }
+  delete [] operands;
+  return 0;
+}
+
 Matrix * Matrix::createTranspose() const {
   const Expression ** operands = new const Expression * [numberOfOperands()];
   for (int i = 0; i < numberOfRows(); i++) {
@@ -362,4 +446,6 @@ template Matrix* Matrix::createApproximateInverse<float>() const;
 template Matrix* Matrix::createApproximateInverse<double>() const;
 template Matrix* Matrix::createApproximateIdentity<float>(int);
 template Matrix* Matrix::createApproximateIdentity<double>(int);
+template int Matrix::ArrayInverse<float>(float **, int, int);
+template int Matrix::ArrayInverse<double>(double **, int, int);
 }

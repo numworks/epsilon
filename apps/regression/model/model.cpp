@@ -39,26 +39,25 @@ void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoeff
   while (smallChi2ChangeCounts < k_consecutiveSmallChi2ChangesLimit && iterationCount < k_maxIterations) {
     // Compute modelCoefficients step
     // Create the alpha prime matrix (it is symmetric)
-    Expression * coefficientsAPrime[Model::k_maxNumberOfCoefficients][Model::k_maxNumberOfCoefficients]; // TODO find a way not to use so much space, we only need Expression * coefficientsAPrime[n][n]
+    double coefficientsAPrime[Model::k_maxNumberOfCoefficients * Model::k_maxNumberOfCoefficients];
     for (int i = 0; i < n; i++) {
       for (int j = i; j < n; j++) {
-        Complex<double> alphaPrime = Complex<double>::Float(alphaPrimeCoefficient(store, series, modelCoefficients, i, j, lambda));
-        coefficientsAPrime[i][j] = new Complex<double>(alphaPrime);
+        double alphaPrime = alphaPrimeCoefficient(store, series, modelCoefficients, i, j, lambda);
+        coefficientsAPrime[i*n+j] = alphaPrime;
         if (i != j) {
-          coefficientsAPrime[j][i] = new Complex<double>(alphaPrime);
+          coefficientsAPrime[j*n+i] = alphaPrime;
         }
       }
     }
     // Create the beta matrix
-    Expression ** operandsB = new Expression * [n];
+    double operandsB[Model::k_maxNumberOfCoefficients];
     for (int j = 0; j < n; j++) {
-      operandsB[j] = new Complex<double>(Complex<double>::Float(betaCoefficient(store, series, modelCoefficients, j)));
+      operandsB[j] = betaCoefficient(store, series, modelCoefficients, j);
     }
-    double modelCoefficientSteps[n];
+    double modelCoefficientSteps[Model::k_maxNumberOfCoefficients];
     solveLinearSystem(modelCoefficientSteps, coefficientsAPrime, operandsB, n, context);
-
     // Compare new chi2 with the previous value
-    double newModelCoefficients[n];
+    double newModelCoefficients[Model::k_maxNumberOfCoefficients];
     for (int i = 0; i < n; i++) {
       newModelCoefficients[i] = modelCoefficients[i] + modelCoefficientSteps[i];
     }
@@ -145,35 +144,11 @@ double Model::betaCoefficient(Store * store, int series, double * modelCoefficie
 
 
 // TODO should return an error if no solution ?
-void Model::solveLinearSystem(double * solutions, Expression * coefficients[Model::k_maxNumberOfCoefficients][Model::k_maxNumberOfCoefficients], Expression * * constants, int solutionDimension, Context * context) {
+void Model::solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Context * context) {
   int n = solutionDimension;
-  const Expression ** operandsA = new const Expression * [n*n];
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < n; j++) {
-      operandsA[i*n+j] = coefficients[i][j];
-    }
-  }
-  Matrix * AMatrix = new Matrix(operandsA, n, n, false);
-  delete[] operandsA;
-  Matrix * BMatrix = new Matrix(constants, n, 1, false);
-  Expression::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-  Matrix * matrixInverse = AMatrix->createApproximateInverse<double>();
-  assert(matrixInverse != nullptr);
-  Matrix * result = Multiplication::computeOnMatrices<double>(const_cast<const Matrix *>(matrixInverse), const_cast<const Matrix *>(BMatrix));
-  Expression * exactSolutions[n];
-  for (int i = 0; i < n; i++) {
-    Expression * sol = result->matrixOperand(i,0);
-    exactSolutions[i] = sol;
-    result->detachOperand(sol);
-    Expression::Simplify(&exactSolutions[i], *context, angleUnit);
-    assert(exactSolutions[i] != nullptr);
-    solutions[i] = exactSolutions[i]->approximateToScalar<double>(*context, angleUnit);
-    delete exactSolutions[i];
-  }
-  delete result;
-  delete matrixInverse;
-  delete BMatrix;
-  delete AMatrix;
+  int inverseResult = Matrix::ArrayInverse(coefficients, n, n);
+  assert(inverseResult >= 0);
+  Multiplication::computeOnArrays<double>(coefficients, constants, solutions, n, n, 1);
 }
 
 }

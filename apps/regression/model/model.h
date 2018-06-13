@@ -52,7 +52,7 @@ private:
   double alphaPrimeCoefficient(Store * store, int series, double * modelCoefficients, int k, int l, double lambda) const;
   double alphaCoefficient(Store * store, int series, double * modelCoefficients, int k, int l) const;
   double betaCoefficient(Store * store, int series, double * modelCoefficients, int k) const;
-  void solveLinearSystem(double * solutions, Poincare::Expression * coefficients[Model::k_maxNumberOfCoefficients][Model::k_maxNumberOfCoefficients], Poincare::Expression * * constants, int solutionDimension, Poincare::Context * context);
+  void solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Poincare::Context * context);
 };
 
 }

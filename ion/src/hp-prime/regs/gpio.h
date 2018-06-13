@@ -23,6 +23,20 @@ public:
     void setStatus(int index, bool on) volatile { setBitRange(index, index, (uint32_t)on); }
   };
 
+  class GPCCON : public Register32 {
+  public:
+    enum class Mode {
+      Input = 0,
+      Output = 1
+    };
+
+    Mode getMode(int index) { return (Mode)getBitRange(2*index+1, 2*index); }
+    void setMode(int index, Mode mode) volatile { setBitRange(2*index+1, 2*index, (uint32_t)mode); }
+  };
+
+  class GPCDAT : public Register32 {
+  };
+
   class GPDCON : public Register32 {
   public:
     enum class Mode {
@@ -37,6 +51,7 @@ public:
 
   class GPDDAT : public Register32 {
   };
+
 
   class GPDUDP : public Register32 {
   public:
@@ -79,6 +94,8 @@ public:
 
   REGS_REGISTER_AT(GPBCON, 0x10);
   REGS_REGISTER_AT(GPBDAT, 0x14);
+  REGS_REGISTER_AT(GPCCON, 0x20);
+  REGS_REGISTER_AT(GPCDAT, 0x24);
   REGS_REGISTER_AT(GPDCON, 0x30);
   REGS_REGISTER_AT(GPDDAT, 0x34);
   REGS_REGISTER_AT(GPDUDP, 0x38);

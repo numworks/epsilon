@@ -6,6 +6,7 @@ extern "C" {
 #include <ion.h>
 #include "display.h"
 #include "keyboard.h"
+#include "led.h"
 
 
 // Public Ion methods
@@ -49,6 +50,7 @@ void init() {
 void initPeripherals() {
   Ion::Display::Device::init();
   Ion::Keyboard::Device::init();
+  Ion::LED::Device::init();
 }
 
 }

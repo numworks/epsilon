@@ -230,7 +230,17 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
 }
 
 KDCoordinate CalculationController::columnWidth(int i) {
-  return i == 0 ? k_calculationTitleCellWidth : k_calculationCellWidth;
+  if (i == 0) {
+    return k_smallCalculationCellWidth;
+  }
+  Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthNonEmptySeries(i-1));
+  if (currentType == Model::Type::Quartic) {
+    return k_quarticCalculationCellWidth;
+  }
+  if (currentType == Model::Type::Cubic) {
+    return k_cubicCalculationCellWidth;
+  }
+  return k_smallCalculationCellWidth;
 }
 
 KDCoordinate CalculationController::rowHeight(int j) {

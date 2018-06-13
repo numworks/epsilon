@@ -64,8 +64,9 @@ private:
   static constexpr int k_regressionCellIndex = 9;
 
   static constexpr KDCoordinate k_cellHeight = 25;
-  static constexpr KDCoordinate k_calculationTitleCellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
-  static constexpr KDCoordinate k_calculationCellWidth = 195;
+  static constexpr KDCoordinate k_smallCalculationCellWidth = Ion::Display::Width/2 - Metric::CommonRightMargin/2 - Metric::CommonLeftMargin/2;
+  static constexpr KDCoordinate k_cubicCalculationCellWidth = 150;
+  static constexpr KDCoordinate k_quarticCalculationCellWidth = 195;
   static constexpr KDCoordinate k_margin = 8;
   static constexpr KDCoordinate k_r2CellMargin = 2;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;

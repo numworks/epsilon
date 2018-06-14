@@ -62,7 +62,7 @@ double PowerModel::partialDerivate(double * modelCoefficients, int derivateCoeff
      * For x = 0, a*pow(x,b) = 0, the partial derivate along b is 0
      * For x > 0, a*pow(x,b) = a*exp(b*ln(x)), the partial derivate along b is
      *   ln(x)*a*pow(x,b) */
-    return x == 0 ? 0 : a*log(x)*exp(b*x);
+    return x == 0 ? 0 : log(x)*a*pow(x, b);
   }
   assert(false);
   return 0.0;

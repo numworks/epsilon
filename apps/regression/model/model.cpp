@@ -92,18 +92,14 @@ double Model::chi2(Store * store, int series, double * modelCoefficients) const 
 double Model::alphaPrimeCoefficient(Store * store, int series, double * modelCoefficients, int k, int l, double lambda) const {
   assert(k >= 0 && k < numberOfCoefficients());
   assert(l >= 0 && l < numberOfCoefficients());
-  // TODO Choose which formula to use
-#if 0
-  // Levenberg method
-  double result = k == l ? alphaCoefficient(store, series, modelCoefficients, k, l)*(1+lambda) : alphaCoefficient(store, series, modelCoefficients, l, k);
-#else
-#if 0
-  // Marquardt method
-  double result = k == l ? alphaCoefficient(store, series, modelCoefficients, k, l)+lambda : alphaCoefficient(store, series, modelCoefficients, l, k);
-#else
-  // Mixed method to prevent non invertible matrices
   double result = 0.0;
   if (k == l) {
+    /* The Levengerg method uses a'(k,k) = a(k,k) + lambda.
+     * The Marquardt method uses a'(k,k) = a(k,k) * (1 + lambda).
+     * We use a mixed method to ensure that the matrix will be invertible:
+     * a'(k,k) = a(k,k) * (1 + lambda), but if a'(k,k) is too small,
+     * a'(k,k) = 2*epsilon so that the inversion method does not detect a'(k,k)
+     * as a zero. */
     result = alphaCoefficient(store, series, modelCoefficients, k, l)*(1.0+lambda);
     if (std::fabs(result) < Expression::epsilon<double>()) {
       result = 2*Expression::epsilon<double>();
@@ -111,8 +107,6 @@ double Model::alphaPrimeCoefficient(Store * store, int series, double * modelCoe
   } else {
     result = alphaCoefficient(store, series, modelCoefficients, l, k);
   }
-#endif
-#endif
   return result;
 }
 
@@ -142,8 +136,6 @@ double Model::betaCoefficient(Store * store, int series, double * modelCoefficie
   return result;
 }
 
-
-// TODO should return an error if no solution ?
 void Model::solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Context * context) {
   int n = solutionDimension;
   int inverseResult = Matrix::ArrayInverse(coefficients, n, n);

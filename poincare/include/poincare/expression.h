@@ -274,6 +274,9 @@ public:
   Coordinate2D nextMaximum(char symbol, double start, double step, double max, Context & context) const;
   double nextRoot(char symbol, double start, double step, double max, Context & context) const;
   Coordinate2D nextIntersection(char symbol, double start, double step, double max, Context & context, const Expression * expression) const;
+
+  /* Evaluation engine */
+  template<typename T> static T epsilon();
 protected:
   /* Constructor */
   Expression() : m_parent(nullptr) {}
@@ -282,7 +285,6 @@ protected:
   /* Evaluation Engine */
   typedef float SinglePrecision;
   typedef double DoublePrecision;
-  template<typename T> static T epsilon();
   constexpr static int k_maxNumberOfSteps = 10000;
 
   /* Simplification */

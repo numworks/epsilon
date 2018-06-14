@@ -105,8 +105,8 @@ double Model::alphaPrimeCoefficient(Store * store, int series, double * modelCoe
   double result = 0.0;
   if (k == l) {
     result = alphaCoefficient(store, series, modelCoefficients, k, l)*(1.0+lambda);
-    if (result == 0) {
-      result = lambda;
+    if (std::fabs(result) < Expression::epsilon<double>()) {
+      result = 2*Expression::epsilon<double>();
     }
   } else {
     result = alphaCoefficient(store, series, modelCoefficients, l, k);

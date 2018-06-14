@@ -59,20 +59,20 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     if (controller->isActivatingExamMode()) {
       container->reset();
     } else {
-      Ion::LED::setColor(KDColorBlack);
+      Ion::LED::setColor(KDColorRed);
     }
     container->refreshPreferences();
     container->activeApp()->dismissModalViewController();
   }, parentResponder), KDText::FontSize::Small),
-  m_warningTextView(KDText::FontSize::Small, I18n::Message::Warning, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView1(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView2(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack),
-  m_messageTextView3(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorWhite, KDColorBlack)
+  m_warningTextView(KDText::FontSize::Large, I18n::Message::Warning, 0.5, 0.5, KDColorBlack, KDColorRed),
+  m_messageTextView1(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorBlack, KDColorRed),
+  m_messageTextView2(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorBlack, KDColorRed),
+  m_messageTextView3(KDText::FontSize::Small, I18n::Message::Default, 0.5, 0.5, KDColorBlack, KDColorRed)
 {
 }
 
 void ExamPopUpController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorBlack);
+  ctx->fillRect(bounds(), KDColorRed);
 }
 
 void ExamPopUpController::ContentView::setSelectedButton(int selectedButton, App * app) {

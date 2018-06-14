@@ -42,4 +42,36 @@ i18n_files += $(addprefix apps/regression/,\
   base.universal.i18n\
 )
 
+tests += $(addprefix apps/regression/test/,\
+  model.cpp\
+)
+test_objs += $(addprefix apps/regression/,\
+  regression_context.o\
+  store.o\
+)
+test_objs += $(addprefix apps/shared/,\
+  store_context.o\
+)
+test_objs += $(addprefix apps/shared/,\
+  curve_view_cursor.o\
+  curve_view_range.o\
+  double_pair_store.o\
+  interactive_curve_view_range.o\
+  interactive_curve_view_range_delegate.o\
+  memoized_curve_view_range.o\
+  store_context.o\
+)
+test_objs += $(addprefix apps/regression/model/,\
+  cubic_model.o\
+  exponential_model.o\
+  linear_model.o\
+  logarithmic_model.o\
+  logistic_model.o\
+  model.o\
+  power_model.o\
+  quadratic_model.o\
+  quartic_model.o\
+  trigonometric_model.o\
+)
+
 app_images += apps/regression/regression_icon.png

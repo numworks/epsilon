@@ -27,7 +27,7 @@ public:
   static constexpr int k_maxNumberOfCoefficients = 5;
   virtual ~Model() = default;
   virtual Poincare::ExpressionLayout * layout() = 0;
-  virtual Poincare::Expression * expression(double * modelCoefficients) { return nullptr; } //TODO keep this so no need to implement for bijective functions?
+  virtual Poincare::Expression * simplifiedExpression(double * modelCoefficients, Poincare::Context * context) { return nullptr; } //TODO keep this so no need to implement for bijective functions?
   virtual I18n::Message formulaMessage() const = 0;
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual double levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context);

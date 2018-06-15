@@ -38,7 +38,7 @@ ExpressionLayout * CubicModel::layout() {
   return layout;
 }
 
-Expression * CubicModel::expression(double * modelCoefficients) {
+Expression * CubicModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   if (m_expression != nullptr) {
     delete m_expression;
     m_expression = nullptr;
@@ -68,6 +68,7 @@ Expression * CubicModel::expression(double * modelCoefficients) {
   Expression * dExpression = new Decimal(d);
   Expression * const operands[] = {ax3Expression, bx2Expression, cxExpression, dExpression};
   m_expression = new Addition(operands, 4, false);
+  Expression::Simplify(&m_expression, *context);
   return m_expression;
 }
 

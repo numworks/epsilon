@@ -31,19 +31,10 @@ double PowerModel::evaluate(double * modelCoefficients, double x) const {
   return a*pow(x,b);
 }
 
-bool PowerModel::levelSetAvailable(double * modelCoefficients) const {
+double PowerModel::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
-  if (a == 0 || b == 0) {
-    return false;
-  }
-  return true;
-}
-
-double PowerModel::levelSet(double * modelCoefficients, double y) const {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  if (!levelSetAvailable(modelCoefficients) || y/a <= 0) {
+  if (a == 0 || b == 0|| y/a <= 0) {
     return NAN;
   }
   return exp(log(y/a)/b);

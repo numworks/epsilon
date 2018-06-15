@@ -33,17 +33,12 @@ double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {
   return a*log(x)+b;
 }
 
-bool LogarithmicModel::levelSetAvailable(double * modelCoefficients) const {
-  double a = modelCoefficients[0];
-  return a != 0;
-}
-
-double LogarithmicModel::levelSet(double * modelCoefficients, double y) const {
-  if (!levelSetAvailable(modelCoefficients)) {
-    return NAN;
-  }
+double LogarithmicModel::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
+  if (a == 0) {
+    return NAN;
+  }
   return exp((y-b)/a);
 }
 

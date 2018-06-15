@@ -30,15 +30,36 @@ ExpressionLayout * QuadraticModel::layout() {
   return layout;
 }
 
+Expression * QuadraticModel::expression(double * modelCoefficients) {
+  if (m_expression != nullptr) {
+    delete m_expression;
+    m_expression = nullptr;
+  }
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  Expression * ax2Expression = new Multiplication(
+      new Decimal(a),
+      new Power(
+        new Symbol('x'),
+        new Decimal(2),
+        false),
+      false);
+  Expression * bxExpression = new Multiplication(
+    new Decimal(b),
+    new Symbol('x'),
+    false);
+  Expression * cExpression = new Decimal(c);
+  Expression * const operands[] = {ax2Expression, bxExpression, cExpression};
+  m_expression = new Addition(operands, 3, false);
+  return m_expression;
+}
+
 double QuadraticModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   return a*x*x+b*x+c;
-}
-
-double QuadraticModel::levelSet(double * modelCoefficients, double y) const {
-  return NAN;
 }
 
 double QuadraticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {

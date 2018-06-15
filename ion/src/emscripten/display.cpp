@@ -60,6 +60,9 @@ void refresh() {
     SDL_UnlockSurface(screen);
   }
   SDL_UpdateRect(screen, 0, 0, Ion::Display::Width, Ion::Display::Height);
+
+  // notify screen rendring
+  EM_ASM(if (typeof Module.onDisplayRefresh === "function") { Module.onDisplayRefresh(); });
 }
 
 }

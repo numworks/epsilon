@@ -39,19 +39,34 @@ double GoToParameterController::parameterAtIndex(int index) {
 
 bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
+  int series = m_graphController->selectedSeriesIndex();
   if (std::fabs(f) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
   double x = m_xPrediction ?
-    m_store->yValueForXValue(m_graphController->selectedSeriesIndex(), f, globContext) :
-    m_store->xValueForYValue(m_graphController->selectedSeriesIndex(), f, globContext);
+    m_store->yValueForXValue(series, f, globContext) :
+    m_store->xValueForYValue(series, f, globContext);
+
+  // Forbidden value
   if (std::fabs(x) > k_maxDisplayableFloat) {
     app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
+
   if (std::isnan(x)) {
+    if (!m_xPrediction) {
+      x = m_cursor->x();
+      double yForCurrentX = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), x);
+      if (std::fabs(yForCurrentX - f) < DBL_EPSILON) {
+        // If the computed value is NaN and the current abscissa is solution
+        m_graphController->selectRegressionCurve();
+        m_cursor->moveTo(x, yForCurrentX);
+        return true;
+      }
+    }
+    // Value not reached
     app()->displayWarning(I18n::Message::ValueNotReachedByRegression); //TODO
     return false;
   }
@@ -59,7 +74,8 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
   if (m_xPrediction) {
     m_cursor->moveTo(f, x);
   } else {
-    m_cursor->moveTo(x, f);
+    double y = m_store->modelForSeries(series)->evaluate(m_store->coefficientsForSeries(series, globContext), x);
+    m_cursor->moveTo(x, y);
   }
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());

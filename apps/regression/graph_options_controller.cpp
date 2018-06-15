@@ -57,11 +57,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
 }
 
 int GraphOptionsController::numberOfRows() {
-  int series = m_graphController->selectedSeriesIndex();
-  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
-  double * coefs = m_store->coefficientsForSeries(series, globContext);
-  int numberOfParameterCells = m_store->modelForSeries(series)->levelSetAvailable(coefs) ? k_numberOfParameterCells : k_numberOfParameterCells - 1;
-  return numberOfParameterCells + 1;
+  return k_numberOfParameterCells + 1;
 }
 
 KDCoordinate GraphOptionsController::rowHeight(int j) {

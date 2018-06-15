@@ -46,6 +46,47 @@ ExpressionLayout * QuarticModel::layout() {
   return layout;
 }
 
+Expression * QuarticModel::expression(double * modelCoefficients) {
+  if (m_expression != nullptr) {
+    delete m_expression;
+    m_expression = nullptr;
+  }
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
+  double e = modelCoefficients[4];
+  Expression * ax4Expression = new Multiplication(
+      new Decimal(a),
+      new Power(
+        new Symbol('x'),
+        new Decimal(4),
+        false),
+      false);
+  Expression * bx3Expression = new Multiplication(
+      new Decimal(b),
+      new Power(
+        new Symbol('x'),
+        new Decimal(3),
+        false),
+      false);
+  Expression * cx2Expression = new Multiplication(
+    new Decimal(c),
+    new Power(
+      new Symbol('x'),
+      new Decimal(2),
+      false),
+    false);
+  Expression * dxExpression = new Multiplication(
+    new Decimal(d),
+    new Symbol('x'),
+    false);
+  Expression * eExpression = new Decimal(e);
+  Expression * const operands[] = {ax4Expression, bx3Expression, cx2Expression, dxExpression, eExpression};
+  m_expression = new Addition(operands, 5, false);
+  return m_expression;
+}
+
 double QuarticModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
@@ -53,10 +94,6 @@ double QuarticModel::evaluate(double * modelCoefficients, double x) const {
   double d = modelCoefficients[3];
   double e = modelCoefficients[4];
   return a*x*x*x*x+b*x*x*x+c*x*x+d*x+e;
-}
-
-double QuarticModel::levelSet(double * modelCoefficients, double y) const {
-  return NAN;
 }
 
 double QuarticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {

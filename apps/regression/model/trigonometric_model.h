@@ -8,14 +8,15 @@ namespace Regression {
 
 class TrigonometricModel : public Model {
 public:
-  using Model::Model;
+  TrigonometricModel() : m_expression(nullptr) {}
   Poincare::ExpressionLayout * layout() override;
+  Poincare::Expression * expression(double * modelCoefficients) override;
   I18n::Message formulaMessage() const override { return I18n::Message::TrigonometricRegressionFormula; }
   double evaluate(double * modelCoefficients, double x) const override;
-  bool levelSetAvailable(double * modelCoefficients) const override { return false; }
-  double levelSet(double * modelCoefficients, double y) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 3; }
+private:
+  Poincare::Expression * m_expression;
 };
 
 }

@@ -30,16 +30,34 @@ ExpressionLayout * TrigonometricModel::layout() {
   return layout;
 }
 
+Expression * TrigonometricModel::expression(double * modelCoefficients) {
+  if (m_expression != nullptr) {
+    delete m_expression;
+    m_expression = nullptr;
+  }
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  Expression * aExpression = new Decimal(a);
+  Expression * sinExpression = new Sine(
+      new Addition(
+        new Multiplication(
+          new Decimal(b),
+          new Symbol('x'),
+          false),
+        new Decimal(c),
+        false),
+      false);
+  m_expression = new Multiplication(aExpression, sinExpression, false);
+  return m_expression;
+}
+
 double TrigonometricModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Expression::AngleUnit::Radian ? x : x * M_PI/180.0;
   return a*sin(b*radianX+c);
-}
-
-double TrigonometricModel::levelSet(double * modelCoefficients, double y) const {
-  return NAN;
 }
 
 double TrigonometricModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {

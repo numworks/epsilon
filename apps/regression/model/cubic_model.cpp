@@ -38,16 +38,45 @@ ExpressionLayout * CubicModel::layout() {
   return layout;
 }
 
+Expression * CubicModel::expression(double * modelCoefficients) {
+  if (m_expression != nullptr) {
+    delete m_expression;
+    m_expression = nullptr;
+  }
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
+  Expression * ax3Expression = new Multiplication(
+      new Decimal(a),
+      new Power(
+        new Symbol('x'),
+        new Decimal(3),
+        false),
+      false);
+  Expression * bx2Expression = new Multiplication(
+    new Decimal(b),
+    new Power(
+      new Symbol('x'),
+      new Decimal(2),
+      false),
+    false);
+  Expression * cxExpression = new Multiplication(
+    new Decimal(c),
+    new Symbol('x'),
+    false);
+  Expression * dExpression = new Decimal(d);
+  Expression * const operands[] = {ax3Expression, bx2Expression, cxExpression, dExpression};
+  m_expression = new Addition(operands, 4, false);
+  return m_expression;
+}
+
 double CubicModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
   return a*x*x*x+b*x*x+c*x+d;
-}
-
-double CubicModel::levelSet(double * modelCoefficients, double y) const {
-  return NAN;
 }
 
 double CubicModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {

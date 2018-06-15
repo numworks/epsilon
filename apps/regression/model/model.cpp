@@ -12,8 +12,10 @@ using namespace Shared;
 namespace Regression {
 
 double Model::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
-  Decimal * yExpression = new Decimal(y);
-  double result = expression(modelCoefficients)->nextIntersection('x', xMin, step, xMax, *context, yExpression).abscissa;
+  Expression * yExpression = static_cast<Expression *>(new Decimal(y));
+  Expression::Simplify(&yExpression, *context);
+  Expression * modelExpression = simplifiedExpression(modelCoefficients, context);
+  double result = modelExpression->nextIntersection('x', xMin, step, xMax, *context, yExpression).abscissa;
   delete yExpression;
   return result;
 }

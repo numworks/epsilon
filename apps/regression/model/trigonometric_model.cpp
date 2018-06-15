@@ -30,7 +30,7 @@ ExpressionLayout * TrigonometricModel::layout() {
   return layout;
 }
 
-Expression * TrigonometricModel::expression(double * modelCoefficients) {
+Expression * TrigonometricModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   if (m_expression != nullptr) {
     delete m_expression;
     m_expression = nullptr;
@@ -49,6 +49,7 @@ Expression * TrigonometricModel::expression(double * modelCoefficients) {
         false),
       false);
   m_expression = new Multiplication(aExpression, sinExpression, false);
+  Expression::Simplify(&m_expression, *context);
   return m_expression;
 }
 

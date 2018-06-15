@@ -30,7 +30,7 @@ ExpressionLayout * QuadraticModel::layout() {
   return layout;
 }
 
-Expression * QuadraticModel::expression(double * modelCoefficients) {
+Expression * QuadraticModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   if (m_expression != nullptr) {
     delete m_expression;
     m_expression = nullptr;
@@ -52,6 +52,7 @@ Expression * QuadraticModel::expression(double * modelCoefficients) {
   Expression * cExpression = new Decimal(c);
   Expression * const operands[] = {ax2Expression, bxExpression, cExpression};
   m_expression = new Addition(operands, 3, false);
+  Expression::Simplify(&m_expression, *context);
   return m_expression;
 }
 

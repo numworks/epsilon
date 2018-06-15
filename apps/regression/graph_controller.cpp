@@ -19,6 +19,9 @@ GraphController::GraphController(Responder * parentResponder, ButtonRowControlle
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex)
 {
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    m_modelType[i] = (Model::Type) -1;
+  }
   m_store->setCursor(m_cursor);
 }
 
@@ -36,6 +39,12 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   InteractiveCurveViewController::viewWillAppear();
+  if (m_modelType[*m_selectedSeriesIndex] != m_store->seriesRegressionType(*m_selectedSeriesIndex)) {
+    initCursorParameters();
+  }
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    m_modelType[i] = m_store->seriesRegressionType(*m_selectedSeriesIndex);
+  }
   if (*m_selectedSeriesIndex < 0) {
     *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
   }

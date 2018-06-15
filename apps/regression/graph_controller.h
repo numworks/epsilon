@@ -51,6 +51,7 @@ private:
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;
   int * m_selectedSeriesIndex;
+  Model::Type m_modelType[Store::k_numberOfSeries];
 };
 
 }

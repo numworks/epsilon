@@ -148,8 +148,23 @@ double Model::betaCoefficient(Store * store, int series, double * modelCoefficie
 
 void Model::solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Context * context) {
   int n = solutionDimension;
+  assert(n <= k_maxNumberOfCoefficients);
+  double coefficientsSave[k_maxNumberOfCoefficients * k_maxNumberOfCoefficients];
+  for (int i = 0; i < n * n; i++) {
+    coefficientsSave[i] = coefficients[i];
+  }
   int inverseResult = Matrix::ArrayInverse(coefficients, n, n);
-  assert(inverseResult >= 0);
+  if (inverseResult < 0) {
+    // If the matrix was not invertible, modify it a bit
+    for (int i = 0; i < n; i ++) {
+      coefficientsSave[i*n+i] = (1 + ((double)i)/((double)n)) * coefficientsSave[i*n+i];
+    }
+    int inverseSecondResult = Matrix::ArrayInverse(coefficientsSave, n, n);
+    assert(inverseSecondResult >= 0);
+    for (int i = 0; i < n*n; i++) {
+      coefficients[i] = coefficientsSave[i];
+    }
+  }
   Multiplication::computeOnArrays<double>(coefficients, constants, solutions, n, n, 1);
 }
 

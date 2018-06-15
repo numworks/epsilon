@@ -1,6 +1,7 @@
 #include "model.h"
 #include "../store.h"
 #include <poincare/complex.h>
+#include <poincare/decimal.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <math.h>
@@ -9,6 +10,13 @@ using namespace Poincare;
 using namespace Shared;
 
 namespace Regression {
+
+double Model::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
+  Decimal * yExpression = new Decimal(y);
+  double result = expression(modelCoefficients)->nextIntersection('x', xMin, step, xMax, *context, yExpression).abscissa;
+  delete yExpression;
+  return result;
+}
 
 void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   if (dataSuitableForFit(store, series)) {

@@ -302,7 +302,7 @@ double Store::yValueForXValue(int series, double x, Poincare::Context * globalCo
 double Store::xValueForYValue(int series, double y, Poincare::Context * globalContext) {
   Model * model = m_regressionModels[(int)m_regressionTypes[series]];
   double * coefficients = coefficientsForSeries(series, globalContext);
-  return model->levelSet(coefficients, y);
+  return model->levelSet(coefficients, xMin(), xGridUnit()/10.0, xMax(), y, globalContext);
 }
 
 double Store::correlationCoefficient(int series) const {

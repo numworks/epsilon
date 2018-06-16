@@ -103,6 +103,7 @@ def print_header(data, path, locales):
     f.write("  Default = 0,\n")
     for locale in locales:
         f.write("  " + locale.upper() + ",\n")
+    f.write("  FirstAvailable = 1\n")
     f.write("};\n")
     f.write("\n")
     f.write("constexpr const Message LanguageNames[NumberOfLanguages] = {\n");

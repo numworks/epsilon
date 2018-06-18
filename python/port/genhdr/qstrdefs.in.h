@@ -12,7 +12,7 @@
 
 // Global configuration
 
-QCFG(BYTES_IN_HASH, (1))
+QCFG(BYTES_IN_HASH, (2))
 QCFG(BYTES_IN_LEN, (1))
 
 // Kandinsky QSTRs

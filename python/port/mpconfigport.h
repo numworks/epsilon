@@ -8,9 +8,6 @@
 // Maximum length of a path in the filesystem
 #define MICROPY_ALLOC_PATH_MAX (32)
 
-// Number of bytes used to store qstr hash
-#define MICROPY_QSTR_BYTES_IN_HASH (1)
-
 // Whether to include the garbage collector
 #define MICROPY_ENABLE_GC (1)
 

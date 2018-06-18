@@ -42,6 +42,7 @@ private:
 
   // Levenberg-Marquardt
   static constexpr double k_maxIterations = 1000;
+  static constexpr double k_maxMatrixInversionFixIterations = 10;
   static constexpr double k_initialLambda = 0.001;
   static constexpr double k_lambdaFactor = 10;
   static constexpr double k_chi2ChangeCondition = 0.001;
@@ -52,7 +53,7 @@ private:
   double alphaPrimeCoefficient(Store * store, int series, double * modelCoefficients, int k, int l, double lambda) const;
   double alphaCoefficient(Store * store, int series, double * modelCoefficients, int k, int l) const;
   double betaCoefficient(Store * store, int series, double * modelCoefficients, int k) const;
-  void solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Poincare::Context * context);
+  int solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Poincare::Context * context);
 };
 
 }

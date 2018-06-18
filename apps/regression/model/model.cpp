@@ -65,7 +65,9 @@ void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoeff
       operandsB[j] = betaCoefficient(store, series, modelCoefficients, j);
     }
     double modelCoefficientSteps[Model::k_maxNumberOfCoefficients];
-    solveLinearSystem(modelCoefficientSteps, coefficientsAPrime, operandsB, n, context);
+    if (solveLinearSystem(modelCoefficientSteps, coefficientsAPrime, operandsB, n, context) < 0) {
+      break;
+    }
     // Compare new chi2 with the previous value
     double newModelCoefficients[Model::k_maxNumberOfCoefficients];
     for (int i = 0; i < n; i++) {
@@ -146,7 +148,7 @@ double Model::betaCoefficient(Store * store, int series, double * modelCoefficie
   return result;
 }
 
-void Model::solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Context * context) {
+int Model::solveLinearSystem(double * solutions, double * coefficients, double * constants, int solutionDimension, Context * context) {
   int n = solutionDimension;
   assert(n <= k_maxNumberOfCoefficients);
   double coefficientsSave[k_maxNumberOfCoefficients * k_maxNumberOfCoefficients];
@@ -154,18 +156,25 @@ void Model::solveLinearSystem(double * solutions, double * coefficients, double 
     coefficientsSave[i] = coefficients[i];
   }
   int inverseResult = Matrix::ArrayInverse(coefficients, n, n);
-  if (inverseResult < 0) {
+  int numberOfMatrixModifications = 0;
+  while (inverseResult < 0 && numberOfMatrixModifications < k_maxMatrixInversionFixIterations) {
     // If the matrix was not invertible, modify it a bit
     for (int i = 0; i < n; i ++) {
       coefficientsSave[i*n+i] = (1 + ((double)i)/((double)n)) * coefficientsSave[i*n+i];
     }
-    int inverseSecondResult = Matrix::ArrayInverse(coefficientsSave, n, n);
-    assert(inverseSecondResult >= 0);
+    inverseResult = Matrix::ArrayInverse(coefficientsSave, n, n);
+    numberOfMatrixModifications++;
+  }
+  if (inverseResult < 0) {
+    return - 1;
+  }
+  if (numberOfMatrixModifications > 0) {
     for (int i = 0; i < n*n; i++) {
       coefficients[i] = coefficientsSave[i];
     }
   }
   Multiplication::computeOnArrays<double>(coefficients, constants, solutions, n, n, 1);
+  return 0;
 }
 
 }

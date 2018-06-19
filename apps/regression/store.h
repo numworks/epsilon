@@ -77,6 +77,7 @@ private:
   Model * m_regressionModels[Model::k_numberOfModels];
   double m_regressionCoefficients[k_numberOfSeries][Model::k_maxNumberOfCoefficients];
   bool m_regressionChanged[k_numberOfSeries];
+  Poincare::Expression::AngleUnit m_angleUnit;
 };
 
 typedef double (Store::*ArgCalculPointer)(int, int) const;

@@ -14,7 +14,7 @@ public:
   I18n::Message formulaMessage() const override { return I18n::Message::TrigonometricRegressionFormula; }
   double evaluate(double * modelCoefficients, double x) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
-  int numberOfCoefficients() const override { return 3; }
+  int numberOfCoefficients() const override { return 4; }
 private:
   Poincare::Expression * m_expression;
 };

@@ -9,6 +9,7 @@
 #include "model/quartic_model.h"
 #include "model/trigonometric_model.h"
 #include "apps/apps_container.h"
+#include <poincare/preferences.h>
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -27,7 +28,8 @@ static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regressio
 Store::Store() :
   InteractiveCurveViewRange(nullptr, this),
   DoublePairStore(),
-  m_seriesChecksum{0, 0, 0}
+  m_seriesChecksum{0, 0, 0},
+  m_angleUnit(Poincare::Expression::AngleUnit::Default)
 {
   for (int i = 0; i < k_numberOfSeries; i++) {
     m_regressionTypes[i] = Model::Type::Linear;
@@ -223,6 +225,15 @@ double * Store::coefficientsForSeries(int series, Poincare::Context * globalCont
   assert(series >= 0 && series <= k_numberOfSeries);
   assert(!seriesIsEmpty(series));
   uint32_t storeChecksumSeries = storeChecksumForSeries(series);
+  Poincare::Expression::AngleUnit currentAngleUnit = Poincare::Preferences::sharedPreferences()->angleUnit();
+  if (m_angleUnit != currentAngleUnit) {
+    m_angleUnit = currentAngleUnit;
+    for (int i = 0; i < k_numberOfSeries; i++) {
+      if (m_regressionTypes[i] == Model::Type::Trigonometric) {
+        m_regressionChanged[i] = true;
+      }
+    }
+  }
   if (m_regressionChanged[series] || (m_seriesChecksum[series] != storeChecksumSeries)) {
     Model * seriesModel = modelForSeries(series);
     seriesModel->fit(this, series, m_regressionCoefficients[series], globalContext);

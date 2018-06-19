@@ -23,9 +23,11 @@ ExpressionLayout * TrigonometricModel::layout() {
       new CharLayout('X', KDText::FontSize::Small),
       new CharLayout('+', KDText::FontSize::Small),
       new CharLayout('c', KDText::FontSize::Small),
-      new CharLayout(')', KDText::FontSize::Small)
+      new CharLayout(')', KDText::FontSize::Small),
+      new CharLayout('+', KDText::FontSize::Small),
+      new CharLayout('d', KDText::FontSize::Small)
     };
-    layout = new HorizontalLayout(layoutChildren, 12, false);
+    layout = new HorizontalLayout(layoutChildren, 14, false);
   }
   return layout;
 }
@@ -38,6 +40,7 @@ Expression * TrigonometricModel::simplifiedExpression(double * modelCoefficients
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
   Expression * aExpression = new Decimal(a);
   Expression * sinExpression = new Sine(
       new Addition(
@@ -48,7 +51,9 @@ Expression * TrigonometricModel::simplifiedExpression(double * modelCoefficients
         new Decimal(c),
         false),
       false);
-  m_expression = new Multiplication(aExpression, sinExpression, false);
+  Expression * asinExpression = new Multiplication(aExpression, sinExpression, false);
+  Expression * dExpression = new Decimal(d);
+  m_expression = new Addition(asinExpression, dExpression, false);
   Expression::Simplify(&m_expression, *context);
   return m_expression;
 }
@@ -57,8 +62,9 @@ double TrigonometricModel::evaluate(double * modelCoefficients, double x) const 
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
   double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Expression::AngleUnit::Radian ? x : x * M_PI/180.0;
-  return a*sin(b*radianX+c);
+  return a*sin(b*radianX+c)+d;
 }
 
 double TrigonometricModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
@@ -77,6 +83,10 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   if (derivateCoefficientIndex == 2) {
     // Derivate: a*cos(b*x+c)
     return a*cos(b*radianX+c);
+  }
+  if (derivateCoefficientIndex == 3) {
+    // Derivate: 1
+    return 1.0;
   }
   assert(false);
   return 0.0;

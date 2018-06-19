@@ -41,13 +41,20 @@ bool Model::dataSuitableForFit(Store * store, int series) const {
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {
+  /* We want to find the best coefficients of the regression to minimize the sum
+   * of the squares of the difference between a data point and the corresponding
+   * point of the fitting regression (chi2 function).
+   * We use the Levenberg-Marquardt algorithm to minimize this chi2 merit
+   * function.
+   * The equation to solve is A'*da = B, with A' a damped version of the chi2
+   * Hessian matrix, da the coefficients increments and B colinear to the
+   * gradient of chi2.*/
   double currentChi2 = chi2(store, series, modelCoefficients);
   double lambda = k_initialLambda;
   int n = numberOfCoefficients(); // n unknown coefficients
   int smallChi2ChangeCounts = 0;
   int iterationCount = 0;
   while (smallChi2ChangeCounts < k_consecutiveSmallChi2ChangesLimit && iterationCount < k_maxIterations) {
-    // Compute modelCoefficients step
     // Create the alpha prime matrix (it is symmetric)
     double coefficientsAPrime[Model::k_maxNumberOfCoefficients * Model::k_maxNumberOfCoefficients];
     for (int i = 0; i < n; i++) {
@@ -64,15 +71,20 @@ void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoeff
     for (int j = 0; j < n; j++) {
       operandsB[j] = betaCoefficient(store, series, modelCoefficients, j);
     }
+
+    // Compute the equation solution (= vector of coefficients increments)
     double modelCoefficientSteps[Model::k_maxNumberOfCoefficients];
     if (solveLinearSystem(modelCoefficientSteps, coefficientsAPrime, operandsB, n, context) < 0) {
       break;
     }
-    // Compare new chi2 with the previous value
+
+    // Compute the new coefficients
     double newModelCoefficients[Model::k_maxNumberOfCoefficients];
     for (int i = 0; i < n; i++) {
       newModelCoefficients[i] = modelCoefficients[i] + modelCoefficientSteps[i];
     }
+
+    // Compare new chi2 with the previous value
     double newChi2 = chi2(store, series, newModelCoefficients);
     smallChi2ChangeCounts = (fabs(currentChi2 - newChi2) > k_chi2ChangeCondition) ? 0 : smallChi2ChangeCounts + 1;
     if (newChi2 >= currentChi2) {
@@ -108,7 +120,7 @@ double Model::alphaPrimeCoefficient(Store * store, int series, double * modelCoe
   if (k == l) {
     /* The Levengerg method uses a'(k,k) = a(k,k) + lambda.
      * The Marquardt method uses a'(k,k) = a(k,k) * (1 + lambda).
-     * We use a mixed method to ensure that the matrix will be invertible:
+     * We use a mixed method to try to make the matrix invertible:
      * a'(k,k) = a(k,k) * (1 + lambda), but if a'(k,k) is too small,
      * a'(k,k) = 2*epsilon so that the inversion method does not detect a'(k,k)
      * as a zero. */
@@ -158,7 +170,11 @@ int Model::solveLinearSystem(double * solutions, double * coefficients, double *
   int inverseResult = Matrix::ArrayInverse(coefficients, n, n);
   int numberOfMatrixModifications = 0;
   while (inverseResult < 0 && numberOfMatrixModifications < k_maxMatrixInversionFixIterations) {
-    // If the matrix was not invertible, modify it a bit
+    /* If the matrix is not invertible, we modify it to try to make
+     * it invertible by multiplying the diagonal coefficients by 1+i/n. This
+     * will change the iterative path of the algorithm towards the chi2 minimum,
+     * but not the final solution itself, as the stopping condition is that chi2
+     * is at its minimum, so when B is null. */
     for (int i = 0; i < n; i ++) {
       coefficientsSave[i*n+i] = (1 + ((double)i)/((double)n)) * coefficientsSave[i*n+i];
     }

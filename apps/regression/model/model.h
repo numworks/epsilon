@@ -41,7 +41,7 @@ private:
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;
 
   // Levenberg-Marquardt
-  static constexpr double k_maxIterations = 1000;
+  static constexpr double k_maxIterations = 100;
   static constexpr double k_maxMatrixInversionFixIterations = 10;
   static constexpr double k_initialLambda = 0.001;
   static constexpr double k_lambdaFactor = 10;

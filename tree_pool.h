@@ -9,6 +9,7 @@ class TreePool {
 public:
   TreePool() : m_cursor(m_buffer) { }
 
+  // Identifiers
   int generateIdentifier() {
     int newIdentifier = -1;
     for (int i = 0; i < MaxNumberOfNodes; i++) {
@@ -26,6 +27,7 @@ public:
     m_nodeForIdentifier[identifier] = nullptr;
   }
 
+  // Pool memory
   void * alloc(size_t size);
   void dealloc(void * ptr);
 
@@ -43,9 +45,10 @@ public:
     // then dealloc node's memory
   }
   TreeNode * node(int identifier) const;
-  void move(TreeNode * source, TreeNode * destination);
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
+
+  void move(TreeNode * source, TreeNode * destination);
 
   void registerNode(TreeNode * node) {
     m_nodeForIdentifier[node->identifier()] = node;

@@ -1,6 +1,6 @@
 #include "tree_pool.h"
-#include <string.h>
 #include "tree_node.h"
+#include <string.h>
 
 void * TreePool::alloc(size_t size) {
   if (m_cursor >= m_buffer + BufferSize || m_cursor + size > m_buffer + BufferSize) {

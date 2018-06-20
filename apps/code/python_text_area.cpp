@@ -48,7 +48,18 @@ static inline int TokenLength(mp_lexer_t * lex) {
     case MP_TOKEN_OP_LESS_EQUAL:
     case MP_TOKEN_OP_MORE_EQUAL:
     case MP_TOKEN_OP_DBL_EQUAL:
+    case MP_TOKEN_OP_NOT_EQUAL:
+    case MP_TOKEN_DEL_PLUS_EQUAL:
+    case MP_TOKEN_DEL_MINUS_EQUAL:
+    case MP_TOKEN_DEL_STAR_EQUAL:
+    case MP_TOKEN_DEL_SLASH_EQUAL:
+    case MP_TOKEN_DEL_PERCENT_EQUAL:
+    case MP_TOKEN_DEL_AMPERSAND_EQUAL:
+    case MP_TOKEN_DEL_PIPE_EQUAL:
+    case MP_TOKEN_DEL_CARET_EQUAL:
+    case MP_TOKEN_DEL_MINUS_MORE:
       return 2;
+    case MP_TOKEN_DEL_DBL_SLASH_EQUAL:
     case MP_TOKEN_DEL_DBL_MORE_EQUAL:
     case MP_TOKEN_DEL_DBL_LESS_EQUAL:
     case MP_TOKEN_DEL_DBL_STAR_EQUAL:

@@ -30,6 +30,9 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind >= MP_TOKEN_OP_PLUS && tokenKind <= MP_TOKEN_OP_NOT_EQUAL) {
     return OperatorColor;
   }
+  if (tokenKind >= MP_TOKEN_DEL_EQUAL && tokenKind <= MP_TOKEN_DEL_MINUS_MORE) {
+    return OperatorColor;
+  }
   return KDColorBlack;
 }
 

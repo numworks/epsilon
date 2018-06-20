@@ -59,7 +59,6 @@ public:
     public:
       using TreeNode::Iterator::Iterator;
       Iterator & operator++() {
-        // printf("  Iterating from %d(%p) to %d(%p)\n", m_node->m_identifier, m_node, m_node->next()->m_identifier, m_node->next());
         m_node = m_node->next();
         return *this;
       }
@@ -88,6 +87,7 @@ public:
   void retain() {
     m_referenceCounter++;
   }
+
   void release();
 
   void rename(int identifier) {
@@ -107,7 +107,7 @@ public:
     assert(i >= 0);
     assert(i < numberOfChildren());
     TreeNode * child = next();
-    while (i>0) {
+    while (i > 0) {
       child = child->nextSibling();
       assert(child != nullptr);
       i--;
@@ -143,15 +143,11 @@ public:
 
   TreeNode * lastDescendant() const {
     TreeNode * node = const_cast<TreeNode *>(this);
-
-    int remainingNodesToVisit = 0;
-    while (true) {
-      remainingNodesToVisit += node->numberOfChildren();
-      if (remainingNodesToVisit == 0) {
-        return node;
-      }
+    int remainingNodesToVisit = node->numberOfChildren();
+    while (remainingNodesToVisit > 0) {
       node = node->next();
       remainingNodesToVisit--;
+      remainingNodesToVisit += node->numberOfChildren();
     }
     return node;
   }

@@ -9,17 +9,6 @@ class TreePool {
 public:
   TreePool() : m_cursor(m_buffer) { }
 
-  template <class T>
-  TreeNode * createTreeNode() {
-    // Find a new identifier
-    // Find a memory location for node
-  }
-  void discardTreeNode(TreeNode * node) {
-    // Reclaim node's identifier
-    // then dealloc node's memory
-    // Then call the destructor on node
-  }
-
   int generateIdentifier() {
     int newIdentifier = -1;
     for (int i = 0; i < MaxNumberOfNodes; i++) {
@@ -40,6 +29,19 @@ public:
   void * alloc(size_t size);
   void dealloc(void * ptr);
 
+  // Node
+  template <class T>
+  TreeNode * createTreeNode() {
+    // TODO
+    // Find a new identifier
+    // Find a memory location for node
+  }
+  void discardTreeNode(TreeNode * node) {
+    // TODO
+    // Reclaim node's identifier
+    // Then call the destructor on node
+    // then dealloc node's memory
+  }
   TreeNode * node(int identifier) const;
   void move(TreeNode * source, TreeNode * destination);
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
@@ -71,7 +73,7 @@ public:
 #endif
 
 private:
-
+  static inline void insert(char * destination, char * source, size_t length);
   TreeNode::DepthFirst::Iterator begin() const { return TreeNode::DepthFirst::Iterator(first()); }
   TreeNode::DepthFirst::Iterator end() const { return TreeNode::DepthFirst::Iterator(last()); }
 

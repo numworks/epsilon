@@ -38,35 +38,41 @@ TreeNode * TreePool::node(int identifier) const {
   return m_nodeForIdentifier[identifier];
 }
 
-static inline void swap(uint32_t * a, uint32_t * b) {
-  uint32_t tmp = *a;
-  *a = *b;
-  *b = tmp;
+static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
+  if (dst > src) {
+    src += len;
+    dst += len;
+    while (len--) {
+      *--dst = *--src;
+    }
+  } else {
+    while (len--) {
+      *dst++ = *src++;
+    }
+  }
 }
 
-static inline void insert(char * source, char * destination, size_t length) {
+void TreePool::insert(char * destination, char * source, size_t length) {
+  if (source == destination || destination < source + length) {
+    return;
+  }
+
   assert(length % 4 == 0);
   assert((long)source % 4 == 0);
   assert((long)destination % 4 == 0);
+
   uint32_t * src = reinterpret_cast<uint32_t *>(source);
   uint32_t * dst = reinterpret_cast<uint32_t *>(destination);
   size_t len = length/4;
-
+  char tempBuffer[BufferSize];
+  uint32_t * tmp = reinterpret_cast<uint32_t *>(tempBuffer);
+  memmove32(reinterpret_cast<uint32_t *>(tmp), src, len);
   if (dst < src) {
-    if (src - dst <= len) {
-      uint32_t * srcPointer = src;
-      uint32_t * dstPointer = dst;
-      while (dstPointer != src) {
-        swap(srcPointer, dstPointer);
-        srcPointer++;
-        dstPointer++;
-        if (srcPointer == src + len) {
-          srcPointer = src;
-        }
-      }
-    }
+    memmove32(dst + len, dst, src - dst);
+    memmove32(dst, tmp, len);
   } else {
-    assert(false); // TODO: Implement this case
+    memmove32(src, src + len, dst - (src + len));
+    memmove32(dst - len, tmp, len);
   }
 }
 
@@ -74,8 +80,27 @@ void TreePool::move(TreeNode * source, TreeNode * destination) {
   if (source == destination) {
     return;
   }
-  insert(reinterpret_cast<char *>(source), reinterpret_cast<char *>(destination), source->deepSize());
-  // Here, update the nodeForIdentifier array
+  // Move the Node
+  size_t srcDeepSize = source->deepSize();
+  insert(reinterpret_cast<char *>(destination), reinterpret_cast<char *>(source), srcDeepSize);
+
+  // Update the nodeForIdentifier array
+  for (int i = 0; i < MaxNumberOfNodes; i++) {
+    void * nodeAddress = m_nodeForIdentifier[i];
+    if (nodeAddress == nullptr) {
+      continue;
+    } else if (nodeAddress >= source && nodeAddress < source + srcDeepSize) {
+      if (destination < source) {
+        m_nodeForIdentifier[i] -= (source - destination);
+      } else {
+        m_nodeForIdentifier[i] += destination - (source + srcDeepSize);
+      }
+    } else if (nodeAddress > source && nodeAddress < destination) {
+      m_nodeForIdentifier[i] -= srcDeepSize;
+    } else if (nodeAddress < source && nodeAddress > destination) {
+      m_nodeForIdentifier[i] += srcDeepSize;
+    }
+  }
 }
 
 #if TREE_LOGGING

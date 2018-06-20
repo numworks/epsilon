@@ -3,6 +3,9 @@
 #include "tree_node.h"
 
 void * TreePool::alloc(size_t size) {
+  if (m_cursor >= m_buffer + BufferSize || m_cursor + size > m_buffer + BufferSize) {
+    return nullptr;
+  }
   void * result = m_cursor;
   m_cursor += size;
   return result;
@@ -12,14 +15,22 @@ void TreePool::dealloc(void * ptr) {
   assert(ptr >= m_buffer && ptr < m_cursor);
   TreeNode * node = reinterpret_cast<TreeNode *>(ptr);
   size_t size = node->size();
-  printf("Dealloc %d(%p) of size %d\n", node->m_identifier, node, size);
+  printf("Dealloc %d(%p) of size %zu\n", node->m_identifier, node, size);
+
   // Step 1 - Compact the pool
   memmove(
     ptr,
     static_cast<char *>(ptr) + size,
-    m_cursor - static_cast<char *>(ptr)
+    m_cursor - (static_cast<char *>(ptr) + size)
   );
   m_cursor -= size;
+
+  // Step 2 - Update m_nodeForIdentifier
+  for (int i = 0; i < MaxNumberOfNodes; i++) {
+    if (m_nodeForIdentifier[i] > node) {
+      m_nodeForIdentifier[i] -= size;
+    }
+  }
 }
 
 TreeNode * TreePool::node(int identifier) const {

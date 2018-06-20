@@ -68,6 +68,8 @@ static inline void insert(char * source, char * destination, size_t length) {
         }
       }
     }
+  } else {
+    assert(false); // TODO: Implement this case
   }
 }
 
@@ -76,6 +78,7 @@ void TreePool::move(TreeNode * source, TreeNode * destination) {
     return;
   }
   insert(reinterpret_cast<char *>(source), reinterpret_cast<char *>(destination), source->deepSize());
+  // Here, update the nodeForIdentifier array
 }
 
 #if TREE_LOGGING

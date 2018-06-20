@@ -9,6 +9,17 @@ class TreePool {
 public:
   TreePool() : m_lastIdentifier(0), m_cursor(m_buffer) {}
 
+  template <class T>
+  TreeNode * createTreeNode() {
+    // Find a new identifier
+    // Find a memory location for node
+  }
+  void discardTreeNode(TreeNode * node) {
+    // Reclaim node's identifier
+    // then dealloc node's memory
+    // Then call the destructor on node
+  }
+
   int generateIdentifier() {
     printf("Generating identifier %d\n", m_lastIdentifier);
     /* For now we're not bothering with making sure the identifiers are indeed

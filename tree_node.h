@@ -9,6 +9,12 @@
 
 #include <stdio.h>
 
+/* What's in a TreeNode, really?
+ *  - a vtable
+ *  - an identifier
+ *  - a reference counter
+ */
+
 class TreeNode {
   //friend class TreeReference;
   // friend class TreePool;
@@ -75,7 +81,7 @@ public:
   }
 #endif
 
-  virtual size_t size() const {
+  virtual size_t size() const { // Consider making this full abstract?
     return sizeof(TreeNode);
   }
 
@@ -132,6 +138,21 @@ public:
       node = node->next();
       remainingNodesToVisit--;
     } while (remainingNodesToVisit > 0);
+    return node;
+  }
+
+  TreeNode * lastDescendant() const {
+    TreeNode * node = const_cast<TreeNode *>(this);
+
+    int remainingNodesToVisit = 0;
+    while (true) {
+      remainingNodesToVisit += node->numberOfChildren();
+      if (remainingNodesToVisit == 0) {
+        return node;
+      }
+      node = node->next();
+      remainingNodesToVisit--;
+    }
     return node;
   }
 

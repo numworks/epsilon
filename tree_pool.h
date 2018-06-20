@@ -7,7 +7,7 @@
 
 class TreePool {
 public:
-  TreePool() : m_lastIdentifier(0), m_cursor(m_buffer) {}
+  TreePool() : m_cursor(m_buffer) { }
 
   template <class T>
   TreeNode * createTreeNode() {
@@ -21,13 +21,20 @@ public:
   }
 
   int generateIdentifier() {
-    printf("Generating identifier %d\n", m_lastIdentifier);
-    /* For now we're not bothering with making sure the identifiers are indeed
-     * unique. We're just assuming we'll never overflow... */
-    //assert(node(m_lastIdentifier) == nullptr);
-    return m_lastIdentifier++;
+    int newIdentifier = -1;
+    for (int i = 0; i < MaxNumberOfNodes; i++) {
+      if (m_nodeForIdentifier[i] == nullptr) {
+        newIdentifier = i;
+        break;
+      }
+    }
+    printf("Generating identifier %d\n", newIdentifier);
+    return newIdentifier;
   }
-  void reclaimIdentifier(int identifier) {
+
+  void freeIdentifier(int identifier) {
+    assert(identifier >= 0 && identifier < MaxNumberOfNodes);
+    m_nodeForIdentifier[identifier] = nullptr;
   }
 
   void * alloc(size_t size);
@@ -38,14 +45,23 @@ public:
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
+  void registerNode(TreeNode * node) {
+    m_nodeForIdentifier[node->identifier()] = node;
+  }
+
+  void renameNode(TreeNode * node) {
+    node->rename(generateIdentifier());
+    registerNode(node);
+  }
+
   TreeNode * deepCopy(TreeNode * node) {
     size_t size = node->deepSize();
     void * ptr = alloc(size);
     memcpy(ptr, static_cast<void *>(node), size);
     TreeNode * copy = reinterpret_cast<TreeNode *>(ptr);
-    copy->rename(generateIdentifier());
+    renameNode(copy);
     for (TreeNode * child : copy->depthFirstChildren()) {
-      child->rename(generateIdentifier());
+      renameNode(child);
     }
     return copy;
   }
@@ -59,9 +75,12 @@ private:
   TreeNode::DepthFirst::Iterator begin() const { return TreeNode::DepthFirst::Iterator(first()); }
   TreeNode::DepthFirst::Iterator end() const { return TreeNode::DepthFirst::Iterator(last()); }
 
-  int m_lastIdentifier;
   char * m_cursor;
-  char m_buffer[256];
+
+  constexpr static int BufferSize = 256;
+  char m_buffer[BufferSize];
+  constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
+  TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
 };
 
 #endif

@@ -23,22 +23,8 @@ void TreePool::dealloc(void * ptr) {
 }
 
 TreeNode * TreePool::node(int identifier) const {
-  for (TreeNode * node : *this) {
-    if (node->identifier() == identifier) {
-      return node;
-    }
-  }
-  /*
-  TreeNode * node = const_cast<TreeNode *>(reinterpret_cast<const TreeNode *>(m_buffer));
-  TreeNode * endOfPool = reinterpret_cast<TreeNode *>(m_cursor);
-  while (node < endOfPool) {
-    if (node->identifier() == identifier) {
-      return node;
-    }
-    node = node->next();
-  }
-  */
-  return nullptr;
+  assert(identifier >= 0 && identifier <= MaxNumberOfNodes);
+  return m_nodeForIdentifier[identifier];
 }
 
 static inline void swap(uint32_t * a, uint32_t * b) {

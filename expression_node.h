@@ -6,7 +6,9 @@
 
 class ExpressionNode : public TreeNode {
 public:
-  ExpressionNode() : TreeNode(Pool()->generateIdentifier()) {}
+  ExpressionNode() : TreeNode(Pool()->generateIdentifier()) {
+    Pool()->registerNode(this);
+  }
 
   // TODO: operator new and delte
   // this behavior is the same for every TreeNode

@@ -9,18 +9,6 @@ public:
     TreePool::sharedPool()->registerNode(this);
   }
 
-  // TODO: operator new and delte
-  // this behavior is the same for every TreeNode
-  // Find a way to define it on the TreeNode
-
-  void * operator new(size_t count) {
-    return TreePool::sharedPool()->alloc(count);
-  }
-
-  void operator delete(void * ptr) {
-    TreePool::sharedPool()->dealloc(ptr);
-  }
-
   virtual float approximate() = 0;
   int numberOfOperands() { return numberOfChildren(); }
   ExpressionNode * operand(int i) { return static_cast<ExpressionNode *>(childAtIndex(i)); }

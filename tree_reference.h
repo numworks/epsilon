@@ -62,7 +62,7 @@ public:
 
 protected:
   TreeReference() {
-    TreeNode * node = new T();
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<T>();
     m_identifier = node->identifier();
     printf("Creating TreeRef of new node %d\n", m_identifier);
   }

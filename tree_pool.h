@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include "tree_node.h"
+#include <new>
 
 class TreePool {
 public:
@@ -33,18 +34,27 @@ public:
   void dealloc(void * ptr);
 
   // Node
-  template <class T>
-  TreeNode * createTreeNode() {
-    // TODO
-    // Find a new identifier
-    // Find a memory location for node
+  template <typename T>
+  T * createTreeNode() {
+    int nodeIdentifier = generateIdentifier();
+    if (nodeIdentifier == -1) {
+      return nullptr; // TODO return static node "failedAllocation"
+    }
+    void * ptr = alloc(sizeof(T));
+    // TODO handle allocation problem!
+    TreeNode * node = new(ptr) T();
+    node->rename(nodeIdentifier);
+    registerNode(node);
+    return reinterpret_cast<T *>(node);
   }
+
   void discardTreeNode(TreeNode * node) {
-    // TODO
-    // Reclaim node's identifier
-    // Then call the destructor on node
-    // then dealloc node's memory
+    int nodeIdentifier = node->identifier();
+    node->~TreeNode();
+    dealloc(static_cast<void *>(node));
+    freeIdentifier(nodeIdentifier);
   }
+
   TreeNode * node(int identifier) const;
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }

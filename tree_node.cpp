@@ -20,8 +20,6 @@ void TreeNode::release() {
       }
     }
     printf("Delete %d(%p)\n", m_identifier, this);
-    int identifier = m_identifier;
-    delete this;
-    TreePool::sharedPool()->freeIdentifier(identifier);
+    TreePool::sharedPool()->discardTreeNode(this);
   }
 }

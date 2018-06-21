@@ -95,7 +95,7 @@ public:
     m_referenceCounter = 1;
   }
 
-  int retainCount() {
+  int retainCount() const {
     return m_referenceCounter;
   }
 

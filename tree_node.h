@@ -122,8 +122,8 @@ public:
   }
 
 protected:
-  TreeNode(int identifier) :
-    m_identifier(identifier),
+  TreeNode() :
+    m_identifier(-1),
     m_referenceCounter(1)
   {
   }

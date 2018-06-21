@@ -7,7 +7,7 @@
 class FloatNode : public ExpressionNode {
 public:
   FloatNode() : ExpressionNode() {
-    printf("Create float\n");
+    printf("Created float\n");
   }
   size_t size() const override {
     return sizeof(FloatNode);

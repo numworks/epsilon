@@ -17,14 +17,14 @@ public:
         break;
       }
     }
-    printf("Generating identifier %d\n", newIdentifier);
+    //printf("Generating identifier %d\n", newIdentifier);
     assert(newIdentifier != -1); // TODO error handling
     return newIdentifier;
   }
 
   void freeIdentifier(int identifier) {
     assert(identifier >= 0 && identifier < MaxNumberOfNodes);
-    printf("DELETE IDENTIFIER %d\n", identifier);
+    printf("Freeing identifier %d\n", identifier);
     m_nodeForIdentifier[identifier] = nullptr;
   }
 

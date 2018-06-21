@@ -99,7 +99,6 @@ void TreePool::move(TreeNode * source, TreeNode * destination) {
 
   // Move the Node
   size_t srcDeepSize = source->deepSize();
-  printf("SourceDeepSize %zu\n", srcDeepSize);
   char * destinationAddress = reinterpret_cast<char *>(destination);
   char * sourceAddress = reinterpret_cast<char *>(source);
   insert(destinationAddress, sourceAddress, srcDeepSize);
@@ -110,9 +109,7 @@ void TreePool::move(TreeNode * source, TreeNode * destination) {
     if (nodeAddress == nullptr) {
       continue;
     } else if (nodeAddress >= sourceAddress && nodeAddress < sourceAddress + srcDeepSize) {
-      printf("Source %p, dest %p, currentNode identifier %d, pointer %p\n", sourceAddress, destinationAddress, i, m_nodeForIdentifier[i]);
       if (destinationAddress < sourceAddress) {
-        printf("former pointer %p, pointer difference %ld", m_nodeForIdentifier[i], sourceAddress - destinationAddress);
         m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress - (sourceAddress - destinationAddress));
       } else {
         m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress + (destinationAddress - (sourceAddress + srcDeepSize)));

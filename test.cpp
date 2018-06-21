@@ -21,20 +21,27 @@ void poolTest() {
 }
 
 Expression buildAddition() {
+  printf("\n\n-----------------------------\n");
+  printf("CODE: Float smallFloat(0.2f);\n\n");
   Float smallFloat(0.2f);
+
+  printf("\n\n-----------------------------\n");
+  printf("CODE: Float bigFloat(3.4f);\n\n");
   Float bigFloat(3.4f);
 
+  printf("\n\n-----------------------------\n");
+  printf("CODE: Addition a(smallFloat, bigFloat);\n\n");
   Addition a(smallFloat, bigFloat);
 
   TreePool::sharedPool()->log();
-  printf("EXITING\n");
-  printf("smallFloat ref = %d\n", smallFloat.identifier());
-  printf("bigFloat ref = %d\n", bigFloat.identifier());
+  printf("\n\n-----------------------------\n");
+  printf("CODE: return a;\n\n");
   return a;
 }
 
 int main() {
-  printf("Hello\n");
+  printf("\n\n-----------------------------\n");
+  printf("CODE: Expression a = buildAddition();\n\n");
   Expression a = buildAddition();
   printf("HAS RETURNED\n");
   TreePool::sharedPool()->log();

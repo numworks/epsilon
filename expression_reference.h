@@ -16,7 +16,6 @@ public:
 
   // Allow every ExpressionReference<T> to be transformed into an ExpressionReference<ExpressionNode>, i.e. Expression
   operator ExpressionReference<ExpressionNode>() const {
-    printf("ExpressionReference cast\n");
     // TODO: make sure this is kosher
     // static_assert(sizeof(ExpressionReference<T>) == sizeof(ExpressionReference<ExpressionNode>), "All ExpressionReference are supposed to have the same size");
     return *(reinterpret_cast<const ExpressionReference<ExpressionNode> *>(this));

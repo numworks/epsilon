@@ -3,7 +3,7 @@
 #include "expression_node.h"
 
 void TreeNode::release() {
-  printf("Releasing of %d(%p)\n", m_identifier, this);
+  printf("Release %d(%p)\n", m_identifier, this);
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     if (numberOfChildren() != 0) {
@@ -20,7 +20,7 @@ void TreeNode::release() {
         }
       } while (child->identifier() != lastIdentifier);
     }
-    printf("DELETE %d(%p)\n", m_identifier, this);
+    printf("Delete %d(%p)\n", m_identifier, this);
     int identifier = m_identifier;
     delete this;
     TreePool::sharedPool()->freeIdentifier(identifier);

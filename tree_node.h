@@ -16,11 +16,13 @@
  */
 
 class TreeNode {
-  //friend class TreeReference;
-  // friend class TreePool;
+//  friend class TreeReference<T>;
+  friend class TreePool;
 public:
   virtual ~TreeNode() {
   }
+
+  int indentifier() const { return m_identifier; }
 
   // Iterators
 
@@ -115,19 +117,17 @@ public:
     return child;
   }
 
-//private:
-
-    // FIXME: Make this private
-  TreeNode(int identifier) :
-    m_identifier(identifier),
-    m_referenceCounter(1)
-  {
-  }
-
   TreeNode * next() const {
     // Simple version would be "return this + 1;", with pointer arithmetics taken care of by the compiler.
     // Unfortunately, we want TreeNode to have a VARIABLE size
     return reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(const_cast<TreeNode *>(this)) + size());
+  }
+
+protected:
+  TreeNode(int identifier) :
+    m_identifier(identifier),
+    m_referenceCounter(1)
+  {
   }
 
   TreeNode * nextSibling() const {
@@ -172,7 +172,7 @@ public:
     ;
   }
 
-//private:
+private:
   int m_identifier;
   int m_referenceCounter;
 };

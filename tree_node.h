@@ -131,23 +131,34 @@ public:
   }
 
   TreeNode * nextSibling() const {
-    TreeNode * node = const_cast<TreeNode *>(this);
-    int remainingNodesToVisit = 0;
-    do {
+    int remainingNodesToVisit = numberOfChildren();
+    TreeNode * node = const_cast<TreeNode *>(this)->next();
+    while (remainingNodesToVisit > 0) {
       remainingNodesToVisit += node->numberOfChildren();
       node = node->next();
       remainingNodesToVisit--;
-    } while (remainingNodesToVisit > 0);
+    }
     return node;
   }
 
-  TreeNode * lastDescendant() const {
+  /*TreeNode * lastDescendant() const {
     TreeNode * node = const_cast<TreeNode *>(this);
     int remainingNodesToVisit = node->numberOfChildren();
     while (remainingNodesToVisit > 0) {
       node = node->next();
       remainingNodesToVisit--;
       remainingNodesToVisit += node->numberOfChildren();
+    }
+    return node;
+  }*/
+
+  TreeNode * lastChild() const {
+    if (numberOfChildren() == 0) {
+      return const_cast<TreeNode *>(this);
+    }
+    TreeNode * node = next();
+    for (int i = 0; i < numberOfChildren() - 1; i++) {
+      node = node->nextSibling();
     }
     return node;
   }

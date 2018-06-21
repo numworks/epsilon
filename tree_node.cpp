@@ -7,18 +7,17 @@ void TreeNode::release() {
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     if (numberOfChildren() != 0) {
-      int lastIdentifier = lastDescendant()->identifier();
+      int lastIdentifier = lastChild()->identifier();
       TreeNode * child = next();
-      do {
-        bool childWillBeDeleted = (child->m_referenceCounter == 1);
+      bool lastChildReleased = false;
+      while (!lastChildReleased) {
+        lastChildReleased = child->identifier() == lastIdentifier;
+        int nextSiblingIdentifier = lastChildReleased ? -1 : child->nextSibling()->identifier();
         child->release();
-        if (!childWillBeDeleted) {
-          printf("Incrementing iterator\n");
-          child = child->next();
-        } else {
-          printf("Keeping iterator\n");
+        if (nextSiblingIdentifier != -1) {
+          child = TreePool::sharedPool()->node(nextSiblingIdentifier);
         }
-      } while (child->identifier() != lastIdentifier);
+      }
     }
     printf("Delete %d(%p)\n", m_identifier, this);
     int identifier = m_identifier;

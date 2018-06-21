@@ -2,7 +2,6 @@
 #define TREE_REFERENCE_H
 
 #include "tree_pool.h"
-#include <new>
 
 #include <stdio.h>
 

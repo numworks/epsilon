@@ -15,9 +15,3 @@ public:
 };
 
 #endif
-
-/* Code I want to write:
- *
- *   ExpressionNode * n = new AdditionNode();
- *   delete n;
- */

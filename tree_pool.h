@@ -18,7 +18,6 @@ public:
         break;
       }
     }
-    //printf("Generating identifier %d\n", newIdentifier);
     assert(newIdentifier != -1); // TODO error handling
     return newIdentifier;
   }

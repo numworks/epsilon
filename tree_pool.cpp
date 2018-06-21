@@ -1,5 +1,4 @@
 #include "tree_pool.h"
-#include "tree_node.h"
 #include <string.h>
 
 void * TreePool::alloc(size_t size) {
@@ -27,8 +26,8 @@ void TreePool::dealloc(void * ptr) {
 
   // Step 2 - Update m_nodeForIdentifier
   for (int i = 0; i < MaxNumberOfNodes; i++) {
-    if (m_nodeForIdentifier[i] > node) {
-      m_nodeForIdentifier[i] -= size;
+    if (m_nodeForIdentifier[i] != nullptr && m_nodeForIdentifier[i] > node) {
+      m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(m_nodeForIdentifier[i]) - size);
     }
   }
 }
@@ -53,7 +52,7 @@ static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
 }
 
 void TreePool::insert(char * destination, char * source, size_t length) {
-  if (source == destination || destination < source + length) {
+  if (source == destination || (destination > source && destination < source + length)) {
     return;
   }
 
@@ -76,31 +75,50 @@ void TreePool::insert(char * destination, char * source, size_t length) {
   }
 }
 
+void TreePool::logNodeForIdentifierArray() {
+  printf("\n\n");
+  for (int i = 0; i < MaxNumberOfNodes; i++) {
+    if (m_nodeForIdentifier[i] != nullptr) {
+      printf("Identifier %d, node %p\n", i, m_nodeForIdentifier[i]);
+    }
+  }
+  printf("\n\n");
+}
+
 void TreePool::move(TreeNode * source, TreeNode * destination) {
   if (source == destination) {
     return;
   }
+
+  log();
+
   // Move the Node
   size_t srcDeepSize = source->deepSize();
-  insert(reinterpret_cast<char *>(destination), reinterpret_cast<char *>(source), srcDeepSize);
+  printf("SourceDeepSize %zu\n", srcDeepSize);
+  char * destinationAddress = reinterpret_cast<char *>(destination);
+  char * sourceAddress = reinterpret_cast<char *>(source);
+  insert(destinationAddress, sourceAddress, srcDeepSize);
 
   // Update the nodeForIdentifier array
   for (int i = 0; i < MaxNumberOfNodes; i++) {
-    void * nodeAddress = m_nodeForIdentifier[i];
+    char * nodeAddress = reinterpret_cast<char *>(m_nodeForIdentifier[i]);
     if (nodeAddress == nullptr) {
       continue;
-    } else if (nodeAddress >= source && nodeAddress < source + srcDeepSize) {
-      if (destination < source) {
-        m_nodeForIdentifier[i] -= (source - destination);
+    } else if (nodeAddress >= sourceAddress && nodeAddress < sourceAddress + srcDeepSize) {
+      printf("Source %p, dest %p, currentNode identifier %d, pointer %p\n", sourceAddress, destinationAddress, i, m_nodeForIdentifier[i]);
+      if (destinationAddress < sourceAddress) {
+        printf("former pointer %p, pointer difference %ld", m_nodeForIdentifier[i], sourceAddress - destinationAddress);
+        m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress - (sourceAddress - destinationAddress));
       } else {
-        m_nodeForIdentifier[i] += destination - (source + srcDeepSize);
+        m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress + (destinationAddress - (sourceAddress + srcDeepSize)));
       }
-    } else if (nodeAddress > source && nodeAddress < destination) {
-      m_nodeForIdentifier[i] -= srcDeepSize;
-    } else if (nodeAddress < source && nodeAddress > destination) {
-      m_nodeForIdentifier[i] += srcDeepSize;
+    } else if (nodeAddress > sourceAddress && nodeAddress <= destinationAddress) {
+      m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress - srcDeepSize);
+    } else if (nodeAddress < sourceAddress && nodeAddress >= destinationAddress) {
+      m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress + srcDeepSize);
     }
   }
+  log();
 }
 
 #if TREE_LOGGING
@@ -112,6 +130,8 @@ void TreePool::log() {
     printf("|(%03d|%s|%03d|%p)", node->m_identifier, node->description(), node->retainCount(), node);
   }
   printf("|\n");
+
+  logNodeForIdentifierArray();
 }
 #endif
 

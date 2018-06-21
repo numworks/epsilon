@@ -2,7 +2,6 @@
 #define TREE_POOL_H
 
 #include <stddef.h>
-
 #include "tree_node.h"
 
 class TreePool {
@@ -19,11 +18,13 @@ public:
       }
     }
     printf("Generating identifier %d\n", newIdentifier);
+    assert(newIdentifier != -1); // TODO error handling
     return newIdentifier;
   }
 
   void freeIdentifier(int identifier) {
     assert(identifier >= 0 && identifier < MaxNumberOfNodes);
+    printf("DELETE IDENTIFIER %d\n", identifier);
     m_nodeForIdentifier[identifier] = nullptr;
   }
 
@@ -48,9 +49,12 @@ public:
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
+  void logNodeForIdentifierArray();
+
   void move(TreeNode * source, TreeNode * destination);
 
   void registerNode(TreeNode * node) {
+    printf("Registering identifier %d with node %p\n", node->identifier(), node);
     m_nodeForIdentifier[node->identifier()] = node;
   }
 

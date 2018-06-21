@@ -22,11 +22,6 @@ public:
     Pool()->dealloc(ptr);
   }
 
-  static TreePool * Pool() {
-    static TreePool pool;
-    return &pool;
-  }
-
   virtual float approximate() = 0;
   int numberOfOperands() { return numberOfChildren(); }
   ExpressionNode * operand(int i) { return static_cast<ExpressionNode *>(childAtIndex(i)); }

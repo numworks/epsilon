@@ -19,6 +19,9 @@ public:
 
   ~TreeReference() {
     printf("TreeRef destroy of %d\n", m_identifier);
+    assert(node());
+    printf("TreeRef's node %p\n", node());
+    printf("TreeRef's node identifier %d and node identifier %d\n", node()->m_identifier, m_identifier);
     assert(node()->m_identifier == m_identifier);
     node()->release();
   }

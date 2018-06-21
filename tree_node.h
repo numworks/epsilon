@@ -82,9 +82,7 @@ public:
   }
 #endif
 
-  virtual size_t size() const { // Consider making this full abstract?
-    return sizeof(TreeNode);
-  }
+  virtual size_t size() const = 0;
 
   void retain() {
     m_referenceCounter++;

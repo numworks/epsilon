@@ -11,6 +11,10 @@ public:
     return "Addition";
   }
 #endif
+
+  size_t size() const override {
+    return sizeof(AdditionNode);
+  }
   float approximate() override {
     float result = 0.0f;
     for (int i=0; i<numberOfOperands(); i++) {

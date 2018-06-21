@@ -2,12 +2,11 @@
 #define EXPRESSION_NODE_H
 
 #include "tree_node.h"
-#include "tree_pool.h"
 
 class ExpressionNode : public TreeNode {
 public:
-  ExpressionNode() : TreeNode(Pool()->generateIdentifier()) {
-    Pool()->registerNode(this);
+  ExpressionNode() : TreeNode(TreePool::sharedPool()->generateIdentifier()) {
+    TreePool::sharedPool()->registerNode(this);
   }
 
   // TODO: operator new and delte
@@ -15,11 +14,11 @@ public:
   // Find a way to define it on the TreeNode
 
   void * operator new(size_t count) {
-    return Pool()->alloc(count);
+    return TreePool::sharedPool()->alloc(count);
   }
 
   void operator delete(void * ptr) {
-    Pool()->dealloc(ptr);
+    TreePool::sharedPool()->dealloc(ptr);
   }
 
   virtual float approximate() = 0;

@@ -9,7 +9,7 @@
 template <class T>
 class ExpressionReference : public TreeReference<T> {
 public:
-  ExpressionReference() : TreeReference<T>(ExpressionNode::Pool()) { }
+  ExpressionReference() : TreeReference<T>() { }
 
   /*ExpressionReference(const ExpressionReference & er) {
   }*/

@@ -2,11 +2,6 @@
 #include "tree_pool.h"
 #include "expression_node.h"
 
-TreePool * TreeNode::Pool() {
-  static TreePool pool;
-  return &pool;
-}
-
 void TreeNode::release() {
   printf("Releasing of %d(%p)\n", m_identifier, this);
   m_referenceCounter--;
@@ -28,6 +23,6 @@ void TreeNode::release() {
     printf("DELETE %d(%p)\n", m_identifier, this);
     int identifier = m_identifier;
     delete this;
-    Pool()->freeIdentifier(identifier);
+    TreePool::sharedPool()->freeIdentifier(identifier);
   }
 }

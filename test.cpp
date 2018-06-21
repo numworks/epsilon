@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 void poolTest() {
-  ExpressionNode::Pool()->log();
+  TreePool::sharedPool()->log();
 
   FloatNode * f = new FloatNode();
   f->setFloat(0.1f);
@@ -13,11 +13,11 @@ void poolTest() {
 
   AdditionNode * h = new AdditionNode();
 
-  ExpressionNode::Pool()->log();
+  TreePool::sharedPool()->log();
 
   delete g;
 
-  ExpressionNode::Pool()->log();
+  TreePool::sharedPool()->log();
 }
 
 Expression buildAddition() {
@@ -26,7 +26,7 @@ Expression buildAddition() {
 
   Addition a(smallFloat, bigFloat);
 
-  ExpressionNode::Pool()->log();
+  TreePool::sharedPool()->log();
   printf("EXITING\n");
   printf("smallFloat ref = %d\n", smallFloat.identifier());
   printf("bigFloat ref = %d\n", bigFloat.identifier());
@@ -37,7 +37,7 @@ int main() {
   printf("Hello\n");
   Expression a = buildAddition();
   printf("HAS RETURNED\n");
-  ExpressionNode::Pool()->log();
+  TreePool::sharedPool()->log();
 
 
 

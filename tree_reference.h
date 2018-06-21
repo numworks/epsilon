@@ -10,7 +10,6 @@ template <class T>
 class TreeReference {
 public:
   TreeReference(const TreeReference & tr) :
-    m_pool(tr.m_pool),
     m_identifier(tr.m_identifier)
   {
     printf("TreeReference copy of %d\n", m_identifier);
@@ -41,42 +40,37 @@ public:
   }
 
   void addChild(TreeReference<TreeNode> t) {
-    //assert(t.m_pool == m_pool);
-    //t.node()->retain();
-    TreeNode * deepCopy = m_pool->deepCopy(t.node());
-    m_pool->move(
+    TreeNode * deepCopy = TreePool::sharedPool()->deepCopy(t.node());
+    TreePool::sharedPool()->move(
       deepCopy,
       node()->next()
     );
   }
 
   void removeChild(TreeReference<TreeNode> t) {
-    m_pool->move(
+    TreePool::sharedPool()->move(
         t.node(),
-        m_pool->last()
+        TreePool::sharedPool()->last()
     );
     t.node()->release();
   }
 
   T * node() const {
     // TODO: Here, assert that the node type is indeed T
-    return static_cast<T*>(m_pool->node(m_identifier));
+    return static_cast<T*>(TreePool::sharedPool()->node(m_identifier));
   }
 
   int identifier() const { return m_identifier; }
 
 protected:
-  TreeReference(TreePool * pool) :
-   m_pool(pool)
-  {
+  TreeReference() {
     TreeNode * node = new T();
     m_identifier = node->identifier();
     printf("TreeNode orig build of %d\n", m_identifier);
   }
 
 private:
-  TreeReference(TreePool * pool, TreeNode * node) :
-    m_pool(pool),
+  TreeReference(TreeNode * node) :
     m_identifier(node->identifier())
     //m_cachedNode(node)
   {
@@ -84,8 +78,6 @@ private:
     node->retain();
   }
 
-
-  TreePool * m_pool;
   int m_identifier;
   //TreeNode * m_cachedNode;
 };

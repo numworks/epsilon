@@ -6,7 +6,7 @@
 
 class TreePool {
 public:
-  TreePool() : m_cursor(m_buffer) { }
+  static TreePool * sharedPool();
 
   // Identifiers
   int generateIdentifier() {
@@ -80,6 +80,7 @@ public:
 #endif
 
 private:
+  TreePool() : m_cursor(m_buffer) { }
   static inline void insert(char * destination, char * source, size_t length);
   TreeNode::DepthFirst::Iterator begin() const { return TreeNode::DepthFirst::Iterator(first()); }
   TreeNode::DepthFirst::Iterator end() const { return TreeNode::DepthFirst::Iterator(last()); }

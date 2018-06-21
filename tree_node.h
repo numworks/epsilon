@@ -15,17 +15,12 @@
  *  - a reference counter
  */
 
-class TreePool;
-
 class TreeNode {
   //friend class TreeReference;
   // friend class TreePool;
 public:
   virtual ~TreeNode() {
   }
-
-  // Pool
-  static TreePool * Pool();
 
   // Iterators
 

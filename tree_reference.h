@@ -2,8 +2,10 @@
 #define TREE_REFERENCE_H
 
 #include "tree_pool.h"
-
 #include <stdio.h>
+
+static inline int min(int i, int j) { return i < j ? i : j; }
+static inline int max(int i, int j) { return i > j ? i : j; }
 
 template <class T>
 class TreeReference {
@@ -70,6 +72,22 @@ public:
     TreePool::sharedPool()->move(oldChild.node(), TreePool::sharedPool()->last());
     oldChild.node()->release();
   }
+
+  void swapChildren(int i, int j) {
+    assert(i >= 0 && i < numberOfChildren());
+    assert(j >= 0 && j < numberOfChildren());
+    if (i == j) {
+      return;
+    }
+    int firstChildIndex = min(i, j);
+    int secondChildIndex = max(i, j);
+    TreeReference<T> firstChild = childAtIndex(firstChildIndex);
+    TreeReference<T> secondChild = childAtIndex(secondChildIndex);
+    TreeNode * firstChildNode = firstChild.node();
+    TreePool::sharedPool()->move(firstChildNode, secondChild.node()->next());
+    TreePool::sharedPool()->move(secondChild.node(), firstChildNode);
+  }
+
 protected:
   TreeReference() {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<T>();

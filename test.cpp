@@ -16,6 +16,7 @@ int main() {
   Float smallFloat(1.3f);
   a.replaceChildAtIndex(0, smallFloat);
   float result2 = a.approximate();
+  a.swapChildren(1,0);
   TreePool::sharedPool()->log();
   return 0;
 }

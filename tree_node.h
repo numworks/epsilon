@@ -19,15 +19,13 @@ class TreeNode {
 //  friend class TreeReference<T>;
   friend class TreePool;
 public:
-  virtual ~TreeNode() {
-  }
-
+  virtual ~TreeNode() {}
   int indentifier() const { return m_identifier; }
 
-  // Iterators
+  TreeNode * parent() const;
 
   class Iterator {
-  public:
+    public:
     Iterator(TreeNode * node) : m_node(node) {}
     TreeNode * operator*() { return m_node; }
     bool operator!=(const Iterator& it) const { return (m_node != it.m_node); }
@@ -72,7 +70,6 @@ public:
   };
 
   DepthFirst depthFirstChildren() { return DepthFirst(this); }
-
 
   int identifier() const { return m_identifier; }
 

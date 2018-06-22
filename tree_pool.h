@@ -6,6 +6,7 @@
 #include <new>
 
 class TreePool {
+  friend class TreeNode;
 public:
   static TreePool * sharedPool();
 
@@ -88,17 +89,37 @@ public:
   void log();
 #endif
 
-private:
-  TreePool() : m_cursor(m_buffer) { }
-  static inline void insert(char * destination, char * source, size_t length);
+protected:
+  constexpr static int BufferSize = 256;
+  constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
+
+  class AllPool {
+  public:
+    AllPool(TreeNode * node) : m_node(node) {}
+    class Iterator : public TreeNode::Iterator {
+    public:
+      using TreeNode::Iterator::Iterator;
+      Iterator & operator++() {
+        m_node = m_node->next();
+        return *this;
+      }
+    };
+    Iterator begin() const { return Iterator(m_node); }
+    Iterator end() const { return Iterator(TreePool::sharedPool()->last()); }
+  private:
+    TreeNode * m_node;
+  };
+  AllPool allNodes() { return AllPool(*(begin())); }
+
   TreeNode::DepthFirst::Iterator begin() const { return TreeNode::DepthFirst::Iterator(first()); }
   TreeNode::DepthFirst::Iterator end() const { return TreeNode::DepthFirst::Iterator(last()); }
 
-  char * m_cursor;
+private:
+  TreePool() : m_cursor(m_buffer) { }
+  static inline void insert(char * destination, char * source, size_t length);
 
-  constexpr static int BufferSize = 256;
+  char * m_cursor;
   char m_buffer[BufferSize];
-  constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
 };
 

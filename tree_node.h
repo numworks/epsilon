@@ -100,7 +100,7 @@ public:
     return 0;
   }
 
-  TreeNode * childAtIndex(int i) const {
+  TreeNode * treeChildAtIndex(int i) const {
     assert(i >= 0);
     assert(i < numberOfChildren());
     TreeNode * child = next();

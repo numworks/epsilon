@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -247,7 +247,7 @@ a.action svg {
 var mainCanvas = document.querySelector(".calculator .screen");
 var secondaryCanvasContext = document.querySelector(".screen-magnified").getContext("2d");
 var Module = {
-  arguments: ["--language", document.documentElement.lang],
+  arguments: ["--language", window.navigator.language.split('-')[0]],
   canvas: mainCanvas,
   onDisplayRefresh: function() {
     secondaryCanvasContext.drawImage(mainCanvas, 0, 0);

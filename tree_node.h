@@ -20,9 +20,29 @@ class TreeNode {
   friend class TreePool;
 public:
   virtual ~TreeNode() {}
-  int indentifier() const { return m_identifier; }
 
-  TreeNode * parent() const;
+  // Attributes
+  virtual size_t size() const = 0;
+  int identifier() const { return m_identifier; }
+  int retainCount() const { return m_referenceCounter; }
+#if TREE_LOGGING
+  virtual const char * description() const {
+    return "UNKNOWN";
+  }
+#endif
+
+  // Node operations
+  void retain() { m_referenceCounter++; }
+  void release();
+  void rename(int identifier) {
+    m_identifier = identifier;
+    m_referenceCounter = 1;
+  }
+
+  // Hierarchy
+  TreeNode * treeParent() const;
+  virtual int numberOfChildren() const { return 0; }
+  TreeNode * treeChildAtIndex(int i) const;
 
   class Iterator {
     public:
@@ -50,8 +70,6 @@ public:
     TreeNode * m_node;
   };
 
-  Direct directChildren() { return Direct(this); }
-
   class DepthFirst {
   public:
     DepthFirst(TreeNode * node) : m_node(node) {}
@@ -69,48 +87,8 @@ public:
     TreeNode * m_node;
   };
 
+  Direct directChildren() { return Direct(this); }
   DepthFirst depthFirstChildren() { return DepthFirst(this); }
-
-  int identifier() const { return m_identifier; }
-
-#if TREE_LOGGING
-  virtual const char * description() const {
-    return "UNKNOWN";
-  }
-#endif
-
-  virtual size_t size() const = 0;
-
-  void retain() {
-    m_referenceCounter++;
-  }
-
-  void release();
-
-  void rename(int identifier) {
-    m_identifier = identifier;
-    m_referenceCounter = 1;
-  }
-
-  int retainCount() const {
-    return m_referenceCounter;
-  }
-
-  virtual int numberOfChildren() const {
-    return 0;
-  }
-
-  TreeNode * treeChildAtIndex(int i) const {
-    assert(i >= 0);
-    assert(i < numberOfChildren());
-    TreeNode * child = next();
-    while (i > 0) {
-      child = child->nextSibling();
-      assert(child != nullptr);
-      i--;
-    }
-    return child;
-  }
 
   TreeNode * next() const {
     // Simple version would be "return this + 1;", with pointer arithmetics taken care of by the compiler.

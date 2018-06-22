@@ -2,7 +2,7 @@
 #include "tree_pool.h"
 #include "expression_node.h"
 
-TreeNode * TreeNode::parent() const {
+TreeNode * TreeNode::treeParent() const {
   int cursor = -1;
   TreeNode * parentsHistory[TreePool::MaxNumberOfNodes];
   int numberOfChildrenHistory[TreePool::MaxNumberOfNodes];
@@ -30,6 +30,19 @@ TreeNode * TreeNode::parent() const {
   assert(false);
   return nullptr;
 }
+
+TreeNode * TreeNode::treeChildAtIndex(int i) const {
+  assert(i >= 0);
+  assert(i < numberOfChildren());
+  TreeNode * child = next();
+  while (i > 0) {
+    child = child->nextSibling();
+    assert(child != nullptr);
+    i--;
+  }
+  return child;
+}
+
 
 void TreeNode::release() {
   printf("Release %d(%p)\n", m_identifier, this);

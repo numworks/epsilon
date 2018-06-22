@@ -132,7 +132,7 @@ protected:
 
 private:
   TreePool() : m_cursor(m_buffer) { }
-  static inline void insert(char * destination, char * source, size_t length);
+  static inline bool insert(char * destination, char * source, size_t length);
 
   char * m_cursor;
   char m_buffer[BufferSize];

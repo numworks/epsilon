@@ -40,11 +40,15 @@ public:
   }
 
   // Hierarchy
-  TreeNode * treeParent() const;
+  TreeNode * parentTree() const;
+  TreeNode * editableRootTree();
   virtual int numberOfChildren() const { return 0; }
   int numberOfDescendants(bool includeSelf) const;
-  TreeNode * treeChildAtIndex(int i) const;
+  TreeNode * childTreeAtIndex(int i) const;
+  int indexOfChild(const TreeNode * child) const;
   bool hasChild(const TreeNode * child) const;
+  bool hasAncestor(const TreeNode * node, bool includeSelf) const;
+  bool hasSibling(const TreeNode * e) const;
 
   class Iterator {
     public:

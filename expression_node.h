@@ -6,7 +6,7 @@
 class ExpressionNode : public TreeNode {
 public:
   virtual float approximate() = 0;
-  ExpressionNode * child(int i) { return static_cast<ExpressionNode *>(treeChildAtIndex(i)); }
+  ExpressionNode * child(int i) { return static_cast<ExpressionNode *>(childTreeAtIndex(i)); }
 };
 
 #endif

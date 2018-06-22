@@ -111,6 +111,24 @@ protected:
   };
   AllPool allNodes() { return AllPool(*(begin())); }
 
+  class Roots {
+  public:
+    Roots(TreeNode * node) : m_node(node) {}
+    class Iterator : public TreeNode::Iterator {
+    public:
+      using TreeNode::Iterator::Iterator;
+      Iterator & operator++() {
+        m_node = m_node->nextSibling();
+        return *this;
+      }
+    };
+    Iterator begin() const { return Iterator(m_node); }
+    Iterator end() const { return Iterator(TreePool::sharedPool()->last()); }
+  private:
+    TreeNode * m_node;
+  };
+  Roots roots() { return Roots(*(begin())); }
+
   TreeNode::DepthFirst::Iterator begin() const { return TreeNode::DepthFirst::Iterator(first()); }
   TreeNode::DepthFirst::Iterator end() const { return TreeNode::DepthFirst::Iterator(last()); }
 

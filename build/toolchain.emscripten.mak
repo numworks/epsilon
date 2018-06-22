@@ -82,4 +82,4 @@ endif
 EMFLAGS += -s MODULARIZE=1 -s 'EXPORT_NAME="Epsilon"'
 
 SFLAGS += $(EMFLAGS)
-LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonEventsEmscriptenPushKey", "_IonEventsEmscriptenPushEvent"]'
+LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonEventsEmscriptenPushKey", "_IonEventsEmscriptenPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]'

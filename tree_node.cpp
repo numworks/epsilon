@@ -3,6 +3,9 @@
 #include "expression_node.h"
 
 TreeNode * TreeNode::treeParent() const {
+// Choose between those two algorithms: the first has complexity O(numberNodes) but uses 0(3maxNumberNodes) space
+// The second is much clearer for the reader and uses no space, but has complexity 0
+#if 0
   int cursor = -1;
   TreeNode * parentsHistory[TreePool::MaxNumberOfNodes];
   int numberOfChildrenHistory[TreePool::MaxNumberOfNodes];
@@ -29,6 +32,26 @@ TreeNode * TreeNode::treeParent() const {
   }
   assert(false);
   return nullptr;
+#else
+  for (TreeNode * node : TreePool::sharedPool()->allNodes()) {
+    if (node == this) {
+      return nullptr;
+    }
+    if (node->hasChild(this)) {
+      return node;
+    }
+  }
+  assert(false);
+  return nullptr;
+#endif
+}
+
+int TreeNode::numberOfDescendants(bool includeSelf) const {
+  int result = includeSelf ? 1 : 0;
+  for (TreeNode * child : depthFirstChildren()) {
+    result++;
+  }
+  return result;
 }
 
 TreeNode * TreeNode::treeChildAtIndex(int i) const {

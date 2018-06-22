@@ -42,11 +42,13 @@ public:
   // Hierarchy
   TreeNode * treeParent() const;
   virtual int numberOfChildren() const { return 0; }
+  int numberOfDescendants(bool includeSelf) const;
   TreeNode * treeChildAtIndex(int i) const;
+  bool hasChild(const TreeNode * child) const;
 
   class Iterator {
     public:
-    Iterator(TreeNode * node) : m_node(node) {}
+    Iterator(const TreeNode * node) : m_node(const_cast<TreeNode *>(node)) {}
     TreeNode * operator*() { return m_node; }
     bool operator!=(const Iterator& it) const { return (m_node != it.m_node); }
   protected:
@@ -55,7 +57,7 @@ public:
 
   class Direct {
   public:
-    Direct(TreeNode * node) : m_node(node) {}
+    Direct(const TreeNode * node) : m_node(const_cast<TreeNode *>(node)) {}
     class Iterator : public TreeNode::Iterator {
     public:
       using TreeNode::Iterator::Iterator;
@@ -72,7 +74,7 @@ public:
 
   class DepthFirst {
   public:
-    DepthFirst(TreeNode * node) : m_node(node) {}
+    DepthFirst(const TreeNode * node) : m_node(const_cast<TreeNode *>(node)) {}
     class Iterator : public TreeNode::Iterator {
     public:
       using TreeNode::Iterator::Iterator;
@@ -87,8 +89,8 @@ public:
     TreeNode * m_node;
   };
 
-  Direct directChildren() { return Direct(this); }
-  DepthFirst depthFirstChildren() { return DepthFirst(this); }
+  Direct directChildren() const { return Direct(this); }
+  DepthFirst depthFirstChildren() const { return DepthFirst(this); }
 
   TreeNode * next() const {
     // Simple version would be "return this + 1;", with pointer arithmetics taken care of by the compiler.

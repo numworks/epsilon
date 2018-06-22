@@ -5,7 +5,6 @@
 // Node operations
 
 void TreeNode::release() {
-  printf("Release %d(%p)\n", m_identifier, this);
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     if (numberOfChildren() != 0) {
@@ -21,7 +20,6 @@ void TreeNode::release() {
         }
       }
     }
-    printf("Delete %d(%p)\n", m_identifier, this);
     TreePool::sharedPool()->discardTreeNode(this);
   }
 }
@@ -38,7 +36,6 @@ TreeNode * TreeNode::parentTree() const {
   int childrenVisitedCountHistory[TreePool::MaxNumberOfNodes];
   for (TreeNode * node : TreePool::sharedPool()->allNodes()) {
     if (node->identifier() == m_identifier) {
-      printf("Parent of %d is %d\n", m_identifier, cursor >= 0 ? parentsHistory[cursor]->identifier() : -1);
       return cursor >= 0 ? parentsHistory[cursor] : nullptr;
     }
     if (cursor >= 0) {

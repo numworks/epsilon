@@ -25,7 +25,6 @@ public:
 
   void freeIdentifier(int identifier) {
     assert(identifier >= 0 && identifier < MaxNumberOfNodes);
-    printf("Freeing identifier %d\n", identifier);
     m_nodeForIdentifier[identifier] = nullptr;
   }
 
@@ -64,7 +63,6 @@ public:
   void move(TreeNode * source, TreeNode * destination);
 
   void registerNode(TreeNode * node) {
-    printf("Registering identifier %d with node %p\n", node->identifier(), node);
     m_nodeForIdentifier[node->identifier()] = node;
   }
 

@@ -19,7 +19,6 @@ void TreePool::dealloc(void * ptr) {
   assert(ptr >= m_buffer && ptr < m_cursor);
   TreeNode * node = reinterpret_cast<TreeNode *>(ptr);
   size_t size = node->size();
-  printf("Dealloc %d(%p) of size %zu\n", node->m_identifier, node, size);
 
   // Step 1 - Compact the pool
   memmove(
@@ -133,7 +132,7 @@ void TreePool::log() {
   }
   printf("|\n");
 
-  logNodeForIdentifierArray();
+  //logNodeForIdentifierArray();
 }
 #endif
 

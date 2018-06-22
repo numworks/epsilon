@@ -10,13 +10,11 @@ class TreeReference {
 public:
   TreeReference(const TreeReference & tr) {
     int trNodeIdentifier = tr.identifier();
-    printf("TreeReference copy of %d\n", trNodeIdentifier);
     TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(TreePool::sharedPool()->node(trNodeIdentifier));
     m_identifier = nodeCopy->identifier();
   }
 
   ~TreeReference() {
-    printf("TreeRef destroy of %d\n", m_identifier);
     assert(node());
     assert(node()->identifier() == m_identifier);
     node()->release();
@@ -76,14 +74,12 @@ protected:
   TreeReference() {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<T>();
     m_identifier = node->identifier();
-    printf("Creating TreeRef of new node %d\n", m_identifier);
   }
 
 private:
   TreeReference(TreeNode * node) :
     m_identifier(node->identifier())
   {
-    printf("Creating TreeRef of existing node %d\n", m_identifier);
     node->retain();
   }
 

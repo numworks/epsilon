@@ -25,6 +25,14 @@ public:
     TreeReference<T>::addChild(e);
   }
 
+  ExpressionReference<ExpressionNode> childAtIndex(int i) {
+    return TreeReference<T>::childAtIndex(i);
+  }
+
+  void replaceChildAtIndex(int oldChildIndex, ExpressionReference<ExpressionNode> newChild) {
+    TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild);
+  }
+
   float approximate() const {
     return this->node()->approximate();
   }

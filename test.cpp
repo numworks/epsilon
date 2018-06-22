@@ -2,7 +2,7 @@
 #include "addition_node.h"
 #include <stdio.h>
 
-Expression buildAddition() {
+Addition buildAddition() {
   printf("\n\n-----------------------------\n");
   printf("CODE: Float smallFloat(0.2f);\n\n");
   Float smallFloat(0.2f);
@@ -24,7 +24,14 @@ Expression buildAddition() {
 int main() {
   printf("\n\n-----------------------------\n");
   printf("CODE: Expression a = buildAddition();\n\n");
-  Expression a = buildAddition();
+  Addition a = buildAddition();
+  float result = a.approximate();
+  printf("a = %f \n", result);
+  Float smallFloat(1.3f);
+  a.replaceChildAtIndex(0, smallFloat);
+  float result2 = a.approximate();
+  printf("a = %f \n", result2);
+
   printf("HAS RETURNED\n");
   TreePool::sharedPool()->log();
 

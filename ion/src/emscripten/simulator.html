@@ -246,7 +246,7 @@ a.action svg {
     <script>
 var mainCanvas = document.querySelector(".calculator .screen");
 var secondaryCanvasContext = document.querySelector(".screen-magnified").getContext("2d");
-var module = {
+var Module = {
   arguments: ["--language", document.documentElement.lang],
   canvas: mainCanvas,
   onDisplayRefresh: function() {
@@ -254,7 +254,7 @@ var module = {
   }
 };
 
-Epsilon(module);
+Epsilon(Module);
     </script>
     <script>
 function screenshot() {

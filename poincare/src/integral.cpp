@@ -98,7 +98,15 @@ T Integral::lagrangeGaussQuadrature(T a, T b, Context & context, AngleUnit angle
   T result = 0;
   for (int j = 0; j < 10; j++) {
     T dx = xr * x[j];
-    result += w[j]*(functionValueAtAbscissa(xm+dx, context, angleUnit) + functionValueAtAbscissa(xm-dx, context, angleUnit));
+    T evaluationAfterx = functionValueAtAbscissa(xm+dx, context, angleUnit);
+    if (std::isnan(evaluationAfterx)) {
+      return NAN;
+    }
+    T evaluationBeforex = functionValueAtAbscissa(xm-dx, context, angleUnit);
+    if (std::isnan(evaluationBeforex)) {
+      return NAN;
+    }
+    result += w[j]*(evaluationAfterx + fevaluationBeforex);
   }
   result *= xr;
   return result;
@@ -129,15 +137,28 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, Context &
   T hlgth = 0.5*(b-a);
   T dhlgth = std::fabs(hlgth);
 
+  DetailedResult<T> errorResult;
+  errorResult.integral = NAN;
+  errorResult.absoluteError = 0;
+
   T resg = 0;
   T fc = functionValueAtAbscissa(centr, context, angleUnit);
+  if (std::isnan(fc)) {
+    return errorResult;
+  }
   T resk = wgk[10]*fc;
   T resabs = std::fabs(resk);
   for (int j = 0; j < 5; j++) {
     int jtw = 2*j+1;
     T absc = hlgth*xgk[jtw];
     T fval1 = functionValueAtAbscissa(centr-absc, context, angleUnit);
+    if (std::isnan(fval1)) {
+      return errorResult;
+    }
     T fval2 = functionValueAtAbscissa(centr+absc, context, angleUnit);
+    if (std::isnan(fval2)) {
+      return errorResult;
+    }
     fv1[jtw] = fval1;
     fv2[jtw] = fval2;
     T fsum = fval1+fval2;
@@ -149,7 +170,13 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, Context &
     int jtwm1 = 2*j;
     T absc = hlgth*xgk[jtwm1];
     T fval1 = functionValueAtAbscissa(centr-absc, context, angleUnit);
+    if (std::isnan(fval1)) {
+      return errorResult;
+    }
     T fval2 = functionValueAtAbscissa(centr+absc, context, angleUnit);
+    if (std::isnan(fval2)) {
+      return errorResult;
+    }
     fv1[jtwm1] = fval1;
     fv2[jtwm1] = fval2;
     T fsum = fval1+fval2;

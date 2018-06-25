@@ -148,9 +148,8 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, Context &
   }
   T resk = wgk[10]*fc;
   T resabs = std::fabs(resk);
-  for (int j = 0; j < 5; j++) {
-    int jtw = 2*j+1;
-    T absc = hlgth*xgk[jtw];
+  for (int j = 0; j < 10; j++) {
+    T absc = hlgth*xgk[j];
     T fval1 = functionValueAtAbscissa(centr-absc, context, angleUnit);
     if (std::isnan(fval1)) {
       return errorResult;
@@ -159,30 +158,16 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, Context &
     if (std::isnan(fval2)) {
       return errorResult;
     }
-    fv1[jtw] = fval1;
-    fv2[jtw] = fval2;
+    fv1[j] = fval1;
+    fv2[j] = fval2;
     T fsum = fval1+fval2;
-    resg += wg[j]*fsum;
-    resk += wgk[jtw]*fsum;
-    resabs += wgk[jtw]*(std::fabs(fval1)+std::fabs(fval2));
-  }
-  for (int j = 0; j < 5; j++) {
-    int jtwm1 = 2*j;
-    T absc = hlgth*xgk[jtwm1];
-    T fval1 = functionValueAtAbscissa(centr-absc, context, angleUnit);
-    if (std::isnan(fval1)) {
-      return errorResult;
+    if (j%2 == 1) {
+      resg += wg[j/2]*fsum;
     }
-    T fval2 = functionValueAtAbscissa(centr+absc, context, angleUnit);
-    if (std::isnan(fval2)) {
-      return errorResult;
-    }
-    fv1[jtwm1] = fval1;
-    fv2[jtwm1] = fval2;
-    T fsum = fval1+fval2;
-    resk += wgk[jtwm1]*fsum;
-    resabs += wgk[jtwm1]*(std::fabs(fval1)+std::fabs(fval2));
+    resk += wgk[j]*fsum;
+    resabs += wgk[j]*(std::fabs(fval1)+std::fabs(fval2));
   }
+
   T reskh = resk*0.5;
   T resasc = wgk[10]*std::fabs(fc-reskh);
   for (int j = 0; j < 10; j++) {

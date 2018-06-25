@@ -7,7 +7,7 @@
 static inline int min(int i, int j) { return i < j ? i : j; }
 static inline int max(int i, int j) { return i > j ? i : j; }
 
-template <class T>
+template <typename T>
 class TreeReference {
 public:
   TreeReference(const TreeReference & tr) {
@@ -18,9 +18,12 @@ public:
 
   ~TreeReference() {
     assert(node());
+    printf("Delete TreeReference of m_id %d, nodeId %d\n", m_identifier, node()->identifier());
     assert(node()->identifier() == m_identifier);
     node()->release();
   }
+
+  bool isDefined() const { return m_identifier >= 0 && TreePool::sharedPool()->node(m_identifier) != nullptr; }
 
   operator TreeReference<TreeNode>() const {
     // TODO: make sure this is kosher
@@ -94,13 +97,11 @@ protected:
     m_identifier = node->identifier();
   }
 
-private:
   TreeReference(TreeNode * node) :
     m_identifier(node->identifier())
   {
     node->retain();
   }
-
   int m_identifier;
 };
 

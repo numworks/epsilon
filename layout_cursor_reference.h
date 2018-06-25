@@ -9,7 +9,6 @@ class LayoutCursor;
 template <typename T>
 class LayoutCursorReference : public LayoutReference<T> {
 public:
-  //using LayoutReference<T>::LayoutReference;
   LayoutCursorReference(LayoutReference<T> * r) :
     LayoutReference<T>(r->node())
   {
@@ -24,8 +23,8 @@ public:
 
   /* We cannot have LayoutCursor cursorLeftOf(LayoutCursor cursor) because of
    * circular header dependency */
-  virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {}
-  virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {}
+  virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) { return this->node()->moveCursorLeft(cursor, shouldRecomputeLayout); }
+  virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) { return this->node()->moveCursorRight(cursor, shouldRecomputeLayout); }
   virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {}
   virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {}
 };

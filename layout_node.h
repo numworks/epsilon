@@ -3,6 +3,8 @@
 
 #include "tree_node.h"
 
+class LayoutCursor;
+
 class LayoutNode : public TreeNode {
 public:
   /* Hierarchy */
@@ -12,6 +14,13 @@ public:
   void draw();
   int origin();
   int absoluteOrigin();
+
+  /* Tree navigation */
+  virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {}
+  virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {}
+  virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {}
+  virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {}
+
 
   LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(childTreeAtIndex(i)); }
 

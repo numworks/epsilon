@@ -30,5 +30,7 @@ int main() {
   bool recompute = false;
   cursor.moveLeft(&recompute);
   cursor.log();
+  cursor.moveRight(&recompute);
+  cursor.log();
   return 0;
 }

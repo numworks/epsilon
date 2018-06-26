@@ -1,7 +1,7 @@
 #include "float_node.h"
 #include "char_layout_node.h"
 #include "addition_node.h"
-#include "layout_cursor.h"
+#include "cursor.h"
 #include <stdio.h>
 
 Addition buildAddition() {
@@ -24,13 +24,13 @@ int main() {
   printf("\nCHAR LAYOUT\n");
   CharLayout aChar('a');
   TreePool::sharedPool()->log();
-  LayoutCursor cursor(aChar.pointer());
-  TreePool::sharedPool()->log();
+  Cursor cursor = aChar.cursor();
+/*  TreePool::sharedPool()->log();
   cursor.log();
   bool recompute = false;
   cursor.moveLeft(&recompute);
   cursor.log();
   cursor.moveRight(&recompute);
-  cursor.log();
+  cursor.log();*/
   return 0;
 }

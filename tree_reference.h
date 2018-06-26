@@ -7,8 +7,11 @@
 static inline int min(int i, int j) { return i < j ? i : j; }
 static inline int max(int i, int j) { return i > j ? i : j; }
 
+class Cursor;
+
 template <typename T>
 class TreeReference {
+  friend class Cursor;
 public:
   TreeReference(const TreeReference & tr) {
     int trNodeIdentifier = tr.identifier();
@@ -37,6 +40,8 @@ public:
   }
 
   int identifier() const { return m_identifier; }
+
+  Cursor cursor();
 
   // Hierarchy
   int numberOfChildren() const {

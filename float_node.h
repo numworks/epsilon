@@ -28,13 +28,11 @@ private:
   float m_value;
 };
 
-class Float : public ExpressionReference<FloatNode> {
+class FloatRef : public ExpressionReference<FloatNode> {
 public:
-  Float(float f) : ExpressionReference<FloatNode>() {
+  FloatRef(float f) : ExpressionReference<FloatNode>() {
     this->node()->setFloat(f);
   }
 };
-
-//typedef ExpressionReference<FloatNode> Float;
 
 #endif

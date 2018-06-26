@@ -44,6 +44,6 @@ public:
   */
 };
 
-typedef ExpressionReference<ExpressionNode> Expression;
+typedef ExpressionReference<ExpressionNode> ExpressionRef;
 
 #endif

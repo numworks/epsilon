@@ -47,9 +47,9 @@ private:
   char m_char;
 };
 
-class CharLayout : public LayoutReference<CharLayoutNode> {
+class CharLayoutRef : public LayoutReference<CharLayoutNode> {
 public:
-  CharLayout(char c) : LayoutReference<CharLayoutNode>() {
+  CharLayoutRef(char c) : LayoutReference<CharLayoutNode>() {
     this->node()->setChar(c);
   }
 };

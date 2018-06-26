@@ -47,6 +47,6 @@ public:
   }
 };
 
-typedef LayoutReference<LayoutNode> Layout;
+typedef LayoutReference<LayoutNode> LayoutRef;
 
 #endif

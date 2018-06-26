@@ -36,17 +36,14 @@ public:
   */
 };
 
-class Addition : public ExpressionReference<AdditionNode> {
+class AdditionRef : public ExpressionReference<AdditionNode> {
 public:
-  Addition(Expression e1, Expression e2) :
+  AdditionRef(ExpressionRef e1, ExpressionRef e2) :
     ExpressionReference<AdditionNode>()
   {
     addOperand(e2);
     addOperand(e1);
   }
 };
-
-
-//typedef ExpressionReference<AdditionNode> Addition;
 
 #endif

@@ -18,9 +18,22 @@ class TreeReference {
   friend class LayoutReference;
 public:
   TreeReference(const TreeReference & tr) {
-    int trNodeIdentifier = tr.identifier();
-    TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(TreePool::sharedPool()->node(trNodeIdentifier));
-    m_identifier = nodeCopy->identifier();
+    setTo(tr);
+  }
+
+  TreeReference& operator=(const TreeReference& tr) {
+    setTo(tr);
+    return *this;
+  }
+
+  void setTo(const TreeReference & tr) {
+    m_identifier = tr.identifier();
+    TreePool::sharedPool()->node(m_identifier)->retain();
+  }
+
+  TreeReference<T> clone() const {
+    TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(node());
+    return TreeReference<T>(nodeCopy);
   }
 
   ~TreeReference() {
@@ -63,8 +76,8 @@ public:
   // Hierarchy operations
 
   void addChild(TreeReference<TreeNode> t) {
-    TreeNode * deepCopy = TreePool::sharedPool()->deepCopy(t.node());
-    TreePool::sharedPool()->move(deepCopy, node()->next());
+    t.node()->retain();
+    TreePool::sharedPool()->move(t.node(), node()->next());
   }
 
   void removeChild(TreeReference<TreeNode> t) {

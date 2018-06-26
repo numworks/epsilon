@@ -1,6 +1,7 @@
 #include "tree_node.h"
 #include "tree_pool.h"
 #include "expression_node.h"
+#include <stdio.h>
 
 // Node operations
 

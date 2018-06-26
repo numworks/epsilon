@@ -10,8 +10,12 @@ class Cursor {
 public:
   TreeReference<TreeNode> treeReference() { return m_treeReference; }
   int treeReferenceIdentifier() { return m_treeReference.identifier(); }
-  void setTreeReference(TreeReference<TreeNode>  t) { m_treeReference = t; }
-  void setTreeNode(TreeNode * t) { m_treeReference = TreeReference<TreeNode>(t); }
+  void setTreeReference(TreeReference<TreeNode>  t) {
+    m_treeReference = t;
+  }
+  void setTreeNode(TreeNode * t) {
+    m_treeReference = TreeReference<TreeNode>(t);
+  }
   bool isDefined() const { return m_treeReference.isDefined(); }
 protected:
   Cursor(TreeNode * node) : m_treeReference(node) {}

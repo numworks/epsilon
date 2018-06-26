@@ -5,10 +5,10 @@
 #include "cursor.h"
 #include <stdio.h>
 
-Addition buildAddition() {
-  Float smallFloat(0.2f);
-  Float bigFloat(3.4f);
-  Addition a(smallFloat, bigFloat);
+AdditionRef buildAddition() {
+  FloatRef smallFloat(0.2f);
+  FloatRef bigFloat(3.4f);
+  AdditionRef a(smallFloat, bigFloat);
   TreePool::sharedPool()->log();
   return a;
 }
@@ -23,21 +23,22 @@ int main() {
   TreePool::sharedPool()->log();*/
 
   printf("\nCHAR LAYOUT\n");
-  CharLayout aChar('c');
-  CharLayout bChar('b');
+  CharLayoutRef aChar('c');
+  CharLayoutRef bChar('b');
   TreePool::sharedPool()->log();
 
-  HorizontalLayout h(aChar, bChar);
+  HorizontalLayoutRef h(aChar, bChar);
   TreePool::sharedPool()->log();
 
   LayoutCursor cursor = h.childAtIndex(1).cursor();
-  LayoutCursor cursor2 = aChar.cursor();
-  cursor.log();
+ // LayoutCursor cursor2 = aChar.cursor();
+  /*cursor.log();
   bool recompute = false;
   cursor.moveLeft(&recompute);
   cursor.log();
   cursor.moveLeft(&recompute);
-  cursor.log();
+  cursor.log();*/
+  TreePool::sharedPool()->log();
 
   /*cursor.log();
   bool recompute = false;

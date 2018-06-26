@@ -41,7 +41,7 @@ public:
 
   int identifier() const { return m_identifier; }
 
-  Cursor cursor();
+  Cursor treeCursor();
 
   // Hierarchy
   int numberOfChildren() const {

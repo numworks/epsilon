@@ -13,26 +13,26 @@ bool LayoutCursor::isEquivalentTo(LayoutCursor cursor) {
 /* Position */
 
 int LayoutCursor::middleLeftPoint() {
-  int layoutOrigin = m_layoutPointer.absoluteOrigin();
+  int layoutOrigin = layoutReference().absoluteOrigin();
   return layoutOrigin;
 }
 
 /* Move */
 
 void LayoutCursor::moveLeft(bool * shouldRecomputeLayout) {
-  m_layoutPointer.moveCursorLeft(this, shouldRecomputeLayout);
+  layoutReference().node()->moveCursorLeft(this, shouldRecomputeLayout);
 }
 
 void LayoutCursor::moveRight(bool * shouldRecomputeLayout) {
-  m_layoutPointer.moveCursorRight(this, shouldRecomputeLayout);
+  layoutReference().node()->moveCursorRight(this, shouldRecomputeLayout);
 }
 
 void LayoutCursor::moveAbove(bool * shouldRecomputeLayout) {
-  m_layoutPointer.moveCursorUp(this, shouldRecomputeLayout);
+  layoutReference().node()->moveCursorUp(this, shouldRecomputeLayout);
 }
 
 void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
-  m_layoutPointer.moveCursorDown(this, shouldRecomputeLayout);
+  layoutReference().node()->moveCursorDown(this, shouldRecomputeLayout);
 }
 
 

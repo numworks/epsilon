@@ -5,8 +5,6 @@
 #include "layout_node.h"
 #include "layout_cursor.h"
 
-//#define TREE_LOGGING 1
-
 class CharLayoutNode : public LayoutNode {
 public:
   CharLayoutNode() : LayoutNode() {}
@@ -38,12 +36,11 @@ public:
     }
   }
 
-#if TREE_LOGGING
   const char * description() const override {
     static char Description[] = {'C', 'h', 'a', 'r', ' ', m_char, 0};
     return Description;
   }
-#endif
+
   void setChar(char c) { m_char = c; }
 private:
   char m_char;

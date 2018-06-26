@@ -2,8 +2,9 @@
 #define LAYOUT_REFERENCE_H
 
 #include "tree_reference.h"
-//#include "layout_cursor.h"
 #include "layout_node.h"
+
+class LayoutCursor;
 
 template <typename T>
 class LayoutReference : public TreeReference<T> {
@@ -22,9 +23,9 @@ public:
     return (reinterpret_cast<LayoutReference<LayoutNode> *>(this));
   }
 
-  // LayoutReference<T> cursorReference() const;
+  LayoutCursor cursor() const;
 
-  void addChild(LayoutReference<LayoutNode> l) {
+  virtual void addChild(LayoutReference<LayoutNode> l) {
     TreeReference<T>::addChild(l);
   }
 

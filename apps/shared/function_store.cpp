@@ -24,6 +24,22 @@ Function * FunctionStore::activeFunctionAtIndex(int i) {
   return nullptr;
 }
 
+int FunctionStore::activeFunctionStoreIndex(int i) {
+  assert(i>=0 && i<numberOfActiveFunctions());
+  int index = 0;
+  for (int k = 0; k < m_numberOfModels; k++) {
+    Function * function = modelAtIndex(k);
+    if (function->isActive() && function->isDefined()) {
+      if (i == index) {
+        return k;
+      }
+      index++;
+    }
+  }
+  assert(false);
+  return -1;
+}
+
 int FunctionStore::numberOfActiveFunctions() {
   int result = 0;
   for (int i = 0; i < m_numberOfModels; i++) {

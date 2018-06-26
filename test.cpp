@@ -31,6 +31,12 @@ int main() {
   TreePool::sharedPool()->log();
 
   LayoutCursor cursor = h.childAtIndex(1).cursor();
+  LayoutCursor cursor2 = aChar.cursor();
+  cursor.log();
+  bool recompute = false;
+  cursor.moveLeft(&recompute);
+  cursor.log();
+  cursor.moveLeft(&recompute);
   cursor.log();
 
   /*cursor.log();

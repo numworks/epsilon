@@ -45,6 +45,7 @@ public:
   virtual int numberOfChildren() const = 0;
   int numberOfDescendants(bool includeSelf) const;
   TreeNode * childTreeAtIndex(int i) const;
+  int indexOfChildByIdentifier(int childID) const;
   int indexOfChild(const TreeNode * child) const;
   bool hasChild(const TreeNode * child) const;
   bool hasAncestor(const TreeNode * node, bool includeSelf) const;

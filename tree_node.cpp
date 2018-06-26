@@ -99,19 +99,23 @@ TreeNode * TreeNode::childTreeAtIndex(int i) const {
   return child;
 }
 
-int TreeNode::indexOfChild(const TreeNode * child) const {
-  if (child == nullptr) {
-    return -1;
-  }
+int TreeNode::indexOfChildByIdentifier(int childID) const {
   int childrenCount = numberOfChildren();
   TreeNode * childAtIndexi = next();
   for (int i = 0; i < childrenCount; i++) {
-    if (childAtIndexi == child) {
+    if (childAtIndexi->identifier() == childID) {
       return i;
     }
     childAtIndexi = childAtIndexi->nextSibling();
   }
   return -1;
+}
+
+int TreeNode::indexOfChild(const TreeNode * child) const {
+  if (child == nullptr) {
+    return -1;
+  }
+  return indexOfChildByIdentifier(child->identifier());
 }
 
 bool TreeNode::hasChild(const TreeNode * child) const {

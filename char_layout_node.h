@@ -14,6 +14,8 @@ public:
     return sizeof(CharLayoutNode);
   }
 
+  int numberOfChildren() const override { return 0; }
+
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {
     if (cursor->position() == LayoutCursor::Position::Right) {
       cursor->setPosition(LayoutCursor::Position::Left);

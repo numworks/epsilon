@@ -42,7 +42,7 @@ public:
   // Hierarchy
   TreeNode * parentTree() const;
   TreeNode * editableRootTree();
-  virtual int numberOfChildren() const { return 0; }
+  virtual int numberOfChildren() const = 0;
   int numberOfDescendants(bool includeSelf) const;
   TreeNode * childTreeAtIndex(int i) const;
   int indexOfChild(const TreeNode * child) const;

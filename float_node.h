@@ -10,6 +10,7 @@ public:
   size_t size() const override {
     return sizeof(FloatNode);
   }
+  int numberOfChildren() const override { return 0; }
   float approximate() override {
     return m_value;
   }

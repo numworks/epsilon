@@ -37,7 +37,8 @@ public:
   }
 
   const char * description() const override {
-    static char Description[] = {'C', 'h', 'a', 'r', ' ', m_char, 0};
+    static char Description[] = "Char a";
+    Description[5] = m_char;
     return Description;
   }
 

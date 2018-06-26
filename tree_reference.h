@@ -58,8 +58,6 @@ public:
 
   int identifier() const { return m_identifier; }
 
-  Cursor treeCursor();
-
   // Hierarchy
   int numberOfChildren() const {
     return node()->numberOfChildren();

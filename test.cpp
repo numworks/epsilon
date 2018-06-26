@@ -2,7 +2,7 @@
 #include "char_layout_node.h"
 #include "horizontal_layout_node.h"
 #include "addition_node.h"
-#include "cursor.h"
+#include "layout_cursor.h"
 #include <stdio.h>
 
 AdditionRef buildAddition() {

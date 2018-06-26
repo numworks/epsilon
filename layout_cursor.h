@@ -1,12 +1,11 @@
 #ifndef LAYOUT_CURSOR_H
 #define LAYOUT_CURSOR_H
 
-#include "cursor.h"
 #include "layout_reference.h"
 #include "layout_node.h"
 #include <stdio.h>
 
-class LayoutCursor : public Cursor {
+class LayoutCursor {
   template <typename T>
   friend class LayoutReference;
 public:
@@ -17,7 +16,7 @@ public:
 
   /* Debug */
   void log() {
-    printf("Pointed Layout id %d, cursor position ", m_treeReference.identifier());
+    printf("Pointed Layout id %d, cursor position ", m_layoutRef.identifier());
     if (m_position == Position::Left) {
       printf("Left");
     } else {
@@ -26,12 +25,14 @@ public:
     printf("\n");
   }
 
+  bool isDefined() const { return m_layoutRef.isDefined(); }
+
+
   /* Getters and setters */
-  LayoutReference<LayoutNode> layoutReference() {
-    return LayoutReference<LayoutNode>(m_treeReference.node());
-  }
-  //int pointedLayoutIdentifier() const { return m_layoutIdentifier; }
-  //void setPointedLayoutIdentifier(int layoutID) { m_layoutIdentifier = layoutID; }
+  LayoutRef layoutReference() { return m_layoutRef; }
+  int layoutReferenceIdentifier() { return m_layoutRef.identifier(); }
+  void setLayoutReference(LayoutRef r) { m_layoutRef = r; }
+  void setLayoutNode(LayoutNode * n) { m_layoutRef = LayoutRef(n); }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
   int cursorHeight() { return 1; } //TODO
@@ -49,11 +50,12 @@ public:
   void moveAbove(bool * shouldRecomputeLayout);
   void moveUnder(bool * shouldRecomputeLayout);
 private:
-  LayoutCursor(TreeNode * node, Position position = Position::Right) :
-    Cursor(node),
+  LayoutCursor(LayoutNode * node, Position position = Position::Right) :
+    m_layoutRef(node),
     m_position(position)
   {
   }
+  LayoutRef m_layoutRef;
   Position m_position;
 };
 

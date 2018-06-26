@@ -1,5 +1,6 @@
 #include "float_node.h"
 #include "char_layout_node.h"
+#include "horizontal_layout_node.h"
 #include "addition_node.h"
 #include "cursor.h"
 #include <stdio.h>
@@ -22,11 +23,17 @@ int main() {
   TreePool::sharedPool()->log();*/
 
   printf("\nCHAR LAYOUT\n");
-  CharLayout aChar('a');
+  CharLayout aChar('c');
+  CharLayout bChar('b');
   TreePool::sharedPool()->log();
-  Cursor cursor = aChar.cursor();
-/*  TreePool::sharedPool()->log();
+
+  HorizontalLayout h(aChar, bChar);
+  TreePool::sharedPool()->log();
+
+  LayoutCursor cursor = h.childAtIndex(1).cursor();
   cursor.log();
+
+  /*cursor.log();
   bool recompute = false;
   cursor.moveLeft(&recompute);
   cursor.log();

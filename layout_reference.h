@@ -30,7 +30,8 @@ public:
   }
 
   LayoutReference<LayoutNode> childAtIndex(int i) {
-    return TreeReference<T>::childAtIndex(i);
+    TreeReference<T> treeRefChild = TreeReference<T>::treeChildAtIndex(i);
+    return LayoutReference<LayoutNode>(treeRefChild.node());
   }
 
   void replaceChildAtIndex(int oldChildIndex, LayoutReference<LayoutNode> newChild) {

@@ -12,6 +12,10 @@ class Cursor;
 template <typename T>
 class TreeReference {
   friend class Cursor;
+  template <typename U>
+  friend class ExpressionReference;
+  template <typename U>
+  friend class LayoutReference;
 public:
   TreeReference(const TreeReference & tr) {
     int trNodeIdentifier = tr.identifier();
@@ -52,8 +56,8 @@ public:
     return TreeReference(node()->parentTree());
   }
 
-  TreeReference<T> childAtIndex(int i) const {
-    return TreeReference(node()->child(i));
+  TreeReference<T> treeChildAtIndex(int i) const {
+    return TreeReference(node()->childTreeAtIndex(i));
   }
 
   // Hierarchy operations
@@ -74,7 +78,7 @@ public:
 
   void replaceChildAtIndex(int oldChildIndex, TreeReference<TreeNode> newChild) {
     assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
-    TreeReference<T> oldChild = childAtIndex(oldChildIndex);
+    TreeReference<T> oldChild = treeChildAtIndex(oldChildIndex);
     TreePool::sharedPool()->move(newChild.node(), oldChild.node()->next());
     newChild.node()->retain();
     TreePool::sharedPool()->move(oldChild.node(), TreePool::sharedPool()->last());
@@ -89,8 +93,8 @@ public:
     }
     int firstChildIndex = min(i, j);
     int secondChildIndex = max(i, j);
-    TreeReference<T> firstChild = childAtIndex(firstChildIndex);
-    TreeReference<T> secondChild = childAtIndex(secondChildIndex);
+    TreeReference<T> firstChild = treeChildAtIndex(firstChildIndex);
+    TreeReference<T> secondChild = treeChildAtIndex(secondChildIndex);
     TreeNode * firstChildNode = firstChild.node();
     TreePool::sharedPool()->move(firstChildNode, secondChild.node()->next());
     TreePool::sharedPool()->move(secondChild.node(), firstChildNode);

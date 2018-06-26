@@ -9,23 +9,14 @@ FunctionStore::FunctionStore() :
 }
 
 Function * FunctionStore::activeFunctionAtIndex(int i) {
-  assert(i>=0 && i<m_numberOfModels);
-  int index = 0;
-  for (int k = 0; k < m_numberOfModels; k++) {
-    Function * function = modelAtIndex(k);
-    if (function->isActive() && function->isDefined()) {
-      if (i == index) {
-        return function;
-      }
-      index++;
-    }
-  }
-  assert(false);
-  return nullptr;
+  assert(i >= 0 && i < numberOfActiveFunctions());
+  Function * function = modelAtIndex(activeFunctionStoreIndex(i));
+  assert(function->isActive() && function->isDefined());
+  return function;
 }
 
 int FunctionStore::activeFunctionStoreIndex(int i) {
-  assert(i>=0 && i<numberOfActiveFunctions());
+  assert(i >= 0 && i < numberOfActiveFunctions());
   int index = 0;
   for (int k = 0; k < m_numberOfModels; k++) {
     Function * function = modelAtIndex(k);

@@ -81,7 +81,6 @@ bool GraphController::moveCursorHorizontally(int direction) {
 
 void GraphController::initCursorParameters() {
   double x = (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
-  selectFunctionWithCursor(0);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   int functionIndex = 0;
   double y = 0;
@@ -90,6 +89,8 @@ void GraphController::initCursorParameters() {
     y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
   } while (std::isnan(y) && functionIndex < functionStore()->numberOfActiveFunctions());
   m_cursor->moveTo(x, y);
+  int functionSelected = functionStore()->activeFunctionStoreIndex(functionIndex-1);
+  selectFunctionWithCursor(functionSelected < 0 ? 0 : functionSelected);
   interactiveCurveViewRange()->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }
 

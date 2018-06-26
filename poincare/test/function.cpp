@@ -281,6 +281,16 @@ QUIZ_CASE(poincare_function_evaluate) {
   Complex<double> ald[1] = {Complex<double>::Float(-5.125)};
   assert_parsed_expression_evaluates_to("factor(-123/24)", ald);
 
+  Complex<float> am[1] = {Complex<float>::Float(64.0/3.0)};
+  assert_parsed_expression_evaluates_to("int(int(x*x,0,x),0,4)", am);
+  Complex<double> amd[1] = {Complex<double>::Float(64.0/3.0)};
+  assert_parsed_expression_evaluates_to("int(int(x^2,0,x),0,4)", amd);
+
+  Complex<float> an[1] = {Complex<float>::Float(180)};
+  assert_parsed_expression_evaluates_to("int(1+cos(x), 0, 180)", an);
+  Complex<double> andouble[1] = {Complex<double>::Float(180)};
+  assert_parsed_expression_evaluates_to("int(1+cos(x), 0, 180)", andouble);
+
   Expression * exp = parse_expression("random()");
   assert_exp_is_bounded(exp, 0.0f, 1.0f);
   assert_exp_is_bounded(exp, 0.0, 1.0);

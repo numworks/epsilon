@@ -98,15 +98,15 @@ T Integral::lagrangeGaussQuadrature(T a, T b, Context & context, AngleUnit angle
   T result = 0;
   for (int j = 0; j < 10; j++) {
     T dx = xr * x[j];
-    T evaluationAfterx = functionValueAtAbscissa(xm+dx, context, angleUnit);
-    if (std::isnan(evaluationAfterx)) {
+    T evaluationAfterX = functionValueAtAbscissa(xm+dx, context, angleUnit);
+    if (std::isnan(evaluationAfterX)) {
       return NAN;
     }
-    T evaluationBeforex = functionValueAtAbscissa(xm-dx, context, angleUnit);
-    if (std::isnan(evaluationBeforex)) {
+    T evaluationBeforeX = functionValueAtAbscissa(xm-dx, context, angleUnit);
+    if (std::isnan(evaluationBeforeX)) {
       return NAN;
     }
-    result += w[j]*(evaluationAfterx + fevaluationBeforex);
+    result += w[j]*(evaluationAfterX + evaluationBeforeX);
   }
   result *= xr;
   return result;

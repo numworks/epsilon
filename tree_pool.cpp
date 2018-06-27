@@ -65,7 +65,6 @@ void TreePool::move(TreeNode * source, TreeNode * destination) {
   }
 }
 
-#if TREE_LOGGING
 #include <stdio.h>
 
 void TreePool::log() {
@@ -77,7 +76,6 @@ void TreePool::log() {
 
   //logNodeForIdentifierArray();
 }
-#endif
 
 void * TreePool::alloc(size_t size) {
   if (m_cursor >= m_buffer + BufferSize || m_cursor + size > m_buffer + BufferSize) {

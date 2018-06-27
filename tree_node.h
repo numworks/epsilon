@@ -5,8 +5,6 @@
 #include <stddef.h>
 #include <strings.h>
 
-#define TREE_LOGGING 1
-
 #include <stdio.h>
 
 /* What's in a TreeNode, really?
@@ -24,11 +22,9 @@ public:
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
-#if TREE_LOGGING
   virtual const char * description() const {
     return "UNKNOWN";
   }
-#endif
 
   // Node operations
   void retain() { m_referenceCounter++; }

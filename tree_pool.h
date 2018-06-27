@@ -42,9 +42,7 @@ public:
     return copy;
   }
 
-#if TREE_LOGGING
   void log();
-#endif
 
   // Debug
   int numberOfNodes() const {

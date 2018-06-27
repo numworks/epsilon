@@ -7,22 +7,12 @@
 class FloatNode : public ExpressionNode {
 public:
   FloatNode() : ExpressionNode() {}
-  size_t size() const override {
-    return sizeof(FloatNode);
-  }
+  size_t size() const override { return sizeof(FloatNode); }
   int numberOfChildren() const override { return 0; }
-  float approximate() override {
-    return m_value;
-  }
-#if TREE_LOGGING
+  float approximate() override { return m_value; }
   const char * description() const override {
-    if (m_value > 1) {
-      return "BigFloat";
-    } else {
-      return "SmallFloat";
-    }
+    return m_value > 1 ? "BigFloat" : "SmallFloat";
   }
-#endif
   void setFloat(float f) { m_value = f; }
 private:
   float m_value;

@@ -32,7 +32,10 @@ public:
   LayoutRef layoutReference() { return m_layoutRef; }
   int layoutIdentifier() { return m_layoutRef.identifier(); }
   void setLayoutReference(LayoutRef r) { m_layoutRef = r; }
-  void setLayoutNode(LayoutNode * n) { m_layoutRef = LayoutRef(n); }
+  void setLayoutNode(LayoutNode * n) {
+    m_layoutRef.node()->release();
+    m_layoutRef = LayoutRef(n);
+  }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
   int cursorHeight() { return 1; } //TODO

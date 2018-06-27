@@ -21,7 +21,9 @@ public:
       return nullptr; // TODO return static node "failedAllocation"
     }
     void * ptr = alloc(sizeof(T));
-    // TODO handle allocation problem!
+    if (ptr == nullptr) {
+      return nullptr;
+    }
     T * node = new(ptr) T();
     node->rename(nodeIdentifier);
     registerNode(node);

@@ -1,8 +1,4 @@
-#include "float_node.h"
-#include "char_layout_node.h"
-#include "horizontal_layout_node.h"
-#include "addition_node.h"
-#include "layout_cursor.h"
+#include "refs.h"
 #include <stdio.h>
 
 AdditionRef buildAddition() {
@@ -98,6 +94,20 @@ void testCursorMoveLeft() {
   assert(aChar.nodeRetainCount() == 3);
 }
 
+void testPoolAllocationFail() {
+  printf("Pool allocation fail test\n");
+
+  // Fill the pool for size 256
+
+  // Allocation fail
+  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+  AllocationFailedExpressionRef a;
+  assert(TreePool::sharedPool()->numberOfNodes() == 1);
+
+  /*Expression e = ;
+  e.simplify*/
+}
+
 typedef void (test)();
 void runTest(test t) {
   assert(TreePool::sharedPool()->numberOfNodes() == 0);
@@ -106,9 +116,12 @@ void runTest(test t) {
 }
 
 int main() {
+  printf("\n*******************\nStart running tests\n*******************\n\n");
   runTest(testAddition);
   runTest(testPoolEmpties);
   runTest(testCursorCreateAndRetain);
   runTest(testCursorMoveLeft);
+  runTest(testPoolAllocationFail);
+  printf("\n*******************\nEnd of tests\n*******************\n\n");
   return 0;
 }

@@ -10,29 +10,10 @@ class TreePool {
 public:
   static TreePool * sharedPool();
 
-  // Identifiers
-  int generateIdentifier() {
-    int newIdentifier = -1;
-    for (int i = 0; i < MaxNumberOfNodes; i++) {
-      if (m_nodeForIdentifier[i] == nullptr) {
-        newIdentifier = i;
-        break;
-      }
-    }
-    assert(newIdentifier != -1); // TODO error handling
-    return newIdentifier;
-  }
-
-  void freeIdentifier(int identifier) {
-    assert(identifier >= 0 && identifier < MaxNumberOfNodes);
-    m_nodeForIdentifier[identifier] = nullptr;
-  }
-
-  // Pool memory
-  void * alloc(size_t size);
-  void dealloc(void * ptr);
-
   // Node
+  TreeNode * node(int identifier) const;
+  TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
+
   template <typename T>
   T * createTreeNode() {
     int nodeIdentifier = generateIdentifier();
@@ -47,29 +28,7 @@ public:
     return node;
   }
 
-  void discardTreeNode(TreeNode * node) {
-    int nodeIdentifier = node->identifier();
-    node->~TreeNode();
-    dealloc(static_cast<void *>(node));
-    freeIdentifier(nodeIdentifier);
-  }
-
-  TreeNode * node(int identifier) const;
-  TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
-  TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
-
-  void logNodeForIdentifierArray();
-
   void move(TreeNode * source, TreeNode * destination);
-
-  void registerNode(TreeNode * node) {
-    m_nodeForIdentifier[node->identifier()] = node;
-  }
-
-  void renameNode(TreeNode * node) {
-    node->rename(generateIdentifier());
-    registerNode(node);
-  }
 
   TreeNode * deepCopy(TreeNode * node) {
     size_t size = node->deepSize();
@@ -97,9 +56,28 @@ public:
     return count;
   }
 
-protected:
+private:
   constexpr static int BufferSize = 256;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
+
+  // TreeNode
+  void discardTreeNode(TreeNode * node) {
+    int nodeIdentifier = node->identifier();
+    node->~TreeNode();
+    dealloc(node);
+    freeIdentifier(nodeIdentifier);
+  }
+  void registerNode(TreeNode * node) {
+    m_nodeForIdentifier[node->identifier()] = node;
+  }
+  void renameNode(TreeNode * node) {
+    node->rename(generateIdentifier());
+    registerNode(node);
+  }
+
+  // Iterators
+
+  TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
 
   class AllPool {
   public:
@@ -140,9 +118,33 @@ protected:
   TreeNode::DepthFirst::Iterator begin() const { return TreeNode::DepthFirst::Iterator(first()); }
   TreeNode::DepthFirst::Iterator end() const { return TreeNode::DepthFirst::Iterator(last()); }
 
-private:
   TreePool() : m_cursor(m_buffer) { }
+
+  // Pool memory
+  void * alloc(size_t size);
+  void dealloc(TreeNode * ptr);
   static inline bool insert(char * destination, char * source, size_t length);
+
+  // Identifiers
+  int generateIdentifier() {
+    int newIdentifier = -1;
+    for (int i = 0; i < MaxNumberOfNodes; i++) {
+      if (m_nodeForIdentifier[i] == nullptr) {
+        newIdentifier = i;
+        break;
+      }
+    }
+    assert(newIdentifier != -1); // TODO error handling
+    return newIdentifier;
+  }
+
+  void freeIdentifier(int identifier) {
+    assert(identifier >= 0 && identifier < MaxNumberOfNodes);
+    m_nodeForIdentifier[identifier] = nullptr;
+  }
+
+  // Debug
+  void logNodeForIdentifierArray();
 
   char * m_cursor;
   char m_buffer[BufferSize];

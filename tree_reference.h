@@ -19,11 +19,13 @@ class TreeReference {
   template <typename U>
   friend class LayoutReference;
 public:
-  TreeReference(const TreeReference & tr) {
-    setTo(tr);
-  }
-
+  TreeReference(const TreeReference & tr) { setTo(tr); }
+  TreeReference(TreeReference&& tr) { setTo(tr); }
   TreeReference& operator=(const TreeReference& tr) {
+    setTo(tr);
+    return *this;
+  }
+  TreeReference& operator=(TreeReference&& tr) {
     setTo(tr);
     return *this;
   }

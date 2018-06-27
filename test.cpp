@@ -36,6 +36,8 @@ void createNodes() {
   FloatRef smallFloat(0.2f);
   FloatRef bigFloat(3.4f);
   AdditionRef a(smallFloat, bigFloat);
+  ExpressionRef e = a;
+  ExpressionRef f = e;
 }
 
 void testPoolEmpties() {

@@ -13,9 +13,7 @@ public:
 
   // Allow every ExpressionReference<T> to be transformed into an ExpressionReference<ExpressionNode>, i.e. Expression
   operator ExpressionReference<ExpressionNode>() const {
-    // TODO: make sure this is kosher
-    // static_assert(sizeof(ExpressionReference<T>) == sizeof(ExpressionReference<ExpressionNode>), "All ExpressionReference are supposed to have the same size");
-    return *(reinterpret_cast<const ExpressionReference<ExpressionNode> *>(this));
+    return ExpressionReference<ExpressionNode>(this->node());
   }
 
   void addOperand(ExpressionReference<ExpressionNode> e) {

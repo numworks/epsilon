@@ -13,6 +13,8 @@ template <typename T>
 class TreeReference {
   friend class Cursor;
   template <typename U>
+  friend class TreeReference;
+  template <typename U>
   friend class ExpressionReference;
   template <typename U>
   friend class LayoutReference;
@@ -50,9 +52,7 @@ public:
   int nodeRetainCount() const { return node()->retainCount(); }
 
   operator TreeReference<TreeNode>() const {
-    // TODO: make sure this is kosher
-    // static_assert(sizeof(ExpressionReference<T>) == sizeof(ExpressionReference<ExpressionNode>), "All ExpressionReference are supposed to have the same size");
-    return *(reinterpret_cast<const TreeReference<TreeNode> *>(this));
+    return TreeReference<TreeNode>(this->node());
   }
 
   T * node() const {

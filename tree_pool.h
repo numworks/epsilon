@@ -41,10 +41,10 @@ public:
     }
     void * ptr = alloc(sizeof(T));
     // TODO handle allocation problem!
-    TreeNode * node = new(ptr) T();
+    T * node = new(ptr) T();
     node->rename(nodeIdentifier);
     registerNode(node);
-    return reinterpret_cast<T *>(node);
+    return node;
   }
 
   void discardTreeNode(TreeNode * node) {

@@ -15,12 +15,7 @@ public:
   /* Allow every LayoutReference<T> to be transformed into a
    * LayoutReference<LayoutNode>, i.e. Layout */
   operator LayoutReference<LayoutNode>() const {
-    // TODO: make sure this is kosher
-    return *(reinterpret_cast<const LayoutReference<LayoutNode> *>(this));
-  }
-
-  LayoutReference<LayoutNode> * pointer() {
-    return (reinterpret_cast<LayoutReference<LayoutNode> *>(this));
+    return LayoutReference<LayoutNode>(this->node());
   }
 
   LayoutCursor cursor() const;

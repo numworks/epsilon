@@ -98,10 +98,17 @@ void testCursorMoveLeft() {
   assert(aChar.nodeRetainCount() == 3);
 }
 
+typedef void (test)();
+void runTest(test t) {
+  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+  t();
+  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+}
+
 int main() {
-  testAddition();
-  testPoolEmpties();
-  testCursorCreateAndRetain();
-  testCursorMoveLeft();
+  runTest(testAddition);
+  runTest(testPoolEmpties);
+  runTest(testCursorCreateAndRetain);
+  runTest(testCursorMoveLeft);
   return 0;
 }

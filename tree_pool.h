@@ -87,6 +87,16 @@ public:
   void log();
 #endif
 
+  // Debug
+  int numberOfNodes() const {
+    int count = 0;
+    AllPool nodes = const_cast<TreePool *>(this)->allNodes();
+    for (TreeNode * t : nodes) {
+      count++;
+    }
+    return count;
+  }
+
 protected:
   constexpr static int BufferSize = 256;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);

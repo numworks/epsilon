@@ -9,10 +9,7 @@
 template <class T>
 class ExpressionReference : public TreeReference<T> {
 public:
-  ExpressionReference() : TreeReference<T>() { }
-
-  /*ExpressionReference(const ExpressionReference & er) {
-  }*/
+  using TreeReference<T>::TreeReference;
 
   // Allow every ExpressionReference<T> to be transformed into an ExpressionReference<ExpressionNode>, i.e. Expression
   operator ExpressionReference<ExpressionNode>() const {
@@ -26,7 +23,7 @@ public:
   }
 
   ExpressionReference<ExpressionNode> childAtIndex(int i) {
-    return TreeReference<T>::childAtIndex(i);
+    return ExpressionReference<ExpressionNode>(TreeReference<T>::treeChildAtIndex(i).node());
   }
 
   void replaceChildAtIndex(int oldChildIndex, ExpressionReference<ExpressionNode> newChild) {

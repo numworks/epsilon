@@ -26,6 +26,8 @@ public:
     return *this;
   }
 
+  inline bool operator==(TreeReference<TreeNode> t) { return m_identifier == t.identifier(); }
+
   void setTo(const TreeReference & tr) {
     m_identifier = tr.identifier();
     TreePool::sharedPool()->node(m_identifier)->retain();
@@ -38,12 +40,14 @@ public:
 
   ~TreeReference() {
     assert(node());
-    printf("Delete TreeReference of m_id %d, nodeId %d\n", m_identifier, node()->identifier());
+    //printf("Delete TreeReference of m_id %d, nodeId %d\n", m_identifier, node()->identifier());
     assert(node()->identifier() == m_identifier);
     node()->release();
   }
 
   bool isDefined() const { return m_identifier >= 0 && TreePool::sharedPool()->node(m_identifier) != nullptr; }
+
+  int nodeRetainCount() const { return node()->retainCount(); }
 
   operator TreeReference<TreeNode>() const {
     // TODO: make sure this is kosher

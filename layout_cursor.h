@@ -30,7 +30,7 @@ public:
 
   /* Getters and setters */
   LayoutRef layoutReference() { return m_layoutRef; }
-  int layoutReferenceIdentifier() { return m_layoutRef.identifier(); }
+  int layoutIdentifier() { return m_layoutRef.identifier(); }
   void setLayoutReference(LayoutRef r) { m_layoutRef = r; }
   void setLayoutNode(LayoutNode * n) { m_layoutRef = LayoutRef(n); }
   Position position() const { return m_position; }

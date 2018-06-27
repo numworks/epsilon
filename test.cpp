@@ -9,42 +9,97 @@ AdditionRef buildAddition() {
   FloatRef smallFloat(0.2f);
   FloatRef bigFloat(3.4f);
   AdditionRef a(smallFloat, bigFloat);
-  TreePool::sharedPool()->log();
+  assert(TreePool::sharedPool()->numberOfNodes() == 3);
   return a;
 }
 
-int main() {
-  /*Addition a = buildAddition();
+void testAddition() {
+  printf("Addition test\n");
+  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+  AdditionRef a = buildAddition();
+  assert(TreePool::sharedPool()->numberOfNodes() == 3);
+
   float result = a.approximate();
-  Float smallFloat(1.3f);
+  assert(result = 3.6f);
+
+  FloatRef smallFloat(1.3f);
   a.replaceChildAtIndex(0, smallFloat);
   float result2 = a.approximate();
-  a.swapChildren(1,0);
-  TreePool::sharedPool()->log();*/
+  assert(result2 == 4.7f);
 
-  printf("\nCHAR LAYOUT\n");
-  CharLayoutRef aChar('c');
+  a.swapChildren(1,0);
+  assert(a.childAtIndex(0).identifier() == 1);
+  assert(a.childAtIndex(1).identifier() == 3);
+}
+
+void createNodes() {
+  FloatRef smallFloat(0.2f);
+  FloatRef bigFloat(3.4f);
+  AdditionRef a(smallFloat, bigFloat);
+}
+
+void testPoolEmpties() {
+  printf("Pool empties test\n");
+  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+  createNodes();
+  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+}
+
+void testCursorCreateAndRetain() {
+  printf("Cursor create and retain test\n");
+  CharLayoutRef aChar('a');
   CharLayoutRef bChar('b');
-  TreePool::sharedPool()->log();
+  assert(aChar.identifier() == 0);
+  assert(bChar.identifier() == 1);
+  assert(aChar.nodeRetainCount() == 1);
+  assert(bChar.nodeRetainCount() == 1);
+  assert(strcmp(aChar.node()->description(), "Char a") == 0);
+  assert(strcmp(bChar.node()->description(), "Char b") == 0);
+  assert(TreePool::sharedPool()->numberOfNodes() == 2);
 
   HorizontalLayoutRef h(aChar, bChar);
-  TreePool::sharedPool()->log();
+  assert(aChar.identifier() == 0);
+  assert(bChar.identifier() == 1);
+  assert(h.identifier() == 2);
+  assert(aChar.nodeRetainCount() == 2);
+  assert(bChar.nodeRetainCount() == 2);
+  assert(h.nodeRetainCount() == 1);
+  assert(aChar == h.childAtIndex(0));
+  assert(bChar == h.childAtIndex(1));
+
+  LayoutCursor cursorA = aChar.cursor();
+  assert(cursorA.layoutIdentifier() == aChar.identifier());
+  assert(aChar.nodeRetainCount() == 3);
+}
+
+void testCursorMoveLeft() {
+  printf("Cursor move left test\n");
+  CharLayoutRef aChar('a');
+  CharLayoutRef bChar('b');
+  HorizontalLayoutRef h(aChar, bChar);
 
   LayoutCursor cursor = h.childAtIndex(1).cursor();
- // LayoutCursor cursor2 = aChar.cursor();
-  /*cursor.log();
-  bool recompute = false;
-  cursor.moveLeft(&recompute);
-  cursor.log();
-  cursor.moveLeft(&recompute);
-  cursor.log();*/
-  TreePool::sharedPool()->log();
+  assert(bChar.nodeRetainCount() == 3);
+  assert(cursor.layoutIdentifier() == h.childAtIndex(1).identifier());
 
-  /*cursor.log();
   bool recompute = false;
+  assert(cursor.layoutIdentifier() == bChar.identifier());
+  assert(cursor.position() == LayoutCursor::Position::Right);
   cursor.moveLeft(&recompute);
-  cursor.log();
-  cursor.moveRight(&recompute);
-  cursor.log();*/
+  assert(cursor.layoutIdentifier() == bChar.identifier());
+  assert(cursor.position() == LayoutCursor::Position::Left);
+  assert(bChar.nodeRetainCount() == 3);
+  assert(aChar.nodeRetainCount() == 2);
+  cursor.moveLeft(&recompute);
+  assert(cursor.layoutIdentifier() == aChar.identifier());
+  assert(cursor.position() == LayoutCursor::Position::Left);
+  assert(aChar.nodeRetainCount() == 3);
+}
+
+int main() {
+  testAddition();
+  testPoolEmpties();
+  testCursorCreateAndRetain();
+  testCursorMoveLeft();
   return 0;
 }

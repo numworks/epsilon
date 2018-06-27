@@ -20,10 +20,6 @@ public:
 
   LayoutCursor cursor() const;
 
-  virtual void addChild(LayoutReference<LayoutNode> l) {
-    TreeReference<T>::addChild(l);
-  }
-
   LayoutReference<LayoutNode> childAtIndex(int i) {
     TreeReference<T> treeRefChild = TreeReference<T>::treeChildAtIndex(i);
     return LayoutReference<LayoutNode>(treeRefChild.node());

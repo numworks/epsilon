@@ -81,6 +81,7 @@ public:
   void addChild(TreeReference<TreeNode> t) {
     t.node()->retain();
     TreePool::sharedPool()->move(t.node(), node()->next());
+    node()->incrementNumberOfChildren();
   }
 
   void removeChild(TreeReference<TreeNode> t) {

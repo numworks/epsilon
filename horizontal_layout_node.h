@@ -17,7 +17,7 @@ public:
   }
 
   int numberOfChildren() const override { return m_numberOfChildren; }
-  void incrementNumberOfChildren() { m_numberOfChildren++; }
+  void incrementNumberOfChildren() override { m_numberOfChildren++; }
 
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {
     if (this == cursor->layoutReference().node()) {
@@ -84,11 +84,6 @@ public:
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : LayoutReference<HorizontalLayoutNode>() {
     addChild(l2);
     addChild(l1);
-  }
-
-  virtual void addChild(LayoutRef l) override {
-    LayoutReference<HorizontalLayoutNode>::addChild(l);
-    node()->incrementNumberOfChildren();
   }
 };
 

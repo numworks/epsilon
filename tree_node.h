@@ -38,6 +38,7 @@ public:
   TreeNode * parentTree() const;
   TreeNode * editableRootTree();
   virtual int numberOfChildren() const = 0;
+  virtual void incrementNumberOfChildren() {} //TODO Put an assert false
   int numberOfDescendants(bool includeSelf) const;
   TreeNode * childTreeAtIndex(int i) const;
   int indexOfChildByIdentifier(int childID) const;

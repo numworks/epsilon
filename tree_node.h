@@ -16,7 +16,6 @@
  */
 
 class TreeNode {
-//  friend class TreeReference<T>;
   friend class TreePool;
 public:
   virtual ~TreeNode() {}

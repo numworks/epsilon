@@ -42,7 +42,6 @@ public:
 
   ~TreeReference() {
     assert(node());
-    //printf("Delete TreeReference of m_id %d, nodeId %d\n", m_identifier, node()->identifier());
     assert(node()->identifier() == m_identifier);
     node()->release();
   }

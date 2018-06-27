@@ -134,7 +134,7 @@ private:
         break;
       }
     }
-    assert(newIdentifier != -1); // TODO error handling
+    assert(newIdentifier != -1);
     return newIdentifier;
   }
 

@@ -94,25 +94,66 @@ void testCursorMoveLeft() {
   assert(aChar.nodeRetainCount() == 3);
 }
 
-void testPoolAllocationFail() {
-  printf("Pool allocation fail test\n");
+void testPoolExpressionAllocationFail() {
+  printf("Pool expression allocation fail test\n");
 
-  // Fill the pool for size 256
-
-  // Allocation fail
-  assert(TreePool::sharedPool()->numberOfNodes() == 0);
-  AllocationFailedExpressionRef a;
+  ExpressionRef::failedAllocationNode();
   assert(TreePool::sharedPool()->numberOfNodes() == 1);
 
+  // Fill the pool for size 256
+  FloatRef f1(0.0f);
+  FloatRef f2(1.0f);
+  AdditionRef a1(f1, f2);
+  float result1 = a1.approximate();
+  assert(result1 == 1);
+
+  FloatRef f3(2.0f);
+  FloatRef f4(3.0f);
+  FloatRef f5(4.0f);
+  FloatRef f6(5.0f);
+  FloatRef f7(6.0f);
+  FloatRef f8(7.0f);
+  FloatRef f9(8.0f);
+
+  // Allocation fail
+  FloatRef f11(10.0f);
+  AdditionRef a(f11, f3);
+  float result = a.approximate();
+  assert(result == -1);
+  assert(ExpressionRef::failedAllocationNode()->retainCount() == 3);
+
+  f1.replaceWith(f11);
+  float result2 = a1.approximate();
+  assert(result2 == 0);
+  TreePool::sharedPool()->log();
+}
+
+void testPoolLayoutAllocationFail() {
+  printf("Pool layout allocation fail test\n");
+
+  // Fill the pool for size 256
+  CharLayoutRef char1('a');
+  LayoutRef::failedAllocationNode();
+  CharLayoutRef char2('b');
+  CharLayoutRef char3('a');
+  CharLayoutRef char4('b');
+  CharLayoutRef char5('a');
+  CharLayoutRef char6('b');
+  CharLayoutRef char7('a');
+  CharLayoutRef char8('b');
+  CharLayoutRef char9('a');
+  CharLayoutRef char10('b');
+
+  // Allocation fail
+  CharLayoutRef char11('a');
   /*Expression e = ;
-  e.simplify*/
+    e.simplify*/
 }
 
 typedef void (test)();
 void runTest(test t) {
-  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+  // TODO add aserts on the pool size once we decide to create allocationFailureNodesFromTheStart
   t();
-  assert(TreePool::sharedPool()->numberOfNodes() == 0);
 }
 
 int main() {
@@ -121,7 +162,7 @@ int main() {
   runTest(testPoolEmpties);
   runTest(testCursorCreateAndRetain);
   runTest(testCursorMoveLeft);
-  runTest(testPoolAllocationFail);
+  runTest(testPoolExpressionAllocationFail);
   printf("\n*******************\nEnd of tests\n*******************\n\n");
   return 0;
 }

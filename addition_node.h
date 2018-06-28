@@ -6,11 +6,9 @@
 
 class AdditionNode : public ExpressionNode {
 public:
-#if TREE_LOGGING
   const char * description() const override {
     return "Addition";
   }
-#endif
 
   size_t size() const override {
     return sizeof(AdditionNode);
@@ -23,8 +21,11 @@ public:
     return result;
   }
 
-  int numberOfChildren() const override {
-    return 2;
+  int numberOfChildren() const override { return m_numberOfChildren; }
+  void incrementNumberOfChildren() override { m_numberOfChildren++; }
+  void decrementNumberOfChildren() override {
+    assert(m_numberOfChildren > 0);
+    m_numberOfChildren--;
   }
 /*
   Expression simplify() override {
@@ -34,6 +35,8 @@ public:
     }
   }
   */
+private:
+  int m_numberOfChildren;
 };
 
 class AdditionRef : public ExpressionReference<AdditionNode> {
@@ -41,8 +44,8 @@ public:
   AdditionRef(ExpressionRef e1, ExpressionRef e2) :
     ExpressionReference<AdditionNode>()
   {
-    addOperand(e2);
-    addOperand(e1);
+    addChild(e2);
+    addChild(e1);
   }
 };
 

@@ -7,6 +7,8 @@ class LayoutCursor;
 
 class LayoutNode : public TreeNode {
 public:
+  static TreeNode * failedAllocationNode();
+
   /* Hierarchy */
   LayoutNode * parent() const { return static_cast<LayoutNode *>(parentTree()); }
 

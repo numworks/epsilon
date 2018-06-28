@@ -18,6 +18,10 @@ public:
 
   int numberOfChildren() const override { return m_numberOfChildren; }
   void incrementNumberOfChildren() override { m_numberOfChildren++; }
+  void decrementNumberOfChildren() override {
+    assert(m_numberOfChildren > 0);
+    m_numberOfChildren--;
+  }
 
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {
     if (this == cursor->layoutReference().node()) {
@@ -78,12 +82,12 @@ class HorizontalLayoutRef : public LayoutReference<HorizontalLayoutNode> {
 public:
   HorizontalLayoutRef() : LayoutReference<HorizontalLayoutNode>() {}
   HorizontalLayoutRef(LayoutRef l) : LayoutReference<HorizontalLayoutNode>() {
-    addChild(l);
+    addTreeChild(l);
   }
 
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : LayoutReference<HorizontalLayoutNode>() {
-    addChild(l2);
-    addChild(l1);
+    addTreeChild(l2);
+    addTreeChild(l1);
   }
 };
 

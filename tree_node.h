@@ -25,8 +25,10 @@ public:
   virtual const char * description() const {
     return "UNKNOWN";
   }
+  virtual bool isAllocationFailure() const { return false; }
 
   // Node operations
+  virtual void init(float f) {}
   void retain() { m_referenceCounter++; }
   void release();
   void rename(int identifier) {
@@ -39,6 +41,7 @@ public:
   TreeNode * editableRootTree();
   virtual int numberOfChildren() const = 0;
   virtual void incrementNumberOfChildren() {} //TODO Put an assert false
+  virtual void decrementNumberOfChildren() {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
   int numberOfDescendants(bool includeSelf) const;
   TreeNode * childTreeAtIndex(int i) const;
   int indexOfChildByIdentifier(int childID) const;

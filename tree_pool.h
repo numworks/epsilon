@@ -15,14 +15,16 @@ public:
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
   template <typename T>
-  T * createTreeNode() {
+  TreeNode * createTreeNode() {
     int nodeIdentifier = generateIdentifier();
     if (nodeIdentifier == -1) {
-      return nullptr; // TODO return static node "failedAllocation"
+      T::failedAllocationNode()->retain();
+      return T::failedAllocationNode(); // TODO return static node "failedAllocation"
     }
     void * ptr = alloc(sizeof(T));
     if (ptr == nullptr) {
-      return nullptr;
+      T::failedAllocationNode()->retain();
+      return T::failedAllocationNode();
     }
     T * node = new(ptr) T();
     node->rename(nodeIdentifier);

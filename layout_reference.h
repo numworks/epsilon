@@ -18,6 +18,8 @@ public:
     return LayoutReference<LayoutNode>(this->node());
   }
 
+  static TreeNode * failedAllocationNode();
+
   LayoutCursor cursor() const;
 
   LayoutReference<LayoutNode> childAtIndex(int i) {

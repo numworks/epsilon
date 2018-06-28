@@ -1,4 +1,9 @@
 #include "layout_node.h"
+#include "layout_reference.h"
+
+TreeNode * LayoutNode::failedAllocationNode() {
+  return LayoutRef::failedAllocationNode();
+}
 
 void LayoutNode::draw() {
   for (LayoutNode * child : children()) {

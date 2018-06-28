@@ -14,6 +14,7 @@ public:
     return m_value > 1 ? "BigFloat" : "SmallFloat";
   }
   void setFloat(float f) { m_value = f; }
+  void init(float f) override { m_value = f; }
 private:
   float m_value;
 };
@@ -21,7 +22,7 @@ private:
 class FloatRef : public ExpressionReference<FloatNode> {
 public:
   FloatRef(float f) : ExpressionReference<FloatNode>() {
-    this->node()->setFloat(f);
+    this->uncastedNode()->init(f);
   }
 };
 

@@ -16,8 +16,12 @@ public:
     return ExpressionReference<ExpressionNode>(this->node());
   }
 
-  void addOperand(ExpressionReference<ExpressionNode> e) {
-    TreeReference<T>::addChild(e);
+  static TreeNode * failedAllocationNode();
+
+  void addChild(ExpressionReference<ExpressionNode> e) {
+    if (!this->node()->isAllocationFailure()) {
+      TreeReference<T>::addTreeChild(e);
+    }
   }
 
   ExpressionReference<ExpressionNode> childAtIndex(int i) {

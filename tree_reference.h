@@ -58,8 +58,14 @@ public:
 
   T * node() const {
     // TODO: Here, assert that the node type is indeed T
+    // ?? Might be allocation failure, not T
     return static_cast<T*>(TreePool::sharedPool()->node(m_identifier));
   }
+
+  TreeNode * uncastedNode() const {
+    return TreePool::sharedPool()->node(m_identifier);
+  }
+
 
   int identifier() const { return m_identifier; }
 
@@ -78,7 +84,7 @@ public:
 
   // Hierarchy operations
 
-  void addChild(TreeReference<TreeNode> t) {
+  void addTreeChild(TreeReference<TreeNode> t) {
     t.node()->retain();
     TreePool::sharedPool()->move(t.node(), node()->next());
     node()->incrementNumberOfChildren();
@@ -90,10 +96,12 @@ public:
   }
 
   void replaceWith(TreeReference<TreeNode> t) {
-    parent().replaceChild(node()->indexOfChild(t.node()), t);
+    TreeReference<T> p = parent();
+    p.replaceChildAtIndex(p.node()->indexOfChildByIdentifier(identifier()), t);
   }
 
   void replaceChildAtIndex(int oldChildIndex, TreeReference<TreeNode> newChild) {
+    // TODO decrement the children count of the new child parent
     assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
     TreeReference<T> oldChild = treeChildAtIndex(oldChildIndex);
     TreePool::sharedPool()->move(newChild.node(), oldChild.node()->next());

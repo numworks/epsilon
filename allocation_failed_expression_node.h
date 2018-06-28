@@ -2,6 +2,8 @@
 #define ALLOCATION_FAILED_EXPRESSION_NODE_H
 
 #include "expression_node.h"
+#include "expression_reference.h"
+#include <stdio.h>
 
 class AllocationFailedExpressionNode : public ExpressionNode {
 public:
@@ -12,6 +14,7 @@ public:
   size_t size() const override { return sizeof(AllocationFailedExpressionNode); }
   const char * description() const override { return "Allocation Failed";  }
   int numberOfChildren() const override { return 0; }
+  bool isAllocationFailure() const override { return true; }
 };
 
 class AllocationFailedExpressionRef : public ExpressionReference<AllocationFailedExpressionNode> {

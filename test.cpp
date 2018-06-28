@@ -2,18 +2,19 @@
 #include <stdio.h>
 
 AdditionRef buildAddition() {
+  int initialNumberOfNodes = TreePool::sharedPool()->numberOfNodes();
   FloatRef smallFloat(0.2f);
   FloatRef bigFloat(3.4f);
   AdditionRef a(smallFloat, bigFloat);
-  assert(TreePool::sharedPool()->numberOfNodes() == 3);
+  assert(TreePool::sharedPool()->numberOfNodes() == initialNumberOfNodes + 3);
   return a;
 }
 
 void testAddition() {
   printf("Addition test\n");
-  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+  int initialNumberOfNodes = TreePool::sharedPool()->numberOfNodes();
   AdditionRef a = buildAddition();
-  assert(TreePool::sharedPool()->numberOfNodes() == 3);
+  assert(TreePool::sharedPool()->numberOfNodes() == initialNumberOfNodes + 3);
 
   float result = a.approximate();
   assert(result = 3.6f);
@@ -23,9 +24,11 @@ void testAddition() {
   float result2 = a.approximate();
   assert(result2 == 4.7f);
 
+  int firstChildIdentifier = a.childAtIndex(0).identifier();
+  int secondChildIdentifier = a.childAtIndex(1).identifier();
   a.swapChildren(1,0);
-  assert(a.childAtIndex(0).identifier() == 1);
-  assert(a.childAtIndex(1).identifier() == 3);
+  assert(a.childAtIndex(0).identifier() == secondChildIdentifier);
+  assert(a.childAtIndex(1).identifier() == firstChildIdentifier);
 }
 
 void createNodes() {
@@ -38,27 +41,29 @@ void createNodes() {
 
 void testPoolEmpties() {
   printf("Pool empties test\n");
-  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+  int initialNumberOfNodes = TreePool::sharedPool()->numberOfNodes();
   createNodes();
-  assert(TreePool::sharedPool()->numberOfNodes() == 0);
+  assert(TreePool::sharedPool()->numberOfNodes() == initialNumberOfNodes);
 }
 
 void testCursorCreateAndRetain() {
   printf("Cursor create and retain test\n");
+  int initialNumberOfNodes = TreePool::sharedPool()->numberOfNodes();
   CharLayoutRef aChar('a');
   CharLayoutRef bChar('b');
-  assert(aChar.identifier() == 0);
-  assert(bChar.identifier() == 1);
+  int aCharID = aChar.identifier();
+  int bCharID = bChar.identifier();
+  assert(bCharID = aCharID + 1);
   assert(aChar.nodeRetainCount() == 1);
   assert(bChar.nodeRetainCount() == 1);
   assert(strcmp(aChar.node()->description(), "Char a") == 0);
   assert(strcmp(bChar.node()->description(), "Char b") == 0);
-  assert(TreePool::sharedPool()->numberOfNodes() == 2);
+  assert(TreePool::sharedPool()->numberOfNodes() == initialNumberOfNodes + 2);
 
   HorizontalLayoutRef h(aChar, bChar);
-  assert(aChar.identifier() == 0);
-  assert(bChar.identifier() == 1);
-  assert(h.identifier() == 2);
+  assert(aChar.identifier() == aCharID);
+  assert(bChar.identifier() == bCharID);
+  assert(h.identifier() == bCharID + 1);
   assert(aChar.nodeRetainCount() == 2);
   assert(bChar.nodeRetainCount() == 2);
   assert(h.nodeRetainCount() == 1);
@@ -97,9 +102,6 @@ void testCursorMoveLeft() {
 void testPoolExpressionAllocationFail() {
   printf("Pool expression allocation fail test\n");
 
-  ExpressionRef::failedAllocationNode();
-  assert(TreePool::sharedPool()->numberOfNodes() == 1);
-
   // Fill the pool for size 256
   FloatRef f1(0.0f);
   FloatRef f2(1.0f);
@@ -129,9 +131,6 @@ void testPoolExpressionAllocationFail() {
 
 void testPoolExpressionAllocationFail2() {
   printf("Pool expression allocation fail second test\n");
-
-  ExpressionRef::failedAllocationNode();
-  assert(TreePool::sharedPool()->numberOfNodes() == 1);
 
   // Fill the pool for size 256
   FloatRef f1(0.0f);
@@ -199,12 +198,15 @@ void testPoolLayoutAllocationFail() {
 
 typedef void (test)();
 void runTest(test t) {
-  // TODO add aserts on the pool size once we decide to create allocationFailureNodesFromTheStart
+  int initialNumberOfNodes = TreePool::sharedPool()->numberOfNodes();
   t();
+  assert(TreePool::sharedPool()->numberOfNodes() == initialNumberOfNodes);
 }
 
 int main() {
   printf("\n*******************\nStart running tests\n*******************\n\n");
+  ExpressionRef::failedAllocationNode();
+  assert(TreePool::sharedPool()->numberOfNodes() == 1);
   runTest(testAddition);
   runTest(testPoolEmpties);
   runTest(testCursorCreateAndRetain);

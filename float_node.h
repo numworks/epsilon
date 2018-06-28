@@ -22,7 +22,7 @@ private:
 class FloatRef : public ExpressionReference<FloatNode> {
 public:
   FloatRef(float f) : ExpressionReference<FloatNode>() {
-    this->uncastedNode()->init(f);
+    this->node()->init(f);
   }
 };
 

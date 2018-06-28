@@ -33,7 +33,7 @@ public:
   }
 
   float approximate() const {
-    return this->node()->approximate();
+    return this->castedNode()->approximate();
   }
 
   /*

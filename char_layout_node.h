@@ -50,7 +50,7 @@ private:
 class CharLayoutRef : public LayoutReference<CharLayoutNode> {
 public:
   CharLayoutRef(char c) : LayoutReference<CharLayoutNode>() {
-    this->node()->setChar(c);
+    this->castedNode()->setChar(c); //TODO use init
   }
 };
 

@@ -60,13 +60,13 @@ public:
     return TreeReference<TreeNode>(this->node());
   }
 
-  T * node() const {
+  T * castedNode() const {
     // TODO: Here, assert that the node type is indeed T
     // ?? Might be allocation failure, not T
     return static_cast<T*>(TreePool::sharedPool()->node(m_identifier));
   }
 
-  TreeNode * uncastedNode() const {
+  TreeNode * node() const {
     return TreePool::sharedPool()->node(m_identifier);
   }
 

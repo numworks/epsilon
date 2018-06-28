@@ -12,7 +12,7 @@ TreeNode * LayoutRef::failedAllocationNode() {
 
 template <typename T>
 LayoutCursor LayoutReference<T>::cursor() const {
-  return LayoutCursor(this->node());
+  return LayoutCursor(this->castedNode());
 }
 
 template LayoutCursor LayoutReference<LayoutNode>::cursor() const;

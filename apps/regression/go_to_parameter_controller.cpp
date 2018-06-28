@@ -67,7 +67,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex, double f) 
       }
     }
     // Value not reached
-    app()->displayWarning(I18n::Message::ValueNotReachedByRegression); //TODO
+    app()->displayWarning(I18n::Message::ValueNotReachedByRegression);
     return false;
   }
   m_graphController->selectRegressionCurve();

@@ -8,21 +8,29 @@
 void TreeNode::release() {
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
-    if (numberOfChildren() != 0) {
-      int lastIdentifier = lastChild()->identifier();
-      TreeNode * child = next();
-      bool lastChildReleased = false;
-      while (!lastChildReleased) {
-        lastChildReleased = child->identifier() == lastIdentifier;
-        int nextSiblingIdentifier = lastChildReleased ? -1 : child->nextSibling()->identifier();
-        child->release();
-        if (nextSiblingIdentifier != -1) {
-          child = TreePool::sharedPool()->node(nextSiblingIdentifier);
-        }
+    releaseChildrenAndDestroy();
+  }
+}
+
+void TreeNode::releaseChildren() {
+  if (numberOfChildren() != 0) {
+    int lastIdentifier = lastChild()->identifier();
+    TreeNode * child = next();
+    bool lastChildReleased = false;
+    while (!lastChildReleased) {
+      lastChildReleased = child->identifier() == lastIdentifier;
+      int nextSiblingIdentifier = lastChildReleased ? -1 : child->nextSibling()->identifier();
+      child->release();
+      if (nextSiblingIdentifier != -1) {
+        child = TreePool::sharedPool()->node(nextSiblingIdentifier);
       }
     }
-    TreePool::sharedPool()->discardTreeNode(this);
   }
+}
+
+void TreeNode::releaseChildrenAndDestroy() {
+  releaseChildren();
+  TreePool::sharedPool()->discardTreeNode(this);
 }
 
 // Hierarchy

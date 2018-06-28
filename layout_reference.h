@@ -14,13 +14,13 @@ public:
 
   /* Allow every LayoutReference<T> to be transformed into a
    * LayoutReference<LayoutNode>, i.e. Layout */
-  operator LayoutReference<LayoutNode>() const {
+  operator LayoutReference<LayoutNode>() {
     return LayoutReference<LayoutNode>(this->node());
   }
 
   static TreeNode * failedAllocationNode();
 
-  LayoutCursor cursor() const;
+  LayoutCursor cursor();
 
   LayoutReference<LayoutNode> childAtIndex(int i) {
     TreeReference<T> treeRefChild = TreeReference<T>::treeChildAtIndex(i);

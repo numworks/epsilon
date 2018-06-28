@@ -6,3 +6,8 @@ TreeNode * ExpressionRef::failedAllocationNode() {
   static AllocationFailedExpressionRef FailureRef;
   return FailureRef.node();
 }
+
+template<>
+ExpressionReference<ExpressionNode> ExpressionRef::failedAllocationRef() {
+  return ExpressionReference<ExpressionNode>(failedAllocationNode());
+}

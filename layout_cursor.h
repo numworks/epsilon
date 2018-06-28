@@ -25,7 +25,7 @@ public:
     printf("\n");
   }
 
-  bool isDefined() const { return m_layoutRef.isDefined(); }
+  bool isDefined() { return m_layoutRef.isDefined(); }
 
 
   /* Getters and setters */

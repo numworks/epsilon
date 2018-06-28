@@ -8,6 +8,7 @@
 class TreePool {
   friend class TreeNode;
 public:
+  static constexpr int AllocationFailureIdentifier = 0;
   static TreePool * sharedPool();
 
   // Node
@@ -19,7 +20,7 @@ public:
     int nodeIdentifier = generateIdentifier();
     if (nodeIdentifier == -1) {
       T::failedAllocationNode()->retain();
-      return T::failedAllocationNode(); // TODO return static node "failedAllocation"
+      return T::failedAllocationNode();
     }
     void * ptr = alloc(sizeof(T));
     if (ptr == nullptr) {
@@ -46,9 +47,34 @@ public:
     return copy;
   }
 
-  void log();
+  // Allocation failure handling
+
+  bool nodeWasReplacedWithAllocationFailure(int id) {
+    return m_allocationFailureRetainCount[id] > 0;
+  }
+
+  void releaseAllocationFailure(int id) {
+    int currrentRetainCount = m_allocationFailureRetainCount[id];
+    assert(currrentRetainCount > 0);
+    m_allocationFailureRetainCount[id] = currrentRetainCount - 1;
+    if (m_allocationFailureRetainCount[id] == 0) {
+      freeIdentifier(id);
+    }
+  }
+
+  void registerIdentiferAsAllocationFailure(int id, int retainCount) {
+    if (retainCount == 0) {
+      freeIdentifier(id);
+    } else {
+      assert(id >= 0 && id < MaxNumberOfNodes);
+      m_nodeForIdentifier[id] = first(); // TODO for now the first node in the pool is the allocation failure node (WARNING when implementing for Layouts... HAVE 2 POOLS?)
+      m_allocationFailureRetainCount[id] = retainCount;
+    }
+  }
 
   // Debug
+  void log();
+
   int numberOfNodes() const {
     int count = 0;
     AllPool nodes = const_cast<TreePool *>(this)->allNodes();
@@ -72,6 +98,7 @@ private:
   void registerNode(TreeNode * node) {
     m_nodeForIdentifier[node->identifier()] = node;
   }
+
   void renameNode(TreeNode * node) {
     node->rename(generateIdentifier());
     registerNode(node);
@@ -151,6 +178,7 @@ private:
   char * m_cursor;
   char m_buffer[BufferSize];
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
+  int m_allocationFailureRetainCount[MaxNumberOfNodes];
 };
 
 #endif

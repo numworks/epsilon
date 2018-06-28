@@ -126,7 +126,7 @@ void testPoolExpressionAllocationFail() {
 
   f1.replaceWith(f11);
   float result2 = a1.approximate();
-  assert(result2 == 0);
+  assert(result2 == -1);
 }
 
 void testPoolExpressionAllocationFail2() {
@@ -211,7 +211,7 @@ int main() {
   runTest(testPoolEmpties);
   runTest(testCursorCreateAndRetain);
   runTest(testCursorMoveLeft);
-  //runTest(testPoolExpressionAllocationFail);
+  runTest(testPoolExpressionAllocationFail);
   runTest(testPoolExpressionAllocationFail2);
   printf("\n*******************\nEnd of tests\n*******************\n\n");
   return 0;

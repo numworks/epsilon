@@ -31,6 +31,8 @@ public:
   virtual void init(float f) {}
   void retain() { m_referenceCounter++; }
   void release();
+  void releaseChildren();
+  void releaseChildrenAndDestroy();
   void rename(int identifier) {
     m_identifier = identifier;
     m_referenceCounter = 1;
@@ -101,6 +103,9 @@ public:
     // Unfortunately, we want TreeNode to have a VARIABLE size
     return reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(const_cast<TreeNode *>(this)) + size());
   }
+
+  // Hierarchy operations
+  void moveAndReleaseAllChildren();
 
 protected:
   TreeNode() :

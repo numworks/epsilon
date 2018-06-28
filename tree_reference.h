@@ -43,14 +43,18 @@ public:
   }
 
   ~TreeReference() {
-    assert(node());
-    assert(node()->identifier() == m_identifier);
-    node()->release();
+    if (m_identifier >= 0) {
+      assert(node());
+      assert(node()->identifier() == m_identifier);
+      node()->release();
+    }
   }
 
   bool isDefined() const { return m_identifier >= 0 && TreePool::sharedPool()->node(m_identifier) != nullptr; }
 
   int nodeRetainCount() const { return node()->retainCount(); }
+  void incrementNumberOfChildren() { return node()->incrementNumberOfChildren(); }
+  void decrementNumberOfChildren() { return node()->decrementNumberOfChildren(); }
 
   operator TreeReference<TreeNode>() const {
     return TreeReference<TreeNode>(this->node());
@@ -96,12 +100,16 @@ public:
   }
 
   void replaceWith(TreeReference<TreeNode> t) {
-    TreeReference<T> p = parent();
+    TreeReference<TreeNode> p = parent();
     p.replaceChildAtIndex(p.node()->indexOfChildByIdentifier(identifier()), t);
   }
 
   void replaceChildAtIndex(int oldChildIndex, TreeReference<TreeNode> newChild) {
     // TODO decrement the children count of the new child parent
+    TreeReference<TreeNode> p = newChild.parent();
+    if (p.isDefined()) {
+      p.decrementNumberOfChildren();
+    }
     assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
     TreeReference<T> oldChild = treeChildAtIndex(oldChildIndex);
     TreePool::sharedPool()->move(newChild.node(), oldChild.node()->next());
@@ -131,12 +139,17 @@ protected:
     m_identifier = node->identifier();
   }
 
-  TreeReference(TreeNode * node) :
-    m_identifier(node->identifier())
-  {
-    node->retain();
+  TreeReference(TreeNode * node) {
+    if (node == nullptr) {
+      m_identifier = -1;
+    } else {
+      m_identifier = node->identifier();
+      node->retain();
+    }
   }
   int m_identifier;
 };
+
+typedef TreeReference<TreeNode> TreeRef;
 
 #endif

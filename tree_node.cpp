@@ -1,6 +1,6 @@
 #include "tree_node.h"
 #include "tree_pool.h"
-#include "expression_node.h"
+#include "tree_reference.h"
 #include <stdio.h>
 
 // Node operations
@@ -174,4 +174,10 @@ bool TreeNode::hasSibling(const TreeNode * e) const {
     }
   }
   return false;
+}
+
+void TreeNode::replaceWithAllocationFailure() {
+  TreeRef t(this);
+  t.replaceWithAllocationFailure();
+  // TODO: OK to change the memory while executing from it, even though we know it will stop execution just after ?
 }

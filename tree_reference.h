@@ -11,6 +11,9 @@ class Cursor;
 
 template <typename T>
 class TreeReference {
+  friend class TreeNode;
+  friend class AdditionNode;
+
   friend class Cursor;
   template <typename U>
   friend class TreeReference;
@@ -126,6 +129,12 @@ public:
     node()->decrementNumberOfChildren();
   }
 
+  void removeChildren() {
+    node()->releaseChildren();
+    TreePool::sharedPool()->moveChildren(node(), TreePool::sharedPool()->last());
+    node()->eraseNumberOfChildren();
+  }
+
   void replaceWith(TreeReference<TreeNode> t) {
     TreeReference<TreeNode> p = parent();
     if (p.isDefined()) {
@@ -196,6 +205,15 @@ public:
     TreeNode * firstChildNode = firstChild.node();
     TreePool::sharedPool()->move(firstChildNode, secondChild.node()->next());
     TreePool::sharedPool()->move(secondChild.node(), firstChildNode);
+  }
+
+  void mergeChildren(TreeReference<T> t) {
+    // Steal operands
+    TreePool::sharedPool()->moveChildren(t.node(), node()->lastDescendant());
+    // If t is a child, remove it
+    if (node()->hasChild(t.node())) {
+      removeChild(t);
+    }
   }
 
 protected:

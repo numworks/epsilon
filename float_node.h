@@ -8,6 +8,7 @@ class FloatNode : public ExpressionNode {
 public:
   FloatNode() : ExpressionNode() {}
   size_t size() const override { return sizeof(FloatNode); }
+  Type type() const override { return Type::Float; }
   int numberOfChildren() const override { return 0; }
   float approximate() override { return m_value; }
   const char * description() const override {

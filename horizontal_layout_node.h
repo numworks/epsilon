@@ -22,6 +22,9 @@ public:
     assert(m_numberOfChildren > 0);
     m_numberOfChildren--;
   }
+  void eraseNumberOfChildren() override {
+    m_numberOfChildren = 0;
+  }
 
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {
     if (this == cursor->layoutReference().node()) {

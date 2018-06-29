@@ -41,34 +41,44 @@ void TreePool::logNodeForIdentifierArray() {
 }
 
 void TreePool::move(TreeNode * source, TreeNode * destination) {
-  if (source == destination) {
+  size_t moveSize = source->deepSize();
+  moveNodes(source, destination, moveSize);
+}
+
+void TreePool::moveChildren(TreeNode * sourceParent, TreeNode * destination) {
+  size_t moveSize = sourceParent->deepSize() - sourceParent->size();
+  moveNodes(sourceParent->next(), destination, moveSize);
+}
+
+void TreePool::moveNodes(TreeNode * source, TreeNode * destination, size_t moveSize) {
+  if (source == destination || moveSize == 0) {
     return;
   }
 
-  // Move the Node
-  size_t srcDeepSize = source->deepSize();
   char * destinationAddress = reinterpret_cast<char *>(destination);
   char * sourceAddress = reinterpret_cast<char *>(source);
-  if (insert(destinationAddress, sourceAddress, srcDeepSize)) {
+  if (insert(destinationAddress, sourceAddress, moveSize)) {
     // Update the nodeForIdentifier array
     for (int i = 0; i < MaxNumberOfNodes; i++) {
       char * nodeAddress = reinterpret_cast<char *>(m_nodeForIdentifier[i]);
       if (nodeAddress == nullptr) {
         continue;
-      } else if (nodeAddress >= sourceAddress && nodeAddress < sourceAddress + srcDeepSize) {
+      } else if (nodeAddress >= sourceAddress && nodeAddress < sourceAddress + moveSize) {
         if (destinationAddress < sourceAddress) {
           m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress - (sourceAddress - destinationAddress));
         } else {
-          m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress + (destinationAddress - (sourceAddress + srcDeepSize)));
+          m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress + (destinationAddress - (sourceAddress + moveSize)));
         }
       } else if (nodeAddress > sourceAddress && nodeAddress < destinationAddress) {
-        m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress - srcDeepSize);
+        m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress - moveSize);
       } else if (nodeAddress < sourceAddress && nodeAddress >= destinationAddress) {
-        m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress + srcDeepSize);
+        m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress + moveSize);
       }
     }
   }
 }
+
+
 
 #include <stdio.h>
 

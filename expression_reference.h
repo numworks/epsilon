@@ -11,7 +11,8 @@ class ExpressionReference : public TreeReference<T> {
 public:
   using TreeReference<T>::TreeReference;
 
-  // Allow every ExpressionReference<T> to be transformed into an ExpressionReference<ExpressionNode>, i.e. Expression
+  /* Allow every ExpressionReference<T> to be transformed into an
+   * ExpressionReference<ExpressionNode>, i.e. ExpressionRef */
   operator ExpressionReference<ExpressionNode>() const {
     return ExpressionReference<ExpressionNode>(this->node());
   }
@@ -30,11 +31,13 @@ public:
     return this->castedNode()->approximate();
   }
 
-  /*
-  ExpressionReference<ExpressionNode> simplify() {
-    return node()->simplify();
+  void deepReduce() {
+    return this->castedNode()->deepReduce();
   }
-  */
+
+  void shallowReduce() {
+    return this->castedNode()->shallowReduce();
+  }
 };
 
 typedef ExpressionReference<ExpressionNode> ExpressionRef;

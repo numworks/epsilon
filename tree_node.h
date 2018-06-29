@@ -53,6 +53,7 @@ public:
   virtual int numberOfChildren() const = 0;
   virtual void incrementNumberOfChildren() {} //TODO Put an assert false
   virtual void decrementNumberOfChildren() {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
+  virtual void eraseNumberOfChildren() {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
   int numberOfDescendants(bool includeSelf) const;
   TreeNode * childTreeAtIndex(int i) const;
   int indexOfChildByIdentifier(int childID) const;
@@ -125,14 +126,7 @@ public:
     return node;
   }
 
-protected:
-  TreeNode() :
-    m_identifier(-1),
-    m_referenceCounter(1)
-  {
-  }
-
-  /*TreeNode * lastDescendant() const {
+  TreeNode * lastDescendant() const {
     TreeNode * node = const_cast<TreeNode *>(this);
     int remainingNodesToVisit = node->numberOfChildren();
     while (remainingNodesToVisit > 0) {
@@ -141,7 +135,17 @@ protected:
       remainingNodesToVisit += node->numberOfChildren();
     }
     return node;
-  }*/
+  }
+
+  // Hierarchy operations
+  void replaceWithAllocationFailure();
+
+protected:
+  TreeNode() :
+    m_identifier(-1),
+    m_referenceCounter(1)
+  {
+  }
 
   TreeNode * lastChild() const {
     if (numberOfChildren() == 0) {

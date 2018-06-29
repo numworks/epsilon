@@ -222,6 +222,23 @@ void testStealOperand() {
   assert_expression_approximates_to(a2, 2);
 }
 
+void testSimplify() {
+  printf("Symplify test\n");
+
+  AdditionRef a(
+      AdditionRef(
+        FloatRef(0.0f),
+        FloatRef(1.0f)),
+      FloatRef(2.0f));
+
+  assert_expression_approximates_to(a, 3);
+
+  a.deepReduce();
+
+  assert_expression_approximates_to(a, 3);
+  assert(a.numberOfChildren() == 3);
+}
+
 void testPoolLayoutAllocationFail() {
   printf("Pool layout allocation fail test\n");
 
@@ -260,7 +277,7 @@ int main() {
   runTest(testPoolExpressionAllocationFail);
   runTest(testPoolExpressionAllocationFail2);
   runTest(testPoolExpressionAllocationFailOnImbricatedAdditions);
-  runTest(testStealOperand);
+  //runTest(testStealOperand);
   printf("\n*******************\nEnd of tests\n*******************\n\n");
   return 0;
 }

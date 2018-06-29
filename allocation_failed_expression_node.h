@@ -13,6 +13,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailedExpressionNode); }
   const char * description() const override { return "Allocation Failed";  }
+  Type type() const override { return Type::AllocationFailure; }
   int numberOfChildren() const override { return 0; }
   bool isAllocationFailure() const override { return true; }
 };

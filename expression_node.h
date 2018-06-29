@@ -5,6 +5,35 @@
 
 class ExpressionNode : public TreeNode {
 public:
+   enum class Type : uint8_t {
+    AllocationFailure = 0,
+    Float = 1,
+    Addition
+   };
+
+  // Expression
+  virtual Type type() const = 0;
+  virtual float approximate() = 0;
+
+  void deepReduce() {
+    assert(parentTree() != nullptr);
+    for (int i = 0; i < numberOfChildren(); i++) {
+      child(i)->deepReduce();
+    }
+    shallowReduce();
+  }
+
+  virtual bool shallowReduce() {
+    for (int i = 0; i < numberOfChildren(); i++) {
+      if (child(i)->isAllocationFailure()) {
+        replaceWithAllocationFailure();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Allocation failure
   static TreeNode * FailedAllocationStaticNode();
   static int AllocationFailureNodeIdentifier() {
     return FailedAllocationStaticNode()->identifier();
@@ -12,9 +41,9 @@ public:
   int allocationFailureNodeIdentifier() override {
     return AllocationFailureNodeIdentifier();
   }
-
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-  virtual float approximate() = 0;
+
+  // Hierarchy
   ExpressionNode * child(int i) { return static_cast<ExpressionNode *>(childTreeAtIndex(i)); }
 };
 

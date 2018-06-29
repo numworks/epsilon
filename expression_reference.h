@@ -19,18 +19,6 @@ public:
   static ExpressionReference<ExpressionNode> staticFailedAllocationStaticRef();
   static TreeNode * staticFailedAllocationStaticNode();
 
-  void addChild(ExpressionReference<ExpressionNode> e) {
-    if (!this->node()->isAllocationFailure()) {
-      TreeReference<T>::addTreeChild(e);
-    }
-  }
-
-  void addChildAtIndex(ExpressionReference<ExpressionNode> e, int index) {
-    if (!this->node()->isAllocationFailure()) {
-      TreeReference<T>::addTreeChildAtIndex(e, index);
-    }
-  }
-
   ExpressionReference<ExpressionNode> childAtIndex(int i) {
     return ExpressionReference<ExpressionNode>(TreeReference<T>::treeChildAtIndex(i).node());
   }

@@ -1,6 +1,15 @@
 #include "refs.h"
 #include <stdio.h>
 
+void assert_expression_approximates_to(ExpressionRef e, float result) {
+  float b = e.approximate();
+  if (b > result) {
+    assert(b - result < 0.000001f);
+  } else {
+    assert(result - b < 0.000001f);
+  }
+}
+
 AdditionRef buildAddition() {
   int initialNumberOfNodes = TreePool::sharedPool()->numberOfNodes();
   FloatRef smallFloat(0.2f);
@@ -16,13 +25,12 @@ void testAddition() {
   AdditionRef a = buildAddition();
   assert(TreePool::sharedPool()->numberOfNodes() == initialNumberOfNodes + 3);
 
-  float result = a.approximate();
-  assert(result = 3.6f);
+  assert_expression_approximates_to(a, 3.6f);
 
   FloatRef smallFloat(1.3f);
   a.replaceChildAtIndex(0, smallFloat);
-  float result2 = a.approximate();
-  assert(result2 == 4.7f);
+
+  assert_expression_approximates_to(a, 4.7f);
 
   int firstChildIdentifier = a.childAtIndex(0).identifier();
   int secondChildIdentifier = a.childAtIndex(1).identifier();
@@ -106,8 +114,8 @@ void testPoolExpressionAllocationFail() {
   FloatRef f1(0.0f);
   FloatRef f2(1.0f);
   AdditionRef a1(f1, f2);
-  float result1 = a1.approximate();
-  assert(result1 == 1);
+
+  assert_expression_approximates_to(a1, 1);
 
   FloatRef f3(2.0f);
   FloatRef f4(3.0f);
@@ -120,12 +128,12 @@ void testPoolExpressionAllocationFail() {
   // Allocation fail
   FloatRef f11(10.0f);
   AdditionRef a(f11, f3);
-  float result = a.approximate();
-  assert(result == -1);
+
+  assert_expression_approximates_to(a, -1);
 
   f1.replaceWith(f11);
-  float result2 = a1.approximate();
-  assert(result2 == -1);
+
+  assert_expression_approximates_to(a1, -1);
 }
 
 void testPoolExpressionAllocationFail2() {
@@ -135,14 +143,14 @@ void testPoolExpressionAllocationFail2() {
   FloatRef f1(0.0f);
   FloatRef f2(1.0f);
   AdditionRef a1(f1, f2);
-  float result1 = a1.approximate();
-  assert(result1 == 1);
+
+  assert_expression_approximates_to(a1, 1);
 
   FloatRef f3(2.0f);
   FloatRef f4(3.0f);
   AdditionRef a2(f3, f4);
-  float result2 = a2.approximate();
-  assert(result2 == 5);
+
+  assert_expression_approximates_to(a2, 5);
 
   FloatRef f5(4.0f);
   FloatRef f6(5.0f);
@@ -153,15 +161,13 @@ void testPoolExpressionAllocationFail2() {
   FloatRef f10(8.0f);
 
   f1.replaceWith(f9);
-  result1 = a1.approximate();
-  assert(result1 == -1);
+
+  assert_expression_approximates_to(a1, -1);
 
   f3.replaceWith(f10);
-  result2 = a2.approximate();
-  assert(result2 == -1);
 
-  result1 = a1.approximate();
-  assert(result1 == -1);
+  assert_expression_approximates_to(a2, -1);
+  assert_expression_approximates_to(a1, -1);
 }
 
 void testPoolExpressionAllocationFailOnImbricatedAdditions() {
@@ -171,13 +177,13 @@ void testPoolExpressionAllocationFailOnImbricatedAdditions() {
   FloatRef f1(0.0f);
   FloatRef f2(1.0f);
   AdditionRef a1(f1, f2);
-  float result1 = a1.approximate();
-  assert(result1 == 1);
+
+  assert_expression_approximates_to(a1, 1);
 
   FloatRef f3(2.0f);
   AdditionRef a2(a1, f3);
-  float result2 = a2.approximate();
-  assert(result2 == 3);
+
+  assert_expression_approximates_to(a2, 3);
 
   FloatRef f4(3.0f);
   FloatRef f5(4.0f);
@@ -187,11 +193,12 @@ void testPoolExpressionAllocationFailOnImbricatedAdditions() {
   // Allocation fail
   FloatRef f9(7.0f);
   f1.replaceWith(f9);
-  result2 = a2.approximate();
-  assert(result2 == -1);
+
+  assert_expression_approximates_to(a2, -1);
+
   a2.removeChild(a1);
-  result2 = a2.approximate();
-  assert(result2 == 2);
+
+  assert_expression_approximates_to(a2, 2);
 }
 
 void testStealOperand() {
@@ -200,20 +207,19 @@ void testStealOperand() {
   FloatRef f1(0.0f);
   FloatRef f2(1.0f);
   AdditionRef a1(f1, f2);
-  int result1 = a1.approximate();
-  assert(result1 == 1);
+
+  assert_expression_approximates_to(a1, 1);
 
   FloatRef f3(2.0f);
   FloatRef f4(3.0f);
   AdditionRef a2(f4, f3);
-  int result2 = a2.approximate();
-  assert(result2 == 5);
+
+  assert_expression_approximates_to(a2, 5);
 
   a1.addChild(f4);
-  int result3 = a1.approximate();
-  assert(result3 == 4);
-  int result4 = a2.approximate();
-  assert(result4 == 2);
+
+  assert_expression_approximates_to(a1, 4);
+  assert_expression_approximates_to(a2, 2);
 }
 
 void testPoolLayoutAllocationFail() {

@@ -194,6 +194,28 @@ void testPoolExpressionAllocationFailOnImbricatedAdditions() {
   assert(result2 == 2);
 }
 
+void testStealOperand() {
+  printf("Steal operand test\n");
+
+  FloatRef f1(0.0f);
+  FloatRef f2(1.0f);
+  AdditionRef a1(f1, f2);
+  int result1 = a1.approximate();
+  assert(result1 == 1);
+
+  FloatRef f3(2.0f);
+  FloatRef f4(3.0f);
+  AdditionRef a2(f4, f3);
+  int result2 = a2.approximate();
+  assert(result2 == 5);
+
+  a1.addChild(f4);
+  int result3 = a1.approximate();
+  assert(result3 == 4);
+  int result4 = a2.approximate();
+  assert(result4 == 2);
+}
+
 void testPoolLayoutAllocationFail() {
   printf("Pool layout allocation fail test\n");
 
@@ -232,6 +254,7 @@ int main() {
   runTest(testPoolExpressionAllocationFail);
   runTest(testPoolExpressionAllocationFail2);
   runTest(testPoolExpressionAllocationFailOnImbricatedAdditions);
+  runTest(testStealOperand);
   printf("\n*******************\nEnd of tests\n*******************\n\n");
   return 0;
 }

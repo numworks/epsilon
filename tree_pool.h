@@ -8,7 +8,6 @@
 class TreePool {
   friend class TreeNode;
 public:
-  static constexpr int AllocationFailureIdentifier = 0;
   static TreePool * sharedPool();
 
   // Node
@@ -19,13 +18,13 @@ public:
   TreeNode * createTreeNode() {
     int nodeIdentifier = generateIdentifier();
     if (nodeIdentifier == -1) {
-      T::staticFailedAllocationStaticNode()->retain();
-      return T::staticFailedAllocationStaticNode();
+      T::FailedAllocationStaticNode()->retain();
+      return T::FailedAllocationStaticNode();
     }
     void * ptr = alloc(sizeof(T));
     if (ptr == nullptr) {
-      T::staticFailedAllocationStaticNode()->retain();
-      return T::staticFailedAllocationStaticNode();
+      T::FailedAllocationStaticNode()->retain();
+      return T::FailedAllocationStaticNode();
     }
     T * node = new(ptr) T();
     node->rename(nodeIdentifier);
@@ -47,6 +46,16 @@ public:
     return copy;
   }
 
+  int registerStaticNode(TreeNode * node) {
+    int nodeID = 0;
+    while (m_staticNodes[nodeID] != nullptr && nodeID < MaxNumberOfStaticNodes) {
+      nodeID++;
+    }
+    assert(nodeID < MaxNumberOfStaticNodes);
+    m_staticNodes[nodeID] = node;
+    return identifierOfStaticNodeAtIndex(nodeID);
+  }
+
   // Debug
   void log();
 
@@ -62,6 +71,7 @@ public:
 private:
   constexpr static int BufferSize = 256;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
+  constexpr static int MaxNumberOfStaticNodes = 2;
 
   // TreeNode
   void discardTreeNode(TreeNode * node) {
@@ -78,6 +88,9 @@ private:
     node->rename(generateIdentifier());
     registerNode(node);
   }
+
+  int identifierOfStaticNodeAtIndex(int index) const { return - (index+2);} // We do not want positive indexes that are reserved for pool nodes, and -1 is reserved for node initialisation.
+  int indexOfStaticNode(int id) const { return -id-2;}
 
   // Iterators
 
@@ -153,6 +166,7 @@ private:
   char * m_cursor;
   char m_buffer[BufferSize];
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
+  TreeNode * m_staticNodes[MaxNumberOfStaticNodes];
 };
 
 #endif

@@ -5,9 +5,13 @@
 #include "char_layout_node.h"
 
 template<>
-TreeNode * LayoutRef::staticFailedAllocationStaticNode() {
-  static AllocationFailedLayoutRef FailureRef;
-  return FailureRef.node();
+TreeNode * LayoutRef::FailedAllocationStaticNode() {
+  static AllocationFailedLayoutNode FailureNode;
+  if (FailureNode.identifier() >= -1) {
+    int newIdentifier = TreePool::sharedPool()->registerStaticNode(&FailureNode);
+    FailureNode.rename(newIdentifier);
+  }
+  return &FailureNode;
 }
 
 template <typename T>

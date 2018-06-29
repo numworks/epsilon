@@ -18,7 +18,7 @@ public:
     return LayoutReference<LayoutNode>(this->node());
   }
 
-  static TreeNode * staticFailedAllocationStaticNode();
+  static TreeNode * FailedAllocationStaticNode();
 
   LayoutCursor cursor() const;
 

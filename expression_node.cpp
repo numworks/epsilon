@@ -2,6 +2,6 @@
 #include "allocation_failed_expression_node.h"
 #include "expression_reference.h"
 
-TreeNode * ExpressionNode::staticFailedAllocationStaticNode() {
-  return ExpressionRef::staticFailedAllocationStaticNode();
+TreeNode * ExpressionNode::FailedAllocationStaticNode() {
+  return ExpressionRef::FailedAllocationStaticNode();
 }

@@ -7,8 +7,14 @@ class LayoutCursor;
 
 class LayoutNode : public TreeNode {
 public:
-  static TreeNode * staticFailedAllocationStaticNode();
-  TreeNode * failedAllocationStaticNode() override { return staticFailedAllocationStaticNode(); }
+  static TreeNode * FailedAllocationStaticNode();
+  TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+  static int AllocationFailureNodeIdentifier() {
+    return FailedAllocationStaticNode()->identifier();
+  }
+  int allocationFailureNodeIdentifier() override {
+    return AllocationFailureNodeIdentifier();
+  }
 
   /* Hierarchy */
   LayoutNode * parent() const { return static_cast<LayoutNode *>(parentTree()); }

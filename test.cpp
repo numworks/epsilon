@@ -122,7 +122,6 @@ void testPoolExpressionAllocationFail() {
   AdditionRef a(f11, f3);
   float result = a.approximate();
   assert(result == -1);
-  assert(ExpressionRef::staticFailedAllocationStaticNode()->retainCount() == 3);
 
   f1.replaceWith(f11);
   float result2 = a1.approximate();
@@ -200,7 +199,6 @@ void testPoolLayoutAllocationFail() {
 
   // Fill the pool for size 256
   CharLayoutRef char1('a');
-  LayoutRef::staticFailedAllocationStaticNode();
   CharLayoutRef char2('b');
   CharLayoutRef char3('a');
   CharLayoutRef char4('b');
@@ -226,8 +224,7 @@ void runTest(test t) {
 
 int main() {
   printf("\n*******************\nStart running tests\n*******************\n\n");
-  ExpressionRef::staticFailedAllocationStaticNode();
-  assert(TreePool::sharedPool()->numberOfNodes() == 1);
+  assert(TreePool::sharedPool()->numberOfNodes() == 0);
   runTest(testAddition);
   runTest(testPoolEmpties);
   runTest(testCursorCreateAndRetain);

@@ -2,12 +2,11 @@
 #include "allocation_failed_expression_node.h"
 
 template<>
-TreeNode * ExpressionRef::staticFailedAllocationStaticNode() {
-  static AllocationFailedExpressionRef FailureRef;
-  return FailureRef.node();
-}
-
-template<>
-ExpressionReference<ExpressionNode> ExpressionRef::staticFailedAllocationStaticRef() {
-  return ExpressionReference<ExpressionNode>(staticFailedAllocationStaticNode());
+TreeNode * ExpressionRef::FailedAllocationStaticNode() {
+  static AllocationFailedExpressionNode FailureNode;
+  if (FailureNode.identifier() >= -1) {
+    int newIdentifier = TreePool::sharedPool()->registerStaticNode(&FailureNode);
+    FailureNode.rename(newIdentifier);
+  }
+  return &FailureNode;
 }

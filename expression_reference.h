@@ -16,8 +16,7 @@ public:
     return ExpressionReference<ExpressionNode>(this->node());
   }
 
-  static ExpressionReference<ExpressionNode> staticFailedAllocationStaticRef();
-  static TreeNode * staticFailedAllocationStaticNode();
+  static TreeNode * FailedAllocationStaticNode();
 
   ExpressionReference<ExpressionNode> childAtIndex(int i) {
     return ExpressionReference<ExpressionNode>(TreeReference<T>::treeChildAtIndex(i).node());

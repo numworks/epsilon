@@ -39,7 +39,8 @@ public:
   TreeReference<T> clone() const {
     TreeNode * myNode = node();
     if (myNode->isAllocationFailure()) {
-      return TreeReference<T>(TreePool::sharedPool()->node(TreePool::AllocationFailureIdentifier));
+      int allocationFailureNodeId = myNode->allocationFailureNodeIdentifier();
+      return TreeReference<T>(TreePool::sharedPool()->node(allocationFailureNodeId));
     }
     TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(myNode);
     return TreeReference<T>(nodeCopy);

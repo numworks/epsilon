@@ -31,6 +31,10 @@ public:
     assert(false);
     return nullptr;
   }
+  virtual int allocationFailureNodeIdentifier() {
+    assert(false);
+    return -1;
+  }
 
   // Node operations
   virtual void init(float f) {}

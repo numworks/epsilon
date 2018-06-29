@@ -92,6 +92,13 @@ public:
 
   // Hierarchy operations
 
+  void detach(TreeReference<TreeNode> t) {
+    assert(node()->hasChild(t.node()));
+    TreePool::sharedPool()->move(t.node(), TreePool::sharedPool()->last());
+    t.node()->release();
+    node()->decrementNumberOfChildren();
+  }
+
   void addChild(TreeReference<TreeNode> t) {
     return addChildAtIndex(t, 0);
   }
@@ -100,9 +107,18 @@ public:
     if (node()->isAllocationFailure()) {
       return;
     }
-    // TODO detach t
     assert(index >= 0 && index <= numberOfChildren());
+
+    // Retain t before detaching it, else it might get destroyed
     t.node()->retain();
+
+    // Detach t from its parent
+    TreeReference<TreeNode> tParent = t.parent();
+    if (tParent.isDefined()) {
+      tParent.detach(t);
+    }
+
+    // Move t
     TreeNode * newChildPosition = node()->next();
     for (int i = 0; i < index; i++) {
       newChildPosition = newChildPosition->nextSibling();

@@ -51,8 +51,8 @@ public:
   TreeNode * parentTree() const;
   TreeNode * editableRootTree();
   virtual int numberOfChildren() const = 0;
-  virtual void incrementNumberOfChildren() {} //TODO Put an assert false
-  virtual void decrementNumberOfChildren() {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
+  virtual void incrementNumberOfChildren(int increment = 1) {} //TODO Put an assert false
+  virtual void decrementNumberOfChildren(int decrement = 1) {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
   virtual void eraseNumberOfChildren() {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
   int numberOfDescendants(bool includeSelf) const;
   TreeNode * childTreeAtIndex(int i) const;

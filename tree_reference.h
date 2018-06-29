@@ -61,8 +61,8 @@ public:
   bool isAllocationFailure() const { return node()->isAllocationFailure(); }
 
   int nodeRetainCount() const { return node()->retainCount(); }
-  void incrementNumberOfChildren() { return node()->incrementNumberOfChildren(); }
-  void decrementNumberOfChildren() { return node()->decrementNumberOfChildren(); }
+  void incrementNumberOfChildren(int increment = 1) { return node()->incrementNumberOfChildren(increment); }
+  void decrementNumberOfChildren(int decrement = 1) { return node()->decrementNumberOfChildren(decrement); }
 
   operator TreeReference<TreeNode>() const {
     return TreeReference<TreeNode>(this->node());
@@ -209,11 +209,14 @@ public:
 
   void mergeChildren(TreeReference<T> t) {
     // Steal operands
-    TreePool::sharedPool()->moveChildren(t.node(), node()->lastDescendant());
+    int numberOfNewChildren = t.numberOfChildren();
+    TreePool::sharedPool()->moveChildren(t.node(), node()->lastDescendant()->next());
+    t.node()->eraseNumberOfChildren();
     // If t is a child, remove it
     if (node()->hasChild(t.node())) {
       removeChild(t);
     }
+    node()->incrementNumberOfChildren(numberOfNewChildren);
   }
 
 protected:

@@ -17,10 +17,10 @@ public:
   }
 
   int numberOfChildren() const override { return m_numberOfChildren; }
-  void incrementNumberOfChildren() override { m_numberOfChildren++; }
-  void decrementNumberOfChildren() override {
+  void incrementNumberOfChildren(int increment = 1) override { m_numberOfChildren+= increment; }
+  void decrementNumberOfChildren(int decrement = 1) override {
     assert(m_numberOfChildren > 0);
-    m_numberOfChildren--;
+    m_numberOfChildren-= decrement;
   }
   void eraseNumberOfChildren() override {
     m_numberOfChildren = 0;

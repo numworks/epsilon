@@ -232,7 +232,7 @@ void testSimplify() {
       FloatRef(2.0f));
 
   assert_expression_approximates_to(a, 3);
-
+  SimplificationRootRef b(a);
   a.deepReduce();
 
   assert_expression_approximates_to(a, 3);
@@ -277,7 +277,8 @@ int main() {
   runTest(testPoolExpressionAllocationFail);
   runTest(testPoolExpressionAllocationFail2);
   runTest(testPoolExpressionAllocationFailOnImbricatedAdditions);
-  //runTest(testStealOperand);
+  runTest(testStealOperand);
+  runTest(testSimplify);
   printf("\n*******************\nEnd of tests\n*******************\n\n");
   return 0;
 }

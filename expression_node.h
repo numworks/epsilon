@@ -8,7 +8,8 @@ public:
    enum class Type : uint8_t {
     AllocationFailure = 0,
     Float = 1,
-    Addition
+    Addition,
+    SimplificationRoot
    };
 
   // Expression

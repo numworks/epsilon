@@ -47,31 +47,6 @@ public:
     return copy;
   }
 
-  // Allocation failure handling
-
-  bool nodeWasReplacedWithAllocationFailure(int id) {
-    return m_allocationFailureRetainCount[id] > 0;
-  }
-
-  void releaseAllocationFailure(int id) {
-    int currrentRetainCount = m_allocationFailureRetainCount[id];
-    assert(currrentRetainCount > 0);
-    m_allocationFailureRetainCount[id] = currrentRetainCount - 1;
-    if (m_allocationFailureRetainCount[id] == 0) {
-      freeIdentifier(id);
-    }
-  }
-
-  void registerIdentiferAsAllocationFailure(int id, int retainCount) {
-    if (retainCount == 0) {
-      freeIdentifier(id);
-    } else {
-      assert(id >= 0 && id < MaxNumberOfNodes);
-      m_nodeForIdentifier[id] = first(); // TODO for now the first node in the pool is the allocation failure node (WARNING when implementing for Layouts... HAVE 2 POOLS?)
-      m_allocationFailureRetainCount[id] = retainCount;
-    }
-  }
-
   // Debug
   void log();
 
@@ -178,7 +153,6 @@ private:
   char * m_cursor;
   char m_buffer[BufferSize];
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
-  int m_allocationFailureRetainCount[MaxNumberOfNodes];
 };
 
 #endif

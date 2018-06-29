@@ -239,6 +239,28 @@ void testSimplify() {
   assert(a.numberOfChildren() == 3);
 }
 
+void testChildSort() {
+  printf("Child sort test\n");
+
+  AdditionRef a(
+      AdditionRef(
+        FloatRef(1.0f),
+        FloatRef(2.0f)),
+      FloatRef(3.0f));
+  a.addChild(FloatRef(0.0f));
+
+  assert(a.childAtIndex(0).castedNode()->type() == ExpressionNode::Type::Float);
+  assert(a.childAtIndex(1).castedNode()->type() == ExpressionNode::Type::Addition);
+  assert(a.childAtIndex(2).castedNode()->type() == ExpressionNode::Type::Float);
+
+  a.sortChildren();
+
+  assert(a.childAtIndex(0).castedNode()->type() == ExpressionNode::Type::Float);
+  assert(a.childAtIndex(1).castedNode()->type() == ExpressionNode::Type::Float);
+  assert(a.childAtIndex(2).castedNode()->type() == ExpressionNode::Type::Addition);
+}
+
+
 void testPoolLayoutAllocationFail() {
   printf("Pool layout allocation fail test\n");
 
@@ -279,6 +301,7 @@ int main() {
   runTest(testPoolExpressionAllocationFailOnImbricatedAdditions);
   runTest(testStealOperand);
   runTest(testSimplify);
+  runTest(testChildSort);
   printf("\n*******************\nEnd of tests\n*******************\n\n");
   return 0;
 }

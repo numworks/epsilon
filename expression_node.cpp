@@ -5,3 +5,7 @@
 TreeNode * ExpressionNode::FailedAllocationStaticNode() {
   return ExpressionRef::FailedAllocationStaticNode();
 }
+
+void ExpressionNode::sortChildren() {
+  ExpressionRef(this).sortChildren();
+}

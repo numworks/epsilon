@@ -38,6 +38,23 @@ public:
   void shallowReduce() {
     return this->castedNode()->shallowReduce();
   }
+
+  void sortChildren() {
+    for (int i = this->numberOfChildren()-1; i > 0; i--) {
+      bool isSorted = true;
+      for (int j = 0; j < this->numberOfChildren()-1; j++) {
+        if (this->childAtIndex(j).castedNode()->type() > this->childAtIndex(j+1).castedNode()->type()) {
+          this->swapChildren(j, j+1);
+          isSorted = false;
+        }
+      }
+      if (isSorted) {
+        return;
+      }
+    }
+  }
+
+
 };
 
 typedef ExpressionReference<ExpressionNode> ExpressionRef;

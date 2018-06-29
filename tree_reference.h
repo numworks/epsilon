@@ -13,7 +13,7 @@ template <typename T>
 class TreeReference {
   friend class TreeNode;
   friend class AdditionNode;
-
+  friend class ExpressionNode;
   friend class Cursor;
   template <typename U>
   friend class TreeReference;

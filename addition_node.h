@@ -40,6 +40,9 @@ public:
       i++;
     }
 
+    // Step 2: Sort the operands
+    sortChildren();
+
     return false;
   }
 

@@ -46,6 +46,8 @@ public:
 
   // Hierarchy
   ExpressionNode * child(int i) { return static_cast<ExpressionNode *>(childTreeAtIndex(i)); }
+protected:
+  void sortChildren();
 };
 
 #endif

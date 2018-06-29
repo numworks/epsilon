@@ -36,8 +36,9 @@ void TreeNode::releaseChildrenAndDestroy() {
 // Hierarchy
 
 TreeNode * TreeNode::parentTree() const {
-// Choose between those two algorithms: the first has complexity O(numberNodes) but uses 0(3maxNumberNodes) space
-// The second is much clearer for the reader and uses no space, but has complexity 0
+  /* Choose between these algorithms: the first has complexity O(numberNodes)
+   * but uses O(3maxNumberNodes) space. The second is much clearer for the
+   * reader and uses no space, but has complexity O(numberNodes^2) */
 #if 0
   int cursor = -1;
   TreeNode * parentsHistory[TreePool::MaxNumberOfNodes];

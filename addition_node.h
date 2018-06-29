@@ -16,7 +16,11 @@ public:
   float approximate() override {
     float result = 0.0f;
     for (int i=0; i<numberOfChildren(); i++) {
-      result += child(i)->approximate();
+      float approximateI = child(i)->approximate();
+      if (approximateI == -1) {
+        return -1;
+      }
+      result += approximateI;
     }
     return result;
   }

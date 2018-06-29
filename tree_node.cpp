@@ -127,6 +127,14 @@ int TreeNode::indexOfChild(const TreeNode * child) const {
   return indexOfChildByIdentifier(child->identifier());
 }
 
+int TreeNode::indexInParent() const {
+  TreeNode * p = parentTree();
+  if (p == nullptr) {
+    return -1;
+  }
+  return p->indexOfChildByIdentifier(m_identifier);
+}
+
 bool TreeNode::hasChild(const TreeNode * child) const {
   if (child == nullptr) {
     return false;

@@ -2,12 +2,12 @@
 #include "allocation_failed_expression_node.h"
 
 template<>
-TreeNode * ExpressionRef::failedAllocationNode() {
+TreeNode * ExpressionRef::staticFailedAllocationStaticNode() {
   static AllocationFailedExpressionRef FailureRef;
   return FailureRef.node();
 }
 
 template<>
-ExpressionReference<ExpressionNode> ExpressionRef::failedAllocationRef() {
-  return ExpressionReference<ExpressionNode>(failedAllocationNode());
+ExpressionReference<ExpressionNode> ExpressionRef::staticFailedAllocationStaticRef() {
+  return ExpressionReference<ExpressionNode>(staticFailedAllocationStaticNode());
 }

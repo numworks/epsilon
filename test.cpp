@@ -122,7 +122,7 @@ void testPoolExpressionAllocationFail() {
   AdditionRef a(f11, f3);
   float result = a.approximate();
   assert(result == -1);
-  assert(ExpressionRef::failedAllocationNode()->retainCount() == 3);
+  assert(ExpressionRef::staticFailedAllocationStaticNode()->retainCount() == 3);
 
   f1.replaceWith(f11);
   float result2 = a1.approximate();
@@ -130,7 +130,7 @@ void testPoolExpressionAllocationFail() {
 }
 
 void testPoolExpressionAllocationFail2() {
-  printf("Pool expression allocation fail second test\n");
+  printf("Pool expression allocation multiple fail test\n");
 
   // Fill the pool for size 256
   FloatRef f1(0.0f);
@@ -153,25 +153,46 @@ void testPoolExpressionAllocationFail2() {
   FloatRef f9(8.0f);
   FloatRef f10(8.0f);
 
-  printf("\n");
-  TreePool::sharedPool()->log();
-  printf("\n");
   f1.replaceWith(f9);
   result1 = a1.approximate();
   assert(result1 == -1);
 
-  TreePool::sharedPool()->log();
-  printf("\n");
   f3.replaceWith(f10);
   result2 = a2.approximate();
   assert(result2 == -1);
 
-  printf("\n");
-  TreePool::sharedPool()->log();
   result1 = a1.approximate();
-  printf("a1 number children %d\n", a1.numberOfChildren());
-  printf("a1 %f\n", result1);
   assert(result1 == -1);
+}
+
+void testPoolExpressionAllocationFailOnImbricatedAdditions() {
+  printf("Pool expression allocation fail second test\n");
+
+  // Fill the pool for size 256
+  FloatRef f1(0.0f);
+  FloatRef f2(1.0f);
+  AdditionRef a1(f1, f2);
+  float result1 = a1.approximate();
+  assert(result1 == 1);
+
+  FloatRef f3(2.0f);
+  AdditionRef a2(a1, f3);
+  float result2 = a2.approximate();
+  assert(result2 == 3);
+
+  FloatRef f4(3.0f);
+  FloatRef f5(4.0f);
+  FloatRef f6(5.0f);
+  FloatRef f7(6.0f);
+  FloatRef f8(7.0f);
+  // Allocation fail
+  FloatRef f9(7.0f);
+  f1.replaceWith(f9);
+  result2 = a2.approximate();
+  assert(result2 == -1);
+  a2.removeChild(a1);
+  result2 = a2.approximate();
+  assert(result2 == 2);
 }
 
 void testPoolLayoutAllocationFail() {
@@ -179,7 +200,7 @@ void testPoolLayoutAllocationFail() {
 
   // Fill the pool for size 256
   CharLayoutRef char1('a');
-  LayoutRef::failedAllocationNode();
+  LayoutRef::staticFailedAllocationStaticNode();
   CharLayoutRef char2('b');
   CharLayoutRef char3('a');
   CharLayoutRef char4('b');
@@ -205,7 +226,7 @@ void runTest(test t) {
 
 int main() {
   printf("\n*******************\nStart running tests\n*******************\n\n");
-  ExpressionRef::failedAllocationNode();
+  ExpressionRef::staticFailedAllocationStaticNode();
   assert(TreePool::sharedPool()->numberOfNodes() == 1);
   runTest(testAddition);
   runTest(testPoolEmpties);
@@ -213,6 +234,7 @@ int main() {
   runTest(testCursorMoveLeft);
   runTest(testPoolExpressionAllocationFail);
   runTest(testPoolExpressionAllocationFail2);
+  runTest(testPoolExpressionAllocationFailOnImbricatedAdditions);
   printf("\n*******************\nEnd of tests\n*******************\n\n");
   return 0;
 }

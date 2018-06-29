@@ -1,8 +1,9 @@
 #include "layout_node.h"
+#include "allocation_failed_layout_node.h"
 #include "layout_reference.h"
 
-TreeNode * LayoutNode::failedAllocationNode() {
-  return LayoutRef::failedAllocationNode();
+TreeNode * LayoutNode::staticFailedAllocationStaticNode() {
+  return LayoutRef::staticFailedAllocationStaticNode();
 }
 
 void LayoutNode::draw() {

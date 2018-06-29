@@ -22,10 +22,15 @@ public:
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
+  void setReferenceCounter(int refCount) { m_referenceCounter = refCount; } //TODO make this method privte with only friends that can access it
   virtual const char * description() const {
     return "UNKNOWN";
   }
   virtual bool isAllocationFailure() const { return false; }
+  virtual TreeNode * failedAllocationStaticNode() {
+    assert(false);
+    return nullptr;
+  }
 
   // Node operations
   virtual void init(float f) {}
@@ -48,6 +53,7 @@ public:
   TreeNode * childTreeAtIndex(int i) const;
   int indexOfChildByIdentifier(int childID) const;
   int indexOfChild(const TreeNode * child) const;
+  int indexInParent() const;
   bool hasChild(const TreeNode * child) const;
   bool hasAncestor(const TreeNode * node, bool includeSelf) const;
   bool hasSibling(const TreeNode * e) const;
@@ -104,16 +110,6 @@ public:
     return reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(const_cast<TreeNode *>(this)) + size());
   }
 
-  // Hierarchy operations
-  void moveAndReleaseAllChildren();
-
-protected:
-  TreeNode() :
-    m_identifier(-1),
-    m_referenceCounter(1)
-  {
-  }
-
   TreeNode * nextSibling() const {
     int remainingNodesToVisit = numberOfChildren();
     TreeNode * node = const_cast<TreeNode *>(this)->next();
@@ -123,6 +119,16 @@ protected:
       remainingNodesToVisit--;
     }
     return node;
+  }
+
+  // Hierarchy operations
+  void moveAndReleaseAllChildren();
+
+protected:
+  TreeNode() :
+    m_identifier(-1),
+    m_referenceCounter(1)
+  {
   }
 
   /*TreeNode * lastDescendant() const {

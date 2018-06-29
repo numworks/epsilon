@@ -5,7 +5,8 @@
 
 class ExpressionNode : public TreeNode {
 public:
-  static TreeNode * failedAllocationNode();
+  static TreeNode * staticFailedAllocationStaticNode();
+  TreeNode * failedAllocationStaticNode() override { return staticFailedAllocationStaticNode(); }
   virtual float approximate() = 0;
   ExpressionNode * child(int i) { return static_cast<ExpressionNode *>(childTreeAtIndex(i)); }
 };

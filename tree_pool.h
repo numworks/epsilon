@@ -19,13 +19,13 @@ public:
   TreeNode * createTreeNode() {
     int nodeIdentifier = generateIdentifier();
     if (nodeIdentifier == -1) {
-      T::failedAllocationNode()->retain();
-      return T::failedAllocationNode();
+      T::staticFailedAllocationStaticNode()->retain();
+      return T::staticFailedAllocationStaticNode();
     }
     void * ptr = alloc(sizeof(T));
     if (ptr == nullptr) {
-      T::failedAllocationNode()->retain();
-      return T::failedAllocationNode();
+      T::staticFailedAllocationStaticNode()->retain();
+      return T::staticFailedAllocationStaticNode();
     }
     T * node = new(ptr) T();
     node->rename(nodeIdentifier);

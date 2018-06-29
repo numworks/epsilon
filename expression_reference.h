@@ -12,16 +12,22 @@ public:
   using TreeReference<T>::TreeReference;
 
   // Allow every ExpressionReference<T> to be transformed into an ExpressionReference<ExpressionNode>, i.e. Expression
-  operator ExpressionReference<ExpressionNode>() {
+  operator ExpressionReference<ExpressionNode>() const {
     return ExpressionReference<ExpressionNode>(this->node());
   }
 
-  static ExpressionReference<ExpressionNode> failedAllocationRef();
-  static TreeNode * failedAllocationNode();
+  static ExpressionReference<ExpressionNode> staticFailedAllocationStaticRef();
+  static TreeNode * staticFailedAllocationStaticNode();
 
   void addChild(ExpressionReference<ExpressionNode> e) {
     if (!this->node()->isAllocationFailure()) {
       TreeReference<T>::addTreeChild(e);
+    }
+  }
+
+  void addChildAtIndex(ExpressionReference<ExpressionNode> e, int index) {
+    if (!this->node()->isAllocationFailure()) {
+      TreeReference<T>::addTreeChildAtIndex(e, index);
     }
   }
 
@@ -33,7 +39,7 @@ public:
     TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild);
   }
 
-  float approximate() {
+  float approximate() const {
     return this->castedNode()->approximate();
   }
 

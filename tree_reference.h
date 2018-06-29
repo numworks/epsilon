@@ -36,7 +36,7 @@ public:
     setIdentifierAndRetain(tr.identifier());
   }
 
-  TreeReference<T> clone() {
+  TreeReference<T> clone() const {
     TreeNode * myNode = node();
     if (myNode->isAllocationFailure()) {
       return TreeReference<T>(TreePool::sharedPool()->node(TreePool::AllocationFailureIdentifier));
@@ -53,69 +53,70 @@ public:
     }
   }
 
-  bool isDefined() { return m_identifier >= 0 && node() != nullptr; }
-  bool isAllocationFailure() { return node()->isAllocationFailure(); }
+  bool isDefined() const { return m_identifier >= 0 && node() != nullptr; }
+  bool isAllocationFailure() const { return node()->isAllocationFailure(); }
 
-  int nodeRetainCount() { return node()->retainCount(); }
+  int nodeRetainCount() const { return node()->retainCount(); }
   void incrementNumberOfChildren() { return node()->incrementNumberOfChildren(); }
   void decrementNumberOfChildren() { return node()->decrementNumberOfChildren(); }
 
-  operator TreeReference<TreeNode>() {
+  operator TreeReference<TreeNode>() const {
     return TreeReference<TreeNode>(this->node());
   }
 
-  T * castedNode() {
+  T * castedNode() const {
     // TODO: Here, assert that the node type is indeed T
     // ?? Might be allocation failure, not T
-    updateIdentifier();
     return static_cast<T*>(TreePool::sharedPool()->node(m_identifier));
   }
 
-  TreeNode * node() {
-    updateIdentifier();
+  TreeNode * node() const {
     return TreePool::sharedPool()->node(m_identifier);
-  }
-
-  void updateIdentifier() {
-    /* If the node was replaced with an allocation failure, change the
-     * identifier */
-    if (TreePool::sharedPool()->nodeWasReplacedWithAllocationFailure(m_identifier)) {
-      TreePool::sharedPool()->releaseAllocationFailure(m_identifier);
-      setIdentifierAndRetain(TreePool::AllocationFailureIdentifier);
-    }
   }
 
   int identifier() const { return m_identifier; }
 
   // Hierarchy
-  int numberOfChildren() {
+  int numberOfChildren() const {
     return node()->numberOfChildren();
   }
 
-  TreeReference<T> parent() {
+  TreeReference<T> parent() const {
     return TreeReference(node()->parentTree());
   }
 
-  TreeReference<T> treeChildAtIndex(int i) {
+  TreeReference<T> treeChildAtIndex(int i) const {
     return TreeReference(node()->childTreeAtIndex(i));
   }
 
   // Hierarchy operations
 
   void addTreeChild(TreeReference<TreeNode> t) {
+    return addTreeChildAtIndex(t, 0);
+  }
+
+  void addTreeChildAtIndex(TreeReference<TreeNode> t, int index) {
+    assert(index >= 0 && index <= numberOfChildren());
     t.node()->retain();
-    TreePool::sharedPool()->move(t.node(), node()->next());
+    TreeNode * newChildPosition = node()->next();
+    for (int i = 0; i < index; i++) {
+      newChildPosition = newChildPosition->nextSibling();
+    }
+    TreePool::sharedPool()->move(t.node(), newChildPosition);
     node()->incrementNumberOfChildren();
   }
 
   void removeChild(TreeReference<TreeNode> t) {
     TreePool::sharedPool()->move(t.node(), TreePool::sharedPool()->last());
     t.node()->release();
+    node()->decrementNumberOfChildren();
   }
 
   void replaceWith(TreeReference<TreeNode> t) {
     TreeReference<TreeNode> p = parent();
-    p.replaceChildAtIndex(p.node()->indexOfChildByIdentifier(identifier()), t);
+    if (p.isDefined()) {
+      p.replaceChildAtIndex(p.node()->indexOfChildByIdentifier(identifier()), t);
+    }
   }
 
   void replaceChildAtIndex(int oldChildIndex, TreeReference<TreeNode> newChild) {
@@ -137,7 +138,9 @@ public:
 
   void replaceWithAllocationFailure() {
     TreeReference<TreeNode> p = parent();
+    int indexInParentNode = node()->indexInParent();
     int currentRetainCount = node()->retainCount();
+    TreeNode * staticAllocFailNode = castedNode()->failedAllocationStaticNode();
 
     // Move the node to the end of the pool and decrease children count of parent
     TreePool::sharedPool()->move(node(), TreePool::sharedPool()->last());
@@ -148,16 +151,21 @@ public:
     // Release all children and delete the node in the pool
     node()->releaseChildrenAndDestroy();
 
-    /* In case another ref is pointing to the node, register the identifier as
-     * AllocationFailure. If the retainCount is 1 (this reference is the only
-     * one pointing to the node), the pool will register the identifier as
-     * free. */
-    TreePool::sharedPool()->registerIdentiferAsAllocationFailure(m_identifier, currentRetainCount - 1);
-    setIdentifierAndRetain(TreePool::AllocationFailureIdentifier);
-
-    // Replace parent with AllocationFailure
+    /* Create an allocation failure node with the previous node id. We know
+     * there is room in the pool as we deleted the previous node and an
+     * AllocationFailure nodes size is smaller or equal to any other node size.*/
+    //TODO static assert that the size is smaller
+    TreeNode * newAllocationFailureNode = TreePool::sharedPool()->deepCopy(staticAllocFailNode);
+    newAllocationFailureNode->rename(m_identifier);
     if (p.isDefined()) {
-      p.replaceWithAllocationFailure();
+      assert(indexInParentNode >= 0);
+      /* Set the refCount to previousRefCount-1 because the previous parent is
+       * no longer retaining the node. When we add this node to the parent, it
+       * will retain it and increment the retain count. */
+      newAllocationFailureNode->setReferenceCounter(currentRetainCount - 1);
+      p.addTreeChildAtIndex(newAllocationFailureNode, indexInParentNode);
+    } else {
+      newAllocationFailureNode->setReferenceCounter(currentRetainCount);
     }
   }
 

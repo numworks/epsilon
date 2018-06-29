@@ -5,15 +5,15 @@
 #include "char_layout_node.h"
 
 template<>
-TreeNode * LayoutRef::failedAllocationNode() {
+TreeNode * LayoutRef::staticFailedAllocationStaticNode() {
   static AllocationFailedLayoutRef FailureRef;
   return FailureRef.node();
 }
 
 template <typename T>
-LayoutCursor LayoutReference<T>::cursor() {
+LayoutCursor LayoutReference<T>::cursor() const {
   return LayoutCursor(this->castedNode());
 }
 
-template LayoutCursor LayoutReference<LayoutNode>::cursor();
-template LayoutCursor LayoutReference<CharLayoutNode>::cursor();
+template LayoutCursor LayoutReference<LayoutNode>::cursor() const;
+template LayoutCursor LayoutReference<CharLayoutNode>::cursor() const;

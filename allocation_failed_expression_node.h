@@ -20,7 +20,7 @@ public:
 
 class AllocationFailedExpressionRef : public ExpressionReference<AllocationFailedExpressionNode> {
 public:
-  AllocationFailedExpressionRef() : ExpressionReference<AllocationFailedExpressionNode>() {}
+  using ExpressionReference<AllocationFailedExpressionNode>::ExpressionReference;
 };
 
 #endif

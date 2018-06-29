@@ -92,13 +92,6 @@ public:
 
   // Hierarchy operations
 
-  void detach(TreeReference<TreeNode> t) {
-    assert(node()->hasChild(t.node()));
-    TreePool::sharedPool()->move(t.node(), TreePool::sharedPool()->last());
-    t.node()->release();
-    node()->decrementNumberOfChildren();
-  }
-
   void addChild(TreeReference<TreeNode> t) {
     return addChildAtIndex(t, 0);
   }
@@ -115,7 +108,7 @@ public:
     // Detach t from its parent
     TreeReference<TreeNode> tParent = t.parent();
     if (tParent.isDefined()) {
-      tParent.detach(t);
+      tParent.removeChild(t);
     }
 
     // Move t

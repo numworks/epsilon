@@ -125,9 +125,6 @@ public:
     return node;
   }
 
-  // Hierarchy operations
-  void moveAndReleaseAllChildren();
-
 protected:
   TreeNode() :
     m_identifier(-1),

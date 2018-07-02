@@ -32,14 +32,7 @@ public:
   void eraseNumberOfChildren() override {
     m_numberOfChildren = 0;
   }
-/*
-  Expression simplify() override {
-    // Scan operands, merge constants
-    Addition a = wrapped(this);
-    if (operand(0)->type() == Integer && operand(1)->type() == Integer) {
-    }
-  }
-  */
+
 private:
   int m_numberOfChildren;
 };

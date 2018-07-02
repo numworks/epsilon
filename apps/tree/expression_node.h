@@ -2,6 +2,7 @@
 #define EXPRESSION_NODE_H
 
 #include "tree_node.h"
+#include <stdint.h>
 
 class ExpressionNode : public TreeNode {
 public:

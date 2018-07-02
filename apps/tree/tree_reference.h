@@ -221,19 +221,20 @@ public:
     node()->incrementNumberOfChildren(numberOfNewChildren);
   }
 
-protected:
-  TreeReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<T>();
-    m_identifier = node->identifier();
-  }
-
-  TreeReference(TreeNode * node) {
+  TreeReference(TreeNode * node) { // TODO Make this protected
     if (node == nullptr) {
       m_identifier = -1;
     } else {
       setIdentifierAndRetain(node->identifier());
     }
   }
+
+protected:
+  TreeReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<T>();
+    m_identifier = node->identifier();
+  }
+
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;
     node()->retain();

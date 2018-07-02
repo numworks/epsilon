@@ -1,6 +1,8 @@
-#include "tree_pool.h"
+#include <poincare/tree_pool.h>
 #include <string.h>
 #include <stdint.h>
+
+namespace Poincare {
 
 TreePool * TreePool::sharedPool() {
   static TreePool pool;
@@ -150,4 +152,6 @@ bool TreePool::insert(char * destination, char * source, size_t length) {
     memmove32(dst - len, tmp, len);
   }
   return true;
+}
+
 }

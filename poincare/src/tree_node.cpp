@@ -1,7 +1,9 @@
-#include "tree_node.h"
-#include "tree_pool.h"
-#include "tree_reference.h"
+#include <poincare/tree_node.h>
+#include <poincare/tree_pool.h>
+#include <poincare/tree_reference.h>
 #include <stdio.h>
+
+namespace Poincare {
 
 // Node operations
 
@@ -190,4 +192,6 @@ void TreeNode::addChildAtIndex(TreeNode * t, int index) {
 void TreeNode::removeChild(TreeNode * t) {
   TreeRef tr(this);
   tr.removeChild(TreeRef(t));
+}
+
 }

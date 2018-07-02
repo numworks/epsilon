@@ -1,8 +1,10 @@
-#include "layout_reference.h"
-#include "layout_cursor.h"
-#include "allocation_failed_layout_node.h"
-#include "layout_node.h"
-#include "char_layout_node.h"
+#include <poincare/layout_reference.h>
+#include <poincare/layout_cursor.h>
+#include <poincare/allocation_failed_layout_node.h>
+#include <poincare/layout_node.h>
+#include <poincare/char_layout_node.h>
+
+namespace Poincare {
 
 template<>
 TreeNode * LayoutRef::FailedAllocationStaticNode() {
@@ -21,3 +23,5 @@ LayoutCursor LayoutReference<T>::cursor() const {
 
 template LayoutCursor LayoutReference<LayoutNode>::cursor() const;
 template LayoutCursor LayoutReference<CharLayoutNode>::cursor() const;
+
+}

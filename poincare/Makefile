@@ -47,7 +47,10 @@ objs += $(addprefix poincare/src/,\
   imaginary_part.o\
   integer.o\
   integral.o\
+  layout_cursor.o\
   layout_engine.o\
+  layout_node.o\
+  layout_reference.o\
   list_data.o\
   least_common_multiple.o\
   logarithm.o\
@@ -83,6 +86,8 @@ objs += $(addprefix poincare/src/,\
   sum.o\
   symbol.o\
   tangent.o\
+  tree_node.o\
+  tree_pool.o\
   trigonometry.o\
   undefined.o\
   variable_context.o\

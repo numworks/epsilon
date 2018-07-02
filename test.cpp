@@ -236,7 +236,9 @@ void testSimplify() {
   a.deepReduce();
 
   assert_expression_approximates_to(a, 3);
-  assert(a.numberOfChildren() == 3);
+  assert(a.numberOfChildren() == 1);
+  assert(a.childAtIndex(0).castedNode()->type() == ExpressionNode::Type::Float);
+  assert(a.childAtIndex(0).castedNode()->approximate() == 3.0f);
 }
 
 void testChildSort() {

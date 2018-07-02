@@ -181,3 +181,13 @@ void TreeNode::replaceWithAllocationFailure() {
   t.replaceWithAllocationFailure();
   // TODO: OK to change the memory while executing from it, even though we know it will stop execution just after ?
 }
+
+void TreeNode::addChildAtIndex(TreeNode * t, int index) {
+  TreeRef tr(this);
+  tr.addChildAtIndex(TreeRef(t), index);
+}
+
+void TreeNode::removeChild(TreeNode * t) {
+  TreeRef tr(this);
+  tr.removeChild(TreeRef(t));
+}

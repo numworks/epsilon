@@ -6,7 +6,10 @@
 
 class FloatNode : public ExpressionNode {
 public:
-  FloatNode() : ExpressionNode() {}
+  FloatNode(float value = 0) :
+    ExpressionNode(),
+    m_value(value)
+  {}
   size_t size() const override { return sizeof(FloatNode); }
   Type type() const override { return Type::Float; }
   int numberOfChildren() const override { return 0; }

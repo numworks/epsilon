@@ -139,6 +139,8 @@ public:
 
   // Hierarchy operations
   void replaceWithAllocationFailure();
+  void addChildAtIndex(TreeNode * t, int index);
+  void removeChild(TreeNode * t);
 
 protected:
   TreeNode() :

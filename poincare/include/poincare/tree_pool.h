@@ -65,9 +65,11 @@ public:
 
   int numberOfNodes() const {
     int count = 0;
-    AllPool nodes = const_cast<TreePool *>(this)->allNodes();
-    for (TreeNode * t : nodes) {
+    TreeNode * firstNode = first();
+    TreeNode * lastNode = last();
+    while (firstNode != lastNode) {
       count++;
+      firstNode = firstNode->next();
     }
     return count;
   }

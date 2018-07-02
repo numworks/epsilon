@@ -37,7 +37,6 @@ public:
   }
 
   // Node operations
-  virtual void init(float f) {}
   void retain() { m_referenceCounter++; }
   void release();
   void releaseChildren();

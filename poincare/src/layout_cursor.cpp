@@ -1,6 +1,8 @@
-#include "layout_cursor.h"
-#include "layout_reference.h"
+#include <poincare/layout_cursor.h>
+#include <poincare/layout_reference.h>
 #include <stdio.h>
+
+namespace Poincare {
 
 /* Comparison */
 
@@ -35,4 +37,4 @@ void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
   layoutReference().typedNode()->moveCursorDown(this, shouldRecomputeLayout);
 }
 
-
+}

@@ -93,8 +93,11 @@ TreeNode * TreeNode::editableRootTree() {
 
 int TreeNode::numberOfDescendants(bool includeSelf) const {
   int result = includeSelf ? 1 : 0;
-  for (TreeNode * child : depthFirstChildren()) {
+  TreeNode * nextSiblingNode = nextSibling();
+  TreeNode * currentNode = next();
+  while (currentNode != nextSiblingNode) {
     result++;
+    currentNode = currentNode->next();
   }
   return result;
 }

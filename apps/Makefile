@@ -3,6 +3,7 @@ include apps/home/Makefile
 include apps/on_boarding/Makefile
 include apps/hardware_test/Makefile
 include apps/usb/Makefile
+include apps/tree/Makefile
 snapshots =
 
 # All selected apps are included. Each Makefile below is responsible for setting

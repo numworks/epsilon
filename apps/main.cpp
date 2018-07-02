@@ -1,6 +1,14 @@
 #include "apps_container_storage.h"
 #include "global_preferences.h"
 
+#include "tree/test.cpp"
+
+
+void ion_main(int argc, char * argv[]) {
+  Test::main();
+}
+
+#if 0
 void ion_main(int argc, char * argv[]) {
 #if EPSILON_GETOPT
   for (int i=1; i<argc; i++) {
@@ -40,3 +48,4 @@ void ion_main(int argc, char * argv[]) {
 #endif
   AppsContainerStorage::sharedContainer()->run();
 }
+#endif

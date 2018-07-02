@@ -1,6 +1,8 @@
 #include "refs.h"
 #include <stdio.h>
 
+namespace Test {
+
 void logPool() {
   TreePool::sharedPool()->log();
 }
@@ -24,7 +26,9 @@ AdditionRef buildAddition() {
 }
 
 void testAddition() {
+#if TREE_LOG
   printf("Addition test\n");
+#endif
   int initialNumberOfNodes = TreePool::sharedPool()->numberOfNodes();
   AdditionRef a = buildAddition();
   assert(TreePool::sharedPool()->numberOfNodes() == initialNumberOfNodes + 3);
@@ -52,14 +56,18 @@ void createNodes() {
 }
 
 void testPoolEmpties() {
+#if TREE_LOG
   printf("Pool empties test\n");
+#endif
   int initialNumberOfNodes = TreePool::sharedPool()->numberOfNodes();
   createNodes();
   assert(TreePool::sharedPool()->numberOfNodes() == initialNumberOfNodes);
 }
 
 void testCursorCreateAndRetain() {
+#if TREE_LOG
   printf("Cursor create and retain test\n");
+#endif
   int initialNumberOfNodes = TreePool::sharedPool()->numberOfNodes();
   CharLayoutRef aChar('a');
   CharLayoutRef bChar('b');
@@ -88,7 +96,9 @@ void testCursorCreateAndRetain() {
 }
 
 void testCursorMoveLeft() {
+#if TREE_LOG
   printf("Cursor move left test\n");
+#endif
   CharLayoutRef aChar('a');
   CharLayoutRef bChar('b');
   HorizontalLayoutRef h(aChar, bChar);
@@ -112,7 +122,9 @@ void testCursorMoveLeft() {
 }
 
 void testPoolExpressionAllocationFail() {
+#if TREE_LOG
   printf("Pool expression allocation fail test\n");
+#endif
 
   // Fill the pool for size 256
   FloatRef f1(0.0f);
@@ -141,7 +153,9 @@ void testPoolExpressionAllocationFail() {
 }
 
 void testPoolExpressionAllocationFail2() {
+#if TREE_LOG
   printf("Pool expression allocation multiple fail test\n");
+#endif
 
   // Fill the pool for size 256
   FloatRef f1(0.0f);
@@ -175,7 +189,9 @@ void testPoolExpressionAllocationFail2() {
 }
 
 void testPoolExpressionAllocationFailOnImbricatedAdditions() {
+#if TREE_LOG
   printf("Pool expression allocation fail second test\n");
+#endif
 
   // Fill the pool for size 256
   FloatRef f1(0.0f);
@@ -206,7 +222,9 @@ void testPoolExpressionAllocationFailOnImbricatedAdditions() {
 }
 
 void testStealOperand() {
+#if TREE_LOG
   printf("Steal operand test\n");
+#endif
 
   FloatRef f1(0.0f);
   FloatRef f2(1.0f);
@@ -227,7 +245,9 @@ void testStealOperand() {
 }
 
 void testSimplify() {
+#if TREE_LOG
   printf("Simplify test\n");
+#endif
   AdditionRef a(
       AdditionRef(
         FloatRef(0.0f),
@@ -244,7 +264,9 @@ void testSimplify() {
 }
 
 void testChildSort() {
+#if TREE_LOG
   printf("Child sort test\n");
+#endif
 
   AdditionRef a(
       AdditionRef(
@@ -266,7 +288,9 @@ void testChildSort() {
 
 
 void testPoolLayoutAllocationFail() {
+#if TREE_LOG
   printf("Pool layout allocation fail test\n");
+#endif
 
   // Fill the pool for size 256
   CharLayoutRef char1('a');
@@ -293,7 +317,9 @@ void runTest(test t) {
 }
 
 int main() {
+#if TREE_LOG
   printf("\n*******************\nStart running tests\n*******************\n\n");
+#endif
   assert(TreePool::sharedPool()->numberOfNodes() == 0);
   runTest(testAddition);
   runTest(testPoolEmpties);
@@ -306,6 +332,10 @@ int main() {
   runTest(testSimplify);
   runTest(testChildSort);
   runTest(testPoolLayoutAllocationFail);
+#if TREE_LOG
   printf("\n*******************\nEnd of tests\n*******************\n\n");
+#endif
   return 0;
+}
+
 }

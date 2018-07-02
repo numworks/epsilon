@@ -1,8 +1,9 @@
 #ifndef TREE_POOL_H
 #define TREE_POOL_H
 
-#include <stddef.h>
 #include "tree_node.h"
+#include <stddef.h>
+#include <string.h>
 #include <new>
 
 class TreePool {

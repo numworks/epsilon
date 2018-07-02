@@ -1,5 +1,5 @@
-#ifndef TREE_NODE_H
-#define TREE_NODE_H
+#ifndef POINCARE_TREE_NODE_H
+#define POINCARE_TREE_NODE_H
 
 #include <assert.h>
 #include <stddef.h>
@@ -12,6 +12,8 @@
  *  - an identifier
  *  - a reference counter
  */
+
+namespace Poincare {
 
 class TreeNode {
   friend class TreePool;
@@ -180,5 +182,7 @@ private:
   int m_identifier;
   int m_referenceCounter;
 };
+
+}
 
 #endif

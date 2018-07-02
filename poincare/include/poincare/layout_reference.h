@@ -1,8 +1,10 @@
-#ifndef LAYOUT_REFERENCE_H
-#define LAYOUT_REFERENCE_H
+#ifndef POINCARE_LAYOUT_REFERENCE_H
+#define POINCARE_LAYOUT_REFERENCE_H
 
 #include "tree_reference.h"
 #include "layout_node.h"
+
+namespace Poincare {
 
 class LayoutCursor;
 
@@ -41,5 +43,7 @@ public:
 };
 
 typedef LayoutReference<LayoutNode> LayoutRef;
+
+}
 
 #endif

@@ -1,8 +1,10 @@
-#ifndef TREE_REFERENCE_H
-#define TREE_REFERENCE_H
+#ifndef POINCARE_TREE_REFERENCE_H
+#define POINCARE_TREE_REFERENCE_H
 
 #include "tree_pool.h"
 #include <stdio.h>
+
+namespace Poincare {
 
 static inline int min(int i, int j) { return i < j ? i : j; }
 static inline int max(int i, int j) { return i > j ? i : j; }
@@ -244,5 +246,7 @@ private:
 };
 
 typedef TreeReference<TreeNode> TreeRef;
+
+}
 
 #endif

@@ -1,6 +1,8 @@
-#include "layout_node.h"
-#include "allocation_failed_layout_node.h"
-#include "layout_reference.h"
+#include <poincare/layout_node.h>
+#include <poincare/allocation_failed_layout_node.h>
+#include <poincare/layout_reference.h>
+
+namespace Poincare {
 
 TreeNode * LayoutNode::FailedAllocationStaticNode() {
   return LayoutRef::FailedAllocationStaticNode();
@@ -35,4 +37,6 @@ int LayoutNode::absoluteOrigin() {
   }
   return m_frame.origin();*/
   return 1;
+}
+
 }

@@ -23,6 +23,14 @@ public:
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; } //TODO make this method privte with only friends that can access it
+
+  void deepResetReferenceCounter() { //TODO make this method private with friends that can access it
+    setReferenceCounter(0);
+    for (TreeNode * t : depthFirstChildren()) {
+      t->setReferenceCounter(1);
+    }
+  }
+
   virtual const char * description() const {
     return "UNKNOWN";
   }

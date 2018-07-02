@@ -46,6 +46,7 @@ public:
       return TreeReference<T>(TreePool::sharedPool()->node(allocationFailureNodeId));
     }
     TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(myNode);
+    nodeCopy->deepResetReferenceCounter();
     return TreeReference<T>(nodeCopy);
   }
 
@@ -161,7 +162,8 @@ public:
 
   void replaceWithAllocationFailure() {
     TreeReference<TreeNode> p = parent();
-    int indexInParentNode = node()->indexInParent();
+    bool hasParent = p.isDefined();
+    int indexInParentNode = hasParent ? node()->indexInParent() : -1;
     int currentRetainCount = node()->retainCount();
     TreeNode * staticAllocFailNode = typedNode()->failedAllocationStaticNode();
 

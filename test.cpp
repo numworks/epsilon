@@ -227,8 +227,7 @@ void testStealOperand() {
 }
 
 void testSimplify() {
-  printf("Symplify test\n");
-
+  printf("Simplify test\n");
   AdditionRef a(
       AdditionRef(
         FloatRef(0.0f),
@@ -236,13 +235,12 @@ void testSimplify() {
       FloatRef(2.0f));
 
   assert_expression_approximates_to(a, 3);
-  SimplificationRootRef b(a);
-  a.deepReduce();
-
+  ExpressionRef b = a.deepReduce();
   assert_expression_approximates_to(a, 3);
-  assert(a.numberOfChildren() == 1);
-  assert(a.childAtIndex(0).typedNode()->type() == ExpressionNode::Type::Float);
-  assert(a.childAtIndex(0).typedNode()->approximate() == 3.0f);
+  assert_expression_approximates_to(b, 3);
+  assert(b.numberOfChildren() == 1);
+  assert(b.childAtIndex(0).typedNode()->type() == ExpressionNode::Type::Float);
+  assert(b.childAtIndex(0).typedNode()->approximate() == 3.0f);
 }
 
 void testChildSort() {

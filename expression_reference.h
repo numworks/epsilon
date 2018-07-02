@@ -31,8 +31,10 @@ public:
     return this->typedNode()->approximate();
   }
 
-  void deepReduce() {
-    return this->typedNode()->deepReduce();
+  ExpressionReference<ExpressionNode> deepReduce() {
+    ExpressionReference<ExpressionNode> result = ExpressionReference<ExpressionNode>(this->clone().node());
+    result.typedNode()->deepReduce();
+    return result;
   }
 
   void shallowReduce() {

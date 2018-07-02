@@ -17,7 +17,6 @@ public:
   virtual float approximate() = 0;
 
   void deepReduce() {
-    assert(parentTree() != nullptr);
     for (int i = 0; i < numberOfChildren(); i++) {
       child(i)->deepReduce();
     }

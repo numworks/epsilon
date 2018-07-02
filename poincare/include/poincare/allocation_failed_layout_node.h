@@ -1,8 +1,10 @@
-#ifndef ALLOCATION_FAILED_LAYOUT_NODE_H
-#define ALLOCATION_FAILED_LAYOUT_NODE_H
+#ifndef POINCARE_ALLOCATION_FAILED_LAYOUT_NODE_H
+#define POINCARE_ALLOCATION_FAILED_LAYOUT_NODE_H
 
 #include "layout_node.h"
 #include "layout_reference.h"
+
+namespace Poincare {
 
 class AllocationFailedLayoutNode : public LayoutNode {
 public:
@@ -17,5 +19,7 @@ class AllocationFailedLayoutRef : public LayoutReference<AllocationFailedLayoutN
 public:
   AllocationFailedLayoutRef() : LayoutReference<AllocationFailedLayoutNode>() {}
 };
+
+}
 
 #endif

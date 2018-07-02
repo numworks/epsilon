@@ -1,9 +1,11 @@
-#ifndef LAYOUT_CURSOR_H
-#define LAYOUT_CURSOR_H
+#ifndef POINCARE_LAYOUT_CURSOR_H
+#define POINCARE_LAYOUT_CURSOR_H
 
 #include "layout_reference.h"
 #include "layout_node.h"
 #include <stdio.h>
+
+namespace Poincare {
 
 class LayoutCursor {
   template <typename T>
@@ -63,5 +65,7 @@ private:
   LayoutRef m_layoutRef;
   Position m_position;
 };
+
+}
 
 #endif

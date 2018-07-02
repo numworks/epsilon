@@ -1,10 +1,12 @@
-#ifndef TREE_POOL_H
-#define TREE_POOL_H
+#ifndef POINCARE_TREE_POOL_H
+#define POINCARE_TREE_POOL_H
 
 #include "tree_node.h"
 #include <stddef.h>
 #include <string.h>
 #include <new>
+
+namespace Poincare {
 
 class TreePool {
   friend class TreeNode;
@@ -171,5 +173,7 @@ private:
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
   TreeNode * m_staticNodes[MaxNumberOfStaticNodes];
 };
+
+}
 
 #endif

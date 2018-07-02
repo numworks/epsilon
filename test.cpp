@@ -1,6 +1,10 @@
 #include "refs.h"
 #include <stdio.h>
 
+void logPool() {
+  TreePool::sharedPool()->log();
+}
+
 void assert_expression_approximates_to(ExpressionRef e, float result) {
   float b = e.approximate();
   if (b > result) {

@@ -51,7 +51,7 @@ class CharLayoutRef : public LayoutReference<CharLayoutNode> {
 public:
   CharLayoutRef(char c) : LayoutReference<CharLayoutNode>() {
     if (!(this->node()->isAllocationFailure())) {
-      this->castedNode()->setChar(c);
+      this->typedNode()->setChar(c);
     }
   }
 };

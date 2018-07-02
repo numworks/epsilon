@@ -68,10 +68,10 @@ public:
     return TreeReference<TreeNode>(this->node());
   }
 
-  T * castedNode() const {
+  T * typedNode() const {
     // TODO: Here, assert that the node type is indeed T
     // ?? Might be allocation failure, not T
-    return static_cast<T*>(TreePool::sharedPool()->node(m_identifier));
+    return static_cast<T*>(node());
   }
 
   TreeNode * node() const {
@@ -163,7 +163,7 @@ public:
     TreeReference<TreeNode> p = parent();
     int indexInParentNode = node()->indexInParent();
     int currentRetainCount = node()->retainCount();
-    TreeNode * staticAllocFailNode = castedNode()->failedAllocationStaticNode();
+    TreeNode * staticAllocFailNode = typedNode()->failedAllocationStaticNode();
 
     // Move the node to the end of the pool and decrease children count of parent
     TreePool::sharedPool()->move(node(), TreePool::sharedPool()->last());

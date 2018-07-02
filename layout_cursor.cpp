@@ -20,19 +20,19 @@ int LayoutCursor::middleLeftPoint() {
 /* Move */
 
 void LayoutCursor::moveLeft(bool * shouldRecomputeLayout) {
-  layoutReference().castedNode()->moveCursorLeft(this, shouldRecomputeLayout);
+  layoutReference().typedNode()->moveCursorLeft(this, shouldRecomputeLayout);
 }
 
 void LayoutCursor::moveRight(bool * shouldRecomputeLayout) {
-  layoutReference().castedNode()->moveCursorRight(this, shouldRecomputeLayout);
+  layoutReference().typedNode()->moveCursorRight(this, shouldRecomputeLayout);
 }
 
 void LayoutCursor::moveAbove(bool * shouldRecomputeLayout) {
-  layoutReference().castedNode()->moveCursorUp(this, shouldRecomputeLayout);
+  layoutReference().typedNode()->moveCursorUp(this, shouldRecomputeLayout);
 }
 
 void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
-  layoutReference().castedNode()->moveCursorDown(this, shouldRecomputeLayout);
+  layoutReference().typedNode()->moveCursorDown(this, shouldRecomputeLayout);
 }
 
 

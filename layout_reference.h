@@ -32,11 +32,11 @@ public:
   }
 
   int layoutOrigin() {
-    return this->castedNode()->layoutOrigin();
+    return this->typedNode()->layoutOrigin();
   }
 
   int absoluteOrigin() {
-    return this->castedNode()->absoluteOrigin();
+    return this->typedNode()->absoluteOrigin();
   }
 };
 

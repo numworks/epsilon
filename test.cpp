@@ -237,8 +237,8 @@ void testSimplify() {
 
   assert_expression_approximates_to(a, 3);
   assert(a.numberOfChildren() == 1);
-  assert(a.childAtIndex(0).castedNode()->type() == ExpressionNode::Type::Float);
-  assert(a.childAtIndex(0).castedNode()->approximate() == 3.0f);
+  assert(a.childAtIndex(0).typedNode()->type() == ExpressionNode::Type::Float);
+  assert(a.childAtIndex(0).typedNode()->approximate() == 3.0f);
 }
 
 void testChildSort() {
@@ -251,15 +251,15 @@ void testChildSort() {
       FloatRef(3.0f));
   a.addChild(FloatRef(0.0f));
 
-  assert(a.childAtIndex(0).castedNode()->type() == ExpressionNode::Type::Float);
-  assert(a.childAtIndex(1).castedNode()->type() == ExpressionNode::Type::Addition);
-  assert(a.childAtIndex(2).castedNode()->type() == ExpressionNode::Type::Float);
+  assert(a.childAtIndex(0).typedNode()->type() == ExpressionNode::Type::Float);
+  assert(a.childAtIndex(1).typedNode()->type() == ExpressionNode::Type::Addition);
+  assert(a.childAtIndex(2).typedNode()->type() == ExpressionNode::Type::Float);
 
   a.sortChildren();
 
-  assert(a.childAtIndex(0).castedNode()->type() == ExpressionNode::Type::Float);
-  assert(a.childAtIndex(1).castedNode()->type() == ExpressionNode::Type::Float);
-  assert(a.childAtIndex(2).castedNode()->type() == ExpressionNode::Type::Addition);
+  assert(a.childAtIndex(0).typedNode()->type() == ExpressionNode::Type::Float);
+  assert(a.childAtIndex(1).typedNode()->type() == ExpressionNode::Type::Float);
+  assert(a.childAtIndex(2).typedNode()->type() == ExpressionNode::Type::Addition);
 }
 
 

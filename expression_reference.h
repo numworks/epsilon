@@ -28,22 +28,22 @@ public:
   }
 
   float approximate() const {
-    return this->castedNode()->approximate();
+    return this->typedNode()->approximate();
   }
 
   void deepReduce() {
-    return this->castedNode()->deepReduce();
+    return this->typedNode()->deepReduce();
   }
 
   void shallowReduce() {
-    return this->castedNode()->shallowReduce();
+    return this->typedNode()->shallowReduce();
   }
 
   void sortChildren() {
     for (int i = this->numberOfChildren()-1; i > 0; i--) {
       bool isSorted = true;
       for (int j = 0; j < this->numberOfChildren()-1; j++) {
-        if (this->childAtIndex(j).castedNode()->type() > this->childAtIndex(j+1).castedNode()->type()) {
+        if (this->childAtIndex(j).typedNode()->type() > this->childAtIndex(j+1).typedNode()->type()) {
           this->swapChildren(j, j+1);
           isSorted = false;
         }

@@ -278,8 +278,7 @@ void testPoolLayoutAllocationFail() {
 
   // Allocation fail
   CharLayoutRef char11('a');
-  /*Expression e = ;
-    e.simplify*/
+  assert(strcmp(char11.node()->description(), "Allocation Failed") == 0);
 }
 
 typedef void (test)();
@@ -302,6 +301,7 @@ int main() {
   runTest(testStealOperand);
   runTest(testSimplify);
   runTest(testChildSort);
+  runTest(testPoolLayoutAllocationFail);
   printf("\n*******************\nEnd of tests\n*******************\n\n");
   return 0;
 }

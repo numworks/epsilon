@@ -1,5 +1,6 @@
 #include "tree_pool.h"
 #include <string.h>
+#include <stdint.h>
 
 TreePool * TreePool::sharedPool() {
   static TreePool pool;
@@ -31,6 +32,7 @@ static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
 }
 
 void TreePool::logNodeForIdentifierArray() {
+#if TREE_LOG
   printf("\n\n");
   for (int i = 0; i < MaxNumberOfNodes; i++) {
     if (m_nodeForIdentifier[i] != nullptr) {
@@ -38,6 +40,7 @@ void TreePool::logNodeForIdentifierArray() {
     }
   }
   printf("\n\n");
+#endif
 }
 
 void TreePool::move(TreeNode * source, TreeNode * destination) {
@@ -83,6 +86,7 @@ void TreePool::moveNodes(TreeNode * source, TreeNode * destination, size_t moveS
 #include <stdio.h>
 
 void TreePool::log() {
+#if TREE_LOG
   printf("POOL:");
   for (TreeNode * node : *this) {
     printf("|(%03d|%s|%03d|%p)", node->m_identifier, node->description(), node->retainCount(), node);
@@ -90,6 +94,7 @@ void TreePool::log() {
   printf("|\n");
 
   //logNodeForIdentifierArray();
+#endif
 }
 
 void * TreePool::alloc(size_t size) {

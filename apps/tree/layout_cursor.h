@@ -16,6 +16,7 @@ public:
 
   /* Debug */
   void log() {
+#if TREE_LOG
     printf("Pointed Layout id %d, cursor position ", m_layoutRef.identifier());
     if (m_position == Position::Left) {
       printf("Left");
@@ -23,6 +24,7 @@ public:
       printf("Right");
     }
     printf("\n");
+#endif
   }
 
   bool isDefined() const { return m_layoutRef.isDefined(); }

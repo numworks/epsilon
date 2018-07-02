@@ -1,7 +1,9 @@
-#ifndef LAYOUT_NODE_H
-#define LAYOUT_NODE_H
+#ifndef POINCARE_LAYOUT_NODE_H
+#define POINCARE_LAYOUT_NODE_H
 
 #include "tree_node.h"
+
+namespace Poincare {
 
 class LayoutCursor;
 
@@ -63,5 +65,7 @@ protected:
 private:
   virtual void render() {};
 };
+
+}
 
 #endif

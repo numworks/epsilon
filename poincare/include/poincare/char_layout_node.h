@@ -1,9 +1,11 @@
-#ifndef CHAR_LAYOUT_H
-#define CHAR_LAYOUT_H
+#ifndef POINCARE_CHAR_LAYOUT_NODE_H
+#define POINCARE_CHAR_LAYOUT_NODE_H
 
-#include "layout_reference.h"
-#include "layout_node.h"
-#include "layout_cursor.h"
+#include <poincare/layout_reference.h>
+#include <poincare/layout_node.h>
+#include <poincare/layout_cursor.h>
+
+namespace Poincare {
 
 class CharLayoutNode : public LayoutNode {
 public:
@@ -55,5 +57,7 @@ public:
     }
   }
 };
+
+}
 
 #endif

@@ -1,9 +1,11 @@
-#ifndef HORIZONTAL_LAYOUT_H
-#define HORIZONTAL_LAYOUT_H
+#ifndef POINCARE_HORIZONTAL_LAYOUT_NODE_H
+#define POINCARE_HORIZONTAL_LAYOUT_NODE_H
 
 #include "layout_reference.h"
 #include "layout_node.h"
 #include "layout_cursor.h"
+
+namespace Poincare {
 
 class HorizontalLayoutNode : public LayoutNode {
 public:
@@ -93,5 +95,7 @@ public:
     addChild(l1);
   }
 };
+
+}
 
 #endif

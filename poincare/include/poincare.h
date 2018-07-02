@@ -5,10 +5,12 @@
 
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
+#include <poincare/allocation_failed_layout_node.h>
 #include <poincare/arc_cosine.h>
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
+#include <poincare/char_layout_node.h>
 #include <poincare/ceiling.h>
 #include <poincare/complex.h>
 #include <poincare/complex_argument.h>
@@ -35,6 +37,7 @@
 #include <poincare/frac_part.h>
 #include <poincare/global_context.h>
 #include <poincare/great_common_divisor.h>
+#include <poincare/horizontal_layout_node.h>
 #include <poincare/hyperbolic_arc_cosine.h>
 #include <poincare/hyperbolic_arc_sine.h>
 #include <poincare/hyperbolic_arc_tangent.h>
@@ -43,6 +46,9 @@
 #include <poincare/hyperbolic_tangent.h>
 #include <poincare/imaginary_part.h>
 #include <poincare/integral.h>
+#include <poincare/layout_cursor.h>
+#include <poincare/layout_node.h>
+#include <poincare/layout_reference.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
@@ -72,6 +78,9 @@
 #include <poincare/sum.h>
 #include <poincare/symbol.h>
 #include <poincare/tangent.h>
+#include <poincare/tree_node.h>
+#include <poincare/tree_pool.h>
+#include <poincare/tree_reference.h>
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
 

@@ -61,7 +61,7 @@ public:
   }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
-  int cursorHeight() { return 1; } //TODO
+  KDCoordinate cursorHeight();
   int baseline() { return 1; } //TODO
   LayoutCursor clone() const {
     return LayoutCursor(m_layoutRef, m_position);
@@ -112,11 +112,12 @@ public:
   void addLayoutAndMoveCursor(LayoutRef l) {} //TODO
 
 private:
+  constexpr static KDCoordinate k_cursorHeight = 18;
   LayoutCursor(LayoutNode * node, Position position = Position::Right) :
     m_layoutRef(node),
     m_position(position)
-  {
-  }
+  {}
+  KDCoordinate layoutHeight();
   LayoutRef m_layoutRef;
   Position m_position;
 };

@@ -75,6 +75,7 @@ public:
 
   // Hierarchy
   bool hasChild(TreeReference<TreeNode> t) const { return node()->hasChild(t.node()); };
+  bool hasSibling(TreeReference<TreeNode> t) const { return node()->hasSibling(t.node()); };
   int numberOfChildren() const { return node()->numberOfChildren(); }
   TreeReference<T> parent() const { return TreeReference(node()->parentTree()); }
   TreeReference<T> treeChildAtIndex(int i) const { return TreeReference(node()->childTreeAtIndex(i)); }

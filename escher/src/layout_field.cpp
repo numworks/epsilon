@@ -156,7 +156,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     setEditing(true);
-    m_contentView.cursor()->setPLayoutReference(layoutRef());
+    m_contentView.cursor()->setLayoutReference(layoutRef());
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     return true;
   }
@@ -190,25 +190,25 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
 bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
   LayoutCursor result;
   if (event == Ion::Events::Left) {
-    result = m_contentView.cursor()->cursorOnLeft(shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Left, shouldRecomputeLayout);
   } else if (event == Ion::Events::Right) {
-    result =  m_contentView.cursor()->cursorOnRight(shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Right, shouldRecomputeLayout);
   } else if (event == Ion::Events::Up) {
-    result = m_contentView.cursor()->cursorAbove(shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Up, shouldRecomputeLayout);
   } else if (event == Ion::Events::Down) {
-    result = m_contentView.cursor()->cursorUnder(shouldRecomputeLayout);
+    result = m_contentView.cursor()->cursorAtDirection(LayoutCursor::MoveDirection::Down, shouldRecomputeLayout);
   } else if (event == Ion::Events::ShiftLeft) {
     *shouldRecomputeLayout = true;
-    if (m_contentView.cursor()->layoutReference()->removeGreySquaresFromAllMatrixAncestors()) {
+    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
       *shouldRecomputeLayout = true;
     }
-    result.setPointedLayoutRef(layoutRef());
+    result.setLayoutReference(layoutRef());
     result.setPosition(LayoutCursor::Position::Left);
   } else if (event == Ion::Events::ShiftRight) {
-    if (m_contentView.cursor()->layoutReference()->removeGreySquaresFromAllMatrixAncestors()) {
+    if (m_contentView.cursor()->layoutReference().removeGreySquaresFromAllMatrixAncestors()) {
       *shouldRecomputeLayout = true;
     }
-    result.setPointedLayoutRef(layoutRef());
+    result.setLayoutReference(layoutRef());
     result.setPosition(LayoutCursor::Position::Right);
   }
   if (result.isDefined()) {
@@ -219,8 +219,8 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
 }
 
 void LayoutField::scrollRightOfLayout(LayoutRef layoutR) {
-  KDRect layoutRect(layout.absoluteOrigin().translatedBy(m_contentView.expressionView()->drawingOrigin()), layout.size());
-  scrollToBaselinedRect(layoutRect, layout.baseline());
+  KDRect layoutRect(layoutR.absoluteOrigin().translatedBy(m_contentView.expressionView()->drawingOrigin()), layoutR.layoutSize());
+  scrollToBaselinedRect(layoutRect, layoutR.baseline());
 }
 
 void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
@@ -238,28 +238,28 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
     return;
   }
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
-  bool layoutWillBeMerged = layoutR->isHorizontal();
-  LayoutRef lastMergedLayoutChild = layoutWillBeMerged ? layout.child(layout.numberOfChildren()-1) : nullptr;
-  m_contentView.cursor()->addLayoutAndMoveCursor(layout);
+  bool layoutWillBeMerged = layoutR.isHorizontal();
+  LayoutRef lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : LayoutRef(nullptr);
+  m_contentView.cursor()->addLayoutAndMoveCursor(layoutR);
   if (!forceCursorRightOfLayout) {
-    if (pointedLayoutR.isDefined() && (pointedLayout != layout || !layoutWillBeMerged)) {
-      m_contentView.cursor()->setPointedLayoutRef(pointedLayoutR);
+    if (pointedLayoutR.isDefined() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
+      m_contentView.cursor()->setLayoutReference(pointedLayoutR);
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     } else if (!layoutWillBeMerged) {
-      m_contentView.cursor()->setPointedLayoutRef(layout.layoutToPointWhenInserting());
+      m_contentView.cursor()->setLayoutReference(layoutR.layoutToPointWhenInserting());
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     }
   } else if (!layoutWillBeMerged) {
-    m_contentView.cursor()->setPointedLayoutRef(layout);
+    m_contentView.cursor()->setLayoutReference(layoutR);
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }
   m_contentView.cursor()->layoutReference().addGreySquaresToAllMatrixAncestors();
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();
   reload();
   if (!layoutWillBeMerged) {
-    scrollRightOfLayout(layout);
+    scrollRightOfLayout(layoutR);
   } else {
-    assert(lastMergedLayoutChild != nullptr);
+    assert(lastMergedLayoutChild.isDefined());
     scrollRightOfLayout(lastMergedLayoutChild);
   }
   scrollToCursor();

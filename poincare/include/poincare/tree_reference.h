@@ -66,8 +66,6 @@ public:
   void incrementNumberOfChildren(int increment = 1) { return node()->incrementNumberOfChildren(increment); }
   void decrementNumberOfChildren(int decrement = 1) { return node()->decrementNumberOfChildren(decrement); }
 
-
-
   // Serialization
   bool needsParenthesisWithParent(TreeReference<TreeNode> parentRef) { return node()->needsParenthesisWithParent(parentRef.node()); }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const {

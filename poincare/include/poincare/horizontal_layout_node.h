@@ -17,6 +17,8 @@ public:
     m_numberOfChildren(0)
   {}
 
+  bool isHorizontal() const override { return true; }
+
   // LayoutNode
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;

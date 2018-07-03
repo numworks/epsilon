@@ -13,10 +13,22 @@ class LayoutCursor {
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
+  enum class MoveDirection {
+    Left,
+    Right,
+    Up,
+    Down
+  };
+
   enum class Position {
     Left,
     Right
   };
+
+  LayoutCursor() :
+    m_layoutRef(nullptr),
+    m_position(Position::Right)
+  {}
 
   LayoutCursor(LayoutRef layoutR, Position position = Position::Right) :
     m_layoutRef(layoutR.node()),
@@ -51,6 +63,9 @@ public:
   void setPosition(Position position) { m_position = position; }
   int cursorHeight() { return 1; } //TODO
   int baseline() { return 1; } //TODO
+  LayoutCursor clone() const {
+    return LayoutCursor(m_layoutRef, m_position);
+  }
 
   /* Comparison */
   bool isEquivalentTo(LayoutCursor cursor);
@@ -59,11 +74,28 @@ public:
   KDPoint middleLeftPoint();
 
   /* Move */
+  void move(MoveDirection direction, bool * shouldRecomputeLayout) {
+    if (direction == MoveDirection::Left) {
+      moveLeft(shouldRecomputeLayout);
+    } else if (direction == MoveDirection::Right) {
+      moveRight(shouldRecomputeLayout);
+    } else if (direction == MoveDirection::Up) {
+      moveAbove(shouldRecomputeLayout);
+    } else if (direction == MoveDirection::Down) {
+      moveUnder(shouldRecomputeLayout);
+    } else {
+      assert(false);
+    }
+  }
   void moveLeft(bool * shouldRecomputeLayout);
   void moveRight(bool * shouldRecomputeLayout);
   void moveAbove(bool * shouldRecomputeLayout);
   void moveUnder(bool * shouldRecomputeLayout);
-
+  LayoutCursor cursorAtDirection(MoveDirection direction, bool * shouldRecomputeLayout) {
+    LayoutCursor result = clone();
+    result.move(direction, shouldRecomputeLayout);
+    return result;
+  }
   /* Layout modification */
   void clearLayout() {} //TODO
   void addFractionLayoutAndCollapseSiblings() {} //TODO
@@ -77,6 +109,7 @@ public:
   void performBackspace() {} //TODO
   bool showEmptyLayoutIfNeeded() { return false; } //TODO
   bool hideEmptyLayoutIfNeeded() { return false; } //TODO
+  void addLayoutAndMoveCursor(LayoutRef l) {} //TODO
 
 private:
   LayoutCursor(LayoutNode * node, Position position = Position::Right) :

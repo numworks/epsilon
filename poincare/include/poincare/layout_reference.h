@@ -19,6 +19,16 @@ public:
   operator LayoutReference<LayoutNode>() const {
     return LayoutReference<LayoutNode>(this->node());
   }
+  LayoutReference& operator=(LayoutReference<LayoutNode>& lr) {
+    this->setTo(lr);
+    return *this;
+  }
+  LayoutReference& operator=(const LayoutReference<LayoutNode>& lr) {
+    this->setTo(lr);
+    return *this;
+  }
+  inline bool operator==(LayoutReference<LayoutNode> l) { return this->identifier() == l.identifier(); }
+  inline bool operator!=(LayoutReference<LayoutNode> l) { return this->identifier() != l.identifier(); }
 
   static TreeNode * FailedAllocationStaticNode();
 
@@ -33,6 +43,7 @@ public:
     TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild);
   }
 
+  bool isHorizontal() const { return this->typedNode()->isHorizontal(); }
   bool hasText() { return this->typedNode()->hasText(); }
   char XNTChar() const { return this->typedNode()->XNTChar(); }
   KDSize layoutSize() { return this->typedNode()->layoutSize(); }
@@ -41,7 +52,9 @@ public:
   KDCoordinate baseline() { return this->typedNode()->baseline(); }
   LayoutCursor equivalentCursor(LayoutCursor * cursor);
   void invalidAllSizesPositionsAndBaselines() { return this->typedNode()->invalidAllSizesPositionsAndBaselines(); }
-
+  bool removeGreySquaresFromAllMatrixAncestors() { return this->typedNode()->removeGreySquaresFromAllMatrixAncestors(); }
+  bool addGreySquaresToAllMatrixAncestors() { return this->typedNode()->addGreySquaresToAllMatrixAncestors(); }
+  LayoutReference<LayoutNode> layoutToPointWhenInserting() { return LayoutReference<LayoutNode>(this->typedNode()->layoutToPointWhenInserting()); }
 };
 
 typedef LayoutReference<LayoutNode> LayoutRef;

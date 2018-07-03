@@ -186,6 +186,76 @@ int LayoutEngine::writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expr
   return numberOfChar;
 }
 
+/* LayoutReference to Text */
+int LayoutEngine::writeInfixTreeRefTextInBuffer(
+    const TreeRef treeRef,
+    char * buffer,
+    int bufferSize,
+    int numberOfDigits,
+    const char * operatorName,
+    int firstChildIndex,
+    int lastChildIndex)
+{
+  // If buffer has size 0 or 1, put a zero if it fits and return
+  assert(treeRef.isDefined());
+  if (bufferSize == 0) {
+    return -1;
+  }
+
+  buffer[bufferSize-1] = 0; // Null-terminate the buffer
+  if (bufferSize == 1) {
+    return 0;
+  }
+
+  // Get some information on the TreeRef
+  int numberOfChar = 0;
+  int numberOfOperands = treeRef.numberOfChildren();
+  assert(numberOfOperands > 0);
+
+  // Write the first child, with parentheses if needed
+  writeChildTreeInBuffer(treeRef.treeChildAtIndex(firstChildIndex), treeRef, buffer, bufferSize, numberOfDigits, &numberOfChar);
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+  // For all remaining children:
+  int lastIndex = lastChildIndex < 0 ? numberOfOperands - 1 : lastChildIndex;
+  for (int i = firstChildIndex + 1; i < lastIndex+1; i++) {
+    // Write the operator
+    numberOfChar += strlcpy(buffer+numberOfChar, operatorName, bufferSize-numberOfChar);
+    if (numberOfChar >= bufferSize-1) {
+      return bufferSize-1;
+    }
+    // Write the child, with parentheses if needed
+    writeChildTreeInBuffer(treeRef.treeChildAtIndex(i), treeRef, buffer, bufferSize, numberOfDigits, &numberOfChar);
+    if (numberOfChar >= bufferSize-1) {
+      return bufferSize-1;
+    }
+  }
+
+  // Null-terminate the buffer
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
+}
+
+void LayoutEngine::writeChildTreeInBuffer(TreeRef childRef, TreeRef parentRef, char * buffer, int bufferSize, int numberOfDigits, int * numberOfChar) {
+  // Write the child with parentheses if needed
+  bool addParentheses = childRef.needsParenthesisWithParent(parentRef);
+  if (addParentheses) {
+    buffer[*numberOfChar++] = '('; //TODO ok ?
+    if (*numberOfChar >= bufferSize-1) {
+      return;
+    }
+  }
+  *numberOfChar += childRef.writeTextInBuffer(buffer + *numberOfChar, bufferSize - *numberOfChar, numberOfDigits);
+  if (*numberOfChar >= bufferSize-1) {
+    return;
+  }
+  if (addParentheses) {
+    buffer[*numberOfChar++] = ')';
+  }
+}
+
+
 int LayoutEngine::writeOneCharInBuffer(char * buffer, int bufferSize, char charToWrite) {
   if (bufferSize == 0) {
     return -1;

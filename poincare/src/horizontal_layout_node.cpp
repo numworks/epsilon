@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate c1, KDCoordinate c2) { return c1 > c2 ? c1 : c2; }
+static inline KDCoordinate maxCoordinate(KDCoordinate c1, KDCoordinate c2) { return c1 > c2 ? c1 : c2; }
 
 int HorizontalLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (numberOfChildren() == 0) {
@@ -13,7 +13,7 @@ int HorizontalLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int n
     buffer[0] = 0;
     return 0;
   }
-  return LayoutEngine::writeInfixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "");
+  return LayoutEngine::writeInfixTreeRefTextInBuffer(TreeRef(const_cast<HorizontalLayoutNode *>(this)), buffer, bufferSize, numberOfSignificantDigits, "");
 }
 
 void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
@@ -64,16 +64,16 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
   }
 }
 
-KDSize HorizontalLayoutNode::computeSize() {
+void HorizontalLayoutNode::computeSize() {
   assert(!m_sized);
   KDCoordinate totalWidth = 0;
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
-  for (LayoutNode * l : directChildren()) {
-    KDSize childSize = l->size();
+  for (LayoutNode * l : children()) {
+    KDSize childSize = l->layoutSize();
     totalWidth += childSize.width();
-    maxUnderBaseline = max(maxUnderBaseline, childSize.height() - l->baseline());
-    maxAboveBaseline = max(maxAboveBaseline, l->baseline());
+    maxUnderBaseline = maxCoordinate(maxUnderBaseline, childSize.height() - l->baseline());
+    maxAboveBaseline = maxCoordinate(maxAboveBaseline, l->baseline());
   }
   m_frame.setSize(KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline));
   m_sized = true;
@@ -82,8 +82,8 @@ KDSize HorizontalLayoutNode::computeSize() {
 void HorizontalLayoutNode::computeBaseline() {
   assert(!m_baselined);
   m_baseline = 0;
-  for (LayoutNode * l : directChildren()) {
-    m_baseline = max(m_baseline, l->baseline());
+  for (LayoutNode * l : children()) {
+    m_baseline = maxCoordinate(m_baseline, l->baseline());
   }
   m_baselined = true;
 }
@@ -94,8 +94,8 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
   int index = indexOfChild(l);
   assert(index > -1);
   if (index > 0) {
-    LayoutNode * previousChild = child(index-1);
-    x = previousChild->origin().x() + previousChild->size().width();
+    LayoutNode * previousChild = childAtIndex(index-1);
+    x = previousChild->origin().x() + previousChild->layoutSize().width();
   }
   KDCoordinate y = baseline() - l->baseline();
   return KDPoint(x, y);

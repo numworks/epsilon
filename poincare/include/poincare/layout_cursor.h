@@ -49,7 +49,7 @@ public:
   bool isEquivalentTo(LayoutCursor cursor);
 
   /* Position */
-  int middleLeftPoint();
+  KDPoint middleLeftPoint();
 
   /* Move */
   void moveLeft(bool * shouldRecomputeLayout);

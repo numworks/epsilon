@@ -16,13 +16,8 @@ class ExpressionView : public View {
 public:
   ExpressionView(float horizontalAlignment = 0.0f, float verticalAlignment = 0.5f,
     KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
-
-  Poincare::ExpressionLayout * expressionLayout() const;
-  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
-
   Poincare::LayoutRef layoutRef() const { return m_layoutRef; }
   void setLayoutRef(Poincare::LayoutRef layoutRef);
-
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
@@ -37,8 +32,7 @@ private:
    * layout is always possessed by a controller which only gives a pointer to
    * the expression view (without cloning it). The named controller is then
    * responsible for freeing the expression layout when required. */
-  Poincare::ExpressionLayout * m_expressionLayout;
-  Poincare::LayoutRef m_layoutRef;
+  mutable Poincare::LayoutRef m_layoutRef; // TODO find better way to have minimalSizeForOptimalDisplay const
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDColor m_textColor;

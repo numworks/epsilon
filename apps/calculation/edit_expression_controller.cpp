@@ -10,17 +10,13 @@ using namespace Poincare;
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_layout(new Poincare::HorizontalLayout()),
-  m_expressionField(parentResponder, m_textBody, k_bufferLength, m_layout, textFieldDelegate, expressionLayoutFieldDelegate)
+  m_layoutR(Poincare::HorizontalLayoutRef()),
+  m_expressionField(parentResponder, m_textBody, k_bufferLength, m_layoutR, textFieldDelegate, layoutFieldDelegate)
 {
   m_textBody[0] = 0;
-}
-
-EditExpressionController::ContentView::~ContentView() {
-  delete m_layout;
 }
 
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {
@@ -92,22 +88,22 @@ bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField)
   return inputViewDidAbortEditing(textField->text());
 }
 
-bool EditExpressionController::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
-  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event) && !expressionLayoutField->hasText() && m_calculationStore->numberOfCalculations() > 0) {
+bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) {
+  if (layoutField->isEditing() && layoutField->layoutFieldShouldFinishEditing(event) && !layoutField->hasText() && m_calculationStore->numberOfCalculations() > 0) {
     return inputViewDidReceiveEvent(event);
   }
-  return expressionFieldDelegateApp()->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
+  return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-bool EditExpressionController::expressionLayoutFieldDidFinishEditing(::ExpressionLayoutField * expressionLayoutField, ExpressionLayout * layout, Ion::Events::Event event) {
-  return inputViewDidFinishEditing(nullptr, layout);
+bool EditExpressionController::layoutFieldDidFinishEditing(::LayoutField * layoutField, LayoutRef layoutR, Ion::Events::Event event) {
+  return inputViewDidFinishEditing(nullptr, layoutR);
 }
 
-bool EditExpressionController::expressionLayoutFieldDidAbortEditing(::ExpressionLayoutField * expressionLayoutField) {
+bool EditExpressionController::layoutFieldDidAbortEditing(::LayoutField * layoutField) {
   return inputViewDidAbortEditing(nullptr);
 }
 
-void EditExpressionController::expressionLayoutFieldDidChangeSize(::ExpressionLayoutField * expressionLayoutField) {
+void EditExpressionController::layoutFieldDidChangeSize(::LayoutField * layoutField) {
   /* Reload the view only if the ExpressionField height actually changes, i.e.
    * not if the height is already maximal and stays maximal. */
   if (view()) {
@@ -157,14 +153,14 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
 }
 
 
-bool EditExpressionController::inputViewDidFinishEditing(const char * text, ExpressionLayout * layout) {
+bool EditExpressionController::inputViewDidFinishEditing(const char * text, LayoutRef layoutR) {
   App * calculationApp = (App *)app();
-  if (layout == nullptr) {
+  if (!layoutR.isDefined()) {
     assert(text);
     strlcpy(m_cacheBuffer, text, Calculation::k_printedExpressionSize);
   } else {
-    assert(layout);
-    layout->writeTextInBuffer(m_cacheBuffer, Calculation::k_printedExpressionSize);
+    assert(layoutR.isDefined());
+    layoutR.writeTextInBuffer(m_cacheBuffer, Calculation::k_printedExpressionSize);
   }
   m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
   m_historyController->reload();

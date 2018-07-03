@@ -10,7 +10,6 @@ app_objs += $(addprefix apps/shared/,\
   double_pair_store.o\
   editable_cell_table_view_controller.o\
   expression_field_delegate_app.o\
-  expression_layout_field_delegate.o\
   expression_model.o\
   expression_model_list_controller.o\
   expression_model_store.o\
@@ -36,6 +35,7 @@ app_objs += $(addprefix apps/shared/,\
   interval.o\
   interval_parameter_controller.o\
   language_controller.o\
+  layout_field_delegate.o\
   list_parameter_controller.o\
   margin_even_odd_message_text_cell.o\
   memoized_curve_view_range.o\

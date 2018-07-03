@@ -43,6 +43,10 @@ public:
     TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild);
   }
 
+  void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) {
+    return this->typedNode()->draw(ctx, p, expressionColor, backgroundColor);
+  }
+
   bool isHorizontal() const { return this->typedNode()->isHorizontal(); }
   bool isLeftParenthesis() const { return this->typedNode()->isLeftParenthesis(); }
   bool hasText() { return this->typedNode()->hasText(); }

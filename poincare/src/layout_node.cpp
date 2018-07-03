@@ -1,5 +1,6 @@
 #include <poincare/layout_node.h>
 #include <poincare/allocation_failed_layout_node.h>
+#include <poincare/layout_cursor.h>
 #include <poincare/layout_reference.h>
 
 namespace Poincare {
@@ -63,6 +64,11 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
 
 TreeNode * LayoutNode::FailedAllocationStaticNode() {
   return LayoutRef::FailedAllocationStaticNode();
+}
+
+// Tree navigation
+LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
+  return LayoutCursor(cursor->layoutReference());
 }
 
 }

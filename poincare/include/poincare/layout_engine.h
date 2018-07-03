@@ -2,6 +2,7 @@
 #define POINCARE_LAYOUT_ENGINE_H
 
 #include <poincare/expression.h>
+#include <poincare/tree_reference.h>
 
 namespace Poincare {
 
@@ -51,6 +52,16 @@ public:
       const char * operatorName,
       bool writeFirstChild = true);
 
+  /* LayoutReference to Text */
+  static int writeInfixTreeRefTextInBuffer(
+      const TreeRef treeRef,
+      char * buffer,
+      int bufferSize,
+      int numberOfDigits,
+      const char * operatorName,
+      int firstChildIndex = 0,
+      int lastChildIndex = -1);
+
   /* Write one char in buffer */
   static int writeOneCharInBuffer(char * buffer, int bufferSize, char charToWrite);
 
@@ -59,6 +70,8 @@ private:
   // These two functions return the index of the null-terminating char.
   static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis);
   static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
+
+  static void writeChildTreeInBuffer(TreeRef childRef, TreeRef parentRef, char * buffer, int bufferSize, int numberOfDigits, int * numberOfChar);
 };
 
 }

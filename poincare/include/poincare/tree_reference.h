@@ -6,17 +6,11 @@
 
 namespace Poincare {
 
-static inline int min(int i, int j) { return i < j ? i : j; }
-static inline int max(int i, int j) { return i > j ? i : j; }
-
-class Cursor;
-
 template <typename T>
 class TreeReference {
   friend class TreeNode;
   friend class AdditionNode;
   friend class ExpressionNode;
-  friend class Cursor;
   template <typename U>
   friend class TreeReference;
   template <typename U>
@@ -37,10 +31,6 @@ public:
 
   inline bool operator==(TreeReference<TreeNode> t) { return m_identifier == t.identifier(); }
 
-  void setTo(const TreeReference & tr) {
-    setIdentifierAndRetain(tr.identifier());
-  }
-
   TreeReference<T> clone() const {
     TreeNode * myNode = node();
     if (myNode->isAllocationFailure()) {
@@ -59,48 +49,40 @@ public:
       node()->release();
     }
   }
+  operator TreeReference<TreeNode>() const { return TreeReference<TreeNode>(this->node()); }
 
-  bool isDefined() const { return m_identifier >= 0 && node() != nullptr; }
-  bool isAllocationFailure() const { return node()->isAllocationFailure(); }
-
-  int nodeRetainCount() const { return node()->retainCount(); }
-  void incrementNumberOfChildren(int increment = 1) { return node()->incrementNumberOfChildren(increment); }
-  void decrementNumberOfChildren(int decrement = 1) { return node()->decrementNumberOfChildren(decrement); }
-
-  operator TreeReference<TreeNode>() const {
-    return TreeReference<TreeNode>(this->node());
-  }
-
+  int identifier() const { return m_identifier; }
+  TreeNode * node() const { return TreePool::sharedPool()->node(m_identifier); }
   T * typedNode() const {
     // TODO: Here, assert that the node type is indeed T
     // ?? Might be allocation failure, not T
     return static_cast<T*>(node());
   }
 
-  TreeNode * node() const {
-    return TreePool::sharedPool()->node(m_identifier);
-  }
+  bool isDefined() const { return m_identifier >= 0 && node() != nullptr; } //TODO m_identifier != -1
+  bool isAllocationFailure() const { return node()->isAllocationFailure(); }
 
-  int identifier() const { return m_identifier; }
+  int nodeRetainCount() const { return node()->retainCount(); }
+  void incrementNumberOfChildren(int increment = 1) { return node()->incrementNumberOfChildren(increment); }
+  void decrementNumberOfChildren(int decrement = 1) { return node()->decrementNumberOfChildren(decrement); }
+
+
+
+  // Serialization
+  bool needsParenthesisWithParent(TreeReference<TreeNode> parentRef) { return node()->needsParenthesisWithParent(parentRef.node()); }
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const {
+    return node()->writeTextInBuffer(buffer, bufferSize, numberOfSignificantDigits);
+  }
 
   // Hierarchy
-  int numberOfChildren() const {
-    return node()->numberOfChildren();
-  }
-
-  TreeReference<T> parent() const {
-    return TreeReference(node()->parentTree());
-  }
-
-  TreeReference<T> treeChildAtIndex(int i) const {
-    return TreeReference(node()->childTreeAtIndex(i));
-  }
+  bool hasChild(TreeReference<TreeNode> t) const { return node()->hasChild(t.node()); };
+  int numberOfChildren() const { return node()->numberOfChildren(); }
+  TreeReference<T> parent() const { return TreeReference(node()->parentTree()); }
+  TreeReference<T> treeChildAtIndex(int i) const { return TreeReference(node()->childTreeAtIndex(i)); }
 
   // Hierarchy operations
 
-  void addChild(TreeReference<TreeNode> t) {
-    return addChildAtIndex(t, 0);
-  }
+  void addChild(TreeReference<TreeNode> t) { return addChildAtIndex(t, 0); }
 
   void addChildAtIndex(TreeReference<TreeNode> t, int index) {
     if (node()->isAllocationFailure()) {
@@ -202,8 +184,8 @@ public:
     if (i == j) {
       return;
     }
-    int firstChildIndex = min(i, j);
-    int secondChildIndex = max(i, j);
+    int firstChildIndex = i < j ? i : j;
+    int secondChildIndex = i > j ? i : j;
     TreeReference<T> firstChild = treeChildAtIndex(firstChildIndex);
     TreeReference<T> secondChild = treeChildAtIndex(secondChildIndex);
     TreeNode * firstChildNode = firstChild.node();
@@ -242,6 +224,9 @@ protected:
     node()->retain();
   }
 private:
+  void setTo(const TreeReference & tr) {
+    setIdentifierAndRetain(tr.identifier());
+  }
   int m_identifier;
 };
 

@@ -1,7 +1,6 @@
 #ifndef POINCARE_LAYOUT_NODE_H
 #define POINCARE_LAYOUT_NODE_H
 
-#include <poincare/print_float.h>
 #include <poincare/tree_node.h>
 #include <kandinsky.h>
 
@@ -23,6 +22,8 @@ public:
   {
   }
 
+  virtual char XNTChar() const { return 'x'; }
+
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   KDPoint origin();
@@ -30,9 +31,6 @@ public:
   KDSize layoutSize();
   KDCoordinate baseline();
   virtual void invalidAllSizesPositionsAndBaselines();
-
-  // Serialization
-  virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   // TreeNode
   static TreeNode * FailedAllocationStaticNode();
@@ -46,15 +44,14 @@ public:
 
   // Hierarchy
   LayoutNode * parent() const { return static_cast<LayoutNode *>(parentTree()); }
+  LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(childTreeAtIndex(i)); }
 
   // Tree navigation
   virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {}
   virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {}
   virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {}
   virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {}
-
-
-  LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(childTreeAtIndex(i)); }
+  virtual LayoutCursor equivalentCursor(LayoutCursor * cursor); //TODO
 
 protected:
   // Iterators

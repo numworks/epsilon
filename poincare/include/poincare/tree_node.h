@@ -1,6 +1,8 @@
 #ifndef POINCARE_TREE_NODE_H
 #define POINCARE_TREE_NODE_H
 
+#include <poincare/print_float.h>
+
 #include <assert.h>
 #include <stddef.h>
 #include <strings.h>
@@ -36,6 +38,12 @@ public:
   virtual const char * description() const {
     return "UNKNOWN";
   }
+
+  // Serialization
+  virtual bool needsParenthesisWithParent(TreeNode * parentNode) { return false; } //TODO virtual pure and override on expresionNode/layoutNode
+  virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const { return 0; } //TODO virtual pure
+
+  // Allocation failure
   virtual bool isAllocationFailure() const { return false; }
   virtual TreeNode * failedAllocationStaticNode() {
     assert(false);

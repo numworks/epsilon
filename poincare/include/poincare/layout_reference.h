@@ -33,13 +33,15 @@ public:
     TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild);
   }
 
-  KDPoint layoutOrigin() {
-    return this->typedNode()->layoutOrigin();
-  }
+  bool hasText() { return this->typedNode()->hasText(); }
+  char XNTChar() const { return this->typedNode()->XNTChar(); }
+  KDSize layoutSize() { return this->typedNode()->layoutSize(); }
+  KDPoint layoutOrigin() { return this->typedNode()->layoutOrigin(); }
+  KDPoint absoluteOrigin() { return this->typedNode()->absoluteOrigin(); }
+  KDCoordinate baseline() { return this->typedNode()->baseline(); }
+  LayoutCursor equivalentCursor(LayoutCursor * cursor);
+  void invalidAllSizesPositionsAndBaselines() { return this->typedNode()->invalidAllSizesPositionsAndBaselines(); }
 
-  KDPoint absoluteOrigin() {
-    return this->typedNode()->absoluteOrigin();
-  }
 };
 
 typedef LayoutReference<LayoutNode> LayoutRef;

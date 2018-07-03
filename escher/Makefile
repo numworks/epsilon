@@ -30,7 +30,6 @@ objs += $(addprefix escher/src/,\
   input_view_controller.o\
   key_view.o\
   layout_field.o\
-  layout_field_content_view.o\
   list_view_data_source.o\
   message_table_cell.o\
   message_table_cell_with_buffer.o\
@@ -52,8 +51,6 @@ objs += $(addprefix escher/src/,\
   scroll_view_data_source.o\
   scroll_view_indicator.o\
   scrollable_view.o\
-  expression_layout_field.o\
-  expression_layout_field_content_view.o\
   selectable_table_view.o\
   selectable_table_view_data_source.o\
   selectable_table_view_delegate.o\

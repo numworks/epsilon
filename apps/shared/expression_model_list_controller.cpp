@@ -33,8 +33,7 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
 void ExpressionModelListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
   EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
   ExpressionModel * m = modelStore()->modelAtIndex(j);
-  myCell->setExpressionLayout(nullptr); //TODO
-  //myCell->setExpressionLayout(m->layout());
+  myCell->setLayoutRef(m->layoutRef());
 }
 
 /* Responder */

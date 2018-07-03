@@ -65,18 +65,18 @@ bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event e
   return false;
 }
 
-bool App::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
-  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {
+bool App::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) {
+  if ((event == Ion::Events::Var ||  event == Ion::Events::XNT) && ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField, event)) {
     return true;
   }
-  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event)) {
-    if (!expressionLayoutField->hasText()) {
+  if (layoutField->isEditing() && layoutField->layoutFieldShouldFinishEditing(event)) {
+    if (!layoutField->hasText()) {
       return true;
     }
 
     int bufferLength = Calculation::k_printedExpressionSize;
     char bufferForParsing[bufferLength];
-    expressionLayoutField->writeTextInBuffer(bufferForParsing, bufferLength);
+    layoutField->writeTextInBuffer(bufferForParsing, bufferLength);
 
     if (!textInputIsCorrect(bufferForParsing)) {
       displayWarning(I18n::Message::SyntaxError);

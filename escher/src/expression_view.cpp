@@ -4,6 +4,7 @@ using namespace Poincare;
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
   m_expressionLayout(nullptr),
+  m_layoutRef(nullptr),
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
   m_textColor(textColor),
@@ -11,12 +12,18 @@ ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignmen
 {
 }
 
+//TODO remove
 ExpressionLayout * ExpressionView::expressionLayout() const {
   return m_expressionLayout;
 }
 
 void ExpressionView::setExpressionLayout(ExpressionLayout * expressionLayout) {
   m_expressionLayout = expressionLayout;
+  markRectAsDirty(bounds());
+}
+
+void ExpressionView::setLayoutRef(LayoutRef layoutR) {
+  m_layoutRef = layoutR;
   markRectAsDirty(bounds());
 }
 

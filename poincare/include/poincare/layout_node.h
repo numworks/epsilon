@@ -22,7 +22,9 @@ public:
   {
   }
 
+  virtual bool hasText() const { return false; } //TODO
   virtual char XNTChar() const { return 'x'; }
+  virtual bool isHorizontal() const { return false; }
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
@@ -53,6 +55,10 @@ public:
   virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {}
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor); //TODO
 
+  // Tree modification
+  bool removeGreySquaresFromAllMatrixAncestors() { return false; } //TODO
+  bool addGreySquaresToAllMatrixAncestors() { return false; } //TODO
+  virtual LayoutNode * layoutToPointWhenInserting() { return this; } //TODO
 protected:
   // Iterators
   class Iterator {

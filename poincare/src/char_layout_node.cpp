@@ -1,6 +1,12 @@
 #include <poincare/char_layout_node.h>
+#include <poincare/layout_engine.h>
 
 namespace Poincare {
+
+// LayoutNode
+int CharLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+  return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, m_char);
+}
 
 void CharLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Right) {

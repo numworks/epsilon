@@ -20,6 +20,8 @@ extern "C" {
 #include <string.h>
 }
 
+#include <poincare/char_layout_node.h>
+
 namespace Poincare {
 
 template<typename T>
@@ -213,13 +215,14 @@ Complex<T>::Complex(T a, T b) :
 }
 
 template <class T>
-ExpressionLayout * Complex<T>::privateCreateLayout(PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef Complex<T>::privateCreateLayout(PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+ /*  assert(floatDisplayMode != PrintFloat::Mode::Default);
   if (complexFormat == Expression::ComplexFormat::Polar) {
     return createPolarLayout(floatDisplayMode);
   }
   return createCartesianLayout(floatDisplayMode);
-}
+*/}
 
 template <class T>
 Expression * Complex<T>::CreateDecimal(T f) {
@@ -306,7 +309,7 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, int numberOf
   return numberOfChars;
 }
 
-template <class T>
+/*template <class T>
 ExpressionLayout * Complex<T>::createPolarLayout(PrintFloat::Mode floatDisplayMode) const {
   char bufferBase[PrintFloat::k_maxFloatBufferLength+2];
   int numberOfCharInBase = 0;
@@ -349,7 +352,7 @@ ExpressionLayout * Complex<T>::createCartesianLayout(PrintFloat::Mode floatDispl
   char buffer[PrintFloat::k_maxComplexBufferLength];
   int numberOfChars = convertComplexToText(buffer, PrintFloat::k_maxComplexBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode, Expression::ComplexFormat::Cartesian, Ion::Charset::MiddleDot);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
-}
+}*/
 
 template class Complex<float>;
 template class Complex<double>;

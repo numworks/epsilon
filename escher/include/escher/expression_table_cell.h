@@ -10,7 +10,7 @@ public:
   View * labelView() const override;
   void setHighlighted(bool highlight) override;
   void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
-  Poincare::ExpressionLayout * expressionLayout() const override { return m_labelExpressionView.expressionLayout(); }
+  Poincare::LayoutRef layoutRef() const override { return m_labelExpressionView.layoutRef(); }
 private:
   ExpressionView m_labelExpressionView;
 };

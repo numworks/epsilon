@@ -4,18 +4,29 @@
 #include "layout/left_parenthesis_layout.h"
 #include "layout/right_parenthesis_layout.h"
 #include "layout/vertical_offset_layout.h"
+#include <poincare/horizontal_layout_node.h>
+#include <poincare/char_layout_node.h>
+
 extern "C" {
 #include<assert.h>
 }
 
 namespace Poincare {
 
-ExpressionLayout * LayoutEngine::createInfixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
+LayoutRef LayoutEngine::createInfixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != Expression::ComplexFormat::Default);
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 1);
-  HorizontalLayout * result = new HorizontalLayout();
+  HorizontalLayoutRef result;
+  result.addChildAtIndex(expression->operand(0)->createLayout(), 0);
+  for (int i = 1; i < numberOfOperands; i++) {
+    result.addChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result.numberOfChildren());
+    result.addChildAtIndex(
+        expression->operand(i)->createLayout(floatDisplayMode, complexFormat),
+        result.numberOfChildren());
+  }
+    /*
   result->addOrMergeChildAtIndex(expression->operand(0)->createLayout(), 0, true);
   for (int i = 1; i < numberOfOperands; i++) {
     result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result->numberOfChildren(), true);
@@ -24,16 +35,30 @@ ExpressionLayout * LayoutEngine::createInfixLayout(const Expression * expression
           createParenthesedLayout(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), false) :
           expression->operand(i)->createLayout(floatDisplayMode, complexFormat),
         result->numberOfChildren(), true);
-  }
+  }*/
   return result;
 }
 
-ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
+LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName) {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != Expression::ComplexFormat::Default);
-  HorizontalLayout * result = new HorizontalLayout();
-
+  HorizontalLayoutRef result;
   // Add the operator name.
+  result.addChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0);
+
+  // Create the layout of arguments separated by commas.
+  HorizontalLayoutRef args;
+  int numberOfOperands = expression->numberOfOperands();
+  if (numberOfOperands > 0) {
+    args.addChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, complexFormat), 0);
+    for (int i = 1; i < numberOfOperands; i++) {
+      args.addChildAtIndex(CharLayoutRef(','), args.numberOfChildren());
+      args.addChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), args.numberOfChildren());
+    }
+  }
+  // Add the parenthesed arguments.
+  result.addChildAtIndex(createParenthesedLayout(args, false), result.numberOfChildren());
+  /*// Add the operator name.
   result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, true);
 
   // Create the layout of arguments separated by commas.
@@ -49,35 +74,36 @@ ExpressionLayout * LayoutEngine::createPrefixLayout(const Expression * expressio
     }
   }
   // Add the parenthesed arguments.
-  result->addOrMergeChildAtIndex(createParenthesedLayout(args, false), result->numberOfChildren(), true);
+  result->addOrMergeChildAtIndex(createParenthesedLayout(args, false), result->numberOfChildren(), true);*/
   return result;
 }
 
-ExpressionLayout * LayoutEngine::createParenthesedLayout(ExpressionLayout * layout, bool cloneLayout) {
-  HorizontalLayout * result = new HorizontalLayout();
-  result->addChildAtIndex(new LeftParenthesisLayout(), 0);
-  if (layout != nullptr) {
-    result->addOrMergeChildAtIndex(cloneLayout ? layout->clone() : layout, 1, true);
+LayoutRef LayoutEngine::createParenthesedLayout(LayoutRef layoutRef, bool cloneLayout) {
+  HorizontalLayoutRef result;
+  result.addChildAtIndex(CharLayoutRef('('), 0);
+  if (layoutRef.isDefined()) {
+    result.addChildAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1);
   }
-  result->addChildAtIndex(new RightParenthesisLayout(), result->numberOfChildren());
+  result.addChildAtIndex(CharLayoutRef(')'), result.numberOfChildren());
   return result;
 }
 
-ExpressionLayout * LayoutEngine::createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize) {
+LayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize) {
   assert(bufferSize > 0);
-  HorizontalLayout * resultLayout = new HorizontalLayout();
+  HorizontalLayoutRef resultLayout;
   for (int i = 0; i < bufferSize; i++) {
-    resultLayout->addChildAtIndex(new CharLayout(buffer[i], fontSize), i);
+    resultLayout.addChildAtIndex(CharLayoutRef(buffer[i], fontSize), i);
   }
   return resultLayout;
 }
 
 ExpressionLayout * LayoutEngine::createLogLayout(ExpressionLayout * argument, ExpressionLayout * index) {
-  HorizontalLayout * resultLayout = static_cast<HorizontalLayout *>(createStringLayout("log", 3));
+  return nullptr;
+  /*HorizontalLayout * resultLayout = static_cast<HorizontalLayout *>(createStringLayout("log", 3));
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(index, VerticalOffsetLayout::Type::Subscript, false);
   resultLayout->addChildAtIndex(offsetLayout, resultLayout->numberOfChildren());
   resultLayout->addOrMergeChildAtIndex(createParenthesedLayout(argument, false), resultLayout->numberOfChildren(), true);
-  return resultLayout;
+  return resultLayout;*/
 }
 
 int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName) {

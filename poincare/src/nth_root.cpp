@@ -38,10 +38,13 @@ Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   return p->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * NthRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+LayoutRef NthRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+  /*
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat), false);
+*/
 }
 
 template<typename T>

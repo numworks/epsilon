@@ -12,6 +12,8 @@
 #include "layout/horizontal_layout.h"
 #include "layout/vertical_offset_layout.h"
 
+#include <poincare/char_layout_node.h>
+
 #include <ion.h>
 #include <cmath>
 
@@ -244,7 +246,9 @@ char Symbol::name() const {
   return m_name;
 }
 
-ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+LayoutRef Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+/*
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   if (m_name == SpecialSymbols::Ans) {
@@ -289,7 +293,7 @@ ExpressionLayout * Symbol::privateCreateLayout(PrintFloat::Mode floatDisplayMode
   if (isMatrixSymbol() || isSeriesSymbol(m_name) || isRegressionSymbol(m_name)) {
     return LayoutEngine::createStringLayout(textForSpecialSymbols(m_name), 2);
   }
-  return LayoutEngine::createStringLayout(&m_name, 1);
+  return LayoutEngine::createStringLayout(&m_name, 1);*/
 }
 
 int Symbol::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

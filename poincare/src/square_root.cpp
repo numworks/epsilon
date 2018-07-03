@@ -8,6 +8,7 @@ extern "C" {
 }
 #include <cmath>
 #include <ion.h>
+#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -49,10 +50,12 @@ Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   return p->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * SquareRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef SquareRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+ /* assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
+*/
 }
 
 }

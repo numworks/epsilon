@@ -11,7 +11,7 @@ public:
   void reloadCell() override;
   void setLabel(const char * text);
   void setSubtitle(const char * text);
-  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
+  void setLayoutRef(Poincare::LayoutRef layoutRef);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   const char * text() const override {
     return m_labelView.text();

@@ -11,6 +11,7 @@ extern "C" {
 #include <assert.h>
 }
 #include <cmath>
+#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -92,13 +93,15 @@ Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) 
   return Complex<T>::Float(std::round(result));
 }
 
-ExpressionLayout * Factorial::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef Factorial::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+    return CharLayoutRef('a'); //TODO
+ /*assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   HorizontalLayout * result = new HorizontalLayout();
   result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0, false);
   result->addChildAtIndex(new CharLayout('!'), result->numberOfChildren());
   return result;
+*/
 }
 
 int Factorial::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

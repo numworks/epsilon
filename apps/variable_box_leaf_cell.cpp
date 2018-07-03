@@ -76,8 +76,8 @@ void VariableBoxLeafCell::setSubtitle(const char * text) {
   layoutSubviews();
 }
 
-void VariableBoxLeafCell::setExpressionLayout(ExpressionLayout * expressionLayout) {
-  m_expressionView.setExpressionLayout(expressionLayout);
+void VariableBoxLeafCell::setLayoutRef(LayoutRef layoutRef) {
+  m_expressionView.setLayoutRef(layoutRef);
 }
 
 void VariableBoxLeafCell::drawRect(KDContext * ctx, KDRect rect) const {

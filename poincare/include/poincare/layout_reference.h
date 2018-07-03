@@ -33,11 +33,11 @@ public:
     TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild);
   }
 
-  int layoutOrigin() {
+  KDPoint layoutOrigin() {
     return this->typedNode()->layoutOrigin();
   }
 
-  int absoluteOrigin() {
+  KDPoint absoluteOrigin() {
     return this->typedNode()->absoluteOrigin();
   }
 };

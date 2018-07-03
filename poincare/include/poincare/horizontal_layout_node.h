@@ -7,6 +7,9 @@
 
 namespace Poincare {
 
+/* WARNING: A HorizontalLayout should never have a HorizontalLayout child. For
+ * instance, use addOrMergeChildAtIndex to add a LayoutNode safely. */
+
 class HorizontalLayoutNode : public LayoutNode {
 public:
   HorizontalLayoutNode() :
@@ -14,72 +17,34 @@ public:
     m_numberOfChildren(0)
   {}
 
-  size_t size() const override {
-    return sizeof(HorizontalLayoutNode);
-  }
+  // LayoutNode
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
 
+  // TreeNode
+  size_t size() const override { return sizeof(HorizontalLayoutNode); }
   int numberOfChildren() const override { return m_numberOfChildren; }
   void incrementNumberOfChildren(int increment = 1) override { m_numberOfChildren+= increment; }
   void decrementNumberOfChildren(int decrement = 1) override {
-    assert(m_numberOfChildren > 0);
+    assert(m_numberOfChildren >= decrement);
     m_numberOfChildren-= decrement;
   }
-  void eraseNumberOfChildren() override {
-    m_numberOfChildren = 0;
-  }
-
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {
-    if (this == cursor->layoutReference().node()) {
-      if (cursor->position() == LayoutCursor::Position::Left) {
-        // Case: Left. Ask the parent.
-        LayoutNode * parentNode = parent();
-        if (parentNode != nullptr) {
-          parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
-        }
-        return;
-      }
-      assert(cursor->position() == LayoutCursor::Position::Right);
-      /* Case: Right. Go to the last child if there is one, and move Left. Else
-       * go Left and ask the parent. */
-      int childrenCount = numberOfChildren();
-      if (childrenCount >= 1) {
-        cursor->setLayoutNode(static_cast<LayoutNode *>(childTreeAtIndex(childrenCount-1)));
-      } else {
-        cursor->setPosition(LayoutCursor::Position::Left);
-      }
-      return cursor->moveLeft(shouldRecomputeLayout);
-    }
-
-    // Case: The cursor is Left of a child.
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    int childIndex = indexOfChildByIdentifier(cursor->layoutIdentifier());
-    assert(childIndex >= 0);
-    if (childIndex == 0) {
-      // Case: the child is the leftmost. Ask the parent.
-      if (parent()) {
-        cursor->setLayoutNode(this);
-        return cursor->moveLeft(shouldRecomputeLayout);
-      }
-      return;
-    }
-    // Case: the child is not the leftmost. Go to its left sibling and move Left.
-    cursor->setLayoutNode(static_cast<LayoutNode *>(childTreeAtIndex(childIndex-1)));
-    cursor->setPosition(LayoutCursor::Position::Right);
-    cursor->moveLeft(shouldRecomputeLayout);
-  }
-
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {
-    //TODO
-    LayoutNode * parentNode = parent();
-    if (parentNode != nullptr) {
-      parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-    }
-  }
-
+  void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
+#if TREE_LOG
   const char * description() const override {
     return "Horizontal Layout";
   }
+#endif
+
+protected:
+  // LayoutNode
+  void computeSize() override;
+  void computeBaseline() override;
+  KDPoint positionOfChild(LayoutNode * l) override;
+
 private:
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
   int m_numberOfChildren;
 };
 

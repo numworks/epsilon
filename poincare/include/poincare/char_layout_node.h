@@ -1,59 +1,64 @@
 #ifndef POINCARE_CHAR_LAYOUT_NODE_H
 #define POINCARE_CHAR_LAYOUT_NODE_H
 
-#include <poincare/layout_reference.h>
-#include <poincare/layout_node.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/layout_engine.h>
+#include <poincare/layout_node.h>
+#include <poincare/layout_reference.h>
 
 namespace Poincare {
 
 class CharLayoutNode : public LayoutNode {
 public:
-  CharLayoutNode() : LayoutNode() {}
-  size_t size() const override {
-    return sizeof(CharLayoutNode);
-  }
+  CharLayoutNode() :
+    LayoutNode(),
+    m_char('a'),
+    m_fontSize(KDText::FontSize::Large)
+  {}
+  void setChar(char c) { m_char = c; }
+  void setFontSize(KDText::FontSize fontSize) { m_fontSize = fontSize; }
 
+  // LayoutNode
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
+    return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, m_char);
+  }
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+
+  // TreeNode
+  size_t size() const override { return sizeof(CharLayoutNode); }
   int numberOfChildren() const override { return 0; }
-
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {
-    if (cursor->position() == LayoutCursor::Position::Right) {
-      cursor->setPosition(LayoutCursor::Position::Left);
-      return;
-    }
-    LayoutNode * parentNode = parent();
-    if (parentNode != nullptr) {
-      parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
-    }
-  }
-
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {
-    if (cursor->position() == LayoutCursor::Position::Left) {
-      cursor->setPosition(LayoutCursor::Position::Right);
-      return;
-    }
-    LayoutNode * parentNode = parent();
-    if (parentNode != nullptr) {
-      parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-    }
-  }
-
+#if TREE_LOG
   const char * description() const override {
     static char Description[] = "Char a";
     Description[5] = m_char;
     return Description;
   }
+#endif
 
-  void setChar(char c) { m_char = c; }
+protected:
+  // LayoutNode
+  void computeSize() override;
+  void computeBaseline() override;
+  KDPoint positionOfChild(LayoutNode * child) override {
+    assert(false);
+    return KDPointZero;
+  }
+
 private:
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   char m_char;
+  KDText::FontSize m_fontSize;
 };
 
 class CharLayoutRef : public LayoutReference<CharLayoutNode> {
 public:
-  CharLayoutRef(char c) : LayoutReference<CharLayoutNode>() {
+  CharLayoutRef(char c, KDText::FontSize fontSize = KDText::FontSize::Large) :
+    LayoutReference<CharLayoutNode>()
+  {
     if (!(this->node()->isAllocationFailure())) {
       this->typedNode()->setChar(c);
+      this->typedNode()->setFontSize(fontSize);
     }
   }
 };

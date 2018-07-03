@@ -14,8 +14,8 @@ bool LayoutCursor::isEquivalentTo(LayoutCursor cursor) {
 
 /* Position */
 
-int LayoutCursor::middleLeftPoint() {
-  int layoutOrigin = layoutReference().absoluteOrigin();
+KDPoint LayoutCursor::middleLeftPoint() {
+  KDPoint layoutOrigin = layoutReference().absoluteOrigin();
   return layoutOrigin;
 }
 

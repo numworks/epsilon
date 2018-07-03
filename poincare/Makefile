@@ -4,6 +4,14 @@ SFLAGS += -Ipoincare/include
 #include poincare/src/simplification/Makefile
 
 objs += $(addprefix poincare/src/,\
+  char_layout_node.o\
+  horizontal_layout_node.o\
+  layout_cursor.o\
+  layout_node.o\
+  layout_reference.o\
+)
+
+objs += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
   approximation_engine.o\
@@ -47,10 +55,7 @@ objs += $(addprefix poincare/src/,\
   imaginary_part.o\
   integer.o\
   integral.o\
-  layout_cursor.o\
   layout_engine.o\
-  layout_node.o\
-  layout_reference.o\
   list_data.o\
   least_common_multiple.o\
   logarithm.o\

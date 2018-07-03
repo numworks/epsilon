@@ -11,6 +11,20 @@ KDCoordinate LayoutCursor::cursorHeight() {
   return height == 0 ? k_cursorHeight : height;
 }
 
+KDCoordinate LayoutCursor::baseline() {
+  if (layoutHeight() == 0) {
+    return k_cursorHeight/2;
+  }
+  KDCoordinate layoutBaseline = m_layoutRef.baseline();
+  LayoutRef equivalentLayoutRef = m_layoutRef.equivalentCursor(this).layoutReference();
+  if (m_layoutRef.hasChild(equivalentLayoutRef)) {
+    return equivalentLayoutRef.baseline();
+  } else if (m_layoutRef.hasSibling(equivalentLayoutRef)) {
+    return max(layoutBaseline, equivalentLayoutRef.baseline());
+  }
+  return layoutBaseline;
+}
+
 /* Comparison */
 
 bool LayoutCursor::isEquivalentTo(LayoutCursor cursor) {

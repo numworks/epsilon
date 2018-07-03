@@ -62,7 +62,7 @@ public:
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
   KDCoordinate cursorHeight();
-  int baseline() { return 1; } //TODO
+  KDCoordinate baseline();
   LayoutCursor clone() const {
     return LayoutCursor(m_layoutRef, m_position);
   }

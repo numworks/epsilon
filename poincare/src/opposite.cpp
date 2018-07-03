@@ -12,6 +12,8 @@ extern "C" {
 #include <stdlib.h>
 }
 
+#include <poincare/char_layout_node.h>
+
 namespace Poincare {
 
 Expression::Type Opposite::type() const {
@@ -66,8 +68,9 @@ Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
   return m->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * Opposite::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef Opposite::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+/*  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   HorizontalLayout * result = new HorizontalLayout(new CharLayout('-'), false);
   if (operand(0)->type() == Type::Opposite) {
@@ -76,7 +79,7 @@ ExpressionLayout * Opposite::privateCreateLayout(PrintFloat::Mode floatDisplayMo
     result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 1, false);
   }
   return result;
-
+*/
 }
 
 int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

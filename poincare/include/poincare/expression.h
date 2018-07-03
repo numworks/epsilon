@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
-#include <poincare/expression_layout.h>
+#include <poincare/layout_reference.h>
 #include <poincare/print_float.h>
 extern "C" {
 #include <assert.h>
@@ -249,7 +249,7 @@ public:
   bool isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, int numberOfSignificantDigits, Context & context);
 
   /* Layout Engine */
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const; // Returned object must be deleted
+  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Default, ComplexFormat complexFormat = ComplexFormat::Default) const;
   virtual int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Simplification */
@@ -315,7 +315,7 @@ private:
   //TODO: What should be the implementation for complex?
   virtual int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const { return 0; }
   /* Layout Engine */
-  virtual ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const = 0;
+  virtual LayoutRef privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const = 0;
   /* Simplification */
   Expression * deepBeautify(Context & context, AngleUnit angleUnit);
   Expression * deepReduce(Context & context, AngleUnit angleUnit);

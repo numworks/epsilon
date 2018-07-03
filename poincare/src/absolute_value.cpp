@@ -1,7 +1,7 @@
 #include <poincare/absolute_value.h>
 #include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
-#include "layout/absolute_value_layout.h"
+#include <poincare/char_layout_node.h>
 
 extern "C" {
 #include <assert.h>
@@ -24,10 +24,10 @@ Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUn
   return this;
 }
 
-ExpressionLayout * AbsoluteValue::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+LayoutRef AbsoluteValue::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
+  return CharLayoutRef('a'); //TODO
 }
 
 Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit) {

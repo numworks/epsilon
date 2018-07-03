@@ -2,7 +2,6 @@
 #define POINCARE_CHAR_LAYOUT_NODE_H
 
 #include <poincare/layout_cursor.h>
-#include <poincare/layout_engine.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_reference.h>
 
@@ -19,9 +18,7 @@ public:
   void setFontSize(KDText::FontSize fontSize) { m_fontSize = fontSize; }
 
   // LayoutNode
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
-    return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, m_char);
-  }
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
 

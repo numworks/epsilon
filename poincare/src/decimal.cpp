@@ -9,6 +9,7 @@
 extern "C" {
 #include <assert.h>
 }
+#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -217,8 +218,9 @@ bool Decimal::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 7);
 }
 
-ExpressionLayout * Decimal::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  char buffer[k_maxBufferSize];
+LayoutRef Decimal::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+   return CharLayoutRef('a'); //TODO
+ /*char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, PrintFloat::k_numberOfStoredSignificantDigits);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
@@ -241,7 +243,7 @@ Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
   } else {
     denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-m_exponent));
   }
-  return replaceWith(new Rational(numerator, denominator), true);
+  return replaceWith(new Rational(numerator, denominator), true);*/
 }
 
 Expression * Decimal::shallowBeautify(Context & context, AngleUnit angleUnit) {

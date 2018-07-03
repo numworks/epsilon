@@ -164,8 +164,9 @@ void Matrix::rowCanonize(Context & context, AngleUnit angleUnit, Multiplication 
   }
 }
 
-ExpressionLayout * Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+ /* assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   ExpressionLayout ** childrenLayouts = new ExpressionLayout * [numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
@@ -173,7 +174,7 @@ ExpressionLayout * Matrix::privateCreateLayout(PrintFloat::Mode floatDisplayMode
   }
   ExpressionLayout * layout = new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns(), false);
   delete [] childrenLayouts;
-  return layout;
+  return layout;*/
 }
 
 int Matrix::rank(Context & context, AngleUnit angleUnit, bool inPlace) {

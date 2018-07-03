@@ -65,6 +65,7 @@ public:
   int nodeRetainCount() const { return node()->retainCount(); }
   void incrementNumberOfChildren(int increment = 1) { return node()->incrementNumberOfChildren(increment); }
   void decrementNumberOfChildren(int decrement = 1) { return node()->decrementNumberOfChildren(decrement); }
+  int numberOfDescendants(bool includeSelf) const { return node()->numberOfDescendants(includeSelf);}
 
   // Serialization
   bool needsParenthesisWithParent(TreeReference<TreeNode> parentRef) { return node()->needsParenthesisWithParent(parentRef.node()); }

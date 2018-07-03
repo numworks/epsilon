@@ -10,16 +10,15 @@ namespace Shared {
 ExpressionModel::ExpressionModel() :
   m_text{0},
   m_expression(nullptr),
-  m_layout(nullptr)
+  m_layoutRef(nullptr)
 {
 }
 
 ExpressionModel::~ExpressionModel() {
   /* We cannot call tidy here because tidy is a virtual function and does not
    * do the same thing for all children class. */
-  if (m_layout != nullptr) {
-    delete m_layout;
-    m_layout = nullptr;
+  if (m_layoutRef.isDefined()) {
+    m_layoutRef = LayoutRef(nullptr);
   }
   if (m_expression != nullptr) {
     delete m_expression;
@@ -44,15 +43,15 @@ Poincare::Expression * ExpressionModel::expression(Poincare::Context * context) 
   return m_expression;
 }
 
-Poincare::ExpressionLayout * ExpressionModel::layout() {
-  if (m_layout == nullptr) {
+LayoutRef ExpressionModel::layoutRef() {
+  if (!m_layoutRef.isDefined()) {
     Expression * nonSimplifiedExpression = Expression::parse(m_text);
     if (nonSimplifiedExpression != nullptr) {
-      m_layout = nonSimplifiedExpression->createLayout(PrintFloat::Mode::Decimal);
+      m_layoutRef = nonSimplifiedExpression->createLayout(PrintFloat::Mode::Decimal);
       delete nonSimplifiedExpression;
     }
   }
-  return m_layout;
+  return m_layoutRef;
 }
 
 bool ExpressionModel::isDefined() {
@@ -68,9 +67,8 @@ void ExpressionModel::setContent(const char * c) {
   /* We cannot call tidy here because tidy is a virtual function and does not
    * do the same thing for all children class. And here we want to delete only
    * the m_layout and m_expression. */
-  if (m_layout != nullptr) {
-    delete m_layout;
-    m_layout = nullptr;
+  if (m_layoutRef.isDefined()) {
+    m_layoutRef = LayoutRef(nullptr);
   }
   if (m_expression != nullptr) {
     delete m_expression;
@@ -79,9 +77,8 @@ void ExpressionModel::setContent(const char * c) {
 }
 
 void ExpressionModel::tidy() {
-  if (m_layout != nullptr) {
-    delete m_layout;
-    m_layout = nullptr;
+  if (m_layoutRef.isDefined()) {
+    m_layoutRef = LayoutRef(nullptr);
   }
   if (m_expression != nullptr) {
     delete m_expression;

@@ -43,7 +43,7 @@ public:
 private:
   Complex(T a, T b);
   /* Layout */
-  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat) const override;
+  LayoutRef privateCreateLayout(PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat) const override;
   /* Simplification */
   static Expression * CreateDecimal(T f);
   Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
@@ -54,8 +54,8 @@ private:
   /* convertComplexToText and convertFloatToTextPrivate return the string length
    * of the buffer (does not count the 0 last char)*/
   int convertComplexToText(char * buffer, int bufferSize, int numberOfSignificantDigits, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, char multiplicationSign) const;
-  ExpressionLayout * createPolarLayout(PrintFloat::Mode floatDisplayMode) const;
-  ExpressionLayout * createCartesianLayout(PrintFloat::Mode floatDisplayMode) const;
+  //ExpressionLayout * createPolarLayout(PrintFloat::Mode floatDisplayMode) const;
+  //ExpressionLayout * createCartesianLayout(PrintFloat::Mode floatDisplayMode) const;
   T m_a;
   T m_b;
 };

@@ -20,8 +20,8 @@ public:
   Expression * clone() const override { return nullptr; }
   int polynomialDegree(char symbolName) const override { return -1; }
   Type type() const override { return Expression::Type::SimplificationRoot; }
-  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
-    return nullptr;
+  LayoutRef privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
+    return LayoutRef(nullptr); //TODO
   }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override { return 0; }
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {

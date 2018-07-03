@@ -1,4 +1,5 @@
 #include <poincare/parenthesis.h>
+#include <poincare/char_layout_node.h>
 
 extern "C" {
 #include <assert.h>
@@ -21,10 +22,12 @@ int Parenthesis::polynomialDegree(char symbolName) const {
   return operand(0)->polynomialDegree(symbolName);
 }
 
-ExpressionLayout * Parenthesis::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+LayoutRef Parenthesis::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('('); //TODO
+/*
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
+  return LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);*/
 }
 
 Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {

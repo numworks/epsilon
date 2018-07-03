@@ -10,8 +10,8 @@ void Clipboard::store(const char * storedText) {
   strlcpy(m_textBuffer, storedText, TextField::maxBufferSize());
 }
 
-void Clipboard::store(Poincare::ExpressionLayout * layout) {
-  layout->writeTextInBuffer(m_textBuffer, TextField::maxBufferSize(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
+void Clipboard::store(Poincare::LayoutRef layoutR) {
+  layoutR.writeTextInBuffer(m_textBuffer, TextField::maxBufferSize(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
 }
 
 const char * Clipboard::storedText() {

@@ -228,13 +228,14 @@ Expression * Logarithm::templatedApproximate(Context& context, AngleUnit angleUn
   return new Complex<T>(result);
 }
 
-ExpressionLayout * Logarithm::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef Logarithm::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+  /*assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   if (numberOfOperands() == 1) {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, "log");
   }
-  return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));
+  return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));*/
 }
 
 }

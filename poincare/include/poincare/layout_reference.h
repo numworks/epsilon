@@ -44,6 +44,7 @@ public:
   }
 
   bool isHorizontal() const { return this->typedNode()->isHorizontal(); }
+  bool isLeftParenthesis() const { return this->typedNode()->isLeftParenthesis(); }
   bool hasText() { return this->typedNode()->hasText(); }
   char XNTChar() const { return this->typedNode()->XNTChar(); }
   KDSize layoutSize() { return this->typedNode()->layoutSize(); }

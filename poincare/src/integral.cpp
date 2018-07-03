@@ -10,6 +10,7 @@ extern "C" {
 }
 #include "layout/integral_layout.h"
 #include "layout/horizontal_layout.h"
+#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -66,7 +67,9 @@ Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUn
   return new Complex<T>(Complex<T>::Float(result));
 }
 
-ExpressionLayout * Integral::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+LayoutRef Integral::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+    return CharLayoutRef('a'); //TODO
+ /*
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   return new IntegralLayout(
@@ -74,7 +77,7 @@ ExpressionLayout * Integral::privateCreateLayout(PrintFloat::Mode floatDisplayMo
       operand(1)->createLayout(floatDisplayMode, complexFormat),
       operand(2)->createLayout(floatDisplayMode, complexFormat),
       false);
-}
+*/}
 
 template<typename T>
 T Integral::functionValueAtAbscissa(T x, Context & context, AngleUnit angleUnit) const {

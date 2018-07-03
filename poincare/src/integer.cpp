@@ -2,6 +2,7 @@
 #include <poincare/complex.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_engine.h>
+#include <poincare/char_layout_node.h>
 #include <cmath>
 #include <utility>
 extern "C" {
@@ -600,11 +601,14 @@ int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
   return size;
 }
 
-ExpressionLayout * Integer::createLayout() const {
+/*LayoutRef Integer::createLayout() const {
+    return CharLayoutRef('a'); //TODO
+/*
   char buffer[255];
   int numberOfChars = writeTextInBuffer(buffer, 255);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
-}
+
+}*/
 
 template float Poincare::Integer::approximate<float>() const;
 template double Poincare::Integer::approximate<double>() const;

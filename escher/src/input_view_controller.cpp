@@ -1,32 +1,28 @@
 #include <escher/input_view_controller.h>
 #include <escher/app.h>
 #include <escher/palette.h>
-#include <poincare/src/layout/horizontal_layout.h>
+#include <poincare/horizontal_layout_node.h>
 #include <assert.h>
 
-InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ViewController(parentResponder),
-  m_layout(new Poincare::HorizontalLayout()),
-  m_expressionField(this, m_textBuffer, k_bufferLength, m_layout, textFieldDelegate, expressionLayoutFieldDelegate)
+  m_layout(Poincare::HorizontalLayoutRef()),
+  m_expressionField(this, m_textBuffer, k_bufferLength, m_layout, textFieldDelegate, layoutFieldDelegate)
 {
   m_textBuffer[0] = 0;
-}
-
-InputViewController::ExpressionFieldController::~ExpressionFieldController() {
-  delete m_layout;
 }
 
 void InputViewController::ExpressionFieldController::didBecomeFirstResponder() {
   app()->setFirstResponder(&m_expressionField);
 }
 
-InputViewController::InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, ExpressionLayoutFieldDelegate * expressionLayoutFieldDelegate) :
+InputViewController::InputViewController(Responder * parentResponder, ViewController * child, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ModalViewController(parentResponder, child),
   m_expressionFieldController(this, this, this),
   m_successAction(Invocation(nullptr, nullptr)),
   m_failureAction(Invocation(nullptr, nullptr)),
   m_textFieldDelegate(textFieldDelegate),
-  m_expressionLayoutFieldDelegate(expressionLayoutFieldDelegate),
+  m_layoutFieldDelegate(layoutFieldDelegate),
   m_inputViewHeightIsMaximal(false)
 {
 }
@@ -74,27 +70,27 @@ Toolbox * InputViewController::toolboxForTextInput(TextInput * input) {
   return m_textFieldDelegate->toolboxForTextInput(input);
 }
 
-bool InputViewController::expressionLayoutFieldShouldFinishEditing(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+bool InputViewController::layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool InputViewController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
-  return m_expressionLayoutFieldDelegate->expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event);
+bool InputViewController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
+  return m_layoutFieldDelegate->layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-bool InputViewController::expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) {
+bool InputViewController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::LayoutRef layoutR, Ion::Events::Event event) {
   inputViewDidFinishEditing();
-  m_expressionLayoutFieldDelegate->expressionLayoutFieldDidFinishEditing(expressionLayoutField, layout, event);
+  m_layoutFieldDelegate->layoutFieldDidFinishEditing(layoutField, layoutR, event);
   return true;
 }
 
-bool InputViewController::expressionLayoutFieldDidAbortEditing(ExpressionLayoutField * expressionLayoutField) {
+bool InputViewController::layoutFieldDidAbortEditing(LayoutField * layoutField) {
   inputViewDidAbortEditing();
-  m_expressionLayoutFieldDelegate->expressionLayoutFieldDidAbortEditing(expressionLayoutField);
+  m_layoutFieldDelegate->layoutFieldDidAbortEditing(layoutField);
   return true;
 }
 
-void InputViewController::expressionLayoutFieldDidChangeSize(ExpressionLayoutField * expressionLayoutField) {
+void InputViewController::layoutFieldDidChangeSize(LayoutField * layoutField) {
   /* Reload the view only if the ExpressionField height actually changes, i.e.
    * not if the height is already maximal and stays maximal. */
   bool newInputViewHeightIsMaximal = m_expressionFieldController.expressionField()->heightIsMaximal();
@@ -104,8 +100,8 @@ void InputViewController::expressionLayoutFieldDidChangeSize(ExpressionLayoutFie
   }
 }
 
-Toolbox * InputViewController::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
-  return m_expressionLayoutFieldDelegate->toolboxForExpressionLayoutField(expressionLayoutField);
+Toolbox * InputViewController::toolboxForLayoutField(LayoutField * layoutField) {
+  return m_layoutFieldDelegate->toolboxForLayoutField(layoutField);
 }
 
 void InputViewController::inputViewDidFinishEditing() {

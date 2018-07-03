@@ -32,6 +32,8 @@
 #include <escher/invocation.h>
 #include <escher/i18n.h>
 #include <escher/key_view.h>
+#include <escher/layout_field.h>
+#include <escher/layout_field_delegate.h>
 #include <escher/list_view_data_source.h>
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_buffer.h>
@@ -53,8 +55,6 @@
 #include <escher/scroll_view_data_source.h>
 #include <escher/scroll_view_indicator.h>
 #include <escher/scrollable_view.h>
-#include <escher/expression_layout_field.h>
-#include <escher/expression_layout_field_delegate.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>

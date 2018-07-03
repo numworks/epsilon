@@ -3,23 +3,12 @@ using namespace Poincare;
 
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
-  m_expressionLayout(nullptr),
   m_layoutRef(nullptr),
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
   m_textColor(textColor),
   m_backgroundColor(backgroundColor)
 {
-}
-
-//TODO remove
-ExpressionLayout * ExpressionView::expressionLayout() const {
-  return m_expressionLayout;
-}
-
-void ExpressionView::setExpressionLayout(ExpressionLayout * expressionLayout) {
-  m_expressionLayout = expressionLayout;
-  markRectAsDirty(bounds());
 }
 
 void ExpressionView::setLayoutRef(LayoutRef layoutR) {
@@ -48,18 +37,18 @@ void ExpressionView::setAlignment(float horizontalAlignment, float verticalAlign
 }
 
 int ExpressionView::numberOfLayouts() const {
-  return m_expressionLayout->numberOfDescendants(true);
+  return m_layoutRef.numberOfDescendants(true);
 }
 
 KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
-  if (m_expressionLayout == nullptr) {
+  if (!m_layoutRef.isDefined()) {
     return KDSizeZero;
   }
-  return m_expressionLayout->size();
+  return m_layoutRef.layoutSize();
 }
 
 KDPoint ExpressionView::drawingOrigin() const {
-  KDSize expressionSize = m_expressionLayout->size();
+  KDSize expressionSize = m_layoutRef.layoutSize();
   return KDPoint(m_horizontalAlignment*(m_frame.width() - expressionSize.width()), max(0, (m_frame.height() - expressionSize.height())/2));
 }
 
@@ -69,7 +58,7 @@ KDPoint ExpressionView::absoluteDrawingOrigin() const {
 
 void ExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
-  if (m_expressionLayout != nullptr) {
-    m_expressionLayout->draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor);
+  if (m_layoutRef.isDefined()) {
+    m_layoutRef.draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor);
   }
 }

@@ -29,6 +29,8 @@ objs += $(addprefix escher/src/,\
   invocation.o\
   input_view_controller.o\
   key_view.o\
+  layout_field.o\
+  layout_field_content_view.o\
   list_view_data_source.o\
   message_table_cell.o\
   message_table_cell_with_buffer.o\

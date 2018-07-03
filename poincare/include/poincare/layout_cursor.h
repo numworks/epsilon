@@ -11,10 +11,17 @@ class LayoutCursor {
   template <typename T>
   friend class LayoutReference;
 public:
+  constexpr static KDCoordinate k_cursorWidth = 1;
+
   enum class Position {
     Left,
     Right
   };
+
+  LayoutCursor(LayoutRef layoutR, Position position = Position::Right) :
+    m_layoutRef(layoutR.node()),
+    m_position(position)
+  {}
 
   /* Debug */
   void log() {
@@ -56,6 +63,21 @@ public:
   void moveRight(bool * shouldRecomputeLayout);
   void moveAbove(bool * shouldRecomputeLayout);
   void moveUnder(bool * shouldRecomputeLayout);
+
+  /* Layout modification */
+  void clearLayout() {} //TODO
+  void addFractionLayoutAndCollapseSiblings() {} //TODO
+  void addEmptyExponentialLayout() {} //TODO
+  void addEmptyPowerLayout() {} //TODO
+  void addEmptySquareRootLayout() {} //TODO
+  void addEmptySquarePowerLayout() {} //TODO
+  void addEmptyTenPowerLayout() {} //TODO
+  void addEmptyMatrixLayout() {} //TODO
+  void insertText(const char * text) {} //TODO
+  void performBackspace() {} //TODO
+  bool showEmptyLayoutIfNeeded() { return false; } //TODO
+  bool hideEmptyLayoutIfNeeded() { return false; } //TODO
+
 private:
   LayoutCursor(LayoutNode * node, Position position = Position::Right) :
     m_layoutRef(node),

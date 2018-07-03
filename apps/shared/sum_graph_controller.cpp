@@ -202,19 +202,12 @@ bool SumGraphController::handleEnter() {
 
 SumGraphController::LegendView::LegendView(SumGraphController * controller, char sumSymbol) :
   m_sum(0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
-  m_sumLayout(nullptr),
+  m_sumLayoutRef(nullptr),
   m_legend(KDText::FontSize::Small, I18n::Message::Default, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_editableZone(controller, m_draftText, m_draftText, TextField::maxBufferSize(), controller, false, KDText::FontSize::Small, 0.0f, 0.5f, KDColorBlack, Palette::GreyMiddle),
   m_sumSymbol(sumSymbol)
 {
   m_draftText[0] = 0;
-}
-
-SumGraphController::LegendView::~LegendView() {
-  if (m_sumLayout != nullptr) {
-    delete m_sumLayout;
-    m_sumLayout = nullptr;
-  }
 }
 
 void SumGraphController::LegendView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -238,28 +231,26 @@ void SumGraphController::LegendView::setEditableZone(double d) {
 
 void SumGraphController::LegendView::setSumSymbol(Step step, double start, double end, double result, ExpressionLayout * functionLayout) {
   assert(step == Step::Result || functionLayout == nullptr);
-  if (m_sumLayout) {
-    delete m_sumLayout;
-    m_sumLayout = nullptr;
-  }
   const char sigma[] = {' ', m_sumSymbol};
   if (step == Step::FirstParameter) {
-    m_sumLayout = LayoutEngine::createStringLayout(sigma, sizeof(sigma));
+    m_sumLayoutRef = LayoutEngine::createStringLayout(sigma, sizeof(sigma));
   } else if (step == Step::SecondParameter) {
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
-    m_sumLayout = new CondensedSumLayout(
+    m_sumLayoutRef = LayoutEngine::createStringLayout(sigma, sizeof(sigma));/* TODO new CondensedSumLayout(
         LayoutEngine::createStringLayout(sigma, sizeof(sigma)),
         LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small),
         new EmptyLayout(EmptyLayout::Color::Yellow, false, KDText::FontSize::Small, false),
-        false);
+        false); */
   } else {
+    m_sumLayoutRef = LayoutEngine::createStringLayout(sigma, sizeof(sigma));
+/* TODO
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
-    ExpressionLayout * start =  LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
+    ExpressionLayout * start = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
-    ExpressionLayout * end =  LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
-    m_sumLayout = new CondensedSumLayout(
+    ExpressionLayout * end = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
+    m_sumLayoutRef = new CondensedSumLayout(
         LayoutEngine::createStringLayout(sigma, sizeof(sigma)),
         start,
         end,
@@ -269,10 +260,10 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     PrintFloat::convertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
     childrenLayouts[2] = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     childrenLayouts[1] = functionLayout;
-    childrenLayouts[0] = m_sumLayout;
-    m_sumLayout = new HorizontalLayout(childrenLayouts, 3, false);
+    childrenLayouts[0] = m_sumLayoutRef;
+    m_sumLayoutRef = new HorizontalLayout(childrenLayouts, 3, false);*/
   }
-  m_sum.setExpressionLayout(m_sumLayout);
+  m_sum.setLayoutRef(m_sumLayoutRef);
   if (step == Step::Result) {
     m_sum.setAlignment(0.5f, 0.5f);
   } else {

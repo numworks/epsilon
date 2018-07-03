@@ -175,8 +175,9 @@ bool Power::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 2);
 }
 
-ExpressionLayout * Power::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef Power::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+ /* assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   const Expression * indiceOperand = m_operands[1];
   // Delete eventual parentheses of the indice in the pretty print
@@ -190,7 +191,7 @@ ExpressionLayout * Power::privateCreateLayout(PrintFloat::Mode floatDisplayMode,
         VerticalOffsetLayout::Type::Superscript,
         false),
       result->numberOfChildren());
-  return result;
+  return result;*/
 }
 
 int Power::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {

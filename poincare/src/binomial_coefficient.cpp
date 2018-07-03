@@ -3,6 +3,7 @@
 #include <poincare/complex.h>
 #include <poincare/rational.h>
 #include "layout/binomial_coefficient_layout.h"
+#include <poincare/char_layout_node.h>
 
 extern "C" {
 #include <stdlib.h>
@@ -72,14 +73,15 @@ Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angl
   return replaceWith(new Rational(result), true);
 }
 
-ExpressionLayout * BinomialCoefficient::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef BinomialCoefficient::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+    return CharLayoutRef('a'); //TODO
+ /*assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   return new BinomialCoefficientLayout(
       operand(0)->createLayout(floatDisplayMode, complexFormat),
       operand(1)->createLayout(floatDisplayMode, complexFormat),
       false);
-}
+*/}
 
 template<typename T>
 Expression * BinomialCoefficient::templatedApproximate(Context& context, AngleUnit angleUnit) const {

@@ -93,7 +93,8 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     } else if (resultLayoutRef.isHorizontal()) {
       /* If the layout is horizontal, pick the first open parenthesis. For now,
        * all horizontal layouts in MathToolbox have parentheses. */
-      for (LayoutRef l : resultLayoutRef.directChildren()) {
+      for (int i = 0; i < resultLayoutRef.numberOfChildren(); i++) {
+        LayoutRef l = resultLayoutRef.childAtIndex(i);
         if (l.isLeftParenthesis()) {
           pointedLayoutRef = l;
           break;

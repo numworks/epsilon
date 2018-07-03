@@ -41,7 +41,7 @@ private:
   /* rowCanonize turns a matrix in its reduced row echelon form. */
   void rowCanonize(Context & context, AngleUnit angleUnit, Multiplication * m = nullptr);
   /* Layout */
-  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
+  LayoutRef privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
   /* Evaluation */
   Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }

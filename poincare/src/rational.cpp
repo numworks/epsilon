@@ -8,6 +8,7 @@ extern "C" {
 #include <poincare/arithmetic.h>
 #include <poincare/opposite.h>
 #include "layout/fraction_layout.h"
+#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -151,13 +152,15 @@ bool Rational::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 3);
 }
 
-ExpressionLayout * Rational::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+LayoutRef Rational::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+  /*
   ExpressionLayout * numeratorLayout = m_numerator.createLayout();
   if (m_denominator.isOne()) {
     return numeratorLayout;
   }
   ExpressionLayout * denominatorLayout = m_denominator.createLayout();
-  return new FractionLayout(numeratorLayout, denominatorLayout, false);
+  return new FractionLayout(numeratorLayout, denominatorLayout, false);*/
 }
 
 int Rational::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

@@ -345,7 +345,7 @@ bool Expression::isEqualToItsApproximationLayout(Expression * approximation, int
 
 /* Layout */
 
-ExpressionLayout * Expression::createLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+LayoutRef Expression::createLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
   switch (floatDisplayMode) {
     case PrintFloat::Mode::Default:
       switch (complexFormat) {

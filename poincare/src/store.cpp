@@ -9,6 +9,7 @@ extern "C" {
 #include <poincare/context.h>
 #include "layout/char_layout.h"
 #include "layout/horizontal_layout.h"
+#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -34,14 +35,15 @@ Expression * Store::shallowReduce(Context& context, AngleUnit angleUnit) {
   return replaceWith(editableOperand(1), true)->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * Store::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef Store::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+  /*assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   HorizontalLayout * result = new HorizontalLayout();
   result->addOrMergeChildAtIndex(value()->createLayout(floatDisplayMode, complexFormat), 0, false);
   result->addChildAtIndex(new CharLayout(Ion::Charset::Sto), result->numberOfChildren());
   result->addOrMergeChildAtIndex(symbol()->createLayout(floatDisplayMode, complexFormat), result->numberOfChildren(), false);
-  return result;
+  return result;*/
 }
 
 template<typename T>

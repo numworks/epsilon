@@ -3,6 +3,7 @@
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
+#include <poincare/char_layout_node.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -11,10 +12,12 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionLayout * Sequence::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef Sequence::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  return CharLayoutRef('a'); //TODO
+/*  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   return createSequenceLayoutWithArgumentLayouts(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat), operand(2)->createLayout(floatDisplayMode, complexFormat));
+*/
 }
 
 template<typename T>

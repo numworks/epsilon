@@ -17,7 +17,7 @@ public:
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   void setLeftMargin(KDCoordinate margin);
   void setRightMargin(KDCoordinate margin);
-  Poincare::ExpressionLayout * expressionLayout() const override { return m_expressionView.expressionLayout(); }
+  Poincare::LayoutRef layoutRef() const override { return m_expressionView.layoutRef(); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 protected:
   int numberOfSubviews() const override;

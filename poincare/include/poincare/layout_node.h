@@ -25,6 +25,7 @@ public:
   virtual bool hasText() const { return false; } //TODO
   virtual char XNTChar() const { return 'x'; }
   virtual bool isHorizontal() const { return false; }
+  virtual bool isLeftParenthesis() const { return false; }
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);

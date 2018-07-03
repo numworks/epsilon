@@ -2,20 +2,20 @@
 #define POINCARE_LAYOUT_ENGINE_H
 
 #include <poincare/expression.h>
-#include <poincare/tree_reference.h>
+#include <poincare/layout_reference.h>
 
 namespace Poincare {
 
 class LayoutEngine {
 
 public:
-  /* Expression to ExpressionLayout */
-  static ExpressionLayout * createInfixLayout(const Expression * expression,  PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
-  static ExpressionLayout * createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
+  /* Expression to LayoutRef */
+  static LayoutRef createInfixLayout(const Expression * expression,  PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
+  static LayoutRef createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat, const char * operatorName);
 
   /* Create special layouts */
-  static ExpressionLayout * createParenthesedLayout(ExpressionLayout * layout, bool cloneLayout);
-  static ExpressionLayout * createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize = KDText::FontSize::Large);
+  static LayoutRef createParenthesedLayout(LayoutRef layout, bool cloneLayout);
+  static LayoutRef createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize = KDText::FontSize::Large);
   static ExpressionLayout * createLogLayout(ExpressionLayout * argument, ExpressionLayout * index);
 
   /* Expression to Text */

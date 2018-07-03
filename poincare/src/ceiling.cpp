@@ -8,6 +8,7 @@
 extern "C" {
 #include <assert.h>
 }
+#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -59,10 +60,11 @@ Complex<T> Ceiling::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   return Complex<T>::Float(std::ceil(c.a()));
 }
 
-ExpressionLayout * Ceiling::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  assert(floatDisplayMode != PrintFloat::Mode::Default);
+LayoutRef Ceiling::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+    return CharLayoutRef('a'); //TODO
+ /*assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
   return new CeilingLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat), false);
-}
+*/}
 
 }

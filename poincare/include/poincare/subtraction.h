@@ -4,6 +4,7 @@
 #include <poincare/static_hierarchy.h>
 #include <poincare/layout_engine.h>
 #include <poincare/approximation_engine.h>
+#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -17,8 +18,9 @@ public:
 private:
   /* Layout */
   bool needParenthesisWithParent(const Expression * e) const override;
-  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
-    return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, name());
+  LayoutRef privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
+  return CharLayoutRef('a'); //TODO
+ //   return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, name());
   }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, name());

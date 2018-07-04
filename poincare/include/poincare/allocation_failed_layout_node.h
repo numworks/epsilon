@@ -29,6 +29,7 @@ protected:
   }
 
 private:
+  void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override {}
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 

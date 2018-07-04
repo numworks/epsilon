@@ -5,6 +5,26 @@ namespace Poincare {
 
 static inline KDCoordinate maxCoordinate(KDCoordinate c1, KDCoordinate c2) { return c1 > c2 ? c1 : c2; }
 
+void HorizontalLayoutNode::addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren) {
+  if (l->isHorizontal()) {
+    mergeChildrenAtIndex(static_cast<HorizontalLayoutNode *>(l), index, removeEmptyChildren);
+  } else {
+    addChildAtIndex(l, index);
+  }
+}
+
+void HorizontalLayoutNode::mergeChildrenAtIndex(HorizontalLayoutNode * h, int index, bool removeEmptyChildren) {
+  /* Remove any empty child that would be next to the inserted layout.
+   * If the layout to insert starts with a vertical offset layout, any empty
+   * layout child directly on the left of the inserted layout (if there is one)
+   * should not be removed: it will be the base for the VerticalOffsetLayout. */
+  bool shouldRemoveOnLeft = h->numberOfChildren() == 0 ? true : !(h->childAtIndex(0)->mustHaveLeftSibling());
+  int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, shouldRemoveOnLeft);
+
+  // Merge the horizontal layout
+  LayoutRef(this).mergeChildrenAtIndex(LayoutRef(h), newIndex);
+}
+
 int HorizontalLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (numberOfChildren() == 0) {
     if (bufferSize == 0) {
@@ -99,6 +119,89 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
   }
   KDCoordinate y = baseline() - l->baseline();
   return KDPoint(x, y);
+}
+
+// Private
+
+void HorizontalLayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
+  int childrenCount = numberOfChildren();
+  // Add the "sibling" as a child.
+  if (cursor->position() == LayoutCursor::Position::Left) {
+    int indexForInsertion = 0;
+    /* If the first child is empty, remove it before adding the layout, unless
+     * the new sibling needs the empty layout as a base. */
+    if (childrenCount > 0 && childAtIndex(0)->isEmpty()) {
+      if (sibling->mustHaveLeftSibling()) {
+        indexForInsertion = 1;
+      } else {
+        /* We force the removal of the child even followed by a neighbourg
+         * requiring a left sibling as we are about to add a sibling in first
+         * position anyway. */
+        privateRemoveChildAtIndex(0, true);
+      }
+    }
+    if (moveCursor) {
+      if (childrenCount > indexForInsertion) {
+        cursor->setLayoutNode(childAtIndex(indexForInsertion));
+      } else {
+        cursor->setLayoutNode(this);
+        cursor->setPosition(LayoutCursor::Position::Right);
+      }
+    }
+    addOrMergeChildAtIndex(sibling, indexForInsertion, false);
+    return;
+  }
+  assert(cursor->position() == LayoutCursor::Position::Right);
+  // If the last child is empty, remove it before adding the layout.
+  if (childrenCount > 0 && childAtIndex(childrenCount - 1)->isEmpty() && !sibling->mustHaveLeftSibling()) {
+    /* Force remove the last child. */
+    privateRemoveChildAtIndex(childrenCount - 1, true);
+    childrenCount--;
+  }
+  addOrMergeChildAtIndex(sibling, childrenCount, false);
+  if (moveCursor) {
+    cursor->setLayoutNode(this);
+  }
+}
+
+void HorizontalLayoutNode::privateRemoveChildAtIndex(int index, bool forceRemove) {
+  /* Remove the child before potentially adding an EmptyLayout. Indeed, adding
+   * a new child would remove any EmptyLayout surrounding the new child and in
+   * the case the child to be removed was an Empty layout, it would result in
+   * removing it twice if we remove it afterwards. */
+  removeChild(childAtIndex(index));
+  /* If the child to remove is at index 0 and its right sibling must have a left
+   * sibling (e.g. it is a VerticalOffsetLayout), replace the child with an
+   * EmptyLayout instead of removing it. */
+
+  /*if (!forceRemove && index == 0 && numberOfChildren() > 0 && child(0)->mustHaveLeftSibling()) {
+    addChildAtIndex(new EmptyLayout(), 0);
+  }*/ //TODO
+}
+
+int HorizontalLayoutNode::removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft) {
+  int currentNumberOfChildren = numberOfChildren();
+  assert(index >= 0 && index <= currentNumberOfChildren);
+  int newIndex = index;
+  /* If empty, remove the child that would be on the right of the inserted
+   * layout. */
+  if (newIndex < currentNumberOfChildren) {
+    LayoutNode * c = childAtIndex(newIndex);
+    if (c->isEmpty()) {
+      removeChild(c);
+      currentNumberOfChildren--;
+    }
+  }
+  /* If empty, remove the child that would be on the left of the inserted
+   * layout. */
+  if (shouldRemoveOnLeft && newIndex - 1 >= 0 && newIndex - 1 <= currentNumberOfChildren -1) {
+    LayoutNode * c = childAtIndex(newIndex - 1);
+    if (c->isEmpty()) {
+      removeChild(c);
+      newIndex = index - 1;
+    }
+  }
+  return newIndex;
 }
 
 }

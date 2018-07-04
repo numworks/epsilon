@@ -17,9 +17,11 @@ public:
     m_numberOfChildren(0)
   {}
 
-  bool isHorizontal() const override { return true; }
+  void addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren);
+  void mergeChildrenAtIndex(HorizontalLayoutNode * horizontalLayout, int index, bool removeEmptyChildren);
 
   // LayoutNode
+  bool isHorizontal() const override { return true; }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -46,7 +48,10 @@ protected:
   KDPoint positionOfChild(LayoutNode * l) override;
 
 private:
+  void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
+  void privateRemoveChildAtIndex(int index, bool forceRemove);
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
+  int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft);
   int m_numberOfChildren;
 };
 

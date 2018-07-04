@@ -50,7 +50,6 @@ public:
 
   bool isDefined() const { return m_layoutRef.isDefined(); }
 
-
   /* Getters and setters */
   LayoutRef layoutReference() { return m_layoutRef; }
   int layoutIdentifier() { return m_layoutRef.identifier(); }
@@ -97,7 +96,6 @@ public:
     return result;
   }
   /* Layout modification */
-  void clearLayout() {} //TODO
   void addFractionLayoutAndCollapseSiblings() {} //TODO
   void addEmptyExponentialLayout() {} //TODO
   void addEmptyPowerLayout() {} //TODO
@@ -109,7 +107,8 @@ public:
   void performBackspace() {} //TODO
   bool showEmptyLayoutIfNeeded() { return false; } //TODO
   bool hideEmptyLayoutIfNeeded() { return false; } //TODO
-  void addLayoutAndMoveCursor(LayoutRef l) {} //TODO
+  void addLayoutAndMoveCursor(LayoutRef l);
+  void clearLayout();
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;

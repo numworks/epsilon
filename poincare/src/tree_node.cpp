@@ -81,7 +81,7 @@ TreeNode * TreeNode::parentTree() const {
 #endif
 }
 
-TreeNode * TreeNode::editableRootTree() {
+TreeNode * TreeNode::rootTree() {
   for (TreeNode * root : TreePool::sharedPool()->roots()) {
     if (hasAncestor(root, true)) {
       return root;

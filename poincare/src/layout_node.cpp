@@ -1,5 +1,6 @@
 #include <poincare/layout_node.h>
 #include <poincare/allocation_failed_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_reference.h>
 
@@ -69,6 +70,74 @@ TreeNode * LayoutNode::FailedAllocationStaticNode() {
 // Tree navigation
 LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
   return LayoutCursor(cursor->layoutReference());
+}
+
+// Tree modification
+void LayoutNode::addSibling(LayoutCursor * cursor, LayoutNode * sibling) {
+  privateAddSibling(cursor, sibling, false);
+}
+
+void LayoutNode::addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutNode * sibling) {
+  privateAddSibling(cursor, sibling, true);
+}
+
+// Private
+
+void LayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
+  /* The layout must have a parent, because HorizontalLayout overrides
+   * privateAddSibling and only an HorizontalLayout can be the root layout. */
+  LayoutNode * p = parent();
+  assert(p != nullptr);
+  if (p->isHorizontal()) {
+    int indexInParent = p->indexOfChild(this);
+    int siblingIndex = cursor->position() == LayoutCursor::Position::Left ? indexInParent : indexInParent + 1;
+
+    /* Special case: If the neighbour sibling is a VerticalOffsetLayout, let it
+     * handle the insertion of the new sibling. Do not enter the special case if
+     * "this" is a VerticalOffsetLayout, to avoid an infinite loop. */
+    if (!isVerticalOffset()) {
+      LayoutNode * neighbour = nullptr;
+      if (cursor->position() == LayoutCursor::Position::Left && indexInParent > 0) {
+        neighbour = p->childAtIndex(indexInParent - 1);
+      } else if (cursor->position() ==LayoutCursor::Position::Right && indexInParent < p->numberOfChildren() - 1) {
+        neighbour = p->childAtIndex(indexInParent + 1);
+      }
+      if (neighbour != nullptr && neighbour->isVerticalOffset()) {
+        cursor->setLayoutNode(neighbour);
+        cursor->setPosition(cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left);
+        if (moveCursor) {
+          neighbour->addSiblingAndMoveCursor(cursor, sibling);
+        } else {
+          neighbour->addSibling(cursor, sibling);
+        }
+        return;
+      }
+    }
+
+    // Else, let the parent add the sibling.
+    if (moveCursor) {
+      if (siblingIndex < p->numberOfChildren()) {
+        cursor->setLayoutNode(p->childAtIndex(siblingIndex));
+        cursor->setPosition(LayoutCursor::Position::Left);
+      } else {
+        cursor->setLayoutNode(p);
+        cursor->setPosition(LayoutCursor::Position::Right);
+      }
+    }
+    static_cast<HorizontalLayoutNode *>(p)->addOrMergeChildAtIndex(sibling, siblingIndex, true); //TODO
+    return;
+  }
+  LayoutNode * juxtapositionLayout = nullptr;
+  if (cursor->position() == LayoutCursor::Position::Left) {
+    juxtapositionLayout = replaceWithJuxtapositionOf(sibling, this); //TODO
+  } else {
+    assert(cursor->position() == LayoutCursor::Position::Right);
+    juxtapositionLayout = replaceWithJuxtapositionOf(this, sibling);
+  }
+  if (moveCursor) {
+    cursor->setLayoutNode(juxtapositionLayout);
+    cursor->setPosition(LayoutCursor::Position::Right);
+  }
 }
 
 }

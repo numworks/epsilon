@@ -58,6 +58,22 @@ void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
   layoutReference().typedNode()->moveCursorDown(this, shouldRecomputeLayout);
 }
 
+/* Layout modification */
+void LayoutCursor::addLayoutAndMoveCursor(LayoutRef l) {
+  bool layoutWillBeMerged = l.isHorizontal();
+  m_layoutRef.addSiblingAndMoveCursor(this, l); //TODO
+  if (!layoutWillBeMerged) {
+    l.collapseSiblingsAndMoveCursor(this);
+  }
+}
+
+void LayoutCursor::clearLayout() {
+  LayoutRef rootLayoutR = m_layoutRef.root();
+  assert(rootLayoutR.isHorizontal());
+  rootLayoutR.removeChildren();
+  m_layoutRef = rootLayoutR;
+}
+
 /* Private */
 
 KDCoordinate LayoutCursor::layoutHeight() {

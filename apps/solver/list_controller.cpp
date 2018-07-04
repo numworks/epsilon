@@ -117,6 +117,10 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
     if (!textRepresentsAnEquality(textField->text())) {
       textField->handleEvent(Ion::Events::ShiftRight);
       textField->handleEventWithText("=0");
+      if (!textRepresentsAnEquality(textField->text())) {
+        app()->displayWarning(I18n::Message::RequireEquation);
+        return true;
+      }
     }
   }
   if (Shared::TextFieldDelegate::textFieldDidReceiveEvent(textField, event)) {
@@ -132,6 +136,11 @@ bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField 
     if (!textRepresentsAnEquality(buffer)) {
       expressionLayoutField->handleEvent(Ion::Events::ShiftRight);
       expressionLayoutField->handleEventWithText("=0");
+      expressionLayoutField->writeTextInBuffer(buffer, TextField::maxBufferSize());
+      if (!textRepresentsAnEquality(buffer)) {
+        app()->displayWarning(I18n::Message::RequireEquation);
+        return true;
+      }
     }
   }
   if (Shared::ExpressionLayoutFieldDelegate::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {

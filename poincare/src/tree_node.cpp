@@ -76,6 +76,9 @@ TreeNode * TreeNode::parentTree() const {
       return node;
     }
   }
+  if (isAllocationFailure()) {
+    return nullptr;
+  }
   assert(false);
   return nullptr;
 #endif

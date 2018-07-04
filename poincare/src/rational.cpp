@@ -153,12 +153,12 @@ bool Rational::needParenthesisWithParent(const Expression * e) const {
 }
 
 LayoutRef Rational::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  return CharLayoutRef('a'); //TODO
-  /*
-  ExpressionLayout * numeratorLayout = m_numerator.createLayout();
+  LayoutRef numeratorLayout = m_numerator.createLayout();
   if (m_denominator.isOne()) {
     return numeratorLayout;
   }
+  return CharLayoutRef('a'); //TODO
+  /*
   ExpressionLayout * denominatorLayout = m_denominator.createLayout();
   return new FractionLayout(numeratorLayout, denominatorLayout, false);*/
 }

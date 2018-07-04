@@ -123,6 +123,10 @@ public:
     if (node()->isAllocationFailure()) {
       return;
     }
+    if (t.isAllocationFailure()) {
+      replaceWithAllocationFailure();
+      return;
+    }
     assert(index >= 0 && index <= numberOfChildren());
 
     // Retain t before detaching it, else it might get destroyed
@@ -238,7 +242,11 @@ public:
     assert(i >= 0 && i <= numberOfChildren());
     // Steal operands
     int numberOfNewChildren = t.numberOfChildren();
-    TreePool::sharedPool()->moveChildren(t.node(), node()->childTreeAtIndex(i)->nextSibling());
+    if (i < numberOfChildren()) {
+      TreePool::sharedPool()->moveChildren(t.node(), node()->childTreeAtIndex(i));
+    } else {
+      TreePool::sharedPool()->moveChildren(t.node(), node()->lastDescendant()->next());
+    }
     t.node()->eraseNumberOfChildren();
     // If t is a child, remove it
     if (node()->hasChild(t.node())) {

@@ -35,9 +35,7 @@ public:
     }
   }
 
-  virtual const char * description() const {
-    return "UNKNOWN";
-  }
+  virtual const char * description() const { return "UNKNOWN";}
 
   // Serialization
   virtual bool needsParenthesisWithParent(TreeNode * parentNode) { return false; } //TODO virtual pure and override on expresionNode/layoutNode
@@ -66,7 +64,7 @@ public:
 
   // Hierarchy
   TreeNode * parentTree() const;
-  TreeNode * editableRootTree();
+  TreeNode * rootTree();
   virtual int numberOfChildren() const = 0;
   virtual void incrementNumberOfChildren(int increment = 1) {} //TODO Put an assert false
   virtual void decrementNumberOfChildren(int decrement = 1) {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?

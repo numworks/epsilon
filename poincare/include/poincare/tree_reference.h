@@ -234,10 +234,11 @@ public:
     TreePool::sharedPool()->move(secondChild.node(), firstChildNode);
   }
 
-  void mergeChildren(TreeReference<T> t) {
+  void mergeChildrenAtIndex(TreeReference<T> t, int i) {
+    assert(i >= 0 && i <= numberOfChildren());
     // Steal operands
     int numberOfNewChildren = t.numberOfChildren();
-    TreePool::sharedPool()->moveChildren(t.node(), node()->lastDescendant()->next());
+    TreePool::sharedPool()->moveChildren(t.node(), node()->childTreeAtIndex(i)->nextSibling());
     t.node()->eraseNumberOfChildren();
     // If t is a child, remove it
     if (node()->hasChild(t.node())) {

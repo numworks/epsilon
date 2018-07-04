@@ -25,7 +25,10 @@ public:
   virtual bool hasText() const { return false; } //TODO
   virtual char XNTChar() const { return 'x'; }
   virtual bool isHorizontal() const { return false; }
+  virtual bool isEmpty() const { return false; }
   virtual bool isLeftParenthesis() const { return false; }
+  virtual bool isVerticalOffset() const { return false; }
+  virtual bool mustHaveLeftSibling() const { return false; }
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
@@ -48,6 +51,7 @@ public:
   // Hierarchy
   LayoutNode * parent() const { return static_cast<LayoutNode *>(parentTree()); }
   LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(childTreeAtIndex(i)); }
+  LayoutNode * root() { return static_cast<LayoutNode *>(rootTree()); }
 
   // Tree navigation
   virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {}
@@ -57,9 +61,13 @@ public:
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor); //TODO
 
   // Tree modification
+  void addSibling(LayoutCursor * cursor, LayoutNode * sibling);
+  void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutNode * sibling);
+  void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {} //TODO
   bool removeGreySquaresFromAllMatrixAncestors() { return false; } //TODO
   bool addGreySquaresToAllMatrixAncestors() { return false; } //TODO
   virtual LayoutNode * layoutToPointWhenInserting() { return this; } //TODO
+  LayoutNode * replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild) {return nullptr; } //TODO
 protected:
   // Iterators
   class Iterator {
@@ -102,6 +110,7 @@ protected:
   bool m_positioned;
   bool m_sized;
 private:
+  virtual void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor);
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
 };
 

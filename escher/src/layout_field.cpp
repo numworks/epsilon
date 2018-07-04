@@ -246,7 +246,7 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
     if (pointedLayoutR.isDefined() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
       m_contentView.cursor()->setLayoutReference(pointedLayoutR);
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
-    } else if (!layoutWillBeMerged) {
+    } else if (!layoutWillBeMerged ) { //&& !layoutR.isAllocationFailure()) {
       m_contentView.cursor()->setLayoutReference(layoutR.layoutToPointWhenInserting());
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     }

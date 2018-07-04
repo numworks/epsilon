@@ -11,6 +11,7 @@ namespace Poincare {
 class TreePool {
   friend class TreeNode;
 public:
+  static constexpr int NoNodeIdentifier = -1;
   static TreePool * sharedPool();
 
   // Node

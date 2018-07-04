@@ -32,6 +32,9 @@ public:
   inline bool operator==(TreeReference<TreeNode> t) { return m_identifier == t.identifier(); }
 
   TreeReference<T> clone() const {
+    if (!isDefined()){
+      return TreeReference<T>(nullptr);
+    }
     TreeNode * myNode = node();
     if (myNode->isAllocationFailure()) {
       int allocationFailureNodeId = myNode->allocationFailureNodeIdentifier();
@@ -43,7 +46,7 @@ public:
   }
 
   ~TreeReference() {
-    if (m_identifier >= 0) {
+    if (isDefined()) {
       assert(node());
       assert(node()->identifier() == m_identifier);
       node()->release();
@@ -59,32 +62,64 @@ public:
     return static_cast<T*>(node());
   }
 
-  bool isDefined() const { return m_identifier >= 0 && node() != nullptr; } //TODO m_identifier != -1
-  bool isAllocationFailure() const { return node()->isAllocationFailure(); }
+  bool isDefined() const { return m_identifier != TreePool::NoNodeIdentifier && node() != nullptr; }
+  bool isAllocationFailure() const { return isDefined() && node()->isAllocationFailure(); }
 
-  int nodeRetainCount() const { return node()->retainCount(); }
-  void incrementNumberOfChildren(int increment = 1) { return node()->incrementNumberOfChildren(increment); }
-  void decrementNumberOfChildren(int decrement = 1) { return node()->decrementNumberOfChildren(decrement); }
-  int numberOfDescendants(bool includeSelf) const { return node()->numberOfDescendants(includeSelf);}
+  int nodeRetainCount() const {
+    assert(isDefined());
+    return node()->retainCount();
+  }
+  void incrementNumberOfChildren(int increment = 1) {
+    assert(isDefined());
+    node()->incrementNumberOfChildren(increment);
+  }
+  void decrementNumberOfChildren(int decrement = 1) {
+    assert(isDefined());
+    node()->decrementNumberOfChildren(decrement);
+  }
+  int numberOfDescendants(bool includeSelf) const {
+    assert(isDefined());
+    return node()->numberOfDescendants(includeSelf);
+  }
 
   // Serialization
-  bool needsParenthesisWithParent(TreeReference<TreeNode> parentRef) { return node()->needsParenthesisWithParent(parentRef.node()); }
+  bool needsParenthesisWithParent(TreeReference<TreeNode> parentRef) {
+    assert(isDefined());
+    return node()->needsParenthesisWithParent(parentRef.node());
+  }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const {
+    assert(isDefined());
     return node()->writeTextInBuffer(buffer, bufferSize, numberOfSignificantDigits);
   }
 
   // Hierarchy
-  bool hasChild(TreeReference<TreeNode> t) const { return node()->hasChild(t.node()); };
-  bool hasSibling(TreeReference<TreeNode> t) const { return node()->hasSibling(t.node()); };
-  int numberOfChildren() const { return node()->numberOfChildren(); }
-  TreeReference<T> parent() const { return TreeReference(node()->parentTree()); }
-  TreeReference<T> treeChildAtIndex(int i) const { return TreeReference(node()->childTreeAtIndex(i)); }
+  bool hasChild(TreeReference<TreeNode> t) const {
+    assert(isDefined());
+    return node()->hasChild(t.node());
+  }
+  bool hasSibling(TreeReference<TreeNode> t) const {
+    assert(isDefined());
+    return node()->hasSibling(t.node());
+  }
+  int numberOfChildren() const {
+    assert(isDefined());
+    return node()->numberOfChildren();
+  }
+  TreeReference<T> parent() const {
+    assert(isDefined());
+    return TreeReference(node()->parentTree());
+  }
+  TreeReference<T> treeChildAtIndex(int i) const {
+    assert(isDefined());
+    return TreeReference(node()->childTreeAtIndex(i));
+  }
 
   // Hierarchy operations
 
   void addChild(TreeReference<TreeNode> t) { return addChildAtIndex(t, 0); }
 
   void addChildAtIndex(TreeReference<TreeNode> t, int index) {
+    assert(isDefined());
     if (node()->isAllocationFailure()) {
       return;
     }
@@ -109,18 +144,21 @@ public:
   }
 
   void removeChild(TreeReference<TreeNode> t) {
+    assert(isDefined());
     TreePool::sharedPool()->move(t.node(), TreePool::sharedPool()->last());
     t.node()->release();
     node()->decrementNumberOfChildren();
   }
 
   void removeChildren() {
+    assert(isDefined());
     node()->releaseChildren();
     TreePool::sharedPool()->moveChildren(node(), TreePool::sharedPool()->last());
     node()->eraseNumberOfChildren();
   }
 
   void replaceWith(TreeReference<TreeNode> t) {
+    assert(isDefined());
     TreeReference<TreeNode> p = parent();
     if (p.isDefined()) {
       p.replaceChildAtIndex(p.node()->indexOfChildByIdentifier(identifier()), t);
@@ -128,6 +166,7 @@ public:
   }
 
   void replaceChildAtIndex(int oldChildIndex, TreeReference<TreeNode> newChild) {
+    assert(isDefined());
     if (newChild.isAllocationFailure()) {
       replaceWithAllocationFailure();
       return;
@@ -145,6 +184,7 @@ public:
   }
 
   void replaceWithAllocationFailure() {
+    assert(isDefined());
     TreeReference<TreeNode> p = parent();
     bool hasParent = p.isDefined();
     int indexInParentNode = hasParent ? node()->indexInParent() : -1;
@@ -179,6 +219,7 @@ public:
   }
 
   void swapChildren(int i, int j) {
+    assert(isDefined());
     assert(i >= 0 && i < numberOfChildren());
     assert(j >= 0 && j < numberOfChildren());
     if (i == j) {
@@ -207,7 +248,7 @@ public:
 
   TreeReference(TreeNode * node) { // TODO Make this protected
     if (node == nullptr) {
-      m_identifier = -1;
+      m_identifier = TreePool::NoNodeIdentifier;
     } else {
       setIdentifierAndRetain(node->identifier());
     }
@@ -225,7 +266,11 @@ protected:
   }
 private:
   void setTo(const TreeReference & tr) {
-    setIdentifierAndRetain(tr.identifier());
+    if (tr.isDefined()) {
+      setIdentifierAndRetain(tr.identifier());
+    } else {
+      m_identifier = -1;
+    }
   }
   int m_identifier;
 };

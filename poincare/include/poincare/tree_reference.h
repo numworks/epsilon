@@ -18,8 +18,8 @@ class TreeReference {
   template <typename U>
   friend class LayoutReference;
 public:
-  TreeReference(const TreeReference & tr) { setTo(tr); }
-  TreeReference(TreeReference&& tr) { setTo(tr); }
+  TreeReference(const TreeReference & tr) : m_identifier(TreePool::NoNodeIdentifier) { setTo(tr); }
+  TreeReference(TreeReference&& tr) : m_identifier(TreePool::NoNodeIdentifier) { setTo(tr); }
   TreeReference& operator=(const TreeReference& tr) {
     setTo(tr);
     return *this;
@@ -275,10 +275,18 @@ protected:
   }
 private:
   void setTo(const TreeReference & tr) {
+    if (*this == tr) {
+      return;
+    }
+    TreeNode * currentNode = node();
+    bool releaseNode = isDefined();
     if (tr.isDefined()) {
       setIdentifierAndRetain(tr.identifier());
     } else {
-      m_identifier = -1;
+      m_identifier = TreePool::NoNodeIdentifier;
+    }
+    if (releaseNode) {
+      currentNode->release();
     }
   }
   int m_identifier;

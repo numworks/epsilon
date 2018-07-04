@@ -53,10 +53,16 @@ public:
   /* Getters and setters */
   LayoutRef layoutReference() { return m_layoutRef; }
   int layoutIdentifier() { return m_layoutRef.identifier(); }
-  void setLayoutReference(LayoutRef r) { m_layoutRef = r; }
+  void setLayoutReference(LayoutRef r) {
+    if (r != m_layoutRef) {
+      m_layoutRef = r;
+    }
+  }
   void setLayoutNode(LayoutNode * n) {
-    m_layoutRef.node()->release();
-    m_layoutRef = LayoutRef(n);
+    if (n != m_layoutRef.node()) {
+      m_layoutRef.node()->release();
+      m_layoutRef = LayoutRef(n);
+    }
   }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }

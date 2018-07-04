@@ -10,6 +10,9 @@ TreePool * TreePool::sharedPool() {
 }
 
 TreeNode * TreePool::node(int identifier) const {
+  if (identifier == NoNodeIdentifier) {
+    return nullptr;
+  }
   if (identifier < 0) {
     int index = indexOfStaticNode(identifier);
     assert(index >= 0 && index < MaxNumberOfStaticNodes);

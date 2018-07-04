@@ -7,9 +7,10 @@
 namespace Poincare {
 
 class ExpressionLayout;
-/*class LayoutNode;
-class LayoutReference<LayoutNode>;
-*/
+template <typename T>
+class LayoutReference;
+class LayoutNode;
+
 /* All algorithm should be improved with:
  * Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann */
 
@@ -54,7 +55,7 @@ public:
 
   // Layout
   int writeTextInBuffer(char * buffer, int bufferSize) const;
-  //LayoutReference<LayoutNode> createLayout() const;
+  LayoutReference<LayoutNode> createLayout() const;
 
   // Approximation
   template<typename T> T approximate() const;

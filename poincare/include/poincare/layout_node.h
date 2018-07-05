@@ -77,8 +77,16 @@ public:
   bool removeGreySquaresFromAllMatrixAncestors() { return false; } //TODO
   bool addGreySquaresToAllMatrixAncestors() { return false; } //TODO
   virtual LayoutNode * layoutToPointWhenInserting() { return this; } //TODO
+  LayoutNode * replaceWith(LayoutNode * newChild);
+  LayoutNode * replaceWithAndMoveCursor(LayoutNode * newChild, LayoutCursor * cursor);
   LayoutNode * replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild);
+  virtual void replaceChild(LayoutNode * oldChild, LayoutNode * newChild);
+  virtual void replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
+
 protected:
+  // Tree modification
+  virtual void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor);
+
   // Iterators
   class Iterator {
     public:
@@ -120,7 +128,6 @@ protected:
   bool m_positioned;
   bool m_sized;
 private:
-  virtual void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor);
   virtual void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
 };
 

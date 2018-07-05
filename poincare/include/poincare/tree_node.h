@@ -153,9 +153,11 @@ public:
   }
 
   // Hierarchy operations
-  void replaceWithAllocationFailure();
   void addChildAtIndex(TreeNode * t, int index);
   void removeChild(TreeNode * t);
+  void removeChildAtIndex(int index) { return removeChild(childTreeAtIndex(index)); }
+  void replaceChildTree(TreeNode * t, TreeNode * newChild);
+  void replaceWithAllocationFailure();
 
 protected:
   TreeNode() :

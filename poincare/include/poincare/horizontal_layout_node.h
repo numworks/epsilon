@@ -31,6 +31,8 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  void replaceChild(LayoutNode * oldChild, LayoutNode * newChild) override;
+  void replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) override;
 
   // TreeNode
   size_t size() const override { return sizeof(HorizontalLayoutNode); }
@@ -55,6 +57,7 @@ protected:
 
 private:
   void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
+  void privateReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
   void privateRemoveChildAtIndex(int index, bool forceRemove);
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
   int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft);

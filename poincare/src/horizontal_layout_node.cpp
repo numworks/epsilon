@@ -5,6 +5,39 @@ namespace Poincare {
 
 static inline KDCoordinate maxCoordinate(KDCoordinate c1, KDCoordinate c2) { return c1 > c2 ? c1 : c2; }
 
+
+// Tree navigation
+
+LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {
+  if (cursor->layoutReference().node() == this) {
+    // First or last child, if any
+    int childrenCount = numberOfChildren();
+    if (childrenCount == 0) {
+      return LayoutCursor();
+    }
+    int index = cursor->position() == LayoutCursor::Position::Left ? 0 : childrenCount - 1;
+    return LayoutCursor(childAtIndex(index), cursor->position());
+  }
+  // Left or right of a child: return right or left of its sibling, or of this
+  int indexOfPointedLayout = indexOfChild(cursor->layoutNode());
+  if (indexOfPointedLayout < 0) {
+    return LayoutCursor();
+  }
+  if (cursor->position() == LayoutCursor::Position::Left) {
+    if (indexOfPointedLayout == 0) {
+      return LayoutCursor(this, LayoutCursor::Position::Left);
+    }
+    return LayoutCursor(childAtIndex(indexOfPointedLayout - 1), LayoutCursor::Position::Right);
+  }
+  assert(cursor->position() == LayoutCursor::Position::Right);
+  if (indexOfPointedLayout == numberOfChildren() - 1) {
+    return LayoutCursor(this, LayoutCursor::Position::Right);
+  }
+  return LayoutCursor(childAtIndex(indexOfPointedLayout + 1), LayoutCursor::Position::Left);
+}
+
+// Tree modification
+
 void HorizontalLayoutNode::addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren) {
   if (l->isHorizontal()) {
     mergeChildrenAtIndex(static_cast<HorizontalLayoutNode *>(l), index, removeEmptyChildren);
@@ -78,6 +111,8 @@ void HorizontalLayoutNode::removeChildAndMoveCursor(LayoutNode * l, LayoutCursor
   }
   LayoutNode::removeChildAndMoveCursor(l, cursor);
 }
+
+// LayoutNode
 
 int HorizontalLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (numberOfChildren() == 0) {
@@ -179,6 +214,8 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
   cursor->setPosition(LayoutCursor::Position::Left);
   return childAtIndex(childIndex+1)->moveCursorRight(cursor, shouldRecomputeLayout);
 }
+
+// Protected
 
 void HorizontalLayoutNode::computeSize() {
   assert(!m_sized);

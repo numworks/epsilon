@@ -69,7 +69,9 @@ TreeNode * LayoutNode::FailedAllocationStaticNode() {
 
 // Tree navigation
 LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
-  return LayoutCursor(cursor->layoutReference());
+  // Only HorizontalLayout may have no parent, and it overloads this method
+  assert(parent());
+  return (cursor->layoutReference().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
 }
 
 // Tree modification

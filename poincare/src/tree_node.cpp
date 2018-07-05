@@ -184,9 +184,9 @@ bool TreeNode::hasSibling(const TreeNode * e) const {
   return false;
 }
 
-void TreeNode::addChildAtIndex(TreeNode * t, int index) {
+void TreeNode::addChildTreeAtIndex(TreeNode * t, int index) {
   TreeRef tr(this);
-  tr.addChildAtIndex(TreeRef(t), index);
+  tr.addChildTreeAtIndex(TreeRef(t), index);
 }
 
 void TreeNode::removeChild(TreeNode * t) {
@@ -196,7 +196,7 @@ void TreeNode::removeChild(TreeNode * t) {
 
 void TreeNode::replaceChildTree(TreeNode * t, TreeNode * newChild) {
   int oldChildIndex = indexOfChild(t);
-  addChildAtIndex(newChild, oldChildIndex + 1);
+  addChildTreeAtIndex(newChild, oldChildIndex + 1);
   removeChild(t);
 }
 

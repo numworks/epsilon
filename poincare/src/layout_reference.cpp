@@ -39,9 +39,9 @@ LayoutReference<LayoutNode> LayoutRef::replaceWithJuxtapositionOf(LayoutReferenc
    * replaceWith. */
   LayoutReference<LayoutNode> horizontalLayoutR = HorizontalLayoutRef();
   int index = indexInParent();
-  horizontalLayoutR.addChildAtIndex(leftChild, 0);
-  horizontalLayoutR.addChildAtIndex(rightChild, 1);
-  p.addChildAtIndex(horizontalLayoutR, index);
+  horizontalLayoutR.addChildTreeAtIndex(leftChild, 0);
+  horizontalLayoutR.addChildTreeAtIndex(rightChild, 1);
+  p.addChildTreeAtIndex(horizontalLayoutR, index);
   return horizontalLayoutR;
 }
 

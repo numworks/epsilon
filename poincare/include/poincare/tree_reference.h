@@ -121,9 +121,9 @@ public:
 
   // Hierarchy operations
 
-  void addChild(TreeReference<TreeNode> t) { return addChildAtIndex(t, 0); }
+  void addChildTree(TreeReference<TreeNode> t) { return addChildTreeAtIndex(t, 0); }
 
-  void addChildAtIndex(TreeReference<TreeNode> t, int index) {
+  void addChildTreeAtIndex(TreeReference<TreeNode> t, int index) {
     assert(isDefined());
     if (node()->isAllocationFailure()) {
       return;
@@ -225,7 +225,7 @@ public:
        * no longer retaining the node. When we add this node to the parent, it
        * will retain it and increment the retain count. */
       newAllocationFailureNode->setReferenceCounter(currentRetainCount - 1);
-      p.addChildAtIndex(newAllocationFailureNode, indexInParentNode);
+      p.addChildTreeAtIndex(newAllocationFailureNode, indexInParentNode);
     } else {
       newAllocationFailureNode->setReferenceCounter(currentRetainCount);
     }

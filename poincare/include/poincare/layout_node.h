@@ -29,7 +29,7 @@ public:
       return false;
     }
     int numChildren = numberOfChildren();
-    return !(isHorizontal() && (numChildren == 0 || (numChildren == 1 && !const_cast<LayoutNode *>(this)->childAtIndex(0)->hasText())));
+    return !(isHorizontal() && (numChildren == 0 || (numChildren == 1 && !(const_cast<LayoutNode *>(this)->childAtIndex(0)->hasText()))));
   }
   virtual char XNTChar() const { return 'x'; }
   virtual bool isHorizontal() const { return false; }

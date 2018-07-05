@@ -66,7 +66,8 @@ public:
   void replaceChildAtIndex(int oldChildIndex, LayoutReference<LayoutNode> newChild) {
     TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild);
   }
-  void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSiblingAndMoveCursor(cursor, sibling.typedNode()); } //TODO
+  void addSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSibling(cursor, sibling.typedNode()); }
+  void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSiblingAndMoveCursor(cursor, sibling.typedNode()); }
   void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {} //TODO
   LayoutReference<LayoutNode> replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild); //TODO
 

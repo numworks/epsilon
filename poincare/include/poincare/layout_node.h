@@ -22,7 +22,15 @@ public:
   {
   }
 
-  virtual bool hasText() const { return false; } //TODO
+  bool hasText() const {
+    /* A layout has text if it is not empty and it is not an horizontal layout
+     * with no child or with one child with no text. */
+    if (isEmpty()){
+      return false;
+    }
+    int numChildren = numberOfChildren();
+    return !(isHorizontal() && (numChildren == 0 || (numChildren == 1 && !const_cast<LayoutNode *>(this)->childAtIndex(0)->hasText())));
+  }
   virtual char XNTChar() const { return 'x'; }
   virtual bool isHorizontal() const { return false; }
   virtual bool isEmpty() const { return false; }

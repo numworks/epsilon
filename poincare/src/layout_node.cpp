@@ -81,6 +81,48 @@ void LayoutNode::addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutNode * sib
   privateAddSibling(cursor, sibling, true);
 }
 
+void LayoutNode::removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor) {
+  assert(hasChild(l));
+  int index = indexOfChild(l);
+  removeChild(l);
+  if (index < numberOfChildren()) {
+    cursor->setLayoutNode(childAtIndex(index));
+    cursor->setPosition(LayoutCursor::Position::Left);
+  } else {
+    int newPointedLayoutIndex = index - 1;
+    assert(newPointedLayoutIndex >= 0);
+    assert(newPointedLayoutIndex < numberOfChildren());
+    cursor->setLayoutNode(childAtIndex(newPointedLayoutIndex));
+    cursor->setPosition(LayoutCursor::Position::Right);
+  }
+}
+
+void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
+  int indexOfPointedLayout = indexOfChild(cursor->layoutReference().typedNode());
+  if (indexOfPointedLayout >= 0) {
+    // Case: The pointed layout is a child. Move Left.
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    bool shouldRecomputeLayout = false;
+    cursor->moveLeft(&shouldRecomputeLayout);
+    return;
+  }
+  assert(cursor->layoutReference().node() == this);
+  LayoutNode * p = parent();
+  // Case: this is the pointed layout.
+  if (p == nullptr) {
+    // Case: No parent. Return.
+    return;
+  }
+  if (cursor->position() == LayoutCursor::Position::Left) {
+    // Case: Left. Ask the parent.
+    p->deleteBeforeCursor(cursor);
+    return;
+  }
+  assert(cursor->position() == LayoutCursor::Position::Right);
+  // Case: Right. Delete the layout.
+  p->removeChildAndMoveCursor(this, cursor);
+}
+
 // Private
 
 void LayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {

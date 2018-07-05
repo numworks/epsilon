@@ -17,8 +17,11 @@ public:
     m_numberOfChildren(0)
   {}
 
+  // Tree modification
   void addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren);
   void mergeChildrenAtIndex(HorizontalLayoutNode * horizontalLayout, int index, bool removeEmptyChildren);
+  void deleteBeforeCursor(LayoutCursor * cursor) override;
+  void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor) override;
 
   // LayoutNode
   bool isHorizontal() const override { return true; }

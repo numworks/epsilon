@@ -46,6 +46,7 @@ public:
   char XNTChar() const { return this->typedNode()->XNTChar(); }
 
   // Layout modification
+  void deleteBeforeCursor(LayoutCursor * cursor) { return this->typedNode()->deleteBeforeCursor(cursor); }
   bool removeGreySquaresFromAllMatrixAncestors() { return this->typedNode()->removeGreySquaresFromAllMatrixAncestors(); }
   bool addGreySquaresToAllMatrixAncestors() { return this->typedNode()->addGreySquaresToAllMatrixAncestors(); }
   LayoutReference<LayoutNode> layoutToPointWhenInserting() { return LayoutReference<LayoutNode>(this->typedNode()->layoutToPointWhenInserting()); }
@@ -68,6 +69,7 @@ public:
   }
   void addSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSibling(cursor, sibling.typedNode()); }
   void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSiblingAndMoveCursor(cursor, sibling.typedNode()); }
+  void removeChildAndMoveCursor(LayoutReference<LayoutNode> l, LayoutCursor * cursor) { return this->typedNode()->removeChildAndMoveCursor(l.typedNode(), cursor); }
   void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {} //TODO
   LayoutReference<LayoutNode> replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild); //TODO
 

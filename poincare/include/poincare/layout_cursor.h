@@ -60,7 +60,6 @@ public:
   }
   void setLayoutNode(LayoutNode * n) {
     if (n != m_layoutRef.node()) {
-      m_layoutRef.node()->release();
       m_layoutRef = LayoutRef(n);
     }
   }

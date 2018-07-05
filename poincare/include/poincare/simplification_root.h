@@ -24,11 +24,11 @@ public:
     return nullptr;
   }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override { return 0; }
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }

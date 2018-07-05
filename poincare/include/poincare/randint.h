@@ -21,13 +21,13 @@ private:
   }
   const char * name() const { return "randint"; }
   /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return templateApproximate<float>(context, angleUnit);
   }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return templateApproximate<double>(context, angleUnit);
   }
-  template <typename T> Expression * templateApproximate(Context& context, AngleUnit angleUnit) const;
+  template <typename T> Evaluation<T> * templateApproximate(Context& context, AngleUnit angleUnit) const;
 };
 
 }

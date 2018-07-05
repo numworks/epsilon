@@ -22,7 +22,7 @@ ExpressionLayout * EmptyExpression::privateCreateLayout(PrintFloat::Mode floatDi
 }
 
 template<typename T> Complex<T> * EmptyExpression::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  return new Complex<T>(Complex<T>::Float(NAN));
+  return new Complex<T>(Complex<T>::Undefined());
 }
 
 }

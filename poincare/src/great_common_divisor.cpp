@@ -1,5 +1,4 @@
 #include <poincare/great_common_divisor.h>
-#include <poincare/complex.h>
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
 #include <poincare/arithmetic.h>
@@ -58,14 +57,14 @@ Expression * GreatCommonDivisor::shallowReduce(Context& context, AngleUnit angle
 
 template<typename T>
 Complex<T> * GreatCommonDivisor::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * f1Input = operand(0)->approximate<T>(context, angleUnit);
-  Expression * f2Input = operand(1)->approximate<T>(context, angleUnit);
-  T f1 = f1Input->type() == Type::Complex ? static_cast<Complex<T> *>(f1Input)->toScalar() : NAN;
-  T f2 = f2Input->type() == Type::Complex ? static_cast<Complex<T> *>(f2Input)->toScalar() : NAN;
+  Evaluation<T> * f1Input = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * f2Input = operand(1)->privateApproximate(T(), context, angleUnit);
+  T f1 = f1Input->toScalar();
+  T f2 = f2Input->toScalar();
   delete f1Input;
   delete f2Input;
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Undefined());
   }
   int a = (int)f2;
   int b = (int)f1;
@@ -79,7 +78,7 @@ Complex<T> * GreatCommonDivisor::templatedApproximate(Context& context, AngleUni
     a = b;
     b = r;
   }
-  return new Complex<T>(Complex<T>::Float(std::round((T)a)));
+  return new Complex<T>(std::round((T)a));
 }
 
 }

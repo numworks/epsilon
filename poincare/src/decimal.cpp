@@ -1,5 +1,4 @@
 #include <poincare/decimal.h>
-#include <poincare/complex.h>
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/ieee754.h>
@@ -90,10 +89,10 @@ Expression * Decimal::clone() const {
   return new Decimal(m_mantissa, m_exponent);
 }
 
-template<typename T> Expression * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
+template<typename T> Evaluation<T> * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
   int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
-  return new Complex<T>(Complex<T>::Float(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1))));
+  return new Complex<T>(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1)));
 }
 
 int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode, int numberOfSignificantDigits) const {

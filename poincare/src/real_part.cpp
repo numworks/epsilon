@@ -1,5 +1,4 @@
 #include <poincare/real_part.h>
-#include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
 extern "C" {
 #include <assert.h>
@@ -35,8 +34,8 @@ Expression * RealPart::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> RealPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
-  return Complex<T>::Float(c.a());
+std::complex<T> RealPart::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+  return std::real(c);
 }
 
 }

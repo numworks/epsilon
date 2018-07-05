@@ -26,10 +26,10 @@ private:
   bool parentIsAPowerOfSameBase() const;
   Expression * splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit);
   /* Evaluation */
-  template<typename T> static Complex<T> computeOnComplex(const Complex<T> c, AngleUnit angleUnit);
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, AngleUnit angleUnit);
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> Evaluation<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
 };
 
 }

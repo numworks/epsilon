@@ -55,15 +55,16 @@ public:
   LayoutCursor cursor() const;
   LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
-  // Hierarchy
-
+  // Tree
   LayoutReference<LayoutNode> childAtIndex(int i) {
     TreeReference<T> treeRefChild = TreeReference<T>::treeChildAtIndex(i);
     return LayoutReference<LayoutNode>(treeRefChild.node());
   }
+  int indexInParent() const { return this->typedNode()->indexInParent(); }
   LayoutReference<LayoutNode> root() { return LayoutReference<LayoutNode>(this->typedNode()->root()); }
+  LayoutReference<LayoutNode> parent() { return LayoutReference<LayoutNode>(this->typedNode()->parent()); }
 
-  // Hierarchy modification
+  // Tree modification
   void replaceChildAtIndex(int oldChildIndex, LayoutReference<LayoutNode> newChild) {
     TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild);
   }
@@ -71,7 +72,7 @@ public:
   void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSiblingAndMoveCursor(cursor, sibling.typedNode()); }
   void removeChildAndMoveCursor(LayoutReference<LayoutNode> l, LayoutCursor * cursor) { return this->typedNode()->removeChildAndMoveCursor(l.typedNode(), cursor); }
   void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {} //TODO
-  LayoutReference<LayoutNode> replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild); //TODO
+  LayoutReference<LayoutNode> replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild);
 
   // Allocation failure
   static TreeNode * FailedAllocationStaticNode();

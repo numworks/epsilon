@@ -77,7 +77,7 @@ public:
   bool removeGreySquaresFromAllMatrixAncestors() { return false; } //TODO
   bool addGreySquaresToAllMatrixAncestors() { return false; } //TODO
   virtual LayoutNode * layoutToPointWhenInserting() { return this; } //TODO
-  LayoutNode * replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild) {return nullptr; } //TODO
+  LayoutNode * replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild);
 protected:
   // Iterators
   class Iterator {

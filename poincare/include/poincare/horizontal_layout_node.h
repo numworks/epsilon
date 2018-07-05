@@ -17,6 +17,9 @@ public:
     m_numberOfChildren(0)
   {}
 
+  // Tree navigation
+  LayoutCursor equivalentCursor(LayoutCursor * cursor) override;
+
   // Tree modification
   void addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren);
   void mergeChildrenAtIndex(HorizontalLayoutNode * horizontalLayout, int index, bool removeEmptyChildren);

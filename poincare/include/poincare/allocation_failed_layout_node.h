@@ -3,6 +3,7 @@
 
 #include "layout_node.h"
 #include "layout_reference.h"
+#include "layout_cursor.h"
 
 namespace Poincare {
 
@@ -13,6 +14,10 @@ public:
     assert(false);
     return 0;
   }
+  LayoutCursor equivalentCursor(LayoutCursor * cursor) override { return LayoutCursor(); }
+  void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor) override { }
+  void deleteBeforeCursor(LayoutCursor * cursor) override { }
+
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailedLayoutNode); }
   const char * description() const override { return "Allocation Failed";  }

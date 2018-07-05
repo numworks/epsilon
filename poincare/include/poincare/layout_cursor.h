@@ -7,9 +7,12 @@
 
 namespace Poincare {
 
+class HorizontalLayoutNode;
+
 class LayoutCursor {
   template <typename T>
   friend class LayoutReference;
+  friend class HorizontalLayoutNode;
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
@@ -52,6 +55,8 @@ public:
 
   /* Getters and setters */
   LayoutRef layoutReference() { return m_layoutRef; }
+  LayoutNode * layoutNode() { return m_layoutRef.typedNode(); } // TODO  Make private + friend classes ?
+
   int layoutIdentifier() { return m_layoutRef.identifier(); }
   void setLayoutReference(LayoutRef r) {
     if (r != m_layoutRef) {

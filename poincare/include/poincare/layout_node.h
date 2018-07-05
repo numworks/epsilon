@@ -23,9 +23,9 @@ public:
   }
 
   bool hasText() const {
-    /* A layout has text if it is not empty and it is not an horizontal layout
-     * with no child or with one child with no text. */
-    if (isEmpty()){
+    /* A layout has text if it is not empty or an allocation failure and it is
+     * not an horizontal layout with no child or with one child with no text. */
+    if (isEmpty() || isAllocationFailure()){
       return false;
     }
     int numChildren = numberOfChildren();
@@ -66,7 +66,7 @@ public:
   virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {}
   virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {}
   virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {}
-  virtual LayoutCursor equivalentCursor(LayoutCursor * cursor); //TODO
+  virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
   // Tree modification
   void addSibling(LayoutCursor * cursor, LayoutNode * sibling);

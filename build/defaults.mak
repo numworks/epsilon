@@ -8,7 +8,7 @@ CXXFLAGS = -std=c++11 -fno-exceptions -fno-rtti -fno-threadsafe-statics
 
 # Flags - Optimizations
 ifeq ($(DEBUG),1)
-SFLAGS = -Og -g
+SFLAGS = -O0 -g
 else
 SFLAGS = -Os
 endif

@@ -6,7 +6,6 @@ extern "C" {
 }
 #include <poincare/equal.h>
 #include <ion.h>
-#include <poincare/complex.h>
 #include <poincare/rational.h>
 #include <poincare/addition.h>
 #include <poincare/division.h>
@@ -61,8 +60,8 @@ ExpressionLayout * Equal::privateCreateLayout(PrintFloat::Mode floatDisplayMode,
 }
 
 template<typename T>
-Expression * Equal::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  return new Complex<T>(Complex<T>::Float(NAN));
+Evaluation<T> * Equal::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  return new Complex<T>(Complex<T>::Undefined());
 }
 
 }

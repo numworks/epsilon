@@ -49,21 +49,21 @@ Expression * Integral::shallowReduce(Context& context, AngleUnit angleUnit) {
 
 template<typename T>
 Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUnit) const {
-  Expression * aInput = operand(1)->approximate<T>(context, angleUnit);
-  T a = aInput->type() == Type::Complex ? static_cast<Complex<T> *>(aInput)->toScalar() : NAN;
+  Evaluation<T> * aInput = operand(1)->privateApproximate(T(), context, angleUnit);
+  T a = aInput->toScalar();
   delete aInput;
-  Expression * bInput = operand(2)->approximate<T>(context, angleUnit);
-  T b = bInput->type() == Type::Complex ? static_cast<Complex<T> *>(bInput)->toScalar() : NAN;
+  Evaluation<T> * bInput = operand(2)->privateApproximate(T(), context, angleUnit);
+  T b = bInput->toScalar();
   delete bInput;
   if (std::isnan(a) || std::isnan(b)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Undefined());
   }
 #ifdef LAGRANGE_METHOD
   T result = lagrangeGaussQuadrature<T>(a, b, context, angleUnit);
 #else
   T result = adaptiveQuadrature<T>(a, b, 0.1, k_maxNumberOfIterations, context, angleUnit);
 #endif
-  return new Complex<T>(Complex<T>::Float(result));
+  return new Complex<T>(result);
 }
 
 ExpressionLayout * Integral::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {

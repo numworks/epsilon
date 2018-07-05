@@ -4,7 +4,6 @@ extern "C" {
 }
 #include <poincare/global_context.h>
 #include <poincare/matrix.h>
-#include <poincare/complex.h>
 #include <poincare/addition.h>
 #include <poincare/decimal.h>
 #include <poincare/undefined.h>
@@ -135,7 +134,7 @@ void Matrix::rowCanonize(Context & context, AngleUnit angleUnit, Multiplication 
       }
       /* Set to 1 M[h][k] by linear combination */
       Expression * divisor = matrixOperand(h, k);
-      // Update determinant: det *= 1/divisor
+      // Update determinant: det *= divisor
       if (determinant) { determinant->addOperand(divisor->clone()); }
       for (int j = k+1; j < n; j++) {
         Expression * opHJ = matrixOperand(h, j);
@@ -165,19 +164,21 @@ void Matrix::rowCanonize(Context & context, AngleUnit angleUnit, Multiplication 
 }
 
 template<typename T>
-void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns) {
+void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * determinant) {
   int h = 0; // row pivot
   int k = 0; // column pivot
 
   while (h < numberOfRows && k < numberOfColumns) {
     // Find the first non-null pivot
     int iPivot = h;
-    while (iPivot < numberOfRows && std::fabs(array[iPivot*numberOfColumns+k]) < Expression::epsilon<T>()) {
+    while (iPivot < numberOfRows && std::abs(array[iPivot*numberOfColumns+k]) < Expression::epsilon<double>()) {
       iPivot++;
     }
     if (iPivot == numberOfRows) {
       // No non-null coefficient in this column, skip
       k++;
+      // Update determinant: det *= 0
+      if (determinant) { *determinant *= 0.0; }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
@@ -187,9 +188,13 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns) 
           array[iPivot*numberOfColumns+col] = array[h*numberOfColumns+col];
           array[h*numberOfColumns+col] = temp;
         }
+        // Update determinant: det *= -1
+        if (determinant) { *determinant *= -1.0; }
       }
       /* Set to 1 array[h][k] by linear combination */
       T divisor = array[h*numberOfColumns+k];
+      // Update determinant: det *= divisor
+      if (determinant) { *determinant *= divisor; }
       for (int j = k+1; j < numberOfColumns; j++) {
         array[h*numberOfColumns+j] /= divisor;
       }
@@ -246,36 +251,66 @@ int Matrix::rank(Context & context, AngleUnit angleUnit, bool inPlace) {
 }
 
 template<typename T>
-Complex<T> * Matrix::createTrace() const {
-  if (numberOfRows() != numberOfColumns()) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
+  if (numberOfRows != numberOfColumns) {
+    return -1;
   }
-  int dim = numberOfRows();
-  Complex<T> c = Complex<T>::Float(0);
+  int dim = numberOfRows;
+  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
+  T * operands = new T[dim*2*dim];
   for (int i = 0; i < dim; i++) {
-    assert(operand(i*dim+i)->type() == Type::Complex);
-    c = Addition::compute(c, *(static_cast<const Complex<T> *>(operand(i*dim+i))));
+    for (int j = 0; j < dim; j++) {
+      operands[i*2*dim+j] = array[i*numberOfColumns+j];
+    }
+    for (int j = dim; j < 2*dim; j++) {
+      operands[i*2*dim+j] = j-dim == i ? 1 : 0;
+    }
   }
-  return new Complex<T>(c);
+  ArrayRowCanonize(operands, dim, 2*dim);
+  // Check inversibility
+  for (int i = 0; i < dim; i++) {
+    T one = 1.0;
+    if (std::abs(operands[i*2*dim+i] - one) > Expression::epsilon<float>()) {
+      return -2;
+    }
+  }
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      array[i*numberOfColumns+j] = operands[i*2*dim+j+dim];
+    }
+  }
+  delete [] operands;
+  return 0;
 }
 
-// TODO: 2. implement determinant/inverse for any expression (do not evaluate first)
-template<typename T>
-Complex<T> * Matrix::createDeterminant(Context & context, AngleUnit angleUnit) const {
-  if (numberOfRows() != numberOfColumns()) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+#if MATRIX_EXACT_REDUCING
+Matrix * Matrix::createTranspose() const {
+  const Expression ** operands = new const Expression * [numberOfOperands()];
+  for (int i = 0; i < numberOfRows(); i++) {
+    for (int j = 0; j < numberOfColumns(); j++) {
+      operands[j*numberOfRows()+i] = operand(i*numberOfColumns()+j);
+    }
   }
-  Matrix * copy = static_cast<Matrix *>(clone());
-  Multiplication * m = new Multiplication();
-  copy->rowCanonize(context, angleUnit, m);
-  delete copy;
-  Expression * determinant = m->approximate<T>(context, angleUnit);
-  delete m;
-  if (determinant->type() != Type::Complex) {
-    delete determinant;
-    return new Complex<T>(Complex<T>::Float(NAN));
+  // Intentionally swapping dimensions for transpose
+  Matrix * matrix = new Matrix(operands, numberOfColumns(), numberOfRows(), true);
+  delete[] operands;
+  return matrix;
+}
+
+Matrix * Matrix::createIdentity(int dim) {
+  Expression ** operands = new Expression * [dim*dim];
+  for (int i = 0; i < dim; i++) {
+    for (int j = 0; j < dim; j++) {
+      if (i == j) {
+        operands[i*dim+j] = new Rational(1);
+      } else {
+        operands[i*dim+j] = new Rational(0);
+      }
+    }
   }
-  return static_cast<Complex<T> *>(determinant);
+  Matrix * matrix = new Matrix(operands, dim, dim, false);
+  delete [] operands;
+  return matrix;
 }
 
 Expression * Matrix::createInverse(Context & context, AngleUnit angleUnit) const {
@@ -316,130 +351,31 @@ Expression * Matrix::createInverse(Context & context, AngleUnit angleUnit) const
   return inverse;
 }
 
+#endif
+
 template<typename T>
-Matrix * Matrix::createApproximateInverse() const {
+Evaluation<T> * Matrix::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  std::complex<T> * operands = new std::complex<T> [numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
-    assert(operand(i)->type() == Type::Complex);
-  }
-  /* This method is called on already approximate matrices. The context and
-   * angle unit parameters are therefore useless in createInverse and
-   * approximate (as we work on Complex expressions only - no symbols or
-   * trigonometric functions would required a context and angle unit). We feed
-   * them with default parameters.*/
-  GlobalContext context;
-  Expression * inv = createInverse(context, AngleUnit::Degree);
-  Expression * invApproximation = inv->approximate<T>(context, AngleUnit::Degree);
-  delete inv;
-  if (invApproximation->type() == Type::Matrix) {
-    return static_cast<Matrix *>(invApproximation);
-  }
-  delete invApproximation;
-  return nullptr;
-}
-
-template<typename T>
-int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
-  if (numberOfRows != numberOfColumns) {
-    return -1;
-  }
-  int dim = numberOfRows;
-  /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
-  T * operands = new T[dim*2*dim];
-  for (int i = 0; i < dim; i++) {
-    for (int j = 0; j < dim; j++) {
-      operands[i*2*dim+j] = array[i*numberOfColumns+j];
-    }
-    for (int j = dim; j < 2*dim; j++) {
-      operands[i*2*dim+j] = j-dim == i ? 1 : 0;
-    }
-  }
-  ArrayRowCanonize(operands, dim, 2*dim);
-  // Check inversibility
-  for (int i = 0; i < dim; i++) {
-    if (operands[i*2*dim+i] != 1) {
-      return -2;
-    }
-  }
-  for (int i = 0; i < dim; i++) {
-    for (int j = 0; j < dim; j++) {
-      array[i*numberOfColumns+j] = operands[i*2*dim+j+dim];
-    }
-  }
-  delete [] operands;
-  return 0;
-}
-
-Matrix * Matrix::createTranspose() const {
-  const Expression ** operands = new const Expression * [numberOfOperands()];
-  for (int i = 0; i < numberOfRows(); i++) {
-    for (int j = 0; j < numberOfColumns(); j++) {
-      operands[j*numberOfRows()+i] = operand(i*numberOfColumns()+j);
-    }
-  }
-  // Intentionally swapping dimensions for transpose
-  Matrix * matrix = new Matrix(operands, numberOfColumns(), numberOfRows(), true);
-  delete[] operands;
-  return matrix;
-}
-
-Matrix * Matrix::createIdentity(int dim) {
-  Expression ** operands = new Expression * [dim*dim];
-  for (int i = 0; i < dim; i++) {
-    for (int j = 0; j < dim; j++) {
-      if (i == j) {
-        operands[i*dim+j] = new Rational(1);
-      } else {
-        operands[i*dim+j] = new Rational(0);
-      }
-    }
-  }
-  Matrix * matrix = new Matrix(operands, dim, dim, false);
-  delete [] operands;
-  return matrix;
-}
-
-template<typename T>
-Matrix * Matrix::createApproximateIdentity(int dim) {
-  Expression ** operands = new Expression * [dim*dim];
-  for (int i = 0; i < dim; i++) {
-    for (int j = 0; j < dim; j++) {
-      if (i == j) {
-        operands[i*dim+j] = new Complex<T>(Complex<T>::Float(1));
-      } else {
-        operands[i*dim+j] = new Complex<T>(Complex<T>::Float(0));
-      }
-    }
-  }
-  Matrix * matrix = new Matrix(operands, dim, dim, false);
-  delete [] operands;
-  return matrix;
-}
-
-template<typename T>
-Expression * Matrix::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression ** operands = new Expression * [numberOfOperands()];
-  for (int i = 0; i < numberOfOperands(); i++) {
-    Expression * operandEvaluation = operand(i)->approximate<T>(context, angleUnit);
-    if (operandEvaluation->type() != Type::Complex) {
-      operands[i] = new Complex<T>(Complex<T>::Float(NAN));
-      delete operandEvaluation;
+    Evaluation<T> * operandEvaluation = operand(i)->privateApproximate(T(), context, angleUnit);
+    if (operandEvaluation->type() != Evaluation<T>::Type::Complex) {
+      operands[i] = Complex<T>::Undefined();
     } else {
-      operands[i] = operandEvaluation;
+      std::complex<T> * c = static_cast<Complex<T> *>(operandEvaluation);
+      operands[i] = *c;
     }
+    delete operandEvaluation;
   }
-  Expression * matrix = new Matrix(operands, numberOfRows(), numberOfColumns(), false);
+  MatrixComplex<T> * matrix = new MatrixComplex<T>(operands, numberOfRows(), numberOfColumns());
   delete[] operands;
   return matrix;
 }
 
-template Complex<float>* Matrix::createTrace<float>() const;
-template Complex<double>* Matrix::createTrace<double>() const;
-template Complex<float>* Matrix::createDeterminant<float>(Context &, AngleUnit) const;
-template Complex<double>* Matrix::createDeterminant<double>(Context &, AngleUnit) const;
-template Matrix* Matrix::createApproximateInverse<float>() const;
-template Matrix* Matrix::createApproximateInverse<double>() const;
-template Matrix* Matrix::createApproximateIdentity<float>(int);
-template Matrix* Matrix::createApproximateIdentity<double>(int);
 template int Matrix::ArrayInverse<float>(float *, int, int);
 template int Matrix::ArrayInverse<double>(double *, int, int);
+template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float> *, int, int);
+template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double> *, int, int);
+template void Matrix::ArrayRowCanonize<std::complex<float> >(std::complex<float>*, int, int, std::complex<float>*);
+template void Matrix::ArrayRowCanonize<std::complex<double> >(std::complex<double>*, int, int, std::complex<double>*);
+
 }

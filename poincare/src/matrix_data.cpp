@@ -3,7 +3,6 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/matrix_data.h>
-#include <poincare/complex.h>
 
 namespace Poincare {
 

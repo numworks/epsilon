@@ -31,23 +31,23 @@ ExpressionLayout * Product::createSequenceLayoutWithArgumentLayouts(ExpressionLa
 }
 
 template<typename T>
-Expression * Product::templatedApproximateWithNextTerm(Expression * a, Expression * b) const {
-  if (a->type() == Type::Complex && b->type() == Type::Complex) {
+Evaluation<T> * Product::templatedApproximateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const {
+  if (a->type() == Evaluation<T>::Type::Complex && b->type() == Evaluation<T>::Type::Complex) {
     Complex<T> * c = static_cast<Complex<T> *>(a);
     Complex<T> * d = static_cast<Complex<T> *>(b);
-    return new Complex<T>(Multiplication::compute(*c, *d));
+    return new Complex<T>((*c)*(*d));
   }
-  if (a->type() == Type::Complex) {
+  if (a->type() == Evaluation<T>::Type::Complex) {
     Complex<T> * c = static_cast<Complex<T> *>(a);
-    assert(b->type() == Type::Matrix);
-    Matrix * m = static_cast<Matrix *>(b);
-    return Multiplication::computeOnComplexAndMatrix(c, m);
+    assert(b->type() == Evaluation<T>::Type::MatrixComplex);
+    MatrixComplex<T> * m = static_cast<MatrixComplex<T> *>(b);
+    return new MatrixComplex<T>(Multiplication::computeOnComplexAndMatrix(*c, *m));
   }
-  assert(a->type() == Type::Matrix);
-  assert(b->type() == Type::Matrix);
-  Matrix * m = static_cast<Matrix *>(a);
-  Matrix * n = static_cast<Matrix *>(b);
-  return Multiplication::computeOnMatrices<T>(m, n);
+  assert(a->type() == Evaluation<T>::Type::MatrixComplex);
+  assert(b->type() == Evaluation<T>::Type::MatrixComplex);
+  MatrixComplex<T> * m = static_cast<MatrixComplex<T> *>(a);
+  MatrixComplex<T> * n = static_cast<MatrixComplex<T> *>(b);
+  return new MatrixComplex<T>(Multiplication::computeOnMatrices<T>(*m, *n));
 }
 
 }

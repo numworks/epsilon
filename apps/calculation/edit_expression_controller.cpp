@@ -13,8 +13,7 @@ namespace Calculation {
 EditExpressionController::ContentView::ContentView(Responder * parentResponder, TableView * subview, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_layoutR(Poincare::HorizontalLayoutRef()),
-  m_expressionField(parentResponder, m_textBody, k_bufferLength, m_layoutR, textFieldDelegate, layoutFieldDelegate)
+  m_expressionField(parentResponder, m_textBody, k_bufferLength, Poincare::HorizontalLayoutRef(), textFieldDelegate, layoutFieldDelegate)
 {
   m_textBody[0] = 0;
 }

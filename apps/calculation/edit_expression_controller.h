@@ -47,7 +47,6 @@ private:
     static constexpr int k_bufferLength = TextField::maxBufferSize();
     TableView * m_mainView;
     char m_textBody[k_bufferLength];
-    Poincare::LayoutRef m_layoutR;
     ExpressionField m_expressionField;
   };
   View * loadView() override;

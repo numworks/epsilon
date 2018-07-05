@@ -125,8 +125,31 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   p->removeChildAndMoveCursor(this, cursor);
 }
 
+LayoutNode * LayoutNode::replaceWith(LayoutNode * newChild) {
+  LayoutRef newRef(newChild);
+  LayoutRef(this).replaceWith(newRef);
+  return newRef.typedNode();
+}
+
+void LayoutNode::replaceChild(LayoutNode * oldChild, LayoutNode * newChild) {
+  LayoutRef(this).replaceChild(LayoutRef(oldChild), LayoutRef(newChild));
+}
+
+LayoutNode * LayoutNode::replaceWithAndMoveCursor(LayoutNode * newChild, LayoutCursor * cursor) {
+  return (LayoutRef(this).replaceWithAndMoveCursor(LayoutRef(newChild), cursor)).typedNode();
+}
+
 LayoutNode * LayoutNode::replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild) {
   return (LayoutRef(this).replaceWithJuxtapositionOf(LayoutRef(leftChild), LayoutRef(rightChild))).typedNode();
+}
+
+void LayoutNode::replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) {
+  assert(hasChild(oldChild));
+  if (!newChild->hasAncestor(oldChild, false)) {
+    cursor->setPosition(LayoutCursor::Position::Right);
+  }
+  replaceChild(oldChild, newChild);
+  cursor->setLayoutNode(newChild);
 }
 
 // Private

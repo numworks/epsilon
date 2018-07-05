@@ -184,12 +184,6 @@ bool TreeNode::hasSibling(const TreeNode * e) const {
   return false;
 }
 
-void TreeNode::replaceWithAllocationFailure() {
-  TreeRef t(this);
-  t.replaceWithAllocationFailure();
-  // TODO: OK to change the memory while executing from it, even though we know it will stop execution just after ?
-}
-
 void TreeNode::addChildAtIndex(TreeNode * t, int index) {
   TreeRef tr(this);
   tr.addChildAtIndex(TreeRef(t), index);
@@ -198,6 +192,18 @@ void TreeNode::addChildAtIndex(TreeNode * t, int index) {
 void TreeNode::removeChild(TreeNode * t) {
   TreeRef tr(this);
   tr.removeChild(TreeRef(t));
+}
+
+void TreeNode::replaceChildTree(TreeNode * t, TreeNode * newChild) {
+  int oldChildIndex = indexOfChild(t);
+  addChildAtIndex(newChild, oldChildIndex + 1);
+  removeChild(t);
+}
+
+void TreeNode::replaceWithAllocationFailure() {
+  TreeRef t(this);
+  t.replaceWithAllocationFailure();
+  // TODO: OK to change the memory while executing from it, even though we know it will stop execution just after ?
 }
 
 }

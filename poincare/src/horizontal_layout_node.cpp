@@ -77,11 +77,53 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
 }
 
 void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  //TODO
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
+  if (this == cursor->layoutReference().node()) {
+    if (cursor->position() == LayoutCursor::Position::Right) {
+      // Case: Right. Ask the parent.
+      LayoutNode * parentNode = parent();
+      if (parentNode) {
+        parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
+      }
+      return;
+    }
+    assert(cursor->position() == LayoutCursor::Position::Left);
+    // Case: Left
+    int childrenCount = numberOfChildren();
+    LayoutNode * parentNode = parent();
+    if (childrenCount == 0) {
+      // If there are no children, go Right and ask the parent
+      cursor->setPosition(LayoutCursor::Position::Right);
+      if (parentNode != nullptr) {
+        parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
+      }
+      return;
+    }
+    /* If there is at least one child, set the cursor to the first child and
+     * move it Right */
+    LayoutNode * firstChild = childAtIndex(0);
+    assert(firstChild != nullptr);
+    cursor->setLayoutNode(firstChild);
+    return firstChild->moveCursorRight(cursor, shouldRecomputeLayout);
   }
+
+  // Case: The cursor is Right of a child.
+  assert(cursor->position() == LayoutCursor::Position::Right);
+  int childIndex = indexOfChild(cursor->layoutReference().node());
+  assert(childIndex >= 0);
+  if (childIndex == numberOfChildren() - 1) {
+    // Case: the child is the rightmost. Ask the parent.
+    LayoutNode * parentNode = parent();
+    if (parentNode) {
+      cursor->setLayoutNode(this);
+      parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
+    }
+    return;
+  }
+  /* Case: the child is not the rightmost. Go to its right sibling and move
+   * Right. */
+  cursor->setLayoutNode(childAtIndex(childIndex+1));
+  cursor->setPosition(LayoutCursor::Position::Left);
+  return childAtIndex(childIndex+1)->moveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 void HorizontalLayoutNode::computeSize() {

@@ -54,17 +54,17 @@ Expression * Round::shallowReduce(Context& context, AngleUnit angleUnit) {
 
 template<typename T>
 Complex<T> * Round::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Expression * f1Input = operand(0)->approximate<T>(context, angleUnit);
-  Expression * f2Input = operand(1)->approximate<T>(context, angleUnit);
-  T f1 = f1Input->type() == Type::Complex ? static_cast<Complex<T> *>(f1Input)->toScalar() : NAN;
-  T f2 = f2Input->type() == Type::Complex ? static_cast<Complex<T> *>(f2Input)->toScalar() : NAN;
+  Evaluation<T> * f1Input = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * f2Input = operand(1)->privateApproximate(T(), context, angleUnit);
+  T f1 = f1Input->toScalar();
+  T f2 = f2Input->toScalar();
   delete f1Input;
   delete f2Input;
   if (std::isnan(f2) || f2 != std::round(f2)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Undefined());
   }
   T err = std::pow(10, std::floor(f2));
-  return new Complex<T>(Complex<T>::Float(std::round(f1*err)/err));
+  return new Complex<T>(std::round(f1*err)/err);
 }
 
 }

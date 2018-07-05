@@ -3,7 +3,6 @@
 
 #include <poincare/static_hierarchy.h>
 #include <poincare/layout_engine.h>
-#include <poincare/complex.h>
 
 namespace Poincare {
 
@@ -25,14 +24,14 @@ private:
   }
   const char * name() const { return "random"; }
   /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
     return templateApproximate<float>();
   }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
     return templateApproximate<double>();
   }
-  template <typename T> Expression * templateApproximate() const {
-    return new Complex<T>(Complex<T>::Float(random<T>()));
+  template <typename T> Evaluation<T> * templateApproximate() const {
+    return new Complex<T>(random<T>());
   }
 };
 

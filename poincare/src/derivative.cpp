@@ -1,6 +1,5 @@
 #include <poincare/derivative.h>
 #include <poincare/symbol.h>
-#include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -45,16 +44,16 @@ Expression * Derivative::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * Derivative::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
-  Symbol xSymbol('x');
-  T x = operand(1)->approximateToScalar<T>(context, angleUnit);
+  Evaluation<T> * xInput = operand(1)->privateApproximate(T(), context, angleUnit);
+  T x = xInput->toScalar();
+  delete xInput;
   T functionValue = operand(0)->approximateWithValueForSymbol('x', x, context);
-
   // No complex/matrix version of Derivative
   if (std::isnan(x) || std::isnan(functionValue)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Undefined());
   }
 
   T error, result;
@@ -66,13 +65,13 @@ Expression * Derivative::templatedApproximate(Context& context, AngleUnit angleU
 
   /* if the error is too big regarding the value, do not return the answer */
   if (std::fabs(error/result) > k_maxErrorRateOnApproximation || std::isnan(error)) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+    return new Complex<T>(Complex<T>::Undefined());
   }
   if (std::fabs(error) < min) {
-    return new Complex<T>(Complex<T>::Float(result));
+    return new Complex<T>(result);
   }
   error = std::pow((T)10, std::floor(std::log10(std::fabs(error)))+2);
-  return new Complex<T>(Complex<T>::Float(std::round(result/error)*error));
+  return new Complex<T>(std::round(result/error)*error);
 }
 
 template<typename T>

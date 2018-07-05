@@ -1,5 +1,4 @@
 #include <poincare/integer.h>
-#include <poincare/complex.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_engine.h>
 #include <cmath>
@@ -9,6 +8,9 @@ extern "C" {
 #include <string.h>
 #include <assert.h>
 }
+#include <cmath>
+#include <poincare/ieee754.h>
+#include <utility>
 
 namespace Poincare {
 

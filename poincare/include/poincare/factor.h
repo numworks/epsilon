@@ -5,7 +5,6 @@
 #include <poincare/static_hierarchy.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
-#include <poincare/complex.h>
 #include <cmath>
 
 namespace Poincare {
@@ -28,10 +27,10 @@ private:
   Expression * shallowBeautify(Context& context, AngleUnit angleUnit) override;
   Expression * createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, AngleUnit angleUnit);
   /* Evaluation */
-  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const {
-    return operand(0)->approximate<T>(context, angleUnit);
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> Evaluation<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const {
+    return operand(0)->privateApproximate(T(), context, angleUnit);
   }
 };
 

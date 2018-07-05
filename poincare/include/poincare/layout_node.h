@@ -71,6 +71,8 @@ public:
   // Tree modification
   void addSibling(LayoutCursor * cursor, LayoutNode * sibling);
   void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutNode * sibling);
+  virtual void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor);
+  virtual void deleteBeforeCursor(LayoutCursor * cursor);
   void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {} //TODO
   bool removeGreySquaresFromAllMatrixAncestors() { return false; } //TODO
   bool addGreySquaresToAllMatrixAncestors() { return false; } //TODO

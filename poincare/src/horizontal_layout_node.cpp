@@ -25,6 +25,60 @@ void HorizontalLayoutNode::mergeChildrenAtIndex(HorizontalLayoutNode * h, int in
   LayoutRef(this).mergeChildrenAtIndex(LayoutRef(h), newIndex);
 }
 
+void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
+  LayoutNode * p = parent();
+  if (p == nullptr
+      && cursor->layoutReference().node() == this
+      && (cursor->position() == LayoutCursor::Position::Left
+        || numberOfChildren() == 0))
+  {
+    /* Case: Left and this is the main layout or Right and this is the main
+     * layout with no children. Return. */
+    return;
+  }
+  if (cursor->position() == LayoutCursor::Position::Left) {
+    int indexOfPointedLayout = indexOfChild(cursor->layoutReference().typedNode());
+    if (indexOfPointedLayout >= 0) {
+      /* Case: Left of a child.
+       * Point Right of the previous child. If there is no previous child, point
+       * Left of this. Perform another backspace. */
+      if (indexOfPointedLayout == 0) {
+        cursor->setLayoutNode(this);
+      } else {
+        assert(indexOfPointedLayout > 0);
+        cursor->setLayoutNode(childAtIndex(indexOfPointedLayout - 1));
+        cursor->setPosition(LayoutCursor::Position::Right);
+      }
+      cursor->performBackspace();
+      return;
+    }
+  }
+  assert(cursor->layoutReference().node() == this);
+  if (cursor->position() == LayoutCursor::Position::Right) {
+    // Case: Right. Point to the last child and perform backspace.
+    cursor->setLayoutNode(childAtIndex(numberOfChildren() - 1));
+    cursor->performBackspace();
+    return;
+  }
+  LayoutNode::deleteBeforeCursor(cursor);
+}
+
+void HorizontalLayoutNode::removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor) {
+  if (numberOfChildren() == 1) {
+    assert(childAtIndex(0) == l);
+    LayoutNode * p = parent();
+    if (p != nullptr) {
+      p->removeChildAndMoveCursor(this, cursor);
+    } else {
+      removeChild(l);
+      cursor->setLayoutNode(this);
+      cursor->setPosition(LayoutCursor::Position::Left);
+    }
+    return;
+  }
+  LayoutNode::removeChildAndMoveCursor(l, cursor);
+}
+
 int HorizontalLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (numberOfChildren() == 0) {
     if (bufferSize == 0) {

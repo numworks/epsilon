@@ -113,6 +113,11 @@ public:
     assert(isDefined());
     return TreeReference(node()->childTreeAtIndex(i));
   }
+  int indexOfChild(TreeReference<TreeNode> t) const {
+    assert(isDefined());
+    return node()->indexOfChild(t.node());
+  }
+
 
   // Hierarchy operations
 
@@ -167,6 +172,10 @@ public:
     if (p.isDefined()) {
       p.replaceChildAtIndex(p.node()->indexOfChildByIdentifier(identifier()), t);
     }
+  }
+
+  void replaceChild(TreeReference<TreeNode> oldChild, TreeReference<TreeNode> newChild) {
+    replaceChildAtIndex(indexOfChild(oldChild), newChild);
   }
 
   void replaceChildAtIndex(int oldChildIndex, TreeReference<TreeNode> newChild) {

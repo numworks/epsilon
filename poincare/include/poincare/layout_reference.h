@@ -65,14 +65,24 @@ public:
   LayoutReference<LayoutNode> parent() { return LayoutReference<LayoutNode>(this->typedNode()->parent()); }
 
   // Tree modification
-  void replaceChildAtIndex(int oldChildIndex, LayoutReference<LayoutNode> newChild) {
-    TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild);
+  // Replace
+  void replaceChild(LayoutReference<LayoutNode> oldChild, LayoutReference<LayoutNode> newChild) { TreeReference<T>::replaceChild(oldChild, newChild); }
+  void replaceChildAtIndex(int oldChildIndex, LayoutReference<LayoutNode> newChild) { TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild); }
+  void replaceChildAndMoveCursor(LayoutReference<LayoutNode> oldChild, LayoutReference<LayoutNode> newChild, LayoutCursor * cursor) { this->typedNode()->replaceChildAndMoveCursor(oldChild.typedNode(), newChild.typedNode(), cursor); }
+  LayoutReference<LayoutNode> replaceWithAndMoveCursor(LayoutReference<LayoutNode> newChild, LayoutCursor * cursor) {
+    LayoutReference<LayoutNode> p = parent();
+    assert(p.isDefined());
+    p.replaceChildAndMoveCursor(*this, newChild, cursor);
+    return newChild;
   }
+  LayoutReference<LayoutNode> replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild);
+  // Add
   void addSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSibling(cursor, sibling.typedNode()); }
   void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSiblingAndMoveCursor(cursor, sibling.typedNode()); }
+  //Remove
   void removeChildAndMoveCursor(LayoutReference<LayoutNode> l, LayoutCursor * cursor) { return this->typedNode()->removeChildAndMoveCursor(l.typedNode(), cursor); }
+  // Collapse
   void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {} //TODO
-  LayoutReference<LayoutNode> replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild);
 
   // Allocation failure
   static TreeNode * FailedAllocationStaticNode();

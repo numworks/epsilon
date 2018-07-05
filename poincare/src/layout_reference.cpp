@@ -35,8 +35,8 @@ LayoutReference<LayoutNode> LayoutRef::replaceWithJuxtapositionOf(LayoutReferenc
   LayoutReference<LayoutNode> p = parent();
   assert(p.isDefined());
   assert(!p.isHorizontal());
-  /* One of the children to juxtapose might be "this", so we first have to
-   * replace "this" with an horizontal layout, then add "this" to the layout. */
+  /* One of the children to juxtapose might be "this", so we cannot just call
+   * replaceWith. */
   LayoutReference<LayoutNode> horizontalLayoutR = HorizontalLayoutRef();
   int index = indexInParent();
   horizontalLayoutR.addChildAtIndex(leftChild, 0);

@@ -25,6 +25,7 @@
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
 #include <poincare/empty_expression.h>
+#include <poincare/empty_layout_node.h>
 #include <poincare/equal.h>
 #include <poincare/expression.h>
 #include <poincare/expression_array.h>

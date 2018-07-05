@@ -215,6 +215,15 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
   return childAtIndex(childIndex+1)->moveCursorRight(cursor, shouldRecomputeLayout);
 }
 
+void HorizontalLayoutNode::replaceChild(LayoutNode * oldChild, LayoutNode * newChild) {
+  privateReplaceChild(oldChild, newChild, nullptr);
+}
+
+void HorizontalLayoutNode::replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) {
+  privateReplaceChild(oldChild, newChild, cursor);
+}
+
+
 // Protected
 
 void HorizontalLayoutNode::computeSize() {
@@ -294,6 +303,95 @@ void HorizontalLayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode *
   addOrMergeChildAtIndex(sibling, childrenCount, false);
   if (moveCursor) {
     cursor->setLayoutNode(this);
+  }
+}
+
+void HorizontalLayoutNode::privateReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) {
+  if (oldChild == newChild) {
+    return;
+  }
+  int oldChildIndex = indexOfChild(oldChild);
+  if (newChild->isEmpty()) {
+    if (numberOfChildren() > 1) {
+      /* If the new layout is empty and the horizontal layout has other
+       * children, just remove the old child. */
+      removeChild(oldChild);
+      if (cursor != nullptr) {
+        if (oldChildIndex == 0) {
+          cursor->setLayoutNode(this);
+          cursor->setPosition(LayoutCursor::Position::Left);
+        } else {
+          cursor->setLayoutNode(childAtIndex(oldChildIndex -1));
+          cursor->setPosition(LayoutCursor::Position::Right);
+        }
+      }
+      return;
+    }
+    /* The old layout was the only horizontal layout child, so if this has a
+     * a parent, replace this with the new empty layout. */
+    LayoutNode * p = parent();
+    if (p != nullptr) {
+      if (cursor) {
+        replaceWithAndMoveCursor(newChild, cursor);
+      } else {
+        replaceWith(newChild);
+      }
+      return;
+    }
+    /* This is the main horizontal layout, the old child is its only child and
+     * the new child is Empty: remove the old child and delete the new child. */
+    assert(p == nullptr);
+    removeChild(oldChild);
+    if (cursor != nullptr) {
+      cursor->setLayoutNode(this);
+      cursor->setPosition(LayoutCursor::Position::Left);
+    }
+    return;
+  }
+  /* If the new child is also an horizontal layout, steal the children of the
+   * new layout then destroy it. */
+  bool oldWasAncestorOfNewLayout = newChild->hasAncestor(oldChild, false);
+  if (newChild->isHorizontal()) {
+    int indexForInsertion = indexOfChild(oldChild);
+    if (cursor != nullptr) {
+      /* If the old layout is not an ancestor of the new layout, or if the
+       * cursor was on the right of the new layout, place the cursor on the
+       * right of the new layout, which is left of the next sibling or right of
+       * the parent. */
+      if (!oldWasAncestorOfNewLayout || cursor->position() == LayoutCursor::Position::Right) {
+        if (oldChildIndex == numberOfChildren() - 1) {
+          cursor->setLayoutNode(this);
+          cursor->setPosition(LayoutCursor::Position::Right);
+        } else {
+          cursor->setLayoutNode(childAtIndex(oldChildIndex + 1));
+          cursor->setPosition(LayoutCursor::Position::Left);
+        }
+      } else {
+        /* Else place the cursor on the left of the new layout, which is right
+         * of the previous sibling or left of the parent. */
+        if (oldChildIndex == 0) {
+          cursor->setLayoutNode(this);
+          cursor->setPosition(LayoutCursor::Position::Left);
+        } else {
+          cursor->setLayoutNode(childAtIndex(oldChildIndex - 1));
+          cursor->setPosition(LayoutCursor::Position::Right);
+        }
+      }
+    }
+    bool oldChildRemovedAtMerge = oldChild->isEmpty();
+    mergeChildrenAtIndex(static_cast<HorizontalLayoutNode *>(newChild), indexForInsertion + 1, true);
+    if (!oldChildRemovedAtMerge) {
+      removeChildAtIndex(indexForInsertion);
+    }
+    return;
+  }
+  // Else, just replace the child.
+  if (cursor != nullptr && !oldWasAncestorOfNewLayout) {
+    cursor->setPosition(LayoutCursor::Position::Right);
+  }
+  LayoutNode::replaceChild(oldChild, newChild);
+  if (cursor != nullptr) {
+    cursor->setLayoutNode(newChild);
   }
 }
 

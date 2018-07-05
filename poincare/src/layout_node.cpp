@@ -125,6 +125,10 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   p->removeChildAndMoveCursor(this, cursor);
 }
 
+LayoutNode * LayoutNode::replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild) {
+  return (LayoutRef(this).replaceWithJuxtapositionOf(LayoutRef(leftChild), LayoutRef(rightChild))).typedNode();
+}
+
 // Private
 
 void LayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {

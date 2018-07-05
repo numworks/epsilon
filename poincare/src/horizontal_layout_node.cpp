@@ -42,7 +42,7 @@ void HorizontalLayoutNode::addOrMergeChildAtIndex(LayoutNode * l, int index, boo
   if (l->isHorizontal()) {
     mergeChildrenAtIndex(static_cast<HorizontalLayoutNode *>(l), index, removeEmptyChildren);
   } else {
-    addChildAtIndex(l, index);
+    addChildTreeAtIndex(l, index);
   }
 }
 

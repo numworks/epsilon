@@ -19,10 +19,10 @@ LayoutRef LayoutEngine::createInfixLayout(const Expression * expression, PrintFl
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 1);
   HorizontalLayoutRef result;
-  result.addChildAtIndex(expression->operand(0)->createLayout(), 0);
+  result.addChildTreeAtIndex(expression->operand(0)->createLayout(), 0);
   for (int i = 1; i < numberOfOperands; i++) {
-    result.addChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result.numberOfChildren());
-    result.addChildAtIndex(
+    result.addChildTreeAtIndex(createStringLayout(operatorName, strlen(operatorName)), result.numberOfChildren());
+    result.addChildTreeAtIndex(
         expression->operand(i)->createLayout(floatDisplayMode, complexFormat),
         result.numberOfChildren());
   }
@@ -44,20 +44,20 @@ LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, PrintF
   assert(complexFormat != Expression::ComplexFormat::Default);
   HorizontalLayoutRef result;
   // Add the operator name.
-  result.addChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0);
+  result.addChildTreeAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0);
 
   // Create the layout of arguments separated by commas.
   HorizontalLayoutRef args;
   int numberOfOperands = expression->numberOfOperands();
   if (numberOfOperands > 0) {
-    args.addChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, complexFormat), 0);
+    args.addChildTreeAtIndex(expression->operand(0)->createLayout(floatDisplayMode, complexFormat), 0);
     for (int i = 1; i < numberOfOperands; i++) {
-      args.addChildAtIndex(CharLayoutRef(','), args.numberOfChildren());
-      args.addChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), args.numberOfChildren());
+      args.addChildTreeAtIndex(CharLayoutRef(','), args.numberOfChildren());
+      args.addChildTreeAtIndex(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), args.numberOfChildren());
     }
   }
   // Add the parenthesed arguments.
-  result.addChildAtIndex(createParenthesedLayout(args, false), result.numberOfChildren());
+  result.addChildTreeAtIndex(createParenthesedLayout(args, false), result.numberOfChildren());
   /*// Add the operator name.
   result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, true);
 
@@ -69,7 +69,7 @@ LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, PrintF
     HorizontalLayout * horizontalArgs = static_cast<HorizontalLayout *>(args);
     horizontalArgs->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, complexFormat), 0, true);
     for (int i = 1; i < numberOfOperands; i++) {
-      horizontalArgs->addChildAtIndex(new CharLayout(','), args->numberOfChildren());
+      horizontalArgs->addChildTreeAtIndex(new CharLayout(','), args->numberOfChildren());
       horizontalArgs->addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, complexFormat), horizontalArgs->numberOfChildren(), true);
     }
   }
@@ -80,11 +80,11 @@ LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, PrintF
 
 LayoutRef LayoutEngine::createParenthesedLayout(LayoutRef layoutRef, bool cloneLayout) {
   HorizontalLayoutRef result;
-  result.addChildAtIndex(CharLayoutRef('('), 0);
+  result.addChildTreeAtIndex(CharLayoutRef('('), 0);
   if (layoutRef.isDefined()) {
-    result.addChildAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1);
+    result.addChildTreeAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1);
   }
-  result.addChildAtIndex(CharLayoutRef(')'), result.numberOfChildren());
+  result.addChildTreeAtIndex(CharLayoutRef(')'), result.numberOfChildren());
   return result;
 }
 
@@ -92,7 +92,7 @@ LayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, 
   assert(bufferSize > 0);
   HorizontalLayoutRef resultLayout;
   for (int i = 0; i < bufferSize; i++) {
-    resultLayout.addChildAtIndex(CharLayoutRef(buffer[i], fontSize), i);
+    resultLayout.addChildTreeAtIndex(CharLayoutRef(buffer[i], fontSize), i);
   }
   return resultLayout;
 }

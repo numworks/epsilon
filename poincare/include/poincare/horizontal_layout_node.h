@@ -68,12 +68,12 @@ class HorizontalLayoutRef : public LayoutReference<HorizontalLayoutNode> {
 public:
   HorizontalLayoutRef() : LayoutReference<HorizontalLayoutNode>() {}
   HorizontalLayoutRef(LayoutRef l) : LayoutReference<HorizontalLayoutNode>() {
-    addChild(l);
+    addChildTree(l);
   }
 
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : LayoutReference<HorizontalLayoutNode>() {
-    addChild(l2);
-    addChild(l1);
+    addChildTree(l2);
+    addChildTree(l1);
   }
 };
 

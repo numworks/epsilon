@@ -108,10 +108,10 @@ public:
   void addEmptySquarePowerLayout() {} //TODO
   void addEmptyTenPowerLayout() {} //TODO
   void addEmptyMatrixLayout() {} //TODO
-  void insertText(const char * text) {} //TODO
   void performBackspace() {} //TODO
   bool showEmptyLayoutIfNeeded() { return false; } //TODO
   bool hideEmptyLayoutIfNeeded() { return false; } //TODO
+  void insertText(const char * text);
   void addLayoutAndMoveCursor(LayoutRef l);
   void clearLayout();
 

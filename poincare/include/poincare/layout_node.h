@@ -10,6 +10,14 @@ class LayoutCursor;
 
 class LayoutNode : public TreeNode {
 public:
+  enum class VerticalDirection {
+    Up,
+    Down
+  };
+  enum class HorizontalDirection {
+    Left,
+    Right
+  };
 
   // Constructor
   LayoutNode() :
@@ -56,7 +64,7 @@ public:
     return AllocationFailureNodeIdentifier();
   }
 
-  // Hierarchy
+  // Tree
   LayoutNode * parent() const { return static_cast<LayoutNode *>(parentTree()); }
   LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(childTreeAtIndex(i)); }
   LayoutNode * root() { return static_cast<LayoutNode *>(rootTree()); }
@@ -69,19 +77,25 @@ public:
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
   // Tree modification
+  // Add
   void addSibling(LayoutCursor * cursor, LayoutNode * sibling);
   void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutNode * sibling);
-  virtual void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor);
-  virtual void deleteBeforeCursor(LayoutCursor * cursor);
-  void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {} //TODO
-  bool removeGreySquaresFromAllMatrixAncestors() { return false; } //TODO
-  bool addGreySquaresToAllMatrixAncestors() { return false; } //TODO
-  virtual LayoutNode * layoutToPointWhenInserting() { return this; } //TODO
+  // Replace
   LayoutNode * replaceWith(LayoutNode * newChild);
   LayoutNode * replaceWithAndMoveCursor(LayoutNode * newChild, LayoutCursor * cursor);
   LayoutNode * replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild);
   virtual void replaceChild(LayoutNode * oldChild, LayoutNode * newChild);
   virtual void replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
+  // Remove
+  virtual void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor);
+  // Collapse
+  virtual void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {}
+  // User input
+  virtual void deleteBeforeCursor(LayoutCursor * cursor);
+
+  bool removeGreySquaresFromAllMatrixAncestors() { return false; } //TODO
+  bool addGreySquaresToAllMatrixAncestors() { return false; } //TODO
+  virtual LayoutNode * layoutToPointWhenInserting() { return this; } //TODO
 
 protected:
   // Tree modification

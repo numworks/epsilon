@@ -2,6 +2,7 @@
 #include <ion/charset.h>
 #include <poincare/layout_reference.h>
 #include <poincare/char_layout_node.h>
+#include <poincare/empty_layout_node.h>
 #include <stdio.h>
 
 namespace Poincare {
@@ -146,6 +147,36 @@ KDCoordinate LayoutCursor::layoutHeight() {
   }
   return pointedLayoutHeight;
 
+}
+
+bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
+  /* Find Empty layouts adjacent to the cursor: Check the pointed layout and the
+   * equivalent cursor positions */
+  LayoutRef adjacentEmptyLayout(nullptr);
+
+  if (m_layoutRef.isEmpty()) {
+    // Check the pointed layout
+    adjacentEmptyLayout = m_layoutRef;
+  } else {
+    // Check the equivalent cursor position
+    LayoutRef equivalentPointedLayout = m_layoutRef.equivalentCursor(this).layoutReference();
+    if (equivalentPointedLayout.isDefined() && equivalentPointedLayout.isEmpty()) {
+      adjacentEmptyLayout = equivalentPointedLayout;
+    }
+  }
+
+  if (!adjacentEmptyLayout.isDefined()) {
+    return false;
+  }
+  /* Change the visibility of the neighbouring empty layout: it might be either
+   * an EmptyLayout or an HorizontalLayout with one child only, and this child
+   * is an EmptyLayout. */
+  if (adjacentEmptyLayout.isHorizontal()) {
+    static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.childAtIndex(0).node())->setVisible(show);
+  } else {
+    static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.node())->setVisible(show);
+  }
+  return true;
 }
 
 }

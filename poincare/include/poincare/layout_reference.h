@@ -40,6 +40,7 @@ public:
   void invalidAllSizesPositionsAndBaselines() { return this->typedNode()->invalidAllSizesPositionsAndBaselines(); }
 
   // Layout properties
+  bool isEmpty() const { return this->typedNode()->isEmpty(); }
   bool isHorizontal() const { return this->typedNode()->isHorizontal(); }
   bool isLeftParenthesis() const { return this->typedNode()->isLeftParenthesis(); }
   bool hasText() { return this->typedNode()->hasText(); }

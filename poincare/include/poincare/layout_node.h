@@ -65,12 +65,13 @@ public:
 
   // Tree modification
   // Add
+  void addChildAtIndex(LayoutNode * l, int index, LayoutCursor * cursor);
   void addSibling(LayoutCursor * cursor, LayoutNode * sibling);
   void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutNode * sibling);
   // Replace
   LayoutNode * replaceWith(LayoutNode * newChild);
   LayoutNode * replaceWithAndMoveCursor(LayoutNode * newChild, LayoutCursor * cursor);
-  LayoutNode * replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild);
+  void replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild, LayoutCursor * cursor = nullptr); //TODO remove default
   virtual void replaceChild(LayoutNode * oldChild, LayoutNode * newChild);
   virtual void replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
   // Remove
@@ -162,6 +163,7 @@ protected:
   bool m_positioned;
   bool m_sized;
 private:
+  void privateReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
   virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
   void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
   void scoreCursorInDescendantsVertically (

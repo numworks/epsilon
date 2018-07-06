@@ -21,8 +21,8 @@ public:
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override;
 
   // Tree modification
-  void addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren);
-  void mergeChildrenAtIndex(HorizontalLayoutNode * horizontalLayout, int index, bool removeEmptyChildren);
+  void addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr); // TODO remove default nullptr value
+  void mergeChildrenAtIndex(HorizontalLayoutNode * horizontalLayout, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor) override;
 

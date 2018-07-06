@@ -92,6 +92,31 @@ LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
 }
 
 // Tree modification
+void LayoutNode::addChildAtIndex(LayoutNode * l, int index, LayoutCursor * cursor) {
+  LayoutRef thisRef(this);
+
+  LayoutRef nextPointedLayout(nullptr);
+  LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
+  if (index < numberOfChildren()) {
+    nextPointedLayout = LayoutRef(childAtIndex(index));
+    nextPosition = LayoutCursor::Position::Left;
+  } else {
+    nextPointedLayout = LayoutRef(this);
+    nextPosition = LayoutCursor::Position::Right;
+  }
+
+  addChildTreeAtIndex(l, index);
+
+  if (cursor != nullptr) {
+    if (thisRef.isAllocationFailure()) {
+      cursor->setLayoutReference(thisRef);
+    } else {
+      cursor->setLayoutReference(nextPointedLayout);
+      cursor->setPosition(nextPosition);
+    }
+  }
+}
+
 void LayoutNode::addSibling(LayoutCursor * cursor, LayoutNode * sibling) {
   privateAddSibling(cursor, sibling, false);
 }
@@ -149,15 +174,24 @@ LayoutNode * LayoutNode::replaceWith(LayoutNode * newChild) {
 }
 
 void LayoutNode::replaceChild(LayoutNode * oldChild, LayoutNode * newChild) {
-  LayoutRef(this).replaceChild(LayoutRef(oldChild), LayoutRef(newChild));
+  privateReplaceChild(oldChild, newChild, nullptr);
 }
 
 LayoutNode * LayoutNode::replaceWithAndMoveCursor(LayoutNode * newChild, LayoutCursor * cursor) {
   return (LayoutRef(this).replaceWithAndMoveCursor(LayoutRef(newChild), cursor)).typedNode();
 }
 
-LayoutNode * LayoutNode::replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild) {
-  return (LayoutRef(this).replaceWithJuxtapositionOf(LayoutRef(leftChild), LayoutRef(rightChild))).typedNode();
+void LayoutNode::replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild, LayoutCursor * cursor) {
+  LayoutRef thisRef = LayoutRef(this);
+  LayoutRef juxtapositionLayout = thisRef.replaceWithJuxtapositionOf(LayoutRef(leftChild), LayoutRef(rightChild));
+  if (cursor != nullptr) {
+    if (thisRef.isAllocationFailure()) {
+      cursor->setLayoutReference(thisRef);
+    } else {
+      cursor->setLayoutReference(juxtapositionLayout);
+      cursor->setPosition(LayoutCursor::Position::Right);
+    }
+  }
 }
 
 void LayoutNode::replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) {
@@ -165,8 +199,7 @@ void LayoutNode::replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * n
   if (!newChild->hasAncestor(oldChild, false)) {
     cursor->setPosition(LayoutCursor::Position::Right);
   }
-  replaceChild(oldChild, newChild);
-  cursor->setLayoutNode(newChild);
+  privateReplaceChild(oldChild, newChild, cursor);
 }
 
 // Other
@@ -231,28 +264,14 @@ void LayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, 
     }
 
     // Else, let the parent add the sibling.
-    if (moveCursor) {
-      if (siblingIndex < p->numberOfChildren()) {
-        cursor->setLayoutNode(p->childAtIndex(siblingIndex));
-        cursor->setPosition(LayoutCursor::Position::Left);
-      } else {
-        cursor->setLayoutNode(p);
-        cursor->setPosition(LayoutCursor::Position::Right);
-      }
-    }
-    static_cast<HorizontalLayoutNode *>(p)->addOrMergeChildAtIndex(sibling, siblingIndex, true);
+    static_cast<HorizontalLayoutNode *>(p)->addOrMergeChildAtIndex(sibling, siblingIndex, true, cursor);
     return;
   }
-  LayoutNode * juxtapositionLayout = nullptr;
   if (cursor->position() == LayoutCursor::Position::Left) {
-    juxtapositionLayout = replaceWithJuxtapositionOf(sibling, this);
+    replaceWithJuxtapositionOf(sibling, this, cursor);
   } else {
     assert(cursor->position() == LayoutCursor::Position::Right);
-    juxtapositionLayout = replaceWithJuxtapositionOf(this, sibling);
-  }
-  if (moveCursor) {
-    cursor->setLayoutNode(juxtapositionLayout);
-    cursor->setPosition(LayoutCursor::Position::Right);
+    replaceWithJuxtapositionOf(this, sibling, cursor);
   }
 }
 
@@ -306,6 +325,18 @@ void LayoutNode::collapseOnDirection(HorizontalDirection direction, int absorbin
 }
 
 // Private
+
+void LayoutNode::privateReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) {
+  LayoutRef thisRef = LayoutRef(this);
+  thisRef.replaceChild(LayoutRef(oldChild), LayoutRef(newChild));
+  if (cursor != nullptr) {
+    if (thisRef.isAllocationFailure()) {
+      cursor->setLayoutReference(thisRef);
+    } else {
+      cursor->setLayoutNode(newChild);
+    }
+  }
+}
 
 void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   if (!equivalentPositionVisited) {

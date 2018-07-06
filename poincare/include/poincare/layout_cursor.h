@@ -109,7 +109,7 @@ public:
   void addEmptySquarePowerLayout() {} //TODO
   void addEmptyTenPowerLayout() {} //TODO
   void addFractionLayoutAndCollapseSiblings() {} //TODO
-  void addXNTCharLayout() {} //TODO
+  void addXNTCharLayout();
   void insertText(const char * text);
   void addLayoutAndMoveCursor(LayoutRef l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
@@ -133,7 +133,7 @@ public:
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   KDCoordinate layoutHeight();
-  bool baseForNewPowerLayout() { return false; } //TODO
+  bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
   LayoutRef m_layoutRef;
   Position m_position;

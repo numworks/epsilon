@@ -107,11 +107,9 @@ void LayoutCursor::insertText(const char * text) {
     else {
       newChild = CharLayoutRef(text[i]);
     }
-    m_layoutRef.addSibling(this, newChild);
-    m_layoutRef = newChild;
-    m_position = Position::Right;
+    m_layoutRef.addSiblingAndMoveCursor(this, newChild);
   }
-  if (pointedChild.isDefined()) {
+  if (pointedChild.isDefined() && pointedChild.parent().isDefined()) {
     m_layoutRef = pointedChild;
   }
 }

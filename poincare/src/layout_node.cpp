@@ -3,6 +3,7 @@
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_reference.h>
+#include <ion/display.h>
 
 namespace Poincare {
 
@@ -68,6 +69,22 @@ TreeNode * LayoutNode::FailedAllocationStaticNode() {
 }
 
 // Tree navigation
+void LayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  moveCursorVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
+void LayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  moveCursorVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+}
+
+void LayoutNode::moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  return moveCursorInDescendantsVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout);
+}
+
+void LayoutNode::moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  return moveCursorInDescendantsVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout);
+}
+
 LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
   // Only HorizontalLayout may have no parent, and it overloads this method
   assert(parent());
@@ -152,6 +169,34 @@ void LayoutNode::replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * n
   cursor->setLayoutNode(newChild);
 }
 
+// Other
+bool LayoutNode::hasText() const {
+  /* A layout has text if it is not empty or an allocation failure and it is
+   * not an horizontal layout with no child or with one child with no text. */
+  if (isEmpty() || isAllocationFailure()){
+    return false;
+  }
+  int numChildren = numberOfChildren();
+  return !(isHorizontal() && (numChildren == 0 || (numChildren == 1 && !(const_cast<LayoutNode *>(this)->childAtIndex(0)->hasText()))));
+}
+
+bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
+  /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
+   * isCollapsable is true too. If isCollapsable changes, it might not be the
+   * case anymore so make sure to modify this function if needed. */
+  int numberOfOpenParentheses = 0;
+  return isCollapsable(&numberOfOpenParentheses, true);
+}
+
+bool LayoutNode::canBeOmittedMultiplicationRightFactor() const {
+  /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
+   * isCollapsable is true and isVerticalOffset is false. If one of these
+   * functions changes, it might not be the case anymore so make sure to modify
+   * canBeOmittedMultiplicationRightFactor if needed. */
+  int numberOfOpenParentheses = 0;
+  return isCollapsable(&numberOfOpenParentheses, false) && !isVerticalOffset();
+}
+
 // Private
 
 void LayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
@@ -195,12 +240,12 @@ void LayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, 
         cursor->setPosition(LayoutCursor::Position::Right);
       }
     }
-    static_cast<HorizontalLayoutNode *>(p)->addOrMergeChildAtIndex(sibling, siblingIndex, true); //TODO
+    static_cast<HorizontalLayoutNode *>(p)->addOrMergeChildAtIndex(sibling, siblingIndex, true);
     return;
   }
   LayoutNode * juxtapositionLayout = nullptr;
   if (cursor->position() == LayoutCursor::Position::Left) {
-    juxtapositionLayout = replaceWithJuxtapositionOf(sibling, this); //TODO
+    juxtapositionLayout = replaceWithJuxtapositionOf(sibling, this);
   } else {
     assert(cursor->position() == LayoutCursor::Position::Right);
     juxtapositionLayout = replaceWithJuxtapositionOf(this, sibling);
@@ -209,6 +254,156 @@ void LayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, 
     cursor->setLayoutNode(juxtapositionLayout);
     cursor->setPosition(LayoutCursor::Position::Right);
   }
+}
+
+void LayoutNode::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {
+  LayoutNode * p = parent();
+  if (p == nullptr || !p->isHorizontal()) {
+    return;
+  }
+  int indexInParent = p->indexOfChild(this);
+  int numberOfSiblings = p->numberOfChildren();
+  int numberOfOpenParenthesis = 0;
+  bool canCollapse = true;
+  LayoutNode * absorbingChild = childAtIndex(absorbingChildIndex);
+  if (!absorbingChild || !absorbingChild->isHorizontal()) {
+    return;
+  }
+  HorizontalLayoutNode * horizontalAbsorbingChild = static_cast<HorizontalLayoutNode *>(absorbingChild);
+  if (direction == HorizontalDirection::Right && indexInParent < numberOfSiblings - 1) {
+    canCollapse = !(p->childAtIndex(indexInParent+1)->mustHaveLeftSibling());
+  }
+  LayoutNode * sibling = nullptr;
+  bool forceCollapse = false;
+  while (canCollapse) {
+    if (direction == HorizontalDirection::Right && indexInParent == numberOfSiblings - 1) {
+      break;
+    }
+    if (direction == HorizontalDirection::Left && indexInParent == 0) {
+      break;
+    }
+    int siblingIndex = direction == HorizontalDirection::Right ? indexInParent+1 : indexInParent-1;
+    sibling = p->childAtIndex(siblingIndex);
+    /* Even if forceCollapse is true, isCollapsable should be called to update
+     * the number of open parentheses. */
+    bool shouldCollapse = sibling->isCollapsable(&numberOfOpenParenthesis, direction == HorizontalDirection::Left);
+    if (shouldCollapse || forceCollapse) {
+      /* If the collapse direction is Left and the next sibling to be collapsed
+       * must have a left sibling, force the collapsing of this needed left
+       * sibling. */
+      forceCollapse = direction == HorizontalDirection::Left && sibling->mustHaveLeftSibling();
+      p->removeChildAtIndex(siblingIndex);
+      int newIndex = direction == HorizontalDirection::Right ? absorbingChild->numberOfChildren() : 0;
+      horizontalAbsorbingChild->addOrMergeChildAtIndex(sibling, newIndex, true);
+      numberOfSiblings--;
+      if (direction == HorizontalDirection::Left) {
+        indexInParent--;
+      }
+    } else {
+      break;
+    }
+  }
+}
+
+// Private
+
+void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  if (!equivalentPositionVisited) {
+    LayoutCursor cursorEquivalent = equivalentCursor(cursor);
+    if (cursorEquivalent.isDefined()) {
+      cursor->setLayoutReference(cursorEquivalent.layoutReference());
+      cursor->setPosition(cursorEquivalent.position());
+      if (direction == VerticalDirection::Up) {
+        cursor->layoutNode()->moveCursorUp(cursor, shouldRecomputeLayout, true);
+      } else {
+        cursor->layoutNode()->moveCursorDown(cursor, shouldRecomputeLayout, true);
+      }
+      return;
+    }
+  }
+  LayoutNode * p = parent();
+  if (p != nullptr) {
+    if (direction == VerticalDirection::Up) {
+      p->moveCursorUp(cursor, shouldRecomputeLayout, true);
+    } else {
+      p->moveCursorDown(cursor, shouldRecomputeLayout, true);
+    }
+    return;
+  }
+  cursor->setLayoutNode(nullptr);
+}
+
+void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  LayoutNode *  chilResult = nullptr;
+  LayoutNode ** childResultPtr = &chilResult;
+  LayoutCursor::Position resultPosition = LayoutCursor::Position::Left;
+  /* The distance between the cursor and its next position cannot be greater
+   * than this initial value of score. */
+  int resultScore = Ion::Display::Width*Ion::Display::Width + Ion::Display::Height*Ion::Display::Height;
+
+  scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore);
+
+  // If there is a valid result
+  if (*childResultPtr != nullptr) {
+    *shouldRecomputeLayout = chilResult->addGreySquaresToAllMatrixAncestors();
+  }
+  cursor->setLayoutNode(chilResult);
+  cursor->setPosition(resultPosition);
+}
+
+void LayoutNode::scoreCursorInDescendantsVertically (
+    VerticalDirection direction,
+    LayoutCursor * cursor,
+    bool * shouldRecomputeLayout,
+    LayoutNode ** childResult,
+    void * resultPosition,
+    int * resultScore)
+{
+  LayoutCursor::Position * castedResultPosition = static_cast<LayoutCursor::Position *>(resultPosition);
+  KDPoint cursorMiddleLeft = cursor->middleLeftPoint();
+  bool layoutIsUnderOrAbove = direction == VerticalDirection::Up ? m_frame.isAbove(cursorMiddleLeft) : m_frame.isUnder(cursorMiddleLeft);
+  bool layoutContains = m_frame.contains(cursorMiddleLeft);
+
+  if (layoutIsUnderOrAbove) {
+    // Check the distance to a Left cursor.
+    int currentDistance = LayoutCursor(this, LayoutCursor::Position::Left).middleLeftPoint().squareDistanceTo(cursorMiddleLeft);
+    if (currentDistance <= *resultScore ){
+      *childResult = this;
+      *castedResultPosition = LayoutCursor::Position::Left;
+      *resultScore = currentDistance;
+    }
+
+    // Check the distance to a Right cursor.
+    currentDistance = LayoutCursor(this, LayoutCursor::Position::Right).middleLeftPoint().squareDistanceTo(cursorMiddleLeft);
+    if (currentDistance < *resultScore) {
+      *childResult = this;
+      *castedResultPosition = LayoutCursor::Position::Right;
+      *resultScore = currentDistance;
+    }
+  }
+  if (layoutIsUnderOrAbove || layoutContains) {
+    int childIndex = 0;
+    while (childAtIndex(childIndex++)) {
+      childAtIndex(childIndex-1)->scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore);
+    }
+  }
+}
+
+bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
+  bool changedSquares = false;
+  LayoutNode * currentAncestor = parent();
+  while (currentAncestor != nullptr) {
+    /*if (currentAncestor->isMatrix()) {
+      if (add) {
+        static_cast<MatrixLayout *>(currentAncestor)->addGreySquares();
+      } else {
+        static_cast<MatrixLayout *>(currentAncestor)->removeGreySquares();
+      }
+      changedSquares = true;
+    }*/ //TODO
+    currentAncestor = currentAncestor->parent();
+  }
+  return changedSquares;
 }
 
 }

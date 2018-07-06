@@ -21,7 +21,7 @@ private:
   BannerView * bannerView() override;
   bool handleEnter() override;
   bool moveCursorHorizontally(int direction) override;
-  void initCursorParameters() override;
+  double defaultCursorAbscissa() override;
   CurveViewRange * interactiveCurveViewRange() override;
   SequenceStore * functionStore() const override;
   GraphView * functionGraphView() override;

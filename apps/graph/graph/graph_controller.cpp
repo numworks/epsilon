@@ -79,21 +79,6 @@ bool GraphController::moveCursorHorizontally(int direction) {
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, f, myApp, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
 }
 
-void GraphController::initCursorParameters() {
-  double x = (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
-  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
-  int functionIndex = 0;
-  double y = 0;
-  do {
-    CartesianFunction * firstFunction = functionStore()->activeFunctionAtIndex(functionIndex++);
-    y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
-  } while ((std::isnan(y) || std::isinf(y)) && functionIndex < functionStore()->numberOfActiveFunctions());
-  m_cursor->moveTo(x, y);
-  functionIndex = (std::isnan(y) || std::isinf(y)) ? 0 : functionIndex - 1;
-  selectFunctionWithCursor(functionIndex);
-  interactiveCurveViewRange()->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
-}
-
 InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
   return m_graphRange;
 }

@@ -108,6 +108,25 @@ void FunctionGraphController::initRangeParameters() {
   selectFunctionWithCursor(0);
 }
 
+double FunctionGraphController::defaultCursorAbscissa() {
+  return (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
+}
+
+void FunctionGraphController::initCursorParameters() {
+  double x = defaultCursorAbscissa();
+  TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
+  int functionIndex = 0;
+  double y = 0;
+  do {
+    Function * firstFunction = functionStore()->activeFunctionAtIndex(functionIndex++);
+    y = firstFunction->evaluateAtAbscissa(x, myApp->localContext());
+  } while ((std::isnan(y) || std::isinf(y)) && functionIndex < functionStore()->numberOfActiveFunctions());
+  m_cursor->moveTo(x, y);
+  functionIndex = (std::isnan(y) || std::isinf(y)) ? 0 : functionIndex - 1;
+  selectFunctionWithCursor(functionIndex);
+  interactiveCurveViewRange()->panToMakePointVisible(x, y, k_displayTopMarginRatio, k_cursorRightMarginRatio, k_displayBottomMarginRatio, k_cursorLeftMarginRatio);
+}
+
 bool FunctionGraphController::moveCursorVertically(int direction) {
   Function * actualFunction = functionStore()->activeFunctionAtIndex(indexFunctionSelectedByCursor());
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();

@@ -21,6 +21,7 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(CharLayoutNode); }

@@ -65,6 +65,10 @@ public:
       m_layoutRef = LayoutRef(n);
     }
   }
+  void setTo(LayoutCursor * other) {
+     m_layoutRef = other->layoutReference();
+     m_position = other->position();
+  }
   Position position() const { return m_position; }
   void setPosition(Position position) { m_position = position; }
   KDCoordinate cursorHeight();

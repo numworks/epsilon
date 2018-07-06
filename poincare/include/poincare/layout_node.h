@@ -121,6 +121,7 @@ protected:
   // Tree modification
   virtual void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor);
   void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
+  virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
 
   // Iterators
   class Iterator {
@@ -164,7 +165,6 @@ protected:
   bool m_sized;
 private:
   void privateReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
-  virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
   void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
   void scoreCursorInDescendantsVertically (
     VerticalDirection direction,

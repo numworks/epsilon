@@ -243,14 +243,15 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
   LayoutRef lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : LayoutRef(nullptr);
   m_contentView.cursor()->addLayoutAndMoveCursor(layoutR);
   if (!forceCursorRightOfLayout) {
-    if (pointedLayoutR.isDefined() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
+    if (pointedLayoutR.isDefined() && pointedLayoutR.parent().isDefined() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
+      // Make sure the layout was inserted (its parent is not nullptr)
       m_contentView.cursor()->setLayoutReference(pointedLayoutR);
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
-    } else if (!layoutWillBeMerged ) { //&& !layoutR.isAllocationFailure()) {
+    } else if (!layoutWillBeMerged && layoutR.parent().isDefined()) { //&& !layoutR.isAllocationFailure()) {
       m_contentView.cursor()->setLayoutReference(layoutR.layoutToPointWhenInserting());
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     }
-  } else if (!layoutWillBeMerged) {
+  } else if (!layoutWillBeMerged && layoutR.parent().isDefined()) {
     m_contentView.cursor()->setLayoutReference(layoutR);
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }

@@ -16,6 +16,7 @@ double Model::levelSet(double * modelCoefficients, double xMin, double step, dou
   Expression::Simplify(&yExpression, *context);
   Expression * modelExpression = simplifiedExpression(modelCoefficients, context);
   double result = modelExpression->nextIntersection('x', xMin, step, xMax, *context, yExpression).abscissa;
+  delete modelExpression;
   delete yExpression;
   return result;
 }

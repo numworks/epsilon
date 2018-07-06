@@ -116,7 +116,7 @@ void LayoutCursor::insertText(const char * text) {
 
 void LayoutCursor::addLayoutAndMoveCursor(LayoutRef l) {
   bool layoutWillBeMerged = l.isHorizontal();
-  m_layoutRef.addSiblingAndMoveCursor(this, l); //TODO
+  m_layoutRef.addSiblingAndMoveCursor(this, l);
   if (!layoutWillBeMerged) {
     l.collapseSiblingsAndMoveCursor(this);
   }

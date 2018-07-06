@@ -26,6 +26,7 @@ protected:
     return *m_indexFunctionSelectedByCursor;
   }
   virtual void selectFunctionWithCursor(int functionIndex);
+  virtual double defaultCursorAbscissa();
 private:
   /* When y auto is ticked, we use a display margin to be ensure that the user
    * can move the cursor along the curve without panning the window */
@@ -36,6 +37,7 @@ private:
   float addMargin(float x, float range, bool isMin) override;
 
   void initRangeParameters() override;
+  void initCursorParameters() override;
   bool moveCursorVertically(int direction) override;
   CurveView * curveView() override;
   uint32_t modelVersion() override;

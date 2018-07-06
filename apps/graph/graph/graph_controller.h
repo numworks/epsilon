@@ -26,7 +26,6 @@ private:
   BannerView * bannerView() override;
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction) override;
-  void initCursorParameters() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   CartesianFunctionStore * functionStore() const override;
   GraphView * functionGraphView() override;

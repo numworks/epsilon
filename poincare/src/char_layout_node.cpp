@@ -1,5 +1,6 @@
 #include <poincare/char_layout_node.h>
 #include <poincare/layout_engine.h>
+#include <ion/charset.h>
 
 namespace Poincare {
 
@@ -28,6 +29,22 @@ void CharLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
   if (parentNode != nullptr) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
+}
+
+bool CharLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
+  if (*numberOfOpenParenthesis <= 0
+      && (m_char == '+'
+        || m_char == '-'
+        || m_char == '*'
+        || m_char == Ion::Charset::MultiplicationSign
+        || m_char == Ion::Charset::MiddleDot
+        || m_char == Ion::Charset::Sto
+        || m_char == '='
+        || m_char == ','))
+  {
+    return false;
+  }
+  return true;
 }
 
 // Sizing and positioning

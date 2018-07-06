@@ -83,19 +83,19 @@ void EmptyLayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibl
   //TODO and maybe put first so that "replace" works
 }
 
-#if 0
-LayoutCursor EmptyLayoutNode::cursorVerticalOf(VerticalDirection direction, LayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   /* The two cursor positions around an EmptyLayoutNode are equivalent, so both
    * should be checked. */
   assert(cursor->layoutReference() == this);
-  LayoutCursor cursorResult = LayoutNode::cursorVerticalOf(direction, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  LayoutCursor cursorResult = cursor->clone();
+  moveCursorVertically(direction, &cursorResult, shouldRecomputeLayout, equivalentPositionVisited);
   if (cursorResult.isDefined()) {
-    return cursorResult;
+    cursor->setTo(&cursorResult);
+    return;
   }
   LayoutCursor::Position newPosition = cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
   cursor->setPosition(newPosition);
-  return LayoutNode::cursorVerticalOf(direction, cursor, shouldRecomputeLayout, false);
+  LayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, false);
 }
-#endif
 
 }

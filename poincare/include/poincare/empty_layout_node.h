@@ -60,7 +60,7 @@ private:
   KDCoordinate width() const { return KDText::charSize(m_fontSize).width() - 2*k_marginWidth; }
 
   // LayoutNode
-  //LayoutCursor cursorVerticalOf(VerticalDirection direction, LayoutCursor cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override; //TODO
+  void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
 

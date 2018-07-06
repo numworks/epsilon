@@ -62,6 +62,10 @@ void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
 }
 
 /* Layout modification */
+void LayoutCursor::addXNTCharLayout() {
+  m_layoutRef.addSiblingAndMoveCursor(this, CharLayoutRef(m_layoutRef.XNTChar()));
+}
+
 void LayoutCursor::insertText(const char * text) {
   int textLength = strlen(text);
   if (textLength <= 0) {
@@ -147,6 +151,42 @@ KDCoordinate LayoutCursor::layoutHeight() {
   }
   return pointedLayoutHeight;
 
+}
+
+bool LayoutCursor::baseForNewPowerLayout() {
+  /* Returns true if the layout on the left of the pointed layout is suitable to
+   * be the base of a new power layout: the base layout should be anything but
+   * an horizontal layout with no child. */
+  if (m_position == Position::Right) {
+    return !(m_layoutRef.isHorizontal() && m_layoutRef.numberOfChildren() == 0);
+  } else {
+    assert(m_position == Position::Left);
+    if (m_layoutRef.isHorizontal()) {
+      return false;
+    }
+    if (m_layoutRef.isEmpty()) {
+      /* If the cursor is on the left of an EmptyLayout, move it to its right,
+       * make sure it is yellow, and this EmptyLayout will be the base of the
+       * new power layout. */
+      m_position = Position::Right;
+      if (static_cast<EmptyLayoutNode *>(m_layoutRef.node())->color() == EmptyLayoutNode::Color::Grey) {
+        static_cast<EmptyLayoutNode *>(m_layoutRef.node())->setColor(EmptyLayoutNode::Color::Yellow);
+        LayoutRef p = m_layoutRef.parent();
+        int idxInParent = p.indexOfChild(m_layoutRef);
+        assert(idxInParent >= 0);
+        //TODO static_cast<MatrixLayout *>(p.node())->newRowOrColumnAtIndex(idxInParent);
+      }
+      return true;
+    }
+    LayoutCursor equivalentLayoutCursor = m_layoutRef.equivalentCursor(this);
+    if (!equivalentLayoutCursor.layoutReference().isDefined()
+        || (equivalentLayoutCursor.layoutReference().isHorizontal()
+          && equivalentLayoutCursor.position() == Position::Left))
+    {
+      return false;
+    }
+    return true;
+  }
 }
 
 bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {

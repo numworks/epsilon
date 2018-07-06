@@ -14,6 +14,8 @@ public:
     assert(false);
     return 0;
   }
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override { return LayoutCursor(); }
   void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor) override { }
   void deleteBeforeCursor(LayoutCursor * cursor) override { }

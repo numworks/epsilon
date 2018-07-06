@@ -38,6 +38,11 @@ public:
     m_position(position)
   {}
 
+  LayoutCursor(LayoutNode * node, Position position = Position::Right) :
+    m_layoutRef(node),
+    m_position(position)
+  {} //TODO make this private and friend class layout_node
+
   /* Debug */
   void log() {
 #if TREE_LOG
@@ -124,10 +129,6 @@ public:
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
-  LayoutCursor(LayoutNode * node, Position position = Position::Right) :
-    m_layoutRef(node),
-    m_position(position)
-  {}
   KDCoordinate layoutHeight();
   LayoutRef m_layoutRef;
   Position m_position;

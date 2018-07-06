@@ -38,15 +38,15 @@ LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {
 
 // Tree modification
 
-void HorizontalLayoutNode::addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren) {
+void HorizontalLayoutNode::addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
   if (l->isHorizontal()) {
-    mergeChildrenAtIndex(static_cast<HorizontalLayoutNode *>(l), index, removeEmptyChildren);
+    mergeChildrenAtIndex(static_cast<HorizontalLayoutNode *>(l), index, removeEmptyChildren, cursor);
   } else {
-    addChildTreeAtIndex(l, index);
+    addChildAtIndex(l, index, cursor);
   }
 }
 
-void HorizontalLayoutNode::mergeChildrenAtIndex(HorizontalLayoutNode * h, int index, bool removeEmptyChildren) {
+void HorizontalLayoutNode::mergeChildrenAtIndex(HorizontalLayoutNode * h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
   /* Remove any empty child that would be next to the inserted layout.
    * If the layout to insert starts with a vertical offset layout, any empty
    * layout child directly on the left of the inserted layout (if there is one)
@@ -54,8 +54,28 @@ void HorizontalLayoutNode::mergeChildrenAtIndex(HorizontalLayoutNode * h, int in
   bool shouldRemoveOnLeft = h->numberOfChildren() == 0 ? true : !(h->childAtIndex(0)->mustHaveLeftSibling());
   int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, shouldRemoveOnLeft);
 
+  LayoutRef nextPointedLayout(nullptr);
+  LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
+  if (index < numberOfChildren()) {
+    nextPointedLayout = LayoutRef(childAtIndex(index));
+    nextPosition = LayoutCursor::Position::Left;
+  } else {
+    nextPointedLayout = LayoutRef(this);
+    nextPosition = LayoutCursor::Position::Right;
+  }
+
   // Merge the horizontal layout
-  LayoutRef(this).mergeChildrenAtIndex(LayoutRef(h), newIndex);
+  LayoutRef thisRef = LayoutRef(this);
+  thisRef.mergeChildrenAtIndex(LayoutRef(h), newIndex);
+
+  if (cursor != nullptr) {
+    if (!thisRef.isAllocationFailure()) {
+      cursor->setLayoutReference(nextPointedLayout);
+      cursor->setPosition(nextPosition);
+    } else {
+      cursor->setLayoutReference(thisRef);
+    }
+  }
 }
 
 void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
@@ -389,9 +409,10 @@ void HorizontalLayoutNode::privateReplaceChild(LayoutNode * oldChild, LayoutNode
   if (cursor != nullptr && !oldWasAncestorOfNewLayout) {
     cursor->setPosition(LayoutCursor::Position::Right);
   }
-  LayoutNode::replaceChild(oldChild, newChild);
   if (cursor != nullptr) {
-    cursor->setLayoutNode(newChild);
+    LayoutNode::replaceChildAndMoveCursor(oldChild, newChild, cursor);
+  } else {
+    LayoutNode::replaceChild(oldChild, newChild);
   }
 }
 

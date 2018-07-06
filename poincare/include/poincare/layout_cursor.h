@@ -43,22 +43,14 @@ public:
     m_position(position)
   {} //TODO make this private and friend class layout_node
 
-  /* Debug */
-  void log() {
-#if TREE_LOG
-    printf("Pointed Layout id %d, cursor position ", m_layoutRef.identifier());
-    if (m_position == Position::Left) {
-      printf("Left");
-    } else {
-      printf("Right");
-    }
-    printf("\n");
-#endif
+  LayoutCursor clone() const {
+    return LayoutCursor(m_layoutRef, m_position);
   }
 
+  // Definition
   bool isDefined() const { return m_layoutRef.isDefined(); }
 
-  /* Getters and setters */
+  // Getters and setters
   LayoutRef layoutReference() { return m_layoutRef; }
   LayoutNode * layoutNode() { return m_layoutRef.typedNode(); } // TODO  Make private + friend classes ?
 
@@ -77,9 +69,7 @@ public:
   void setPosition(Position position) { m_position = position; }
   KDCoordinate cursorHeight();
   KDCoordinate baseline();
-  LayoutCursor clone() const {
-    return LayoutCursor(m_layoutRef, m_position);
-  }
+
 
   /* Comparison */
   bool isEquivalentTo(LayoutCursor cursor);
@@ -110,26 +100,41 @@ public:
     result.move(direction, shouldRecomputeLayout);
     return result;
   }
+
   /* Layout modification */
-  void addFractionLayoutAndCollapseSiblings() {} //TODO
   void addEmptyExponentialLayout() {} //TODO
+  void addEmptyMatrixLayout() {} //TODO
   void addEmptyPowerLayout() {} //TODO
   void addEmptySquareRootLayout() {} //TODO
   void addEmptySquarePowerLayout() {} //TODO
   void addEmptyTenPowerLayout() {} //TODO
-  void addEmptyMatrixLayout() {} //TODO
-  bool showEmptyLayoutIfNeeded() { return false; } //TODO
-  bool hideEmptyLayoutIfNeeded() { return false; } //TODO
-  void performBackspace() {
-    m_layoutRef.deleteBeforeCursor(this);
-  }
+  void addFractionLayoutAndCollapseSiblings() {} //TODO
+  void addXNTCharLayout() {} //TODO
   void insertText(const char * text);
   void addLayoutAndMoveCursor(LayoutRef l);
+  bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
+  bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }
+  void performBackspace() { m_layoutRef.deleteBeforeCursor(this); }
   void clearLayout();
+
+  // Debug
+  void log() {
+#if TREE_LOG
+    printf("Pointed Layout id %d, cursor position ", m_layoutRef.identifier());
+    if (m_position == Position::Left) {
+      printf("Left");
+    } else {
+      printf("Right");
+    }
+    printf("\n");
+#endif
+  }
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   KDCoordinate layoutHeight();
+  bool baseForNewPowerLayout() { return false; } //TODO
+  bool privateShowHideEmptyLayoutIfNeeded(bool show);
   LayoutRef m_layoutRef;
   Position m_position;
 };

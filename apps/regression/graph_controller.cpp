@@ -224,7 +224,9 @@ void GraphController::initRangeParameters() {
 }
 
 void GraphController::initCursorParameters() {
-  *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
+  if (*m_selectedSeriesIndex < 0 || m_store->seriesIsEmpty(*m_selectedSeriesIndex)) {
+    *m_selectedSeriesIndex = m_store->indexOfKthNonEmptySeries(0);
+  }
   double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   m_cursor->moveTo(x, y);

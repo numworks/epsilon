@@ -69,6 +69,8 @@ void BoxView::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate thirdQuartilePixels = std::round(floatToPixel(Axis::Horizontal, thirdQuart));
   ctx->fillRect(KDRect(firstQuartilePixels, lowBoundPixel, thirdQuartilePixels - firstQuartilePixels+2,
     upBoundPixel-lowBoundPixel), boxColor);
+  drawSegment(ctx, rect, Axis::Horizontal, lowBound, firstQuart, thirdQuart, Palette::GreyMiddle);
+  drawSegment(ctx, rect, Axis::Horizontal, upBound, firstQuart, thirdQuart, Palette::GreyMiddle);
 
   // Draw the horizontal lines linking the box to the extreme bounds
   KDColor horizontalColor = isMainViewSelected() ? m_selectedHistogramColor : Palette::GreyDark;

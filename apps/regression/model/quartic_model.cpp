@@ -47,10 +47,6 @@ ExpressionLayout * QuarticModel::layout() {
 }
 
 Expression * QuarticModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -83,9 +79,9 @@ Expression * QuarticModel::simplifiedExpression(double * modelCoefficients, Poin
     false);
   Expression * eExpression = new Decimal(e);
   Expression * const operands[] = {ax4Expression, bx3Expression, cx2Expression, dxExpression, eExpression};
-  m_expression = new Addition(operands, 5, false);
-  Expression::Simplify(&m_expression, *context);
-  return m_expression;
+  Expression * result = new Addition(operands, 5, false);
+  Expression::Simplify(&result, *context);
+  return result;
 }
 
 double QuarticModel::evaluate(double * modelCoefficients, double x) const {

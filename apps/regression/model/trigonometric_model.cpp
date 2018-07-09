@@ -33,10 +33,6 @@ ExpressionLayout * TrigonometricModel::layout() {
 }
 
 Expression * TrigonometricModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -53,9 +49,9 @@ Expression * TrigonometricModel::simplifiedExpression(double * modelCoefficients
       false);
   Expression * asinExpression = new Multiplication(aExpression, sinExpression, false);
   Expression * dExpression = new Decimal(d);
-  m_expression = new Addition(asinExpression, dExpression, false);
-  Expression::Simplify(&m_expression, *context);
-  return m_expression;
+  Expression * result = new Addition(asinExpression, dExpression, false);
+  Expression::Simplify(&result, *context);
+  return result;
 }
 
 double TrigonometricModel::evaluate(double * modelCoefficients, double x) const {

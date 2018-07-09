@@ -59,8 +59,7 @@ public:
 private:
   double defaultValue(int series, int i, int j) const override;
   double sumOfValuesBetween(int series, double x1, double x2) const;
-  double sortedElementAtCumulatedFrequency(int series, double k, bool * exactElement = nullptr) const;
-  double sortedElementAfter(int series, double k) const;
+  double sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement = false) const;
   int minIndex(double * bufferValues, int bufferLength) const;
   // Histogram bars
   double m_barWidth;

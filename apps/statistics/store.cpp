@@ -178,17 +178,7 @@ double Store::quartileRange(int series) const {
 }
 
 double Store::median(int series) const {
-  bool exactElement = true;
-  double minMedian = sortedElementAtCumulatedFrequency(series, 1.0/2.0, &exactElement);
-  if (!exactElement) {
-    double maxMedian = sortedElementAfter(series, minMedian);
-    if (maxMedian == DBL_MAX) {
-      return minMedian;
-    }
-    return (minMedian + maxMedian)/2.0;
-  } else {
-    return minMedian;
-  }
+  return sortedElementAtCumulatedFrequency(series, 1.0/2.0, true);
 }
 
 double Store::sum(int series) const {
@@ -251,7 +241,7 @@ double Store::sumOfValuesBetween(int series, double x1, double x2) const {
   return result;
 }
 
-double Store::sortedElementAtCumulatedFrequency(int series, double k, bool * exactElement) const {
+double Store::sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement) const {
   // TODO: use an other algorithm (ex quickselect) to avoid quadratic complexity
   assert(k >= 0.0 && k <= 1.0);
   double totalNumberOfElements = sumOfOccurrences(series);
@@ -263,23 +253,14 @@ double Store::sortedElementAtCumulatedFrequency(int series, double k, bool * exa
     sortedElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
     bufferValues[sortedElementIndex] = DBL_MAX;
     cumulatedFrequency += m_data[series][1][sortedElementIndex] / totalNumberOfElements;
-    if (exactElement != nullptr && cumulatedFrequency == k) {
-      *exactElement = false;
+  }
+  if (createMiddleElement && cumulatedFrequency == k) {
+    int nextElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
+    if (bufferValues[nextElementIndex] != DBL_MAX) {
+      return (m_data[series][0][sortedElementIndex] + m_data[series][0][nextElementIndex]) / 2.0;
     }
   }
   return m_data[series][0][sortedElementIndex];
-}
-
-double Store::sortedElementAfter(int series, double k) const {
-  assert(numberOfPairsOfSeries(series) > 0);
-  double result = DBL_MAX;
-  for (int i = 0; i < numberOfPairsOfSeries(series); i++) {
-    double currentElement = m_data[series][0][i];
-    if (currentElement > k && currentElement < result) {
-      result = currentElement;
-    }
-  }
-  return result;
 }
 
 int Store::minIndex(double * bufferValues, int bufferLength) const {

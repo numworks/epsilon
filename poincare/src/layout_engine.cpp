@@ -213,8 +213,8 @@ int LayoutEngine::writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expr
 }
 
 /* LayoutReference to Text */
-int LayoutEngine::writeInfixTreeRefTextInBuffer(
-    const TreeRef treeRef,
+int LayoutEngine::writeInfixSerializableRefTextInBuffer(
+    const SerializableRef serializableRef,
     char * buffer,
     int bufferSize,
     int numberOfDigits,
@@ -223,7 +223,7 @@ int LayoutEngine::writeInfixTreeRefTextInBuffer(
     int lastChildIndex)
 {
   // If buffer has size 0 or 1, put a zero if it fits and return
-  assert(treeRef.isDefined());
+  assert(serializableRef.isDefined());
   if (bufferSize == 0) {
     return -1;
   }
@@ -233,13 +233,13 @@ int LayoutEngine::writeInfixTreeRefTextInBuffer(
     return 0;
   }
 
-  // Get some information on the TreeRef
+  // Get some information on the SerializableRef
   int numberOfChar = 0;
-  int numberOfOperands = treeRef.numberOfChildren();
+  int numberOfOperands = serializableRef.numberOfChildren();
   assert(numberOfOperands > 0);
 
   // Write the first child, with parentheses if needed
-  writeChildTreeInBuffer(treeRef.treeChildAtIndex(firstChildIndex), treeRef, buffer, bufferSize, numberOfDigits, &numberOfChar);
+  writeChildTreeInBuffer((const_cast<SerializableRef *>(&serializableRef))->serializableChildAtIndex(firstChildIndex), serializableRef, buffer, bufferSize, numberOfDigits, &numberOfChar);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -252,7 +252,7 @@ int LayoutEngine::writeInfixTreeRefTextInBuffer(
       return bufferSize-1;
     }
     // Write the child, with parentheses if needed
-    writeChildTreeInBuffer(treeRef.treeChildAtIndex(i), treeRef, buffer, bufferSize, numberOfDigits, &numberOfChar);
+    writeChildTreeInBuffer((const_cast<SerializableRef *>(&serializableRef))->serializableChildAtIndex(i), serializableRef, buffer, bufferSize, numberOfDigits, &numberOfChar);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }
@@ -263,7 +263,7 @@ int LayoutEngine::writeInfixTreeRefTextInBuffer(
   return numberOfChar;
 }
 
-void LayoutEngine::writeChildTreeInBuffer(TreeRef childRef, TreeRef parentRef, char * buffer, int bufferSize, int numberOfDigits, int * numberOfChar) {
+void LayoutEngine::writeChildTreeInBuffer(SerializableRef childRef, SerializableRef parentRef, char * buffer, int bufferSize, int numberOfDigits, int * numberOfChar) {
   // Write the child with parentheses if needed
   bool addParentheses = childRef.needsParenthesisWithParent(parentRef);
   if (addParentheses) {

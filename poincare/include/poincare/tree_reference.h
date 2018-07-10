@@ -82,16 +82,6 @@ public:
     return node()->numberOfDescendants(includeSelf);
   }
 
-  // Serialization
-  bool needsParenthesisWithParent(TreeReference<TreeNode> parentRef) {
-    assert(isDefined());
-    return node()->needsParenthesisWithParent(parentRef.node());
-  }
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const {
-    assert(isDefined());
-    return node()->writeTextInBuffer(buffer, bufferSize, numberOfSignificantDigits);
-  }
-
   // Hierarchy
   bool hasChild(TreeReference<TreeNode> t) const {
     assert(isDefined());

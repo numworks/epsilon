@@ -142,7 +142,7 @@ int HorizontalLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int n
     buffer[0] = 0;
     return 0;
   }
-  return LayoutEngine::writeInfixTreeRefTextInBuffer(TreeRef(const_cast<HorizontalLayoutNode *>(this)), buffer, bufferSize, numberOfSignificantDigits, "");
+  return LayoutEngine::writeInfixSerializableRefTextInBuffer(SerializableRef(const_cast<HorizontalLayoutNode *>(this)), buffer, bufferSize, numberOfSignificantDigits, "");
 }
 
 void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {

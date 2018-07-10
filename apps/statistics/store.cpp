@@ -254,7 +254,7 @@ double Store::sortedElementAtCumulatedFrequency(int series, double k, bool creat
     bufferValues[sortedElementIndex] = DBL_MAX;
     cumulatedFrequency += m_data[series][1][sortedElementIndex] / totalNumberOfElements;
   }
-  if (createMiddleElement && cumulatedFrequency == k) {
+  if (createMiddleElement && std::fabs(cumulatedFrequency - k) < DBL_EPSILON) {
     int nextElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
     if (bufferValues[nextElementIndex] != DBL_MAX) {
       return (m_data[series][0][sortedElementIndex] + m_data[series][0][nextElementIndex]) / 2.0;

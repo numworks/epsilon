@@ -1,9 +1,13 @@
 #include "graph_controller.h"
 #include "../apps_container.h"
+#include <kandinsky/text.h>
 #include <cmath>
 
 using namespace Poincare;
 using namespace Shared;
+
+static inline float min(float x, float y) { return (x<y ? x : y); }
+static inline float max(float x, float y) { return (x>y ? x : y); }
 
 namespace Regression {
 
@@ -23,6 +27,7 @@ GraphController::GraphController(Responder * parentResponder, ButtonRowControlle
     m_modelType[i] = (Model::Type) -1;
   }
   m_store->setCursor(m_cursor);
+  m_store->setDelegate(this);
 }
 
 ViewController * GraphController::initialisationParameterController() {
@@ -230,7 +235,7 @@ void GraphController::initCursorParameters() {
   double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
   double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
   m_cursor->moveTo(x, y);
-  m_store->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   *m_selectedDotIndex = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
 }
 
@@ -240,13 +245,13 @@ bool GraphController::moveCursorHorizontally(int direction) {
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
       m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
       return true;
     }
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       *m_selectedDotIndex = dotSelected;
       m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
       return true;
     }
     return false;
@@ -256,7 +261,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
   double y = m_store->yValueForXValue(*m_selectedSeriesIndex, x, globContext);
   m_cursor->moveTo(x, y);
-  m_store->panToMakePointVisible(x, y, k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
 }
 
@@ -317,7 +322,7 @@ bool GraphController::moveCursorVertically(int direction) {
     *m_selectedSeriesIndex = closestRegressionSeries;
     selectRegressionCurve();
     m_cursor->moveTo(m_cursor->x(), m_store->yValueForXValue(*m_selectedSeriesIndex, m_cursor->x(), globContext));
-    m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+    m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     return true;
   }
 
@@ -327,11 +332,11 @@ bool GraphController::moveCursorVertically(int direction) {
     *m_selectedDotIndex = dotSelected;
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       m_cursor->moveTo(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
-      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+      m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
       return true;
     }
     m_cursor->moveTo(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
-    m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+    m_store->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
     return true;
   }
   return false;
@@ -346,7 +351,46 @@ uint32_t GraphController::rangeVersion() {
 }
 
 bool GraphController::isCursorVisible() {
-  return interactiveCurveViewRange()->isCursorVisible(k_cursorTopMarginRatio, k_cursorRightMarginRatio, k_cursorBottomMarginRatio, k_cursorLeftMarginRatio);
+  return interactiveCurveViewRange()->isCursorVisible(cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
+}
+
+float GraphController::cursorBottomMarginRatio() {
+  float f = (m_view.cursorView()->minimalSizeForOptimalDisplay().height()/2 + 2 + estimatedBannerHeight())/k_viewHeight;
+  return f;
+}
+
+float GraphController::displayTopMarginRatio() {
+  return 0.12f; // cursorHeight/graphViewHeight
+}
+
+float GraphController::displayBottomMarginRatio() {
+  float f = (m_view.cursorView()->minimalSizeForOptimalDisplay().height() + 2 + estimatedBannerHeight())/k_viewHeight;
+  return f;
+}
+
+float GraphController::estimatedBannerHeight() const {
+  if (selectedSeriesIndex() < 0) {
+    return KDText::charSize(KDText::FontSize::Small).height() * 3;
+  }
+  float result = KDText::charSize(KDText::FontSize::Small).height() * m_store->modelForSeries(selectedSeriesIndex())->bannerLinesCount();
+  return result;
+}
+
+InteractiveCurveViewRangeDelegate::Range GraphController::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
+  float minY = FLT_MAX;
+  float maxY = -FLT_MAX;
+  for (int series = 0; series < Store::k_numberOfSeries; series++) {
+    for (int k = 0; k < m_store->numberOfPairsOfSeries(series); k++) {
+      if (m_store->xMin() <= m_store->get(series, 0, k) && m_store->get(series, 0, k) <= m_store->xMax()) {
+        minY = min(minY, m_store->get(series, 1, k));
+        maxY = max(maxY, m_store->get(series, 1, k));
+      }
+    }
+  }
+  InteractiveCurveViewRangeDelegate::Range range;
+  range.min = minY;
+  range.max = maxY;
+  return range;
 }
 
 }

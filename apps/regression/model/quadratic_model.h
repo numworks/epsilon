@@ -15,6 +15,7 @@ public:
   double evaluate(double * modelCoefficients, double x) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 3; }
+  int bannerLinesCount() const override { return 3; }
 };
 
 }

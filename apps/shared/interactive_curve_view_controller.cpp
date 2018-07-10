@@ -32,6 +32,11 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
 {
 }
 
+float InteractiveCurveViewController::addMargin(float x, float range, bool isMin) {
+  float ratio = isMin ? -displayBottomMarginRatio() : displayTopMarginRatio();
+  return x+ratio*range;
+}
+
 const char * InteractiveCurveViewController::title() {
   return I18n::translate(I18n::Message::GraphTab);
 }

@@ -97,11 +97,6 @@ InteractiveCurveViewRangeDelegate::Range FunctionGraphController::computeYRange(
   return range;
 }
 
-float FunctionGraphController::addMargin(float x, float range, bool isMin) {
-  float ratio = isMin ? -k_displayBottomMarginRatio : k_displayTopMarginRatio;
-  return x+ratio*range;
-}
-
 void FunctionGraphController::initRangeParameters() {
   interactiveCurveViewRange()->setDefault();
   initCursorParameters();

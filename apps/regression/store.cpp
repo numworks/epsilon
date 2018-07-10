@@ -26,7 +26,7 @@ static_assert(Model::k_numberOfModels == 9, "Number of models changed, Regressio
 static_assert(Store::k_numberOfSeries == 3, "Number of series changed, Regression::Store() needs to adapt (m_seriesChecksum)");
 
 Store::Store() :
-  InteractiveCurveViewRange(nullptr, this),
+  InteractiveCurveViewRange(nullptr),
   DoublePairStore(),
   m_seriesChecksum{0, 0, 0},
   m_angleUnit(Poincare::Expression::AngleUnit::Default)
@@ -201,15 +201,15 @@ int Store::nextDot(int series, int direction, int dot) {
 void Store::setDefault() {
   float minX = FLT_MAX;
   float maxX = -FLT_MAX;
-  for (int series = 0; series < k_numberOfSeries; series ++) {
+  for (int series = 0; series < k_numberOfSeries; series++) {
     if (!seriesIsEmpty(series)) {
       minX = min(minX, minValueOfColumn(series, 0));
       maxX = max(maxX, maxValueOfColumn(series, 0));
     }
   }
   float range = maxX - minX;
-  setXMin(minX - k_displayLeftMarginRatio*range);
-  setXMax(maxX + k_displayRightMarginRatio*range);
+  setXMin(minX - k_displayHorizontalMarginRatio*range);
+  setXMax(maxX + k_displayHorizontalMarginRatio*range);
   setYAuto(true);
 }
 
@@ -327,28 +327,6 @@ double Store::squaredCorrelationCoefficient(int series) const {
   double v0 = varianceOfColumn(series, 0);
   double v1 = varianceOfColumn(series, 1);
   return (v0 == 0.0 || v1 == 0.0) ? 1.0 : cov*cov/(v0*v1);
-}
-
-InteractiveCurveViewRangeDelegate::Range Store::computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) {
-  float minY = FLT_MAX;
-  float maxY = -FLT_MAX;
-  for (int series = 0; series < k_numberOfSeries; series++) {
-    for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-      if (m_xMin <= m_data[series][0][k] && m_data[series][0][k] <= m_xMax) {
-        minY = min(minY, m_data[series][1][k]);
-        maxY = max(maxY, m_data[series][1][k]);
-      }
-    }
-  }
-  InteractiveCurveViewRangeDelegate::Range range;
-  range.min = minY;
-  range.max = maxY;
-  return range;
-}
-
-float Store::addMargin(float x, float range, bool isMin) {
-  float ratio = isMin ? -k_displayBottomMarginRatio : k_displayTopMarginRatio;
-  return x+ratio*range;
 }
 
 }

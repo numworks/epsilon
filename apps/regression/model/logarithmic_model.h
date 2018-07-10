@@ -15,6 +15,7 @@ public:
   double levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 2; }
+  int bannerLinesCount() const override { return 2; }
 protected:
   virtual bool dataSuitableForFit(Store * store, int series) const override;
 };

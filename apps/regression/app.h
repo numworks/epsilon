@@ -32,6 +32,7 @@ public:
     uint32_t * modelVersion() { return &m_modelVersion; }
     uint32_t * rangeVersion() { return &m_rangeVersion; }
   private:
+    void tidy() override;
     Store m_store;
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;

@@ -27,7 +27,9 @@ public:
   // When the main view is selected, the banner view is visible
   bool isMainViewSelected() const;
   void selectMainView(bool mainViewSelected);
+  View * cursorView() { return m_cursorView; }
   void setCursorView(View * cursorView);
+  View * bannerView() { return m_bannerView; }
   void setBannerView(View * bannerView);
   void setOkView(View * okView);
   void setForceOkDisplay(bool force) { m_forceOkDisplay = force; }

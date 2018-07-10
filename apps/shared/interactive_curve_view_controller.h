@@ -9,9 +9,15 @@
 
 namespace Shared {
 
-class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
+class InteractiveCurveViewController : public SimpleInteractiveCurveViewController, public InteractiveCurveViewRangeDelegate, public ButtonRowDelegate, public AlternateEmptyViewDelegate {
 public:
   InteractiveCurveViewController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * modelVersion, uint32_t * rangeVersion);
+
+  // InteractiveCurveViewRangeDelegate
+  float addMargin(float x, float range, bool isMin) override;
+  virtual float displayTopMarginRatio() = 0;
+  virtual float displayBottomMarginRatio() = 0;
+
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;

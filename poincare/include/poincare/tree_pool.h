@@ -106,9 +106,9 @@ private:
   class AllPool {
   public:
     AllPool(TreeNode * node) : m_node(node) {}
-    class Iterator : public TreeNode::Iterator {
+    class Iterator : public TreeNode::Iterator<TreeNode> {
     public:
-      using TreeNode::Iterator::Iterator;
+      using TreeNode::Iterator<TreeNode>::Iterator;
       Iterator & operator++() {
         m_node = m_node->next();
         return *this;
@@ -124,9 +124,9 @@ private:
   class Roots {
   public:
     Roots(TreeNode * node) : m_node(node) {}
-    class Iterator : public TreeNode::Iterator {
+    class Iterator : public TreeNode::Iterator<TreeNode> {
     public:
-      using TreeNode::Iterator::Iterator;
+      using TreeNode::Iterator<TreeNode>::Iterator;
       Iterator & operator++() {
         m_node = m_node->nextSibling();
         return *this;
@@ -139,8 +139,8 @@ private:
   };
   Roots roots() { return Roots(*(begin())); }
 
-  TreeNode::DepthFirst::Iterator begin() const { return TreeNode::DepthFirst::Iterator(first()); }
-  TreeNode::DepthFirst::Iterator end() const { return TreeNode::DepthFirst::Iterator(last()); }
+  TreeNode::DepthFirst<TreeNode>::Iterator begin() const { return TreeNode::DepthFirst<TreeNode>::Iterator(first()); }
+  TreeNode::DepthFirst<TreeNode>::Iterator end() const { return TreeNode::DepthFirst<TreeNode>::Iterator(last()); }
 
   TreePool() : m_cursor(m_buffer) { }
 

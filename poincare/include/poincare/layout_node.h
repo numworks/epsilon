@@ -49,6 +49,8 @@ public:
     return AllocationFailureNodeIdentifier();
   }
 
+  LayoutNode * next() const override { return static_cast<LayoutNode *>(TreeNode::next()); }
+  LayoutNode * nextSibling() const override { return static_cast<LayoutNode *>(TreeNode::nextSibling()); }
   // Tree
   LayoutNode * parent() const { return static_cast<LayoutNode *>(parentTree()); }
   LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(childTreeAtIndex(i)); }
@@ -123,32 +125,7 @@ protected:
   void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
   virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
 
-  // Iterators
-  class Iterator {
-    public:
-    Iterator(LayoutNode * node) : m_node(node) {}
-    LayoutNode * operator*() { return m_node; }
-    bool operator!=(const Iterator& it) const { return (m_node != it.m_node); }
-  protected:
-    LayoutNode * m_node;
-  };
-  class DirectChildren {
-  public:
-    DirectChildren(LayoutNode * node) : m_node(node) {}
-    class Iterator : public LayoutNode::Iterator {
-    public:
-      using LayoutNode::Iterator::Iterator;
-      Iterator & operator++() {
-        m_node = static_cast<LayoutNode *>(m_node->nextSibling());
-        return *this;
-      }
-    };
-    Iterator begin() const { return Iterator(static_cast<LayoutNode *>(m_node->next())); }
-    Iterator end() const { return Iterator(static_cast<LayoutNode *>(m_node->nextSibling())); }
-  private:
-    LayoutNode * m_node;
-  };
-  DirectChildren children() { return DirectChildren(this); }
+  Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
 
   // Sizing and positioning
   virtual void computeSize() = 0;

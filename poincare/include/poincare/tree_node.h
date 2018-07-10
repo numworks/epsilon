@@ -78,59 +78,62 @@ public:
   bool hasAncestor(const TreeNode * node, bool includeSelf) const;
   bool hasSibling(const TreeNode * e) const;
 
+  template <typename T>
   class Iterator {
     public:
-    Iterator(const TreeNode * node) : m_node(const_cast<TreeNode *>(node)) {}
-    TreeNode * operator*() { return m_node; }
+    Iterator(const T * node) : m_node(const_cast<T *>(node)) {}
+    T * operator*() { return m_node; }
     bool operator!=(const Iterator& it) const { return (m_node != it.m_node); }
   protected:
-    TreeNode * m_node;
+    T * m_node;
   };
 
+  template <typename T>
   class Direct {
   public:
-    Direct(const TreeNode * node) : m_node(const_cast<TreeNode *>(node)) {}
-    class Iterator : public TreeNode::Iterator {
+    Direct(const T * node) : m_node(const_cast<T *>(node)) {}
+    class Iterator : public TreeNode::Iterator<T> {
     public:
-      using TreeNode::Iterator::Iterator;
+      using TreeNode::Iterator<T>::Iterator;
       Iterator & operator++() {
-        m_node = m_node->nextSibling();
+        this->m_node = this->m_node->nextSibling();
         return *this;
       }
     };
     Iterator begin() const { return Iterator(m_node->next()); }
     Iterator end() const { return Iterator(m_node->nextSibling()); }
   private:
-    TreeNode * m_node;
+    T * m_node;
   };
 
+  template <typename T>
   class DepthFirst {
   public:
     DepthFirst(const TreeNode * node) : m_node(const_cast<TreeNode *>(node)) {}
-    class Iterator : public TreeNode::Iterator {
+    class Iterator : public TreeNode::Iterator<T> {
     public:
-      using TreeNode::Iterator::Iterator;
+      using TreeNode::Iterator<T>::Iterator;
       Iterator & operator++() {
-        m_node = m_node->next();
+        this->m_node = this->m_node->next();
         return *this;
       }
     };
     Iterator begin() const { return Iterator(m_node->next()); }
     Iterator end() const { return Iterator(m_node->nextSibling()); }
   private:
-    TreeNode * m_node;
+    T * m_node;
   };
 
-  Direct directChildren() const { return Direct(this); }
-  DepthFirst depthFirstChildren() const { return DepthFirst(this); }
+  Direct<TreeNode> directChildren() const { return Direct<TreeNode>(this); }
+  DepthFirst<TreeNode> depthFirstChildren() const { return DepthFirst<TreeNode>(this); }
 
-  TreeNode * next() const {
+  virtual TreeNode * next() const {
     // Simple version would be "return this + 1;", with pointer arithmetics taken care of by the compiler.
     // Unfortunately, we want TreeNode to have a VARIABLE size
     return reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(const_cast<TreeNode *>(this)) + size());
   }
 
-  TreeNode * nextSibling() const {
+  virtual TreeNode * nextSibling() const {
     int remainingNodesToVisit = numberOfChildren();
     TreeNode * node = const_cast<TreeNode *>(this)->next();
     while (remainingNodesToVisit > 0) {

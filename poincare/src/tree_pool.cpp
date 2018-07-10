@@ -23,7 +23,8 @@ TreeNode * TreePool::node(int identifier) const {
 }
 
 static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
-  if (dst > src) {
+  if (src < dst && dst < src + len) {
+    /* Copy backwards to avoid overwrites */
     src += len;
     dst += len;
     while (len--) {

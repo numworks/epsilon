@@ -61,7 +61,7 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
   }
 }
 
-int Store::closestVerticalRegression(int direction, float x, float y, int currentRegressionSeries, Poincare::Context * globalContext) {
+int Store::closestVerticalRegression(int direction, double x, double y, int currentRegressionSeries, Poincare::Context * globalContext) {
   int regressionSeries = -1;
   float closestDistance = INFINITY;
   /* The conditions to test on all the regressions are in this order:
@@ -85,9 +85,9 @@ int Store::closestVerticalRegression(int direction, float x, float y, int curren
 
 /* Dots */
 
-int Store::closestVerticalDot(int direction, float x, float y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
-  float nextX = INFINITY;
-  float nextY = INFINITY;
+int Store::closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
+  double nextX = INFINITY;
+  double nextY = INFINITY;
   int selectedDot = -1;
   /* The conditions to test on all dots are in this order:
    * - if the currentDot is valid, the next series should not be the current series

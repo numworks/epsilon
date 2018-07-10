@@ -37,6 +37,7 @@ bool InteractiveCurveViewRangeDelegate::didChangeRange(InteractiveCurveViewRange
     float step = min != 0.0f ? interactiveCurveViewRange->computeGridUnit(CurveViewRange::Axis::Y, 0.0f, std::fabs(min)) : 1.0f;
     max = min+step;
   }
+  range = max - min;
   interactiveCurveViewRange->setYMin(addMargin(min, range, true));
   interactiveCurveViewRange->setYMax(addMargin(max, range, false));
   if (std::isinf(interactiveCurveViewRange->xMin())) {

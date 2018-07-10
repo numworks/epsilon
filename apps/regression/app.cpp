@@ -45,6 +45,10 @@ App::Descriptor * App::Snapshot::descriptor() {
   return &descriptor;
 }
 
+void App::Snapshot::tidy() {
+  m_store.setDelegate(nullptr);
+}
+
 App::App(Container * container, Snapshot * snapshot) :
   TextFieldDelegateApp(container, snapshot, &m_tabViewController),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, snapshot->store()),

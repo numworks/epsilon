@@ -25,10 +25,9 @@ public:
   void selectRegressionCurve();
   int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
 private:
-  constexpr static float k_cursorTopMarginRatio = 0.07f;    // (cursorHeight/2)/graphViewHeight
-  constexpr static float k_cursorBottomMarginRatio = 0.3f;  // (cursorHeight/2+bannerHeigh)/graphViewHeight
   constexpr static int k_maxLegendLength = 16;
   constexpr static int k_maxNumberOfCharacters = 50;
+  constexpr static float k_viewHeight = 174.0f;
   Shared::CurveView * curveView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   bool handleEnter() override;
@@ -40,6 +39,18 @@ private:
   uint32_t modelVersion() override;
   uint32_t rangeVersion() override;
   bool isCursorVisible() override;
+
+  // InteractiveCurveViewController
+  float displayTopMarginRatio() override;
+  float displayBottomMarginRatio() override;
+
+  float cursorTopMarginRatio() { return 0.07f; } // (cursorHeight/2) / graphViewHeight
+  float cursorBottomMarginRatio();
+  float estimatedBannerHeight() const;
+
+  // InteractiveCurveViewRangeDelegate
+  Shared::InteractiveCurveViewRangeDelegate::Range computeYRange(Shared::InteractiveCurveViewRange * interactiveCurveViewRange) override;
+
   Shared::CursorView m_crossCursorView;
   Shared::RoundCursorView m_roundCursorView;
   BannerView m_bannerView;

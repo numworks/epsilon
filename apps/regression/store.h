@@ -9,7 +9,7 @@
 
 namespace Regression {
 
-class Store : public Shared::InteractiveCurveViewRange, public Shared::DoublePairStore, public Shared::InteractiveCurveViewRangeDelegate {
+class Store : public Shared::InteractiveCurveViewRange, public Shared::DoublePairStore {
 public:
   Store();
   ~Store();
@@ -64,12 +64,7 @@ public:
   double correlationCoefficient(int series) const;
   double squaredCorrelationCoefficient(int series) const;
 private:
-  constexpr static float k_displayTopMarginRatio = 0.12f;
-  constexpr static float k_displayRightMarginRatio = 0.05f;
-  constexpr static float k_displayBottomMarginRatio = 0.5f;
-  constexpr static float k_displayLeftMarginRatio = 0.05f;
-  InteractiveCurveViewRangeDelegate::Range computeYRange(InteractiveCurveViewRange * interactiveCurveViewRange) override;
-  float addMargin(float x, float range, bool isMin) override;
+  constexpr static float k_displayHorizontalMarginRatio = 0.05f;
   float maxValueOfColumn(int series, int i) const;
   float minValueOfColumn(int series, int i) const;
   uint32_t m_seriesChecksum[k_numberOfSeries];

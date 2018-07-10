@@ -1,10 +1,10 @@
 #ifndef EXPRESSION_NODE_H
 #define EXPRESSION_NODE_H
 
-#include "tree_node.h"
+#include <poincare/serializable_node.h>
 #include <stdint.h>
 
-class ExpressionNode : public TreeNode {
+class ExpressionNode : public SerializableNode {
 public:
    enum class Type : uint8_t {
     AllocationFailure = 0,

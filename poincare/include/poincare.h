@@ -72,6 +72,8 @@
 #include <poincare/rational.h>
 #include <poincare/real_part.h>
 #include <poincare/round.h>
+#include <poincare/serializable_node.h>
+#include <poincare/serializable_reference.h>
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
 #include <poincare/store.h>

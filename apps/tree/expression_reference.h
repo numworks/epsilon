@@ -1,15 +1,15 @@
-#ifndef EXPRESSION_REFERENCE_H
-#define EXPRESSION_REFERENCE_H
+#ifndef POINCARE_EXPRESSION_REFERENCE_H
+#define POINCARE_EXPRESSION_REFERENCE_H
 
-#include "tree_reference.h"
-#include "expression_node.h"
+#include <poincare/expression_node.h>
+#include <poincare/serializable_reference.h>
 
 #include <stdio.h>
 
 template <class T>
-class ExpressionReference : public TreeReference<T> {
+class ExpressionReference : public SerializableReference<T> {
 public:
-  using TreeReference<T>::TreeReference;
+  using SerializableReference<T>::SerializableReference;
 
   /* Allow every ExpressionReference<T> to be transformed into an
    * ExpressionReference<ExpressionNode>, i.e. ExpressionRef */

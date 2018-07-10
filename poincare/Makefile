@@ -2,6 +2,10 @@ SFLAGS += -Ipoincare/include
 
 #include poincare/src/simplify/Makefile
 #include poincare/src/simplification/Makefile
+objs += $(addprefix poincare/src/,\
+  tree_node.o\
+  tree_pool.o\
+)
 
 objs += $(addprefix poincare/src/,\
   char_layout_node.o\
@@ -92,8 +96,6 @@ objs += $(addprefix poincare/src/,\
   sum.o\
   symbol.o\
   tangent.o\
-  tree_node.o\
-  tree_pool.o\
   trigonometry.o\
   undefined.o\
   variable_context.o\

@@ -53,8 +53,8 @@ public:
       bool writeFirstChild = true);
 
   /* LayoutReference to Text */
-  static int writeInfixTreeRefTextInBuffer(
-      const TreeRef treeRef,
+  static int writeInfixSerializableRefTextInBuffer(
+      const SerializableRef serializableRef,
       char * buffer,
       int bufferSize,
       int numberOfDigits,
@@ -71,7 +71,7 @@ private:
   static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis);
   static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
 
-  static void writeChildTreeInBuffer(TreeRef childRef, TreeRef parentRef, char * buffer, int bufferSize, int numberOfDigits, int * numberOfChar);
+  static void writeChildTreeInBuffer(SerializableRef childRef, SerializableRef parentRef, char * buffer, int bufferSize, int numberOfDigits, int * numberOfChar);
 };
 
 }

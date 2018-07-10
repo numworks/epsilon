@@ -36,12 +36,6 @@ public:
 
   // Allocation failure
   static TreeNode * FailedAllocationStaticNode();
-  static int AllocationFailureNodeIdentifier() {
-    return FailedAllocationStaticNode()->identifier();
-  }
-  int allocationFailureNodeIdentifier() override {
-    return AllocationFailureNodeIdentifier();
-  }
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // Hierarchy

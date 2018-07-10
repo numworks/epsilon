@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_NODE_H
 #define POINCARE_LAYOUT_NODE_H
 
-#include <poincare/tree_node.h>
+#include <poincare/serializable_node.h>
 #include <kandinsky.h>
 #include <ion/charset.h>
 
@@ -9,7 +9,7 @@ namespace Poincare {
 
 class LayoutCursor;
 
-class LayoutNode : public TreeNode {
+class LayoutNode : public SerializableNode {
 public:
   enum class VerticalDirection {
     Up,
@@ -22,7 +22,7 @@ public:
 
   // Constructor
   LayoutNode() :
-    TreeNode(),
+    SerializableNode(),
     m_baseline(0),
     m_frame(KDRectZero),
     m_baselined(false),

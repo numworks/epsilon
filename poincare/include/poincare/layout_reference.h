@@ -1,18 +1,18 @@
 #ifndef POINCARE_LAYOUT_REFERENCE_H
 #define POINCARE_LAYOUT_REFERENCE_H
 
-#include "tree_reference.h"
-#include "layout_node.h"
+#include <poincare/layout_node.h>
+#include <poincare/serializable_reference.h>
 
 namespace Poincare {
 
 class LayoutCursor;
 
 template <typename T>
-class LayoutReference : public TreeReference<T> {
+class LayoutReference : public SerializableReference<T> {
   friend class LayoutCursor;
 public:
-  using TreeReference<T>::TreeReference;
+  using SerializableReference<T>::SerializableReference;
 
   // Operators
 

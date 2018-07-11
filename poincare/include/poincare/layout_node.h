@@ -15,10 +15,6 @@ public:
     Up,
     Down
   };
-  enum class HorizontalDirection {
-    Left,
-    Right
-  };
 
   // Constructor
   LayoutNode() :
@@ -62,7 +58,8 @@ public:
 
   // Tree modification
   // Collapse
-  virtual void collapseSiblings(LayoutCursor * cursor) {}
+  virtual bool shouldCollapseSiblingsOnLeft() { return false; }
+  virtual bool shouldCollapseSiblingsOnRight() { return false; }
   // User input
   virtual void deleteBeforeCursor(LayoutCursor * cursor);
 
@@ -108,9 +105,6 @@ public:
   virtual bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor) { return true; }
   virtual void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
 protected:
-  // Tree modification
-  void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
-
   // Tree navigation
   virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
 

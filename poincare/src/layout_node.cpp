@@ -120,12 +120,6 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   //WARNING: Do no use "this" afterwards
 }
 
-LayoutNode * LayoutNode::privateReplaceWith(LayoutNode * newChild) {
-  LayoutRef newRef(newChild);
-  LayoutRef(this).replaceWith(newRef);
-  return newRef.typedNode();
-}
-
 bool LayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) {
   assert(hasChild(oldChild));
   if (!newChild->hasAncestor(oldChild, false)) {

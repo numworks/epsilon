@@ -17,7 +17,6 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override { return LayoutCursor(); }
-  void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor) override { }
   void deleteBeforeCursor(LayoutCursor * cursor) override { }
 
   // TreeNode
@@ -36,7 +35,10 @@ protected:
   }
 
 private:
-  void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override {}
+  bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override { return false; }
+  bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) override { return false; }
+  bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor) override { return false; }
+
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 

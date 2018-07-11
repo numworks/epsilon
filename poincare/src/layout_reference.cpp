@@ -30,8 +30,24 @@ LayoutCursor LayoutRef::equivalentCursor(LayoutCursor * cursor) {
 }
 
 // Tree modification
+
 template<>
-LayoutReference<LayoutNode> LayoutRef::replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild) {
+void LayoutRef::replaceChild(LayoutRef oldChild, LayoutRef newChild, LayoutCursor * cursor) {
+  if (!typedNode()->willReplaceChild(oldChild.typedNode(), newChild.typedNode(), cursor)) {
+    return;
+  }
+  replaceTreeChild(oldChild, newChild);
+  if (cursor != nullptr) {
+    if (isAllocationFailure()) {
+      cursor->setLayoutReference(*this);
+    } else {
+      cursor->setLayoutReference(newChild);
+    }
+  }
+}
+
+template<>
+void LayoutRef::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef rightChild, LayoutCursor * cursor) {
   LayoutReference<LayoutNode> p = parent();
   assert(p.isDefined());
   assert(!p.isHorizontal());
@@ -42,10 +58,115 @@ LayoutReference<LayoutNode> LayoutRef::replaceWithJuxtapositionOf(LayoutReferenc
   horizontalLayoutR.addChildTreeAtIndex(leftChild, 0);
   horizontalLayoutR.addChildTreeAtIndex(rightChild, 1);
   p.addChildTreeAtIndex(horizontalLayoutR, index);
-  return horizontalLayoutR;
+
+  if (cursor != nullptr) {
+    if (horizontalLayoutR.isAllocationFailure()) {
+      cursor->setLayoutReference(*this);
+    } else {
+      cursor->setLayoutReference(horizontalLayoutR);
+      cursor->setPosition(LayoutCursor::Position::Right);
+    }
+  }
+}
+
+template <typename T>
+void LayoutReference<T>::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cursor) {
+  LayoutRef nextPointedLayout(nullptr);
+  LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
+  if (index < this->numberOfChildren()) {
+    nextPointedLayout = this->childAtIndex(index);
+    nextPosition = LayoutCursor::Position::Left;
+  } else {
+    nextPointedLayout = *this;
+    nextPosition = LayoutCursor::Position::Right;
+  }
+
+  this->addChildTreeAtIndex(l, index);
+
+  if (cursor != nullptr) {
+    if (this->isAllocationFailure()) {
+      cursor->setLayoutReference(*this);
+    } else {
+      cursor->setLayoutReference(nextPointedLayout);
+      cursor->setPosition(nextPosition);
+    }
+  }
+}
+
+template<>
+void LayoutRef::addSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling, bool moveCursor) {
+  if (!typedNode()->willAddSibling(cursor, sibling.typedNode(), moveCursor)) { //TODO
+    return;
+  }
+  /* The layout must have a parent, because HorizontalLayoutRef's
+   * preprocessAddSibling returns false only an HorizontalLayout can be the
+   * root layout. */
+  LayoutRef p = parent();
+  assert(p.isDefined());
+  if (p.isHorizontal()) {
+    int indexInParent = p.indexOfChild(*this);
+    int siblingIndex = cursor->position() == LayoutCursor::Position::Left ? indexInParent : indexInParent + 1;
+
+    /* Special case: If the neighbour sibling is a VerticalOffsetLayout, let it
+     * handle the insertion of the new sibling. Do not enter the special case if
+     * "this" is a VerticalOffsetLayout, to avoid an infinite loop. */
+    if (!isVerticalOffset()) {
+      LayoutRef neighbour(nullptr);
+      if (cursor->position() == LayoutCursor::Position::Left && indexInParent > 0) {
+        neighbour = p.childAtIndex(indexInParent - 1);
+      } else if (cursor->position() ==LayoutCursor::Position::Right && indexInParent < p.numberOfChildren() - 1) {
+        neighbour = p.childAtIndex(indexInParent + 1);
+      }
+      if (neighbour.isDefined() && neighbour.isVerticalOffset()) {
+        cursor->setLayoutReference(neighbour);
+        cursor->setPosition(cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left);
+        neighbour.addSibling(cursor, sibling, moveCursor);
+        return;
+      }
+    }
+
+    // Else, let the parent add the sibling.
+    HorizontalLayoutRef(p.typedNode()).addOrMergeChildAtIndex(sibling, siblingIndex, true, cursor);
+    return;
+  }
+  if (cursor->position() == LayoutCursor::Position::Left) {
+    replaceWithJuxtapositionOf(sibling, *this, cursor);
+  } else {
+    assert(cursor->position() == LayoutCursor::Position::Right);
+    replaceWithJuxtapositionOf(*this, sibling, cursor);
+  }
+}
+
+template <typename T>
+void LayoutReference<T>::removeChild(LayoutRef l, LayoutCursor * cursor, bool force) {
+  if (!this->typedNode()->willRemoveChild(l.typedNode(), cursor)) {
+    return;
+  }
+  assert(this->hasChild(l));
+  int index = this->indexOfChild(l);
+  this->removeTreeChild(l);
+  if (index < this->numberOfChildren()) {
+    cursor->setLayoutReference(this->childAtIndex(index));
+    cursor->setPosition(LayoutCursor::Position::Left);
+  } else {
+    int newPointedLayoutIndex = index - 1;
+    assert(newPointedLayoutIndex >= 0);
+    if (newPointedLayoutIndex < this->numberOfChildren()) {
+      cursor->setLayoutReference(this->childAtIndex(newPointedLayoutIndex));
+      cursor->setPosition(LayoutCursor::Position::Right);
+    } else {
+      cursor->setLayoutReference(*this);
+      cursor->setPosition(LayoutCursor::Position::Right);
+
+    }
+  }
+  this->typedNode()->didRemoveChildAtIndex(index, cursor, force);
 }
 
 template LayoutCursor LayoutReference<LayoutNode>::cursor() const;
 template LayoutCursor LayoutReference<CharLayoutNode>::cursor() const;
-
+template void LayoutReference<LayoutNode>::removeChild(LayoutRef l, LayoutCursor * cursor, bool force);
+template void LayoutReference<HorizontalLayoutNode>::removeChild(LayoutRef l, LayoutCursor * cursor, bool force);
+template void LayoutReference<LayoutNode>::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cursor);
+template void LayoutReference<HorizontalLayoutNode>::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cursor);
 }

@@ -21,18 +21,20 @@ public:
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override;
 
   // Tree modification
-  void addOrMergeChildAtIndex(LayoutNode * l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr); // TODO remove default nullptr value
-  void mergeChildrenAtIndex(HorizontalLayoutNode * horizontalLayout, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
   void deleteBeforeCursor(LayoutCursor * cursor) override;
-  void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor) override;
+
+  // SerializableNode
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
 
   // LayoutNode
   bool isHorizontal() const override { return true; }
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
-  void replaceChild(LayoutNode * oldChild, LayoutNode * newChild) override;
-  void replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) override;
+
+  bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
+  bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor) override;
+  void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
+  bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) override;
 
   // TreeNode
   size_t size() const override { return sizeof(HorizontalLayoutNode); }
@@ -56,25 +58,27 @@ protected:
   KDPoint positionOfChild(LayoutNode * l) override;
 
 private:
-  void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
-  void privateReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
-  void privateRemoveChildAtIndex(int index, bool forceRemove);
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
-  int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft);
   int m_numberOfChildren;
 };
 
 class HorizontalLayoutRef : public LayoutReference<HorizontalLayoutNode> {
 public:
   HorizontalLayoutRef() : LayoutReference<HorizontalLayoutNode>() {}
+  HorizontalLayoutRef(TreeNode * hNode) : LayoutReference<HorizontalLayoutNode>(hNode) {}
   HorizontalLayoutRef(LayoutRef l) : LayoutReference<HorizontalLayoutNode>() {
-    addChildTree(l);
+    addChildTreeAtIndex(l, 0);
   }
 
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : LayoutReference<HorizontalLayoutNode>() {
-    addChildTree(l2);
-    addChildTree(l1);
+    addChildTreeAtIndex(l1, 0);
+    addChildTreeAtIndex(l2, 1);
   }
+
+  void addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
+  void mergeChildrenAtIndex(HorizontalLayoutRef h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
+private:
+  int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft);
 };
 
 }

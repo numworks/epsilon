@@ -63,7 +63,7 @@ void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
 
 /* Layout modification */
 void LayoutCursor::addXNTCharLayout() {
-  m_layoutRef.addSiblingAndMoveCursor(this, CharLayoutRef(m_layoutRef.XNTChar()));
+  m_layoutRef.addSibling(this, CharLayoutRef(m_layoutRef.XNTChar()), true);
 }
 
 void LayoutCursor::insertText(const char * text) {
@@ -112,7 +112,7 @@ void LayoutCursor::insertText(const char * text) {
     else {
       newChild = CharLayoutRef(text[i]);
     }
-    m_layoutRef.addSiblingAndMoveCursor(this, newChild);
+    m_layoutRef.addSibling(this, newChild, true);
   }
   if (pointedChild.isDefined() && pointedChild.parent().isDefined()) {
     m_layoutRef = pointedChild;
@@ -121,7 +121,7 @@ void LayoutCursor::insertText(const char * text) {
 
 void LayoutCursor::addLayoutAndMoveCursor(LayoutRef l) {
   bool layoutWillBeMerged = l.isHorizontal();
-  m_layoutRef.addSiblingAndMoveCursor(this, l);
+  m_layoutRef.addSibling(this, l, true);
   if (!layoutWillBeMerged) {
     l.collapseSiblingsAndMoveCursor(this);
   }

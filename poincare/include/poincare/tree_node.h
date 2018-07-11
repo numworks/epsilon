@@ -145,12 +145,6 @@ public:
     return node;
   }
 
-  // Hierarchy operations
-  void addChildTreeAtIndex(TreeNode * t, int index);
-  void removeChild(TreeNode * t);
-  void removeChildAtIndex(int index) { return removeChild(childTreeAtIndex(index)); }
-  void replaceChildTree(TreeNode * t, TreeNode * newChild);
-  void replaceWithAllocationFailure();
 protected:
   TreeNode() :
     m_identifier(-1),

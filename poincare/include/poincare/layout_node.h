@@ -62,7 +62,7 @@ public:
 
   // Tree modification
   // Collapse
-  virtual void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {}
+  virtual void collapseSiblings(LayoutCursor * cursor) {}
   // User input
   virtual void deleteBeforeCursor(LayoutCursor * cursor);
 

@@ -110,10 +110,11 @@ public:
 protected:
   // Tree modification
   void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
-  virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
-  LayoutNode * privateReplaceWith(LayoutNode * newChild);
-  LayoutNode * privateReplaceWithAndMoveCursor(LayoutNode * newChild, LayoutCursor * cursor);
 
+  // Tree navigation
+  virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
+
+  // Tree
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
 
   // Sizing and positioning

@@ -91,11 +91,6 @@ public:
 
   // Allocation failure
   static TreeNode * FailedAllocationStaticNode();
-private:
-  void privateAddSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling, bool moveCursor);
-  bool preprocessAddSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling, bool moveCursor) {
-    return this->typedNode()->preprocessAddSibling(cursor, sibling.typedNode(), moveCursor);
-  }
 };
 
 typedef LayoutReference<LayoutNode> LayoutRef;

@@ -123,7 +123,7 @@ void LayoutCursor::addLayoutAndMoveCursor(LayoutRef l) {
   bool layoutWillBeMerged = l.isHorizontal();
   m_layoutRef.addSibling(this, l, true);
   if (!layoutWillBeMerged) {
-    l.collapseSiblingsAndMoveCursor(this);
+    l.collapseSiblings(this);
   }
 }
 

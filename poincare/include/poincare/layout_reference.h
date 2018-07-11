@@ -87,7 +87,7 @@ public:
     return removeChild(childAtIndex(index), cursor, force);
   }
   // Collapse
-  void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) { return this->typedNode()->collapseSiblingsAndMoveCursor(cursor); }
+  void collapseSiblings(LayoutCursor * cursor) { return this->typedNode()->collapseSiblings(cursor); }
 
   // Allocation failure
   static TreeNode * FailedAllocationStaticNode();

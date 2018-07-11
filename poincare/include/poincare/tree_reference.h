@@ -111,8 +111,6 @@ public:
 
   // Hierarchy operations
 
-  void addChildTree(TreeReference<TreeNode> t) { return addChildTreeAtIndex(t, 0); }
-
   void addChildTreeAtIndex(TreeReference<TreeNode> t, int index) {
     assert(isDefined());
     if (node()->isAllocationFailure()) {
@@ -130,7 +128,7 @@ public:
     // Detach t from its parent
     TreeReference<TreeNode> tParent = t.parent();
     if (tParent.isDefined()) {
-      tParent.removeChild(t);
+      tParent.removeTreeChild(t);
     }
 
     // Move t
@@ -141,8 +139,14 @@ public:
     TreePool::sharedPool()->move(t.node(), newChildPosition);
     node()->incrementNumberOfChildren();
   }
+  void removeTreeChildAtIndex(int i) {
+    assert(isDefined());
+    assert(i >= 0 && i < numberOfChildren());
+    TreeReference<TreeNode> t = treeChildAtIndex(i);
+    removeTreeChild(t);
+  }
 
-  void removeChild(TreeReference<TreeNode> t) {
+  void removeTreeChild(TreeReference<TreeNode> t) {
     assert(isDefined());
     TreePool::sharedPool()->move(t.node(), TreePool::sharedPool()->last());
     t.node()->release();
@@ -160,15 +164,15 @@ public:
     assert(isDefined());
     TreeReference<TreeNode> p = parent();
     if (p.isDefined()) {
-      p.replaceChildAtIndex(p.node()->indexOfChildByIdentifier(identifier()), t);
+      p.replaceTreeChildAtIndex(p.node()->indexOfChildByIdentifier(identifier()), t);
     }
   }
 
-  void replaceChild(TreeReference<TreeNode> oldChild, TreeReference<TreeNode> newChild) {
-    replaceChildAtIndex(indexOfChild(oldChild), newChild);
+  void replaceTreeChild(TreeReference<TreeNode> oldChild, TreeReference<TreeNode> newChild) {
+    replaceTreeChildAtIndex(indexOfChild(oldChild), newChild);
   }
 
-  void replaceChildAtIndex(int oldChildIndex, TreeReference<TreeNode> newChild) {
+  void replaceTreeChildAtIndex(int oldChildIndex, TreeReference<TreeNode> newChild) {
     assert(isDefined());
     if (newChild.isAllocationFailure()) {
       replaceWithAllocationFailure();
@@ -237,7 +241,7 @@ public:
     TreePool::sharedPool()->move(secondChild.node(), firstChildNode);
   }
 
-  void mergeChildrenAtIndex(TreeReference<T> t, int i) {
+  void mergeTreeChildrenAtIndex(TreeReference<T> t, int i) {
     assert(i >= 0 && i <= numberOfChildren());
     // Steal operands
     int numberOfNewChildren = t.numberOfChildren();
@@ -249,7 +253,7 @@ public:
     t.node()->eraseNumberOfChildren();
     // If t is a child, remove it
     if (node()->hasChild(t.node())) {
-      removeChild(t);
+      removeTreeChild(t);
     }
     node()->incrementNumberOfChildren(numberOfNewChildren);
   }

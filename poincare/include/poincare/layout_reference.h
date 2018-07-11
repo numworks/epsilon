@@ -40,8 +40,10 @@ public:
   void invalidAllSizesPositionsAndBaselines() { return this->typedNode()->invalidAllSizesPositionsAndBaselines(); }
 
   // Layout properties
+  bool mustHaveLeftSibling() const { return this->typedNode()->mustHaveLeftSibling(); }
   bool isEmpty() const { return this->typedNode()->isEmpty(); }
   bool isHorizontal() const { return this->typedNode()->isHorizontal(); }
+  bool isVerticalOffset() const { return this->typedNode()->isVerticalOffset(); }
   bool isLeftParenthesis() const { return this->typedNode()->isLeftParenthesis(); }
   bool hasText() { return this->typedNode()->hasText(); }
   char XNTChar() const { return this->typedNode()->XNTChar(); }
@@ -66,27 +68,34 @@ public:
   LayoutReference<LayoutNode> parent() { return LayoutReference<LayoutNode>(this->typedNode()->parent()); }
 
   // Tree modification
+  // Add
+  void addChildAtIndex(LayoutReference<LayoutNode> l, int index, LayoutCursor * cursor);
+  void addSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling, bool moveCursor);
   // Replace
-  void replaceChild(LayoutReference<LayoutNode> oldChild, LayoutReference<LayoutNode> newChild) { TreeReference<T>::replaceChild(oldChild, newChild); }
   void replaceChildAtIndex(int oldChildIndex, LayoutReference<LayoutNode> newChild) { TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild); }
-  void replaceChildAndMoveCursor(LayoutReference<LayoutNode> oldChild, LayoutReference<LayoutNode> newChild, LayoutCursor * cursor) { this->typedNode()->replaceChildAndMoveCursor(oldChild.typedNode(), newChild.typedNode(), cursor); }
+  void replaceChild(LayoutReference<LayoutNode> oldChild, LayoutReference<LayoutNode> newChild, LayoutCursor * cursor = nullptr);
   LayoutReference<LayoutNode> replaceWithAndMoveCursor(LayoutReference<LayoutNode> newChild, LayoutCursor * cursor) {
     LayoutReference<LayoutNode> p = parent();
     assert(p.isDefined());
-    p.replaceChildAndMoveCursor(*this, newChild, cursor);
+    p.replaceChild(*this, newChild, cursor);
     return newChild;
   }
-  LayoutReference<LayoutNode> replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild);
-  // Add
-  void addSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSibling(cursor, sibling.typedNode()); }
-  void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling) { return this->typedNode()->addSiblingAndMoveCursor(cursor, sibling.typedNode()); }
-  //Remove
-  void removeChildAndMoveCursor(LayoutReference<LayoutNode> l, LayoutCursor * cursor) { return this->typedNode()->removeChildAndMoveCursor(l.typedNode(), cursor); }
+  void replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild, LayoutCursor * cursor);
+  // Remove
+  void removeChild(LayoutReference<LayoutNode> l, LayoutCursor * cursor, bool force = false);
+  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
+    return removeChild(childAtIndex(index), cursor, force);
+  }
   // Collapse
-  void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {} //TODO
+  void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) { return this->typedNode()->collapseSiblingsAndMoveCursor(cursor); }
 
   // Allocation failure
   static TreeNode * FailedAllocationStaticNode();
+private:
+  void privateAddSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling, bool moveCursor);
+  bool preprocessAddSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling, bool moveCursor) {
+    return this->typedNode()->preprocessAddSibling(cursor, sibling.typedNode(), moveCursor);
+  }
 };
 
 typedef LayoutReference<LayoutNode> LayoutRef;

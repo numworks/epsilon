@@ -62,7 +62,7 @@ private:
   // LayoutNode
   void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
+  bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
 
   bool m_isVisible;
   Color m_color;

@@ -45,6 +45,7 @@ public:
 
   LayoutNode * next() const override { return static_cast<LayoutNode *>(TreeNode::next()); }
   LayoutNode * nextSibling() const override { return static_cast<LayoutNode *>(TreeNode::nextSibling()); }
+
   // Tree
   LayoutNode * parent() const { return static_cast<LayoutNode *>(parentTree()); }
   LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(childTreeAtIndex(i)); }
@@ -60,18 +61,6 @@ public:
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
   // Tree modification
-  // Add
-  void addChildAtIndex(LayoutNode * l, int index, LayoutCursor * cursor);
-  void addSibling(LayoutCursor * cursor, LayoutNode * sibling);
-  void addSiblingAndMoveCursor(LayoutCursor * cursor, LayoutNode * sibling);
-  // Replace
-  LayoutNode * replaceWith(LayoutNode * newChild);
-  LayoutNode * replaceWithAndMoveCursor(LayoutNode * newChild, LayoutCursor * cursor);
-  void replaceWithJuxtapositionOf(LayoutNode * leftChild, LayoutNode * rightChild, LayoutCursor * cursor = nullptr); //TODO remove default
-  virtual void replaceChild(LayoutNode * oldChild, LayoutNode * newChild);
-  virtual void replaceChildAndMoveCursor(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
-  // Remove
-  virtual void removeChildAndMoveCursor(LayoutNode * l, LayoutCursor * cursor);
   // Collapse
   virtual void collapseSiblingsAndMoveCursor(LayoutCursor * cursor) {}
   // User input
@@ -113,11 +102,17 @@ public:
     return p == nullptr ? Ion::Charset::Empty : p->XNTChar();
   }
 
+  // TODO: put private
+  virtual bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) { return true; }
+  virtual bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
+  virtual bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor) { return true; }
+  virtual void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
 protected:
   // Tree modification
-  virtual void privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor);
   void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
   virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);
+  LayoutNode * privateReplaceWith(LayoutNode * newChild);
+  LayoutNode * privateReplaceWithAndMoveCursor(LayoutNode * newChild, LayoutCursor * cursor);
 
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
 
@@ -135,7 +130,6 @@ protected:
   bool m_positioned;
   bool m_sized;
 private:
-  void privateReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
   void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
   void scoreCursorInDescendantsVertically (
     VerticalDirection direction,

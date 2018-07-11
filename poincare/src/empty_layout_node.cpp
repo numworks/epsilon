@@ -63,24 +63,17 @@ void EmptyLayoutNode::computeBaseline() {
   m_baselined = true;
 }
 
-void EmptyLayoutNode::privateAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
-  Color currentColor = m_color;
-  int currentIndexInParent = indexInParent();
+bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
   if (sibling->mustHaveLeftSibling()) {
     m_color = Color::Yellow;
-    LayoutNode::privateAddSibling(cursor, sibling, moveCursor);
-  } else {
-    if (moveCursor) {
-      replaceWithAndMoveCursor(sibling, cursor);
-    } else {
-      replaceWith(sibling);
-    }
   }
- /* if (currentColor == Color::Grey) {
-    // The parent is a MatrixLayout.
-    static_cast<MatrixLayoutNode *>(parent())->newRowOrColumnAtIndex(indexInParent);
+  return true;
+  /*   Color currentColor = m_color;
+  int currentIndexInParent = indexInParent();
+  if (currentColor == Color::Grey) {
+  // The parent is a MatrixLayout.
+  static_cast<MatrixLayoutNode *>(parent())->newRowOrColumnAtIndex(indexInParent);
   }*/
-  //TODO and maybe put first so that "replace" works
 }
 
 void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {

@@ -158,58 +158,6 @@ bool LayoutNode::canBeOmittedMultiplicationRightFactor() const {
 
 // Private
 
-void LayoutNode::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {
-  //TODO use the ref in this instead of "this"
-  LayoutNode * p = parent();
-  if (p == nullptr || !p->isHorizontal()) {
-    return;
-  }
-  int indexInParent = p->indexOfChild(this);
-  int numberOfSiblings = p->numberOfChildren();
-  int numberOfOpenParenthesis = 0;
-  bool canCollapse = true;
-  LayoutNode * absorbingChild = childAtIndex(absorbingChildIndex);
-  if (!absorbingChild || !absorbingChild->isHorizontal()) {
-    return;
-  }
-  HorizontalLayoutNode * horizontalAbsorbingChild = static_cast<HorizontalLayoutNode *>(absorbingChild);
-  if (direction == HorizontalDirection::Right && indexInParent < numberOfSiblings - 1) {
-    canCollapse = !(p->childAtIndex(indexInParent+1)->mustHaveLeftSibling());
-  }
-  LayoutNode * sibling = nullptr;
-  bool forceCollapse = false;
-  while (canCollapse) {
-    if (direction == HorizontalDirection::Right && indexInParent == numberOfSiblings - 1) {
-      break;
-    }
-    if (direction == HorizontalDirection::Left && indexInParent == 0) {
-      break;
-    }
-    int siblingIndex = direction == HorizontalDirection::Right ? indexInParent+1 : indexInParent-1;
-    sibling = p->childAtIndex(siblingIndex);
-    /* Even if forceCollapse is true, isCollapsable should be called to update
-     * the number of open parentheses. */
-    bool shouldCollapse = sibling->isCollapsable(&numberOfOpenParenthesis, direction == HorizontalDirection::Left);
-    if (shouldCollapse || forceCollapse) {
-      /* If the collapse direction is Left and the next sibling to be collapsed
-       * must have a left sibling, force the collapsing of this needed left
-       * sibling. */
-      forceCollapse = direction == HorizontalDirection::Left && sibling->mustHaveLeftSibling();
-      /*p->removeChildAtIndex(siblingIndex);
-      int newIndex = direction == HorizontalDirection::Right ? absorbingChild->numberOfChildren() : 0;
-      //TODO TODO TODO horizontalAbsorbingChild->privateAddOrMergeChildAtIndex(sibling, newIndex, true); //TODO remove the private call*/
-      numberOfSiblings--;
-      if (direction == HorizontalDirection::Left) {
-        indexInParent--;
-      }
-    } else {
-      break;
-    }
-  }
-}
-
-// Private
-
 void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   if (!equivalentPositionVisited) {
     LayoutCursor cursorEquivalent = equivalentCursor(cursor);

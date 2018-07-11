@@ -163,6 +163,56 @@ void LayoutReference<T>::removeChild(LayoutRef l, LayoutCursor * cursor, bool fo
   this->typedNode()->didRemoveChildAtIndex(index, cursor, force);
 }
 
+template <>
+void LayoutRef::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {
+  LayoutRef p = parent();
+  if (!p.isDefined() || !p.isHorizontal()) {
+    return;
+  }
+  int idxInParent = p.indexOfChild(*this);
+  int numberOfSiblings = p.numberOfChildren();
+  int numberOfOpenParenthesis = 0;
+  bool canCollapse = true;
+  LayoutRef absorbingChild = childAtIndex(absorbingChildIndex);
+  if (!absorbingChild.isDefined() || !absorbingChild.isHorizontal()) {
+    return;
+  }
+  HorizontalLayoutRef horizontalAbsorbingChild = HorizontalLayoutRef(absorbingChild.node());
+  if (direction == HorizontalDirection::Right && idxInParent < numberOfSiblings - 1) {
+    canCollapse = !(p.childAtIndex(idxInParent+1).mustHaveLeftSibling());
+  }
+  LayoutRef sibling(nullptr);
+  bool forceCollapse = false;
+  while (canCollapse) {
+    if (direction == HorizontalDirection::Right && idxInParent == numberOfSiblings - 1) {
+      break;
+    }
+    if (direction == HorizontalDirection::Left && idxInParent == 0) {
+      break;
+    }
+    int siblingIndex = direction == HorizontalDirection::Right ? idxInParent+1 : idxInParent-1;
+    sibling = p.childAtIndex(siblingIndex);
+    /* Even if forceCollapse is true, isCollapsable should be called to update
+     * the number of open parentheses. */
+    bool shouldCollapse = sibling.isCollapsable(&numberOfOpenParenthesis, direction == HorizontalDirection::Left);
+    if (shouldCollapse || forceCollapse) {
+      /* If the collapse direction is Left and the next sibling to be collapsed
+       * must have a left sibling, force the collapsing of this needed left
+       * sibling. */
+      forceCollapse = direction == HorizontalDirection::Left && sibling.mustHaveLeftSibling();
+      p.removeChildAtIndex(siblingIndex, nullptr);
+      int newIndex = direction == HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
+      horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex, true);
+      numberOfSiblings--;
+      if (direction == HorizontalDirection::Left) {
+        idxInParent--;
+      }
+    } else {
+      break;
+    }
+  }
+}
+
 template LayoutCursor LayoutReference<LayoutNode>::cursor() const;
 template LayoutCursor LayoutReference<CharLayoutNode>::cursor() const;
 template void LayoutReference<LayoutNode>::removeChild(LayoutRef l, LayoutCursor * cursor, bool force);

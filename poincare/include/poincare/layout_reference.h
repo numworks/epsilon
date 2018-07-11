@@ -45,6 +45,7 @@ public:
   bool isHorizontal() const { return this->typedNode()->isHorizontal(); }
   bool isVerticalOffset() const { return this->typedNode()->isVerticalOffset(); }
   bool isLeftParenthesis() const { return this->typedNode()->isLeftParenthesis(); }
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return this->typedNode()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
   bool hasText() { return this->typedNode()->hasText(); }
   char XNTChar() const { return this->typedNode()->XNTChar(); }
 
@@ -87,10 +88,25 @@ public:
     return removeChild(childAtIndex(index), cursor, force);
   }
   // Collapse
-  void collapseSiblings(LayoutCursor * cursor) { return this->typedNode()->collapseSiblings(cursor); }
+  void collapseSiblings(LayoutCursor * cursor) {
+    int absorbingChildIndex = 0; //TODO
+    if (this->typedNode()->shouldCollapseSiblingsOnRight()) {
+      collapseOnDirection(HorizontalDirection::Right, absorbingChildIndex);
+    }
+    if (this->typedNode()->shouldCollapseSiblingsOnLeft()) {
+      collapseOnDirection(HorizontalDirection::Left, absorbingChildIndex);
+    }
+  }
 
   // Allocation failure
   static TreeNode * FailedAllocationStaticNode();
+private:
+  // Tree modification
+  enum class HorizontalDirection {
+    Left,
+    Right
+  };
+  void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
 };
 
 typedef LayoutReference<LayoutNode> LayoutRef;

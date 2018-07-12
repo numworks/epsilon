@@ -26,7 +26,7 @@ LayoutRef LayoutEngine::createInfixLayout(const Expression * expression, PrintFl
         expression->operand(i)->createLayout(floatDisplayMode, complexFormat),
         result.numberOfChildren());
   }
-    /*
+    /* TODO
   result->addOrMergeChildAtIndex(expression->operand(0)->createLayout(), 0, true);
   for (int i = 1; i < numberOfOperands; i++) {
     result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result->numberOfChildren(), true);
@@ -59,7 +59,7 @@ LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, PrintF
   // Add the parenthesed arguments.
   result.addChildTreeAtIndex(createParenthesedLayout(args, false), result.numberOfChildren());
   /*// Add the operator name.
-  result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, true);
+   * TODO  result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, true);
 
   // Create the layout of arguments separated by commas.
   ExpressionLayout * args = nullptr;
@@ -84,7 +84,7 @@ LayoutRef LayoutEngine::createParenthesedLayout(LayoutRef layoutRef, bool cloneL
   if (layoutRef.isDefined()) {
     result.addChildTreeAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1);
   }
-  result.addChildTreeAtIndex(CharLayoutRef(')'), result.numberOfChildren());
+  result.addChildTreeAtIndex(CharLayoutRef(')'), result.numberOfChildren()); //TODO
   return result;
 }
 
@@ -98,7 +98,7 @@ LayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, 
 }
 
 ExpressionLayout * LayoutEngine::createLogLayout(ExpressionLayout * argument, ExpressionLayout * index) {
-  return nullptr;
+  return nullptr; //TODO
   /*HorizontalLayout * resultLayout = static_cast<HorizontalLayout *>(createStringLayout("log", 3));
   VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(index, VerticalOffsetLayout::Type::Subscript, false);
   resultLayout->addChildAtIndex(offsetLayout, resultLayout->numberOfChildren());
@@ -212,7 +212,7 @@ int LayoutEngine::writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expr
   return numberOfChar;
 }
 
-/* LayoutReference to Text */
+/* SerializableReference to Text */
 int LayoutEngine::writeInfixSerializableRefTextInBuffer(
     const SerializableRef serializableRef,
     char * buffer,
@@ -222,8 +222,9 @@ int LayoutEngine::writeInfixSerializableRefTextInBuffer(
     int firstChildIndex,
     int lastChildIndex)
 {
-  // If buffer has size 0 or 1, put a zero if it fits and return
   assert(serializableRef.isDefined());
+
+  // If buffer has size 0 or 1, put a zero if it fits and return
   if (bufferSize == 0) {
     return -1;
   }
@@ -259,6 +260,69 @@ int LayoutEngine::writeInfixSerializableRefTextInBuffer(
   }
 
   // Null-terminate the buffer
+  buffer[numberOfChar] = 0;
+  return numberOfChar;
+}
+
+int LayoutEngine::writePrefixSerializableRefTextInBuffer(
+    const SerializableRef serializableRef,
+    char * buffer,
+    int bufferSize,
+    int numberOfDigits,
+    const char * operatorName,
+    bool writeFirstChild)
+{
+  assert(serializableRef.isDefined());
+
+  // If buffer has size 0 or 1, put a zero if it fits and return
+  if (bufferSize == 0) {
+    return -1;
+  }
+  buffer[bufferSize-1] = 0;
+    if (bufferSize == 1) {
+    return 0;
+  }
+
+  // Copy the operator name
+  int numberOfChar = strlcpy(buffer, operatorName, bufferSize);
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+
+  // Add the opening parenthese
+  buffer[numberOfChar++] = '(';
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+
+  int childrenCount = serializableRef.numberOfChildren();
+  if (childrenCount > 0) {
+    if (!writeFirstChild) {
+      assert(childrenCount > 1);
+    }
+    int firstChildIndex = writeFirstChild ? 0 : 1;
+
+    // Write the first child
+    numberOfChar += const_cast<SerializableRef *>(&serializableRef)->serializableChildAtIndex(firstChildIndex).writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfDigits);
+    if (numberOfChar >= bufferSize-1) {
+      return bufferSize-1;
+    }
+
+    // Write the remaining children, separated with commas
+    for (int i = firstChildIndex + 1; i < childrenCount; i++) {
+      buffer[numberOfChar++] = ',';
+      if (numberOfChar >= bufferSize-1) {
+        return bufferSize-1;
+      }
+      numberOfChar += const_cast<SerializableRef *>(&serializableRef)->serializableChildAtIndex(i).writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+      if (numberOfChar >= bufferSize-1) {
+        return bufferSize-1;
+      }
+    }
+  }
+
+  // Add the closing parenthese
+  buffer[numberOfChar++] = ')';
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

@@ -49,17 +49,17 @@ void TreePool::logNodeForIdentifierArray() {
 #endif
 }
 
-void TreePool::move(TreeNode * source, TreeNode * destination) {
+void TreePool::move(TreeNode * destination, TreeNode * source) {
   size_t moveSize = source->deepSize();
-  moveNodes(source, destination, moveSize);
+  moveNodes(destination, source, moveSize);
 }
 
-void TreePool::moveChildren(TreeNode * sourceParent, TreeNode * destination) {
+void TreePool::moveChildren(TreeNode * destination, TreeNode * sourceParent) {
   size_t moveSize = sourceParent->deepSize() - sourceParent->size();
-  moveNodes(sourceParent->next(), destination, moveSize);
+  moveNodes(destination, sourceParent->next(), moveSize);
 }
 
-void TreePool::moveNodes(TreeNode * source, TreeNode * destination, size_t moveSize) {
+void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveSize) {
   if (source == destination || moveSize == 0) {
     return;
   }

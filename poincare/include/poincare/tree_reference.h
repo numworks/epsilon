@@ -184,7 +184,7 @@ public:
     }
     assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
     TreeReference<T> oldChild = treeChildAtIndex(oldChildIndex);
-    TreePool::sharedPool()->move(oldChild.node()->next(), newChild.node());
+    TreePool::sharedPool()->move(oldChild.node()->nextSibling(), newChild.node());
     if (!p.isDefined()) {
       newChild.node()->retain();
     }
@@ -238,8 +238,8 @@ public:
     int secondChildIndex = i > j ? i : j;
     TreeReference<T> firstChild = treeChildAtIndex(firstChildIndex);
     TreeReference<T> secondChild = treeChildAtIndex(secondChildIndex);
-    TreePool::sharedPool()->move(firstChild.node()->next(), secondChild.node());
-    TreePool::sharedPool()->move(treeChildAtIndex(secondChildIndex).next(), firstChild.node());
+    TreePool::sharedPool()->move(firstChild.node()->nextSibling(), secondChild.node());
+    TreePool::sharedPool()->move(treeChildAtIndex(secondChildIndex).nextSibling(), firstChild.node());
   }
 
   void mergeTreeChildrenAtIndex(TreeReference<T> t, int i) {

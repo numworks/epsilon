@@ -122,15 +122,17 @@ void LayoutRef::addSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> si
         neighbour = p.childAtIndex(indexInParent + 1);
       }
       if (neighbour.isDefined() && neighbour.isVerticalOffset()) {
-        cursor->setLayoutReference(neighbour);
-        cursor->setPosition(cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left);
+        if (moveCursor) {
+          cursor->setLayoutReference(neighbour);
+          cursor->setPosition(cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left);
+        }
         neighbour.addSibling(cursor, sibling, moveCursor);
         return;
       }
     }
 
     // Else, let the parent add the sibling.
-    HorizontalLayoutRef(p.typedNode()).addOrMergeChildAtIndex(sibling, siblingIndex, true, cursor);
+    HorizontalLayoutRef(p.typedNode()).addOrMergeChildAtIndex(sibling, siblingIndex, true, moveCursor ? cursor : nullptr);
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Left) {
@@ -149,18 +151,21 @@ void LayoutReference<T>::removeChild(LayoutRef l, LayoutCursor * cursor, bool fo
   assert(this->hasChild(l));
   int index = this->indexOfChild(l);
   this->removeTreeChild(l);
-  if (index < this->numberOfChildren()) {
-    cursor->setLayoutReference(this->childAtIndex(index));
-    cursor->setPosition(LayoutCursor::Position::Left);
-  } else {
-    int newPointedLayoutIndex = index - 1;
-    if (newPointedLayoutIndex >= 0 && newPointedLayoutIndex < this->numberOfChildren()) {
-      cursor->setLayoutReference(this->childAtIndex(newPointedLayoutIndex));
-      cursor->setPosition(LayoutCursor::Position::Right);
+  if (cursor) {
+    if (index < this->numberOfChildren()) {
+      LayoutRef newCursorRef = this->childAtIndex(index);
+      cursor->setLayoutReference(newCursorRef);
+      cursor->setPosition(LayoutCursor::Position::Left);
     } else {
-      cursor->setLayoutReference(*this);
-      cursor->setPosition(LayoutCursor::Position::Right);
+      int newPointedLayoutIndex = index - 1;
+      if (newPointedLayoutIndex >= 0 && newPointedLayoutIndex < this->numberOfChildren()) {
+        cursor->setLayoutReference(this->childAtIndex(newPointedLayoutIndex));
+        cursor->setPosition(LayoutCursor::Position::Right);
+      } else {
+        cursor->setLayoutReference(*this);
+        cursor->setPosition(LayoutCursor::Position::Right);
 
+      }
     }
   }
   this->typedNode()->didRemoveChildAtIndex(index, cursor, force);

@@ -75,11 +75,10 @@ public:
   // Replace
   void replaceChildAtIndex(int oldChildIndex, LayoutReference<LayoutNode> newChild) { TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild); }
   void replaceChild(LayoutReference<LayoutNode> oldChild, LayoutReference<LayoutNode> newChild, LayoutCursor * cursor = nullptr);
-  LayoutReference<LayoutNode> replaceWithAndMoveCursor(LayoutReference<LayoutNode> newChild, LayoutCursor * cursor) {
+  void replaceWithAndMoveCursor(LayoutReference<LayoutNode> newChild, LayoutCursor * cursor) {
     LayoutReference<LayoutNode> p = parent();
     assert(p.isDefined());
     p.replaceChild(*this, newChild, cursor);
-    return newChild;
   }
   void replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild, LayoutCursor * cursor);
   // Remove

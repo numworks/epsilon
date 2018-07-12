@@ -1,6 +1,7 @@
 #include <poincare/layout_reference.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/allocation_failed_layout_node.h>
+#include <poincare/empty_layout_node.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/char_layout_node.h>
@@ -44,6 +45,11 @@ void LayoutRef::replaceChild(LayoutRef oldChild, LayoutRef newChild, LayoutCurso
       cursor->setLayoutReference(newChild);
     }
   }
+}
+
+template<>
+void LayoutRef::replaceChildWithEmpty(LayoutRef oldChild, LayoutCursor * cursor) {
+  replaceChild(oldChild, EmptyLayoutRef(), cursor);
 }
 
 template<>

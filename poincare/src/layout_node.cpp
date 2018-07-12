@@ -128,6 +128,11 @@ bool LayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, 
   return true;
 }
 
+bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor) {
+  LayoutRef(this).replaceChildWithEmpty(l, cursor);
+  return false;
+}
+
 // Other
 bool LayoutNode::hasText() const {
   /* A layout has text if it is not empty or an allocation failure and it is

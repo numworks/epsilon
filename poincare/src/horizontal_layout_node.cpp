@@ -217,7 +217,9 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
 // Private
 
 bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, LayoutCursor * cursor) {
-  *index = HorizontalLayoutRef(this).removeEmptyChildBeforeInsertionAtIndex(*index, !childAtIndex(0)->mustHaveLeftSibling());
+  if (m_numberOfChildren > 0) {
+    *index = HorizontalLayoutRef(this).removeEmptyChildBeforeInsertionAtIndex(*index, !childAtIndex(0)->mustHaveLeftSibling());
+  }
   return true;
 }
 
@@ -441,7 +443,7 @@ int HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int index, bool 
   if (shouldRemoveOnLeft && newIndex - 1 >= 0 && newIndex - 1 <= currentNumberOfChildren -1) {
     LayoutRef c = childAtIndex(newIndex - 1);
     if (c.isEmpty()) {
-      removeChild(c, nullptr);
+      removeChild(c, nullptr, true);
       newIndex = index - 1;
     }
   }

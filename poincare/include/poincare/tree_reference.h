@@ -185,7 +185,9 @@ public:
     assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
     TreeReference<T> oldChild = treeChildAtIndex(oldChildIndex);
     TreePool::sharedPool()->move(oldChild.node()->next(), newChild.node());
-    newChild.node()->retain();
+    if (!p.isDefined()) {
+      newChild.node()->retain();
+    }
     TreePool::sharedPool()->move(TreePool::sharedPool()->last(), oldChild.node());
     oldChild.node()->release();
   }

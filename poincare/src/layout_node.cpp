@@ -94,7 +94,7 @@ LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
 // Tree modification
 
 void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  int indexOfPointedLayout = indexOfChild(cursor->layoutReference().typedNode());
+  int indexOfPointedLayout = indexOfChild(cursor->layoutNode());
   if (indexOfPointedLayout >= 0) {
     // Case: The pointed layout is a child. Move Left.
     assert(cursor->position() == LayoutCursor::Position::Left);
@@ -102,7 +102,7 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     cursor->moveLeft(&shouldRecomputeLayout);
     return;
   }
-  assert(cursor->layoutReference().node() == this);
+  assert(cursor->layoutNode() == this);
   LayoutNode * p = parent();
   // Case: this is the pointed layout.
   if (p == nullptr) {

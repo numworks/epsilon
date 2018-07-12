@@ -46,19 +46,19 @@ KDPoint LayoutCursor::middleLeftPoint() {
 /* Move */
 
 void LayoutCursor::moveLeft(bool * shouldRecomputeLayout) {
-  layoutReference().typedNode()->moveCursorLeft(this, shouldRecomputeLayout);
+  layoutNode()->moveCursorLeft(this, shouldRecomputeLayout);
 }
 
 void LayoutCursor::moveRight(bool * shouldRecomputeLayout) {
-  layoutReference().typedNode()->moveCursorRight(this, shouldRecomputeLayout);
+  layoutNode()->moveCursorRight(this, shouldRecomputeLayout);
 }
 
 void LayoutCursor::moveAbove(bool * shouldRecomputeLayout) {
-  layoutReference().typedNode()->moveCursorUp(this, shouldRecomputeLayout);
+  layoutNode()->moveCursorUp(this, shouldRecomputeLayout);
 }
 
 void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
-  layoutReference().typedNode()->moveCursorDown(this, shouldRecomputeLayout);
+  layoutNode()->moveCursorDown(this, shouldRecomputeLayout);
 }
 
 /* Layout modification */

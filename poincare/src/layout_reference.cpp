@@ -53,20 +53,11 @@ void LayoutRef::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef rightC
   assert(!p.isHorizontal());
   /* One of the children to juxtapose might be "this", so we cannot just call
    * replaceWith. */
-  LayoutReference<LayoutNode> horizontalLayoutR = HorizontalLayoutRef();
-  int index = indexInParent();
-  horizontalLayoutR.addChildTreeAtIndex(leftChild, 0);
-  horizontalLayoutR.addChildTreeAtIndex(rightChild, 1);
-  p.addChildTreeAtIndex(horizontalLayoutR, index);
-
-  if (cursor != nullptr) {
-    if (horizontalLayoutR.isAllocationFailure()) {
-      cursor->setLayoutReference(*this);
-    } else {
-      cursor->setLayoutReference(horizontalLayoutR);
-      cursor->setPosition(LayoutCursor::Position::Right);
-    }
-  }
+  HorizontalLayoutRef horizontalLayoutR;
+  p.replaceChild(*this, horizontalLayoutR, cursor);
+  horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
+  horizontalLayoutR.addOrMergeChildAtIndex(rightChild, 1, false);
+  TreePool::sharedPool()->log();
 }
 
 template <typename T>

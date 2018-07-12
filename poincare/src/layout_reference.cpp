@@ -71,17 +71,21 @@ void LayoutRef::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef rightC
 
 template <typename T>
 void LayoutReference<T>::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cursor) {
+  int newIndex = index;
+  if (!this->typedNode()->willAddChildAtIndex(l.typedNode(), &newIndex, cursor)) {
+    return;
+  }
   LayoutRef nextPointedLayout(nullptr);
   LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
-  if (index < this->numberOfChildren()) {
-    nextPointedLayout = this->childAtIndex(index);
+  if (newIndex < this->numberOfChildren()) {
+    nextPointedLayout = this->childAtIndex(newIndex);
     nextPosition = LayoutCursor::Position::Left;
   } else {
     nextPointedLayout = *this;
     nextPosition = LayoutCursor::Position::Right;
   }
 
-  this->addChildTreeAtIndex(l, index);
+  this->addChildTreeAtIndex(l, newIndex);
 
   if (cursor != nullptr) {
     if (this->isAllocationFailure()) {

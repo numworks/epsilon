@@ -42,14 +42,6 @@ int EmptyLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int number
   return 0;
 }
 
-void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  if (m_isVisible) {
-    KDColor fillColor = m_color == Color::Yellow ? Palette::YellowDark : Palette::GreyBright;
-    ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
-    ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
-  }
-}
-
 void EmptyLayoutNode::computeSize() {
   assert(!m_sized);
   KDCoordinate sizeWidth = m_isVisible ? width() + 2*(m_margins ? k_marginWidth : 0) : 0;
@@ -61,19 +53,6 @@ void EmptyLayoutNode::computeBaseline() {
   assert(!m_baselined);
   m_baseline = (m_margins ? k_marginHeight : 0) + height()/2;
   m_baselined = true;
-}
-
-bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
-  if (sibling->mustHaveLeftSibling()) {
-    m_color = Color::Yellow;
-  }
-  return true;
-  /*   Color currentColor = m_color;
-  int currentIndexInParent = indexInParent();
-  if (currentColor == Color::Grey) {
-  // The parent is a MatrixLayout.
-  static_cast<MatrixLayoutNode *>(parent())->newRowOrColumnAtIndex(indexInParent);
-  }*/
 }
 
 void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
@@ -89,6 +68,27 @@ void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCu
   LayoutCursor::Position newPosition = cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
   cursor->setPosition(newPosition);
   LayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, false);
+}
+
+bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
+  if (sibling->mustHaveLeftSibling()) {
+    m_color = Color::Yellow;
+  }
+  return true;
+  /*   Color currentColor = m_color;
+  int currentIndexInParent = indexInParent();
+  if (currentColor == Color::Grey) {
+  // The parent is a MatrixLayout.
+  static_cast<MatrixLayoutNode *>(parent())->newRowOrColumnAtIndex(indexInParent);
+  }*/
+}
+
+void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  if (m_isVisible) {
+    KDColor fillColor = m_color == Color::Yellow ? Palette::YellowDark : Palette::GreyBright;
+    ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
+    ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(), height()), fillColor);
+  }
 }
 
 }

@@ -31,11 +31,11 @@ public:
   void setFontSize(KDText::FontSize fontSize) { m_fontSize = fontSize; }
 
   // LayoutNode
-  bool isEmpty() const override { return true; }
   void deleteBeforeCursor(LayoutCursor * cursor) override;
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
+  bool isEmpty() const override { return true; }
 
   // TreeNode
   size_t size() const override { return sizeof(EmptyLayoutNode); }
@@ -61,8 +61,8 @@ private:
 
   // LayoutNode
   void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
-  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 
   bool m_isVisible;
   Color m_color;
@@ -72,6 +72,7 @@ private:
 
 class EmptyLayoutRef : public LayoutReference<EmptyLayoutNode> {
 public:
+  EmptyLayoutRef(TreeNode * eNode) : LayoutReference<EmptyLayoutNode>(eNode) {}
   EmptyLayoutRef(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true) :
     LayoutReference<EmptyLayoutNode>()
   {

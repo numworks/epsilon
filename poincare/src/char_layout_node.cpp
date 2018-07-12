@@ -5,10 +5,6 @@
 namespace Poincare {
 
 // LayoutNode
-int CharLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
-  return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, m_char);
-}
-
 void CharLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Right) {
     cursor->setPosition(LayoutCursor::Position::Left);
@@ -29,6 +25,10 @@ void CharLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
   if (parentNode != nullptr) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
+}
+
+int CharLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
+  return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, m_char);
 }
 
 bool CharLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {

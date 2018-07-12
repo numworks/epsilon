@@ -45,6 +45,7 @@ private:
 class AllocationFailedLayoutRef : public LayoutReference<AllocationFailedLayoutNode> {
 public:
   AllocationFailedLayoutRef() : LayoutReference<AllocationFailedLayoutNode>() {}
+  AllocationFailedLayoutRef(TreeNode * aNode) : LayoutReference<AllocationFailedLayoutNode>(aNode) {}
 };
 
 }

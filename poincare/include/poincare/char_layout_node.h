@@ -9,18 +9,20 @@ namespace Poincare {
 
 class CharLayoutNode : public LayoutNode {
 public:
-  CharLayoutNode() :
+  CharLayoutNode(char c = 'a', KDText::FontSize fontSize = KDText::FontSize::Large) :
     LayoutNode(),
-    m_char('a'),
-    m_fontSize(KDText::FontSize::Large)
+    m_char(c),
+    m_fontSize(fontSize)
   {}
+
+  // CharLayout
   void setChar(char c) { m_char = c; }
   void setFontSize(KDText::FontSize fontSize) { m_fontSize = fontSize; }
 
   // LayoutNode
-  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 
   // TreeNode
@@ -59,6 +61,8 @@ public:
       this->typedNode()->setFontSize(fontSize);
     }
   }
+
+  CharLayoutRef(TreeNode * t) : LayoutReference<CharLayoutNode>(t) {}
 };
 
 }

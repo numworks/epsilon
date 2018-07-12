@@ -9,7 +9,7 @@ static inline KDCoordinate maxCoordinate(KDCoordinate c1, KDCoordinate c2) { ret
 // LayoutNode
 
 void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (this == cursor->layoutReference().node()) {
+  if (this == cursor->layoutNode()) {
     if (cursor->position() == LayoutCursor::Position::Left) {
       // Case: Left. Ask the parent.
       LayoutNode * parentNode = parent();
@@ -49,7 +49,7 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
 }
 
 void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (this == cursor->layoutReference().node()) {
+  if (this == cursor->layoutNode()) {
     if (cursor->position() == LayoutCursor::Position::Right) {
       // Case: Right. Ask the parent.
       LayoutNode * parentNode = parent();
@@ -80,7 +80,7 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
 
   // Case: The cursor is Right of a child.
   assert(cursor->position() == LayoutCursor::Position::Right);
-  int childIndex = indexOfChild(cursor->layoutReference().node());
+  int childIndex = indexOfChild(cursor->layoutNode());
   assert(childIndex >= 0);
   if (childIndex == numberOfChildren() - 1) {
     // Case: the child is the rightmost. Ask the parent.
@@ -99,7 +99,7 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
 }
 
 LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {
-  if (cursor->layoutReference().node() == this) {
+  if (cursor->layoutNode() == this) {
     // First or last child, if any
     int childrenCount = numberOfChildren();
     if (childrenCount == 0) {
@@ -129,7 +129,7 @@ LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {
 void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode * p = parent();
   if (p == nullptr
-      && cursor->layoutReference().node() == this
+      && cursor->layoutNode() == this
       && (cursor->position() == LayoutCursor::Position::Left
         || numberOfChildren() == 0))
   {
@@ -138,7 +138,7 @@ void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Left) {
-    int indexOfPointedLayout = indexOfChild(cursor->layoutReference().typedNode());
+    int indexOfPointedLayout = indexOfChild(cursor->layoutNode());
     if (indexOfPointedLayout >= 0) {
       /* Case: Left of a child.
        * Point Right of the previous child. If there is no previous child, point
@@ -154,7 +154,7 @@ void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
       return;
     }
   }
-  assert(cursor->layoutReference().node() == this);
+  assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Point to the last child and perform backspace.
     cursor->setLayoutNode(childAtIndex(numberOfChildren() - 1));

@@ -52,7 +52,7 @@ public:
       const char * operatorName,
       bool writeFirstChild = true);
 
-  /* LayoutReference to Text */
+  /* SerializableReference to Text */
   static int writeInfixSerializableRefTextInBuffer(
       const SerializableRef serializableRef,
       char * buffer,
@@ -61,6 +61,14 @@ public:
       const char * operatorName,
       int firstChildIndex = 0,
       int lastChildIndex = -1);
+
+  static int writePrefixSerializableRefTextInBuffer(
+      const SerializableRef serializableRef,
+      char * buffer,
+      int bufferSize,
+      int numberOfDigits,
+      const char * operatorName,
+      bool writeFirstChild = true); //TODO
 
   /* Write one char in buffer */
   static int writeOneCharInBuffer(char * buffer, int bufferSize, char charToWrite);

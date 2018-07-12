@@ -2,7 +2,9 @@
 #include <ion/charset.h>
 #include <poincare/layout_reference.h>
 #include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
 #include <poincare/empty_layout_node.h>
+#include <poincare/vertical_offset_layout_node.h>
 #include <stdio.h>
 
 namespace Poincare {
@@ -62,6 +64,25 @@ void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
 }
 
 /* Layout modification */
+
+void LayoutCursor::addEmptySquarePowerLayout() {
+  CharLayoutRef indiceLayout = CharLayoutRef('2');
+  VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(indiceLayout, VerticalOffsetLayoutNode::Type::Superscript);
+  // If there is already a base
+  if (baseForNewPowerLayout()) {
+    m_layoutRef.addSibling(this, offsetLayout, false);
+    m_layoutRef = offsetLayout;
+    m_position = LayoutCursor::Position::Right;
+    return;
+  }
+  // Else, add an empty base
+  EmptyLayoutRef child1 = EmptyLayoutRef();
+  HorizontalLayoutRef newChild = HorizontalLayoutRef(child1, offsetLayout);
+  m_layoutRef.addSibling(this, newChild, false);
+  m_layoutRef = child1;
+  m_position = LayoutCursor::Position::Right;
+}
+
 void LayoutCursor::addXNTCharLayout() {
   m_layoutRef.addSibling(this, CharLayoutRef(m_layoutRef.XNTChar()), true);
 }

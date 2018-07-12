@@ -110,7 +110,7 @@ public:
   void addEmptyMatrixLayout() {} //TODO
   void addEmptyPowerLayout() {} //TODO
   void addEmptySquareRootLayout() {} //TODO
-  void addEmptySquarePowerLayout() {} //TODO
+  void addEmptySquarePowerLayout();
   void addEmptyTenPowerLayout() {} //TODO
   void addFractionLayoutAndCollapseSiblings() {} //TODO
   void addXNTCharLayout();

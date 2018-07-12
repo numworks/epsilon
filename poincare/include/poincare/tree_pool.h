@@ -36,8 +36,8 @@ public:
     return node;
   }
 
-  void move(TreeNode * source, TreeNode * destination);
-  void moveChildren(TreeNode * sourceParent, TreeNode * destination);
+  void move(TreeNode * destination, TreeNode * source);
+  void moveChildren(TreeNode * destination, TreeNode * sourceParent);
 
   TreeNode * deepCopy(TreeNode * node) {
     size_t size = node->deepSize();
@@ -148,7 +148,7 @@ private:
   void * alloc(size_t size);
   void dealloc(TreeNode * ptr);
   bool insert(char * destination, char * source, size_t length);
-  void moveNodes(TreeNode * source, TreeNode * destination, size_t moveLength);
+  void moveNodes(TreeNode * destination, TreeNode * source, size_t moveLength);
 
   // Identifiers
   int generateIdentifier() {

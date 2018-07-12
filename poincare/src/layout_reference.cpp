@@ -57,7 +57,6 @@ void LayoutRef::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef rightC
   p.replaceChild(*this, horizontalLayoutR, cursor);
   horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
   horizontalLayoutR.addOrMergeChildAtIndex(rightChild, 1, false);
-  TreePool::sharedPool()->log();
 }
 
 template <typename T>

@@ -279,7 +279,9 @@ protected:
   }
 private:
   void setTo(const TreeReference & tr) {
-    if (*this == tr) {
+    /* We cannot use (*this)==tr because tr would need to be casted to
+     * TreeReference<TreeNode>, which calls setTo and triggers an infinite loop */
+    if (identifier() == tr.identifier()) {
       return;
     }
     TreeNode * currentNode = node();

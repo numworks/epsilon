@@ -103,7 +103,7 @@ public:
   virtual bool willAddChildAtIndex(LayoutNode * l, int * index, LayoutCursor * cursor) { return true; }
   virtual bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) { return true; }
   virtual bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor);
-  virtual bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor) { return true; }
+  virtual bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor);
   virtual void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
 protected:
   // Tree navigation

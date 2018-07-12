@@ -86,5 +86,6 @@
 #include <poincare/tree_reference.h>
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
+#include <poincare/vertical_offset_layout_node.h>
 
 #endif

@@ -154,8 +154,7 @@ void LayoutReference<T>::removeChild(LayoutRef l, LayoutCursor * cursor, bool fo
     cursor->setPosition(LayoutCursor::Position::Left);
   } else {
     int newPointedLayoutIndex = index - 1;
-    assert(newPointedLayoutIndex >= 0);
-    if (newPointedLayoutIndex < this->numberOfChildren()) {
+    if (newPointedLayoutIndex >= 0 && newPointedLayoutIndex < this->numberOfChildren()) {
       cursor->setLayoutReference(this->childAtIndex(newPointedLayoutIndex));
       cursor->setPosition(LayoutCursor::Position::Right);
     } else {

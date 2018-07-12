@@ -236,9 +236,8 @@ public:
     int secondChildIndex = i > j ? i : j;
     TreeReference<T> firstChild = treeChildAtIndex(firstChildIndex);
     TreeReference<T> secondChild = treeChildAtIndex(secondChildIndex);
-    TreeNode * firstChildNode = firstChild.node();
-    TreePool::sharedPool()->move(secondChild.node()->next(), firstChildNode);
-    TreePool::sharedPool()->move(firstChildNode, secondChild.node());
+    TreePool::sharedPool()->move(firstChild.node()->next(), secondChild.node());
+    TreePool::sharedPool()->move(treeChildAtIndex(secondChildIndex).next(), firstChild.node());
   }
 
   void mergeTreeChildrenAtIndex(TreeReference<T> t, int i) {

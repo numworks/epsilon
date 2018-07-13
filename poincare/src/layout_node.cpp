@@ -239,9 +239,8 @@ void LayoutNode::scoreCursorInDescendantsVertically (
     }
   }
   if (layoutIsUnderOrAbove || layoutContains) {
-    int childIndex = 0;
-    while (childAtIndex(childIndex++)) {
-      childAtIndex(childIndex-1)->scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore);
+    for (LayoutNode * c : children()) {
+      c->scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore);
     }
   }
 }

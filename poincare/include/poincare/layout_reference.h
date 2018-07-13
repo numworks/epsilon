@@ -14,6 +14,10 @@ class LayoutReference : public SerializableReference<T> {
 public:
   using SerializableReference<T>::SerializableReference;
 
+  LayoutReference<LayoutNode> clone() const {
+    return LayoutReference<LayoutNode>(this->treeClone().node());
+  }
+
   // Operators
 
   // Allow every LayoutReference<T> to be transformed into a LayoutRef
@@ -40,6 +44,7 @@ public:
   void invalidAllSizesPositionsAndBaselines() { return this->typedNode()->invalidAllSizesPositionsAndBaselines(); }
 
   // Layout properties
+  KDPoint positionOfChild(LayoutReference<LayoutNode> child) { return this->typedNode()->positionOfChild(child.typedNode()); }
   bool mustHaveLeftSibling() const { return this->typedNode()->mustHaveLeftSibling(); }
   bool isEmpty() const { return this->typedNode()->isEmpty(); }
   bool isHorizontal() const { return this->typedNode()->isHorizontal(); }

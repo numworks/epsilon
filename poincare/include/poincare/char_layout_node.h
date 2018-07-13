@@ -17,6 +17,7 @@ public:
 
   // CharLayout
   void setChar(char c) { m_char = c; }
+  KDText::FontSize fontSize() const { return m_fontSize; }
   void setFontSize(KDText::FontSize fontSize) { m_fontSize = fontSize; }
 
   // LayoutNode
@@ -63,6 +64,13 @@ public:
   }
 
   CharLayoutRef(TreeNode * t) : LayoutReference<CharLayoutNode>(t) {}
+  KDText::FontSize fontSize() const {
+    if (!(this->node()->isAllocationFailure())) {
+      return this->typedNode()->fontSize();
+    }
+    return KDText::FontSize::Large;
+  }
+
 };
 
 }

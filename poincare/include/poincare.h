@@ -79,6 +79,7 @@
 #include <poincare/store.h>
 #include <poincare/subtraction.h>
 #include <poincare/sum.h>
+#include <poincare/sum_layout_node.h>
 #include <poincare/symbol.h>
 #include <poincare/tangent.h>
 #include <poincare/tree_node.h>

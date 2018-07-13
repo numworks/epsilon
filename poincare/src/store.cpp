@@ -7,9 +7,9 @@ extern "C" {
 #include <ion.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
-#include "layout/char_layout.h"
-#include "layout/horizontal_layout.h"
 #include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
+
 
 namespace Poincare {
 
@@ -36,14 +36,13 @@ Expression * Store::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 LayoutRef Store::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  return CharLayoutRef('a'); //TODO
-  /*assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(value()->createLayout(floatDisplayMode, complexFormat), 0, false);
-  result->addChildAtIndex(new CharLayout(Ion::Charset::Sto), result->numberOfChildren());
-  result->addOrMergeChildAtIndex(symbol()->createLayout(floatDisplayMode, complexFormat), result->numberOfChildren(), false);
-  return result;*/
+  HorizontalLayoutRef result = HorizontalLayoutRef();
+  result.addOrMergeChildAtIndex(value()->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result.addChildAtIndex(CharLayoutRef(Ion::Charset::Sto), result.numberOfChildren(), nullptr);
+  result.addOrMergeChildAtIndex(symbol()->createLayout(floatDisplayMode, complexFormat), result.numberOfChildren(), false);
+  return result;
 }
 
 template<typename T>

@@ -4,8 +4,9 @@
 #include "layout/left_parenthesis_layout.h"
 #include "layout/right_parenthesis_layout.h"
 #include "layout/vertical_offset_layout.h"
-#include <poincare/horizontal_layout_node.h>
 #include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
+#include <poincare/vertical_offset_layout_node.h>
 
 extern "C" {
 #include<assert.h>
@@ -97,13 +98,12 @@ LayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, 
   return resultLayout;
 }
 
-ExpressionLayout * LayoutEngine::createLogLayout(ExpressionLayout * argument, ExpressionLayout * index) {
-  return nullptr; //TODO
-  /*HorizontalLayout * resultLayout = static_cast<HorizontalLayout *>(createStringLayout("log", 3));
-  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(index, VerticalOffsetLayout::Type::Subscript, false);
-  resultLayout->addChildAtIndex(offsetLayout, resultLayout->numberOfChildren());
-  resultLayout->addOrMergeChildAtIndex(createParenthesedLayout(argument, false), resultLayout->numberOfChildren(), true);
-  return resultLayout;*/
+LayoutRef LayoutEngine::createLogLayout(LayoutRef argument, LayoutRef index) {
+  HorizontalLayoutRef resultLayout = HorizontalLayoutRef(createStringLayout("log", 3));
+  VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(index, VerticalOffsetLayoutNode::Type::Subscript);
+  resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), nullptr);
+  resultLayout.addOrMergeChildAtIndex(createParenthesedLayout(argument, false), resultLayout.numberOfChildren(), true);
+  return resultLayout;
 }
 
 int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName) {

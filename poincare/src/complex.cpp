@@ -6,8 +6,8 @@
 #include <poincare/symbol.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_engine.h>
-#include "layout/horizontal_layout.h"
-#include "layout/vertical_offset_layout.h"
+#include <poincare/horizontal_layout_node.h>
+#include <poincare/vertical_offset_layout_node.h>
 
 #include <cmath>
 #include <ion.h>
@@ -19,8 +19,6 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 }
-
-#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -216,13 +214,12 @@ Complex<T>::Complex(T a, T b) :
 
 template <class T>
 LayoutRef Complex<T>::privateCreateLayout(PrintFloat::Mode floatDisplayMode, Expression::ComplexFormat complexFormat) const {
-  return CharLayoutRef('a'); //TODO
- /*  assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   if (complexFormat == Expression::ComplexFormat::Polar) {
     return createPolarLayout(floatDisplayMode);
   }
   return createCartesianLayout(floatDisplayMode);
-*/}
+}
 
 template <class T>
 Expression * Complex<T>::CreateDecimal(T f) {
@@ -309,8 +306,8 @@ int Complex<T>::convertComplexToText(char * buffer, int bufferSize, int numberOf
   return numberOfChars;
 }
 
-/*template <class T>
-ExpressionLayout * Complex<T>::createPolarLayout(PrintFloat::Mode floatDisplayMode) const {
+template <class T>
+LayoutRef Complex<T>::createPolarLayout(PrintFloat::Mode floatDisplayMode) const {
   char bufferBase[PrintFloat::k_maxFloatBufferLength+2];
   int numberOfCharInBase = 0;
   char bufferSuperscript[PrintFloat::k_maxFloatBufferLength+2];
@@ -340,19 +337,19 @@ ExpressionLayout * Complex<T>::createPolarLayout(PrintFloat::Mode floatDisplayMo
   if (numberOfCharInSuperscript == 0) {
     return LayoutEngine::createStringLayout(bufferBase, numberOfCharInBase);
   }
-  ExpressionLayout * result = LayoutEngine::createStringLayout(bufferBase, numberOfCharInBase);
-  ExpressionLayout * exponentLayout = LayoutEngine::createStringLayout(bufferSuperscript, numberOfCharInSuperscript);
-  VerticalOffsetLayout * offsetLayout = new VerticalOffsetLayout(exponentLayout, VerticalOffsetLayout::Type::Superscript, false);
-  (static_cast<HorizontalLayout *>(result))->addChildAtIndex(offsetLayout, result->numberOfChildren());
+  LayoutRef result = LayoutEngine::createStringLayout(bufferBase, numberOfCharInBase);
+  LayoutRef exponentLayout = LayoutEngine::createStringLayout(bufferSuperscript, numberOfCharInSuperscript);
+  VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(exponentLayout, VerticalOffsetLayoutNode::Type::Superscript);
+  result.addChildAtIndex(offsetLayout, result.numberOfChildren(), nullptr);
   return result;
 }
 
 template <class T>
-ExpressionLayout * Complex<T>::createCartesianLayout(PrintFloat::Mode floatDisplayMode) const {
+LayoutRef Complex<T>::createCartesianLayout(PrintFloat::Mode floatDisplayMode) const {
   char buffer[PrintFloat::k_maxComplexBufferLength];
   int numberOfChars = convertComplexToText(buffer, PrintFloat::k_maxComplexBufferLength, Preferences::sharedPreferences()->numberOfSignificantDigits(), floatDisplayMode, Expression::ComplexFormat::Cartesian, Ion::Charset::MiddleDot);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
-}*/
+}
 
 template class Complex<float>;
 template class Complex<double>;

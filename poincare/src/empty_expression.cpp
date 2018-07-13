@@ -1,12 +1,8 @@
 #include <poincare/empty_expression.h>
+#include <poincare/empty_layout_node.h>
 #include <poincare/layout_engine.h>
-#include <poincare/src/layout/empty_layout.h>
 #include <ion/charset.h>
-#include <poincare/char_layout_node.h>
-
-extern "C" {
 #include <math.h>
-}
 
 namespace Poincare {
 
@@ -19,8 +15,7 @@ int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, int number
 }
 
 LayoutRef EmptyExpression::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  return CharLayoutRef('a'); //TODO
- //  return new EmptyLayout();
+  return EmptyLayoutRef();
 }
 
 template<typename T> Complex<T> * EmptyExpression::templatedApproximate(Context& context, AngleUnit angleUnit) const {

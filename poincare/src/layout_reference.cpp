@@ -217,6 +217,28 @@ void LayoutRef::collapseOnDirection(HorizontalDirection direction, int absorbing
   }
 }
 
+/* Layout specialization, at the end of the .cpp as they must be defined after
+ * the definition of the methods they calls */
+template<>
+void LayoutRef::collapseSiblings(LayoutCursor * cursor) {
+  if (this->typedNode()->shouldCollapseSiblingsOnRight()) {
+    LayoutReference<LayoutNode> absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
+    if (!absorbingChild.isHorizontal()) {
+      replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor);
+    }
+    collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
+  }
+  if (this->typedNode()->shouldCollapseSiblingsOnLeft()) {
+    LayoutReference<LayoutNode> absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
+    if (!absorbingChild.isHorizontal()) {
+      replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor);
+    }
+    collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
+  }
+  this->typedNode()->didCollapseSiblings(cursor);
+}
+
+
 template LayoutCursor LayoutReference<LayoutNode>::cursor() const;
 template LayoutCursor LayoutReference<CharLayoutNode>::cursor() const;
 template void LayoutReference<LayoutNode>::removeChild(LayoutRef l, LayoutCursor * cursor, bool force);

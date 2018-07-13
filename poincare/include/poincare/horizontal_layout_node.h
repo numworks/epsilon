@@ -89,7 +89,7 @@ public:
   void addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
   void mergeChildrenAtIndex(HorizontalLayoutRef h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
 private:
-  int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft);
+  int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
 };
 
 }

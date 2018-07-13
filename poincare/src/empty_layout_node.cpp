@@ -73,8 +73,12 @@ void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCu
 bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
   if (sibling->mustHaveLeftSibling()) {
     m_color = Color::Yellow;
+    return true;
+  } else {
+    LayoutRef(this).replaceWith(LayoutRef(sibling), cursor);
+    // WARNING: do not call "this" afterwards
+    return false;
   }
-  return true;
   /*   Color currentColor = m_color;
   int currentIndexInParent = indexInParent();
   if (currentColor == Color::Grey) {

@@ -70,17 +70,13 @@ void LayoutCursor::addEmptySquarePowerLayout() {
   VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(indiceLayout, VerticalOffsetLayoutNode::Type::Superscript);
   // If there is already a base
   if (baseForNewPowerLayout()) {
-    m_layoutRef.addSibling(this, offsetLayout, false);
-    m_layoutRef = offsetLayout;
-    m_position = LayoutCursor::Position::Right;
+    m_layoutRef.addSibling(this, offsetLayout, true);
     return;
   }
   // Else, add an empty base
   EmptyLayoutRef child1 = EmptyLayoutRef();
   HorizontalLayoutRef newChild = HorizontalLayoutRef(child1, offsetLayout);
-  m_layoutRef.addSibling(this, newChild, false);
-  m_layoutRef = child1;
-  m_position = LayoutCursor::Position::Right;
+  m_layoutRef.addSibling(this, newChild, true);
 }
 
 void LayoutCursor::addXNTCharLayout() {

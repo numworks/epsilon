@@ -51,6 +51,7 @@
 #include <poincare/layout_node.h>
 #include <poincare/layout_reference.h>
 #include <poincare/least_common_multiple.h>
+#include <poincare/left_parenthesis_layout_node.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_dimension.h>
@@ -72,6 +73,7 @@
 #include <poincare/random.h>
 #include <poincare/rational.h>
 #include <poincare/real_part.h>
+#include <poincare/right_parenthesis_layout_node.h>
 #include <poincare/round.h>
 #include <poincare/serializable_node.h>
 #include <poincare/serializable_reference.h>

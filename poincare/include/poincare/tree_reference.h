@@ -91,6 +91,10 @@ public:
     assert(isDefined());
     return node()->hasSibling(t.node());
   }
+  bool hasAncestor(TreeReference<TreeNode> t, bool includeSelf) const {
+    assert(isDefined());
+    return node()->hasAncestor(t.node(), includeSelf);
+  }
   int numberOfChildren() const {
     assert(isDefined());
     return node()->numberOfChildren();

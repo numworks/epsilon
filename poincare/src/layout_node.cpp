@@ -86,7 +86,8 @@ void LayoutNode::moveCursorDownInDescendants(LayoutCursor * cursor, bool * shoul
 }
 
 LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
-  // Only HorizontalLayout may have no parent, and it overloads this method
+  /* Only HorizontalLayout or AllocationFailedLayout may have no parent, and
+   * they overload this method */
   assert(parent());
   return (cursor->layoutReference().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
 }

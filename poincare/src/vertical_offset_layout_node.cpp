@@ -1,8 +1,8 @@
 #include <poincare/vertical_offset_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/layout_engine.h>
-//TODO #include "left_parenthesis_layout.h"
-//TODO #include "right_parenthesis_layout.h"
+#include <poincare/left_parenthesis_layout_node.h>
+#include <poincare/right_parenthesis_layout_node.h>
 #include <ion/charset.h>
 #include <string.h>
 #include <assert.h>
@@ -242,29 +242,32 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
     VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling);
     if (verticalOffsetSibling->type() == Type::Superscript) {
       LayoutNode * parentNode = parent();
+      LayoutRef parentRef = LayoutRef(parentNode);
       assert(parentNode->isHorizontal());
       // Add the Left parenthesis
       int idxInParent = parentNode->indexOfChild(this);
       int leftParenthesisIndex = idxInParent;
-      //TODO LeftParenthesisLayout * leftParenthesis = new LeftParenthesisLayout();
+      LeftParenthesisLayoutRef leftParenthesis = LeftParenthesisLayoutRef();
       int numberOfOpenParenthesis = 0;
       while (leftParenthesisIndex > 0
           && parentNode->childAtIndex(leftParenthesisIndex-1)->isCollapsable(&numberOfOpenParenthesis, true))
       {
         leftParenthesisIndex--;
       }
-       //TODO parentNode->addChildAtIndex(leftParenthesis, leftParenthesisIndex);
+      parentRef.addChildAtIndex(leftParenthesis, leftParenthesisIndex, nullptr);
       idxInParent++;
 
       // Add the Right parenthesis
-       //TODO RightParenthesisLayout * rightParenthesis = new RightParenthesisLayout();
+      RightParenthesisLayoutRef rightParenthesis = RightParenthesisLayoutRef();
       if (cursor->position() == LayoutCursor::Position::Right) {
-         //TODO parentNode->addChildAtIndex(rightParenthesis, idxInParent + 1);
+         parentRef.addChildAtIndex(rightParenthesis, idxInParent + 1, nullptr);
       } else {
         assert(cursor->position() == LayoutCursor::Position::Left);
-         //TODO parentNode->addChildAtIndex(rightParenthesis, idxInParent);
+         parentRef.addChildAtIndex(rightParenthesis, idxInParent, nullptr);
       }
-      //TODOcursor->setLayoutNode(rightParenthesis);
+      if (rightParenthesis.parent().isDefined()) {
+        cursor->setLayoutReference(rightParenthesis);
+      }
     }
   }
   return true;

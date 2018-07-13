@@ -76,7 +76,7 @@ public:
   void replaceChildAtIndex(int oldChildIndex, LayoutReference<LayoutNode> newChild) { TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild); }
   void replaceChild(LayoutReference<LayoutNode> oldChild, LayoutReference<LayoutNode> newChild, LayoutCursor * cursor = nullptr);
   void replaceChildWithEmpty(LayoutReference<LayoutNode> oldChild, LayoutCursor * cursor = nullptr);
-  void replaceWithAndMoveCursor(LayoutReference<LayoutNode> newChild, LayoutCursor * cursor) {
+  void replaceWith(LayoutReference<LayoutNode> newChild, LayoutCursor * cursor) {
     LayoutReference<LayoutNode> p = parent();
     assert(p.isDefined());
     p.replaceChild(*this, newChild, cursor);

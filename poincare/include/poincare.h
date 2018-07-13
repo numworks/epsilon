@@ -4,14 +4,17 @@
 #define MATRICES_ARE_DEFINED 1
 
 #include <poincare/absolute_value.h>
+#include <poincare/absolute_value_layout_node.h>
 #include <poincare/addition.h>
 #include <poincare/allocation_failed_layout_node.h>
 #include <poincare/arc_cosine.h>
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
+#include <poincare/bracket_pair_layout_node.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/ceiling.h>
+#include <poincare/ceiling_layout_node.h>
 #include <poincare/complex.h>
 #include <poincare/complex_argument.h>
 #include <poincare/confidence_interval.h>
@@ -35,6 +38,7 @@
 #include <poincare/expression_layout_cursor.h>
 #include <poincare/factorial.h>
 #include <poincare/floor.h>
+#include <poincare/floor_layout_node.h>
 #include <poincare/frac_part.h>
 #include <poincare/global_context.h>
 #include <poincare/great_common_divisor.h>
@@ -52,6 +56,7 @@
 #include <poincare/layout_reference.h>
 #include <poincare/least_common_multiple.h>
 #include <poincare/left_parenthesis_layout_node.h>
+#include <poincare/left_square_bracket_layout_node.h>
 #include <poincare/logarithm.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_dimension.h>
@@ -74,11 +79,13 @@
 #include <poincare/rational.h>
 #include <poincare/real_part.h>
 #include <poincare/right_parenthesis_layout_node.h>
+#include <poincare/right_square_bracket_layout_node.h>
 #include <poincare/round.h>
 #include <poincare/serializable_node.h>
 #include <poincare/serializable_reference.h>
 #include <poincare/sine.h>
 #include <poincare/square_root.h>
+#include <poincare/square_bracket_layout_node.h>
 #include <poincare/store.h>
 #include <poincare/subtraction.h>
 #include <poincare/sum.h>

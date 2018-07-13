@@ -58,8 +58,12 @@ public:
 
   // Tree modification
   // Collapse
-  virtual bool shouldCollapseSiblingsOnLeft() { return false; }
-  virtual bool shouldCollapseSiblingsOnRight() { return false; }
+  virtual bool shouldCollapseSiblingsOnLeft() const { return false; }
+  virtual bool shouldCollapseSiblingsOnRight() const { return false; }
+  virtual int leftCollapsingAbsorbingChildIndex() const { return 0; }
+  virtual int rightCollapsingAbsorbingChildIndex() const { return 0; }
+  virtual void didCollapseSiblings(LayoutCursor * cursor) {}
+
   // User input
   virtual void deleteBeforeCursor(LayoutCursor * cursor);
 

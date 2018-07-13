@@ -65,18 +65,17 @@ void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
 
 /* Layout modification */
 
-void LayoutCursor::addEmptySquarePowerLayout() {
-  CharLayoutRef indiceLayout = CharLayoutRef('2');
-  VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(indiceLayout, VerticalOffsetLayoutNode::Type::Superscript);
-  // If there is already a base
-  if (baseForNewPowerLayout()) {
-    m_layoutRef.addSibling(this, offsetLayout, true);
-    return;
+void LayoutCursor::addEmptyPowerLayout() {
+  VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(EmptyLayoutRef(), VerticalOffsetLayoutNode::Type::Superscript);
+  privateAddEmptyPowerLayout(offsetLayout);
+  if (offsetLayout.parent().isDefined() && offsetLayout.numberOfChildren() == 1 && !offsetLayout.childAtIndex(0).isAllocationFailure()) {
+    m_layoutRef = offsetLayout.childAtIndex(0);
   }
-  // Else, add an empty base
-  EmptyLayoutRef child1 = EmptyLayoutRef();
-  HorizontalLayoutRef newChild = HorizontalLayoutRef(child1, offsetLayout);
-  m_layoutRef.addSibling(this, newChild, true);
+}
+
+void LayoutCursor::addEmptySquarePowerLayout() {
+  VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(CharLayoutRef('2'), VerticalOffsetLayoutNode::Type::Superscript);
+  privateAddEmptyPowerLayout(offsetLayout);
 }
 
 void LayoutCursor::addXNTCharLayout() {
@@ -168,6 +167,18 @@ KDCoordinate LayoutCursor::layoutHeight() {
   }
   return pointedLayoutHeight;
 
+}
+
+void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayoutRef v) {
+  // If there is already a base
+  if (baseForNewPowerLayout()) {
+    m_layoutRef.addSibling(this, v, true);
+    return;
+  }
+  // Else, add an empty base
+  EmptyLayoutRef e = EmptyLayoutRef();
+  HorizontalLayoutRef newChild = HorizontalLayoutRef(e, v);
+  m_layoutRef.addSibling(this, newChild, true);
 }
 
 bool LayoutCursor::baseForNewPowerLayout() {

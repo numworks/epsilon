@@ -8,6 +8,7 @@
 namespace Poincare {
 
 class HorizontalLayoutNode;
+class VerticalOffsetLayoutRef;
 
 class LayoutCursor {
   template <typename T>
@@ -108,7 +109,7 @@ public:
   /* Layout modification */
   void addEmptyExponentialLayout() {} //TODO
   void addEmptyMatrixLayout() {} //TODO
-  void addEmptyPowerLayout() {} //TODO
+  void addEmptyPowerLayout();
   void addEmptySquareRootLayout() {} //TODO
   void addEmptySquarePowerLayout();
   void addEmptyTenPowerLayout() {} //TODO
@@ -137,6 +138,7 @@ public:
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   KDCoordinate layoutHeight();
+  void privateAddEmptyPowerLayout(VerticalOffsetLayoutRef v);
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
   LayoutRef m_layoutRef;

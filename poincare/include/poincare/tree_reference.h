@@ -31,7 +31,7 @@ public:
 
   inline bool operator==(TreeReference<TreeNode> t) { return m_identifier == t.identifier(); }
 
-  TreeReference<T> clone() const {
+  TreeReference<T> treeClone() const {
     if (!isDefined()){
       return TreeReference<T>(nullptr);
     }

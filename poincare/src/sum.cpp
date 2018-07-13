@@ -1,6 +1,7 @@
 #include <poincare/sum.h>
 #include <poincare/addition.h>
-#include "layout/sum_layout.h"
+#include <poincare/sum_layout_node.h>
+
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -26,8 +27,8 @@ int Sum::emptySequenceValue() const {
   return 0;
 }
 
-ExpressionLayout * Sum::createSequenceLayoutWithArgumentLayouts(ExpressionLayout * argumentLayout, ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout) const {
-  return new SumLayout(argumentLayout, subscriptLayout, superscriptLayout, false);
+LayoutRef Sum::createSequenceLayout(LayoutRef argumentLayout, LayoutRef subscriptLayout, LayoutRef superscriptLayout) const {
+  return SumLayoutRef(argumentLayout, subscriptLayout, superscriptLayout);
 }
 
 template<typename T>

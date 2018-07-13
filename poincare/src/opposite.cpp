@@ -1,6 +1,6 @@
 #include <poincare/opposite.h>
-#include "layout/char_layout.h"
-#include "layout/horizontal_layout.h"
+#include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
 #include <cmath>
 #include <poincare/complex.h>
 #include <poincare/layout_engine.h>
@@ -11,8 +11,6 @@ extern "C" {
 #include <assert.h>
 #include <stdlib.h>
 }
-
-#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -69,17 +67,15 @@ Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 LayoutRef Opposite::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  return CharLayoutRef('a'); //TODO
-/*  assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  HorizontalLayout * result = new HorizontalLayout(new CharLayout('-'), false);
+  HorizontalLayoutRef result = HorizontalLayoutRef(CharLayoutRef('-'));
   if (operand(0)->type() == Type::Opposite) {
-    result->addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false), 1, false);
+    result.addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false), 1, false);
   } else {
-    result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 1, false);
+    result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 1, false);
   }
   return result;
-*/
 }
 
 int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

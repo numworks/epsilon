@@ -6,10 +6,7 @@
 #include <assert.h>
 #include <ion.h>
 #include <cmath>
-extern "C" {
 #include <assert.h>
-}
-#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -219,10 +216,9 @@ bool Decimal::needParenthesisWithParent(const Expression * e) const {
 }
 
 LayoutRef Decimal::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-   return CharLayoutRef('a'); //TODO
- /*char buffer[k_maxBufferSize];
+  char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, PrintFloat::k_numberOfStoredSignificantDigits);
-  return LayoutEngine::createStringLayout(buffer, numberOfChars);*/
+  return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
 Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {

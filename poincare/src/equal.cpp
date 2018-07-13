@@ -16,8 +16,8 @@ extern "C" {
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
-#include "layout/char_layout.h"
-#include "layout/horizontal_layout.h"
+#include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
 
 namespace Poincare {
 
@@ -51,14 +51,13 @@ Expression * Equal::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 LayoutRef Equal::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-    return CharLayoutRef('a'); //TODO
- /*assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0, false);
-  result->addChildAtIndex(new CharLayout('='), result->numberOfChildren());
-  result->addOrMergeChildAtIndex(operand(1)->createLayout(floatDisplayMode, complexFormat), result->numberOfChildren(), false);
-  return result;*/
+  HorizontalLayoutRef result;
+  result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result.addChildAtIndex(CharLayoutRef('='), result.numberOfChildren(), nullptr);
+  result.addOrMergeChildAtIndex(operand(1)->createLayout(floatDisplayMode, complexFormat), result.numberOfChildren(), false);
+  return result;
 }
 
 template<typename T>

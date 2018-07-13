@@ -16,6 +16,9 @@ extern "C" {
 #include <float.h>
 #include <string.h>
 
+#include <poincare/char_layout_node.h> //TODO
+
+
 namespace Poincare {
 
 Matrix::Matrix(MatrixData * matrixData) :

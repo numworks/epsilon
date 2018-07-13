@@ -1,6 +1,6 @@
 #include <poincare/factorial.h>
-#include "layout/char_layout.h"
-#include "layout/horizontal_layout.h"
+#include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
 #include <poincare/symbol.h>
@@ -11,7 +11,6 @@ extern "C" {
 #include <assert.h>
 }
 #include <cmath>
-#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -94,14 +93,12 @@ Complex<T> Factorial::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) 
 }
 
 LayoutRef Factorial::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-    return CharLayoutRef('a'); //TODO
- /*assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0, false);
-  result->addChildAtIndex(new CharLayout('!'), result->numberOfChildren());
+  HorizontalLayoutRef result;
+  result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0, false);
+  result.addChildAtIndex(CharLayoutRef('!'), result.numberOfChildren(), nullptr);
   return result;
-*/
 }
 
 int Factorial::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

@@ -6,7 +6,6 @@
 #include <poincare/approximation_engine.h>
 #include <poincare/trigonometry.h>
 #include <poincare/expression.h>
-#include <poincare/char_layout_node.h> //TODO remove
 
 namespace Poincare {
 
@@ -21,8 +20,7 @@ public:
 private:
   /* Layout */
   LayoutRef privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
-      return CharLayoutRef('a'); //TODO
- //return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
+    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, complexFormat, name());
   }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, name());

@@ -1,6 +1,5 @@
 #include <poincare/undefined.h>
 #include <poincare/layout_engine.h>
-#include <poincare/char_layout_node.h>
 
 extern "C" {
 #include <math.h>
@@ -26,10 +25,9 @@ template<typename T> Complex<T> * Undefined::templatedApproximate(Context& conte
 }
 
 LayoutRef Undefined::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  /*char buffer[16];
+  char buffer[16];
   int numberOfChars = PrintFloat::convertFloatToText<float>(NAN, buffer, 16, 1, floatDisplayMode);
-  return LayoutEngine::createStringLayout(buffer, numberOfChars);*/
-  return CharLayoutRef('a'); //TODO
+  return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
 int Undefined::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {

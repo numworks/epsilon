@@ -60,7 +60,7 @@ void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCu
    * should be checked. */
   assert(cursor->layoutReference() == this);
   LayoutCursor cursorResult = cursor->clone();
-  moveCursorVertically(direction, &cursorResult, shouldRecomputeLayout, equivalentPositionVisited);
+  LayoutNode::moveCursorVertically(direction, &cursorResult, shouldRecomputeLayout, equivalentPositionVisited);
   if (cursorResult.isDefined()) {
     cursor->setTo(&cursorResult);
     return;

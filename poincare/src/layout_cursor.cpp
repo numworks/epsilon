@@ -90,6 +90,22 @@ void LayoutCursor::addEmptySquarePowerLayout() {
   privateAddEmptyPowerLayout(offsetLayout);
 }
 
+void LayoutCursor::addEmptyTenPowerLayout() {
+  EmptyLayoutRef emptyLayout;
+  HorizontalLayoutRef sibling = HorizontalLayoutRef(
+      CharLayoutRef(Ion::Charset::MiddleDot),
+      CharLayoutRef('1'),
+      CharLayoutRef('0'),
+      VerticalOffsetLayoutRef(
+        emptyLayout,
+        VerticalOffsetLayoutNode::Type::Superscript));
+  LayoutRef rootRef = m_layoutRef.root();
+  m_layoutRef.addSibling(this, sibling, false);
+  if (emptyLayout.hasAncestor(rootRef, false) && !emptyLayout.isAllocationFailure()) {
+    m_layoutRef = emptyLayout;
+  }
+}
+
 void LayoutCursor::addXNTCharLayout() {
   m_layoutRef.addSibling(this, CharLayoutRef(m_layoutRef.XNTChar()), true);
 }

@@ -112,7 +112,7 @@ public:
   void addEmptyPowerLayout();
   void addEmptySquareRootLayout() {} //TODO
   void addEmptySquarePowerLayout();
-  void addEmptyTenPowerLayout() {} //TODO
+  void addEmptyTenPowerLayout();
   void addFractionLayoutAndCollapseSiblings() {} //TODO
   void addXNTCharLayout();
   void insertText(const char * text);

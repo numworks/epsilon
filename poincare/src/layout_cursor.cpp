@@ -65,6 +65,18 @@ void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
 
 /* Layout modification */
 
+void LayoutCursor::addEmptyExponentialLayout() {
+  EmptyLayoutRef emptyLayout;
+  HorizontalLayoutRef sibling = HorizontalLayoutRef(
+      CharLayoutRef(Ion::Charset::Exponential),
+      VerticalOffsetLayoutRef(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
+  LayoutRef rootRef = m_layoutRef.root();
+  m_layoutRef.addSibling(this, sibling, false);
+  if (emptyLayout.hasAncestor(rootRef, false) && !emptyLayout.isAllocationFailure()) {
+    m_layoutRef = emptyLayout;
+  }
+}
+
 void LayoutCursor::addEmptyPowerLayout() {
   VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(EmptyLayoutRef(), VerticalOffsetLayoutNode::Type::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);

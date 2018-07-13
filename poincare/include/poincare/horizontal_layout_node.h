@@ -74,7 +74,11 @@ public:
     addChildTreeAtIndex(l1, 0);
     addChildTreeAtIndex(l2, 1);
   }
-
+  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3) : LayoutReference<HorizontalLayoutNode>() {
+    addChildTreeAtIndex(l1, 0);
+    addChildTreeAtIndex(l2, 1);
+    addChildTreeAtIndex(l3, 2);
+  }
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) : LayoutReference<HorizontalLayoutNode>() {
     addChildTreeAtIndex(l1, 0);
     addChildTreeAtIndex(l2, 1);

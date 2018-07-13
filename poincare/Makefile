@@ -14,6 +14,8 @@ objs += $(addprefix poincare/src/,\
   layout_cursor.o\
   layout_node.o\
   layout_reference.o\
+  sequence_layout_node.o\
+  sum_layout_node.o\
   vertical_offset_layout_node.o\
 )
 

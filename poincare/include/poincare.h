@@ -67,6 +67,7 @@
 #include <poincare/prediction_interval.h>
 #include <poincare/preferences.h>
 #include <poincare/product.h>
+#include <poincare/product_layout_node.h>
 #include <poincare/randint.h>
 #include <poincare/random.h>
 #include <poincare/rational.h>

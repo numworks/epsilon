@@ -1,7 +1,6 @@
 #include <poincare/product.h>
 #include <poincare/multiplication.h>
-#include <poincare/sum_layout_node.h> //TODO remove
-//#include <poincare/product_layout_node.h>
+#include <poincare/product_layout_node.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -28,8 +27,7 @@ int Product::emptySequenceValue() const {
 }
 
 LayoutRef Product::createSequenceLayout(LayoutRef argumentLayout, LayoutRef subscriptLayout, LayoutRef superscriptLayout) const {
-  return SumLayoutRef(argumentLayout, subscriptLayout, superscriptLayout);
-  // TODO return ProductLayoutRef(argumentLayout, subscriptLayout, superscriptLayout);
+  return ProductLayoutRef(argumentLayout, subscriptLayout, superscriptLayout);
 }
 
 template<typename T>

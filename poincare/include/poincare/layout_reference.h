@@ -15,7 +15,9 @@ public:
   using SerializableReference<T>::SerializableReference;
 
   LayoutReference<LayoutNode> clone() const {
-    return LayoutReference<LayoutNode>(this->treeClone().node());
+    LayoutReference<LayoutNode> result = LayoutReference<LayoutNode>(this->treeClone().node());
+    result.invalidAllSizesPositionsAndBaselines();
+    return result;
   }
 
   // Operators

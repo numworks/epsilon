@@ -218,14 +218,20 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
 
 bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, LayoutCursor * cursor) {
   if (m_numberOfChildren > 0) {
-    *index = HorizontalLayoutRef(this).removeEmptyChildBeforeInsertionAtIndex(*index, !childAtIndex(0)->mustHaveLeftSibling());
+    *index = HorizontalLayoutRef(this).removeEmptyChildBeforeInsertionAtIndex(*index, !childAtIndex(0)->mustHaveLeftSibling(), cursor);
+
   }
   return true;
 }
 
 bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
-  int childrenCount = numberOfChildren();
   HorizontalLayoutRef thisRef(this);
+  int newChildIndex = cursor->position() == LayoutCursor::Position::Left ? 0 : numberOfChildren();
+  thisRef.addChildAtIndex(sibling, newChildIndex, cursor);
+  return false;
+
+
+  int childrenCount = numberOfChildren();
   // Add the "sibling" as a child.
   if (cursor->position() == LayoutCursor::Position::Left) {
     int indexForInsertion = 0;
@@ -420,7 +426,7 @@ void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index,
   }
 }
 
-int HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft) {
+int HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft, LayoutCursor * cursor) {
   int currentNumberOfChildren = numberOfChildren();
   assert(index >= 0 && index <= currentNumberOfChildren);
   int newIndex = index;
@@ -429,7 +435,7 @@ int HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int index, bool 
   if (newIndex < currentNumberOfChildren) {
     LayoutRef c = childAtIndex(newIndex);
     if (c.isEmpty()) {
-      removeChild(c, nullptr);
+      removeChild(c, cursor);
       currentNumberOfChildren--;
     }
   }
@@ -438,7 +444,7 @@ int HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int index, bool 
   if (shouldRemoveOnLeft && newIndex - 1 >= 0 && newIndex - 1 <= currentNumberOfChildren -1) {
     LayoutRef c = childAtIndex(newIndex - 1);
     if (c.isEmpty()) {
-      removeChild(c, nullptr, true);
+      removeChild(c, cursor, true);
       newIndex = index - 1;
     }
   }

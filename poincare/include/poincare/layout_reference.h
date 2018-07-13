@@ -53,6 +53,8 @@ public:
   bool isVerticalOffset() const { return this->typedNode()->isVerticalOffset(); }
   bool isLeftParenthesis() const { return this->typedNode()->isLeftParenthesis(); }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return this->typedNode()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
+  int leftCollapsingAbsorbingChildIndex() const { return this->typedNode()->leftCollapsingAbsorbingChildIndex(); }
+  int rightCollapsingAbsorbingChildIndex() const { return this->typedNode()->rightCollapsingAbsorbingChildIndex(); }
   bool hasText() { return this->typedNode()->hasText(); }
   char XNTChar() const { return this->typedNode()->XNTChar(); }
 
@@ -95,15 +97,7 @@ public:
     return removeChild(childAtIndex(index), cursor, force);
   }
   // Collapse
-  void collapseSiblings(LayoutCursor * cursor) {
-    int absorbingChildIndex = 0; //TODO
-    if (this->typedNode()->shouldCollapseSiblingsOnRight()) {
-      collapseOnDirection(HorizontalDirection::Right, absorbingChildIndex);
-    }
-    if (this->typedNode()->shouldCollapseSiblingsOnLeft()) {
-      collapseOnDirection(HorizontalDirection::Left, absorbingChildIndex);
-    }
-  }
+  void collapseSiblings(LayoutCursor * cursor);
 
   // Allocation failure
   static TreeNode * FailedAllocationStaticNode();

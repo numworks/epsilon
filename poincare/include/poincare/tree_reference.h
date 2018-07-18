@@ -272,8 +272,8 @@ public:
   }
 
 protected:
-  TreeReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<T>();
+  TreeReference(size_t size = sizeof(T)) {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<T>(size);
     m_identifier = node->identifier();
   }
 

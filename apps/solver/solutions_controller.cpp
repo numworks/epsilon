@@ -148,8 +148,6 @@ int SolutionsController::numberOfColumns() {
 }
 
 void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
-  evenOddCell->setEven(j%2 == 0);
   if (i == 0) {
     if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && j == m_equationStore->numberOfSolutions()) {
       EvenOddExpressionCell * deltaCell = static_cast<EvenOddExpressionCell *>(cell);
@@ -187,6 +185,8 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       }
     }
   }
+  EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
+  evenOddCell->setEven(j%2 == 0);
   evenOddCell->reloadCell();
 }
 

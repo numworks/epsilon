@@ -68,7 +68,7 @@ int SequenceToolbox::typeAtLocation(int i, int j) {
   return MathToolbox::typeAtLocation(i,mathToolboxIndex(j));
 }
 
-void SequenceToolbox::setExtraCells(const char * sequenceName, int recurrenceDepth) {
+void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth) {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     if (m_addedCellLayout[i]) {
       delete m_addedCellLayout[i];

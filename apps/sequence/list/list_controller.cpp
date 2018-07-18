@@ -91,7 +91,7 @@ Toolbox * ListController::toolboxForSender(Responder * sender) {
   if (sequenceDefinition == 0) {
     recurrenceDepth = sequence->numberOfElements()-1;
   }
-  m_sequenceToolbox.setExtraCells(sequence->name(), recurrenceDepth);
+  m_sequenceToolbox.buildExtraCellsLayouts(sequence->name(), recurrenceDepth);
   // Set sender
   m_sequenceToolbox.setSender(sender);
   return &m_sequenceToolbox;

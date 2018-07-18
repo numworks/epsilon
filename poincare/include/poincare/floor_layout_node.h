@@ -25,7 +25,10 @@ protected:
 
 class FloorLayoutRef : public LayoutReference<FloorLayoutNode> {
 public:
-  using LayoutReference<FloorLayoutNode>::LayoutReference;
+  FloorLayoutRef(TreeNode * n) : LayoutReference<FloorLayoutNode>(n) {}
+  FloorLayoutRef(LayoutRef l) : LayoutReference<FloorLayoutNode>() {
+    addChildTreeAtIndex(l, 0);
+  }
 };
 
 }

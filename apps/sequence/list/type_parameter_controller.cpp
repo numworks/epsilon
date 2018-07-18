@@ -131,7 +131,7 @@ void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, in
   }
   m_expressionLayouts[j] = new HorizontalLayout(
         new CharLayout(nextName[0], size),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout(subscripts[j], strlen(subscripts[j]), KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout(subscripts[j], strlen(subscripts[j]), size), VerticalOffsetLayout::Type::Subscript, false),
         false);
   ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
   myCell->setExpressionLayout(m_expressionLayouts[j]);

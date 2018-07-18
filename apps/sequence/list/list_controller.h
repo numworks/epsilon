@@ -26,6 +26,7 @@ public:
   void selectPreviousNewSequenceCell();
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
 private:
+  static constexpr KDCoordinate k_expressionCellVerticalMargin = 3;
   Toolbox * toolboxForSender(Responder * sender);
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;

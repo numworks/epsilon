@@ -19,6 +19,7 @@
 #include <poincare/complex_argument.h>
 #include <poincare/confidence_interval.h>
 #include <poincare/conjugate.h>
+#include <poincare/conjugate_layout_node.h>
 #include <poincare/context.h>
 #include <poincare/cosine.h>
 #include <poincare/decimal.h>

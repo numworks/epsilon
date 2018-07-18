@@ -83,7 +83,7 @@ public:
   void addSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> sibling, bool moveCursor);
   // Replace
   void replaceChildAtIndex(int oldChildIndex, LayoutReference<LayoutNode> newChild) { TreeReference<T>::replaceChildAtIndex(oldChildIndex, newChild); }
-  void replaceChild(LayoutReference<LayoutNode> oldChild, LayoutReference<LayoutNode> newChild, LayoutCursor * cursor = nullptr);
+  void replaceChild(LayoutReference<LayoutNode> oldChild, LayoutReference<LayoutNode> newChild, LayoutCursor * cursor = nullptr, bool force = false);
   void replaceChildWithEmpty(LayoutReference<LayoutNode> oldChild, LayoutCursor * cursor = nullptr);
   void replaceWith(LayoutReference<LayoutNode> newChild, LayoutCursor * cursor) {
     LayoutReference<LayoutNode> p = parent();

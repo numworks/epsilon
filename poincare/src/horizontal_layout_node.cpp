@@ -253,9 +253,12 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
   }
 }
 
-bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) {
+bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) {
   if (oldChild == newChild) {
     return false;
+  }
+  if (force) {
+    return true;
   }
   HorizontalLayoutRef thisRef(this);
   int oldChildIndex = indexOfChild(oldChild);

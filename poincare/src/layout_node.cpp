@@ -123,7 +123,7 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   //WARNING: Do no use "this" afterwards
 }
 
-bool LayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) {
+bool LayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) {
   assert(hasChild(oldChild));
   if (!newChild->hasAncestor(oldChild, false)) {
     cursor->setPosition(LayoutCursor::Position::Right);
@@ -132,8 +132,11 @@ bool LayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, 
 }
 
 bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
-  LayoutRef(this).replaceChildWithEmpty(l, cursor);
-  return false;
+  if (!force) {
+    LayoutRef(this).replaceChildWithEmpty(l, cursor);
+    return false;
+  }
+  return true;
 }
 
 // Other

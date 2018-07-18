@@ -1,12 +1,8 @@
 #include <poincare/conjugate.h>
 #include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
-#include "layout/conjugate_layout.h"
-#include <poincare/char_layout_node.h>
-
-extern "C" {
+#include <poincare/conjugate_layout_node.h>
 #include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
@@ -21,11 +17,10 @@ Expression * Conjugate::clone() const {
 }
 
 LayoutRef Conjugate::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-    return CharLayoutRef('a'); //TODO
- /*assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new ConjugateLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
-*/}
+  return ConjugateLayoutRef(operand(0)->createLayout(floatDisplayMode, complexFormat));
+}
 
 Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);

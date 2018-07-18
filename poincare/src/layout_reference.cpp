@@ -22,8 +22,8 @@ LayoutCursor LayoutRef::equivalentCursor(LayoutCursor * cursor) {
 // Tree modification
 
 template<>
-void LayoutRef::replaceChild(LayoutRef oldChild, LayoutRef newChild, LayoutCursor * cursor) {
-  if (!typedNode()->willReplaceChild(oldChild.typedNode(), newChild.typedNode(), cursor)) {
+void LayoutRef::replaceChild(LayoutRef oldChild, LayoutRef newChild, LayoutCursor * cursor, bool force) {
+  if (!typedNode()->willReplaceChild(oldChild.typedNode(), newChild.typedNode(), cursor, force)) {
     return;
   }
   replaceTreeChild(oldChild, newChild);
@@ -213,14 +213,14 @@ void LayoutRef::collapseSiblings(LayoutCursor * cursor) {
   if (this->typedNode()->shouldCollapseSiblingsOnRight()) {
     LayoutReference<LayoutNode> absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
-      replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor);
+      replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor, true);
     }
     collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
   }
   if (this->typedNode()->shouldCollapseSiblingsOnLeft()) {
     LayoutReference<LayoutNode> absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
-      replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor);
+      replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor, true);
     }
     collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
   }

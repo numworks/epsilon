@@ -1,5 +1,5 @@
 #include <poincare/floor.h>
-#include "layout/floor_layout.h"
+#include <poincare/floor_layout_node.h>
 #include <poincare/symbol.h>
 #include <poincare/simplification_engine.h>
 #include <poincare/rational.h>
@@ -57,10 +57,9 @@ Complex<T> Floor::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
 }
 
 LayoutRef Floor::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-     return CharLayoutRef('a'); //TODO
-/*  assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new FloorLayout(m_operands[0]->createLayout(floatDisplayMode, complexFormat), false);*/
+  return FloorLayoutRef(m_operands[0]->createLayout(floatDisplayMode, complexFormat));
 }
 
 }

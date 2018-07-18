@@ -4,7 +4,6 @@
 #include <poincare/layout_engine.h>
 #include <poincare/static_hierarchy.h>
 #include <poincare/approximation_engine.h>
-#include <poincare/char_layout_node.h> //TODO remove
 
 namespace Poincare {
 

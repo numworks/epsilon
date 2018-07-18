@@ -24,7 +24,10 @@ protected:
 
 class CeilingLayoutRef : public LayoutReference<CeilingLayoutNode> {
 public:
-  using LayoutReference<CeilingLayoutNode>::LayoutReference;
+  CeilingLayoutRef(TreeNode * n) : LayoutReference<CeilingLayoutNode>(n) {}
+  CeilingLayoutRef(LayoutRef l) : LayoutReference<CeilingLayoutNode>() {
+    addChildTreeAtIndex(l, 0);
+  }
 };
 
 }

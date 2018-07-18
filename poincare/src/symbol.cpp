@@ -251,7 +251,7 @@ ExpressionLayout * Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int n
     return new HorizontalLayout(
         new CharLayout('u'),
         new VerticalOffsetLayout(
-          new CharLayout('n', KDText::FontSize::Small),
+          new CharLayout('n'),
           VerticalOffsetLayout::Type::Subscript,
           false),
         false);
@@ -260,7 +260,7 @@ ExpressionLayout * Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int n
     return new HorizontalLayout(
       new CharLayout('u'),
       new VerticalOffsetLayout(
-        LayoutEngine::createStringLayout("n+1", 3, KDText::FontSize::Small),
+        LayoutEngine::createStringLayout("n+1", 3),
         VerticalOffsetLayout::Type::Subscript,
         false),
       false);
@@ -269,7 +269,7 @@ ExpressionLayout * Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int n
     return new HorizontalLayout(
         new CharLayout('v'),
         new VerticalOffsetLayout(
-          new CharLayout('n', KDText::FontSize::Small),
+          new CharLayout('n'),
           VerticalOffsetLayout::Type::Subscript,
           false),
         false);
@@ -278,7 +278,7 @@ ExpressionLayout * Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int n
     return new HorizontalLayout(
       new CharLayout('v'),
       new VerticalOffsetLayout(
-        LayoutEngine::createStringLayout("n+1", 3, KDText::FontSize::Small),
+        LayoutEngine::createStringLayout("n+1", 3),
         VerticalOffsetLayout::Type::Subscript,
         false),
       false);

@@ -141,7 +141,7 @@ void LayoutRef::addSibling(LayoutCursor * cursor, LayoutReference<LayoutNode> si
 
 template <typename T>
 void LayoutReference<T>::removeChild(LayoutRef l, LayoutCursor * cursor, bool force) {
-  if (!this->typedNode()->willRemoveChild(l.typedNode(), cursor)) {
+  if (!this->typedNode()->willRemoveChild(l.typedNode(), cursor, force)) {
     return;
   }
   assert(this->hasChild(l));

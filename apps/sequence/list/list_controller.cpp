@@ -5,6 +5,8 @@
 using namespace Shared;
 using namespace Poincare;
 
+//TODO static inline KDCoordinate max(KDCoordinate c1, KDCoordinate c2) { return c1 > c2 ? c1 : c2; }
+
 namespace Sequence {
 
 ListController::ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer) :
@@ -56,7 +58,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
     return Metric::StoreRowHeight;
   }
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
-  KDCoordinate defaultHeight = sequence->type() == Sequence::Type::Explicit ? Metric::StoreRowHeight : k_emptySubRowHeight;
+  KDCoordinate defaultHeight = 2*k_expressionCellVerticalMargin + (sequence->type() == Sequence::Type::Explicit ? Metric::StoreRowHeight : k_emptySubRowHeight);
   ExpressionLayout * layout = sequence->layout();
   if (sequenceDefinitionForRow(j) == 1) {
     layout = sequence->firstInitialConditionLayout();
@@ -67,8 +69,8 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   if (layout == nullptr) {
     return defaultHeight;
   }
-  KDCoordinate sequenceSize = layout->size().height();
-  return sequenceSize + defaultHeight - KDText::charSize().height();
+  KDCoordinate sequenceHeight = layout->size().height();
+  return max(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
 }
 
 void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

@@ -18,7 +18,7 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
   int typeAtLocation(int i, int j) override;
-  void setExtraCells(const char * sequenceName, int recurrenceDepth);
+  void buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth);
 private:
   bool selectAddedCell(int selectedRow);
   int mathToolboxIndex(int index);

@@ -2,8 +2,9 @@
 #include <ion/charset.h>
 #include <poincare/layout_reference.h>
 #include <poincare/char_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
 #include <poincare/empty_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
+#include <poincare/nth_root_layout_node.h>
 #include <poincare/vertical_offset_layout_node.h>
 #include <stdio.h>
 
@@ -75,6 +76,14 @@ void LayoutCursor::addEmptyExponentialLayout() {
   if (emptyLayout.hasAncestor(rootRef, false) && !emptyLayout.isAllocationFailure()) {
     m_layoutRef = emptyLayout;
   }
+}
+
+void LayoutCursor::addEmptySquareRootLayout() {
+  HorizontalLayoutRef child1 = HorizontalLayoutRef(EmptyLayoutRef());
+  NthRootLayoutRef newChild = NthRootLayoutRef(child1);
+  m_layoutRef.addSibling(this, newChild, false);
+  m_layoutRef = newChild.childAtIndex(0);
+  ((LayoutRef *)&newChild)->collapseSiblings(this);
 }
 
 void LayoutCursor::addEmptyPowerLayout() {

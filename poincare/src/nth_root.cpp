@@ -3,7 +3,7 @@
 #include <poincare/division.h>
 #include <poincare/power.h>
 #include <poincare/undefined.h>
-#include "layout/nth_root_layout.h"
+#include <poincare/nth_root_layout_node.h>
 
 extern "C" {
 #include <assert.h>
@@ -39,12 +39,9 @@ Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 LayoutRef NthRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  return CharLayoutRef('a'); //TODO
-  /*
   assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat), false);
-*/
+  return NthRootLayoutRef(operand(0)->createLayout(floatDisplayMode, complexFormat), operand(1)->createLayout(floatDisplayMode, complexFormat));
 }
 
 template<typename T>

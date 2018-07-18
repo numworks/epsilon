@@ -2,13 +2,12 @@
 #include <poincare/complex.h>
 #include <poincare/power.h>
 #include <poincare/simplification_engine.h>
-#include "layout/nth_root_layout.h"
+#include <poincare/nth_root_layout_node.h>
 extern "C" {
 #include <assert.h>
 }
 #include <cmath>
 #include <ion.h>
-#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -51,11 +50,9 @@ Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 LayoutRef SquareRoot::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
-  return CharLayoutRef('a'); //TODO
- /* assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
   assert(complexFormat != ComplexFormat::Default);
-  return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
-*/
+  return NthRootLayoutRef(operand(0)->createLayout(floatDisplayMode, complexFormat));
 }
 
 }

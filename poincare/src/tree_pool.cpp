@@ -49,6 +49,13 @@ void TreePool::logNodeForIdentifierArray() {
 #endif
 }
 
+void TreePool::registerStaticNodeIfRequired(TreeNode * node) {
+  if (node->identifier() == -1) {
+    int newIdentifier = registerStaticNode(node);
+    node->rename(newIdentifier);
+  }
+}
+
 void TreePool::move(TreeNode * destination, TreeNode * source) {
   size_t moveSize = source->deepSize();
   moveNodes(destination, source, moveSize);

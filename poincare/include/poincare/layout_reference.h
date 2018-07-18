@@ -99,8 +99,6 @@ public:
   // Collapse
   void collapseSiblings(LayoutCursor * cursor);
 
-  // Allocation failure
-  static TreeNode * FailedAllocationStaticNode();
 private:
   // Tree modification
   enum class HorizontalDirection {

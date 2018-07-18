@@ -93,18 +93,18 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
     const char * indice = j == 0 ? "n" : "n+1";
     m_addedCellLayout[j] = new HorizontalLayout(
         new CharLayout(sequenceName[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout(indice, strlen(indice), KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
         false);
     m_addedCellLayout[j+recurrenceDepth] = new HorizontalLayout(
         new CharLayout(otherSequenceName[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout(indice, strlen(indice), KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
         false);
   }
   if (recurrenceDepth < 2) {
     const char * indice = recurrenceDepth == 0 ? "n" : (recurrenceDepth == 1 ? "n+1" : "n+2");
     m_addedCellLayout[2*recurrenceDepth] = new HorizontalLayout(
         new CharLayout(otherSequenceName[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout(indice, strlen(indice), KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutEngine::createStringLayout(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
         false);
   }
 }

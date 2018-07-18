@@ -1,6 +1,5 @@
 #include <poincare/layout_reference.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/allocation_failed_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_cursor.h>
@@ -8,16 +7,6 @@
 #include <poincare/horizontal_layout_node.h>
 
 namespace Poincare {
-
-template<>
-TreeNode * LayoutRef::FailedAllocationStaticNode() {
-  static AllocationFailedLayoutNode FailureNode;
-  if (FailureNode.identifier() >= -1) {
-    int newIdentifier = TreePool::sharedPool()->registerStaticNode(&FailureNode);
-    FailureNode.rename(newIdentifier);
-  }
-  return &FailureNode;
-}
 
 // Cursor
 template <typename T>

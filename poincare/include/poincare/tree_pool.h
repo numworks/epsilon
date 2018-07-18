@@ -51,6 +51,8 @@ public:
     return copy;
   }
 
+  void registerStaticNodeIfRequired(TreeNode * node);
+
   int registerStaticNode(TreeNode * node) {
     int nodeID = 0;
     while (m_staticNodes[nodeID] != nullptr && nodeID < MaxNumberOfStaticNodes) {

@@ -129,7 +129,7 @@ bool LayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, 
   return true;
 }
 
-bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor) {
+bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
   LayoutRef(this).replaceChildWithEmpty(l, cursor);
   return false;
 }

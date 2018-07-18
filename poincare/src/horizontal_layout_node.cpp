@@ -227,57 +227,12 @@ bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, Layo
 bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
   HorizontalLayoutRef thisRef(this);
   int newChildIndex = cursor->position() == LayoutCursor::Position::Left ? 0 : numberOfChildren();
-  thisRef.addChildAtIndex(sibling, newChildIndex, cursor);
-  return false;
-
-
-  int childrenCount = numberOfChildren();
-  // Add the "sibling" as a child.
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    int indexForInsertion = 0;
-    /* If the first child is empty, remove it before adding the layout, unless
-     * the new sibling needs the empty layout as a base. */
-    if (childrenCount > 0 && childAtIndex(0)->isEmpty()) {
-      if (sibling->mustHaveLeftSibling()) {
-        indexForInsertion = 1;
-      } else {
-        /* We force the removal of the child even followed by a neighbourg
-         * requiring a left sibling as we are about to add a sibling in first
-         * position anyway. */
-        thisRef.removeChildAtIndex(0, cursor, true);
-        // WARNING: do not call "this" afterwards
-      }
-    }
-    if (moveCursor) {
-      if (childrenCount > indexForInsertion) {
-        cursor->setLayoutReference(thisRef.childAtIndex(indexForInsertion));
-      } else {
-        cursor->setLayoutReference(thisRef);
-        cursor->setPosition(LayoutCursor::Position::Right);
-      }
-    }
-    thisRef.addOrMergeChildAtIndex(sibling, indexForInsertion, false);
-    // WARNING: do not call "this" afterwards
-  } else {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    // If the last child is empty, remove it before adding the layout.
-    if (childrenCount > 0 && childAtIndex(childrenCount - 1)->isEmpty() && !sibling->mustHaveLeftSibling()) {
-      /* Force remove the last child. */
-      thisRef.removeChildAtIndex(childrenCount - 1, cursor, true);
-      // WARNING: do not call "this" afterwards
-      childrenCount--;
-    }
-    thisRef.addOrMergeChildAtIndex(sibling, childrenCount, false);
-    // WARNING: do not call "this" afterwards
-    if (moveCursor) {
-      cursor->setLayoutReference(thisRef);
-    }
-  }
+  thisRef.addOrMergeChildAtIndex(sibling, newChildIndex, cursor);
   return false;
 }
 
-bool HorizontalLayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor) {
-  if (numberOfChildren() == 1) {
+bool HorizontalLayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
+  if (!force && numberOfChildren() == 1) {
     assert(childAtIndex(0) == l);
     LayoutNode * p = parent();
     if (p != nullptr) {
@@ -435,7 +390,7 @@ int HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int index, bool 
   if (newIndex < currentNumberOfChildren) {
     LayoutRef c = childAtIndex(newIndex);
     if (c.isEmpty()) {
-      removeChild(c, cursor);
+      removeChild(c, cursor, true);
       currentNumberOfChildren--;
     }
   }

@@ -65,7 +65,9 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
 // TreeNode
 
 TreeNode * LayoutNode::FailedAllocationStaticNode() {
-  return LayoutRef::FailedAllocationStaticNode();
+  static AllocationFailedLayoutNode FailureNode;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&FailureNode);
+  return &FailureNode;
 }
 
 // Tree navigation

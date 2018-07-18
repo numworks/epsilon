@@ -37,7 +37,7 @@ protected:
 private:
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override { return false; }
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) override { return false; }
-  bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor) override { return false; }
+  bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override { return false; }
 
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };

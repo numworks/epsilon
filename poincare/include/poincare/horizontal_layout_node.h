@@ -54,7 +54,7 @@ protected:
 private:
   bool willAddChildAtIndex(LayoutNode * l, int * index, LayoutCursor * cursor) override;
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
-  bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor) override;
+  bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override;
   void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}

@@ -78,6 +78,7 @@ template<typename T> Evaluation<T> * ApproximationEngine::mapReduce(const Expres
     result = intermediateResult;
     assert(result != nullptr);
     if (result->isUndefined()) {
+      delete result;
       return new Complex<T>(Complex<T>::Undefined());
     }
   }

@@ -11,6 +11,7 @@ objs += $(addprefix poincare/src/,\
   bracket_layout_node.o\
   bracket_pair_layout_node.o\
   char_layout_node.o\
+  condensed_sum_layout_node.o\
   conjugate_layout_node.o\
   empty_layout_node.o\
   horizontal_layout_node.o\

@@ -17,6 +17,7 @@
 #include <poincare/ceiling.h>
 #include <poincare/ceiling_layout_node.h>
 #include <poincare/complex_argument.h>
+#include <poincare/condensed_sum_layout_node.h>
 #include <poincare/confidence_interval.h>
 #include <poincare/conjugate.h>
 #include <poincare/conjugate_layout_node.h>

@@ -3,14 +3,10 @@
 #include <poincare/context.h>
 #include <poincare/undefined.h>
 #include <cmath>
-extern "C" {
 #include <assert.h>
 #include <float.h>
 #include <stdlib.h>
-}
-#include "layout/integral_layout.h"
-#include "layout/horizontal_layout.h"
-#include <poincare/char_layout_node.h>
+#include <poincare/integral_layout_node.h>
 
 namespace Poincare {
 
@@ -68,14 +64,11 @@ Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUn
 }
 
 LayoutRef Integral::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-    return CharLayoutRef('a'); //TODO
- /*
-  return new IntegralLayout(
+  return IntegralLayoutRef(
       operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      operand(2)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      false);
-*/}
+      operand(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
 
 template<typename T>
 T Integral::functionValueAtAbscissa(T x, Context & context, AngleUnit angleUnit) const {

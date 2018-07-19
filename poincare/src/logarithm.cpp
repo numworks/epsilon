@@ -1,6 +1,4 @@
 #include <poincare/logarithm.h>
-#include "layout/horizontal_layout.h"
-#include "layout/vertical_offset_layout.h"
 #include <poincare/addition.h>
 #include <poincare/approximation_engine.h>
 #include <poincare/arithmetic.h>
@@ -228,7 +226,7 @@ Evaluation<T> * Logarithm::templatedApproximate(Context& context, AngleUnit angl
   return new Complex<T>(result);
 }
 
-ExpressionLayout * Logarithm::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Logarithm::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (numberOfOperands() == 1) {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, "log");
   }

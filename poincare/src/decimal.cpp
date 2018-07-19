@@ -5,9 +5,7 @@
 #include <assert.h>
 #include <ion.h>
 #include <cmath>
-extern "C" {
 #include <assert.h>
-}
 
 namespace Poincare {
 
@@ -217,7 +215,7 @@ bool Decimal::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 7);
 }
 
-ExpressionLayout * Decimal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Decimal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);

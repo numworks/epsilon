@@ -68,7 +68,7 @@ private:
   /* Comparison */
   int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   /* Layout */
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Evaluation */
   Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }

@@ -43,7 +43,7 @@ public:
   }
 private:
   /* Layout */
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
    assert(false);
    return nullptr;
   }

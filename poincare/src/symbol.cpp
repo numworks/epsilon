@@ -7,9 +7,9 @@
 #include <poincare/power.h>
 
 #include <poincare/layout_engine.h>
-#include "layout/char_layout.h"
-#include "layout/horizontal_layout.h"
-#include "layout/vertical_offset_layout.h"
+#include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
+#include <poincare/vertical_offset_layout_node.h>
 
 #include <ion.h>
 #include <cmath>
@@ -243,45 +243,37 @@ char Symbol::name() const {
   return m_name;
 }
 
-ExpressionLayout * Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name == SpecialSymbols::Ans) {
     return LayoutEngine::createStringLayout("ans", 3);
   }
   if (m_name == SpecialSymbols::un) {
-    return new HorizontalLayout(
-        new CharLayout('u'),
-        new VerticalOffsetLayout(
-          new CharLayout('n'),
-          VerticalOffsetLayout::Type::Subscript,
-          false),
-        false);
+    return HorizontalLayoutRef(
+        CharLayoutRef('u'),
+        VerticalOffsetLayoutRef(
+          CharLayoutRef('n'),
+          VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (m_name == SpecialSymbols::un1) {
-    return new HorizontalLayout(
-      new CharLayout('u'),
-      new VerticalOffsetLayout(
+    return HorizontalLayoutRef(
+      CharLayoutRef('u'),
+      VerticalOffsetLayoutRef(
         LayoutEngine::createStringLayout("n+1", 3),
-        VerticalOffsetLayout::Type::Subscript,
-        false),
-      false);
+        VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (m_name == SpecialSymbols::vn) {
-    return new HorizontalLayout(
-        new CharLayout('v'),
-        new VerticalOffsetLayout(
-          new CharLayout('n'),
-          VerticalOffsetLayout::Type::Subscript,
-          false),
-        false);
+    return HorizontalLayoutRef(
+        CharLayoutRef('v'),
+        VerticalOffsetLayoutRef(
+          CharLayoutRef('n'),
+          VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (m_name == SpecialSymbols::vn1) {
-    return new HorizontalLayout(
-      new CharLayout('v'),
-      new VerticalOffsetLayout(
+    return HorizontalLayoutRef(
+      CharLayoutRef('v'),
+      VerticalOffsetLayoutRef(
         LayoutEngine::createStringLayout("n+1", 3),
-        VerticalOffsetLayout::Type::Subscript,
-        false),
-      false);
+          VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (isMatrixSymbol() || isSeriesSymbol(m_name) || isRegressionSymbol(m_name)) {
     return LayoutEngine::createStringLayout(textForSpecialSymbols(m_name), 2);

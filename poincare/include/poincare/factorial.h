@@ -15,7 +15,7 @@ private:
   constexpr static int k_maxOperandValue = 100;
   /* Layout */
   bool needParenthesisWithParent(const Expression * e) const override;
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplication */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;

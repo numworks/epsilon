@@ -20,7 +20,7 @@ public:
   Expression * clone() const override { return nullptr; }
   int polynomialDegree(char symbolName) const override { return -1; }
   Type type() const override { return Expression::Type::SimplificationRoot; }
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
     return nullptr;
   }
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override { return 0; }

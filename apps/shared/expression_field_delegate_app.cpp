@@ -9,31 +9,31 @@ namespace Shared {
 
 ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Container * container, Snapshot * snapshot, ViewController * rootViewController) :
   TextFieldDelegateApp(container, snapshot, rootViewController),
-  ExpressionLayoutFieldDelegate()
+  LayoutFieldDelegate()
 {
 }
 
-char ExpressionFieldDelegateApp::privateXNT(ExpressionLayoutField * expressionLayoutField) {
-  char xntCharFromLayout = expressionLayoutField->XNTChar();
+char ExpressionFieldDelegateApp::privateXNT(LayoutField * layoutField) {
+  char xntCharFromLayout = layoutField->XNTChar();
   if (xntCharFromLayout != Ion::Charset::Empty) {
     return xntCharFromLayout;
   }
   return XNT()[0];
 }
 
-bool ExpressionFieldDelegateApp::expressionLayoutFieldShouldFinishEditing(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
+bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
-  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event)) {
-    if (!expressionLayoutField->hasText()) {
-      expressionLayoutField->app()->displayWarning(I18n::Message::SyntaxError);
+bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
+  if (layoutField->isEditing() && layoutField->layoutFieldShouldFinishEditing(event)) {
+    if (!layoutField->hasText()) {
+      layoutField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
     char buffer[TextField::maxBufferSize()];
     int bufferSize = TextField::maxBufferSize();
-    int length = expressionLayoutField->writeTextInBuffer(buffer, bufferSize);
+    int length = layoutField->writeTextInBuffer(buffer, bufferSize);
     Expression * exp = Expression::parse(buffer);
     if (exp != nullptr) {
       delete exp;
@@ -45,33 +45,33 @@ bool ExpressionFieldDelegateApp::expressionLayoutFieldDidReceiveEvent(Expression
       return true;
     }
     if (exp == nullptr) {
-      expressionLayoutField->app()->displayWarning(I18n::Message::SyntaxError);
+      layoutField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }
   }
   if (event == Ion::Events::Var) {
-    if (!expressionLayoutField->isEditing()) {
-      expressionLayoutField->setEditing(true);
+    if (!layoutField->isEditing()) {
+      layoutField->setEditing(true);
     }
-    AppsContainer * appsContainer = (AppsContainer *)expressionLayoutField->app()->container();
+    AppsContainer * appsContainer = (AppsContainer *)layoutField->app()->container();
     VariableBoxController * variableBoxController = appsContainer->variableBoxController();
-    variableBoxController->setSender(expressionLayoutField);
-    expressionLayoutField->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+    variableBoxController->setSender(layoutField);
+    layoutField->app()->displayModalViewController(variableBoxController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     return true;
   }
   if (event == Ion::Events::XNT) {
-    if (!expressionLayoutField->isEditing()) {
-      expressionLayoutField->setEditing(true);
+    if (!layoutField->isEditing()) {
+      layoutField->setEditing(true);
     }
-    const char xnt[2] = {privateXNT(expressionLayoutField), 0};
-    return expressionLayoutField->handleEventWithText(xnt);
+    const char xnt[2] = {privateXNT(layoutField), 0};
+    return layoutField->handleEventWithText(xnt);
   }
   return false;
 }
 
-Toolbox * ExpressionFieldDelegateApp::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
+Toolbox * ExpressionFieldDelegateApp::toolboxForLayoutField(LayoutField * layoutField) {
   Toolbox * toolbox = container()->mathToolbox();
-  toolbox->setSender(expressionLayoutField);
+  toolbox->setSender(layoutField);
   return toolbox;
 }
 

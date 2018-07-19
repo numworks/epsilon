@@ -15,8 +15,8 @@ extern "C" {
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
-#include "layout/char_layout.h"
-#include "layout/horizontal_layout.h"
+#include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
 
 namespace Poincare {
 
@@ -49,11 +49,11 @@ Expression * Equal::shallowReduce(Context& context, AngleUnit angleUnit) {
   return this;
 }
 
-ExpressionLayout * Equal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result->addChildAtIndex(new CharLayout('='), result->numberOfChildren());
-  result->addOrMergeChildAtIndex(operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result->numberOfChildren(), false);
+LayoutRef Equal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  HorizontalLayoutRef result;
+  result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addChildAtIndex(CharLayoutRef('='), result.numberOfChildren(), nullptr);
+  result.addOrMergeChildAtIndex(operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }
 

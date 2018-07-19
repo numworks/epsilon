@@ -1,5 +1,5 @@
 #include <poincare/ceiling.h>
-#include "layout/ceiling_layout.h"
+#include <poincare/ceiling_layout_node.h>
 #include <cmath>
 #include <ion.h>
 #include <poincare/symbol.h>
@@ -59,8 +59,8 @@ std::complex<T> Ceiling::computeOnComplex(const std::complex<T> c, AngleUnit ang
   return std::ceil(c.real());
 }
 
-ExpressionLayout * Ceiling::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  return new CeilingLayout(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
+LayoutRef Ceiling::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return CeilingLayoutRef(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 }

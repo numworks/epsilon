@@ -15,6 +15,9 @@ extern "C" {
 #include <float.h>
 #include <string.h>
 
+#include <poincare/char_layout_node.h> //TODO
+
+
 namespace Poincare {
 
 Matrix::Matrix(MatrixData * matrixData) :
@@ -215,14 +218,16 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
   }
 }
 
-ExpressionLayout * Matrix::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Matrix::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return CharLayoutRef('a'); //TODO
+ /*
   ExpressionLayout ** childrenLayouts = new ExpressionLayout * [numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
     childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits);
   }
   ExpressionLayout * layout = new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns(), false);
   delete [] childrenLayouts;
-  return layout;
+  return layout;*/
 }
 
 int Matrix::rank(Context & context, AngleUnit angleUnit, bool inPlace) {

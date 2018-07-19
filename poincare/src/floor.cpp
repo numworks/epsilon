@@ -1,5 +1,5 @@
 #include <poincare/floor.h>
-#include "layout/floor_layout.h"
+#include <poincare/floor_layout_node.h>
 #include <poincare/symbol.h>
 #include <poincare/simplification_engine.h>
 #include <poincare/rational.h>
@@ -56,8 +56,8 @@ std::complex<T> Floor::computeOnComplex(const std::complex<T> c, AngleUnit angle
   return Complex<T>(std::floor(c.real()));
 }
 
-ExpressionLayout * Floor::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  return new FloorLayout(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
+LayoutRef Floor::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return FloorLayoutRef(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 }

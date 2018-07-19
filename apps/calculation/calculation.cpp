@@ -69,21 +69,18 @@ void Calculation::setContent(const char * c, Context * context, Expression * ans
 
 KDCoordinate Calculation::height(Context * context) {
   if (m_height < 0) {
-    ExpressionLayout * inputLayout = createInputLayout();
-    KDCoordinate inputHeight = inputLayout->size().height();
-    delete inputLayout;
-    Poincare::ExpressionLayout * approximateLayout = createApproximateOutputLayout(context);
-    KDCoordinate approximateOutputHeight = approximateLayout->size().height();
+    LayoutRef inputLayout = createInputLayout();
+    KDCoordinate inputHeight = inputLayout.layoutSize().height();
+    LayoutRef approximateLayout = createApproximateOutputLayout(context);
+    KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
     if (shouldOnlyDisplayApproximateOutput(context)) {
       m_height = inputHeight+approximateOutputHeight;
     } else {
-      Poincare::ExpressionLayout * exactLayout = createExactOutputLayout(context);
-      KDCoordinate exactOutputHeight = exactLayout->size().height();
-      KDCoordinate outputHeight = max(exactLayout->baseline(), approximateLayout->baseline()) + max(exactOutputHeight-exactLayout->baseline(), approximateOutputHeight-approximateLayout->baseline());
-      delete exactLayout;
+      LayoutRef exactLayout = createExactOutputLayout(context);
+      KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
+      KDCoordinate outputHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
       m_height = inputHeight + outputHeight;
     }
-    delete approximateLayout;
   }
   return m_height;
 }
@@ -107,11 +104,11 @@ Expression * Calculation::input() {
   return m_input;
 }
 
-ExpressionLayout * Calculation::createInputLayout() {
+LayoutRef Calculation::createInputLayout() {
   if (input() != nullptr) {
     return input()->createLayout(PrintFloat::Mode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
   }
-  return nullptr;
+  return LayoutRef(nullptr);
 }
 
 bool Calculation::isEmpty() {
@@ -159,11 +156,11 @@ Expression * Calculation::exactOutput(Context * context) {
   return m_exactOutput;
 }
 
-ExpressionLayout * Calculation::createExactOutputLayout(Context * context) {
+LayoutRef Calculation::createExactOutputLayout(Context * context) {
   if (exactOutput(context) != nullptr) {
     return PoincareHelpers::CreateLayout(exactOutput(context));
   }
-  return nullptr;
+  return LayoutRef(nullptr);
 }
 
 Expression * Calculation::approximateOutput(Context * context) {
@@ -181,11 +178,11 @@ Expression * Calculation::approximateOutput(Context * context) {
   return m_approximateOutput;
 }
 
-ExpressionLayout * Calculation::createApproximateOutputLayout(Context * context) {
+LayoutRef Calculation::createApproximateOutputLayout(Context * context) {
   if (approximateOutput(context) != nullptr) {
     return PoincareHelpers::CreateLayout(approximateOutput(context));
   }
-  return nullptr;
+  return LayoutRef(nullptr);
 }
 
 bool Calculation::shouldOnlyDisplayApproximateOutput(Context * context) {

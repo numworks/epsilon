@@ -2,6 +2,31 @@ SFLAGS += -Ipoincare/include
 
 #include poincare/src/simplify/Makefile
 #include poincare/src/simplification/Makefile
+objs += $(addprefix poincare/src/,\
+  tree_node.o\
+  tree_pool.o\
+)
+
+objs += $(addprefix poincare/src/,\
+  bracket_layout_node.o\
+  bracket_pair_layout_node.o\
+  char_layout_node.o\
+  conjugate_layout_node.o\
+  empty_layout_node.o\
+  horizontal_layout_node.o\
+  layout_cursor.o\
+  layout_node.o\
+  layout_reference.o\
+  left_parenthesis_layout_node.o\
+  left_square_bracket_layout_node.o\
+  nth_root_layout_node.o\
+  product_layout_node.o\
+  right_parenthesis_layout_node.o\
+  right_square_bracket_layout_node.o\
+  sequence_layout_node.o\
+  sum_layout_node.o\
+  vertical_offset_layout_node.o\
+)
 
 objs += $(addprefix poincare/src/,\
   absolute_value.o\

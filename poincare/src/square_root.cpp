@@ -1,7 +1,7 @@
 #include <poincare/square_root.h>
 #include <poincare/power.h>
 #include <poincare/simplification_engine.h>
-#include "layout/nth_root_layout.h"
+#include <poincare/nth_root_layout_node.h>
 extern "C" {
 #include <assert.h>
 }
@@ -52,8 +52,8 @@ Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   return p->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * SquareRoot::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  return new NthRootLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
+LayoutRef SquareRoot::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return NthRootLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 }

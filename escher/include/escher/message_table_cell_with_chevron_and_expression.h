@@ -9,7 +9,7 @@ public:
   MessageTableCellWithChevronAndExpression(I18n::Message message = (I18n::Message)0, KDText::FontSize size = KDText::FontSize::Small);
   View * subAccessoryView() const override;
   void setHighlighted(bool highlight) override;
-  void setExpressionLayout(Poincare::ExpressionLayout * expressionLayout);
+  void setLayoutRef(Poincare::LayoutRef layoutR);
 private:
   ExpressionView m_subtitleView;
 };

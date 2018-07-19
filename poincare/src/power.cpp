@@ -17,8 +17,8 @@
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
 
-#include "layout/horizontal_layout.h"
-#include "layout/vertical_offset_layout.h"
+#include <poincare/horizontal_layout_node.h>
+#include <poincare/vertical_offset_layout_node.h>
 
 #include <cmath>
 #include <math.h>
@@ -171,19 +171,19 @@ bool Power::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 2);
 }
 
-ExpressionLayout * Power::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Power::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   const Expression * indiceOperand = m_operands[1];
   // Delete eventual parentheses of the indice in the pretty print
   if (m_operands[1]->type() == Type::Parenthesis) {
     indiceOperand = m_operands[1]->operand(0);
   }
-  HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result->addChildAtIndex(new VerticalOffsetLayout(
+  HorizontalLayoutRef result = HorizontalLayoutRef();
+  result.addOrMergeChildAtIndex(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addChildAtIndex(VerticalOffsetLayoutRef(
         indiceOperand->createLayout(floatDisplayMode, numberOfSignificantDigits),
-        VerticalOffsetLayout::Type::Superscript,
-        false),
-      result->numberOfChildren());
+        VerticalOffsetLayoutNode::Type::Superscript),
+      result.numberOfChildren(),
+      nullptr);
   return result;
 }
 

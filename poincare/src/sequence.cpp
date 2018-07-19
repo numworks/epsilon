@@ -11,8 +11,8 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionLayout * Sequence::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  return createSequenceLayoutWithArgumentLayouts(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+LayoutRef Sequence::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return createSequenceLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 template<typename T>

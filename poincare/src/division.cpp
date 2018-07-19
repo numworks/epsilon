@@ -53,11 +53,13 @@ std::complex<T> Division::compute(const std::complex<T> c, const std::complex<T>
   return c/d;
 }
 
-ExpressionLayout * Division::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Division::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return CharLayoutRef('a'); //TODO
+ /*
   const Expression * numerator = operand(0)->type() == Type::Parenthesis ? operand(0)->operand(0) : operand(0);
   const Expression * denominator = operand(1)->type() == Type::Parenthesis ? operand(1)->operand(0) : operand(1);
   return new FractionLayout(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
-}
+*/}
 
 template<typename T> MatrixComplex<T> Division::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {
   MatrixComplex<T> * inverse = n.createInverse();

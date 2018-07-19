@@ -1,6 +1,6 @@
 #include <poincare/factorial.h>
-#include "layout/char_layout.h"
-#include "layout/horizontal_layout.h"
+#include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
 #include <poincare/symbol.h>
@@ -92,10 +92,10 @@ std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, AngleUnit a
   return Complex<T>(std::round(result));
 }
 
-ExpressionLayout * Factorial::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result->addChildAtIndex(new CharLayout('!'), result->numberOfChildren());
+LayoutRef Factorial::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  HorizontalLayoutRef result;
+  result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addChildAtIndex(CharLayoutRef('!'), result.numberOfChildren(), nullptr);
   return result;
 }
 

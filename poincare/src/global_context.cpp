@@ -9,6 +9,17 @@
 namespace Poincare {
 
 GlobalContext::GlobalContext() :
+  m_matrixLayouts{
+    LayoutRef(nullptr),
+    LayoutRef(nullptr),
+    LayoutRef(nullptr),
+    LayoutRef(nullptr),
+    LayoutRef(nullptr),
+    LayoutRef(nullptr),
+    LayoutRef(nullptr),
+    LayoutRef(nullptr),
+    LayoutRef(nullptr),
+    LayoutRef(nullptr)}, //TODO find better way to initialize
   m_pi(M_PI),
   m_e(M_E),
   m_i(0.0, 1.0)
@@ -18,7 +29,6 @@ GlobalContext::GlobalContext() :
   }
   for (int i = 0; i < k_maxNumberOfMatrixExpressions ; i++) {
     m_matrixExpressions[i] = nullptr;
-    m_matrixLayout[i] = nullptr;
   }
 }
 
@@ -34,10 +44,6 @@ GlobalContext::~GlobalContext() {
       delete m_matrixExpressions[i];
     }
     m_matrixExpressions[i] = nullptr;
-    if (m_matrixLayout[i] != nullptr) {
-      delete m_matrixLayout[i];
-    }
-    m_matrixLayout[i] = nullptr;
   }
 }
 
@@ -79,13 +85,13 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   return m_expressions[index];
 }
 
-ExpressionLayout * GlobalContext::expressionLayoutForSymbol(const Symbol * symbol, int numberOfSignificantDigits) {
+LayoutRef GlobalContext::layoutForSymbol(const Symbol * symbol, int numberOfSignificantDigits) {
   if (symbol->isMatrixSymbol()) {
     int index = symbolIndex(symbol);
-    if (m_matrixLayout[index] == nullptr && m_matrixExpressions[index] != nullptr) {
-      m_matrixLayout[index] = m_matrixExpressions[index]->createLayout(PrintFloat::Mode::Decimal, numberOfSignificantDigits);
+    if (!m_matrixLayouts[index].isDefined() && m_matrixExpressions[index] != nullptr) {
+      m_matrixLayouts[index] = m_matrixExpressions[index]->createLayout(PrintFloat::Mode::Decimal, numberOfSignificantDigits);
     }
-    return m_matrixLayout[index];
+    return m_matrixLayouts[index];
   }
   return nullptr;
 }
@@ -100,9 +106,8 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
       delete m_matrixExpressions[indexMatrix];
       m_matrixExpressions[indexMatrix] = nullptr;
     }
-    if (m_matrixLayout[indexMatrix] != nullptr) {
-      delete m_matrixLayout[indexMatrix];
-      m_matrixLayout[indexMatrix] = nullptr;
+    if (m_matrixLayouts[indexMatrix] != nullptr) {
+      m_matrixLayouts[indexMatrix] = LayoutRef(nullptr);
     }
     if (evaluation != nullptr) {
       if (evaluation->type() != Expression::Type::Matrix) {

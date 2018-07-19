@@ -1,6 +1,6 @@
 #include <poincare/absolute_value.h>
 #include <poincare/simplification_engine.h>
-#include "layout/absolute_value_layout.h"
+#include <poincare/absolute_value_layout_node.h>
 
 extern "C" {
 #include <assert.h>
@@ -23,8 +23,8 @@ Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUn
   return this;
 }
 
-ExpressionLayout * AbsoluteValue::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
+LayoutRef AbsoluteValue::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  return AbsoluteValueLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit) {

@@ -5,6 +5,7 @@
 #include <poincare/approximation_engine.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
+#include <poincare/char_layout_node.h>
 
 namespace Poincare {
 
@@ -30,7 +31,7 @@ private:
   /* Property */
   Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
   /* Layout */
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool needParenthesisWithParent(const Expression * e) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());

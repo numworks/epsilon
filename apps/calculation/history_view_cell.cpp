@@ -18,25 +18,10 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
 {
 }
 
-HistoryViewCell::~HistoryViewCell() {
-  if (m_inputLayout != nullptr) {
-    delete m_inputLayout;
-    m_inputLayout = nullptr;
-  }
-  if (m_exactOutputLayout != nullptr) {
-    delete m_exactOutputLayout;
-    m_exactOutputLayout = nullptr;
-  }
-  if (m_approximateOutputLayout != nullptr) {
-    delete m_approximateOutputLayout;
-    m_approximateOutputLayout = nullptr;
-  }
-}
-
 Shared::ScrollableExactApproximateExpressionsView * HistoryViewCell::outputView() {
   return &m_scrollableOutputView;
-
 }
+
 void HistoryViewCell::setEven(bool even) {
   EvenOddCell::setEven(even);
   m_inputView.setBackgroundColor(backgroundColor());
@@ -57,11 +42,11 @@ void HistoryViewCell::setHighlighted(bool highlight) {
   reloadScroll();
 }
 
-Poincare::ExpressionLayout * HistoryViewCell::expressionLayout() const {
+Poincare::LayoutRef HistoryViewCell::layoutRef() const {
   if (m_selectedSubviewType == SubviewType::Input) {
     return m_inputLayout;
   } else {
-    return m_scrollableOutputView.expressionLayout();
+    return m_scrollableOutputView.layoutRef();
   }
 }
 
@@ -109,27 +94,20 @@ void HistoryViewCell::layoutSubviews() {
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation) {
-  if (m_inputLayout) {
-    delete m_inputLayout;
-  }
   m_inputLayout = calculation->createInputLayout();
-  m_inputView.setExpressionLayout(m_inputLayout);
+  m_inputView.setLayoutRef(m_inputLayout);
   App * calculationApp = (App *)app();
   /* Both output expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
-  if (m_exactOutputLayout) {
-    delete m_exactOutputLayout;
-    m_exactOutputLayout = nullptr;
+  if (m_exactOutputLayout.isDefined()) {
+    m_exactOutputLayout = Poincare::LayoutRef(nullptr);
   }
   if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
     m_exactOutputLayout = calculation->createExactOutputLayout(calculationApp->localContext());
   }
-  if (m_approximateOutputLayout) {
-    delete m_approximateOutputLayout;
-  }
   m_approximateOutputLayout = calculation->createApproximateOutputLayout(calculationApp->localContext());
-  Poincare::ExpressionLayout * outputExpressions[2] = {m_approximateOutputLayout, m_exactOutputLayout};
+  Poincare::LayoutRef outputExpressions[2] = {m_approximateOutputLayout, m_exactOutputLayout};
   m_scrollableOutputView.setExpressions(outputExpressions);
   I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(calculationApp->localContext()) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
   m_scrollableOutputView.setEqualMessage(equalMessage);

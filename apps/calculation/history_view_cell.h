@@ -15,7 +15,6 @@ public:
     Output
   };
   HistoryViewCell(Responder * parentResponder);
-  ~HistoryViewCell();
   void reloadCell() override;
   void reloadScroll();
   void setEven(bool even) override;
@@ -23,7 +22,7 @@ public:
   Responder * responder() override {
     return this;
   }
-  Poincare::ExpressionLayout * expressionLayout() const override;
+  Poincare::LayoutRef layoutRef() const override;
   KDColor backgroundColor() const override;
   void setCalculation(Calculation * calculation);
   int numberOfSubviews() const override;
@@ -37,9 +36,9 @@ public:
   Shared::ScrollableExactApproximateExpressionsView * outputView();
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
-  Poincare::ExpressionLayout * m_inputLayout;
-  Poincare::ExpressionLayout * m_exactOutputLayout;
-  Poincare::ExpressionLayout * m_approximateOutputLayout;
+  Poincare::LayoutRef m_inputLayout;
+  Poincare::LayoutRef m_exactOutputLayout;
+  Poincare::LayoutRef m_approximateOutputLayout;
   ScrollableExpressionView m_inputView;
   Shared::ScrollableExactApproximateExpressionsView m_scrollableOutputView;
   SubviewType m_selectedSubviewType;

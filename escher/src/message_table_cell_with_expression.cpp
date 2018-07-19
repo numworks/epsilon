@@ -17,8 +17,8 @@ void MessageTableCellWithExpression::setHighlighted(bool highlight) {
   m_subtitleView.setBackgroundColor(backgroundColor);
 }
 
-void MessageTableCellWithExpression::setExpressionLayout(Poincare::ExpressionLayout * expressionLayout) {
-  m_subtitleView.setExpressionLayout(expressionLayout);
+void MessageTableCellWithExpression::setLayoutRef(Poincare::LayoutRef layout) {
+  m_subtitleView.setLayoutRef(layout);
   reloadCell();
   layoutSubviews();
 }

@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
-#include <poincare/expression_layout.h>
+#include <poincare/layout_reference.h>
 #include <poincare/print_float.h>
 #include <complex>
 extern "C" {
@@ -247,7 +247,7 @@ public:
   bool isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, AngleUnit angleUnit, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, Context & context);
 
   /* Layout Engine */
-  virtual ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const = 0; // Returned object must be deleted
+  virtual LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const = 0;
   virtual int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Simplification */

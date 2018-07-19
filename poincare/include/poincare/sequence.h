@@ -10,11 +10,11 @@ namespace Poincare {
 class Sequence : public StaticHierarchy<3>  {
   using StaticHierarchy<3>::StaticHierarchy;
 private:
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
-  virtual ExpressionLayout * createSequenceLayoutWithArgumentLayouts(ExpressionLayout * subscriptLayout, ExpressionLayout * superscriptLayout, ExpressionLayout * argumentLayout) const = 0;
+  virtual LayoutRef createSequenceLayout(LayoutRef subscriptLayout, LayoutRef superscriptLayout, LayoutRef argumentLayout) const = 0;
   virtual const char * name() const = 0;
   /* Evaluation */
   Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }

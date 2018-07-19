@@ -1,6 +1,6 @@
 #include <poincare/opposite.h>
-#include "layout/char_layout.h"
-#include "layout/horizontal_layout.h"
+#include <poincare/char_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
 #include <cmath>
 #include <poincare/layout_engine.h>
 #include <poincare/multiplication.h>
@@ -65,12 +65,12 @@ Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
   return m->shallowReduce(context, angleUnit);
 }
 
-ExpressionLayout * Opposite::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  HorizontalLayout * result = new HorizontalLayout(new CharLayout('-'), false);
+LayoutRef Opposite::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+  HorizontalLayoutRef result = HorizontalLayoutRef(CharLayoutRef('-'));
   if (operand(0)->type() == Type::Opposite) {
-    result->addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
+    result.addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
   } else {
-    result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, false);
+    result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, false);
   }
   return result;
 }

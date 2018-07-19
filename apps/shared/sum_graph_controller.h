@@ -49,7 +49,6 @@ private:
   class LegendView : public View {
   public:
     LegendView(SumGraphController * controller, char sumSymbol);
-    ~LegendView();
     LegendView(const LegendView& other) = delete;
     LegendView(LegendView&& other) = delete;
     LegendView& operator=(const LegendView& other) = delete;
@@ -71,7 +70,7 @@ private:
     void layoutSubviews() override;
     void layoutSubviews(Step step);
     ExpressionView m_sum;
-    Poincare::ExpressionLayout * m_sumLayout;
+    Poincare::LayoutRef m_sumLayoutRef;
     MessageTextView m_legend;
     TextField m_editableZone;
     char m_draftText[TextField::maxBufferSize()];

@@ -53,6 +53,7 @@
 #include <poincare/hyperbolic_tangent.h>
 #include <poincare/imaginary_part.h>
 #include <poincare/integral.h>
+#include <poincare/integral_layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_reference.h>

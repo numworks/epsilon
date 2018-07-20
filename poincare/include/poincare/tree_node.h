@@ -57,8 +57,8 @@ public:
   TreeNode * parentTree() const;
   TreeNode * rootTree();
   virtual int numberOfChildren() const = 0;
-  virtual void incrementNumberOfChildren(int increment = 1) {} //TODO Put an assert false
-  virtual void decrementNumberOfChildren(int decrement = 1) {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
+  virtual void incrementNumberOfChildren(int increment = 1) {} // Do no put an assert(false), we need this method for instance in GridLayout::removeRow
+  virtual void decrementNumberOfChildren(int decrement = 1) {} // Do no put an assert(false), we need this method for instance in GridLayout::removeRow
   virtual void eraseNumberOfChildren() {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
   int numberOfDescendants(bool includeSelf) const;
   TreeNode * childTreeAtIndex(int i) const;

@@ -91,7 +91,7 @@ public:
     assert(p.isDefined());
     p.replaceChild(*this, newChild, cursor);
   }
-  void replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild, LayoutCursor * cursor);
+  void replaceWithJuxtapositionOf(LayoutReference<LayoutNode> leftChild, LayoutReference<LayoutNode> rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle = false);
   // Remove
   void removeChild(LayoutReference<LayoutNode> l, LayoutCursor * cursor, bool force = false);
   void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {

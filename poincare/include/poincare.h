@@ -42,6 +42,7 @@
 #include <poincare/floor.h>
 #include <poincare/floor_layout_node.h>
 #include <poincare/frac_part.h>
+#include <poincare/fraction_layout_node.h>
 #include <poincare/global_context.h>
 #include <poincare/great_common_divisor.h>
 #include <poincare/horizontal_layout_node.h>

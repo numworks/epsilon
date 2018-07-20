@@ -42,16 +42,43 @@ void LayoutRef::replaceChildWithEmpty(LayoutRef oldChild, LayoutCursor * cursor)
 }
 
 template<>
-void LayoutRef::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef rightChild, LayoutCursor * cursor) {
+void LayoutRef::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle) {
   LayoutReference<LayoutNode> p = parent();
   assert(p.isDefined());
-  assert(!p.isHorizontal());
-  /* One of the children to juxtapose might be "this", so we cannot just call
-   * replaceWith. */
-  HorizontalLayoutRef horizontalLayoutR;
-  p.replaceChild(*this, horizontalLayoutR, cursor);
-  horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
-  horizontalLayoutR.addOrMergeChildAtIndex(rightChild, 1, false);
+  if (!p.isHorizontal()) {
+    /* One of the children to juxtapose might be "this", so we cannot just call
+     * replaceWith. */
+    HorizontalLayoutRef horizontalLayoutR;
+    p.replaceChild(*this, horizontalLayoutR, cursor);
+    horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
+    if (putCursorInTheMiddle) {
+      if (!horizontalLayoutR.isEmpty()) {
+        cursor->setLayoutReference(horizontalLayoutR.childAtIndex(horizontalLayoutR.numberOfChildren()-1));
+        cursor->setPosition(LayoutCursor::Position::Right);
+      } else {
+        cursor->setLayoutReference(horizontalLayoutR);
+        cursor->setPosition(LayoutCursor::Position::Left);
+      }
+    }
+    horizontalLayoutR.addOrMergeChildAtIndex(rightChild, 1, false);
+    return;
+  }
+  /* The parent is an Horizontal layout, so directly add the two juxtaposition
+   * children to the parent. */
+  int idxInParent = p.indexOfChild(*this);
+  HorizontalLayoutRef castedParent = HorizontalLayoutRef(p.node());
+  if (putCursorInTheMiddle) {
+    if (idxInParent > 0) {
+      cursor->setLayoutReference(castedParent.childAtIndex(idxInParent-1));
+      cursor->setPosition(LayoutCursor::Position::Right);
+    } else {
+      cursor->setLayoutReference(castedParent);
+      cursor->setPosition(LayoutCursor::Position::Left);
+    }
+  }
+  castedParent.addOrMergeChildAtIndex(rightChild, idxInParent, true);
+  castedParent.addOrMergeChildAtIndex(leftChild, idxInParent, true, putCursorInTheMiddle ? cursor : nullptr);
+  p.removeChild(*this, cursor->layoutReference() == *this ? cursor : nullptr);
 }
 
 template <typename T>

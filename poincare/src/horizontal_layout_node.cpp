@@ -227,7 +227,7 @@ bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, Layo
 bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
   HorizontalLayoutRef thisRef(this);
   int newChildIndex = cursor->position() == LayoutCursor::Position::Left ? 0 : numberOfChildren();
-  thisRef.addOrMergeChildAtIndex(sibling, newChildIndex, cursor);
+  thisRef.addOrMergeChildAtIndex(sibling, newChildIndex, true, cursor);
   return false;
 }
 

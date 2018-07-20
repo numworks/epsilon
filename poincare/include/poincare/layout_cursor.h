@@ -113,7 +113,7 @@ public:
   void addEmptySquareRootLayout();
   void addEmptySquarePowerLayout();
   void addEmptyTenPowerLayout();
-  void addFractionLayoutAndCollapseSiblings() {} //TODO
+  void addFractionLayoutAndCollapseSiblings();
   void addXNTCharLayout();
   void insertText(const char * text);
   void addLayoutAndMoveCursor(LayoutRef l);

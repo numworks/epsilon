@@ -3,6 +3,7 @@
 #include <poincare/layout_reference.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/empty_layout_node.h>
+#include <poincare/fraction_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/nth_root_layout_node.h>
 #include <poincare/vertical_offset_layout_node.h>
@@ -113,6 +114,14 @@ void LayoutCursor::addEmptyTenPowerLayout() {
   if (emptyLayout.hasAncestor(rootRef, false) && !emptyLayout.isAllocationFailure()) {
     m_layoutRef = emptyLayout;
   }
+}
+
+void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
+  HorizontalLayoutRef child1 = HorizontalLayoutRef(EmptyLayoutRef());
+  HorizontalLayoutRef child2 = HorizontalLayoutRef(EmptyLayoutRef());
+  FractionLayoutRef newChild = FractionLayoutRef(child1, child2);
+  m_layoutRef.addSibling(this, newChild, true);
+  LayoutRef(newChild.node()).collapseSiblings(this);
 }
 
 void LayoutCursor::addXNTCharLayout() {

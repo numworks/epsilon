@@ -5,6 +5,7 @@
 #include <poincare/empty_layout_node.h>
 #include <poincare/fraction_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
+#include <poincare/matrix_layout_node.h>
 #include <poincare/nth_root_layout_node.h>
 #include <poincare/vertical_offset_layout_node.h>
 #include <stdio.h>
@@ -77,6 +78,19 @@ void LayoutCursor::addEmptyExponentialLayout() {
   if (emptyLayout.hasAncestor(rootRef, false) && !emptyLayout.isAllocationFailure()) {
     m_layoutRef = emptyLayout;
   }
+}
+
+void LayoutCursor::addEmptyMatrixLayout() {
+  MatrixLayoutRef matrixLayout = MatrixLayoutRef(
+      EmptyLayoutRef(EmptyLayoutNode::Color::Yellow),
+      EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
+      EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
+      EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
+      2,
+      2);
+  m_layoutRef.addSibling(this, matrixLayout, false);
+  m_layoutRef = matrixLayout.isAllocationFailure() ? matrixLayout : matrixLayout.childAtIndex(0);
+  m_position = Position::Right;
 }
 
 void LayoutCursor::addEmptySquareRootLayout() {

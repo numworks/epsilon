@@ -24,6 +24,7 @@ objs += $(addprefix poincare/src/,\
   layout_reference.o\
   left_parenthesis_layout_node.o\
   left_square_bracket_layout_node.o\
+  matrix_layout_node.o\
   nth_root_layout_node.o\
   product_layout_node.o\
   right_parenthesis_layout_node.o\

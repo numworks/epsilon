@@ -1,5 +1,6 @@
 #include <poincare/layout_reference.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/bracket_pair_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_cursor.h>
@@ -23,6 +24,8 @@ LayoutCursor LayoutRef::equivalentCursor(LayoutCursor * cursor) {
 
 template<>
 void LayoutRef::replaceChild(LayoutRef oldChild, LayoutRef newChild, LayoutCursor * cursor, bool force) {
+  int childIndex = indexOfChild(oldChild);
+  assert(childIndex >= 0);
   if (!typedNode()->willReplaceChild(oldChild.typedNode(), newChild.typedNode(), cursor, force)) {
     return;
   }
@@ -34,6 +37,7 @@ void LayoutRef::replaceChild(LayoutRef oldChild, LayoutRef newChild, LayoutCurso
       cursor->setLayoutReference(newChild);
     }
   }
+  this->typedNode()->didReplaceChildAtIndex(childIndex, cursor, force);
 }
 
 template<>
@@ -89,12 +93,14 @@ void LayoutReference<T>::addChildAtIndex(LayoutRef l, int index, LayoutCursor * 
   }
   LayoutRef nextPointedLayout(nullptr);
   LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
-  if (newIndex < this->numberOfChildren()) {
-    nextPointedLayout = this->childAtIndex(newIndex);
-    nextPosition = LayoutCursor::Position::Left;
-  } else {
-    nextPointedLayout = *this;
-    nextPosition = LayoutCursor::Position::Right;
+  if (cursor != nullptr) {
+    if (newIndex < this->numberOfChildren()) {
+      nextPointedLayout = this->childAtIndex(newIndex);
+      nextPosition = LayoutCursor::Position::Left;
+    } else {
+      nextPointedLayout = *this;
+      nextPosition = LayoutCursor::Position::Right;
+    }
   }
 
   this->addChildTreeAtIndex(l, newIndex);
@@ -261,4 +267,5 @@ template void LayoutReference<LayoutNode>::removeChild(LayoutRef l, LayoutCursor
 template void LayoutReference<HorizontalLayoutNode>::removeChild(LayoutRef l, LayoutCursor * cursor, bool force);
 template void LayoutReference<LayoutNode>::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cursor);
 template void LayoutReference<HorizontalLayoutNode>::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cursor);
+template void LayoutReference<BracketPairLayoutNode>::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cursor);
 }

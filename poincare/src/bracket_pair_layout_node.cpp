@@ -8,6 +8,20 @@ extern "C" {
 
 namespace Poincare {
 
+void BracketPairLayoutNode::RenderWithChildSize(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+  KDCoordinate verticalBarHeight = childSize.height() + 2*k_verticalMargin;
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_verticalExternMargin, k_lineThickness, verticalBarHeight), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+childSize.width()+2*k_widthMargin+k_lineThickness, p.y()+k_verticalExternMargin, k_lineThickness, verticalBarHeight), expressionColor);
+
+  // Render top bar
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_verticalExternMargin, k_bracketWidth, k_lineThickness), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+childSize.width()+2*k_widthMargin-k_bracketWidth, p.y()+k_verticalExternMargin, k_bracketWidth, k_lineThickness), expressionColor);
+
+  // Render bottom bar
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin, p.y()+k_verticalExternMargin+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
+  ctx->fillRect(KDRect(p.x()+k_externWidthMargin+2*k_lineThickness+childSize.width()+2*k_widthMargin-k_bracketWidth, p.y()+k_verticalExternMargin+verticalBarHeight-k_lineThickness, k_bracketWidth, k_lineThickness), expressionColor);
+}
+
 void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (childLayout()
     && cursor->layoutNode() == childLayout()

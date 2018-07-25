@@ -206,16 +206,16 @@ KDCoordinate GridLayoutNode::rowBaseline(int i) {
   return rowBaseline;
 }
 
-KDCoordinate GridLayoutNode::rowHeight(int i) {
+KDCoordinate GridLayoutNode::rowHeight(int i) const {
   KDCoordinate rowHeight = 0;
-  KDCoordinate baseline = rowBaseline(i);
+  KDCoordinate baseline = const_cast<GridLayoutNode *>(this)->rowBaseline(i);
   for (int j = 0; j < m_numberOfColumns; j++) {
-    rowHeight = max(rowHeight, childAtIndex(i*m_numberOfColumns+j)->layoutSize().height() - childAtIndex(i*m_numberOfColumns+j)->baseline());
+    rowHeight = max(rowHeight, const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j)->layoutSize().height() - const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j)->baseline());
   }
   return baseline+rowHeight;
 }
 
-KDCoordinate GridLayoutNode::height() {
+KDCoordinate GridLayoutNode::height() const {
   KDCoordinate totalHeight = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
     totalHeight += rowHeight(i);
@@ -224,15 +224,15 @@ KDCoordinate GridLayoutNode::height() {
   return totalHeight;
 }
 
-KDCoordinate GridLayoutNode::columnWidth(int j) {
+KDCoordinate GridLayoutNode::columnWidth(int j) const {
   KDCoordinate columnWidth = 0;
   for (int i = 0; i < m_numberOfRows; i++) {
-    columnWidth = max(columnWidth, childAtIndex(i*m_numberOfColumns+j)->layoutSize().width());
+    columnWidth = max(columnWidth, const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j)->layoutSize().width());
   }
   return columnWidth;
 }
 
-KDCoordinate GridLayoutNode::width() {
+KDCoordinate GridLayoutNode::width() const {
   KDCoordinate totalWidth = 0;
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j);

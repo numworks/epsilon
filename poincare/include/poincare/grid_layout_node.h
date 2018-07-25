@@ -74,10 +74,10 @@ private:
   // GridLayoutNode
   constexpr static KDCoordinate k_gridEntryMargin = 6;
   KDCoordinate rowBaseline(int i);
-  KDCoordinate rowHeight(int i);
-  KDCoordinate height();
-  KDCoordinate columnWidth(int j);
-  KDCoordinate width();
+  KDCoordinate rowHeight(int i) const;
+  KDCoordinate height() const;
+  KDCoordinate columnWidth(int j) const;
+  KDCoordinate width() const;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 

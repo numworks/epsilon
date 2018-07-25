@@ -16,9 +16,9 @@ public:
 
   LayoutReference<LayoutNode> clone() const {
     TreeReference<T> c = this->treeClone();
-    LayoutReference<LayoutNode> * cast = static_cast<LayoutReference<LayoutNode> *>(&c);
-    cast->invalidAllSizesPositionsAndBaselines();
-    return *cast;
+    LayoutReference<LayoutNode> cast = LayoutReference<LayoutNode *>(c.node());
+    cast.invalidAllSizesPositionsAndBaselines();
+    return cast;
   }
 
   // Operators

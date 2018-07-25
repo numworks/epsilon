@@ -162,7 +162,7 @@ int GridLayoutNode::indexAtRowColumn(int rowIndex, int columnIndex) const {
 }
 
 void GridLayoutNode::computeSize() {
-  m_frame.setSize(KDSize(width(), height()));
+  m_frame.setSize(gridSize());
   m_sized = true;
 }
 

@@ -56,6 +56,7 @@ class MatrixLayoutRef : public LayoutReference<MatrixLayoutNode> {
   friend class MatrixLayoutNode;
 public:
   MatrixLayoutRef(TreeNode * n) : LayoutReference<MatrixLayoutNode>(n) {}
+  MatrixLayoutRef() : LayoutReference<MatrixLayoutNode>() {}
   MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4, int numberOfRows, int numberOfColumns) :
     LayoutReference<MatrixLayoutNode>()
   {
@@ -68,6 +69,16 @@ public:
     addChildTreeAtIndex(l2, 1);
     addChildTreeAtIndex(l3, 2);
     addChildTreeAtIndex(l4, 3);
+  }
+  void setNumberOfRows(int count) {
+    if (!(node()->isAllocationFailure())) {
+      typedNode()->setNumberOfRows(count);
+    }
+  }
+  void setNumberOfColumns(int count) {
+    if (!(node()->isAllocationFailure())) {
+      typedNode()->setNumberOfColumns(count);
+    }
   }
 };
 

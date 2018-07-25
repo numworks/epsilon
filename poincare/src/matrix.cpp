@@ -11,12 +11,10 @@ extern "C" {
 #include <poincare/subtraction.h>
 #include <poincare/multiplication.h>
 #include "layout/matrix_layout.h"
+#include <poincare/matrix_layout_node.h>
 #include <cmath>
 #include <float.h>
 #include <string.h>
-
-#include <poincare/char_layout_node.h> //TODO
-
 
 namespace Poincare {
 
@@ -219,15 +217,14 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
 }
 
 LayoutRef Matrix::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  return CharLayoutRef('a'); //TODO
- /*
-  ExpressionLayout ** childrenLayouts = new ExpressionLayout * [numberOfOperands()];
+  MatrixLayoutRef layout;
+  LayoutRef castedLayout(layout.node());
   for (int i = 0; i < numberOfOperands(); i++) {
-    childrenLayouts[i] = operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits);
+    castedLayout.addChildAtIndex(operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, nullptr);
   }
-  ExpressionLayout * layout = new MatrixLayout(childrenLayouts, numberOfRows(), numberOfColumns(), false);
-  delete [] childrenLayouts;
-  return layout;*/
+  layout.setNumberOfRows(numberOfRows());
+  layout.setNumberOfColumns(numberOfColumns());
+  return layout;
 }
 
 int Matrix::rank(Context & context, AngleUnit angleUnit, bool inPlace) {

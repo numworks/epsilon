@@ -42,6 +42,10 @@ public:
   TreeNode * deepCopy(TreeNode * node) {
     size_t size = node->deepSize();
     void * ptr = alloc(size);
+    if (ptr == nullptr) {
+      node->failedAllocationStaticNode()->retain();
+      return node->failedAllocationStaticNode();
+    }
     memcpy(ptr, static_cast<void *>(node), size);
     TreeNode * copy = reinterpret_cast<TreeNode *>(ptr);
     renameNode(copy);

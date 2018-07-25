@@ -17,11 +17,20 @@ public:
     m_numberOfColumns(0)
   {}
 
+  void setNumberOfRows(int numberOfRows) { m_numberOfRows = numberOfRows; }
+  void setNumberOfColumns(int numberOfColumns) { m_numberOfColumns = numberOfColumns; }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
+
+  // SerializableNode
+  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+    assert(false);
+    return 0;
+  }
 
   // TreeNode
   size_t size() const override { return sizeof(GridLayoutNode); }
@@ -66,6 +75,21 @@ private:
   KDCoordinate columnWidth(int j);
   KDCoordinate width();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
+};
+
+class GridLayoutRef : public LayoutReference<GridLayoutNode> {
+public:
+  GridLayoutRef(LayoutRef l1, LayoutRef l2) :
+    LayoutReference<GridLayoutNode>()
+  {
+    if (!(node()->isAllocationFailure())) {
+      typedNode()->setNumberOfRows(2);
+      typedNode()->setNumberOfColumns(1);
+    }
+    addChildTreeAtIndex(l1, 0);
+    addChildTreeAtIndex(l2, 1);
+  }
+  GridLayoutRef(TreeNode * t) : LayoutReference<GridLayoutNode>(t) {}
 };
 
 }

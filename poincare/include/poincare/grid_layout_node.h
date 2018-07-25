@@ -8,8 +8,12 @@
 
 namespace Poincare {
 
+class GridLayoutRef;
+
 class GridLayoutNode : public LayoutNode {
   friend class BinomialCoefficientLayoutNode;
+  friend class BinomialCoefficientLayoutRef;
+  friend class LayoutReference<GridLayoutNode>;
 public:
   GridLayoutNode() :
     LayoutNode(),

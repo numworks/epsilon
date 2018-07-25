@@ -40,6 +40,9 @@ public:
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) {
     return this->typedNode()->draw(ctx, p, expressionColor, backgroundColor);
   }
+  void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
+    return this->typedNode()->render(ctx, p, expressionColor, backgroundColor);
+  }
   KDSize layoutSize() { return this->typedNode()->layoutSize(); }
   KDPoint layoutOrigin() { return this->typedNode()->layoutOrigin(); }
   KDPoint absoluteOrigin() { return this->typedNode()->absoluteOrigin(); }

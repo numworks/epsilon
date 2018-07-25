@@ -12,6 +12,7 @@
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
+#include <poincare/binomial_coefficient_layout_node.h>
 #include <poincare/bracket_pair_layout_node.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/ceiling.h>

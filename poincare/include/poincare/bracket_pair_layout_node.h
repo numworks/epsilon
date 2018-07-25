@@ -35,15 +35,26 @@ protected:
   LayoutNode * childLayout() { return childAtIndex(0); }
 
 private:
-  KDCoordinate externWidthMargin() const { return 2; }
-  virtual KDCoordinate widthMargin() const { return 5; }
-  virtual KDCoordinate verticalExternMargin() const { return 0; }
+  constexpr static KDCoordinate k_externWidthMargin = 2;
+  constexpr static KDCoordinate k_widthMargin = 5;
+  constexpr static KDCoordinate k_verticalExternMargin = 0;
   constexpr static KDCoordinate k_bracketWidth = 5;
   constexpr static KDCoordinate k_lineThickness = 1;
   constexpr static KDCoordinate k_verticalMargin = 1;
+  KDCoordinate externWidthMargin() const { return k_externWidthMargin; }
+  virtual KDCoordinate widthMargin() const { return k_widthMargin; }
+  virtual KDCoordinate verticalExternMargin() const { return k_verticalExternMargin; }
   virtual bool renderTopBar() const { return true; }
   virtual bool renderBottomBar() const { return true; }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+};
+
+class BracketPairLayoutRef : public LayoutReference<BracketPairLayoutNode> {
+public:
+  BracketPairLayoutRef(LayoutRef l) : LayoutReference<BracketPairLayoutNode>() {
+    addChildAtIndex(l, 0, nullptr);
+  }
+  BracketPairLayoutRef(TreeNode * n) : LayoutReference<BracketPairLayoutNode>(n) {}
 };
 
 }

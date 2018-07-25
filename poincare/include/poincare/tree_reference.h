@@ -197,6 +197,9 @@ public:
   }
 
   void replaceWithAllocationFailure() {
+    if (isAllocationFailure()) {
+      return;
+    }
     assert(isDefined());
     TreeReference<TreeNode> p = parent();
     bool hasParent = p.isDefined();

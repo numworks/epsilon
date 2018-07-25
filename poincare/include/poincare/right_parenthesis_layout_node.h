@@ -7,8 +7,8 @@
 namespace Poincare {
 
 class RightParenthesisLayoutNode : public ParenthesisLayoutNode {
-//TODO  friend class BinomialCoefficientLayout;
   friend class SequenceLayoutNode;
+  friend class LayoutReference<RightParenthesisLayoutNode>;
 public:
   using ParenthesisLayoutNode::ParenthesisLayoutNode;
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {

@@ -108,7 +108,7 @@ public:
 
   /* Layout modification */
   void addEmptyExponentialLayout();
-  void addEmptyMatrixLayout() {} //TODO
+  void addEmptyMatrixLayout();
   void addEmptyPowerLayout();
   void addEmptySquareRootLayout();
   void addEmptySquarePowerLayout();

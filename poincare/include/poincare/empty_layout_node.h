@@ -88,6 +88,12 @@ public:
       this->typedNode()->setVisible(visible);
     }
   }
+
+  void setColor(EmptyLayoutNode::Color color) {
+    if (!(this->node()->isAllocationFailure())) {
+      this->typedNode()->setColor(color);
+    }
+  }
 };
 
 }

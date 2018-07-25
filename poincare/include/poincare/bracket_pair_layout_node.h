@@ -8,9 +8,11 @@
 namespace Poincare {
 
 class BracketPairLayoutNode : public LayoutNode {
-  //TODO friend class MatrixLayout;
+  friend class LayoutReference<BracketPairLayoutNode>;
 public:
   using LayoutNode::LayoutNode;
+
+  static void RenderWithChildSize(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;

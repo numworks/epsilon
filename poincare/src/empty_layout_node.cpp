@@ -1,7 +1,6 @@
 #include <poincare/empty_layout_node.h>
-//#include "matrix_layout.h" //TODO ?
+#include <poincare/matrix_layout_node.h>
 #include <escher/palette.h>
-#include <poincare/layout_cursor.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -71,20 +70,24 @@ void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCu
 }
 
 bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
+  EmptyLayoutRef thisRef(this);
+  LayoutRef siblingRef(sibling); // Create the reference now, as the node might be moved
+  if (m_color == Color::Grey) {
+    /* The parent is a MatrixLayout, and the current empty row or column is
+     * being filled in, so add a new empty row or column. */
+    LayoutNode * parentNode = parent();
+    assert(parentNode != nullptr);
+    static_cast<MatrixLayoutNode *>(parentNode)->newRowOrColumnAtIndex(parentNode->indexOfChild(this));
+    // WARNING: Do not use "this" afterwards.
+  }
   if (sibling->mustHaveLeftSibling()) {
-    m_color = Color::Yellow;
+    thisRef.setColor(Color::Yellow);
     return true;
   } else {
-    LayoutRef(this).replaceWith(LayoutRef(sibling), cursor);
+    thisRef.replaceWith(siblingRef, cursor);
     // WARNING: do not call "this" afterwards
     return false;
   }
-  /*   Color currentColor = m_color;
-  int currentIndexInParent = indexInParent();
-  if (currentColor == Color::Grey) {
-  // The parent is a MatrixLayout.
-  static_cast<MatrixLayoutNode *>(parent())->newRowOrColumnAtIndex(indexInParent);
-  }*/
 }
 
 void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

@@ -3,8 +3,6 @@
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <poincare/expression.h>
-#include <poincare/expression_layout_cursor.h>
-//#include <poincare/src/layout/matrix_layout.h> //TODO
 #include <assert.h>
 #include <string.h>
 

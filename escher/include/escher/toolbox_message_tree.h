@@ -2,7 +2,6 @@
 #define ESCHER_TOOLBOX_MESSAGE_TREE_H
 
 #include <escher/message_tree.h>
-#include <poincare_layouts.h>
 
 class ToolboxMessageTree : public MessageTree {
 public:

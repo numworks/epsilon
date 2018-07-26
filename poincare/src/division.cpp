@@ -10,7 +10,6 @@ extern "C" {
 #include <poincare/tangent.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
-#include "layout/fraction_layout.h"
 #include <cmath>
 
 namespace Poincare {

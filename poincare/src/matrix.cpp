@@ -10,7 +10,6 @@ extern "C" {
 #include <poincare/division.h>
 #include <poincare/subtraction.h>
 #include <poincare/multiplication.h>
-#include "layout/matrix_layout.h"
 #include <poincare/matrix_layout_node.h>
 #include <cmath>
 #include <float.h>

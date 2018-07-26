@@ -63,19 +63,6 @@ private:
   KDSize lowerBoundSizeWithNEquals();
 };
 
-/*class SequenceLayoutRef : public LayoutReference<SequenceLayoutNode> {
-public:
-  VerticalOffsetLayoutRef(LayoutRef l, VerticalOffsetLayoutNode::Type type) :
-    LayoutReference<VerticalOffsetLayoutNode>()
-  {
-    if (!(this->node()->isAllocationFailure())) {
-      this->typedNode()->setType(type);
-    }
-    addChildTreeAtIndex(l, 0);
-  }
-  VerticalOffsetLayoutRef(TreeNode * t) : LayoutReference<VerticalOffsetLayoutNode>(t) {}
-};*/
-
 }
 
 #endif

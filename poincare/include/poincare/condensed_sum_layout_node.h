@@ -27,7 +27,6 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(CondensedSumLayoutNode); }
-  int numberOfChildren() const override { return 3; }
 #if TREE_LOG
   const char * description() const override {
     return "CondensedSumLayout";

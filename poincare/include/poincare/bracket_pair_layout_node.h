@@ -53,14 +53,6 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class BracketPairLayoutRef : public LayoutReference<BracketPairLayoutNode> {
-public:
-  BracketPairLayoutRef(LayoutRef l) : LayoutReference<BracketPairLayoutNode>() {
-    addChildAtIndex(l, 0, nullptr);
-  }
-  BracketPairLayoutRef(TreeNode * n) : LayoutReference<BracketPairLayoutNode>(n) {}
-};
-
 }
 
 #endif

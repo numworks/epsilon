@@ -7,15 +7,22 @@
 namespace Poincare {
 
 class RightParenthesisLayoutNode : public ParenthesisLayoutNode {
-  friend class SequenceLayoutNode;
-  friend class LayoutReference<RightParenthesisLayoutNode>;
+  //TODO friend class SequenceLayoutNode;
+  //TODO friend class LayoutReference<RightParenthesisLayoutNode>;
 public:
   using ParenthesisLayoutNode::ParenthesisLayoutNode;
+
+  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
+
+  // LayoutNode
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
+  bool isRightParenthesis() const override { return true; }
+
+  // SerializableNode
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, ')');
   }
-  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
-  bool isRightParenthesis() const override { return true; }
+
   // TreeNode
   size_t size() const override { return sizeof(RightParenthesisLayoutNode); }
 #if TREE_LOG

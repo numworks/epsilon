@@ -210,7 +210,8 @@ KDCoordinate GridLayoutNode::rowHeight(int i) const {
   KDCoordinate rowHeight = 0;
   KDCoordinate baseline = const_cast<GridLayoutNode *>(this)->rowBaseline(i);
   for (int j = 0; j < m_numberOfColumns; j++) {
-    rowHeight = max(rowHeight, const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j)->layoutSize().height() - const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j)->baseline());
+    LayoutNode * currentChild = const_cast<GridLayoutNode *>(this)->childAtIndex(i*m_numberOfColumns+j);
+    rowHeight = max(rowHeight, currentChild->layoutSize().height() - currentChild->baseline());
   }
   return baseline+rowHeight;
 }

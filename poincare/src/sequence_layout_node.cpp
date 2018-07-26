@@ -126,16 +126,15 @@ void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 // Protected
 
 void SequenceLayoutNode::computeSize() {
-  KDSize lowerBoundSizeWithNEquals = HorizontalLayoutRef(CharLayoutRef('n'), CharLayoutRef('='), LayoutRef(lowerBoundLayout()).clone()).layoutSize();
-  LeftParenthesisLayoutRef dummyLeftParenthesis;
-  RightParenthesisLayoutRef dummyRightParenthesis;
-  HorizontalLayoutRef dummyLayout2(dummyLeftParenthesis, LayoutRef(argumentLayout()).clone(), dummyRightParenthesis);
-  KDSize dummyLayoutSize = dummyLayout2.layoutSize();
+  KDSize nEqualslowerBoundSize = lowerBoundSizeWithNEquals();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
+  KDSize argumentSize = argumentLayout()->layoutSize();
+  KDSize argumentSizeWithParentheses = KDSize(
+    argumentSize.width() + 2*ParenthesisLayoutNode::ParenthesisWidth(),
+    ParenthesisLayoutNode::HeightGivenChildHeight(argumentSize.height()));
   KDSize result = KDSize(
-    max(max(k_symbolWidth, lowerBoundSizeWithNEquals.width()), upperBoundSize.width())+k_argumentWidthMargin+dummyLayoutSize.width(),
-    baseline() + max(k_symbolHeight/2+k_boundHeightMargin+lowerBoundSizeWithNEquals.height(), dummyLayoutSize.height() - argumentLayout()->baseline())
-  );
+    max(max(k_symbolWidth, nEqualslowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
+    baseline() + max(k_symbolHeight/2+k_boundHeightMargin+nEqualslowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline()));
   m_frame.setSize(result);
   m_sized = true;
 }
@@ -145,26 +144,22 @@ void SequenceLayoutNode::computeBaseline() {
   m_baselined = true;
 }
 
-
 KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
-  LayoutRef lowerBoundClone = LayoutRef(lowerBoundLayout()).clone();
-  HorizontalLayoutRef dummyLayout1(CharLayoutRef('n'), CharLayoutRef('='), lowerBoundClone);
-  KDSize lowerBoundSizeWithNEquals = dummyLayout1.layoutSize();
+  KDSize nEqualslowerBoundSize = lowerBoundSizeWithNEquals();
+  KDSize nEqualsSize = KDText::stringSize("n=", k_fontSize);
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
-  LeftParenthesisLayoutRef dummyLeftParenthesis;
-  HorizontalLayoutRef dummyLayout2(dummyLeftParenthesis, LayoutRef(argumentLayout()).clone());
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   if (l == lowerBoundLayout()) {
-    x = dummyLayout1.positionOfChild(lowerBoundClone).x()
-      +max(max(0, (k_symbolWidth-lowerBoundSizeWithNEquals.width())/2),
-        (upperBoundSize.width()-lowerBoundSizeWithNEquals.width())/2);
+    x = nEqualsSize.width() +
+      max(max(0, (k_symbolWidth-nEqualslowerBoundSize.width())/2),
+          (upperBoundSize.width()-nEqualslowerBoundSize.width())/2);
     y = baseline() + k_symbolHeight/2 + k_boundHeightMargin;
   } else if (l == upperBoundLayout()) {
-    x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (lowerBoundSizeWithNEquals.width()-upperBoundSize.width())/2);
+    x = max(max(0, (k_symbolWidth-upperBoundSize.width())/2), (nEqualslowerBoundSize.width()-upperBoundSize.width())/2);
     y = baseline() - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
   } else if (l == argumentLayout()) {
-    x = max(max(k_symbolWidth, lowerBoundSizeWithNEquals.width()), upperBoundSize.width())+k_argumentWidthMargin+dummyLeftParenthesis.layoutSize().width();
+    x = max(max(k_symbolWidth, nEqualslowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+ParenthesisLayoutNode::ParenthesisWidth();
     y = baseline() - argumentLayout()->baseline();
   } else {
     assert(false);
@@ -215,23 +210,30 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
 
 void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Render the "n="
-  CharLayoutRef dummyN = CharLayoutRef('n');
-  LayoutRef lowerBoundClone = LayoutRef(lowerBoundLayout()).clone();
-  HorizontalLayoutRef dummyLayout(dummyN, CharLayoutRef('='), lowerBoundClone);
-  KDPoint nEqualsPosition = positionOfChild(lowerBoundLayout()).translatedBy((dummyLayout.positionOfChild(lowerBoundClone)).opposite()).translatedBy(dummyLayout.positionOfChild(dummyN));
-  ctx->drawString("n=", p.translatedBy(nEqualsPosition), dummyN.fontSize(), expressionColor, backgroundColor);
+  KDPoint nEqualsPosition = positionOfChild(lowerBoundLayout()).translatedBy(KDPoint(-KDText::stringSize("n=", k_fontSize).width(), 0));
+  ctx->drawString("n=", p.translatedBy(nEqualsPosition), k_fontSize, expressionColor, backgroundColor);
 
   // Render the parentheses
-  LeftParenthesisLayoutRef dummyLeftParenthesis;
-  RightParenthesisLayoutRef dummyRightParenthesis;
-  HorizontalLayoutRef dummyLayout2(dummyLeftParenthesis, LayoutRef(argumentLayout()).clone(), dummyRightParenthesis);
-  KDPoint positionOfArg = positionOfChild(argumentLayout());
-  KDPoint oppositeDummyPositionOfArg = dummyLayout2.positionOfChild(dummyLayout2.childAtIndex(1)).opposite();
-  KDPoint startOfParenthesis = positionOfArg.translatedBy(oppositeDummyPositionOfArg);
-  KDPoint leftParenthesisPoint = startOfParenthesis.translatedBy(dummyLayout2.positionOfChild(dummyLeftParenthesis));
-  KDPoint rightParenthesisPoint = startOfParenthesis.translatedBy(dummyLayout2.positionOfChild(dummyRightParenthesis));
-  dummyLeftParenthesis.typedNode()->render(ctx, p.translatedBy(leftParenthesisPoint), expressionColor, backgroundColor);
-  dummyRightParenthesis.typedNode()->render(ctx, p.translatedBy(rightParenthesisPoint), expressionColor, backgroundColor);
+  KDCoordinate argumentWithParenthesesHeight = ParenthesisLayoutNode::HeightGivenChildHeight(argumentLayout()->layoutSize().height());
+  KDPoint argumentPosition = positionOfChild(argumentLayout());
+
+  KDPoint leftParenthesisPoint = KDPoint(
+      argumentPosition.x() - ParenthesisLayoutNode::ParenthesisWidth(),
+      argumentPosition.y() + argumentLayout()->layoutSize().height() - argumentWithParenthesesHeight);
+  LeftParenthesisLayoutNode::RenderWithChildHeight(argumentWithParenthesesHeight, ctx, leftParenthesisPoint, expressionColor, backgroundColor);
+
+  KDPoint rightParenthesisPoint = KDPoint(
+      argumentPosition.x() + argumentLayout()->layoutSize().width(),
+      argumentPosition.y() + argumentLayout()->layoutSize().height() - argumentWithParenthesesHeight);
+  RightParenthesisLayoutNode::RenderWithChildHeight(argumentWithParenthesesHeight, ctx, rightParenthesisPoint, expressionColor, backgroundColor);
+}
+
+KDSize SequenceLayoutNode::lowerBoundSizeWithNEquals() {
+  KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
+  KDSize nEqualsSize = KDText::stringSize("n=", k_fontSize);
+  return KDSize(
+      nEqualsSize.width() + lowerBoundSize.width(),
+      max(nEqualsSize.height(), lowerBoundSize.height()));
 }
 
 }

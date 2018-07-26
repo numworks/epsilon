@@ -56,21 +56,24 @@ private:
   }
 };
 
-class NthRootLayoutRef : public LayoutReference<NthRootLayoutNode> {
+class NthRootLayoutRef : public LayoutReference {
 public:
-  NthRootLayoutRef(LayoutRef radicand) :
-    LayoutReference<NthRootLayoutNode>()
-  {
+  NthRootLayoutRef(TreeNode * t) : LayoutReference(t) {}
+
+  NthRootLayoutRef(LayoutRef radicand) : NthRootLayoutRef() {
     addChildTreeAtIndex(radicand, 0);
   }
-  NthRootLayoutRef(LayoutRef radicand, LayoutRef index) :
-    LayoutReference<NthRootLayoutNode>()
-  {
+
+  NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {
     addChildTreeAtIndex(radicand, 0);
     addChildTreeAtIndex(index, 1);
   }
 
-  NthRootLayoutRef(TreeNode * t) : LayoutReference<NthRootLayoutNode>(t) {}
+private:
+  NthRootLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>();
+    m_identifier = node->identifier();
+  }
 };
 
 }

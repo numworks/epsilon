@@ -41,10 +41,13 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 
-class AllocationFailedLayoutRef : public LayoutReference<AllocationFailedLayoutNode> {
+class AllocationFailedLayoutRef : public LayoutReference {
 public:
-  AllocationFailedLayoutRef() : LayoutReference<AllocationFailedLayoutNode>() {}
-  AllocationFailedLayoutRef(TreeNode * aNode) : LayoutReference<AllocationFailedLayoutNode>(aNode) {}
+  AllocationFailedLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<AllocationFailedLayoutNode>();
+    m_identifier = node->identifier();
+  }
+  AllocationFailedLayoutRef(TreeNode * n) : LayoutReference(n) {}
 };
 
 }

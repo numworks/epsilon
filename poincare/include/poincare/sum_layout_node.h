@@ -14,13 +14,20 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class SumLayoutRef : public LayoutReference<SumLayoutNode> {
+class SumLayoutRef : public LayoutReference {
 public:
-  SumLayoutRef(TreeNode * n) : LayoutReference<SumLayoutNode>(n) {}
-  SumLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) : LayoutReference<SumLayoutNode>() {
+  SumLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  SumLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
+    SumLayoutRef()
+  {
     addChildTreeAtIndex(argument, 0);
     addChildTreeAtIndex(lowerB, 1);
     addChildTreeAtIndex(upperB, 2);
+  }
+private:
+  SumLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<SumLayoutNode>();
+    m_identifier = node->identifier();
   }
 };
 

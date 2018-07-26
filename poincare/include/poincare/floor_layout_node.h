@@ -23,12 +23,18 @@ protected:
   bool renderTopBar() const override { return false; }
 };
 
-class FloorLayoutRef : public LayoutReference<FloorLayoutNode> {
+class FloorLayoutRef : public LayoutReference {
 public:
-  FloorLayoutRef(TreeNode * n) : LayoutReference<FloorLayoutNode>(n) {}
-  FloorLayoutRef(LayoutRef l) : LayoutReference<FloorLayoutNode>() {
+  FloorLayoutRef(TreeNode * n) : LayoutReference(n) {}
+  FloorLayoutRef(LayoutRef l) : FloorLayoutRef() {
     addChildTreeAtIndex(l, 0);
   }
+private:
+  FloorLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<FloorLayoutNode>();
+    m_identifier = node->identifier();
+  }
+
 };
 
 }

@@ -11,7 +11,6 @@ namespace Poincare {
  * instance, use addOrMergeChildAtIndex to add a LayoutNode safely. */
 
 class HorizontalLayoutNode : public LayoutNode {
-  template <typename T>
   friend class LayoutReference;
 public:
   using LayoutNode::LayoutNode;
@@ -50,25 +49,29 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 
-class HorizontalLayoutRef : public LayoutReference<HorizontalLayoutNode> {
+class HorizontalLayoutRef : public LayoutReference {
   friend class HorizontalLayoutNode;
 public:
-  HorizontalLayoutRef() : LayoutReference<HorizontalLayoutNode>() {}
-  HorizontalLayoutRef(TreeNode * hNode) : LayoutReference<HorizontalLayoutNode>(hNode) {}
-  HorizontalLayoutRef(LayoutRef l) : LayoutReference<HorizontalLayoutNode>() {
+  HorizontalLayoutRef(TreeNode * n) : LayoutReference(n) {}
+  HorizontalLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>();
+    m_identifier = node->identifier();
+  }
+
+  HorizontalLayoutRef(LayoutRef l) : HorizontalLayoutRef() {
     addChildTreeAtIndex(l, 0);
   }
 
-  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : LayoutReference<HorizontalLayoutNode>() {
+  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : HorizontalLayoutRef() {
     addChildTreeAtIndex(l1, 0);
     addChildTreeAtIndex(l2, 1);
   }
-  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3) : LayoutReference<HorizontalLayoutNode>() {
+  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3) : HorizontalLayoutRef() {
     addChildTreeAtIndex(l1, 0);
     addChildTreeAtIndex(l2, 1);
     addChildTreeAtIndex(l3, 2);
   }
-  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) : LayoutReference<HorizontalLayoutNode>() {
+  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) : HorizontalLayoutRef() {
     addChildTreeAtIndex(l1, 0);
     addChildTreeAtIndex(l2, 1);
     addChildTreeAtIndex(l3, 2);

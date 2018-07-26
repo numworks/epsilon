@@ -22,11 +22,16 @@ protected:
   bool renderBottomBar() const override { return false; }
 };
 
-class CeilingLayoutRef : public LayoutReference<CeilingLayoutNode> {
+class CeilingLayoutRef : public LayoutReference {
 public:
-  CeilingLayoutRef(TreeNode * n) : LayoutReference<CeilingLayoutNode>(n) {}
-  CeilingLayoutRef(LayoutRef l) : LayoutReference<CeilingLayoutNode>() {
+  CeilingLayoutRef(TreeNode * n) : LayoutReference(n) {}
+  CeilingLayoutRef(LayoutRef l) : CeilingLayoutRef() {
     addChildTreeAtIndex(l, 0);
+  }
+private:
+  CeilingLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>();
+    m_identifier = node->identifier();
   }
 };
 

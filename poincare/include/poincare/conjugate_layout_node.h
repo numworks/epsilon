@@ -41,14 +41,19 @@ private:
   }
 };
 
-class ConjugateLayoutRef : public LayoutReference<ConjugateLayoutNode> {
+class ConjugateLayoutRef : public LayoutReference {
 public:
   ConjugateLayoutRef(LayoutRef l) :
-    LayoutReference<ConjugateLayoutNode>()
+    ConjugateLayoutRef()
   {
     addChildTreeAtIndex(l, 0);
   }
-  ConjugateLayoutRef(TreeNode * n) : LayoutReference<ConjugateLayoutNode>(n) {}
+  ConjugateLayoutRef(TreeNode * n) : LayoutReference(n) {}
+private:
+  ConjugateLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<ConjugateLayoutNode>();
+    m_identifier = node->identifier();
+  }
 };
 
 }

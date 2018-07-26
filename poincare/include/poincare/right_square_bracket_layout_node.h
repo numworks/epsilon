@@ -24,9 +24,16 @@ protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class RightSquareBracketLayoutRef : public LayoutReference<RightSquareBracketLayoutNode> {
+class RightSquareBracketLayoutRef : public LayoutReference {
 public:
-  using LayoutReference<RightSquareBracketLayoutNode>::LayoutReference;
+  RightSquareBracketLayoutRef(TreeNode * t) : LayoutReference(t) {}
+
+  RightSquareBracketLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<RightSquareBracketLayoutNode>();
+    m_identifier = node->identifier();
+  }
+
+
 };
 
 }

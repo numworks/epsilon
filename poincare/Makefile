@@ -5,6 +5,7 @@ SFLAGS += -Ipoincare/include
 objs += $(addprefix poincare/src/,\
   tree_node.o\
   tree_pool.o\
+  tree_reference.o\
 )
 
 objs += $(addprefix poincare/src/,\

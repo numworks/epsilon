@@ -8,8 +8,10 @@
 namespace Poincare {
 
 class LayoutCursor;
+class LayoutReference;
 
 class LayoutNode : public SerializableNode {
+  friend class LayoutReference;
 public:
   enum class VerticalDirection {
     Up,

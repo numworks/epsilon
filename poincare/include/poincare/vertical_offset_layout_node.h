@@ -59,17 +59,22 @@ private:
   Type m_type;
 };
 
-class VerticalOffsetLayoutRef : public LayoutReference<VerticalOffsetLayoutNode> {
+class VerticalOffsetLayoutRef : public LayoutReference {
 public:
+  VerticalOffsetLayoutRef(TreeNode * t) : LayoutReference(t) {}
   VerticalOffsetLayoutRef(LayoutRef l, VerticalOffsetLayoutNode::Type type) :
-    LayoutReference<VerticalOffsetLayoutNode>()
+    VerticalOffsetLayoutRef()
   {
-    if (!(this->node()->isAllocationFailure())) {
-      this->typedNode()->setType(type);
+    if (!(node()->isAllocationFailure())) {
+      static_cast<VerticalOffsetLayoutNode *>(node())->setType(type);
     }
     addChildTreeAtIndex(l, 0);
   }
-  VerticalOffsetLayoutRef(TreeNode * t) : LayoutReference<VerticalOffsetLayoutNode>(t) {}
+private:
+  VerticalOffsetLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>();
+    m_identifier = node->identifier();
+  }
 };
 
 }

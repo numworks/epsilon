@@ -38,6 +38,9 @@ protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
   constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Large;
+  constexpr static char k_nEquals[] = {'n', '=', 0};
+
+  KDSize lowerBoundSizeWithNEquals();
 
   // LayoutNode
   void computeSize() override;
@@ -57,10 +60,7 @@ protected:
     assert(numberOfChildren() == 3);
     return childAtIndex(2);
   }
-
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-private:
-  KDSize lowerBoundSizeWithNEquals();
 };
 
 }

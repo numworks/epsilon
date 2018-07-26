@@ -6,6 +6,8 @@
 
 namespace Poincare {
 
+static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 const uint8_t topSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayoutNode::k_symbolWidth] = {
   {0x00, 0x00, 0xFF, 0xFF},
   {0xFF, 0xFF, 0x00, 0xFF},

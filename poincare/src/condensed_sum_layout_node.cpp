@@ -4,6 +4,8 @@
 
 namespace Poincare {
 
+static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 void CondensedSumLayoutNode::computeBaseline() {
   KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->layoutSize();
   m_baseline = baseLayout()->baseline() + max(0, superscriptSize.height() - baseLayout()->layoutSize().height()/2);

@@ -1,6 +1,5 @@
 #include "math_toolbox.h"
 #include "./shared/toolbox_helpers.h"
-#include <poincare/expression_layout_array.h>
 #include <assert.h>
 #include <string.h>
 

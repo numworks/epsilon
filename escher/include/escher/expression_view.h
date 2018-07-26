@@ -3,7 +3,6 @@
 
 #include <escher/view.h>
 #include <kandinsky/color.h>
-#include <poincare/expression_layout.h>
 #include <poincare/layout_reference.h>
 
 /* This class does not handle the expression layout as the size of the layout is

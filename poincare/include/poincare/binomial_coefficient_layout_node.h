@@ -35,8 +35,14 @@ protected:
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * nLayout() { return childAtIndex(0); }
-  LayoutNode * kLayout() { return childAtIndex(1); }
+  LayoutNode * nLayout() {
+    assert(numberOfChildren() == 2);
+    return childAtIndex(0);
+  }
+  LayoutNode * kLayout() {
+    assert(numberOfChildren() == 2);
+    return childAtIndex(1);
+  }
 };
 
 class BinomialCoefficientLayoutRef : public LayoutReference<BinomialCoefficientLayoutNode> {

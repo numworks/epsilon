@@ -40,9 +40,18 @@ protected:
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
-  LayoutNode * baseLayout() { return childAtIndex(0); }
-  LayoutNode * subscriptLayout() { return childAtIndex(1); }
-  LayoutNode * superscriptLayout() { return childAtIndex(2); }
+  LayoutNode * baseLayout() {
+    assert(numberOfChildren() == 3);
+    return childAtIndex(0);
+  }
+  LayoutNode * subscriptLayout() {
+    assert(numberOfChildren() == 3);
+    return childAtIndex(1);
+  }
+  LayoutNode * superscriptLayout() {
+    assert(numberOfChildren() == 3);
+    return childAtIndex(2);
+  }
 };
 
 class CondensedSumLayoutRef : public LayoutReference<CondensedSumLayoutNode> {

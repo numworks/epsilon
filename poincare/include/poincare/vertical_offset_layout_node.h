@@ -51,7 +51,10 @@ private:
   constexpr static KDCoordinate k_separationMargin = 5;
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
-  LayoutNode * indiceLayout() { return childAtIndex(0);}
+  LayoutNode * indiceLayout() {
+    assert(numberOfChildren() == 1);
+    return childAtIndex(0);
+  }
   LayoutNode * baseLayout();
   Type m_type;
 };

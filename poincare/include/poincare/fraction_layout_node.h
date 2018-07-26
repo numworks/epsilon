@@ -48,8 +48,14 @@ private:
   constexpr static KDCoordinate k_fractionLineMargin = 2;
   constexpr static KDCoordinate k_fractionLineHeight = 1;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * numeratorLayout() { return childAtIndex(0); }
-  LayoutNode * denominatorLayout() { return childAtIndex(1); }
+  LayoutNode * numeratorLayout() {
+    assert(numberOfChildren() == 2);
+    return childAtIndex(0);
+  }
+  LayoutNode * denominatorLayout() {
+    assert(numberOfChildren() == 2);
+    return childAtIndex(1);
+  }
 };
 
 class FractionLayoutRef : public LayoutReference<FractionLayoutNode> {

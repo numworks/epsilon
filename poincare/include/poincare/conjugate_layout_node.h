@@ -35,7 +35,10 @@ private:
   constexpr static KDCoordinate k_overlineVerticalMargin = 1;
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * childLayout() { return childAtIndex(0); }
+  LayoutNode * childLayout() {
+    assert(numberOfChildren() == 1);
+    return childAtIndex(0);
+  }
 };
 
 class ConjugateLayoutRef : public LayoutReference<ConjugateLayoutNode> {

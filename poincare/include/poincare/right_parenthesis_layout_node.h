@@ -33,10 +33,13 @@ protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class RightParenthesisLayoutRef : public LayoutReference<RightParenthesisLayoutNode> {
+class RightParenthesisLayoutRef : public LayoutReference {
 public:
-  RightParenthesisLayoutRef(TreeNode * n) : LayoutReference<RightParenthesisLayoutNode>(n) {}
-  RightParenthesisLayoutRef() : LayoutReference<RightParenthesisLayoutNode>() {}
+  RightParenthesisLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  RightParenthesisLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<RightParenthesisLayoutNode>();
+    m_identifier = node->identifier();
+  }
 };
 
 }

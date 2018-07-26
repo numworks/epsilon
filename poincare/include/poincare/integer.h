@@ -7,7 +7,6 @@
 namespace Poincare {
 
 class ExpressionLayout;
-template <typename T>
 class LayoutReference;
 class LayoutNode;
 
@@ -55,7 +54,7 @@ public:
 
   // Layout
   int writeTextInBuffer(char * buffer, int bufferSize) const;
-  LayoutReference<LayoutNode> createLayout() const;
+  LayoutReference createLayout() const;
 
   // Approximation
   template<typename T> T approximate() const;

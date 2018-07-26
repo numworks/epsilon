@@ -63,16 +63,23 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
-class IntegralLayoutRef : public LayoutReference<IntegralLayoutNode> {
+class IntegralLayoutRef : public LayoutReference {
 public:
   IntegralLayoutRef(LayoutRef integrand, LayoutRef lowerBound, LayoutRef upperBound) :
-    LayoutReference<IntegralLayoutNode>()
+    IntegralLayoutRef()
   {
     addChildTreeAtIndex(integrand, 0);
     addChildTreeAtIndex(lowerBound, 1);
     addChildTreeAtIndex(upperBound, 2);
   }
-  IntegralLayoutRef(TreeNode * t) : LayoutReference<IntegralLayoutNode>(t) {}
+  IntegralLayoutRef(TreeNode * t) : LayoutReference(t) {}
+private:
+  IntegralLayoutRef() :
+    LayoutReference()
+  {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>();
+    m_identifier = node->identifier();
+  }
 };
 
 }

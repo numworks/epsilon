@@ -19,13 +19,13 @@ public:
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
   template <typename T>
-  TreeNode * createTreeNode(size_t size) {
+  TreeNode * createTreeNode() {
     int nodeIdentifier = generateIdentifier();
     if (nodeIdentifier == -1) {
       T::FailedAllocationStaticNode()->retain();
       return T::FailedAllocationStaticNode();
     }
-    void * ptr = alloc(size);
+    void * ptr = alloc(sizeof(T));
     if (ptr == nullptr) {
       T::FailedAllocationStaticNode()->retain();
       return T::FailedAllocationStaticNode();

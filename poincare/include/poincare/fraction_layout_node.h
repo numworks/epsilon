@@ -58,15 +58,21 @@ private:
   }
 };
 
-class FractionLayoutRef : public LayoutReference<FractionLayoutNode> {
+class FractionLayoutRef : public LayoutReference {
 public:
   FractionLayoutRef(LayoutRef numerator, LayoutRef denominator) :
-    LayoutReference<FractionLayoutNode>()
+    FractionLayoutRef()
   {
     addChildTreeAtIndex(numerator, 0);
     addChildTreeAtIndex(denominator, 1);
   }
-  FractionLayoutRef(TreeNode * t) : LayoutReference<FractionLayoutNode>(t) {}
+  FractionLayoutRef(TreeNode * n) : LayoutReference(n) {}
+private:
+  FractionLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<FractionLayoutNode>();
+    m_identifier = node->identifier();
+  }
+
 };
 
 }

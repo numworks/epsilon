@@ -7,8 +7,10 @@
 
 namespace Poincare {
 
+class BracketPairLayoutRef;
+
 class BracketPairLayoutNode : public LayoutNode {
-  friend class LayoutReference<BracketPairLayoutNode>;
+  friend class BracketPairLayoutRef;
 public:
   using LayoutNode::LayoutNode;
 

@@ -54,17 +54,22 @@ private:
   }
 };
 
-class CondensedSumLayoutRef : public LayoutReference<CondensedSumLayoutNode> {
+class CondensedSumLayoutRef : public LayoutReference {
 public:
   CondensedSumLayoutRef(LayoutRef base, LayoutRef subscript, LayoutRef superscript) :
-    LayoutReference<CondensedSumLayoutNode>()
+    CondensedSumLayoutRef()
   {
     addChildTreeAtIndex(base, 0);
     addChildTreeAtIndex(subscript, 1);
     addChildTreeAtIndex(superscript, 2);
   }
 
-  CondensedSumLayoutRef(TreeNode * t) : LayoutReference<CondensedSumLayoutNode>(t) {}
+  CondensedSumLayoutRef(TreeNode * t) : LayoutReference(t) {}
+private:
+  CondensedSumLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<CondensedSumLayoutNode>();
+    m_identifier = node->identifier();
+  }
 };
 
 }

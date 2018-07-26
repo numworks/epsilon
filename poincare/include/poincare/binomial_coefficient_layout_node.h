@@ -47,15 +47,20 @@ private:
   }
 };
 
-class BinomialCoefficientLayoutRef : public LayoutReference<BinomialCoefficientLayoutNode> {
+class BinomialCoefficientLayoutRef : public LayoutReference {
 public:
   BinomialCoefficientLayoutRef(LayoutRef n, LayoutRef k) :
-    LayoutReference<BinomialCoefficientLayoutNode>()
+    BinomialCoefficientLayoutRef()
   {
     addChildTreeAtIndex(n, 0);
     addChildTreeAtIndex(k, 1);
   }
-  BinomialCoefficientLayoutRef(TreeNode * t) : LayoutReference<BinomialCoefficientLayoutNode>(t) {}
+  BinomialCoefficientLayoutRef(TreeNode * n) : LayoutReference(n) {}
+private:
+  BinomialCoefficientLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>();
+    m_identifier = node->identifier();
+  }
 };
 
 }

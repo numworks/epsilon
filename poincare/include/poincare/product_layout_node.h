@@ -16,13 +16,20 @@ private:
   constexpr static KDCoordinate k_lineThickness = 1;
 };
 
-class ProductLayoutRef : public LayoutReference<ProductLayoutNode> {
+class ProductLayoutRef : public LayoutReference {
 public:
-  ProductLayoutRef(TreeNode * n) : LayoutReference<ProductLayoutNode>(n) {}
-  ProductLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) : LayoutReference<ProductLayoutNode>() {
+  ProductLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  ProductLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
+    ProductLayoutRef()
+  {
     addChildTreeAtIndex(argument, 0);
     addChildTreeAtIndex(lowerB, 1);
     addChildTreeAtIndex(upperB, 2);
+  }
+private:
+  ProductLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<ProductLayoutNode>();
+    m_identifier = node->identifier();
   }
 };
 

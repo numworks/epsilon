@@ -11,7 +11,6 @@ class HorizontalLayoutNode;
 class VerticalOffsetLayoutRef;
 
 class LayoutCursor {
-  template <typename T>
   friend class LayoutReference;
   friend class HorizontalLayoutNode;
 public:

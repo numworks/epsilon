@@ -8,7 +8,6 @@
 namespace Poincare {
 
 class MatrixLayoutNode : public GridLayoutNode {
-  template <typename T>
   friend class LayoutReference;
 public:
   using GridLayoutNode::GridLayoutNode;
@@ -52,18 +51,22 @@ private:
   void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };
 
-class MatrixLayoutRef : public LayoutReference<MatrixLayoutNode> {
+class MatrixLayoutRef : public LayoutReference {
   friend class MatrixLayoutNode;
 public:
-  MatrixLayoutRef(TreeNode * n) : LayoutReference<MatrixLayoutNode>(n) {}
-  MatrixLayoutRef() : LayoutReference<MatrixLayoutNode>() {}
+  MatrixLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  MatrixLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>();
+    m_identifier = node->identifier();
+  }
+
   MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4, int numberOfRows, int numberOfColumns) :
-    LayoutReference<MatrixLayoutNode>()
+    MatrixLayoutRef()
   {
     if (!(node()->isAllocationFailure())) {
       assert(numberOfRows*numberOfColumns == 4);
-      typedNode()->setNumberOfRows(numberOfRows);
-      typedNode()->setNumberOfColumns(numberOfColumns);
+      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(numberOfRows);
+      static_cast<MatrixLayoutNode *>(node())->setNumberOfColumns(numberOfColumns);
     }
     addChildTreeAtIndex(l1, 0);
     addChildTreeAtIndex(l2, 1);
@@ -72,12 +75,12 @@ public:
   }
   void setNumberOfRows(int count) {
     if (!(node()->isAllocationFailure())) {
-      typedNode()->setNumberOfRows(count);
+      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(count);
     }
   }
   void setNumberOfColumns(int count) {
     if (!(node()->isAllocationFailure())) {
-      typedNode()->setNumberOfColumns(count);
+      static_cast<MatrixLayoutNode *>(node())->setNumberOfColumns(count);
     }
   }
 };

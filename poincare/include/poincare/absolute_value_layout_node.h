@@ -24,11 +24,16 @@ private:
   bool renderBottomBar() const override { return false; }
 };
 
-class AbsoluteValueLayoutRef : public LayoutReference<AbsoluteValueLayoutNode> {
+class AbsoluteValueLayoutRef : public LayoutReference {
 public:
-  AbsoluteValueLayoutRef(TreeNode * n) : LayoutReference<AbsoluteValueLayoutNode>(n) {}
-  AbsoluteValueLayoutRef(LayoutRef l) : LayoutReference<AbsoluteValueLayoutNode>() {
+  AbsoluteValueLayoutRef(TreeNode * n) : LayoutReference(n) {}
+  AbsoluteValueLayoutRef(LayoutRef l) : AbsoluteValueLayoutRef() {
     addChildTreeAtIndex(l, 0);
+  }
+private:
+  AbsoluteValueLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<AbsoluteValueLayoutNode>();
+    m_identifier = node->identifier();
   }
 };
 

@@ -51,25 +51,30 @@ private:
   KDText::FontSize m_fontSize;
 };
 
-class CharLayoutRef : public LayoutReference<CharLayoutNode> {
+class CharLayoutRef : public LayoutReference {
 public:
   CharLayoutRef(char c, KDText::FontSize fontSize = KDText::FontSize::Large) :
-    LayoutReference<CharLayoutNode>()
+    CharLayoutRef()
   {
     if (!(this->node()->isAllocationFailure())) {
-      this->typedNode()->setChar(c);
-      this->typedNode()->setFontSize(fontSize);
+      static_cast<CharLayoutNode *>(node())->setChar(c);
+      static_cast<CharLayoutNode *>(node())->setFontSize(fontSize);
     }
   }
 
-  CharLayoutRef(TreeNode * t) : LayoutReference<CharLayoutNode>(t) {}
+  CharLayoutRef(TreeNode * t) : LayoutReference(t) {}
+
   KDText::FontSize fontSize() const {
     if (!(this->node()->isAllocationFailure())) {
-      return this->typedNode()->fontSize();
+      return static_cast<CharLayoutNode *>(node())->fontSize();
     }
     return KDText::FontSize::Large;
   }
-
+private:
+  CharLayoutRef() : LayoutReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<CharLayoutNode>();
+    m_identifier = node->identifier();
+  }
 };
 
 }

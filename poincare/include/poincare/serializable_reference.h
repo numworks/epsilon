@@ -6,29 +6,28 @@
 
 namespace Poincare {
 
-template <typename T>
-class SerializableReference : public TreeReference<T> {
+class SerializableReference : public TreeReference {
 public:
-  using TreeReference<T>::TreeReference;
+  using TreeReference::TreeReference;
 
   // Serialization
-  bool needsParenthesisWithParent(SerializableReference<SerializableNode> parentRef) {
-    assert(this->isDefined());
-    return this->typedNode()->needsParenthesisWithParent(parentRef.typedNode());
+  bool needsParenthesisWithParent(SerializableReference parentRef) {
+    assert(isDefined());
+    return static_cast<SerializableNode *>(node())->needsParenthesisWithParent(static_cast<SerializableNode *>(parentRef.node()));
   }
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Decimal, int numberOfSignificantDigits = 0) const {
-    assert(this->isDefined());
-    return this->typedNode()->writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+    assert(isDefined());
+    return static_cast<SerializableNode *>(node())->writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
   }
 
   // Tree
-  SerializableReference<SerializableNode> serializableChildAtIndex(int i) {
-    TreeReference<T> treeRefChild = TreeReference<T>::treeChildAtIndex(i);
-    return SerializableReference<SerializableNode>(treeRefChild.node());
+  SerializableReference serializableChildAtIndex(int i) {
+    TreeReference treeRefChild = TreeReference::treeChildAtIndex(i);
+    return SerializableReference(treeRefChild.node());
   }
 };
 
-typedef SerializableReference<SerializableNode> SerializableRef;
+typedef SerializableReference SerializableRef;
 
 }
 

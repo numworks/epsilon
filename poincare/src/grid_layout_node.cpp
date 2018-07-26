@@ -4,6 +4,8 @@
 
 namespace Poincare {
 
+static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 // LayoutNode
 
 void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {

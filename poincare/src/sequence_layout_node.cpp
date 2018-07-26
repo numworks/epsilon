@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Left
       && ((lowerBoundLayout() && cursor->layoutReference() == lowerBoundLayout())

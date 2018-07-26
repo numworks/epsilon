@@ -82,21 +82,6 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 
-class GridLayoutRef : public LayoutReference<GridLayoutNode> {
-public:
-  GridLayoutRef(LayoutRef l1, LayoutRef l2) :
-    LayoutReference<GridLayoutNode>()
-  {
-    if (!(node()->isAllocationFailure())) {
-      typedNode()->setNumberOfRows(2);
-      typedNode()->setNumberOfColumns(1);
-    }
-    addChildTreeAtIndex(l1, 0);
-    addChildTreeAtIndex(l2, 1);
-  }
-  GridLayoutRef(TreeNode * t) : LayoutReference<GridLayoutNode>(t) {}
-};
-
 }
 
 #endif

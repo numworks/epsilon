@@ -34,24 +34,6 @@ public:
       int numberOfDigits,
       const char * operatorName);
 
-  /* ExpressionLayout to Text */
-  typedef bool (*ChildNeedsParenthesis)(const char * operatorName);
-  static int writeInfixExpressionLayoutTextInBuffer(
-      const ExpressionLayout * expressionLayout,
-      char * buffer,
-      int bufferSize,
-      const char * operatorName,
-      int firstChildIndex = 0,
-      int lastChildIndex = -1,
-      ChildNeedsParenthesis childNeedsParenthesis = [](const char * operatorName) {
-        return (operatorName[0] != 0 && operatorName[1] == 0 && (operatorName[0] == divideChar)); });
-  static int writePrefixExpressionLayoutTextInBuffer(
-      const ExpressionLayout * expressionLayout,
-      char * buffer,
-      int bufferSize,
-      const char * operatorName,
-      bool writeFirstChild = true);
-
   /* SerializableReference to Text */
   static int writeInfixSerializableRefTextInBuffer(
       const SerializableRef serializableRef,
@@ -78,8 +60,8 @@ public:
 private:
   static constexpr char divideChar = '/';
   // These two functions return the index of the null-terminating char.
-  static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis);
-  static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
+  static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex);
+  static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
 
   static void writeChildTreeInBuffer(SerializableRef childRef, SerializableRef parentRef, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, int * numberOfChar);
 };

@@ -24,7 +24,6 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(BracketPairLayoutNode); }
-  int numberOfChildren() const override { return 1; }
 #if TREE_LOG
   const char * description() const override { return "BracketPairLayout"; }
 #endif

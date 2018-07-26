@@ -219,14 +219,14 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
   KDCoordinate argumentWithParenthesesHeight = ParenthesisLayoutNode::HeightGivenChildHeight(argumentLayout()->layoutSize().height());
   KDPoint argumentPosition = positionOfChild(argumentLayout());
 
-  KDPoint leftParenthesisPoint = KDPoint(
+  KDPoint leftParenthesisPoint = p.translatedBy(KDPoint(
       argumentPosition.x() - ParenthesisLayoutNode::ParenthesisWidth(),
-      argumentPosition.y() + argumentLayout()->layoutSize().height() - argumentWithParenthesesHeight);
+      argumentPosition.y() + argumentLayout()->layoutSize().height() - argumentWithParenthesesHeight));
   LeftParenthesisLayoutNode::RenderWithChildHeight(argumentWithParenthesesHeight, ctx, leftParenthesisPoint, expressionColor, backgroundColor);
 
-  KDPoint rightParenthesisPoint = KDPoint(
+  KDPoint rightParenthesisPoint = p.translatedBy(KDPoint(
       argumentPosition.x() + argumentLayout()->layoutSize().width(),
-      argumentPosition.y() + argumentLayout()->layoutSize().height() - argumentWithParenthesesHeight);
+      argumentPosition.y() + argumentLayout()->layoutSize().height() - argumentWithParenthesesHeight));
   RightParenthesisLayoutNode::RenderWithChildHeight(argumentWithParenthesesHeight, ctx, rightParenthesisPoint, expressionColor, backgroundColor);
 }
 

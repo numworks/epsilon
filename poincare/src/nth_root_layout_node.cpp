@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-static inline uint16_t max(uint16_t x, uint16_t y) { return (x>y ? x : y); }
+static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode::k_leftRadixWidth] = {
   {0x00, 0xFF, 0xFF, 0xFF, 0xFF},

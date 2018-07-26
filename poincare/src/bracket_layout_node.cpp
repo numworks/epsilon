@@ -1,13 +1,11 @@
 #include <poincare/bracket_layout_node.h>
 #include <escher/metric.h>
-extern "C" {
 #include <assert.h>
 #include <stdlib.h>
-}
 
 namespace Poincare {
 
-static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return (x>y ? x : y); }
+static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 void BracketLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->layoutReference() == this);

@@ -10,6 +10,8 @@
 
 namespace Poincare {
 
+static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
 void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
    if (cursor->position() == LayoutCursor::Position::Left
        && ((numeratorLayout() && cursor->layoutNode() == numeratorLayout())

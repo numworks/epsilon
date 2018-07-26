@@ -33,7 +33,10 @@ protected:
   void computeBaseline() override;
   void computeSize() override;
   KDPoint positionOfChild(LayoutNode * child) override;
-  LayoutNode * childLayout() { return childAtIndex(0); }
+  LayoutNode * childLayout() {
+    assert(numberOfChildren() == 0);
+    return childAtIndex(0);
+  }
 
 private:
   constexpr static KDCoordinate k_externWidthMargin = 2;

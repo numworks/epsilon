@@ -46,9 +46,18 @@ private:
   constexpr static KDCoordinate k_integrandWidthMargin = 2;
   constexpr static KDCoordinate k_integrandHeigthMargin = 2;
   constexpr static KDCoordinate k_lineThickness = 1;
-  LayoutNode * integrandLayout() { return childAtIndex(0); }
-  LayoutNode * lowerBoundLayout() { return childAtIndex(1); }
-  LayoutNode * upperBoundLayout() { return childAtIndex(2); }
+  LayoutNode * integrandLayout() {
+    assert(numberOfChildren() == 3);
+    return childAtIndex(0);
+  }
+  LayoutNode * lowerBoundLayout() {
+    assert(numberOfChildren() == 3);
+    return childAtIndex(1);
+  }
+  LayoutNode * upperBoundLayout() {
+    assert(numberOfChildren() == 3);
+    return childAtIndex(2);
+  }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 

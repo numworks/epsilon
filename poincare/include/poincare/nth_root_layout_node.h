@@ -46,8 +46,14 @@ private:
   constexpr static KDCoordinate k_radixLineThickness = 1;
   KDSize adjustedIndexSize();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * radicandLayout() { return childAtIndex(0);}
-  LayoutNode * indexLayout() { return numberOfChildren() > 1 ? childAtIndex(1) : nullptr; }
+  LayoutNode * radicandLayout() {
+    assert(numberOfChildren() > 0);
+    return childAtIndex(0);
+  }
+  LayoutNode * indexLayout() {
+    assert(numberOfChildren() == 1 || numberOfChildren() == 2);
+    return numberOfChildren() == 2 ? childAtIndex(1) : nullptr;
+  }
 };
 
 class NthRootLayoutRef : public LayoutReference<NthRootLayoutNode> {

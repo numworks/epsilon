@@ -44,9 +44,18 @@ protected:
   KDPoint positionOfChild(LayoutNode * child) override;
 
   int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const;
-  LayoutNode * argumentLayout() { return childAtIndex(0); }
-  LayoutNode * lowerBoundLayout() { return childAtIndex(1); }
-  LayoutNode * upperBoundLayout() { return childAtIndex(2); }
+  LayoutNode * argumentLayout() {
+    assert(numberOfChildren() == 3);
+    return childAtIndex(0);
+  }
+  LayoutNode * lowerBoundLayout() {
+    assert(numberOfChildren() == 3);
+    return childAtIndex(1);
+  }
+  LayoutNode * upperBoundLayout() {
+    assert(numberOfChildren() == 3);
+    return childAtIndex(2);
+  }
 
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };

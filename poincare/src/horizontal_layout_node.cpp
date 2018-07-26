@@ -375,7 +375,7 @@ void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index,
   }
 
   // Merge the horizontal layout
-  TreeRef(node()).mergeTreeChildrenAtIndex(h, newIndex);
+  mergeTreeChildrenAtIndex(h, newIndex);
 
   if (cursor != nullptr) {
     if (!isAllocationFailure()) {

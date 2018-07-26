@@ -4,6 +4,7 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_reference.h>
+#include <poincare/grid_layout_node.h>
 
 namespace Poincare {
 
@@ -34,6 +35,7 @@ protected:
   void computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
+  KDCoordinate knHeight() { return nLayout()->layoutSize().height() + GridLayoutNode::k_gridEntryMargin + kLayout()->layoutSize().height(); }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   LayoutNode * nLayout() {
     assert(numberOfChildren() == 2);

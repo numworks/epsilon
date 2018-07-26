@@ -1,10 +1,7 @@
 #include <poincare/binomial_coefficient_layout_node.h>
-#include <poincare/empty_layout_node.h>
-#include <poincare/grid_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
 #include <poincare/left_parenthesis_layout_node.h>
-#include <poincare/layout_engine.h>
 #include <poincare/right_parenthesis_layout_node.h>
+#include <poincare/layout_engine.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -80,40 +77,33 @@ int BinomialCoefficientLayoutNode::writeTextInBuffer(char * buffer, int bufferSi
 }
 
 void BinomialCoefficientLayoutNode::computeSize() {
-  KDSize coefficientsSize = GridLayoutRef(LayoutRef(nLayout()).clone(), LayoutRef(kLayout()).clone()).layoutSize();
-
-  KDCoordinate width = coefficientsSize.width() + 2*ParenthesisLayoutNode::parenthesisWidth();
+  KDSize coefficientsSize = KDSize(
+      max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()),
+      knHeight());
+  KDCoordinate width = coefficientsSize.width() + 2*ParenthesisLayoutNode::ParenthesisWidth();
   m_frame.setSize(KDSize(width, coefficientsSize.height()));
   m_sized = true;
 }
 
 void BinomialCoefficientLayoutNode::computeBaseline() {
-  m_baseline = GridLayoutRef(LayoutRef(nLayout()).clone(), LayoutRef(kLayout()).clone()).baseline();
+  m_baseline = (knHeight()+1)/2;
   m_baselined = true;
 }
 
 KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child) {
-  LeftParenthesisLayoutRef dummyLeftParenthesis = LeftParenthesisLayoutRef();
-  RightParenthesisLayoutRef dummyRightParenthesis = RightParenthesisLayoutRef();
-  GridLayoutRef dummyGridLayout = GridLayoutRef(LayoutRef(nLayout()).clone(), LayoutRef(kLayout()).clone());
-  HorizontalLayoutRef dummyLayout = HorizontalLayoutRef(dummyLeftParenthesis, dummyGridLayout, dummyRightParenthesis);
   if (child == nLayout()) {
-    return dummyGridLayout.positionOfChild(dummyGridLayout.childAtIndex(0)).translatedBy(dummyLayout.positionOfChild(dummyGridLayout));
+    return KDPoint(ParenthesisLayoutNode::ParenthesisWidth(), 0);
   }
   assert(child == kLayout());
-  return dummyGridLayout.positionOfChild(dummyGridLayout.childAtIndex(1)).translatedBy(dummyLayout.positionOfChild(dummyGridLayout));
+  return KDPoint(ParenthesisLayoutNode::ParenthesisWidth(), knHeight() - kLayout()->layoutSize().height());
 }
 
 void BinomialCoefficientLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   // Render the parentheses.
-  LeftParenthesisLayoutRef dummyLeftParenthesis = LeftParenthesisLayoutRef();
-  RightParenthesisLayoutRef dummyRightParenthesis = RightParenthesisLayoutRef();
-  GridLayoutRef dummyGridLayout = GridLayoutRef(LayoutRef(nLayout()).clone(), LayoutRef(kLayout()).clone());
-  HorizontalLayoutRef dummyLayout = HorizontalLayoutRef(dummyLeftParenthesis, dummyGridLayout, dummyRightParenthesis);
-  KDPoint leftParenthesisPoint = dummyLayout.positionOfChild(dummyLeftParenthesis);
-  KDPoint rightParenthesisPoint = dummyLayout.positionOfChild(dummyRightParenthesis);
-  dummyLeftParenthesis.render(ctx, p.translatedBy(leftParenthesisPoint), expressionColor, backgroundColor);
-  dummyRightParenthesis.render(ctx, p.translatedBy(rightParenthesisPoint), expressionColor, backgroundColor);
+  KDCoordinate childHeight = knHeight();
+  KDCoordinate rightParenthesisPointX = max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width());
+  LeftParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p, expressionColor, backgroundColor);
+  RightParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor, backgroundColor);
 }
 
 }

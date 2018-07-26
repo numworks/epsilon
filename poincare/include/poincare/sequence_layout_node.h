@@ -37,6 +37,7 @@ public:
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;
   constexpr static KDCoordinate k_argumentWidthMargin = 2;
+  constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Large;
 
   // LayoutNode
   void computeSize() override;
@@ -58,6 +59,8 @@ protected:
   }
 
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
+private:
+  KDSize lowerBoundSizeWithNEquals();
 };
 
 /*class SequenceLayoutRef : public LayoutReference<SequenceLayoutNode> {

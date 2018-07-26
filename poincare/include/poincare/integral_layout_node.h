@@ -4,6 +4,7 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_reference.h>
+#include <kandinsky/text.h>
 
 namespace Poincare {
 
@@ -41,6 +42,7 @@ protected:
   void computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
+  constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Large;
   constexpr static KDCoordinate k_boundHeightMargin = 8;
   constexpr static KDCoordinate k_boundWidthMargin = 5;
   constexpr static KDCoordinate k_integrandWidthMargin = 2;

@@ -159,9 +159,7 @@ void MatrixLayoutNode::computeSize() {
 
 KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l) {
   assert(indexOfChild(l) >= 0);
-  LayoutRef dummyGridLayout = GridLayoutRef(this).clone();
-  BracketPairLayoutRef dummyLayout(dummyGridLayout);
-  return GridLayoutNode::positionOfChild(l).translatedBy(dummyLayout.positionOfChild(dummyGridLayout));
+  return GridLayoutNode::positionOfChild(l).translatedBy(KDPoint(KDPoint(SquareBracketLayoutNode::BracketWidth(), SquareBracketLayoutNode::k_lineThickness)));
 }
 
 void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
@@ -221,7 +219,6 @@ bool MatrixLayoutNode::hasGreySquares() const {
 
 void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
   BracketPairLayoutNode::RenderWithChildSize(gridSize(), ctx, p, expressionColor, backgroundColor);
-  GridLayoutNode::render(ctx, p.translatedBy(KDPoint(SquareBracketLayoutNode::BracketWidth(), SquareBracketLayoutNode::k_lineThickness)), expressionColor, backgroundColor);
 }
 
 void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {

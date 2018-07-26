@@ -182,7 +182,7 @@ int IntegralLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, PrintFl
 }
 
 void IntegralLayoutNode::computeSize() {
-  KDSize dxSize = HorizontalLayoutRef(CharLayoutRef('d'), CharLayoutRef('x')).layoutSize();
+  KDSize dxSize = KDText::stringSize("dx", k_fontSize);
   KDSize integrandSize = integrandLayout()->layoutSize();
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
@@ -235,10 +235,8 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCo
     2*k_boundHeightMargin+2*k_integrandHeigthMargin+integrandSize.height()), expressionColor);
 
   // Render "dx".
-  CharLayoutRef dummydx = CharLayoutRef('d');
-  HorizontalLayoutRef dummyLayout(LayoutRef(integrandLayout()).clone(), dummydx);
-  KDPoint dxPosition = dummyLayout.positionOfChild(dummydx);
-  ctx->drawString("dx", dxPosition.translatedBy(p).translatedBy(positionOfChild(integrandLayout())), dummydx.fontSize(), expressionColor, backgroundColor);
+  KDPoint dxPosition = p.translatedBy(positionOfChild(integrandLayout())).translatedBy(KDPoint(integrandSize.width(), 0));
+  ctx->drawString("dx", dxPosition, k_fontSize, expressionColor, backgroundColor);
 }
 
 }

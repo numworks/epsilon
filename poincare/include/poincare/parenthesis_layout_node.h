@@ -24,7 +24,7 @@ public:
 #endif
 
 protected:
-  KDColor s_parenthesisWorkingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
+  static KDColor s_parenthesisWorkingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
   void computeSize() override {
     m_frame.setSize(KDSize(parenthesisWidth(), childHeight() + k_verticalMargin));
     m_sized = true;

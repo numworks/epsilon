@@ -10,6 +10,18 @@ namespace Poincare {
 class LayoutCursor;
 class LayoutReference;
 
+/* Some methods, such as FractionLayoutNode::didCollapseSiblings, move the
+ * cursor without making sure that the layout is in the main layout, so they
+ * might make the cursor "jump" to an independent layout.
+ *
+ * Example : the main layout is AllocationFailure, we add a FractionLayout,
+ * which cannot be inserted in the main layout. Then FractionLayout collapses
+ * its siblings and moves the cursor to its denominator: the cursor is no longer
+ * on the main layout.
+ *
+ * We tackle this by not handling any event when the cursor points to an
+ * AllocationFailure layout. */
+
 class LayoutNode : public SerializableNode {
   friend class LayoutReference;
 public:

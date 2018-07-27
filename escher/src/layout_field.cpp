@@ -107,6 +107,9 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
 }
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
+  if (m_contentView.cursor()->layoutReference().isAllocationFailure()) {
+    return false;
+  }
   bool didHandleEvent = false;
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();
   bool moveEventChangedLayout = false;

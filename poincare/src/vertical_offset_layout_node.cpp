@@ -124,7 +124,7 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     LayoutRef parentRef(parent());
     LayoutNode * base = baseLayout();
     if (indiceLayout()->isEmpty()) {
-      int indexInParent = parentRef.typedNode()->indexOfChild(this);
+      int indexInParent = parentRef.node()->indexOfChild(this);
       if (base->isEmpty()) {
         // Case: Empty base and indice. Remove the base and the indice layouts.
         cursor->setLayoutNode(this);

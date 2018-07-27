@@ -28,24 +28,24 @@ public:
   }
 
   float approximate() const {
-    return this->typedNode()->approximate();
+    return this->node()->approximate();
   }
 
   ExpressionReference<ExpressionNode> deepReduce() {
     ExpressionReference<ExpressionNode> result = ExpressionReference<ExpressionNode>(this->clone().node());
-    result.typedNode()->deepReduce();
+    result.node()->deepReduce();
     return result;
   }
 
   void shallowReduce() {
-    return this->typedNode()->shallowReduce();
+    return this->node()->shallowReduce();
   }
 
   void sortChildren() {
     for (int i = this->numberOfChildren()-1; i > 0; i--) {
       bool isSorted = true;
       for (int j = 0; j < this->numberOfChildren()-1; j++) {
-        if (this->childAtIndex(j).typedNode()->type() > this->childAtIndex(j+1).typedNode()->type()) {
+        if (this->childAtIndex(j).node()->type() > this->childAtIndex(j+1).node()->type()) {
           this->swapChildren(j, j+1);
           isSorted = false;
         }

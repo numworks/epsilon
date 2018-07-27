@@ -34,40 +34,40 @@ public:
   inline bool operator==(LayoutReference l) { return this->identifier() == l.identifier(); }
   inline bool operator!=(LayoutReference l) { return this->identifier() != l.identifier(); }
 
-  LayoutNode * typedNode() { return static_cast<LayoutNode *>(node()); }
+  LayoutNode * node() const override{ return static_cast<LayoutNode *>(SerializableReference::node()); }
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) {
-    return this->typedNode()->draw(ctx, p, expressionColor, backgroundColor);
+    return this->node()->draw(ctx, p, expressionColor, backgroundColor);
   }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-    return this->typedNode()->render(ctx, p, expressionColor, backgroundColor);
+    return this->node()->render(ctx, p, expressionColor, backgroundColor);
   }
   //TODO: check these methods are needed here, not just in Node
-  KDSize layoutSize() { return this->typedNode()->layoutSize(); }
-  //KDPoint layoutOrigin() { return this->typedNode()->origin(); }
-  KDPoint absoluteOrigin() { return this->typedNode()->absoluteOrigin(); }
-  KDCoordinate baseline() { return this->typedNode()->baseline(); }
-  void invalidAllSizesPositionsAndBaselines() { return this->typedNode()->invalidAllSizesPositionsAndBaselines(); }
+  KDSize layoutSize() { return this->node()->layoutSize(); }
+  //KDPoint layoutOrigin() { return this->node()->origin(); }
+  KDPoint absoluteOrigin() { return this->node()->absoluteOrigin(); }
+  KDCoordinate baseline() { return this->node()->baseline(); }
+  void invalidAllSizesPositionsAndBaselines() { return this->node()->invalidAllSizesPositionsAndBaselines(); }
 
   // Layout properties
-  KDPoint positionOfChild(LayoutReference child) { return this->typedNode()->positionOfChild(child.typedNode()); }
-  bool mustHaveLeftSibling() const { return const_cast<LayoutReference *>(this)->typedNode()->mustHaveLeftSibling(); }
-  bool isEmpty() const { return const_cast<LayoutReference *>(this)->typedNode()->isEmpty(); }
-  bool isHorizontal() const { return const_cast<LayoutReference *>(this)->typedNode()->isHorizontal(); }
-  bool isVerticalOffset() const { return const_cast<LayoutReference *>(this)->typedNode()->isVerticalOffset(); }
-  bool isLeftParenthesis() const { return const_cast<LayoutReference *>(this)->typedNode()->isLeftParenthesis(); }
-  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return const_cast<LayoutReference *>(this)->typedNode()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
-  int leftCollapsingAbsorbingChildIndex() const { return const_cast<LayoutReference *>(this)->typedNode()->leftCollapsingAbsorbingChildIndex(); }
-  int rightCollapsingAbsorbingChildIndex() const { return const_cast<LayoutReference *>(this)->typedNode()->rightCollapsingAbsorbingChildIndex(); }
-  bool hasText() { return this->typedNode()->hasText(); }
-  char XNTChar() const { return const_cast<LayoutReference *>(this)->typedNode()->XNTChar(); }
+  KDPoint positionOfChild(LayoutReference child) { return this->node()->positionOfChild(child.node()); }
+  bool mustHaveLeftSibling() const { return const_cast<LayoutReference *>(this)->node()->mustHaveLeftSibling(); }
+  bool isEmpty() const { return const_cast<LayoutReference *>(this)->node()->isEmpty(); }
+  bool isHorizontal() const { return const_cast<LayoutReference *>(this)->node()->isHorizontal(); }
+  bool isVerticalOffset() const { return const_cast<LayoutReference *>(this)->node()->isVerticalOffset(); }
+  bool isLeftParenthesis() const { return const_cast<LayoutReference *>(this)->node()->isLeftParenthesis(); }
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return const_cast<LayoutReference *>(this)->node()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
+  int leftCollapsingAbsorbingChildIndex() const { return const_cast<LayoutReference *>(this)->node()->leftCollapsingAbsorbingChildIndex(); }
+  int rightCollapsingAbsorbingChildIndex() const { return const_cast<LayoutReference *>(this)->node()->rightCollapsingAbsorbingChildIndex(); }
+  bool hasText() { return this->node()->hasText(); }
+  char XNTChar() const { return const_cast<LayoutReference *>(this)->node()->XNTChar(); }
 
   // Layout modification
-  void deleteBeforeCursor(LayoutCursor * cursor) { return this->typedNode()->deleteBeforeCursor(cursor); }
-  bool removeGreySquaresFromAllMatrixAncestors() { return this->typedNode()->removeGreySquaresFromAllMatrixAncestors(); }
-  bool addGreySquaresToAllMatrixAncestors() { return this->typedNode()->addGreySquaresToAllMatrixAncestors(); }
-  LayoutReference layoutToPointWhenInserting() { return LayoutReference(this->typedNode()->layoutToPointWhenInserting()); }
+  void deleteBeforeCursor(LayoutCursor * cursor) { return this->node()->deleteBeforeCursor(cursor); }
+  bool removeGreySquaresFromAllMatrixAncestors() { return this->node()->removeGreySquaresFromAllMatrixAncestors(); }
+  bool addGreySquaresToAllMatrixAncestors() { return this->node()->addGreySquaresToAllMatrixAncestors(); }
+  LayoutReference layoutToPointWhenInserting() { return LayoutReference(this->node()->layoutToPointWhenInserting()); }
 
   // Cursor
   LayoutCursor cursor() const;
@@ -78,9 +78,9 @@ public:
     TreeReference treeRefChild = TreeReference::treeChildAtIndex(i);
     return LayoutReference(treeRefChild.node());
   }
-  //int indexInParent() const { return this->typedNode()->indexInParent(); }
-  LayoutReference root() { return LayoutReference(this->typedNode()->root()); }
-  LayoutReference parent() { return LayoutReference(this->typedNode()->parent()); }
+  //int indexInParent() const { return this->node()->indexInParent(); }
+  LayoutReference root() { return LayoutReference(this->node()->root()); }
+  LayoutReference parent() { return LayoutReference(this->node()->parent()); }
 
   // Tree modification
   // Add

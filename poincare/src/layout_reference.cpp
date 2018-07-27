@@ -11,11 +11,11 @@ namespace Poincare {
 
 // Cursor
 LayoutCursor LayoutReference::cursor() const {
-  return LayoutCursor(const_cast<LayoutReference *>(this)->typedNode());
+  return LayoutCursor(const_cast<LayoutReference *>(this)->node());
 }
 
 LayoutCursor LayoutReference::equivalentCursor(LayoutCursor * cursor) {
-  return this->typedNode()->equivalentCursor(cursor);
+  return this->node()->equivalentCursor(cursor);
 }
 
 // Tree modification
@@ -23,7 +23,7 @@ LayoutCursor LayoutReference::equivalentCursor(LayoutCursor * cursor) {
 void LayoutReference::replaceChild(LayoutRef oldChild, LayoutRef newChild, LayoutCursor * cursor, bool force) {
   int childIndex = indexOfChild(oldChild);
   assert(childIndex >= 0);
-  if (!typedNode()->willReplaceChild(oldChild.typedNode(), newChild.typedNode(), cursor, force)) {
+  if (!node()->willReplaceChild(oldChild.node(), newChild.node(), cursor, force)) {
     return;
   }
   replaceTreeChild(oldChild, newChild);
@@ -34,7 +34,7 @@ void LayoutReference::replaceChild(LayoutRef oldChild, LayoutRef newChild, Layou
       cursor->setLayoutReference(newChild);
     }
   }
-  this->typedNode()->didReplaceChildAtIndex(childIndex, cursor, force);
+  this->node()->didReplaceChildAtIndex(childIndex, cursor, force);
 }
 
 void LayoutReference::replaceChildWithEmpty(LayoutRef oldChild, LayoutCursor * cursor) {
@@ -82,7 +82,7 @@ void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef 
 
 void LayoutReference::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cursor) {
   int newIndex = index;
-  if (!this->typedNode()->willAddChildAtIndex(l.typedNode(), &newIndex, cursor)) {
+  if (!this->node()->willAddChildAtIndex(l.node(), &newIndex, cursor)) {
     return;
   }
   LayoutRef nextPointedLayout(nullptr);
@@ -110,7 +110,7 @@ void LayoutReference::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cur
 }
 
 void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling, bool moveCursor) {
-  if (!typedNode()->willAddSibling(cursor, sibling.typedNode(), moveCursor)) { //TODO
+  if (!node()->willAddSibling(cursor, sibling.node(), moveCursor)) { //TODO
     return;
   }
   /* The layout must have a parent, because HorizontalLayoutRef's
@@ -143,7 +143,7 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
     }
 
     // Else, let the parent add the sibling.
-    HorizontalLayoutRef(p.typedNode()).addOrMergeChildAtIndex(sibling, siblingIndex, true, moveCursor ? cursor : nullptr);
+    HorizontalLayoutRef(p.node()).addOrMergeChildAtIndex(sibling, siblingIndex, true, moveCursor ? cursor : nullptr);
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Left) {
@@ -155,7 +155,7 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
 }
 
 void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force) {
-  if (!this->typedNode()->willRemoveChild(l.typedNode(), cursor, force)) {
+  if (!this->node()->willRemoveChild(l.node(), cursor, force)) {
     return;
   }
   assert(this->hasChild(l));
@@ -178,7 +178,7 @@ void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force
       }
     }
   }
-  this->typedNode()->didRemoveChildAtIndex(index, cursor, force);
+  this->node()->didRemoveChildAtIndex(index, cursor, force);
 }
 
 void LayoutReference::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {
@@ -233,21 +233,21 @@ void LayoutReference::collapseOnDirection(HorizontalDirection direction, int abs
 /* Layout specialization, at the end of the .cpp as they must be defined after
  * the definition of the methods they calls */
 void LayoutReference::collapseSiblings(LayoutCursor * cursor) {
-  if (this->typedNode()->shouldCollapseSiblingsOnRight()) {
+  if (this->node()->shouldCollapseSiblingsOnRight()) {
     LayoutReference absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
       replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor, true);
     }
     collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
   }
-  if (this->typedNode()->shouldCollapseSiblingsOnLeft()) {
+  if (this->node()->shouldCollapseSiblingsOnLeft()) {
     LayoutReference absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
       replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor, true);
     }
     collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
   }
-  this->typedNode()->didCollapseSiblings(cursor);
+  this->node()->didCollapseSiblings(cursor);
 }
 
 }

@@ -26,7 +26,7 @@ class FloatRef : public ExpressionReference<FloatNode> {
 public:
   FloatRef(float f) : ExpressionReference<FloatNode>() {
     if (!(this->node()->isAllocationFailure())) {
-      this->typedNode()->setFloat(f);
+      this->node()->setFloat(f);
     }
   }
 };

@@ -9,16 +9,6 @@ extern "C" {
 
 namespace Poincare {
 
-/* acos, asin, arctan, acosh, asinh, arctanh and log have branch cuts on the
- * complex plan.
- * - acos, asin, atanh: ]-inf, -1[U]1, +inf[
- * - atan, asinh: ]-inf*i, -i[U]i, +inf*i[
- * - acosh: ]-inf, 1]
- * - log: ]-inf, 0]
- * They are then multivalued on these cuts. We followed the convention chosen
- * by the lib c++ of llvm but it might differ from a calculator to another
- * (ie acos(2) = -1.3169578969248*I or 1.3169578969248*I). */
-
 template<typename T>
 class Evaluation {
 public:
@@ -36,9 +26,6 @@ public:
   virtual Evaluation * createInverse() const = 0;
   virtual Evaluation * createTranspose() const = 0;
 };
-
-template <typename T>
-using ComplexFunction = std::complex<T> (*)(const std::complex<T>&);
 
 template<typename T>
 class Complex : public std::complex<T>, public Evaluation<T> {
@@ -66,21 +53,6 @@ public:
   std::complex<T> createDeterminant() const override { return *this; }
   Complex<T> * createInverse() const override;
   Complex<T> * createTranspose() const override { return new Complex<T>(*this); }
-  /* Complex functions */
-  static std::complex<T> pow(const std::complex<T> &c, const std::complex<T> &d);
-  static std::complex<T> sqrt(const std::complex<T> &c) {
-    return approximate(c, std::sqrt);
-  }
-  static std::complex<T> cos(const std::complex<T> &c) {
-    return approximate(c, std::cos);
-  }
-  static std::complex<T> sin(const std::complex<T> &c) {
-    return approximate(c, std::sin);
-  }
-  static std::complex<T> tan(const std::complex<T> &c) {
-    return approximate(c, std::tan);
-  }
-  static std::complex<T> approximate(const std::complex<T>& c, ComplexFunction<T> approximation);
 };
 
 template<typename T>

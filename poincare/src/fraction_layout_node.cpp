@@ -180,8 +180,10 @@ LayoutNode * FractionLayoutNode::layoutToPointWhenInserting() {
 }
 
 void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
-  cursor->setLayoutNode(denominatorLayout());
-  cursor->setPosition(LayoutCursor::Position::Left);
+  if (cursor != nullptr) {
+    cursor->setLayoutNode(denominatorLayout());
+    cursor->setPosition(LayoutCursor::Position::Left);
+  }
 }
 
 void FractionLayoutNode::computeSize() {

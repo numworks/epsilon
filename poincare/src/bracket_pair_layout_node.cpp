@@ -82,8 +82,10 @@ void BracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 void BracketPairLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
-  cursor->setLayoutNode(childLayout());
-  cursor->setPosition(LayoutCursor::Position::Left);
+  if (cursor != nullptr) {
+    cursor->setLayoutNode(childLayout());
+    cursor->setPosition(LayoutCursor::Position::Left);
+  }
 }
 
 int BracketPairLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {

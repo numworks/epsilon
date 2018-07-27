@@ -28,7 +28,7 @@ public:
   ~TreeReference();
 
   int identifier() const { return m_identifier; }
-  TreeNode * node() const { return TreePool::sharedPool()->node(m_identifier); }
+  virtual TreeNode * node() const { return TreePool::sharedPool()->node(m_identifier); }
 
   bool isDefined() const { return m_identifier != TreePool::NoNodeIdentifier && node() != nullptr; }
   bool isAllocationFailure() const { return isDefined() && node()->isAllocationFailure(); }

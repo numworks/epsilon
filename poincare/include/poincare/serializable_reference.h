@@ -10,14 +10,15 @@ class SerializableReference : public TreeReference {
 public:
   using TreeReference::TreeReference;
 
+  SerializableNode * node() const override { return static_cast<SerializableNode *>(TreeReference::node()); }
   // Serialization
   bool needsParenthesisWithParent(SerializableReference parentRef) {
     assert(isDefined());
-    return static_cast<SerializableNode *>(node())->needsParenthesisWithParent(static_cast<SerializableNode *>(parentRef.node()));
+    return node()->needsParenthesisWithParent(parentRef.node());
   }
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Decimal, int numberOfSignificantDigits = 0) const {
     assert(isDefined());
-    return static_cast<SerializableNode *>(node())->writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+    return node()->writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
   }
 
   // Tree

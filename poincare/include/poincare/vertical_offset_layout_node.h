@@ -35,6 +35,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(VerticalOffsetLayoutNode); }
+  int numberOfChildren() const override { return 1; }
 #if TREE_LOG
   const char * description() const override {
     return m_type == Type::Subscript ? "Subscript" : "Superscript";

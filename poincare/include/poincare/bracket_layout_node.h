@@ -22,6 +22,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(BracketLayoutNode); }
+  int numberOfChildren() const override { return 0; }
 #if TREE_LOG
   const char * description() const override { return "BracketLayout"; }
 #endif

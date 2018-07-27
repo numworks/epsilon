@@ -53,12 +53,10 @@ public:
   // Hierarchy
   TreeNode * parent() const;
   TreeNode * root();
-  int numberOfChildren() const { return m_numberOfChildren; }
-  void incrementNumberOfChildren(int increment = 1) { m_numberOfChildren += increment; }
-  void decrementNumberOfChildren(int decrement = 1) {
-    m_numberOfChildren = m_numberOfChildren > decrement ? m_numberOfChildren - decrement : 0;
-  }
-  virtual void eraseNumberOfChildren() { m_numberOfChildren = 0; }
+  virtual int numberOfChildren() const = 0;
+  virtual void incrementNumberOfChildren(int increment = 1) {} // Do no put an assert(false), we need this method for instance in GridLayout::removeRow
+  virtual void decrementNumberOfChildren(int decrement = 1) {} // Do no put an assert(false), we need this method for instance in GridLayout::removeRow
+  virtual void eraseNumberOfChildren() {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
   int numberOfDescendants(bool includeSelf) const;
   TreeNode * childAtIndex(int i) const;
   int indexOfChildByIdentifier(int childID) const;
@@ -175,7 +173,6 @@ protected:
 private:
   int m_identifier;
   int m_referenceCounter;
-  int m_numberOfChildren;
 };
 
 }

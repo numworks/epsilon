@@ -23,7 +23,7 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
      * go Left and ask the parent. */
     int childrenCount = numberOfChildren();
     if (childrenCount >= 1) {
-      cursor->setLayoutNode(static_cast<LayoutNode *>(childTreeAtIndex(childrenCount-1)));
+      cursor->setLayoutNode(childAtIndex(childrenCount-1));
     } else {
       cursor->setPosition(LayoutCursor::Position::Left);
     }
@@ -43,7 +43,7 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
     return;
   }
   // Case: the child is not the leftmost. Go to its left sibling and move Left.
-  cursor->setLayoutNode(static_cast<LayoutNode *>(childTreeAtIndex(childIndex-1)));
+  cursor->setLayoutNode(childAtIndex(childIndex-1));
   cursor->setPosition(LayoutCursor::Position::Right);
   cursor->moveLeft(shouldRecomputeLayout);
 }

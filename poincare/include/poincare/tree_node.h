@@ -51,8 +51,8 @@ public:
   void rename(int identifier);
 
   // Hierarchy
-  TreeNode * parentTree() const;
-  TreeNode * rootTree();
+  TreeNode * parent() const;
+  TreeNode * root();
   int numberOfChildren() const { return m_numberOfChildren; }
   void incrementNumberOfChildren(int increment = 1) { m_numberOfChildren += increment; }
   void decrementNumberOfChildren(int decrement = 1) {
@@ -60,7 +60,7 @@ public:
   }
   virtual void eraseNumberOfChildren() { m_numberOfChildren = 0; }
   int numberOfDescendants(bool includeSelf) const;
-  TreeNode * childTreeAtIndex(int i) const;
+  TreeNode * childAtIndex(int i) const;
   int indexOfChildByIdentifier(int childID) const;
   int indexOfChild(const TreeNode * child) const;
   int indexInParent() const;

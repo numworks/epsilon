@@ -44,7 +44,7 @@ void TreeNode::rename(int identifier) {
 
 // Hierarchy
 
-TreeNode * TreeNode::parentTree() const {
+TreeNode * TreeNode::parent() const {
   /* Choose between these algorithms: the first has complexity O(numberNodes)
    * but uses O(3maxNumberNodes) space. The second is much clearer for the
    * reader and uses no space, but has complexity O(numberNodes^2) */
@@ -91,7 +91,7 @@ TreeNode * TreeNode::parentTree() const {
 #endif
 }
 
-TreeNode * TreeNode::rootTree() {
+TreeNode * TreeNode::root() {
   for (TreeNode * root : TreePool::sharedPool()->roots()) {
     if (hasAncestor(root, true)) {
       return root;
@@ -112,7 +112,7 @@ int TreeNode::numberOfDescendants(bool includeSelf) const {
   return result;
 }
 
-TreeNode * TreeNode::childTreeAtIndex(int i) const {
+TreeNode * TreeNode::childAtIndex(int i) const {
   assert(i >= 0);
   assert(i < numberOfChildren());
   TreeNode * child = next();
@@ -144,7 +144,7 @@ int TreeNode::indexOfChild(const TreeNode * child) const {
 }
 
 int TreeNode::indexInParent() const {
-  TreeNode * p = parentTree();
+  TreeNode * p = parent();
   if (p == nullptr) {
     return -1;
   }
@@ -179,11 +179,11 @@ bool TreeNode::hasSibling(const TreeNode * e) const {
   if (e == nullptr) {
     return false;
   }
-  TreeNode * parent = parentTree();
-  if (parent == nullptr) {
+  TreeNode * p = parent();
+  if (p == nullptr) {
     return false;
   }
-  for (TreeNode * childNode : parent->directChildren()) {
+  for (TreeNode * childNode : p->directChildren()) {
     if (childNode == e) {
       return true;
     }

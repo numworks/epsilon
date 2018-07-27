@@ -45,9 +45,9 @@ public:
   LayoutNode * nextSibling() const override { return static_cast<LayoutNode *>(TreeNode::nextSibling()); }
 
   // Tree
-  LayoutNode * parent() const { return static_cast<LayoutNode *>(parentTree()); }
-  LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(childTreeAtIndex(i)); }
-  LayoutNode * root() { return static_cast<LayoutNode *>(rootTree()); }
+  LayoutNode * parent() const { return static_cast<LayoutNode *>(TreeNode::parent()); }
+  LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(TreeNode::childAtIndex(i)); }
+  LayoutNode * root() { return static_cast<LayoutNode *>(TreeNode::root()); }
 
   // Tree navigation
   virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;

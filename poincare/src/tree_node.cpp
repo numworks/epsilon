@@ -35,8 +35,13 @@ void TreeNode::releaseChildrenAndDestroy() {
   TreePool::sharedPool()->discardTreeNode(this);
 }
 
-void TreeNode::rename(int identifier) {
-  TreePool::sharedPool()->unregisterNode(this);
+void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
+  if (unregisterPreviousIdentifier) {
+    /* The previous identifier should not always be unregistered. For instance,
+     * if the node is a clone and still has the original node's identifier,
+     * unregistering it would lose the access to the original node. */
+    TreePool::sharedPool()->unregisterNode(this);
+  }
   m_identifier = identifier;
   m_referenceCounter = 1;
   TreePool::sharedPool()->registerNode(this);

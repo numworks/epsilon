@@ -36,7 +36,7 @@ protected:
   void computeSize() override;
   KDPoint positionOfChild(LayoutNode * child) override;
   LayoutNode * childLayout() {
-    assert(numberOfChildren() == 0);
+    assert(numberOfChildren() == 1);
     return childAtIndex(0);
   }
 

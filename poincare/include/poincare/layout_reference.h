@@ -20,17 +20,6 @@ public:
     return cast;
   }
 
-  // Operators
-  //TODO Remove these operators? If so, put setTo private
-  // Allow every LayoutReference to be transformed into a LayoutRef
-  LayoutReference& operator=(LayoutReference& lr) {
-    this->setTo(lr);
-    return *this;
-  }
-  LayoutReference& operator=(const LayoutReference& lr) {
-    this->setTo(lr);
-    return *this;
-  }
   inline bool operator==(LayoutReference l) { return this->identifier() == l.identifier(); }
   inline bool operator!=(LayoutReference l) { return this->identifier() != l.identifier(); }
 

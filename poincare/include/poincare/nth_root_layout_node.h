@@ -12,7 +12,10 @@ public:
   constexpr static KDCoordinate k_leftRadixHeight = 8;
   constexpr static KDCoordinate k_leftRadixWidth = 5;
 
-  using LayoutNode::LayoutNode;
+  NthRootLayoutNode() :
+    LayoutNode(),
+    m_numberOfChildren(0)
+  {}
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -25,7 +28,16 @@ public:
   bool hasUpperLeftIndex() const override { return numberOfChildren() > 1; }
 
   // TreeNode
+  void incrementNumberOfChildren(int increment = 1) override {
+    assert(increment == 1);
+    m_numberOfChildren+= increment;
+  }
+  void decrementNumberOfChildren(int decrement = 1) override {
+    assert(m_numberOfChildren >= decrement);
+    m_numberOfChildren-= decrement;
+  }
   size_t size() const override { return sizeof(NthRootLayoutNode); }
+  int numberOfChildren() const override { return m_numberOfChildren; }
 #if TREE_LOG
   const char * description() const override {
     return "NthRootLayout";
@@ -54,6 +66,7 @@ private:
     assert(numberOfChildren() == 1 || numberOfChildren() == 2);
     return numberOfChildren() == 2 ? childAtIndex(1) : nullptr;
   }
+  int m_numberOfChildren;
 };
 
 class NthRootLayoutRef : public LayoutReference {

@@ -13,7 +13,10 @@ namespace Poincare {
 class HorizontalLayoutNode : public LayoutNode {
   friend class LayoutReference;
 public:
-  using LayoutNode::LayoutNode;
+  HorizontalLayoutNode() :
+    LayoutNode(),
+    m_numberOfChildren(0)
+  {}
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -23,11 +26,18 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   bool isHorizontal() const override { return true; }
-  bool isEmpty() const override { return numberOfChildren() == 1 && const_cast<HorizontalLayoutNode *>(this)->childAtIndex(0)->isEmpty(); }
-  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return numberOfChildren() != 0; }
+  bool isEmpty() const override { return m_numberOfChildren == 1 && const_cast<HorizontalLayoutNode *>(this)->childAtIndex(0)->isEmpty(); }
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return m_numberOfChildren != 0; }
 
   // TreeNode
   size_t size() const override { return sizeof(HorizontalLayoutNode); }
+  int numberOfChildren() const override { return m_numberOfChildren; }
+  void incrementNumberOfChildren(int increment = 1) override { m_numberOfChildren+= increment; }
+  void decrementNumberOfChildren(int decrement = 1) override {
+    assert(m_numberOfChildren >= decrement);
+    m_numberOfChildren-= decrement;
+  }
+  void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 #if TREE_LOG
   const char * description() const override {
     return "Horizontal Layout";
@@ -47,6 +57,7 @@ private:
   void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
+  int m_numberOfChildren;
 };
 
 class HorizontalLayoutRef : public LayoutReference {

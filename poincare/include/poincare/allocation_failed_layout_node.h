@@ -22,6 +22,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailedLayoutNode); }
   const char * description() const override { return "Allocation Failed";  }
+  int numberOfChildren() const override { return 0; }
   bool isAllocationFailure() const override { return true; }
 
 protected:

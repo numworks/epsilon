@@ -23,6 +23,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(BinomialCoefficientLayoutNode); }
+  int numberOfChildren() const override { return 2; }
 #if TREE_LOG
   const char * description() const override {
     return "BinomialCoefficientLayout";

@@ -35,6 +35,13 @@ void TreeNode::releaseChildrenAndDestroy() {
   TreePool::sharedPool()->discardTreeNode(this);
 }
 
+void TreeNode::rename(int identifier) {
+  TreePool::sharedPool()->unregisterNode(this);
+  m_identifier = identifier;
+  m_referenceCounter = 1;
+  TreePool::sharedPool()->registerNode(this);
+}
+
 // Hierarchy
 
 TreeNode * TreeNode::parentTree() const {

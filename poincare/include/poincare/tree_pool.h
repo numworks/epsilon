@@ -168,7 +168,6 @@ private:
         break;
       }
     }
-    assert(newIdentifier != -1);
     return newIdentifier;
   }
 

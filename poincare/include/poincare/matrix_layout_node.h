@@ -13,13 +13,13 @@ public:
   using GridLayoutNode::GridLayoutNode;
 
   // MatrixLayoutNode
-  void newRowOrColumnAtIndex(int index);
   void addGreySquares();
   void removeGreySquares();
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
+  void willAddSiblingToEmptyChildAtIndex(int childIndex) override;
   bool isMatrix() const override { return true; }
 
   // SerializableNode
@@ -37,11 +37,11 @@ protected:
   // LayoutNode
   void computeSize() override;
   KDPoint positionOfChild(LayoutNode * l) override;
-  void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
+  void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor,  bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
 
 private:
   // MatrixNode
-  void childWasReplacedAtIndex(int index);
+  void newRowOrColumnAtIndex(int index);
   bool isRowEmpty(int index) const;
   bool isColumnEmpty(int index) const;
   bool hasGreySquares() const;

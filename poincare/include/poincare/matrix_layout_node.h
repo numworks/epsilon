@@ -68,10 +68,10 @@ public:
       static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(numberOfRows);
       static_cast<MatrixLayoutNode *>(node())->setNumberOfColumns(numberOfColumns);
     }
-    addChildTreeAtIndex(l1, 0);
-    addChildTreeAtIndex(l2, 1);
-    addChildTreeAtIndex(l3, 2);
-    addChildTreeAtIndex(l4, 3);
+    addChildTreeAtIndex(l1, 0, 0);
+    addChildTreeAtIndex(l2, 1, 1);
+    addChildTreeAtIndex(l3, 2, 2);
+    addChildTreeAtIndex(l4, 3, 3);
   }
   void setNumberOfRows(int count) {
     if (!(node()->isAllocationFailure())) {

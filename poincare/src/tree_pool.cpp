@@ -56,8 +56,8 @@ void TreePool::registerStaticNodeIfRequired(TreeNode * node) {
   }
 }
 
-void TreePool::move(TreeNode * destination, TreeNode * source) {
-  size_t moveSize = source->deepSize();
+void TreePool::move(TreeNode * destination, TreeNode * source, int realNumberOfSourceChildren) {
+  size_t moveSize = source->deepSize(realNumberOfSourceChildren);
   moveNodes(destination, source, moveSize);
 }
 

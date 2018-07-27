@@ -35,7 +35,7 @@ public:
     return node;
   }
 
-  void move(TreeNode * destination, TreeNode * source);
+  void move(TreeNode * destination, TreeNode * source, int realNumberOfSourceChildren);
   void moveChildren(TreeNode * destination, TreeNode * sourceParent);
 
   TreeNode * deepCopy(TreeNode * node) {

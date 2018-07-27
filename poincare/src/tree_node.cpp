@@ -10,13 +10,13 @@ namespace Poincare {
 void TreeNode::release() {
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
-    releaseChildrenAndDestroy();
+    releaseChildrenAndDestroy(numberOfChildren());
   }
 }
 
-void TreeNode::releaseChildren() {
-  if (numberOfChildren() != 0) {
-    int lastIdentifier = lastChild()->identifier();
+void TreeNode::releaseChildren(int currentNumberOfChildren) {
+  if (currentNumberOfChildren != 0) {
+    int lastIdentifier = childAtIndex(currentNumberOfChildren-1)->identifier();
     TreeNode * child = next();
     bool lastChildReleased = false;
     while (!lastChildReleased) {
@@ -30,8 +30,8 @@ void TreeNode::releaseChildren() {
   }
 }
 
-void TreeNode::releaseChildrenAndDestroy() {
-  releaseChildren();
+void TreeNode::releaseChildrenAndDestroy(int currentNumberOfChildren) {
+  releaseChildren(currentNumberOfChildren);
   TreePool::sharedPool()->discardTreeNode(this);
 }
 
@@ -195,5 +195,25 @@ bool TreeNode::hasSibling(const TreeNode * e) const {
   }
   return false;
 }
+
+size_t TreeNode::deepSize(int realNumberOfChildren) const {
+  if (realNumberOfChildren == -1) {
+  // TODO: Error handling
+  return
+    reinterpret_cast<char *>(nextSibling())
+    -
+    reinterpret_cast<const char *>(this);
+  ;
+  }
+  TreeNode * realNextSibling = next();
+  for (int i = 0; i < realNumberOfChildren; i++) {
+    realNextSibling = realNextSibling->nextSibling();
+  }
+  return
+    reinterpret_cast<char *>(realNextSibling)
+    -
+    reinterpret_cast<const char *>(this);
+}
+
 
 }

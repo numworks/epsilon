@@ -82,7 +82,7 @@ public:
 
   // Hierarchy operations
 
-  void addChildTreeAtIndex(TreeReference t, int index);
+  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren);
   void removeTreeChildAtIndex(int i);
   void removeTreeChild(TreeReference t);
   void removeChildren();
@@ -91,7 +91,7 @@ public:
     replaceTreeChildAtIndex(indexOfChild(oldChild), newChild);
   }
   void replaceTreeChildAtIndex(int oldChildIndex, TreeReference newChild);
-  void replaceWithAllocationFailure();
+  void replaceWithAllocationFailure(int currentNumberOfChildren);
   void mergeTreeChildrenAtIndex(TreeReference t, int i);
   TreeReference(TreeNode * node) { // TODO Make this protected
     if (node == nullptr) {

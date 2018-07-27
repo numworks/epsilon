@@ -52,7 +52,7 @@ public:
 
   // Getters and setters
   LayoutRef layoutReference() { return m_layoutRef; }
-  LayoutNode * layoutNode() { return m_layoutRef.typedNode(); } // TODO  Make private + friend classes ?
+  LayoutNode * layoutNode() { return m_layoutRef.node(); } // TODO  Make private + friend classes ?
 
   int layoutIdentifier() { return m_layoutRef.identifier(); }
   void setLayoutReference(LayoutRef r) {

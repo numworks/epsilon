@@ -26,16 +26,16 @@ TreeReference::~TreeReference() {
 
 // Hierarchy operations
 
-void TreeReference::addChildTreeAtIndex(TreeReference t, int index) {
+void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
   assert(isDefined());
   if (node()->isAllocationFailure()) {
     return;
   }
   if (t.isAllocationFailure()) {
-    replaceWithAllocationFailure();
+    replaceWithAllocationFailure(currentNumberOfChildren);
     return;
   }
-  assert(index >= 0 && index <= numberOfChildren());
+  assert(index >= 0 && index <= currentNumberOfChildren);
 
   // Retain t before detaching it, else it might get destroyed
   t.node()->retain();
@@ -51,7 +51,7 @@ void TreeReference::addChildTreeAtIndex(TreeReference t, int index) {
   for (int i = 0; i < index; i++) {
     newChildPosition = newChildPosition->nextSibling();
   }
-  TreePool::sharedPool()->move(newChildPosition, t.node());
+  TreePool::sharedPool()->move(newChildPosition, t.node(), t.numberOfChildren());
   node()->incrementNumberOfChildren();
 }
 
@@ -64,14 +64,14 @@ void TreeReference::removeTreeChildAtIndex(int i) {
 
 void TreeReference::removeTreeChild(TreeReference t) {
   assert(isDefined());
-  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node());
+  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), t.numberOfChildren());
   t.node()->release();
   node()->decrementNumberOfChildren();
 }
 
 void TreeReference::removeChildren() {
   assert(isDefined());
-  node()->releaseChildren();
+  node()->releaseChildren(numberOfChildren());
   TreePool::sharedPool()->moveChildren(TreePool::sharedPool()->last(), node());
   node()->eraseNumberOfChildren();
 }
@@ -87,7 +87,7 @@ void TreeReference::replaceWith(TreeReference t) {
 void TreeReference::replaceTreeChildAtIndex(int oldChildIndex, TreeReference newChild) {
   assert(isDefined());
   if (newChild.isAllocationFailure()) {
-    replaceWithAllocationFailure();
+    replaceWithAllocationFailure(numberOfChildren());
     return;
   }
   TreeReference p = newChild.parent();
@@ -96,15 +96,15 @@ void TreeReference::replaceTreeChildAtIndex(int oldChildIndex, TreeReference new
   }
   assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
   TreeReference oldChild = treeChildAtIndex(oldChildIndex);
-  TreePool::sharedPool()->move(oldChild.node()->nextSibling(), newChild.node());
+  TreePool::sharedPool()->move(oldChild.node()->nextSibling(), newChild.node(), newChild.numberOfChildren());
   if (!p.isDefined()) {
     newChild.node()->retain();
   }
-  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), oldChild.node());
+  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), oldChild.node(), oldChild.numberOfChildren());
   oldChild.node()->release();
 }
 
-void TreeReference::replaceWithAllocationFailure() {
+void TreeReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
   if (isAllocationFailure()) {
     return;
   }
@@ -116,13 +116,10 @@ void TreeReference::replaceWithAllocationFailure() {
   TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode(); //TODO was typedNode
 
   // Move the node to the end of the pool and decrease children count of parent
-  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), node());
-  if (p.isDefined()) {
-    p.decrementNumberOfChildren();
-  }
+  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), node(), currentNumberOfChildren);
 
   // Release all children and delete the node in the pool
-  node()->releaseChildrenAndDestroy();
+  node()->releaseChildrenAndDestroy(currentNumberOfChildren);
 
   /* Create an allocation failure node with the previous node id. We know
    * there is room in the pool as we deleted the previous node and an
@@ -136,7 +133,9 @@ void TreeReference::replaceWithAllocationFailure() {
      * no longer retaining the node. When we add this node to the parent, it
      * will retain it and increment the retain count. */
     newAllocationFailureNode->setReferenceCounter(currentRetainCount - 1);
-    p.addChildTreeAtIndex(TreeRef(newAllocationFailureNode), indexInParentNode);
+    p.addChildTreeAtIndex(TreeRef(newAllocationFailureNode), indexInParentNode, p.numberOfChildren() - 1);
+    /* We decrement the number of children as we removed the previous child. TODO better comment*/
+    p.decrementNumberOfChildren();
   } else {
     newAllocationFailureNode->setReferenceCounter(currentRetainCount);
   }

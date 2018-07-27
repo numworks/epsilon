@@ -46,8 +46,8 @@ public:
   // Node operations
   void retain() { m_referenceCounter++; }
   void release();
-  void releaseChildren();
-  void releaseChildrenAndDestroy();
+  void releaseChildren(int currentNumberOfChildren);
+  void releaseChildrenAndDestroy(int currentNumberOfChildren);
   void rename(int identifier, bool unregisterPreviousIdentifier);
 
   // Hierarchy
@@ -161,15 +161,7 @@ protected:
     return node;
   }
 
-  size_t deepSize() const {
-    // TODO: Error handling
-    return
-      reinterpret_cast<char *>(nextSibling())
-      -
-      reinterpret_cast<const char *>(this);
-    ;
-  }
-
+  size_t deepSize(int realNumberOfChildren = -1) const;
 private:
   int m_identifier;
   int m_referenceCounter;

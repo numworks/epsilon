@@ -74,12 +74,12 @@ public:
   NthRootLayoutRef(TreeNode * t) : LayoutReference(t) {}
 
   NthRootLayoutRef(LayoutRef radicand) : NthRootLayoutRef() {
-    addChildTreeAtIndex(radicand, 0);
+    addChildTreeAtIndex(radicand, 0, 0);
   }
 
   NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {
-    addChildTreeAtIndex(radicand, 0);
-    addChildTreeAtIndex(index, 1);
+    addChildTreeAtIndex(radicand, 0, 0);
+    addChildTreeAtIndex(index, 1, 1);
   }
 
 private:

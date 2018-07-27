@@ -32,7 +32,6 @@ public:
     }
     T * node = new(ptr) T();
     node->rename(nodeIdentifier);
-    registerNode(node);
     return node;
   }
 
@@ -93,13 +92,17 @@ private:
     dealloc(node);
     freeIdentifier(nodeIdentifier);
   }
+
   void registerNode(TreeNode * node) {
     m_nodeForIdentifier[node->identifier()] = node;
   }
 
+  void unregisterNode(TreeNode * node) {
+    freeIdentifier(node->identifier());
+  }
+
   void renameNode(TreeNode * node) {
     node->rename(generateIdentifier());
-    registerNode(node);
   }
 
   int identifierOfStaticNodeAtIndex(int index) const { return - (index+2);} // We do not want positive indexes that are reserved for pool nodes, and -1 is reserved for node initialisation.
@@ -170,8 +173,9 @@ private:
   }
 
   void freeIdentifier(int identifier) {
-    assert(identifier >= 0 && identifier < MaxNumberOfNodes);
-    m_nodeForIdentifier[identifier] = nullptr;
+    if (identifier >= 0 && identifier < MaxNumberOfNodes) {
+      m_nodeForIdentifier[identifier] = nullptr;
+    }
   }
 
   // Debug

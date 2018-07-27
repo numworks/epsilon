@@ -75,8 +75,10 @@ void LayoutCursor::addEmptyExponentialLayout() {
       VerticalOffsetLayoutRef(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
   LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, sibling, false);
-  if (emptyLayout.hasAncestor(rootRef, false) && !emptyLayout.isAllocationFailure()) {
+  if (!rootRef.isAllocationFailure()) {
     m_layoutRef = emptyLayout;
+  } else {
+    m_layoutRef = rootRef;
   }
 }
 
@@ -88,24 +90,37 @@ void LayoutCursor::addEmptyMatrixLayout() {
       EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
       2,
       2);
+  LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, matrixLayout, false);
-  m_layoutRef = matrixLayout.isAllocationFailure() ? matrixLayout : matrixLayout.childAtIndex(0);
-  m_position = Position::Right;
+  if (!rootRef.isAllocationFailure()) {
+    m_layoutRef = matrixLayout.childAtIndex(0);
+    m_position = Position::Right;
+  } else {
+    m_layoutRef = rootRef;
+  }
 }
 
 void LayoutCursor::addEmptySquareRootLayout() {
   HorizontalLayoutRef child1 = HorizontalLayoutRef(EmptyLayoutRef());
   NthRootLayoutRef newChild = NthRootLayoutRef(child1);
+  LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, newChild, false);
-  m_layoutRef = newChild.childAtIndex(0);
-  ((LayoutRef *)&newChild)->collapseSiblings(this);
+  if (!rootRef.isAllocationFailure()) {
+    m_layoutRef = newChild.childAtIndex(0);
+    ((LayoutRef *)&newChild)->collapseSiblings(this);
+  } else {
+    m_layoutRef = rootRef;
+  }
 }
 
 void LayoutCursor::addEmptyPowerLayout() {
   VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(EmptyLayoutRef(), VerticalOffsetLayoutNode::Type::Superscript);
+  LayoutRef rootRef = m_layoutRef.root();
   privateAddEmptyPowerLayout(offsetLayout);
-  if (offsetLayout.parent().isDefined() && offsetLayout.numberOfChildren() == 1 && !offsetLayout.childAtIndex(0).isAllocationFailure()) {
+  if (!rootRef.isAllocationFailure()) {
     m_layoutRef = offsetLayout.childAtIndex(0);
+  } else {
+    m_layoutRef = rootRef;
   }
 }
 
@@ -125,8 +140,10 @@ void LayoutCursor::addEmptyTenPowerLayout() {
         VerticalOffsetLayoutNode::Type::Superscript));
   LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, sibling, false);
-  if (emptyLayout.hasAncestor(rootRef, false) && !emptyLayout.isAllocationFailure()) {
+  if (!rootRef.isAllocationFailure()) {
     m_layoutRef = emptyLayout;
+  } else {
+    m_layoutRef = rootRef;
   }
 }
 

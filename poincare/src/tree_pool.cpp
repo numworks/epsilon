@@ -52,7 +52,7 @@ void TreePool::logNodeForIdentifierArray() {
 void TreePool::registerStaticNodeIfRequired(TreeNode * node) {
   if (node->identifier() == -1) {
     int newIdentifier = registerStaticNode(node);
-    node->rename(newIdentifier);
+    node->rename(newIdentifier, false);
   }
 }
 

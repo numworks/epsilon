@@ -31,7 +31,7 @@ public:
       return T::FailedAllocationStaticNode();
     }
     T * node = new(ptr) T();
-    node->rename(nodeIdentifier);
+    node->rename(nodeIdentifier, false);
     return node;
   }
 
@@ -47,9 +47,9 @@ public:
     }
     memcpy(ptr, static_cast<void *>(node), size);
     TreeNode * copy = reinterpret_cast<TreeNode *>(ptr);
-    renameNode(copy);
+    renameNode(copy, false);
     for (TreeNode * child : copy->depthFirstChildren()) {
-      renameNode(child);
+      renameNode(child, false);
     }
     return copy;
   }
@@ -101,8 +101,8 @@ private:
     freeIdentifier(node->identifier());
   }
 
-  void renameNode(TreeNode * node) {
-    node->rename(generateIdentifier());
+  void renameNode(TreeNode * node, bool unregisterPreviousIdentifier = true) {
+    node->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
 
   int identifierOfStaticNodeAtIndex(int index) const { return - (index+2);} // We do not want positive indexes that are reserved for pool nodes, and -1 is reserved for node initialisation.

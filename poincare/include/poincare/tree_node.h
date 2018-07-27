@@ -48,7 +48,7 @@ public:
   void release();
   void releaseChildren();
   void releaseChildrenAndDestroy();
-  void rename(int identifier);
+  void rename(int identifier, bool unregisterPreviousIdentifier);
 
   // Hierarchy
   TreeNode * parent() const;

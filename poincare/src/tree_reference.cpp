@@ -129,7 +129,7 @@ void TreeReference::replaceWithAllocationFailure() {
    * AllocationFailure nodes size is smaller or equal to any other node size.*/
   //TODO static assert that the size is smaller
   TreeNode * newAllocationFailureNode = TreePool::sharedPool()->deepCopy(staticAllocFailNode);
-  newAllocationFailureNode->rename(m_identifier);
+  newAllocationFailureNode->rename(m_identifier, false);
   if (p.isDefined()) {
     assert(indexInParentNode >= 0);
     /* Set the refCount to previousRefCount-1 because the previous parent is

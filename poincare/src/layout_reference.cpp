@@ -236,7 +236,8 @@ void LayoutReference::collapseSiblings(LayoutCursor * cursor) {
   if (this->node()->shouldCollapseSiblingsOnRight()) {
     LayoutReference absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
-      replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor, true);
+      LayoutRef horRef = HorizontalLayoutRef(absorbingChild.clone());
+      replaceChild(absorbingChild, horRef, cursor, true);
     }
     collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
   }

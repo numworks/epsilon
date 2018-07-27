@@ -69,11 +69,11 @@ public:
   }
   TreeReference parent() const {
     assert(isDefined());
-    return TreeReference(node()->parentTree());
+    return TreeReference(node()->parent());
   }
   TreeReference treeChildAtIndex(int i) const {
     assert(isDefined());
-    return TreeReference(node()->childTreeAtIndex(i));
+    return TreeReference(node()->childAtIndex(i));
   }
   int indexOfChild(TreeReference t) const {
     assert(isDefined());

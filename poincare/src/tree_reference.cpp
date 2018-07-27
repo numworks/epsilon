@@ -147,7 +147,7 @@ void TreeReference::mergeTreeChildrenAtIndex(TreeReference t, int i) {
   // Steal operands
   int numberOfNewChildren = t.numberOfChildren();
   if (i < numberOfChildren()) {
-    TreePool::sharedPool()->moveChildren(node()->childTreeAtIndex(i), t.node());
+    TreePool::sharedPool()->moveChildren(node()->childAtIndex(i), t.node());
   } else {
     TreePool::sharedPool()->moveChildren(node()->lastDescendant()->next(), t.node());
   }

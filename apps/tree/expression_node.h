@@ -39,7 +39,7 @@ public:
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // Hierarchy
-  ExpressionNode * child(int i) { return static_cast<ExpressionNode *>(childTreeAtIndex(i)); }
+  ExpressionNode * child(int i) { return static_cast<ExpressionNode *>(childAtIndex(i)); }
 protected:
   void sortChildren();
 };

@@ -8,35 +8,6 @@ namespace Poincare {
 
 // MatrixLayoutNode
 
-void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
-  assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
-  bool shouldAddNewRow = childIsBottomOfGrid(index); // We need to compute this boolean before modifying the layout
-  int correspondingRow = rowAtChildIndex(index);
-    if (childIsRightOfGrid(index)) {
-    // Color the grey EmptyLayouts of the column in yellow.
-    int correspondingColumn = m_numberOfColumns - 1;
-    for (int i = 0; i < m_numberOfRows - 1; i++) {
-      LayoutNode * lastLayoutOfRow = childAtIndex(i*m_numberOfColumns+correspondingColumn);
-      if (lastLayoutOfRow->isEmpty()) {
-        static_cast<EmptyLayoutNode *>(lastLayoutOfRow)->setColor(EmptyLayoutNode::Color::Yellow);
-      }
-    }
-    // Add a column of grey EmptyLayouts on the right.
-    addEmptyColumn(EmptyLayoutNode::Color::Grey);
-  }
-  if (shouldAddNewRow) {
-    // Color the grey EmptyLayouts of the row in yellow.
-    for (int i = 0; i < m_numberOfColumns - 1; i++) {
-      LayoutNode * lastLayoutOfColumn = childAtIndex(correspondingRow*m_numberOfColumns+i);
-      if (lastLayoutOfColumn->isEmpty()) {
-        static_cast<EmptyLayoutNode *>(lastLayoutOfColumn)->setColor(EmptyLayoutNode::Color::Yellow);
-      }
-    }
-    // Add a row of grey EmptyLayouts at the bottom.
-    addEmptyRow(EmptyLayoutNode::Color::Grey);
-  }
-}
-
 void MatrixLayoutNode::addGreySquares() {
   if (!hasGreySquares()) {
     addEmptyRow(EmptyLayoutNode::Color::Grey);
@@ -113,6 +84,11 @@ void MatrixLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecom
   GridLayoutNode::moveCursorRight(cursor, shouldRecomputeLayout);
 }
 
+void MatrixLayoutNode::willAddSiblingToEmptyChildAtIndex(int childIndex) {
+  if (childIsRightOfGrid(childIndex) || childIsBottomOfGrid(childIndex)) {
+     newRowOrColumnAtIndex(childIndex);
+  }
+}
 
 // SerializableNode
 
@@ -182,6 +158,35 @@ void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutC
 }
 
 // Private
+
+void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
+  assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
+  bool shouldAddNewRow = childIsBottomOfGrid(index); // We need to compute this boolean before modifying the layout
+  int correspondingRow = rowAtChildIndex(index);
+    if (childIsRightOfGrid(index)) {
+    // Color the grey EmptyLayouts of the column in yellow.
+    int correspondingColumn = m_numberOfColumns - 1;
+    for (int i = 0; i < m_numberOfRows - 1; i++) {
+      LayoutNode * lastLayoutOfRow = childAtIndex(i*m_numberOfColumns+correspondingColumn);
+      if (lastLayoutOfRow->isEmpty()) {
+        static_cast<EmptyLayoutNode *>(lastLayoutOfRow)->setColor(EmptyLayoutNode::Color::Yellow);
+      }
+    }
+    // Add a column of grey EmptyLayouts on the right.
+    addEmptyColumn(EmptyLayoutNode::Color::Grey);
+  }
+  if (shouldAddNewRow) {
+    // Color the grey EmptyLayouts of the row in yellow.
+    for (int i = 0; i < m_numberOfColumns - 1; i++) {
+      LayoutNode * lastLayoutOfColumn = childAtIndex(correspondingRow*m_numberOfColumns+i);
+      if (lastLayoutOfColumn->isEmpty()) {
+        static_cast<EmptyLayoutNode *>(lastLayoutOfColumn)->setColor(EmptyLayoutNode::Color::Yellow);
+      }
+    }
+    // Add a row of grey EmptyLayouts at the bottom.
+    addEmptyRow(EmptyLayoutNode::Color::Grey);
+  }
+}
 
 bool MatrixLayoutNode::isRowEmpty(int index) const {
   assert(index >= 0 && index < m_numberOfRows);

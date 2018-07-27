@@ -77,10 +77,19 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
      * being filled in, so add a new empty row or column. */
     LayoutNode * parentNode = parent();
     assert(parentNode != nullptr);
-    static_cast<MatrixLayoutNode *>(parentNode)->newRowOrColumnAtIndex(parentNode->indexOfChild(this));
-    // WARNING: Do not use "this" afterwards.
+    LayoutRef parentRef(parentNode);
+    parentNode->willAddSiblingToEmptyChildAtIndex(parentRef.indexOfChild(thisRef));
+    // WARNING: Do not use previous node pointers afterwards.
+    bool shouldContinueAddition = !(parentRef.isAllocationFailure());
+    if (!shouldContinueAddition) {
+      if (moveCursor) {
+        cursor->setLayoutReference(parentRef);
+      }
+      return false;
+    }
+
   }
-  if (sibling->mustHaveLeftSibling()) {
+  if (siblingRef.mustHaveLeftSibling()) {
     thisRef.setColor(Color::Yellow);
     return true;
   } else {

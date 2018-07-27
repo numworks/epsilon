@@ -69,7 +69,7 @@ public:
     if (!(node()->isAllocationFailure())) {
       static_cast<VerticalOffsetLayoutNode *>(node())->setType(type);
     }
-    addChildTreeAtIndex(l, 0);
+    addChildTreeAtIndex(l, 0, 0);
   }
 private:
   VerticalOffsetLayoutRef() : LayoutReference() {

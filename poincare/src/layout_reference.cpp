@@ -97,7 +97,7 @@ void LayoutReference::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cur
     }
   }
 
-  this->addChildTreeAtIndex(l, newIndex);
+  this->addChildTreeAtIndex(l, newIndex, numberOfChildren());
 
   if (cursor != nullptr) {
     if (this->isAllocationFailure()) {

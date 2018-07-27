@@ -22,9 +22,9 @@ public:
   ProductLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
     ProductLayoutRef()
   {
-    addChildTreeAtIndex(argument, 0);
-    addChildTreeAtIndex(lowerB, 1);
-    addChildTreeAtIndex(upperB, 2);
+    addChildTreeAtIndex(argument, 0, 0);
+    addChildTreeAtIndex(lowerB, 1, 1);
+    addChildTreeAtIndex(upperB, 2, 2);
   }
 private:
   ProductLayoutRef() : LayoutReference() {

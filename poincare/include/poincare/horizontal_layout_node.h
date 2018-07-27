@@ -70,23 +70,23 @@ public:
   }
 
   HorizontalLayoutRef(LayoutRef l) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l, 0);
+    addChildTreeAtIndex(l, 0, 0);
   }
 
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l1, 0);
-    addChildTreeAtIndex(l2, 1);
+    addChildTreeAtIndex(l1, 0, 0);
+    addChildTreeAtIndex(l2, 1, 1);
   }
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l1, 0);
-    addChildTreeAtIndex(l2, 1);
-    addChildTreeAtIndex(l3, 2);
+    addChildTreeAtIndex(l1, 0, 0);
+    addChildTreeAtIndex(l2, 1, 1);
+    addChildTreeAtIndex(l3, 2, 2);
   }
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l1, 0);
-    addChildTreeAtIndex(l2, 1);
-    addChildTreeAtIndex(l3, 2);
-    addChildTreeAtIndex(l4, 3);
+    addChildTreeAtIndex(l1, 0, 0);
+    addChildTreeAtIndex(l2, 1, 1);
+    addChildTreeAtIndex(l3, 2, 2);
+    addChildTreeAtIndex(l4, 3, 3);
   }
 
   void addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);

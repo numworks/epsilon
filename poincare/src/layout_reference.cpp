@@ -231,11 +231,15 @@ void LayoutReference::collapseOnDirection(HorizontalDirection direction, int abs
 }
 
 void LayoutReference::collapseSiblings(LayoutCursor * cursor) {
+  LayoutRef rootLayout = root();
   if (this->node()->shouldCollapseSiblingsOnRight()) {
     LayoutReference absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
       LayoutRef horRef = HorizontalLayoutRef(absorbingChild.clone());
       replaceChild(absorbingChild, horRef, cursor, true);
+    }
+    if (rootLayout.isAllocationFailure()) {
+      return;
     }
     collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
   }
@@ -243,6 +247,9 @@ void LayoutReference::collapseSiblings(LayoutCursor * cursor) {
     LayoutReference absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
       replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor, true);
+    }
+    if (rootLayout.isAllocationFailure()) {
+      return;
     }
     collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
   }

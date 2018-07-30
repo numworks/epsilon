@@ -70,6 +70,12 @@ void Calculation::setContent(const char * c, Context * context, Expression * ans
 KDCoordinate Calculation::height(Context * context) {
   if (m_height < 0) {
     LayoutRef inputLayout = createInputLayout();
+    if (inputLayout.isAllocationFailure()) {
+      /* If there is not enough tree pool space to create the layout, return a
+       * default height. Do not store it in m_height in case some memory get
+       * freed afterwards. */
+      return k_heightComputationFailureHeight;
+    }
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
     LayoutRef approximateLayout = createApproximateOutputLayout(context);
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();

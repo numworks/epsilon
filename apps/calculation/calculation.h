@@ -40,6 +40,7 @@ public:
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
   constexpr static int k_printedExpressionSize = 2*::TextField::maxBufferSize();
 private:
+  static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::maxBufferSize()) because when we
    * print an expression we add omitted signs (multiplications, parenthesis...) */

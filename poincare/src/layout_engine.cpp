@@ -1,6 +1,8 @@
 #include <poincare/layout_engine.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
+#include <poincare/left_parenthesis_layout_node.h>
+#include <poincare/right_parenthesis_layout_node.h>
 #include <poincare/vertical_offset_layout_node.h>
 #include <assert.h>
 
@@ -43,11 +45,11 @@ LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, PrintF
 
 LayoutRef LayoutEngine::createParenthesedLayout(LayoutRef layoutRef, bool cloneLayout) {
   HorizontalLayoutRef result;
-  result.addChildTreeAtIndex(CharLayoutRef('('), 0, 0); //TODO
+  result.addChildTreeAtIndex(LeftParenthesisLayoutRef(), 0, 0);
   if (layoutRef.isDefined()) {
     result.addOrMergeChildAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1, true);
   }
-  result.addChildTreeAtIndex(CharLayoutRef(')'), result.numberOfChildren(), result.numberOfChildren()); //TODO
+  result.addChildTreeAtIndex(RightParenthesisLayoutRef(), result.numberOfChildren(), result.numberOfChildren());
   return result;
 }
 

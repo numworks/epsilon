@@ -94,7 +94,10 @@ private:
   }
 
   void registerNode(TreeNode * node) {
-    m_nodeForIdentifier[node->identifier()] = node;
+    int nodeID = node->identifier();
+    if (nodeID >= 0 && nodeID < MaxNumberOfNodes) {
+      m_nodeForIdentifier[nodeID] = node;
+    }
   }
 
   void unregisterNode(TreeNode * node) {

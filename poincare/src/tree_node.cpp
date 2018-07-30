@@ -190,12 +190,11 @@ bool TreeNode::hasSibling(const TreeNode * e) const {
 
 size_t TreeNode::deepSize(int realNumberOfChildren) const {
   if (realNumberOfChildren == -1) {
-  // TODO: Error handling
-  return
-    reinterpret_cast<char *>(nextSibling())
-    -
-    reinterpret_cast<const char *>(this);
-  ;
+    // TODO: Error handling
+    return
+      reinterpret_cast<char *>(nextSibling())
+      -
+      reinterpret_cast<const char *>(this);
   }
   TreeNode * realNextSibling = next();
   for (int i = 0; i < realNumberOfChildren; i++) {

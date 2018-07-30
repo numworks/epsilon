@@ -22,11 +22,12 @@ public:
   virtual ~TreeNode() {}
 
   // Attributes
+  bool isStatic() const;
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
   void setReferenceCounter(int refCount) { //TODO make this method privte with only friends that can access it
-    if (m_identifier < 0) {
+    if (isStatic()) {
       // Do not retain static nodes
       return;
     }
@@ -51,7 +52,7 @@ public:
 
   // Node operations
   void retain() {
-    if (m_identifier < 0) {
+    if (isStatic()) {
       // Do not retain static nodes
       return;
     }
@@ -156,11 +157,7 @@ public:
   }
 
 protected:
-  TreeNode() :
-    m_identifier(-1),
-    m_referenceCounter(1)
-  {
-  }
+  TreeNode();
 
   TreeNode * lastChild() const {
     if (numberOfChildren() == 0) {

@@ -110,12 +110,13 @@ void LayoutReference::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cur
 }
 
 void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling, bool moveCursor) {
-  if (!node()->willAddSibling(cursor, sibling.node(), moveCursor)) { //TODO
+  if (!node()->willAddSibling(cursor, sibling.node(), moveCursor)) {
     return;
   }
   /* The layout must have a parent, because HorizontalLayoutRef's
    * preprocessAddSibling returns false only an HorizontalLayout can be the
    * root layout. */
+  LayoutRef rootLayout = root();
   LayoutRef p = parent();
   assert(p.isDefined());
   if (p.isHorizontal()) {
@@ -129,7 +130,7 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
       LayoutRef neighbour(nullptr);
       if (cursor->position() == LayoutCursor::Position::Left && indexInParent > 0) {
         neighbour = p.childAtIndex(indexInParent - 1);
-      } else if (cursor->position() ==LayoutCursor::Position::Right && indexInParent < p.numberOfChildren() - 1) {
+      } else if (cursor->position() == LayoutCursor::Position::Right && indexInParent < p.numberOfChildren() - 1) {
         neighbour = p.childAtIndex(indexInParent + 1);
       }
       if (neighbour.isDefined() && neighbour.isVerticalOffset()) {
@@ -138,6 +139,9 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
           cursor->setPosition(cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left);
         }
         neighbour.addSibling(cursor, sibling, moveCursor);
+        if (rootLayout.isAllocationFailure() && moveCursor) {
+          cursor->setLayoutReference(rootLayout);
+        }
         return;
       }
     }

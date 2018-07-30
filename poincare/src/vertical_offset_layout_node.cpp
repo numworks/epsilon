@@ -241,6 +241,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
   if (sibling->isVerticalOffset()) {
     VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling);
     if (verticalOffsetSibling->type() == Type::Superscript) {
+      LayoutRef rootLayout = root();
       LayoutNode * parentNode = parent();
       LayoutRef parentRef = LayoutRef(parentNode);
       assert(parentNode->isHorizontal());
@@ -267,6 +268,12 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
       }
       if (rightParenthesis.parent().isDefined()) {
         cursor->setLayoutReference(rightParenthesis);
+      }
+      if (rootLayout.isAllocationFailure()) {
+        if (moveCursor) {
+          cursor->setLayoutReference(rootLayout);
+        }
+        return false;
       }
     }
   }

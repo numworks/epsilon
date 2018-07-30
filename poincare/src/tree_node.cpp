@@ -5,10 +5,14 @@
 
 namespace Poincare {
 
+bool TreeNode::isStatic() const {
+  return m_identifier <= TreePool::FirstStaticNodeIdentifier;
+}
+
 // Node operations
 
 void TreeNode::release() {
-  if (m_identifier < 0) {
+  if (isStatic()) {
     // Do not release static nodes
     return;
   }
@@ -46,6 +50,9 @@ void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
 // Hierarchy
 
 TreeNode * TreeNode::parent() const {
+  if (isStatic()) {
+    return nullptr;
+  }
   /* Choose between these algorithms: the first has complexity O(numberNodes)
    * but uses O(3maxNumberNodes) space. The second is much clearer for the
    * reader and uses no space, but has complexity O(numberNodes^2) */
@@ -93,6 +100,9 @@ TreeNode * TreeNode::parent() const {
 }
 
 TreeNode * TreeNode::root() {
+  if (isStatic()) {
+    return this;
+  }
   for (TreeNode * root : TreePool::sharedPool()->roots()) {
     if (hasAncestor(root, true)) {
       return root;
@@ -191,6 +201,13 @@ bool TreeNode::hasSibling(const TreeNode * e) const {
   }
   return false;
 }
+
+TreeNode::TreeNode() :
+  m_identifier(TreePool::NoNodeIdentifier),
+  m_referenceCounter(1)
+{
+}
+
 
 size_t TreeNode::deepSize(int realNumberOfChildren) const {
   if (realNumberOfChildren == -1) {

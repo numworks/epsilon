@@ -44,11 +44,11 @@ bool Opposite::needParenthesisWithParent(const Expression * e) const {
 }
 
 template<typename T>
-std::complex<T> Opposite::compute(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> Opposite::compute(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   return -c;
 }
 
-Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Opposite::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -65,7 +65,7 @@ Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
   return m->shallowReduce(context, angleUnit);
 }
 
-LayoutRef Opposite::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Opposite::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result = HorizontalLayoutRef(CharLayoutRef('-'));
   if (operand(0)->type() == Type::Opposite) {
     result.addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
@@ -75,7 +75,7 @@ LayoutRef Opposite::createLayout(PrintFloat::Mode floatDisplayMode, int numberOf
   return result;
 }
 
-int Opposite::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int Opposite::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -90,5 +90,5 @@ int Opposite::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode 
 
 }
 
-template std::complex<float> Poincare::Opposite::compute<float>(const std::complex<float>, AngleUnit angleUnit);
-template std::complex<double> Poincare::Opposite::compute<double>(const std::complex<double>, AngleUnit angleUnit);
+template std::complex<float> Poincare::Opposite::compute<float>(const std::complex<float>, Preferences::AngleUnit angleUnit);
+template std::complex<double> Poincare::Opposite::compute<double>(const std::complex<double>, Preferences::AngleUnit angleUnit);

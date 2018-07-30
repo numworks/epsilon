@@ -158,7 +158,7 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
-int VerticalOffsetLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int VerticalOffsetLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_type == Type::Subscript) {
     if (bufferSize == 0) {
       return -1;

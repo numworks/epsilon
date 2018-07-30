@@ -85,12 +85,12 @@ bool Multiplication::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 3);
 }
 
-LayoutRef Multiplication::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Multiplication::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
   return LayoutEngine::createInfixLayout(this, floatDisplayMode, numberOfSignificantDigits, middleDotString);
 }
 
-int Multiplication::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int Multiplication::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   const char multiplicationString[] = {Ion::Charset::MultiplicationSign, 0};
   return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, multiplicationString);
 }
@@ -103,7 +103,7 @@ Expression::Sign Multiplication::sign() const {
   return (Sign)sign;
 }
 
-Expression * Multiplication::setSign(Sign s, Context & context, AngleUnit angleUnit) {
+Expression * Multiplication::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == Sign::Positive);
   for (int i = 0; i < numberOfOperands(); i++) {
     if (operand(i)->sign() == Sign::Negative) {
@@ -174,11 +174,11 @@ static inline const Expression * Base(const Expression * e) {
   return e;
 }
 
-Expression * Multiplication::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Multiplication::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   return privateShallowReduce(context, angleUnit, true, true);
 }
 
-Expression * Multiplication::privateShallowReduce(Context & context, AngleUnit angleUnit, bool shouldExpand, bool canBeInterrupted) {
+Expression * Multiplication::privateShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool shouldExpand, bool canBeInterrupted) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -392,7 +392,7 @@ void Multiplication::mergeMultiplicationOperands() {
   }
 }
 
-void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Context & context, AngleUnit angleUnit) {
+void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Context & context, Preferences::AngleUnit angleUnit) {
   assert(o1->parent() == this && o2->parent() == this);
   /* This function turn sin(x)^p * cos(x)^q into either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
@@ -447,7 +447,7 @@ void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Co
   }
 }
 
-void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
+void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit) {
   /* This function factorizes two operands which have a common base. For example
    * if this is Multiplication(pi^2, pi^3), then pi^2 and pi^3 could be merged
    * and this turned into Multiplication(pi^5). */
@@ -482,7 +482,7 @@ void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & c
   }
 }
 
-void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
+void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit) {
   /* This function factorizes operands which share a common exponent. For
    * example, it turns Multiplication(2^x,3^x) into Multiplication(6^x). */
   assert(e1->parent() == this && e2->parent() == this);
@@ -504,7 +504,7 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context
   }
 }
 
-Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context, AngleUnit angleUnit) {
+Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context, Preferences::AngleUnit angleUnit) {
   // This function turns a*(b+c) into a*b + a*c
   // We avoid deleting and creating a new addition
   Addition * a = static_cast<Addition *>(editableOperand(i));
@@ -548,7 +548,7 @@ bool Multiplication::TermHasRationalExponent(const Expression * e) {
   return false;
 }
 
-Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleUnit) {
+Expression * Multiplication::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Adding parenthesis if needed (a*(b+c) is not a*b+c)
@@ -612,7 +612,7 @@ Expression * Multiplication::shallowBeautify(Context & context, AngleUnit angleU
   return this;
 }
 
-Expression * Multiplication::cloneDenominator(Context & context, AngleUnit angleUnit) const {
+Expression * Multiplication::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
   // WARNING: we do not want to change the expression but to create a new one.
   SimplificationRoot root(clone());
@@ -636,7 +636,7 @@ Expression * Multiplication::cloneDenominator(Context & context, AngleUnit angle
   return result;
 }
 
-Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit angleUnit) {
+Expression * Multiplication::mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit) {
   Multiplication * m = new Multiplication();
   // Special case for rational p/q: if q != 1, q should be at denominator
   if (operand(0)->type() == Type::Rational && !static_cast<const Rational *>(operand(0))->denominator().isOne()) {
@@ -672,7 +672,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, AngleUnit ang
   return squashUnaryHierarchy();
 }
 
-void Multiplication::addMissingFactors(Expression * factor, Context & context, AngleUnit angleUnit) {
+void Multiplication::addMissingFactors(Expression * factor, Context & context, Preferences::AngleUnit angleUnit) {
   if (factor->type() == Type::Multiplication) {
     for (int j = 0; j < factor->numberOfOperands(); j++) {
       addMissingFactors(factor->editableOperand(j), context, angleUnit);

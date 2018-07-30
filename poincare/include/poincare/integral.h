@@ -15,16 +15,16 @@ public:
   int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "int");
   }
   /* Simplification */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Complex<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Complex<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
   template<typename T>
   struct DetailedResult
   {
@@ -33,12 +33,12 @@ private:
   };
   constexpr static int k_maxNumberOfIterations = 10;
 #ifdef LAGRANGE_METHOD
-  template<typename T> T lagrangeGaussQuadrature(T a, T b, Context & context, AngleUnit angleUnit) const;
+  template<typename T> T lagrangeGaussQuadrature(T a, T b, Context & context, Preferences::AngleUnit angleUnit) const;
 #else
-  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Context & context, AngleUnit angleUnit) const;
-  template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, AngleUnit angleUnit) const;
+  template<typename T> DetailedResult<T> kronrodGaussQuadrature(T a, T b, Context & context, Preferences::AngleUnit angleUnit) const;
+  template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, Preferences::AngleUnit angleUnit) const;
 #endif
-  template<typename T> T functionValueAtAbscissa(T x, Context & xcontext, AngleUnit angleUnit) const;
+  template<typename T> T functionValueAtAbscissa(T x, Context & xcontext, Preferences::AngleUnit angleUnit) const;
 };
 
 }

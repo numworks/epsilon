@@ -57,23 +57,23 @@ public:
   static bool isSeriesSymbol(char c);
   static bool isRegressionSymbol(char c);
   bool isApproximate(Context & context) const;
-  float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
+  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
   bool hasAnExactRepresentation(Context & context) const;
   static const char * textForSpecialSymbols(char name);
   int getVariables(isVariableTest isVariable, char * variables) const override;
 private:
   Expression * replaceSymbolWithExpression(char symbol, Expression * expression) override;
   /* Simplification */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Comparison */
   int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
   /* Layout */
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Evaluation<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
   const char m_name;
 };
 

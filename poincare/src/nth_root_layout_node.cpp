@@ -147,7 +147,7 @@ void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");
-int NthRootLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int NthRootLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   // Case: root(x,n)
   if (numberOfChildren() == 2
       && (const_cast<NthRootLayoutNode *>(this))->indexLayout()

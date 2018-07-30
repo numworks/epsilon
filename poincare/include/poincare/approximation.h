@@ -37,20 +37,20 @@ public:
     assert(false);
     return 0;
   }
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     assert(false);
     return 0;
   }
 private:
   /* Layout */
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
    assert(false);
    return nullptr;
   }
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename U> Complex<U> * templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename U> Complex<U> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
     return new Complex<U>((U)m_complex.real(), (U)m_complex.imag());
   }
   std::complex<T> m_complex;

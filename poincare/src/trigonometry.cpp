@@ -17,7 +17,7 @@ extern "C" {
 
 namespace Poincare {
 
-float Trigonometry::characteristicXRange(const Expression * e, Context & context, Expression::AngleUnit angleUnit) {
+float Trigonometry::characteristicXRange(const Expression * e, Context & context, Preferences::AngleUnit angleUnit) {
   assert(e->numberOfOperands() == 1);
   const Expression * op = e->operand(0);
   int d = op->polynomialDegree('x');
@@ -37,11 +37,11 @@ float Trigonometry::characteristicXRange(const Expression * e, Context & context
   const Poincare::Expression * args[2] = {op, &x};
   Poincare::Derivative derivative(args, true);
   float a = derivative.approximateToScalar<float>(context, angleUnit);
-  float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180.0f;
+  float pi = angleUnit == Preferences::AngleUnit::Radian ? M_PI : 180.0f;
   return 2.0f*pi/std::fabs(a);
 }
 
-Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
+Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& context, Preferences::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::Sine || e->type() == Expression::Type::Cosine || e->type() == Expression::Type::Tangent);
   Expression * lookup = Trigonometry::table(e->operand(0), e->type(), context, angleUnit);
   if (lookup != nullptr) {
@@ -63,16 +63,16 @@ Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& 
       return e->replaceWith(m, true)->shallowReduce(context, angleUnit);
     }
   }
-  if ((angleUnit == Expression::AngleUnit::Radian && e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->numberOfOperands() == 2 && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) || (angleUnit == Expression::AngleUnit::Degree && e->operand(0)->type() == Expression::Type::Rational)) {
-    Rational * r = angleUnit == Expression::AngleUnit::Radian ? static_cast<Rational *>(e->editableOperand(0)->editableOperand(0)) : static_cast<Rational *>(e->editableOperand(0));
+  if ((angleUnit == Preferences::AngleUnit::Radian && e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->numberOfOperands() == 2 && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) || (angleUnit == Preferences::AngleUnit::Degree && e->operand(0)->type() == Expression::Type::Rational)) {
+    Rational * r = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Rational *>(e->editableOperand(0)->editableOperand(0)) : static_cast<Rational *>(e->editableOperand(0));
     int unaryCoefficient = 1; // store 1 or -1
     // Replace argument in [0, Pi/2[ or [0, 90[
-    Integer divisor = angleUnit == Expression::AngleUnit::Radian ? r->denominator() : Integer::Multiplication(r->denominator(), Integer(90));
-    Integer dividand = angleUnit == Expression::AngleUnit::Radian ? Integer::Addition(r->numerator(), r->numerator()) : r->numerator();
+    Integer divisor = angleUnit == Preferences::AngleUnit::Radian ? r->denominator() : Integer::Multiplication(r->denominator(), Integer(90));
+    Integer dividand = angleUnit == Preferences::AngleUnit::Radian ? Integer::Addition(r->numerator(), r->numerator()) : r->numerator();
     if (divisor.isLowerThan(dividand)) {
-      Integer piDivisor = angleUnit == Expression::AngleUnit::Radian ? r->denominator() : Integer::Multiplication(r->denominator(), Integer(180));
+      Integer piDivisor = angleUnit == Preferences::AngleUnit::Radian ? r->denominator() : Integer::Multiplication(r->denominator(), Integer(180));
       IntegerDivision div = Integer::Division(r->numerator(), piDivisor);
-      dividand = angleUnit == Expression::AngleUnit::Radian ? Integer::Addition(div.remainder, div.remainder) : div.remainder;
+      dividand = angleUnit == Preferences::AngleUnit::Radian ? Integer::Addition(div.remainder, div.remainder) : div.remainder;
       if (divisor.isLowerThan(dividand)) {
         div.remainder = Integer::Subtraction(piDivisor, div.remainder);
         if (e->type() == Expression::Type::Cosine || e->type() == Expression::Type::Tangent) {
@@ -80,7 +80,7 @@ Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& 
         }
       }
       Rational * newR = new Rational(div.remainder, r->denominator());
-      Expression * rationalParent = angleUnit == Expression::AngleUnit::Radian ? e->editableOperand(0) : e;
+      Expression * rationalParent = angleUnit == Preferences::AngleUnit::Radian ? e->editableOperand(0) : e;
       rationalParent->replaceOperand(r, newR, true);
       e->editableOperand(0)->shallowReduce(context, angleUnit);
       if (Integer::Division(div.quotient, Integer(2)).remainder.isOne() && e->type() != Expression::Type::Tangent) {
@@ -104,10 +104,10 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression * e) {
   return false;
 }
 
-Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context& context, Expression::AngleUnit angleUnit) {
+Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context& context, Preferences::AngleUnit angleUnit) {
   assert(e->type() == Expression::Type::ArcCosine || e->type() == Expression::Type::ArcSine || e->type() == Expression::Type::ArcTangent);
   Expression::Type correspondingType = e->type() == Expression::Type::ArcCosine ? Expression::Type::Cosine : (e->type() == Expression::Type::ArcSine ? Expression::Type::Sine : Expression::Type::Tangent);
-  float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180;
+  float pi = angleUnit == Preferences::AngleUnit::Radian ? M_PI : 180;
   if (e->operand(0)->type() == correspondingType) {
     float trigoOp = e->operand(0)->operand(0)->approximateToScalar<float>(context, angleUnit);
     if ((e->type() == Expression::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
@@ -138,7 +138,7 @@ Expression * Trigonometry::shallowReduceInverseFunction(Expression * e, Context&
       op->shallowReduce(context, angleUnit);
     }
     if (e->type() == Expression::Type::ArcCosine) {
-      Expression * pi = angleUnit == Expression::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(180));
+      Expression * pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression *>(new Symbol(Ion::Charset::SmallPi)) : static_cast<Expression *>(new Rational(180));
       Subtraction * s = new Subtraction(pi, e->clone(), false);
       s->editableOperand(1)->shallowReduce(context, angleUnit);
       return e->replaceWith(s, true)->shallowReduce(context, angleUnit);
@@ -192,9 +192,9 @@ constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][5] =
  {"165",    "\x8A*11*12^(-1)",   "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", "",                                   ""},
  {"180",    "\x8A",              "-1",                                 "0",                                  "0"}};
 
-Expression * Trigonometry::table(const Expression * e, Expression::Type type, Context & context, Expression::AngleUnit angleUnit) {
+Expression * Trigonometry::table(const Expression * e, Expression::Type type, Context & context, Preferences::AngleUnit angleUnit) {
   assert(type == Expression::Type::Sine || type == Expression::Type::Cosine || type == Expression::Type::Tangent || type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent);
-  int angleUnitIndex = angleUnit == Expression::AngleUnit::Radian ? 1 : 0;
+  int angleUnitIndex = angleUnit == Preferences::AngleUnit::Radian ? 1 : 0;
   int trigonometricFunctionIndex = type == Expression::Type::Cosine || type == Expression::Type::ArcCosine ? 2 : (type == Expression::Type::Sine || type == Expression::Type::ArcSine ? 3 : 4);
   int inputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? trigonometricFunctionIndex : angleUnitIndex;
   int outputIndex = type == Expression::Type::ArcCosine || type == Expression::Type::ArcSine || type == Expression::Type::ArcTangent ? angleUnitIndex : trigonometricFunctionIndex;
@@ -231,16 +231,16 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
 
 
 template <typename T>
-std::complex<T> Trigonometry::ConvertToRadian(const std::complex<T> c, Expression::AngleUnit angleUnit) {
-  if (angleUnit == Expression::AngleUnit::Degree) {
+std::complex<T> Trigonometry::ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  if (angleUnit == Preferences::AngleUnit::Degree) {
     return c*std::complex<T>(M_PI/180.0);
   }
   return c;
 }
 
 template <typename T>
-std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, Expression::AngleUnit angleUnit) {
-  if (angleUnit == Expression::AngleUnit::Degree) {
+std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  if (angleUnit == Preferences::AngleUnit::Degree) {
     return c*std::complex<T>(180/M_PI);
   }
   return c;
@@ -264,10 +264,10 @@ std::complex<T> Trigonometry::RoundToMeaningfulDigits(const std::complex<T> c) {
   return std::complex<T>(RoundToMeaningfulDigits(c.real()), RoundToMeaningfulDigits(c.imag()));
 }
 
-template std::complex<float> Trigonometry::ConvertToRadian<float>(std::complex<float>, Expression::AngleUnit);
-template std::complex<double> Trigonometry::ConvertToRadian<double>(std::complex<double>, Expression::AngleUnit);
-template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(std::complex<float>, Expression::AngleUnit);
-template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(std::complex<double>, Expression::AngleUnit);
+template std::complex<float> Trigonometry::ConvertToRadian<float>(std::complex<float>, Preferences::AngleUnit);
+template std::complex<double> Trigonometry::ConvertToRadian<double>(std::complex<double>, Preferences::AngleUnit);
+template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(std::complex<float>, Preferences::AngleUnit);
+template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(std::complex<double>, Preferences::AngleUnit);
 template std::complex<float> Trigonometry::RoundToMeaningfulDigits<float>(std::complex<float>);
 template std::complex<double> Trigonometry::RoundToMeaningfulDigits<double>(std::complex<double>);
 

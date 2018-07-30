@@ -157,7 +157,7 @@ bool SumGraphController::textFieldDidAbortEditing(TextField * textField) {
     default:
       assert(false);
   }
-  PrintFloat::convertFloatToText<double>(parameter, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
+  PrintFloat::convertFloatToText<double>(parameter, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
   textField->setText(buffer);
   return true;
 }
@@ -225,7 +225,7 @@ void SumGraphController::LegendView::setLegendMessage(I18n::Message message, Ste
 
 void SumGraphController::LegendView::setEditableZone(double d) {
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-  PrintFloat::convertFloatToText<double>(d, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
+  PrintFloat::convertFloatToText<double>(d, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
  m_editableZone.setText(buffer);
 }
 
@@ -236,7 +236,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     m_sumLayoutRef = LayoutEngine::createStringLayout(sigma, sizeof(sigma));
   } else if (step == Step::SecondParameter) {
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
-    PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
+    PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     m_sumLayoutRef = LayoutEngine::createStringLayout(sigma, sizeof(sigma));/* TODO new CondensedSumLayout(
         LayoutEngine::createStringLayout(sigma, sizeof(sigma)),
         LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small),
@@ -246,9 +246,9 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     m_sumLayoutRef = LayoutEngine::createStringLayout(sigma, sizeof(sigma));
 /* TODO
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-    PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
+    PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     ExpressionLayout * start = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
-    PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
+    PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     ExpressionLayout * end = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
     m_sumLayoutRef = new CondensedSumLayout(
         LayoutEngine::createStringLayout(sigma, sizeof(sigma)),

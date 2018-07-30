@@ -82,7 +82,7 @@ Expression * Rational::setSign(Sign s) {
   return this;
 }
 
-Expression * Rational::shallowBeautify(Context & context, AngleUnit angleUnit) {
+Expression * Rational::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   if (m_numerator.isNegative()) {
     m_numerator.setNegative(false);
     Opposite * o = new Opposite(this, true);
@@ -91,7 +91,7 @@ Expression * Rational::shallowBeautify(Context & context, AngleUnit angleUnit) {
   return this;
 }
 
-Expression * Rational::cloneDenominator(Context & context, AngleUnit angleUnit) const {
+Expression * Rational::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
   if (m_denominator.isOne()) {
     return nullptr;
   }
@@ -137,7 +137,7 @@ int Rational::simplificationOrderSameType(const Expression * e, bool canBeInterr
   return NaturalOrder(*this, *other);
 }
 
-template<typename T> Complex<T> * Rational::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
+template<typename T> Complex<T> * Rational::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   T n = m_numerator.approximate<T>();
   T d = m_denominator.approximate<T>();
   return new Complex<T>(n/d);
@@ -151,7 +151,7 @@ bool Rational::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 3);
 }
 
-LayoutRef Rational::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Rational::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   LayoutRef numeratorLayout = m_numerator.createLayout();
   if (m_denominator.isOne()) {
     return numeratorLayout;
@@ -160,7 +160,7 @@ LayoutRef Rational::createLayout(PrintFloat::Mode floatDisplayMode, int numberOf
   return FractionLayoutRef(numeratorLayout, denominatorLayout);
 }
 
-int Rational::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int Rational::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   buffer[bufferSize-1] = 0;
   int numberOfChar = m_numerator.writeTextInBuffer(buffer, bufferSize);
   if (m_denominator.isOne()) {

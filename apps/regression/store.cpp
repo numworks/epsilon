@@ -29,7 +29,7 @@ Store::Store() :
   InteractiveCurveViewRange(nullptr),
   DoublePairStore(),
   m_seriesChecksum{0, 0, 0},
-  m_angleUnit(Poincare::Expression::AngleUnit::Degree)
+  m_angleUnit(Poincare::Preferences::AngleUnit::Degree)
 {
   for (int i = 0; i < k_numberOfSeries; i++) {
     m_regressionTypes[i] = Model::Type::Linear;
@@ -225,7 +225,7 @@ double * Store::coefficientsForSeries(int series, Poincare::Context * globalCont
   assert(series >= 0 && series <= k_numberOfSeries);
   assert(!seriesIsEmpty(series));
   uint32_t storeChecksumSeries = storeChecksumForSeries(series);
-  Poincare::Expression::AngleUnit currentAngleUnit = Poincare::Preferences::sharedPreferences()->angleUnit();
+  Poincare::Preferences::AngleUnit currentAngleUnit = Poincare::Preferences::sharedPreferences()->angleUnit();
   if (m_angleUnit != currentAngleUnit) {
     m_angleUnit = currentAngleUnit;
     for (int i = 0; i < k_numberOfSeries; i++) {

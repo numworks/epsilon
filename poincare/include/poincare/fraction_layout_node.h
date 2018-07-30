@@ -17,7 +17,7 @@ public:
   void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool shouldCollapseSiblingsOnLeft() const override { return true; }
   bool shouldCollapseSiblingsOnRight() const override { return true; }
   int leftCollapsingAbsorbingChildIndex() const override { return 0; }

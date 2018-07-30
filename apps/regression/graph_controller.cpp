@@ -104,7 +104,7 @@ void GraphController::reloadBannerView() {
     strlcpy(buffer+numberOfChar, legend, legendLength+1);
     numberOfChar += legendLength;
   } else {
-    numberOfChar += PrintFloat::convertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
+    numberOfChar += PrintFloat::convertFloatToText<float>(std::round((float)*m_selectedDotIndex+1.0f), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits), Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
   legend = ")  ";
   legendLength = strlen(legend);

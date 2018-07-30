@@ -61,7 +61,7 @@ double TrigonometricModel::evaluate(double * modelCoefficients, double x) const 
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
-  double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Expression::AngleUnit::Radian ? x : x * M_PI/180.0;
+  double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Preferences::AngleUnit::Radian ? x : x * M_PI/180.0;
   return a*sin(b*radianX+c)+d;
 }
 
@@ -69,7 +69,7 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Expression::AngleUnit::Radian ? x : x * M_PI/180.0;
+  double radianX = Poincare::Preferences::sharedPreferences()->angleUnit() == Poincare::Preferences::AngleUnit::Radian ? x : x * M_PI/180.0;
   if (derivateCoefficientIndex == 0) {
     // Derivate: sin(b*x+c)
     return sin(b*radianX+c);

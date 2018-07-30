@@ -88,7 +88,7 @@ void BracketPairLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
   }
 }
 
-int BracketPairLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int BracketPairLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

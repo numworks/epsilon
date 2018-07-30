@@ -16,7 +16,7 @@ Expression * ComplexArgument::clone() const {
   return a;
 }
 
-Expression * ComplexArgument::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * ComplexArgument::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -31,7 +31,7 @@ Expression * ComplexArgument::shallowReduce(Context& context, AngleUnit angleUni
 }
 
 template<typename T>
-std::complex<T> ComplexArgument::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> ComplexArgument::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   return Complex<T>(std::arg(c));
 }
 

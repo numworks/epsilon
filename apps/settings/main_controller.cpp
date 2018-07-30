@@ -177,7 +177,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       delete m_complexFormatLayout;
       m_complexFormatLayout = nullptr;
     }
-    if (Preferences::sharedPreferences()->complexFormat() == Expression::ComplexFormat::Cartesian) {
+    if (Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Cartesian) {
       m_complexFormatLayout = Helpers::CartesianComplexFormat(KDText::FontSize::Small);
     } else {
       m_complexFormatLayout = Helpers::PolarComplexFormat(KDText::FontSize::Small);

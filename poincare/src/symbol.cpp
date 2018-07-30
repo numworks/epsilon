@@ -199,7 +199,7 @@ bool Symbol::isApproximate(Context & context) const {
   return false;
 }
 
-float Symbol::characteristicXRange(Context & context, AngleUnit angleUnit) const {
+float Symbol::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   if (m_name == 'x') {
     return NAN;
   }
@@ -211,7 +211,7 @@ bool Symbol::hasAnExactRepresentation(Context & context) const {
   return false;
 }
 
-Expression * Symbol::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Symbol::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   // Do not replace symbols in expression of type: 3->A
   if (parent()->type() == Type::Store && parent()->operand(1) == this) {
     return this;
@@ -225,7 +225,7 @@ Expression * Symbol::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Evaluation<T> * Symbol::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * Symbol::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   if (m_name == Ion::Charset::IComplex) {
     return new Complex<T>(0.0, 1.0);
   }
@@ -243,7 +243,7 @@ char Symbol::name() const {
   return m_name;
 }
 
-LayoutRef Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Symbol::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name == SpecialSymbols::Ans) {
     return LayoutEngine::createStringLayout("ans", 3);
   }
@@ -281,7 +281,7 @@ LayoutRef Symbol::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSi
   return LayoutEngine::createStringLayout(&m_name, 1);
 }
 
-int Symbol::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int Symbol::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

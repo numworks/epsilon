@@ -25,7 +25,7 @@ template <typename T> std::complex<T> ApproximationEngine::truncateRealOrImagina
   return c;
 }
 
-template<typename T> Evaluation<T> * ApproximationEngine::map(const Expression * expression, Context& context, Expression::AngleUnit angleUnit, ComplexCompute<T> compute) {
+template<typename T> Evaluation<T> * ApproximationEngine::map(const Expression * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexCompute<T> compute) {
   assert(expression->numberOfOperands() == 1);
   Evaluation<T> * input = expression->operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * result = nullptr;
@@ -47,7 +47,7 @@ template<typename T> Evaluation<T> * ApproximationEngine::map(const Expression *
   return result;
 }
 
-template<typename T> Evaluation<T> * ApproximationEngine::mapReduce(const Expression * expression, Context& context, Expression::AngleUnit angleUnit, ComplexAndComplexReduction<T> computeOnComplexes, ComplexAndMatrixReduction<T> computeOnComplexAndMatrix, MatrixAndComplexReduction<T> computeOnMatrixAndComplex, MatrixAndMatrixReduction<T> computeOnMatrices) {
+template<typename T> Evaluation<T> * ApproximationEngine::mapReduce(const Expression * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexAndComplexReduction<T> computeOnComplexes, ComplexAndMatrixReduction<T> computeOnComplexAndMatrix, MatrixAndComplexReduction<T> computeOnMatrixAndComplex, MatrixAndMatrixReduction<T> computeOnMatrices) {
   Evaluation<T> * result = expression->operand(0)->privateApproximate(T(), context, angleUnit);
   for (int i = 1; i < expression->numberOfOperands(); i++) {
     Evaluation<T> * intermediateResult = nullptr;
@@ -112,10 +112,10 @@ template<typename T> MatrixComplex<T> ApproximationEngine::elementWiseOnComplexM
 
 template std::complex<float> Poincare::ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument<float>(std::complex<float>);
 template std::complex<double> Poincare::ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument<double>(std::complex<double>);
-template Poincare::Evaluation<float> * Poincare::ApproximationEngine::map(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Expression::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<float> compute);
-template Poincare::Evaluation<double> * Poincare::ApproximationEngine::map(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Expression::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<double> compute);
-template Poincare::Evaluation<float> * Poincare::ApproximationEngine::mapReduce(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Expression::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationEngine::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationEngine::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationEngine::MatrixAndMatrixReduction<float> computeOnMatrices);
-template Poincare::Evaluation<double> * Poincare::ApproximationEngine::mapReduce(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Expression::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexAndComplexReduction<double> computeOnComplexes, Poincare::ApproximationEngine::ComplexAndMatrixReduction<double> computeOnComplexAndMatrix, Poincare::ApproximationEngine::MatrixAndComplexReduction<double> computeOnMatrixAndComplex, Poincare::ApproximationEngine::MatrixAndMatrixReduction<double> computeOnMatrices);
+template Poincare::Evaluation<float> * Poincare::ApproximationEngine::map(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<float> compute);
+template Poincare::Evaluation<double> * Poincare::ApproximationEngine::map(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<double> compute);
+template Poincare::Evaluation<float> * Poincare::ApproximationEngine::mapReduce(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationEngine::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationEngine::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationEngine::MatrixAndMatrixReduction<float> computeOnMatrices);
+template Poincare::Evaluation<double> * Poincare::ApproximationEngine::mapReduce(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexAndComplexReduction<double> computeOnComplexes, Poincare::ApproximationEngine::ComplexAndMatrixReduction<double> computeOnComplexAndMatrix, Poincare::ApproximationEngine::MatrixAndComplexReduction<double> computeOnMatrixAndComplex, Poincare::ApproximationEngine::MatrixAndMatrixReduction<double> computeOnMatrices);
 template Poincare::MatrixComplex<float> Poincare::ApproximationEngine::elementWiseOnMatrixComplexAndComplex<float>(const Poincare::MatrixComplex<float>, const std::complex<float>, std::complex<float> (*)(std::complex<float>, std::complex<float>));
 template Poincare::MatrixComplex<double> Poincare::ApproximationEngine::elementWiseOnMatrixComplexAndComplex<double>(const Poincare::MatrixComplex<double>, std::complex<double> const, std::complex<double> (*)(std::complex<double>, std::complex<double>));
 template Poincare::MatrixComplex<float> Poincare::ApproximationEngine::elementWiseOnComplexMatrices<float>(const Poincare::MatrixComplex<float>, const Poincare::MatrixComplex<float>, std::complex<float> (*)(std::complex<float>, std::complex<float>));

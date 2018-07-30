@@ -9,7 +9,7 @@ namespace Poincare {
 class FloorLayoutNode : public BracketPairLayoutNode {
 public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(const_cast<FloorLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "floor");
   }
 

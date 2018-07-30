@@ -87,13 +87,13 @@ Expression * Decimal::clone() const {
   return new Decimal(m_mantissa, m_exponent);
 }
 
-template<typename T> Evaluation<T> * Decimal::templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const {
+template<typename T> Evaluation<T> * Decimal::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
   int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
   return new Complex<T>(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1)));
 }
 
-int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode, int numberOfSignificantDigits) const {
+int Decimal::convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -132,7 +132,7 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
   /* We force scientific mode if the number of digits before the dot is superior
    * to the number of significant digits (ie with 4 significant digits,
    * 12345 -> 1.235E4 or 12340 -> 1.234E4). */
-  bool forceScientificMode = mode == PrintFloat::Mode::Scientific || exponent >= numberOfSignificantDigits;
+  bool forceScientificMode = mode == Preferences::PrintFloatMode::Scientific || exponent >= numberOfSignificantDigits;
   int numberOfRequiredDigits = mantissaLength;
   if (!forceScientificMode) {
     numberOfRequiredDigits = mantissaLength > exponent ? mantissaLength : exponent;
@@ -203,7 +203,7 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
   return currentChar;
 }
 
-int Decimal::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int Decimal::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return convertToText(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
@@ -215,13 +215,13 @@ bool Decimal::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 7);
 }
 
-LayoutRef Decimal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Decimal::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
-Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Decimal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -242,7 +242,7 @@ Expression * Decimal::shallowReduce(Context& context, AngleUnit angleUnit) {
   return replaceWith(new Rational(numerator, denominator), true);
 }
 
-Expression * Decimal::shallowBeautify(Context & context, AngleUnit angleUnit) {
+Expression * Decimal::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   if (m_mantissa.isNegative()) {
     m_mantissa.setNegative(false);
     Opposite * o = new Opposite(this, true);

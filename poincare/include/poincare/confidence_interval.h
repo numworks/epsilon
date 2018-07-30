@@ -14,19 +14,19 @@ public:
   int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   virtual const char * name() const { return "confidence"; }
   /* Simplification */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(Expression::SinglePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(Expression::DoublePrecision p, Context& context, Expression::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  Evaluation<float> * privateApproximate(Expression::SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(Expression::DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> Evaluation<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 class SimplePredictionInterval : public ConfidenceInterval {

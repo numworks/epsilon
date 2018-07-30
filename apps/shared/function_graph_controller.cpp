@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Expression::AngleUnit * angleUnitVersion) :
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * modelVersion, uint32_t * rangeVersion, Preferences::AngleUnit * angleUnitVersion) :
   InteractiveCurveViewController(parentResponder, header, interactiveRange, curveView, cursor, modelVersion, rangeVersion),
   m_initialisationParameterController(this, interactiveRange),
   m_angleUnitVersion(angleUnitVersion),
@@ -36,7 +36,7 @@ void FunctionGraphController::viewWillAppear() {
     TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
     functionGraphView()->setContext(myApp->localContext());
   }
-  Expression::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
+  Preferences::AngleUnit newAngleUnitVersion = Preferences::sharedPreferences()->angleUnit();
   if (*m_angleUnitVersion != newAngleUnitVersion) {
     *m_angleUnitVersion = newAngleUnitVersion;
     initCursorParameters();

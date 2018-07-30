@@ -17,7 +17,7 @@ Expression * FracPart::clone() const {
   return c;
 }
 
-Expression * FracPart::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * FracPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -37,7 +37,7 @@ Expression * FracPart::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> FracPart::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> FracPart::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }

@@ -20,7 +20,7 @@ Expression * Floor::clone() const {
   return c;
 }
 
-Expression * Floor::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Floor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -49,14 +49,14 @@ Expression * Floor::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> Floor::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> Floor::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
     return Complex<T>::Undefined();
   }
   return Complex<T>(std::floor(c.real()));
 }
 
-LayoutRef Floor::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Floor::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return FloorLayoutRef(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 

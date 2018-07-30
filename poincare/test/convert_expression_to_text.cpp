@@ -10,7 +10,7 @@
 using namespace Poincare;
 
 template<typename T>
-void assert_float_prints_to(T a, const char * result, PrintFloat::Mode mode = ScientificMode, int significantDigits = 7, int bufferSize = 250) {
+void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMode mode = ScientificMode, int significantDigits = 7, int bufferSize = 250) {
   quiz_print(result);
 
   int tagSize = 8;
@@ -34,7 +34,7 @@ void assert_float_prints_to(T a, const char * result, PrintFloat::Mode mode = Sc
   delete[] taggedBuffer;
 }
 
-void assert_expression_prints_to(Expression * e, const char * result, PrintFloat::Mode mode = ScientificMode, int numberOfSignificantDigits = 7, int bufferSize = 250) {
+void assert_expression_prints_to(Expression * e, const char * result, Preferences::PrintFloatMode mode = ScientificMode, int numberOfSignificantDigits = 7, int bufferSize = 250) {
   quiz_print(result);
 
   int tagSize = 8;
@@ -59,7 +59,7 @@ void assert_expression_prints_to(Expression * e, const char * result, PrintFloat
 }
 
 template<typename T>
-void assert_approximation_prints_to(Approximation<T> * e, const char * result, Expression::ComplexFormat complexFormat = Cartesian) {
+void assert_approximation_prints_to(Approximation<T> * e, const char * result, Preferences::ComplexFormat complexFormat = Cartesian) {
   GlobalContext globalContext;
   Expression * approximation = e->template approximate<T>(globalContext, Radian, complexFormat);
   assert_expression_prints_to(approximation, result, DecimalMode, (sizeof(T) == sizeof(float) ? 7 : 14));

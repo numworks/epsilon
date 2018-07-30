@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-LayoutRef LayoutEngine::createInfixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
+LayoutRef LayoutEngine::createInfixLayout(const Expression * expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 1);
   HorizontalLayoutRef result;
@@ -23,7 +23,7 @@ LayoutRef LayoutEngine::createInfixLayout(const Expression * expression, PrintFl
   return result;
 }
 
-LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
+LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
   HorizontalLayoutRef result;
   // Add the operator name.
   result.addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, true);
@@ -70,15 +70,15 @@ LayoutRef LayoutEngine::createLogLayout(LayoutRef argument, LayoutRef index) {
   return resultLayout;
 }
 
-int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName) {
+int LayoutEngine::writeInfixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, const char * operatorName) {
   return writeInfixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize,floatDisplayMode, numberOfDigits, operatorName, 0, -1);
 }
 
-int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName) {
+int LayoutEngine::writePrefixExpressionTextInBuffer(const Expression * expression, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, const char * operatorName) {
   return writePrefixExpressionOrExpressionLayoutTextInBuffer(expression, nullptr, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName);
 }
 
-int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex) {
+int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex) {
   assert(expression != nullptr && expressionLayout == nullptr);
   if (bufferSize == 0) {
     return -1;
@@ -124,7 +124,7 @@ int LayoutEngine::writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expre
   return numberOfChar;
 }
 
-int LayoutEngine::writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, bool writeFirstChild) {
+int LayoutEngine::writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, const char * operatorName, bool writeFirstChild) {
   assert(expression != nullptr && expressionLayout == nullptr);
   if (bufferSize == 0) {
     return -1;
@@ -165,7 +165,7 @@ int LayoutEngine::writeInfixSerializableRefTextInBuffer(
     const SerializableRef serializableRef,
     char * buffer,
     int bufferSize,
-    PrintFloat::Mode floatDisplayMode,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfDigits,
     const char * operatorName,
     int firstChildIndex,
@@ -217,7 +217,7 @@ int LayoutEngine::writePrefixSerializableRefTextInBuffer(
     const SerializableRef serializableRef,
     char * buffer,
     int bufferSize,
-    PrintFloat::Mode floatDisplayMode,
+    Preferences::PrintFloatMode floatDisplayMode,
     int numberOfDigits,
     const char * operatorName,
     bool writeFirstChild)
@@ -277,7 +277,7 @@ int LayoutEngine::writePrefixSerializableRefTextInBuffer(
   return numberOfChar;
 }
 
-void LayoutEngine::writeChildTreeInBuffer(SerializableRef childRef, SerializableRef parentRef, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, int * numberOfChar) {
+void LayoutEngine::writeChildTreeInBuffer(SerializableRef childRef, SerializableRef parentRef, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, int * numberOfChar) {
   // Write the child with parentheses if needed
   bool addParentheses = childRef.needsParenthesisWithParent(parentRef);
   if (addParentheses) {

@@ -72,7 +72,6 @@ void TreeReference::removeTreeChild(TreeReference t) {
 void TreeReference::removeChildren() {
   assert(isDefined());
   node()->releaseChildren(numberOfChildren());
-  TreePool::sharedPool()->moveChildren(TreePool::sharedPool()->last(), node());
   node()->eraseNumberOfChildren();
 }
 
@@ -114,9 +113,6 @@ void TreeReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
   int indexInParentNode = hasParent ? node()->indexInParent() : -1;
   int currentRetainCount = node()->retainCount();
   TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode(); //TODO was typedNode
-
-  // Move the node to the end of the pool and decrease children count of parent
-  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), node(), currentNumberOfChildren);
 
   // Release all children and delete the node in the pool
   node()->releaseChildrenAndDestroy(currentNumberOfChildren);

@@ -218,8 +218,7 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
 
 bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, LayoutCursor * cursor) {
   if (m_numberOfChildren > 0) {
-    *index = HorizontalLayoutRef(this).removeEmptyChildBeforeInsertionAtIndex(*index, !childAtIndex(0)->mustHaveLeftSibling(), cursor);
-
+    *index = HorizontalLayoutRef(this).removeEmptyChildBeforeInsertionAtIndex(*index, !l->mustHaveLeftSibling(), cursor);
   }
   return true;
 }

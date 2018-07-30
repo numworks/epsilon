@@ -15,18 +15,10 @@ void TreeNode::release() {
 }
 
 void TreeNode::releaseChildren(int currentNumberOfChildren) {
-  if (currentNumberOfChildren != 0) {
-    int lastIdentifier = childAtIndex(currentNumberOfChildren-1)->identifier();
-    TreeNode * child = next();
-    bool lastChildReleased = false;
-    while (!lastChildReleased) {
-      lastChildReleased = child->identifier() == lastIdentifier;
-      int nextSiblingIdentifier = lastChildReleased ? -1 : child->nextSibling()->identifier();
-      child->release();
-      if (nextSiblingIdentifier != -1) {
-        child = TreePool::sharedPool()->node(nextSiblingIdentifier);
-      }
-    }
+  for (int i = 0; i < currentNumberOfChildren; i++) {
+    TreeRef childRef = TreeRef(childAtIndex(0));
+    TreePool::sharedPool()->move(TreePool::sharedPool()->last(), childRef.node(), childRef.numberOfChildren());
+    childRef.node()->release();
   }
 }
 

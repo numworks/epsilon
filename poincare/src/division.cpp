@@ -11,6 +11,7 @@ extern "C" {
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <cmath>
+#include <poincare/fraction_layout_node.h>
 
 namespace Poincare {
 
@@ -53,12 +54,10 @@ std::complex<T> Division::compute(const std::complex<T> c, const std::complex<T>
 }
 
 LayoutRef Division::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return CharLayoutRef('a'); //TODO
- /*
   const Expression * numerator = operand(0)->type() == Type::Parenthesis ? operand(0)->operand(0) : operand(0);
   const Expression * denominator = operand(1)->type() == Type::Parenthesis ? operand(1)->operand(0) : operand(1);
-  return new FractionLayout(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
-*/}
+  return FractionLayoutRef(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
 
 template<typename T> MatrixComplex<T> Division::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {
   MatrixComplex<T> * inverse = n.createInverse();

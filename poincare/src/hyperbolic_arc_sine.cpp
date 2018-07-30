@@ -17,7 +17,7 @@ Expression * HyperbolicArcSine::clone() const {
   return a;
 }
 
-Expression * HyperbolicArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * HyperbolicArcSine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -32,7 +32,7 @@ Expression * HyperbolicArcSine::shallowReduce(Context& context, AngleUnit angleU
 }
 
 template<typename T>
-std::complex<T> HyperbolicArcSine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> HyperbolicArcSine::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::asinh(c);
   /* asinh has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then multivalued
    * on this cut. We followed the convention chosen by the lib c++ of llvm on

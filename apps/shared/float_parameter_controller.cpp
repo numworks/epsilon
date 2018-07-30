@@ -107,7 +107,7 @@ void FloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int
     return;
   }
   char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
-  PrintFloat::convertFloatToText<double>(parameterAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
+  PrintFloat::convertFloatToText<double>(parameterAtIndex(index), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
   myCell->setAccessoryText(buffer);
 }
 

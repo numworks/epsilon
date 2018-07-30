@@ -15,20 +15,20 @@ public:
   Sign sign() const override { return Sign::Positive; }
   template<typename T> static T random();
 private:
-  Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override;
+  Expression * setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   /* Layout */
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   const char * name() const { return "random"; }
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<float>();
   }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<double>();
   }
   template <typename T> Evaluation<T> * templateApproximate() const {

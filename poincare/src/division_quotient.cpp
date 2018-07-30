@@ -18,7 +18,7 @@ Expression * DivisionQuotient::clone() const {
   return a;
 }
 
-Expression * DivisionQuotient::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * DivisionQuotient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -58,7 +58,7 @@ Expression * DivisionQuotient::shallowReduce(Context& context, AngleUnit angleUn
 }
 
 template<typename T>
-Complex<T> * DivisionQuotient::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * DivisionQuotient::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * f1Input = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * f2Input = operand(1)->privateApproximate(T(), context, angleUnit);
   T f1 = f1Input->toScalar();

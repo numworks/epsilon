@@ -19,7 +19,7 @@ Expression * GreatCommonDivisor::clone() const {
   return a;
 }
 
-Expression * GreatCommonDivisor::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * GreatCommonDivisor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -56,7 +56,7 @@ Expression * GreatCommonDivisor::shallowReduce(Context& context, AngleUnit angle
 }
 
 template<typename T>
-Complex<T> * GreatCommonDivisor::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * GreatCommonDivisor::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * f1Input = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * f2Input = operand(1)->privateApproximate(T(), context, angleUnit);
   T f1 = f1Input->toScalar();

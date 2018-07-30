@@ -53,7 +53,7 @@ void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
   }
 }
 
-int ConjugateLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int ConjugateLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(const_cast<ConjugateLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "conj");
 }
 

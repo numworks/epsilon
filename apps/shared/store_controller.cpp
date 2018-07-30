@@ -175,7 +175,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   if (cellAtLocationIsEditable(i, j)) {
     static_cast<StoreCell *>(cell)->setHide(false);
   }
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, PrintFloat::Mode::Decimal);
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::PrintFloatMode::Decimal);
 }
 
 const char * StoreController::title() {

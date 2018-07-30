@@ -149,14 +149,6 @@ public:
     SimplificationRoot,
     EmptyExpression
   };
-  enum class ComplexFormat {
-    Cartesian = 0,
-    Polar = 1,
-  };
-  enum class AngleUnit {
-    Degree = 0,
-    Radian = 1,
-  };
 
   /* Constructor & Destructor */
   static Expression * parse(char const * string);
@@ -207,7 +199,7 @@ public:
    * the return value is NAN.
    * NB: so far, we consider that the only way of building a periodic function
    * is to use sin/tan/cos(f(x)) with f a linear function. */
-  virtual float characteristicXRange(Context & context, AngleUnit angleUnit) const;
+  virtual float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const;
   static bool IsMatrix(const Expression * e, Context & context);
 
   /* polynomialDegree returns:
@@ -226,14 +218,14 @@ public:
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same
    * order) and 'constant' with the constant of the expression. */
-  bool getLinearCoefficients(char * variables, Expression * coefficients[], Expression * constant[], Context & context, AngleUnit angleUnit) const;
+  bool getLinearCoefficients(char * variables, Expression * coefficients[], Expression * constant[], Context & context, Preferences::AngleUnit angleUnit) const;
   /* getPolynomialCoefficients fills the table coefficients with the expressions
    * of the first 3 polynomial coefficients and return polynomialDegree.
    * coefficients has up to 3 entries. It supposed to be called on Reduced
    * expression. */
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
-  int getPolynomialCoefficients(char symbolName, Expression * coefficients[], Context & context, AngleUnit angleUnit) const;
+  int getPolynomialCoefficients(char symbolName, Expression * coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -244,34 +236,34 @@ public:
      * order on expresssions. */
     return SimplificationOrder(this, e, true) == 0;
   }
-  bool isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, AngleUnit angleUnit, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, Context & context);
+  bool isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context);
 
   /* Layout Engine */
-  virtual LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const = 0;
-  virtual int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
+  virtual LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;
+  virtual int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const = 0;
 
   /* Simplification */
-  static Expression * ParseAndSimplify(const char * text, Context & context, AngleUnit angleUnit);
-  static void Simplify(Expression ** expressionAddress, Context & context, AngleUnit angleUnit);
-  static void Reduce(Expression ** expressionAddress, Context & context, AngleUnit angleUnit, bool recursively = true);
+  static Expression * ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
+  static void Simplify(Expression ** expressionAddress, Context & context, Preferences::AngleUnit angleUnit);
+  static void Reduce(Expression ** expressionAddress, Context & context, Preferences::AngleUnit angleUnit, bool recursively = true);
 
   /* Evaluation Engine */
   /* The function approximate creates a new expression and thus mallocs memory.
    * Do not forget to delete the new expression to avoid leaking. */
-  template<typename T> Expression * approximate(Context& context, AngleUnit angleUnit, ComplexFormat complexFormat) const;
-  template<typename T> T approximateToScalar(Context& context, AngleUnit angleUnit) const;
-  template<typename T> static T approximateToScalar(const char * text, Context& context, AngleUnit angleUnit);
-  template<typename T> T approximateWithValueForSymbol(char symbol, T x, Context & context, AngleUnit angleUnit) const;
+  template<typename T> Expression * approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const;
+  template<typename T> T approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
+  template<typename T> static T approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit);
+  template<typename T> T approximateWithValueForSymbol(char symbol, T x, Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Expression roots/extrema solver*/
   struct Coordinate2D {
     double abscissa;
     double value;
   };
-  Coordinate2D nextMinimum(char symbol, double start, double step, double max, Context & context, AngleUnit angleUnit) const;
-  Coordinate2D nextMaximum(char symbol, double start, double step, double max, Context & context, AngleUnit angleUnit) const;
-  double nextRoot(char symbol, double start, double step, double max, Context & context, AngleUnit angleUnit) const;
-  Coordinate2D nextIntersection(char symbol, double start, double step, double max, Context & context, AngleUnit angleUnit, const Expression * expression) const;
+  Coordinate2D nextMinimum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const;
+  Coordinate2D nextMaximum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const;
+  double nextRoot(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const;
+  Coordinate2D nextIntersection(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const;
 
   /* Evaluation engine */
   template<typename T> static T epsilon();
@@ -300,7 +292,7 @@ protected:
 private:
   virtual Expression * replaceSymbolWithExpression(char symbol, Expression * expression);
   /* Properties */
-  virtual Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) { assert(false); return nullptr; }
+  virtual Expression * setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) { assert(false); return nullptr; }
   bool isOfType(Type * types, int length) const;
   virtual bool needParenthesisWithParent(const Expression * e) const;
   virtual int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const;
@@ -315,32 +307,32 @@ private:
   //TODO: What should be the implementation for complex?
   virtual int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const { return 0; }
   /* Simplification */
-  Expression * deepBeautify(Context & context, AngleUnit angleUnit);
-  Expression * deepReduce(Context & context, AngleUnit angleUnit);
+  Expression * deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression * deepReduce(Context & context, Preferences::AngleUnit angleUnit);
   // TODO: should be virtual pure
-  virtual Expression * shallowReduce(Context & context, AngleUnit angleUnit);
-  virtual Expression * shallowBeautify(Context & context, AngleUnit angleUnit) { return this; };
+  virtual Expression * shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  virtual Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return this; };
 
   // Private methods used in simplification process
-  virtual Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const {
+  virtual Expression * cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
     return nullptr;
   }
   /* Evaluation Engine */
-  virtual Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const = 0;
-  virtual Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const = 0;
+  virtual Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
+  virtual Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Expression roots/extrema solver*/
   constexpr static double k_solverPrecision = 1.0E-5;
   constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
   constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
   constexpr static double k_maxFloat = 1e100;
-  typedef double (*EvaluationAtAbscissa)(char symbol, double abscissa, Context & context, AngleUnit angleUnit, const Expression * expression0, const Expression * expression1);
-  Coordinate2D nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, AngleUnit angleUnit, const Expression * expression = nullptr, bool lookForRootMinimum = false) const;
-  void bracketMinimum(char symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluation, Context & context, AngleUnit angleUnit, const Expression * expression = nullptr) const;
-  Coordinate2D brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluation, Context & context, AngleUnit angleUnit, const Expression * expression = nullptr) const;
-  double nextIntersectionWithExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, AngleUnit angleUnit, const Expression * expression) const;
-  void bracketRoot(char symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, AngleUnit angleUnit, const Expression * expression) const;
-  double brentRoot(char symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, AngleUnit angleUnit, const Expression * expression) const;
+  typedef double (*EvaluationAtAbscissa)(char symbol, double abscissa, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression0, const Expression * expression1);
+  Coordinate2D nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression = nullptr, bool lookForRootMinimum = false) const;
+  void bracketMinimum(char symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression = nullptr) const;
+  Coordinate2D brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression = nullptr) const;
+  double nextIntersectionWithExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const;
+  void bracketRoot(char symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const;
+  double brentRoot(char symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const;
 
   Expression * m_parent;
 };

@@ -138,7 +138,7 @@ void CurveView::computeLabels(Axis axis) {
     }
     PrintFloat::convertFloatToText<float>(labelValue, buffer,
       PrintFloat::bufferSizeForFloatsWithPrecision(Constant::ShortNumberOfSignificantDigits),
-      Constant::ShortNumberOfSignificantDigits, PrintFloat::Mode::Decimal);
+      Constant::ShortNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
     //TODO: check for size of label?
     strlcpy(label(axis, index), buffer, strlen(buffer)+1);
   }

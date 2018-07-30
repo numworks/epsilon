@@ -19,7 +19,7 @@ Expression * NthRoot::clone() const {
   NthRoot * a = new NthRoot(m_operands, true);  return a;
 }
 
-Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * NthRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -37,12 +37,12 @@ Expression * NthRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   return p->shallowReduce(context, angleUnit);
 }
 
-LayoutRef NthRoot::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef NthRoot::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 template<typename T>
-Evaluation<T> * NthRoot::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * NthRoot::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * base = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * index = operand(1)->privateApproximate(T(), context, angleUnit);
   Complex<T> result = Complex<T>::Undefined();

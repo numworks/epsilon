@@ -17,7 +17,7 @@ Expression * ArcSine::clone() const {
   return a;
 }
 
-Expression * ArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * ArcSine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -31,7 +31,7 @@ Expression * ArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> ArcSine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> ArcSine::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::asin(c);
   /* asin has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued on
    * this cut. We followed the convention chosen by the lib c++ of llvm on

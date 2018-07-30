@@ -110,7 +110,7 @@ int Power::privateGetPolynomialCoefficients(char symbolName, Expression * coeffi
   return -1;
 }
 
-Expression * Power::setSign(Sign s, Context & context, AngleUnit angleUnit) {
+Expression * Power::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == Sign::Positive);
   assert(operand(0)->sign() == Sign::Negative);
   editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
@@ -171,7 +171,7 @@ bool Power::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 2);
 }
 
-LayoutRef Power::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Power::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   const Expression * indiceOperand = m_operands[1];
   // Delete eventual parentheses of the indice in the pretty print
   if (m_operands[1]->type() == Type::Parenthesis) {
@@ -204,7 +204,7 @@ int Power::simplificationOrderGreaterType(const Expression * e, bool canBeInterr
   return SimplificationOrder(operand(1), &one, canBeInterrupted);
 }
 
-Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Power::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -346,7 +346,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
     detachOperand(m);
     Expression * i = m->editableOperand(m->numberOfOperands()-1);
     static_cast<Multiplication *>(m)->removeOperand(i, false);
-    if (angleUnit == AngleUnit::Degree) {
+    if (angleUnit == Preferences::AngleUnit::Degree) {
       const Expression * pi = m->operand(m->numberOfOperands()-1);
       m->replaceOperand(pi, new Rational(180), true);
     }
@@ -548,7 +548,7 @@ bool Power::parentIsALogarithmOfSameBase() const {
   return false;
 }
 
-Expression * Power::simplifyPowerPower(Power * p, Expression * e, Context& context, AngleUnit angleUnit) {
+Expression * Power::simplifyPowerPower(Power * p, Expression * e, Context& context, Preferences::AngleUnit angleUnit) {
   Expression * p0 = p->editableOperand(0);
   Expression * p1 = p->editableOperand(1);
   p->detachOperands();
@@ -559,7 +559,7 @@ Expression * Power::simplifyPowerPower(Power * p, Expression * e, Context& conte
   return shallowReduce(context, angleUnit);
 }
 
-Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression * r, Context& context, AngleUnit angleUnit) {
+Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression * r, Context& context, Preferences::AngleUnit angleUnit) {
   for (int index = 0; index < m->numberOfOperands(); index++) {
     Expression * factor = m->editableOperand(index);
     Power * p = new Power(factor, r, true); // We copy r and factor to avoid inheritance issues
@@ -570,7 +570,7 @@ Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression *
   return replaceWith(m, true)->shallowReduce(context, angleUnit); // delete r
 }
 
-Expression * Power::simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context& context, AngleUnit angleUnit) {
+Expression * Power::simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context& context, Preferences::AngleUnit angleUnit) {
   if (b->denominator().isOne()) {
     Rational r = Rational::Power(*a, b->numerator());
     return result->replaceWith(new Rational(r),true);
@@ -590,7 +590,7 @@ Expression * Power::simplifyRationalRationalPower(Expression * result, Rational 
   return m->shallowReduce(context, angleUnit);
 }
 
-Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator, Context & context, AngleUnit angleUnit) {
+Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
   assert(!i.isZero());
   assert(r->sign() == Sign::Positive);
   if (i.isOne()) {
@@ -664,7 +664,7 @@ Expression * Power::CreateNthRootOfUnity(const Rational r) {
 #endif
 }
 
-Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
+Expression * Power::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
   if (operand(1)->sign() == Sign::Negative) {
     Expression * p = cloneDenominator(context, angleUnit);
@@ -693,7 +693,7 @@ Expression * Power::shallowBeautify(Context& context, AngleUnit angleUnit) {
   return this;
 }
 
-Expression * Power::cloneDenominator(Context & context, AngleUnit angleUnit) const {
+Expression * Power::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
   if (operand(1)->sign() == Sign::Negative) {
     Expression * denominator = clone();
     Expression * newExponent = denominator->editableOperand(1)->setSign(Sign::Positive, context, angleUnit);
@@ -746,7 +746,7 @@ const Rational * Power::RationalFactorInExpression(const Expression * e) {
   }
 }
 
-Expression * Power::removeSquareRootsFromDenominator(Context & context, AngleUnit angleUnit) {
+Expression * Power::removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit) {
   Expression * result = nullptr;
 
   if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Rational && (static_cast<const Rational *>(operand(1))->isHalf() || static_cast<const Rational *>(operand(1))->isMinusHalf())) {

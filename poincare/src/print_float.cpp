@@ -1,6 +1,7 @@
 #include <poincare/print_float.h>
 #include <poincare/preferences.h>
 #include <poincare/ieee754.h>
+#include <poincare/integer.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -39,7 +40,7 @@ void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferLe
 
 template <class T>
 int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
-    int numberOfSignificantDigits, Mode mode) {
+    int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
   char tempBuffer[PrintFloat::k_maxFloatBufferLength];
   int requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, mode);
@@ -48,13 +49,13 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
    * fit the buffer size. If the buffer size is still to small, we only write
    * the beginning of the float and truncate it (which can result in a non sense
    * text) */
-  if (mode == Mode::Decimal && requiredLength >= bufferSize) {
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, Mode::Scientific);
+  if (mode == Preferences::PrintFloatMode::Decimal && requiredLength >= bufferSize) {
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, numberOfSignificantDigits, Preferences::PrintFloatMode::Scientific);
   }
   if (requiredLength >= bufferSize) {
     int adjustedNumberOfSignificantDigits = numberOfSignificantDigits - requiredLength + bufferSize - 1;
     adjustedNumberOfSignificantDigits = adjustedNumberOfSignificantDigits < 1 ? 1 : adjustedNumberOfSignificantDigits;
-    requiredLength = convertFloatToTextPrivate(f, tempBuffer, adjustedNumberOfSignificantDigits, Mode::Scientific);
+    requiredLength = convertFloatToTextPrivate(f, tempBuffer, adjustedNumberOfSignificantDigits, Preferences::PrintFloatMode::Scientific);
   }
   requiredLength = requiredLength < bufferSize ? requiredLength : bufferSize-1;
   strlcpy(buffer, tempBuffer, bufferSize);
@@ -62,7 +63,7 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
 }
 
 template <class T>
-int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Mode mode) {
+int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
   /*if (std::isinf(f)) {
     int currentChar = 0;
@@ -89,9 +90,9 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
 
   int exponentInBase10 = IEEE754<T>::exponentBase10(f);
 
-  Mode displayMode = mode;
-  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Mode::Decimal) {
-    displayMode = Mode::Scientific;
+  Preferences::PrintFloatMode displayMode = mode;
+  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Preferences::PrintFloatMode::Decimal) {
+    displayMode = Preferences::PrintFloatMode::Scientific;
   }
 
   // Number of char available for the mantissa
@@ -104,7 +105,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
    * that we stay beyond this threshold during computation. */
   assert(availableCharsForMantissaWithoutSign - 1 < std::log10(std::pow(2.0f, 63.0f)));
 
-  int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == Mode::Scientific ?
+  int numberOfDigitBeforeDecimal = exponentInBase10 >= 0 || displayMode == Preferences::PrintFloatMode::Scientific ?
                                    exponentInBase10 + 1 : 1;
 
   T unroundedMantissa = f * std::pow((T)10.0, (T)(availableCharsForMantissaWithoutSign - 1 - numberOfDigitBeforeDecimal));
@@ -128,16 +129,16 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   }
 
   // Update the display mode if the exponent changed
-  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Mode::Decimal) {
-    displayMode = Mode::Scientific;
+  if ((exponentInBase10 >= numberOfSignificantDigits || exponentInBase10 <= -numberOfSignificantDigits) && mode == Preferences::PrintFloatMode::Decimal) {
+    displayMode = Preferences::PrintFloatMode::Scientific;
   }
 
-  int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == Mode::Scientific ?
+  int decimalMarkerPosition = exponentInBase10 < 0 || displayMode == Preferences::PrintFloatMode::Scientific ?
     1 : exponentInBase10+1;
   decimalMarkerPosition = f < 0 ? decimalMarkerPosition+1 : decimalMarkerPosition;
 
   // Correct the number of digits in mantissa after rounding
-  int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == Mode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
+  int mantissaExponentInBase10 = exponentInBase10 > 0 || displayMode == Preferences::PrintFloatMode::Scientific ? availableCharsForMantissaWithoutSign - 1 : availableCharsForMantissaWithoutSign + exponentInBase10;
   if (IEEE754<T>::exponentBase10(mantissa) >= mantissaExponentInBase10) {
     mantissa = mantissa/10;
   }
@@ -154,7 +155,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   Integer digit = Integer::Subtraction(dividend, Integer::Multiplication(quotient, Integer(10)));
   int minimumNumberOfCharsInMantissa = 1;
   while (digit.isZero() && availableCharsForMantissaWithoutSign > minimumNumberOfCharsInMantissa &&
-      (availableCharsForMantissaWithoutSign > exponentInBase10+2 || displayMode == Mode::Scientific)) {
+      (availableCharsForMantissaWithoutSign > exponentInBase10+2 || displayMode == Preferences::PrintFloatMode::Scientific)) {
     mantissa = mantissa/10;
     availableCharsForMantissaWithoutSign--;
     availableCharsForMantissaWithSign--;
@@ -164,15 +165,15 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   }
 
   // Suppress the decimal marker if no fractional part
-  if ((displayMode == Mode::Decimal && availableCharsForMantissaWithoutSign == exponentInBase10+2)
-      || (displayMode == Mode::Scientific && availableCharsForMantissaWithoutSign == 2)) {
+  if ((displayMode == Preferences::PrintFloatMode::Decimal && availableCharsForMantissaWithoutSign == exponentInBase10+2)
+      || (displayMode == Preferences::PrintFloatMode::Scientific && availableCharsForMantissaWithoutSign == 2)) {
     availableCharsForMantissaWithSign--;
   }
 
   // Print mantissa
   assert(availableCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
   PrintFloat::printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, Integer((int64_t)mantissa), decimalMarkerPosition);
-  if (displayMode == Mode::Decimal || exponentInBase10 == 0) {
+  if (displayMode == Preferences::PrintFloatMode::Decimal || exponentInBase10 == 0) {
     buffer[availableCharsForMantissaWithSign] = 0;
     return availableCharsForMantissaWithSign;
   }
@@ -185,8 +186,8 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   return (availableCharsForMantissaWithSign+1+numberOfCharExponent);
 }
 
-template int PrintFloat::convertFloatToText<float>(float, char*, int, int, PrintFloat::Mode);
-template int PrintFloat::convertFloatToText<double>(double, char*, int, int, PrintFloat::Mode);
+template int PrintFloat::convertFloatToText<float>(float, char*, int, int, Preferences::Preferences::PrintFloatMode);
+template int PrintFloat::convertFloatToText<double>(double, char*, int, int, Preferences::Preferences::PrintFloatMode);
 
 }
 

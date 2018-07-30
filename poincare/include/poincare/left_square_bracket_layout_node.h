@@ -9,7 +9,7 @@ namespace Poincare {
 class LeftSquareBracketLayoutNode : public SquareBracketLayoutNode {
 public:
   using SquareBracketLayoutNode::SquareBracketLayoutNode;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, '[');
   }
   bool isLeftBracket() const override { return true; }

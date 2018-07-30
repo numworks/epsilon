@@ -18,7 +18,7 @@ Expression * ImaginaryPart::clone() const {
 }
 
 
-Expression * ImaginaryPart::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * ImaginaryPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -36,7 +36,7 @@ Expression * ImaginaryPart::shallowReduce(Context& context, AngleUnit angleUnit)
 }
 
 template<typename T>
-std::complex<T> ImaginaryPart::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> ImaginaryPart::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   return std::imag(c);
 }
 

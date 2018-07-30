@@ -26,7 +26,7 @@ public:
   Type type() const override;
   Expression * clone() const override;
   Sign sign() const override;
-  Expression * cloneDenominator(Context & context, AngleUnit angleUnit) const override;
+  Expression * cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Basic test
   bool isZero() const { return m_numerator.isZero(); }
@@ -43,14 +43,14 @@ public:
   static int NaturalOrder(const Rational & i, const Rational & j);
 private:
   bool needParenthesisWithParent(const Expression * e) const override;
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename U> Complex<U> * templatedApproximate(Context& context, Expression::AngleUnit angleUnit) const;
-  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename U> Complex<U> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression * setSign(Sign s);
-  Expression * setSign(Sign s, Context & context, AngleUnit angleUnit) override {
+  Expression * setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override {
     return setSign(s);
   }
 

@@ -18,7 +18,7 @@ Expression * MatrixTrace::clone() const {
   return a;
 }
 
-Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * MatrixTrace::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -49,7 +49,7 @@ Expression * MatrixTrace::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> * MatrixTrace::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * MatrixTrace::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
   Complex<T> * result = new Complex<T>(input->createTrace());
   delete input;

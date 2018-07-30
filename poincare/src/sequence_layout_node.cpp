@@ -171,7 +171,7 @@ KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {
   return KDPoint(x,y);
 }
 
-int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(operatorName != nullptr);
   if (bufferSize == 0) {
     return -1;

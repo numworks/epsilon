@@ -20,7 +20,7 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool shouldCollapseSiblingsOnRight() const override{ return true; }
   void didCollapseSiblings(LayoutCursor * cursor) override;
 

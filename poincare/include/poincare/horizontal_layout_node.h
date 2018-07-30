@@ -23,7 +23,7 @@ public:
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   bool isHorizontal() const override { return true; }
   bool isEmpty() const override { return m_numberOfChildren == 1 && const_cast<HorizontalLayoutNode *>(this)->childAtIndex(0)->isEmpty(); }

@@ -11,12 +11,12 @@ extern "C" {
 
 namespace Poincare {
 
-LayoutRef Sequence::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Sequence::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return createSequenceLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 template<typename T>
-Evaluation<T> * Sequence::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * Sequence::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * aInput = operand(1)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * bInput = operand(2)->privateApproximate(T(), context, angleUnit);
   T start = aInput->toScalar();

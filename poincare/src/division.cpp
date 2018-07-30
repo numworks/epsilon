@@ -34,7 +34,7 @@ bool Division::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 3);
 }
 
-Expression * Division::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Division::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -52,7 +52,7 @@ std::complex<T> Division::compute(const std::complex<T> c, const std::complex<T>
   return c/d;
 }
 
-LayoutRef Division::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Division::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return CharLayoutRef('a'); //TODO
  /*
   const Expression * numerator = operand(0)->type() == Type::Parenthesis ? operand(0)->operand(0) : operand(0);

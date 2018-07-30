@@ -20,7 +20,7 @@ Expression * BinomialCoefficient::clone() const {
   return b;
 }
 
-Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * BinomialCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -71,14 +71,14 @@ Expression * BinomialCoefficient::shallowReduce(Context& context, AngleUnit angl
   return replaceWith(new Rational(result), true);
 }
 
-LayoutRef BinomialCoefficient::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef BinomialCoefficient::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return BinomialCoefficientLayoutRef(
       operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 template<typename T>
-Complex<T> * BinomialCoefficient::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * BinomialCoefficient::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * nInput = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * kInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T n = nInput->toScalar();

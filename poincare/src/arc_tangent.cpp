@@ -17,7 +17,7 @@ Expression * ArcTangent::clone() const {
   return a;
 }
 
-Expression * ArcTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * ArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -31,7 +31,7 @@ Expression * ArcTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> ArcTangent::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> ArcTangent::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::atan(c);
   /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then multivalued
    * on this cut. We followed the convention chosen by the lib c++ of llvm on

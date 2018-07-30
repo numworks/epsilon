@@ -63,7 +63,7 @@ bool Addition::needParenthesisWithParent(const Expression * e) const {
 
 /* Simplication */
 
-Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Addition::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -180,7 +180,7 @@ Expression * Addition::shallowReduce(Context& context, AngleUnit angleUnit) {
   return result;
 }
 
-Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit) {
+Expression * Addition::factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) {
   // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
 
   // Step 1: We want to compute the common denominator, b*d
@@ -223,7 +223,7 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, AngleUnit
   return static_cast<Multiplication *>(replaceWith(result, true))->privateShallowReduce(context, angleUnit, false, true);
 }
 
-void Addition::factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit) {
+void Addition::factorizeOperands(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit) {
   /* This function factorizes two operands which only differ by a rational
    * factor. For example, if this is Addition(2*pi, 3*pi), then 2*pi and 3*pi
    * could be merged, and this turned into Addition(5*pi). */
@@ -302,7 +302,7 @@ bool Addition::TermsHaveIdenticalNonRationalFactors(const Expression * e1, const
   }
 }
 
-Expression * Addition::shallowBeautify(Context & context, AngleUnit angleUnit) {
+Expression * Addition::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   /* Beautifying Addition essentially consists in adding Subtractions if needed.
    * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
    * "a+(-r)*b" into "a-r*b" where r is a positive Rational.

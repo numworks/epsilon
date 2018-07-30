@@ -1,8 +1,6 @@
 #ifndef POINCARE_PREFERENCES_H
 #define POINCARE_PREFERENCES_H
 
-#include <poincare/expression.h>
-
 namespace Poincare {
 
 class Preferences {
@@ -11,23 +9,42 @@ public:
     Edition1D,
     Edition2D
   };
+  /* The 'PrintFlotMode' refers to the way to display float 'scientific' or
+   * 'auto'. The scientific mode returns float with style -1.2E2 whereas the
+   * auto mode tries to return 'natural' float like (0.021) and switches to
+   * scientific mode if the float is too small or too big regarding the number
+   * of significant digits. */
+  enum class PrintFloatMode {
+    Decimal = 0,
+    Scientific = 1,
+  };
+  enum class ComplexFormat {
+    Cartesian = 0,
+    Polar = 1,
+    Default = 2
+  };
+  enum class AngleUnit {
+    Degree = 0,
+    Radian = 1,
+    Default = 2
+  };
   Preferences();
   static Preferences * sharedPreferences();
-  Expression::AngleUnit angleUnit() const;
-  void setAngleUnit(Expression::AngleUnit angleUnit);
-  PrintFloat::Mode displayMode() const;
-  void setDisplayMode(PrintFloat::Mode mode);
+  AngleUnit angleUnit() const;
+  void setAngleUnit(AngleUnit angleUnit);
+  PrintFloatMode displayMode() const;
+  void setDisplayMode(PrintFloatMode mode);
   EditionMode editionMode() const;
   void setEditionMode(EditionMode editionMode);
-  Expression::ComplexFormat complexFormat() const;
-  void setComplexFormat(Expression::ComplexFormat complexFormat);
+  ComplexFormat complexFormat() const;
+  void setComplexFormat(Preferences::ComplexFormat complexFormat);
   char numberOfSignificantDigits() const;
   void setNumberOfSignificantDigits(char numberOfSignificantDigits);
 private:
-  Expression::AngleUnit m_angleUnit;
-  PrintFloat::Mode m_displayMode;
+  AngleUnit m_angleUnit;
+  PrintFloatMode m_displayMode;
   EditionMode m_editionMode;
-  Expression::ComplexFormat m_complexFormat;
+  ComplexFormat m_complexFormat;
   char m_numberOfSignificantDigits;
 };
 

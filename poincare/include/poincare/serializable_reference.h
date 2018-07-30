@@ -1,8 +1,9 @@
 #ifndef POINCARE_SERIALIZABLE_REFERENCE_H
 #define POINCARE_SERIALIZABLE_REFERENCE_H
 
-#include <poincare/print_float.h>
+#include <poincare/preferences.h>
 #include <poincare/tree_reference.h>
+#include <poincare/serializable_node.h>
 
 namespace Poincare {
 
@@ -16,7 +17,7 @@ public:
     assert(isDefined());
     return node()->needsParenthesisWithParent(parentRef.node());
   }
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode = PrintFloat::Mode::Decimal, int numberOfSignificantDigits = 0) const {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const {
     assert(isDefined());
     return node()->writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
   }

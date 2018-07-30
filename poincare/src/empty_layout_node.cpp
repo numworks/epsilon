@@ -33,7 +33,7 @@ void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomp
   }
 }
 
-int EmptyLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int EmptyLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

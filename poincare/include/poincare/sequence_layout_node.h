@@ -48,7 +48,7 @@ protected:
   void computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 
-  int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const;
+  int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
   LayoutNode * argumentLayout() {
     assert(numberOfChildren() == 3);
     return childAtIndex(0);

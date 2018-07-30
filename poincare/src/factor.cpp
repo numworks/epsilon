@@ -22,7 +22,7 @@ Expression * Factor::clone() const {
   return b;
 }
 
-Expression * Factor::shallowBeautify(Context& context, AngleUnit angleUnit) {
+Expression * Factor::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * op = editableOperand(0);
   if (op->type() != Type::Rational) {
     return new Undefined();
@@ -58,7 +58,7 @@ Expression * Factor::shallowBeautify(Context& context, AngleUnit angleUnit) {
   return result;
 }
 
-Expression * Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, AngleUnit angleUnit) {
+Expression * Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) {
   assert(!i.isZero());
   i.setNegative(false);
   Multiplication * m = new Multiplication();

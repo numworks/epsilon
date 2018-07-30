@@ -89,7 +89,7 @@ LayoutRef GlobalContext::layoutForSymbol(const Symbol * symbol, int numberOfSign
   if (symbol->isMatrixSymbol()) {
     int index = symbolIndex(symbol);
     if (!m_matrixLayouts[index].isDefined() && m_matrixExpressions[index] != nullptr) {
-      m_matrixLayouts[index] = m_matrixExpressions[index]->createLayout(PrintFloat::Mode::Decimal, numberOfSignificantDigits);
+      m_matrixLayouts[index] = m_matrixExpressions[index]->createLayout(Preferences::PrintFloatMode::Decimal, numberOfSignificantDigits);
     }
     return m_matrixLayouts[index];
   }

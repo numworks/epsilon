@@ -17,7 +17,7 @@ Expression * Random::clone() const {
   return a;
 }
 
-Expression * Random::setSign(Sign s, Context & context, AngleUnit angleUnit) {
+Expression * Random::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == Sign::Positive);
   return this;
 }

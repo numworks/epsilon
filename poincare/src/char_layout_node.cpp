@@ -27,7 +27,7 @@ void CharLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
   }
 }
 
-int CharLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int CharLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, m_char);
 }
 

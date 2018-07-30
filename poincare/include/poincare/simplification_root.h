@@ -20,20 +20,20 @@ public:
   Expression * clone() const override { return nullptr; }
   int polynomialDegree(char symbolName) const override { return -1; }
   Type type() const override { return Expression::Type::SimplificationRoot; }
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return nullptr;
   }
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override { return 0; }
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return 0; }
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }
 private:
-  Expression * shallowReduce(Context & context, AngleUnit angleUnit) override { return this; }
+  Expression * shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override { return this; }
 };
 
 }

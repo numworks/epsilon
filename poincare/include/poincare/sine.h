@@ -11,27 +11,27 @@ namespace Poincare {
 class Sine : public StaticHierarchy<1> {
   using StaticHierarchy<1>::StaticHierarchy;
   friend class Tangent;
-  float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
+  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 public:
   Type type() const override;
   Expression * clone() const override;
-  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
+  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
 private:
   /* Layout */
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   const char * name() const { return "sin"; }
   /* Simplication */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
   }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
 };

@@ -28,14 +28,14 @@ Expression * Logarithm::clone() const {
 }
 
 template<typename T>
-std::complex<T> Logarithm::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> Logarithm::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
    * followed the convention chosen by the lib c++ of llvm on ]-inf+0i, 0+0i]
    * (warning: log takes the other side of the cut values on ]-inf-0i, 0-0i]). */
   return std::log10(c);
 }
 
-Expression * Logarithm::simpleShallowReduce(Context & context, AngleUnit angleUnit) {
+Expression * Logarithm::simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression * op = editableOperand(0);
   // log(x,x)->1
   if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
@@ -59,7 +59,7 @@ Expression * Logarithm::simpleShallowReduce(Context & context, AngleUnit angleUn
   return this;
 }
 
-Expression * Logarithm::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Logarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -158,7 +158,7 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
   return false;
 }
 
-Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit) {
+Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
   assert(!i.isZero());
   assert(!i.isNegative());
   if (i.isOne()) {
@@ -196,7 +196,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
   return a;
 }
 
-Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) {
+Expression * Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   Symbol e = Symbol(Ion::Charset::Exponential);
   const Expression * op = operand(0);
   Rational one(1);
@@ -209,7 +209,7 @@ Expression * Logarithm::shallowBeautify(Context & context, AngleUnit angleUnit) 
 }
 
 template<typename T>
-Evaluation<T> * Logarithm::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * Logarithm::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   if (numberOfOperands() == 1) {
     return ApproximationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }
@@ -226,7 +226,7 @@ Evaluation<T> * Logarithm::templatedApproximate(Context& context, AngleUnit angl
   return new Complex<T>(result);
 }
 
-LayoutRef Logarithm::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Logarithm::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (numberOfOperands() == 1) {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, "log");
   }

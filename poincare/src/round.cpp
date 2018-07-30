@@ -19,7 +19,7 @@ Expression * Round::clone() const {
   return c;
 }
 
-Expression * Round::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Round::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -53,7 +53,7 @@ Expression * Round::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> * Round::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * Round::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * f1Input = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * f2Input = operand(1)->privateApproximate(T(), context, angleUnit);
   T f1 = f1Input->toScalar();

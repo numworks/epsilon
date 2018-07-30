@@ -15,11 +15,11 @@ Expression * Conjugate::clone() const {
   return a;
 }
 
-LayoutRef Conjugate::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Conjugate::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return ConjugateLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Conjugate::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -37,7 +37,7 @@ Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> Conjugate::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> Conjugate::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   return std::conj(c);
 }
 

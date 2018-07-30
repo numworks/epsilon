@@ -16,7 +16,7 @@ Expression * MatrixDimension::clone() const {
   return a;
 }
 
-Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * MatrixDimension::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -40,7 +40,7 @@ Expression * MatrixDimension::shallowReduce(Context& context, AngleUnit angleUni
 }
 
 template<typename T>
-Evaluation<T> * MatrixDimension::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * MatrixDimension::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
   std::complex<T> operands[2];
   if (input->type() == Evaluation<T>::Type::MatrixComplex) {

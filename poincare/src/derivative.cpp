@@ -29,7 +29,7 @@ int Derivative::polynomialDegree(char symbolName) const {
   return Expression::polynomialDegree(symbolName);
 }
 
-Expression * Derivative::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Derivative::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -44,7 +44,7 @@ Expression * Derivative::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> * Derivative::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Complex<T> * Derivative::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   static T min = sizeof(T) == sizeof(double) ? DBL_MIN : FLT_MIN;
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   Evaluation<T> * xInput = operand(1)->privateApproximate(T(), context, angleUnit);
@@ -75,14 +75,14 @@ Complex<T> * Derivative::templatedApproximate(Context& context, AngleUnit angleU
 }
 
 template<typename T>
-T Derivative::growthRateAroundAbscissa(T x, T h, Context & context, AngleUnit angleUnit) const {
+T Derivative::growthRateAroundAbscissa(T x, T h, Context & context, Preferences::AngleUnit angleUnit) const {
   T expressionPlus = operand(0)->approximateWithValueForSymbol('x', x+h, context, angleUnit);
   T expressionMinus = operand(0)->approximateWithValueForSymbol('x', x-h, context, angleUnit);
   return (expressionPlus - expressionMinus)/(2*h);
 }
 
 template<typename T>
-T Derivative::riddersApproximation(Context & context, AngleUnit angleUnit, T x, T h, T * error) const {
+T Derivative::riddersApproximation(Context & context, Preferences::AngleUnit angleUnit, T x, T h, T * error) const {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Engineering Software, vol. 4, no. 2,

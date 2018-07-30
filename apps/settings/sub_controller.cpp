@@ -243,16 +243,16 @@ StackViewController * SubController::stackController() const {
 
 void SubController::setPreferenceWithValueIndex(I18n::Message message, int valueIndex) {
   if (message == I18n::Message::AngleUnit) {
-    Preferences::sharedPreferences()->setAngleUnit((Expression::AngleUnit)valueIndex);
+    Preferences::sharedPreferences()->setAngleUnit((Preferences::AngleUnit)valueIndex);
   }
   if (message == I18n::Message::DisplayMode) {
-    Preferences::sharedPreferences()->setDisplayMode((PrintFloat::Mode)valueIndex);
+    Preferences::sharedPreferences()->setDisplayMode((Preferences::PrintFloatMode)valueIndex);
   }
   if (message == I18n::Message::EditionMode) {
     Preferences::sharedPreferences()->setEditionMode((Preferences::EditionMode)valueIndex);
   }
   if (message == I18n::Message::ComplexFormat) {
-    Preferences::sharedPreferences()->setComplexFormat((Expression::ComplexFormat)valueIndex);
+    Preferences::sharedPreferences()->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   }
 }
 

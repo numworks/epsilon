@@ -17,7 +17,7 @@ Expression * HyperbolicArcTangent::clone() const {
   return a;
 }
 
-Expression * HyperbolicArcTangent::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * HyperbolicArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -32,7 +32,7 @@ Expression * HyperbolicArcTangent::shallowReduce(Context& context, AngleUnit ang
 }
 
 template<typename T>
-std::complex<T> HyperbolicArcTangent::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> HyperbolicArcTangent::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::atanh(c);
   /* atanh has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued on
    * this cut. We followed the convention chosen by the lib c++ of llvm on

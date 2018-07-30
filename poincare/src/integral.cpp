@@ -31,7 +31,7 @@ int Integral::polynomialDegree(char symbolName) const {
   return Expression::polynomialDegree(symbolName);
 }
 
-Expression * Integral::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Integral::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -45,7 +45,7 @@ Expression * Integral::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUnit) const {
+Complex<T> * Integral::templatedApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * aInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T a = aInput->toScalar();
   delete aInput;
@@ -63,7 +63,7 @@ Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUn
   return new Complex<T>(result);
 }
 
-LayoutRef Integral::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Integral::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return IntegralLayoutRef(
       operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
       operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
@@ -71,14 +71,14 @@ LayoutRef Integral::createLayout(PrintFloat::Mode floatDisplayMode, int numberOf
 }
 
 template<typename T>
-T Integral::functionValueAtAbscissa(T x, Context & context, AngleUnit angleUnit) const {
+T Integral::functionValueAtAbscissa(T x, Context & context, Preferences::AngleUnit angleUnit) const {
   return operand(0)->approximateWithValueForSymbol('x', x, context, angleUnit);
 }
 
 #ifdef LAGRANGE_METHOD
 
 template<typename T>
-T Integral::lagrangeGaussQuadrature(T a, T b, Context & context, AngleUnit angleUnit) const {
+T Integral::lagrangeGaussQuadrature(T a, T b, Context & context, Preferences::AngleUnit angleUnit) const {
   /* We here use Gauss-Legendre quadrature with n = 5
    * Gauss-Legendre abscissae and weights can be found in
    * C/C++ library source code. */
@@ -109,7 +109,7 @@ T Integral::lagrangeGaussQuadrature(T a, T b, Context & context, AngleUnit angle
 #else
 
 template<typename T>
-Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, Context & context, AngleUnit angleUnit) const {
+Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, Context & context, Preferences::AngleUnit angleUnit) const {
   static T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   static T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
@@ -184,7 +184,7 @@ Integral::DetailedResult<T> Integral::kronrodGaussQuadrature(T a, T b, Context &
 }
 
 template<typename T>
-T Integral::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, AngleUnit angleUnit) const {
+T Integral::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, Preferences::AngleUnit angleUnit) const {
   if (shouldStopProcessing()) {
     return NAN;
   }

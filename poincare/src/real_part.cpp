@@ -16,7 +16,7 @@ Expression * RealPart::clone() const {
   return a;
 }
 
-Expression * RealPart::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * RealPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -34,7 +34,7 @@ Expression * RealPart::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> RealPart::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> RealPart::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   return std::real(c);
 }
 

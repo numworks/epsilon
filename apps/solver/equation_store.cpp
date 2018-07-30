@@ -181,7 +181,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
 }
 
 EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSolutions[k_maxNumberOfExactSolutions], Expression * coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression * constants[k_maxNumberOfEquations], Context * context) {
-  Expression::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   int n = strlen(m_variables); // n unknown variables
   int m = numberOfDefinedModels(); // m equations
   /* Create the matrix (A | b) for the equation Ax=b */

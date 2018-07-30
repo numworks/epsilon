@@ -32,29 +32,29 @@ public:
 private:
   /* Layout */
   bool needParenthesisWithParent(const Expression * e) const override;
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   static const char * name() { return "+"; }
 
   /* Simplification */
-  Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
-  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
-  Expression * factorizeOnCommonDenominator(Context & context, AngleUnit angleUnit);
-  void factorizeOperands(Expression * e1, Expression * e2, Context & context, AngleUnit angleUnit);
+  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression * factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit);
+  void factorizeOperands(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit);
   static const Rational RationalFactor(Expression * e);
   static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
     return ApproximationEngine::elementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
    }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override {
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
    }
 };

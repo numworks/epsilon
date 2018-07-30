@@ -4,7 +4,7 @@
 
 namespace Poincare {
 
-Expression * SimplificationEngine::map(Expression * e, Context & context, Expression::AngleUnit angleUnit) {
+Expression * SimplificationEngine::map(Expression * e, Context & context, Preferences::AngleUnit angleUnit) {
   assert(e->numberOfOperands() == 1 && e->operand(0)->type() == Expression::Type::Matrix);
   Expression * op = e->editableOperand(0);
   for (int i = 0; i < op->numberOfOperands(); i++) {

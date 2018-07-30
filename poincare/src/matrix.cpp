@@ -51,7 +51,7 @@ Expression * Matrix::clone() const {
   return new Matrix(m_operands, numberOfRows(), numberOfColumns(), true);
 }
 
-int Matrix::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int Matrix::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -101,7 +101,7 @@ int Matrix::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-void Matrix::rowCanonize(Context & context, AngleUnit angleUnit, Multiplication * determinant) {
+void Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication * determinant) {
   // The matrix has to be reduced to be able to spot 0 inside it
   for (int i = 0; i < numberOfOperands(); i++) {
     editableOperand(i)->deepReduce(context, angleUnit);
@@ -215,7 +215,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
   }
 }
 
-LayoutRef Matrix::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Matrix::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   MatrixLayoutRef layout;
   LayoutRef castedLayout(layout.node());
   for (int i = 0; i < numberOfOperands(); i++) {
@@ -226,7 +226,7 @@ LayoutRef Matrix::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSi
   return layout;
 }
 
-int Matrix::rank(Context & context, AngleUnit angleUnit, bool inPlace) {
+int Matrix::rank(Context & context, Preferences::AngleUnit angleUnit, bool inPlace) {
   Matrix * m = inPlace ? this : static_cast<Matrix *>(clone());
   m->rowCanonize(context, angleUnit);
   int rank = m->numberOfRows();
@@ -312,7 +312,7 @@ Matrix * Matrix::createIdentity(int dim) {
   return matrix;
 }
 
-Expression * Matrix::createInverse(Context & context, AngleUnit angleUnit) const {
+Expression * Matrix::createInverse(Context & context, Preferences::AngleUnit angleUnit) const {
   if (numberOfRows() != numberOfColumns()) {
     return new Undefined();
   }
@@ -353,7 +353,7 @@ Expression * Matrix::createInverse(Context & context, AngleUnit angleUnit) const
 #endif
 
 template<typename T>
-Evaluation<T> * Matrix::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * Matrix::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   std::complex<T> * operands = new std::complex<T> [numberOfOperands()];
   for (int i = 0; i < numberOfOperands(); i++) {
     Evaluation<T> * operandEvaluation = operand(i)->privateApproximate(T(), context, angleUnit);

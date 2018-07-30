@@ -20,12 +20,12 @@ Expression * SquareRoot::clone() const {
 }
 
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");
-int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
 }
 
 template<typename T>
-std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::sqrt(c);
   /* Openbsd trigonometric functions are numerical implementation and thus are
    * approximative.
@@ -36,7 +36,7 @@ std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, AngleUnit 
   return ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument(result);
 }
 
-Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -52,7 +52,7 @@ Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {
   return p->shallowReduce(context, angleUnit);
 }
 
-LayoutRef SquareRoot::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef SquareRoot::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 

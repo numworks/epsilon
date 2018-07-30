@@ -18,16 +18,16 @@ Expression * AbsoluteValue::clone() const {
   return a;
 }
 
-Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUnit) {
+Expression * AbsoluteValue::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == Sign::Positive);
   return this;
 }
 
-LayoutRef AbsoluteValue::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef AbsoluteValue::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return AbsoluteValueLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * AbsoluteValue::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -49,7 +49,7 @@ Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit)
 }
 
 template<typename T>
-std::complex<T> AbsoluteValue::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> AbsoluteValue::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   return std::abs(c);
 }
 

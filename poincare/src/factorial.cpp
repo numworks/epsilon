@@ -36,7 +36,7 @@ bool Factorial::needParenthesisWithParent(const Expression * e) const {
 
 /* Simplification */
 
-Expression * Factorial::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Factorial::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -66,7 +66,7 @@ Expression * Factorial::shallowReduce(Context& context, AngleUnit angleUnit) {
   return this;
 }
 
-Expression * Factorial::shallowBeautify(Context& context, AngleUnit angleUnit) {
+Expression * Factorial::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
   // +(a,b)! ->(+(a,b))!
   if (operand(0)->type() == Type::Addition || operand(0)->type() == Type::Multiplication || operand(0)->type() == Type::Power) {
     const Expression * o[1] = {operand(0)};
@@ -77,7 +77,7 @@ Expression * Factorial::shallowBeautify(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   T n = c.real();
   if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
     return Complex<T>::Undefined();
@@ -92,14 +92,14 @@ std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, AngleUnit a
   return Complex<T>(std::round(result));
 }
 
-LayoutRef Factorial::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Factorial::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result;
   result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(CharLayoutRef('!'), result.numberOfChildren(), nullptr);
   return result;
 }
 
-int Factorial::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int Factorial::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

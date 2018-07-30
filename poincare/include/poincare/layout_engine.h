@@ -10,8 +10,8 @@ class LayoutEngine {
 
 public:
   /* Expression to Layout */
-  static LayoutRef createInfixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
-  static LayoutRef createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  static LayoutRef createInfixLayout(const Expression * expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  static LayoutRef createPrefixLayout(const Expression * expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
 
   /* Create special layouts */
   static LayoutRef createParenthesedLayout(LayoutRef layout, bool cloneLayout);
@@ -23,14 +23,14 @@ public:
       const Expression * expression,
       char * buffer,
       int bufferSize,
-      PrintFloat::Mode floatDisplayMode,
+      Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName);
   static int writePrefixExpressionTextInBuffer(
       const Expression * expression,
       char * buffer,
       int bufferSize,
-      PrintFloat::Mode floatDisplayMode,
+      Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName);
 
@@ -39,7 +39,7 @@ public:
       const SerializableRef serializableRef,
       char * buffer,
       int bufferSize,
-      PrintFloat::Mode floatDisplayMode,
+      Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName,
       int firstChildIndex = 0,
@@ -49,7 +49,7 @@ public:
       const SerializableRef serializableRef,
       char * buffer,
       int bufferSize,
-      PrintFloat::Mode floatDisplayMode,
+      Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName,
       bool writeFirstChild = true); //TODO
@@ -60,10 +60,10 @@ public:
 private:
   static constexpr char divideChar = '/';
   // These two functions return the index of the null-terminating char.
-  static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex);
-  static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
+  static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex);
+  static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, void * expressionLayout, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
 
-  static void writeChildTreeInBuffer(SerializableRef childRef, SerializableRef parentRef, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, int * numberOfChar);
+  static void writeChildTreeInBuffer(SerializableRef childRef, SerializableRef parentRef, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, int * numberOfChar);
 };
 
 }

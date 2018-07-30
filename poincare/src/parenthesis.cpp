@@ -20,11 +20,11 @@ int Parenthesis::polynomialDegree(char symbolName) const {
   return operand(0)->polynomialDegree(symbolName);
 }
 
-LayoutRef Parenthesis::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Parenthesis::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
-Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Parenthesis::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -33,7 +33,7 @@ Expression * Parenthesis::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-Evaluation<T> * Parenthesis::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * Parenthesis::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   return operand(0)->privateApproximate(T(), context, angleUnit);
 }
 

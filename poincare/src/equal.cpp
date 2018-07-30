@@ -32,13 +32,13 @@ int Equal::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-Expression * Equal::standardEquation(Context & context, AngleUnit angleUnit) const {
+Expression * Equal::standardEquation(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression * sub = new Subtraction(operand(0), operand(1), true);
   Reduce(&sub, context, angleUnit);
   return sub;
 }
 
-Expression * Equal::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Equal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -49,7 +49,7 @@ Expression * Equal::shallowReduce(Context& context, AngleUnit angleUnit) {
   return this;
 }
 
-LayoutRef Equal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Equal::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result;
   result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(CharLayoutRef('='), result.numberOfChildren(), nullptr);
@@ -58,7 +58,7 @@ LayoutRef Equal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSig
 }
 
 template<typename T>
-Evaluation<T> * Equal::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * Equal::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   return new Complex<T>(Complex<T>::Undefined());
 }
 

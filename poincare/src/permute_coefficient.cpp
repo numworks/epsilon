@@ -18,7 +18,7 @@ Expression * PermuteCoefficient::clone() const {
   return b;
 }
 
-Expression * PermuteCoefficient::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * PermuteCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -68,7 +68,7 @@ Expression * PermuteCoefficient::shallowReduce(Context& context, AngleUnit angle
 }
 
 template<typename T>
-Complex<T> * PermuteCoefficient::templatedApproximate(Context& context, AngleUnit angleUnit) const {  Evaluation<T> * nInput = operand(0)->privateApproximate(T(), context, angleUnit);
+Complex<T> * PermuteCoefficient::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {  Evaluation<T> * nInput = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * kInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T n = nInput->toScalar();
   T k = kInput->toScalar();

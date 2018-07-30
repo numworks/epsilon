@@ -84,11 +84,11 @@ void TitleBarView::layoutSubviews() {
 void TitleBarView::refreshPreferences() {
   char buffer[13];
   int numberOfChar = 0;
-  if (Preferences::sharedPreferences()->displayMode() == PrintFloat::Mode::Scientific) {
+  if (Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Scientific) {
     strlcpy(buffer, I18n::translate(I18n::Message::Sci), strlen(I18n::translate(I18n::Message::Sci))+1);
     numberOfChar += strlen(I18n::translate(I18n::Message::Sci));
   }
-  if (Preferences::sharedPreferences()->angleUnit() == Expression::AngleUnit::Radian) {
+  if (Preferences::sharedPreferences()->angleUnit() == Preferences::AngleUnit::Radian) {
     strlcpy(buffer+numberOfChar, I18n::translate(I18n::Message::Rad), strlen(I18n::translate(I18n::Message::Rad))+1);
     numberOfChar += strlen(I18n::translate(I18n::Message::Rad));
   } else {

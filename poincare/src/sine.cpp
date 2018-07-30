@@ -21,18 +21,18 @@ Expression * Sine::clone() const {
   return a;
 }
 
-float Sine::characteristicXRange(Context & context, AngleUnit angleUnit) const {
+float Sine::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(this, context, angleUnit);
 }
 
 template<typename T>
-std::complex<T> Sine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> Sine::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::sin(angleInput);
   return Trigonometry::RoundToMeaningfulDigits(res);
 }
 
-Expression * Sine::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * Sine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

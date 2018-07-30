@@ -20,17 +20,17 @@ int Undefined::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-template<typename T> Complex<T> * Undefined::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+template<typename T> Complex<T> * Undefined::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   return new Complex<T>(Complex<T>::Undefined());
 }
 
-LayoutRef Undefined::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef Undefined::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[16];
   int numberOfChars = PrintFloat::convertFloatToText<float>(NAN, buffer, 16, 1, floatDisplayMode);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
-int Undefined::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int Undefined::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

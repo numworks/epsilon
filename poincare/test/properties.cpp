@@ -52,7 +52,7 @@ QUIZ_CASE(poincare_polynomial_degree) {
   assert_parsed_expression_polynomial_degree("P*x", 1);
 }
 
-void assert_parsed_expression_has_characteristic_range(const char * expression, float range, Expression::AngleUnit angleUnit = Expression::AngleUnit::Degree) {
+void assert_parsed_expression_has_characteristic_range(const char * expression, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
   GlobalContext globalContext;
   Expression * e = parse_expression(expression);
   Expression::Simplify(&e, globalContext, angleUnit);
@@ -67,11 +67,11 @@ void assert_parsed_expression_has_characteristic_range(const char * expression, 
 QUIZ_CASE(poincare_characteristic_range) {
   assert_parsed_expression_has_characteristic_range("cos(x)", 360.0f);
   assert_parsed_expression_has_characteristic_range("cos(-x)", 360.0f);
-  assert_parsed_expression_has_characteristic_range("cos(x)", 2.0f*M_PI, Expression::AngleUnit::Radian);
-  assert_parsed_expression_has_characteristic_range("cos(-x)", 2.0f*M_PI, Expression::AngleUnit::Radian);
+  assert_parsed_expression_has_characteristic_range("cos(x)", 2.0f*M_PI, Preferences::AngleUnit::Radian);
+  assert_parsed_expression_has_characteristic_range("cos(-x)", 2.0f*M_PI, Preferences::AngleUnit::Radian);
   assert_parsed_expression_has_characteristic_range("sin(9*x+10)", 40.0f);
   assert_parsed_expression_has_characteristic_range("sin(9*x+10)+cos(x/2)", 720.0f);
-  assert_parsed_expression_has_characteristic_range("sin(9*x+10)+cos(x/2)", 4.0f*M_PI, Expression::AngleUnit::Radian);
+  assert_parsed_expression_has_characteristic_range("sin(9*x+10)+cos(x/2)", 4.0f*M_PI, Preferences::AngleUnit::Radian);
   assert_parsed_expression_has_characteristic_range("x", NAN);
   assert_parsed_expression_has_characteristic_range("cos(3)+2", 0.0f);
   assert_parsed_expression_has_characteristic_range("log(cos(40*x))", 9.0f);
@@ -103,7 +103,7 @@ QUIZ_CASE(poincare_get_variables) {
   assert_parsed_expression_has_variables("x^2+2*y+k!*A+w", "xykw");
 }
 
-void assert_parsed_expression_has_polynomial_coefficient(const char * expression, char symbolName, const char ** coefficients, Expression::AngleUnit angleUnit = Expression::AngleUnit::Degree) {
+void assert_parsed_expression_has_polynomial_coefficient(const char * expression, char symbolName, const char ** coefficients, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
   GlobalContext globalContext;
   Expression * e = parse_expression(expression);
   Expression::Reduce(&e, globalContext, angleUnit);

@@ -63,7 +63,7 @@ void CurveViewRange::normalize() {
 void CurveViewRange::setTrigonometric() {
   m_xMin = -k_displayLeftMarginRatio*21.0f;
   m_xMax = 21.0f;
-  if (Preferences::sharedPreferences()->angleUnit() == Expression::AngleUnit::Degree) {
+  if (Preferences::sharedPreferences()->angleUnit() == Preferences::AngleUnit::Degree) {
     m_xMin = -k_displayLeftMarginRatio*1200;
     m_xMax = 1200;
   }

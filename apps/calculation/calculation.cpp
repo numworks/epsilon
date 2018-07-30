@@ -106,7 +106,7 @@ Expression * Calculation::input() {
 
 LayoutRef Calculation::createInputLayout() {
   if (input() != nullptr) {
-    return input()->createLayout(PrintFloat::Mode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
+    return input()->createLayout(Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
   }
   return LayoutRef(nullptr);
 }

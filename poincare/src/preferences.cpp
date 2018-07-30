@@ -1,12 +1,13 @@
 #include <poincare/preferences.h>
+#include <poincare/print_float.h>
 
 namespace Poincare {
 
 Preferences::Preferences() :
-  m_angleUnit(Expression::AngleUnit::Degree),
-  m_displayMode(PrintFloat::Mode::Decimal),
+  m_angleUnit(AngleUnit::Degree),
+  m_displayMode(Preferences::PrintFloatMode::Decimal),
   m_editionMode(EditionMode::Edition2D),
-  m_complexFormat(Expression::ComplexFormat::Cartesian),
+  m_complexFormat(Preferences::ComplexFormat::Cartesian),
   m_numberOfSignificantDigits(PrintFloat::k_numberOfPrintedSignificantDigits)
 {
 }
@@ -16,19 +17,19 @@ Preferences * Preferences::sharedPreferences() {
   return &preferences;
 }
 
-Expression::AngleUnit Preferences::angleUnit() const {
+Preferences::AngleUnit Preferences::angleUnit() const {
   return m_angleUnit;
 }
 
-void Preferences::setAngleUnit(Expression::AngleUnit angleUnit) {
+void Preferences::setAngleUnit(AngleUnit angleUnit) {
   m_angleUnit = angleUnit;
 }
 
-PrintFloat::Mode Preferences::displayMode() const {
+Preferences::PrintFloatMode Preferences::displayMode() const {
   return m_displayMode;
 }
 
-void Preferences::setDisplayMode(PrintFloat::Mode mode) {
+void Preferences::setDisplayMode(Preferences::PrintFloatMode mode) {
   m_displayMode = mode;
 }
 
@@ -40,11 +41,11 @@ void Preferences::setEditionMode(Preferences::EditionMode editionMode) {
   m_editionMode = editionMode;
 }
 
-Expression::ComplexFormat Preferences::complexFormat() const {
+Preferences::ComplexFormat Preferences::complexFormat() const {
   return m_complexFormat;
 }
 
-void Preferences::setComplexFormat(Expression::ComplexFormat complexFormat) {
+void Preferences::setComplexFormat(ComplexFormat complexFormat) {
   m_complexFormat = complexFormat;
 }
 

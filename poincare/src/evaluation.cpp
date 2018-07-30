@@ -38,13 +38,13 @@ static Expression * CreateDecimal(T f) {
 }
 
 template<typename T>
-Expression * Complex<T>::complexToExpression(Expression::ComplexFormat complexFormat) const {
+Expression * Complex<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   if (std::isnan(this->real()) || std::isnan(this->imag()) || std::isinf(this->real()) || std::isinf(this->imag())) {
     return new Poincare::Undefined();
   }
 
   switch (complexFormat) {
-    case Expression::ComplexFormat::Cartesian:
+    case Preferences::ComplexFormat::Cartesian:
     {
       Expression * real = nullptr;
       Expression * imag = nullptr;
@@ -77,7 +77,7 @@ Expression * Complex<T>::complexToExpression(Expression::ComplexFormat complexFo
     }
     default:
     {
-      assert(complexFormat == Expression::ComplexFormat::Polar);
+      assert(complexFormat == Preferences::ComplexFormat::Polar);
       Expression * norm = nullptr;
       Expression * exp = nullptr;
       T r = std::abs(*this);
@@ -172,7 +172,7 @@ MatrixComplex<T>::MatrixComplex(std::complex<T> * operands, int numberOfRows, in
 }
 
 template<typename T>
-Expression * MatrixComplex<T>::complexToExpression(Expression::ComplexFormat complexFormat) const {
+Expression * MatrixComplex<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   Expression ** operands = new Expression * [numberOfComplexOperands()];
   for (int i = 0; i < numberOfComplexOperands(); i++) {
     operands[i] = Complex<T>(complexOperand(i)).complexToExpression(complexFormat);

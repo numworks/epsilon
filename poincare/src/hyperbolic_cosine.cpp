@@ -21,7 +21,7 @@ Expression * HyperbolicCosine::clone() const {
   return a;
 }
 
-Expression * HyperbolicCosine::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * HyperbolicCosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -36,7 +36,7 @@ Expression * HyperbolicCosine::shallowReduce(Context& context, AngleUnit angleUn
 }
 
 template<typename T>
-std::complex<T> HyperbolicCosine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> HyperbolicCosine::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   return Trigonometry::RoundToMeaningfulDigits(std::cosh(c));
 }
 

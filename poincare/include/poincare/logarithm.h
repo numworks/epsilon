@@ -15,21 +15,21 @@ public:
   Expression * clone() const override;
 private:
   /* Layout */
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "log");
   }
   /* Simplification */
-  Expression * shallowReduce(Context & context, AngleUnit angleUnit) override;
-  Expression * simpleShallowReduce(Context & context, AngleUnit angleUnit);
-  Expression * shallowBeautify(Context & context, AngleUnit angleUnit) override;
+  Expression * shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression * simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   bool parentIsAPowerOfSameBase() const;
-  Expression * splitInteger(Integer i, bool isDenominator, Context & context, AngleUnit angleUnit);
+  Expression * splitInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
   /* Evaluation */
-  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, AngleUnit angleUnit);
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> Evaluation<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

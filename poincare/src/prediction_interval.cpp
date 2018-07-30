@@ -25,7 +25,7 @@ int PredictionInterval::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * PredictionInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -71,7 +71,7 @@ Expression * PredictionInterval::shallowReduce(Context& context, AngleUnit angle
 }
 
 template<typename T>
-Evaluation<T> * PredictionInterval::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * PredictionInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * pInput = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * nInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T p = static_cast<Complex<T> *>(pInput)->toScalar();

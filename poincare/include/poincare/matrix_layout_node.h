@@ -23,7 +23,7 @@ public:
   bool isMatrix() const override { return true; }
 
   // SerializableNode
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixLayoutNode); }

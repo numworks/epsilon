@@ -23,7 +23,7 @@ EquationModelsParameterController::EquationModelsParameterController(Responder *
   m_selectableTableView.setShowsIndicators(false);
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::Expression * e = Expression::parse(k_models[i+1]);
-    m_expressionLayouts[i] = e->createLayout(Poincare::PrintFloat::Mode::Decimal, Constant::ShortNumberOfSignificantDigits);
+    m_expressionLayouts[i] = e->createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Constant::ShortNumberOfSignificantDigits);
     delete e;
     m_modelCells[i].setExpressionLayout(m_expressionLayouts[i]);
   }

@@ -21,11 +21,11 @@ public:
   /* Expression */
   Type type() const override;
   Expression * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int polynomialDegree(char symbolName) const override;
 
   /* Operation on matrix */
-  int rank(Context & context, AngleUnit angleUnit, bool inPlace);
+  int rank(Context & context, Preferences::AngleUnit angleUnit, bool inPlace);
   // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
 #if MATRIX_EXACT_REDUCING
@@ -34,19 +34,19 @@ public:
   Matrix * createTranspose() const;
   static Matrix * createIdentity(int dim);
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
-  Expression * createInverse(Context & context, AngleUnit angleUnit) const;
+  Expression * createInverse(Context & context, Preferences::AngleUnit angleUnit) const;
 #endif
 private:
   /* rowCanonize turns a matrix in its reduced row echelon form. */
-  void rowCanonize(Context & context, AngleUnit angleUnit, Multiplication * m = nullptr);
+  void rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication * m = nullptr);
   // Row canonize the array in place
   template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
   /* Layout */
-  LayoutRef createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Evaluation<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
   int m_numberOfRows;
 };
 

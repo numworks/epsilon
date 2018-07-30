@@ -19,7 +19,7 @@ Expression * MatrixInverse::clone() const {
   return a;
 }
 
-Expression * MatrixInverse::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * MatrixInverse::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -45,7 +45,7 @@ Expression * MatrixInverse::shallowReduce(Context& context, AngleUnit angleUnit)
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
-Evaluation<T> * MatrixInverse::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+Evaluation<T> * MatrixInverse::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * inverse = input->createInverse();
   if (inverse == nullptr) {

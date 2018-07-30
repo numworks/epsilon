@@ -10,7 +10,7 @@ namespace Poincare {
 class AllocationFailedLayoutNode : public LayoutNode {
 public:
   // LayoutNode
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     assert(false);
     return 0;
   }

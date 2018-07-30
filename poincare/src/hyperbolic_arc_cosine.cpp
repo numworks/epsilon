@@ -17,7 +17,7 @@ Expression * HyperbolicArcCosine::clone() const {
   return a;
 }
 
-Expression * HyperbolicArcCosine::shallowReduce(Context& context, AngleUnit angleUnit) {
+Expression * HyperbolicArcCosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -32,7 +32,7 @@ Expression * HyperbolicArcCosine::shallowReduce(Context& context, AngleUnit angl
 }
 
 template<typename T>
-std::complex<T> HyperbolicArcCosine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+std::complex<T> HyperbolicArcCosine::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::acosh(c);
   /* asinh has a branch cut on ]-inf, 1]: it is then multivalued
    * on this cut. We followed the convention chosen by the lib c++ of llvm on

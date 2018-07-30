@@ -8,6 +8,10 @@ namespace Poincare {
 // Node operations
 
 void TreeNode::release() {
+  if (m_identifier < 0) {
+    // Do not release static nodes
+    return;
+  }
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     releaseChildrenAndDestroy(numberOfChildren());

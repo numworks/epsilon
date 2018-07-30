@@ -25,7 +25,13 @@ public:
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
-  void setReferenceCounter(int refCount) { m_referenceCounter = refCount; } //TODO make this method privte with only friends that can access it
+  void setReferenceCounter(int refCount) { //TODO make this method privte with only friends that can access it
+    if (m_identifier < 0) {
+      // Do not retain static nodes
+      return;
+    }
+    m_referenceCounter = refCount;
+  }
 
   void deepResetReferenceCounter() { //TODO make this method private with friends that can access it
     setReferenceCounter(0);
@@ -44,7 +50,13 @@ public:
   }
 
   // Node operations
-  void retain() { m_referenceCounter++; }
+  void retain() {
+    if (m_identifier < 0) {
+      // Do not retain static nodes
+      return;
+    }
+    m_referenceCounter++;
+  }
   void release();
   void releaseChildren(int currentNumberOfChildren);
   void releaseChildrenAndDestroy(int currentNumberOfChildren);

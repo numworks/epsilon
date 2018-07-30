@@ -230,8 +230,6 @@ void LayoutReference::collapseOnDirection(HorizontalDirection direction, int abs
   }
 }
 
-/* Layout specialization, at the end of the .cpp as they must be defined after
- * the definition of the methods they calls */
 void LayoutReference::collapseSiblings(LayoutCursor * cursor) {
   if (this->node()->shouldCollapseSiblingsOnRight()) {
     LayoutReference absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());

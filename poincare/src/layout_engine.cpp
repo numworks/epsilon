@@ -10,69 +10,42 @@ LayoutRef LayoutEngine::createInfixLayout(const Expression * expression, PrintFl
   int numberOfOperands = expression->numberOfOperands();
   assert(numberOfOperands > 1);
   HorizontalLayoutRef result;
-  result.addChildTreeAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, 0); //TODO addOrMerge
+  result.addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, 0);
   for (int i = 1; i < numberOfOperands; i++) {
-    result.addChildTreeAtIndex(createStringLayout(operatorName, strlen(operatorName)), result.numberOfChildren(), result.numberOfChildren());
-    result.addChildTreeAtIndex(
+    result.addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result.numberOfChildren(), true);
+    result.addOrMergeChildAtIndex(
         expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits),
         result.numberOfChildren(),
-        result.numberOfChildren());
+        true);
   }
-    /* TODO
-  result->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
-  for (int i = 1; i < numberOfOperands; i++) {
-    result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result->numberOfChildren(), true);
-    result->addOrMergeChildAtIndex(
-        expression->operand(i)->type() == Expression::Type::Opposite ?
-          createParenthesedLayout(expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), false) :
-          expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-        result->numberOfChildren(), true);
-  }*/
   return result;
 }
 
 LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
   HorizontalLayoutRef result;
   // Add the operator name.
-  result.addChildTreeAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, 0);
+  result.addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, true);
 
   // Create the layout of arguments separated by commas.
   HorizontalLayoutRef args;
   int numberOfOperands = expression->numberOfOperands();
   if (numberOfOperands > 0) {
-    args.addChildTreeAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, 0);
+    args.addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
     for (int i = 1; i < numberOfOperands; i++) {
-      args.addChildTreeAtIndex(CharLayoutRef(','), args.numberOfChildren(), args.numberOfChildren());
-      args.addChildTreeAtIndex(expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), args.numberOfChildren());
+      args.addChildAtIndex(CharLayoutRef(','), args.numberOfChildren(), nullptr);
+      args.addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
     }
   }
   // Add the parenthesed arguments.
-  result.addChildTreeAtIndex(createParenthesedLayout(args, false), result.numberOfChildren(), result.numberOfChildren());
-  /*// Add the operator name.
-   * TODO  result->addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), 0, true);
-
-  // Create the layout of arguments separated by commas.
-  ExpressionLayout * args = nullptr;
-  int numberOfOperands = expression->numberOfOperands();
-  if (numberOfOperands > 0) {
-    args = new HorizontalLayout();
-    HorizontalLayout * horizontalArgs = static_cast<HorizontalLayout *>(args);
-    horizontalArgs->addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
-    for (int i = 1; i < numberOfOperands; i++) {
-      horizontalArgs->addChildTreeAtIndex(new CharLayout(','), args->numberOfChildren());
-      horizontalArgs->addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), horizontalArgs->numberOfChildren(), true);
-    }
-  }
-  // Add the parenthesed arguments.
-  result->addOrMergeChildAtIndex(createParenthesedLayout(args, false), result->numberOfChildren(), true);*/
+  result.addOrMergeChildAtIndex(createParenthesedLayout(args, false), result.numberOfChildren(), true);
   return result;
 }
 
 LayoutRef LayoutEngine::createParenthesedLayout(LayoutRef layoutRef, bool cloneLayout) {
   HorizontalLayoutRef result;
-  result.addChildTreeAtIndex(CharLayoutRef('('), 0, 0);
+  result.addChildTreeAtIndex(CharLayoutRef('('), 0, 0); //TODO
   if (layoutRef.isDefined()) {
-    result.addChildTreeAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1, result.numberOfChildren());
+    result.addOrMergeChildAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1, true);
   }
   result.addChildTreeAtIndex(CharLayoutRef(')'), result.numberOfChildren(), result.numberOfChildren()); //TODO
   return result;
@@ -82,7 +55,7 @@ LayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, 
   assert(bufferSize > 0);
   HorizontalLayoutRef resultLayout;
   for (int i = 0; i < bufferSize; i++) {
-    resultLayout.addChildTreeAtIndex(CharLayoutRef(buffer[i], fontSize), i, resultLayout.numberOfChildren());
+    resultLayout.addChildAtIndex(CharLayoutRef(buffer[i], fontSize), i, nullptr);
   }
   return resultLayout;
 }

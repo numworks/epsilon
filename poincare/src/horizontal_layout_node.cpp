@@ -345,6 +345,9 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
 // HorizontalLayoutRef
 
 void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
+  if (isAllocationFailure()) {
+    return;
+  }
   if (l.isEmpty() && removeEmptyChildren) {
     return;
   }
@@ -356,6 +359,9 @@ void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool re
 }
 
 void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
+  if (isAllocationFailure()) {
+    return;
+  }
   /* Remove any empty child that would be next to the inserted layout.
    * If the layout to insert starts with a vertical offset layout, any empty
    * layout child directly on the left of the inserted layout (if there is one)
@@ -387,6 +393,9 @@ void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index,
 }
 
 int HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft, LayoutCursor * cursor) {
+  if (isAllocationFailure()) {
+    return index;
+  }
   int currentNumberOfChildren = numberOfChildren();
   assert(index >= 0 && index <= currentNumberOfChildren);
   int newIndex = index;

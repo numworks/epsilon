@@ -63,7 +63,7 @@ public:
     std::complex<T> undef = std::complex<T>(NAN, NAN);
     return MatrixComplex<T>(&undef, 1, 1);
   }
-  virtual ~MatrixComplex() {}
+  ~MatrixComplex();
   typename Poincare::Evaluation<T>::Type type() const override { return Poincare::Evaluation<T>::Type::MatrixComplex; }
   const std::complex<T> complexOperand(int i) const { return m_operands[i]; }
   int numberOfComplexOperands() const { return m_numberOfRows*m_numberOfColumns; }

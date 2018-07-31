@@ -52,7 +52,7 @@ public:
       Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName,
-      bool writeFirstChild = true); //TODO
+      bool writeFirstChild = true);
 
   /* Write one char in buffer */
   static int writeOneCharInBuffer(char * buffer, int bufferSize, char charToWrite);

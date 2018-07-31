@@ -281,7 +281,8 @@ void LayoutEngine::writeChildTreeInBuffer(SerializableRef childRef, Serializable
   // Write the child with parentheses if needed
   bool addParentheses = childRef.needsParenthesisWithParent(parentRef);
   if (addParentheses) {
-    buffer[*numberOfChar++] = '('; //TODO ok ?
+    buffer[*numberOfChar] = '(';
+    numberOfChar++;
     if (*numberOfChar >= bufferSize-1) {
       return;
     }
@@ -291,7 +292,8 @@ void LayoutEngine::writeChildTreeInBuffer(SerializableRef childRef, Serializable
     return;
   }
   if (addParentheses) {
-    buffer[*numberOfChar++] = ')';
+    buffer[*numberOfChar] = ')';
+    numberOfChar++;
   }
 }
 

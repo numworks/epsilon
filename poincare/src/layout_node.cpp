@@ -3,6 +3,7 @@
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_reference.h>
+#include <poincare/matrix_layout_node.h>
 #include <ion/display.h>
 
 namespace Poincare {
@@ -256,14 +257,14 @@ bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
   bool changedSquares = false;
   LayoutNode * currentAncestor = parent();
   while (currentAncestor != nullptr) {
-    /*if (currentAncestor->isMatrix()) {
+    if (currentAncestor->isMatrix()) {
       if (add) {
-        static_cast<MatrixLayout *>(currentAncestor)->addGreySquares();
+        static_cast<MatrixLayoutNode *>(currentAncestor)->addGreySquares();
       } else {
-        static_cast<MatrixLayout *>(currentAncestor)->removeGreySquares();
+        static_cast<MatrixLayoutNode *>(currentAncestor)->removeGreySquares();
       }
       changedSquares = true;
-    }*/ //TODO
+    }
     currentAncestor = currentAncestor->parent();
   }
   return changedSquares;

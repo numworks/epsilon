@@ -196,8 +196,8 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
 }
 
 void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  LayoutNode *  chilResult = nullptr;
-  LayoutNode ** childResultPtr = &chilResult;
+  LayoutNode * childResult = nullptr;
+  LayoutNode ** childResultPtr = &childResult;
   LayoutCursor::Position resultPosition = LayoutCursor::Position::Left;
   /* The distance between the cursor and its next position cannot be greater
    * than this initial value of score. */
@@ -206,10 +206,12 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
   scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore);
 
   // If there is a valid result
+  LayoutRef resultRef(childResult);
   if (*childResultPtr != nullptr) {
-    *shouldRecomputeLayout = chilResult->addGreySquaresToAllMatrixAncestors();
+    *shouldRecomputeLayout = childResult->addGreySquaresToAllMatrixAncestors();
+    // WARNING: Do not use "this" afterwards
   }
-  cursor->setLayoutNode(chilResult);
+  cursor->setLayoutReference(resultRef);
   cursor->setPosition(resultPosition);
 }
 

@@ -83,7 +83,7 @@ void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef 
 void LayoutReference::addChildAtIndex(LayoutRef l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
   int newIndex = index;
   int newCurrentNumberOfChildren = currentNumberOfChildren;
-  if (!this->node()->willAddChildAtIndex(l.node(), &newIndex, /*&newCurrentNumberOfChildren /*TODO*/, cursor)) {
+  if (!this->node()->willAddChildAtIndex(l.node(), &newIndex, &newCurrentNumberOfChildren, cursor)) {
     return;
   }
   LayoutRef nextPointedLayout(nullptr);
@@ -165,7 +165,7 @@ void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force
   }
   assert(this->hasChild(l));
   int index = this->indexOfChild(l);
-  this->removeTreeChild(l);
+  this->removeTreeChild(l, l.numberOfChildren());
   if (cursor) {
     if (index < this->numberOfChildren()) {
       LayoutRef newCursorRef = this->childAtIndex(index);

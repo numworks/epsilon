@@ -20,7 +20,7 @@ TreeReference::~TreeReference() {
   if (isDefined()) {
     assert(node());
     assert(node()->identifier() == m_identifier);
-    node()->release();
+    node()->release(numberOfChildren()); //TODO No malformed nodes ?
   }
 }
 
@@ -43,7 +43,7 @@ void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentN
   // Detach t from its parent
   TreeReference tParent = t.parent();
   if (tParent.isDefined()) {
-    tParent.removeTreeChild(t);
+    tParent.removeTreeChild(t, t.numberOfChildren());
   }
 
   // Move t
@@ -59,13 +59,13 @@ void TreeReference::removeTreeChildAtIndex(int i) {
   assert(isDefined());
   assert(i >= 0 && i < numberOfChildren());
   TreeReference t = treeChildAtIndex(i);
-  removeTreeChild(t);
+  removeTreeChild(t, t.numberOfChildren());
 }
 
-void TreeReference::removeTreeChild(TreeReference t) {
+void TreeReference::removeTreeChild(TreeReference t, int childNumberOfChildren) {
   assert(isDefined());
-  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), t.numberOfChildren());
-  t.node()->release();
+  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), childNumberOfChildren);
+  t.node()->release(childNumberOfChildren);
   node()->decrementNumberOfChildren();
 }
 
@@ -100,7 +100,7 @@ void TreeReference::replaceTreeChildAtIndex(int oldChildIndex, TreeReference new
     newChild.node()->retain();
   }
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), oldChild.node(), oldChild.numberOfChildren());
-  oldChild.node()->release();
+  oldChild.node()->release(oldChild.numberOfChildren());
 }
 
 void TreeReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
@@ -159,7 +159,7 @@ void TreeReference::mergeTreeChildrenAtIndex(TreeReference t, int i) {
   t.node()->eraseNumberOfChildren();
   // If t is a child, remove it
   if (node()->hasChild(t.node())) {
-    removeTreeChild(t);
+    removeTreeChild(t, 0);
   }
   node()->incrementNumberOfChildren(numberOfNewChildren);
 }
@@ -180,7 +180,7 @@ void TreeReference::setTo(const TreeReference & tr) {
     m_identifier = TreePool::NoNodeIdentifier;
   }
   if (releaseNode) {
-    currentNode->release();
+    currentNode->release(currentNode->numberOfChildren());
   }
 };
 

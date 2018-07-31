@@ -216,9 +216,9 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {
 
 // Private
 
-bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, LayoutCursor * cursor) {
+bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) {
   if (m_numberOfChildren > 0) {
-    *index = HorizontalLayoutRef(this).removeEmptyChildBeforeInsertionAtIndex(*index, !l->mustHaveLeftSibling(), cursor);
+    HorizontalLayoutRef(this).removeEmptyChildBeforeInsertionAtIndex(index, currentNumberOfChildren, !l->mustHaveLeftSibling(), cursor);
   }
   return true;
 }
@@ -367,7 +367,8 @@ void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index,
    * layout child directly on the left of the inserted layout (if there is one)
    * should not be removed: it will be the base for the VerticalOffsetLayout. */
   bool shouldRemoveOnLeft = h.numberOfChildren() == 0 ? true : !(h.childAtIndex(0).mustHaveLeftSibling());
-  int newIndex = removeEmptyChildBeforeInsertionAtIndex(index, shouldRemoveOnLeft);
+  int newIndex = index;
+  removeEmptyChildBeforeInsertionAtIndex(&newIndex, nullptr, shouldRemoveOnLeft);
 
   LayoutRef nextPointedLayout(nullptr);
   LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
@@ -392,32 +393,37 @@ void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index,
   }
 }
 
-int HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft, LayoutCursor * cursor) {
+void HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor) {
   if (isAllocationFailure()) {
-    return index;
+    return;
   }
-  int currentNumberOfChildren = numberOfChildren();
-  assert(index >= 0 && index <= currentNumberOfChildren);
-  int newIndex = index;
+  int childrenCount = currentNumberOfChildren == nullptr ? numberOfChildren() : *currentNumberOfChildren;
+  assert(*index >= 0 && *index <= childrenCount);
   /* If empty, remove the child that would be on the right of the inserted
    * layout. */
-  if (newIndex < currentNumberOfChildren) {
-    LayoutRef c = childAtIndex(newIndex);
+  if (*index < childrenCount) {
+    LayoutRef c = childAtIndex(*index);
     if (c.isEmpty()) {
       removeChild(c, cursor, true);
-      currentNumberOfChildren--;
+      childrenCount--;
+      if (currentNumberOfChildren != nullptr) {
+        *currentNumberOfChildren = childrenCount;
+      }
     }
   }
   /* If empty, remove the child that would be on the left of the inserted
    * layout. */
-  if (shouldRemoveOnLeft && newIndex - 1 >= 0 && newIndex - 1 <= currentNumberOfChildren -1) {
-    LayoutRef c = childAtIndex(newIndex - 1);
+  if (shouldRemoveOnLeft && *index - 1 >= 0 && *index - 1 < childrenCount) {
+    LayoutRef c = childAtIndex(*index - 1);
     if (c.isEmpty()) {
       removeChild(c, cursor, true);
-      newIndex = index - 1;
+      *index = *index - 1;
+      childrenCount--;
+      if (currentNumberOfChildren != nullptr) {
+        *currentNumberOfChildren = childrenCount;
+      }
     }
   }
-  return newIndex;
 }
 
 }

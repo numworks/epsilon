@@ -219,7 +219,7 @@ LayoutRef Matrix::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
   MatrixLayoutRef layout;
   LayoutRef castedLayout(layout.node());
   for (int i = 0; i < numberOfOperands(); i++) {
-    castedLayout.addChildAtIndex(operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, nullptr);
+    castedLayout.addChildAtIndex(operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
   }
   layout.setNumberOfRows(numberOfRows());
   layout.setNumberOfColumns(numberOfColumns());

@@ -183,6 +183,7 @@ LayoutRef Power::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
         indiceOperand->createLayout(floatDisplayMode, numberOfSignificantDigits),
         VerticalOffsetLayoutNode::Type::Superscript),
       result.numberOfChildren(),
+      result.numberOfChildren(),
       nullptr);
   return result;
 }

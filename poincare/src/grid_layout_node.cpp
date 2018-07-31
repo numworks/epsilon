@@ -94,18 +94,27 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
 //TODO
 void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
   LayoutRef thisRef = LayoutRef(this);
-  int insertionIndex = numberOfChildren();
+  int previousNumberOfChildren = numberOfChildren();
   for (int i = 0; i < m_numberOfColumns; i++) {
-    thisRef.addChildAtIndex(EmptyLayoutRef(color), insertionIndex, nullptr);
+    thisRef.addChildAtIndex(
+        EmptyLayoutRef(color),
+        previousNumberOfChildren,
+        previousNumberOfChildren + i,
+        nullptr);
   }
   m_numberOfRows++;
 }
 
 void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
   LayoutRef thisRef = LayoutRef(this);
+  int previousNumberOfChildren = numberOfChildren();
   m_numberOfColumns++;
   for (int i = 0; i < m_numberOfRows; i++) {
-    thisRef.addChildAtIndex(EmptyLayoutRef(color), i*m_numberOfColumns + m_numberOfColumns-1, nullptr);
+    thisRef.addChildAtIndex(
+        EmptyLayoutRef(color),
+        i*m_numberOfColumns + m_numberOfColumns-1,
+        previousNumberOfChildren + i,
+        nullptr);
   }
 }
 

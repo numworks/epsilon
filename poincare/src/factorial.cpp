@@ -95,7 +95,8 @@ std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, Preferences
 LayoutRef Factorial::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result;
   result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CharLayoutRef('!'), result.numberOfChildren(), nullptr);
+  int childrenCount = result.numberOfChildren();
+  result.addChildAtIndex(CharLayoutRef('!'), childrenCount, childrenCount, nullptr);
   return result;
 }
 

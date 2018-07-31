@@ -161,9 +161,10 @@ void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutC
 
 void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
   assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
+  LayoutRef rootRef = LayoutRef(root());
   bool shouldAddNewRow = childIsBottomOfGrid(index); // We need to compute this boolean before modifying the layout
   int correspondingRow = rowAtChildIndex(index);
-    if (childIsRightOfGrid(index)) {
+  if (childIsRightOfGrid(index)) {
     // Color the grey EmptyLayouts of the column in yellow.
     int correspondingColumn = m_numberOfColumns - 1;
     for (int i = 0; i < m_numberOfRows - 1; i++) {
@@ -174,6 +175,9 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
     }
     // Add a column of grey EmptyLayouts on the right.
     addEmptyColumn(EmptyLayoutNode::Color::Grey);
+  }
+  if (rootRef.isAllocationFailure()) {
+    return;
   }
   if (shouldAddNewRow) {
     // Color the grey EmptyLayouts of the row in yellow.

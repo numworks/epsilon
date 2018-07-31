@@ -255,16 +255,16 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
       {
         leftParenthesisIndex--;
       }
-      parentRef.addChildAtIndex(leftParenthesis, leftParenthesisIndex, nullptr);
+      parentRef.addChildAtIndex(leftParenthesis, leftParenthesisIndex, parentRef.numberOfChildren(), nullptr);
       idxInParent++;
 
       // Add the Right parenthesis
       RightParenthesisLayoutRef rightParenthesis = RightParenthesisLayoutRef();
       if (cursor->position() == LayoutCursor::Position::Right) {
-         parentRef.addChildAtIndex(rightParenthesis, idxInParent + 1, nullptr);
+         parentRef.addChildAtIndex(rightParenthesis, idxInParent + 1, parentRef.numberOfChildren(), nullptr);
       } else {
         assert(cursor->position() == LayoutCursor::Position::Left);
-         parentRef.addChildAtIndex(rightParenthesis, idxInParent, nullptr);
+        parentRef.addChildAtIndex(rightParenthesis, idxInParent, parentRef.numberOfChildren(), nullptr);
       }
       if (rightParenthesis.parent().isDefined()) {
         cursor->setLayoutReference(rightParenthesis);

@@ -80,9 +80,10 @@ void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef 
   p.removeChild(*this, cursor->layoutReference() == *this ? cursor : nullptr);
 }
 
-void LayoutReference::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cursor) {
+void LayoutReference::addChildAtIndex(LayoutRef l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
   int newIndex = index;
-  if (!this->node()->willAddChildAtIndex(l.node(), &newIndex, cursor)) {
+  int newCurrentNumberOfChildren = currentNumberOfChildren;
+  if (!this->node()->willAddChildAtIndex(l.node(), &newIndex, /*&newCurrentNumberOfChildren /*TODO*/, cursor)) {
     return;
   }
   LayoutRef nextPointedLayout(nullptr);
@@ -97,7 +98,7 @@ void LayoutReference::addChildAtIndex(LayoutRef l, int index, LayoutCursor * cur
     }
   }
 
-  this->addChildTreeAtIndex(l, newIndex, numberOfChildren());
+  this->addChildTreeAtIndex(l, newIndex, newCurrentNumberOfChildren);
 
   if (cursor != nullptr) {
     if (this->isAllocationFailure()) {

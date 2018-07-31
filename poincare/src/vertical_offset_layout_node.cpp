@@ -242,21 +242,21 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
     VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling);
     if (verticalOffsetSibling->type() == Type::Superscript) {
       LayoutRef rootLayout = root();
-      LayoutNode * parentNode = parent();
-      LayoutRef parentRef = LayoutRef(parentNode);
-      assert(parentNode->isHorizontal());
+      LayoutRef thisRef = LayoutRef(this);
+      LayoutRef parentRef = LayoutRef(parent());
+      assert(parentRef.isHorizontal());
       // Add the Left parenthesis
-      int idxInParent = parentNode->indexOfChild(this);
+      int idxInParent = parentRef.indexOfChild(thisRef);
       int leftParenthesisIndex = idxInParent;
       LeftParenthesisLayoutRef leftParenthesis = LeftParenthesisLayoutRef();
       int numberOfOpenParenthesis = 0;
       while (leftParenthesisIndex > 0
-          && parentNode->childAtIndex(leftParenthesisIndex-1)->isCollapsable(&numberOfOpenParenthesis, true))
+          && parentRef.childAtIndex(leftParenthesisIndex-1).isCollapsable(&numberOfOpenParenthesis, true))
       {
         leftParenthesisIndex--;
       }
       parentRef.addChildAtIndex(leftParenthesis, leftParenthesisIndex, parentRef.numberOfChildren(), nullptr);
-      idxInParent++;
+      idxInParent = parentRef.indexOfChild(thisRef);
 
       // Add the Right parenthesis
       RightParenthesisLayoutRef rightParenthesis = RightParenthesisLayoutRef();

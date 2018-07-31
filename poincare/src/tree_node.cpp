@@ -11,14 +11,14 @@ bool TreeNode::isStatic() const {
 
 // Node operations
 
-void TreeNode::release() {
+void TreeNode::release(int currentNumberOfChildren) {
   if (isStatic()) {
     // Do not release static nodes
     return;
   }
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
-    releaseChildrenAndDestroy(numberOfChildren());
+    releaseChildrenAndDestroy(currentNumberOfChildren);
   }
 }
 
@@ -26,8 +26,9 @@ void TreeNode::releaseChildren(int currentNumberOfChildren) {
   for (int i = 0; i < currentNumberOfChildren; i++) {
     TreeRef childRef = TreeRef(childAtIndex(0));
     TreePool::sharedPool()->move(TreePool::sharedPool()->last(), childRef.node(), childRef.numberOfChildren());
-    childRef.node()->release();
+    childRef.node()->release(childRef.numberOfChildren());
   }
+  eraseNumberOfChildren();
 }
 
 void TreeNode::releaseChildrenAndDestroy(int currentNumberOfChildren) {

@@ -41,7 +41,7 @@ public:
   void moveChildren(TreeNode * destination, TreeNode * sourceParent);
 
   TreeNode * deepCopy(TreeNode * node) {
-    size_t size = node->deepSize();
+    size_t size = node->deepSize(-1);
     void * ptr = alloc(size);
     if (ptr == nullptr) {
       node->failedAllocationStaticNode()->retain();

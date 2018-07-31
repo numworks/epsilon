@@ -58,7 +58,7 @@ public:
     }
     m_referenceCounter++;
   }
-  void release();
+  void release(int currentNumberOfChildren);
   void releaseChildren(int currentNumberOfChildren);
   void releaseChildrenAndDestroy(int currentNumberOfChildren);
   void rename(int identifier, bool unregisterPreviousIdentifier);
@@ -170,7 +170,7 @@ protected:
     return node;
   }
 
-  size_t deepSize(int realNumberOfChildren = -1) const;
+  size_t deepSize(int realNumberOfChildren) const;
 private:
   int m_identifier;
   int m_referenceCounter;

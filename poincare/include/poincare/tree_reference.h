@@ -84,7 +84,7 @@ public:
 
   void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren);
   void removeTreeChildAtIndex(int i);
-  void removeTreeChild(TreeReference t);
+  void removeTreeChild(TreeReference t, int childNumberOfChildren);
   void removeChildren();
   void replaceWith(TreeReference t);
   void replaceTreeChild(TreeReference oldChild, TreeReference newChild) {

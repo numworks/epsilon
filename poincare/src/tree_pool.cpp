@@ -62,7 +62,7 @@ void TreePool::move(TreeNode * destination, TreeNode * source, int realNumberOfS
 }
 
 void TreePool::moveChildren(TreeNode * destination, TreeNode * sourceParent) {
-  size_t moveSize = sourceParent->deepSize() - sourceParent->size();
+  size_t moveSize = sourceParent->deepSize(-1) - sourceParent->size();
   moveNodes(destination, sourceParent->next(), moveSize);
 }
 

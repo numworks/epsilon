@@ -51,7 +51,7 @@ protected:
   KDPoint positionOfChild(LayoutNode * l) override;
 
 private:
-  bool willAddChildAtIndex(LayoutNode * l, int * index, LayoutCursor * cursor) override;
+  bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) override;
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
   bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override;
   void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
@@ -92,7 +92,7 @@ public:
   void addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
   void mergeChildrenAtIndex(HorizontalLayoutRef h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
 private:
-  int removeEmptyChildBeforeInsertionAtIndex(int index, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
+  void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
 };
 
 }

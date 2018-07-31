@@ -60,6 +60,8 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     return true;
   }
 
+  LayoutRef rootRef = m_contentView.expressionView()->layoutRef();
+
   // Handle special cases
   if (strcmp(text, Ion::Events::Division.text()) == 0) {
     m_contentView.cursor()->addFractionLayoutAndCollapseSiblings();
@@ -79,33 +81,36 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     Expression * resultExpression = Expression::parse(text);
     if (resultExpression == nullptr) {
       m_contentView.cursor()->insertText(text);
-      return true;
-    }
-    LayoutRef resultLayoutRef = resultExpression->createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
-    delete resultExpression;
-    if (currentNumberOfLayouts + resultLayoutRef.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
-      return true;
-    }
-    // Find the pointed layout.
-    LayoutRef pointedLayoutRef(nullptr);
-    if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
-      /* Special case: if the text is "random()", the cursor should not be set
-       * inside the parentheses. */
-      pointedLayoutRef = resultLayoutRef;
-    } else if (resultLayoutRef.isHorizontal()) {
-      /* If the layout is horizontal, pick the first open parenthesis. For now,
-       * all horizontal layouts in MathToolbox have parentheses. */
-      for (int i = 0; i < resultLayoutRef.numberOfChildren(); i++) {
-        LayoutRef l = resultLayoutRef.childAtIndex(i);
-        if (l.isLeftParenthesis()) {
-          pointedLayoutRef = l;
-          break;
+    } else {
+      LayoutRef resultLayoutRef = resultExpression->createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
+      delete resultExpression;
+      if (currentNumberOfLayouts + resultLayoutRef.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+        return true;
+      }
+      // Find the pointed layout.
+      LayoutRef pointedLayoutRef(nullptr);
+      if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
+        /* Special case: if the text is "random()", the cursor should not be set
+         * inside the parentheses. */
+        pointedLayoutRef = resultLayoutRef;
+      } else if (resultLayoutRef.isHorizontal()) {
+        /* If the layout is horizontal, pick the first open parenthesis. For now,
+         * all horizontal layouts in MathToolbox have parentheses. */
+        for (int i = 0; i < resultLayoutRef.numberOfChildren(); i++) {
+          LayoutRef l = resultLayoutRef.childAtIndex(i);
+          if (l.isLeftParenthesis()) {
+            pointedLayoutRef = l;
+            break;
+          }
         }
       }
+      /* Insert the layout. If pointedLayout is nullptr, the cursor will be on the
+       * right of the inserted layout. */
+      insertLayoutAtCursor(resultLayoutRef, pointedLayoutRef, forceCursorRightOfText);
     }
-    /* Insert the layout. If pointedLayout is nullptr, the cursor will be on the
-     * right of the inserted layout. */
-    insertLayoutAtCursor(resultLayoutRef, pointedLayoutRef, forceCursorRightOfText);
+  }
+  if (rootRef.isAllocationFailure()) {
+    m_contentView.cursor()->setLayoutReference(rootRef);
   }
   return true;
 }
@@ -114,6 +119,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   if (m_contentView.cursor()->layoutReference().isAllocationFailure()) {
     return false;
   }
+  LayoutRef rootRef = m_contentView.expressionView()->layoutRef();
   bool didHandleEvent = false;
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();
   bool moveEventChangedLayout = false;
@@ -128,6 +134,9 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     didHandleEvent = true;
   }
   if (didHandleEvent) {
+    if (rootRef.isAllocationFailure()) {
+      m_contentView.cursor()->setLayoutReference(rootRef);
+    }
     shouldRecomputeLayout = m_contentView.cursor()->hideEmptyLayoutIfNeeded() || shouldRecomputeLayout;
     if (!shouldRecomputeLayout) {
       m_contentView.cursorPositionChanged();

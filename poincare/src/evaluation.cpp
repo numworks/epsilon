@@ -139,6 +139,48 @@ MatrixComplex<T>::~MatrixComplex() {
 }
 
 template<typename T>
+MatrixComplex<T>::MatrixComplex(MatrixComplex&& other) {
+  // Pilfer other's data
+  m_operands = other.m_operands;
+  m_numberOfRows = other.m_numberOfRows;
+  m_numberOfColumns = other.m_numberOfColumns;
+
+  // Reset other
+  other.m_operands = nullptr;
+  other.m_numberOfRows = 0;
+  other.m_numberOfColumns = 0;
+}
+
+template<typename T>
+MatrixComplex<T>::MatrixComplex(const MatrixComplex& other) {
+  // Copy other's data
+  m_numberOfRows = other.m_numberOfRows;
+  m_numberOfColumns = other.m_numberOfColumns;
+  std::complex<T> * operands = new std::complex<T> [m_numberOfRows*m_numberOfColumns];
+  for (int i=0; i<m_numberOfRows*m_numberOfColumns; i++) {
+    operands[i] = other.m_operands[i];
+  }
+  m_operands = operands;
+}
+
+template<typename T>
+MatrixComplex<T>& MatrixComplex<T>::operator=(MatrixComplex<T> && other) {
+  if (this != &other) {
+    if (m_operands) { delete [] m_operands; }
+    // Pilfer other's ivars
+    m_operands = other.m_operands;
+    m_numberOfRows = other.m_numberOfRows;
+    m_numberOfColumns = other.m_numberOfColumns;
+
+    // Reset other
+    other.m_operands = nullptr;
+    other.m_numberOfRows = 0;
+    other.m_numberOfColumns = 0;
+  }
+  return *this;
+}
+
+template<typename T>
 Expression * MatrixComplex<T>::complexToExpression(Expression::ComplexFormat complexFormat) const {
   Expression ** operands = new Expression * [numberOfComplexOperands()];
   for (int i = 0; i < numberOfComplexOperands(); i++) {

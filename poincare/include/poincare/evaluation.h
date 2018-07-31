@@ -64,6 +64,11 @@ public:
     return MatrixComplex<T>(&undef, 1, 1);
   }
   ~MatrixComplex();
+  MatrixComplex(MatrixComplex&& other); // C++11 move constructor
+  MatrixComplex& operator=(MatrixComplex&& other); // C++11 move assignment operator
+  MatrixComplex(const MatrixComplex& other); // C++11 copy constructor
+  MatrixComplex& operator=(const MatrixComplex& other) = delete; // C++11 copy assignment operator
+
   typename Poincare::Evaluation<T>::Type type() const override { return Poincare::Evaluation<T>::Type::MatrixComplex; }
   const std::complex<T> complexOperand(int i) const { return m_operands[i]; }
   int numberOfComplexOperands() const { return m_numberOfRows*m_numberOfColumns; }

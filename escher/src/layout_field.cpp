@@ -43,6 +43,10 @@ void LayoutField::reload() {
 }
 
 bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
+  if (m_contentView.cursor()->layoutReference().isAllocationFailure()) {
+    return false;
+  }
+
   if (text[0] == 0) {
     // The text is empty
     return true;

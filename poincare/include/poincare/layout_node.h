@@ -85,8 +85,8 @@ public:
   virtual LayoutNode * layoutToPointWhenInserting() {
     return numberOfChildren() > 0 ? childAtIndex(0) : this;
   }
-  bool removeGreySquaresFromAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(true); }
-  bool addGreySquaresToAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(false); }
+  bool removeGreySquaresFromAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(false); }
+  bool addGreySquaresToAllMatrixAncestors() { return changeGreySquaresOfAllMatrixAncestors(true); }
   bool hasText() const;
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   /* isCollapsable is used when adding a sibling fraction: should the layout be

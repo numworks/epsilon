@@ -116,6 +116,15 @@ void TreeReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
 
   // Release all children and delete the node in the pool
   node()->releaseChildrenAndDestroy(currentNumberOfChildren);
+  /* WARNING: If we called "p.decrementNumberOfChildren()" here, the number of
+   * children of the parent layout would be:
+   * -> numberOfChildren() for "dynamic trees" that have a m_numberOfChildren
+   * variable (such as HorizontalLayout)
+   * -> numberOfChildren() - 1 for "static trees" that have a fixed number of
+   * children (such as IntegralLayout)
+   *
+   * By not decrementing the parent's number of children here, we now that it
+   * has (numberOfChildren() - 1) children. */
 
   /* Create an allocation failure node with the previous node id. We know
    * there is room in the pool as we deleted the previous node and an
@@ -130,11 +139,12 @@ void TreeReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
      * will retain it and increment the retain count. */
     newAllocationFailureNode->setReferenceCounter(currentRetainCount - 1);
     p.addChildTreeAtIndex(TreeRef(newAllocationFailureNode), indexInParentNode, p.numberOfChildren() - 1);
-    /* We decrement the number of children as we removed the previous child. TODO better comment*/
-    p.decrementNumberOfChildren();
   } else {
     newAllocationFailureNode->setReferenceCounter(currentRetainCount);
   }
+  p.decrementNumberOfChildren();
+  /* We decrement here the parent's number of children, as we did not do it
+   * before, see WARNING. */
 }
 
 void TreeReference::mergeTreeChildrenAtIndex(TreeReference t, int i) {

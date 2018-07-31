@@ -228,27 +228,30 @@ void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColo
 
 void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {
   assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
-  if (cursor) {
-    cursor->setLayoutNode(childAtIndex(index));
-    cursor->setPosition(LayoutCursor::Position::Right);
-  }
   int rowIndex = rowAtChildIndex(index);
   int columnIndex = columnAtChildIndex(index);
   bool rowIsEmpty = isRowEmpty(rowIndex);
   bool columnIsEmpty = isColumnEmpty(columnIndex);
+  int newIndex = index;
   if (rowIsEmpty && m_numberOfRows > 2) {
     deleteRowAtIndex(rowIndex);
   }
   if (columnIsEmpty && m_numberOfColumns > 2) {
     deleteColumnAtIndex(columnIndex);
+    newIndex -= rowIndex;
   }
   if (!rowIsEmpty && !columnIsEmpty) {
-    LayoutNode * newChild = childAtIndex(index);
+    LayoutNode * newChild = childAtIndex(newIndex);
     if (newChild->isEmpty()
         && (childIsRightOfGrid(index)|| childIsBottomOfGrid(index)))
     {
       static_cast<EmptyLayoutNode *>(newChild)->setColor(EmptyLayoutNode::Color::Grey);
     }
+  }
+  if (cursor) {
+    assert(newIndex >= 0 && newIndex < m_numberOfColumns*m_numberOfRows);
+    cursor->setLayoutNode(childAtIndex(newIndex));
+    cursor->setPosition(LayoutCursor::Position::Right);
   }
 }
 

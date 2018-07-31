@@ -132,6 +132,13 @@ MatrixComplex<T>::MatrixComplex(std::complex<T> * operands, int numberOfRows, in
 }
 
 template<typename T>
+MatrixComplex<T>::~MatrixComplex() {
+  if (m_operands != nullptr) {
+    delete [] m_operands;
+  }
+}
+
+template<typename T>
 Expression * MatrixComplex<T>::complexToExpression(Expression::ComplexFormat complexFormat) const {
   Expression ** operands = new Expression * [numberOfComplexOperands()];
   for (int i = 0; i < numberOfComplexOperands(); i++) {

@@ -83,7 +83,7 @@ void TreeReference::replaceWith(TreeReference t) {
   }
 }
 
-void TreeReference::replaceTreeChildAtIndex(int oldChildIndex, TreeReference newChild) {
+void TreeReference::replaceTreeChild(TreeReference oldChild, TreeReference newChild) {
   assert(isDefined());
   if (newChild.isAllocationFailure()) {
     replaceWithAllocationFailure(numberOfChildren());
@@ -93,8 +93,6 @@ void TreeReference::replaceTreeChildAtIndex(int oldChildIndex, TreeReference new
   if (p.isDefined()) {
     p.decrementNumberOfChildren();
   }
-  assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
-  TreeReference oldChild = treeChildAtIndex(oldChildIndex);
   TreePool::sharedPool()->move(oldChild.node()->nextSibling(), newChild.node(), newChild.numberOfChildren());
   if (!p.isDefined()) {
     newChild.node()->retain();

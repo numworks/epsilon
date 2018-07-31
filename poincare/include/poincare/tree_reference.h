@@ -87,10 +87,12 @@ public:
   void removeTreeChild(TreeReference t, int childNumberOfChildren);
   void removeChildren();
   void replaceWith(TreeReference t);
-  void replaceTreeChild(TreeReference oldChild, TreeReference newChild) {
-    replaceTreeChildAtIndex(indexOfChild(oldChild), newChild);
+  void replaceTreeChild(TreeReference oldChild, TreeReference newChild);
+  void replaceTreeChildAtIndex(int oldChildIndex, TreeReference newChild) {
+    assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
+    TreeReference oldChild = treeChildAtIndex(oldChildIndex);
+    replaceTreeChild(oldChild, newChild);
   }
-  void replaceTreeChildAtIndex(int oldChildIndex, TreeReference newChild);
   void replaceWithAllocationFailure(int currentNumberOfChildren);
   void mergeTreeChildrenAtIndex(TreeReference t, int i);
   TreeReference(TreeNode * node) { // TODO Make this protected

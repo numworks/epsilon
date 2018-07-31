@@ -288,6 +288,9 @@ bool LayoutCursor::baseForNewPowerLayout() {
 }
 
 bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
+  if (m_layoutRef.isAllocationFailure()) {
+    return false;
+  }
   /* Find Empty layouts adjacent to the cursor: Check the pointed layout and the
    * equivalent cursor positions */
   LayoutRef adjacentEmptyLayout(nullptr);

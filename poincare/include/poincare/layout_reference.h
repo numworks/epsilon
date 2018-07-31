@@ -44,6 +44,7 @@ public:
   bool mustHaveLeftSibling() const { return const_cast<LayoutReference *>(this)->node()->mustHaveLeftSibling(); }
   bool isEmpty() const { return const_cast<LayoutReference *>(this)->node()->isEmpty(); }
   bool isHorizontal() const { return const_cast<LayoutReference *>(this)->node()->isHorizontal(); }
+  bool isMatrix() const { return const_cast<LayoutReference *>(this)->node()->isMatrix(); }
   bool isVerticalOffset() const { return const_cast<LayoutReference *>(this)->node()->isVerticalOffset(); }
   bool isLeftParenthesis() const { return const_cast<LayoutReference *>(this)->node()->isLeftParenthesis(); }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return const_cast<LayoutReference *>(this)->node()->isCollapsable(numberOfOpenParenthesis, goingLeft); }

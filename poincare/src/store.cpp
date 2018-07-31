@@ -36,7 +36,7 @@ Expression * Store::shallowReduce(Context& context, Preferences::AngleUnit angle
 LayoutRef Store::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result = HorizontalLayoutRef();
   result.addOrMergeChildAtIndex(value()->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CharLayoutRef(Ion::Charset::Sto), result.numberOfChildren(), nullptr);
+  result.addChildAtIndex(CharLayoutRef(Ion::Charset::Sto), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(symbol()->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }

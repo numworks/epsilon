@@ -248,7 +248,7 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
    * sibling (e.g. a VerticalOffsetLayout), add an empty layout at index 0 */
 
   if (!force && index == 0 && numberOfChildren() > 0 && childAtIndex(0)->mustHaveLeftSibling()) {
-    HorizontalLayoutRef(this).addChildAtIndex(EmptyLayoutRef(), 0, cursor);
+    HorizontalLayoutRef(this).addChildAtIndex(EmptyLayoutRef(), 0, numberOfChildren(), cursor);
   }
 }
 
@@ -354,7 +354,7 @@ void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool re
   if (l.isHorizontal()) {
     mergeChildrenAtIndex(HorizontalLayoutRef(l.node()), index, removeEmptyChildren, cursor);
   } else {
-    addChildAtIndex(l, index, cursor);
+    addChildAtIndex(l, index, numberOfChildren(),cursor);
   }
 }
 

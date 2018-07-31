@@ -271,16 +271,9 @@ bool LayoutCursor::baseForNewPowerLayout() {
     }
     if (m_layoutRef.isEmpty()) {
       /* If the cursor is on the left of an EmptyLayout, move it to its right,
-       * make sure it is yellow, and this EmptyLayout will be the base of the
-       * new power layout. */
+       * the empty layout will take care of changing its color and adding a new
+       * row/column to its parent matrix if needed. */
       m_position = Position::Right;
-      if (static_cast<EmptyLayoutNode *>(m_layoutRef.node())->color() == EmptyLayoutNode::Color::Grey) {
-        static_cast<EmptyLayoutNode *>(m_layoutRef.node())->setColor(EmptyLayoutNode::Color::Yellow);
-        LayoutRef p = m_layoutRef.parent();
-        int idxInParent = p.indexOfChild(m_layoutRef);
-        assert(idxInParent >= 0);
-        //TODO static_cast<MatrixLayout *>(p.node())->newRowOrColumnAtIndex(idxInParent);
-      }
       return true;
     }
     LayoutCursor equivalentLayoutCursor = m_layoutRef.equivalentCursor(this);

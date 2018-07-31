@@ -64,14 +64,14 @@ public:
   void rename(int identifier, bool unregisterPreviousIdentifier);
 
   // Hierarchy
-  TreeNode * parent() const;
-  TreeNode * root();
+  virtual TreeNode * parent() const;
+  virtual TreeNode * root();
   virtual int numberOfChildren() const = 0;
   virtual void incrementNumberOfChildren(int increment = 1) {} // Do no put an assert(false), we need this method for instance in GridLayout::removeRow
   virtual void decrementNumberOfChildren(int decrement = 1) {} // Do no put an assert(false), we need this method for instance in GridLayout::removeRow
   virtual void eraseNumberOfChildren() {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
   int numberOfDescendants(bool includeSelf) const;
-  TreeNode * childAtIndex(int i) const;
+  virtual TreeNode * childAtIndex(int i) const;
   int indexOfChildByIdentifier(int childID) const;
   int indexOfChild(const TreeNode * child) const;
   int indexInParent() const;

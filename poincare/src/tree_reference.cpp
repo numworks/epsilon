@@ -137,12 +137,12 @@ void TreeReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
      * will retain it and increment the retain count. */
     newAllocationFailureNode->setReferenceCounter(currentRetainCount - 1);
     p.addChildTreeAtIndex(TreeRef(newAllocationFailureNode), indexInParentNode, p.numberOfChildren() - 1);
+    p.decrementNumberOfChildren();
+    /* We decrement here the parent's number of children, as we did not do it
+     * before, see WARNING. */
   } else {
     newAllocationFailureNode->setReferenceCounter(currentRetainCount);
   }
-  p.decrementNumberOfChildren();
-  /* We decrement here the parent's number of children, as we did not do it
-   * before, see WARNING. */
 }
 
 void TreeReference::mergeTreeChildrenAtIndex(TreeReference t, int i) {

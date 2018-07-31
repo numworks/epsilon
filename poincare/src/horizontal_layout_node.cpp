@@ -348,9 +348,6 @@ void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool re
   if (isAllocationFailure()) {
     return;
   }
-  if (l.isEmpty() && removeEmptyChildren) {
-    return;
-  }
   if (l.isHorizontal()) {
     mergeChildrenAtIndex(HorizontalLayoutRef(l.node()), index, removeEmptyChildren, cursor);
   } else {

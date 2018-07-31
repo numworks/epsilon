@@ -255,17 +255,17 @@ void LayoutNode::scoreCursorInDescendantsVertically (
 
 bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
   bool changedSquares = false;
-  LayoutNode * currentAncestor = parent();
-  while (currentAncestor != nullptr) {
-    if (currentAncestor->isMatrix()) {
+  LayoutRef currentAncestor = LayoutRef(parent());
+  while (currentAncestor.isDefined()) {
+    if (currentAncestor.isMatrix()) {
       if (add) {
-        static_cast<MatrixLayoutNode *>(currentAncestor)->addGreySquares();
+        static_cast<MatrixLayoutNode *>(currentAncestor.node())->addGreySquares();
       } else {
-        static_cast<MatrixLayoutNode *>(currentAncestor)->removeGreySquares();
+        static_cast<MatrixLayoutNode *>(currentAncestor.node())->removeGreySquares();
       }
       changedSquares = true;
     }
-    currentAncestor = currentAncestor->parent();
+    currentAncestor = currentAncestor.parent();
   }
   return changedSquares;
 }

@@ -179,7 +179,6 @@ void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force
       } else {
         cursor->setLayoutReference(*this);
         cursor->setPosition(LayoutCursor::Position::Right);
-
       }
     }
   }

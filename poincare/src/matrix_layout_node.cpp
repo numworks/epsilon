@@ -126,7 +126,7 @@ int MatrixLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferenc
     buffer[numberOfChar++] = '[';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-    numberOfChar += LayoutEngine::writeInfixSerializableRefTextInBuffer(SerializableRef(const_cast<MatrixLayoutNode *>(this)), buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
+    numberOfChar += LayoutEngine::writeInfixSerializableRefTextInBuffer(SerializableRef(this), buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     buffer[numberOfChar++] = ']';

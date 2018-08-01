@@ -95,7 +95,7 @@ public:
   }
   void replaceWithAllocationFailure(int currentNumberOfChildren);
   void mergeTreeChildrenAtIndex(TreeReference t, int i);
-  TreeReference(TreeNode * node) { // TODO Make this protected
+  TreeReference(const TreeNode * node) { // TODO Make this protected
     if (node == nullptr) {
       m_identifier = TreePool::NoNodeIdentifier;
     } else {

@@ -184,7 +184,7 @@ int VerticalOffsetLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, P
   }
   assert(m_type == Type::Superscript);
   // If the layout is a superscript, write "^(indice)"
-  int numberOfChar = LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(const_cast<VerticalOffsetLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "^");
+  int numberOfChar = LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "^");
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Add a multiplication if omitted.

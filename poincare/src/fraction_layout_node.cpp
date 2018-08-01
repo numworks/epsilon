@@ -150,7 +150,7 @@ int FractionLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefere
   }
 
   // Write the content of the fraction
-  numberOfChar += LayoutEngine::writeInfixSerializableRefTextInBuffer(SerializableRef(const_cast<FractionLayoutNode *>(this)), buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, "/");
+  numberOfChar += LayoutEngine::writeInfixSerializableRefTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, "/");
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   if (addParenthesis) {

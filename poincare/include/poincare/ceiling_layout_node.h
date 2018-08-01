@@ -10,7 +10,7 @@ class CeilingLayoutNode : public BracketPairLayoutNode {
 public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(const_cast<CeilingLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "ceil");
+    return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "ceil");
   }
   // TreeNode
   size_t size() const override { return sizeof(CeilingLayoutNode); }

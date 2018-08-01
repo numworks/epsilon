@@ -10,7 +10,7 @@ class FloorLayoutNode : public BracketPairLayoutNode {
 public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(const_cast<FloorLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "floor");
+    return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "floor");
   }
 
   // TreeNode

@@ -172,7 +172,7 @@ int HorizontalLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefe
     buffer[0] = 0;
     return 0;
   }
-  return LayoutEngine::writeInfixSerializableRefTextInBuffer(SerializableRef(const_cast<HorizontalLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
+  return LayoutEngine::writeInfixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
 // Protected

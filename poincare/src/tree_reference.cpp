@@ -118,7 +118,10 @@ void TreeReference::replaceTreeChild(TreeReference oldChild, TreeReference newCh
   }
 
   // Move the new child
-  TreePool::sharedPool()->move(oldChild.node()->nextSibling(), newChild.node(), newChild.numberOfChildren());
+  TreePool::sharedPool()->move(oldChild.node(), newChild.node(), newChild.numberOfChildren());
+  /* We could have moved the new node to oldChild.node()->nextSibling(), but
+   * nextSibling is not computed correctly if we inserted an
+   * AllocationFailureNode next to newChild. */
 
   if (!p.isDefined()) {
     newChild.node()->retain();

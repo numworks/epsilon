@@ -7,7 +7,10 @@
 
 namespace Poincare {
 
+class NthRootLayoutRef;
+
 class NthRootLayoutNode : public LayoutNode {
+  friend class NthRootLayoutRef;
 public:
   constexpr static KDCoordinate k_leftRadixHeight = 8;
   constexpr static KDCoordinate k_leftRadixWidth = 5;
@@ -28,14 +31,6 @@ public:
   bool hasUpperLeftIndex() const override { return numberOfChildren() > 1; }
 
   // TreeNode
-  void incrementNumberOfChildren(int increment = 1) override {
-    assert(increment == 1);
-    m_numberOfChildren+= increment;
-  }
-  void decrementNumberOfChildren(int decrement = 1) override {
-    assert(m_numberOfChildren >= decrement);
-    m_numberOfChildren-= decrement;
-  }
   size_t size() const override { return sizeof(NthRootLayoutNode); }
   int numberOfChildren() const override { return m_numberOfChildren; }
 #if TREE_LOG
@@ -56,6 +51,10 @@ private:
   constexpr static KDCoordinate k_heightMargin = 2;
   constexpr static KDCoordinate k_widthMargin = 2;
   constexpr static KDCoordinate k_radixLineThickness = 1;
+  void setNumberOfChildren(int number) {
+    assert(number == 1 || number == 2);
+    m_numberOfChildren = number;
+  }
   KDSize adjustedIndexSize();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   LayoutNode * radicandLayout() {
@@ -75,11 +74,22 @@ public:
 
   NthRootLayoutRef(LayoutRef radicand) : NthRootLayoutRef() {
     addChildTreeAtIndex(radicand, 0, 0);
+    if (!node()->isAllocationFailure()) {
+      static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(1);
+    }
   }
 
   NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {
     addChildTreeAtIndex(radicand, 0, 0);
+    if (!node()->isAllocationFailure()) {
+      static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(1);
+    } else {
+      return;
+    }
     addChildTreeAtIndex(index, 1, 1);
+    if (!node()->isAllocationFailure()) {
+      static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);
+    }
   }
 
 private:

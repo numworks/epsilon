@@ -75,19 +75,17 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
   if (m_color == Color::Grey) {
     /* The parent is a MatrixLayout, and the current empty row or column is
      * being filled in, so add a new empty row or column. */
+    LayoutRef rootRef = LayoutRef(root());
     LayoutNode * parentNode = parent();
     assert(parentNode != nullptr);
-    LayoutRef parentRef(parentNode);
-    parentNode->willAddSiblingToEmptyChildAtIndex(parentRef.indexOfChild(thisRef));
+    parentNode->willAddSiblingToEmptyChildAtIndex(parentNode->indexOfChild(this));
     // WARNING: Do not use previous node pointers afterwards.
-    bool shouldContinueAddition = !(parentRef.isAllocationFailure());
-    if (!shouldContinueAddition) {
+    if (rootRef.isAllocationFailure()) {
       if (moveCursor) {
-        cursor->setLayoutReference(parentRef);
+        cursor->setLayoutReference(rootRef);
       }
       return false;
     }
-
   }
   if (siblingRef.mustHaveLeftSibling()) {
     thisRef.setColor(Color::Yellow);

@@ -91,30 +91,35 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
 }
 
 // Protected
-//TODO
 void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
   LayoutRef thisRef = LayoutRef(this);
   int previousNumberOfChildren = numberOfChildren();
-  for (int i = 0; i < m_numberOfColumns; i++) {
+  int columnsCount = m_numberOfColumns;
+  for (int i = 0; i < columnsCount; i++) {
     thisRef.addChildAtIndex(
         EmptyLayoutRef(color),
         previousNumberOfChildren,
         previousNumberOfChildren + i,
         nullptr);
+    // WARNING: Do not access "this" afterwards
   }
-  m_numberOfRows++;
+  if (!thisRef.isAllocationFailure()) {
+    m_numberOfRows++;
+  }
 }
 
 void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
   LayoutRef thisRef = LayoutRef(this);
   int previousNumberOfChildren = numberOfChildren();
   m_numberOfColumns++;
-  for (int i = 0; i < m_numberOfRows; i++) {
+  int rowsCount = m_numberOfRows;
+  for (int i = 0; i < rowsCount; i++) {
     thisRef.addChildAtIndex(
         EmptyLayoutRef(color),
         i*m_numberOfColumns + m_numberOfColumns-1,
         previousNumberOfChildren + i,
         nullptr);
+    // WARNING: Do not access "this" afterwards
   }
 }
 

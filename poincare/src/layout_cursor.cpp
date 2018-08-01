@@ -213,9 +213,10 @@ void LayoutCursor::insertText(const char * text) {
 }
 
 void LayoutCursor::addLayoutAndMoveCursor(LayoutRef l) {
+  LayoutRef rootRef = m_layoutRef.root();
   bool layoutWillBeMerged = l.isHorizontal();
   m_layoutRef.addSibling(this, l, true);
-  if (!layoutWillBeMerged) {
+  if (!rootRef.isAllocationFailure() && !layoutWillBeMerged) {
     l.collapseSiblings(this);
   }
 }

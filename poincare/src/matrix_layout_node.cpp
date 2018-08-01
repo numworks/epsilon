@@ -170,7 +170,12 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
     for (int i = 0; i < m_numberOfRows - 1; i++) {
       LayoutNode * lastLayoutOfRow = childAtIndex(i*m_numberOfColumns+correspondingColumn);
       if (lastLayoutOfRow->isEmpty()) {
-        static_cast<EmptyLayoutNode *>(lastLayoutOfRow)->setColor(EmptyLayoutNode::Color::Yellow);
+        if (!lastLayoutOfRow->isHorizontal()) {
+          static_cast<EmptyLayoutNode *>(lastLayoutOfRow)->setColor(EmptyLayoutNode::Color::Yellow);
+        } else {
+          assert(lastLayoutOfRow->numberOfChildren() == 1);
+          static_cast<EmptyLayoutNode *>(lastLayoutOfRow->childAtIndex(0))->setColor(EmptyLayoutNode::Color::Yellow);
+        }
       }
     }
     // Add a column of grey EmptyLayouts on the right.
@@ -184,7 +189,12 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
     for (int i = 0; i < m_numberOfColumns - 1; i++) {
       LayoutNode * lastLayoutOfColumn = childAtIndex(correspondingRow*m_numberOfColumns+i);
       if (lastLayoutOfColumn->isEmpty()) {
-        static_cast<EmptyLayoutNode *>(lastLayoutOfColumn)->setColor(EmptyLayoutNode::Color::Yellow);
+        if (!lastLayoutOfColumn->isHorizontal()) {
+          static_cast<EmptyLayoutNode *>(lastLayoutOfColumn)->setColor(EmptyLayoutNode::Color::Yellow);
+        } else {
+          assert(lastLayoutOfColumn->numberOfChildren() == 1);
+          static_cast<EmptyLayoutNode *>(lastLayoutOfColumn->childAtIndex(0))->setColor(EmptyLayoutNode::Color::Yellow);
+        }
       }
     }
     // Add a row of grey EmptyLayouts at the bottom.

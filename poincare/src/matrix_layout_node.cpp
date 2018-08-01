@@ -10,8 +10,12 @@ namespace Poincare {
 
 void MatrixLayoutNode::addGreySquares() {
   if (!hasGreySquares()) {
+    LayoutRef thisRef(this);
     addEmptyRow(EmptyLayoutNode::Color::Grey);
-    addEmptyColumn(EmptyLayoutNode::Color::Grey);
+    // WARNING: the layout might have become an AllocationFailure
+    if (!thisRef.isAllocationFailure()) {
+      addEmptyColumn(EmptyLayoutNode::Color::Grey);
+    }
   }
 }
 
@@ -44,8 +48,14 @@ void MatrixLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomp
     /* Case: Right. Add the grey squares to the matrix, then move to the bottom
      * right non empty nor grey child. */
     assert(!hasGreySquares());
+    LayoutRef rootRef(root());
     addGreySquares();
+    // WARNING: the layout might have become an AllocationFailure
     *shouldRecomputeLayout = true;
+    if (rootRef.isAllocationFailure()) {
+      cursor->setLayoutReference(rootRef);
+      return;
+    }
     LayoutNode * lastChild = childAtIndex((m_numberOfColumns-1)*(m_numberOfRows-1));
     assert(lastChild != nullptr);
     cursor->setLayoutNode(lastChild);
@@ -60,8 +70,14 @@ void MatrixLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecom
   {
     // Case: Left. Add grey squares to the matrix, then go to its first entry.
     assert(!hasGreySquares());
+    LayoutRef rootRef(root());
     addGreySquares();
+    // WARNING: the layout might have become an AllocationFailure
     *shouldRecomputeLayout = true;
+    if (rootRef.isAllocationFailure()) {
+      cursor->setLayoutReference(rootRef);
+      return;
+    }
     assert(m_numberOfColumns*m_numberOfRows >= 1);
     assert(childAtIndex(0) != nullptr);
     cursor->setLayoutNode(childAtIndex(0));
@@ -180,6 +196,7 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
     }
     // Add a column of grey EmptyLayouts on the right.
     addEmptyColumn(EmptyLayoutNode::Color::Grey);
+    // WARNING: the layout might have become an AllocationFailure
   }
   if (rootRef.isAllocationFailure()) {
     return;
@@ -199,6 +216,7 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
     }
     // Add a row of grey EmptyLayouts at the bottom.
     addEmptyRow(EmptyLayoutNode::Color::Grey);
+    // WARNING: the layout might have become an AllocationFailure
   }
 }
 

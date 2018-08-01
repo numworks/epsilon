@@ -75,7 +75,7 @@ void BinomialCoefficientLayoutNode::moveCursorDown(LayoutCursor * cursor, bool *
 }
 
 int BinomialCoefficientLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(const_cast<BinomialCoefficientLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "binomial");
+  return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "binomial");
 }
 
 void BinomialCoefficientLayoutNode::computeSize() {

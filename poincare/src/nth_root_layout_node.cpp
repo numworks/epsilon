@@ -153,11 +153,11 @@ int NthRootLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferen
       && (const_cast<NthRootLayoutNode *>(this))->indexLayout()
       && !(const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty())
   {
-    return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(const_cast<NthRootLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
+    return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
   }
   // Case: squareRoot(x)
   if (numberOfChildren() == 1) {
-    return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(const_cast<NthRootLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
+    return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
   }
   // Case: root(x,empty)
   // Write "'SquareRootSymbol'('radicandLayout')".

@@ -17,7 +17,7 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override { assert(false); }
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override { assert(false); }
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(const_cast<CondensedSumLayoutNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "sum");
+    return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "sum");
   }
 
   LayoutNode * layoutToPointWhenInserting() override {

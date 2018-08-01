@@ -12,6 +12,8 @@ class LayoutReference : public SerializableReference {
   friend class LayoutCursor;
 public:
   using SerializableReference::SerializableReference;
+  using TreeReference::operator==;
+  using TreeReference::operator!=;
 
   LayoutReference clone() const {
     TreeReference c = this->treeClone();
@@ -19,9 +21,6 @@ public:
     cast.invalidAllSizesPositionsAndBaselines();
     return cast;
   }
-
-  inline bool operator==(LayoutReference l) { return this->identifier() == l.identifier(); }
-  inline bool operator!=(LayoutReference l) { return this->identifier() != l.identifier(); }
 
   LayoutNode * node() const override{ return static_cast<LayoutNode *>(SerializableReference::node()); }
 

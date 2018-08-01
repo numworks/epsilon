@@ -84,20 +84,53 @@ void TreeReference::replaceWith(TreeReference t) {
 }
 
 void TreeReference::replaceTreeChild(TreeReference oldChild, TreeReference newChild) {
+  if (oldChild == newChild) {
+    return;
+  }
+
   assert(isDefined());
   if (newChild.isAllocationFailure()) {
     replaceWithAllocationFailure(numberOfChildren());
     return;
   }
+
   TreeReference p = newChild.parent();
+  bool shouldDestroyNewChildParent = false;
   if (p.isDefined()) {
+    int childrenCount = p.numberOfChildren();
     p.decrementNumberOfChildren();
+    if (childrenCount == p.numberOfChildren()) {
+      // The parent tree does not have the right children count
+      shouldDestroyNewChildParent = true;
+    }
   }
+  if (shouldDestroyNewChildParent) {
+    TreeNode * staticAllocFailNode = newChild.node()->failedAllocationStaticNode();
+    TreeNode * newAllocationFailureNode = TreePool::sharedPool()->deepCopy(staticAllocFailNode);
+    if (newAllocationFailureNode == nullptr) {
+      newChild.replaceWithAllocationFailure(newChild.numberOfChildren());
+      oldChild.replaceWithAllocationFailure(oldChild.numberOfChildren());
+      return;
+    }
+
+    // Put the new layout next to the newChild
+    TreePool::sharedPool()->move(newChild.node(), newAllocationFailureNode, 0);
+  }
+
+  // Move the new child
   TreePool::sharedPool()->move(oldChild.node()->nextSibling(), newChild.node(), newChild.numberOfChildren());
+
   if (!p.isDefined()) {
     newChild.node()->retain();
   }
+
+  // Move the old child
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), oldChild.node(), oldChild.numberOfChildren());
+
+  if (shouldDestroyNewChildParent) {
+    p.replaceWithAllocationFailure(p.numberOfChildren());
+  }
+
   oldChild.node()->release(oldChild.numberOfChildren());
 }
 

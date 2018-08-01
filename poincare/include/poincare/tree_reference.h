@@ -23,6 +23,7 @@ public:
   }
 
   inline bool operator==(TreeReference t) { return m_identifier == t.identifier(); }
+  inline bool operator!=(TreeReference t) { return m_identifier != t.identifier(); }
 
   TreeReference treeClone() const;
   ~TreeReference();

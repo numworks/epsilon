@@ -345,10 +345,10 @@ ExpressionReference Power::shallowReduce(Context& context, Preferences::AngleUni
   if (!letPowerAtRoot && isNthRootOfUnity()) {
     Expression * m = editableOperand(1);
     detachOperand(m);
-    Expression * i = m->editableOperand(m->numberOfOperands()-1);
+    Expression * i = m->editableOperand(m->numberOfChildren()-1);
     static_cast<Multiplication *>(m)->removeOperand(i, false);
     if (angleUnit == Preferences::AngleUnit::Degree) {
-      const Expression * pi = m->operand(m->numberOfOperands()-1);
+      const Expression * pi = m->operand(m->numberOfChildren()-1);
       m->replaceOperand(pi, new Rational(180), true);
     }
     Expression * cos = new Cosine(m, false);
@@ -363,14 +363,14 @@ ExpressionReference Power::shallowReduce(Context& context, Preferences::AngleUni
   }
   // x^log(y,x)->y if y > 0
   if (operand(1)->type() == Type::Logarithm) {
-    if (operand(1)->numberOfOperands() == 2 && operand(0)->isIdenticalTo(operand(1)->operand(1))) {
+    if (operand(1)->numberOfChildren() == 2 && operand(0)->isIdenticalTo(operand(1)->operand(1))) {
       // y > 0
       if (operand(1)->operand(0)->sign() == Sign::Positive) {
         return replaceWith(editableOperand(1)->editableOperand(0), true);
       }
     }
     // 10^log(y)
-    if (operand(1)->numberOfOperands() == 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isTen()) {
+    if (operand(1)->numberOfChildren() == 1 && operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isTen()) {
       return replaceWith(editableOperand(1)->editableOperand(0), true);
     }
   }
@@ -391,7 +391,7 @@ ExpressionReference Power::shallowReduce(Context& context, Preferences::AngleUni
       return simplifyPowerMultiplication(m, editableOperand(1), context, angleUnit);
     }
     // (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a rational
-    for (int i = 0; i < m->numberOfOperands(); i++) {
+    for (int i = 0; i < m->numberOfChildren(); i++) {
       // a is signed and a != -1
       if (m->operand(i)->sign() != Sign::Unknown && (m->operand(i)->type() != Type::Rational || !static_cast<const Rational *>(m->operand(i))->isMinusOne())) {
       //if (m->operand(i)->sign() == Sign::Positive || m->operand(i)->type() == Type::Rational) {
@@ -447,7 +447,7 @@ ExpressionReference Power::shallowReduce(Context& context, Preferences::AngleUni
     }
     int clippedN = n.extractedInt(); // Authorized because n < k_maxNumberOfTermsInExpandedMultinome
     // Number of terms in addition m
-    int m = operand(0)->numberOfOperands();
+    int m = operand(0)->numberOfChildren();
     /* The multinome (a0+a2+...+a(m-1))^n has BinomialCoefficient(n+m-1,n) terms;
      * we expand the multinome only when the number of terms in the resulting
      * sum has less than k_maxNumberOfTermsInExpandedMultinome terms. */
@@ -459,7 +459,7 @@ ExpressionReference Power::shallowReduce(Context& context, Preferences::AngleUni
     for (int i = 2; i <= clippedN; i++) {
       if (result->type() == Type::Addition) {
         Expression * a0 = new Addition();
-        for (int j = 0; j < a->numberOfOperands(); j++) {
+        for (int j = 0; j < a->numberOfChildren(); j++) {
           Multiplication * m = new Multiplication(result, a->editableOperand(j), true);
           SimplificationRoot rootM(m); // m need to have a parent when applying distributeOnOperandAtIndex
           Expression * expandM = m->distributeOnOperandAtIndex(0, context, angleUnit);
@@ -494,7 +494,7 @@ ExpressionReference Power::shallowReduce(Context& context, Preferences::AngleUni
   /* We could use the Newton formula instead which is quicker but not immediate
    * to implement in the general case (Newton multinome). */
   // (a+b)^n with n integer -> a^n+?a^(n-1)*b+?a^(n-2)*b^2+...+b^n (Newton)
-  if (!letPowerAtRoot && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->denominator().isOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfOperands() == 2) {
+  if (!letPowerAtRoot && operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->denominator().isOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfChildren() == 2) {
     Rational * nr = static_cast<Rational *>(editableOperand(1));
     Integer n = nr->numerator();
     n.setNegative(false);
@@ -531,7 +531,7 @@ ExpressionReference Power::shallowReduce(Context& context, Preferences::AngleUni
 bool Power::parentIsALogarithmOfSameBase() const {
   if (parent()->type() == Type::Logarithm && parent()->operand(0) == this) {
     // parent = log(10^x)
-    if (parent()->numberOfOperands() == 1) {
+    if (parent()->numberOfChildren() == 1) {
       if (operand(0)->type() == Type::Rational && static_cast<const Rational *>(operand(0))->isTen()) {
         return true;
       }
@@ -561,7 +561,7 @@ Expression * Power::simplifyPowerPower(Power * p, Expression * e, Context& conte
 }
 
 Expression * Power::simplifyPowerMultiplication(Multiplication * m, Expression * r, Context& context, Preferences::AngleUnit angleUnit) {
-  for (int index = 0; index < m->numberOfOperands(); index++) {
+  for (int index = 0; index < m->numberOfChildren(); index++) {
     Expression * factor = m->editableOperand(index);
     Power * p = new Power(factor, r, true); // We copy r and factor to avoid inheritance issues
     m->replaceOperand(factor, p, true);
@@ -714,7 +714,7 @@ bool Power::TermIsARationalSquareRootOrRational(const Expression * e) {
   if (e->type() == Type::Power && e->operand(0)->type() == Type::Rational && e->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(1))->isHalf()) {
     return true;
   }
-  if (e->type() == Type::Multiplication && e->numberOfOperands() == 2 && e->operand(0)->type() == Type::Rational && e->operand(1)->type() == Type::Power && e->operand(1)->operand(0)->type() == Type::Rational && e->operand(1)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(1)->operand(1))->isHalf()) {
+  if (e->type() == Type::Multiplication && e->numberOfChildren() == 2 && e->operand(0)->type() == Type::Rational && e->operand(1)->type() == Type::Power && e->operand(1)->operand(0)->type() == Type::Rational && e->operand(1)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(1)->operand(1))->isHalf()) {
   return true;
   }
   return false;
@@ -767,7 +767,7 @@ Expression * Power::removeSquareRootsFromDenominator(Context & context, Preferen
         }
         sqrt->shallowReduce(context, angleUnit);
       }
-  } else if (operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfOperands() == 2 && TermIsARationalSquareRootOrRational(operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(operand(0)->operand(1))) {
+  } else if (operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(1))->isMinusOne() && operand(0)->type() == Type::Addition && operand(0)->numberOfChildren() == 2 && TermIsARationalSquareRootOrRational(operand(0)->operand(0)) && TermIsARationalSquareRootOrRational(operand(0)->operand(1))) {
     /* We're considering a term of the form
      *
      * 1/(n1/d1*sqrt(p1/q1) + n2/d2*sqrt(p2/q2))
@@ -841,18 +841,18 @@ bool Power::isNthRootOfUnity() const {
   if (operand(1)->type() != Type::Multiplication) {
     return false;
   }
-  if (operand(1)->numberOfOperands() < 2 || operand(1)->numberOfOperands() > 3) {
+  if (operand(1)->numberOfChildren() < 2 || operand(1)->numberOfChildren() > 3) {
     return false;
   }
-  const Expression * i = operand(1)->operand(operand(1)->numberOfOperands()-1);
+  const Expression * i = operand(1)->operand(operand(1)->numberOfChildren()-1);
   if (i->type() != Type::Symbol || static_cast<const Symbol *>(i)->name() != Ion::Charset::IComplex) {
     return false;
   }
-  const Expression * pi = operand(1)->operand(operand(1)->numberOfOperands()-2);
+  const Expression * pi = operand(1)->operand(operand(1)->numberOfChildren()-2);
   if (pi->type() != Type::Symbol || static_cast<const Symbol *>(pi)->name() != Ion::Charset::SmallPi) {
     return false;
   }
-  if (numberOfOperands() == 2) {
+  if (numberOfChildren() == 2) {
     return true;
   }
   if (operand(1)->operand(0)->type() == Type::Rational) {

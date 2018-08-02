@@ -9,11 +9,11 @@
 namespace Poincare {
 
 LayoutRef LayoutEngine::createInfixLayout(const Expression * expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
-  int numberOfOperands = expression->numberOfOperands();
-  assert(numberOfOperands > 1);
+  int numberOfChildren = expression->numberOfChildren();
+  assert(numberOfChildren > 1);
   HorizontalLayoutRef result;
   result.addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, 0);
-  for (int i = 1; i < numberOfOperands; i++) {
+  for (int i = 1; i < numberOfChildren; i++) {
     result.addOrMergeChildAtIndex(createStringLayout(operatorName, strlen(operatorName)), result.numberOfChildren(), true);
     result.addOrMergeChildAtIndex(
         expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits),
@@ -30,10 +30,10 @@ LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, Prefer
 
   // Create the layout of arguments separated by commas.
   HorizontalLayoutRef args;
-  int numberOfOperands = expression->numberOfOperands();
-  if (numberOfOperands > 0) {
+  int numberOfChildren = expression->numberOfChildren();
+  if (numberOfChildren > 0) {
     args.addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
-    for (int i = 1; i < numberOfOperands; i++) {
+    for (int i = 1; i < numberOfChildren; i++) {
       args.addChildAtIndex(CharLayoutRef(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
       args.addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
     }
@@ -95,8 +95,8 @@ int LayoutEngine::writeInfixSerializableRefTextInBuffer(
 
   // Get some information on the SerializableRef
   int numberOfChar = 0;
-  int numberOfOperands = serializableRef.numberOfChildren();
-  assert(numberOfOperands > 0);
+  int numberOfChildren = serializableRef.numberOfChildren();
+  assert(numberOfChildren > 0);
 
   // Write the first child, with parentheses if needed
   writeChildTreeInBuffer((const_cast<SerializableRef *>(&serializableRef))->serializableChildAtIndex(firstChildIndex), serializableRef, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
@@ -104,7 +104,7 @@ int LayoutEngine::writeInfixSerializableRefTextInBuffer(
     return bufferSize-1;
   }
   // For all remaining children:
-  int lastIndex = lastChildIndex < 0 ? numberOfOperands - 1 : lastChildIndex;
+  int lastIndex = lastChildIndex < 0 ? numberOfChildren - 1 : lastChildIndex;
   for (int i = firstChildIndex + 1; i < lastIndex+1; i++) {
     // Write the operator
     numberOfChar += strlcpy(buffer+numberOfChar, operatorName, bufferSize-numberOfChar);

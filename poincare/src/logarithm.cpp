@@ -24,7 +24,7 @@ Expression::Type Logarithm::type() const {
 }
 
 Expression * Logarithm::clone() const {
-  return new Logarithm(operands(), numberOfOperands(), true);
+  return new Logarithm(operands(), numberOfChildren(), true);
 }
 
 template<typename T>
@@ -38,7 +38,7 @@ std::complex<T> Logarithm::computeOnComplex(const std::complex<T> c, Preferences
 Expression * Logarithm::simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression * op = editableOperand(0);
   // log(x,x)->1
-  if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
+  if (numberOfChildren() == 2 && op->isIdenticalTo(operand(1))) {
     return replaceWith(RationalReference(1), true);
   }
   if (op->type() == Type::Rational) {
@@ -52,7 +52,7 @@ Expression * Logarithm::simpleShallowReduce(Context & context, Preferences::Angl
       return replaceWith(RationalReference(0), true);
     }
     // log(10) ->1
-    if (numberOfOperands() == 1 && r->isTen()) {
+    if (numberOfChildren() == 1 && r->isTen()) {
       return replaceWith(RationalReference(1), true);
     }
   }
@@ -66,14 +66,14 @@ ExpressionReference Logarithm::shallowReduce(Context& context, Preferences::Angl
   }
   Expression * op = editableOperand(0);
 #if MATRIX_EXACT_REDUCING
-  if (numberOfOperands() == 1 && op->type() == Type::Matrix) {
+  if (numberOfChildren() == 1 && op->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);
   }
-  if (numberOfOperands() == 2 && (op->type() == Type::Matrix || operand(1)->type() == Type::Matrix)) {
+  if (numberOfChildren() == 2 && (op->type() == Type::Matrix || operand(1)->type() == Type::Matrix)) {
     return replaceWith(new Undefined(), true);
   }
 #endif
-  if (op->sign() == Sign::Negative || (numberOfOperands() == 2 && operand(1)->sign() == Sign::Negative)) {
+  if (op->sign() == Sign::Negative || (numberOfChildren() == 2 && operand(1)->sign() == Sign::Negative)) {
     return this;
   }
   Expression * f = simpleShallowReduce(context, angleUnit);
@@ -98,7 +98,7 @@ ExpressionReference Logarithm::shallowReduce(Context& context, Preferences::Angl
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
   if (!letLogAtRoot && op->type() == Type::Multiplication) {
     Addition * a = new Addition();
-    for (int i = 0; i<op->numberOfOperands()-1; i++) {
+    for (int i = 0; i<op->numberOfChildren()-1; i++) {
       Expression * factor = op->editableOperand(i);
       if (factor->sign() == Sign::Positive) {
         Expression * newLog = clone();
@@ -108,7 +108,7 @@ ExpressionReference Logarithm::shallowReduce(Context& context, Preferences::Angl
         newLog->shallowReduce(context, angleUnit);
       }
     }
-    if (a->numberOfOperands() > 0) {
+    if (a->numberOfChildren() > 0) {
       op->shallowReduce(context, angleUnit);
       Expression * reducedLastLog = shallowReduce(context, angleUnit);
       reducedLastLog->replaceWith(a, false);
@@ -144,12 +144,12 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
   }
   if (thisIsPowerExponent) {
     const Expression * powerOperand0 = parentExpression->operand(0);
-    if (numberOfOperands() == 1) {
+    if (numberOfChildren() == 1) {
       if (powerOperand0->type() == Type::Rational && static_cast<const Rational *>(powerOperand0)->isTen()) {
         return true;
       }
     }
-    if (numberOfOperands() == 2) {
+    if (numberOfChildren() == 2) {
       if (powerOperand0->isIdenticalTo(operand(1))){
         return true;
       }
@@ -200,7 +200,7 @@ Expression * Logarithm::shallowBeautify(Context & context, Preferences::AngleUni
   Symbol e = Symbol(Ion::Charset::Exponential);
   const Expression * op = operand(0);
   Rational one(1);
-  if (numberOfOperands() == 2 && (operand(1)->isIdenticalTo(&e) || operand(1)->isIdenticalTo(&one))) {
+  if (numberOfChildren() == 2 && (operand(1)->isIdenticalTo(&e) || operand(1)->isIdenticalTo(&one))) {
     detachOperand(op);
     Expression * nl = operand(1)->isIdenticalTo(&e) ? static_cast<Expression *>(new NaperianLogarithm(op, false)) : static_cast<Expression *> (new Logarithm(op, false));
     return replaceWith(nl, true);
@@ -210,7 +210,7 @@ Expression * Logarithm::shallowBeautify(Context & context, Preferences::AngleUni
 
 template<typename T>
 EvaluationReference<T> Logarithm::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  if (numberOfOperands() == 1) {
+  if (numberOfChildren() == 1) {
     return ApproximationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }
   Evaluation<T> * x = operand(0)->privateApproximate(T(), context, angleUnit);
@@ -227,7 +227,7 @@ EvaluationReference<T> Logarithm::templatedApproximate(Context& context, Prefere
 }
 
 LayoutRef Logarithm::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (numberOfOperands() == 1) {
+  if (numberOfChildren() == 1) {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, "log");
   }
   return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));

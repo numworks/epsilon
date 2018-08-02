@@ -14,13 +14,13 @@ public:
   ListData(ListData&& other) = delete;
   ListData& operator=(const ListData& other) = delete;
   ListData& operator=(ListData&& other) = delete;
-  int numberOfOperands() const;
+  int numberOfChildren() const;
   Expression ** operands() const;
   const Expression * operand(int i) const;
   void pushExpression(Expression * operand);
   void detachOperands();
 private:
-  int m_numberOfOperands;
+  int m_numberOfChildren;
   Expression ** m_operands;
 };
 

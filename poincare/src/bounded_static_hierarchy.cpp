@@ -9,15 +9,15 @@ namespace Poincare {
 template<int T>
 BoundedStaticHierarchy<T>::BoundedStaticHierarchy() :
   StaticHierarchy<T>(),
-  m_numberOfOperands(0)
+  m_numberOfChildren(0)
 {
 }
 
 template<int T>
-BoundedStaticHierarchy<T>::BoundedStaticHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands) :
-  m_numberOfOperands(numberOfOperands)
+BoundedStaticHierarchy<T>::BoundedStaticHierarchy(const Expression * const * operands, int numberOfChildren, bool cloneOperands) :
+  m_numberOfChildren(numberOfChildren)
 {
-  StaticHierarchy<T>::build(operands, numberOfOperands, cloneOperands);
+  StaticHierarchy<T>::build(operands, numberOfChildren, cloneOperands);
 }
 
 template<>
@@ -33,14 +33,14 @@ BoundedStaticHierarchy<2>::BoundedStaticHierarchy(const Expression * e, bool clo
 }
 
 template<int T>
-void BoundedStaticHierarchy<T>::setArgument(ListData * listData, int numberOfOperands, bool clone) {
-  StaticHierarchy<T>::setArgument(listData, numberOfOperands, clone);
-  m_numberOfOperands = listData->numberOfOperands();
+void BoundedStaticHierarchy<T>::setArgument(ListData * listData, int numberOfChildren, bool clone) {
+  StaticHierarchy<T>::setArgument(listData, numberOfChildren, clone);
+  m_numberOfChildren = listData->numberOfChildren();
 }
 
 template<int T>
-bool BoundedStaticHierarchy<T>::hasValidNumberOfOperands(int numberOfOperands) const {
-  return numberOfOperands >= 1 && numberOfOperands <= T;
+bool BoundedStaticHierarchy<T>::hasValidNumberOfOperands(int numberOfChildren) const {
+  return numberOfChildren >= 1 && numberOfChildren <= T;
 }
 
 template class Poincare::BoundedStaticHierarchy<2>;

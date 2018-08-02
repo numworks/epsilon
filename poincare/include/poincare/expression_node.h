@@ -111,7 +111,7 @@ public:
   bool isOfType(Type * types, int length) const;
 
   // Useful to avoid parsing incorrect expressions as cos(2,3,4)
-  virtual bool hasValidNumberOfOperands(int numberOfChildren) const { return numberOfChildren() == numberOfChildren; }
+  virtual bool hasValidNumberOfOperands(int nbChildren) const { return numberOfChildren() == nbChildren; }
 
   /* Comparison */
 

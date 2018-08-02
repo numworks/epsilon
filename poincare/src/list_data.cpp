@@ -7,12 +7,12 @@ extern "C" {
 namespace Poincare {
 
 ListData::ListData() :
-  m_numberOfOperands(0),
+  m_numberOfChildren(0),
   m_operands(new Expression*[0])
 {}
 
 ListData::ListData(Expression * operand) :
-  m_numberOfOperands(1),
+  m_numberOfChildren(1),
   m_operands(new Expression*[1])
 {
   assert(operand != nullptr);
@@ -20,7 +20,7 @@ ListData::ListData(Expression * operand) :
 }
 
 ListData::~ListData() {
-  for (int i=0; i<m_numberOfOperands; i++) {
+  for (int i=0; i<m_numberOfChildren; i++) {
     if (m_operands[i]) {
       delete m_operands[i];
     }
@@ -29,18 +29,18 @@ ListData::~ListData() {
 }
 
 void ListData::pushExpression(Expression * operand) {
-  Expression ** newOperands = new Expression *[m_numberOfOperands+1];
-  for (int i=0; i<m_numberOfOperands; i++) {
+  Expression ** newOperands = new Expression *[m_numberOfChildren+1];
+  for (int i=0; i<m_numberOfChildren; i++) {
     newOperands[i] = m_operands[i];
   }
   delete [] m_operands;
-  newOperands[m_numberOfOperands] = operand;
+  newOperands[m_numberOfChildren] = operand;
   m_operands = newOperands;
-  m_numberOfOperands++;
+  m_numberOfChildren++;
 }
 
-int ListData::numberOfOperands() const {
-  return m_numberOfOperands;
+int ListData::numberOfChildren() const {
+  return m_numberOfChildren;
 }
 
 Expression ** ListData::operands() const {
@@ -49,12 +49,12 @@ Expression ** ListData::operands() const {
 
 const Expression * ListData::operand(int i) const {
   assert(i >= 0);
-  assert(i < m_numberOfOperands);
+  assert(i < m_numberOfChildren);
   return m_operands[i];
 }
 
 void ListData::detachOperands() {
-  for (int i = 0; i < m_numberOfOperands; i++) {
+  for (int i = 0; i < m_numberOfChildren; i++) {
     m_operands[i] = nullptr;
   }
 }

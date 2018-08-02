@@ -155,7 +155,7 @@ lstData: exp { $$ = new Poincare::ListData($1); }
 
 /* MATRICES_ARE_DEFINED */
 mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, false); $2->detachOperands(); delete $2; }
-       | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3->numberOfOperands() != $1->numberOfColumns()) { delete $1; delete $3; YYERROR; } ; $$ = $1; $$->pushListData($3, false); $3->detachOperands(); delete $3; }
+       | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3->numberOfChildren() != $1->numberOfColumns()) { delete $1; delete $3; YYERROR; } ; $$ = $1; $$->pushListData($3, false); $3->detachOperands(); delete $3; }
        ;
 
 /* When approximating expressions to double, results are bounded by 1E308 (and
@@ -185,14 +185,14 @@ term   : EMPTY          { $$ = $1; }
        | symb           { $$ = $1; }
        | UNDEFINED      { $$ = $1; }
        | number         { $$ = $1; }
-       | FUNCTION UNDERSCORE LEFT_BRACE lstData RIGHT_BRACE LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; int totalNumberOfArguments = $4->numberOfOperands()+$7->numberOfOperands();
+       | FUNCTION UNDERSCORE LEFT_BRACE lstData RIGHT_BRACE LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; int totalNumberOfArguments = $4->numberOfChildren()+$7->numberOfChildren();
 if (!$1->hasValidNumberOfOperands(totalNumberOfArguments)) { delete $1; delete $4; delete $7; YYERROR; };
 Poincare::ListData * arguments = new Poincare::ListData();
-for (int i = 0; i < $7->numberOfOperands(); i++) { arguments->pushExpression($7->operands()[i]); }
-for (int i = 0; i < $4->numberOfOperands(); i++) { arguments->pushExpression($4->operands()[i]); }
+for (int i = 0; i < $7->numberOfChildren(); i++) { arguments->pushExpression($7->operands()[i]); }
+for (int i = 0; i < $4->numberOfChildren(); i++) { arguments->pushExpression($4->operands()[i]); }
 $1->setArgument(arguments, totalNumberOfArguments, false);
 $4->detachOperands(); delete $4; $7->detachOperands(); delete $7; arguments->detachOperands(); delete arguments;}
-       | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfOperands())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfOperands(), false); $3->detachOperands(); delete $3; }
+       | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfChildren())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfChildren(), false); $3->detachOperands(); delete $3; }
        | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands(0)) { delete $1; YYERROR; } ; }
        | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { Poincare::Expression * terms[1] = {$2}; $$ = new Poincare::Parenthesis(terms, false); }
 /* MATRICES_ARE_DEFINED */

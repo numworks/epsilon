@@ -168,7 +168,7 @@ public:
   virtual const Expression * const * operands() const = 0;
   const Expression * operand(int i) const;
   Expression * editableOperand(int i) { return const_cast<Expression *>(operand(i)); }
-  virtual int numberOfOperands() const = 0;
+  virtual int numberOfChildren() const = 0;
 
   Expression * replaceWith(Expression * newOperand, bool deleteAfterReplace = true);
   void replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand = true);

@@ -10,7 +10,7 @@ namespace Poincare {
 class DynamicHierarchy : public Expression {
 public:
   DynamicHierarchy();
-  DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands);
+  DynamicHierarchy(const Expression * const * operands, int numberOfChildren, bool cloneOperands);
   DynamicHierarchy(const Expression * operand1, const Expression * operand2, bool cloneOperands) :
     DynamicHierarchy(ExpressionArray(operand1, operand2).array(), 2, cloneOperands) {}
   ~DynamicHierarchy();
@@ -19,11 +19,11 @@ public:
   DynamicHierarchy& operator=(const DynamicHierarchy & other) = delete;
   DynamicHierarchy& operator=(DynamicHierarchy && other) = delete;
 
-  int numberOfOperands() const override { return m_numberOfOperands; }
+  int numberOfChildren() const override { return m_numberOfChildren; }
   const Expression * const * operands() const override { return m_operands; };
 
   void removeOperand(const Expression * e, bool deleteAfterRemoval = true);
-  void addOperands(const Expression * const * operands, int numberOfOperands);
+  void addOperands(const Expression * const * operands, int numberOfChildren);
   void addOperand(Expression * operand);
   void addOperandAtIndex(Expression * operand, int index);
   void mergeOperands(DynamicHierarchy * d);
@@ -32,7 +32,7 @@ public:
   Expression * squashUnaryHierarchy();
 protected:
   const Expression ** m_operands;
-  int m_numberOfOperands;
+  int m_numberOfChildren;
 private:
   void removeOperandAtIndex(int i, bool deleteAfterRemoval);
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;

@@ -18,7 +18,7 @@ extern "C" {
 namespace Poincare {
 
 float Trigonometry::characteristicXRange(const Expression * e, Context & context, Preferences::AngleUnit angleUnit) {
-  assert(e->numberOfOperands() == 1);
+  assert(e->numberOfChildren() == 1);
   const Expression * op = e->operand(0);
   int d = op->polynomialDegree('x');
   // op is not linear so we cannot not easily find an interesting range
@@ -63,7 +63,7 @@ Expression * Trigonometry::shallowReduceDirectFunction(Expression * e, Context& 
       return e->replaceWith(m, true)->shallowReduce(context, angleUnit);
     }
   }
-  if ((angleUnit == Preferences::AngleUnit::Radian && e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->numberOfOperands() == 2 && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) || (angleUnit == Preferences::AngleUnit::Degree && e->operand(0)->type() == Expression::Type::Rational)) {
+  if ((angleUnit == Preferences::AngleUnit::Radian && e->operand(0)->type() == Expression::Type::Multiplication && e->operand(0)->numberOfChildren() == 2 && e->operand(0)->operand(1)->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e->operand(0)->operand(1))->name() == Ion::Charset::SmallPi && e->operand(0)->operand(0)->type() == Expression::Type::Rational) || (angleUnit == Preferences::AngleUnit::Degree && e->operand(0)->type() == Expression::Type::Rational)) {
     Rational * r = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Rational *>(e->editableOperand(0)->editableOperand(0)) : static_cast<Rational *>(e->editableOperand(0));
     int unaryCoefficient = 1; // store 1 or -1
     // Replace argument in [0, Pi/2[ or [0, 90[

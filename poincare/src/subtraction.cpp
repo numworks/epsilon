@@ -21,7 +21,7 @@ Expression * Subtraction::clone() const {
 
 int Subtraction::polynomialDegree(char symbolName) const {
   int degree = 0;
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     int d = operand(i)->polynomialDegree(symbolName);
     if (d < 0) {
       return -1;

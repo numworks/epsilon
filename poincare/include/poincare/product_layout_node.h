@@ -10,6 +10,11 @@ class ProductLayoutNode : public SequenceLayoutNode {
 public:
   using SequenceLayoutNode::SequenceLayoutNode;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // size is not overrided as ProductLayoutNode has the same size as SequenceLayoutNode
+#if TREE_LOG
+  const char * description() const override { return "ProductLayout"; }
+#endif
+
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 private:
@@ -18,7 +23,7 @@ private:
 
 class ProductLayoutRef : public LayoutReference {
 public:
-  ProductLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  ProductLayoutRef(TreeNode * n) : LayoutReference(n) {}
   ProductLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
     ProductLayoutRef()
   {

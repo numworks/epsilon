@@ -29,12 +29,10 @@ public:
   char XNTChar() const override { return 'x'; }
 
   // TreeNode
-  size_t size() const override { return sizeof(IntegralLayoutNode); }
+  // size() does not need to be overrided
   int numberOfChildren() const override { return 3; }
 #if TREE_LOG
-  const char * description() const override {
-    return "IntegralLayout";
-  }
+  const char * description() const override { return "IntegralLayout"; }
 #endif
 
 protected:
@@ -49,18 +47,9 @@ private:
   constexpr static KDCoordinate k_integrandWidthMargin = 2;
   constexpr static KDCoordinate k_integrandHeigthMargin = 2;
   constexpr static KDCoordinate k_lineThickness = 1;
-  LayoutNode * integrandLayout() {
-    assert(numberOfChildren() == 3);
-    return childAtIndex(0);
-  }
-  LayoutNode * lowerBoundLayout() {
-    assert(numberOfChildren() == 3);
-    return childAtIndex(1);
-  }
-  LayoutNode * upperBoundLayout() {
-    assert(numberOfChildren() == 3);
-    return childAtIndex(2);
-  }
+  LayoutNode * integrandLayout() { return childAtIndex(0); }
+  LayoutNode * lowerBoundLayout() { return childAtIndex(1); }
+  LayoutNode * upperBoundLayout() { return childAtIndex(2); }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
@@ -73,7 +62,7 @@ public:
     addChildTreeAtIndex(lowerBound, 1, 1);
     addChildTreeAtIndex(upperBound, 2, 2);
   }
-  IntegralLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  IntegralLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:
   IntegralLayoutRef() :
     LayoutReference()

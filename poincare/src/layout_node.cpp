@@ -120,23 +120,13 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right. Delete the layout.
-  LayoutRef(p).removeChild(this, cursor);
-  //WARNING: Do no use "this" afterwards
-}
-
-bool LayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) {
-  /* TODO Remove ?
-  assert(hasChild(oldChild));
-  if (!newChild->hasAncestor(oldChild, false)) {
-    cursor->setPosition(LayoutCursor::Position::Right);
-  }
-  */
-  return true;
+  LayoutRef(p).removeChild(LayoutRef(this), cursor);
+  // WARNING: Do no use "this" afterwards
 }
 
 bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
   if (!force) {
-    LayoutRef(this).replaceChildWithEmpty(l, cursor);
+    LayoutRef(this).replaceChildWithEmpty(LayoutRef(l), cursor);
     return false;
   }
   return true;
@@ -266,9 +256,9 @@ bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
   while (currentAncestor.isDefined()) {
     if (currentAncestor.isMatrix()) {
       if (add) {
-        static_cast<MatrixLayoutNode *>(currentAncestor.node())->addGreySquares();
+        MatrixLayoutRef(currentAncestor.node()).addGreySquares();
       } else {
-        static_cast<MatrixLayoutNode *>(currentAncestor.node())->removeGreySquares();
+        MatrixLayoutRef(currentAncestor.node()).removeGreySquares();
       }
       changedSquares = true;
     }

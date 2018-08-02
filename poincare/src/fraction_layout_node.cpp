@@ -3,9 +3,7 @@
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_engine.h>
 #include <ion/charset.h>
-//#include <string.h>
 #include <escher/metric.h>
-#include <ion/charset.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -97,11 +95,12 @@ void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (cursor->layoutNode() == denominatorLayout()) {
     /* Case: Left of the denominator. Replace the fraction with a horizontal
      * juxtaposition of the numerator and the denominator. */
+    LayoutRef thisRef = LayoutRef(this);
     assert(cursor->position() == LayoutCursor::Position::Left);
     if (numeratorLayout()->isEmpty() && denominatorLayout()->isEmpty()) {
       /* Case: Numerator and denominator are empty. Move the cursor and replace
        * the fraction with an empty layout. */
-      FractionLayoutRef(this).replaceWith(EmptyLayoutRef(), cursor);
+      thisRef.replaceWith(EmptyLayoutRef(), cursor);
       // WARNING: Do no use "this" afterwards
       return;
     }
@@ -110,7 +109,6 @@ void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
      * is right of the numerator. */
     LayoutRef numeratorRef = LayoutRef(numeratorLayout());
     LayoutRef denominatorRef = LayoutRef(denominatorLayout());
-    LayoutRef thisRef = LayoutRef(this);
     thisRef.replaceChild(numeratorRef, EmptyLayoutRef());
     if (thisRef.isAllocationFailure()) {
       return;
@@ -221,7 +219,7 @@ KDPoint FractionLayoutNode::positionOfChild(LayoutNode * child) {
     x = (KDCoordinate)((layoutSize().width() - denominatorLayout()->layoutSize().width())/2);
     y = (KDCoordinate)(numeratorLayout()->layoutSize().height() + 2*k_fractionLineMargin + k_fractionLineHeight);
   } else {
-    assert(false); // Should not happen
+    assert(false);
   }
   return KDPoint(x, y);
 }

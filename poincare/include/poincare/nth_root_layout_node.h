@@ -17,7 +17,7 @@ public:
 
   NthRootLayoutNode() :
     LayoutNode(),
-    m_numberOfChildren(0)
+    m_hasIndex(false)
   {}
 
   // LayoutNode
@@ -28,15 +28,13 @@ public:
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool shouldCollapseSiblingsOnRight() const override { return true; }
-  bool hasUpperLeftIndex() const override { return numberOfChildren() > 1; }
+  bool hasUpperLeftIndex() const override { return m_hasIndex; }
 
   // TreeNode
   size_t size() const override { return sizeof(NthRootLayoutNode); }
-  int numberOfChildren() const override { return m_numberOfChildren; }
+  int numberOfChildren() const override { return m_hasIndex ? 2 : 1; }
 #if TREE_LOG
-  const char * description() const override {
-    return "NthRootLayout";
-  }
+  const char * description() const override { return "NthRootLayout"; }
 #endif
 
 protected:
@@ -53,24 +51,22 @@ private:
   constexpr static KDCoordinate k_radixLineThickness = 1;
   void setNumberOfChildren(int number) {
     assert(number == 1 || number == 2);
-    m_numberOfChildren = number;
+    if (number == 1) {
+      m_hasIndex = false;
+    } else {
+      m_hasIndex = true;
+    }
   }
   KDSize adjustedIndexSize();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * radicandLayout() {
-    assert(numberOfChildren() > 0);
-    return childAtIndex(0);
-  }
-  LayoutNode * indexLayout() {
-    assert(numberOfChildren() == 1 || numberOfChildren() == 2);
-    return numberOfChildren() == 2 ? childAtIndex(1) : nullptr;
-  }
-  int m_numberOfChildren;
+  LayoutNode * radicandLayout() { return childAtIndex(0); }
+  LayoutNode * indexLayout() { return m_hasIndex ? childAtIndex(1) : nullptr; }
+  bool m_hasIndex;
 };
 
 class NthRootLayoutRef : public LayoutReference {
 public:
-  NthRootLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  NthRootLayoutRef(TreeNode * n) : LayoutReference(n) {}
 
   NthRootLayoutRef(LayoutRef radicand) : NthRootLayoutRef() {
     addChildTreeAtIndex(radicand, 0, 0);
@@ -81,11 +77,10 @@ public:
 
   NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {
     addChildTreeAtIndex(radicand, 0, 0);
-    if (!node()->isAllocationFailure()) {
-      static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(1);
-    } else {
+    if (node()->isAllocationFailure()) {
       return;
     }
+    static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(1);
     addChildTreeAtIndex(index, 1, 1);
     if (!node()->isAllocationFailure()) {
       static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);

@@ -17,13 +17,15 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override { return LayoutCursor(); }
-  void deleteBeforeCursor(LayoutCursor * cursor) override { }
+  void deleteBeforeCursor(LayoutCursor * cursor) override {}
+  bool isAllocationFailure() const override { return true; }
 
   // TreeNode
-  size_t size() const override { return sizeof(AllocationFailedLayoutNode); }
-  const char * description() const override { return "Allocation Failed";  }
   int numberOfChildren() const override { return 0; }
-  bool isAllocationFailure() const override { return true; }
+  // size() does not need to be overrided
+#if TREE_LOG
+  const char * description() const override { return "Allocation Failed";  }
+#endif
 
 protected:
   // LayoutNode

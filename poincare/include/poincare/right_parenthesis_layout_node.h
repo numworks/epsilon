@@ -7,8 +7,6 @@
 namespace Poincare {
 
 class RightParenthesisLayoutNode : public ParenthesisLayoutNode {
-  //TODO friend class SequenceLayoutNode;
-  //TODO friend class LayoutReference<RightParenthesisLayoutNode>;
 public:
   using ParenthesisLayoutNode::ParenthesisLayoutNode;
 
@@ -24,9 +22,9 @@ public:
   }
 
   // TreeNode
-  size_t size() const override { return sizeof(RightParenthesisLayoutNode); }
+  // size() does not need to be overrided
 #if TREE_LOG
-  const char * description() const override { return "Right parenthesis"; }
+  const char * description() const override { return "RightParenthesisLayout"; }
 #endif
 
 protected:
@@ -35,7 +33,7 @@ protected:
 
 class RightParenthesisLayoutRef : public LayoutReference {
 public:
-  RightParenthesisLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  RightParenthesisLayoutRef(TreeNode * n) : LayoutReference(n) {}
   RightParenthesisLayoutRef() : LayoutReference() {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<RightParenthesisLayoutNode>();
     m_identifier = node->identifier();

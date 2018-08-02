@@ -283,6 +283,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
 LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   LayoutNode * parentNode = parent();
   assert(parentNode != nullptr);
+  assert(parentNode->isHorizontal());
   int idxInParent = parentNode->indexOfChild(this);
   assert(idxInParent > 0);
   return parentNode->childAtIndex(idxInParent - 1);

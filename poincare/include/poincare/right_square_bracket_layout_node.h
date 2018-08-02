@@ -15,7 +15,7 @@ public:
   bool isRightBracket() const override { return true; }
 
   // TreeNode
-  size_t size() const override { return sizeof(RightSquareBracketLayoutNode); }
+  // size() does not need to be overrided
 #if TREE_LOG
   const char * description() const override { return "RightSquareBracketLayout"; }
 #endif
@@ -26,7 +26,7 @@ protected:
 
 class RightSquareBracketLayoutRef : public LayoutReference {
 public:
-  RightSquareBracketLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  RightSquareBracketLayoutRef(TreeNode * n) : LayoutReference(n) {}
 
   RightSquareBracketLayoutRef() : LayoutReference() {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<RightSquareBracketLayoutNode>();

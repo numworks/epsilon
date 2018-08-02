@@ -47,9 +47,7 @@ public:
     m_numberOfColumns = 0;
   }
 #if TREE_LOG
-  const char * description() const override {
-    return "GridLayout";
-  }
+  const char * description() const override { return "GridLayout"; }
 #endif
 
 protected:

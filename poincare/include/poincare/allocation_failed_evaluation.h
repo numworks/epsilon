@@ -20,7 +20,9 @@ public:
   virtual EvaluationReference<T> transpose() const override { return ComplexReference<T>::Undefined(); }
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailedEvaluationNode); }
+#if TREE_LOG
   const char * description() const override { return "Allocation Failed";  }
+#endif
   bool isAllocationFailure() const override { return true; }
 };
 

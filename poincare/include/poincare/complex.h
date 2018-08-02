@@ -13,7 +13,9 @@ class ComplexNode : public std::complex<T>, public EvaluationNode<T> {
 public:
   // TreeNode
   size_t size() const override { return sizeof(ComplexNode<T>); }
+#if TREE_LOG
   const char * description() const override { return "Evaluation complex";  }
+#endif
   int numberOfChildren() const override { return 0; }
 
   void setComplex(std::complex<T> c);

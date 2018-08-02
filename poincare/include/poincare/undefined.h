@@ -9,7 +9,9 @@ class UndefinedNode : public NumberNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(UndefinedNode); }
+#if TREE_LOG
   const char * description() const override { return "Undefined";  }
+#endif
 
   // Properties
   Type type() const override { return Type::Undefined; }

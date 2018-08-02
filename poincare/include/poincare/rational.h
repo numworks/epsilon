@@ -14,7 +14,9 @@ public:
 
   // TreeNode
   size_t size() const override;
+#if TREE_LOG
   const char * description() const override { return "Rational";  }
+#endif
 
   // Serialization Node
   bool needsParenthesisWithParent(SerializableNode * e) const override;

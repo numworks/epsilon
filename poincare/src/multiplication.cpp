@@ -25,15 +25,15 @@ Expression::Type Multiplication::type() const {
 }
 
 Expression * Multiplication::clone() const {
-  if (numberOfOperands() == 0) {
+  if (numberOfChildren() == 0) {
     return new Multiplication();
   }
-  return new Multiplication(operands(), numberOfOperands(), true);
+  return new Multiplication(operands(), numberOfChildren(), true);
 }
 
 int Multiplication::polynomialDegree(char symbolName) const {
   int degree = 0;
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     int d = operand(i)->polynomialDegree(symbolName);
     if (d < 0) {
       return -1;
@@ -56,7 +56,7 @@ int Multiplication::getPolynomialCoefficients(char symbolName, ExpressionReferen
 
   Expression * intermediateCoefficients[k_maxNumberOfPolynomialCoefficients];
   // Let's note result = a(0)+a(1)*X+a(2)*X^2+a(3)*x^3+..
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     // operand(i) = b(0)+b(1)*X+b(2)*X^2+b(3)*x^3+...
     int degI = operand(i)->privateGetPolynomialCoefficients(symbolName, intermediateCoefficients);
     assert(degI <= k_maxPolynomialDegree);
@@ -97,7 +97,7 @@ int Multiplication::writeTextInBuffer(char * buffer, int bufferSize, Preferences
 
 Expression::Sign Multiplication::sign() const {
   int sign = 1;
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     sign *= (int)operand(i)->sign();
   }
   return (Sign)sign;
@@ -105,7 +105,7 @@ Expression::Sign Multiplication::sign() const {
 
 Expression * Multiplication::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == Sign::Positive);
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     if (operand(i)->sign() == Sign::Negative) {
       editableOperand(i)->setSign(s, context, angleUnit);
     }
@@ -152,8 +152,8 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
 }
 
 bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Expression * e2) {
-  int numberOfNonRationalFactors1 = e1->operand(0)->type() == Type::Rational ? e1->numberOfOperands()-1 : e1->numberOfOperands();
-  int numberOfNonRationalFactors2 = e2->operand(0)->type() == Type::Rational ? e2->numberOfOperands()-1 : e2->numberOfOperands();
+  int numberOfNonRationalFactors1 = e1->operand(0)->type() == Type::Rational ? e1->numberOfChildren()-1 : e1->numberOfChildren();
+  int numberOfNonRationalFactors2 = e2->operand(0)->type() == Type::Rational ? e2->numberOfChildren()-1 : e2->numberOfChildren();
   if (numberOfNonRationalFactors1 != numberOfNonRationalFactors2) {
     return false;
   }
@@ -188,7 +188,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
   mergeMultiplicationOperands();
 
   /* Step 2: If any of the operand is zero, the multiplication result is zero */
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     const Expression * o = operand(i);
     if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
       return replaceWith(RationalReference(0), true);
@@ -205,7 +205,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
   /* All operands have been simplified so if any operand contains a matrix, it
    * is at the root node of the operand. Moreover, thanks to the simplification
    * order, all matrix operands (if any) are the last operands. */
-  Expression * lastOperand = editableOperand(numberOfOperands()-1);
+  Expression * lastOperand = editableOperand(numberOfChildren()-1);
   if (lastOperand->type() == Type::Matrix) {
     Matrix * resultMatrix = static_cast<Matrix *>(lastOperand);
     // Use the last matrix operand as the final matrix
@@ -213,8 +213,8 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
     m = resultMatrix->numberOfColumns();
     /* Scan accross the multiplication operands to find any other matrix:
      * (the last operand is the result matrix so we start at
-     * numberOfOperands()-2)*/
-    int k = numberOfOperands()-2;
+     * numberOfChildren()-2)*/
+    int k = numberOfChildren()-2;
     while (k >= 0 && operand(k)->type() == Type::Matrix) {
       Matrix * currentMatrix = static_cast<Matrix *>(editableOperand(k));
       int on = currentMatrix->numberOfRows();
@@ -276,7 +276,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
   int i = 0;
-  while (i < numberOfOperands()-1) {
+  while (i < numberOfChildren()-1) {
     Expression * oi = editableOperand(i);
     Expression * oi1 = editableOperand(i+1);
     if (TermsHaveIdenticalBase(oi, oi1)) {
@@ -303,13 +303,13 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
    *opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     Expression * o1 = editableOperand(i);
     if (Base(o1)->type() == Type::Sine && TermHasRationalExponent(o1)) {
       const Expression * x = Base(o1)->operand(0);
       /* Thanks to the SimplificationOrder, Cosine-base factors are after
        * Sine-base factors */
-      for (int j = i+1; j < numberOfOperands(); j++) {
+      for (int j = i+1; j < numberOfChildren(); j++) {
         Expression * o2 = editableOperand(j);
         if (Base(o2)->type() == Type::Cosine && TermHasRationalExponent(o2) && Base(o2)->operand(0)->isIdenticalTo(x)) {
           factorizeSineAndCosine(o1, o2, context, angleUnit);
@@ -333,7 +333,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
    * Last, we remove the only rational operand if it is one and not the only
    * operand. */
   i = 1;
-  while (i < numberOfOperands()) {
+  while (i < numberOfChildren()) {
     Expression * o = editableOperand(i);
     if (o->type() == Type::Rational && static_cast<Rational *>(o)->isOne()) {
       removeOperand(o, true);
@@ -353,7 +353,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
     }
     i++;
   }
-  if (operand(0)->type() == Type::Rational && static_cast<Rational *>(editableOperand(0))->isOne() && numberOfOperands() > 1) {
+  if (operand(0)->type() == Type::Rational && static_cast<Rational *>(editableOperand(0))->isOne() && numberOfChildren() > 1) {
     removeOperand(editableOperand(0), true);
   }
 
@@ -365,7 +365,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
    * Note: This step must be done after Step 4, otherwise we wouldn't be able to
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b). */
   if (shouldExpand && parent()->type() != Type::Multiplication) {
-    for (int i=0; i<numberOfOperands(); i++) {
+    for (int i=0; i<numberOfChildren(); i++) {
       if (operand(i)->type() == Type::Addition) {
         return distributeOnOperandAtIndex(i, context, angleUnit);
       }
@@ -381,7 +381,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
 void Multiplication::mergeMultiplicationOperands() {
   // Multiplication is associative: a*(b*c)->a*b*c
   int i = 0;
-  int initialNumberOfOperands = numberOfOperands();
+  int initialNumberOfOperands = numberOfChildren();
   while (i < initialNumberOfOperands) {
     Expression * o = editableOperand(i);
     if (o->type() == Type::Multiplication) {
@@ -509,7 +509,7 @@ Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context
   // We avoid deleting and creating a new addition
   Addition * a = static_cast<Addition *>(editableOperand(i));
   removeOperand(a, false);
-  for (int j = 0; j < a->numberOfOperands(); j++) {
+  for (int j = 0; j < a->numberOfChildren(); j++) {
     Multiplication * m = static_cast<Multiplication *>(clone());
     Expression * termJ = a->editableOperand(j);
     a->replaceOperand(termJ, m, false);
@@ -578,7 +578,7 @@ Expression * Multiplication::shallowBeautify(Context & context, Preferences::Ang
   assert(e == this);
 
   // Step 3: Add Parenthesis if needed
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     const Expression * o = operand(i);
     if (o->type() == Type::Addition ) {
       Parenthesis * p = new Parenthesis(o, false);
@@ -587,7 +587,7 @@ Expression * Multiplication::shallowBeautify(Context & context, Preferences::Ang
   }
 
   // Step 4: Create a Division if needed
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     if (!(operand(i)->type() == Type::Power && operand(i)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(i)->operand(1))->isMinusOne())) {
       continue;
     }
@@ -622,7 +622,7 @@ Expression * Multiplication::cloneDenominator(Context & context, Preferences::An
     result = static_cast<Power *>(e)->cloneDenominator(context, angleUnit);
   } else {
     assert(e->type() == Type::Multiplication);
-    for (int i = 0; i < e->numberOfOperands(); i++) {
+    for (int i = 0; i < e->numberOfChildren(); i++) {
       // a*b^(-1)*... -> a*.../b
       if (e->operand(i)->type() == Type::Power && e->operand(i)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(i)->operand(1))->isMinusOne()) {
         Power * p = static_cast<Power *>(e->editableOperand(i));
@@ -649,7 +649,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, Preferences::
     }
   }
   int i = 0;
-  while (i < numberOfOperands()) {
+  while (i < numberOfChildren()) {
     if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() == Sign::Negative) {
       Expression * e = editableOperand(i);
       e->editableOperand(1)->setSign(Sign::Positive, context, angleUnit);
@@ -660,7 +660,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, Preferences::
       i++;
     }
   }
-  if (m->numberOfOperands() == 0) {
+  if (m->numberOfChildren() == 0) {
     delete m;
     return this;
   }
@@ -674,7 +674,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, Preferences::
 
 void Multiplication::addMissingFactors(Expression * factor, Context & context, Preferences::AngleUnit angleUnit) {
   if (factor->type() == Type::Multiplication) {
-    for (int j = 0; j < factor->numberOfOperands(); j++) {
+    for (int j = 0; j < factor->numberOfChildren(); j++) {
       addMissingFactors(factor->editableOperand(j), context, angleUnit);
     }
     return;
@@ -682,7 +682,7 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, P
   /* Special case when factor is a Rational: if 'this' has already a rational
    * operand, we replace it by its LCM with factor ; otherwise, we simply add
    * factor as an operand. */
-  if (numberOfOperands() > 0 && operand(0)->type() == Type::Rational && factor->type() == Type::Rational) {
+  if (numberOfChildren() > 0 && operand(0)->type() == Type::Rational && factor->type() == Type::Rational) {
     Rational * f = static_cast<Rational *>(factor);
     Rational * o = static_cast<Rational *>(editableOperand(0));
     assert(f->denominator().isOne());
@@ -694,7 +694,7 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, P
   if (factor->type() != Type::Rational) {
     /* If factor is not a rational, we merge it with the operand of identical
      * base if any. Otherwise, we add it as an new operand. */
-    for (int i = 0; i < numberOfOperands(); i++) {
+    for (int i = 0; i < numberOfChildren(); i++) {
       if (TermsHaveIdenticalBase(operand(i), factor)) {
         Expression * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
         Reduce((Expression **)&sub, context, angleUnit);

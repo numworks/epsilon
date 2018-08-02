@@ -11,7 +11,7 @@ MatrixData::MatrixData(ListData * listData, bool clone) :
   m_numberOfColumns(0)
 {
   assert(listData != nullptr);
-  m_numberOfColumns = listData->numberOfOperands();
+  m_numberOfColumns = listData->numberOfChildren();
   m_operands = new const Expression *[m_numberOfColumns];
   for (int i = 0; i < m_numberOfColumns; i++) {
     if (clone) {
@@ -33,7 +33,7 @@ MatrixData::~MatrixData() {
 
 void MatrixData::pushListData(ListData * listData, bool clone) {
   const Expression ** newOperands = new const Expression * [(m_numberOfRows+1)*m_numberOfColumns];
-  assert(listData->numberOfOperands() == m_numberOfColumns);
+  assert(listData->numberOfChildren() == m_numberOfColumns);
   for (int i = 0; i < m_numberOfRows*m_numberOfColumns; i++) {
     newOperands[i] = m_operands[i];
   }

@@ -42,20 +42,20 @@ StaticHierarchy<T>::~StaticHierarchy() {
 }
 
 template<int T>
-void StaticHierarchy<T>::setArgument(ListData * listData, int numberOfOperands, bool clone) {
-  build(listData->operands(), listData->numberOfOperands(), clone);
+void StaticHierarchy<T>::setArgument(ListData * listData, int numberOfChildren, bool clone) {
+  build(listData->operands(), listData->numberOfChildren(), clone);
 }
 
 template<int T>
-bool StaticHierarchy<T>::hasValidNumberOfOperands(int numberOfOperands) const {
-  return numberOfOperands == T;
+bool StaticHierarchy<T>::hasValidNumberOfOperands(int numberOfChildren) const {
+  return numberOfChildren == T;
 }
 
 template<int T>
-void StaticHierarchy<T>::build(const Expression * const * operands, int numberOfOperands, bool cloneOperands) {
+void StaticHierarchy<T>::build(const Expression * const * operands, int numberOfChildren, bool cloneOperands) {
   assert(operands != nullptr);
-  assert(numberOfOperands <= T);
-  for (int i=0; i < numberOfOperands; i++) {
+  assert(numberOfChildren <= T);
+  for (int i=0; i < numberOfChildren; i++) {
     assert(operands[i] != nullptr);
     if (cloneOperands) {
       m_operands[i] = operands[i]->clone();
@@ -68,9 +68,9 @@ void StaticHierarchy<T>::build(const Expression * const * operands, int numberOf
 
 template<int T>
 int StaticHierarchy<T>::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
-  for (int i = 0; i < this->numberOfOperands(); i++) {
+  for (int i = 0; i < this->numberOfChildren(); i++) {
     // The NULL node is the least node type.
-    if (e->numberOfOperands() <= i) {
+    if (e->numberOfChildren() <= i) {
       return 1;
     }
     if (SimplificationOrder(this->operand(i), e->operand(i), canBeInterrupted) != 0) {
@@ -78,7 +78,7 @@ int StaticHierarchy<T>::simplificationOrderSameType(const Expression * e, bool c
     }
   }
   // The NULL node is the least node type.
-  if (e->numberOfOperands() > numberOfOperands()) {
+  if (e->numberOfChildren() > numberOfChildren()) {
     return -1;
   }
   return 0;

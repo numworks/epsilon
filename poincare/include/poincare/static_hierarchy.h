@@ -20,11 +20,11 @@ public:
   StaticHierarchy& operator=(StaticHierarchy && other) = delete;
 
   virtual void setArgument(ListData * listData, int numberOfEntries, bool clone);
-  int numberOfOperands() const override { return T; }
+  int numberOfChildren() const override { return T; }
   const Expression * const * operands() const override { return m_operands; }
-  virtual bool hasValidNumberOfOperands(int numberOfOperands) const;
+  virtual bool hasValidNumberOfOperands(int numberOfChildren) const;
 protected:
-  void build(const Expression * const * operands, int numberOfOperands, bool cloneOperands);
+  void build(const Expression * const * operands, int numberOfChildren, bool cloneOperands);
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   const Expression * m_operands[T];
 };

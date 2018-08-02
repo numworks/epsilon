@@ -9,17 +9,17 @@ namespace Poincare {
 DynamicHierarchy::DynamicHierarchy() :
   Expression(),
   m_operands(nullptr),
-  m_numberOfOperands(0)
+  m_numberOfChildren(0)
 {
 }
 
-DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numberOfOperands, bool cloneOperands) :
+DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numberOfChildren, bool cloneOperands) :
   Expression(),
-  m_numberOfOperands(numberOfOperands)
+  m_numberOfChildren(numberOfChildren)
 {
   assert(operands != nullptr);
-  m_operands = new const Expression * [numberOfOperands];
-  for (int i=0; i<numberOfOperands; i++) {
+  m_operands = new const Expression * [numberOfChildren];
+  for (int i=0; i<numberOfChildren; i++) {
     assert(operands[i] != nullptr);
     if (cloneOperands) {
       m_operands[i] = operands[i]->clone();
@@ -32,7 +32,7 @@ DynamicHierarchy::DynamicHierarchy(const Expression * const * operands, int numb
 
 DynamicHierarchy::~DynamicHierarchy() {
   if (m_operands != nullptr) {
-    for (int i = 0; i < m_numberOfOperands; i++) {
+    for (int i = 0; i < m_numberOfChildren; i++) {
       if (m_operands[i] != nullptr) {
         delete m_operands[i];
       }
@@ -41,37 +41,37 @@ DynamicHierarchy::~DynamicHierarchy() {
   delete[] m_operands;
 }
 
-void DynamicHierarchy::addOperands(const Expression * const * operands, int numberOfOperands) {
-  assert(numberOfOperands > 0);
-  const Expression ** newOperands = new const Expression * [m_numberOfOperands+numberOfOperands];
-  for (int i=0; i<m_numberOfOperands; i++) {
+void DynamicHierarchy::addOperands(const Expression * const * operands, int numberOfChildren) {
+  assert(numberOfChildren > 0);
+  const Expression ** newOperands = new const Expression * [m_numberOfChildren+numberOfChildren];
+  for (int i=0; i<m_numberOfChildren; i++) {
     newOperands[i] = m_operands[i];
   }
-  for (int i=0; i<numberOfOperands; i++) {
+  for (int i=0; i<numberOfChildren; i++) {
     const_cast<Expression *>(operands[i])->setParent(this);
-    newOperands[i+m_numberOfOperands] = operands[i];
+    newOperands[i+m_numberOfChildren] = operands[i];
   }
   delete[] m_operands;
   m_operands = newOperands;
-  m_numberOfOperands += numberOfOperands;
+  m_numberOfChildren += numberOfChildren;
 }
 
 void DynamicHierarchy::mergeOperands(DynamicHierarchy * d) {
   removeOperand(d, false);
-  addOperands(d->operands(), d->numberOfOperands());
+  addOperands(d->operands(), d->numberOfChildren());
   d->detachOperands();
   delete d;
 }
 
 void DynamicHierarchy::addOperand(Expression * operand) {
-  addOperandAtIndex(operand, m_numberOfOperands);
+  addOperandAtIndex(operand, m_numberOfChildren);
 }
 
 void DynamicHierarchy::addOperandAtIndex(Expression * operand, int index) {
-  assert(index >= 0 && index <= m_numberOfOperands);
-  const Expression ** newOperands = new const Expression * [m_numberOfOperands+1];
+  assert(index >= 0 && index <= m_numberOfChildren);
+  const Expression ** newOperands = new const Expression * [m_numberOfChildren+1];
   int j = 0;
-  for (int i=0; i<=m_numberOfOperands; i++) {
+  for (int i=0; i<=m_numberOfChildren; i++) {
     if (i == index) {
       operand->setParent(this);
       newOperands[i] = operand;
@@ -81,11 +81,11 @@ void DynamicHierarchy::addOperandAtIndex(Expression * operand, int index) {
   }
   delete[] m_operands;
   m_operands = newOperands;
-  m_numberOfOperands += 1;
+  m_numberOfChildren += 1;
 }
 
 void DynamicHierarchy::removeOperand(const Expression * e, bool deleteAfterRemoval) {
-  for (int i=0; i<numberOfOperands(); i++) {
+  for (int i=0; i<numberOfChildren(); i++) {
     if (operand(i) == e) {
       removeOperandAtIndex(i, deleteAfterRemoval);
       break;
@@ -97,9 +97,9 @@ void DynamicHierarchy::removeOperand(const Expression * e, bool deleteAfterRemov
 
 
 void DynamicHierarchy::sortOperands(ExpressionOrder order, bool canBeInterrupted) {
-  for (int i = numberOfOperands()-1; i > 0; i--) {
+  for (int i = numberOfChildren()-1; i > 0; i--) {
     bool isSorted = true;
-    for (int j = 0; j < numberOfOperands()-1; j++) {
+    for (int j = 0; j < numberOfChildren()-1; j++) {
       /* Warning: Matrix operations are not always commutative (ie,
        * multiplication) so we never swap 2 matrices. */
 #if MATRIX_EXACT_REDUCING
@@ -118,7 +118,7 @@ void DynamicHierarchy::sortOperands(ExpressionOrder order, bool canBeInterrupted
 }
 
 Expression * DynamicHierarchy::squashUnaryHierarchy() {
-  if (numberOfOperands() == 1) {
+  if (numberOfChildren() == 1) {
     assert(parent() != nullptr);
     Expression * o = editableOperand(0);
     replaceWith(o, true);
@@ -135,15 +135,15 @@ void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
   } else {
     const_cast<Expression *>(m_operands[i])->setParent(nullptr);
   }
-  m_numberOfOperands--;
-  for (int j=i; j<m_numberOfOperands; j++) {
+  m_numberOfChildren--;
+  for (int j=i; j<m_numberOfChildren; j++) {
     m_operands[j] = m_operands[j+1];
   }
 }
 
 int DynamicHierarchy::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
-  int m = this->numberOfOperands();
-  int n = e->numberOfOperands();
+  int m = this->numberOfChildren();
+  int n = e->numberOfChildren();
   for (int i = 1; i <= m; i++) {
     // The NULL node is the least node type.
     if (n < i) {
@@ -162,7 +162,7 @@ int DynamicHierarchy::simplificationOrderSameType(const ExpressionNode * e, bool
 }
 
 int DynamicHierarchy::simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const {
-  int m = numberOfOperands();
+  int m = numberOfChildren();
   if (m == 0) {
     return -1;
   }

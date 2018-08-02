@@ -17,15 +17,15 @@ Expression::Type Addition::type() const {
 }
 
 Expression * Addition::clone() const {
-  if (numberOfOperands() == 0) {
+  if (numberOfChildren() == 0) {
     return new Addition();
   }
-  return new Addition(operands(), numberOfOperands(), true);
+  return new Addition(operands(), numberOfChildren(), true);
 }
 
 int Addition::polynomialDegree(char symbolName) const {
   int degree = 0;
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     int d = operand(i)->polynomialDegree(symbolName);
     if (d < 0) {
       return -1;
@@ -44,7 +44,7 @@ int Addition::getPolynomialCoefficients(char symbolName, ExpressionReference coe
     coefficients[k] = new Addition();
   }
   Expression * intermediateCoefficients[k_maxNumberOfPolynomialCoefficients];
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     int d = operand(i)->privateGetPolynomialCoefficients(symbolName, intermediateCoefficients);
     assert(d < k_maxNumberOfPolynomialCoefficients);
     for (int j = 0; j < d+1; j++) {
@@ -71,7 +71,7 @@ ExpressionReference Addition::shallowReduce(Context& context, Preferences::Angle
   /* Step 1: Addition is associative, so let's start by merging children which
    * also are additions themselves. */
   int i = 0;
-  int initialNumberOfOperands = numberOfOperands();
+  int initialNumberOfOperands = numberOfChildren();
   while (i < initialNumberOfOperands) {
     Expression * o = editableOperand(i);
     if (o->type() == Type::Addition) {
@@ -91,7 +91,7 @@ ExpressionReference Addition::shallowReduce(Context& context, Preferences::Angle
   /* All operands have been simplified so if any operand contains a matrix, it
    * is at the root node of the operand. Moreover, thanks to the simplification
    * order, all matrix operands (if any) are the last operands. */
-  Expression * lastOperand = editableOperand(numberOfOperands()-1);
+  Expression * lastOperand = editableOperand(numberOfChildren()-1);
   if (lastOperand->type() == Type::Matrix) {
     // Create in-place the matrix of addition M (in place of the last operand)
     Matrix * resultMatrix = static_cast<Matrix *>(lastOperand);
@@ -100,7 +100,7 @@ ExpressionReference Addition::shallowReduce(Context& context, Preferences::Angle
     removeOperand(resultMatrix, false);
     /* Scan (starting at the end) accross the addition operands to find any
      * other matrix */
-    int i = numberOfOperands()-1;
+    int i = numberOfChildren()-1;
     while (i >= 0 && operand(i)->type() == Type::Matrix) {
       Matrix * currentMatrix = static_cast<Matrix *>(editableOperand(i));
       int on = currentMatrix->numberOfRows();
@@ -136,7 +136,7 @@ ExpressionReference Addition::shallowReduce(Context& context, Preferences::Angle
   /* Step 3: Factorize like terms. Thanks to the simplification order, those are
    * next to each other at this point. */
   i = 0;
-  while (i < numberOfOperands()-1) {
+  while (i < numberOfChildren()-1) {
     Expression * o1 = editableOperand(i);
     Expression * o2 = editableOperand(i+1);
     if (o1->type() == Type::Rational && o2->type() == Type::Rational) {
@@ -159,9 +159,9 @@ ExpressionReference Addition::shallowReduce(Context& context, Preferences::Angle
    * pi+(-1)*pi. We don't remove the last zero if it's the only operand left
    * though. */
   i = 0;
-  while (i < numberOfOperands()) {
+  while (i < numberOfChildren()) {
     Expression * o = editableOperand(i);
-    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isZero() && numberOfOperands() > 1) {
+    if (o->type() == Type::Rational && static_cast<Rational *>(o)->isZero() && numberOfChildren() > 1) {
       removeOperand(o, true);
       continue;
     }
@@ -185,7 +185,7 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, Preferenc
 
   // Step 1: We want to compute the common denominator, b*d
   Multiplication * commonDenominator = new Multiplication();
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     Expression * denominator = operand(i)->cloneDenominator(context, angleUnit);
     if (denominator) {
       // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
@@ -193,7 +193,7 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, Preferenc
       delete denominator;
     }
   }
-  if (commonDenominator->numberOfOperands() == 0) {
+  if (commonDenominator->numberOfChildren() == 0) {
     delete commonDenominator;
     // If commonDenominator is empty this means that no operand was a fraction.
     return this;
@@ -202,7 +202,7 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, Preferenc
   // Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
   // want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d
   Addition * numerator = new Addition();
-  for (int i=0; i < numberOfOperands(); i++) {
+  for (int i=0; i < numberOfChildren(); i++) {
     Multiplication * m = new Multiplication(operand(i), commonDenominator, true);
     numerator->addOperand(m);
     m->privateShallowReduce(context, angleUnit, true, false);
@@ -265,7 +265,7 @@ static inline int NumberOfNonRationalFactors(const Expression * e) {
   if (e->type() != Expression::Type::Multiplication) {
     return 1; // Or (e->type() != Type::Rational);
   }
-  int result = e->numberOfOperands();
+  int result = e->numberOfChildren();
   if (e->operand(0)->type() == Expression::Type::Rational) {
     result--;
   }
@@ -277,7 +277,7 @@ static inline const Expression * FirstNonRationalFactor(const Expression * e) {
     return e;
   }
   if (e->operand(0)->type() == Expression::Type::Rational) {
-    return e->numberOfOperands() > 1 ? e->operand(1) : nullptr;
+    return e->numberOfChildren() > 1 ? e->operand(1) : nullptr;
   }
   return e->operand(0);
 }
@@ -312,7 +312,7 @@ Expression * Addition::shallowBeautify(Context & context, Preferences::AngleUnit
    * Last but not least, special care must be taken when iterating over operands
    * since we may remove some during the process. */
 
-  for (int i=0; i<numberOfOperands(); i++) {
+  for (int i=0; i<numberOfChildren(); i++) {
     if (operand(i)->type() != Type::Multiplication || operand(i)->operand(0)->type() != Type::Rational || operand(i)->operand(0)->sign() != Sign::Negative) {
       // Ignore terms which are not like "(-r)*a"
       continue;

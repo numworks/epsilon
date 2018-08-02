@@ -50,7 +50,7 @@ void Expression::ReplaceSymbolWithExpression(Expression ** expressionAddress, ch
 }
 
 Expression * Expression::replaceSymbolWithExpression(char symbol, Expression * expression) {
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     editableOperand(i)->replaceSymbolWithExpression(symbol, expression);
   }
   return this;
@@ -80,7 +80,7 @@ bool Expression::shouldStopProcessing() {
 
 const Expression * Expression::operand(int i) const {
   assert(i >= 0);
-  assert(i < numberOfOperands());
+  assert(i < numberOfChildren());
   assert(operands()[i]->parent() == nullptr || operands()[i]->parent() == this);
   return operands()[i];
 }
@@ -98,7 +98,7 @@ void Expression::replaceOperand(const Expression * oldOperand, Expression * newO
     newOperand->parent()->detachOperand(newOperand);
   }
   Expression ** op = const_cast<Expression **>(operands());
-  for (int i=0; i<numberOfOperands(); i++) {
+  for (int i=0; i<numberOfChildren(); i++) {
     if (op[i] == oldOperand) {
       if (oldOperand != nullptr && oldOperand->parent() == this) {
         const_cast<Expression *>(oldOperand)->setParent(nullptr);
@@ -117,7 +117,7 @@ void Expression::replaceOperand(const Expression * oldOperand, Expression * newO
 
 void Expression::detachOperand(const Expression * e) {
   Expression ** op = const_cast<Expression **>(operands());
-  for (int i=0; i<numberOfOperands(); i++) {
+  for (int i=0; i<numberOfChildren(); i++) {
     if (op[i] == e) {
       detachOperandAtIndex(i);
     }
@@ -125,7 +125,7 @@ void Expression::detachOperand(const Expression * e) {
 }
 
 void Expression::detachOperands() {
-  for (int i=0; i<numberOfOperands(); i++) {
+  for (int i=0; i<numberOfChildren(); i++) {
     detachOperandAtIndex(i);
   }
 }
@@ -140,8 +140,8 @@ void Expression::detachOperandAtIndex(int i) {
 }
 
 void Expression::swapOperands(int i, int j) {
-  assert(i >= 0 && i < numberOfOperands());
-  assert(j >= 0 && j < numberOfOperands());
+  assert(i >= 0 && i < numberOfChildren());
+  assert(j >= 0 && j < numberOfChildren());
   Expression ** op = const_cast<Expression **>(operands());
   Expression * temp = op[i];
   op[i] = op[j];
@@ -168,7 +168,7 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context) cons
   if (test(this, context)) {
     return true;
   }
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     if (operand(i)->recursivelyMatches(test, context)) {
       return true;
     }
@@ -187,7 +187,7 @@ float Expression::characteristicXRange(Context & context, Preferences::AngleUnit
    * one and the other are x-independant. We keep the biggest interesting range
    * among the operand interesting ranges. */
   float range = 0.0f;
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     float opRange = operand(i)->characteristicXRange(context, angleUnit);
     if (std::isnan(opRange)) {
       return NAN;
@@ -203,7 +203,7 @@ bool Expression::IsMatrix(const Expression * e, Context & context) {
 }
 
 int Expression::polynomialDegree(char symbolName) const {
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     if (operand(i)->polynomialDegree(symbolName) != 0) {
       return -1;
     }
@@ -213,7 +213,7 @@ int Expression::polynomialDegree(char symbolName) const {
 
 int Expression::getVariables(isVariableTest isVariable, char * variables) const {
  int numberOfVariables = 0;
- for (int i = 0; i < numberOfOperands(); i++) {
+ for (int i = 0; i < numberOfChildren(); i++) {
    int n = operand(i)->getVariables(isVariable, variables);
    if (n < 0) {
      return -1;
@@ -386,14 +386,14 @@ void Expression::Reduce(Expression ** expressionAddress, Context & context, Pref
 
 Expression * Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
   assert(parent() != nullptr);
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     editableOperand(i)->deepReduce(context, angleUnit);
   }
   return shallowReduce(context, angleUnit);
 }
 
 Expression * Expression::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  for (int i = 0; i < numberOfOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     if (editableOperand(i)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {
       return replaceWith(new Undefined(), true);
     }
@@ -404,7 +404,7 @@ Expression * Expression::shallowReduce(Context & context, Preferences::AngleUnit
 Expression * Expression::deepBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   assert(parent() != nullptr);
   Expression * e = shallowBeautify(context, angleUnit);
-  for (int i = 0; i < e->numberOfOperands(); i++) {
+  for (int i = 0; i < e->numberOfChildren(); i++) {
     e->editableOperand(i)->deepBeautify(context, angleUnit);
   }
   return e;
@@ -423,7 +423,7 @@ template<typename T> T Expression::approximateToScalar(Context& context, Prefere
   Evaluation<T> * evaluation = privateApproximate(T(), context, angleUnit);
   T result = evaluation->toScalar();
   /*if (evaluation->type() == Type::Matrix) {
-    if (numberOfOperands() == 1) {
+    if (numberOfChildren() == 1) {
       result = static_cast<const Complex<T> *>(operand(0))->toScalar();
     }
   }*/

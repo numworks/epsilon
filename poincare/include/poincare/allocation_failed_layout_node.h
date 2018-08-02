@@ -29,8 +29,8 @@ public:
 
 protected:
   // LayoutNode
-  void computeSize() override { m_sized = true; }
-  void computeBaseline() override { m_baselined = true; }
+  KDSize computeSize() override { return KDSizeZero; }
+  KDCoordinate computeBaseline() override { return 0; }
   KDPoint positionOfChild(LayoutNode * child) override {
     assert(false);
     return KDPointZero;

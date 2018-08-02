@@ -133,8 +133,8 @@ protected:
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
 
   // Sizing and positioning
-  virtual void computeSize() = 0;
-  virtual void computeBaseline() = 0;
+  virtual KDSize computeSize() = 0;
+  virtual KDCoordinate computeBaseline() = 0;
   virtual KDPoint positionOfChild(LayoutNode * child) = 0;
 
   /* m_baseline is the signed vertical distance from the top of the layout to

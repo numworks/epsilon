@@ -78,18 +78,16 @@ int BinomialCoefficientLayoutNode::writeTextInBuffer(char * buffer, int bufferSi
   return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "binomial");
 }
 
-void BinomialCoefficientLayoutNode::computeSize() {
+KDSize BinomialCoefficientLayoutNode::computeSize() {
   KDSize coefficientsSize = KDSize(
       max(nLayout()->layoutSize().width(), kLayout()->layoutSize().width()),
       knHeight());
   KDCoordinate width = coefficientsSize.width() + 2*ParenthesisLayoutNode::ParenthesisWidth();
-  m_frame.setSize(KDSize(width, coefficientsSize.height()));
-  m_sized = true;
+  return KDSize(width, coefficientsSize.height());
 }
 
-void BinomialCoefficientLayoutNode::computeBaseline() {
-  m_baseline = (knHeight()+1)/2;
-  m_baselined = true;
+KDCoordinate BinomialCoefficientLayoutNode::computeBaseline() {
+  return (knHeight()+1)/2;
 }
 
 KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child) {

@@ -37,8 +37,8 @@ public:
 
 protected:
   // LayoutNode
-  void computeSize() override;
-  void computeBaseline() override;
+  KDSize computeSize() override;
+  KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
   constexpr static KDText::FontSize k_fontSize = KDText::FontSize::Large;

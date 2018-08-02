@@ -180,16 +180,12 @@ int GridLayoutNode::indexAtRowColumn(int rowIndex, int columnIndex) const {
   return rowIndex * m_numberOfColumns + columnIndex;
 }
 
-void GridLayoutNode::computeSize() {
-  assert(!m_sized);
-  m_frame.setSize(gridSize());
-  m_sized = true;
+KDSize GridLayoutNode::computeSize() {
+  return gridSize();
 }
 
-void GridLayoutNode::computeBaseline() {
-  assert(!m_baselined);
-  m_baseline = (height()+1)/2;
-  m_baselined = true;
+KDCoordinate GridLayoutNode::computeBaseline() {
+  return (height()+1)/2;
 }
 
 KDPoint GridLayoutNode::positionOfChild(LayoutNode * l) {

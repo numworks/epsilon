@@ -40,8 +40,8 @@ public:
 
 protected:
   // LayoutNode
-  void computeSize() override;
-  void computeBaseline() override;
+  KDSize computeSize() override;
+  KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
   constexpr static KDCoordinate k_fractionLineMargin = 2;

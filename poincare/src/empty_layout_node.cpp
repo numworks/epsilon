@@ -41,17 +41,13 @@ int EmptyLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preference
   return 0;
 }
 
-void EmptyLayoutNode::computeSize() {
-  assert(!m_sized);
+KDSize EmptyLayoutNode::computeSize() {
   KDCoordinate sizeWidth = m_isVisible ? width() + 2*(m_margins ? k_marginWidth : 0) : 0;
-  m_frame.setSize(KDSize(sizeWidth, height() + 2*(m_margins ? k_marginHeight : 0)));
-  m_sized = true;
+  return KDSize(sizeWidth, height() + 2*(m_margins ? k_marginHeight : 0));
 }
 
-void EmptyLayoutNode::computeBaseline() {
-  assert(!m_baselined);
-  m_baseline = (m_margins ? k_marginHeight : 0) + height()/2;
-  m_baselined = true;
+KDCoordinate EmptyLayoutNode::computeBaseline() {
+  return (m_margins ? k_marginHeight : 0) + height()/2;
 }
 
 void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {

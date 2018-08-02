@@ -19,7 +19,6 @@ class GridLayoutNode : public LayoutNode {
 public:
   GridLayoutNode() :
     LayoutNode(),
-    m_numberOfChildren(0),
     m_numberOfRows(0),
     m_numberOfColumns(0)
   {}
@@ -42,20 +41,8 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(GridLayoutNode); }
-  int numberOfChildren() const override { return m_numberOfChildren; }
-  void incrementNumberOfChildren(int increment = 1) override {
-    assert(increment >= 0);
-    m_numberOfChildren += increment;
-  }
-  void decrementNumberOfChildren(int decrement = 1) override {
-    m_numberOfChildren -= decrement;
-    if (m_numberOfChildren < 0) {
-      m_numberOfChildren = 0;
-    }
-  }
-
+  int numberOfChildren() const override { return m_numberOfRows * m_numberOfColumns; }
   void eraseNumberOfChildren() override {
-    m_numberOfChildren = 0;
     m_numberOfRows = 0;
     m_numberOfColumns = 0;
   }
@@ -78,7 +65,6 @@ protected:
   int rowAtChildIndex(int index) const;
   int columnAtChildIndex(int index) const;
   int indexAtRowColumn(int rowIndex, int columnIndex) const;
-  int m_numberOfChildren;
   int m_numberOfRows;
   int m_numberOfColumns;
 

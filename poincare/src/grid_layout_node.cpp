@@ -111,15 +111,18 @@ void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
 void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
   LayoutRef thisRef = LayoutRef(this);
   int previousNumberOfChildren = numberOfChildren();
-  m_numberOfColumns++;
   int rowsCount = m_numberOfRows;
+  int futureColumnsCount = m_numberOfColumns + 1;
   for (int i = 0; i < rowsCount; i++) {
     thisRef.addChildAtIndex(
         EmptyLayoutRef(color),
-        i*m_numberOfColumns + m_numberOfColumns-1,
+        i*futureColumnsCount + futureColumnsCount-1,
         previousNumberOfChildren + i,
         nullptr);
     // WARNING: Do not access "this" afterwards
+  }
+  if (!thisRef.isAllocationFailure()) {
+    m_numberOfColumns++;
   }
 }
 

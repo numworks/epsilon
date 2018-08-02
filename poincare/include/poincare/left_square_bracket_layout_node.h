@@ -15,7 +15,7 @@ public:
   bool isLeftBracket() const override { return true; }
 
   // TreeNode
-  // size() does not need to be overrided
+  size_t size() const override { return sizeof(LeftSquareBracketLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "LeftSquareBracketLayout"; }
 #endif

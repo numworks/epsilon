@@ -15,7 +15,7 @@ public:
   bool isRightBracket() const override { return true; }
 
   // TreeNode
-  // size() does not need to be overrided
+  size_t size() const override { return sizeof(RightSquareBracketLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "RightSquareBracketLayout"; }
 #endif

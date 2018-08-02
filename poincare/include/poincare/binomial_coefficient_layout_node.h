@@ -30,8 +30,8 @@ public:
 
 protected:
   // LayoutNode
-  void computeSize() override;
-  void computeBaseline() override;
+  KDSize computeSize() override;
+  KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
   KDCoordinate knHeight() { return nLayout()->layoutSize().height() + GridLayoutNode::k_gridEntryMargin + kLayout()->layoutSize().height(); }

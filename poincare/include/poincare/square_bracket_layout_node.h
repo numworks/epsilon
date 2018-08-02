@@ -14,9 +14,8 @@ protected:
   constexpr static KDCoordinate k_bracketWidth = 5;
   constexpr static KDCoordinate k_widthMargin = 5;
   constexpr static KDCoordinate k_externWidthMargin = 2;
-  void computeSize() override {
-    m_frame.setSize(KDSize(BracketWidth(), childHeight() + k_lineThickness));
-    m_sized = true;
+  KDSize computeSize() override {
+    return KDSize(BracketWidth(), childHeight() + k_lineThickness);
   }
 };
 }

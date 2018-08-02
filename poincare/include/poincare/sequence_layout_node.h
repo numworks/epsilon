@@ -42,8 +42,8 @@ protected:
   KDSize lowerBoundSizeWithNEquals();
 
   // LayoutNode
-  void computeSize() override;
-  void computeBaseline() override;
+  KDSize computeSize() override;
+  KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 
   int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;

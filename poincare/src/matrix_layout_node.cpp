@@ -139,14 +139,12 @@ int MatrixLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferenc
 
 // Protected
 
-void MatrixLayoutNode::computeSize() {
-  assert(!m_sized);
+KDSize MatrixLayoutNode::computeSize() {
   KDSize sizeWithoutBrackets = gridSize();
   KDSize sizeWithBrackets = KDSize(
       sizeWithoutBrackets.width() + 2 * SquareBracketLayoutNode::BracketWidth(),
       sizeWithoutBrackets.height() + 2 * SquareBracketLayoutNode::k_lineThickness);
-  m_frame.setSize(sizeWithBrackets);
-  m_sized = true;
+  return sizeWithBrackets;
 }
 
 KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l) {

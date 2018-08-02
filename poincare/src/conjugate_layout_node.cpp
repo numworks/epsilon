@@ -57,7 +57,7 @@ int ConjugateLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefer
   return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "conj");
 }
 
-void ConjugateLayoutNode::computeSize() {
+KDSize ConjugateLayoutNode::computeSize() {
   KDSize childSize = childLayout()->layoutSize();
   KDCoordinate newWidth =
     Metric::FractionAndConjugateHorizontalMargin +
@@ -69,13 +69,11 @@ void ConjugateLayoutNode::computeSize() {
     childSize.height() +
     k_overlineWidth +
     k_overlineVerticalMargin;
-  m_frame.setSize(KDSize(newWidth, newHeight));
-  m_sized = true;
+  return KDSize(newWidth, newHeight);
 }
 
-void ConjugateLayoutNode::computeBaseline() {
-  m_baseline = childLayout()->baseline() + k_overlineWidth + k_overlineVerticalMargin;
-  m_baselined = true;
+KDCoordinate ConjugateLayoutNode::computeBaseline() {
+  return childLayout()->baseline() + k_overlineWidth + k_overlineVerticalMargin;
 }
 
 KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode * child) {

@@ -195,19 +195,17 @@ void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
   }
 }
 
-void FractionLayoutNode::computeSize() {
+KDSize FractionLayoutNode::computeSize() {
   KDCoordinate width = max(numeratorLayout()->layoutSize().width(), denominatorLayout()->layoutSize().width())
     + 2*Metric::FractionAndConjugateHorizontalOverflow+2*Metric::FractionAndConjugateHorizontalMargin;
   KDCoordinate height = numeratorLayout()->layoutSize().height()
     + k_fractionLineMargin + k_fractionLineHeight + k_fractionLineMargin
     + denominatorLayout()->layoutSize().height();
-  m_frame.setSize(KDSize(width, height));
-  m_sized = true;
+  return KDSize(width, height);
 }
 
-void FractionLayoutNode::computeBaseline() {
-  m_baseline = numeratorLayout()->layoutSize().height() + k_fractionLineMargin + k_fractionLineHeight;
-  m_baselined = true;
+KDCoordinate FractionLayoutNode::computeBaseline() {
+  return numeratorLayout()->layoutSize().height() + k_fractionLineMargin + k_fractionLineHeight;
 }
 
 KDPoint FractionLayoutNode::positionOfChild(LayoutNode * child) {

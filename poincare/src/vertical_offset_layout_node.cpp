@@ -201,7 +201,7 @@ int VerticalOffsetLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, P
   return numberOfChar;
 }
 
-void VerticalOffsetLayoutNode::computeSize() {
+KDSize VerticalOffsetLayoutNode::computeSize() {
   KDSize indiceSize = indiceLayout()->layoutSize();
   KDCoordinate width = indiceSize.width();
   if (m_type == Type::Superscript) {
@@ -214,17 +214,15 @@ void VerticalOffsetLayoutNode::computeSize() {
     }
   }
   KDCoordinate height = baseLayout()->layoutSize().height() - k_indiceHeight + indiceLayout()->layoutSize().height();
-  m_frame.setSize(KDSize(width, height));
-  m_sized = true;
+  return KDSize(width, height);
 }
 
-void VerticalOffsetLayoutNode::computeBaseline() {
+KDCoordinate VerticalOffsetLayoutNode::computeBaseline() {
   if (m_type == Type::Subscript) {
-    m_baseline = baseLayout()->baseline();
+    return baseLayout()->baseline();
   } else {
-    m_baseline = indiceLayout()->layoutSize().height() - k_indiceHeight + baseLayout()->baseline();
+    return indiceLayout()->layoutSize().height() - k_indiceHeight + baseLayout()->baseline();
   }
-  m_baselined = true;
 }
 
 KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child) {

@@ -33,8 +33,8 @@ public:
 
 protected:
   // LayoutNode
-  void computeBaseline() override;
-  void computeSize() override;
+  KDCoordinate computeBaseline() override;
+  KDSize computeSize() override;
   KDPoint positionOfChild(LayoutNode * child) override;
   LayoutNode * childLayout() { return childAtIndex(0); }
 

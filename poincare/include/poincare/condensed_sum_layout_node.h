@@ -36,8 +36,8 @@ public:
 
 protected:
   // LayoutNode
-  void computeSize() override;
-  void computeBaseline() override;
+  KDSize computeSize() override;
+  KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}

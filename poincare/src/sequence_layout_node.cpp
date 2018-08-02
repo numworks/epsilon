@@ -129,7 +129,7 @@ void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 
 // Protected
 
-void SequenceLayoutNode::computeSize() {
+KDSize SequenceLayoutNode::computeSize() {
   KDSize nEqualslowerBoundSize = lowerBoundSizeWithNEquals();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDSize argumentSize = argumentLayout()->layoutSize();
@@ -139,13 +139,11 @@ void SequenceLayoutNode::computeSize() {
   KDSize result = KDSize(
     max(max(k_symbolWidth, nEqualslowerBoundSize.width()), upperBoundSize.width())+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
     baseline() + max(k_symbolHeight/2+k_boundHeightMargin+nEqualslowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline()));
-  m_frame.setSize(result);
-  m_sized = true;
+  return result;
 }
 
-void SequenceLayoutNode::computeBaseline() {
-  m_baseline = max(upperBoundLayout()->layoutSize().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
-  m_baselined = true;
+KDCoordinate SequenceLayoutNode::computeBaseline() {
+  return max(upperBoundLayout()->layoutSize().height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline());
 }
 
 KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l) {

@@ -48,16 +48,12 @@ bool CharLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft
 }
 
 // Sizing and positioning
-void CharLayoutNode::computeSize() {
-  assert(!m_sized);
-  m_frame.setSize(KDText::charSize(m_fontSize));
-  m_sized = true;
+KDSize CharLayoutNode::computeSize() {
+  return KDText::charSize(m_fontSize);
 }
 
-void CharLayoutNode::computeBaseline() {
-  assert(!m_baselined);
-  m_baseline = (KDText::charSize(m_fontSize).height()+1)/2; //TODO +1 ?
-  m_baselined = true;
+KDCoordinate CharLayoutNode::computeBaseline() {
+  return (KDText::charSize(m_fontSize).height()+1)/2; //TODO +1 ?
 }
 
 void CharLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

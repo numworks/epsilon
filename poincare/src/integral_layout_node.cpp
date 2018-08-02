@@ -183,22 +183,18 @@ int IntegralLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefere
   return numberOfChar;
 }
 
-void IntegralLayoutNode::computeSize() {
-  assert(!m_sized);
+KDSize IntegralLayoutNode::computeSize() {
   KDSize dxSize = KDText::stringSize("dx", k_fontSize);
   KDSize integrandSize = integrandLayout()->layoutSize();
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
   KDSize upperBoundSize = upperBoundLayout()->layoutSize();
   KDCoordinate width = k_symbolWidth+k_lineThickness+k_boundWidthMargin+max(lowerBoundSize.width(), upperBoundSize.width())+k_integrandWidthMargin+integrandSize.width()+dxSize.width();
   KDCoordinate height = upperBoundSize.height()+ 2*k_integrandHeigthMargin+max(integrandSize.height(), dxSize.height())+lowerBoundSize.height();
-  m_frame.setSize(KDSize(width, height));
-  m_sized = true;
+  return KDSize(width, height);
 }
 
-void IntegralLayoutNode::computeBaseline() {
-  assert(!m_baselined);
-  m_baseline = upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + integrandLayout()->baseline();
-  m_baselined = true;
+KDCoordinate IntegralLayoutNode::computeBaseline() {
+  return upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + integrandLayout()->baseline();
 }
 
 KDPoint IntegralLayoutNode::positionOfChild(LayoutNode * child) {

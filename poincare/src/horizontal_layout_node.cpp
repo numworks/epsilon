@@ -177,8 +177,7 @@ int HorizontalLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefe
 
 // Protected
 
-void HorizontalLayoutNode::computeSize() {
-  assert(!m_sized);
+KDSize HorizontalLayoutNode::computeSize() {
   KDCoordinate totalWidth = 0;
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
@@ -188,17 +187,15 @@ void HorizontalLayoutNode::computeSize() {
     maxUnderBaseline = maxCoordinate(maxUnderBaseline, childSize.height() - l->baseline());
     maxAboveBaseline = maxCoordinate(maxAboveBaseline, l->baseline());
   }
-  m_frame.setSize(KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline));
-  m_sized = true;
+  return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
 }
 
-void HorizontalLayoutNode::computeBaseline() {
-  assert(!m_baselined);
-  m_baseline = 0;
+KDCoordinate HorizontalLayoutNode::computeBaseline() {
+  KDCoordinate result = 0;
   for (LayoutNode * l : children()) {
-    m_baseline = maxCoordinate(m_baseline, l->baseline());
+    result = maxCoordinate(result, l->baseline());
   }
-  m_baselined = true;
+  return result;
 }
 
 KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l) {

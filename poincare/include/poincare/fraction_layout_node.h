@@ -32,12 +32,10 @@ public:
    * and not canBeOmittedMultiplicationLeftFactor. */
 
   // TreeNode
-  size_t size() const override { return sizeof(FractionLayoutNode); }
+  // size() does not need to be overrided
   int numberOfChildren() const override { return 2; }
 #if TREE_LOG
-  const char * description() const override {
-    return "FractionLayout";
-  }
+  const char * description() const override { return "FractionLayout"; }
 #endif
 
 protected:
@@ -49,14 +47,8 @@ private:
   constexpr static KDCoordinate k_fractionLineMargin = 2;
   constexpr static KDCoordinate k_fractionLineHeight = 1;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * numeratorLayout() {
-    assert(numberOfChildren() == 2);
-    return childAtIndex(0);
-  }
-  LayoutNode * denominatorLayout() {
-    assert(numberOfChildren() == 2);
-    return childAtIndex(1);
-  }
+  LayoutNode * numeratorLayout() { return childAtIndex(0); }
+  LayoutNode * denominatorLayout() { return childAtIndex(1); }
 };
 
 class FractionLayoutRef : public LayoutReference {

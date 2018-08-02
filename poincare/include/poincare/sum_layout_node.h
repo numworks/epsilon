@@ -16,7 +16,7 @@ private:
 
 class SumLayoutRef : public LayoutReference {
 public:
-  SumLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  SumLayoutRef(TreeNode * n) : LayoutReference(n) {}
   SumLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
     SumLayoutRef()
   {

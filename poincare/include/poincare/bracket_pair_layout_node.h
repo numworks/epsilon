@@ -25,7 +25,7 @@ public:
   void didCollapseSiblings(LayoutCursor * cursor) override;
 
   // TreeNode
-  size_t size() const override { return sizeof(BracketPairLayoutNode); }
+  // size() does not need to be overrided
   int numberOfChildren() const override { return 1; }
 #if TREE_LOG
   const char * description() const override { return "BracketPairLayout"; }
@@ -36,10 +36,7 @@ protected:
   void computeBaseline() override;
   void computeSize() override;
   KDPoint positionOfChild(LayoutNode * child) override;
-  LayoutNode * childLayout() {
-    assert(numberOfChildren() == 1);
-    return childAtIndex(0);
-  }
+  LayoutNode * childLayout() { return childAtIndex(0); }
 
 private:
   constexpr static KDCoordinate k_externWidthMargin = 2;

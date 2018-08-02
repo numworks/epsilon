@@ -18,7 +18,7 @@ public:
   bool shouldCollapseSiblingsOnRight() const override { return true; }
 
   // TreeNode
-  size_t size() const override { return sizeof(ConjugateLayoutNode); }
+  // size() does not need to be overrided
   int numberOfChildren() const override { return 1; }
 #if TREE_LOG
   const char * description() const override {
@@ -34,19 +34,14 @@ protected:
 private:
   constexpr static KDCoordinate k_overlineWidth = 1;
   constexpr static KDCoordinate k_overlineVerticalMargin = 1;
+  LayoutNode * childLayout() { return childAtIndex(0); }
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * childLayout() {
-    assert(numberOfChildren() == 1);
-    return childAtIndex(0);
-  }
 };
 
 class ConjugateLayoutRef : public LayoutReference {
 public:
-  ConjugateLayoutRef(LayoutRef l) :
-    ConjugateLayoutRef()
-  {
+  ConjugateLayoutRef(LayoutRef l) : ConjugateLayoutRef() {
     addChildTreeAtIndex(l, 0, 0);
   }
   ConjugateLayoutRef(TreeNode * n) : LayoutReference(n) {}

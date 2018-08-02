@@ -39,9 +39,7 @@ public:
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 #if TREE_LOG
-  const char * description() const override {
-    return "Horizontal Layout";
-  }
+  const char * description() const override { return "Horizontal Layout"; }
 #endif
 
 protected:

@@ -22,12 +22,10 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // TreeNode
-  size_t size() const override { return sizeof(BinomialCoefficientLayoutNode); }
+  // size() does not need to be overrided
   int numberOfChildren() const override { return 2; }
 #if TREE_LOG
-  const char * description() const override {
-    return "BinomialCoefficientLayout";
-  }
+  const char * description() const override { return "BinomialCoefficientLayout"; }
 #endif
 
 protected:
@@ -38,14 +36,8 @@ protected:
 private:
   KDCoordinate knHeight() { return nLayout()->layoutSize().height() + GridLayoutNode::k_gridEntryMargin + kLayout()->layoutSize().height(); }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * nLayout() {
-    assert(numberOfChildren() == 2);
-    return childAtIndex(0);
-  }
-  LayoutNode * kLayout() {
-    assert(numberOfChildren() == 2);
-    return childAtIndex(1);
-  }
+  LayoutNode * nLayout() { return childAtIndex(0); }
+  LayoutNode * kLayout() { return childAtIndex(1); }
 };
 
 class BinomialCoefficientLayoutRef : public LayoutReference {

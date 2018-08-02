@@ -248,7 +248,7 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
    * sibling (e.g. a VerticalOffsetLayout), add an empty layout at index 0 */
 
   if (!force && index == 0 && numberOfChildren() > 0 && childAtIndex(0)->mustHaveLeftSibling()) {
-    HorizontalLayoutRef(this).addChildAtIndex(EmptyLayoutRef(), 0, numberOfChildren(), cursor);
+    LayoutRef(this).addChildAtIndex(EmptyLayoutRef(), 0, numberOfChildren(), cursor);
   }
 }
 
@@ -266,7 +266,6 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
       /* If the new layout is empty and the horizontal layout has other
        * children, just remove the old child. */
       thisRef.removeChild(oldChild, nullptr);
-      // WARNING: do not call "this" afterwards
       if (cursor != nullptr) {
         if (oldChildIndex == 0) {
           cursor->setLayoutReference(thisRef);

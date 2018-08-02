@@ -27,12 +27,10 @@ public:
   char XNTChar() const override { return 'n'; }
 
   // TreeNode
-  size_t size() const override { return sizeof(SequenceLayoutNode); }
+  // size() does not need to be overrided
   int numberOfChildren() const override { return 3; }
 #if TREE_LOG
-  const char * description() const override {
-    return "Sequence Layout";
-  }
+  const char * description() const override { return "Sequence Layout"; }
 #endif
 
 protected:
@@ -49,18 +47,9 @@ protected:
   KDPoint positionOfChild(LayoutNode * child) override;
 
   int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
-  LayoutNode * argumentLayout() {
-    assert(numberOfChildren() == 3);
-    return childAtIndex(0);
-  }
-  LayoutNode * lowerBoundLayout() {
-    assert(numberOfChildren() == 3);
-    return childAtIndex(1);
-  }
-  LayoutNode * upperBoundLayout() {
-    assert(numberOfChildren() == 3);
-    return childAtIndex(2);
-  }
+  LayoutNode * argumentLayout() { return childAtIndex(0); }
+  LayoutNode * lowerBoundLayout() { return childAtIndex(1); }
+  LayoutNode * upperBoundLayout() { return childAtIndex(2); }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };
 

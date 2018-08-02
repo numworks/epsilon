@@ -63,12 +63,13 @@ public:
     }
   }
 
-  CharLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  CharLayoutRef(TreeNode * n) : LayoutReference(n) {}
 
   KDText::FontSize fontSize() const {
     if (!(this->node()->isAllocationFailure())) {
       return static_cast<CharLayoutNode *>(node())->fontSize();
     }
+    // TODO put an assert false?
     return KDText::FontSize::Large;
   }
 private:

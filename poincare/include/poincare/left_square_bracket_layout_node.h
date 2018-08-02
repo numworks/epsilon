@@ -15,7 +15,7 @@ public:
   bool isLeftBracket() const override { return true; }
 
   // TreeNode
-  size_t size() const override { return sizeof(LeftSquareBracketLayoutNode); }
+  // size() does not need to be overrided
 #if TREE_LOG
   const char * description() const override { return "LeftSquareBracketLayout"; }
 #endif
@@ -29,7 +29,7 @@ public:
     TreeNode * node = TreePool::sharedPool()->createTreeNode<LeftSquareBracketLayoutNode>();
     m_identifier = node->identifier();
   }
-  LeftSquareBracketLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  LeftSquareBracketLayoutRef(TreeNode * n) : LayoutReference(n) {}
 };
 
 }

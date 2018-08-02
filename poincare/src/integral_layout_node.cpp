@@ -184,6 +184,7 @@ int IntegralLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefere
 }
 
 void IntegralLayoutNode::computeSize() {
+  assert(!m_sized);
   KDSize dxSize = KDText::stringSize("dx", k_fontSize);
   KDSize integrandSize = integrandLayout()->layoutSize();
   KDSize lowerBoundSize = lowerBoundLayout()->layoutSize();
@@ -195,6 +196,7 @@ void IntegralLayoutNode::computeSize() {
 }
 
 void IntegralLayoutNode::computeBaseline() {
+  assert(!m_baselined);
   m_baseline = upperBoundLayout()->layoutSize().height() + k_integrandHeigthMargin + integrandLayout()->baseline();
   m_baselined = true;
 }

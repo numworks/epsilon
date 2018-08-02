@@ -26,7 +26,7 @@ public:
   }
 
   // TreeNode
-  size_t size() const override { return sizeof(CondensedSumLayoutNode); }
+  // size() does not need to be overrided
   int numberOfChildren() const override { return 3; }
 #if TREE_LOG
   const char * description() const override {
@@ -41,18 +41,9 @@ protected:
   KDPoint positionOfChild(LayoutNode * child) override;
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
-  LayoutNode * baseLayout() {
-    assert(numberOfChildren() == 3);
-    return childAtIndex(0);
-  }
-  LayoutNode * subscriptLayout() {
-    assert(numberOfChildren() == 3);
-    return childAtIndex(1);
-  }
-  LayoutNode * superscriptLayout() {
-    assert(numberOfChildren() == 3);
-    return childAtIndex(2);
-  }
+  LayoutNode * baseLayout() { return childAtIndex(0); }
+  LayoutNode * subscriptLayout() { return childAtIndex(1); }
+  LayoutNode * superscriptLayout() { return childAtIndex(2); }
 };
 
 class CondensedSumLayoutRef : public LayoutReference {
@@ -65,7 +56,7 @@ public:
     addChildTreeAtIndex(superscript, 2, 2);
   }
 
-  CondensedSumLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  CondensedSumLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:
   CondensedSumLayoutRef() : LayoutReference() {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<CondensedSumLayoutNode>();

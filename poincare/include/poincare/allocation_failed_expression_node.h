@@ -19,7 +19,9 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailedExpressionNode); }
+#if TREE_LOG
   const char * description() const override { return "Allocation Failed";  }
+#endif
   int numberOfChildren() const override { return 0; }
   bool isAllocationFailure() const override { return true; }
 };

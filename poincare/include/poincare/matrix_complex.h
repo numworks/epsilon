@@ -14,7 +14,9 @@ class MatrixComplexNode : public EvaluationNode<T> {
 public:
   // TreeNode
   size_t size() const override { return sizeof(MatrixComplexNode<T>); }
+#if TREE_LOG
   const char * description() const override { return "Evaluation matrix complex";  }
+#endif
   int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
 
   void setMatrixComplexDimension(int numberOfRows, int numberOfColumns);

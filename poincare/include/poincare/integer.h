@@ -127,7 +127,9 @@ public:
 
   // TreeNode
   size_t size() const override;
+#if TREE_LOG
   const char * description() const override { return "Integer";  }
+#endif
 
   // ExpressionNode
   Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }

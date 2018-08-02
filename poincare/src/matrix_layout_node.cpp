@@ -155,20 +155,21 @@ KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l) {
 }
 
 void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
+  MatrixLayoutRef thisRef = MatrixLayoutRef(this);
   bool shouldRemoveGreySquares = false;
   int firstIndex = direction == VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
   int lastIndex = direction == VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
   for (int childIndex = firstIndex; childIndex < lastIndex; childIndex++) {
-    if (cursor->layoutNode()->hasAncestor(childAtIndex(childIndex), true)) {
+    if (cursor->layoutReference().hasAncestor(thisRef.childAtIndex(childIndex), true)) {
       // The cursor is leaving the matrix, so remove the grey squares.
       shouldRemoveGreySquares = true;
       break;
     }
   }
-   GridLayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, equivalentPositionVisited);
-  if (cursor->isDefined() && shouldRemoveGreySquares) {
-    assert(hasGreySquares());
-    removeGreySquares();
+  GridLayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  if (cursor->isDefined() && shouldRemoveGreySquares && !thisRef.isAllocationFailure()) {
+    assert(thisRef.hasGreySquares());
+    thisRef.removeGreySquares();
     *shouldRecomputeLayout = true;
   }
 }

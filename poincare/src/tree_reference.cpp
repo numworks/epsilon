@@ -37,9 +37,6 @@ void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentN
   }
   assert(index >= 0 && index <= currentNumberOfChildren);
 
-  // Retain t before detaching it, else it might get destroyed
-  t.node()->retain();
-
   // Detach t from its parent
   TreeReference tParent = t.parent();
   if (tParent.isDefined()) {
@@ -52,6 +49,7 @@ void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentN
     newChildPosition = newChildPosition->nextSibling();
   }
   TreePool::sharedPool()->move(newChildPosition, t.node(), t.numberOfChildren());
+  t.node()->retain();
   node()->incrementNumberOfChildren();
 }
 

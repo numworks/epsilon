@@ -187,15 +187,15 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
     }
   }
   LayoutNode * p = parent();
-  if (p != nullptr) {
-    if (direction == VerticalDirection::Up) {
-      p->moveCursorUp(cursor, shouldRecomputeLayout, true);
-    } else {
-      p->moveCursorDown(cursor, shouldRecomputeLayout, true);
-    }
+  if (p == nullptr) {
+    cursor->setLayoutNode(nullptr);
     return;
   }
-  cursor->setLayoutNode(nullptr);
+  if (direction == VerticalDirection::Up) {
+    p->moveCursorUp(cursor, shouldRecomputeLayout, true);
+  } else {
+    p->moveCursorDown(cursor, shouldRecomputeLayout, true);
+  }
 }
 
 void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
@@ -210,12 +210,17 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
 
   // If there is a valid result
   LayoutRef resultRef(childResult);
+  LayoutRef rootRef = LayoutRef(root());
   if (*childResultPtr != nullptr) {
     *shouldRecomputeLayout = childResult->addGreySquaresToAllMatrixAncestors();
     // WARNING: Do not use "this" afterwards
   }
-  cursor->setLayoutReference(resultRef);
-  cursor->setPosition(resultPosition);
+  if (rootRef.isAllocationFailure()) {
+    cursor->setLayoutReference(rootRef);
+  } else {
+    cursor->setLayoutReference(resultRef);
+    cursor->setPosition(resultPosition);
+  }
 }
 
 void LayoutNode::scoreCursorInDescendantsVertically (

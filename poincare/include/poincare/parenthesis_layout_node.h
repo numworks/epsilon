@@ -19,7 +19,7 @@ public:
   constexpr static KDCoordinate k_verticalMargin = 4;
 
   // TreeNode
-  size_t size() const override { return sizeof(ParenthesisLayoutNode); }
+  // size() does not need to be overrided
 #if TREE_LOG
   const char * description() const override { return "ParenthesisLayout"; }
 #endif

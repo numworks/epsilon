@@ -102,7 +102,7 @@ void TreePool::log() {
 #if TREE_LOG
   printf("POOL:");
   for (TreeNode * node : *this) {
-    printf("|(%03d|%s|%03d|%p)", node->m_identifier, node->description(), node->retainCount(), node);
+    printf("|(%03d|%s|%03d|%p)\n", node->m_identifier, node->description(), node->retainCount(), node);
   }
   printf("|\n");
 

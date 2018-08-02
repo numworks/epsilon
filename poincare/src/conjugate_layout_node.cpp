@@ -74,7 +74,7 @@ void ConjugateLayoutNode::computeSize() {
 }
 
 void ConjugateLayoutNode::computeBaseline() {
-  m_baseline = childLayout()->baseline()+k_overlineWidth+k_overlineVerticalMargin;
+  m_baseline = childLayout()->baseline() + k_overlineWidth + k_overlineVerticalMargin;
   m_baselined = true;
 }
 
@@ -86,7 +86,13 @@ KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode * child) {
 }
 
 void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-  ctx->fillRect(KDRect(p.x()+Metric::FractionAndConjugateHorizontalMargin, p.y(), childLayout()->layoutSize().width()+2*Metric::FractionAndConjugateHorizontalOverflow, k_overlineWidth), expressionColor);
+  ctx->fillRect(
+      KDRect(
+        p.x() + Metric::FractionAndConjugateHorizontalMargin,
+        p.y(),
+        childLayout()->layoutSize().width() + 2 * Metric::FractionAndConjugateHorizontalOverflow,
+        k_overlineWidth),
+      expressionColor);
 }
 
 bool ConjugateLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) {

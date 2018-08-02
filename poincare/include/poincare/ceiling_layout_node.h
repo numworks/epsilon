@@ -13,7 +13,7 @@ public:
     return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "ceil");
   }
   // TreeNode
-  size_t size() const override { return sizeof(CeilingLayoutNode); }
+  // size() does not need to be overrided
 #if TREE_LOG
   const char * description() const override { return "CeilingLayout"; }
 #endif

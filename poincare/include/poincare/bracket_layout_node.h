@@ -36,6 +36,7 @@ protected:
   bool m_childHeightComputed;
   uint16_t m_childHeight;
 };
+
 }
 
 #endif

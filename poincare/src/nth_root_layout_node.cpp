@@ -149,14 +149,14 @@ void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");
 int NthRootLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   // Case: root(x,n)
-  if (numberOfChildren() == 2
+  if (m_hasIndex
       && (const_cast<NthRootLayoutNode *>(this))->indexLayout()
       && !(const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty())
   {
     return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
   }
   // Case: squareRoot(x)
-  if (numberOfChildren() == 1) {
+  if (!m_hasIndex) {
     return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
   }
   // Case: root(x,empty)
@@ -268,7 +268,6 @@ void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
                          k_radixLineThickness,
                          k_rightRadixHeight + k_radixLineThickness), expressionColor);
   }
-
 }
 
 }

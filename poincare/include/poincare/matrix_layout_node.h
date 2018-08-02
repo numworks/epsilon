@@ -29,11 +29,9 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // TreeNode
-  size_t size() const override { return sizeof(MatrixLayoutNode); }
+  // size() does not need to be overrided
 #if TREE_LOG
-  const char * description() const override {
-    return "MatrixLayout";
-  }
+  const char * description() const override { return "MatrixLayout"; }
 #endif
 
 protected:
@@ -57,7 +55,7 @@ private:
 class MatrixLayoutRef : public LayoutReference {
   friend class MatrixLayoutNode;
 public:
-  MatrixLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  MatrixLayoutRef(TreeNode * n) : LayoutReference(n) {}
   MatrixLayoutRef() : LayoutReference() {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>();
     m_identifier = node->identifier();
@@ -66,15 +64,29 @@ public:
   MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4, int numberOfRows, int numberOfColumns) :
     MatrixLayoutRef()
   {
+    assert(numberOfRows*numberOfColumns == 4);
     if (!(node()->isAllocationFailure())) {
-      assert(numberOfRows*numberOfColumns == 4);
+      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(0);
+      static_cast<MatrixLayoutNode *>(node())->setNumberOfColumns(1);
+    }
+    addChildTreeAtIndex(l1, 0, 0);
+    if (!(node()->isAllocationFailure())) {
+      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(1);
+    }
+
+    addChildTreeAtIndex(l2, 1, 1);
+    if (!(node()->isAllocationFailure())) {
+      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(2);
+    }
+    addChildTreeAtIndex(l3, 2, 2);
+    if (!(node()->isAllocationFailure())) {
+      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(3);
+    }
+    addChildTreeAtIndex(l4, 3, 3);
+    if (!(node()->isAllocationFailure())) {
       static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(numberOfRows);
       static_cast<MatrixLayoutNode *>(node())->setNumberOfColumns(numberOfColumns);
     }
-    addChildTreeAtIndex(l1, 0, 0);
-    addChildTreeAtIndex(l2, 1, 1);
-    addChildTreeAtIndex(l3, 2, 2);
-    addChildTreeAtIndex(l4, 3, 3);
   }
   void setNumberOfRows(int count) {
     if (!(node()->isAllocationFailure())) {
@@ -93,6 +105,12 @@ public:
     }
     assert(false);
     return true;
+  }
+
+  void addGreySquares() {
+    if (!(node()->isAllocationFailure())) {
+      return static_cast<MatrixLayoutNode *>(node())->addGreySquares();
+    }
   }
 
   void removeGreySquares() {

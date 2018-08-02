@@ -52,17 +52,14 @@ private:
   constexpr static KDCoordinate k_separationMargin = 5;
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
-  LayoutNode * indiceLayout() {
-    assert(numberOfChildren() == 1);
-    return childAtIndex(0);
-  }
+  LayoutNode * indiceLayout() { return childAtIndex(0); }
   LayoutNode * baseLayout();
   Type m_type;
 };
 
 class VerticalOffsetLayoutRef : public LayoutReference {
 public:
-  VerticalOffsetLayoutRef(TreeNode * t) : LayoutReference(t) {}
+  VerticalOffsetLayoutRef(TreeNode * n) : LayoutReference(n) {}
   VerticalOffsetLayoutRef(LayoutRef l, VerticalOffsetLayoutNode::Type type) :
     VerticalOffsetLayoutRef()
   {

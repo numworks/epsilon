@@ -27,7 +27,7 @@ public:
   char XNTChar() const override { return 'n'; }
 
   // TreeNode
-  // size() does not need to be overrided
+  size_t size() const override { return sizeof(SequenceLayoutNode); }
   int numberOfChildren() const override { return 3; }
 #if TREE_LOG
   const char * description() const override { return "Sequence Layout"; }

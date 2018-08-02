@@ -18,7 +18,7 @@ public:
   bool shouldCollapseSiblingsOnRight() const override { return true; }
 
   // TreeNode
-  // size() does not need to be overrided
+  size_t size() const override { return sizeof(ConjugateLayoutNode); }
   int numberOfChildren() const override { return 1; }
 #if TREE_LOG
   const char * description() const override {

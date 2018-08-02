@@ -127,11 +127,12 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool can
 // Simplification
 
 ExpressionReference RationalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+  ExpressionReference reference(this);
   if (m_negative) {
     m_negative = false;
-    return OppositeReference(ExpressionReference(this));
+    return OppositeReference(reference);
   }
-  return ExpressionReference(this);
+  return reference;
 }
 
 ExpressionReference RationalNode::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {

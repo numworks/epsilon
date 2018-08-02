@@ -12,8 +12,14 @@ TreeNode * ExpressionNode::FailedAllocationStaticNode() {
 
 ExpressionReference ExpressionNode::replaceSymbolWithExpression(char symbol, ExpressionReference expression) {
   ExpressionReference reference(this);
-  for (int i = 0; i < reference.numberOfChildren(); i++) {
-    reference.replaceTreeChildAtIndex(i, reference.childAtIndex(i).node()->replaceSymbolWithExpression(symbol, expression));
+  int nbChildren = reference.numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    ExpressionReference newChild = reference.childAtIndex(i).node()->replaceSymbolWithExpression(symbol, expression);
+    if (reference.numberOfChildren() < nbChildren) {
+      reference.addChildTreeAtIndex(newChild, i, nbChildren - 1);
+    } else {
+      reference.replaceTreeChildAtIndex(i, newChild);
+    }
   }
   return reference;
 }

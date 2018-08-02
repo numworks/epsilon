@@ -107,7 +107,7 @@ bool ExpressionReference::getLinearCoefficients(char * variables, ExpressionRefe
     }
     x++;
   }
-  ExpressionReference equation = *this;
+  ExpressionReference equation = clone();
   x = variables;
   int index = 0;
   ExpressionReference polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
@@ -198,16 +198,28 @@ void ExpressionReference::Simplify(ExpressionReference * expressionAddress, Cont
 }
 
 ExpressionReference ExpressionReference::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  for (int i = 0; i < this->numberOfChildren(); i++) {
-    replaceTreeChildAtIndex(i, childAtIndex(i).deepReduce(context, angleUnit));
+  int nbChildren = this->numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    ExpressionReference reducedChild = childAtIndex(i).deepReduce(context, angleUnit);
+    if (numberOfChildren() < nbChildren) {
+      addChildTreeAtIndex(reducedChild, i, nbChildren-1);
+    } else {
+      replaceTreeChildAtIndex(i, reducedChild);
+    }
   }
   return shallowReduce(context, angleUnit);
 }
 
 ExpressionReference ExpressionReference::deepBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   ExpressionReference beautifiedExpression = shallowBeautify(context, angleUnit);
-  for (int i = 0; i < beautifiedExpression.numberOfChildren(); i++) {
-    beautifiedExpression.replaceTreeChildAtIndex(i, beautifiedExpression.childAtIndex(i).deepBeautify(context, angleUnit));
+  int nbChildren = beautifiedExpression.numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    ExpressionReference beautifiedChild = beautifiedExpression.childAtIndex(i).deepBeautify(context, angleUnit);
+    if (beautifiedExpression.numberOfChildren() < nbChildren) {
+      beautifiedExpression.addChildTreeAtIndex(beautifiedChild, i, nbChildren-1);
+    } else {
+      beautifiedExpression.replaceTreeChildAtIndex(i, beautifiedChild);
+    }
   }
   return beautifiedExpression;
 }

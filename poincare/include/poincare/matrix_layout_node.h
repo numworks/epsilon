@@ -29,7 +29,7 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // TreeNode
-  // size() does not need to be overrided
+  size_t size() const override { return sizeof(MatrixLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "MatrixLayout"; }
 #endif

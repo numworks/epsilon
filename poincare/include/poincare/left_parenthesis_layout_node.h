@@ -22,7 +22,7 @@ public:
   }
 
   // TreeNode
-  // size() does not need to be overrided
+  size_t size() const override { return sizeof(LeftParenthesisLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "Left parenthesis"; }
 #endif

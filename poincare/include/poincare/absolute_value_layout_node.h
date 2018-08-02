@@ -12,7 +12,7 @@ public:
     return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "abs");
   }
   // TreeNode
-  // size() does not need to be overrided
+  size_t size() const override { return sizeof(AbsoluteValueLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "AbsoluteValueLayout"; }
 #endif

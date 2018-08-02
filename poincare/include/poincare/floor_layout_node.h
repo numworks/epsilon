@@ -14,7 +14,7 @@ public:
   }
 
   // TreeNode
-  // size() does not need to be overrided
+  size_t size() const override { return sizeof(FloorLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "FloorLayout"; }
 #endif

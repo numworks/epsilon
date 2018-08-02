@@ -33,7 +33,7 @@ public:
   static NumberReference Integer(const char * digits, size_t length, bool negative);
   /* This set of Functions return either a RationalReference or a FloatReference
    * or InfiniteReference in case of overflow. DecimalReference are not taken into
-   * account as it is not an internal node - it will always be truned into a
+   * account as it is not an internal node - it will always be turned into a
    * Rational/Float beforehand. */
   static NumberReference Addition(const NumberReference i, const NumberReference j);
   static NumberReference Multiplication(const NumberReference i, const NumberReference j);

@@ -249,28 +249,46 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
 }
 
 void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayoutR, bool forceCursorRightOfLayout) {
-  if (!layoutR.isDefined()) {
+  if (!layoutR.isDefined() || layoutRef().isAllocationFailure()) {
     return;
   }
+
+  // Handle empty layouts
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
+
   bool layoutWillBeMerged = layoutR.isHorizontal();
   LayoutRef lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : LayoutRef(nullptr);
+
+  // Add the layout
   m_contentView.cursor()->addLayoutAndMoveCursor(layoutR);
-  if (!forceCursorRightOfLayout) {
-    if (pointedLayoutR.isDefined() && pointedLayoutR.parent().isDefined() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
+
+  // Move the cursor if needed
+  if (layoutRef().isAllocationFailure()) {
+    m_contentView.cursor()->setLayoutReference(layoutRef());
+  } else if(!forceCursorRightOfLayout) {
+    if (pointedLayoutR.isDefined() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
       // Make sure the layout was inserted (its parent is not nullptr)
       m_contentView.cursor()->setLayoutReference(pointedLayoutR);
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
-    } else if (!layoutWillBeMerged && layoutR.parent().isDefined()) { //&& !layoutR.isAllocationFailure()) {
+    } else if (!layoutWillBeMerged) {
       m_contentView.cursor()->setLayoutReference(layoutR.layoutToPointWhenInserting());
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     }
-  } else if (!layoutWillBeMerged && layoutR.parent().isDefined()) {
+  } else if (!layoutWillBeMerged) {
     m_contentView.cursor()->setLayoutReference(layoutR);
     m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }
+
+  // Handle matrices
   m_contentView.cursor()->layoutReference().addGreySquaresToAllMatrixAncestors();
+  if (layoutRef().isAllocationFailure()) {
+    m_contentView.cursor()->setLayoutReference(layoutRef());
+  }
+
+  // Handle empty layouts
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();
+
+  // Reload
   reload();
   if (!layoutWillBeMerged) {
     scrollRightOfLayout(layoutR);

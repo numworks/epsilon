@@ -7,8 +7,11 @@
 
 namespace Poincare {
 
+class MatrixLayoutRef;
+
 class MatrixLayoutNode : public GridLayoutNode {
   friend class LayoutReference;
+  friend class MatrixLayoutRef;
 public:
   using GridLayoutNode::GridLayoutNode;
 
@@ -81,6 +84,20 @@ public:
   void setNumberOfColumns(int count) {
     if (!(node()->isAllocationFailure())) {
       static_cast<MatrixLayoutNode *>(node())->setNumberOfColumns(count);
+    }
+  }
+
+  bool hasGreySquares() const {
+    if (!(node()->isAllocationFailure())) {
+      return static_cast<MatrixLayoutNode *>(node())->hasGreySquares();
+    }
+    assert(false);
+    return true;
+  }
+
+  void removeGreySquares() {
+    if (!(node()->isAllocationFailure())) {
+      return static_cast<MatrixLayoutNode *>(node())->removeGreySquares();
     }
   }
 };

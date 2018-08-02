@@ -18,7 +18,7 @@ Expression * PermuteCoefficient::clone() const {
   return b;
 }
 
-Expression * PermuteCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference PermuteCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -51,7 +51,7 @@ Expression * PermuteCoefficient::shallowReduce(Context& context, Preferences::An
   Integer n = r0->numerator();
   Integer k = r1->numerator();
   if (n.isLowerThan(k)) {
-    return replaceWith(new Rational(0), true);
+    return replaceWith(RationalReference(0), true);
   }
   /* if n is too big, we do not reduce to avoid too long computation.
    * The permute coefficient will be evaluate approximatively later */

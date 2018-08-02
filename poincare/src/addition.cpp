@@ -35,7 +35,7 @@ int Addition::polynomialDegree(char symbolName) const {
   return degree;
 }
 
-int Addition::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+int Addition::getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg < 0 || deg > k_maxPolynomialDegree) {
     return -1;
@@ -63,7 +63,7 @@ bool Addition::needParenthesisWithParent(const Expression * e) const {
 
 /* Simplication */
 
-Expression * Addition::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Addition::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

@@ -135,6 +135,21 @@ void TreeReference::replaceTreeChild(TreeReference oldChild, TreeReference newCh
   oldChild.node()->release(oldChild.numberOfChildren());
 }
 
+void TreeReference::swapChildren(int i, int j) {
+  assert(isDefined());
+  assert(i >= 0 && i < numberOfChildren());
+  assert(j >= 0 && j < numberOfChildren());
+  if (i == j) {
+    return;
+  }
+  int firstChildIndex = i < j ? i : j;
+  int secondChildIndex = i > j ? i : j;
+  TreeReference firstChild = treeChildAtIndex(firstChildIndex);
+  TreeReference secondChild = treeChildAtIndex(secondChildIndex);
+  TreePool::sharedPool()->move(firstChild.node()->nextSibling(), secondChild.node(), secondChild.numberOfChildren());
+  TreePool::sharedPool()->move(treeChildAtIndex(secondChildIndex).node()->nextSibling(), firstChild.node(), firstChild.numberOfChildren());
+}
+
 void TreeReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
   if (isAllocationFailure()) {
     return;

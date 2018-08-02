@@ -87,7 +87,7 @@ Expression * Decimal::clone() const {
   return new Decimal(m_mantissa, m_exponent);
 }
 
-template<typename T> Evaluation<T> * Decimal::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+template<typename T> EvaluationReference<T> Decimal::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   T m = m_mantissa.approximate<T>();
   int numberOfDigits = Integer::numberOfDigitsWithoutSign(m_mantissa);
   return new Complex<T>(m*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1)));
@@ -221,14 +221,14 @@ LayoutRef Decimal::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
-Expression * Decimal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Decimal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
   }
   // Do not reduce decimal to rational if the exponent is too big or too small.
   if (m_exponent > k_maxDoubleExponent || m_exponent < -k_maxDoubleExponent) {
-    return this; // TODO: return new Infinite() ? new Rational(0) ?
+    return this; // TODO: return new Infinite() ? RationalReference(0) ?
   }
   Integer numerator = m_mantissa;
   removeZeroAtTheEnd(numerator);
@@ -251,7 +251,7 @@ Expression * Decimal::shallowBeautify(Context & context, Preferences::AngleUnit 
   return this;
 }
 
-int Decimal::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
+int Decimal::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
   assert(e->type() == Type::Decimal);
   const Decimal * other = static_cast<const Decimal *>(e);
   if (sign() == Sign::Negative && other->sign() == Sign::Positive) {

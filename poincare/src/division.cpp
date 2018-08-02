@@ -35,7 +35,7 @@ bool Division::needParenthesisWithParent(const Expression * e) const {
   return e->isOfType(types, 3);
 }
 
-Expression * Division::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Division::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

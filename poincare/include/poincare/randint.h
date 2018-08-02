@@ -10,7 +10,6 @@ class Randint : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
 private:
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
@@ -21,13 +20,13 @@ private:
   }
   const char * name() const { return "randint"; }
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<float>(context, angleUnit);
   }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<double>(context, angleUnit);
   }
-  template <typename T> Evaluation<T> * templateApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  template <typename T> EvaluationReference<T> templateApproximate()Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

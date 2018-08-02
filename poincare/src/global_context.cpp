@@ -53,10 +53,10 @@ Decimal * GlobalContext::defaultExpression() {
 }
 
 int GlobalContext::symbolIndex(const Symbol * symbol) const {
-  if (symbol->isMatrixSymbol()) {
+  if (SymbolReference::isMatrixSymbol(symbol->name())) {
     return symbol->name() - (char)Symbol::SpecialSymbols::M0;
   }
-  if (symbol->isScalarSymbol()) {
+  if (SymbolReference::isScalarSymbol(symbol->name())) {
     return symbol->name() - 'A';
   }
   return -1;
@@ -73,7 +73,7 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
     return &m_e;
   }
   int index = symbolIndex(symbol);
-  if (symbol->isMatrixSymbol()) {
+  if (SymbolReference::isMatrixSymbol(symbol->name()) {
     return m_matrixExpressions[index];
   }
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
@@ -86,7 +86,7 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
 }
 
 LayoutRef GlobalContext::layoutForSymbol(const Symbol * symbol, int numberOfSignificantDigits) {
-  if (symbol->isMatrixSymbol()) {
+  if (SymbolReference::isMatrixSymbol(symbol->name()) {
     int index = symbolIndex(symbol);
     if (!m_matrixLayouts[index].isDefined() && m_matrixExpressions[index] != nullptr) {
       m_matrixLayouts[index] = m_matrixExpressions[index]->createLayout(Preferences::PrintFloatMode::Decimal, numberOfSignificantDigits);
@@ -98,7 +98,7 @@ LayoutRef GlobalContext::layoutForSymbol(const Symbol * symbol, int numberOfSign
 
 void GlobalContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
   int index = symbolIndex(symbol);
- if (symbol->isMatrixSymbol()) {
+ if (SymbolReference::isMatrixSymbol(symbol->name()) {
     int indexMatrix = symbol->name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
     Expression * evaluation = expression ? expression->approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()) : nullptr; // evaluate before deleting anything (to be able to evaluate M1+2->M1)

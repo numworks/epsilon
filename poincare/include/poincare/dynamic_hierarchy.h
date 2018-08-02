@@ -35,7 +35,7 @@ protected:
   int m_numberOfOperands;
 private:
   void removeOperandAtIndex(int i, bool deleteAfterRemoval);
-  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const override;
 };
 

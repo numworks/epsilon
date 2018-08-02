@@ -17,7 +17,7 @@ Expression * ArcTangent::clone() const {
   return a;
 }
 
-Expression * ArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference ArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

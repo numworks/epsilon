@@ -2,6 +2,7 @@
 #include <poincare/ieee754.h>
 #include <poincare/layout_engine.h>
 #include <poincare/char_layout_node.h>
+#include <poincare/rational.h>
 #include <cmath>
 #include <utility>
 extern "C" {
@@ -11,24 +12,23 @@ extern "C" {
 }
 #include <cmath>
 #include <poincare/ieee754.h>
-#include <utility>
 
 namespace Poincare {
 
 static inline int max(int x, int y) { return (x>y ? x : y); }
 
-uint8_t log2(Integer::native_uint_t v) {
-  constexpr int nativeUnsignedIntegerBitCount = 8*sizeof(Integer::native_uint_t);
+uint8_t log2(native_uint_t v) {
+  constexpr int nativeUnsignedIntegerBitCount = 8*sizeof(native_uint_t);
   static_assert(nativeUnsignedIntegerBitCount < 256, "uint8_t cannot contain the log2 of a native_uint_t");
   for (uint8_t i=0; i<nativeUnsignedIntegerBitCount; i++) {
-    if (v < ((Integer::native_uint_t)1<<i)) {
+    if (v < ((native_uint_t)1<<i)) {
       return i;
     }
   }
   return 32;
 }
 
-static inline char char_from_digit(Integer::native_uint_t digit) {
+static inline char char_from_digit(native_uint_t digit) {
   return '0'+digit;
 }
 
@@ -36,471 +36,67 @@ static inline int8_t sign(bool negative) {
   return 1 - 2*(int8_t)negative;
 }
 
-// Constructors
+/* Natural Integer Abstract */
 
-static_assert(sizeof(Integer::double_native_int_t) == 2*sizeof(Integer::native_int_t), "double_native_int_t type has not the right size compared to native_int_t");
-static_assert(sizeof(Integer::native_int_t) == sizeof(Integer::native_uint_t), "native_int_t type has not the right size compared to native_uint_t");
+// Layout
 
-Integer::Integer(double_native_int_t i) {
-  double_native_uint_t j = i < 0 ? -i : i;
-  native_uint_t * digits = (native_uint_t *)&j;
-  native_uint_t leastSignificantDigit = *digits;
-  native_uint_t mostSignificantDigit = *(digits+1);
-  m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
-  if (m_numberOfDigits == 1) {
-    m_digit = leastSignificantDigit;
-  } else {
-    native_uint_t * digits = new native_uint_t [2];
-    digits[0] = leastSignificantDigit;
-    digits[1] = mostSignificantDigit;
-    m_digits = digits;
+int NaturalIntegerAbstract::writeTextInBuffer(char * buffer, int bufferSize) const {
+  if (bufferSize == 0) {
+    return -1;
   }
-  m_negative = i < 0;
-}
-
-/* Caution: string is NOT guaranteed to be NULL-terminated! */
-Integer::Integer(const char * digits, bool negative) :
-  Integer(0)
-{
-  if (digits != nullptr && digits[0] == '-') {
-    negative = true;
-    digits++;
+  buffer[bufferSize-1] = 0;
+  //TODO: handle 'inf'
+  if (isInfinity()) {
+    return strlcpy(buffer, "undef", bufferSize);
   }
 
-  Integer result = Integer(0);
-
-  if (digits != nullptr) {
-    Integer base = Integer(10);
-    while (*digits >= '0' && *digits <= '9') {
-      result = Multiplication(result, base);
-      result = Addition(result, Integer(*digits-'0'));
-      digits++;
-    }
+  IntegerReference base(10);
+  IntegerReference ref(this);
+  IntegerDivisionReference d = IntegerReference::Division(ref, base);
+  int size = 0;
+  if (bufferSize == 1) {
+    return 0;
   }
-
-  *this = std::move(result);
-
   if (isZero()) {
-    negative = false;
+    buffer[size++] = '0';
   }
-  m_negative = negative;
-}
-
-Integer Integer::exponent(int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
-  Integer base = Integer(10);
-  Integer power = Integer(0);
-  for (int i = 0; i < exponentLength; i++) {
-    power = Multiplication(power, base);
-    power = Addition(power, Integer(*exponent-'0'));
-    exponent++;
-  }
-  if (exponentNegative) {
-    power.setNegative(true);
-  }
-  return Subtraction(Integer(fractionalPartLength), power);
-}
-
-Integer Integer::numerator(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, Integer * exponent) {
-  Integer base = Integer(10);
-  Integer numerator = Integer(integralPart, negative);
-  for (int i = 0; i < fractionalPartLength; i++) {
-    numerator = Multiplication(numerator, base);
-    numerator = Addition(numerator, Integer(*fractionalPart-'0'));
-    fractionalPart++;
-  }
-  if (exponent->isNegative()) {
-    while (!exponent->isEqualTo(Integer(0))) {
-      numerator = Multiplication(numerator, base);
-      *exponent = Addition(*exponent, Integer(1));
+  while (!(d.remainder.isZero() &&
+        d.quotient.isZero())) {
+    char c = char_from_digit(d.remainder.digit(0));
+    if (size >= bufferSize-1) {
+      return strlcpy(buffer, "undef", bufferSize);
     }
+    buffer[size++] = c;
+    d = IntegerReference::Division(d.quotient, base);
   }
-  return numerator;
+  buffer[size] = 0;
+
+  // Flip the string
+  for (int i=0, j=size-1 ; i < j ; i++, j--) {
+    char c = buffer[i];
+    buffer[i] = buffer[j];
+    buffer[j] = c;
+  }
+  return size;
 }
 
-Integer Integer::denominator(Integer * exponent) {
-  Integer base = Integer(10);
-  Integer denominator = Integer(1);
-  if (!exponent->isNegative()) {
-    while (!exponent->isEqualTo(Integer(0))) {
-      denominator = Multiplication(denominator, base);
-      *exponent = Subtraction(*exponent, Integer(1));
-    }
-  }
-  return denominator;
+LayoutRef NaturalIntegerAbstract::createLayout() const {
+  char buffer[k_maxNumberOfDigitsBase10];
+  int numberOfChars = writeTextInBuffer(buffer, k_maxNumberOfDigitsBase10);
+  return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
-Integer::~Integer() {
-  releaseDynamicIvars();
-}
-
-Integer::Integer(Integer && other) {
-  // Pilfer other's data
-  if (other.usesImmediateDigit()) {
-    m_digit = other.m_digit;
-  } else {
-    m_digits = other.m_digits;
-  }
-  m_numberOfDigits = other.m_numberOfDigits;
-  m_negative = other.m_negative;
-
-  // Reset other
-  other.m_digit = 0;
-  other.m_numberOfDigits = 1;
-  other.m_negative = 0;
-}
-
-Integer::Integer(const Integer& other) {
-  // Copy other's data
-  if (other.usesImmediateDigit()) {
-    m_digit = other.m_digit;
-  } else {
-    native_uint_t * digits = new native_uint_t [other.m_numberOfDigits];
-    for (int i=0; i<other.m_numberOfDigits; i++) {
-      digits[i] = other.m_digits[i];
-    }
-    m_digits = digits;
-  }
-  m_numberOfDigits = other.m_numberOfDigits;
-  m_negative = other.m_negative;
-}
-
-Integer& Integer::operator=(Integer && other) {
-  if (this != &other) {
-    releaseDynamicIvars();
-    // Pilfer other's ivars
-    if (other.usesImmediateDigit()) {
-      m_digit = other.m_digit;
-    } else {
-      m_digits = other.m_digits;
-    }
-    m_numberOfDigits = other.m_numberOfDigits;
-    m_negative = other.m_negative;
-
-    // Reset other
-    other.m_digit = 0;
-    other.m_numberOfDigits = 1;
-    other.m_negative = 0;
-  }
-  return *this;
-}
-
-Integer& Integer::operator=(const Integer& other) {
-  if (this != &other) {
-    releaseDynamicIvars();
-    // Copy other's ivars
-    if (other.usesImmediateDigit()) {
-      m_digit = other.m_digit;
-    } else {
-      native_uint_t * digits = new native_uint_t [other.m_numberOfDigits];
-      for (int i=0; i<other.m_numberOfDigits; i++) {
-        digits[i] = other.m_digits[i];
-      }
-      m_digits = digits;
-    }
-    m_numberOfDigits = other.m_numberOfDigits;
-    m_negative = other.m_negative;
-  }
-  return *this;
-}
-
-void Integer::setNegative(bool negative) {
-  if (isZero()) { // Zero cannot be negative
-    return;
-  }
-  m_negative = negative;
-}
-
-// Comparison
-
-int Integer::NaturalOrder(const Integer & i, const Integer & j) {
-  if (i.isNegative() && !j.isNegative()) {
-    return -1;
-  }
-  if (!i.isNegative() && j.isNegative()) {
-    return 1;
-  }
-  return ::Poincare::sign(i.isNegative())*ucmp(i, j);
-}
-
-bool Integer::isEqualTo(const Integer & other) const {
-  return (NaturalOrder(*this, other) == 0);
-}
-
-bool Integer::isLowerThan(const Integer & other) const {
-  return (NaturalOrder(*this, other) < 0);
-}
-
-// Arithmetic
-
-Integer Integer::Addition(const Integer & a, const Integer & b) {
-  return addition(a, b, false);
-}
-
-Integer Integer::Subtraction(const Integer & a, const Integer & b) {
-  return addition(a, b, true);
-}
-
-Integer Integer::Multiplication(const Integer & a, const Integer & b) {
-  assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t));
-  uint16_t productSize = a.m_numberOfDigits + b.m_numberOfDigits;
-  native_uint_t * digits = new native_uint_t [productSize];
-  memset(digits, 0, productSize*sizeof(native_uint_t));
-
-  double_native_uint_t carry = 0;
-  for (uint16_t i=0; i<a.m_numberOfDigits; i++) {
-    double_native_uint_t aDigit = a.digit(i);
-    carry = 0;
-    for (uint16_t j=0; j<b.m_numberOfDigits; j++) {
-      double_native_uint_t bDigit = b.digit(j);
-      /* The fact that aDigit and bDigit are double_native is very important,
-       * otherwise the product might end up being computed on single_native size
-       * and then zero-padded. */
-      double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(digits[i+j]); // TODO: Prove it cannot overflow double_native type
-      native_uint_t * l = (native_uint_t *)&p;
-      digits[i+j] = l[0];
-      carry = l[1];
-    }
-    digits[i+b.m_numberOfDigits] += carry;
-  }
-
-  while (digits[productSize-1] == 0 && productSize>1) {
-    productSize--;
-    /* At this point we could realloc m_digits to a smaller size. */
-  }
-
-  return Integer(digits, productSize, a.m_negative != b.m_negative);
-}
-
-Integer Integer::Factorial(const Integer & i) {
-  Integer j = Integer(2);
-  Integer result = Integer(1);
-  while (!i.isLowerThan(j)) {
-    result = Multiplication(j, result);
-    j = Addition(j, Integer(1));
-  }
-  return result;
-}
-
-IntegerDivision Integer::Division(const Integer & numerator, const Integer & denominator) {
-  if (!numerator.isNegative() && !denominator.isNegative()) {
-    return udiv(numerator, denominator);
-  }
-  Integer absNumerator = numerator;
-  absNumerator.setNegative(false);
-  Integer absDenominator = denominator;
-  absDenominator.setNegative(false);
-  IntegerDivision usignedDiv = udiv(absNumerator, absDenominator);
-  if (usignedDiv.remainder.isEqualTo(Integer(0))) {
-    if (!numerator.isNegative() || !denominator.isNegative()) {
-      usignedDiv.quotient.setNegative(true);
-    }
-    return usignedDiv;
-  }
-  if (numerator.isNegative()) {
-    if (denominator.isNegative()) {
-      usignedDiv.remainder.setNegative(true);
-      usignedDiv.quotient = Addition(usignedDiv.quotient, Integer(1));
-      usignedDiv.remainder = Integer::Subtraction(usignedDiv.remainder, denominator);
-   } else {
-      usignedDiv.quotient.setNegative(true);
-      usignedDiv.quotient = Subtraction(usignedDiv.quotient, Integer(1));
-      usignedDiv.remainder = Integer::Subtraction(denominator, usignedDiv.remainder);
-    }
-  } else {
-    assert(denominator.isNegative());
-    usignedDiv.quotient.setNegative(true);
-  }
-  return usignedDiv;
-}
-
-Integer Integer::Power(const Integer & i, const Integer & j) {
-  // TODO: optimize with dichotomia
-  assert(!j.isNegative());
-  Integer index = j;
-  Integer result = Integer(1);
-  while (!index.isEqualTo(Integer(0))) {
-    result = Multiplication(result, i);
-    index = Subtraction(index, Integer(1));
-  }
-  return result;
-}
-
-int Integer::numberOfDigitsWithoutSign(const Integer & i) {
-  int numberOfDigits = 1;
-  Integer copy = i;
-  copy.setNegative(false);
-  IntegerDivision d = Integer::Division(copy, Integer(10));
-  while (!d.quotient.isZero()) {
-    copy = d.quotient;
-    d = Integer::Division(copy, Integer(10));
-    numberOfDigits++;
-  }
-  return numberOfDigits;
-}
-
-// Private methods
-
-  /* WARNING: This constructor takes ownership of the digits array! */
-Integer::Integer(const native_uint_t * digits, uint16_t numberOfDigits, bool negative) :
-    m_numberOfDigits(numberOfDigits),
-    m_negative(negative)
-{
-  assert(digits != nullptr);
-  if (numberOfDigits == 1) {
-    m_digit = digits[0];
-    delete[] digits;
-    if (isZero()) {
-      // Normalize zero
-      m_negative = false;
-    }
-  } else {
-    assert(numberOfDigits > 1);
-    m_digits = digits;
-  }
-}
-
-void Integer::releaseDynamicIvars() {
-  if (!usesImmediateDigit()) {
-    assert(m_digits != nullptr);
-    delete[] m_digits;
-  }
-}
-
-int8_t Integer::ucmp(const Integer & a, const Integer & b) {
-  if (a.m_numberOfDigits < b.m_numberOfDigits) {
-    return -1;
-  } else if (a.m_numberOfDigits > b.m_numberOfDigits) {
-    return 1;
-  }
-  for (uint16_t i = 0; i < a.m_numberOfDigits; i++) {
-    // Digits are stored most-significant last
-    native_uint_t aDigit = a.digit(a.m_numberOfDigits-i-1);
-    native_uint_t bDigit = b.digit(b.m_numberOfDigits-i-1);
-    if (aDigit < bDigit) {
-      return -1;
-    } else if (aDigit > bDigit) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool outputNegative) {
-  uint16_t size = max(a.m_numberOfDigits, b.m_numberOfDigits);
-  if (!subtract) {
-    // Addition can overflow
-    size += 1;
-  }
-  native_uint_t * digits = new native_uint_t [size];
-  bool carry = false;
-  for (uint16_t i = 0; i<size; i++) {
-    native_uint_t aDigit = (i >= a.m_numberOfDigits ? 0 : a.digit(i));
-    native_uint_t bDigit = (i >= b.m_numberOfDigits ? 0 : b.digit(i));
-    native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
-    digits[i] = result;
-    if (subtract) {
-      carry = (aDigit < result) || (carry && aDigit == result); // There's been an underflow
-    } else {
-      carry = (aDigit > result) || (bDigit > result); // There's been an overflow
-    }
-  }
-  while (digits[size-1] == 0 && size>1) {
-    size--;
-    // We could realloc digits to a smaller size. Probably not worth the trouble.
-  }
-  return Integer(digits, size, outputNegative);
-}
-
-
-Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative) {
-  bool bNegative = (inverseBNegative ? !b.m_negative : b.m_negative);
-  if (a.m_negative == bNegative) {
-    return usum(a, b, false, a.m_negative);
-  } else {
-    /* The signs are different, this is in fact a subtraction
-     * s = a+b = (abs(a)-abs(b) OR abs(b)-abs(a))
-     * 1/abs(a)>abs(b) : s = sign*udiff(a, b)
-     * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
-     * sign? sign of the greater! */
-    if (ucmp(a, b) >= 0) {
-      return usum(a, b, true, a.m_negative);
-    } else {
-      return usum(b, a, true, bNegative);
-    }
-  }
-}
-
-Integer Integer::IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index) {
-  assert(halfDigit != 0);
-  half_native_uint_t * digits = (half_native_uint_t *)new native_uint_t [(index+1)/2];
-  memset(digits, 0, (index+1)/2*sizeof(native_uint_t));
-  digits[index-1] = halfDigit;
-  int indexInBase32 = index%2 == 1 ? index/2+1 : index/2;
-  return Integer((native_uint_t *)digits, indexInBase32, false);
-}
-
-IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denominator) {
-  /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
-   * (Algorithm 1.6) */
-  assert(!denominator.isZero());
-  if (numerator.isLowerThan(denominator)) {
-    IntegerDivision div = {.quotient = 0, .remainder = numerator};
-    return div;
-  }
-
-  Integer A = numerator;
-  Integer B = denominator;
-  native_int_t base = 1 << 16;
-  // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
-  native_int_t d = base/(native_int_t)(B.halfDigit(B.numberOfHalfDigits()-1)+1);
-  A = Multiplication(Integer(d), A);
-  B = Multiplication(Integer(d), B);
-
-  int n = B.numberOfHalfDigits();
-  int m = A.numberOfHalfDigits()-n;
-  half_native_uint_t * qDigits = (half_native_uint_t *)new native_uint_t [m/2+1];
-  memset(qDigits, 0, (m/2+1)*sizeof(native_uint_t));
-  Integer betam = IntegerWithHalfDigitAtIndex(1, m+1);
-  Integer betaMB = Multiplication(betam, B); // TODO: can swift all digits by m! B.swift16(mg)
-  if (!A.isLowerThan(betaMB)) {
-    qDigits[m] = 1;
-    A = Subtraction(A, betaMB);
-  }
-  for (int j = m-1; j >= 0; j--) {
-    native_uint_t qj2 = ((native_uint_t)A.halfDigit(n+j)*base+(native_uint_t)A.halfDigit(n+j-1))/(native_uint_t)B.halfDigit(n-1);
-    half_native_uint_t baseMinus1 = (1 << 16) -1;
-    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1;
-    Integer factor = qDigits[j] > 0 ? IntegerWithHalfDigitAtIndex(qDigits[j], j+1) : Integer(0);
-    A = Subtraction(A, Multiplication(factor, B));
-    Integer m = Multiplication(IntegerWithHalfDigitAtIndex(1, j+1), B);
-    while (A.isLowerThan(Integer(0))) {
-      qDigits[j] = qDigits[j]-1;
-      A = Addition(A, m);
-    }
-  }
-  int qNumberOfDigits = m+1;
-  while (qDigits[qNumberOfDigits-1] == 0 && qNumberOfDigits > 1) {
-    qNumberOfDigits--;
-    // We could realloc digits to a smaller size. Probably not worth the trouble.
-  }
-  int qNumberOfDigitsInBase32 = qNumberOfDigits%2 == 1 ? qNumberOfDigits/2+1 : qNumberOfDigits/2;
-  IntegerDivision div = {.quotient = Integer((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
-  if (d != 1 && !div.remainder.isZero()) {
-    div.remainder = udiv(div.remainder, Integer(d)).quotient;
-  }
-  return div;
-}
+// Approximation
 
 template<typename T>
-T Integer::approximate() const {
+T NaturalIntegerAbstract::approximate() const {
   if (isZero()) {
     /* This special case for 0 is needed, because the current algorithm assumes
      * that the big integer is non zero, thus puts the exponent to 126 (integer
      * area), the issue is that when the mantissa is 0, a "shadow bit" is
      * assumed to be there, thus 126 0x000000 is equal to 0.5 and not zero.
      */
-    T result = m_negative ? -0.0 : 0.0;
-    return result;
+    return (T)0.0;
   }
   assert(sizeof(T) == 4 || sizeof(T) == 8);
   /* We're generating an IEEE 754 compliant float(double).
@@ -512,8 +108,6 @@ T Integer::approximate() const {
 
   native_uint_t lastDigit = digit(m_numberOfDigits-1);
   uint8_t numberOfBitsInLastDigit = log2(lastDigit);
-
-  bool sign = m_negative;
 
   uint16_t exponent = IEEE754<T>::exponentOffset();
   /* Escape case if the exponent is too big to be stored */
@@ -548,7 +142,7 @@ T Integer::approximate() const {
     digitIndex++;
   }
 
-  T result = IEEE754<T>::buildFloat(sign, exponent, mantissa);
+  T result = IEEE754<T>::buildFloat(false, exponent, mantissa);
 
   /* If exponent is 255 and the float is undefined, we have exceed IEEE 754
    * representable float. */
@@ -558,58 +152,532 @@ T Integer::approximate() const {
   return result;
 }
 
-int Integer::writeTextInBuffer(char * buffer, int bufferSize) const {
+// Properties
+
+int NaturalIntegerAbstract::numberOfDigits(const NaturalIntegerAbstract * i) {
+  int numberOfDigits = 1;
+  IntegerReference ref(i);
+  IntegerReference base(10);
+  IntegerDivisionReference d = IntegerReference::Division(ref, base);
+  while (!d.quotient.isZero()) {
+    ref = d.quotient;
+    d = IntegerReference::Division(ref, base);
+    numberOfDigits++;
+  }
+  return numberOfDigits;
+}
+
+// Arithmetic
+
+int8_t NaturalIntegerAbstract::ucmp(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b) {
+  if (a->m_numberOfDigits < b->m_numberOfDigits) {
+    return -1;
+  } else if (a->m_numberOfDigits > b->m_numberOfDigits) {
+    return 1;
+  }
+  for (uint16_t i = 0; i < a->m_numberOfDigits; i++) {
+    // Digits are stored most-significant last
+    native_uint_t aDigit = a->digit(a->m_numberOfDigits-i-1);
+    native_uint_t bDigit = b->digit(b->m_numberOfDigits-i-1);
+    if (aDigit < bDigit) {
+      return -1;
+    } else if (aDigit > bDigit) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+IntegerReference NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b, bool subtract) {
+  size_t size = max(a->m_numberOfDigits, b->m_numberOfDigits);
+  if (!subtract) {
+    // Addition can overflow
+    size++;
+  }
+  // Overflow
+  if (size > k_maxNumberOfDigits + 1) {
+    return IntegerReference::Overflow();
+  }
+  native_uint_t digits[k_maxNumberOfDigits+1];
+  bool carry = false;
+  for (size_t i = 0; i < size; i++) {
+    native_uint_t aDigit = (i >= a->m_numberOfDigits ? 0 : a->digit(i));
+    native_uint_t bDigit = (i >= b->m_numberOfDigits ? 0 : b->digit(i));
+    native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
+    digits[i] = result;
+    if (subtract) {
+      carry = (aDigit < result) || (carry && aDigit == result); // There's been an underflow
+    } else {
+      carry = (aDigit > result) || (bDigit > result); // There's been an overflow
+    }
+  }
+  while (digits[size-1] == 0 && size>1) {
+    size--;
+  }
+  if (size > k_maxNumberOfDigits) {
+    return IntegerReference::Overflow();
+  }
+  return IntegerReference::IntegerReference(digits, size, false);
+}
+
+IntegerReference NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b){
+  size_t size = a->m_numberOfDigits + b->m_numberOfDigits;
+  // Overflow
+  if (size > k_maxNumberOfDigits + 1) {
+    return IntegerReference::Overflow();
+  }
+
+  native_uint_t digits[k_maxNumberOfDigits+1];
+  memset(digits, 0, size*sizeof(native_uint_t));
+
+  double_native_uint_t carry = 0;
+  for (size_t i=0; i<a->m_numberOfDigits; i++) {
+    double_native_uint_t aDigit = a->digit(i);
+    carry = 0;
+    for (size_t j=0; j<b->m_numberOfDigits; j++) {
+      double_native_uint_t bDigit = b->digit(j);
+      /* The fact that aDigit and bDigit are double_native is very important,
+       * otherwise the product might end up being computed on single_native size
+       * and then zero-padded. */
+      double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(digits[i+j]); // TODO: Prove it cannot overflow double_native type
+      native_uint_t * l = (native_uint_t *)&p;
+      digits[i+j] = l[0];
+      carry = l[1];
+    }
+    digits[i+b->m_numberOfDigits] += carry;
+  }
+
+  while (digits[size-1] == 0 && size>1) {
+    size--;
+  }
+  // Overflow
+  if (size > k_maxNumberOfDigits + 1) {
+    return IntegerReference::Overflow();
+  }
+  return IntegerReference::IntegerReference(digits, size, false);
+}
+
+// TODO: OPTIMIZE
+IntegerDivisionReference NaturalIntegerAbstract::udiv(const NaturalIntegerAbstract * numerator, const NaturalIntegerAbstract * denominator) {
+  /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
+   * (Algorithm 1.6) */
+  assert(!denominator->isZero());
+  if (ucmp(numerator,denominator) < 0) {
+    IntegerDivisionReference div = {.quotient = IntegerReference(0), .remainder = IntegerReference(numerator)};
+    return div;
+  }
+
+  IntegerReference A(numerator);
+  IntegerReference B(denominator);
+  native_int_t base = 1 << 16;
+  // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
+  // Afterwards, we require B to hold Integer node, we check then for allocation failures
+  if (B.isAllocationFailure()) {
+    return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
+  }
+  native_int_t d = base/(native_int_t)(B.typedNode()->halfDigit(B.typedNode()->numberOfHalfDigits()-1)+1);
+  A = IntegerReference::Multiplication(IntegerReference(d), A);
+  B = IntegerReference::Multiplication(IntegerReference(d), B);
+
+  // Afterwards, we require A and B to hold Integer node, we check then for allocation failures
+  if (A.isAllocationFailure() || B.isAllocationFailure()) {
+    return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
+  }
+  int n = B.typedNode()->numberOfHalfDigits();
+  int m = A.typedNode()->numberOfHalfDigits()-n;
+  half_native_uint_t qDigits[k_maxNumberOfDigits+1];
+  memset(qDigits, 0, (m/2+1)*sizeof(native_uint_t));
+  IntegerReference betam = IntegerWithHalfDigitAtIndex(1, m+1);
+  IntegerReference betaMB = IntegerReference::Multiplication(betam, B); // TODO: can swift all digits by m! B.swift16(mg)
+  if (IntegerReference::NaturalOrder(A,betaMB) > 0) {
+    qDigits[m] = 1;
+    A = IntegerReference::Subtraction(A, betaMB);
+  }
+  for (int j = m-1; j >= 0; j--) {
+    // Afterwards, we require A to hold Integer node, we check then for allocation failure
+    if (A.isAllocationFailure()) {
+      return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
+    }
+    native_uint_t qj2 = ((native_uint_t)A.typedNode()->halfDigit(n+j)*base+(native_uint_t)A.typedNode()->halfDigit(n+j-1))/(native_uint_t)B.typedNode()->halfDigit(n-1);
+    half_native_uint_t baseMinus1 = (1 << 16) -1;
+    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1;
+    IntegerReference factor = qDigits[j] > 0 ? IntegerWithHalfDigitAtIndex(qDigits[j], j+1) : IntegerReference(0);
+    A = IntegerReference::Subtraction(A, IntegerReference::Multiplication(factor, B));
+    IntegerReference m = IntegerReference::Multiplication(IntegerWithHalfDigitAtIndex(1, j+1), B);
+    while (A.sign() == ExpressionNode::Sign::Negative) {
+      qDigits[j] = qDigits[j]-1;
+      A = IntegerReference::Addition(A, m);
+    }
+  }
+  int qNumberOfDigits = m+1;
+  while (qDigits[qNumberOfDigits-1] == 0 && qNumberOfDigits > 1) {
+    qNumberOfDigits--;
+  }
+  int qNumberOfDigitsInBase32 = qNumberOfDigits%2 == 1 ? qNumberOfDigits/2+1 : qNumberOfDigits/2;
+  IntegerDivisionReference div = {.quotient = IntegerReference((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
+  if (d != 1 && !div.remainder.isZero()) {
+    IntegerReference dReference(d);
+    if (div.remainder.isAllocationFailure() || dReference.isAllocationFailure()) {
+      return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
+    }
+    div.remainder = udiv(div.remainder.typedNode(), dReference.typedNode()).quotient;
+  }
+  return div;
+}
+
+IntegerReference NaturalIntegerAbstract::upow(const NaturalIntegerAbstract * i, const NaturalIntegerAbstract * j) {
+  // TODO: optimize with dichotomia
+  IntegerReference index(j);
+  IntegerReference result(1);
+  while (!index.isZero()) {
+    result = IntegerReference::Multiplication(result, i);
+    index = IntegerReference::Subtraction(index, IntegerReference(1));
+  }
+  return result;
+}
+
+IntegerReference NaturalIntegerAbstract::ufact(const NaturalIntegerAbstract * i) {
+  IntegerReference j(2);
+  if (j.isAllocationFailure()) {
+    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
+  }
+  IntegerReference result(1);
+  while (ucmp(i,j.typedNode()) > 0) {
+    result = IntegerReference::Multiplication(j, result);
+    j = IntegerReference::Addition(j, IntegerReference(1));
+  }
+  return result;
+}
+
+IntegerReference NaturalIntegerAbstract::IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index) {
+  assert(halfDigit != 0);
+  // Overflow
+  if ((index + 1)/2) {
+    return IntegerReference::Overflow();
+  }
+  half_native_uint_t digits[k_maxNumberOfDigits+1];
+  memset(digits, 0, (index+1)/2*sizeof(native_uint_t));
+  digits[index-1] = halfDigit;
+  int indexInBase32 = index%2 == 1 ? index/2+1 : index/2;
+  return IntegerReference((native_uint_t *)digits, indexInBase32, false);
+}
+
+/* Natural Integer Pointer */
+
+NaturalIntegerPointer::NaturalIntegerPointer(native_uint_t * buffer, size_t size) :
+  NaturalIntegerAbstract(size)
+{
+  memcpy(m_digits, buffer, size*sizeof(native_uint_t));
+}
+
+/* Integer Node */
+
+void IntegerNode::setDigits(native_int_t i) {
+  if (i == 0) {
+    m_numberOfDigits = 0;
+    m_negative = false;
+    return;
+  }
+  m_negative = i < 0;
+  m_digits[0] = i < 0 ? -i : i;
+  m_numberOfDigits = 1;
+}
+
+void IntegerNode::setDigits(double_native_int_t i) {
+  if (i == 0) {
+    m_numberOfDigits = 0;
+    m_negative = false;
+    return;
+  }
+  double_native_uint_t j = i < 0 ? -i : i;
+  native_uint_t * digits = (native_uint_t *)&j;
+  native_uint_t leastSignificantDigit = *digits;
+  native_uint_t mostSignificantDigit = *(digits+1);
+  m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
+  m_digits[0] = leastSignificantDigit;
+  if (m_numberOfDigits > 1) {
+    digits[1] = mostSignificantDigit;
+  }
+  m_negative = i < 0;
+
+}
+void IntegerNode::setDigits(const native_uint_t * digits, size_t size, bool negative) {
+  memcpy(m_digits, digits, size*sizeof(native_uint_t));
+  m_numberOfDigits = size;
+  m_negative = negative;
+}
+
+ExpressionReference IntegerNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  return RationalReference(IntegerReference((NaturalIntegerAbstract *)this), IntegerReference(1));
+}
+
+template<typename T>
+T IntegerNode::templatedApproximate() const {
+  T a = NaturalIntegerAbstract::approximate<T>();
+  return m_negative ? -a : a;
+}
+
+// Layout
+
+LayoutRef IntegerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  LayoutRef naturalLayout = NaturalIntegerAbstract::createLayout();
+  if (m_negative) {
+    naturalLayout.addChildAtIndex(CharLayoutRef('-'), 0, naturalLayout.numberOfChildren(), nullptr);
+  }
+  return naturalLayout;
+}
+
+int IntegerNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  /* If the integer is too long, this method may be too slow.
-   * Experimentally, we can display at most integer whose number of digits is
-   * around 25. */
-  if (m_numberOfDigits > 25) {
-    return strlcpy(buffer, "undef", bufferSize);
+  int numberOfChar = 0;
+  if (m_negative) {
+    buffer[numberOfChar++] = '-';
   }
+  if (numberOfChar >= bufferSize-1) {
+    return bufferSize-1;
+  }
+  numberOfChar += NaturalIntegerAbstract::writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  return numberOfChar;
+}
 
-  Integer base = Integer(10);
-  Integer abs = *this;
-  abs.setNegative(false);
-  IntegerDivision d = udiv(abs, base);
+size_t IntegerNode::size() const {
+  return m_numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode);
+}
+
+ExpressionReference IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+  setNegative(s == Sign::Negative);
+  return IntegerReference((NaturalIntegerAbstract *)this);
+}
+
+void IntegerNode::setNegative(bool negative) {
+  if (isZero()) { // Zero cannot be negative
+    return;
+  }
+  m_negative = negative;
+}
+
+int IntegerNode::NaturalOrder(const IntegerNode * i, const IntegerNode * j) {
+  if (i->sign() == Sign::Negative && j->sign() == Sign::Positive) {
+    return -1;
+  }
+  if (i->sign() == Sign::Positive && j->sign() == Sign::Negative) {
+    return 1;
+  }
+  return ::Poincare::sign(i->sign() == Sign::Negative)*ucmp(i, j);
+}
+
+/* IntegerReference */
+
+IntegerReference::IntegerReference(const native_uint_t * digits, size_t numberOfDigits, bool negative) :
+  IntegerReference(numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode))
+{
+  if (node()->isAllocationFailure()) {
+    return;
+  }
+  if (numberOfDigits == 1 && digits[0] == 0) {
+    negative = false;
+  }
+  typedNode()->setDigits(digits, numberOfDigits, negative);
+}
+
+IntegerReference::IntegerReference(const char * digits, size_t length, bool negative) {
+  if (digits != nullptr && digits[0] == '-') {
+    negative = true;
+    digits++;
+  }
+  native_uint_t buffer[IntegerNode::k_maxNumberOfDigits];
+  double_native_uint_t d = 0;
   int size = 0;
-  if (bufferSize == 1) {
+  if (digits != nullptr) {
+    for (size_t s = 0; s < length; s++) {
+      if (d*10+(*digits-'0') > 0xFFFFFFFF) {
+        buffer[size++] = d;
+        d = 0;
+      }
+      d = 10*d+(*digits-'0');
+      digits++;
+    }
+  }
+  buffer[size++] = d;
+  *this = IntegerReference(buffer, size, negative);
+}
+
+IntegerReference::IntegerReference(const NaturalIntegerAbstract * naturalInteger) :
+  IntegerReference(naturalInteger->numberOfDigits()*sizeof(native_uint_t)+sizeof(IntegerNode))
+{
+  if (!node()->isAllocationFailure()) {
+    typedNode()->setDigits(naturalInteger->digits(), naturalInteger->numberOfDigits(), false);
+  }
+}
+
+IntegerReference::IntegerReference(native_int_t i) :
+  IntegerReference(i == 0 ? sizeof(IntegerNode) : sizeof(IntegerNode)+sizeof(native_uint_t))
+{
+  if (!node()->isAllocationFailure()) {
+    typedNode()->setDigits(i);
+  }
+}
+
+IntegerReference::IntegerReference(double_native_int_t i)
+{
+  double_native_uint_t j = i;
+  if (i == 0) {
+    *this = IntegerReference(sizeof(IntegerNode));
+  } else if (j <= 0xFFFFFFFF) {
+    *this = IntegerReference(sizeof(IntegerNode)+sizeof(native_uint_t));
+  } else {
+    *this = IntegerReference(sizeof(IntegerNode)+2*sizeof(native_uint_t));
+  }
+  if (!node()->isAllocationFailure()) {
+    typedNode()->setDigits(i);
+  }
+}
+
+int IntegerReference::extractedInt() const {
+  if (isAllocationFailure()) {
     return 0;
   }
-  if (isEqualTo(Integer(0))) {
-    buffer[size++] = '0';
-  } else if (isNegative()) {
-    buffer[size++] = '-';
+  assert(numberOfDigits() == 1 && digit(0) <= k_maxExtractableInteger);
+  return node()->sign() == ExpressionNode::Sign::Negative ? -digit(0) : digit(0);
+}
+
+int IntegerReference::NaturalOrder(const IntegerReference i, const IntegerReference j) {
+  if (i.isAllocationFailure() || j.isAllocationFailure()) {
+    return 0;
   }
-  while (!(d.remainder.isEqualTo(Integer(0)) &&
-        d.quotient.isEqualTo(Integer(0)))) {
-    char c = char_from_digit(d.remainder.digit(0));
-    if (size >= bufferSize-1) {
-      return strlcpy(buffer, "undef", bufferSize);
+  return IntegerNode::NaturalOrder(i.typedNode(), j.typedNode());
+}
+
+bool IntegerReference::isZero() const {
+  if (isAllocationFailure()) {
+    return false;
+  }
+  return typedNode()->isZero();
+}
+
+bool IntegerReference::isOne() const {
+  if (isAllocationFailure()) {
+    return false;
+  }
+  return typedNode()->isOne();
+}
+
+bool IntegerReference::isInfinity() const {
+  if (isAllocationFailure()) {
+    return false;
+  }
+  return typedNode()->isInfinity();
+}
+
+bool IntegerReference::isEven() const {
+  if (isAllocationFailure()) {
+    return false;
+  }
+  return typedNode()->isEven();
+}
+
+void IntegerReference::setNegative(bool negative) {
+  if (!isAllocationFailure()) {
+    return typedNode()->setNegative(negative);
+  }
+}
+
+// Arithmetic
+
+IntegerReference IntegerReference::Addition(const IntegerReference a, const IntegerReference b) {
+  return addition(a, b, false);
+}
+
+IntegerReference IntegerReference::Subtraction(const IntegerReference a, const IntegerReference b) {
+  return addition(a, b, true);
+}
+
+IntegerReference IntegerReference::Multiplication(const IntegerReference a, const IntegerReference b) {
+  if (a.isAllocationFailure() || b.isAllocationFailure()) {
+    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
+  }
+  IntegerReference um = IntegerNode::umult(a.typedNode(), b.typedNode());
+  um.setNegative(a.sign() != b.sign());
+  return um;
+}
+
+IntegerDivisionReference IntegerReference::Division(const IntegerReference numerator, const IntegerReference denominator) {
+  if (numerator.isAllocationFailure() || denominator.isAllocationFailure()) {
+    return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
+  }
+  IntegerDivisionReference ud = IntegerNode::udiv(numerator.typedNode(), denominator.typedNode());
+  if (numerator.sign() == ExpressionNode::Sign::Positive && denominator.sign() == ExpressionNode::Sign::Positive) {
+    return ud;
+  }
+  if (NaturalOrder(ud.remainder, IntegerReference(0)) == 0) {
+    if (numerator.sign() == ExpressionNode::Sign::Positive || denominator.sign() == ExpressionNode::Sign::Positive) {
+      ud.quotient.setNegative(true);
     }
-    buffer[size++] = c;
-    d = Division(d.quotient, base);
+    return ud;
   }
-  buffer[size] = 0;
-
-  // Flip the string
-  for (int i=m_negative, j=size-1 ; i < j ; i++, j--) {
-    char c = buffer[i];
-    buffer[i] = buffer[j];
-    buffer[j] = c;
+  if (numerator.sign() == ExpressionNode::Sign::Negative) {
+    if (denominator.sign() == ExpressionNode::Sign::Negative) {
+      ud.remainder.setNegative(true);
+      ud.quotient = Addition(ud.quotient, IntegerReference(1));
+      ud.remainder = Subtraction(ud.remainder, denominator);
+   } else {
+      ud.quotient.setNegative(true);
+      ud.quotient = Subtraction(ud.quotient, IntegerReference(1));
+      ud.remainder = Subtraction(denominator, ud.remainder);
+    }
+  } else {
+    assert(denominator.sign() == ExpressionNode::Sign::Negative);
+    ud.quotient.setNegative(true);
   }
-  return size;
+  return ud;
 }
 
-LayoutRef Integer::createLayout() const {
-  char buffer[255];
-  int numberOfChars = writeTextInBuffer(buffer, 255);
-  return LayoutEngine::createStringLayout(buffer, numberOfChars);
+IntegerReference IntegerReference::Power(const IntegerReference i, const IntegerReference j) {
+  if (i.isAllocationFailure() || j.isAllocationFailure()) {
+    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
+  }
+  assert(j.sign() == ExpressionNode::Sign::Positive);
+  IntegerReference upow = IntegerNode::upow(i.typedNode(), j.typedNode());
+  upow.setNegative(i.sign() == ExpressionNode::Sign::Negative && !j.isEven());
+  return upow;
 }
 
-template float Poincare::Integer::approximate<float>() const;
-template double Poincare::Integer::approximate<double>() const;
+IntegerReference IntegerReference::Factorial(const IntegerReference i) {
+  if (i.isAllocationFailure()) {
+    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
+  }
+  assert(i.sign() == ExpressionNode::Sign::Positive);
+  return IntegerNode::ufact(i.typedNode());
+}
+
+IntegerReference IntegerReference::addition(const IntegerReference a, const IntegerReference b, bool inverseBNegative) {
+  if (a.isAllocationFailure() || b.isAllocationFailure()) {
+    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
+  }
+  bool bNegative = (inverseBNegative ? b.sign() == ExpressionNode::Sign::Positive : b.sign() == ExpressionNode::Sign::Negative);
+  if ((a.sign() == ExpressionNode::Sign::Negative) == bNegative) {
+    IntegerReference us = IntegerNode::usum(a.typedNode(), b.typedNode(), false);
+    us.setNegative(a.sign() == ExpressionNode::Sign::Negative);
+    return us;
+  } else {
+    /* The signs are different, this is in fact a subtraction
+     * s = a+b = (abs(a)-abs(b) OR abs(b)-abs(a))
+     * 1/abs(a)>abs(b) : s = sign*udiff(a, b)
+     * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
+     * sign? sign of the greater! */
+    if (IntegerNode::ucmp(a.typedNode(), b.typedNode()) >= 0) {
+      IntegerReference us = IntegerNode::usum(a.typedNode(), b.typedNode(), true);
+      us.setNegative(a.sign() == ExpressionNode::Sign::Negative);
+      return us;
+    } else {
+      IntegerReference us = IntegerNode::usum(a.typedNode(), b.typedNode(), true);
+      us.setNegative(bNegative);
+      return us;
+    }
+  }
+}
 
 }

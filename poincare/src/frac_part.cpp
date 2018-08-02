@@ -17,7 +17,7 @@ Expression * FracPart::clone() const {
   return c;
 }
 
-Expression * FracPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference FracPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

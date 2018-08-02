@@ -24,7 +24,7 @@ int ConfidenceInterval::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-Expression * ConfidenceInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference ConfidenceInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -62,7 +62,7 @@ Expression * ConfidenceInterval::shallowReduce(Context& context, Preferences::An
 }
 
 template<typename T>
-Evaluation<T> * ConfidenceInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+EvaluationReference<T> ConfidenceInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * fInput = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * nInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T f = static_cast<Complex<T> *>(fInput)->toScalar();

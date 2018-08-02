@@ -1,24 +1,41 @@
 #ifndef POINCARE_UNDEFINED_H
 #define POINCARE_UNDEFINED_H
 
-#include <poincare/static_hierarchy.h>
-#include <poincare/evaluation.h>
+#include <poincare/number.h>
 
 namespace Poincare {
 
-class Undefined : public StaticHierarchy<0> {
+class UndefinedNode : public NumberNode {
 public:
-  Type type() const override;
-  Expression * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // TreeNode
+  size_t size() const override { return sizeof(UndefinedNode); }
+  const char * description() const override { return "Undefined";  }
+
+  // Properties
+  Type type() const override { return Type::Undefined; }
   int polynomialDegree(char symbolName) const override;
-private:
-  /* Layout */
+
+  // Approximation
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+    return templatedApproximate<float>();
+  }
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+    return templatedApproximate<double>();
+  }
+
+  // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Complex<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
+private:
+  template<typename T> EvaluationReference<T> templatedApproximate() const;
+};
+
+class UndefinedReference : public NumberReference {
+public:
+  UndefinedReference() {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<UndefinedNode>();
+    m_identifier = node->identifier();
+  }
 };
 
 }

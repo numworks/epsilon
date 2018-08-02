@@ -5,111 +5,58 @@
 extern "C" {
 #include <stdint.h>
 }
-#include <poincare/expression.h>
+#include <poincare/preferences.h>
+#include <poincare/tree_node.h>
+#include <poincare/tree_reference.h>
 
 namespace Poincare {
 
-/* acos, asin, arctan, acosh, asinh, arctanh and log have branch cuts on the
- * complex plan.
- * - acos, asin, atanh: ]-inf, -1[U]1, +inf[
- * - atan, asinh: ]-inf*i, -i[U]i, +inf*i[
- * - acosh: ]-inf, 1]
- * - log: ]-inf, 0]
- * They are then multivalued on these cuts. We followed the convention chosen
- * by the lib c++ of llvm but it might differ from a calculator to another
- * (ie acos(2) = -1.3169578969248*I or 1.3169578969248*I). */
+class ExpressionReference;
+template<typename T>
+class EvaluationReference;
 
 template<typename T>
-class Evaluation {
+class EvaluationNode : public TreeNode {
 public:
   enum class Type : uint8_t {
+    AllocationFailure,
     Complex,
     MatrixComplex
   };
+  EvaluationNode<T> * childAtIndex(int index) const override { return static_cast<EvaluationNode<T> *>(TreeNode::childAtIndex(index)); }
   virtual Type type() const = 0;
-  virtual ~Evaluation() {}
+  virtual ~EvaluationNode() = default;
   virtual bool isUndefined() const = 0;
   virtual T toScalar() const { return NAN; }
-  virtual Expression * complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
-  virtual std::complex<T> createTrace() const = 0;
-  virtual std::complex<T> createDeterminant() const = 0;
-  virtual Evaluation * createInverse() const = 0;
-  virtual Evaluation * createTranspose() const = 0;
-};
+  virtual ExpressionReference complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
+  virtual std::complex<T> trace() const = 0;
+  virtual std::complex<T> determinant() const = 0;
+  virtual EvaluationReference<T> inverse() const = 0;
+  virtual EvaluationReference<T> transpose() const = 0;
 
-template <typename T>
-using ComplexFunction = std::complex<T> (*)(const std::complex<T>&);
+  // TreeNode
+  static TreeNode * FailedAllocationStaticNode();
+  TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
-template<typename T>
-class Complex : public std::complex<T>, public Evaluation<T> {
-public:
-  Complex(T a, T b = 0.0) : std::complex<T>(a, b) {}
-  Complex(std::complex<T> c) : std::complex<T>(c) {
-    if (this->real() == -0) {
-      this->real(0);
-    }
-    if (this->imag() == -0) {
-      this->imag(0);
-    }
-  }
-  static Complex Undefined() {
-    return Complex(NAN, NAN);
-  }
-  virtual ~Complex() {}
-  typename Poincare::Evaluation<T>::Type type() const override { return Poincare::Evaluation<T>::Type::Complex; }
-  bool isUndefined() const override {
-    return (std::isnan(this->real()) && std::isnan(this->imag()));
-  }
-  T toScalar() const override;
-  Expression * complexToExpression(Preferences::ComplexFormat complexFormat) const override;
-  std::complex<T> createTrace() const override { return *this; }
-  std::complex<T> createDeterminant() const override { return *this; }
-  Complex<T> * createInverse() const override;
-  Complex<T> * createTranspose() const override { return new Complex<T>(*this); }
-  /* Complex functions */
-  static std::complex<T> pow(const std::complex<T> &c, const std::complex<T> &d);
-  static std::complex<T> sqrt(const std::complex<T> &c) {
-    return approximate(c, std::sqrt);
-  }
-  static std::complex<T> cos(const std::complex<T> &c) {
-    return approximate(c, std::cos);
-  }
-  static std::complex<T> sin(const std::complex<T> &c) {
-    return approximate(c, std::sin);
-  }
-  static std::complex<T> tan(const std::complex<T> &c) {
-    return approximate(c, std::tan);
-  }
-  static std::complex<T> approximate(const std::complex<T>& c, ComplexFunction<T> approximation);
+  // Tree
+  //LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(TreeNode::childAtIndex(i)); }
 };
 
 template<typename T>
-class MatrixComplex : public Evaluation<T> {
+class EvaluationReference : public TreeReference {
 public:
-  MatrixComplex(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
-  static MatrixComplex Undefined() {
-    std::complex<T> undef = std::complex<T>(NAN, NAN);
-    return MatrixComplex<T>(&undef, 1, 1);
-  }
-  virtual ~MatrixComplex() {}
-  typename Poincare::Evaluation<T>::Type type() const override { return Poincare::Evaluation<T>::Type::MatrixComplex; }
-  const std::complex<T> complexOperand(int i) const { return m_operands[i]; }
-  int numberOfComplexOperands() const { return m_numberOfRows*m_numberOfColumns; }
-  int numberOfRows() const { return m_numberOfRows; }
-  int numberOfColumns() const { return m_numberOfColumns; }
-  bool isUndefined() const override {
-    return (numberOfRows() == 1 && numberOfColumns() == 1 && std::isnan(complexOperand(0).real()) && std::isnan(complexOperand(0).imag()));
-  }
-  Expression * complexToExpression(Preferences::ComplexFormat complexFormat) const override;
-  std::complex<T> createTrace() const override;
-  std::complex<T> createDeterminant() const override;
-  MatrixComplex<T> * createInverse() const override;
-  MatrixComplex<T> * createTranspose() const override;
-  static MatrixComplex<T> createIdentity(int dim);
-private:
-  std::complex<T> * m_operands;
-  int m_numberOfRows;
-  int m_numberOfColumns;
+  EvaluationReference(TreeNode * t) : TreeReference(t) {}
+  EvaluationNode<T> * node() const override{ return static_cast<EvaluationNode<T> *>(TreeReference::node()); }
+  typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }
+  bool isUndefined() const { return node()->isUndefined(); }
+  T toScalar() const { return node()->toScalar(); }
+  ExpressionReference complexToExpression(Preferences::ComplexFormat complexFormat) const;
+  std::complex<T> trace() const { return node()->trace(); }
+  std::complex<T> determinant() const { return node()->determinant(); }
+  EvaluationReference inverse() const { return node()->inverse(); }
+  EvaluationReference transpose() const { return node()->transpose(); }
+protected:
+  EvaluationReference() : TreeReference() {}
 };
 
 }

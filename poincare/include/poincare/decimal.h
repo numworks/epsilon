@@ -21,24 +21,24 @@ public:
   Integer mantissa() const { return m_mantissa; }
   // Expression subclassing
   Type type() const override;
-  Expression * clone() const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   Sign sign() const override { return m_mantissa.isNegative() ? Sign::Negative : Sign::Positive; }
+  constexpr static int k_maxExponentLength = 4;
 private:
   constexpr static double k_biggestMantissaFromDouble = 999999999999999;
   constexpr static int k_maxDoubleExponent = 308;
   /* Comparison */
-  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   /* Layout */
-  bool needParenthesisWithParent(const Expression * e) const override;
+  bool needsParenthesisWithParent(SerializableNode * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplification */
-  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
-  Expression * shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> EvaluationReference<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 
   int convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const;
   // Worst case is -1.2345678901234E-1000

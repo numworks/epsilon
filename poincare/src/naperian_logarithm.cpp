@@ -20,7 +20,7 @@ Expression * NaperianLogarithm::clone() const {
   return a;
 }
 
-Expression * NaperianLogarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference NaperianLogarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

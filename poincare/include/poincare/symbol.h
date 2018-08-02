@@ -1,12 +1,52 @@
 #ifndef POINCARE_SYMBOL_H
 #define POINCARE_SYMBOL_H
 
-#include <poincare/static_hierarchy.h>
+#include <poincare/expression_reference.h>
 
 namespace Poincare {
 
-class Symbol : public StaticHierarchy<0> {
+class SymbolNode : public ExpressionNode {
   friend class Store;
+public:
+  void setName(const char name) { m_name = name; }
+  char name() const { return m_name; }
+
+  // TreeNode
+  size_t size() const override { return sizeof(SymbolNode); }
+  const char * description() const override { return "Symbol";  }
+  int numberOfChildren() const override { return 0; }
+
+  // Expression Properties
+  Type type() const override { return Type::Symbol; }
+  Sign sign() const override;
+  ExpressionReference replaceSymbolWithExpression(char symbol, ExpressionReference expression) override;
+  int polynomialDegree(char symbolName) const override;
+  int getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const override;
+  int getVariables(isVariableTest isVariable, char * variables) const override;
+  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
+
+  /* Comparison */
+  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
+
+/* Layout */
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+
+  /* Simplification */
+  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+
+  /* Approximation */
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+
+private:
+  bool hasAnExactRepresentation(Context & context) const;
+  template<typename T> EvaluationReference<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+
+  char m_name;
+};
+
+class SymbolReference : public ExpressionReference {
 public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
@@ -41,40 +81,22 @@ public:
     X3,
     Y3 = 29
   };
+  SymbolReference(const char name) {
+    TreeNode * node = TreePool::sharedPool()->createTreeNode<SymbolNode>();
+    m_identifier = node->identifier();
+    if (!node->isAllocationFailure()) {
+      static_cast<SymbolNode *>(node)->setName(name);
+    }
+  }
+  // Symbol properties
+  static const char * textForSpecialSymbols(char name);
   static SpecialSymbols matrixSymbol(char index);
-  Symbol(char name);
-  Symbol(Symbol&& other); // C++11 move constructor
-  Symbol(const Symbol& other); // C++11 copy constructor
-  char name() const;
-  Type type() const override;
-  Expression * clone() const override;
-  int polynomialDegree(char symbolName) const override;
-  int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
-  Sign sign() const override;
-  bool isMatrixSymbol() const;
-  bool isScalarSymbol() const;
+  static bool isMatrixSymbol(char c);
+  static bool isScalarSymbol(char c);
   static bool isVariableSymbol(char c);
   static bool isSeriesSymbol(char c);
   static bool isRegressionSymbol(char c);
-  bool isApproximate(Context & context) const;
-  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
-  bool hasAnExactRepresentation(Context & context) const;
-  static const char * textForSpecialSymbols(char name);
-  int getVariables(isVariableTest isVariable, char * variables) const override;
-private:
-  Expression * replaceSymbolWithExpression(char symbol, Expression * expression) override;
-  /* Simplification */
-  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
-  /* Comparison */
-  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
-  const char m_name;
+  static bool isApproximate(char c, Context & context);
 };
 
 }

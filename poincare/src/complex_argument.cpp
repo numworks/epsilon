@@ -16,7 +16,7 @@ Expression * ComplexArgument::clone() const {
   return a;
 }
 
-Expression * ComplexArgument::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference ComplexArgument::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

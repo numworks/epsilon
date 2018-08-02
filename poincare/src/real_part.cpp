@@ -16,7 +16,7 @@ Expression * RealPart::clone() const {
   return a;
 }
 
-Expression * RealPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference RealPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

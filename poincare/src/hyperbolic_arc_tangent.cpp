@@ -17,7 +17,7 @@ Expression * HyperbolicArcTangent::clone() const {
   return a;
 }
 
-Expression * HyperbolicArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference HyperbolicArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

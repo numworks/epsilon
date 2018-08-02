@@ -16,7 +16,7 @@ Expression * Determinant::clone() const {
   return a;
 }
 
-Expression * Determinant::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Determinant::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -34,7 +34,7 @@ Expression * Determinant::shallowReduce(Context& context, Preferences::AngleUnit
 
 // TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
-Evaluation<T> * Determinant::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+EvaluationReference<T> Determinant::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
   Complex<T> * result = new Complex<T>(input->createDeterminant());
   delete input;

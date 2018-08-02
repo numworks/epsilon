@@ -15,24 +15,19 @@ class Integer;
 class GlobalContext : public Context {
 public:
   GlobalContext();
-  ~GlobalContext();
-  GlobalContext(const GlobalContext& other) = delete;
-  GlobalContext(GlobalContext&& other) = delete;
-  GlobalContext& operator=(const GlobalContext& other) = delete;
-  GlobalContext& operator=(GlobalContext&& other) = delete;
   /* The expression recorded in global context is already a expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
-  const Expression * expressionForSymbol(const Symbol * symbol) override;
-  LayoutRef layoutForSymbol(const Symbol * symbol, int numberOfSignificantDigits);
-  void setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) override;
+  const ExpressionReference expressionForSymbol(const SymbolReference symbol) override;
+  LayoutRef layoutForSymbol(const SymbolReference symbol, int numberOfSignificantDigits);
+  void setExpressionForSymbolName(const ExpressionReference expression, const SymbolReference symbol, Context & context) override;
   static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
   static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
 private:
   static Decimal * defaultExpression();
   int symbolIndex(const Symbol * symbol) const;
-  Expression * m_expressions[k_maxNumberOfScalarExpressions];
-  Matrix * m_matrixExpressions[k_maxNumberOfMatrixExpressions];
+  ExpressionReference m_expressions[k_maxNumberOfScalarExpressions];
+  MatrixReference m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   /* Matrix layout memoization */
   LayoutRef m_matrixLayouts[k_maxNumberOfMatrixExpressions];
   Approximation<double> m_pi;

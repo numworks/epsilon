@@ -36,7 +36,7 @@ std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, Preference
   return ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument(result);
 }
 
-Expression * SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

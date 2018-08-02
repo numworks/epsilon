@@ -11,11 +11,10 @@ class Random : public StaticHierarchy<0> {
   using StaticHierarchy<0>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
   Sign sign() const override { return Sign::Positive; }
   template<typename T> static T random();
 private:
-  Expression * setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
@@ -25,13 +24,13 @@ private:
   }
   const char * name() const { return "random"; }
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<float>();
   }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<double>();
   }
-  template <typename T> Evaluation<T> * templateApproximate() const {
+  template <typename T> EvaluationReference<T> templateApproximate()) const {
     return new Complex<T>(random<T>());
   }
 };

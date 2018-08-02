@@ -20,7 +20,6 @@ class Power : public StaticHierarchy<2> {
   friend class Symbol;
 public:
   Type type() const override;
-  Expression * clone() const override;
   Sign sign() const override;
   int polynomialDegree(char symbolName) const override;
   int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
@@ -29,19 +28,19 @@ private:
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
   constexpr static int k_maxExactPowerMatrix = 100;
   /* Property */
-  Expression * setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  bool needParenthesisWithParent(const Expression * e) const override;
+  bool needsParenthesisWithParent(SerializableNode * parentNode) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   static const char * name() { return "^"; }
   /* Simplify */
-  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const override;
-  int simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
   Expression * cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
@@ -60,10 +59,10 @@ private:
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n);
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d);
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };

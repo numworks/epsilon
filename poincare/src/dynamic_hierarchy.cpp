@@ -141,7 +141,7 @@ void DynamicHierarchy::removeOperandAtIndex(int i, bool deleteAfterRemoval) {
   }
 }
 
-int DynamicHierarchy::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
+int DynamicHierarchy::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
   int m = this->numberOfOperands();
   int n = e->numberOfOperands();
   for (int i = 1; i <= m; i++) {

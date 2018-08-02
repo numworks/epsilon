@@ -65,7 +65,7 @@ int PrintFloat::convertFloatToText(T f, char * buffer, int bufferSize,
 template <class T>
 int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
-  /*if (std::isinf(f)) {
+  if (std::isinf(f)) {
     int currentChar = 0;
     if (f < 0) {
       buffer[currentChar++] = '-';
@@ -75,7 +75,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
     buffer[currentChar++] = 'f';
     buffer[currentChar] = 0;
     return currentChar;
-  }*/
+  }
 
   if (std::isinf(f) || std::isnan(f)) {
     int currentChar = 0;

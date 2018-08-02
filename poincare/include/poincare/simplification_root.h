@@ -17,23 +17,22 @@ public:
     /* We don't want to clone the expression provided at construction.
      * So we don't want it to be deleted when we're destroyed (parent destructor). */
   }
-  Expression * clone() const override { return nullptr; }
   int polynomialDegree(char symbolName) const override { return -1; }
   Type type() const override { return Expression::Type::SimplificationRoot; }
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return nullptr;
   }
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return 0; }
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     assert(false);
     return nullptr;
   }
 private:
-  Expression * shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override { return this; }
+  ExpressionReference shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override { return this; }
 };
 
 }

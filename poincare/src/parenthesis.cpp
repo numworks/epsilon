@@ -6,35 +6,25 @@ extern "C" {
 
 namespace Poincare {
 
-
-Expression::Type Parenthesis::type() const {
-  return Type::Parenthesis;
+int ParenthesisNode::polynomialDegree(char symbolName) const {
+  return childAtIndex(0)->polynomialDegree(symbolName);
 }
 
-Expression * Parenthesis::clone() const {
-  Parenthesis * o = new Parenthesis(m_operands, true);
-  return o;
+LayoutRef ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutEngine::createParenthesedLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
-int Parenthesis::polynomialDegree(char symbolName) const {
-  return operand(0)->polynomialDegree(symbolName);
-}
-
-LayoutRef Parenthesis::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
-}
-
-Expression * Parenthesis::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
+ExpressionReference ParenthesisNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+  ExpressionReference e = ExpressionNode::shallowReduce(context, angleUnit);
+  if (e.node() != this) {
     return e;
   }
-  return replaceWith(editableOperand(0), true);
+  return ExpressionReference(childAtIndex(0));
 }
 
 template<typename T>
-Evaluation<T> * Parenthesis::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  return operand(0)->privateApproximate(T(), context, angleUnit);
+EvaluationReference<T> ParenthesisNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  return childAtIndex(0)->approximate(T(), context, angleUnit);
 }
 
 }

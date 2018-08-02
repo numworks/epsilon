@@ -39,7 +39,7 @@ Expression * Logarithm::simpleShallowReduce(Context & context, Preferences::Angl
   Expression * op = editableOperand(0);
   // log(x,x)->1
   if (numberOfOperands() == 2 && op->isIdenticalTo(operand(1))) {
-    return replaceWith(new Rational(1), true);
+    return replaceWith(RationalReference(1), true);
   }
   if (op->type() == Type::Rational) {
     const Rational * r = static_cast<const Rational *>(operand(0));
@@ -49,17 +49,17 @@ Expression * Logarithm::simpleShallowReduce(Context & context, Preferences::Angl
     }
     // log(1) = 0;
     if (r->isOne()) {
-      return replaceWith(new Rational(0), true);
+      return replaceWith(RationalReference(0), true);
     }
     // log(10) ->1
     if (numberOfOperands() == 1 && r->isTen()) {
-      return replaceWith(new Rational(1), true);
+      return replaceWith(RationalReference(1), true);
     }
   }
   return this;
 }
 
-Expression * Logarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Logarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -162,7 +162,7 @@ Expression * Logarithm::splitInteger(Integer i, bool isDenominator, Context & co
   assert(!i.isZero());
   assert(!i.isNegative());
   if (i.isOne()) {
-    return new Rational(0);
+    return RationalReference(0);
   }
   assert(!i.isOne());
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
@@ -209,7 +209,7 @@ Expression * Logarithm::shallowBeautify(Context & context, Preferences::AngleUni
 }
 
 template<typename T>
-Evaluation<T> * Logarithm::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+EvaluationReference<T> Logarithm::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   if (numberOfOperands() == 1) {
     return ApproximationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }

@@ -18,7 +18,6 @@ class Addition : public DynamicHierarchy {
   friend class Complex<double>;
 public:
   Type type() const override;
-  Expression * clone() const override;
   int polynomialDegree(char symbolName) const override;
   int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
   /* Evaluation */
@@ -31,7 +30,7 @@ public:
   }
 private:
   /* Layout */
-  bool needParenthesisWithParent(const Expression * e) const override;
+  bool needsParenthesisWithParent(SerializableNode * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::createInfixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
@@ -41,7 +40,7 @@ private:
   static const char * name() { return "+"; }
 
   /* Simplification */
-  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression * factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit);
   void factorizeOperands(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit);
@@ -51,10 +50,10 @@ private:
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
     return ApproximationEngine::elementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
    }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
    }
 };

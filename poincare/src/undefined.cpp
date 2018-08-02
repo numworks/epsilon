@@ -1,4 +1,5 @@
 #include <poincare/undefined.h>
+#include <poincare/complex.h>
 #include <poincare/layout_engine.h>
 
 extern "C" {
@@ -8,33 +9,25 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Undefined::type() const {
-  return Type::Undefined;
-}
-
-Expression * Undefined::clone() const {
-  return new Undefined();
-}
-
-int Undefined::polynomialDegree(char symbolName) const {
+int UndefinedNode::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-template<typename T> Complex<T> * Undefined::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  return new Complex<T>(Complex<T>::Undefined());
-}
-
-LayoutRef Undefined::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  char buffer[16];
-  int numberOfChars = PrintFloat::convertFloatToText<float>(NAN, buffer, 16, 1, floatDisplayMode);
+LayoutRef UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  char buffer[6];
+  int numberOfChars = PrintFloat::convertFloatToText<float>(NAN, buffer, 6, numberOfSignificantDigits, floatDisplayMode);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 
-int Undefined::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int UndefinedNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
-  return strlcpy(buffer, "undef", bufferSize);
+  return PrintFloat::convertFloatToText<float>(NAN, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
+}
+
+template<typename T> EvaluationReference<T> UndefinedNode::templatedApproximate() const {
+  return ComplexReference<T>::Undefined();
 }
 
 }

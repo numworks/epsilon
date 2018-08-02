@@ -40,7 +40,7 @@ Expression * Equation::standardForm(Context * context) const {
       m_standardForm = static_cast<const Equal *>(e)->standardEquation(*context, Preferences::sharedPreferences()->angleUnit());
     } else if (e->type() == Expression::Type::Rational && static_cast<Rational *>(e)->isOne()) {
       // The equality was reduced which means the equality was always true.
-      m_standardForm = new Rational(0);
+      m_standardForm = RationalReference(0);
     } else {
       // The equality has an undefined operand
       assert(e->type() == Expression::Type::Undefined);

@@ -28,7 +28,7 @@ int Store::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFl
   return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x90");
 }
 
-Expression * Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   context.setExpressionForSymbolName(value(), symbol(), context);
   return replaceWith(editableOperand(1), true)->shallowReduce(context, angleUnit);
 }
@@ -42,7 +42,7 @@ LayoutRef Store::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 template<typename T>
-Evaluation<T> * Store::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+EvaluationReference<T> Store::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   context.setExpressionForSymbolName(value(), symbol(), context);
   if (context.expressionForSymbol(symbol()) != nullptr) {
     return context.expressionForSymbol(symbol())->privateApproximate(T(), context, angleUnit);

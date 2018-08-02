@@ -25,101 +25,113 @@ template <typename T> std::complex<T> ApproximationEngine::truncateRealOrImagina
   return c;
 }
 
-template<typename T> Evaluation<T> * ApproximationEngine::map(const Expression * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexCompute<T> compute) {
-  assert(expression->numberOfOperands() == 1);
-  Evaluation<T> * input = expression->operand(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * result = nullptr;
-  if (input->type() == Evaluation<T>::Type::Complex) {
-    Complex<T> * c = static_cast<Complex<T> *>(input);
-    result = new Complex<T>(compute(*c, angleUnit));
+template<typename T> EvaluationReference<T> ApproximationEngine::map(const ExpressionNode * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexCompute<T> compute) {
+  assert(expression->numberOfChildren() == 1);
+  EvaluationReference<T> input = expression->childAtIndex(0)->approximate(T(), context, angleUnit);
+  if (input.node()->type() == EvaluationNode<T>::Type::AllocationFailure) {
+    return EvaluationReference<T>(EvaluationNode<T>::FailedAllocationStaticNode());
+  } else if (input.node()->type() == EvaluationNode<T>::Type::Complex) {
+    const ComplexNode<T> * c = static_cast<ComplexNode<T> *>(input.node());
+    return compute(*c, angleUnit);
   } else {
-    assert(input->type() == Evaluation<T>::Type::MatrixComplex);
-    MatrixComplex<T> * m = static_cast<MatrixComplex<T> *>(input);
-    std::complex<T> * operands = new std::complex<T> [m->numberOfComplexOperands()];
-    for (int i = 0; i < m->numberOfComplexOperands(); i++) {
-      const std::complex<T> c = m->complexOperand(i);
-      operands[i] = compute(c, angleUnit);
+    assert(input.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
+    MatrixComplexReference<T> m = MatrixComplexReference<T>(input.node());
+    MatrixComplexReference<T> result(m.numberOfRows(), m.numberOfColumns());
+    for (int i = 0; i < result.numberOfRows()*result.numberOfColumns(); i++) {
+      ComplexNode<T> * child = static_cast<MatrixComplexNode<T> *>(m.node())->childAtIndex(i);
+      if (child) {
+        result.addChildTreeAtIndex(compute(*child, angleUnit), i, i);
+      } else {
+        result.addChildTreeAtIndex(ComplexReference<T>::Undefined(), i, i);
+      }
     }
-    result = new MatrixComplex<T>(operands, m->numberOfRows(), m->numberOfColumns());
-    delete[] operands;
+    return result;
   }
-  delete input;
-  return result;
 }
 
-template<typename T> Evaluation<T> * ApproximationEngine::mapReduce(const Expression * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexAndComplexReduction<T> computeOnComplexes, ComplexAndMatrixReduction<T> computeOnComplexAndMatrix, MatrixAndComplexReduction<T> computeOnMatrixAndComplex, MatrixAndMatrixReduction<T> computeOnMatrices) {
-  Evaluation<T> * result = expression->operand(0)->privateApproximate(T(), context, angleUnit);
-  for (int i = 1; i < expression->numberOfOperands(); i++) {
-    Evaluation<T> * intermediateResult = nullptr;
-    Evaluation<T> * nextOperandEvaluation = expression->operand(i)->privateApproximate(T(), context, angleUnit);
-    if (result->type() == Evaluation<T>::Type::Complex && nextOperandEvaluation->type() == Evaluation<T>::Type::Complex) {
-      const Complex<T> * c = static_cast<const Complex<T> *>(result);
-      const Complex<T> * d = static_cast<const Complex<T> *>(nextOperandEvaluation);
-      intermediateResult = new Complex<T>(computeOnComplexes(*c, *d));
-    } else if (result->type() == Evaluation<T>::Type::Complex) {
-      const Complex<T> * c = static_cast<const Complex<T> *>(result);
-      assert(nextOperandEvaluation->type() == Evaluation<T>::Type::MatrixComplex);
-      const MatrixComplex<T> * n = static_cast<const MatrixComplex<T> *>(nextOperandEvaluation);
-      intermediateResult = new MatrixComplex<T>(computeOnComplexAndMatrix(*c, *n));
-    } else if (nextOperandEvaluation->type() == Evaluation<T>::Type::Complex) {
-      assert(result->type() == Evaluation<T>::Type::MatrixComplex);
-      const MatrixComplex<T> * m = static_cast<const MatrixComplex<T> *>(result);
-      const Complex<T> * d = static_cast<const Complex<T> *>(nextOperandEvaluation);
-      intermediateResult = new MatrixComplex<T>(computeOnMatrixAndComplex(*m, *d));
+template<typename T> EvaluationReference<T> ApproximationEngine::mapReduce(const ExpressionNode * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexAndComplexReduction<T> computeOnComplexes, ComplexAndMatrixReduction<T> computeOnComplexAndMatrix, MatrixAndComplexReduction<T> computeOnMatrixAndComplex, MatrixAndMatrixReduction<T> computeOnMatrices) {
+  EvaluationReference<T> result = expression->childAtIndex(0)->approximate(T(), context, angleUnit);
+  for (int i = 1; i < expression->numberOfChildren(); i++) {
+    EvaluationReference<T> intermediateResult(nullptr);
+    EvaluationReference<T> nextOperandEvaluation = expression->childAtIndex(i)->approximate(T(), context, angleUnit);
+    if (result.node()->type() == EvaluationNode<T>::Type::AllocationFailure || nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::AllocationFailure) {
+      return EvaluationReference<T>(EvaluationNode<T>::FailedAllocationStaticNode());
+    }
+    if (result.node()->type() == EvaluationNode<T>::Type::Complex && nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::Complex) {
+      const ComplexNode<T> * c = static_cast<const ComplexNode<T> *>(result.node());
+      const ComplexNode<T> * d = static_cast<const ComplexNode<T> *>(nextOperandEvaluation.node());
+      intermediateResult = computeOnComplexes(*c, *d);
+    } else if (result.node()->type() == EvaluationNode<T>::Type::Complex) {
+      assert(nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
+      const ComplexNode<T> * c = static_cast<const ComplexNode<T> *>(result.node());
+      MatrixComplexReference<T> n = MatrixComplexReference<T>(nextOperandEvaluation.node());
+      intermediateResult = computeOnComplexAndMatrix(*c, n);
+    } else if (nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::Complex) {
+      assert(result.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
+      MatrixComplexReference<T> m = MatrixComplexReference<T>(result.node());
+      const ComplexNode<T> * d = static_cast<const ComplexNode<T> *>(nextOperandEvaluation.node());
+      intermediateResult = computeOnMatrixAndComplex(m, *d);
     } else {
-      assert(result->type() == Evaluation<T>::Type::MatrixComplex);
-      const MatrixComplex<T> * m = static_cast<const MatrixComplex<T> *>(result);
-      assert(nextOperandEvaluation->type() == Evaluation<T>::Type::MatrixComplex);
-      const MatrixComplex<T> * n = static_cast<const MatrixComplex<T> *>(nextOperandEvaluation);
-      intermediateResult = new MatrixComplex<T>(computeOnMatrices(*m, *n));
+      assert(result.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
+      assert(nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
+      MatrixComplexReference<T> m = MatrixComplexReference<T>(result.node());
+      MatrixComplexReference<T> n = MatrixComplexReference<T>(nextOperandEvaluation.node());
+      intermediateResult = computeOnMatrices(m, n);
     }
-    delete result;
-    delete nextOperandEvaluation;
     result = intermediateResult;
-    assert(result != nullptr);
-    if (result->isUndefined()) {
-      return new Complex<T>(Complex<T>::Undefined());
+    if (result.isUndefined()) {
+      return ComplexReference<T>::Undefined();
     }
   }
   return result;
 }
 
-template<typename T> MatrixComplex<T> ApproximationEngine::elementWiseOnMatrixComplexAndComplex(const MatrixComplex<T> m, const std::complex<T> c, ComplexAndComplexReduction<T> computeOnComplexes) {
-  std::complex<T> * operands = new std::complex<T> [m.numberOfRows()*m.numberOfColumns()];
-  for (int i = 0; i < m.numberOfComplexOperands(); i++) {
-    const std::complex<T> d = m.complexOperand(i);
-    operands[i] = computeOnComplexes(d, c);
+template<typename T> MatrixComplexReference<T> ApproximationEngine::elementWiseOnMatrixComplexAndComplex(const MatrixComplexReference<T> m, const std::complex<T> c, ComplexAndComplexReduction<T> computeOnComplexes) {
+  if (m.isAllocationFailure()) {
+    return MatrixComplexReference<T>(EvaluationNode<T>::FailedAllocationStaticNode());
   }
-  MatrixComplex<T> result = MatrixComplex<T>(operands, m.numberOfRows(), m.numberOfColumns());
-  delete[] operands;
-  return result;
+  MatrixComplexReference<T> matrix(m.numberOfRows(), m.numberOfColumns());
+  for (int i = 0; i < m.numberOfChildren(); i++) {
+    ComplexNode<T> * child = static_cast<MatrixComplexNode<T> *>(m.node())->childAtIndex(i);
+    if (child) {
+      matrix.addChildTreeAtIndex(computeOnComplexes(*child, c), i, i);
+    } else {
+      matrix.addChildTreeAtIndex(ComplexReference<T>::Undefined(), i, i);
+    }
+  }
+  return matrix;
 }
 
-template<typename T> MatrixComplex<T> ApproximationEngine::elementWiseOnComplexMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, ComplexAndComplexReduction<T> computeOnComplexes) {
+template<typename T> MatrixComplexReference<T> ApproximationEngine::elementWiseOnComplexMatrices(const MatrixComplexReference<T> m, const MatrixComplexReference<T> n, ComplexAndComplexReduction<T> computeOnComplexes) {
+  if (m.isAllocationFailure() || n.isAllocationFailure()) {
+    return MatrixComplexReference<T>(EvaluationNode<T>::FailedAllocationStaticNode());
+  }
   if (m.numberOfRows() != n.numberOfRows() || m.numberOfColumns() != n.numberOfColumns()) {
-    return MatrixComplex<T>::Undefined();
+    return MatrixComplexReference<T>::Undefined();
   }
-  std::complex<T> * operands = new std::complex<T> [m.numberOfRows()*m.numberOfColumns()];
-  for (int i = 0; i < m.numberOfComplexOperands(); i++) {
-    const Complex<T> c = m.complexOperand(i);
-    const Complex<T> d = n.complexOperand(i);
-    operands[i] = computeOnComplexes(c, d);
+  MatrixComplexReference<T> matrix(m.numberOfRows(), m.numberOfColumns());
+  for (int i = 0; i < m.numberOfChildren(); i++) {
+    ComplexNode<T> * childM = static_cast<MatrixComplexNode<T> *>(m.node())->childAtIndex(i);
+    ComplexNode<T> * childN = static_cast<MatrixComplexNode<T> *>(n.node())->childAtIndex(i);
+    if (childM && childN) {
+      matrix.addChildTreeAtIndex(computeOnComplexes(*childM, *childN), i, i);
+    } else {
+      matrix.addChildTreeAtIndex(ComplexReference<T>::Undefined(), i, i);
+    }
   }
-  MatrixComplex<T> result = MatrixComplex<T>(operands, m.numberOfRows(), m.numberOfColumns());
-  delete[] operands;
-  return result;
+  return matrix;
 }
 
 template std::complex<float> Poincare::ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument<float>(std::complex<float>);
 template std::complex<double> Poincare::ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument<double>(std::complex<double>);
-template Poincare::Evaluation<float> * Poincare::ApproximationEngine::map(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<float> compute);
-template Poincare::Evaluation<double> * Poincare::ApproximationEngine::map(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<double> compute);
-template Poincare::Evaluation<float> * Poincare::ApproximationEngine::mapReduce(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationEngine::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationEngine::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationEngine::MatrixAndMatrixReduction<float> computeOnMatrices);
-template Poincare::Evaluation<double> * Poincare::ApproximationEngine::mapReduce(const Poincare::Expression * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexAndComplexReduction<double> computeOnComplexes, Poincare::ApproximationEngine::ComplexAndMatrixReduction<double> computeOnComplexAndMatrix, Poincare::ApproximationEngine::MatrixAndComplexReduction<double> computeOnMatrixAndComplex, Poincare::ApproximationEngine::MatrixAndMatrixReduction<double> computeOnMatrices);
-template Poincare::MatrixComplex<float> Poincare::ApproximationEngine::elementWiseOnMatrixComplexAndComplex<float>(const Poincare::MatrixComplex<float>, const std::complex<float>, std::complex<float> (*)(std::complex<float>, std::complex<float>));
-template Poincare::MatrixComplex<double> Poincare::ApproximationEngine::elementWiseOnMatrixComplexAndComplex<double>(const Poincare::MatrixComplex<double>, std::complex<double> const, std::complex<double> (*)(std::complex<double>, std::complex<double>));
-template Poincare::MatrixComplex<float> Poincare::ApproximationEngine::elementWiseOnComplexMatrices<float>(const Poincare::MatrixComplex<float>, const Poincare::MatrixComplex<float>, std::complex<float> (*)(std::complex<float>, std::complex<float>));
-template Poincare::MatrixComplex<double> Poincare::ApproximationEngine::elementWiseOnComplexMatrices<double>(const Poincare::MatrixComplex<double>, const Poincare::MatrixComplex<double>, std::complex<double> (*)(std::complex<double>, std::complex<double>));
+template Poincare::EvaluationReference<float> Poincare::ApproximationEngine::map(const Poincare::ExpressionNode * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<float> compute);
+template Poincare::EvaluationReference<double> Poincare::ApproximationEngine::map(const Poincare::ExpressionNode * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexCompute<double> compute);
+template Poincare::EvaluationReference<float> Poincare::ApproximationEngine::mapReduce(const Poincare::ExpressionNode * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexAndComplexReduction<float> computeOnComplexes, Poincare::ApproximationEngine::ComplexAndMatrixReduction<float> computeOnComplexAndMatrix, Poincare::ApproximationEngine::MatrixAndComplexReduction<float> computeOnMatrixAndComplex, Poincare::ApproximationEngine::MatrixAndMatrixReduction<float> computeOnMatrices);
+template Poincare::EvaluationReference<double> Poincare::ApproximationEngine::mapReduce(const Poincare::ExpressionNode * expression, Poincare::Context& context, Poincare::Preferences::AngleUnit angleUnit, Poincare::ApproximationEngine::ComplexAndComplexReduction<double> computeOnComplexes, Poincare::ApproximationEngine::ComplexAndMatrixReduction<double> computeOnComplexAndMatrix, Poincare::ApproximationEngine::MatrixAndComplexReduction<double> computeOnMatrixAndComplex, Poincare::ApproximationEngine::MatrixAndMatrixReduction<double> computeOnMatrices);
+template Poincare::MatrixComplexReference<float> Poincare::ApproximationEngine::elementWiseOnMatrixComplexAndComplex<float>(const Poincare::MatrixComplexReference<float>, const std::complex<float>, Poincare::ComplexReference<float> (*)(std::complex<float>, std::complex<float>));
+template Poincare::MatrixComplexReference<double> Poincare::ApproximationEngine::elementWiseOnMatrixComplexAndComplex<double>(const Poincare::MatrixComplexReference<double>, std::complex<double> const, Poincare::ComplexReference<double> (*)(std::complex<double>, std::complex<double>));
+template Poincare::MatrixComplexReference<float> Poincare::ApproximationEngine::elementWiseOnComplexMatrices<float>(const Poincare::MatrixComplexReference<float>, const Poincare::MatrixComplexReference<float>, Poincare::ComplexReference<float> (*)(std::complex<float>, std::complex<float>));
+template Poincare::MatrixComplexReference<double> Poincare::ApproximationEngine::elementWiseOnComplexMatrices<double>(const Poincare::MatrixComplexReference<double>, const Poincare::MatrixComplexReference<double>, Poincare::ComplexReference<double> (*)(std::complex<double>, std::complex<double>));
 
 
 }

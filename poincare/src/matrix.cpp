@@ -217,9 +217,15 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
 
 LayoutRef Matrix::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   MatrixLayoutRef layout;
+  /* To keep track of the number of children, number of columns is set to 1 and
+   * number of rows is incremented with each child addition. The real number of
+   * rows and columns is properly set once all children are added. */
+  layout.setNumberOfRows(0);
+  layout.setNumberOfColumns(1);
   LayoutRef castedLayout(layout.node());
   for (int i = 0; i < numberOfOperands(); i++) {
     castedLayout.addChildAtIndex(operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
+    layout.setNumberOfRows(i+1);
   }
   layout.setNumberOfRows(numberOfRows());
   layout.setNumberOfColumns(numberOfColumns());

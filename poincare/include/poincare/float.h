@@ -25,7 +25,9 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(FloatNode<T>); }
+#if TREE_LOG
   const char * description() const override { return "Float";  }
+#endif
 
   // Properties
   Type type() const override { return Type::Float; }

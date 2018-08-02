@@ -13,7 +13,9 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(SymbolNode); }
+#if TREE_LOG
   const char * description() const override { return "Symbol";  }
+#endif
   int numberOfChildren() const override { return 0; }
 
   // Expression Properties

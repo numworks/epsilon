@@ -10,7 +10,9 @@ class ParenthesisNode : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(ParenthesisNode); }
+#if TREE_LOG
   const char * description() const override { return "Parenthesis";  }
+#endif
   int numberOfChildren() const override { return 1; }
 
   // Properties

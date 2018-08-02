@@ -10,7 +10,9 @@ class OppositeNode : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(OppositeNode); }
+#if TREE_LOG
   const char * description() const override { return "Opposite";  }
+#endif
   int numberOfChildren() const override { return 0; }
 
   // Properties

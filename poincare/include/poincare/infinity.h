@@ -11,7 +11,9 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(InfinityNode); }
+#if TREE_LOG
   const char * description() const override { return "Infinity";  }
+#endif
 
   // Properties
   Type type() const override { return Type::Infinity; }

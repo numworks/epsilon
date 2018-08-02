@@ -19,7 +19,9 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixNode); }
+#if TREE_LOG
   const char * description() const override { return "Matrix";  }
+#endif
   int numberOfChildren() const { return m_numberOfRows*m_numberOfColumns; }
 
   // Properties

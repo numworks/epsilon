@@ -123,16 +123,14 @@ void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressio
   }
 }
 
-void BracketPairLayoutNode::computeSize() {
+KDSize BracketPairLayoutNode::computeSize() {
   KDSize childSize = childLayout()->layoutSize();
   KDSize result = KDSize(childSize.width() + 2*externWidthMargin() + 2*widthMargin() + 2*k_lineThickness, childSize.height() + 2 * k_verticalMargin + 2*verticalExternMargin());
-  m_frame.setSize(result);
-  m_sized = true;
+  return result;
 }
 
-void BracketPairLayoutNode::computeBaseline() {
-  m_baseline = childLayout()->baseline() + k_verticalMargin + verticalExternMargin();
-  m_baselined = true;
+KDCoordinate BracketPairLayoutNode::computeBaseline() {
+  return childLayout()->baseline() + k_verticalMargin + verticalExternMargin();
 }
 
 KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode * child) {

@@ -42,7 +42,7 @@ void BracketLayoutNode::invalidAllSizesPositionsAndBaselines() {
   LayoutNode::invalidAllSizesPositionsAndBaselines();
 }
 
-void BracketLayoutNode::computeBaseline() {
+KDCoordinate BracketLayoutNode::computeBaseline() {
   LayoutNode * parentLayout = parent();
   assert(parentLayout != nullptr);
   int idxInParent = parentLayout->indexOfChild(this);
@@ -55,13 +55,11 @@ void BracketLayoutNode::computeBaseline() {
      * bracket that is base of a superscript layout. In the latter case, it
      * should have a default baseline, else it creates an infinite loop as the
      * bracket needs the superscript baseline, which needs the bracket baseline.*/
-    m_baseline = layoutSize().height()/2;
-    m_baselined = true;
-    return;
+    return layoutSize().height()/2;
   }
 
   int currentNumberOfOpenBrackets = 1;
-  m_baseline = 0;
+  KDCoordinate result = 0;
   int increment = (isLeftParenthesis() || isLeftBracket()) ? 1 : -1;
   for (int i = idxInParent + increment; i >= 0 && i < numberOfSiblings; i+=increment) {
     LayoutNode * sibling = parentLayout->childAtIndex(i);
@@ -73,9 +71,7 @@ void BracketLayoutNode::computeBaseline() {
       if (i == idxInParent + increment) {
         /* If the bracket is immediately closed, we set the baseline to half the
          * bracket height. */
-        m_baseline = layoutSize().height()/2;
-        m_baselined = true;
-        return;
+        return layoutSize().height()/2;
       }
       currentNumberOfOpenBrackets--;
       if (currentNumberOfOpenBrackets == 0) {
@@ -88,23 +84,23 @@ void BracketLayoutNode::computeBaseline() {
     {
       currentNumberOfOpenBrackets++;
     }
-    m_baseline = max(m_baseline, sibling->baseline());
+    result = max(m_baseline, sibling->baseline());
   }
-  m_baseline += (layoutSize().height() - childHeight()) / 2;
-  m_baselined = true;
+  return result + (layoutSize().height() - childHeight()) / 2;
 }
 
 KDCoordinate BracketLayoutNode::childHeight() {
   if (!m_childHeightComputed) {
-    computeChildHeight();
+    m_childHeight = computeChildHeight();
+    m_childHeightComputed = true;
   }
   return m_childHeight;
 }
 
-void BracketLayoutNode::computeChildHeight() {
+KDCoordinate BracketLayoutNode::computeChildHeight() {
   LayoutNode * parentLayout = parent();
   assert(parentLayout != nullptr);
-  m_childHeight = Metric::MinimalBracketAndParenthesisHeight;
+  KDCoordinate result = Metric::MinimalBracketAndParenthesisHeight;
   int idxInParent = parentLayout->indexOfChild(this);
   int numberOfSiblings = parentLayout->numberOfChildren();
   if ((isLeftParenthesis() || isLeftBracket())
@@ -114,8 +110,7 @@ void BracketLayoutNode::computeChildHeight() {
     /* If a left bracket is the base of a superscript layout, it should have a
      * a default height, else it creates an infinite loop because the bracket
      * needs the superscript height, which needs the bracket height. */
-    m_childHeightComputed = true;
-    return;
+    return result;
   }
 
   KDCoordinate maxUnderBaseline = 0;
@@ -146,9 +141,7 @@ void BracketLayoutNode::computeChildHeight() {
     maxUnderBaseline = max(maxUnderBaseline, siblingHeight - siblingBaseline);
     maxAboveBaseline = max(maxAboveBaseline, siblingBaseline);
   }
-  m_childHeight = max(m_childHeight, maxUnderBaseline + maxAboveBaseline);
-  m_childHeightComputed = true;
-
+  return max(result, maxUnderBaseline + maxAboveBaseline);
 }
 
 KDPoint BracketLayoutNode::positionOfChild(LayoutNode * child) {

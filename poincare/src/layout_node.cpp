@@ -42,14 +42,16 @@ KDPoint LayoutNode::absoluteOrigin() {
 
 KDSize LayoutNode::layoutSize() {
   if (!m_sized) {
-    computeSize();
+    m_frame.setSize(computeSize());
+    m_sized = true;
   }
   return m_frame.size();
 }
 
 KDCoordinate LayoutNode::baseline() {
   if (!m_baselined) {
-    computeBaseline();
+    m_baseline = computeBaseline();
+    m_baselined = true;
   }
   return m_baseline;
 }

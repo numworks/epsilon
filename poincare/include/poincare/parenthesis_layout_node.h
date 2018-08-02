@@ -26,9 +26,8 @@ public:
 
 protected:
   static KDColor s_parenthesisWorkingBuffer[k_parenthesisCurveHeight*k_parenthesisCurveWidth];
-  void computeSize() override {
-    m_frame.setSize(KDSize(ParenthesisWidth(), HeightGivenChildHeight(childHeight())));
-    m_sized = true;
+  KDSize computeSize() override {
+    return KDSize(ParenthesisWidth(), HeightGivenChildHeight(childHeight()));
   }
   static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) {
     return childHeight + k_verticalMargin;

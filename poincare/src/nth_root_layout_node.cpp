@@ -186,25 +186,24 @@ int NthRootLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferen
   return numberOfChar;
 }
 
-void NthRootLayoutNode::computeSize() {
+KDSize NthRootLayoutNode::computeSize() {
   KDSize radicandSize = radicandLayout()->layoutSize();
   KDSize indexSize = adjustedIndexSize();
   KDSize newSize = KDSize(
       indexSize.width() + 3*k_widthMargin + 2*k_radixLineThickness + radicandSize.width() + k_radixHorizontalOverflow,
       baseline() + radicandSize.height() - radicandLayout()->baseline() + k_heightMargin
       );
-  m_frame.setSize(newSize);
-  m_sized = true;
+  return newSize;
 }
 
-void NthRootLayoutNode::computeBaseline() {
+KDCoordinate NthRootLayoutNode::computeBaseline() {
   if (indexLayout() != nullptr) {
-    m_baseline = max(radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
-      indexLayout()->layoutSize().height() + k_indexHeight);
+    return max(
+        radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
+        indexLayout()->layoutSize().height() + k_indexHeight);
   } else {
-    m_baseline = radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin;
+    return radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin;
   }
-  m_baselined = true;
 }
 
 KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child) {

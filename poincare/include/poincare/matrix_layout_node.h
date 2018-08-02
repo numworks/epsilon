@@ -36,7 +36,7 @@ public:
 
 protected:
   // LayoutNode
-  void computeSize() override;
+  KDSize computeSize() override;
   KDPoint positionOfChild(LayoutNode * l) override;
   void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor,  bool * shouldRecomputeLayout, bool equivalentPositionVisited) override;
 

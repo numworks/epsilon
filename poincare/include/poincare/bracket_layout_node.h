@@ -29,10 +29,10 @@ public:
 
 protected:
   // LayoutNode
-  void computeBaseline() override;
+  KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;
   KDCoordinate childHeight();
-  void computeChildHeight();
+  KDCoordinate computeChildHeight();
   bool m_childHeightComputed;
   uint16_t m_childHeight;
 };

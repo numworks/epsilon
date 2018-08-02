@@ -20,7 +20,7 @@ Expression * BinomialCoefficient::clone() const {
   return b;
 }
 
-Expression * BinomialCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference BinomialCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

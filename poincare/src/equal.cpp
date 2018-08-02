@@ -38,13 +38,13 @@ Expression * Equal::standardEquation(Context & context, Preferences::AngleUnit a
   return sub;
 }
 
-Expression * Equal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Equal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
   }
   if (operand(0)->isIdenticalTo(operand(1))) {
-    return replaceWith(new Rational(1), true);
+    return replaceWith(RationalReference(1), true);
   }
   return this;
 }
@@ -58,7 +58,7 @@ LayoutRef Equal::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 template<typename T>
-Evaluation<T> * Equal::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+EvaluationReference<T> Equal::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   return new Complex<T>(Complex<T>::Undefined());
 }
 

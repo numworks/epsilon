@@ -17,7 +17,7 @@ Expression * ArcCosine::clone() const {
   return a;
 }
 
-Expression * ArcCosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference ArcCosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

@@ -19,7 +19,7 @@ LayoutRef Conjugate::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return ConjugateLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression * Conjugate::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Conjugate::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

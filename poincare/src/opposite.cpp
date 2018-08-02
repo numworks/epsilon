@@ -3,7 +3,7 @@
 #include <poincare/horizontal_layout_node.h>
 #include <cmath>
 #include <poincare/layout_engine.h>
-#include <poincare/multiplication.h>
+//#include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/simplification_engine.h>
 extern "C" {
@@ -13,24 +13,15 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Opposite::type() const {
-  return Type::Opposite;
+int OppositeNode::polynomialDegree(char symbolName) const {
+  return childAtIndex(0)->polynomialDegree(symbolName);
 }
 
-Expression * Opposite::clone() const {
-  Opposite * o = new Opposite(m_operands, true);
-  return o;
-}
-
-int Opposite::polynomialDegree(char symbolName) const {
-  return operand(0)->polynomialDegree(symbolName);
-}
-
-Expression::Sign Opposite::sign() const {
-  if (operand(0)->sign() == Sign::Positive) {
+ExpressionNode::Sign OppositeNode::sign() const {
+  if (childAtIndex(0)->sign() == Sign::Positive) {
     return Sign::Negative;
   }
-  if (operand(0)->sign() == Sign::Negative) {
+  if (childAtIndex(0)->sign() == Sign::Negative) {
     return Sign::Positive;
   }
   return Sign::Unknown;
@@ -38,44 +29,22 @@ Expression::Sign Opposite::sign() const {
 
 /* Layout */
 
-bool Opposite::needParenthesisWithParent(const Expression * e) const {
+bool OppositeNode::needsParenthesisWithParent(SerializableNode * e) const {
   Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
-  return e->isOfType(types, 7);
+  return static_cast<ExpressionNode *>(e)->isOfType(types, 7);
 }
 
-template<typename T>
-std::complex<T> Opposite::compute(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  return -c;
-}
-
-Expression * Opposite::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-  const Expression * op = operand(0);
-#if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
-  }
-#endif
-  detachOperand(op);
-  Multiplication * m = new Multiplication(new Rational(-1), op, false);
-  replaceWith(m, true);
-  return m->shallowReduce(context, angleUnit);
-}
-
-LayoutRef Opposite::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result = HorizontalLayoutRef(CharLayoutRef('-'));
-  if (operand(0)->type() == Type::Opposite) {
-    result.addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
+  if (childAtIndex(0)->type() == Type::Opposite) {
+    result.addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
   } else {
-    result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, false);
+    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, false);
   }
   return result;
 }
 
-int Opposite::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int OppositeNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -83,12 +52,26 @@ int Opposite::writeTextInBuffer(char * buffer, int bufferSize, Preferences::Prin
   int numberOfChar = 0;
   if (bufferSize == 1) { return 0; }
   buffer[numberOfChar++] = '-';
-  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += childAtIndex(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }
 
+/* Simplification */
+
+ExpressionReference OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+  ExpressionReference e = ExpressionNode::shallowReduce(context, angleUnit);
+  if (e.node() != this) {
+    return e;
+  }
+  const ExpressionReference child = ExpressionReference(childAtIndex(0));
+#if MATRIX_EXACT_REDUCING
+  if (op->type() == Type::Matrix) {
+    return SimplificationEngine::map(this, context, angleUnit);
+  }
+#endif
+  MultiplicationReference m = MultiplicationReference(RationalReference(-1), child);
+  return m->node()->shallowReduce(context, angleUnit);
 }
 
-template std::complex<float> Poincare::Opposite::compute<float>(const std::complex<float>, Preferences::AngleUnit angleUnit);
-template std::complex<double> Poincare::Opposite::compute<double>(const std::complex<double>, Preferences::AngleUnit angleUnit);
+}

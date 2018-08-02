@@ -12,7 +12,6 @@ class Logarithm : public BoundedStaticHierarchy<2>  {
   friend class NaperianLogarithm;
 public:
   Type type() const override;
-  Expression * clone() const override;
 private:
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -20,16 +19,16 @@ private:
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "log");
   }
   /* Simplification */
-  Expression * shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression * simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   bool parentIsAPowerOfSameBase() const;
   Expression * splitInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
   /* Evaluation */
   template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> EvaluationReference<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

@@ -18,7 +18,7 @@ Expression * ImaginaryPart::clone() const {
 }
 
 
-Expression * ImaginaryPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference ImaginaryPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -30,7 +30,7 @@ Expression * ImaginaryPart::shallowReduce(Context& context, Preferences::AngleUn
   }
 #endif
   if (op->type() == Type::Rational) {
-    return replaceWith(new Rational(0), true);
+    return replaceWith(RationalReference(0), true);
   }
   return this;
 }

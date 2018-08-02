@@ -104,6 +104,8 @@ public:
     }
   }
 
+  void swapChildren(int i, int j);
+
 protected:
   TreeReference() : m_identifier(-1) {}
   void setIdentifierAndRetain(int newId) {

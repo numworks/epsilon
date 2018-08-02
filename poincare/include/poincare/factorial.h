@@ -10,22 +10,21 @@ class Factorial : public StaticHierarchy<1> {
 public:
   Factorial(const Expression * argument, bool clone = true);
   Type type() const override;
-  Expression * clone() const override;
 private:
   constexpr static int k_maxOperandValue = 100;
   /* Layout */
-  bool needParenthesisWithParent(const Expression * e) const override;
+  bool needsParenthesisWithParent(SerializableNode * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplication */
-  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
-  Expression * shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
   template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
   }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
 

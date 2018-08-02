@@ -292,9 +292,9 @@ protected:
 private:
   virtual Expression * replaceSymbolWithExpression(char symbol, Expression * expression);
   /* Properties */
-  virtual Expression * setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) { assert(false); return nullptr; }
+  virtual ExpressionReference setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) { assert(false); return nullptr; }
   bool isOfType(Type * types, int length) const;
-  virtual bool needParenthesisWithParent(const Expression * e) const;
+  virtual bool needsParenthesisWithParent(SerializableNode * parentNode) const;
   virtual int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const;
   /* Comparison */
   /* In the simplification order, most expressions are compared by only
@@ -310,7 +310,7 @@ private:
   Expression * deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression * deepReduce(Context & context, Preferences::AngleUnit angleUnit);
   // TODO: should be virtual pure
-  virtual Expression * shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  virtual ExpressionReference shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   virtual Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return this; };
 
   // Private methods used in simplification process
@@ -318,8 +318,8 @@ private:
     return nullptr;
   }
   /* Evaluation Engine */
-  virtual Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
-  virtual Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
+  virtual EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
+  virtual EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Expression roots/extrema solver*/
   constexpr static double k_solverPrecision = 1.0E-5;

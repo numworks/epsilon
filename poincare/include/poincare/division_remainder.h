@@ -11,7 +11,6 @@ class DivisionRemainder : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
 private:
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
@@ -22,11 +21,11 @@ private:
   }
   const char * name() const { return "rem"; }
   /* Simplification */
-  Expression * shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Complex<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> EvaluationReference<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

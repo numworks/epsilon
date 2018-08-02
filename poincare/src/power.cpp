@@ -83,7 +83,7 @@ int Power::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-int Power::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+int Power::getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg <= 0) {
     return Expression::privateGetPolynomialCoefficients(symbolName, coefficients);
@@ -101,9 +101,9 @@ int Power::privateGetPolynomialCoefficients(char symbolName, Expression * coeffi
     int n = r->numerator().extractedInt();
     if (n <= k_maxPolynomialDegree) {
       for (int i = 0; i < n; i++) {
-        coefficients[i] = new Rational(0);
+        coefficients[i] = RationalReference(0);
       }
-      coefficients[n] = new Rational(1);
+      coefficients[n] = RationalReference(1);
       return n;
     }
   }
@@ -188,7 +188,7 @@ LayoutRef Power::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
   return result;
 }
 
-int Power::simplificationOrderSameType(const Expression * e, bool canBeInterrupted) const {
+int Power::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
   int baseComparison = SimplificationOrder(operand(0), e->operand(0), canBeInterrupted);
   if (baseComparison != 0) {
     return baseComparison;
@@ -205,7 +205,7 @@ int Power::simplificationOrderGreaterType(const Expression * e, bool canBeInterr
   return SimplificationOrder(operand(1), &one, canBeInterrupted);
 }
 
-Expression * Power::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Power::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -277,7 +277,7 @@ Expression * Power::shallowReduce(Context& context, Preferences::AngleUnit angle
       /* Warning: in all other case but 0^0, we replace x^0 by one. This is
        * almost always true except when x = 0. However, not substituting x^0 by
        * one would prevent from simplifying many expressions like x/x->1. */
-      return replaceWith(new Rational(1), true);
+      return replaceWith(RationalReference(1), true);
     }
     // x^1
     if (b->isOne()) {
@@ -289,7 +289,7 @@ Expression * Power::shallowReduce(Context& context, Preferences::AngleUnit angle
     // 0^x
     if (a->isZero()) {
       if (operand(1)->sign() == Sign::Positive) {
-        return replaceWith(new Rational(0), true);
+        return replaceWith(RationalReference(0), true);
       }
       if (operand(1)->sign() == Sign::Negative) {
         return replaceWith(new Undefined(), true);
@@ -297,7 +297,7 @@ Expression * Power::shallowReduce(Context& context, Preferences::AngleUnit angle
     }
     // 1^x
     if (a->isOne()) {
-      return replaceWith(new Rational(1), true);
+      return replaceWith(RationalReference(1), true);
     }
   }
 
@@ -595,7 +595,7 @@ Expression * Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational * r
   assert(!i.isZero());
   assert(r->sign() == Sign::Positive);
   if (i.isOne()) {
-    return new Rational(1);
+    return RationalReference(1);
   }
   Integer absI = i;
   absI.setNegative(false);
@@ -665,11 +665,11 @@ Expression * Power::CreateNthRootOfUnity(const Rational r) {
 #endif
 }
 
-Expression * Power::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Power::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
   if (operand(1)->sign() == Sign::Negative) {
     Expression * p = cloneDenominator(context, angleUnit);
-    Division * d = new Division(new Rational(1), p, false);
+    Division * d = new Division(RationalReference(1), p, false);
     p->shallowReduce(context, angleUnit);
     replaceWith(d, true);
     return d->shallowBeautify(context, angleUnit);

@@ -16,7 +16,7 @@ LayoutRef Sequence::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
 }
 
 template<typename T>
-Evaluation<T> * Sequence::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+EvaluationReference<T> Sequence::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * aInput = operand(1)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * bInput = operand(2)->privateApproximate(T(), context, angleUnit);
   T start = aInput->toScalar();

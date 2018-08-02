@@ -54,7 +54,7 @@ template<typename T> MatrixComplex<T> Subtraction::computeOnComplexAndMatrix(con
   return result;
 }
 
-Expression * Subtraction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+ExpressionReference Subtraction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

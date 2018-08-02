@@ -10,7 +10,6 @@ class ConfidenceInterval : public StaticHierarchy<2> {
   using StaticHierarchy<2>::StaticHierarchy;
 public:
   Type type() const override;
-  Expression * clone() const override;
   int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */
@@ -22,11 +21,11 @@ private:
   }
   virtual const char * name() const { return "confidence"; }
   /* Simplification */
-  Expression * shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(Expression::SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  EvaluationReference<float> approximate(Expression::SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> * privateApproximate(Expression::DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Evaluation<T> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  template<typename T> EvaluationReference<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 class SimplePredictionInterval : public ConfidenceInterval {

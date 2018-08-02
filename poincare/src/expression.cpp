@@ -246,7 +246,7 @@ bool Expression::getLinearCoefficients(char * variables, Expression * coefficien
       coefficients[index] = polynomialCoefficients[1];
     } else {
       assert(degree == 0);
-      coefficients[index] = new Rational(0);
+      coefficients[index] = RationalReference(0);
     }
     delete equation;
     equation = polynomialCoefficients[0];
@@ -285,7 +285,7 @@ int Expression::getPolynomialCoefficients(char symbolName, Expression * coeffici
   return degree;
 }
 
-int Expression::privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const {
+int Expression::getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg == 0) {
     coefficients[0] = clone();

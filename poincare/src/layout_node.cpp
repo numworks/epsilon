@@ -125,10 +125,12 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 bool LayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) {
+  /* TODO Remove ?
   assert(hasChild(oldChild));
   if (!newChild->hasAncestor(oldChild, false)) {
     cursor->setPosition(LayoutCursor::Position::Right);
   }
+  */
   return true;
 }
 

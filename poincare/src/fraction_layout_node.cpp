@@ -108,7 +108,18 @@ void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     /* Else, replace the fraction with a juxtaposition of the numerator and
      * denominator. Place the cursor in the middle of the juxtaposition, which
      * is right of the numerator. */
-    LayoutRef(this).replaceWithJuxtapositionOf(numeratorLayout(), denominatorLayout(), cursor, true);
+    LayoutRef numeratorRef = LayoutRef(numeratorLayout());
+    LayoutRef denominatorRef = LayoutRef(denominatorLayout());
+    LayoutRef thisRef = LayoutRef(this);
+    thisRef.replaceChild(numeratorRef, EmptyLayoutRef());
+    if (thisRef.isAllocationFailure()) {
+      return;
+    }
+    thisRef.replaceChild(denominatorRef, EmptyLayoutRef());
+    if (thisRef.isAllocationFailure()) {
+      return;
+    }
+    thisRef.replaceWithJuxtapositionOf(numeratorRef, denominatorRef, cursor, true);
     // WARNING: Do no use "this" afterwards
     return;
   }

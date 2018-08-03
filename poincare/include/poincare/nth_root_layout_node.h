@@ -69,18 +69,11 @@ public:
   NthRootLayoutRef(TreeNode * n) : LayoutReference(n) {}
 
   NthRootLayoutRef(LayoutRef radicand) : NthRootLayoutRef() {
-    addChildTreeAtIndex(radicand, 0, 0);
-    if (!node()->isAllocationFailure()) {
-      static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(1);
-    }
+    replaceTreeChildAtIndex(radicand, 0, 0);
   }
 
   NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {
-    addChildTreeAtIndex(radicand, 0, 0);
-    if (node()->isAllocationFailure()) {
-      return;
-    }
-    static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(1);
+    replaceTreeChildAtIndex(0, radicand);
     addChildTreeAtIndex(index, 1, 1);
     if (!node()->isAllocationFailure()) {
       static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);
@@ -88,10 +81,7 @@ public:
   }
 
 private:
-  NthRootLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  NthRootLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>(), true) {}
 };
 
 }

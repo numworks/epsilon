@@ -126,14 +126,6 @@ EvaluationReference<T> MatrixComplexNode<T>::transpose() const {
 // MATRIX COMPLEX REFERENCE
 
 template<typename T>
-MatrixComplexReference<T>::MatrixComplexReference() :
-  EvaluationReference<T>()
-{
-  TreeNode * node = TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T>>();
-  m_identifier = node->identifier();
-}
-
-template<typename T>
 MatrixComplexReference<T>::MatrixComplexReference(std::complex<T> * operands, int numberOfRows, int numberOfColumns) :
   MatrixComplexReference<T>()
 {

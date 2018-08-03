@@ -42,9 +42,8 @@ private:
 
 class OppositeReference : public ExpressionReference {
 public:
-  OppositeReference(ExpressionReference operand) {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<OppositeNode>();
-    m_identifier = node->identifier();
+  OppositeReference(ExpressionReference operand) : ExpressionReference(TreePool::sharedPool()->createTreeNode<OppositeNode>(), true) {
+    replaceTreeChildAtIndex(0, operand);
   }
 };
 

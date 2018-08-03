@@ -22,10 +22,7 @@ public:
 
 class AllocationFailedExpressionRef : public ExpressionReference {
 public:
-  AllocationFailedExpressionRef() : ExpressionReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<AllocationFailedExpressionNode>();
-    m_identifier = node->identifier();
-  }
+  AllocationFailedExpressionRef() : ExpressionReference(TreePool::sharedPool()->createTreeNode<AllocationFailedExpressionNode>(), true) {}
   AllocationFailedExpressionRef(TreeNode * n) : ExpressionReference(n) {}
 };
 

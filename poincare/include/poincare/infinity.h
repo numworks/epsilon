@@ -37,9 +37,7 @@ private:
 
 class InfinityReference : public NumberReference {
 public:
-  InfinityReference(bool negative) {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<InfinityNode>();
-    m_identifier = node->identifier();
+  InfinityReference(bool negative) : NumberReference(TreePool::sharedPool()->createTreeNode<InfinityNode>(), true) {
     if (!node->isAllocationFailure()) {
       static_cast<InfinityNode *>(node)->setNegative(negative);
     }

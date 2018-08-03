@@ -26,13 +26,10 @@ class CeilingLayoutRef : public LayoutReference {
 public:
   CeilingLayoutRef(TreeNode * n) : LayoutReference(n) {}
   CeilingLayoutRef(LayoutRef l) : CeilingLayoutRef() {
-    addChildTreeAtIndex(l, 0, 0);
+    replaceTreeChildAtIndex(0, l);
   }
 private:
-  CeilingLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  CeilingLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>(), true) {}
 };
 
 }

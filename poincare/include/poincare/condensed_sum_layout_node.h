@@ -51,17 +51,14 @@ public:
   CondensedSumLayoutRef(LayoutRef base, LayoutRef subscript, LayoutRef superscript) :
     CondensedSumLayoutRef()
   {
-    addChildTreeAtIndex(base, 0, 0);
-    addChildTreeAtIndex(subscript, 1, 1);
-    addChildTreeAtIndex(superscript, 2, 2);
+    replaceTreeChildAtIndex(0, base);
+    replaceTreeChildAtIndex(1, subscript);
+    replaceTreeChildAtIndex(2, superscript);
   }
 
   CondensedSumLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:
-  CondensedSumLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<CondensedSumLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  CondensedSumLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<CondensedSumLayoutNode>(), true) {}
 };
 
 }

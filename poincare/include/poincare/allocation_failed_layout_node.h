@@ -18,10 +18,7 @@ public:
 
 class AllocationFailedLayoutRef : public LayoutReference {
 public:
-  AllocationFailedLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<AllocationFailedLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  AllocationFailedLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<AllocationFailedLayoutNode>(), true) {}
   AllocationFailedLayoutRef(TreeNode * n) : LayoutReference(n) {}
 };
 

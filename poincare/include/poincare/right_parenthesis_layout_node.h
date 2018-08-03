@@ -34,10 +34,7 @@ protected:
 class RightParenthesisLayoutRef : public LayoutReference {
 public:
   RightParenthesisLayoutRef(TreeNode * n) : LayoutReference(n) {}
-  RightParenthesisLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<RightParenthesisLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  RightParenthesisLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<RightParenthesisLayoutNode>(), true) {}
 };
 
 }

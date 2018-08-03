@@ -42,17 +42,6 @@ T ComplexNode<T>::toScalar() const {
   return NAN;
 }
 
-template <typename T>
-static ExpressionReference CreateDecimal(T f) {
-  if (std::isnan(f)) {
-    return UndefinedReference();
-  }
-  if (std::isinf(f)) {
-    return InfiniteReference(f < 0.0);
-  }
-  return DecimalReference(f);
-}
-
 template<typename T>
 ExpressionReference ComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   if (std::isnan(this->real()) || std::isnan(this->imag())) {
@@ -64,15 +53,15 @@ ExpressionReference ComplexNode<T>::complexToExpression(Preferences::ComplexForm
       ExpressionReference real(nullptr);
       ExpressionReference imag(nullptr);
       if (this->real() != 0 || this->imag() == 0) {
-        real = CreateDecimal<T>(this->real());
+        real = NumberReference::Decimal<T>(this->real());
       }
       if (this->imag() != 0) {
         if (this->imag() == 1.0 || this->imag() == -1) {
           imag = SymbolReference(Ion::Charset::IComplex);
         } else if (this->imag() > 0) {
-          imag = MultiplicationReference(CreateDecimal(this->imag()), SymbolReference(Ion::Charset::IComplex));
+          imag = MultiplicationReference(NumberReference::Decimal(this->imag()), SymbolReference(Ion::Charset::IComplex));
         } else {
-          imag = MultiplicationReference(CreateDecimal(-this->imag()), SymbolReference(Ion::Charset::IComplex));
+          imag = MultiplicationReference(NumberReference::Decimal(-this->imag()), SymbolReference(Ion::Charset::IComplex));
         }
       }
       if (!imag.isDefined()) {
@@ -98,7 +87,7 @@ ExpressionReference ComplexNode<T>::complexToExpression(Preferences::ComplexForm
       T r = std::abs(*this);
       T th = std::arg(*this);
       if (r != 1 || th == 0) {
-        norm = CreateDecimal(r);
+        norm = NumberReference::Decimal(r);
       }
       if (r != 0 && th != 0) {
         ExpressionReference arg(nullptr);
@@ -107,9 +96,9 @@ ExpressionReference ComplexNode<T>::complexToExpression(Preferences::ComplexForm
         } else if (th == -1.0) {
           arg = OppositeReference(SymbolReference(Ion::Charset::IComplex));
         } else if (th > 0) {
-          arg = MultiplicationReference(CreateDecimal(th), SymbolReference(Ion::Charset::IComplex));
+          arg = MultiplicationReference(NumberReference::Decimal(th), SymbolReference(Ion::Charset::IComplex));
         } else {
-          arg = OppositeRefrence(MultiplicationReference(CreateDecimal(-th), SymbolReference(Ion::Charset::IComplex)));
+          arg = OppositeRefrence(MultiplicationReference(NumberReference::Decimal(-th), SymbolReference(Ion::Charset::IComplex)));
         }
         exp = PowerReference(SymbolReference(Ion::Charset::Exponential), arg);
       }

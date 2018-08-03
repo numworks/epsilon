@@ -61,47 +61,30 @@ public:
     m_identifier = node->identifier();
   }
 
-  MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4, int numberOfRows, int numberOfColumns) :
+  MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) :
     MatrixLayoutRef()
   {
-    assert(numberOfRows*numberOfColumns == 4);
-    if (!(node()->isAllocationFailure())) {
-      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(0);
-      static_cast<MatrixLayoutNode *>(node())->setNumberOfColumns(1);
-    }
     addChildTreeAtIndex(l1, 0, 0);
-    if (!(node()->isAllocationFailure())) {
-      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(1);
-    }
-
     addChildTreeAtIndex(l2, 1, 1);
-    if (!(node()->isAllocationFailure())) {
-      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(2);
-    }
     addChildTreeAtIndex(l3, 2, 2);
-    if (!(node()->isAllocationFailure())) {
-      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(3);
-    }
     addChildTreeAtIndex(l4, 3, 3);
-    if (!(node()->isAllocationFailure())) {
-      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(numberOfRows);
-      static_cast<MatrixLayoutNode *>(node())->setNumberOfColumns(numberOfColumns);
-    }
+    setDimensions(2, 2);
   }
+
   void setNumberOfRows(int count) {
     if (!(node()->isAllocationFailure())) {
-      static_cast<MatrixLayoutNode *>(node())->setNumberOfRows(count);
+      typedNode()->setNumberOfRows(count);
     }
   }
   void setNumberOfColumns(int count) {
     if (!(node()->isAllocationFailure())) {
-      static_cast<MatrixLayoutNode *>(node())->setNumberOfColumns(count);
+      typedNode()->setNumberOfColumns(count);
     }
   }
 
   bool hasGreySquares() const {
     if (!(node()->isAllocationFailure())) {
-      return static_cast<MatrixLayoutNode *>(node())->hasGreySquares();
+      return typedNode()->hasGreySquares();
     }
     assert(false);
     return true;
@@ -109,15 +92,21 @@ public:
 
   void addGreySquares() {
     if (!(node()->isAllocationFailure())) {
-      return static_cast<MatrixLayoutNode *>(node())->addGreySquares();
+      return typedNode()->addGreySquares();
     }
   }
 
   void removeGreySquares() {
     if (!(node()->isAllocationFailure())) {
-      return static_cast<MatrixLayoutNode *>(node())->removeGreySquares();
+      return typedNode()->removeGreySquares();
     }
   }
+  void setDimensions(int rows, int columns);
+  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
+private:
+  MatrixLayoutNode * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixLayotuNode *>(node()); }
+  void setNumberOfRows(int rows);
+  void setNumberOfColumns(int columns);
 };
 
 }

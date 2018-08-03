@@ -87,9 +87,7 @@ void LayoutCursor::addEmptyMatrixLayout() {
       EmptyLayoutRef(EmptyLayoutNode::Color::Yellow),
       EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
       EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
-      EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
-      2,
-      2);
+      EmptyLayoutRef(EmptyLayoutNode::Color::Grey);
   LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, matrixLayout, false);
   if (!rootRef.isAllocationFailure()) {

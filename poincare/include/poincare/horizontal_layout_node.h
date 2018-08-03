@@ -87,7 +87,22 @@ public:
     addChildTreeAtIndex(l3, 2, 2);
     addChildTreeAtIndex(l4, 3, 3);
   }
-
+  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override {
+    ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  }
+  // Remove puts a child at the end of the pool
+  void removeChildAtIndex(int i) override {
+    ExpressionReference::removeChildAtIndex(i);
+  }
+  void removeChild(TreeReference t, int childNumberOfChildren) override {
+    ExpressionReference::removeChild(t, childNumberOfChildren);
+  }
+  void removeChildren(int currentNumberOfChildren) {
+    ExpressionReference::removeChildren(currentNumberOfChildren);
+  }
+  void removeChildrenAndDestroy(int currentNumberOfChildren) {
+    ExpressionReference::removeChildren(currentNumberOfChildren);
+  }
   void addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
   void mergeChildrenAtIndex(HorizontalLayoutRef h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
 private:

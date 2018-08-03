@@ -286,4 +286,39 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
   }
 }
 
+// Matrix Layout Reference
+void MatrixLayoutRef::setDimensions(int rows, int columns) {
+  if (isAllocationFailure()) {
+    return;
+  }
+  assert(rows * columns = numberOfChildren());
+  setNumberOfRows(rows);
+  setNumberOfColumns(columns);
+}
+
+void MatrixLayoutRef::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
+  ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  if (isAllocationFailure()) {
+    return;
+  }
+  setNumberOfRows(1);
+  setNumberOfColumns(currentNumberOfChildren + 1);
+}
+
+void MatrixLayoutRef::setNumberOfRows(int rows) {
+ if (isAllocationFailure()) {
+    return;
+  }
+  assert(rows >= 0);
+  typedNode()->setNumberOfRows(rows);
+}
+
+void MatrixLayoutRef::setNumberOfColumns(int columns) {
+  if (isAllocationFailure()) {
+    return;
+  }
+  assert(columns >= 0);
+  typedNode()->setNumberOfColumns(columns);
+}
+
 }

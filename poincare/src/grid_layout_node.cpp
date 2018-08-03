@@ -96,7 +96,7 @@ void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
   int previousNumberOfChildren = numberOfChildren();
   int columnsCount = m_numberOfColumns;
   for (int i = 0; i < columnsCount; i++) {
-    thisRef.addChildAtIndex(
+    thisRef.addChildTreeAtIndex(
         EmptyLayoutRef(color),
         previousNumberOfChildren,
         previousNumberOfChildren + i,
@@ -114,7 +114,7 @@ void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
   int rowsCount = m_numberOfRows;
   int futureColumnsCount = m_numberOfColumns + 1;
   for (int i = 0; i < rowsCount; i++) {
-    thisRef.addChildAtIndex(
+    thisRef.addChildTreeAtIndex(
         EmptyLayoutRef(color),
         i*futureColumnsCount + futureColumnsCount-1,
         previousNumberOfChildren + i,
@@ -130,7 +130,7 @@ void GridLayoutNode::deleteRowAtIndex(int index) {
   assert(index >= 0 && index < m_numberOfRows);
   LayoutRef thisRef = LayoutRef(this);
   for (int i = 0; i < m_numberOfColumns; i++) {
-    thisRef.removeTreeChildAtIndex(index * m_numberOfColumns);
+    thisRef.removeChildAtIndex(index * m_numberOfColumns);
   }
   m_numberOfRows--;
 }
@@ -139,7 +139,7 @@ void GridLayoutNode::deleteColumnAtIndex(int index) {
   assert(index >= 0 && index < m_numberOfColumns);
   LayoutRef thisRef = LayoutRef(this);
   for (int i = (m_numberOfRows - 1) * m_numberOfColumns + index; i > -1; i-= m_numberOfColumns) {
-    thisRef.removeTreeChildAtIndex(i);
+    thisRef.removeChildAtIndex(i);
   }
   m_numberOfColumns--;
 }

@@ -23,7 +23,7 @@ LayoutRef MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   layout.setNumberOfColumns(1);
   LayoutRef castedLayout(layout.node());
   for (int i = 0; i < numberOfChildren(); i++) {
-    castedLayout.addChildAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
+    castedLayout.addChildTreeAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
     layout.setNumberOfRows(i+1);
   }
   layout.setNumberOfRows(m_numberOfRows);
@@ -79,7 +79,7 @@ int MatrixNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::Pr
 
 template<typename T>
 EvaluationReference<T> MatrixNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  MatrixComplexReference<T> matrix(m.numberOfRows(), m.numberOfColumns());
+  MatrixComplexReference<T> matrix;
   for (int i = 0; i < numberOfChildren(); i++) {
     EvaluationReference<T> operandEvaluation = childAtIndex(i)->approximate(T(), context, angleUnit);
     if (operandEvaluation.node()->type() != Evaluation<T>::Type::Complex) {
@@ -88,7 +88,19 @@ EvaluationReference<T> MatrixNode::templatedApproximate(Context& context, Prefer
       result.addChildTreeAtIndex(compute(*child, angleUnit), i, i);
     }
   }
+  matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
   return matrix;
+}
+
+// MATRIX REFERENCE
+
+void MatrixReference::setDimensions(int rows, int columns) {
+  if (isAllocationFailure()) {
+    return;
+  }
+  assert(rows * columns = numberOfChildren());
+  setNumberOfRows(rows);
+  setNumberOfColumns(columns);
 }
 
 int MatrixReference::numberOfRows() const {
@@ -103,6 +115,31 @@ int MatrixReference::numberOfColumns() const {
     return 0;
   }
   return typedNode()->numberOfColumns();
+}
+
+void MatrixReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
+  ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  if (isAllocationFailure()) {
+    return;
+  }
+  setNumberOfRows(1);
+  setNumberOfColumns(currentNumberOfChildren + 1);
+}
+
+void MatrixReference::setNumberOfRows(int rows) {
+  if (isAllocationFailure()) {
+    return;
+  }
+  assert(rows >= 0);
+  typedNode()->setNumberOfRows(rows);
+}
+
+void MatrixReference::setNumberOfColumns(int columns) {
+  if (isAllocationFailure()) {
+    return;
+  }
+  assert(columns >= 0);
+  typedNode()->setNumberOfColumns(columns);
 }
 
 void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, MultiplicationReference determinant) {

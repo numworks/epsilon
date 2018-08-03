@@ -83,13 +83,7 @@ public:
   }
 
   // Hierarchy operations
-  // Add
-  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren);
-  // Remove puts a child at the end of the pool
-  void removeTreeChildAtIndex(int i);
-  void removeTreeChild(TreeReference t, int childNumberOfChildren);
-  void removeChildren(int currentNumberOfChildren);
-  void removeChildrenAndDestroy(int currentNumberOfChildren);
+  // Remove
   void removeFromParent();
   // Detach puts a child at the end of the pool and replaces it with a GhostNode
   void detachChild(TreeReference t, int childNumberOfChildren);
@@ -117,6 +111,15 @@ public:
   }
 
 protected:
+  // Hierarchy operations
+  // Add
+  virtual void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren);
+  // Remove puts a child at the end of the pool
+  virtual void removeChildAtIndex(int i);
+  virtual void removeChild(TreeReference t, int childNumberOfChildren);
+  virtual void removeChildren(int currentNumberOfChildren);
+  virtual void removeChildrenAndDestroy(int currentNumberOfChildren);
+
   TreeReference() : m_identifier(-1) {}
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;

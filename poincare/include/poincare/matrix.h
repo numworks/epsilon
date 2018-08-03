@@ -12,10 +12,12 @@ class MatrixNode : public ExpressionNode {
 public:
   void setDimensions(int numberOfRows, int numberOfColumns) {
     m_numberOfRows = numberOfRows;
-    m_numberOfColumns = m_numberOfColumns;
+    m_numberOfColumns = numberOfColumns;
   }
-  int numberOfRows() const { return m_numberOfRows; }
+  int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
+  void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
+  void setNumberOfColumns(int columns) { assert(columns >= 0); m_numberOfColumns = columns; }
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixNode); }
@@ -41,15 +43,19 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
   template<typename T> EvaluationReference<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  int m_numberOfRows;
+  int m_numberOfColumns;
 };
 
 class MatrixReference : public ExpressionReference {
-template<typename T> friend class MatrixComplexNode;
-friend class GlobalContext;
+  template<typename T> friend class MatrixComplexNode;
+  friend class GlobalContext;
 public:
+  void setDimensions(int rows, int columns);
   MatrixNode * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixNode *>(node()); }
   int numberOfRows() const;
   int numberOfColumns() const;
+  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
   ExpressionReference matrixChild(int i, int j) { assert(!isAllocationFailure()); return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */
@@ -65,6 +71,8 @@ public:
   ExpressionReference inverse(Context & context, Preferences::AngleUnit angleUnit) const;
 #endif
 private:
+  void setNumberOfRows(int rows);
+  void setNumberOfColumns(int columns);
   /* rowCanonize turns a matrix in its reduced row echelon form. */
   void rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication * m = nullptr);
   // Row canonize the array in place

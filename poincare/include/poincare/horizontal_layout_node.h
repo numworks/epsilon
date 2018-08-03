@@ -69,26 +69,26 @@ public:
   }
 
   HorizontalLayoutRef(LayoutRef l) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l, 0, 0);
+    addChildAtIndex(l, 0, 0);
   }
 
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l1, 0, 0);
-    addChildTreeAtIndex(l2, 1, 1);
+    addChildAtIndex(l1, 0, 0);
+    addChildAtIndex(l2, 1, 1);
   }
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l1, 0, 0);
-    addChildTreeAtIndex(l2, 1, 1);
-    addChildTreeAtIndex(l3, 2, 2);
+    addChildAtIndex(l1, 0, 0);
+    addChildAtIndex(l2, 1, 1);
+    addChildAtIndex(l3, 2, 2);
   }
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l1, 0, 0);
-    addChildTreeAtIndex(l2, 1, 1);
-    addChildTreeAtIndex(l3, 2, 2);
-    addChildTreeAtIndex(l4, 3, 3);
+    addChildAtIndex(l1, 0, 0);
+    addChildAtIndex(l2, 1, 1);
+    addChildAtIndex(l3, 2, 2);
+    addChildAtIndex(l4, 3, 3);
   }
-  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override {
-    ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  void addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren) override {
+    ExpressionReference::addChildAtIndex(t, index, currentNumberOfChildren);
   }
   // Remove puts a child at the end of the pool
   void removeChildAtIndex(int i) override {

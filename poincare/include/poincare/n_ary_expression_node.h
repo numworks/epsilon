@@ -33,8 +33,8 @@ private:
 
 class NAryExpressionRef : public ExpressionReference {
 public:
-  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override {
-    ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  void addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren) override {
+    ExpressionReference::addChildAtIndex(t, index, currentNumberOfChildren);
   }
   // Remove puts a child at the end of the pool
   void removeChildAtIndex(int i) override {

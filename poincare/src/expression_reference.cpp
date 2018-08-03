@@ -202,7 +202,7 @@ ExpressionReference ExpressionReference::deepReduce(Context & context, Preferenc
   for (int i = 0; i < nbChildren; i++) {
     ExpressionReference reducedChild = childAtIndex(i).deepReduce(context, angleUnit);
     if (numberOfChildren() < nbChildren) {
-      addChildTreeAtIndex(reducedChild, i, nbChildren-1);
+      addChildAtIndex(reducedChild, i, nbChildren-1);
     } else {
       replaceTreeChildAtIndex(i, reducedChild);
     }
@@ -216,7 +216,7 @@ ExpressionReference ExpressionReference::deepBeautify(Context & context, Prefere
   for (int i = 0; i < nbChildren; i++) {
     ExpressionReference beautifiedChild = beautifiedExpression.childAtIndex(i).deepBeautify(context, angleUnit);
     if (beautifiedExpression.numberOfChildren() < nbChildren) {
-      beautifiedExpression.addChildTreeAtIndex(beautifiedChild, i, nbChildren-1);
+      beautifiedExpression.addChildAtIndex(beautifiedChild, i, nbChildren-1);
     } else {
       beautifiedExpression.replaceTreeChildAtIndex(i, beautifiedChild);
     }

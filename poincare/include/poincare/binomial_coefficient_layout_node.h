@@ -45,8 +45,8 @@ public:
   BinomialCoefficientLayoutRef(LayoutRef n, LayoutRef k) :
     BinomialCoefficientLayoutRef()
   {
-    addChildTreeAtIndex(n, 0, 0);
-    addChildTreeAtIndex(k, 1, 1);
+    addChildAtIndex(n, 0, 0);
+    addChildAtIndex(k, 1, 1);
   }
   BinomialCoefficientLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:

@@ -12,7 +12,7 @@
  *  - an identifier
  *  - a reference counter
  */
-#define TREE_LOG 1
+#define TREE_LOG 0
 
 namespace Poincare {
 

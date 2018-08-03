@@ -89,7 +89,7 @@ void RationalNode::setSign(Sign s) {
 LayoutRef RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   LayoutRef numeratorLayout = numerator().createLayout();
   if (m_negative) {
-    numeratorLayout.addChildTreeAtIndex(CharLayoutRef('-'), 0, numeratorLayout.numberOfChildren(), nullptr);
+    numeratorLayout.addChildAtIndex(CharLayoutRef('-'), 0, numeratorLayout.numberOfChildren(), nullptr);
   }
   if (denominator().isOne()) {
     return numeratorLayout;

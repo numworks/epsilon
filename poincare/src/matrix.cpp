@@ -23,7 +23,7 @@ LayoutRef MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   layout.setNumberOfColumns(1);
   LayoutRef castedLayout(layout.node());
   for (int i = 0; i < numberOfChildren(); i++) {
-    castedLayout.addChildTreeAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
+    castedLayout.addChildAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
     layout.setNumberOfRows(i+1);
   }
   layout.setNumberOfRows(m_numberOfRows);

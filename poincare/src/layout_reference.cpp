@@ -80,7 +80,7 @@ void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef 
   p.removeChild(*this, cursor->layoutReference() == *this ? cursor : nullptr);
 }
 
-void LayoutReference::addChildTreeAtIndex(LayoutRef l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
+void LayoutReference::addChildAtIndex(LayoutRef l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
   int newIndex = index;
   int newCurrentNumberOfChildren = currentNumberOfChildren;
   if (!this->node()->willAddChildAtIndex(l.node(), &newIndex, &newCurrentNumberOfChildren, cursor)) {
@@ -160,21 +160,21 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
 }
 
 void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force) {
-  if (!this->node()->willRemoveChild(l.node(), cursor, force)) {
+  if (!node()->willRemoveChild(l.node(), cursor, force)) {
     return;
   }
-  assert(this->hasChild(l));
-  int index = this->indexOfChild(l);
-  this->removeChild(l, l.numberOfChildren());
+  assert(hasChild(l));
+  int index = indexOfChild(l);
+  removeChildTree(l, numberOfChildren());
   if (cursor) {
-    if (index < this->numberOfChildren()) {
-      LayoutRef newCursorRef = this->childAtIndex(index);
+    if (index < numberOfChildren()) {
+      LayoutRef newCursorRef = childAtIndex(index);
       cursor->setLayoutReference(newCursorRef);
       cursor->setPosition(LayoutCursor::Position::Left);
     } else {
       int newPointedLayoutIndex = index - 1;
-      if (newPointedLayoutIndex >= 0 && newPointedLayoutIndex < this->numberOfChildren()) {
-        cursor->setLayoutReference(this->childAtIndex(newPointedLayoutIndex));
+      if (newPointedLayoutIndex >= 0 && newPointedLayoutIndex < numberOfChildren()) {
+        cursor->setLayoutReference(childAtIndex(newPointedLayoutIndex));
         cursor->setPosition(LayoutCursor::Position::Right);
       } else {
         cursor->setLayoutReference(*this);
@@ -182,7 +182,7 @@ void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force
       }
     }
   }
-  this->node()->didRemoveChildAtIndex(index, cursor, force);
+  node()->didRemoveChildAtIndex(index, cursor, force);
 }
 
 void LayoutReference::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {

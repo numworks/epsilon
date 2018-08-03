@@ -20,9 +20,9 @@ public:
   SumLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
     SumLayoutRef()
   {
-    addChildTreeAtIndex(argument, 0, 0);
-    addChildTreeAtIndex(lowerB, 1, 1);
-    addChildTreeAtIndex(upperB, 2, 2);
+    addChildAtIndex(argument, 0, 0);
+    addChildAtIndex(lowerB, 1, 1);
+    addChildAtIndex(upperB, 2, 2);
   }
 private:
   SumLayoutRef() : LayoutReference() {

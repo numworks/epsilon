@@ -23,7 +23,7 @@ LayoutRef MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   layout.setNumberOfColumns(1);
   LayoutRef castedLayout(layout.node());
   for (int i = 0; i < numberOfChildren(); i++) {
-    castedLayout.addChildTreeAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
+    castedLayout.addChildAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
     layout.setNumberOfRows(i+1);
   }
   layout.setNumberOfRows(m_numberOfRows);
@@ -83,9 +83,9 @@ EvaluationReference<T> MatrixNode::templatedApproximate(Context& context, Prefer
   for (int i = 0; i < numberOfChildren(); i++) {
     EvaluationReference<T> operandEvaluation = childAtIndex(i)->approximate(T(), context, angleUnit);
     if (operandEvaluation.node()->type() != Evaluation<T>::Type::Complex) {
-      result.addChildTreeAtIndex(ComplexReference<T>::Undefined(), i, i);
+      result.addChildAtIndex(ComplexReference<T>::Undefined(), i, i);
     } else {
-      result.addChildTreeAtIndex(compute(*child, angleUnit), i, i);
+      result.addChildAtIndex(compute(*child, angleUnit), i, i);
     }
   }
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
@@ -117,8 +117,8 @@ int MatrixReference::numberOfColumns() const {
   return typedNode()->numberOfColumns();
 }
 
-void MatrixReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
-  ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+void MatrixReference::addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
+  ExpressionReference::addChildAtIndex(t, index, currentNumberOfChildren);
   if (isAllocationFailure()) {
     return;
   }
@@ -163,7 +163,7 @@ void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angl
       // No non-null coefficient in this column, skip
       k++;
       // Update determinant: det *= 0
-      if (determinant) { determinant.addChildTreeAtIndex(RationalReference(0), 0, determinant.numberOfChildren()); }
+      if (determinant) { determinant.addChildAtIndex(RationalReference(0), 0, determinant.numberOfChildren()); }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
@@ -171,12 +171,12 @@ void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angl
           swapChildren(iPivot*n+col, h*n+col);
         }
         // Update determinant: det *= -1
-        if (determinant) { determinant.addChildTreeAtIndex(RationalReference(-1), 0, determinant.numberOfChildren()); }
+        if (determinant) { determinant.addChildAtIndex(RationalReference(-1), 0, determinant.numberOfChildren()); }
       }
       /* Set to 1 M[h][k] by linear combination */
       ExpressionReference divisor = matrixChild(h, k);
       // Update determinant: det *= divisor
-      if (determinant) { determinant.addChildTreeAtIndex(divisor.clone()); }
+      if (determinant) { determinant.addChildAtIndex(divisor.clone()); }
       for (int j = k+1; j < n; j++) {
         ExpressionReference opHJ = matrixChild(h, j);
         ExpressionReference newOpHJ = DivisionReference(opHJ, divisor.clone());

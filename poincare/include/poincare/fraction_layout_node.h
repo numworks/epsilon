@@ -56,8 +56,8 @@ public:
   FractionLayoutRef(LayoutRef numerator, LayoutRef denominator) :
     FractionLayoutRef()
   {
-    addChildTreeAtIndex(numerator, 0, 0);
-    addChildTreeAtIndex(denominator, 1, 1);
+    addChildAtIndex(numerator, 0, 0);
+    addChildAtIndex(denominator, 1, 1);
   }
   FractionLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:

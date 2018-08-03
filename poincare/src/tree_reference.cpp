@@ -158,7 +158,7 @@ void TreeReference::mergeTreeChildrenAtIndex(TreeReference t, int i) {
   t.node()->eraseNumberOfChildren();
   // If t is a child, remove it
   if (node()->hasChild(t.node())) {
-    removeChild(t, 0);
+    removeTreeChild(t, 0);
   }
   node()->incrementNumberOfChildren(numberOfNewChildren);
 }

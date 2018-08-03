@@ -96,7 +96,7 @@ LayoutRef Factorial::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   HorizontalLayoutRef result;
   result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
-  result.addChildTreeAtIndex(CharLayoutRef('!'), childrenCount, childrenCount, nullptr);
+  result.addChildAtIndex(CharLayoutRef('!'), childrenCount, childrenCount, nullptr);
   return result;
 }
 

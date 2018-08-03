@@ -87,21 +87,15 @@ public:
     addChildTreeAtIndex(l3, 2, 2);
     addChildTreeAtIndex(l4, 3, 3);
   }
-  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override {
-    ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
+    LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
   // Remove puts a child at the end of the pool
-  void removeChildAtIndex(int i) override {
-    ExpressionReference::removeChildAtIndex(i);
+  void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false) override {
+    LayoutReference::removeChild(l, cursor, force);
   }
-  void removeChild(TreeReference t, int childNumberOfChildren) override {
-    ExpressionReference::removeChild(t, childNumberOfChildren);
-  }
-  void removeChildren(int currentNumberOfChildren) {
-    ExpressionReference::removeChildren(currentNumberOfChildren);
-  }
-  void removeChildrenAndDestroy(int currentNumberOfChildren) {
-    ExpressionReference::removeChildren(currentNumberOfChildren);
+  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) override {
+    LayoutReference::removeChildAtIndex(index, cursor, force);
   }
   void addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
   void mergeChildrenAtIndex(HorizontalLayoutRef h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);

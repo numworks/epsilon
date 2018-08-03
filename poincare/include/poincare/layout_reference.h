@@ -72,8 +72,7 @@ public:
   LayoutReference parent() { return LayoutReference(this->node()->parent()); }
 
   // Tree modification
-  // Add
-  void addChildTreeAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
+  //Add
   void addSibling(LayoutCursor * cursor, LayoutReference sibling, bool moveCursor);
   // Replace
   //void replaceChildAtIndex(int oldChildIndex, LayoutReference newChild) { TreeReference::replaceTreeChildAtIndex(oldChildIndex, newChild); }
@@ -85,14 +84,16 @@ public:
     p.replaceChild(*this, newChild, cursor);
   }
   void replaceWithJuxtapositionOf(LayoutReference leftChild, LayoutReference rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle = false);
-  // Remove
-  void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false);
-  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
-    return removeChild(childAtIndex(index), cursor, force);
-  }
   // Collapse
   void collapseSiblings(LayoutCursor * cursor);
-
+protected:
+  // Add
+  virtual void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
+  // Remove
+  virtual void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false);
+  virtual void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
+    removeChild(childAtIndex(index), cursor, force);
+  }
 private:
   // Tree modification
   enum class HorizontalDirection {

@@ -34,7 +34,7 @@ LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, Prefer
   if (numberOfChildren > 0) {
     args.addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
     for (int i = 1; i < numberOfChildren; i++) {
-      args.addChildTreeAtIndex(CharLayoutRef(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
+      args.addChildAtIndex(CharLayoutRef(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
       args.addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
     }
   }
@@ -45,11 +45,11 @@ LayoutRef LayoutEngine::createPrefixLayout(const Expression * expression, Prefer
 
 LayoutRef LayoutEngine::createParenthesedLayout(LayoutRef layoutRef, bool cloneLayout) {
   HorizontalLayoutRef result;
-  result.addChildTreeAtIndex(LeftParenthesisLayoutRef(), 0, 0);
+  result.addChildAtIndex(LeftParenthesisLayoutRef(), 0, 0);
   if (layoutRef.isDefined()) {
     result.addOrMergeChildAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1, true);
   }
-  result.addChildTreeAtIndex(RightParenthesisLayoutRef(), result.numberOfChildren(), result.numberOfChildren());
+  result.addChildAtIndex(RightParenthesisLayoutRef(), result.numberOfChildren(), result.numberOfChildren());
   return result;
 }
 
@@ -57,7 +57,7 @@ LayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, 
   assert(bufferSize > 0);
   HorizontalLayoutRef resultLayout;
   for (int i = 0; i < bufferSize; i++) {
-    resultLayout.addChildTreeAtIndex(CharLayoutRef(buffer[i], fontSize), i, i, nullptr);
+    resultLayout.addChildAtIndex(CharLayoutRef(buffer[i], fontSize), i, i, nullptr);
   }
   return resultLayout;
 }
@@ -65,7 +65,7 @@ LayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, 
 LayoutRef LayoutEngine::createLogLayout(LayoutRef argument, LayoutRef index) {
   HorizontalLayoutRef resultLayout = HorizontalLayoutRef(createStringLayout("log", 3));
   VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(index, VerticalOffsetLayoutNode::Type::Subscript);
-  resultLayout.addChildTreeAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(createParenthesedLayout(argument, false), resultLayout.numberOfChildren(), true);
   return resultLayout;
 }

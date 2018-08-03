@@ -41,6 +41,7 @@ private:
 
 template<typename T>
 class MatrixComplexReference : public EvaluationReference<T> {
+friend class MatrixComplexNode<T>;
 public:
   MatrixComplexReference(TreeNode * t) : EvaluationReference<T>(t) {}
   MatrixComplexReference(int numberOfRows, int numberOfColumns);
@@ -53,7 +54,7 @@ public:
   int numberOfColumns() const;
 private:
   MatrixComplexReference(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
-  MatrixComplexNode<T> * node() const override{ return static_cast<MatrixComplexNode<T> *>(TreeReference::node()); }
+  MatrixComplexNode<T> * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixComplexNode<T> *>(TreeReference::node()); }
 };
 
 }

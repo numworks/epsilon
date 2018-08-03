@@ -1,8 +1,15 @@
 #include <poincare/expression_node.h>
 #include <poincare/undefined.h>
+#include <poincare/ghost_expression_node.h>
 #include <poincare/allocation_failed_expression_node.h>
 
 namespace Poincare {
+
+TreeNode * ExpressionNode::GhostStaticNode() {
+  static GhostExpressionNode GhostNode;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&GhostNode);
+  return &GhostNode;
+}
 
 TreeNode * ExpressionNode::FailedAllocationStaticNode() {
   static AllocationFailedExpressionNode FailureNode;

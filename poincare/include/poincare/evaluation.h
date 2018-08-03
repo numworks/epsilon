@@ -35,6 +35,11 @@ public:
   virtual EvaluationReference<T> transpose() const = 0;
 
   // TreeNode
+  TreeNode * ghostStaticNode() override {
+    assert(false);
+    return FailedAllocationStaticNode();
+  }
+
   static TreeNode * FailedAllocationStaticNode();
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 

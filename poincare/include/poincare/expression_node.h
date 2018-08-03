@@ -14,14 +14,15 @@ namespace Poincare {
  * ExpressionRef. */
 
 class ExpressionNode : public SerializableNode {
-friend class ApproximationEngine;
-friend class SymbolNode;
+  friend class ApproximationEngine;
+  friend class SymbolNode;
   friend class NAryExpressionNode;
 public:
    enum class Type : uint8_t {
-    AllocationFailure = 0,
-    Undefined = 1,
-    Integer = 2,
+    Ghost = 0,
+    AllocationFailure = 1,
+    Undefined = 2,
+    Integer = 3,
     Rational,
     Decimal,
     Float,
@@ -86,6 +87,10 @@ public:
     PredictionInterval,
     EmptyExpression
    };
+  /* Ghost */
+  static TreeNode * GhostStaticNode();
+  TreeNode * ghostStaticNode() override { return GhostStaticNode(); }
+
   /* Allocation failure */
   static TreeNode * FailedAllocationStaticNode();
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }

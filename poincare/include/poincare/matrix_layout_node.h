@@ -64,10 +64,10 @@ public:
   MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) :
     MatrixLayoutRef()
   {
-    addChildTreeAtIndex(l1, 0, 0);
-    addChildTreeAtIndex(l2, 1, 1);
-    addChildTreeAtIndex(l3, 2, 2);
-    addChildTreeAtIndex(l4, 3, 3);
+    addChildAtIndex(l1, 0, 0);
+    addChildAtIndex(l2, 1, 1);
+    addChildAtIndex(l3, 2, 2);
+    addChildAtIndex(l4, 3, 3);
     setDimensions(2, 2);
   }
 
@@ -102,7 +102,7 @@ public:
     }
   }
   void setDimensions(int rows, int columns);
-  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
+  void addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
 private:
   MatrixLayoutNode * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixLayotuNode *>(node()); }
   void setNumberOfRows(int rows);

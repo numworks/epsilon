@@ -55,7 +55,7 @@ public:
   MatrixNode * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixNode *>(node()); }
   int numberOfRows() const;
   int numberOfColumns() const;
-  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
+  void addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
   ExpressionReference matrixChild(int i, int j) { assert(!isAllocationFailure()); return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */

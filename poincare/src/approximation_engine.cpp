@@ -40,9 +40,9 @@ template<typename T> EvaluationReference<T> ApproximationEngine::map(const Expre
     for (int i = 0; i < result.numberOfRows()*result.numberOfColumns(); i++) {
       ComplexNode<T> * child = static_cast<MatrixComplexNode<T> *>(m.node())->childAtIndex(i);
       if (child) {
-        result.addChildTreeAtIndex(compute(*child, angleUnit), i, i);
+        result.addChildAtIndex(compute(*child, angleUnit), i, i);
       } else {
-        result.addChildTreeAtIndex(ComplexReference<T>::Undefined(), i, i);
+        result.addChildAtIndex(ComplexReference<T>::Undefined(), i, i);
       }
     }
     result.setDimensions(m.numberOfRows(), m.numberOfColumns());
@@ -95,9 +95,9 @@ template<typename T> MatrixComplexReference<T> ApproximationEngine::elementWiseO
   for (int i = 0; i < m.numberOfChildren(); i++) {
     ComplexNode<T> * child = static_cast<MatrixComplexNode<T> *>(m.node())->childAtIndex(i);
     if (child) {
-      matrix.addChildTreeAtIndex(computeOnComplexes(*child, c), i, i);
+      matrix.addChildAtIndex(computeOnComplexes(*child, c), i, i);
     } else {
-      matrix.addChildTreeAtIndex(ComplexReference<T>::Undefined(), i, i);
+      matrix.addChildAtIndex(ComplexReference<T>::Undefined(), i, i);
     }
   }
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
@@ -116,9 +116,9 @@ template<typename T> MatrixComplexReference<T> ApproximationEngine::elementWiseO
     ComplexNode<T> * childM = static_cast<MatrixComplexNode<T> *>(m.node())->childAtIndex(i);
     ComplexNode<T> * childN = static_cast<MatrixComplexNode<T> *>(n.node())->childAtIndex(i);
     if (childM && childN) {
-      matrix.addChildTreeAtIndex(computeOnComplexes(*childM, *childN), i, i);
+      matrix.addChildAtIndex(computeOnComplexes(*childM, *childN), i, i);
     } else {
-      matrix.addChildTreeAtIndex(ComplexReference<T>::Undefined(), i, i);
+      matrix.addChildAtIndex(ComplexReference<T>::Undefined(), i, i);
     }
   }
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());

@@ -113,7 +113,7 @@ public:
 protected:
   // Hierarchy operations
   // Add
-  virtual void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren);
+  virtual void addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren);
   // Remove puts a child at the end of the pool
   virtual void removeChildAtIndex(int i);
   virtual void removeChild(TreeReference t, int childNumberOfChildren);

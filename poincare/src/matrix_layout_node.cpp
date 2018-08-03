@@ -296,8 +296,8 @@ void MatrixLayoutRef::setDimensions(int rows, int columns) {
   setNumberOfColumns(columns);
 }
 
-void MatrixLayoutRef::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
-  ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+void MatrixLayoutRef::addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
+  ExpressionReference::addChildAtIndex(t, index, currentNumberOfChildren);
   if (isAllocationFailure()) {
     return;
   }

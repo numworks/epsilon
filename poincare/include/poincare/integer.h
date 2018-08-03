@@ -56,9 +56,9 @@ public:
   static IntegerReference upow(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b);
   static IntegerReference ufact(const NaturalIntegerAbstract * a);
 
-  constexpr static int k_maxNumberOfDigits = 11;
+  constexpr static int k_maxNumberOfDigits = 32;
 protected:
-  constexpr static int k_maxNumberOfDigitsBase10 = 105; // (2^32)^k_maxNumberOfDigits-1 ~ 10^105
+  constexpr static int k_maxNumberOfDigitsBase10 = 308; // (2^32)^k_maxNumberOfDigits ~ 1E308
   NaturalIntegerAbstract(size_t numberOfDigits = 0) :
     m_numberOfDigits(numberOfDigits)
   {

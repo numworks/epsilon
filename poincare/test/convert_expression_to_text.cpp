@@ -189,6 +189,14 @@ QUIZ_CASE(poincare_decimal_to_text) {
   assert_expression_prints_to(&e15, "0.000001", DecimalMode);
   Decimal e16(0.000000999999999901200121020102010201201201021099995);
   assert_expression_prints_to(&e16, "9.999999999012E-7", DecimalMode, 14);
+  Decimal e17(9999999999999.6);
+  assert_expression_prints_to(&e17, "9999999999999.6", DecimalMode, 14);
+  Decimal e18(99999999999999.6);
+  assert_expression_prints_to(&e18, "1E14", DecimalMode, 14);
+  Decimal e19(999999999999999.6);
+  assert_expression_prints_to(&e19, "1E15", DecimalMode, 14);
+  Decimal e20(9999999999999999.6);
+  assert_expression_prints_to(&e20, "1E16", DecimalMode, 14);
 }
 
 QUIZ_CASE(poincare_approximation_to_text) {

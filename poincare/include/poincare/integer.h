@@ -39,7 +39,7 @@ public:
   template<typename T> T approximate() const;
 
   // Properties
-  static int numberOfDigits(const NaturalIntegerAbstract * i);
+  static int NumberOfBase10Digits(const NaturalIntegerAbstract * i);
   virtual bool isOne() const { return (m_numberOfDigits == 1 && digit(0) == 1); };
   virtual bool isTwo() const { return (m_numberOfDigits == 1 && digit(0) == 2); };
   virtual bool isTen() const { return (m_numberOfDigits == 1 && digit(0) == 10); };
@@ -158,6 +158,7 @@ friend class NaturalIntegerAbstract;
 friend class NaturalIntegerPointer;
 friend class IntegerNode;
 friend class RationalReference;
+friend class DecimalReference;
 public:
   IntegerReference(TreeNode * n) : NumberReference(n) {}
   IntegerReference(const char * digits, size_t length, bool negative);
@@ -182,6 +183,7 @@ public:
   bool isEven() const;
   bool isNegative() const { return node()->sign() == ExpressionNode::Sign::Negative; }
   void setNegative(bool negative);
+  static int NumberOfBase10Digits(const IntegerReference i);
 
   // Arithmetic
   static IntegerReference Addition(const IntegerReference i, const IntegerReference j);

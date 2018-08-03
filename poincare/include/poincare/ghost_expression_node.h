@@ -31,10 +31,7 @@ public:
 
 class GhostExpressionRef : public ExpressionReference {
 public:
-  GhostExpressionRef() : ExpressionReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<GhostExpressionNode>();
-    m_identifier = node->identifier();
-  }
+  GhostExpressionRef() : ExpressionReference(TreePool::sharedPool()->createTreeNode<GhostExpressionNode>(), true) {}
   GhostExpressionRef(TreeNode * n) : ExpressionReference(n) {}
 };
 

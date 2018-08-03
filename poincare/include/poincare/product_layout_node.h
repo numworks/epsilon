@@ -27,15 +27,12 @@ public:
   ProductLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
     ProductLayoutRef()
   {
-    addChildTreeAtIndex(argument, 0, 0);
-    addChildTreeAtIndex(lowerB, 1, 1);
-    addChildTreeAtIndex(upperB, 2, 2);
+    replaceTreeChildAtIndex(0, argument);
+    replaceTreeChildAtIndex(1, lowerB);
+    replaceTreeChildAtIndex(2, upperB);
   }
 private:
-  ProductLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<ProductLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  ProductLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>(), true) {}
 };
 
 }

@@ -50,7 +50,7 @@ public:
 template<typename T>
 class EvaluationReference : public TreeReference {
 public:
-  EvaluationReference(TreeNode * t) : TreeReference(t) {}
+  EvaluationReference(TreeNode * n, bool isCreatingNode = false) : TreeReference(n, isCreatingNode) {}
   EvaluationNode<T> * node() const override{ return static_cast<EvaluationNode<T> *>(TreeReference::node()); }
   typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }
   bool isUndefined() const { return node()->isUndefined(); }

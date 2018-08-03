@@ -66,13 +66,10 @@ public:
     if (!(node()->isAllocationFailure())) {
       static_cast<VerticalOffsetLayoutNode *>(node())->setType(type);
     }
-    addChildTreeAtIndex(l, 0, 0);
+    replaceTreeChildAtIndex(0,l);
   }
 private:
-  VerticalOffsetLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  VerticalOffsetLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>(), true) {}
 };
 
 }

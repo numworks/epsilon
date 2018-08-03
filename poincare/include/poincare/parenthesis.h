@@ -36,10 +36,8 @@ private:
 
 class ParenthesisReference : public ExpressionReference {
 public:
-  ParenthesisReference(ExpressionReference exp) {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<ParenthesisNode>();
-    m_identifier = node->identifier();
-    addChildTreeAtIndex(exp, 0, 0);
+  ParenthesisReference(ExpressionReference exp) : ExpressionReference(TreePool::sharedPool()->createTreeNode<ParenthesisNode>(), true) {
+    replaceTreeChildAtIndex(0, exp);
   }
 };
 

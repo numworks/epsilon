@@ -194,9 +194,7 @@ public:
   static IntegerReference Factorial(const IntegerReference i);
 private:
   IntegerReference(const native_uint_t * digits, size_t numberOfDigits, bool negative);
-  IntegerReference(size_t size) : NumberReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<IntegerNode>(size);
-    m_identifier = node->identifier();
+  IntegerReference(size_t size) : NumberReference(TreePool::sharedPool()->createTreeNode<IntegerNode>(size), true) {
   }
   static IntegerReference addition(const IntegerReference a, const IntegerReference b, bool inverseBNegative);
   size_t numberOfDigits() const { return typedNode()->numberOfDigits(); }

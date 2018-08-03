@@ -102,11 +102,14 @@ public:
   // Swap
   void swapChildren(int i, int j);
 
-  TreeReference(const TreeNode * node) { // TODO Make this protected
+  TreeReference(const TreeNode * node, bool isCreatingNode = false) { // TODO Make this protected
     if (node == nullptr) {
       m_identifier = TreePool::NoNodeIdentifier;
-    } else {
-      setIdentifierAndRetain(node->identifier());
+      return;
+    }
+    setIdentifierAndRetain(node->identifier());
+    if (isCreatingNode) {
+      buildGhostChildren();
     }
   }
 
@@ -119,6 +122,9 @@ protected:
   virtual void removeChildTree(TreeReference t, int childNumberOfChildren);
   virtual void removeChildren(int currentNumberOfChildren);
   virtual void removeChildrenAndDestroy(int currentNumberOfChildren);
+
+  // Add ghost children on layout construction
+  void buildGhostChildren();
 
   TreeReference() : m_identifier(-1) {}
   void setIdentifierAndRetain(int newId) {

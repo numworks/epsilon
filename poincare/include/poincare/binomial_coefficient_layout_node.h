@@ -45,15 +45,12 @@ public:
   BinomialCoefficientLayoutRef(LayoutRef n, LayoutRef k) :
     BinomialCoefficientLayoutRef()
   {
-    addChildTreeAtIndex(n, 0, 0);
-    addChildTreeAtIndex(k, 1, 1);
+    replaceTreeChildAtIndex(0, n);
+    replaceTreeChildAtIndex(1, k);
   }
   BinomialCoefficientLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:
-  BinomialCoefficientLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  BinomialCoefficientLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>(), true) {}
 };
 
 }

@@ -51,7 +51,7 @@ class MatrixComplexReference : public EvaluationReference<T> {
 friend class MatrixComplexNode<T>;
 public:
   MatrixComplexReference(TreeNode * t) : EvaluationReference<T>(t) {}
-  MatrixComplexReference();
+  MatrixComplexReference() : EvaluationReference<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >(), true) {}
   static MatrixComplexReference<T> Undefined() {
     std::complex<T> undef = std::complex<T>(NAN, NAN);
     return MatrixComplexReference<T>((std::complex<T> *)&undef, 1, 1);

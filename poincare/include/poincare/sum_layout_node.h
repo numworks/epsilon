@@ -20,15 +20,12 @@ public:
   SumLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
     SumLayoutRef()
   {
-    addChildTreeAtIndex(argument, 0, 0);
-    addChildTreeAtIndex(lowerB, 1, 1);
-    addChildTreeAtIndex(upperB, 2, 2);
+    replaceTreeChildAtIndex(0, argument);
+    replaceTreeChildAtIndex(1, lowerB);
+    replaceTreeChildAtIndex(2, upperB);
   }
 private:
-  SumLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<SumLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  SumLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<SumLayoutNode>(), true) {}
 };
 
 }

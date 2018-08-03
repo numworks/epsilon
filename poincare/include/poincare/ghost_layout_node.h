@@ -46,10 +46,7 @@ private:
 
 class GhostLayoutRef : public LayoutReference {
 public:
-  GhostLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<GhostLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  GhostLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<GhostLayoutNode>(), true) {}
   GhostLayoutRef(TreeNode * n) : LayoutReference(n) {}
 };
 

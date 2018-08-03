@@ -18,22 +18,8 @@ void TreeNode::release(int currentNumberOfChildren) {
   }
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
-    releaseChildrenAndDestroy(currentNumberOfChildren);
+    TreeReference(this).removeChildrenAndDestroy(currentNumberOfChildren);
   }
-}
-
-void TreeNode::releaseChildren(int currentNumberOfChildren) {
-  for (int i = 0; i < currentNumberOfChildren; i++) {
-    TreeRef childRef = TreeRef(childAtIndex(0));
-    TreePool::sharedPool()->move(TreePool::sharedPool()->last(), childRef.node(), childRef.numberOfChildren());
-    childRef.node()->release(childRef.numberOfChildren());
-  }
-  eraseNumberOfChildren();
-}
-
-void TreeNode::releaseChildrenAndDestroy(int currentNumberOfChildren) {
-  releaseChildren(currentNumberOfChildren);
-  TreePool::sharedPool()->discardTreeNode(this);
 }
 
 void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
@@ -136,11 +122,14 @@ TreeNode * TreeNode::childAtIndex(int i) const {
   return child;
 }
 
-int TreeNode::indexOfChildByIdentifier(int childID) const {
+int TreeNode::indexOfChild(const TreeNode * child) const {
+  if (child == nullptr) {
+    return -1;
+  }
   int childrenCount = numberOfChildren();
   TreeNode * childAtIndexi = next();
   for (int i = 0; i < childrenCount; i++) {
-    if (childAtIndexi->identifier() == childID) {
+    if (childAtIndexi == child) {
       return i;
     }
     childAtIndexi = childAtIndexi->nextSibling();
@@ -148,19 +137,12 @@ int TreeNode::indexOfChildByIdentifier(int childID) const {
   return -1;
 }
 
-int TreeNode::indexOfChild(const TreeNode * child) const {
-  if (child == nullptr) {
-    return -1;
-  }
-  return indexOfChildByIdentifier(child->identifier());
-}
-
 int TreeNode::indexInParent() const {
   TreeNode * p = parent();
   if (p == nullptr) {
     return -1;
   }
-  return p->indexOfChildByIdentifier(m_identifier);
+  return p->indexOfChild(this);
 }
 
 bool TreeNode::hasChild(const TreeNode * child) const {

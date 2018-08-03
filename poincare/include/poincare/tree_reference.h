@@ -33,6 +33,7 @@ public:
 
   bool isDefined() const { return m_identifier != TreePool::NoNodeIdentifier && node() != nullptr; }
   bool isAllocationFailure() const { return isDefined() && node()->isAllocationFailure(); }
+  bool isChildRemovalTolerant() const { return isDefined() && node()->isChildRemovalTolerant(); }
 
   int nodeRetainCount() const {
     assert(isDefined());
@@ -82,11 +83,18 @@ public:
   }
 
   // Hierarchy operations
-
+  // Add
   void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren);
+  // Remove puts a child at the end of the pool
   void removeTreeChildAtIndex(int i);
   void removeTreeChild(TreeReference t, int childNumberOfChildren);
-  void removeChildren();
+  void removeChildren(int currentNumberOfChildren);
+  void removeChildrenAndDestroy(int currentNumberOfChildren);
+  void removeFromParent();
+  // Detach puts a child at the end of the pool and replaces it with a GhostNode
+  void detachChild(TreeReference t, int childNumberOfChildren);
+  void detachFromParent();
+  // Replace
   void replaceWith(TreeReference t);
   void replaceTreeChild(TreeReference oldChild, TreeReference newChild);
   void replaceTreeChildAtIndex(int oldChildIndex, TreeReference newChild) {
@@ -95,7 +103,11 @@ public:
     replaceTreeChild(oldChild, newChild);
   }
   void replaceWithAllocationFailure(int currentNumberOfChildren);
+  // Merge
   void mergeTreeChildrenAtIndex(TreeReference t, int i);
+  // Swap
+  void swapChildren(int i, int j);
+
   TreeReference(const TreeNode * node) { // TODO Make this protected
     if (node == nullptr) {
       m_identifier = TreePool::NoNodeIdentifier;
@@ -103,8 +115,6 @@ public:
       setIdentifierAndRetain(node->identifier());
     }
   }
-
-  void swapChildren(int i, int j);
 
 protected:
   TreeReference() : m_identifier(-1) {}
@@ -114,6 +124,8 @@ protected:
   }
   void setTo(const TreeReference & tr);
   int m_identifier;
+private:
+  void detachOrRemoveFromParent();
 };
 
 typedef TreeReference TreeRef;

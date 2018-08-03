@@ -56,16 +56,12 @@ public:
   FractionLayoutRef(LayoutRef numerator, LayoutRef denominator) :
     FractionLayoutRef()
   {
-    addChildTreeAtIndex(numerator, 0, 0);
-    addChildTreeAtIndex(denominator, 1, 1);
+    replaceTreeChildAtIndex(0, numerator);
+    replaceTreeChildAtIndex(1, denominator);
   }
   FractionLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:
-  FractionLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<FractionLayoutNode>();
-    m_identifier = node->identifier();
-  }
-
+  FractionLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<FractionLayoutNode>(), true) {}
 };
 
 }

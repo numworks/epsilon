@@ -28,13 +28,10 @@ class AbsoluteValueLayoutRef : public LayoutReference {
 public:
   AbsoluteValueLayoutRef(TreeNode * n) : LayoutReference(n) {}
   AbsoluteValueLayoutRef(LayoutRef l) : AbsoluteValueLayoutRef() {
-    addChildTreeAtIndex(l, 0, 0);
+    replaceTreeChildAtIndex(0, l);
   }
 private:
-  AbsoluteValueLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<AbsoluteValueLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  AbsoluteValueLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<AbsoluteValueLayoutNode>(), true) {}
 };
 
 }

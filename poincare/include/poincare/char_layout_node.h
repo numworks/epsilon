@@ -73,10 +73,7 @@ public:
     return KDText::FontSize::Large;
   }
 private:
-  CharLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<CharLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  CharLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<CharLayoutNode>(), true) {}
 };
 
 }

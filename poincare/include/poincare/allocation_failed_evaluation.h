@@ -29,10 +29,7 @@ public:
 template<typename T>
 class AllocationFailedEvaluationReference : public EvaluationReference<T> {
 public:
-  AllocationFailedEvaluationReference() : EvaluationReference<T>() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<AllocationFailedEvaluationNode<T>>();
-    this->m_identifier = node->identifier();
-  }
+  AllocationFailedEvaluationReference() : EvaluationReference<T>(TreePool::sharedPool()->createTreeNode<AllocationFailedEvaluationNode<T> >(), true) {}
   AllocationFailedEvaluationReference(TreeNode * n) : EvaluationReference<T>(n) {}
 };
 

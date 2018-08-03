@@ -58,18 +58,13 @@ public:
   IntegralLayoutRef(LayoutRef integrand, LayoutRef lowerBound, LayoutRef upperBound) :
     IntegralLayoutRef()
   {
-    addChildTreeAtIndex(integrand, 0, 0);
-    addChildTreeAtIndex(lowerBound, 1, 1);
-    addChildTreeAtIndex(upperBound, 2, 2);
+    replaceTreeChildAtIndex(0, integrand);
+    replaceTreeChildAtIndex(1, lowerBound);
+    replaceTreeChildAtIndex(2, upperBound);
   }
   IntegralLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:
-  IntegralLayoutRef() :
-    LayoutReference()
-  {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  IntegralLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>(), true) {}
 };
 
 }

@@ -27,13 +27,10 @@ class FloorLayoutRef : public LayoutReference {
 public:
   FloorLayoutRef(TreeNode * n) : LayoutReference(n) {}
   FloorLayoutRef(LayoutRef l) : FloorLayoutRef() {
-    addChildTreeAtIndex(l, 0, 0);
+    replaceTreeChildAtIndex(0, l);
   }
 private:
-  FloorLayoutRef() : LayoutReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<FloorLayoutNode>();
-    m_identifier = node->identifier();
-  }
+  FloorLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<FloorLayoutNode>(), true) {}
 
 };
 

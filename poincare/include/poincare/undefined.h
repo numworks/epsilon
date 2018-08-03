@@ -34,10 +34,7 @@ private:
 
 class UndefinedReference : public NumberReference {
 public:
-  UndefinedReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<UndefinedNode>();
-    m_identifier = node->identifier();
-  }
+  UndefinedReference() : NumberReference(TreePool::sharedPool()->createTreeNode<UndefinedNode>(), true) {}
 };
 
 }

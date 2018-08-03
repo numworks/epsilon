@@ -164,6 +164,22 @@ void TreeReference::mergeTreeChildrenAtIndex(TreeReference t, int i) {
 }
 
 // Protected
+
+void TreeReference::buildGhostChildren() {
+  assert(isDefined());
+  TreeNode * staticGhostNode = node()->ghostStaticNode();
+  for (int i = 0; i < numberOfChildren(); i++) {
+    // Add a ghost child
+    TreeNode * newGhostNode = TreePool::sharedPool()->deepCopy(staticGhostNode);
+    if (newGhostNode == nullptr) {
+      replaceWithAllocationFailure(t.numberOfChildren());
+      return;
+    }
+    newGhostNode->retain();
+    TreePool::sharedPool()->move(node()->next(), newGhostNode, 0);
+  }
+}
+
 void TreeReference::setTo(const TreeReference & tr) {
   /* We cannot use (*this)==tr because tr would need to be casted to
    * TreeReference, which calls setTo and triggers an infinite loop */

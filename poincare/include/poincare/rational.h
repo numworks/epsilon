@@ -84,10 +84,7 @@ public:
   static int NaturalOrder(const RationalReference i, const RationalReference j);
 
 private:
-  RationalReference(size_t size) : NumberReference() {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<RationalNode>(size);
-    m_identifier = node->identifier();
-  }
+  RationalReference(size_t size) : NumberReference(TreePool::sharedPool()->createTreeNode<RationalNode>(size), true) {}
 };
 
 }

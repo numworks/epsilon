@@ -115,8 +115,8 @@ protected:
   // Add
   virtual void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren);
   // Remove puts a child at the end of the pool
-  virtual void removeChildAtIndex(int i);
-  virtual void removeChild(TreeReference t, int childNumberOfChildren);
+  virtual void removeChildTreeAtIndex(int i);
+  virtual void removeChildTree(TreeReference t, int childNumberOfChildren);
   virtual void removeChildren(int currentNumberOfChildren);
   virtual void removeChildrenAndDestroy(int currentNumberOfChildren);
 

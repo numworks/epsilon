@@ -46,9 +46,9 @@ public:
   // Allocation failure
   virtual bool isAllocationFailure() const { return false; }
   virtual TreeNode * failedAllocationStaticNode() = 0;
-  int allocationFailureNodeIdentifier() {
-    return failedAllocationStaticNode()->identifier();
-  }
+  int allocationFailureNodeIdentifier() { return failedAllocationStaticNode()->identifier(); }
+  virtual TreeNode * ghostStaticNode() = 0;
+  int ghostNodeIdentifier() { return ghostStaticNode()->identifier(); }
 
   // Node operations
   void retain() {

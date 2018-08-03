@@ -31,6 +31,8 @@ public:
   NumberNode * numberNode() const { assert(!isAllocationFailure()); return static_cast<NumberNode *>(node()); }
   /* Return either a IntegerReference, a DecimalReference or an InfiniteReference. */
   static NumberReference Integer(const char * digits, size_t length, bool negative);
+  /* Return either a DecimalInteger or an InfiniteReference. */
+  template <typename T> static NumberReference Decimal(T f);
   /* This set of Functions return either a RationalReference or a FloatReference
    * or InfiniteReference in case of overflow. DecimalReference are not taken into
    * account as it is not an internal node - it will always be turned into a

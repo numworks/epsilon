@@ -1,4 +1,5 @@
 #include <poincare/number.h>
+#include <poincare/decimal.h>
 #include <poincare/integer.h>
 #include <poincare/rational.h>
 #include <poincare/float.h>
@@ -55,11 +56,21 @@ NumberReference NumberReference::Integer(const char * digits, size_t length, boo
     negative = true;
     digits++;
   }
-  /*if (length > Decimal::k_maxExponentLength) {
+  if (length > Decimal::k_maxExponentLength) {
     return InfinityReference(negative);
   }
   int exponent = Decimal::Exponent(digits, length, nullptr, 0, nullptr, 0, negative);
-  return DecimalReference(digits, length, nullptr, 0, negative, exponent);*/
+  return DecimalReference(digits, length, nullptr, 0, negative, exponent);
+}
+
+template <typename T> static NumberReference NumberReference::Decimal(T f) {
+  if (std::isnan(f)) {
+    return UndefinedReference();
+  }
+  if (std::isinf(f)) {
+    return InfiniteReference(f < 0.0);
+  }
+  return DecimalReference(f);
 }
 
 NumberReference NumberReference::BinaryOperation(const NumberReference i, const NumberReference j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {

@@ -39,7 +39,7 @@ public:
   ParenthesisReference(ExpressionReference exp) {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<ParenthesisNode>();
     m_identifier = node->identifier();
-    addChildAtIndex(exp, 0, 0);
+    addChildTreeAtIndex(exp, 0, 0);
   }
 };
 

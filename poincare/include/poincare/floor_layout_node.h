@@ -27,7 +27,7 @@ class FloorLayoutRef : public LayoutReference {
 public:
   FloorLayoutRef(TreeNode * n) : LayoutReference(n) {}
   FloorLayoutRef(LayoutRef l) : FloorLayoutRef() {
-    addChildAtIndex(l, 0, 0);
+    addChildTreeAtIndex(l, 0, 0);
   }
 private:
   FloorLayoutRef() : LayoutReference() {

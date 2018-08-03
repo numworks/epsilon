@@ -52,7 +52,7 @@ ExpressionReference Equal::shallowReduce(Context& context, Preferences::AngleUni
 LayoutRef Equal::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result;
   result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(CharLayoutRef('='), result.numberOfChildren(), result.numberOfChildren(), nullptr);
+  result.addChildTreeAtIndex(CharLayoutRef('='), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   result.addOrMergeChildAtIndex(operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }

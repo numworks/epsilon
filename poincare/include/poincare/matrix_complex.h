@@ -60,7 +60,7 @@ public:
   int numberOfRows() const;
   int numberOfColumns() const;
   void setDimensions(int rows, int columns);
-  void addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
+  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
 private:
   void setNumberOfRows(int rows);
   void setNumberOfColumns(int columns);

@@ -422,7 +422,7 @@ T IntegerNode::templatedApproximate() const {
 LayoutRef IntegerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   LayoutRef naturalLayout = NaturalIntegerAbstract::createLayout();
   if (m_negative) {
-    naturalLayout.addChildAtIndex(CharLayoutRef('-'), 0, naturalLayout.numberOfChildren(), nullptr);
+    naturalLayout.addChildTreeAtIndex(CharLayoutRef('-'), 0, naturalLayout.numberOfChildren(), nullptr);
   }
   return naturalLayout;
 }

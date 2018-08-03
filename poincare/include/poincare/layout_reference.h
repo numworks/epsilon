@@ -73,7 +73,7 @@ public:
 
   // Tree modification
   // Add
-  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
+  void addChildTreeAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
   void addSibling(LayoutCursor * cursor, LayoutReference sibling, bool moveCursor);
   // Replace
   //void replaceChildAtIndex(int oldChildIndex, LayoutReference newChild) { TreeReference::replaceTreeChildAtIndex(oldChildIndex, newChild); }

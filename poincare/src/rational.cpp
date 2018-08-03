@@ -109,13 +109,19 @@ template<typename T> T RationalNode::templatedApproximate() const {
 // Comparison
 
 int RationalNode::NaturalOrder(const RationalNode i, const RationalNode j) {
+  if (i.sign() == Sign::Negative && j.sign() == Sign::Positive) {
+    return -1;
+  }
+  if (i.sign() == Sign::Positive && j.sign() == Sign::Negative) {
+    return 1;
+  }
   NaturalIntegerPointer in = i.numerator();
   NaturalIntegerPointer id = i.denominator();
   NaturalIntegerPointer jn = j.numerator();
   NaturalIntegerPointer jd = j.denominator();
   IntegerReference i1 = NaturalIntegerAbstract::umult(&in, &jd);
   IntegerReference i2 = NaturalIntegerAbstract::umult(&id, &jn);
-  return IntegerReference::NaturalOrder(i1, i2);
+  return ((int)i.sign())*IntegerReference::NaturalOrder(i1, i2);
 }
 
 int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {

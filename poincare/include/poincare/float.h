@@ -5,12 +5,11 @@
 
 namespace Poincare {
 
-/* Float reprensents an approximated number. This class is use when:
- * - a rational overflows
- * - to avoid turning float/double into Decimal back and forth because
- *   performances are dramatically affected when doing so. For instance, when
- *   plotting a graph, we need to set a float/double value for a symbol and
- *   approximate an expression containing the symbol for each dot displayed).
+/* Float reprensents an approximated number. This class is use to avoid turning
+ * float/double into Decimal back and forth because performances are
+ * dramatically affected when doing so. For instance, when plotting a graph, we
+ * need to set a float/double value for a symbol and approximate an expression
+ * containing the symbol for each dot displayed).
  * We thus use the Float class that hold a float/double.
  * Float can only be approximated ; Float is an INTERNAL node only. Indeed,
  * they are always turned back into Decimal when beautifying. Thus, the usual

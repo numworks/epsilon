@@ -45,9 +45,8 @@ int NaturalIntegerAbstract::writeTextInBuffer(char * buffer, int bufferSize) con
     return -1;
   }
   buffer[bufferSize-1] = 0;
-  //TODO: handle 'inf'
   if (isInfinity()) {
-    return strlcpy(buffer, "undef", bufferSize);
+    return PrintFloat::convertFloatToText<float>(INFINITY, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
 
   IntegerReference base(10);
@@ -154,7 +153,7 @@ T NaturalIntegerAbstract::approximate() const {
 
 // Properties
 
-int NaturalIntegerAbstract::numberOfDigits(const NaturalIntegerAbstract * i) {
+int NaturalIntegerAbstract::NumberOfBase10Digits(const NaturalIntegerAbstract * i) {
   int numberOfDigits = 1;
   IntegerReference ref(i);
   IntegerReference base(10);
@@ -583,6 +582,13 @@ void IntegerReference::setNegative(bool negative) {
   if (!isAllocationFailure()) {
     return typedNode()->setNegative(negative);
   }
+}
+
+int IntegerReference::NumberOfBase10Digits(IntegerReference i) {
+  if (!i.isAllocationFailure()) {
+    return NaturalIntegerAbstract::numberOfBase10Digits(i.typedNode());
+  }
+  return 0;
 }
 
 // Arithmetic

@@ -18,7 +18,6 @@ TreeReference TreeReference::treeClone() const {
 
 TreeReference::~TreeReference() {
   if (isDefined()) {
-    assert(node());
     assert(node()->identifier() == m_identifier);
     node()->release(numberOfChildren()); //TODO No malformed nodes ?
   }
@@ -26,6 +25,7 @@ TreeReference::~TreeReference() {
 
 // Hierarchy operations
 
+// Add
 void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
   assert(isDefined());
   if (node()->isAllocationFailure()) {
@@ -37,11 +37,8 @@ void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentN
   }
   assert(index >= 0 && index <= currentNumberOfChildren);
 
-  // Detach t from its parent
-  TreeReference tParent = t.parent();
-  if (tParent.isDefined()) {
-    tParent.removeTreeChild(t, t.numberOfChildren());
-  }
+  // Detach or remove t from its parent
+  t.detachOrRemoveFromParent();
 
   // Move t
   TreeNode * newChildPosition = node()->next();
@@ -52,6 +49,8 @@ void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentN
   t.node()->retain();
   node()->incrementNumberOfChildren();
 }
+
+// Remove
 
 void TreeReference::removeTreeChildAtIndex(int i) {
   assert(isDefined());
@@ -67,17 +66,65 @@ void TreeReference::removeTreeChild(TreeReference t, int childNumberOfChildren) 
   node()->decrementNumberOfChildren();
 }
 
-void TreeReference::removeChildren() {
+void TreeReference::removeChildren(int currentNumberOfChildren) {
   assert(isDefined());
-  node()->releaseChildren(numberOfChildren());
+  for (int i = 0; i < currentNumberOfChildren; i++) {
+    TreeReference childRef = treeChildAtIndex(0);
+    TreePool::sharedPool()->move(TreePool::sharedPool()->last(), childRef.node(), childRef.numberOfChildren());
+    childRef.node()->release(childRef.numberOfChildren());
+  }
   node()->eraseNumberOfChildren();
+}
+
+void TreeReference::removeChildrenAndDestroy(int currentNumberOfChildren) {
+  removeChildren(currentNumberOfChildren);
+  TreePool::sharedPool()->discardTreeNode(node());
+}
+
+void TreeReference::removeFromParent() {
+  assert(isDefined());
+  TreeReference p = parent();
+  if (!p.isDefined()) {
+    return;
+  }
+  p.removeTreeChild(*this, numberOfChildren());
+}
+
+// Detach
+
+void TreeReference::detachChild(TreeReference t, int childNumberOfChildren) {
+  assert(isDefined());
+  // Replace the child with a ghost node
+  TreeNode * staticGhostNode = t.node()->ghostStaticNode();
+  TreeNode * newGhostStaticNode = TreePool::sharedPool()->deepCopy(staticGhostNode);
+  if (newGhostStaticNode == nullptr) {
+    t.replaceWithAllocationFailure(t.numberOfChildren());
+    return;
+  }
+
+  // Put the ghost next to the child to detach
+  newGhostStaticNode->retain();
+  TreePool::sharedPool()->move(t.node(), newGhostStaticNode, 0);
+
+  // Move the child to detach
+  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), t.numberOfChildren());
+  t.node()->release(childNumberOfChildren);
+}
+
+void TreeReference::detachFromParent() {
+  assert(isDefined());
+  TreeReference p = parent();
+  if (!p.isDefined()) {
+    return;
+  }
+  p.detachChild(*this, numberOfChildren());
 }
 
 void TreeReference::replaceWith(TreeReference t) {
   assert(isDefined());
   TreeReference p = parent();
   if (p.isDefined()) {
-    p.replaceTreeChildAtIndex(p.node()->indexOfChildByIdentifier(identifier()), t);
+    p.replaceTreeChild(*this, t);
   }
 }
 
@@ -92,46 +139,16 @@ void TreeReference::replaceTreeChild(TreeReference oldChild, TreeReference newCh
     return;
   }
 
-  TreeReference p = newChild.parent();
-  bool shouldDestroyNewChildParent = false;
-  if (p.isDefined()) {
-    int childrenCount = p.numberOfChildren();
-    p.decrementNumberOfChildren();
-    if (childrenCount == p.numberOfChildren()) {
-      // The parent tree does not have the right children count
-      shouldDestroyNewChildParent = true;
-    }
-  }
-  if (shouldDestroyNewChildParent) {
-    TreeNode * staticAllocFailNode = newChild.node()->failedAllocationStaticNode();
-    TreeNode * newAllocationFailureNode = TreePool::sharedPool()->deepCopy(staticAllocFailNode);
-    if (newAllocationFailureNode == nullptr) {
-      newChild.replaceWithAllocationFailure(newChild.numberOfChildren());
-      oldChild.replaceWithAllocationFailure(oldChild.numberOfChildren());
-      return;
-    }
-
-    // Put the new layout next to the newChild
-    TreePool::sharedPool()->move(newChild.node(), newAllocationFailureNode, 0);
-  }
-
   // Move the new child
+  newChild.detachOrRemoveFromParent();
   TreePool::sharedPool()->move(oldChild.node(), newChild.node(), newChild.numberOfChildren());
   /* We could have moved the new node to oldChild.node()->nextSibling(), but
    * nextSibling is not computed correctly if we inserted an
    * AllocationFailureNode next to newChild. */
-
-  if (!p.isDefined()) {
-    newChild.node()->retain();
-  }
+  newChild.node()->retain();
 
   // Move the old child
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), oldChild.node(), oldChild.numberOfChildren());
-
-  if (shouldDestroyNewChildParent) {
-    p.replaceWithAllocationFailure(p.numberOfChildren());
-  }
-
   oldChild.node()->release(oldChild.numberOfChildren());
 }
 
@@ -159,10 +176,10 @@ void TreeReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
   bool hasParent = p.isDefined();
   int indexInParentNode = hasParent ? node()->indexInParent() : -1;
   int currentRetainCount = node()->retainCount();
-  TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode(); //TODO was typedNode
+  TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode();
 
   // Release all children and delete the node in the pool
-  node()->releaseChildrenAndDestroy(currentNumberOfChildren);
+  removeChildrenAndDestroy(currentNumberOfChildren);
   /* WARNING: If we called "p.decrementNumberOfChildren()" here, the number of
    * children of the parent layout would be:
    * -> numberOfChildren() for "dynamic trees" that have a m_numberOfChildren
@@ -211,8 +228,7 @@ void TreeReference::mergeTreeChildrenAtIndex(TreeReference t, int i) {
   node()->incrementNumberOfChildren(numberOfNewChildren);
 }
 
-// Private
-
+// Protected
 void TreeReference::setTo(const TreeReference & tr) {
   /* We cannot use (*this)==tr because tr would need to be casted to
    * TreeReference, which calls setTo and triggers an infinite loop */
@@ -229,6 +245,20 @@ void TreeReference::setTo(const TreeReference & tr) {
   if (releaseNode) {
     currentNode->release(currentNode->numberOfChildren());
   }
-};
+}
+
+// Private
+void TreeReference::detachOrRemoveFromParent() {
+  assert(isDefined());
+  TreeReference p = parent();
+  if (p.isDefined()) {
+    if (p.isChildRemovalTolerant()) {
+      p.removeTreeChild(*this, numberOfChildren());
+    } else {
+      p.detachChild(*this, numberOfChildren());
+    }
+  }
+}
+
 
 }

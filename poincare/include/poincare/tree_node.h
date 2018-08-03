@@ -25,6 +25,7 @@ public:
   bool isStatic() const;
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
+  virtual bool isChildRemovalTolerant() const { return false; }
   int retainCount() const { return m_referenceCounter; }
   void setReferenceCounter(int refCount) { //TODO make this method privte with only friends that can access it
     if (isStatic()) {
@@ -52,15 +53,11 @@ public:
 
   // Node operations
   void retain() {
-    if (isStatic()) {
-      // Do not retain static nodes
-      return;
+    if (!isStatic()) {
+      m_referenceCounter++;
     }
-    m_referenceCounter++;
   }
   void release(int currentNumberOfChildren);
-  void releaseChildren(int currentNumberOfChildren);
-  void releaseChildrenAndDestroy(int currentNumberOfChildren);
   void rename(int identifier, bool unregisterPreviousIdentifier);
 
   // Hierarchy
@@ -72,7 +69,6 @@ public:
   virtual void eraseNumberOfChildren() {} //TODO Put an assert false //TODO what if somebody i stealing a unary tree's only child ?
   int numberOfDescendants(bool includeSelf) const;
   virtual TreeNode * childAtIndex(int i) const;
-  int indexOfChildByIdentifier(int childID) const;
   int indexOfChild(const TreeNode * child) const;
   int indexInParent() const;
   bool hasChild(const TreeNode * child) const;

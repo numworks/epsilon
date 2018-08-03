@@ -65,7 +65,7 @@ private:
   void setNumberOfRows(int rows);
   void setNumberOfColumns(int columns);
   MatrixComplexReference(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
-  MatrixComplexNode<T> * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixComplexNode<T> *>(TreeReference::node()); }
+  MatrixComplexNode<T> * typedNode() const { assert(!(this->node())->isAllocationFailure()); return static_cast<MatrixComplexNode<T> *>(TreeReference::node()); }
 };
 
 }

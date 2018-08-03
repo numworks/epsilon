@@ -164,7 +164,7 @@ int MatrixComplexReference<T>::numberOfRows() const {
   if (this->node()->isAllocationFailure()) {
     return 0;
   }
-  return this->node()->numberOfRows();
+  return this->typedNode()->numberOfRows();
 }
 
 template<typename T>
@@ -172,7 +172,7 @@ int MatrixComplexReference<T>::numberOfColumns() const {
   if (this->node()->isAllocationFailure()) {
     return 0;
   }
-  return this->node()->numberOfColumns();
+  return this->typedNode()->numberOfColumns();
 }
 
 template class MatrixComplexReference<float>;

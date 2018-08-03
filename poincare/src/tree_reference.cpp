@@ -31,15 +31,15 @@ void TreeReference::detachChild(TreeReference t, int childNumberOfChildren) {
   assert(isDefined());
   // Replace the child with a ghost node
   TreeNode * staticGhostNode = t.node()->ghostStaticNode();
-  TreeNode * newGhostStaticNode = TreePool::sharedPool()->deepCopy(staticGhostNode);
-  if (newGhostStaticNode == nullptr) {
+  TreeNode * newGhostNode = TreePool::sharedPool()->deepCopy(staticGhostNode);
+  if (newGhostNode == nullptr) {
     t.replaceWithAllocationFailure(t.numberOfChildren());
     return;
   }
 
   // Put the ghost next to the child to detach
-  newGhostStaticNode->retain();
-  TreePool::sharedPool()->move(t.node(), newGhostStaticNode, 0);
+  newGhostNode->retain();
+  TreePool::sharedPool()->move(t.node(), newGhostNode, 0);
 
   // Move the child to detach
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), t.numberOfChildren());

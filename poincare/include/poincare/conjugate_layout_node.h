@@ -42,7 +42,7 @@ private:
 class ConjugateLayoutRef : public LayoutReference {
 public:
   ConjugateLayoutRef(LayoutRef l) : ConjugateLayoutRef() {
-    addChildAtIndex(l, 0, 0);
+    addChildTreeAtIndex(l, 0, 0);
   }
   ConjugateLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:

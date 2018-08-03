@@ -23,7 +23,7 @@ ExpressionReference ExpressionNode::replaceSymbolWithExpression(char symbol, Exp
   for (int i = 0; i < nbChildren; i++) {
     ExpressionReference newChild = reference.childAtIndex(i).node()->replaceSymbolWithExpression(symbol, expression);
     if (reference.numberOfChildren() < nbChildren) {
-      reference.addChildAtIndex(newChild, i, nbChildren - 1);
+      reference.addChildTreeAtIndex(newChild, i, nbChildren - 1);
     } else {
       reference.replaceTreeChildAtIndex(i, newChild);
     }

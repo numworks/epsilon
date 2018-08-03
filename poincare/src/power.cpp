@@ -179,7 +179,7 @@ LayoutRef Power::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
   }
   HorizontalLayoutRef result = HorizontalLayoutRef();
   result.addOrMergeChildAtIndex(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
-  result.addChildAtIndex(VerticalOffsetLayoutRef(
+  result.addChildTreeAtIndex(VerticalOffsetLayoutRef(
         indiceOperand->createLayout(floatDisplayMode, numberOfSignificantDigits),
         VerticalOffsetLayoutNode::Type::Superscript),
       result.numberOfChildren(),

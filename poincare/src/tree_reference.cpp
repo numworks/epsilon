@@ -137,7 +137,7 @@ void TreeReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
      * no longer retaining the node. When we add this node to the parent, it
      * will retain it and increment the retain count. */
     newAllocationFailureNode->setReferenceCounter(currentRetainCount - 1);
-    p.addChildAtIndex(TreeRef(newAllocationFailureNode), indexInParentNode, p.numberOfChildren() - 1);
+    p.addChildTreeAtIndex(TreeRef(newAllocationFailureNode), indexInParentNode, p.numberOfChildren() - 1);
     p.decrementNumberOfChildren();
     /* We decrement here the parent's number of children, as we did not do it
      * before, see WARNING. */
@@ -183,7 +183,7 @@ void TreeReference::setTo(const TreeReference & tr) {
 }
 
 // Add
-void TreeReference::addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
+void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
   assert(isDefined());
   if (node()->isAllocationFailure()) {
     return;

@@ -32,6 +32,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(HorizontalLayoutNode); }
   int numberOfChildren() const override { return m_numberOfChildren; }
+  bool isChildRemovalTolerant() const override { return true; }
   void incrementNumberOfChildren(int increment = 1) override { m_numberOfChildren+= increment; }
   void decrementNumberOfChildren(int decrement = 1) override {
     assert(m_numberOfChildren >= decrement);

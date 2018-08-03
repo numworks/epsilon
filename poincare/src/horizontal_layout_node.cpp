@@ -32,7 +32,7 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
 
   // Case: The cursor is Left of a child.
   assert(cursor->position() == LayoutCursor::Position::Left);
-  int childIndex = indexOfChildByIdentifier(cursor->layoutIdentifier());
+  int childIndex = indexOfChild(cursor->layoutNode());
   assert(childIndex >= 0);
   if (childIndex == 0) {
     // Case: the child is the leftmost. Ask the parent.

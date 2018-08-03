@@ -69,19 +69,19 @@ public:
   NthRootLayoutRef(TreeNode * n) : LayoutReference(n) {}
 
   NthRootLayoutRef(LayoutRef radicand) : NthRootLayoutRef() {
-    addChildAtIndex(radicand, 0, 0);
+    addChildTreeAtIndex(radicand, 0, 0);
     if (!node()->isAllocationFailure()) {
       static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(1);
     }
   }
 
   NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {
-    addChildAtIndex(radicand, 0, 0);
+    addChildTreeAtIndex(radicand, 0, 0);
     if (node()->isAllocationFailure()) {
       return;
     }
     static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(1);
-    addChildAtIndex(index, 1, 1);
+    addChildTreeAtIndex(index, 1, 1);
     if (!node()->isAllocationFailure()) {
       static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);
     }

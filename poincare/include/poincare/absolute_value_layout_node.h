@@ -28,7 +28,7 @@ class AbsoluteValueLayoutRef : public LayoutReference {
 public:
   AbsoluteValueLayoutRef(TreeNode * n) : LayoutReference(n) {}
   AbsoluteValueLayoutRef(LayoutRef l) : AbsoluteValueLayoutRef() {
-    addChildAtIndex(l, 0, 0);
+    addChildTreeAtIndex(l, 0, 0);
   }
 private:
   AbsoluteValueLayoutRef() : LayoutReference() {

@@ -39,9 +39,9 @@ ExpressionReference MatrixComplexNode<T>::complexToExpression(Preferences::Compl
   for (int i = 0; i < numberOfComplexOperands(); i++) {
     ComplexNode<T> * child = childAtIndex(i);
     if (child) {
-      matrix.addChildAtIndex(child->complexToExpression(complexFormat), i, i);
+      matrix.addChildTreeAtIndex(child->complexToExpression(complexFormat), i, i);
     } else {
-      matrix.addChildAtIndex(UndefinedReference(), i, i);
+      matrix.addChildTreeAtIndex(UndefinedReference(), i, i);
     }
   }
   matrix.setDimensions(numberOfRows(), numberOfColumns());
@@ -113,9 +113,9 @@ EvaluationReference<T> MatrixComplexNode<T>::transpose() const {
     for (int j = 0; j < numberOfColumns(); j++) {
       ComplexNode<T> * child = childAtIndex(i*numberOfColumns()+i);
       if (child) {
-        result.addChildAtIndex(child, j*numberOfRows()+i, j*numberOfRows()+i);
+        result.addChildTreeAtIndex(child, j*numberOfRows()+i, j*numberOfRows()+i);
       } else {
-        result.addChildAtIndex(ComplexReference<T>::Undefined(), j*numberOfRows()+i, j*numberOfRows()+i);
+        result.addChildTreeAtIndex(ComplexReference<T>::Undefined(), j*numberOfRows()+i, j*numberOfRows()+i);
       }
     }
   }
@@ -138,7 +138,7 @@ MatrixComplexReference<T>::MatrixComplexReference(std::complex<T> * operands, in
   MatrixComplexReference<T>()
 {
   for (int i=0; i<numberOfRows*numberOfColumns; i++) {
-    addChildAtIndex(ComplexReference<T>(operands[i]), i, i);
+    addChildTreeAtIndex(ComplexReference<T>(operands[i]), i, i);
   }
   setDimensions(numberOfRows, numberOfColumns);
 }
@@ -149,7 +149,7 @@ MatrixComplexReference<T> MatrixComplexReference<T>::createIdentity(int dim) {
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       ComplexReference<T> c = i == j ? ComplexReference<T>(1.0) : ComplexReference<T>(0.0);
-      result.addChildAtIndex(c, i*dim+j, i*dim+j);
+      result.addChildTreeAtIndex(c, i*dim+j, i*dim+j);
     }
   }
   result.setDimensions(dim, dim);
@@ -183,8 +183,8 @@ void MatrixComplexReference<T>::setDimensions(int rows, int columns) {
 }
 
 template<typename T>
-void MatrixComplexReference<T>::addChildAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
-  ExpressionReference::addChildAtIndex(t, index, currentNumberOfChildren);
+void MatrixComplexReference<T>::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
+  ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
   if (isAllocationFailure()) {
     return;
   }

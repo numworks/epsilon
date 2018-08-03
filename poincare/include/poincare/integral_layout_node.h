@@ -58,9 +58,9 @@ public:
   IntegralLayoutRef(LayoutRef integrand, LayoutRef lowerBound, LayoutRef upperBound) :
     IntegralLayoutRef()
   {
-    addChildAtIndex(integrand, 0, 0);
-    addChildAtIndex(lowerBound, 1, 1);
-    addChildAtIndex(upperBound, 2, 2);
+    addChildTreeAtIndex(integrand, 0, 0);
+    addChildTreeAtIndex(lowerBound, 1, 1);
+    addChildTreeAtIndex(upperBound, 2, 2);
   }
   IntegralLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:

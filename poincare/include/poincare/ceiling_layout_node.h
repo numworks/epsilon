@@ -26,7 +26,7 @@ class CeilingLayoutRef : public LayoutReference {
 public:
   CeilingLayoutRef(TreeNode * n) : LayoutReference(n) {}
   CeilingLayoutRef(LayoutRef l) : CeilingLayoutRef() {
-    addChildAtIndex(l, 0, 0);
+    addChildTreeAtIndex(l, 0, 0);
   }
 private:
   CeilingLayoutRef() : LayoutReference() {

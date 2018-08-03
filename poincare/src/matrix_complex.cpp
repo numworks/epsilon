@@ -4,19 +4,13 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/matrix_complex.h>
-//#include <poincare/matrix.h>
+#include <poincare/matrix.h>
 #include <poincare/expression_reference.h>
 #include <poincare/undefined.h>
 #include <ion.h>
 #include <cmath>
 
 namespace Poincare {
-
-template<typename T>
-void MatrixComplexNode<T>::setMatrixComplexDimension(int numberOfRows, int numberOfColumns) {
-  m_numberOfRows = numberOfRows;
-  m_numberOfColumns = numberOfColumns;
-}
 
 template<typename T>
 ComplexNode<T> * childAtIndex(int index) {
@@ -41,7 +35,7 @@ bool MatrixComplexNode<T>::isUndefined() const {
 
 template<typename T>
 ExpressionReference MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
-  MatrixReference matrix(numberOfRows(), numberOfColumns());
+  MatrixReference matrix;
   for (int i = 0; i < numberOfComplexOperands(); i++) {
     ComplexNode<T> * child = childAtIndex(i);
     if (child) {
@@ -50,6 +44,7 @@ ExpressionReference MatrixComplexNode<T>::complexToExpression(Preferences::Compl
       matrix.addChildTreeAtIndex(UndefinedReference(), i, i);
     }
   }
+  matrix.setDimensions(numberOfRows(), numberOfColumns());
   return matrix;
 }
 
@@ -113,7 +108,7 @@ EvaluationReference<T> MatrixComplexNode<T>::inverse() const {
 template<typename T>
 EvaluationReference<T> MatrixComplexNode<T>::transpose() const {
   // Intentionally swapping dimensions for transpose
-  MatrixComplexReference<T> result(numberOfColumns(), numberOfRows());
+  MatrixComplexReference<T> result;
   for (int i = 0; i < numberOfRows(); i++) {
     for (int j = 0; j < numberOfColumns(); j++) {
       ComplexNode<T> * child = childAtIndex(i*numberOfColumns()+i);
@@ -124,55 +119,95 @@ EvaluationReference<T> MatrixComplexNode<T>::transpose() const {
       }
     }
   }
+  result.setDimensions(numberOfColumns(), numberOfRows());
   return result;
 }
 
+// MATRIX COMPLEX REFERENCE
+
 template<typename T>
-MatrixComplexReference<T>::MatrixComplexReference(int numberOfRows, int numberOfColumns) :
+MatrixComplexReference<T>::MatrixComplexReference() :
   EvaluationReference<T>()
 {
   TreeNode * node = TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T>>();
-  this->m_identifier = node->identifier();
-  if (!(node->isAllocationFailure())) {
-    static_cast<MatrixComplexNode<T> *>(node)->setMatrixComplexDimension(numberOfRows, numberOfColumns);
-  }
+  m_identifier = node->identifier();
 }
 
 template<typename T>
 MatrixComplexReference<T>::MatrixComplexReference(std::complex<T> * operands, int numberOfRows, int numberOfColumns) :
-  MatrixComplexReference<T>(numberOfRows, numberOfColumns)
+  MatrixComplexReference<T>()
 {
   for (int i=0; i<numberOfRows*numberOfColumns; i++) {
-    this->addChildTreeAtIndex(ComplexReference<T>(operands[i]), i, i);
+    addChildTreeAtIndex(ComplexReference<T>(operands[i]), i, i);
   }
+  setDimensions(numberOfRows, numberOfColumns);
 }
 
 template<typename T>
 MatrixComplexReference<T> MatrixComplexReference<T>::createIdentity(int dim) {
-  MatrixComplexReference<T> result(dim, dim);
+  MatrixComplexReference<T> result;
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       ComplexReference<T> c = i == j ? ComplexReference<T>(1.0) : ComplexReference<T>(0.0);
       result.addChildTreeAtIndex(c, i*dim+j, i*dim+j);
     }
   }
+  result.setDimensions(dim, dim);
   return result;
 }
 
 template<typename T>
 int MatrixComplexReference<T>::numberOfRows() const {
-  if (this->node()->isAllocationFailure()) {
+  if (isAllocationFailure()) {
     return 0;
   }
-  return this->typedNode()->numberOfRows();
+  return typedNode()->numberOfRows();
 }
 
 template<typename T>
 int MatrixComplexReference<T>::numberOfColumns() const {
-  if (this->node()->isAllocationFailure()) {
+  if (isAllocationFailure()) {
     return 0;
   }
-  return this->typedNode()->numberOfColumns();
+  return typedNode()->numberOfColumns();
+}
+
+template<typename T>
+void MatrixComplexReference<T>::setDimensions(int rows, int columns) {
+  if (isAllocationFailure()) {
+    return;
+  }
+  assert(rows * columns = numberOfChildren());
+  setNumberOfRows(rows);
+  setNumberOfColumns(columns);
+}
+
+template<typename T>
+void MatrixComplexReference<T>::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
+  ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  if (isAllocationFailure()) {
+    return;
+  }
+  setNumberOfRows(1);
+  setNumberOfColumns(currentNumberOfChildren + 1);
+}
+
+template<typename T>
+void MatrixComplexReference<T>::setNumberOfRows(int rows) {
+ if (isAllocationFailure()) {
+    return;
+  }
+  assert(rows >= 0);
+  typedNode()->setNumberOfRows(rows);
+}
+
+template<typename T>
+void MatrixComplexReference<T>::setNumberOfColumns(int columns) {
+  if (isAllocationFailure()) {
+    return;
+  }
+  assert(columns >= 0);
+  typedNode()->setNumberOfColumns(columns);
 }
 
 template class MatrixComplexReference<float>;

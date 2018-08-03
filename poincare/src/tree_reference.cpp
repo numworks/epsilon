@@ -25,71 +25,6 @@ TreeReference::~TreeReference() {
 
 // Hierarchy operations
 
-// Add
-void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
-  assert(isDefined());
-  if (node()->isAllocationFailure()) {
-    return;
-  }
-  if (t.isAllocationFailure()) {
-    replaceWithAllocationFailure(currentNumberOfChildren);
-    return;
-  }
-  assert(index >= 0 && index <= currentNumberOfChildren);
-
-  // Detach or remove t from its parent
-  t.detachOrRemoveFromParent();
-
-  // Move t
-  TreeNode * newChildPosition = node()->next();
-  for (int i = 0; i < index; i++) {
-    newChildPosition = newChildPosition->nextSibling();
-  }
-  TreePool::sharedPool()->move(newChildPosition, t.node(), t.numberOfChildren());
-  t.node()->retain();
-  node()->incrementNumberOfChildren();
-}
-
-// Remove
-
-void TreeReference::removeTreeChildAtIndex(int i) {
-  assert(isDefined());
-  assert(i >= 0 && i < numberOfChildren());
-  TreeReference t = treeChildAtIndex(i);
-  removeTreeChild(t, t.numberOfChildren());
-}
-
-void TreeReference::removeTreeChild(TreeReference t, int childNumberOfChildren) {
-  assert(isDefined());
-  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), childNumberOfChildren);
-  t.node()->release(childNumberOfChildren);
-  node()->decrementNumberOfChildren();
-}
-
-void TreeReference::removeChildren(int currentNumberOfChildren) {
-  assert(isDefined());
-  for (int i = 0; i < currentNumberOfChildren; i++) {
-    TreeReference childRef = treeChildAtIndex(0);
-    TreePool::sharedPool()->move(TreePool::sharedPool()->last(), childRef.node(), childRef.numberOfChildren());
-    childRef.node()->release(childRef.numberOfChildren());
-  }
-  node()->eraseNumberOfChildren();
-}
-
-void TreeReference::removeChildrenAndDestroy(int currentNumberOfChildren) {
-  removeChildren(currentNumberOfChildren);
-  TreePool::sharedPool()->discardTreeNode(node());
-}
-
-void TreeReference::removeFromParent() {
-  assert(isDefined());
-  TreeReference p = parent();
-  if (!p.isDefined()) {
-    return;
-  }
-  p.removeTreeChild(*this, numberOfChildren());
-}
-
 // Detach
 
 void TreeReference::detachChild(TreeReference t, int childNumberOfChildren) {
@@ -223,7 +158,7 @@ void TreeReference::mergeTreeChildrenAtIndex(TreeReference t, int i) {
   t.node()->eraseNumberOfChildren();
   // If t is a child, remove it
   if (node()->hasChild(t.node())) {
-    removeTreeChild(t, 0);
+    removeChild(t, 0);
   }
   node()->incrementNumberOfChildren(numberOfNewChildren);
 }
@@ -247,18 +182,82 @@ void TreeReference::setTo(const TreeReference & tr) {
   }
 }
 
+// Add
+void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
+  assert(isDefined());
+  if (node()->isAllocationFailure()) {
+    return;
+  }
+  if (t.isAllocationFailure()) {
+    replaceWithAllocationFailure(currentNumberOfChildren);
+    return;
+  }
+  assert(index >= 0 && index <= currentNumberOfChildren);
+
+  // Detach or remove t from its parent
+  t.detachOrRemoveFromParent();
+
+  // Move t
+  TreeNode * newChildPosition = node()->next();
+  for (int i = 0; i < index; i++) {
+    newChildPosition = newChildPosition->nextSibling();
+  }
+  TreePool::sharedPool()->move(newChildPosition, t.node(), t.numberOfChildren());
+  t.node()->retain();
+  node()->incrementNumberOfChildren();
+}
+
+// Remove
+
+void TreeReference::removeChildAtIndex(int i) {
+  assert(isDefined());
+  assert(i >= 0 && i < numberOfChildren());
+  TreeReference t = treeChildAtIndex(i);
+  removeChild(t, t.numberOfChildren());
+}
+
+void TreeReference::removeChild(TreeReference t, int childNumberOfChildren) {
+  assert(isDefined());
+  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), childNumberOfChildren);
+  t.node()->release(childNumberOfChildren);
+  node()->decrementNumberOfChildren();
+}
+
+void TreeReference::removeChildren(int currentNumberOfChildren) {
+  assert(isDefined());
+  for (int i = 0; i < currentNumberOfChildren; i++) {
+    TreeReference childRef = treeChildAtIndex(0);
+    TreePool::sharedPool()->move(TreePool::sharedPool()->last(), childRef.node(), childRef.numberOfChildren());
+    childRef.node()->release(childRef.numberOfChildren());
+  }
+  node()->eraseNumberOfChildren();
+}
+
+void TreeReference::removeChildrenAndDestroy(int currentNumberOfChildren) {
+  removeChildren(currentNumberOfChildren);
+  TreePool::sharedPool()->discardTreeNode(node());
+}
+
+void TreeReference::removeFromParent() {
+  assert(isDefined());
+  TreeReference p = parent();
+  if (!p.isDefined()) {
+    return;
+  }
+  p.removeChild(*this, numberOfChildren());
+}
+
 // Private
 void TreeReference::detachOrRemoveFromParent() {
   assert(isDefined());
   TreeReference p = parent();
   if (p.isDefined()) {
     if (p.isChildRemovalTolerant()) {
-      p.removeTreeChild(*this, numberOfChildren());
+      p.removeChild(*this, numberOfChildren());
     } else {
       p.detachChild(*this, numberOfChildren());
     }
   }
 }
-
 
 }

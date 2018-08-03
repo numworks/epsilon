@@ -7,6 +7,7 @@ namespace Poincare {
 
 class NAryExpressionNode : public ExpressionNode { // TODO: VariableArityExpressionNode?
 public:
+  //Tree
   int numberOfChildren() const override { return m_numberOfChildren; }
   bool isChildRemovalTolerant() const override { return true; }
   void incrementNumberOfChildren(int increment = 1) { m_numberOfChildren+= increment; }
@@ -28,6 +29,26 @@ protected:
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;
+};
+
+class NAryExpressionRef : public ExpressionReference {
+public:
+  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override {
+    ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  }
+  // Remove puts a child at the end of the pool
+  void removeChildAtIndex(int i) override {
+    ExpressionReference::removeChildAtIndex(i);
+  }
+  void removeChild(TreeReference t, int childNumberOfChildren) override {
+    ExpressionReference::removeChild(t, childNumberOfChildren);
+  }
+  void removeChildren(int currentNumberOfChildren) {
+    ExpressionReference::removeChildren(currentNumberOfChildren);
+  }
+  void removeChildrenAndDestroy(int currentNumberOfChildren) {
+    ExpressionReference::removeChildren(currentNumberOfChildren);
+  }
 };
 
 }

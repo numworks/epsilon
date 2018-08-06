@@ -24,7 +24,7 @@ public:
 #if TREE_LOG
   const char * description() const override { return "Matrix";  }
 #endif
-  int numberOfChildren() const { return m_numberOfRows*m_numberOfColumns; }
+  int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
 
   // Properties
   Type type() const override { return Type::Matrix; }
@@ -32,10 +32,10 @@ public:
 
   // Approximation
   EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return templatedApproximate<float>();
+    return templatedApproximate<float>(context, angleUnit);
   }
   EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return templatedApproximate<double>();
+    return templatedApproximate<double>(context, angleUnit);
   }
 
   // Layout
@@ -52,11 +52,10 @@ class MatrixReference : public ExpressionReference {
   friend class GlobalContext;
 public:
   void setDimensions(int rows, int columns);
-  MatrixNode * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixNode *>(node()); }
   int numberOfRows() const;
   int numberOfColumns() const;
   void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
-  ExpressionReference matrixChild(int i, int j) { assert(!isAllocationFailure()); return childAtIndex(i*numberOfColumns()+j); }
+  ExpressionReference matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */
   int rank(Context & context, Preferences::AngleUnit angleUnit, bool inPlace);
@@ -71,6 +70,11 @@ public:
   ExpressionReference inverse(Context & context, Preferences::AngleUnit angleUnit) const;
 #endif
 private:
+  // TODO: find another solution for inverse and determinant (avoid capping the matrix)
+  static constexpr int k_maxNumberOfCoefficients = 100;
+
+  MatrixReference(TreeNode * node) : ExpressionReference(node) {}
+  MatrixNode * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixNode *>(node()); }
   void setNumberOfRows(int rows);
   void setNumberOfColumns(int columns);
   /* rowCanonize turns a matrix in its reduced row echelon form. */

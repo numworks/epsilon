@@ -40,8 +40,6 @@ public:
   EvaluationReference<T> inverse() const override;
   EvaluationReference<T> transpose() const override;
 private:
-  // TODO: find another solution for inverse and determinant (avoid capping the matrix)
-  static constexpr int k_maxNumberOfCoefficients = 100;
   int m_numberOfRows;
   int m_numberOfColumns;
 };

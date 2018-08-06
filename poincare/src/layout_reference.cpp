@@ -42,6 +42,11 @@ void LayoutReference::replaceChildWithEmpty(LayoutRef oldChild, LayoutCursor * c
 }
 
 void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle) {
+  LayoutReference rootRef = root();
+  if (rootRef.isAllocationFailure()) {
+    cursor->setLayoutReference(rootRef);
+    return;
+  }
   LayoutReference p = parent();
   assert(p.isDefined());
   if (!p.isHorizontal()) {
@@ -50,6 +55,10 @@ void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef 
     HorizontalLayoutRef horizontalLayoutR;
     p.replaceChild(*this, horizontalLayoutR, cursor);
     horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
+    if (rootRef.isAllocationFailure()) {
+      cursor->setLayoutReference(rootRef);
+      return;
+    }
     if (putCursorInTheMiddle) {
       if (!horizontalLayoutR.isEmpty()) {
         cursor->setLayoutReference(horizontalLayoutR.childAtIndex(horizontalLayoutR.numberOfChildren()-1));

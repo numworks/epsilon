@@ -167,9 +167,6 @@ public:
   IntegerReference(double_native_int_t i);
   static IntegerReference Overflow() { return IntegerReference((native_uint_t *)nullptr, IntegerNode::k_maxNumberOfDigits+1, false); }
 
-  // TreeNode
-  IntegerNode * typedNode() const { assert(node()->type() == ExpressionNode::Type::Integer); return static_cast<IntegerNode *>(node()); }
-
   constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
   int extractedInt() const;
 
@@ -193,6 +190,9 @@ public:
   static IntegerReference Power(const IntegerReference i, const IntegerReference j);
   static IntegerReference Factorial(const IntegerReference i);
 private:
+  // TreeNode
+  IntegerNode * typedNode() const { assert(node()->type() == ExpressionNode::Type::Integer); return static_cast<IntegerNode *>(node()); }
+
   IntegerReference(const native_uint_t * digits, size_t numberOfDigits, bool negative);
   IntegerReference(size_t size) : NumberReference(TreePool::sharedPool()->createTreeNode<IntegerNode>(size), true) {
   }

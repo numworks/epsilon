@@ -68,10 +68,10 @@ std::complex<T> MatrixComplexNode<T>::trace() const {
 
 template<typename T>
 std::complex<T> MatrixComplexNode<T>::determinant() const {
-  if (numberOfRows() != numberOfColumns() || numberOfComplexOperands() > k_maxNumberOfCoefficients) {
+  if (numberOfRows() != numberOfColumns() || numberOfComplexOperands() > MatrixReference::k_maxNumberOfCoefficients) {
     return std::complex<T>(NAN, NAN);
   }
-  std::complex<T> operandsCopy[k_maxNumberOfCoefficients];
+  std::complex<T> operandsCopy[MatrixReference::k_maxNumberOfCoefficients];
   for (int i=0; i<m_numberOfRows*m_numberOfColumns; i++) {
     ComplexNode<T> * child = childAtIndex(i);
     if (child == nullptr) {
@@ -86,10 +86,10 @@ std::complex<T> MatrixComplexNode<T>::determinant() const {
 
 template<typename T>
 EvaluationReference<T> MatrixComplexNode<T>::inverse() const {
-  if (numberOfRows() != numberOfColumns() || numberOfComplexOperands() > k_maxNumberOfCoefficients) {
+  if (numberOfRows() != numberOfColumns() || numberOfComplexOperands() > MatrixReference::k_maxNumberOfCoefficients) {
     return MatrixComplexReference<T>::Undefined();
   }
-  std::complex<T> operandsCopy[k_maxNumberOfCoefficients];
+  std::complex<T> operandsCopy[MatrixReference::k_maxNumberOfCoefficients];
   for (int i=0; i<m_numberOfRows*m_numberOfColumns; i++) {
     ComplexNode<T> * child = childAtIndex(i);
     if (child == nullptr) {

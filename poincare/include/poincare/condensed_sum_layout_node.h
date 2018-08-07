@@ -49,16 +49,12 @@ private:
 class CondensedSumLayoutRef : public LayoutReference {
 public:
   CondensedSumLayoutRef(LayoutRef base, LayoutRef subscript, LayoutRef superscript) :
-    CondensedSumLayoutRef()
+    LayoutReference(TreePool::sharedPool()->createTreeNode<CondensedSumLayoutNode>(), true)
   {
     replaceChildAtIndexInPlace(0, base);
     replaceChildAtIndexInPlace(1, subscript);
     replaceChildAtIndexInPlace(2, superscript);
   }
-
-  CondensedSumLayoutRef(TreeNode * n) : LayoutReference(n) {}
-private:
-  CondensedSumLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<CondensedSumLayoutNode>(), true) {}
 };
 
 }

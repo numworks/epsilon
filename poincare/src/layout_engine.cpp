@@ -53,7 +53,7 @@ LayoutRef LayoutEngine::createParenthesedLayout(LayoutRef layoutRef, bool cloneL
   return result;
 }
 
-LayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize) {
+HorizontalLayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize) {
   assert(bufferSize > 0);
   HorizontalLayoutRef resultLayout;
   for (int i = 0; i < bufferSize; i++) {
@@ -63,7 +63,7 @@ LayoutRef LayoutEngine::createStringLayout(const char * buffer, int bufferSize, 
 }
 
 LayoutRef LayoutEngine::createLogLayout(LayoutRef argument, LayoutRef index) {
-  HorizontalLayoutRef resultLayout = HorizontalLayoutRef(createStringLayout("log", 3));
+  HorizontalLayoutRef resultLayout = createStringLayout("log", 3);
   VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(index, VerticalOffsetLayoutNode::Type::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(createParenthesedLayout(argument, false), resultLayout.numberOfChildren(), true);

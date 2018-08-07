@@ -34,7 +34,6 @@ protected:
 class LeftParenthesisLayoutRef : public LayoutReference {
 public:
   LeftParenthesisLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<LeftParenthesisLayoutNode>(), true) {}
-  LeftParenthesisLayoutRef(TreeNode * n) : LayoutReference(n) {}
 };
 
 }

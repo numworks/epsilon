@@ -23,16 +23,13 @@ private:
 
 class ProductLayoutRef : public LayoutReference {
 public:
-  ProductLayoutRef(TreeNode * n) : LayoutReference(n) {}
   ProductLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
-    ProductLayoutRef()
+    LayoutReference(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>(), true)
   {
     replaceChildAtIndexInPlace(0, argument);
     replaceChildAtIndexInPlace(1, lowerB);
     replaceChildAtIndexInPlace(2, upperB);
   }
-private:
-  ProductLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>(), true) {}
 };
 
 }

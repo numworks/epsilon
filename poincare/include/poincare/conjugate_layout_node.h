@@ -41,12 +41,9 @@ private:
 
 class ConjugateLayoutRef : public LayoutReference {
 public:
-  ConjugateLayoutRef(LayoutRef l) : ConjugateLayoutRef() {
-    superscript(0, l);
+  ConjugateLayoutRef(LayoutRef l) : LayoutReference(TreePool::sharedPool()->createTreeNode<ConjugateLayoutNode>(), true) {
+    replaceChildAtIndexInPlace(0, l);
   }
-  ConjugateLayoutRef(TreeNode * n) : LayoutReference(n) {}
-private:
-  ConjugateLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<ConjugateLayoutNode>(), true) {}
 };
 
 }

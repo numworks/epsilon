@@ -56,15 +56,12 @@ private:
 class IntegralLayoutRef : public LayoutReference {
 public:
   IntegralLayoutRef(LayoutRef integrand, LayoutRef lowerBound, LayoutRef upperBound) :
-    IntegralLayoutRef()
+    LayoutReference(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>(), true)
   {
     replaceChildAtIndexInPlace(0, integrand);
     replaceChildAtIndexInPlace(1, lowerBound);
     replaceChildAtIndexInPlace(2, upperBound);
   }
-  IntegralLayoutRef(TreeNode * n) : LayoutReference(n) {}
-private:
-  IntegralLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<IntegralLayoutNode>(), true) {}
 };
 
 }

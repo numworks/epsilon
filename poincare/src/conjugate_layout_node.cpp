@@ -99,7 +99,7 @@ bool ConjugateLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * n
   }
   assert(oldChild == childLayout());
   if (!force && newChild->isEmpty()) {
-    ConjugateLayoutRef(this).replaceWith(LayoutRef(newChild), cursor);
+    LayoutRef(this).replaceWith(LayoutRef(newChild), cursor);
     // WARNING: do not call "this" afterwards
     return false;
   }

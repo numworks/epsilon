@@ -87,7 +87,7 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
     thisRef.setColor(Color::Yellow);
     return true;
   } else {
-    thisRef.replaceWithInPlace(siblingRef, cursor);
+    thisRef.replaceWith(siblingRef, cursor);
     // WARNING: do not call "this" afterwards
     return false;
   }

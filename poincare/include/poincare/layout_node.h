@@ -50,8 +50,6 @@ public:
   virtual void invalidAllSizesPositionsAndBaselines();
 
   // TreeNode
-  static TreeNode * GhostStaticNode();
-  TreeNode * ghostStaticNode() override { return GhostStaticNode(); }
   static TreeNode * FailedAllocationStaticNode();
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 

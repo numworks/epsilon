@@ -1,4 +1,5 @@
 #include <poincare/tree_reference.h>
+#include <poincare/ghost_node.h>
 
 namespace Poincare {
 
@@ -197,6 +198,12 @@ void TreeReference::setTo(const TreeReference & tr) {
     currentNode->release(currentNode->numberOfChildren());
   }
 }
+
+TreeNode * ghostStaticNode() {
+  static GhostNode ghostNode;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&ghostNode);
+  return &ghostNode;
+};
 
 // Add
 void TreeReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {

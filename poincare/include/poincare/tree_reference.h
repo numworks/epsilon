@@ -114,6 +114,8 @@ public:
   }
 
 protected:
+  TreeNode * ghostStaticNode();
+
   // Hierarchy operations
   // Add
   virtual void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren);

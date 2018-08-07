@@ -44,12 +44,13 @@ public:
 
   virtual const char * description() const { return "UNKNOWN";}
 
+  // Ghost
+  virtual bool isGhost() const { return false; }
+
   // Allocation failure
   virtual bool isAllocationFailure() const { return false; }
   virtual TreeNode * failedAllocationStaticNode() = 0;
   int allocationFailureNodeIdentifier() { return failedAllocationStaticNode()->identifier(); }
-  virtual TreeNode * ghostStaticNode() = 0;
-  int ghostNodeIdentifier() { return ghostStaticNode()->identifier(); }
 
   // Node operations
   void retain() {

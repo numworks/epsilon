@@ -35,11 +35,6 @@ public:
   virtual EvaluationReference<T> transpose() const = 0;
 
   // TreeNode
-  TreeNode * ghostStaticNode() override {
-    assert(false);
-    return FailedAllocationStaticNode();
-  }
-
   static TreeNode * FailedAllocationStaticNode();
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
@@ -51,7 +46,10 @@ template<typename T>
 class EvaluationReference : public TreeReference {
 public:
   EvaluationReference(TreeNode * n, bool isCreatingNode = false) : TreeReference(n, isCreatingNode) {}
-  EvaluationNode<T> * node() const override{ return static_cast<EvaluationNode<T> *>(TreeReference::node()); }
+  EvaluationNode<T> * node() const override {
+    assert(!TreeReference::node().isGhost());
+    return static_cast<EvaluationNode<T> *>(TreeReference::node());
+  }
   typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }
   bool isUndefined() const { return node()->isUndefined(); }
   T toScalar() const { return node()->toScalar(); }

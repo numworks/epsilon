@@ -22,7 +22,10 @@ public:
     return cast;
   }
 
-  LayoutNode * node() const override{ return static_cast<LayoutNode *>(SerializableReference::node()); }
+  LayoutNode * node() const override {
+    assert(!SerializableReference::node().isGhost());
+    return static_cast<LayoutNode *>(SerializableReference::node());
+  }
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) {

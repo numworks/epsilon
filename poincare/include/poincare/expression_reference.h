@@ -26,7 +26,10 @@ public:
   ExpressionReference clone() const;
 
   /* Reference */
-  ExpressionNode * node() const override { return static_cast<ExpressionNode *>(SerializableReference::node()); }
+  ExpressionNode * node() const override {
+    assert(!SerializableReference::node().isGhost());
+    return static_cast<ExpressionNode *>(SerializableReference::node());
+  }
 
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();

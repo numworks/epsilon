@@ -32,6 +32,9 @@ TreeByReference TreeByReference::clone() const {
 
 void TreeByReference::replaceWithInPlace(TreeByReference t) {
   assert(isDefined());
+  if (isAllocationFailure()) {
+    return;
+  }
   TreeByReference p = parent();
   if (p.isDefined()) {
     p.replaceChildInPlace(*this, t);
@@ -44,6 +47,9 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
   }
 
   assert(isDefined());
+  if (isAllocationFailure()) {
+    return;
+  }
   if (newChild.isAllocationFailure()) {
     replaceWithAllocationFailureInPlace(numberOfChildren());
     return;

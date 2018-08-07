@@ -1,32 +1,35 @@
-#ifndef POINCARE_TREE_REFERENCE_H
-#define POINCARE_TREE_REFERENCE_H
+#ifndef POINCARE_TREE_BY_REFERENCE_H
+#define POINCARE_TREE_BY_REFERENCE_H
 
 #include "tree_pool.h"
 #include <stdio.h>
 
 namespace Poincare {
 
-class TreeReference {
+class TreeByReference {
   friend class TreeNode;
-  friend class AdditionNode; //TODO remove?
-  friend class ExpressionNode;// TODO remove?
 public:
-  TreeReference(const TreeReference & tr) : m_identifier(TreePool::NoNodeIdentifier) { setTo(tr); }
-  TreeReference(TreeReference&& tr) : m_identifier(TreePool::NoNodeIdentifier) { setTo(tr); }
-  TreeReference& operator=(const TreeReference& tr) {
+  /* Constructors */
+  TreeByReference(const TreeByReference & tr) : m_identifier(TreePool::NoNodeIdentifier) { setTo(tr); }
+  TreeByReference(TreeByReference&& tr) : m_identifier(TreePool::NoNodeIdentifier) { setTo(tr); }
+  ~TreeByReference();
+
+  /* Operators */
+  TreeByReference& operator=(const TreeByReference& tr) {
     setTo(tr);
     return *this;
   }
-  TreeReference& operator=(TreeReference&& tr) {
+  TreeByReference& operator=(TreeByReference&& tr) {
     setTo(tr);
     return *this;
   }
 
-  inline bool operator==(TreeReference t) { return m_identifier == t.identifier(); }
-  inline bool operator!=(TreeReference t) { return m_identifier != t.identifier(); }
+  /* Comparison */
+  inline bool operator==(TreeByReference t) { return m_identifier == t.identifier(); }
+  inline bool operator!=(TreeByReference t) { return m_identifier != t.identifier(); }
 
-  TreeReference treeClone() const;
-  ~TreeReference();
+  /* Clone */
+  TreeByReference clone() const;
 
   int identifier() const { return m_identifier; }
   virtual TreeNode * node() const { return TreePool::sharedPool()->node(m_identifier); }
@@ -52,16 +55,16 @@ public:
     return node()->numberOfDescendants(includeSelf);
   }
 
-  // Hierarchy
-  bool hasChild(TreeReference t) const {
+  /* Hierarchy */
+  bool hasChild(TreeByReference t) const {
     assert(isDefined());
     return node()->hasChild(t.node());
   }
-  bool hasSibling(TreeReference t) const {
+  bool hasSibling(TreeByReference t) const {
     assert(isDefined());
     return node()->hasSibling(t.node());
   }
-  bool hasAncestor(TreeReference t, bool includeSelf) const {
+  bool hasAncestor(TreeByReference t, bool includeSelf) const {
     assert(isDefined());
     return node()->hasAncestor(t.node(), includeSelf);
   }
@@ -69,40 +72,38 @@ public:
     assert(isDefined());
     return node()->numberOfChildren();
   }
-  TreeReference parent() const {
+  TreeByReference parent() const {
     assert(isDefined());
-    return TreeReference(node()->parent());
+    return TreeByReference(node()->parent());
   }
-  TreeReference treeChildAtIndex(int i) const {
+  TreeByReference treeChildAtIndex(int i) const {
     assert(isDefined());
-    return TreeReference(node()->childAtIndex(i));
+    return TreeByReference(node()->childAtIndex(i));
   }
-  int indexOfChild(TreeReference t) const {
+  int indexOfChild(TreeByReference t) const {
     assert(isDefined());
     return node()->indexOfChild(t.node());
   }
 
-  // Hierarchy operations
-  // Remove
-  void removeFromParent();
-  // Detach puts a child at the end of the pool and replaces it with a GhostNode
-  void detachChild(TreeReference t, int childNumberOfChildren);
-  void detachFromParent();
+  /* Hierarchy operations */
   // Replace
-  void replaceWith(TreeReference t);
-  void replaceTreeChild(TreeReference oldChild, TreeReference newChild);
-  void replaceTreeChildAtIndex(int oldChildIndex, TreeReference newChild) {
+  void replaceWith(TreeByReference t);
+  void replaceTreeChild(TreeByReference oldChild, TreeByReference newChild);
+  void replaceTreeChildAtIndex(int oldChildIndex, TreeByReference newChild) {
     assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
-    TreeReference oldChild = treeChildAtIndex(oldChildIndex);
+    TreeByReference oldChild = treeChildAtIndex(oldChildIndex);
     replaceTreeChild(oldChild, newChild);
   }
   void replaceWithAllocationFailure(int currentNumberOfChildren);
+  void replaceChildWithGhost(TreeByReference t);
   // Merge
-  void mergeTreeChildrenAtIndex(TreeReference t, int i);
+  void mergeTreeChildrenAtIndex(TreeByReference t, int i);
   // Swap
   void swapChildren(int i, int j);
 
-  TreeReference(const TreeNode * node, bool isCreatingNode = false) { // TODO Make this protected
+protected:
+  /* Constructor */
+  TreeByReference(const TreeNode * node, bool isCreatingNode = false) {
     if (node == nullptr) {
       m_identifier = TreePool::NoNodeIdentifier;
       return;
@@ -113,33 +114,28 @@ public:
     }
   }
 
-protected:
-  TreeNode * ghostStaticNode();
-
-  // Hierarchy operations
+  /* Hierarchy operations */
   // Add
-  virtual void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren);
+  virtual void addChildTreeAtIndex(TreeByReference t, int index, int currentNumberOfChildren);
   // Remove puts a child at the end of the pool
   virtual void removeChildTreeAtIndex(int i);
-  virtual void removeChildTree(TreeReference t, int childNumberOfChildren);
+  virtual void removeChildTree(TreeByReference t, int childNumberOfChildren);
   virtual void removeChildren(int currentNumberOfChildren);
   virtual void removeChildrenAndDestroy(int currentNumberOfChildren);
+
+  int m_identifier;
+private:
+  TreeByReference() : m_identifier(-1) {}
+  void setTo(const TreeByReference & tr);
 
   // Add ghost children on layout construction
   void buildGhostChildren();
 
-  TreeReference() : m_identifier(-1) {}
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;
     node()->retain();
   }
-  void setTo(const TreeReference & tr);
-  int m_identifier;
-private:
-  void detachOrRemoveFromParent();
 };
-
-typedef TreeReference TreeRef;
 
 }
 

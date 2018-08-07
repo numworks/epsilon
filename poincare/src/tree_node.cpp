@@ -1,6 +1,6 @@
 #include <poincare/tree_node.h>
 #include <poincare/tree_pool.h>
-#include <poincare/tree_reference.h>
+#include <poincare/tree_by_reference.h>
 #include <stdio.h>
 
 namespace Poincare {
@@ -18,7 +18,7 @@ void TreeNode::release(int currentNumberOfChildren) {
   }
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
-    TreeReference(this).removeChildrenAndDestroy(currentNumberOfChildren);
+    TreeByReference(this).removeChildrenAndDestroy(currentNumberOfChildren);
   }
 }
 

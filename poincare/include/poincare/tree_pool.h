@@ -8,11 +8,11 @@
 
 namespace Poincare {
 
-class TreeReference;
+class TreeByReference;
 
 class TreePool {
   friend class TreeNode;
-  friend class TreeReference;
+  friend class TreeByReference;
 public:
   static constexpr int NoNodeIdentifier = -1;
   static constexpr int FirstStaticNodeIdentifier = -2;

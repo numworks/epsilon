@@ -67,7 +67,7 @@ private:
 class NthRootLayoutRef : public LayoutReference {
 public:
   NthRootLayoutRef(LayoutRef radicand) : NthRootLayoutRef() {
-    replaceChildAtIndexInPlace(radicand, 0, 0);
+    replaceChildAtIndexInPlace(0, radicand);
   }
 
   NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {

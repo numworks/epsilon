@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class TreeByValue : protected TreeByReference {
+class TreeByValue : virtual protected TreeByReference {
 public:
   /* Constructors */
   TreeByValue(const TreeByValue & tr);

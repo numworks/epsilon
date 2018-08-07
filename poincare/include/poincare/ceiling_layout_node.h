@@ -26,7 +26,7 @@ class CeilingLayoutRef : public LayoutReference {
 public:
   CeilingLayoutRef(TreeNode * n) : LayoutReference(n) {}
   CeilingLayoutRef(LayoutRef l) : CeilingLayoutRef() {
-    replaceTreeChildAtIndex(0, l);
+    replaceChildAtIndexInPlace(0, l);
   }
 private:
   CeilingLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>(), true) {}

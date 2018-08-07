@@ -27,7 +27,7 @@ class FloorLayoutRef : public LayoutReference {
 public:
   FloorLayoutRef(TreeNode * n) : LayoutReference(n) {}
   FloorLayoutRef(LayoutRef l) : FloorLayoutRef() {
-    replaceTreeChildAtIndex(0, l);
+    replaceChildAtIndexInPlace(0, l);
   }
 private:
   FloorLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<FloorLayoutNode>(), true) {}

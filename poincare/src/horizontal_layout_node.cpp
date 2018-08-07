@@ -278,7 +278,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
      * a parent, replace this with the new empty layout. */
     LayoutNode * p = parent();
     if (p != nullptr) {
-      thisRef.replaceWith(newChild, cursor);
+      thisRef.replaceWithInPlace(newChild, cursor);
       // WARNING: do not call "this" afterwards
       return false;
     }
@@ -374,7 +374,7 @@ void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index,
   }
 
   // Merge the horizontal layout
-  mergeTreeChildrenAtIndex(h, newIndex);
+  mergeChildrenAtIndexInPlace(h, newIndex);
 
   if (cursor != nullptr) {
     if (!isAllocationFailure()) {

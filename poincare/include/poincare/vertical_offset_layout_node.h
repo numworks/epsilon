@@ -59,17 +59,14 @@ private:
 
 class VerticalOffsetLayoutRef : public LayoutReference {
 public:
-  VerticalOffsetLayoutRef(TreeNode * n) : LayoutReference(n) {}
   VerticalOffsetLayoutRef(LayoutRef l, VerticalOffsetLayoutNode::Type type) :
-    VerticalOffsetLayoutRef()
+    LayoutReference(TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>(), true)
   {
     if (!(node()->isAllocationFailure())) {
       static_cast<VerticalOffsetLayoutNode *>(node())->setType(type);
     }
     replaceChildAtIndexInPlace(0,l);
   }
-private:
-  VerticalOffsetLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>(), true) {}
 };
 
 }

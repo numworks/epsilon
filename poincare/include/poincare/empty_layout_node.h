@@ -72,7 +72,6 @@ private:
 
 class EmptyLayoutRef : public LayoutReference {
 public:
-  EmptyLayoutRef(TreeNode * n) : LayoutReference(n) {}
   EmptyLayoutRef(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true) :
     LayoutReference(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>(), true)
   {

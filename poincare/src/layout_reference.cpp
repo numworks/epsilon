@@ -74,7 +74,7 @@ void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef 
   /* The parent is an Horizontal layout, so directly add the two juxtaposition
    * children to the parent. */
   int idxInParent = p.indexOfChild(*this);
-  HorizontalLayoutRef castedParent = HorizontalLayoutRef(p.node());
+  HorizontalLayoutRef castedParent = HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(p.node()));
   if (putCursorInTheMiddle) {
     if (idxInParent > 0) {
       cursor->setLayoutReference(castedParent.childAtIndex(idxInParent-1));
@@ -157,7 +157,7 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
     }
 
     // Else, let the parent add the sibling.
-    HorizontalLayoutRef(p.node()).addOrMergeChildAtIndex(sibling, siblingIndex, true, moveCursor ? cursor : nullptr);
+    HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(p.node())).addOrMergeChildAtIndex(sibling, siblingIndex, true, moveCursor ? cursor : nullptr);
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Left) {
@@ -207,7 +207,7 @@ void LayoutReference::collapseOnDirection(HorizontalDirection direction, int abs
   if (!absorbingChild.isDefined() || !absorbingChild.isHorizontal()) {
     return;
   }
-  HorizontalLayoutRef horizontalAbsorbingChild = HorizontalLayoutRef(absorbingChild.node());
+  HorizontalLayoutRef horizontalAbsorbingChild = HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(static_cast<HorizontalLayoutNode *>(absorbingChild.node()));
   if (direction == HorizontalDirection::Right && idxInParent < numberOfSiblings - 1) {
     canCollapse = !(p.childAtIndex(idxInParent+1).mustHaveLeftSibling());
   }

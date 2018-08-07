@@ -26,7 +26,6 @@ protected:
 class LeftSquareBracketLayoutRef : public LayoutReference {
 public:
   LeftSquareBracketLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<LeftSquareBracketLayoutNode>(), true) {}
-  LeftSquareBracketLayoutRef(TreeNode * n) : LayoutReference(n) {}
 };
 
 }

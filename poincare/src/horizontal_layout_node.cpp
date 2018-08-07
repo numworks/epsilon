@@ -324,7 +324,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
       }
     }
     bool oldChildRemovedAtMerge = oldChild->isEmpty();
-    thisRef.mergeChildrenAtIndex(HorizontalLayoutRef(newChild), indexForInsertion + 1, true);
+    thisRef.mergeChildrenAtIndex(HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(newChild)), indexForInsertion + 1, true);
     // WARNING: do not call "this" afterwards
     if (!oldChildRemovedAtMerge) {
       thisRef.removeChildAtIndex(indexForInsertion, cursor);
@@ -345,7 +345,7 @@ void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool re
     return;
   }
   if (l.isHorizontal()) {
-    mergeChildrenAtIndex(HorizontalLayoutRef(l.node()), index, removeEmptyChildren, cursor);
+    mergeChildrenAtIndex(HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);
   } else {
     addChildAtIndex(l, index, numberOfChildren(),cursor);
   }

@@ -6,6 +6,8 @@
 
 namespace Poincare {
 
+class HorizontalLayoutRef;
+
 class LayoutEngine {
 
 public:
@@ -15,7 +17,7 @@ public:
 
   /* Create special layouts */
   static LayoutRef createParenthesedLayout(LayoutRef layout, bool cloneLayout);
-  static LayoutRef createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize = KDText::FontSize::Large);
+  static HorizontalLayoutRef createStringLayout(const char * buffer, int bufferSize, KDText::FontSize fontSize = KDText::FontSize::Large);
   static LayoutRef createLogLayout(LayoutRef argument, LayoutRef index);
 
   /* SerializableReference to Text */

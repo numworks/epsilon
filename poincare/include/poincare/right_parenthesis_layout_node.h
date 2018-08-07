@@ -33,7 +33,6 @@ protected:
 
 class RightParenthesisLayoutRef : public LayoutReference {
 public:
-  RightParenthesisLayoutRef(TreeNode * n) : LayoutReference(n) {}
   RightParenthesisLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<RightParenthesisLayoutNode>(), true) {}
 };
 

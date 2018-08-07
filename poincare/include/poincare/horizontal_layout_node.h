@@ -61,7 +61,7 @@ private:
 class HorizontalLayoutRef : public LayoutReference {
   friend class HorizontalLayoutNode;
 public:
-  HorizontalLayoutRef(TreeNode * n) : LayoutReference(n) {}
+  HorizontalLayoutRef(HorizontalLayoutNode * n) : LayoutReference(n) {}
   HorizontalLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>(), true) {}
 
   HorizontalLayoutRef(LayoutRef l) : HorizontalLayoutRef() {

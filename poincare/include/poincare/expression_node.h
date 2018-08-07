@@ -19,10 +19,9 @@ class ExpressionNode : public SerializableNode {
   friend class NAryExpressionNode;
 public:
    enum class Type : uint8_t {
-    Ghost = 0,
-    AllocationFailure = 1,
-    Undefined = 2,
-    Integer = 3,
+    AllocationFailure = 0,
+    Undefined = 1,
+    Integer = 2,
     Rational,
     Decimal,
     Float,
@@ -87,9 +86,6 @@ public:
     PredictionInterval,
     EmptyExpression
    };
-  /* Ghost */
-  static TreeNode * GhostStaticNode();
-  TreeNode * ghostStaticNode() override { return GhostStaticNode(); }
 
   /* Allocation failure */
   static TreeNode * FailedAllocationStaticNode();

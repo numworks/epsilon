@@ -1,6 +1,6 @@
 #include <poincare/evaluation.h>
 #include <poincare/allocation_failed_evaluation.h>
-#include <poincare/expression_reference.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
@@ -12,7 +12,7 @@ TreeNode * EvaluationNode<T>::FailedAllocationStaticNode() {
 }
 
 template<typename T>
-ExpressionReference EvaluationReference<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
+Expression Evaluation<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   return node()->complexToExpression(complexFormat);
 }
 

@@ -42,7 +42,6 @@ public:
 template<typename T>
 class Evaluation : public TreeByValue {
 public:
-  //Evaluation(TreeNode * n, bool isCreatingNode = false) : TreeByValue(n, isCreatingNode) {}
   EvaluationNode<T> * node() const override {
     assert(!TreeByValue::node().isGhost());
     return static_cast<EvaluationNode<T> *>(TreeByValue::node());
@@ -56,6 +55,7 @@ public:
   Evaluation inverse() const { return node()->inverse(); }
   Evaluation transpose() const { return node()->transpose(); }
 protected:
+  //Evaluation(EvaluationNode * n) : TreeByValue(n) {}
   //Evaluation() : TreeByValue() {}
 };
 

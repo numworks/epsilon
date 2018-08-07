@@ -18,7 +18,7 @@ void TreeNode::release(int currentNumberOfChildren) {
   }
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
-    TreeByReference(this).removeChildrenAndDestroy(currentNumberOfChildren);
+    TreeByReference(this).removeChildrenAndDestroyInPlace(currentNumberOfChildren);
   }
 }
 

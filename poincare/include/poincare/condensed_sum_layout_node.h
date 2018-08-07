@@ -51,9 +51,9 @@ public:
   CondensedSumLayoutRef(LayoutRef base, LayoutRef subscript, LayoutRef superscript) :
     CondensedSumLayoutRef()
   {
-    replaceTreeChildAtIndex(0, base);
-    replaceTreeChildAtIndex(1, subscript);
-    replaceTreeChildAtIndex(2, superscript);
+    replaceChildAtIndexInPlace(0, base);
+    replaceChildAtIndexInPlace(1, subscript);
+    replaceChildAtIndexInPlace(2, superscript);
   }
 
   CondensedSumLayoutRef(TreeNode * n) : LayoutReference(n) {}

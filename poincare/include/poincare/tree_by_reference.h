@@ -86,19 +86,19 @@ public:
 
   /* Hierarchy operations */
   // Replace
-  void replaceWith(TreeByReference t);
-  void replaceTreeChild(TreeByReference oldChild, TreeByReference newChild);
-  void replaceTreeChildAtIndex(int oldChildIndex, TreeByReference newChild) {
+  void replaceWithInPlace(TreeByReference t);
+  void replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild);
+  void replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild) {
     assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
     TreeByReference oldChild = treeChildAtIndex(oldChildIndex);
-    replaceTreeChild(oldChild, newChild);
+    replaceChildInPlace(oldChild, newChild);
   }
-  void replaceWithAllocationFailure(int currentNumberOfChildren);
-  void replaceChildWithGhost(TreeByReference t);
+  void replaceWithAllocationFailureInPlace(int currentNumberOfChildren);
+  void replaceChildWithGhostInPlace(TreeByReference t);
   // Merge
-  void mergeTreeChildrenAtIndex(TreeByReference t, int i);
+  void mergeChildrenAtIndexInPlace(TreeByReference t, int i);
   // Swap
-  void swapChildren(int i, int j);
+  void swapChildrenInPlace(int i, int j);
 
 protected:
   /* Constructor */
@@ -115,12 +115,12 @@ protected:
 
   /* Hierarchy operations */
   // Add
-  virtual void addChildTreeAtIndex(TreeByReference t, int index, int currentNumberOfChildren);
+  virtual void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren);
   // Remove puts a child at the end of the pool
-  virtual void removeChildTreeAtIndex(int i);
-  virtual void removeChildTree(TreeByReference t, int childNumberOfChildren);
-  virtual void removeChildren(int currentNumberOfChildren);
-  virtual void removeChildrenAndDestroy(int currentNumberOfChildren);
+  virtual void removeChildAtIndexInPlace(int i);
+  virtual void removeChildInPlace(TreeByReference t, int childNumberOfChildren);
+  virtual void removeChildrenInPlace(int currentNumberOfChildren);
+  virtual void removeChildrenAndDestroyInPlace(int currentNumberOfChildren);
 
   int m_identifier;
 private:

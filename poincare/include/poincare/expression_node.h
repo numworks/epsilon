@@ -11,7 +11,7 @@ namespace Poincare {
 
 /* Methods preceded by a '*!*' interfere with the expression pools which can
  * make 'this' outdated. They should only be call only be call in a wrapper on
- * ExpressionRef. */
+ * Expression. */
 
 class ExpressionNode : public SerializableNode {
   friend class ApproximationEngine;
@@ -102,10 +102,10 @@ public:
   };
   virtual Sign sign() const { return Sign::Unknown; }
   virtual bool isNumber() const { return false; }
-  /*!*/ virtual ExpressionReference replaceSymbolWithExpression(char symbol, ExpressionReference expression);
-  /*!*/ virtual ExpressionReference setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual Expression replaceSymbolWithExpression(char symbol, Expression expression);
+  /*!*/ virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
   virtual int polynomialDegree(char symbolName) const;
-  /*!*/ virtual int getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const;
+  /*!*/ virtual int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
   typedef bool (*isVariableTest)(char c);
   virtual int getVariables(isVariableTest isVariable, char * variables) const;
   virtual float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const;
@@ -145,16 +145,16 @@ public:
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   constexpr static int k_maxNumberOfSteps = 10000;
-  virtual EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
-  virtual EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
+  virtual Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
+  virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual ExpressionReference shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
-  /*!*/ virtual ExpressionReference shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual Expression reduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression beautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
 protected:
   // Private methods used in simplification process
-  /*!*/ virtual ExpressionReference cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Hierarchy */
   ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(SerializableNode::childAtIndex(i)); }

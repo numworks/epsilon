@@ -109,16 +109,10 @@ void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
      * is right of the numerator. */
     LayoutRef numeratorRef = LayoutRef(numeratorLayout());
     LayoutRef denominatorRef = LayoutRef(denominatorLayout());
-    thisRef.replaceChild(numeratorRef, EmptyLayoutRef());
-    if (thisRef.isAllocationFailure()) {
-      return;
-    }
-    thisRef.replaceChild(denominatorRef, EmptyLayoutRef());
-    if (thisRef.isAllocationFailure()) {
-      return;
-    }
-    thisRef.replaceWithJuxtapositionOf(numeratorRef, denominatorRef, cursor, true);
+    thisRef.replaceChildWithGhostInPlace(numeratorRef);
     // WARNING: Do no use "this" afterwards
+    thisRef.replaceChildWithGhostInPlace(denominatorRef);
+    thisRef.replaceWithJuxtapositionOf(numeratorRef, denominatorRef, cursor, true);
     return;
   }
 

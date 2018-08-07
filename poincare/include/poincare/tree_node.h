@@ -25,7 +25,6 @@ public:
   bool isStatic() const;
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
-  virtual bool isChildRemovalTolerant() const { return false; }
   int retainCount() const { return m_referenceCounter; }
   void setReferenceCounter(int refCount) { //TODO make this method privte with only friends that can access it
     if (isStatic()) {

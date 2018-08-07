@@ -112,7 +112,7 @@ protected:
       buildGhostChildren();
     }
   }
-
+  TreeByReference() : m_identifier(-1) {}
   /* Hierarchy operations */
   // Add
   virtual void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren);
@@ -124,7 +124,6 @@ protected:
 
   int m_identifier;
 private:
-  TreeByReference() : m_identifier(-1) {}
   void setTo(const TreeByReference & tr);
 
   // Add ghost children on layout construction

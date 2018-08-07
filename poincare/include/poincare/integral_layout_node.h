@@ -58,9 +58,9 @@ public:
   IntegralLayoutRef(LayoutRef integrand, LayoutRef lowerBound, LayoutRef upperBound) :
     IntegralLayoutRef()
   {
-    replaceTreeChildAtIndex(0, integrand);
-    replaceTreeChildAtIndex(1, lowerBound);
-    replaceTreeChildAtIndex(2, upperBound);
+    replaceChildAtIndexInPlace(0, integrand);
+    replaceChildAtIndexInPlace(1, lowerBound);
+    replaceChildAtIndexInPlace(2, upperBound);
   }
   IntegralLayoutRef(TreeNode * n) : LayoutReference(n) {}
 private:

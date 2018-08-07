@@ -222,7 +222,7 @@ void LayoutCursor::addLayoutAndMoveCursor(LayoutRef l) {
 void LayoutCursor::clearLayout() {
   LayoutRef rootLayoutR = m_layoutRef.root();
   assert(rootLayoutR.isHorizontal());
-  rootLayoutR.removeChildren();
+  rootLayoutR.removeChildrenInPlace();
   m_layoutRef = rootLayoutR;
 }
 

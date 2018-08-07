@@ -26,7 +26,7 @@ void LayoutReference::replaceChild(LayoutRef oldChild, LayoutRef newChild, Layou
   if (!node()->willReplaceChild(oldChild.node(), newChild.node(), cursor, force)) {
     return;
   }
-  replaceTreeChild(oldChild, newChild);
+  replaceChildInPlace(oldChild, newChild);
   if (cursor != nullptr) {
     if (isAllocationFailure()) {
       cursor->setLayoutReference(*this);
@@ -107,7 +107,7 @@ void LayoutReference::addChildAtIndex(LayoutRef l, int index, int currentNumberO
     }
   }
 
-  this->addChildTreeAtIndex(l, newIndex, newCurrentNumberOfChildren);
+  this->addChildAtIndexInPlace(l, newIndex, newCurrentNumberOfChildren);
 
   if (cursor != nullptr) {
     if (this->isAllocationFailure()) {
@@ -174,7 +174,7 @@ void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force
   }
   assert(hasChild(l));
   int index = indexOfChild(l);
-  removeChildTree(l, numberOfChildren());
+  removeChildInPlace(l, numberOfChildren());
   if (cursor) {
     if (index < numberOfChildren()) {
       LayoutRef newCursorRef = childAtIndex(index);

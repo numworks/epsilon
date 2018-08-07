@@ -78,13 +78,13 @@ public:
   //Add
   void addSibling(LayoutCursor * cursor, LayoutReference sibling, bool moveCursor);
   // Replace
-  //void replaceChildAtIndex(int oldChildIndex, LayoutReference newChild) { TreeReference::replaceTreeChildAtIndex(oldChildIndex, newChild); }
+  //void replaceChildAtIndex(int oldChildIndex, LayoutReference newChild) { TreeReference::replaceChildAtIndexInPlace(oldChildIndex, newChild); }
   void replaceChild(LayoutReference oldChild, LayoutReference newChild, LayoutCursor * cursor = nullptr, bool force = false);
   void replaceChildWithEmpty(LayoutReference oldChild, LayoutCursor * cursor = nullptr);
   void replaceWith(LayoutReference newChild, LayoutCursor * cursor) {
     LayoutReference p = parent();
     assert(p.isDefined());
-    p.replaceChild(*this, newChild, cursor);
+    p.replaceChildInPlace(*this, newChild, cursor);
   }
   void replaceWithJuxtapositionOf(LayoutReference leftChild, LayoutReference rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle = false);
   // Collapse

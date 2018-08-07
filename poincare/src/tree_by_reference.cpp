@@ -30,22 +30,22 @@ TreeByReference TreeByReference::clone() const {
 
 /* Hierarchy operations */
 
-void TreeByReference::replaceWith(TreeByReference t) {
+void TreeByReference::replaceWithInPlace(TreeByReference t) {
   assert(isDefined());
   TreeByReference p = parent();
   if (p.isDefined()) {
-    p.replaceTreeChild(*this, t);
+    p.replaceChildInPlace(*this, t);
   }
 }
 
-void TreeByReference::replaceTreeChild(TreeByReference oldChild, TreeByReference newChild) {
+void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild) {
   if (oldChild == newChild) {
     return;
   }
 
   assert(isDefined());
   if (newChild.isAllocationFailure()) {
-    replaceWithAllocationFailure(numberOfChildren());
+    replaceWithAllocationFailureInPlace(numberOfChildren());
     return;
   }
 
@@ -62,7 +62,7 @@ void TreeByReference::replaceTreeChild(TreeByReference oldChild, TreeByReference
   oldChild.node()->release(oldChild.numberOfChildren());
 }
 
-void TreeByReference::replaceWithAllocationFailure(int currentNumberOfChildren) {
+void TreeByReference::replaceWithAllocationFailureInPlace(int currentNumberOfChildren) {
   if (isAllocationFailure()) {
     return;
   }
@@ -74,7 +74,7 @@ void TreeByReference::replaceWithAllocationFailure(int currentNumberOfChildren) 
   TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode();
 
   // Release all children and delete the node in the pool
-  removeChildrenAndDestroy(currentNumberOfChildren);
+  removeChildrenAndDestroyInPlace(currentNumberOfChildren);
   /* WARNING: If we called "p.decrementNumberOfChildren()" here, the number of
    * children of the parent layout would be:
    * -> numberOfChildren() for "dynamic trees" that have a m_numberOfChildren
@@ -97,7 +97,7 @@ void TreeByReference::replaceWithAllocationFailure(int currentNumberOfChildren) 
      * no longer retaining the node. When we add this node to the parent, it
      * will retain it and increment the retain count. */
     newAllocationFailureNode->setReferenceCounter(currentRetainCount - 1);
-    p.addChildTreeAtIndex(TreeByReference(newAllocationFailureNode), indexInParentNode, p.numberOfChildren() - 1);
+    p.addChildAtIndexInPlace(TreeByReference(newAllocationFailureNode), indexInParentNode, p.numberOfChildren() - 1);
     p.decrementNumberOfChildren();
     /* We decrement here the parent's number of children, as we did not do it
      * before, see WARNING. */
@@ -106,12 +106,12 @@ void TreeByReference::replaceWithAllocationFailure(int currentNumberOfChildren) 
   }
 }
 
-void TreeByReference::replaceChildWithGhost(TreeByReference t) {
+void TreeByReference::replaceChildWithGhostInPlace(TreeByReference t) {
   GhostReference ghost;
-  return replaceTreeChild(t, ghost);
+  return replaceChildInPlace(t, ghost);
 }
 
-void TreeByReference::mergeTreeChildrenAtIndex(TreeByReference t, int i) {
+void TreeByReference::mergeChildrenAtIndexInPlace(TreeByReference t, int i) {
   assert(i >= 0 && i <= numberOfChildren());
   // Steal operands
   int numberOfNewChildren = t.numberOfChildren();
@@ -123,12 +123,12 @@ void TreeByReference::mergeTreeChildrenAtIndex(TreeByReference t, int i) {
   t.node()->eraseNumberOfChildren();
   // If t is a child, remove it
   if (node()->hasChild(t.node())) {
-    removeChildTree(t, 0);
+    removeChildInPlace(t, 0);
   }
   node()->incrementNumberOfChildren(numberOfNewChildren);
 }
 
-void TreeByReference::swapChildren(int i, int j) {
+void TreeByReference::swapChildrenInPlace(int i, int j) {
   assert(isDefined());
   assert(i >= 0 && i < numberOfChildren());
   assert(j >= 0 && j < numberOfChildren());
@@ -146,13 +146,13 @@ void TreeByReference::swapChildren(int i, int j) {
 /* Protected */
 
 // Add
-void TreeByReference::addChildTreeAtIndex(TreeByReference t, int index, int currentNumberOfChildren) {
+void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) {
   assert(isDefined());
   if (node()->isAllocationFailure()) {
     return;
   }
   if (t.isAllocationFailure()) {
-    replaceWithAllocationFailure(currentNumberOfChildren);
+    replaceWithAllocationFailureInPlace(currentNumberOfChildren);
     return;
   }
   assert(index >= 0 && index <= currentNumberOfChildren);
@@ -170,21 +170,21 @@ void TreeByReference::addChildTreeAtIndex(TreeByReference t, int index, int curr
 
 // Remove
 
-void TreeByReference::removeChildTreeAtIndex(int i) {
+void TreeByReference::removeChildAtIndexInPlace(int i) {
   assert(isDefined());
   assert(i >= 0 && i < numberOfChildren());
   TreeByReference t = treeChildAtIndex(i);
-  removeChildTree(t, t.numberOfChildren());
+  removeChildInPlace(t, t.numberOfChildren());
 }
 
-void TreeByReference::removeChildTree(TreeByReference t, int childNumberOfChildren) {
+void TreeByReference::removeChildInPlace(TreeByReference t, int childNumberOfChildren) {
   assert(isDefined());
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), childNumberOfChildren);
   t.node()->release(childNumberOfChildren);
   node()->decrementNumberOfChildren();
 }
 
-void TreeByReference::removeChildren(int currentNumberOfChildren) {
+void TreeByReference::removeChildrenInPlace(int currentNumberOfChildren) {
   assert(isDefined());
   for (int i = 0; i < currentNumberOfChildren; i++) {
     TreeByReference childRef = treeChildAtIndex(0);
@@ -194,8 +194,8 @@ void TreeByReference::removeChildren(int currentNumberOfChildren) {
   node()->eraseNumberOfChildren();
 }
 
-void TreeByReference::removeChildrenAndDestroy(int currentNumberOfChildren) {
-  removeChildren(currentNumberOfChildren);
+void TreeByReference::removeChildrenAndDestroyInPlace(int currentNumberOfChildren) {
+  removeChildrenInPlace(currentNumberOfChildren);
   TreePool::sharedPool()->discardTreeNode(node());
 }
 
@@ -225,7 +225,7 @@ void TreeByReference::buildGhostChildren() {
     // Add a ghost child
     GhostReference ghost;
     if (ghost.isAllocationFailure()) {
-      replaceWithAllocationFailure(numberOfChildren());
+      replaceWithAllocationFailureInPlace(numberOfChildren());
       return;
     }
     TreePool::sharedPool()->move(node()->next(), ghost.node(), 0);

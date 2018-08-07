@@ -100,7 +100,7 @@ void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     if (numeratorLayout()->isEmpty() && denominatorLayout()->isEmpty()) {
       /* Case: Numerator and denominator are empty. Move the cursor and replace
        * the fraction with an empty layout. */
-      thisRef.replaceWith(EmptyLayoutRef(), cursor);
+      thisRef.replaceWithInPlace(EmptyLayoutRef(), cursor);
       // WARNING: Do no use "this" afterwards
       return;
     }

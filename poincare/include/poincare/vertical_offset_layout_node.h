@@ -66,7 +66,7 @@ public:
     if (!(node()->isAllocationFailure())) {
       static_cast<VerticalOffsetLayoutNode *>(node())->setType(type);
     }
-    replaceTreeChildAtIndex(0,l);
+    replaceChildAtIndexInPlace(0,l);
   }
 private:
   VerticalOffsetLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>(), true) {}

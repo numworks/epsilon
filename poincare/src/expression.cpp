@@ -1,23 +1,19 @@
-#include <poincare/expression.h>
-#include <poincare/preferences.h>
-#include <poincare/symbol.h>
-#include <poincare/dynamic_hierarchy.h>
-#include <poincare/static_hierarchy.h>
-#include <poincare/list_data.h>
-#include <poincare/matrix_data.h>
-#include <poincare/undefined.h>
-#include <poincare/simplification_root.h>
-#include <poincare/evaluation.h>
+#include <poincare/expression_reference.h>
+#include <poincare/expression_node.h>
+//#include <poincare/list_data.h>
+//#include <poincare/matrix_data.h>
+#include <poincare/rational.h>
 #include <poincare/opposite.h>
-#include <poincare/variable_context.h>
-#include <poincare/decimal.h>
+#include <poincare/undefined.h>
+#include <poincare/symbol.h>
+//#include <poincare/variable_context.h>
 #include <ion.h>
 #include <cmath>
 #include <float.h>
-#include "expression_parser.hpp"
-#include "expression_lexer.hpp"
+//#include "expression_parser.hpp"
+//#include "expression_lexer.hpp"
 
-int poincare_expression_yyparse(Poincare::Expression ** expressionOutput);
+int poincare_expression_yyparse(Poincare::ExpressionReference * expressionOutput);
 
 namespace Poincare {
 
@@ -25,47 +21,31 @@ namespace Poincare {
 
 /* Constructor & Destructor */
 
-Expression * Expression::parse(char const * string) {
+ExpressionReference ExpressionReference::parse(char const * string) {
   if (string[0] == 0) {
     return nullptr;
   }
   YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
-  Expression * expression = 0;
+  ExpressionReference expression(nullptr);
   if (poincare_expression_yyparse(&expression) != 0) {
     // Parsing failed because of invalid input or memory exhaustion
-    if (expression != nullptr) {
-      delete expression;
-      expression = nullptr;
-    }
+    expression = ExpressionReference(nullptr);
   }
   poincare_expression_yy_delete_buffer(buf);
 
   return expression;
 }
 
-void Expression::ReplaceSymbolWithExpression(Expression ** expressionAddress, char symbol, Expression * expression) {
-  SimplificationRoot root(*expressionAddress);
-  root.editableOperand(0)->replaceSymbolWithExpression(symbol, expression);
-  *expressionAddress = root.editableOperand(0);
-}
-
-Expression * Expression::replaceSymbolWithExpression(char symbol, Expression * expression) {
-  for (int i = 0; i < numberOfChildren(); i++) {
-    editableOperand(i)->replaceSymbolWithExpression(symbol, expression);
-  }
-  return this;
-}
-
 /* Circuit breaker */
 
-static Expression::CircuitBreaker sCircuitBreaker = nullptr;
+static ExpressionReference::CircuitBreaker sCircuitBreaker = nullptr;
 static bool sSimplificationHasBeenInterrupted = false;
 
-void Expression::setCircuitBreaker(CircuitBreaker cb) {
+void ExpressionReference::setCircuitBreaker(CircuitBreaker cb) {
   sCircuitBreaker = cb;
 }
 
-bool Expression::shouldStopProcessing() {
+bool ExpressionReference::shouldStopProcessing() {
   if (sCircuitBreaker == nullptr) {
     return false;
   }
@@ -76,158 +56,39 @@ bool Expression::shouldStopProcessing() {
   return false;
 }
 
-/* Hierarchy */
-
-const Expression * Expression::operand(int i) const {
-  assert(i >= 0);
-  assert(i < numberOfChildren());
-  assert(operands()[i]->parent() == nullptr || operands()[i]->parent() == this);
-  return operands()[i];
-}
-
-Expression * Expression::replaceWith(Expression * newOperand, bool deleteAfterReplace) {
-  assert(m_parent != nullptr);
-  m_parent->replaceOperand(this, newOperand, deleteAfterReplace);
-  return newOperand;
-}
-
-void Expression::replaceOperand(const Expression * oldOperand, Expression * newOperand, bool deleteOldOperand) {
-  assert(newOperand != nullptr);
-  // Caution: handle the case where we replace an operand with a descendant of ours.
-  if (newOperand->hasAncestor(this)) {
-    newOperand->parent()->detachOperand(newOperand);
-  }
-  Expression ** op = const_cast<Expression **>(operands());
-  for (int i=0; i<numberOfChildren(); i++) {
-    if (op[i] == oldOperand) {
-      if (oldOperand != nullptr && oldOperand->parent() == this) {
-        const_cast<Expression *>(oldOperand)->setParent(nullptr);
-      }
-      if (deleteOldOperand) {
-        delete oldOperand;
-      }
-      if (newOperand != nullptr) {
-        const_cast<Expression *>(newOperand)->setParent(this);
-      }
-      op[i] = newOperand;
-      break;
-    }
-  }
-}
-
-void Expression::detachOperand(const Expression * e) {
-  Expression ** op = const_cast<Expression **>(operands());
-  for (int i=0; i<numberOfChildren(); i++) {
-    if (op[i] == e) {
-      detachOperandAtIndex(i);
-    }
-  }
-}
-
-void Expression::detachOperands() {
-  for (int i=0; i<numberOfChildren(); i++) {
-    detachOperandAtIndex(i);
-  }
-}
-
-void Expression::detachOperandAtIndex(int i) {
-  Expression ** op = const_cast<Expression **>(operands());
-  // When detachOperands is called, it's very likely that said operands have been stolen
-  if (op[i] != nullptr && op[i]->parent() == this) {
-    const_cast<Expression *>(op[i])->setParent(nullptr);
-  }
-  op[i] = nullptr;
-}
-
-void Expression::swapOperands(int i, int j) {
-  assert(i >= 0 && i < numberOfChildren());
-  assert(j >= 0 && j < numberOfChildren());
-  Expression ** op = const_cast<Expression **>(operands());
-  Expression * temp = op[i];
-  op[i] = op[j];
-  op[j] = temp;
-}
-
-bool Expression::hasAncestor(const Expression * e) const {
-  if (m_parent == e) {
-    return true;
-  }
-  if (m_parent == nullptr) {
-    return false;
-  }
-  return m_parent->hasAncestor(e);
-}
-
 /* Properties */
 
-bool Expression::isRationalZero() const {
-  return type() == Type::Rational && static_cast<const Rational*>(this)->isZero();
+bool ExpressionReference::isRationalZero() const {
+  return this->node()->type() == ExpressionNode::Type::Rational && static_cast<const RationalNode *>(this->node())->isZero();
 }
 
-bool Expression::recursivelyMatches(ExpressionTest test, Context & context) const {
-  if (test(this, context)) {
+bool ExpressionReference::recursivelyMatches(ExpressionTest test, Context & context) const {
+  if (test(*this, context)) {
     return true;
   }
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (operand(i)->recursivelyMatches(test, context)) {
+  for (int i = 0; i < this->numberOfChildren(); i++) {
+    if (childAtIndex(i).recursivelyMatches(test, context)) {
       return true;
     }
   }
   return false;
 }
 
-bool Expression::isApproximate(Context & context) const {
-  return recursivelyMatches([](const Expression * e, Context & context) {
-        return e->type() == Expression::Type::Decimal || Expression::IsMatrix(e, context) || (e->type() == Expression::Type::Symbol && static_cast<const Symbol *>(e)->isApproximate(context));
+bool ExpressionReference::isApproximate(Context & context) const {
+  return recursivelyMatches([](const ExpressionReference e, Context & context) {
+        return e.node()->type() == ExpressionNode::Type::Decimal || e.node()->type() == ExpressionNode::Type::Double || ExpressionReference::IsMatrix(e, context) || (e.node()->type() == ExpressionNode::Type::Symbol && SymbolReference::isApproximate(static_cast<SymbolNode *>(e.node())->name(), context));
     }, context);
 }
 
-float Expression::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
-  /* A expression has a characteristic range if at least one of its operand has
-   * one and the other are x-independant. We keep the biggest interesting range
-   * among the operand interesting ranges. */
-  float range = 0.0f;
-  for (int i = 0; i < numberOfChildren(); i++) {
-    float opRange = operand(i)->characteristicXRange(context, angleUnit);
-    if (std::isnan(opRange)) {
-      return NAN;
-    } else if (range < opRange) {
-      range = opRange;
-    }
-  }
-  return range;
+bool ExpressionReference::IsMatrix(const ExpressionReference e, Context & context) {
+  return e.node()->type() == ExpressionNode::Type::Matrix || e.node()->type() == ExpressionNode::Type::ConfidenceInterval || e.node()->type() == ExpressionNode::Type::MatrixDimension || e.node()->type() == ExpressionNode::Type::PredictionInterval || e.node()->type() == ExpressionNode::Type::MatrixInverse || e.node()->type() == ExpressionNode::Type::MatrixTranspose || (e.node()->type() == ExpressionNode::Type::Symbol && SymbolReference::isMatrixSymbol(static_cast<SymbolNode *>(e.node())->name()));
 }
 
-bool Expression::IsMatrix(const Expression * e, Context & context) {
-  return e->type() == Type::Matrix || e->type() == Type::ConfidenceInterval || e->type() == Type::MatrixDimension || e->type() == Type::PredictionInterval || e->type() == Type::MatrixInverse || e->type() == Type::MatrixTranspose || (e->type() == Type::Symbol && static_cast<const Symbol *>(e)->isMatrixSymbol());
+bool dependsOnVariables(const ExpressionReference e, Context & context) {
+  return e.node()->type() == ExpressionNode::Type::Symbol && SymbolReference::isVariableSymbol(static_cast<SymbolNode *>(e.node())->name());
 }
 
-int Expression::polynomialDegree(char symbolName) const {
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (operand(i)->polynomialDegree(symbolName) != 0) {
-      return -1;
-    }
-  }
-  return 0;
-}
-
-int Expression::getVariables(isVariableTest isVariable, char * variables) const {
- int numberOfVariables = 0;
- for (int i = 0; i < numberOfChildren(); i++) {
-   int n = operand(i)->getVariables(isVariable, variables);
-   if (n < 0) {
-     return -1;
-   }
-   numberOfVariables = n > numberOfVariables ? n : numberOfVariables;
- }
- return numberOfVariables;
-}
-
-bool dependsOnVariables(const Expression * e, Context & context) {
-  return e->type() == Expression::Type::Symbol && Symbol::isVariableSymbol(static_cast<const Symbol *>(e)->name());
-}
-
-bool Expression::getLinearCoefficients(char * variables, Expression * coefficients[], Expression ** constant, Context & context, Preferences::AngleUnit angleUnit) const {
+bool ExpressionReference::getLinearCoefficients(char * variables, ExpressionReference coefficients[], ExpressionReference constant[], Context & context, Preferences::AngleUnit angleUnit) const {
   char * x = variables;
   while (*x != 0) {
     int degree = polynomialDegree(*x);
@@ -236,246 +97,189 @@ bool Expression::getLinearCoefficients(char * variables, Expression * coefficien
     }
     x++;
   }
-  Expression * equation = clone();
+  ExpressionReference equation = clone();
   x = variables;
   int index = 0;
-  Expression * polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
+  ExpressionReference polynomialCoefficients[k_maxNumberOfPolynomialCoefficients];
   while (*x != 0) {
-    int degree = equation->getPolynomialCoefficients(*x, polynomialCoefficients, context, angleUnit);
+    int degree = equation.getPolynomialCoefficients(*x, polynomialCoefficients, context, angleUnit);
     if (degree == 1) {
       coefficients[index] = polynomialCoefficients[1];
     } else {
       assert(degree == 0);
       coefficients[index] = RationalReference(0);
     }
-    delete equation;
     equation = polynomialCoefficients[0];
     x++;
     index++;
   }
-  *constant = new Opposite(equation, false);
-  Reduce(constant, context, angleUnit);
+  constant[0] = OppositeReference(equation).deepReduce(context, angleUnit);
   /* The expression can be linear on all coefficients taken one by one but
    * non-linear (ex: xy = 2). We delete the results and return false if one of
    * the coefficients contains a variable. */
-  bool isMultivariablePolynomial = (*constant)->recursivelyMatches(dependsOnVariables, context);
+  bool isMultivariablePolynomial = (constant[0]).recursivelyMatches(dependsOnVariables, context);
   for (int i = 0; i < index; i++) {
     if (isMultivariablePolynomial) {
       break;
     }
-    isMultivariablePolynomial |= coefficients[i]->recursivelyMatches(dependsOnVariables, context);
+    isMultivariablePolynomial |= coefficients[i].recursivelyMatches(dependsOnVariables, context);
   }
   if (isMultivariablePolynomial) {
     for (int i = 0; i < index; i++) {
-      delete coefficients[i];
-      coefficients[i] = nullptr;
+      coefficients[i] = ExpressionReference(nullptr);
     }
-    delete *constant;
-    *constant = nullptr;
+    constant[0] = ExpressionReference(nullptr);
     return false;
   }
   return true;
 }
 
-int Expression::getPolynomialCoefficients(char symbolName, Expression * coefficients[], Context & context, Preferences::AngleUnit angleUnit) const {
-  int degree = privateGetPolynomialCoefficients(symbolName, coefficients);
+int ExpressionReference::getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[], Context & context, Preferences::AngleUnit angleUnit) const {
+  int degree = this->node()->getPolynomialCoefficients(symbolName, coefficients);
   for (int i = 0; i <= degree; i++) {
-    Reduce(&coefficients[i], context, angleUnit);
+    coefficients[i] = coefficients[i].deepReduce(context, angleUnit);
   }
   return degree;
 }
 
-int Expression::getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const {
-  int deg = polynomialDegree(symbolName);
-  if (deg == 0) {
-    coefficients[0] = clone();
-    return 0;
-  }
-  return -1;
-}
-
-bool Expression::isOfType(Type * types, int length) const {
-  for (int i = 0; i < length; i++) {
-    if (type() == types[i]) {
-      return true;
-    }
-  }
-  return false;
-}
-
-bool Expression::needParenthesisWithParent(const Expression * e) const {
-  return false;
-}
-
 /* Comparison */
 
-int Expression::SimplificationOrder(const Expression * e1, const Expression * e2, bool canBeInterrupted) {
-  if (e1->type() > e2->type()) {
-    if (canBeInterrupted && shouldStopProcessing()) {
-      return 1;
-    }
-    return -(e2->simplificationOrderGreaterType(e1, canBeInterrupted));
-  } else if (e1->type() == e2->type()) {
-    return e1->simplificationOrderSameType(e2, canBeInterrupted);
-  } else {
-    if (canBeInterrupted && shouldStopProcessing()) {
-      return -1;
-    }
-    return e1->simplificationOrderGreaterType(e2, canBeInterrupted);
-  }
-}
-
-bool Expression::isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context) {
+bool ExpressionReference::isEqualToItsApproximationLayout(ExpressionReference approximation, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context) {
   char buffer[bufferSize];
-  approximation->writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  approximation.writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
   /* Warning: we cannot use directly the the approximate expression but we have
    * to re-serialize it because the number of stored significative
    * numbers and the number of displayed significative numbers might not be
    * identical. (For example, 0.000025 might be displayed "0.00003" and stored
    * as Decimal(0.000025) and isEqualToItsApproximationLayout should return
    * false) */
-  Expression * approximateOutput = Expression::ParseAndSimplify(buffer, context, angleUnit);
+  ExpressionReference approximateOutput = ExpressionReference::ParseAndSimplify(buffer, context, angleUnit);
   bool equal = isIdenticalTo(approximateOutput);
-  delete approximateOutput;
   return equal;
 }
 
 /* Simplification */
 
-Expression * Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
-  Expression * exp = parse(text);
-  if (exp == nullptr) {
-    return new Undefined();
+ExpressionReference ExpressionReference::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
+  ExpressionReference exp = parse(text);
+  if (!exp.isDefined()) {
+    return UndefinedReference();
   }
   Simplify(&exp, context, angleUnit);
-  if (exp == nullptr) {
+  if (!exp.isDefined()) {
     return parse(text);
   }
   return exp;
 }
 
-void Expression::Simplify(Expression ** expressionAddress, Context & context, Preferences::AngleUnit angleUnit) {
+void ExpressionReference::Simplify(ExpressionReference * expressionAddress, Context & context, Preferences::AngleUnit angleUnit) {
   sSimplificationHasBeenInterrupted = false;
 #if MATRIX_EXACT_REDUCING
 #else
-  if ((*expressionAddress)->recursivelyMatches(IsMatrix, context)) {
+  if (expressionAddress->recursivelyMatches(IsMatrix, context)) {
     return;
   }
 #endif
-  SimplificationRoot root(*expressionAddress);
-  root.editableOperand(0)->deepReduce(context, angleUnit);
-  root.editableOperand(0)->deepBeautify(context, angleUnit);
-  *expressionAddress = root.editableOperand(0);
+  *expressionAddress = expressionAddress->deepReduce(context, angleUnit);
+  *expressionAddress = expressionAddress->deepBeautify(context, angleUnit);
   if (sSimplificationHasBeenInterrupted) {
-    root.detachOperands();
-    delete *expressionAddress;
-    *expressionAddress = nullptr;
+    *expressionAddress = ExpressionReference(nullptr);
   }
 }
 
-
-void Expression::Reduce(Expression ** expressionAddress, Context & context, Preferences::AngleUnit angleUnit, bool recursively) {
-  SimplificationRoot root(*expressionAddress);
-  if (recursively) {
-    root.editableOperand(0)->deepReduce(context, angleUnit);
-  } else {
-    root.editableOperand(0)->shallowReduce(context,angleUnit);
-  }
-  *expressionAddress = root.editableOperand(0);
-}
-
-Expression * Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  assert(parent() != nullptr);
-  for (int i = 0; i < numberOfChildren(); i++) {
-    editableOperand(i)->deepReduce(context, angleUnit);
+ExpressionReference ExpressionReference::deepReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  int nbChildren = this->numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    ExpressionReference reducedChild = childAtIndex(i).deepReduce(context, angleUnit);
+    if (numberOfChildren() < nbChildren) {
+      addChildTreeAtIndex(reducedChild, i, nbChildren-1);
+    } else {
+      replaceTreeChildAtIndex(i, reducedChild);
+    }
   }
   return shallowReduce(context, angleUnit);
 }
 
-Expression * Expression::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (editableOperand(i)->type() == Type::Undefined && this->type() != Type::SimplificationRoot) {
-      return replaceWith(new Undefined(), true);
+ExpressionReference ExpressionReference::deepBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+  ExpressionReference beautifiedExpression = shallowBeautify(context, angleUnit);
+  int nbChildren = beautifiedExpression.numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
+    ExpressionReference beautifiedChild = beautifiedExpression.childAtIndex(i).deepBeautify(context, angleUnit);
+    if (beautifiedExpression.numberOfChildren() < nbChildren) {
+      beautifiedExpression.addChildTreeAtIndex(beautifiedChild, i, nbChildren-1);
+    } else {
+      beautifiedExpression.replaceTreeChildAtIndex(i, beautifiedChild);
     }
   }
-  return this;
-}
-
-Expression * Expression::deepBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  assert(parent() != nullptr);
-  Expression * e = shallowBeautify(context, angleUnit);
-  for (int i = 0; i < e->numberOfChildren(); i++) {
-    e->editableOperand(i)->deepBeautify(context, angleUnit);
-  }
-  return e;
+  return beautifiedExpression;
 }
 
 /* Evaluation */
 
-template<typename T> Expression * Expression::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const {
-  Evaluation<T> * e = privateApproximate(T(), context, angleUnit);
-  Expression * result = e->complexToExpression(complexFormat);
-  delete e;
-  return result;
+template<typename U>
+ExpressionReference ExpressionReference::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const {
+  EvaluationReference<U> e = this->node()->approximate(U(), context, angleUnit);
+  return e->complexToExpression(complexFormat);
 }
 
-template<typename T> T Expression::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * evaluation = privateApproximate(T(), context, angleUnit);
-  T result = evaluation->toScalar();
-  /*if (evaluation->type() == Type::Matrix) {
-    if (numberOfChildren() == 1) {
-      result = static_cast<const Complex<T> *>(operand(0))->toScalar();
-    }
-  }*/
-  delete evaluation;
-  return result;
+template<typename U>
+U ExpressionReference::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
+  EvaluationReference<U> evaluation = this->node()->approximate(U(), context, angleUnit);
+  return evaluation->toScalar();
 }
 
-template<typename T> T Expression::approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * exp = ParseAndSimplify(text, context, angleUnit);
-  T result = exp->approximateToScalar<T>(context, angleUnit);
-  delete exp;
-  return result;
+template<typename U>
+U ExpressionReference::approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit) {
+  ExpressionReference exp = ParseAndSimplify(text, context, angleUnit);
+  return exp.approximateToScalar<U>(context, angleUnit);
 }
 
-template<typename T> T Expression::epsilon() {
-  static T epsilon = sizeof(T) == sizeof(double) ? 1E-15 : 1E-7f;
+template<typename U>
+U ExpressionReference::approximateWithValueForSymbol(char symbol, U x, Context & context, Preferences::AngleUnit angleUnit) const {
+  VariableContext<U> variableContext = VariableContext<U>(symbol, &context);
+  variableContext.setApproximationForVariable(x);
+  return approximateToScalar<U>(variableContext, angleUnit);
+}
+
+template<typename U>
+U ExpressionReference::epsilon() {
+  static U epsilon = sizeof(U) == sizeof(double) ? 1E-15 : 1E-7f;
   return epsilon;
 }
 
 /* Expression roots/extrema solver*/
 
-Expression::Coordinate2D Expression::nextMinimum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
-  return nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression0, const Expression * expression1 = nullptr) {
-        return expression0->approximateWithValueForSymbol(symbol, x, context, angleUnit);
+typename ExpressionReference::Coordinate2D ExpressionReference::nextMinimum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
+  return nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression0, const ExpressionReference expression1 = nullptr) {
+        return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit);
 }
 
-Expression::Coordinate2D Expression::nextMaximum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
-  Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression0, const Expression * expression1 = nullptr) {
-        return -expression0->approximateWithValueForSymbol(symbol, x, context, angleUnit);
+typename ExpressionReference::Coordinate2D ExpressionReference::nextMaximum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
+  Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression0, const ExpressionReference expression1 = nullptr) {
+        return -expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit);
   return {.abscissa = minimumOfOpposite.abscissa, .value = -minimumOfOpposite.value};
 }
 
-double Expression::nextRoot(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
-  return nextIntersectionWithExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression0, const Expression * expression1 = nullptr) {
-        return expression0->approximateWithValueForSymbol(symbol, x, context, angleUnit);
+double ExpressionReference::nextRoot(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
+  return nextIntersectionWithExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression0, const ExpressionReference expression1 = nullptr) {
+        return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit, nullptr);
 }
 
-Expression::Coordinate2D Expression::nextIntersection(char symbol, double start, double step, double max, Poincare::Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const {
-  double resultAbscissa = nextIntersectionWithExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression0, const Expression * expression1) {
-        return expression0->approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression1->approximateWithValueForSymbol(symbol, x, context, angleUnit);
+typename ExpressionReference::Coordinate2D ExpressionReference::nextIntersection(char symbol, double start, double step, double max, Poincare::Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression) const {
+  double resultAbscissa = nextIntersectionWithExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression0, const ExpressionReference expression1) {
+        return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression1.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit, expression);
-  Expression::Coordinate2D result = {.abscissa = resultAbscissa, .value = approximateWithValueForSymbol(symbol, resultAbscissa, context, angleUnit)};
+  typename ExpressionReference::Coordinate2D result = {.abscissa = resultAbscissa, .value = approximateWithValueForSymbol(symbol, resultAbscissa, context, angleUnit)};
   if (std::fabs(result.value) < step*k_solverPrecision) {
     result.value = 0.0;
   }
   return result;
 }
 
-Expression::Coordinate2D Expression::nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression, bool lookForRootMinimum) const {
+typename ExpressionReference::Coordinate2D ExpressionReference::nextMinimumOfExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression, bool lookForRootMinimum) const {
   Coordinate2D result = {.abscissa = NAN, .value = NAN};
   if (start == max || step == 0.0) {
     return result;
@@ -490,7 +294,7 @@ Expression::Coordinate2D Expression::nextMinimumOfExpression(char symbol, double
     // Because of float approximation, exact zero is never reached
     if (std::fabs(result.abscissa) < std::fabs(step)*k_solverPrecision) {
       result.abscissa = 0;
-      result.value = evaluate(symbol, 0, context, angleUnit, this, expression);
+      result.value = evaluate(symbol, 0, context, angleUnit, *this, expression);
     }
     /* Ignore extremum whose value is undefined or too big because they are
      * really unlikely to be local extremum. */
@@ -512,13 +316,13 @@ Expression::Coordinate2D Expression::nextMinimumOfExpression(char symbol, double
   return result;
 }
 
-void Expression::bracketMinimum(char symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const {
+void ExpressionReference::bracketMinimum(char symbol, double start, double step, double max, double result[3], EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression) const {
   Coordinate2D p[3];
-  p[0] = {.abscissa = start, .value = evaluate(symbol, start, context, angleUnit, this, expression)};
-  p[1] = {.abscissa = start+step, .value = evaluate(symbol, start+step, context, angleUnit, this, expression)};
+  p[0] = {.abscissa = start, .value = evaluate(symbol, start, context, angleUnit, *this, expression)};
+  p[1] = {.abscissa = start+step, .value = evaluate(symbol, start+step, context, angleUnit, *this, expression)};
   double x = start+2.0*step;
   while (step > 0.0 ? x <= max : x >= max) {
-    p[2] = {.abscissa = x, .value = evaluate(symbol, x, context, angleUnit, this, expression)};
+    p[2] = {.abscissa = x, .value = evaluate(symbol, x, context, angleUnit, *this, expression)};
     if ((p[0].value > p[1].value || std::isnan(p[0].value)) && (p[2].value > p[1].value || std::isnan(p[2].value)) && (!std::isnan(p[0].value) || !std::isnan(p[2].value))) {
       result[0] = p[0].abscissa;
       result[1] = p[1].abscissa;
@@ -537,7 +341,7 @@ void Expression::bracketMinimum(char symbol, double start, double step, double m
   result[2] = NAN;
 }
 
-Expression::Coordinate2D Expression::brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const {
+typename ExpressionReference::Coordinate2D ExpressionReference::brentMinimum(char symbol, double ax, double bx, EvaluationAtAbscissa evaluate, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression) const {
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
    * functions without calculating derivatives */
   if (ax > bx) {
@@ -549,7 +353,7 @@ Expression::Coordinate2D Expression::brentMinimum(char symbol, double ax, double
   double x = a+k_goldenRatio*(b-a);
   double v = x;
   double w = x;
-  double fx = evaluate(symbol, x, context, angleUnit, this, expression);
+  double fx = evaluate(symbol, x, context, angleUnit, *this, expression);
   double fw = fx;
   double fv = fw;
 
@@ -561,10 +365,10 @@ Expression::Coordinate2D Expression::brentMinimum(char symbol, double ax, double
     double tol1 = k_sqrtEps*std::fabs(x)+1E-10;
     double tol2 = 2.0*tol1;
     if (std::fabs(x-m) <= tol2-0.5*(b-a))  {
-      double middleFax = evaluate(symbol, (x+a)/2.0, context, angleUnit, this, expression);
-      double middleFbx = evaluate(symbol, (x+b)/2.0, context, angleUnit, this, expression);
-      double fa = evaluate(symbol, a, context, angleUnit, this, expression);
-      double fb = evaluate(symbol, b, context, angleUnit, this, expression);
+      double middleFax = evaluate(symbol, (x+a)/2.0, context, angleUnit, *this, expression);
+      double middleFbx = evaluate(symbol, (x+b)/2.0, context, angleUnit, *this, expression);
+      double fa = evaluate(symbol, a, context, angleUnit, *this, expression);
+      double fb = evaluate(symbol, b, context, angleUnit, *this, expression);
       if (middleFax-fa <= k_sqrtEps && fx-middleFax <= k_sqrtEps && fx-middleFbx <= k_sqrtEps && middleFbx-fb <= k_sqrtEps) {
         Coordinate2D result = {.abscissa = x, .value = fx};
         return result;
@@ -597,7 +401,7 @@ Expression::Coordinate2D Expression::brentMinimum(char symbol, double ax, double
       d = k_goldenRatio*e;
     }
     u = x + (std::fabs(d) >= tol1 ? d : (d>0 ? tol1 : -tol1));
-    fu = evaluate(symbol, u, context, angleUnit, this, expression);
+    fu = evaluate(symbol, u, context, angleUnit, *this, expression);
     if (fu <= fx) {
       if (u<x) {
         b = x;
@@ -631,7 +435,7 @@ Expression::Coordinate2D Expression::brentMinimum(char symbol, double ax, double
   return result;
 }
 
-double Expression::nextIntersectionWithExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const {
+double ExpressionReference::nextIntersectionWithExpression(char symbol, double start, double step, double max, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression) const {
   if (start == max || step == 0.0) {
     return NAN;
   }
@@ -647,18 +451,18 @@ double Expression::nextIntersectionWithExpression(char symbol, double start, dou
 
   double extremumMax = std::isnan(result) ? max : result;
   Coordinate2D resultExtremum[2] = {
-    nextMinimumOfExpression(symbol, start, step, extremumMax, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression0, const Expression * expression1) {
-        if (expression1) {
-          return expression0->approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression1->approximateWithValueForSymbol(symbol, x, context, angleUnit);
+    nextMinimumOfExpression(symbol, start, step, extremumMax, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression0, const ExpressionReference expression1) {
+        if (expression1.isDefined()) {
+          return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression1.approximateWithValueForSymbol(symbol, x, context, angleUnit);
         } else {
-          return expression0->approximateWithValueForSymbol(symbol, x, context, angleUnit);
+          return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
         }
       }, context, angleUnit, expression, true),
-    nextMinimumOfExpression(symbol, start, step, extremumMax, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression0, const Expression * expression1) {
-        if (expression1) {
-          return expression1->approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression0->approximateWithValueForSymbol(symbol, x, context, angleUnit);
+    nextMinimumOfExpression(symbol, start, step, extremumMax, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression0, const ExpressionReference expression1) {
+        if (expression1.isDefined()) {
+          return expression1.approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
         } else {
-          return -expression0->approximateWithValueForSymbol(symbol, x, context, angleUnit);
+          return -expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
         }
       }, context, angleUnit, expression, true)};
   for (int i = 0; i < 2; i++) {
@@ -672,12 +476,12 @@ double Expression::nextIntersectionWithExpression(char symbol, double start, dou
   return result;
 }
 
-void Expression::bracketRoot(char symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const {
+void ExpressionReference::bracketRoot(char symbol, double start, double step, double max, double result[2], EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression) const {
   double a = start;
   double b = start+step;
   while (step > 0.0 ? b <= max : b >= max) {
-    double fa = evaluation(symbol, a, context, angleUnit, this, expression);
-    double fb = evaluation(symbol, b, context, angleUnit, this, expression);
+    double fa = evaluation(symbol, a, context, angleUnit, *this, expression);
+    double fb = evaluation(symbol, b, context, angleUnit,* this, expression);
     if (fa*fb <= 0) {
       result[0] = a;
       result[1] = b;
@@ -690,8 +494,7 @@ void Expression::bracketRoot(char symbol, double start, double step, double max,
   result[1] = NAN;
 }
 
-
-double Expression::brentRoot(char symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const Expression * expression) const {
+double ExpressionReference::brentRoot(char symbol, double ax, double bx, double precision, EvaluationAtAbscissa evaluation, Context & context, Preferences::AngleUnit angleUnit, const ExpressionReference expression) const {
   if (ax > bx) {
     return brentRoot(symbol, bx, ax, precision, evaluation, context, angleUnit, expression);
   }
@@ -700,8 +503,8 @@ double Expression::brentRoot(char symbol, double ax, double bx, double precision
   double c = bx;
   double d = b-a;
   double e = b-a;
-  double fa = evaluation(symbol, a, context, angleUnit, this, expression);
-  double fb = evaluation(symbol, b, context, angleUnit, this, expression);
+  double fa = evaluation(symbol, a, context, angleUnit, *this, expression);
+  double fb = evaluation(symbol, b, context, angleUnit, *this, expression);
   double fc = fb;
   for (int i = 0; i < 100; i++) {
     if ((fb > 0.0 && fc > 0.0) || (fb < 0.0 && fc < 0.0)) {
@@ -721,7 +524,7 @@ double Expression::brentRoot(char symbol, double ax, double bx, double precision
     double tol1 = 2.0*DBL_EPSILON*std::fabs(b)+0.5*precision;
     double xm = 0.5*(c-b);
     if (std::fabs(xm) <= tol1 || fb == 0.0) {
-      double fbcMiddle = evaluation(symbol, 0.5*(b+c), context, angleUnit, this, expression);
+      double fbcMiddle = evaluation(symbol, 0.5*(b+c), context, angleUnit, *this, expression);
       double isContinuous = (fb <= fbcMiddle && fbcMiddle <= fc) || (fc <= fbcMiddle && fbcMiddle <= fb);
       if (isContinuous) {
         return b;
@@ -759,28 +562,9 @@ double Expression::brentRoot(char symbol, double ax, double bx, double precision
     } else {
       b += xm > 0.0 ? tol1 : tol1;
     }
-    fb = evaluation(symbol, b, context, angleUnit, this, expression);
+    fb = evaluation(symbol, b, context, angleUnit, *this, expression);
   }
   return NAN;
 }
 
-template<typename T>
-T Expression::approximateWithValueForSymbol(char symbol, T x, Context & context, Preferences::AngleUnit angleUnit) const {
-  VariableContext<T> variableContext = VariableContext<T>(symbol, &context);
-  variableContext.setApproximationForVariable(x);
-  T value = approximateToScalar<T>(variableContext, angleUnit);
-  return value;
 }
-
-}
-
-template Poincare::Expression * Poincare::Expression::approximate<double>(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const;
-template Poincare::Expression * Poincare::Expression::approximate<float>(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const;
-template double Poincare::Expression::approximateToScalar<double>(char const*, Poincare::Context&, Poincare::Preferences::AngleUnit);
-template float Poincare::Expression::approximateToScalar<float>(char const*, Poincare::Context&, Poincare::Preferences::AngleUnit);
-template double Poincare::Expression::approximateToScalar<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
-template float Poincare::Expression::approximateToScalar<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
-template double Poincare::Expression::epsilon<double>();
-template float Poincare::Expression::epsilon<float>();
-template double Poincare::Expression::approximateWithValueForSymbol(char, double, Poincare::Context&, Preferences::AngleUnit) const;
-template float Poincare::Expression::approximateWithValueForSymbol(char, float, Poincare::Context&, Preferences::AngleUnit) const;

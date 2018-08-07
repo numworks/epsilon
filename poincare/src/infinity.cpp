@@ -9,6 +9,11 @@ extern "C" {
 
 namespace Poincare {
 
+InfinityNode * InfinityNode::FailedAllocationStaticNode() {
+  static AllocationFailureInfinityNode failure;
+  return &failure;
+}
+
 LayoutRef InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[5];
   int numberOfChars = writeTextInBuffer(buffer, 5, floatDisplayMode, numberOfSignificantDigits);
@@ -22,8 +27,8 @@ int InfinityNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::
   return PrintFloat::convertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
 }
 
-template<typename T> EvaluationReference<T> InfinityNode::templatedApproximate() const {
-  return ComplexReference<T>(INFINITY);
+template<typename T> Evaluation<T> InfinityNode::templatedApproximate() const {
+  return Complex<T>(INFINITY);
 }
 
 }

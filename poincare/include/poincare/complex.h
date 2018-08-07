@@ -6,7 +6,7 @@
 namespace Poincare {
 
 template<typename T>
-class ComplexReference;
+class Complex;
 
 template<typename T>
 class ComplexNode : public std::complex<T>, public EvaluationNode<T> {
@@ -24,21 +24,20 @@ public:
     return (std::isnan(this->real()) && std::isnan(this->imag()));
   }
   T toScalar() const override;
-  ExpressionReference complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
+  Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
   std::complex<T> trace() const override { return *this; }
   std::complex<T> determinant() const override { return *this; }
-  EvaluationReference<T> inverse() const override;
-  EvaluationReference<T> transpose() const override { return ComplexReference<T>(*this); }
+  Evaluation<T> inverse() const override;
+  Evaluation<T> transpose() const override { return Complex<T>(*this); }
 };
 
 template<typename T>
-class ComplexReference : public std::complex<T>, public EvaluationReference<T> {
+class Complex : public std::complex<T>, public Evaluation<T> {
 public:
-  ComplexReference(TreeNode * t) : EvaluationReference<T>(t) {}
-  ComplexReference(T a, T b = 0.0) : ComplexReference(std::complex<T>(a, b)) {}
-  ComplexReference(std::complex<T> c);
-  static ComplexReference<T> Undefined() {
-    return ComplexReference<T>(NAN, NAN);
+  Complex(T a, T b = 0.0) : Complex(std::complex<T>(a, b)) {}
+  Complex(std::complex<T> c);
+  static Complex<T> Undefined() {
+    return Complex<T>(NAN, NAN);
   }
 };
 

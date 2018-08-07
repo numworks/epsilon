@@ -13,24 +13,17 @@ public:
   typename EvaluationNode<T>::Type type() const override { return EvaluationNode<T>::Type::AllocationFailure; }
   bool isUndefined() const override { return true; }
   T toScalar() const override{ return NAN; }
-  ExpressionReference complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
+  Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
   std::complex<T> trace() const override { return std::complex<T>(NAN); }
   std::complex<T> determinant() const override { return std::complex<T>(NAN); }
-  EvaluationReference<T> inverse() const override { return ComplexReference<T>::Undefined(); }
-  virtual EvaluationReference<T> transpose() const override { return ComplexReference<T>::Undefined(); }
+  Evaluation<T> inverse() const override { return Complex<T>::Undefined(); }
+  virtual Evaluation<T> transpose() const override { return Complex<T>::Undefined(); }
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailedEvaluationNode); }
 #if TREE_LOG
   const char * description() const override { return "Allocation Failed";  }
 #endif
   bool isAllocationFailure() const override { return true; }
-};
-
-template<typename T>
-class AllocationFailedEvaluationReference : public EvaluationReference<T> {
-public:
-  AllocationFailedEvaluationReference() : EvaluationReference<T>(TreePool::sharedPool()->createTreeNode<AllocationFailedEvaluationNode<T> >(), true) {}
-  AllocationFailedEvaluationReference(TreeNode * n) : EvaluationReference<T>(n) {}
 };
 
 }

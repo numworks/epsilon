@@ -33,6 +33,7 @@ public:
 protected:
   /* Constructor */
   TreeByValue(TreeByReference t) : TreeByReference(node()) {}
+  TreeByValue(TreeNode * n) : TreeByReference(n) {}
 
   /* Hierarchy operations */
   // Add

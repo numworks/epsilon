@@ -111,8 +111,9 @@ public:
   double nextRoot(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const;
   Coordinate2D nextIntersection(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const;
 
-private:
+protected:
   Expression(ExpressionNode * n) : SerializableReference(n), TreeByValue(n) {}
+private:
   /* Hierarchy */
   Expression childAtIndex(int i) const {
     return Expression(static_cast<ExpressionNode *>(TreeByReference::treeChildAtIndex(i).node()));

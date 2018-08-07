@@ -102,15 +102,12 @@ public:
 
 protected:
   /* Constructor */
-  TreeByReference(const TreeNode * node, bool isCreatingNode = false) {
+  TreeByReference(const TreeNode * node) {
     if (node == nullptr) {
       m_identifier = TreePool::NoNodeIdentifier;
       return;
     }
     setIdentifierAndRetain(node->identifier());
-    if (isCreatingNode) {
-      buildGhostChildren();
-    }
   }
   TreeByReference() : m_identifier(-1) {}
   /* Hierarchy operations */

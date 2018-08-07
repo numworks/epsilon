@@ -24,7 +24,7 @@ public:
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
   template <typename T>
-  TreeNode * createTreeNode(size_t size = sizeof(T)) {
+  T * createTreeNode(size_t size = sizeof(T)) {
     int nodeIdentifier = generateIdentifier();
     if (nodeIdentifier == -1) {
       T::FailedAllocationStaticNode()->retain();
@@ -37,6 +37,29 @@ public:
     }
     T * node = new(ptr) T();
     node->rename(nodeIdentifier, false);
+
+    // Ensure the pool is syntactially correct by creating ghost children if needed.
+    // It's needed for children that have a fixed, non-zero number of children.
+    for (int i=0; i<node->numberOfChildren(); i++) {
+      assert(false);
+      // TODO! :-D
+#if 0
+      // It used to be this:
+void TreeByReference::buildGhostChildren() {
+  assert(isDefined());
+  for (int i = 0; i < numberOfChildren(); i++) {
+    // Add a ghost child
+    GhostReference ghost;
+    if (ghost.isAllocationFailure()) {
+      replaceWithAllocationFailureInPlace(numberOfChildren());
+      return;
+    }
+    TreePool::sharedPool()->move(node()->next(), ghost.node(), 0);
+  }
+}
+#endif
+    }
+
     return node;
   }
 

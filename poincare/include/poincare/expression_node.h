@@ -88,8 +88,8 @@ public:
    };
 
   /* Allocation failure */
-  static TreeNode * FailedAllocationStaticNode();
-  TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+  static ExpressionNode * FailedAllocationStaticNode();
+  ExpressionNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;

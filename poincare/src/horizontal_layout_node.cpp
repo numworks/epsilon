@@ -278,7 +278,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
      * a parent, replace this with the new empty layout. */
     LayoutNode * p = parent();
     if (p != nullptr) {
-      thisRef.replaceWithInPlace(newChild, cursor);
+      thisRef.replaceWith(newChild, cursor);
       // WARNING: do not call "this" afterwards
       return false;
     }

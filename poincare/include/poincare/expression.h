@@ -36,7 +36,7 @@ public:
 
   /* Properties */
   ExpressionNode::Sign sign() const { return node()->sign(); }
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) { return node()->setSign(s, context, angleUnit); }
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
   typedef bool (*ExpressionTest)(const Expression e, Context & context);
@@ -74,7 +74,7 @@ public:
    * expression. */
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
+  int getPolynomialReducedCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -93,7 +93,7 @@ public:
 
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
-  static void Simplify(Expression * expressionAddress, Context & context, Preferences::AngleUnit angleUnit);
+  void simplify(Context & context, Preferences::AngleUnit angleUnit);
 
   /* Approximation Engine */
   template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const;
@@ -118,12 +118,14 @@ private:
     return Expression(static_cast<ExpressionNode *>(TreeByReference::treeChildAtIndex(i).node()));
   }
 
+  /* Properties */
+  int getPolynomialCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
+
   /* Simplification */
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
-  // TODO: should be virtual pure
-  virtual Expression reduce(Context & context, Preferences::AngleUnit angleUnit) { return this->node()->reduce(context, angleUnit); }
-  virtual Expression beautify(Context & context, Preferences::AngleUnit angleUnit) { return this->node()->beautify(context, angleUnit); };
 
   /* Approximation */
   template<typename U> static U epsilon();

@@ -26,8 +26,8 @@ int UndefinedNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences:
   return PrintFloat::convertFloatToText<float>(NAN, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
 }
 
-template<typename T> EvaluationReference<T> UndefinedNode::templatedApproximate() const {
-  return ComplexReference<T>::Undefined();
+template<typename T> Evaluation<T> UndefinedNode::templatedApproximate() const {
+  return Complex<T>::Undefined();
 }
 
 }

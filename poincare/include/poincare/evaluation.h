@@ -7,13 +7,13 @@ extern "C" {
 }
 #include <poincare/preferences.h>
 #include <poincare/tree_node.h>
-#include <poincare/tree_reference.h>
+#include <poincare/tree_by_value.h>
 
 namespace Poincare {
 
-class ExpressionReference;
+class Expression;
 template<typename T>
-class EvaluationReference;
+class Evaluation;
 
 template<typename T>
 class EvaluationNode : public TreeNode {
@@ -28,38 +28,35 @@ public:
   virtual ~EvaluationNode() = default;
   virtual bool isUndefined() const = 0;
   virtual T toScalar() const { return NAN; }
-  virtual ExpressionReference complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
+  virtual Expression complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
   virtual std::complex<T> trace() const = 0;
   virtual std::complex<T> determinant() const = 0;
-  virtual EvaluationReference<T> inverse() const = 0;
-  virtual EvaluationReference<T> transpose() const = 0;
+  virtual Evaluation<T> inverse() const = 0;
+  virtual Evaluation<T> transpose() const = 0;
 
   // TreeNode
   static TreeNode * FailedAllocationStaticNode();
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-
-  // Tree
-  //LayoutNode * childAtIndex(int i) { return static_cast<LayoutNode *>(TreeNode::childAtIndex(i)); }
 };
 
 template<typename T>
-class EvaluationReference : public TreeReference {
+class Evaluation : public TreeByValue {
 public:
-  EvaluationReference(TreeNode * n, bool isCreatingNode = false) : TreeReference(n, isCreatingNode) {}
+  //Evaluation(TreeNode * n, bool isCreatingNode = false) : TreeByValue(n, isCreatingNode) {}
   EvaluationNode<T> * node() const override {
-    assert(!TreeReference::node().isGhost());
-    return static_cast<EvaluationNode<T> *>(TreeReference::node());
+    assert(!TreeByValue::node().isGhost());
+    return static_cast<EvaluationNode<T> *>(TreeByValue::node());
   }
   typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }
   bool isUndefined() const { return node()->isUndefined(); }
   T toScalar() const { return node()->toScalar(); }
-  ExpressionReference complexToExpression(Preferences::ComplexFormat complexFormat) const;
+  Expression complexToExpression(Preferences::ComplexFormat complexFormat) const;
   std::complex<T> trace() const { return node()->trace(); }
   std::complex<T> determinant() const { return node()->determinant(); }
-  EvaluationReference inverse() const { return node()->inverse(); }
-  EvaluationReference transpose() const { return node()->transpose(); }
+  Evaluation inverse() const { return node()->inverse(); }
+  Evaluation transpose() const { return node()->transpose(); }
 protected:
-  EvaluationReference() : TreeReference() {}
+  //Evaluation() : TreeByValue() {}
 };
 
 }

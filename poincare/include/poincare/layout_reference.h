@@ -11,19 +11,22 @@ class LayoutCursor;
 class LayoutReference : public SerializableReference {
   friend class LayoutCursor;
 public:
-  using SerializableReference::SerializableReference;
-  using TreeReference::operator==;
-  using TreeReference::operator!=;
+  using TreeByReference::operator==;
+  using TreeByReference::operator!=;
+
+  LayoutReference(LayoutNode * node) :
+    TreeByReference(node),
+    SerializableReference(node) {}
 
   LayoutReference clone() const {
-    TreeReference c = this->treeClone();
-    LayoutReference cast = LayoutReference(c.node()); // TODO ?
+    TreeByReference c = TreeByReference::clone();
+    LayoutReference cast = LayoutReference(static_cast<LayoutNode *>(c.node()));
     cast.invalidAllSizesPositionsAndBaselines();
     return cast;
   }
 
   LayoutNode * node() const override {
-    assert(!SerializableReference::node().isGhost());
+    assert(!SerializableReference::node()->isGhost());
     return static_cast<LayoutNode *>(SerializableReference::node());
   }
 
@@ -67,8 +70,8 @@ public:
 
   // Tree
   LayoutReference childAtIndex(int i) {
-    TreeReference treeRefChild = TreeReference::treeChildAtIndex(i);
-    return LayoutReference(treeRefChild.node());
+    TreeByReference treeRefChild = TreeByReference::treeChildAtIndex(i);
+    return LayoutReference(static_cast<LayoutNode *>(treeRefChild.node()));
   }
   //int indexInParent() const { return this->node()->indexInParent(); }
   LayoutReference root() { return LayoutReference(this->node()->root()); }
@@ -78,13 +81,13 @@ public:
   //Add
   void addSibling(LayoutCursor * cursor, LayoutReference sibling, bool moveCursor);
   // Replace
-  //void replaceChildAtIndex(int oldChildIndex, LayoutReference newChild) { TreeReference::replaceChildAtIndexInPlace(oldChildIndex, newChild); }
+  //void replaceChildAtIndex(int oldChildIndex, LayoutReference newChild) { TreeByReference::replaceChildAtIndexInPlace(oldChildIndex, newChild); }
   void replaceChild(LayoutReference oldChild, LayoutReference newChild, LayoutCursor * cursor = nullptr, bool force = false);
   void replaceChildWithEmpty(LayoutReference oldChild, LayoutCursor * cursor = nullptr);
   void replaceWith(LayoutReference newChild, LayoutCursor * cursor) {
     LayoutReference p = parent();
     assert(p.isDefined());
-    p.replaceChildInPlace(*this, newChild, cursor);
+    p.replaceChild(*this, newChild, cursor);
   }
   void replaceWithJuxtapositionOf(LayoutReference leftChild, LayoutReference rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle = false);
   // Collapse

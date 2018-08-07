@@ -9,8 +9,6 @@ namespace Poincare {
 
 class SerializableReference : virtual public TreeByReference {
 public:
-  using TreeByReference::TreeByReference;
-
   SerializableNode * node() const override { return static_cast<SerializableNode *>(TreeByReference::node()); }
   // Serialization
   bool needsParenthesisWithParent(SerializableReference parentRef) {
@@ -25,7 +23,7 @@ public:
   // Tree
   SerializableReference serializableChildAtIndex(int i) {
     TreeByReference treeRefChild = TreeByReference::treeChildAtIndex(i);
-    return SerializableReference(treeRefChild.node());
+    return SerializableReference(static_cast<SerializableNode *>(treeRefChild.node()));
   }
 protected:
   SerializableReference(SerializableNode * n) : TreeByReference(n) {}

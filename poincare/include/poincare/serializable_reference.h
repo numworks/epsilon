@@ -2,16 +2,16 @@
 #define POINCARE_SERIALIZABLE_REFERENCE_H
 
 #include <poincare/preferences.h>
-#include <poincare/tree_reference.h>
+#include <poincare/tree_by_reference.h>
 #include <poincare/serializable_node.h>
 
 namespace Poincare {
 
-class SerializableReference : public TreeReference {
+class SerializableReference : virtual public TreeByReference {
 public:
-  using TreeReference::TreeReference;
+  using TreeByReference::TreeByReference;
 
-  SerializableNode * node() const override { return static_cast<SerializableNode *>(TreeReference::node()); }
+  SerializableNode * node() const override { return static_cast<SerializableNode *>(TreeByReference::node()); }
   // Serialization
   bool needsParenthesisWithParent(SerializableReference parentRef) {
     assert(isDefined());
@@ -24,12 +24,12 @@ public:
 
   // Tree
   SerializableReference serializableChildAtIndex(int i) {
-    TreeReference treeRefChild = TreeReference::treeChildAtIndex(i);
+    TreeByReference treeRefChild = TreeByReference::treeChildAtIndex(i);
     return SerializableReference(treeRefChild.node());
   }
+protected:
+  SerializableReference(SerializableNode * n) : TreeByReference(n) {}
 };
-
-typedef SerializableReference SerializableRef;
 
 }
 

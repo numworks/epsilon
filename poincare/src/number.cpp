@@ -37,18 +37,18 @@ double NumberNode::doubleApproximation() const {
   }
 }
 
-NumberReference createReference(double d) {
+static inline Number CreateNumber(double d) {
   if (std::isnan(d)) {
-    return UndefinedReference();
+    return Undefined();
   } else if (std::isinf(d)) {
-    return InfinityReference(d < 0.0);
+    return Infinity(d < 0.0);
   } else {
-    return FloatReference<double>(d);
+    return Float<double>(d);
   }
 }
 
-NumberReference NumberReference::Integer(const char * digits, size_t length, bool negative) {
-  IntegerReference i(digits, length, negative);
+Number Number::Integer(const char * digits, size_t length, bool negative) {
+  Integer i(digits, length, negative);
   if (!i.isInfinity()) {
     return i;
   }
@@ -57,71 +57,64 @@ NumberReference NumberReference::Integer(const char * digits, size_t length, boo
     digits++;
   }
   if (length > Decimal::k_maxExponentLength) {
-    return InfinityReference(negative);
+    return Infinity(negative);
   }
   int exponent = Decimal::Exponent(digits, length, nullptr, 0, nullptr, 0, negative);
-  return DecimalReference(digits, length, nullptr, 0, negative, exponent);
+  return Decimal(digits, length, nullptr, 0, negative, exponent);
 }
 
-template <typename T> static NumberReference NumberReference::Decimal(T f) {
+template <typename T> static Number Number::Decimal(T f) {
   if (std::isnan(f)) {
-    return UndefinedReference();
+    return Undefined();
   }
   if (std::isinf(f)) {
-    return InfiniteReference(f < 0.0);
+    return Infinite(f < 0.0);
   }
-  return DecimalReference(f);
+  return Decimal(f);
 }
 
-NumberReference NumberReference::BinaryOperation(const NumberReference i, const NumberReference j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
-  if (i.isAllocationFailure() || j.isAllocationFailure()) {
-    return NumberReference(ExpressionNode::FailedAllocationStaticNode());
-  }
+Number Number::BinaryOperation(const Number i, const Number j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
   if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
   // Integer + Integer
-    IntegerReference k = integerOp(IntegerReference(i.node()), IntegerReference(j.node()));
+    Integer k = integerOp(Integer(i.node()), Integer(j.node()));
     if (!k.isInfinity()) {
       return k;
     }
   } else if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Rational) {
   // Integer + Rational
-    RationalReference r = rationalOp(RationalReference(IntegerReference(i.node())), RationalReference(j.node()));
+    Rational r = rationalOp(Rational(Integer(i.node())), Rational(j.node()));
     if (!r.numeratorOrDenominatorIsInfinity()) {
       return r;
     }
   } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Integer) {
   // Rational + Integer
-    return NumberReference::BinaryOperation(j, i, integerOp, rationalOp, doubleOp);
+    return Number::BinaryOperation(j, i, integerOp, rationalOp, doubleOp);
   } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
   // Rational + Rational
-    RationalReference a = rationalOp(RationalReference(i.node()), RationalReference(j.node()));
+    Rational a = rationalOp(Rational(i.node()), Rational(j.node()));
     if (!a.numeratorOrDenominatorIsInfinity()) {
       return a;
     }
   }
   // one of the operand is Undefined/Infinity/Float or the Integer/Rational addition overflowed
   double a = doubleOp(i.numberNode()->doubleApproximation(), j.numberNode()->doubleApproximation());
-  return createReference(a);
+  return CreateNumber(a);
 }
 
-NumberReference NumberReference::Addition(const NumberReference i, const NumberReference j) {
-  return BinaryOperation(i, j, IntegerReference::Addition, RationalReference::Addition, [](double a, double b) { return a+b; });
+Number Number::Addition(const Number i, const Number j) {
+  return BinaryOperation(i, j, Integer::Addition, Rational::Addition, [](double a, double b) { return a+b; });
 }
 
-NumberReference NumberReference::Multiplication(const NumberReference i, const NumberReference j) {
-  return BinaryOperation(i, j, IntegerReference::Multiplication, RationalReference::Multiplication, [](double a, double b) { return a*b; });
+Number Number::Multiplication(const Number i, const Number j) {
+  return BinaryOperation(i, j, Integer::Multiplication, Rational::Multiplication, [](double a, double b) { return a*b; });
 }
 
-NumberReference NumberReference::Power(const NumberReference i, const NumberReference j) {
-  return BinaryOperation(i, j, IntegerReference::Power,
+Number Number::Power(const Number i, const Number j) {
+  return BinaryOperation(i, j, Integer::Power,
       // Special case for Rational^Rational: we escape to Float if the index is not an Integer
-      [](const RationalReference i, const RationalReference j) {
-        if (!j.isAllocationFailure() && j.typedNode()->denominator().isOne()) {
-          return RationalReference::IntegerPower(i, j);
-        } else {
-          // We return an overflown result to reach the escape case Float+Float
-          return RationalReference(IntegerReference::Overflow());
-        }
+      [](const Rational i, const Rational j) {
+        // We return an overflown result to reach the escape case Float+Float
+        return Rational(Integer::Overflow());
       },
       [](double a, double b) {
         return std::pow(a, b);

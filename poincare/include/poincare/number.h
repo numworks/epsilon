@@ -1,7 +1,7 @@
 #ifndef POINCARE_NUMBER_H
 #define POINCARE_NUMBER_H
 
-#include <poincare/expression_reference.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
@@ -11,11 +11,11 @@ namespace Poincare {
  * - Rational
  * - Float
  * - Decimal
- * - Infinite
+ * - Infinity
  */
 
-class IntegerReference;
-class RationalReference;
+class Integer;
+class Rational;
 
 class NumberNode : public ExpressionNode {
 public:
@@ -25,26 +25,26 @@ public:
   double doubleApproximation() const;
 };
 
-class NumberReference : public ExpressionReference {
+class Number : public Expression {
 public:
-  using ExpressionReference::ExpressionReference;
+  using Expression::Expression;
   NumberNode * numberNode() const { assert(!isAllocationFailure()); return static_cast<NumberNode *>(node()); }
-  /* Return either a IntegerReference, a DecimalReference or an InfiniteReference. */
-  static NumberReference Integer(const char * digits, size_t length, bool negative);
-  /* Return either a DecimalInteger or an InfiniteReference. */
-  template <typename T> static NumberReference Decimal(T f);
-  /* This set of Functions return either a RationalReference or a FloatReference
-   * or InfiniteReference in case of overflow. DecimalReference are not taken into
+  /* Return either a Integer, a Decimal or an Infinity. */
+  static Number ParseInteger(const char * digits, size_t length, bool negative);
+  /* Return either a DecimalInteger or an Infinity. */
+  template <typename T> static Number Decimal(T f);
+  /* This set of Functions return either a Rational or a Float
+   * or Infinity in case of overflow. Decimal are not taken into
    * account as it is not an internal node - it will always be turned into a
    * Rational/Float beforehand. */
-  static NumberReference Addition(const NumberReference i, const NumberReference j);
-  static NumberReference Multiplication(const NumberReference i, const NumberReference j);
-  static NumberReference Power(const NumberReference i, const NumberReference j);
+  static Number Addition(const Number i, const Number j);
+  static Number Multiplication(const Number i, const Number j);
+  static Number Power(const Number i, const Number j);
 private:
-  typedef IntegerReference (*IntegerBinaryOperation)(const IntegerReference, const IntegerReference);
-  typedef RationalReference (*RationalBinaryOperation)(const RationalReference, const RationalReference);
-  typedef double (*DoubleBinaryOperation)(double, double);
-  static NumberReference BinaryOperation(const NumberReference i, const NumberReference j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp);
+  typedef Integer (*IntegerBinaryOperation)(const Integer i, const Integer j);
+  typedef Rational (*RationalBinaryOperation)(const Rational i, const Rational j);
+  typedef double (*DoubleBinaryOperation)(double i, double j);
+  static Number BinaryOperation(const Number i, const Number j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp);
 };
 
 }

@@ -149,8 +149,8 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual Expression reduce(Context & context, Preferences::AngleUnit angleUnit) const;
-  /*!*/ virtual Expression beautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
 protected:
   // Private methods used in simplification process

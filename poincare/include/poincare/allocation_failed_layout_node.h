@@ -48,7 +48,6 @@ private:
 class AllocationFailedLayoutRef : public LayoutReference {
 public:
   AllocationFailedLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<AllocationFailedLayoutNode>(), true) {}
-  AllocationFailedLayoutRef(TreeNode * n) : LayoutReference(n) {}
 };
 
 }

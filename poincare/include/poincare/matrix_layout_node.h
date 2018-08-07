@@ -55,7 +55,6 @@ private:
 class MatrixLayoutRef : public LayoutReference {
   friend class MatrixLayoutNode;
 public:
-  MatrixLayoutRef(TreeNode * n) : LayoutReference(n) {}
   MatrixLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>(), true) {}
 
   MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) :

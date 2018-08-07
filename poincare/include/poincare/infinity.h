@@ -2,11 +2,16 @@
 #define POINCARE_INFINITY_H
 
 #include <poincare/number.h>
+#include <poincare/allocation_failed_expression_node.h>
 
 namespace Poincare {
 
+class AllocationFailureInfinityNode;
+
 class InfinityNode : public NumberNode {
 public:
+  static InfinityNode * FailedAllocationStaticNode();
+
   void setNegative(bool negative) { m_negative = negative; }
 
   // TreeNode
@@ -20,10 +25,10 @@ public:
   Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
 
   // Approximation
-  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<float>();
   }
-  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<double>();
   }
 
@@ -31,17 +36,30 @@ public:
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
-  template<typename T> EvaluationReference<T> templatedApproximate() const;
+  template<typename T> Evaluation<T> templatedApproximate() const;
   bool m_negative;
 };
 
-class InfinityReference : public NumberReference {
+class AllocationFailureInfinityNode : public InfinityNode, public AllocationFailedExpressionNode {
+  using AllocationFailedExpressionNode::type;
+  using AllocationFailedExpressionNode::approximate;
+  using AllocationFailedExpressionNode::writeTextInBuffer;
+  using AllocationFailedExpressionNode::createLayout;
+  using AllocationFailedExpressionNode::numberOfChildren;
+  using AllocationFailedExpressionNode::isAllocationFailure;
+  size_t size() const override { return sizeof(AllocationFailureInfinityNode); }
+#if TREE_LOG
+  const char * description() const override { return "AllocationFailureInfinityNode";  }
+#endif
+};
+
+class Infinity : public Number {
 public:
-  InfinityReference(bool negative) : NumberReference(TreePool::sharedPool()->createTreeNode<InfinityNode>(), true) {
-    if (!node->isAllocationFailure()) {
-      static_cast<InfinityNode *>(node)->setNegative(negative);
-    }
+  Infinity(bool negative) : Number(TreePool::sharedPool()->createTreeNode<InfinityNode>()) {
+    node()->setNegative(negative);
   }
+private:
+  InfinityNode * node() { return static_cast<InfinityNode *>(Number::node()); }
 };
 
 }

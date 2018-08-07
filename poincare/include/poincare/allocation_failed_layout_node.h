@@ -9,7 +9,10 @@ namespace Poincare {
 
 class AllocationFailedLayoutNode : public LayoutNode {
 public:
-  using GhostLayoutNode::GhostLayoutNode;
+  static AllocationFailedLayoutNode * FailedAllocationStaticNode() {
+    return static_cast<AllocationFailedLayoutNode *>(LayoutNode::FailedAllocationStaticNode());
+  }
+
   // TreeNode
   bool isAllocationFailure() const override { return true; }
   size_t size() const override { return sizeof(AllocationFailedLayoutNode); }
@@ -47,7 +50,7 @@ private:
 
 class AllocationFailedLayoutRef : public LayoutReference {
 public:
-  AllocationFailedLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<AllocationFailedLayoutNode>(), true) {}
+  AllocationFailedLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<AllocationFailedLayoutNode>()) {}
 };
 
 }

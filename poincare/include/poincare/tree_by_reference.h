@@ -36,7 +36,6 @@ public:
 
   bool isDefined() const { return m_identifier != TreePool::NoNodeIdentifier && node() != nullptr; }
   bool isAllocationFailure() const { return isDefined() && node()->isAllocationFailure(); }
-  bool isChildRemovalTolerant() const { return isDefined() && node()->isChildRemovalTolerant(); }
 
   int nodeRetainCount() const {
     assert(isDefined());

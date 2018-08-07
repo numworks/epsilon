@@ -7,7 +7,7 @@
 namespace Poincare {
 
 template<typename T>
-class MatrixComplexReference;
+class MatrixComplex;
 
 template<typename T>
 class MatrixComplexNode : public EvaluationNode<T> {
@@ -34,36 +34,36 @@ public:
   void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
   void setNumberOfColumns(int columns) { assert(columns >= 0); m_numberOfColumns = columns; }
   bool isUndefined() const override;
-  ExpressionReference complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
+  Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
   std::complex<T> trace() const override;
   std::complex<T> determinant() const override;
-  EvaluationReference<T> inverse() const override;
-  EvaluationReference<T> transpose() const override;
+  Evaluation<T> inverse() const override;
+  Evaluation<T> transpose() const override;
 private:
   int m_numberOfRows;
   int m_numberOfColumns;
 };
 
 template<typename T>
-class MatrixComplexReference : public EvaluationReference<T> {
+class MatrixComplex : public Evaluation<T> {
 friend class MatrixComplexNode<T>;
 public:
-  MatrixComplexReference(TreeNode * t) : EvaluationReference<T>(t) {}
-  MatrixComplexReference() : EvaluationReference<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >(), true) {}
-  static MatrixComplexReference<T> Undefined() {
+  //MatrixComplex(TreeNode * t) : Evaluation<T>(t) {}
+  MatrixComplex() : Evaluation<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >(), true) {}
+  static MatrixComplex<T> Undefined() {
     std::complex<T> undef = std::complex<T>(NAN, NAN);
-    return MatrixComplexReference<T>((std::complex<T> *)&undef, 1, 1);
+    return MatrixComplex<T>((std::complex<T> *)&undef, 1, 1);
   }
-  static MatrixComplexReference<T> createIdentity(int dim);
+  static MatrixComplex<T> createIdentity(int dim);
   int numberOfRows() const;
   int numberOfColumns() const;
   void setDimensions(int rows, int columns);
-  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
+  void addChildAtIndex(Complex<T> t, int index, int currentNumberOfChildren) override;
 private:
   void setNumberOfRows(int rows);
   void setNumberOfColumns(int columns);
-  MatrixComplexReference(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
-  MatrixComplexNode<T> * typedNode() const { assert(!(this->node())->isAllocationFailure()); return static_cast<MatrixComplexNode<T> *>(TreeReference::node()); }
+  MatrixComplex(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
+  MatrixComplexNode<T> * node() const { return static_cast<MatrixComplexNode<T> *>(Evaluation<T>::node()); }
 };
 
 }

@@ -225,17 +225,4 @@ void TreeByReference::setTo(const TreeByReference & tr) {
   }
 }
 
-void TreeByReference::buildGhostChildren() {
-  assert(isDefined());
-  for (int i = 0; i < numberOfChildren(); i++) {
-    // Add a ghost child
-    GhostReference ghost;
-    if (ghost.isAllocationFailure()) {
-      replaceWithAllocationFailureInPlace(numberOfChildren());
-      return;
-    }
-    TreePool::sharedPool()->move(node()->next(), ghost.node(), 0);
-  }
-}
-
 }

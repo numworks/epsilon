@@ -4,7 +4,7 @@
 
 namespace Poincare {
 
-TreeNode * ExpressionNode::FailedAllocationStaticNode() {
+ExpressionNode * ExpressionNode::FailedAllocationStaticNode() {
   static AllocationFailedExpressionNode FailureNode;
   TreePool::sharedPool()->registerStaticNodeIfRequired(&FailureNode);
   return &FailureNode;

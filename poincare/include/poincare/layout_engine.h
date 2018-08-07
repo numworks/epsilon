@@ -1,19 +1,18 @@
 #ifndef POINCARE_LAYOUT_ENGINE_H
 #define POINCARE_LAYOUT_ENGINE_H
 
-#include <poincare/expression_reference.h>
+#include <poincare/expression.h>
 #include <poincare/layout_reference.h>
+#include <poincare/horizontal_layout_node.h>
 
 namespace Poincare {
-
-class HorizontalLayoutRef;
 
 class LayoutEngine {
 
 public:
   /* Expression to Layout */
-  static LayoutRef createInfixLayout(const ExpressionReference expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
-  static LayoutRef createPrefixLayout(const ExpressionReference expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  static LayoutRef createInfixLayout(const Expression expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  static LayoutRef createPrefixLayout(const Expression expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
 
   /* Create special layouts */
   static LayoutRef createParenthesedLayout(LayoutRef layout, bool cloneLayout);
@@ -22,7 +21,7 @@ public:
 
   /* SerializableReference to Text */
   static int writeInfixSerializableRefTextInBuffer(
-      const SerializableRef serializableRef,
+      const SerializableReference serializableRef,
       char * buffer,
       int bufferSize,
       Preferences::PrintFloatMode floatDisplayMode,
@@ -32,7 +31,7 @@ public:
       int lastChildIndex = -1);
 
   static int writePrefixSerializableRefTextInBuffer(
-      const SerializableRef serializableRef,
+      const SerializableReference serializableRef,
       char * buffer,
       int bufferSize,
       Preferences::PrintFloatMode floatDisplayMode,
@@ -44,7 +43,7 @@ public:
   static int writeOneCharInBuffer(char * buffer, int bufferSize, char charToWrite);
 
 private:
-  static void writeChildTreeInBuffer(SerializableRef childRef, SerializableRef parentRef, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, int * numberOfChar);
+  static void writeChildTreeInBuffer(SerializableReference childRef, SerializableReference parentRef, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, int * numberOfChar);
 };
 
 }

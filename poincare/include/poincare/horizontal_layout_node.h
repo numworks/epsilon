@@ -13,6 +13,12 @@ namespace Poincare {
 class HorizontalLayoutNode : public LayoutNode {
   friend class LayoutReference;
 public:
+
+  static HorizontalLayoutNode * FailedAllocationStaticNode() {
+    // TODO: Check this is OK
+    return static_cast<HorizontalLayoutNode *>(LayoutNode::FailedAllocationStaticNode());
+  }
+
   HorizontalLayoutNode() :
     LayoutNode(),
     m_numberOfChildren(0)
@@ -62,26 +68,26 @@ class HorizontalLayoutRef : public LayoutReference {
   friend class HorizontalLayoutNode;
 public:
   HorizontalLayoutRef(HorizontalLayoutNode * n) : LayoutReference(n) {}
-  HorizontalLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>(), true) {}
+  HorizontalLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>()) {}
 
   HorizontalLayoutRef(LayoutRef l) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l, 0, 0);
+    addChildAtIndexInPlace(l, 0, 0);
   }
 
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l1, 0, 0);
-    addChildTreeAtIndex(l2, 1, 1);
+    addChildAtIndexInPlace(l1, 0, 0);
+    addChildAtIndexInPlace(l2, 1, 1);
   }
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l1, 0, 0);
-    addChildTreeAtIndex(l2, 1, 1);
-    addChildTreeAtIndex(l3, 2, 2);
+    addChildAtIndexInPlace(l1, 0, 0);
+    addChildAtIndexInPlace(l2, 1, 1);
+    addChildAtIndexInPlace(l3, 2, 2);
   }
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) : HorizontalLayoutRef() {
-    addChildTreeAtIndex(l1, 0, 0);
-    addChildTreeAtIndex(l2, 1, 1);
-    addChildTreeAtIndex(l3, 2, 2);
-    addChildTreeAtIndex(l4, 3, 3);
+    addChildAtIndexInPlace(l1, 0, 0);
+    addChildAtIndexInPlace(l2, 1, 1);
+    addChildAtIndexInPlace(l3, 2, 2);
+    addChildAtIndexInPlace(l4, 3, 3);
   }
   void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
     LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);

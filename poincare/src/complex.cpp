@@ -6,17 +6,17 @@ extern "C" {
 #include <poincare/complex.h>
 //#include <poincare/division.h>
 //#include <poincare/matrix.h>
-#include <poincare/expression_reference.h>
-#include <poincare/undefined.h>
-#include <poincare/infinity.h>
+#include <poincare/expression.h>
+//#include <poincare/undefined.h>
+//#include <poincare/infinity.h>
 //#include <poincare/decimal.h>
 //#include <poincare/multiplication.h>
-#include <poincare/opposite.h>
+//#include <poincare/opposite.h>
 //#include <poincare/addition.h>
 //#include <poincare/subtraction.h>
 //#include <poincare/matrix.h>
 //#include <poincare/power.h>
-#include <poincare/symbol.h>
+//#include <poincare/symbol.h>
 #include <ion.h>
 #include <cmath>
 
@@ -43,25 +43,25 @@ T ComplexNode<T>::toScalar() const {
 }
 
 template<typename T>
-ExpressionReference ComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
+Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   if (std::isnan(this->real()) || std::isnan(this->imag())) {
-    return UndefinedReference();
+    return Undefined();
   }
   switch (complexFormat) {
     case Preferences::ComplexFormat::Cartesian:
     {
-      ExpressionReference real(nullptr);
-      ExpressionReference imag(nullptr);
+      Expression real(nullptr);
+      Expression imag(nullptr);
       if (this->real() != 0 || this->imag() == 0) {
-        real = NumberReference::Decimal<T>(this->real());
+        real = Number::Decimal<T>(this->real());
       }
       if (this->imag() != 0) {
         if (this->imag() == 1.0 || this->imag() == -1) {
-          imag = SymbolReference(Ion::Charset::IComplex);
+          imag = Symbol(Ion::Charset::IComplex);
         } else if (this->imag() > 0) {
-          imag = MultiplicationReference(NumberReference::Decimal(this->imag()), SymbolReference(Ion::Charset::IComplex));
+          imag = Multiplication(Number::Decimal(this->imag()), Symbol(Ion::Charset::IComplex));
         } else {
-          imag = MultiplicationReference(NumberReference::Decimal(-this->imag()), SymbolReference(Ion::Charset::IComplex));
+          imag = Multiplication(Number::Decimal(-this->imag()), Symbol(Ion::Charset::IComplex));
         }
       }
       if (!imag.isDefined()) {
@@ -70,57 +70,57 @@ ExpressionReference ComplexNode<T>::complexToExpression(Preferences::ComplexForm
         if (this->imag() > 0) {
           return imag;
         } else {
-          return OppositeReference(imag);
+          return Opposite(imag);
         }
         return imag;
       } else if (this->imag() > 0) {
-        return AdditionReference(real, imag);
+        return Addition(real, imag);
       } else {
-        return SubtractionReference(real, imag);
+        return Subtraction(real, imag);
       }
     }
     default:
     {
       assert(complexFormat == Preferences::ComplexFormat::Polar);
-      ExpressionReference norm(nullptr);
-      ExpressionReference exp(nullptr);
+      Expression norm(nullptr);
+      Expression exp(nullptr);
       T r = std::abs(*this);
       T th = std::arg(*this);
       if (r != 1 || th == 0) {
-        norm = NumberReference::Decimal(r);
+        norm = Number::Decimal(r);
       }
       if (r != 0 && th != 0) {
-        ExpressionReference arg(nullptr);
+        Expression arg(nullptr);
         if (th == 1.0) {
-          arg = SymbolReference(Ion::Charset::IComplex);
+          arg = Symbol(Ion::Charset::IComplex);
         } else if (th == -1.0) {
-          arg = OppositeReference(SymbolReference(Ion::Charset::IComplex));
+          arg = Opposite(Symbol(Ion::Charset::IComplex));
         } else if (th > 0) {
-          arg = MultiplicationReference(NumberReference::Decimal(th), SymbolReference(Ion::Charset::IComplex));
+          arg = Multiplication(Number::Decimal(th), Symbol(Ion::Charset::IComplex));
         } else {
-          arg = OppositeRefrence(MultiplicationReference(NumberReference::Decimal(-th), SymbolReference(Ion::Charset::IComplex)));
+          arg = OppositeRefrence(Multiplication(Number::Decimal(-th), Symbol(Ion::Charset::IComplex)));
         }
-        exp = PowerReference(SymbolReference(Ion::Charset::Exponential), arg);
+        exp = Power(Symbol(Ion::Charset::Exponential), arg);
       }
       if (!exp.isDefined()) {
         return norm;
       } else if (!norm.isDefined()) {
         return exp;
       } else {
-        return MultiplicationReference(norm, exp);
+        return Multiplication(norm, exp);
       }
     }
   }
 }
 
 template<typename T>
-EvaluationReference<T> ComplexNode<T>::inverse() const {
-  return ComplexReference<T>(Division::compute(std::complex<T>(1.0), *this));
+Evaluation<T> ComplexNode<T>::inverse() const {
+  return Complex<T>(Division::compute(std::complex<T>(1.0), *this));
 }
 
 template<typename T>
-ComplexReference<T>::ComplexReference(std::complex<T> c) :
-  EvaluationReference<T>()
+Complex<T>::Complex(std::complex<T> c) :
+  Evaluation<T>()
 {
   TreeNode * node = TreePool::sharedPool()->createTreeNode<ComplexNode<T>>();
   this->m_identifier = node->identifier();
@@ -129,7 +129,7 @@ ComplexReference<T>::ComplexReference(std::complex<T> c) :
   }
 }
 
-template class ComplexReference<float>;
-template class ComplexReference<double>;
+template class Complex<float>;
+template class Complex<double>;
 
 }

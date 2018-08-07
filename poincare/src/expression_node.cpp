@@ -1,5 +1,5 @@
 #include <poincare/expression_node.h>
-#include <poincare/undefined.h>
+//#include <poincare/undefined.h>
 #include <poincare/allocation_failed_expression_node.h>
 
 namespace Poincare {
@@ -10,23 +10,19 @@ TreeNode * ExpressionNode::FailedAllocationStaticNode() {
   return &FailureNode;
 }
 
-ExpressionReference ExpressionNode::replaceSymbolWithExpression(char symbol, ExpressionReference expression) {
-  ExpressionReference reference(this);
-  int nbChildren = reference.numberOfChildren();
+Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression expression) {
+  Expression e(this);
+  int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    ExpressionReference newChild = reference.childAtIndex(i).node()->replaceSymbolWithExpression(symbol, expression);
-    if (reference.numberOfChildren() < nbChildren) {
-      reference.addChildTreeAtIndex(newChild, i, nbChildren - 1);
-    } else {
-      reference.replaceTreeChildAtIndex(i, newChild);
-    }
+    Expression newChild = e.childAtIndex(i).node()->replaceSymbolWithExpression(symbol, expression);
+    e = replaceChildAtIndex(i, newChild);
   }
-  return reference;
+  return e;
 }
 
-ExpressionReference ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(false);
-  return ExpressionReference(nullptr);
+  return Expression(nullptr);
 }
 
 int ExpressionNode::polynomialDegree(char symbolName) const {
@@ -38,10 +34,10 @@ int ExpressionNode::polynomialDegree(char symbolName) const {
   return 0;
 }
 
-int ExpressionNode::getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const {
+int ExpressionNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg == 0) {
-    coefficients[0] = ExpressionReference(this).clone();
+    coefficients[0] = Expression(this);
     return 0;
   }
   return -1;
@@ -77,34 +73,34 @@ float ExpressionNode::characteristicXRange(Context & context, Preferences::Angle
 
 int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted) {
   if (e1->type() > e2->type()) {
-    if (canBeInterrupted && ExpressionReference::shouldStopProcessing()) {
+    if (canBeInterrupted && Expression::shouldStopProcessing()) {
       return 1;
     }
     return -(e2->simplificationOrderGreaterType(e1, canBeInterrupted));
   } else if (e1->type() == e2->type()) {
     return e1->simplificationOrderSameType(e2, canBeInterrupted);
   } else {
-    if (canBeInterrupted && ExpressionReference::shouldStopProcessing()) {
+    if (canBeInterrupted && Expression::shouldStopProcessing()) {
       return -1;
     }
     return e1->simplificationOrderGreaterType(e2, canBeInterrupted);
   }
 }
 
-ExpressionReference ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression ExpressionNode::reduce(Context & context, Preferences::AngleUnit angleUnit) const {
   for (int i = 0; i < numberOfChildren(); i++) {
     if (childAtIndex(i)->isAllocationFailure()) {
       return failedAllocationStaticNode();
     }
     if (childAtIndex(i)->type() == Type::Undefined) {
-      return UndefinedReference();
+      return Undefined();
     }
   }
-  return ExpressionReference(this);
+  return Expression(this);
 }
 
-ExpressionReference ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return ExpressionReference(this);
+Expression ExpressionNode::beautify(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Expression(this);
 }
 
 bool ExpressionNode::isOfType(Type * types, int length) const {
@@ -116,8 +112,8 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
   return false;
 }
 
-ExpressionReference ExpressionNode::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  return ExpressionReference(nullptr);
+Expression ExpressionNode::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Expression(nullptr);
 }
 
 }

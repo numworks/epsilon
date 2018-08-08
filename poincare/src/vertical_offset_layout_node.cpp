@@ -1,6 +1,6 @@
 #include <poincare/vertical_offset_layout_node.h>
 #include <poincare/empty_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/left_parenthesis_layout_node.h>
 #include <poincare/right_parenthesis_layout_node.h>
 #include <ion/charset.h>
@@ -168,23 +168,23 @@ int VerticalOffsetLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, P
       return 0;
     }
     // If the layout is a subscript, write "_{indice}"
-    int numberOfChar = LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, '_');
+    int numberOfChar = SerializationHelper::Char(buffer, bufferSize, '_');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    numberOfChar += LayoutEngine::writeOneCharInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, '{');
+    numberOfChar += SerializationHelper::Char(buffer+numberOfChar, bufferSize-numberOfChar, '{');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    numberOfChar += LayoutEngine::writeOneCharInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, '}');
+    numberOfChar += SerializationHelper::Char(buffer+numberOfChar, bufferSize-numberOfChar, '}');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     return numberOfChar;
   }
   assert(m_type == Type::Superscript);
   // If the layout is a superscript, write "^(indice)"
-  int numberOfChar = LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "^");
+  int numberOfChar = SerializationHelper::Prefix(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "^");
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Add a multiplication if omitted.

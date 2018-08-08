@@ -2,7 +2,7 @@
 #define POINCARE_BINOMIAL_COEFFICIENT_H
 
 #include <poincare/evaluation.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/static_hierarchy.h>
 
 namespace Poincare {
@@ -17,7 +17,7 @@ private:
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "binomial");
+    return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "binomial");
   }
   /* Simplification */
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;

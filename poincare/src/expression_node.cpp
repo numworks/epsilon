@@ -99,8 +99,8 @@ Expression ExpressionNode::reduce(Context & context, Preferences::AngleUnit angl
   return Expression(this);
 }
 
-Expression ExpressionNode::beautify(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Expression(this);
+Expression Expression::beautify(Context & context, Preferences::AngleUnit angleUnit) const {
+  return *this;
 }
 
 bool ExpressionNode::isOfType(Type * types, int length) const {

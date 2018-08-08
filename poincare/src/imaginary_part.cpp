@@ -1,5 +1,5 @@
 #include <poincare/imaginary_part.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/rational.h>
 #include <cmath>
 extern "C" {
@@ -26,7 +26,7 @@ Expression ImaginaryPart::shallowReduce(Context& context, Preferences::AngleUnit
   Expression * op = editableOperand(0);
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   if (op->type() == Type::Rational) {

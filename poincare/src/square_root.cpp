@@ -1,6 +1,6 @@
 #include <poincare/square_root.h>
 #include <poincare/power.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/nth_root_layout_node.h>
 extern "C" {
 #include <assert.h>
@@ -21,7 +21,7 @@ Expression * SquareRoot::clone() const {
 
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");
 int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
+  return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
 }
 
 template<typename T>
@@ -33,7 +33,7 @@ std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, Preference
    * avoid weird results as sqrt(-1) = 6E-16+i, we compute the argument of
    * the result of sqrt(c) and if arg ~ 0 [Pi], we discard the residual imaginary
    * part and if arg ~ Pi/2 [Pi], we discard the residual real part. */
-  return ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument(result);
+  return ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result);
 }
 
 Expression SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
@@ -43,7 +43,7 @@ Expression SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit an
   }
 #if MATRIX_EXACT_REDUCING
   if (operand(0)->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   Power * p = new Power(operand(0), new Rational(1, 2), false);

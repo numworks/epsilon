@@ -1,6 +1,6 @@
 #include "integral_graph_controller.h"
 #include "../../shared/text_field_delegate.h"
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include "../app.h"
 
 #include <assert.h>
@@ -39,7 +39,7 @@ double IntegralGraphController::cursorNextStep(double x, int direction) {
 ExpressionLayout * IntegralGraphController::createFunctionLayout(const char * functionName) {
   char buffer[7] = "0(x)dx";
   buffer[0] = functionName[0];
-  return LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
+  return LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
 }
 
 }

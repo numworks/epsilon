@@ -1,6 +1,6 @@
 #include <poincare/arc_tangent.h>
 #include <poincare/trigonometry.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 extern "C" {
 #include <assert.h>
 }
@@ -24,7 +24,7 @@ Expression ArcTangent::shallowReduce(Context& context, Preferences::AngleUnit an
   }
 #if MATRIX_EXACT_REDUCING
   if (operand(0)->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);

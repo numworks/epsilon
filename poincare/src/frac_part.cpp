@@ -1,5 +1,5 @@
 #include <poincare/frac_part.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/rational.h>
 extern "C" {
 #include <assert.h>
@@ -25,7 +25,7 @@ Expression FracPart::shallowReduce(Context& context, Preferences::AngleUnit angl
   Expression * op = editableOperand(0);
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   if (op->type() != Type::Rational) {

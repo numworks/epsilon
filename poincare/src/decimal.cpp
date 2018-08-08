@@ -2,7 +2,7 @@
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/infinity.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/ieee754.h>
 #include <assert.h>
 #include <ion.h>
@@ -107,7 +107,7 @@ bool DecimalNode::needsParenthesisWithParent(SerializableNode * parentNode) cons
 LayoutRef DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
-  return LayoutEngine::createStringLayout(buffer, numberOfChars);
+  return LayoutHelper::String(buffer, numberOfChars);
 }
 
 int DecimalNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

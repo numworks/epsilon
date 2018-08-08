@@ -4,7 +4,7 @@
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
 #include <poincare/symbol.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/parenthesis.h>
 #include <ion.h>
 extern "C" {
@@ -43,7 +43,7 @@ Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit ang
   }
 #if MATRIX_EXACT_REDUCING
   if (operand(0)->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   if (operand(0)->type() == Type::Rational) {

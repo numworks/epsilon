@@ -1,6 +1,6 @@
 #include <poincare/undefined.h>
 #include <poincare/complex.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 
 extern "C" {
 #include <math.h>
@@ -21,7 +21,7 @@ int UndefinedNode::polynomialDegree(char symbolName) const {
 LayoutRef UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[6];
   int numberOfChars = PrintFloat::convertFloatToText<float>(NAN, buffer, 6, numberOfSignificantDigits, floatDisplayMode);
-  return LayoutEngine::createStringLayout(buffer, numberOfChars);
+  return LayoutHelper::String(buffer, numberOfChars);
 }
 
 int UndefinedNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

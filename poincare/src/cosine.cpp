@@ -3,7 +3,7 @@
 #include <poincare/symbol.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <ion.h>
 extern "C" {
 #include <assert.h>
@@ -40,7 +40,7 @@ Expression Cosine::shallowReduce(Context& context, Preferences::AngleUnit angleU
 #if MATRIX_EXACT_REDUCING
   Expression * op = editableOperand(0);
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   return Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);

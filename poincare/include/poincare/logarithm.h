@@ -1,7 +1,7 @@
 #ifndef POINCARE_LOGARITHM_H
 #define POINCARE_LOGARITHM_H
 
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/bounded_static_hierarchy.h>
 #include <poincare/integer.h>
 
@@ -16,7 +16,7 @@ private:
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "log");
+    return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "log");
   }
   /* Simplification */
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;

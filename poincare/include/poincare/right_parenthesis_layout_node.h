@@ -2,7 +2,7 @@
 #define POINCARE_RIGHT_PARENTHESIS_LAYOUT_NODE_H
 
 #include <poincare/parenthesis_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -18,7 +18,7 @@ public:
 
   // SerializableNode
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, ')');
+    return SerializationHelper::Char(buffer, bufferSize, ')');
   }
 
   // TreeNode

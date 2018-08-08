@@ -2,7 +2,7 @@
 #include <poincare/hyperbolic_cosine.h>
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/division.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/trigonometry.h>
 extern "C" {
 #include <assert.h>
@@ -28,7 +28,7 @@ Expression HyperbolicTangent::shallowReduce(Context& context, Preferences::Angle
 #if MATRIX_EXACT_REDUCING
   Expression * op = editableOperand(0);
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   return this;

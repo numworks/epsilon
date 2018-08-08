@@ -1,5 +1,5 @@
 #include <poincare/char_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <ion/charset.h>
 
 namespace Poincare {
@@ -28,7 +28,7 @@ void CharLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
 }
 
 int CharLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, m_char);
+  return SerializationHelper::Char(buffer, bufferSize, m_char);
 }
 
 bool CharLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {

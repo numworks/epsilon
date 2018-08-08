@@ -5,7 +5,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/trigonometry.h>
 #include <poincare/hyperbolic_tangent.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 extern "C" {
 #include <assert.h>
 }
@@ -41,7 +41,7 @@ Expression Tangent::shallowReduce(Context& context, Preferences::AngleUnit angle
 #if MATRIX_EXACT_REDUCING
   Expression * op = editableOperand(0);
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   Expression * newExpression = Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);

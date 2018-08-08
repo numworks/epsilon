@@ -87,7 +87,7 @@ public:
   }
   bool isEqualToItsApproximationLayout(Expression approximation, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context);
 
-  /* Layout Engine */
+  /* Layout Helper */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return this->node()->createLayout(floatDisplayMode, numberOfSignificantDigits); }
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const { return this->node()->writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
 
@@ -95,7 +95,7 @@ public:
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   void simplify(Context & context, Preferences::AngleUnit angleUnit);
 
-  /* Approximation Engine */
+  /* Approximation Helper */
   template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const;
   template<typename U> U approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
   template<typename U> static U approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit);

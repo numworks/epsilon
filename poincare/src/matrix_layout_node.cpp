@@ -2,7 +2,7 @@
 #include <poincare/bracket_pair_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/square_bracket_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -126,7 +126,7 @@ int MatrixLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferenc
     buffer[numberOfChar++] = '[';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-    numberOfChar += LayoutEngine::writeInfixSerializableRefTextInBuffer(SerializableRef(this), buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
+    numberOfChar += SerializationHelper::Infix(SerializableRef(this), buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     buffer[numberOfChar++] = ']';

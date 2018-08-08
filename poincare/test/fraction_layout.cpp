@@ -13,7 +13,7 @@ QUIZ_CASE(poincare_fraction_layout_create) {
    * 12|34+5 -> "Divide" -> --- + 5
    *                        |34
    * */
-  HorizontalLayout * layout = static_cast<HorizontalLayout *>(LayoutEngine::createStringLayout("1234+5", 6));
+  HorizontalLayout * layout = static_cast<HorizontalLayout *>(LayoutHelper::String("1234+5", 6));
   ExpressionLayoutCursor cursor(layout->editableChild(2), ExpressionLayoutCursor::Position::Left);
   cursor.addFractionLayoutAndCollapseSiblings();
   assert_expression_layout_serialize_to(layout, "(12)/(34)+5");
@@ -29,8 +29,8 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
    * */
   HorizontalLayout * layout1 = new HorizontalLayout(
       new FractionLayout(
-        LayoutEngine::createStringLayout("12", 2),
-        LayoutEngine::createStringLayout("34", 2),
+        LayoutHelper::String("12", 2),
+        LayoutHelper::String("34", 2),
         false),
       false);
   ExpressionLayoutCursor cursor1(layout1->editableChild(0)->editableChild(1), ExpressionLayoutCursor::Position::Left);
@@ -61,7 +61,7 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
 QUIZ_CASE(poincare_fraction_layout_serialize) {
   FractionLayout * layout = new FractionLayout(
       new CharLayout('1'),
-      LayoutEngine::createStringLayout("2+3", 3),
+      LayoutHelper::String("2+3", 3),
       false);
   assert_expression_layout_serialize_to(layout, "(1)/(2+3)");
   delete layout;

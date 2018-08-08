@@ -1,7 +1,7 @@
 #include <poincare/binomial_coefficient_layout_node.h>
 #include <poincare/left_parenthesis_layout_node.h>
 #include <poincare/right_parenthesis_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -75,7 +75,7 @@ void BinomialCoefficientLayoutNode::moveCursorDown(LayoutCursor * cursor, bool *
 }
 
 int BinomialCoefficientLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "binomial");
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "binomial");
 }
 
 KDSize BinomialCoefficientLayoutNode::computeSize() {

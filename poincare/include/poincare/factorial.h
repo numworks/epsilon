@@ -2,7 +2,7 @@
 #define POINCARE_FACTORIAL_H
 
 #include <poincare/static_hierarchy.h>
-#include <poincare/approximation_engine.h>
+#include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
@@ -22,10 +22,10 @@ private:
   /* Evaluation */
   template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
+    return ApproximationHelper::Map<float>(this, context, angleUnit,computeOnComplex<float>);
   }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
+    return ApproximationHelper::Map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
 
 #if 0

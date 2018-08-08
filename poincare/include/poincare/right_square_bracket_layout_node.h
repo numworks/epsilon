@@ -2,7 +2,7 @@
 #define POINCARE_RIGHT_SQUARE_BRACKET_LAYOUT_NODE_H
 
 #include <poincare/square_bracket_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -10,7 +10,7 @@ class RightSquareBracketLayoutNode : public SquareBracketLayoutNode {
 public:
   using SquareBracketLayoutNode::SquareBracketLayoutNode;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, ']');
+    return SerializationHelper::Char(buffer, bufferSize, ']');
   }
   bool isRightBracket() const override { return true; }
 

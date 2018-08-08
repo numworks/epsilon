@@ -1,9 +1,9 @@
 #ifndef POINCARE_SEQUENCE_H
 #define POINCARE_SEQUENCE_H
 
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/static_hierarchy.h>
-#include <poincare/approximation_engine.h>
+#include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
@@ -12,7 +12,7 @@ class Sequence : public StaticHierarchy<3>  {
 private:
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+    return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   virtual LayoutRef createSequenceLayout(LayoutRef subscriptLayout, LayoutRef superscriptLayout, LayoutRef argumentLayout) const = 0;
   virtual const char * name() const = 0;

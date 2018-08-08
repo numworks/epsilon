@@ -12,6 +12,8 @@ class OppositeNode : public ExpressionNode {
 public:
   static OppositeNode * FailedAllocationStaticNode();
 
+  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>(-c); }
+
   // TreeNode
   size_t size() const override { return sizeof(OppositeNode); }
 #if TREE_LOG
@@ -39,9 +41,6 @@ public:
 
   // Simplification
   virtual Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-
-private:
-  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::AngleUnit angleUnit) { return Complex<T>(-c); }
 };
 
 class Opposite : public Expression {

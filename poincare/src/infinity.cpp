@@ -1,4 +1,5 @@
 #include <poincare/infinity.h>
+#include <poincare/allocation_failure_expression_node.h>
 #include <poincare/complex.h>
 #include <poincare/layout_engine.h>
 
@@ -10,7 +11,7 @@ extern "C" {
 namespace Poincare {
 
 InfinityNode * InfinityNode::FailedAllocationStaticNode() {
-  static AllocationFailureInfinityNode failure;
+  static AllocationFailureExpressionNode<InfinityNode> failure;
   return &failure;
 }
 

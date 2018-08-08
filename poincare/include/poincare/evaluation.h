@@ -43,7 +43,7 @@ template<typename T>
 class Evaluation : public TreeByValue {
 public:
   EvaluationNode<T> * node() const override {
-    assert(!TreeByValue::node().isGhost());
+    assert(!TreeByValue::node()->isGhost());
     return static_cast<EvaluationNode<T> *>(TreeByValue::node());
   }
   typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }

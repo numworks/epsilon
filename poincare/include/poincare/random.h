@@ -24,13 +24,13 @@ private:
   }
   const char * name() const { return "random"; }
   /* Evaluation */
-  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<float>();
   }
-  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<double>();
   }
-  template <typename T> EvaluationReference<T> templateApproximate()) const {
+  template <typename T> Evaluation<T> templateApproximate()) const {
     return new Complex<T>(random<T>());
   }
 };

@@ -218,13 +218,13 @@ ExpressionReference ExpressionReference::deepBeautify(Context & context, Prefere
 
 template<typename U>
 ExpressionReference ExpressionReference::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const {
-  EvaluationReference<U> e = this->node()->approximate(U(), context, angleUnit);
+  Evaluation<U> e = this->node()->approximate(U(), context, angleUnit);
   return e->complexToExpression(complexFormat);
 }
 
 template<typename U>
 U ExpressionReference::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
-  EvaluationReference<U> evaluation = this->node()->approximate(U(), context, angleUnit);
+  Evaluation<U> evaluation = this->node()->approximate(U(), context, angleUnit);
   return evaluation->toScalar();
 }
 

@@ -62,7 +62,7 @@ ExpressionReference ConfidenceInterval::shallowReduce(Context& context, Preferen
 }
 
 template<typename T>
-EvaluationReference<T> ConfidenceInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> ConfidenceInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * fInput = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * nInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T f = static_cast<Complex<T> *>(fInput)->toScalar();

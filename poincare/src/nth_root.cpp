@@ -42,7 +42,7 @@ LayoutRef NthRoot::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
 }
 
 template<typename T>
-EvaluationReference<T> NthRoot::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> NthRoot::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * base = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * index = operand(1)->privateApproximate(T(), context, angleUnit);
   Complex<T> result = Complex<T>::Undefined();

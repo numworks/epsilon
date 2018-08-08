@@ -1,22 +1,22 @@
 #include <poincare/symbol.h>
-
+#include <poincare/allocation_failure_expression_node.h>
 #include <poincare/context.h>
 #include <poincare/rational.h>
 #include <poincare/parenthesis.h>
-
 #include <poincare/layout_engine.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/vertical_offset_layout_node.h>
-
 #include <ion.h>
 #include <cmath>
-
-extern "C" {
 #include <assert.h>
-}
 
 namespace Poincare {
+
+SymbolNode * SymbolNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<SymbolNode> failure;
+  return &failure;
+}
 
 ExpressionNode::Sign SymbolNode::sign() const {
   /* TODO: Maybe, we will want to know that from a context given in parameter:
@@ -32,15 +32,8 @@ ExpressionNode::Sign SymbolNode::sign() const {
   return Sign::Unknown;
 }
 
-ExpressionReference SymbolNode::replaceSymbolWithExpression(char symbol, ExpressionReference expression) {
-  if (m_name == symbol) {
-    ExpressionReference value = expression.clone();
-    if (parent() && value.needsParenthesisWithParent(parent())) {
-      value = ParenthesisReference(value);
-    }
-    return value;
-  }
-  return ExpressionReference(this);
+Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression expression) {
+  return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
 int SymbolNode::polynomialDegree(char symbol) const {
@@ -50,14 +43,8 @@ int SymbolNode::polynomialDegree(char symbol) const {
   return 0;
 }
 
-int SymbolNode::getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const {
-  if (m_name == symbolName) {
-    coefficients[0] = RationalReference(0);
-    coefficients[1] = RationalReference(1);
-    return 1;
-  }
-  coefficients[0] = SymbolReference(m_name);
-  return 0;
+int SymbolNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
+  return Symbol(this).getPolynomialCoefficients(symbolName, coefficients);
 }
 
 int SymbolNode::getVariables(isVariableTest isVariable, char * variables) const {
@@ -70,7 +57,7 @@ int SymbolNode::getVariables(isVariableTest isVariable, char * variables) const 
      }
      currentChar++;
    }
-   if (variablesLength < ExpressionReference::k_maxNumberOfVariables) {
+   if (variablesLength < Expression::k_maxNumberOfVariables) {
      variables[variablesLength] = m_name;
      variables[variablesLength+1] = 0;
      return variablesLength+1;
@@ -99,39 +86,39 @@ int SymbolNode::simplificationOrderSameType(const ExpressionNode * e, bool canBe
 }
 
 LayoutRef SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (m_name == SymbolReference::SpecialSymbols::Ans) {
+  if (m_name == Symbol::SpecialSymbols::Ans) {
     return LayoutEngine::createStringLayout("ans", 3);
   }
-  if (m_name == SymbolReference::SpecialSymbols::un) {
+  if (m_name == Symbol::SpecialSymbols::un) {
     return HorizontalLayoutRef(
         CharLayoutRef('u'),
         VerticalOffsetLayoutRef(
           CharLayoutRef('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
-  if (m_name == SymbolReference::SpecialSymbols::un1) {
+  if (m_name == Symbol::SpecialSymbols::un1) {
     return HorizontalLayoutRef(
       CharLayoutRef('u'),
       VerticalOffsetLayoutRef(
         LayoutEngine::createStringLayout("n+1", 3),
         VerticalOffsetLayoutNode::Type::Subscript));
   }
-  if (m_name == SymbolReference::SpecialSymbols::vn) {
+  if (m_name == Symbol::SpecialSymbols::vn) {
     return HorizontalLayoutRef(
         CharLayoutRef('v'),
         VerticalOffsetLayoutRef(
           CharLayoutRef('n'),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
-  if (m_name == SymbolReference::SpecialSymbols::vn1) {
+  if (m_name == Symbol::SpecialSymbols::vn1) {
     return HorizontalLayoutRef(
       CharLayoutRef('v'),
       VerticalOffsetLayoutRef(
         LayoutEngine::createStringLayout("n+1", 3),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
-  if (SymbolReference::isMatrixSymbol(m_name) || SymbolReference::isSeriesSymbol(m_name) || SymbolReference::isRegressionSymbol(m_name)) {
-    return LayoutEngine::createStringLayout(SymbolReference::textForSpecialSymbols(m_name), 2);
+  if (Symbol::isMatrixSymbol(m_name) || Symbol::isSeriesSymbol(m_name) || Symbol::isRegressionSymbol(m_name)) {
+    return LayoutEngine::createStringLayout(Symbol::textForSpecialSymbols(m_name), 2);
   }
   return LayoutEngine::createStringLayout(&m_name, 1);
 }
@@ -146,44 +133,30 @@ int SymbolNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::Pr
   }
   /* Special cases for all special symbols */
   if (m_name >0 && m_name < 32) {
-    return strlcpy(buffer, SymbolReference::textForSpecialSymbols(m_name), bufferSize);
+    return strlcpy(buffer, Symbol::textForSpecialSymbols(m_name), bufferSize);
   }
   buffer[0] = m_name;
   buffer[1] = 0;
   return 1;
 }
 
-ExpressionReference SymbolNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  // Do not replace symbols in expression of type: 3->A
-  if (parent() && parent()->type() == Type::Store && parent()->childAtIndex(1) == this) {
-    return this;
-  }
-  const ExpressionReference e = context.expressionForSymbol(SymbolReference(m_name));
-  if (e.isDefined() && hasAnExactRepresentation(context)) { // TODO: later AZ should be replaced.
-    /* The stored expression had been beautified which forces to call deepReduce. */
-    return e.clone().deepReduce(context, angleUnit);
-  }
-  return ExpressionReference(this);
-}
-
-bool SymbolNode::hasAnExactRepresentation(Context & context) const {
-  // TODO: so far, no symbols can be exact but A, ..Z should be able to hold exact values later.
-  return false;
+Expression SymbolNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Symbol(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>
-EvaluationReference<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   if (m_name == Ion::Charset::IComplex) {
-    return ComplexReference<T>(0.0, 1.0);
+    return Complex<T>(0.0, 1.0);
   }
-  const ExpressionReference e = context.expressionForSymbol(SymbolReference(m_name));
+  const Expression e = context.expressionForSymbol(Symbol(m_name));
   if (e.isDefined()) {
     return e.node()->approximate(T(), context, angleUnit);
   }
-  return ComplexReference<T>::Undefined();
+  return Complex<T>::Undefined();
 }
 
-const char * SymbolReference::textForSpecialSymbols(char name) {
+const char * Symbol::textForSpecialSymbols(char name) {
   switch (name) {
     case SpecialSymbols::Ans:
       return "ans";
@@ -245,7 +218,7 @@ const char * SymbolReference::textForSpecialSymbols(char name) {
   }
 }
 
-SymbolReference::SpecialSymbols SymbolReference::matrixSymbol(char index) {
+Symbol::SpecialSymbols Symbol::matrixSymbol(char index) {
   switch (index - '0') {
     case 0:
       return SpecialSymbols::M0;
@@ -273,47 +246,84 @@ SymbolReference::SpecialSymbols SymbolReference::matrixSymbol(char index) {
   }
 }
 
-bool SymbolReference::isMatrixSymbol(char c) {
+bool Symbol::isMatrixSymbol(char c) {
   if (c >= (char)SpecialSymbols::M0 && c <= (char)SpecialSymbols::M9) {
     return true;
   }
   return false;
 }
 
-bool SymbolReference::isScalarSymbol(char c) {
+bool Symbol::isScalarSymbol(char c) {
   if (c >= 'A' && c <= 'Z') {
     return true;
   }
   return false;
 }
 
-bool SymbolReference::isVariableSymbol(char c)  {
+bool Symbol::isVariableSymbol(char c)  {
   if (c >= 'a' && c <= 'z') {
     return true;
   }
   return false;
 }
 
-bool SymbolReference::isSeriesSymbol(char c) {
+bool Symbol::isSeriesSymbol(char c) {
   if (c >= (char)SpecialSymbols::V1 && c <= (char)SpecialSymbols::N3) {
     return true;
   }
   return false;
 }
 
-bool SymbolReference::isRegressionSymbol(char c) {
+bool Symbol::isRegressionSymbol(char c) {
   if (c >= (char)SpecialSymbols::X1 && c <= (char)SpecialSymbols::Y3) {
     return true;
   }
   return false;
 }
 
-bool SymbolReference::isApproximate(char c, Context & context) {
+bool Symbol::isApproximate(char c, Context & context) {
   // TODO: so far, all symbols A to Z, M0->M9 hold an approximate values. But they should be able to hold exact values later.
-  if (SymbolReference::isScalarSymbol(c) || SymbolReference::isMatrixSymbol(c)) {
+  if (Symbol::isScalarSymbol(c) || Symbol::isMatrixSymbol(c)) {
     return true;
   }
   return false;
+}
+
+Expression Symbol::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+  // Do not replace symbols in expression of type: 3->A
+  Expression p = parent();
+  if (p.isDefined() && p.type() == Type::Store && p.childAtIndex(1) == *this) {
+    return *this;
+  }
+  const Expression e = context.expressionForSymbol(*this);
+  if (e.isDefined() && hasAnExactRepresentation(context)) {
+    // TODO: later AZ should be replaced.
+    /* The stored expression had been beautified which forces to call deepReduce. */
+    return e.clone().deepReduce(context, angleUnit);
+  }
+  return *this;
+}
+
+Expression Symbol::replaceSymbolWithExpression(char symbol, Expression expression) {
+  if (name() == symbol) {
+    Expression value = expression.clone();
+    Expression p = parent();
+    if (p.isDefined() && value.needsParenthesisWithParent(p)) {
+      value = Parenthesis(value);
+    }
+    return value;
+  }
+  return *this;
+}
+
+int Symbol::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
+  if (name() == symbolName) {
+    coefficients[0] = Rational(0);
+    coefficients[1] = Rational(1);
+    return 1;
+  }
+  coefficients[0] = Symbol(name());
+  return 0;
 }
 
 }

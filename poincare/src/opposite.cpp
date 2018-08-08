@@ -34,9 +34,9 @@ ExpressionNode::Sign OppositeNode::sign() const {
 
 /* Layout */
 
-bool OppositeNode::needsParenthesesWithParent(SerializableNode * e) const {
+bool OppositeNode::needsParenthesesWithParent(const SerializationHelperInterface * parent) const {
   Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
-  return static_cast<ExpressionNode *>(e)->isOfType(types, 7);
+  return static_cast<const ExpressionNode *>(parent)->isOfType(types, 7);
 }
 
 LayoutRef OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -79,8 +79,8 @@ Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit ang
   Expression child = result.childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
 #endif
-  result = Multiplication(Rational(-1), child);
-  return result.shallowReduce(context, angleUnit);
+  // TODO result = Multiplication(Rational(-1), child);
+  // TODO return result.shallowReduce(context, angleUnit);
 }
 #if 0
 

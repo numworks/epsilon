@@ -28,6 +28,11 @@ public:
     return static_cast<ExpressionNode *>(TreeByValue::node());
   }
 
+  /* Hierarchy */
+  Expression childAtIndex(int i) const {
+    return Expression(static_cast<ExpressionNode *>(TreeByReference::treeChildAtIndex(i).node()));
+  }
+
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();
   static void setCircuitBreaker(CircuitBreaker cb);
@@ -112,16 +117,10 @@ public:
 
 protected:
   Expression(const ExpressionNode * n) : TreeByValue(n) {}
-  /* Hierarchy */
-  Expression childAtIndex(int i) const {
-    return Expression(static_cast<ExpressionNode *>(TreeByReference::treeChildAtIndex(i).node()));
-  }
   /* Simplification */
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
 private:
-
-
   /* Properties */
   int getPolynomialCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
 

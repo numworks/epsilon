@@ -126,7 +126,7 @@ std::complex<T> Power::compute(const std::complex<T> c, const std::complex<T> d)
    * the result of c^d and if arg ~ 0 [Pi], we discard the residual imaginary
    * part and if arg ~ Pi/2 [Pi], we discard the residual real part. */
   std::complex<T> result = std::pow(c, d);
-  return ApproximationEngine::truncateRealOrImaginaryPartAccordingToArgument(result);
+  return ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result);
 }
 
 template<typename T> MatrixComplex<T> Power::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {

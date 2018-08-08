@@ -13,7 +13,7 @@ QUIZ_CASE(poincare_vertical_offset_layout_serialize) {
   HorizontalLayout * layout = new HorizontalLayout(
       new CharLayout('2'),
       new VerticalOffsetLayout(
-        LayoutEngine::createStringLayout("4+5", 3),
+        LayoutHelper::String("4+5", 3),
         VerticalOffsetLayout::Type::Superscript,
         false),
       false);

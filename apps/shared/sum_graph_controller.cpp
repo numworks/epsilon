@@ -1,6 +1,6 @@
 #include "sum_graph_controller.h"
 #include "../apps_container.h"
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include "poincare_helpers.h"
 
 #include <assert.h>
@@ -233,32 +233,32 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
   assert(step == Step::Result || functionLayout == nullptr);
   const char sigma[] = {' ', m_sumSymbol};
   if (step == Step::FirstParameter) {
-    m_sumLayoutRef = LayoutEngine::createStringLayout(sigma, sizeof(sigma));
+    m_sumLayoutRef = LayoutHelper::String(sigma, sizeof(sigma));
   } else if (step == Step::SecondParameter) {
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    m_sumLayoutRef = LayoutEngine::createStringLayout(sigma, sizeof(sigma));/* TODO new CondensedSumLayout(
-        LayoutEngine::createStringLayout(sigma, sizeof(sigma)),
-        LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small),
+    m_sumLayoutRef = LayoutHelper::String(sigma, sizeof(sigma));/* TODO new CondensedSumLayout(
+        LayoutHelper::String(sigma, sizeof(sigma)),
+        LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small),
         new EmptyLayout(EmptyLayout::Color::Yellow, false, KDText::FontSize::Small, false),
         false); */
   } else {
-    m_sumLayoutRef = LayoutEngine::createStringLayout(sigma, sizeof(sigma));
+    m_sumLayoutRef = LayoutHelper::String(sigma, sizeof(sigma));
 /* TODO
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    ExpressionLayout * start = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
+    ExpressionLayout * start = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
     PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    ExpressionLayout * end = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
+    ExpressionLayout * end = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
     m_sumLayoutRef = new CondensedSumLayout(
-        LayoutEngine::createStringLayout(sigma, sizeof(sigma)),
+        LayoutHelper::String(sigma, sizeof(sigma)),
         start,
         end,
         false);
     ExpressionLayout * childrenLayouts[3];
     strlcpy(buffer, "= ", 3);
     PoincareHelpers::ConvertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    childrenLayouts[2] = LayoutEngine::createStringLayout(buffer, strlen(buffer), KDText::FontSize::Small);
+    childrenLayouts[2] = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
     childrenLayouts[1] = functionLayout;
     childrenLayouts[0] = m_sumLayoutRef;
     m_sumLayoutRef = new HorizontalLayout(childrenLayouts, 3, false);*/

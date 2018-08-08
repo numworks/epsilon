@@ -2,7 +2,7 @@
 #define POINCARE_OPPOSITE_H
 
 #include <poincare/expression.h>
-#include <poincare/approximation_engine.h>
+#include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
@@ -26,10 +26,10 @@ public:
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<float>(this, context, angleUnit, compute<float>);
+    return ApproximationHelper::Map<float>(this, context, angleUnit, compute<float>);
   }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<double>(this, context, angleUnit, compute<double>);
+    return ApproximationHelper::Map<double>(this, context, angleUnit, compute<double>);
   }
 
   // Layout

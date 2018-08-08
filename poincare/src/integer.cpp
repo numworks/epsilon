@@ -1,6 +1,6 @@
 #include <poincare/integer.h>
 #include <poincare/ieee754.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/rational.h>
 #include <cmath>
@@ -82,7 +82,7 @@ int NaturalIntegerAbstract::writeTextInBuffer(char * buffer, int bufferSize) con
 LayoutRef NaturalIntegerAbstract::createLayout() const {
   char buffer[k_maxNumberOfDigitsBase10];
   int numberOfChars = writeTextInBuffer(buffer, k_maxNumberOfDigitsBase10);
-  return LayoutEngine::createStringLayout(buffer, numberOfChars);
+  return LayoutHelper::String(buffer, numberOfChars);
 }
 
 // Approximation
@@ -452,7 +452,7 @@ Expression IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUni
 }
 
 void IntegerNode::setNegative(bool negative) {
-  if (isZero()) { // Zero cannot be negative
+  if (numberOfDigits() > 0) { // Zero cannot be negative
     return;
   }
   m_negative = negative;

@@ -1,10 +1,10 @@
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 
 #if MATRIX_EXACT_REDUCING
 
 namespace Poincare {
 
-Expression * SimplificationEngine::map(Expression * e, Context & context, Preferences::AngleUnit angleUnit) {
+Expression * SimplificationHelper::Map(Expression * e, Context & context, Preferences::AngleUnit angleUnit) {
   assert(e->numberOfChildren() == 1 && e->operand(0)->type() == Expression::Type::Matrix);
   Expression * op = e->editableOperand(0);
   for (int i = 0; i < op->numberOfChildren(); i++) {

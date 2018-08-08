@@ -3,7 +3,7 @@
 #include "../../../poincare/src/layout/char_layout.h"
 #include "../../../poincare/src/layout/horizontal_layout.h"
 #include "../../../poincare/src/layout/vertical_offset_layout.h"
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <assert.h>
 
 using namespace Poincare;
@@ -93,18 +93,18 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
     const char * indice = j == 0 ? "n" : "n+1";
     m_addedCellLayout[j] = new HorizontalLayout(
         new CharLayout(sequenceName[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
         false);
     m_addedCellLayout[j+recurrenceDepth] = new HorizontalLayout(
         new CharLayout(otherSequenceName[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
         false);
   }
   if (recurrenceDepth < 2) {
     const char * indice = recurrenceDepth == 0 ? "n" : (recurrenceDepth == 1 ? "n+1" : "n+2");
     m_addedCellLayout[2*recurrenceDepth] = new HorizontalLayout(
         new CharLayout(otherSequenceName[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
         false);
   }
 }

@@ -39,7 +39,7 @@ objs += $(addprefix poincare/src/,\
 objs += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
-  approximation_engine.o\
+  approximation_helper.o\
   arc_cosine.o\
   arc_sine.o\
   arc_tangent.o\
@@ -79,7 +79,7 @@ objs += $(addprefix poincare/src/,\
   imaginary_part.o\
   integer.o\
   integral.o\
-  layout_engine.o\
+  layout_helper.o\
   list_data.o\
   least_common_multiple.o\
   logarithm.o\
@@ -106,7 +106,7 @@ objs += $(addprefix poincare/src/,\
   real_part.o\
   round.o\
   sequence.o\
-  simplification_engine.o\
+  simplification_helper.o\
   sine.o\
   square_root.o\
   static_hierarchy.o\

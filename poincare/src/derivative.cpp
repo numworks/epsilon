@@ -1,6 +1,6 @@
 #include <poincare/derivative.h>
 #include <poincare/symbol.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <cmath>
 extern "C" {
@@ -85,7 +85,7 @@ template<typename T>
 T Derivative::riddersApproximation(Context & context, Preferences::AngleUnit angleUnit, T x, T h, T * error) const {
   /* Ridders' Algorithm
    * Blibliography:
-   * - Ridders, C.J.F. 1982, Advances in Engineering Software, vol. 4, no. 2,
+   * - Ridders, C.J.F. 1982, Advances in Helperering Software, vol. 4, no. 2,
    * pp. 75–76. */
 
   *error = sizeof(T) == sizeof(float) ? FLT_MAX : DBL_MAX;

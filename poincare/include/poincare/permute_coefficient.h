@@ -1,7 +1,7 @@
 #ifndef POINCARE_PERMUTE_COEFFICIENT_H
 #define POINCARE_PERMUTE_COEFFICIENT_H
 
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/static_hierarchy.h>
 #include <poincare/evaluation.h>
 
@@ -15,10 +15,10 @@ private:
   constexpr static int k_maxNValue = 100;
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
+    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+    return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   const char * name() const { return "permute"; }
   /* Simplification */

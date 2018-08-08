@@ -1,5 +1,5 @@
 #include <poincare/conjugate.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/conjugate_layout_node.h>
 #include <assert.h>
 #include <cmath>
@@ -27,7 +27,7 @@ Expression Conjugate::shallowReduce(Context& context, Preferences::AngleUnit ang
   Expression * op = editableOperand(0);
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   if (op->type() == Type::Rational) {

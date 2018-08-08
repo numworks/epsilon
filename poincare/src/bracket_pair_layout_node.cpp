@@ -1,6 +1,6 @@
 #include <poincare/bracket_pair_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>

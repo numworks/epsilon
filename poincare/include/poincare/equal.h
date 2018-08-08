@@ -3,7 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/static_hierarchy.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -20,7 +20,7 @@ private:
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "=");
+    return LayoutHelper::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "=");
   }
   /* Evalutation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }

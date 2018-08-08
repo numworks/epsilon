@@ -2,7 +2,7 @@
 #include "list_controller.h"
 #include "../app.h"
 #include <assert.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include "../../../poincare/src/layout/char_layout.h"
 #include "../../../poincare/src/layout/horizontal_layout.h"
 #include "../../../poincare/src/layout/vertical_offset_layout.h"
@@ -131,7 +131,7 @@ void TypeParameterController::willDisplayCellAtLocation(HighlightCell * cell, in
   }
   m_expressionLayouts[j] = new HorizontalLayout(
         new CharLayout(nextName[0], size),
-        new VerticalOffsetLayout(LayoutEngine::createStringLayout(subscripts[j], strlen(subscripts[j]), size), VerticalOffsetLayout::Type::Subscript, false),
+        new VerticalOffsetLayout(LayoutHelper::String(subscripts[j], strlen(subscripts[j]), size), VerticalOffsetLayout::Type::Subscript, false),
         false);
   ExpressionTableCellWithPointer * myCell = (ExpressionTableCellWithPointer *)cell;
   myCell->setExpressionLayout(m_expressionLayouts[j]);

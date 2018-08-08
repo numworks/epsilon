@@ -14,7 +14,7 @@ namespace Poincare {
  * Expression. */
 
 class ExpressionNode : public SerializableNode {
-  friend class ApproximationEngine;
+  friend class ApproximationHelper;
   friend class SymbolNode;
   friend class NAryExpressionNode;
 public:
@@ -138,10 +138,10 @@ public:
   //TODO: What should be the implementation for complex?
   virtual int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const { return 0; }
 
-  /* Layout Engine */
+  /* Layout Helper */
   virtual LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;
 
-  /* Evaluation Engine */
+  /* Evaluation Helper */
   typedef float SinglePrecision;
   typedef double DoublePrecision;
   constexpr static int k_maxNumberOfSteps = 10000;

@@ -1,6 +1,6 @@
 #include <poincare/grid_layout_node.h>
 #include <poincare/empty_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 

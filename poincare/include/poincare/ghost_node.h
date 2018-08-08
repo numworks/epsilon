@@ -18,7 +18,7 @@ public:
   // Ghost
   bool isGhost() const override { return true; }
   // Allocation Failure
-  static TreeNode * FailedAllocationStaticNode();
+  static GhostNode * FailedAllocationStaticNode();
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 };
 

@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-TreeNode * GhostNode::FailedAllocationStaticNode() {
+GhostNode * GhostNode::FailedAllocationStaticNode() {
   static AllocationFailedGhostNode FailureNode;
   TreePool::sharedPool()->registerStaticNodeIfRequired(&FailureNode);
   return &FailureNode;

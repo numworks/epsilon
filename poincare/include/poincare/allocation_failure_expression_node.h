@@ -25,7 +25,7 @@ public:
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return AllocationFailedLayoutRef(); }
 
   // TreeNode
-  size_t size() const override { return sizeof(AllocationFailureExpressionNode); }
+  size_t size() const override { return sizeof(AllocationFailureExpressionNode<T>); }
 #if TREE_LOG
   const char * description() const override { return "AllocationFailureExpression";  }
 #endif

@@ -194,7 +194,7 @@ private:
   IntegerNode * typedNode() const { assert(node()->type() == ExpressionNode::Type::Integer); return static_cast<IntegerNode *>(node()); }
 
   IntegerReference(const native_uint_t * digits, size_t numberOfDigits, bool negative);
-  IntegerReference(size_t size) : NumberReference(TreePool::sharedPool()->createTreeNode<IntegerNode>(size), true) {
+  IntegerReference(size_t size) : NumberReference(TreePool::sharedPool()->createTreeNode<IntegerNode>(size)) {
   }
   static IntegerReference addition(const IntegerReference a, const IntegerReference b, bool inverseBNegative);
   size_t numberOfDigits() const { return typedNode()->numberOfDigits(); }

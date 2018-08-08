@@ -24,7 +24,7 @@ protected:
 
 class CeilingLayoutRef : public LayoutReference {
 public:
-  CeilingLayoutRef(LayoutRef l) : LayoutReference(TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>(), true) {
+  CeilingLayoutRef(LayoutRef l) : LayoutReference(TreePool::sharedPool()->createTreeNode<CeilingLayoutNode>()) {
     replaceChildAtIndexInPlace(0, l);
   }
 };

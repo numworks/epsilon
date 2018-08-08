@@ -17,6 +17,7 @@ public:
 
   NaturalIntegerPointer numerator() const;
   NaturalIntegerPointer denominator() const;
+  void setNegative(bool negative) { m_negative = negative; }
 
   // TreeNode
   size_t size() const override;
@@ -66,8 +67,10 @@ public:
 };
 
 class Rational : public Number {
+friend class RationalNode;
 public:
   /* The constructor build a irreductible fraction */
+  Rational(const RationalNode * node) : Number(node) {}
   Rational(Integer numerator, Integer denominator);
   Rational(const Integer numerator);
   Rational(const NaturalIntegerAbstract * numerator, bool negative);
@@ -78,7 +81,7 @@ public:
   RationalNode * node() const override { return static_cast<RationalNode *>(Number::node()); }
 
   // Properties
-  bool isOne() const;
+  bool isOne() const { return node()->isOne(); }
   bool numeratorOrDenominatorIsInfinity() const;
 
   // Arithmetic
@@ -94,9 +97,9 @@ private:
   Rational(size_t size) : Number(TreePool::sharedPool()->createTreeNode<RationalNode>(size)) {}
 
   /* Simplification */
-  Expression setSign(ExpressionNode::Sign s);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression setSign(ExpressionNode::Sign s) const;
 };
 
 }

@@ -13,6 +13,11 @@ extern "C" {
 
 namespace Poincare {
 
+OppositeNode * OppositeNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<OppositeNode> failure;
+  return &failure;
+}
+
 int OppositeNode::polynomialDegree(char symbolName) const {
   return childAtIndex(0)->polynomialDegree(symbolName);
 }
@@ -57,7 +62,27 @@ int OppositeNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::
   return numberOfChar;
 }
 
+Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Opposite(this).shallowReduce(context, angleUnit);
+}
+
 /* Simplification */
+
+Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+  Expression result = Expression::shallowReduce(context, angleUnit);
+#if 0
+  // TODO: handle isFailed or isUndefined
+  if (result.hasFailure()) {
+    return result;
+  }
+#endif
+  Expression child = result.childAtIndex(0);
+#if MATRIX_EXACT_REDUCING
+#endif
+  result = Multiplication(Rational(-1), child);
+  return result.shallowReduce(context.angleUnit);
+}
+#if 0
 
 ExpressionReference OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   ExpressionReference e = ExpressionNode::shallowReduce(context, angleUnit);
@@ -73,5 +98,6 @@ ExpressionReference OppositeNode::shallowReduce(Context& context, Preferences::A
   MultiplicationReference m = MultiplicationReference(RationalReference(-1), child);
   return m->node()->shallowReduce(context, angleUnit);
 }
+#endif
 
 }

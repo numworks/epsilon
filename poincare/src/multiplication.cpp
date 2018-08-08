@@ -612,14 +612,14 @@ Expression * Multiplication::shallowBeautify(Context & context, Preferences::Ang
   return this;
 }
 
-Expression * Multiplication::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression * Multiplication::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
   // WARNING: we do not want to change the expression but to create a new one.
   SimplificationRoot root(clone());
   Expression * e = ((Multiplication *)root.operand(0))->mergeNegativePower(context, angleUnit);
   Expression * result = nullptr;
   if (e->type() == Type::Power) {
-    result = static_cast<Power *>(e)->cloneDenominator(context, angleUnit);
+    result = static_cast<Power *>(e)->denominator(context, angleUnit);
   } else {
     assert(e->type() == Type::Multiplication);
     for (int i = 0; i < e->numberOfChildren(); i++) {

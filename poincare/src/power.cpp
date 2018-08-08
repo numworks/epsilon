@@ -668,7 +668,7 @@ Expression * Power::CreateNthRootOfUnity(const Rational r) {
 Expression Power::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
   if (operand(1)->sign() == Sign::Negative) {
-    Expression * p = cloneDenominator(context, angleUnit);
+    Expression * p = denominator(context, angleUnit);
     Division * d = new Division(RationalReference(1), p, false);
     p->shallowReduce(context, angleUnit);
     replaceWith(d, true);
@@ -694,7 +694,7 @@ Expression Power::shallowBeautify(Context& context, Preferences::AngleUnit angle
   return this;
 }
 
-Expression * Power::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression * Power::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
   if (operand(1)->sign() == Sign::Negative) {
     Expression * denominator = clone();
     Expression * newExponent = denominator->editableOperand(1)->setSign(Sign::Positive, context, angleUnit);

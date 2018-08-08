@@ -31,8 +31,8 @@ private:
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  bool needsParenthesisWithParent(SerializableNode * parentNode) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
+  bool needsParenthesesWithParent(SerializableNode * parentNode) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutHelper::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   static const char * name() { return "^"; }

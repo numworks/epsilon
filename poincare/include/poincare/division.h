@@ -18,9 +18,9 @@ public:
   int polynomialDegree(char symbolName) const override;
 private:
   /* Layout */
-  bool needsParenthesisWithParent(SerializableNode * parentNode) const override;
+  bool needsParenthesesWithParent(SerializableNode * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutHelper::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "/");
   }
   /* Simplification */

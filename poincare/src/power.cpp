@@ -166,7 +166,7 @@ template<typename T> MatrixComplex<T> Power::computeOnMatrices(const MatrixCompl
   return MatrixComplex<T>::Undefined();
 }
 
-bool Power::needParenthesisWithParent(const Expression * e) const {
+bool Power::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
   Type types[] = {Type::Power, Type::Factorial};
   return e->isOfType(types, 2);
 }

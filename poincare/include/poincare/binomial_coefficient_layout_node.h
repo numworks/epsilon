@@ -19,7 +19,7 @@ public:
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
 
   // SerializableNode
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(BinomialCoefficientLayoutNode); }

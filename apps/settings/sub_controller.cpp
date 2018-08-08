@@ -177,7 +177,7 @@ void SubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_messageTreeModel->label() == I18n::Message::DisplayMode && index == numberOfRows()-1) {
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *)cell;
     char buffer[3];
-    Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).writeTextInBuffer(buffer, 3);
+    Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).serialize(buffer, 3);
     myCell->setAccessoryText(buffer);
     return;
   }

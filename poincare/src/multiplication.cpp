@@ -80,7 +80,7 @@ int Multiplication::getPolynomialCoefficients(char symbolName, Expression coeffi
   return deg;
 }
 
-bool Multiplication::needParenthesisWithParent(const Expression * e) const {
+bool Multiplication::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
   Type types[] = {Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 3);
 }
@@ -90,7 +90,7 @@ LayoutRef Multiplication::createLayout(Preferences::PrintFloatMode floatDisplayM
   return LayoutHelper::Infix(this, floatDisplayMode, numberOfSignificantDigits, middleDotString);
 }
 
-int Multiplication::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int Multiplication::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   const char multiplicationString[] = {Ion::Charset::MultiplicationSign, 0};
   return LayoutHelper::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, multiplicationString);
 }

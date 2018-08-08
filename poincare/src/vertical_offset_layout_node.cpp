@@ -158,7 +158,7 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
-int VerticalOffsetLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_type == Type::Subscript) {
     if (bufferSize == 0) {
       return -1;
@@ -174,7 +174,7 @@ int VerticalOffsetLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, P
     numberOfChar += SerializationHelper::Char(buffer+numberOfChar, bufferSize-numberOfChar, '{');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+    numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     numberOfChar += SerializationHelper::Char(buffer+numberOfChar, bufferSize-numberOfChar, '}');

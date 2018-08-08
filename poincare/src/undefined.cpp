@@ -24,7 +24,7 @@ LayoutRef UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMo
   return LayoutHelper::String(buffer, numberOfChars);
 }
 
-int UndefinedNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int UndefinedNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

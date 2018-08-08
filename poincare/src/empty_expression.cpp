@@ -10,7 +10,7 @@ Expression * EmptyExpression::clone() const {
   return new EmptyExpression();
 }
 
-int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int EmptyExpression::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Char(buffer, bufferSize, Ion::Charset::Empty);
 }
 

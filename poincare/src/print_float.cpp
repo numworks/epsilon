@@ -20,7 +20,7 @@ void PrintFloat::printBase10IntegerWithDecimalMarker(char * buffer, int bufferLe
    * always > 0 as we asserted a minimal number of available chars. */
   assert(bufferLength > 0 && decimalMarkerPosition != 0);
   char tempBuffer[PrintFloat::k_maxFloatBufferLength];
-  int intLength = i.writeTextInBuffer(tempBuffer, PrintFloat::k_maxFloatBufferLength);
+  int intLength = i.serialize(tempBuffer, PrintFloat::k_maxFloatBufferLength);
   int firstDigitChar = tempBuffer[0] == '-' ? 1 : 0;
   for (int k = bufferLength-1; k >= firstDigitChar; k--) {
     if (k == decimalMarkerPosition) {

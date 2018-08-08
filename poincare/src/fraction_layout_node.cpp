@@ -124,7 +124,7 @@ void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
-int FractionLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

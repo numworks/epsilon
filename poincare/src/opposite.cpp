@@ -34,7 +34,7 @@ ExpressionNode::Sign OppositeNode::sign() const {
 
 /* Layout */
 
-bool OppositeNode::needsParenthesisWithParent(SerializableNode * e) const {
+bool OppositeNode::needsParenthesesWithParent(SerializableNode * e) const {
   Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
   return static_cast<ExpressionNode *>(e)->isOfType(types, 7);
 }
@@ -49,7 +49,7 @@ LayoutRef OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMod
   return result;
 }
 
-int OppositeNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -57,7 +57,7 @@ int OppositeNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::
   int numberOfChar = 0;
   if (bufferSize == 1) { return 0; }
   buffer[numberOfChar++] = '-';
-  numberOfChar += childAtIndex(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += childAtIndex(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   buffer[numberOfChar] = 0;
   return numberOfChar;
 }

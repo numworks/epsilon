@@ -26,7 +26,7 @@ public:
   }
   void reload();
   bool hasText() const { return layoutRef().hasText(); }
-  int writeTextInBuffer(char * buffer, int bufferLength) { return layoutRef().writeTextInBuffer(buffer, bufferLength); }
+  int serialize(char * buffer, int bufferLength) { return layoutRef().serialize(buffer, bufferLength); }
   Poincare::LayoutRef layoutRef() const { return m_contentView.expressionView()->layoutRef(); }
   char XNTChar() { return m_contentView.cursor()->layoutReference().XNTChar(); }
 

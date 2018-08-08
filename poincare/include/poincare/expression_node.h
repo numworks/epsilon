@@ -1,9 +1,10 @@
 #ifndef POINCARE_EXPRESSION_NODE_H
 #define POINCARE_EXPRESSION_NODE_H
 
-#include <poincare/serializable_node.h>
+#include <poincare/tree_node.h>
 #include <poincare/evaluation.h>
 #include <poincare/layout_reference.h>
+#include <poincare/serialization_helper_interface.h>
 #include <poincare/context.h>
 #include <stdint.h>
 
@@ -13,7 +14,7 @@ namespace Poincare {
  * make 'this' outdated. They should only be call only be call in a wrapper on
  * Expression. */
 
-class ExpressionNode : public SerializableNode {
+class ExpressionNode : public TreeNode, public SerializationHelperInterface {
   friend class ApproximationHelper;
   friend class SymbolNode;
   friend class NAryExpressionNode;
@@ -157,8 +158,12 @@ protected:
   /*!*/ virtual Expression cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Hierarchy */
-  ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(SerializableNode::childAtIndex(i)); }
-  ExpressionNode * parent() const override { return static_cast<ExpressionNode *>(SerializableNode::parent()); }
+  ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }
+  ExpressionNode * parent() const override { return static_cast<ExpressionNode *>(TreeNode::parent()); }
+
+  /* SerializationHelperInterface */
+  SerializationHelperInterface * serializableChildAtIndex(int i) const override { return childAtIndex(i); }
+  int numberOfSerializableChildren() const override { return numberOfChildren(); }
 };
 
 }

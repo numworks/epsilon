@@ -1,11 +1,12 @@
 #include <poincare/serialization_helper.h>
+#include <string.h>
 #include <assert.h>
 
 namespace Poincare {
 
-static void writeChildTreeInBuffer(SerializableRef childRef, SerializableRef parentRef, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, int * numberOfChar) {
+static void serializeChild(const SerializationHelperInterface * childInterface, const SerializationHelperInterface * interface, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, int * numberOfChar) {
   // Write the child with parentheses if needed
-  bool addParentheses = childRef.needsParenthesisWithParent(parentRef);
+  bool addParentheses = childInterface->needsParenthesesWithParent(interface);
   if (addParentheses) {
     buffer[*numberOfChar] = '(';
     numberOfChar++;
@@ -13,7 +14,7 @@ static void writeChildTreeInBuffer(SerializableRef childRef, SerializableRef par
       return;
     }
   }
-  *numberOfChar += childRef.writeTextInBuffer(buffer + *numberOfChar, bufferSize - *numberOfChar, floatDisplayMode, numberOfDigits);
+  *numberOfChar += childInterface->serialize(buffer + *numberOfChar, bufferSize - *numberOfChar, floatDisplayMode, numberOfDigits);
   if (*numberOfChar >= bufferSize-1) {
     return;
   }
@@ -24,7 +25,7 @@ static void writeChildTreeInBuffer(SerializableRef childRef, SerializableRef par
 }
 
 int SerializationHelper::Infix(
-    const SerializableRef serializableRef,
+    const SerializationHelperInterface * interface,
     char * buffer,
     int bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
@@ -33,8 +34,6 @@ int SerializationHelper::Infix(
     int firstChildIndex,
     int lastChildIndex)
 {
-  assert(serializableRef.isDefined());
-
   // If buffer has size 0 or 1, put a zero if it fits and return
   if (bufferSize == 0) {
     return -1;
@@ -45,13 +44,13 @@ int SerializationHelper::Infix(
     return 0;
   }
 
-  // Get some information on the SerializableRef
+  // Get some information on the interface
   int numberOfChar = 0;
-  int numberOfChildren = serializableRef.numberOfChildren();
+  int numberOfChildren = interface->numberOfSerializableChildren();
   assert(numberOfChildren > 0);
 
   // Write the first child, with parentheses if needed
-  writeChildTreeInBuffer((const_cast<SerializableRef *>(&serializableRef))->serializableChildAtIndex(firstChildIndex), serializableRef, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
+  serializeChild(interface->serializableChildAtIndex(firstChildIndex), interface, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
@@ -64,7 +63,7 @@ int SerializationHelper::Infix(
       return bufferSize-1;
     }
     // Write the child, with parentheses if needed
-    writeChildTreeInBuffer((const_cast<SerializableRef *>(&serializableRef))->serializableChildAtIndex(i), serializableRef, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
+    serializeChild(interface->serializableChildAtIndex(firstChildIndex), interface, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }
@@ -76,7 +75,7 @@ int SerializationHelper::Infix(
 }
 
 int SerializationHelper::Prefix(
-    const SerializableRef serializableRef,
+    const SerializationHelperInterface * interface,
     char * buffer,
     int bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
@@ -84,8 +83,6 @@ int SerializationHelper::Prefix(
     const char * operatorName,
     bool writeFirstChild)
 {
-  assert(serializableRef.isDefined());
-
   // If buffer has size 0 or 1, put a zero if it fits and return
   if (bufferSize == 0) {
     return -1;
@@ -107,7 +104,7 @@ int SerializationHelper::Prefix(
     return bufferSize-1;
   }
 
-  int childrenCount = serializableRef.numberOfChildren();
+  int childrenCount = interface->numberOfSerializableChildren();
   if (childrenCount > 0) {
     if (!writeFirstChild) {
       assert(childrenCount > 1);
@@ -115,7 +112,7 @@ int SerializationHelper::Prefix(
     int firstChildIndex = writeFirstChild ? 0 : 1;
 
     // Write the first child
-    numberOfChar += const_cast<SerializableRef *>(&serializableRef)->serializableChildAtIndex(firstChildIndex).writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
+    numberOfChar += interface->serializableChildAtIndex(firstChildIndex)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }
@@ -126,7 +123,7 @@ int SerializationHelper::Prefix(
       if (numberOfChar >= bufferSize-1) {
         return bufferSize-1;
       }
-      numberOfChar += const_cast<SerializableRef *>(&serializableRef)->serializableChildAtIndex(i).writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
+      numberOfChar += interface->serializableChildAtIndex(i)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
       if (numberOfChar >= bufferSize-1) {
         return bufferSize-1;
       }

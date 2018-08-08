@@ -38,7 +38,7 @@ size_t RationalNode::size() const {
 
 // Serialization Node
 
-bool RationalNode::needsParenthesisWithParent(SerializableNode * e) const {
+bool RationalNode::needsParenthesesWithParent(SerializableNode * e) const {
   if (denominator().isOne()) {
     return false;
   }
@@ -46,7 +46,7 @@ bool RationalNode::needsParenthesisWithParent(SerializableNode * e) const {
   return static_cast<ExpressionNode *>(e)->isOfType(types, 3);
 }
 
-int RationalNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -58,7 +58,7 @@ int RationalNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
-  numberOfChar += numerator().writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += numerator().serialize(buffer+numberOfChar, bufferSize-numberOfChar);
   if (denominator().isOne()) {
     return numberOfChar;
   }
@@ -66,7 +66,7 @@ int RationalNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::
     return numberOfChar;
   }
   buffer[numberOfChar++] = '/';
-  numberOfChar += denominator().writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += denominator().serialize(buffer+numberOfChar, bufferSize-numberOfChar);
   return numberOfChar;
 }
 

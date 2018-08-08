@@ -21,7 +21,7 @@ public:
 #endif
   int numberOfChildren() const override { return 0; }
   // LayoutNode
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     assert(false);
     int descriptionLength = strlen(description()) + 1;
     return strlcpy(buffer, description(), bufferSize < descriptionLength ? bufferSize : descriptionLength);

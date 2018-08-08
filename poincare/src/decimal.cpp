@@ -96,7 +96,7 @@ Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUni
   return reference;
 }
 
-bool DecimalNode::needsParenthesisWithParent(SerializableNode * parentNode) const {
+bool DecimalNode::needsParenthesesWithParent(SerializableNode * parentNode) const {
   if (!m_negative) {
     return false;
   }
@@ -110,7 +110,7 @@ LayoutRef DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode
   return LayoutHelper::String(buffer, numberOfChars);
 }
 
-int DecimalNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int DecimalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return convertToText(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
@@ -149,7 +149,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     buffer[currentChar++] = '-';
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
   }
-  int mantissaLength = mantissaRef.writeTextInBuffer(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1, mode, numberOfSignificantDigits);
+  int mantissaLength = mantissaRef.serialize(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1, mode, numberOfSignificantDigits);
   if (strcmp(tempBuffer, "inf") == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     return currentChar;
@@ -184,7 +184,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
     buffer[currentChar++] = Ion::Charset::Exponent;
-    currentChar += IntegerReference(exponent).writeTextInBuffer(buffer+currentChar, bufferSize-currentChar, mode, numberOfSignificantDigits);
+    currentChar += IntegerReference(exponent).serialize(buffer+currentChar, bufferSize-currentChar, mode, numberOfSignificantDigits);
     return currentChar;
   }
   /* Case 1: Decimal mode */

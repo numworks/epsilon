@@ -40,7 +40,7 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
   }
   int n = type == EquationStore::Type::PolynomialMonovariable ? numberOfSolutions+1 : numberOfSolutions; // Check Delta for PolynomialMonovariable
   for (int i = 0; i < n; i++) {
-    equationStore.exactSolutionLayoutAtIndex(i, true)->writeTextInBuffer(buffer, 200);
+    equationStore.exactSolutionLayoutAtIndex(i, true)->serialize(buffer, 200);
     translate_in_ASCII_chars(buffer);
     assert(strcmp(buffer, solutions[i]) == 0);
   }

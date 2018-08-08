@@ -10,7 +10,7 @@ extern "C" {
 namespace Poincare {
 
 UndefinedNode * UndefinedNode::FailedAllocationStaticNode() {
-  static AllocationFailureUndefinedNode failure;
+  static AllocationFailureExpressionNode<UndefinedNode> failure;
   return &failure;
 }
 

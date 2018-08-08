@@ -26,7 +26,7 @@ public:
     return SerializableReference(static_cast<SerializableNode *>(treeRefChild.node()));
   }
 protected:
-  SerializableReference(SerializableNode * n) : TreeByReference(n) {}
+  SerializableReference(const SerializableNode * n) : TreeByReference(n) {}
 };
 
 }

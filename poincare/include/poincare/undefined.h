@@ -35,9 +35,6 @@ private:
   template<typename T> Evaluation<T> templatedApproximate() const;
 };
 
-class AllocationFailureUndefinedNode : public AllocationFailureExpressionNode<UndefinedNode> {
-};
-
 class Undefined : public Number {
 public:
   Undefined() : Number(TreePool::sharedPool()->createTreeNode<UndefinedNode>()) {}

@@ -46,7 +46,7 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
 private:
   template<typename U> Evaluation<U> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-    return ComplexReference<U>((U)m_value);
+    return Complex<U>((U)m_value);
   }
   T m_value;
 };

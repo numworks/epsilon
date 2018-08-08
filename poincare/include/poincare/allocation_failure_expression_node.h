@@ -4,7 +4,8 @@
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
 #include <poincare/complex.h>
-#include <poincare/allocation_failed_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
+#include <poincare/char_layout_node.h>
 #include <stdio.h>
 
 namespace Poincare {
@@ -14,6 +15,7 @@ class AllocationFailureExpressionNode : public T {
 public:
   AllocationFailureExpressionNode() : T() {}
   AllocationFailureExpressionNode(T node) : T(node) {}
+
   // ExpressionNode
   ExpressionNode::Sign sign() const override { return ExpressionNode::Sign::Unknown; }
   ExpressionNode::Type type() const override { return ExpressionNode::Type::AllocationFailure; }
@@ -25,7 +27,8 @@ public:
     }
     return PrintFloat::convertFloatToText<float>(NAN, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
   }
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return AllocationFailedLayoutRef(); }
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return LayoutRef(CharLayoutNode::FailedAllocationStaticNode()); }
+  // FIXME: Use EmptyLayoutNode here above, once EmptyLayout has been cleaned up
 
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailureExpressionNode<T>); }

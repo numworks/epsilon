@@ -29,16 +29,7 @@ extern "C" {
 #include <stdlib.h>
 }
 
-
 namespace Poincare {
-
-Expression::Type Power::type() const {
-  return Type::Power;
-}
-
-Expression * Power::clone() const {
-  return new Power(m_operands, true);
-}
 
 Expression::Sign Power::sign() const {
   if (shouldStopProcessing()) {
@@ -110,11 +101,14 @@ int Power::getPolynomialCoefficients(char symbolName, Expression coefficients[])
   return -1;
 }
 
-Expression * Power::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression PowerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+  return Power(this).setSign(s, context, angleUnit);
+}
+
+Expression Power::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == Sign::Positive);
-  assert(operand(0)->sign() == Sign::Negative);
-  editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
-  return this;
+  assert(childAtIndex(0).sign() == Sign::Negative);
+  return Power(childAtIndex(0).setSign(Sign::Positive, context, angleUnit), childAtIndex(1));
 }
 
 template<typename T>

@@ -11,9 +11,8 @@ class Division;
 
 class DivisionNode : public ExpressionNode {
 public:
-  static DivisionNode * FailedAllocationStaticNode();
-
   // TreeNode
+  static DivisionNode * FailedAllocationStaticNode();
   size_t size() const override { return sizeof(DivisionNode); }
 #if TREE_LOG
   const char * description() const override { return "Division";  }
@@ -59,7 +58,10 @@ private:
 
 class Division : public Expression {
 public:
-  Division(Expression numerator, Expression denominator);
+  Division(Expression numerator, Expression denominator) {
+    addChild(numberator);
+    addChild(denominator);
+  }
   Division(const DivisionNode * n) : Expression(n) {}
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };

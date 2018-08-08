@@ -113,17 +113,20 @@ public:
 
 protected:
   Expression(const ExpressionNode * n) : SerializableReference(n), TreeByValue(n) {}
-private:
   /* Hierarchy */
   Expression childAtIndex(int i) const {
     return Expression(static_cast<ExpressionNode *>(TreeByReference::treeChildAtIndex(i).node()));
   }
+  /* Simplification */
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+
+private:
+
 
   /* Properties */
   int getPolynomialCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);

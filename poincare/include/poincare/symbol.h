@@ -1,13 +1,15 @@
 #ifndef POINCARE_SYMBOL_H
 #define POINCARE_SYMBOL_H
 
-#include <poincare/expression_reference.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
 class SymbolNode : public ExpressionNode {
   friend class Store;
 public:
+  static SymbolNode * FailedAllocationStaticNode();
+
   void setName(const char name) { m_name = name; }
   char name() const { return m_name; }
 
@@ -21,9 +23,9 @@ public:
   // Expression Properties
   Type type() const override { return Type::Symbol; }
   Sign sign() const override;
-  ExpressionReference replaceSymbolWithExpression(char symbol, ExpressionReference expression) override;
+  Expression replaceSymbolWithExpression(char symbol, Expression expression) override;
   int polynomialDegree(char symbolName) const override;
-  int getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const override;
+  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
   int getVariables(isVariableTest isVariable, char * variables) const override;
   float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
 
@@ -35,20 +37,22 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
 
   /* Approximation */
-  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
 
 private:
-  bool hasAnExactRepresentation(Context & context) const;
-  template<typename T> EvaluationReference<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
-
+  bool hasAnExactRepresentation(Context & context) const {
+    // TODO: so far, no symbols can be exact but A, ..Z should be able to hold exact values later.
+    return false;
+  }
+  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
   char m_name;
 };
 
-class SymbolReference : public ExpressionReference {
+class Symbol : public Expression {
 public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
@@ -83,11 +87,11 @@ public:
     X3,
     Y3 = 29
   };
-  SymbolReference(const char name) : ExpressionReference(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
-    if (!node->isAllocationFailure()) {
-      static_cast<SymbolNode *>(node)->setName(name);
-    }
+  Symbol(const SymbolNode * n) : Expression(n) {}
+  Symbol(const char name) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
+    node()->setName(name);
   }
+
   // Symbol properties
   static const char * textForSpecialSymbols(char name);
   static SpecialSymbols matrixSymbol(char index);
@@ -97,6 +101,14 @@ public:
   static bool isSeriesSymbol(char c);
   static bool isRegressionSymbol(char c);
   static bool isApproximate(char c, Context & context);
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression replaceSymbolWithExpression(char symbol, Expression expression);
+  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
+private:
+  SymbolNode * node() { return static_cast<SymbolNode *>(Expression::node()); }
+  char name() { return node()->name(); }
 };
 
 }

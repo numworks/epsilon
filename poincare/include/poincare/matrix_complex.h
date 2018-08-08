@@ -49,7 +49,7 @@ class MatrixComplex : public Evaluation<T> {
 friend class MatrixComplexNode<T>;
 public:
   //MatrixComplex(TreeNode * t) : Evaluation<T>(t) {}
-  MatrixComplex() : Evaluation<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >(), true) {}
+  MatrixComplex() : Evaluation<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >()) {}
   static MatrixComplex<T> Undefined() {
     std::complex<T> undef = std::complex<T>(NAN, NAN);
     return MatrixComplex<T>((std::complex<T> *)&undef, 1, 1);

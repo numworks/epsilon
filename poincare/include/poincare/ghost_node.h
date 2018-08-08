@@ -24,7 +24,7 @@ public:
 
 class GhostReference : public TreeByReference {
 public:
-  GhostReference() : TreeByReference(TreePool::sharedPool()->createTreeNode<GhostNode>(), true) {}
+  GhostReference() : TreeByReference(TreePool::sharedPool()->createTreeNode<GhostNode>()) {}
 };
 
 class AllocationFailedGhostNode : public GhostNode {

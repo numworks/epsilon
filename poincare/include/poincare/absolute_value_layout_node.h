@@ -27,7 +27,7 @@ private:
 class AbsoluteValueLayoutRef : public LayoutReference {
 public:
   AbsoluteValueLayoutRef(LayoutRef l) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<AbsoluteValueLayoutNode>(), true) {}
+    LayoutReference(TreePool::sharedPool()->createTreeNode<AbsoluteValueLayoutNode>()) {}
   {
     replaceChildAtIndexInPlace(0, l);
   }

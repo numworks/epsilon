@@ -79,7 +79,7 @@ public:
   }
 
 private:
-  NthRootLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>(), true) {}
+  NthRootLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>()) {}
 };
 
 }

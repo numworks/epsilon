@@ -83,7 +83,7 @@ public:
     X3,
     Y3 = 29
   };
-  SymbolReference(const char name) : ExpressionReference(TreePool::sharedPool()->createTreeNode<SymbolNode>(), true) {
+  SymbolReference(const char name) : ExpressionReference(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
     if (!node->isAllocationFailure()) {
       static_cast<SymbolNode *>(node)->setName(name);
     }

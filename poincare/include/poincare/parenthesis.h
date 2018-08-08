@@ -36,7 +36,7 @@ private:
 
 class ParenthesisReference : public ExpressionReference {
 public:
-  ParenthesisReference(ExpressionReference exp) : ExpressionReference(TreePool::sharedPool()->createTreeNode<ParenthesisNode>(), true) {
+  ParenthesisReference(ExpressionReference exp) : ExpressionReference(TreePool::sharedPool()->createTreeNode<ParenthesisNode>()) {
     replaceChildAtIndexInPlace(0, exp);
   }
 };

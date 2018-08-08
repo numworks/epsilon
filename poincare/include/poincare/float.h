@@ -54,7 +54,7 @@ private:
 template<typename T>
 class FloatReference : public NumberReference {
 public:
-  FloatReference(T value) : NumberReference(TreePool::sharedPool()->createTreeNode<RationalNode>(), true) {
+  FloatReference(T value) : NumberReference(TreePool::sharedPool()->createTreeNode<RationalNode>()) {
     if (!node->isAllocationFailure()) {
       static_cast<FloatNode<T> *>(node)->setFloat(value);
     }

@@ -186,7 +186,7 @@ Expression * Addition::factorizeOnCommonDenominator(Context & context, Preferenc
   // Step 1: We want to compute the common denominator, b*d
   Multiplication * commonDenominator = new Multiplication();
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression * denominator = operand(i)->cloneDenominator(context, angleUnit);
+    Expression * denominator = operand(i)->denominator(context, angleUnit);
     if (denominator) {
       // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
       commonDenominator->addMissingFactors(denominator, context, angleUnit);

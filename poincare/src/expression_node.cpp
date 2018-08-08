@@ -112,7 +112,7 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
   return false;
 }
 
-Expression ExpressionNode::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression ExpressionNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
   return Expression(nullptr);
 }
 

@@ -30,7 +30,7 @@ int Division::polynomialDegree(char symbolName) const {
   return operand(0)->polynomialDegree(symbolName);
 }
 
-bool Division::needParenthesisWithParent(const Expression * e) const {
+bool Division::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
   Type types[] = {Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 3);
 }

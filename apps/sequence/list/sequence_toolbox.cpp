@@ -112,7 +112,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
 bool SequenceToolbox::selectAddedCell(int selectedRow){
   int bufferSize = 10;
   char buffer[bufferSize];
-  m_addedCellLayout[selectedRow]->writeTextInBuffer(buffer, bufferSize);
+  m_addedCellLayout[selectedRow]->serialize(buffer, bufferSize);
   sender()->handleEventWithText(buffer);
   app()->dismissModalViewController();
   return true;

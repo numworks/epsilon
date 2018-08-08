@@ -149,7 +149,7 @@ void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
-int IntegralLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -168,7 +168,7 @@ int IntegralLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefere
   }
 
   // Write the argument
-  numberOfChar += const_cast<IntegralLayoutNode *>(this)->integrandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += const_cast<IntegralLayoutNode *>(this)->integrandLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
@@ -176,7 +176,7 @@ int IntegralLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefere
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the lower bound
-  numberOfChar += const_cast<IntegralLayoutNode *>(this)->lowerBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += const_cast<IntegralLayoutNode *>(this)->lowerBoundLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
@@ -184,7 +184,7 @@ int IntegralLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefere
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the upper bound
-  numberOfChar += const_cast<IntegralLayoutNode *>(this)->upperBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += const_cast<IntegralLayoutNode *>(this)->upperBoundLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the closing parenthesis

@@ -31,7 +31,7 @@ LayoutRef MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return layout;
 }
 
-int MatrixNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -49,7 +49,7 @@ int MatrixNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::Pr
     if (currentChar >= bufferSize-1) {
       return currentChar;
     }
-    currentChar += childAtIndex(i*m_numberOfColumns)->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar, floatDisplayMode, numberOfSignificantDigits);
+    currentChar += childAtIndex(i*m_numberOfColumns)->serialize(buffer+currentChar, bufferSize-currentChar, floatDisplayMode, numberOfSignificantDigits);
     if (currentChar >= bufferSize-1) {
       return currentChar;
     }
@@ -58,7 +58,7 @@ int MatrixNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::Pr
       if (currentChar >= bufferSize-1) {
         return currentChar;
       }
-      currentChar += childAtIndex(i*m_numberOfColumns+j)->writeTextInBuffer(buffer+currentChar, bufferSize-currentChar, floatDisplayMode, numberOfSignificantDigits);
+      currentChar += childAtIndex(i*m_numberOfColumns+j)->serialize(buffer+currentChar, bufferSize-currentChar, floatDisplayMode, numberOfSignificantDigits);
       if (currentChar >= bufferSize-1) {
         return currentChar;
       }

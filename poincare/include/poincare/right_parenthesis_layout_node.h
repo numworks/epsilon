@@ -17,7 +17,7 @@ public:
   bool isRightParenthesis() const override { return true; }
 
   // SerializableNode
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Char(buffer, bufferSize, ')');
   }
 

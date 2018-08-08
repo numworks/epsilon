@@ -159,7 +159,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
     strlcpy(m_cacheBuffer, text, Calculation::k_printedExpressionSize);
   } else {
     assert(layoutR.isDefined());
-    layoutR.writeTextInBuffer(m_cacheBuffer, Calculation::k_printedExpressionSize);
+    layoutR.serialize(m_cacheBuffer, Calculation::k_printedExpressionSize);
   }
   m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());
   m_historyController->reload();

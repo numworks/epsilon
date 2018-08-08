@@ -9,7 +9,7 @@ namespace Poincare {
 class RightSquareBracketLayoutNode : public SquareBracketLayoutNode {
 public:
   using SquareBracketLayoutNode::SquareBracketLayoutNode;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Char(buffer, bufferSize, ']');
   }
   bool isRightBracket() const override { return true; }

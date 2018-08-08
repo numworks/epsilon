@@ -19,8 +19,8 @@ public:
 #endif
 
   // Serialization Node
-  bool needsParenthesisWithParent(SerializableNode * e) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  bool needsParenthesesWithParent(SerializableNode * e) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Expression subclassing
   Type type() const override { return Type::Rational; }

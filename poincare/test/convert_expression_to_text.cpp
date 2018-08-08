@@ -43,7 +43,7 @@ void assert_expression_prints_to(Expression * e, const char * result, Preference
   memset(taggedBuffer, tag, bufferSize+2*tagSize);
   char * buffer = taggedBuffer + tagSize;
 
-  e->writeTextInBuffer(buffer, bufferSize, mode, numberOfSignificantDigits);
+  e->serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
   translate_in_ASCII_chars(buffer);
 
   for (int i=0; i<tagSize; i++) {

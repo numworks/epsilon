@@ -17,11 +17,11 @@ InfinityNode * InfinityNode::FailedAllocationStaticNode() {
 
 LayoutRef InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[5];
-  int numberOfChars = writeTextInBuffer(buffer, 5, floatDisplayMode, numberOfSignificantDigits);
+  int numberOfChars = serialize(buffer, 5, floatDisplayMode, numberOfSignificantDigits);
   return LayoutHelper::String(buffer, numberOfChars);
 }
 
-int InfinityNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int InfinityNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }

@@ -132,11 +132,11 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
 bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
   if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event)) {
     char buffer[TextField::maxBufferSize()];
-    expressionLayoutField->writeTextInBuffer(buffer, TextField::maxBufferSize());
+    expressionLayoutField->serialize(buffer, TextField::maxBufferSize());
     if (!textRepresentsAnEquality(buffer)) {
       expressionLayoutField->handleEvent(Ion::Events::ShiftRight);
       expressionLayoutField->handleEventWithText("=0");
-      expressionLayoutField->writeTextInBuffer(buffer, TextField::maxBufferSize());
+      expressionLayoutField->serialize(buffer, TextField::maxBufferSize());
       if (!textRepresentsAnEquality(buffer)) {
         app()->displayWarning(I18n::Message::RequireEquation);
         return true;

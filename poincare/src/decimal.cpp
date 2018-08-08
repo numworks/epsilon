@@ -228,7 +228,7 @@ template<typename T> Evaluation<T> DecimalNode::templatedApproximate() const {
   T f = m.approximate<T>();
   int numberOfDigits = NaturalIntegerAbstract::NumberOfBase10Digits(&m);
   T result = f*std::pow((T)10.0, (T)(m_exponent-numberOfDigits+1));
-  return ComplexReference<T>(m_negative ? -result : result);
+  return Complex<T>(m_negative ? -result : result);
 }
 
 int DecimalReference::exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {

@@ -1,5 +1,5 @@
 #include <poincare/absolute_value.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/absolute_value_layout_node.h>
 
 extern "C" {
@@ -35,7 +35,7 @@ Expression AbsoluteValue::shallowReduce(Context& context, Preferences::AngleUnit
   Expression * op = editableOperand(0);
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   if (op->sign() == Sign::Positive) {

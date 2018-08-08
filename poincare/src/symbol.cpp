@@ -3,7 +3,7 @@
 #include <poincare/context.h>
 #include <poincare/rational.h>
 #include <poincare/parenthesis.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/vertical_offset_layout_node.h>
@@ -100,7 +100,7 @@ int SymbolNode::simplificationOrderSameType(const ExpressionNode * e, bool canBe
 
 LayoutRef SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (m_name == Symbol::SpecialSymbols::Ans) {
-    return LayoutEngine::createStringLayout("ans", 3);
+    return LayoutHelper::String("ans", 3);
   }
   if (m_name == Symbol::SpecialSymbols::un) {
     return HorizontalLayoutRef(
@@ -113,7 +113,7 @@ LayoutRef SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
     return HorizontalLayoutRef(
       CharLayoutRef('u'),
       VerticalOffsetLayoutRef(
-        LayoutEngine::createStringLayout("n+1", 3),
+        LayoutHelper::String("n+1", 3),
         VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (m_name == Symbol::SpecialSymbols::vn) {
@@ -127,13 +127,13 @@ LayoutRef SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
     return HorizontalLayoutRef(
       CharLayoutRef('v'),
       VerticalOffsetLayoutRef(
-        LayoutEngine::createStringLayout("n+1", 3),
+        LayoutHelper::String("n+1", 3),
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (Symbol::isMatrixSymbol(m_name) || Symbol::isSeriesSymbol(m_name) || Symbol::isRegressionSymbol(m_name)) {
-    return LayoutEngine::createStringLayout(Symbol::textForSpecialSymbols(m_name), 2);
+    return LayoutHelper::String(SymbolReference::textForSpecialSymbols(m_name), 2);
   }
-  return LayoutEngine::createStringLayout(&m_name, 1);
+  return LayoutHelper::String(&m_name, 1);
 }
 
 int SymbolNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

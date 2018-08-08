@@ -2,7 +2,7 @@
 #define POINCARE_NTH_ROOT_H
 
 #include <poincare/static_hierarchy.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -14,7 +14,7 @@ private:
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
+    return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
   }
   /* Simplification */
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;

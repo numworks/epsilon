@@ -1,7 +1,7 @@
 #ifndef POINCARE_SUM_LAYOUT_NODE_H
 #define POINCARE_SUM_LAYOUT_NODE_H
 
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/sequence_layout_node.h>
 
 namespace Poincare {

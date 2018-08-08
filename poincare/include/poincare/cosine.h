@@ -1,9 +1,9 @@
 #ifndef POINCARE_COSINE_H
 #define POINCARE_COSINE_H
 
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/static_hierarchy.h>
-#include <poincare/approximation_engine.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/trigonometry.h>
 #include <poincare/expression.h>
 
@@ -19,20 +19,20 @@ public:
 private:
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
+    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+    return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   const char * name() const { return "cos"; }
   /* Simplication */
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
+    return ApproximationHelper::Map<float>(this, context, angleUnit,computeOnComplex<float>);
   }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
+    return ApproximationHelper::Map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
 };
 

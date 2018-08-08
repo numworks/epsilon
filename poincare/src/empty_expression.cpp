@@ -1,6 +1,6 @@
 #include <poincare/empty_expression.h>
 #include <poincare/empty_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <ion/charset.h>
 #include <math.h>
 
@@ -11,7 +11,7 @@ Expression * EmptyExpression::clone() const {
 }
 
 int EmptyExpression::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutEngine::writeOneCharInBuffer(buffer, bufferSize, Ion::Charset::Empty);
+  return SerializationHelper::Char(buffer, bufferSize, Ion::Charset::Empty);
 }
 
 LayoutRef EmptyExpression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

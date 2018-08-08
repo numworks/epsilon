@@ -1,13 +1,13 @@
 #include <poincare/logarithm.h>
 #include <poincare/addition.h>
-#include <poincare/approximation_engine.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/arithmetic.h>
 #include <poincare/division.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -67,7 +67,7 @@ Expression Logarithm::shallowReduce(Context& context, Preferences::AngleUnit ang
   Expression * op = editableOperand(0);
 #if MATRIX_EXACT_REDUCING
   if (numberOfChildren() == 1 && op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
   if (numberOfChildren() == 2 && (op->type() == Type::Matrix || operand(1)->type() == Type::Matrix)) {
     return replaceWith(new Undefined(), true);
@@ -211,7 +211,7 @@ Expression * Logarithm::shallowBeautify(Context & context, Preferences::AngleUni
 template<typename T>
 Evaluation<T> Logarithm::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   if (numberOfChildren() == 1) {
-    return ApproximationEngine::map(this, context, angleUnit, computeOnComplex<T>);
+    return ApproximationHelper::Map(this, context, angleUnit, computeOnComplex<T>);
   }
   Evaluation<T> * x = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * n = operand(1)->privateApproximate(T(), context, angleUnit);
@@ -228,9 +228,9 @@ Evaluation<T> Logarithm::templatedApproximate(Context& context, Preferences::Ang
 
 LayoutRef Logarithm::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (numberOfChildren() == 1) {
-    return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, "log");
+    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, "log");
   }
-  return LayoutEngine::createLogLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return LayoutHelper::Logarithm(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 }

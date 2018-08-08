@@ -3,7 +3,7 @@
 #include <cmath>
 #include <ion.h>
 #include <poincare/symbol.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/rational.h>
 extern "C" {
 #include <assert.h>
@@ -28,7 +28,7 @@ Expression Ceiling::shallowReduce(Context& context, Preferences::AngleUnit angle
   Expression * op = editableOperand(0);
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   if (op->type() == Type::Symbol) {

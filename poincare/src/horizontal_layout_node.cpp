@@ -1,6 +1,6 @@
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/empty_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
@@ -172,7 +172,7 @@ int HorizontalLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefe
     buffer[0] = 0;
     return 0;
   }
-  return LayoutEngine::writeInfixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
 // Protected

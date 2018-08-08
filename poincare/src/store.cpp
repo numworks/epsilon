@@ -25,7 +25,7 @@ int Store::polynomialDegree(char symbolName) const {
 }
 
 int Store::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x90");
+  return LayoutHelper::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x90");
 }
 
 Expression Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {

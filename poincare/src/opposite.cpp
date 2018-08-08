@@ -2,10 +2,10 @@
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <cmath>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 //#include <poincare/multiplication.h>
 #include <poincare/rational.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>
@@ -42,7 +42,7 @@ bool OppositeNode::needsParenthesisWithParent(SerializableNode * e) const {
 LayoutRef OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result = HorizontalLayoutRef(CharLayoutRef('-'));
   if (childAtIndex(0)->type() == Type::Opposite) {
-    result.addOrMergeChildAtIndex(LayoutEngine::createParenthesedLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
+    result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
   } else {
     result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, false);
   }
@@ -92,7 +92,7 @@ Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit 
   const Expression child = Expression(childAtIndex(0));
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   MultiplicationReference m = MultiplicationReference(RationalReference(-1), child);

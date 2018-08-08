@@ -1,5 +1,5 @@
 #include <poincare/nth_root_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <ion/charset.h>
 #include <assert.h>
 
@@ -162,11 +162,11 @@ int NthRootLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferen
       && (const_cast<NthRootLayoutNode *>(this))->indexLayout()
       && !(const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty())
   {
-    return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
+    return SerializationHelper::Prefix(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
   }
   // Case: squareRoot(x)
   if (!m_hasIndex) {
-    return LayoutEngine::writePrefixSerializableRefTextInBuffer(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
+    return SerializationHelper::Prefix(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
   }
   // Case: root(x,empty)
   // Write "'SquareRootSymbol'('radicandLayout')".

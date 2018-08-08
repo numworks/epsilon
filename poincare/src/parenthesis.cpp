@@ -14,15 +14,15 @@ int ParenthesisNode::polynomialDegree(char symbolName) const {
 }
 
 LayoutRef ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutEngine::createParenthesedLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
+  return LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
-Expression ParenthesisNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression e = ExpressionNode::shallowReduce(context, angleUnit);
-  if (e.node() != this) {
-    return e;
-  }
-  return Expression(childAtIndex(0));
+int ParenthesisNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(Parenthesis(const_cast<ParenthesisNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
+}
+
+Expression ParenthesisNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Parenthesis(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

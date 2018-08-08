@@ -2,8 +2,8 @@
 #define POINCARE_MULTIPLICATION_H
 
 #include <poincare/dynamic_hierarchy.h>
-#include <poincare/layout_engine.h>
-#include <poincare/approximation_engine.h>
+#include <poincare/layout_helper.h>
+#include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
@@ -26,7 +26,7 @@ public:
   /* Evaluation */
   template<typename T> static std::complex<T> compute(const std::complex<T> c, const std::complex<T> d);
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {
-    return ApproximationEngine::elementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
+    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
@@ -59,13 +59,13 @@ private:
   /* Evaluation */
 
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
-    return ApproximationEngine::elementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
+    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+    return ApproximationHelper::MapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
   }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+    return ApproximationHelper::MapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };
 

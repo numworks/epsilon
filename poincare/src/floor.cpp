@@ -1,7 +1,7 @@
 #include <poincare/floor.h>
 #include <poincare/floor_layout_node.h>
 #include <poincare/symbol.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/rational.h>
 #include <ion.h>
 extern "C" {
@@ -28,7 +28,7 @@ Expression Floor::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   Expression * op = editableOperand(0);
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   if (op->type() == Type::Symbol) {

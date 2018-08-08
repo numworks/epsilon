@@ -3,8 +3,8 @@
 
 #include <poincare/dynamic_hierarchy.h>
 #include <poincare/rational.h>
-#include <poincare/layout_engine.h>
-#include <poincare/approximation_engine.h>
+#include <poincare/layout_helper.h>
+#include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
@@ -23,19 +23,19 @@ public:
   /* Evaluation */
   template<typename T> static std::complex<T> compute(const std::complex<T> c, const std::complex<T> d);
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
-    return ApproximationEngine::elementWiseOnComplexMatrices(m, n, compute<T>);
+    return ApproximationHelper::ElementWiseOnComplexMatrices(m, n, compute<T>);
   }
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {
-    return ApproximationEngine::elementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
+    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
 private:
   /* Layout */
   bool needsParenthesisWithParent(SerializableNode * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::createInfixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
+    return LayoutHelper::Infix(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+    return LayoutHelper::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   static const char * name() { return "+"; }
 
@@ -48,13 +48,13 @@ private:
   static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
-    return ApproximationEngine::elementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
+    return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::mapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
+    return ApproximationHelper::MapReduce<float>(this, context, angleUnit, compute<float>, computeOnComplexAndMatrix<float>, computeOnMatrixAndComplex<float>, computeOnMatrices<float>);
    }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
-    return ApproximationEngine::mapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
+    return ApproximationHelper::MapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
    }
 };
 

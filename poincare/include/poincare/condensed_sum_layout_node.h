@@ -3,7 +3,7 @@
 
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <poincare/layout_reference.h>
 
 namespace Poincare {
@@ -17,7 +17,7 @@ public:
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override { assert(false); }
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override { assert(false); }
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixSerializableRefTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "sum");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "sum");
   }
 
   LayoutNode * layoutToPointWhenInserting() override {

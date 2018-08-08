@@ -3,7 +3,7 @@
 #include <poincare/power.h>
 #include <poincare/division.h>
 #include <poincare/opposite.h>
-#include <poincare/simplification_engine.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/trigonometry.h>
 extern "C" {
 #include <assert.h>
@@ -29,7 +29,7 @@ Expression HyperbolicSine::shallowReduce(Context& context, Preferences::AngleUni
 #if MATRIX_EXACT_REDUCING
   Expression * op = editableOperand(0);
   if (op->type() == Type::Matrix) {
-    return SimplificationEngine::map(this, context, angleUnit);
+    return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
   return this;

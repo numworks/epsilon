@@ -1,7 +1,7 @@
 #include <poincare/fraction_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
-#include <poincare/layout_engine.h>
+#include <poincare/layout_helper.h>
 #include <ion/charset.h>
 #include <escher/metric.h>
 #include <assert.h>
@@ -153,7 +153,7 @@ int FractionLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Prefere
   }
 
   // Write the content of the fraction
-  numberOfChar += LayoutEngine::writeInfixSerializableRefTextInBuffer(this, buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, "/");
+  numberOfChar += SerializationHelper::Infix(this, buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, "/");
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   if (addParenthesis) {

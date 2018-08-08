@@ -9,6 +9,11 @@ extern "C" {
 
 namespace Poincare {
 
+UndefinedNode * UndefinedNode::FailedAllocationStaticNode() {
+  static AllocationFailureUndefinedNode failure;
+  return &failure;
+}
+
 int UndefinedNode::polynomialDegree(char symbolName) const {
   return -1;
 }

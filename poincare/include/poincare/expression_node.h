@@ -10,9 +10,8 @@
 
 namespace Poincare {
 
-/* Methods preceded by a '*!*' interfere with the expression pools which can
- * make 'this' outdated. They should only be call only be call in a wrapper on
- * Expression. */
+/* Methods preceded by '*!*' interfere with the expression pool, which can make
+ * 'this' outdated. They should only be called in a wrapper on Expression. */
 
 class ExpressionNode : public TreeNode, public SerializationHelperInterface {
   friend class SymbolNode;

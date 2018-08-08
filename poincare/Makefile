@@ -3,10 +3,12 @@ SFLAGS += -Ipoincare/include
 #include poincare/src/simplify/Makefile
 #include poincare/src/simplification/Makefile
 objs += $(addprefix poincare/src/,\
+  matrix_complex.o\
   tree_node.o\
   tree_pool.o\
   tree_by_reference.o\
   tree_by_value.o\
+  subtraction.o\
   undefined.o\
   infinity.o\
 )
@@ -114,7 +116,6 @@ objsExpected += $(addprefix poincare/src/,\
   square_root.o\
   static_hierarchy.o\
   store.o\
-  subtraction.o\
   sum.o\
   symbol.o\
   tangent.o\

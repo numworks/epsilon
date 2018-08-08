@@ -12,11 +12,15 @@ class MatrixComplex;
 template<typename T>
 class MatrixComplexNode : public EvaluationNode<T> {
 public:
+  static MatrixComplexNode<T> * FailedAllocationStaticNode();
+
   MatrixComplexNode() :
     EvaluationNode<T>(),
     m_numberOfRows(0),
     m_numberOfColumns(0)
   {}
+
+  ComplexNode<T> * complexAtIndex(int index);
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixComplexNode<T>); }
@@ -25,10 +29,9 @@ public:
 #endif
   int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
 
-  typename Poincare::EvaluationNode<T>::Type type() const override { return Poincare::EvaluationNode<T>::Type::MatrixComplex; }
+  // EvaluationNode
+  typename EvaluationNode<T>::Type type() const override { return EvaluationNode<T>::Type::MatrixComplex; }
   int numberOfComplexOperands() const { return m_numberOfRows*m_numberOfColumns; }
-  // WARNING: complexOperand may return a nullptr
-  ComplexNode<T> * childAtIndex(int index) const override;
   int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
   void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
@@ -46,22 +49,31 @@ private:
 
 template<typename T>
 class MatrixComplex : public Evaluation<T> {
-friend class MatrixComplexNode<T>;
+  friend class MatrixComplexNode<T>;
 public:
-  //MatrixComplex(TreeNode * t) : Evaluation<T>(t) {}
   MatrixComplex() : Evaluation<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >()) {}
   static MatrixComplex<T> Undefined() {
     std::complex<T> undef = std::complex<T>(NAN, NAN);
     return MatrixComplex<T>((std::complex<T> *)&undef, 1, 1);
   }
   static MatrixComplex<T> createIdentity(int dim);
-  int numberOfRows() const;
-  int numberOfColumns() const;
+  Complex<T> complexAtIndex(int index) {
+    return Complex<T>(node()->complexAtIndex(index));
+  }
+  int numberOfRows() const { return node()->numberOfRows(); }
+  int numberOfColumns() const { return node()->numberOfColumns(); }
   void setDimensions(int rows, int columns);
-  void addChildAtIndexInPlace(Complex<T> t, int index, int currentNumberOfChildren) override;
+  void addChildAtIndexInPlace(Complex<T> t, int index, int currentNumberOfChildren);
 private:
-  void setNumberOfRows(int rows);
-  void setNumberOfColumns(int columns);
+  MatrixComplexNode<T> * node() { return static_cast<MatrixComplexNode<T> *>(Evaluation<T>::node()); }
+  void setNumberOfRows(int rows) {
+    assert(rows >= 0);
+    node()->setNumberOfRows(rows);
+  }
+  void setNumberOfColumns(int columns) {
+    assert(columns >= 0);
+    node()->setNumberOfColumns(columns);
+  }
   MatrixComplex(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
   MatrixComplexNode<T> * node() const { return static_cast<MatrixComplexNode<T> *>(Evaluation<T>::node()); }
 };

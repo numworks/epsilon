@@ -1,28 +1,24 @@
 #include <poincare/subtraction.h>
-#include <poincare/addition.h>
-#include <poincare/matrix.h>
-#include <poincare/multiplication.h>
+#include <poincare/allocation_failure_expression_node.h>
+#include <poincare/serialization_helper.h>
+//#include <poincare/addition.h>
+//#include <poincare/matrix.h>
+//#include <poincare/multiplication.h>
 #include <poincare/opposite.h>
-#include <poincare/rational.h>
-extern "C" {
+//#include <poincare/rational.h>
 #include <assert.h>
-#include <stdlib.h>
-}
 
 namespace Poincare {
 
-Expression::Type Subtraction::type() const {
-  return Expression::Type::Subtraction;
+SubtractionNode * SubtractionNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<SubtractionNode> failure;
+  return &failure;
 }
 
-Expression * Subtraction::clone() const {
-  return new Subtraction(m_operands, true);
-}
-
-int Subtraction::polynomialDegree(char symbolName) const {
+int SubtractionNode::polynomialDegree(char symbolName) const {
   int degree = 0;
   for (int i = 0; i < numberOfChildren(); i++) {
-    int d = operand(i)->polynomialDegree(symbolName);
+    int d = childAtIndex(i)->polynomialDegree(symbolName);
     if (d < 0) {
       return -1;
     }
@@ -31,40 +27,45 @@ int Subtraction::polynomialDegree(char symbolName) const {
   return degree;
 }
 
-/* Layout */
+// Private
 
-bool Subtraction::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
+bool SubtractionNode::needsParenthesesWithParent(const SerializationHelperInterface * parent) const {
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
-  return e->isOfType(types, 6);
+  return static_cast<const ExpressionNode *>(parent)->isOfType(types, 6);
 }
 
-template<typename T>
-std::complex<T> Subtraction::compute(const std::complex<T> c, const std::complex<T> d) {
-  return c - d;
+LayoutRef SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Infix(Expression(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-template<typename T> MatrixComplex<T> Subtraction::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {
+int SubtractionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {
   MatrixComplex<T> opposite = computeOnMatrixAndComplex(m, c);
-  std::complex<T> * operands = new std::complex<T> [opposite.numberOfComplexOperands()];
-  for (int i = 0; i < opposite.numberOfComplexOperands(); i++) {
-    operands[i] = -opposite.complexOperand(i);
+  MatrixComplex<T> result;
+  for (int i = 0; i < opposite.numberOfChildren(); i++) {
+    result.addChildAtIndexInPlace(OppositeNode::compute(*(static_cast<ComplexNode<T> *>(opposite.complexAtIndex(i).node()))), i, i);
   }
-  MatrixComplex<T> result = MatrixComplex<T>(operands, opposite.numberOfRows(), opposite.numberOfColumns());
-  delete[] operands;
+  result.setDimensions(opposite.numberOfRows(), opposite.numberOfColumns());
   return result;
 }
 
-Expression Subtraction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
-  if (e != this) {
+
+Expression SubtractionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Subtraction(this).shallowReduce(context, angleUnit);
+}
+
+Expression Subtraction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression e = Expression::shallowReduce(context, angleUnit);
+  if (e.type() == ExpressionNode::Type::AllocationFailure || e.type() == ExpressionNode::Type::Undefined ) { //TODO use Expression method to make the ||
     return e;
   }
-  Multiplication * m = new Multiplication(new Rational(-1), operand(1), false);
-  Addition * a = new Addition(operand(0), m, false);
-  detachOperands();
-  m->shallowReduce(context, angleUnit);
-  replaceWith(a, true);
-  return a->shallowReduce(context, angleUnit);
+  /*Multiplication m = Multiplication(Rational(-1), childAtIndex(1));
+  Expression mReduced = m.shallowReduce(context, angleUnit);
+  Addition a = Addition(childAtIndex(0), mReduced);
+  return a.shallowReduce(context, angleUnit);*/
 }
 
 }

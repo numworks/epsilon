@@ -230,7 +230,7 @@ void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angl
       // Swap row h and iPivot
       if (iPivot != h) {
         for (int col = h; col < n; col++) {
-          swapChildren(iPivot*n+col, h*n+col);
+          swapChildrenInPlace(iPivot*n+col, h*n+col);
         }
         // Update determinant: det *= -1
         if (determinant) { determinant.addChildTreeAtIndex(RationalReference(-1), 0, determinant.numberOfChildren()); }

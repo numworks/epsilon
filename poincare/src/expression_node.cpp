@@ -11,11 +11,11 @@ ExpressionNode * ExpressionNode::FailedAllocationStaticNode() {
 }
 
 Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression expression) {
-  Expression e(this);
+  Expression e = Expression(this);
   int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     Expression newChild = e.childAtIndex(i).node()->replaceSymbolWithExpression(symbol, expression);
-    e = replaceChildAtIndex(i, newChild);
+    e.replaceChildAtIndexInPlace(i, newChild);
   }
   return e;
 }

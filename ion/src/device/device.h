@@ -19,6 +19,8 @@ void shutdownPeripherals(bool keepLEDAwake = false);
 void initClocks();
 void shutdownClocks(bool keepLEDAwake = false);
 
+void sysTick();
+
 /* The serial number is 96 bits long. That's equal to 16 digits in base 64. We
  * expose a convenient "copySerialNumber" routine which can be called without
  * using a static variable (and therefore without a .bss section). This is used

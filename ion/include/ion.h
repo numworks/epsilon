@@ -27,6 +27,8 @@ namespace Ion {
 
 void msleep(long ms);
 void usleep(long us);
+extern "C" long millis();
+extern "C" long micros();
 
 const char * serialNumber();
 const char * softwareVersion();

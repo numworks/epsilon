@@ -1,30 +1,30 @@
-#ifndef POINCARE_ALLOCATION_FAILED_LAYOUT_NODE_H
-#define POINCARE_ALLOCATION_FAILED_LAYOUT_NODE_H
+#ifndef POINCARE_ALLOCATION_FAILURE_LAYOUT_NODE_H
+#define POINCARE_ALLOCATION_FAILURE_LAYOUT_NODE_H
 
+#include "allocation_failure_node.h"
 #include "layout_node.h"
 #include "layout_reference.h"
 #include "layout_cursor.h"
 
 namespace Poincare {
 
-class AllocationFailedLayoutNode : public LayoutNode {
+template <typename T>
+class AllocationFailureLayoutNode : public AllocationFailureNode<T> {
 public:
-  static AllocationFailedLayoutNode * FailedAllocationStaticNode() {
-    return static_cast<AllocationFailedLayoutNode *>(LayoutNode::FailedAllocationStaticNode());
-  }
-
   // TreeNode
-  bool isAllocationFailure() const override { return true; }
-  size_t size() const override { return sizeof(AllocationFailedLayoutNode); }
+  size_t size() const override { return sizeof(AllocationFailureLayoutNode<T>); }
 #if TREE_LOG
-  const char * description() const override { return "AllocationFailedLayout";  }
+  const char * description() const override { return "AllocationFailureLayout";  }
 #endif
-  int numberOfChildren() const override { return 0; }
+
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     assert(false);
+    return 0;
+    /*
     int descriptionLength = strlen(description()) + 1;
     return strlcpy(buffer, description(), bufferSize < descriptionLength ? bufferSize : descriptionLength);
+    */
   }
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
@@ -48,10 +48,13 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 
-class AllocationFailedLayoutRef : public LayoutReference {
+/*
+template <typename T>
+class AllocationFailureLayoutRef : public LayoutReference {
 public:
-  AllocationFailedLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<AllocationFailedLayoutNode>()) {}
+  AllocationFailedLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<AllocationFailureLayoutNode<T>>()) {}
 };
+*/
 
 }
 

@@ -27,6 +27,7 @@ public:
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 
   // TreeNode
+  static CharLayoutNode * FailedAllocationStaticNode();
   size_t size() const override { return sizeof(CharLayoutNode); }
   int numberOfChildren() const override { return 0; }
 #if TREE_LOG

@@ -10,11 +10,10 @@ class Opposite;
 
 class OppositeNode : public ExpressionNode {
 public:
-  static OppositeNode * FailedAllocationStaticNode();
-
   template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>(-c); }
 
   // TreeNode
+  static OppositeNode * FailedAllocationStaticNode();
   size_t size() const override { return sizeof(OppositeNode); }
 #if TREE_LOG
   const char * description() const override { return "Opposite";  }
@@ -45,13 +44,10 @@ public:
 
 class Opposite : public Expression {
 public:
-  Opposite(Expression operand);
   Opposite(const OppositeNode * n) : Expression(n) {}
-
- /* : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
+  Opposite(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
     replaceChildAtIndexInPlace(0, operand);
   }
-  */
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };

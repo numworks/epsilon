@@ -80,7 +80,7 @@ Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit ang
 #if MATRIX_EXACT_REDUCING
 #endif
   result = Multiplication(Rational(-1), child);
-  return result.shallowReduce(context.angleUnit);
+  return result.shallowReduce(context, angleUnit);
 }
 #if 0
 

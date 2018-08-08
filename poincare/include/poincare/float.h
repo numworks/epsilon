@@ -2,6 +2,7 @@
 #define POINCARE_FLOAT_H
 
 #include <poincare/number.h>
+#include <poincare/approximation_helper.h>
 
 namespace Poincare {
 
@@ -19,6 +20,8 @@ namespace Poincare {
 template<typename T>
 class FloatNode : public NumberNode {
 public:
+  static FloatNode * FailedAllocationStaticNode();
+
   void setFloat(T a) { m_value = a; }
   T value() const { return m_value; }
 
@@ -52,15 +55,14 @@ private:
 };
 
 template<typename T>
-class FloatReference : public NumberReference {
+class FloatReference : public Number {
 public:
-  FloatReference(T value) : NumberReference(TreePool::sharedPool()->createTreeNode<RationalNode>()) {
-    if (!node->isAllocationFailure()) {
-      static_cast<FloatNode<T> *>(node)->setFloat(value);
-    }
+  FloatReference(T value) : Number(TreePool::sharedPool()->createTreeNode<FloatNode<T>>()) {
+    node()->setFloat(value);
   }
+private:
+  FloatNode<T> * node() const override { return static_cast<FloatNode<T> *>(Number::node()); }
 };
-
 
 }
 

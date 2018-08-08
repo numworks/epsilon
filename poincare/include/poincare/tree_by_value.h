@@ -6,6 +6,10 @@
 
 namespace Poincare {
 
+/* When looking for information about a child, it must be passed by reference,
+ * else it is copied so it is no longer a child. This is important for instance
+ * in indexOfChild and in replaceChild. */
+
 class TreeByValue : virtual protected TreeByReference {
 public:
   /* Constructors */
@@ -19,16 +23,24 @@ public:
   int numberOfChildren() const { return TreeByReference::numberOfChildren(); }
   TreeByValue parent() const { return TreeByValue(TreeByReference::parent()); }
   TreeByValue treeChildAtIndex(int i) const { return TreeByValue(TreeByReference::treeChildAtIndex(i)); }
-  int indexOfChild(TreeByValue t) const { return TreeByReference::indexOfChild(t); }
+  int indexOfChild(TreeByReference t) const { return TreeByReference::indexOfChild(t); }
 
   /* Hierarchy operations */
   // Replace
-  TreeByValue replaceChild(TreeByValue oldChild, TreeByValue newChild);
-  TreeByValue replaceChildAtIndex(int oldChildIndex, TreeByValue newChild);
+  void replaceChildInPlace(TreeByReference oldChild, TreeByValue newChild) {
+    TreeByReference::replaceChildInPlace(oldChild, newChild);
+  }
+  void replaceChildAtIndexInPlace(int oldChildIndex, TreeByValue newChild) {
+    TreeByReference::replaceChildAtIndexInPlace(oldChildIndex, newChild);
+  }
   // Merge
-  TreeByValue mergeChildrenAtIndex(TreeByValue t, int i);
+  void mergeChildrenAtIndexInPlace(TreeByValue t, int i) {
+    TreeByReference::mergeChildrenAtIndexInPlace(t, i);
+  }
   // Swap
-  TreeByValue swapChildren(int i, int j);
+  void swapChildrenInPlace(int i, int j) {
+    TreeByReference::swapChildrenInPlace(i, j);
+  }
 
 protected:
   /* Constructor */
@@ -37,12 +49,13 @@ protected:
 
   /* Hierarchy operations */
   // Add
-  TreeByValue addChildAtIndex(TreeByValue t, int index, int currentNumberOfChildren);
+  void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
+    TreeByReference::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
+  }
   // Remove puts a child at the end of the pool
-  TreeByValue removeChildAtIndex(int i);
-  TreeByValue removeChild(TreeByValue t, int childNumberOfChildren);
-  TreeByValue removeChildren(int currentNumberOfChildren);
-  TreeByValue removeChildrenAndDestroy(int currentNumberOfChildren);
+  void removeChildInPlace(TreeByValue t, int childNumberOfChildren) {
+    TreeByReference::removeChildInPlace(t, childNumberOfChildren);
+  }
 };
 
 }

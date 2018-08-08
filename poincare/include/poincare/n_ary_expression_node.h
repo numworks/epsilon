@@ -20,7 +20,7 @@ public:
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
 
   // Commutative properties
-  void sortOperands(ExpressionOrder order, bool canBeInterrupted);
+  void sortOperandsInPlace(ExpressionOrder order, bool canBeInterrupted);
   Expression squashUnaryHierarchy();
 
 protected:
@@ -32,21 +32,21 @@ private:
 
 class NAryExpressionRef : public Expression {
 public:
-  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override {
-    Expression::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  void addChildAtIndexInPlace(TreeReference t, int index, int currentNumberOfChildren) override {
+    Expression::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
   }
   // Remove puts a child at the end of the pool
-  void removeChildAtIndex(int i) override {
-    Expression::removeChildAtIndex(i);
+  void removeChildAtIndexInPlace(int i) override {
+    Expression::removeChildAtIndexInPlace(i);
   }
-  void removeChild(TreeReference t, int childNumberOfChildren) override {
-    Expression::removeChild(t, childNumberOfChildren);
+  void removeChildInPlace(TreeReference t, int childNumberOfChildren) override {
+    Expression::removeChildInPlace(t, childNumberOfChildren);
   }
-  void removeChildren(int currentNumberOfChildren) {
-    Expression::removeChildren(currentNumberOfChildren);
+  void removeChildrenInPlace(int currentNumberOfChildren) {
+    Expression::removeChildrenInPlace(currentNumberOfChildren);
   }
-  void removeChildrenAndDestroy(int currentNumberOfChildren) {
-    Expression::removeChildren(currentNumberOfChildren);
+  void removeChildrenAndDestroyInPlace(int currentNumberOfChildren) {
+    Expression::removeChildrenAndDestroyInPlace(currentNumberOfChildren);
   }
 };
 

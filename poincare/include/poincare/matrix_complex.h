@@ -58,7 +58,7 @@ public:
   int numberOfRows() const;
   int numberOfColumns() const;
   void setDimensions(int rows, int columns);
-  void addChildAtIndex(Complex<T> t, int index, int currentNumberOfChildren) override;
+  void addChildAtIndexInPlace(Complex<T> t, int index, int currentNumberOfChildren) override;
 private:
   void setNumberOfRows(int rows);
   void setNumberOfColumns(int columns);

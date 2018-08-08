@@ -6,7 +6,7 @@ extern "C" {
 
 namespace Poincare {
 
-void NAryExpressionNode::sortOperands(ExpressionOrder order, bool canBeInterrupted) {
+void NAryExpressionNode::sortOperandsInPlace(ExpressionOrder order, bool canBeInterrupted) {
   Expression reference(this);
   for (int i = reference.numberOfChildren()-1; i > 0; i--) {
     bool isSorted = true;
@@ -18,7 +18,7 @@ void NAryExpressionNode::sortOperands(ExpressionOrder order, bool canBeInterrupt
 #else
       if (order(childAtIndex(j), childAtIndex(j+1), canBeInterrupted) > 0) {
 #endif
-        reference.swapChildren(j, j+1);
+        reference.swapChildrenInPlace(j, j+1);
         isSorted = false;
       }
     }

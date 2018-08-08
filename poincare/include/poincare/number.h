@@ -28,7 +28,7 @@ public:
 class Number : public Expression {
 public:
   using Expression::Expression;
-  NumberNode * numberNode() const { assert(!isAllocationFailure()); return static_cast<NumberNode *>(node()); }
+  NumberNode * node() const override { return static_cast<NumberNode *>(Expression::node()); }
   /* Return either a Integer, a Decimal or an Infinity. */
   static Number ParseInteger(const char * digits, size_t length, bool negative);
   /* Return either a DecimalInteger or an Infinity. */

@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <poincare/number.h>
 #include <poincare/complex.h>
+#include <poincare/horizontal_layout_node.h>
 #include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
@@ -34,7 +35,7 @@ public:
 
   // Layout
   int serialize(char * buffer, int bufferSize) const;
-  LayoutReference createLayout() const;
+  HorizontalLayoutRef createLayout() const;
 
   // Approximation
   template<typename T> T approximate() const;
@@ -107,6 +108,9 @@ public:
   virtual void setDigits(native_int_t i);
   virtual void setDigits(double_native_int_t i);
   virtual void setDigits(const native_uint_t * digits, size_t size, bool negative);
+
+  // Allocation Failure
+  static IntegerNode * FailedAllocationStaticNode();
 
   // Getters
   native_uint_t * digits() const override { return (native_uint_t *)m_digits; }
@@ -199,7 +203,7 @@ public:
   static Integer Factorial(const Integer i);
 private:
   // TreeNode
-  IntegerNode * node() const override { return static_cast<IntegerNode *>(Expression::node()); }
+  IntegerNode * node() const override { return static_cast<IntegerNode *>(Number::node()); }
 
   Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative);
   Integer(size_t size) : Number(TreePool::sharedPool()->createTreeNode<IntegerNode>(size)) {

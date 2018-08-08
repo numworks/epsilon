@@ -209,7 +209,7 @@ Expression * Logarithm::shallowBeautify(Context & context, Preferences::AngleUni
 }
 
 template<typename T>
-EvaluationReference<T> Logarithm::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> Logarithm::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   if (numberOfChildren() == 1) {
     return ApproximationEngine::map(this, context, angleUnit, computeOnComplex<T>);
   }

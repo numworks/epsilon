@@ -223,7 +223,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   return currentChar;
 }
 
-template<typename T> EvaluationReference<T> DecimalNode::templatedApproximate() const {
+template<typename T> Evaluation<T> DecimalNode::templatedApproximate() const {
   NaturalIntegerPointer m = mantissa();
   T f = m.approximate<T>();
   int numberOfDigits = NaturalIntegerAbstract::NumberOfBase10Digits(&m);

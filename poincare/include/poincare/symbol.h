@@ -44,11 +44,9 @@ public:
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
 
 private:
-  bool hasAnExactRepresentation(Context & context) const {
-    // TODO: so far, no symbols can be exact but A, ..Z should be able to hold exact values later.
-    return false;
-  }
+  bool hasAnExactRepresentation(Context & context) const;
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+
   char m_name;
 };
 

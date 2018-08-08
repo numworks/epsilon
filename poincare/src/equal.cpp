@@ -58,7 +58,7 @@ LayoutRef Equal::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 template<typename T>
-EvaluationReference<T> Equal::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> Equal::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   return new Complex<T>(Complex<T>::Undefined());
 }
 

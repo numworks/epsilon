@@ -21,10 +21,10 @@ private:
   ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
   template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
-  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::map<float>(this, context, angleUnit,computeOnComplex<float>);
   }
-  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
 };

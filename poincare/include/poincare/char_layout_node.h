@@ -55,7 +55,7 @@ private:
 class CharLayoutRef : public LayoutReference {
 public:
   CharLayoutRef(char c, KDText::FontSize fontSize = KDText::FontSize::Large) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<CharLayoutNode>(), true)
+    LayoutReference(TreePool::sharedPool()->createTreeNode<CharLayoutNode>())
   {
     if (!(this->node()->isAllocationFailure())) {
       static_cast<CharLayoutNode *>(node())->setChar(c);

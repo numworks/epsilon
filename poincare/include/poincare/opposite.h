@@ -1,13 +1,17 @@
 #ifndef POINCARE_OPPOSITE_H
 #define POINCARE_OPPOSITE_H
 
-#include <poincare/expression_reference.h>
+#include <poincare/expression.h>
 #include <poincare/approximation_engine.h>
 
 namespace Poincare {
 
+class Opposite;
+
 class OppositeNode : public ExpressionNode {
 public:
+  static OppositeNode * FailedAllocationStaticNode();
+
   // TreeNode
   size_t size() const override { return sizeof(OppositeNode); }
 #if TREE_LOG
@@ -21,10 +25,10 @@ public:
   Sign sign() const override;
 
   // Approximation
-  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::map<float>(this, context, angleUnit, compute<float>);
   }
-  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationEngine::map<double>(this, context, angleUnit, compute<double>);
   }
 
@@ -34,17 +38,23 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 
   // Simplification
-  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  virtual Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
 
 private:
-  template<typename T> static ComplexReference<T> compute(const std::complex<T> c, Preferences::AngleUnit angleUnit) { return ComplexReference<T>(-c); }
+  template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::AngleUnit angleUnit) { return Complex<T>(-c); }
 };
 
-class OppositeReference : public ExpressionReference {
+class Opposite : public Expression {
 public:
-  OppositeReference(ExpressionReference operand) : ExpressionReference(TreePool::sharedPool()->createTreeNode<OppositeNode>(), true) {
+  Opposite(Expression operand);
+  Opposite(const OppositeNode * n) : Expression(n) {}
+
+ /* : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
     replaceChildAtIndexInPlace(0, operand);
   }
+  */
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

@@ -1,13 +1,15 @@
 #ifndef POINCARE_PARENTHESIS_H
 #define POINCARE_PARENTHESIS_H
 
-#include <poincare/expression_reference.h>
+#include <poincare/expression.h>
 #include <poincare/layout_engine.h>
 
 namespace Poincare {
 
 class ParenthesisNode : public ExpressionNode {
 public:
+  static ParenthesisNode * FailedAllocationStaticNode();
+
   // TreeNode
   size_t size() const override { return sizeof(ParenthesisNode); }
 #if TREE_LOG
@@ -21,24 +23,27 @@ public:
 
   // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::writePrefixSerializableRefTextInBuffer(ExpressionReference(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
-  }
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
   // Simplification
-  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
 
   // Approximation
-  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
 private:
- template<typename T> EvaluationReference<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+ template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class ParenthesisReference : public ExpressionReference {
+class Parenthesis : public Expression {
 public:
-  ParenthesisReference(ExpressionReference exp) : ExpressionReference(TreePool::sharedPool()->createTreeNode<ParenthesisNode>()) {
+  Parenthesis(const ParenthesisNode * n) : Expression(n) {}
+  Parenthesis(Expression exp) :
+    Expression(TreePool::sharedPool()->createTreeNode<ParenthesisNode>())
+  {
     replaceChildAtIndexInPlace(0, exp);
   }
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

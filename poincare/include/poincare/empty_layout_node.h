@@ -73,7 +73,7 @@ private:
 class EmptyLayoutRef : public LayoutReference {
 public:
   EmptyLayoutRef(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>(), true)
+    LayoutReference(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>())
   {
     if (!(node()->isAllocationFailure())) {
       typedNode()->setColor(color);

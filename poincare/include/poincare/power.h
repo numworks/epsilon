@@ -9,18 +9,23 @@
 
 namespace Poincare {
 
-class Power : public StaticHierarchy<2> {
-  using StaticHierarchy<2>::StaticHierarchy;
-  friend class Multiplication;
-  friend class NthRoot;
-  friend class SquareRoot;
-  friend class Addition;
-  friend class Division;
-  friend class Round;
-  friend class Symbol;
+class Power;
+
+class PowerNode : public ExpressionNode {
 public:
-  Type type() const override;
-  Sign sign() const override;
+  // TreeNode
+  static PowerNode * FailedAllocationStaticNode();
+  size_t size() const override { return sizeof(PowerNode); }
+#if TREE_LOG
+  const char * description() const override { return "Division";  }
+#endif
+  int numberOfChildren() const override { return 2; }
+
+  // Properties
+  virtual Type type() const override { return Type::Power; }
+  virtual Sign sign() const override;
+  virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+
   int polynomialDegree(char symbolName) const override;
   int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
   template<typename T> static std::complex<T> compute(const std::complex<T> c, const std::complex<T> d);
@@ -28,7 +33,6 @@ private:
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
   constexpr static int k_maxExactPowerMatrix = 100;
   /* Property */
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool needsParenthesesWithParent(SerializableNode * parentNode) const override;
@@ -66,6 +70,17 @@ private:
     return ApproximationHelper::MapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
   }
 };
+
+class Power : public Expression {
+public:
+  Power(Expression base, Expression exponent);
+  Power(const PowerNode * n) : Expression(n) {}
+
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+
+};
+
 
 }
 

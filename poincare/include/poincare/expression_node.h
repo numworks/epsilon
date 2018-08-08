@@ -15,7 +15,6 @@ namespace Poincare {
  * Expression. */
 
 class ExpressionNode : public TreeNode, public SerializationHelperInterface {
-  friend class ApproximationHelper;
   friend class SymbolNode;
   friend class NAryExpressionNode;
 public:

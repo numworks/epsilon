@@ -28,7 +28,7 @@ ISR InitialisationVector[INITIALISATION_VECTOR_SIZE]
   0, // DebugMonitor service routine,
   0, // Reserved
   0, // PendSV service routine,
-  0, // SysTick service routine
+  sysTick, // SysTick service routine
   0, // WWDG service routine
   0, // PVD service routine
   0, // TampStamp service routine

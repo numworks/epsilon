@@ -4,4 +4,6 @@
 void start();
 void abort();
 
+void sysTick();
+
 #endif

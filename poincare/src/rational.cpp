@@ -22,6 +22,11 @@ void RationalNode::setDigits(native_uint_t * numeratorDigits, size_t numeratorSi
   memcpy(m_digits + m_numberOfDigitsNumerator, denominatorDigits, denominatorSize*sizeof(native_uint_t));
 }
 
+RationalNode * RationalNode::FailedAllocationStaticNode() {
+  static AllocationFailureRationalNode failure;
+  return &failure;
+}
+
 NaturalIntegerPointer RationalNode::numerator() const {
   return NaturalIntegerPointer((native_uint_t *)m_digits, m_numberOfDigitsNumerator);
 }
@@ -38,12 +43,12 @@ size_t RationalNode::size() const {
 
 // Serialization Node
 
-bool RationalNode::needsParenthesesWithParent(SerializableNode * e) const {
+bool RationalNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
   if (denominator().isOne()) {
     return false;
   }
   Type types[] = {Type::Division, Type::Power, Type::Factorial};
-  return static_cast<ExpressionNode *>(e)->isOfType(types, 3);
+  return static_cast<const ExpressionNode *>(e)->isOfType(types, 3);
 }
 
 int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -79,22 +84,21 @@ ExpressionNode::Sign RationalNode::sign() const {
   return Sign::Positive;
 }
 
-void RationalNode::setSign(Sign s) {
-  assert(s != Sign::Unknown);
-  m_negative = s == Sign::Negative ? true : false;
+Expression RationalNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+  return Rational(this).setSign(s);
 }
 
 // Layout
 
 LayoutRef RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  LayoutRef numeratorLayout = numerator().createLayout();
+  HorizontalLayoutRef numeratorLayout = numerator().createLayout();
   if (m_negative) {
     numeratorLayout.addChildAtIndex(CharLayoutRef('-'), 0, numeratorLayout.numberOfChildren(), nullptr);
   }
   if (denominator().isOne()) {
     return numeratorLayout;
   }
-  LayoutRef denominatorLayout = denominator().createLayout();
+  HorizontalLayoutRef denominatorLayout = denominator().createLayout();
   return FractionLayoutRef(numeratorLayout, denominatorLayout);
 }
 
@@ -119,9 +123,9 @@ int RationalNode::NaturalOrder(const RationalNode i, const RationalNode j) {
   NaturalIntegerPointer id = i.denominator();
   NaturalIntegerPointer jn = j.numerator();
   NaturalIntegerPointer jd = j.denominator();
-  IntegerReference i1 = NaturalIntegerAbstract::umult(&in, &jd);
-  IntegerReference i2 = NaturalIntegerAbstract::umult(&id, &jn);
-  return ((int)i.sign())*IntegerReference::NaturalOrder(i1, i2);
+  Integer i1 = NaturalIntegerAbstract::umult(&in, &jd);
+  Integer i2 = NaturalIntegerAbstract::umult(&id, &jn);
+  return ((int)i.sign())*Integer::NaturalOrder(i1, i2);
 }
 
 int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
@@ -132,148 +136,137 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool can
 
 // Simplification
 
-Expression RationalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression reference(this);
-  if (m_negative) {
-    m_negative = false;
-    return OppositeReference(reference);
-  }
-  return reference;
+Expression RationalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Rational(this).shallowBeautify(context, angleUnit);
 }
 
-Expression RationalNode::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  if (denominator().isOne()) {
-    return Expression(nullptr);
-  }
-  NaturalIntegerPointer d = denominator();
-  assert(!d.isInfinity());
-  return RationalReference(&d, false);
+Expression RationalNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Rational(this).shallowBeautify(context, angleUnit);
 }
 
-/* Rational Reference */
+/* Rational  */
 
 // Constructors
 
-RationalReference::RationalReference(IntegerReference numerator, IntegerReference denominator) {
+Rational::Rational(Integer numerator, Integer denominator) :
+  Number(nullptr)
+{
   assert(!denominator.isZero());
   if (!numerator.isOne() && !denominator.isOne()) {
     // Avoid computing GCD if possible
-    IntegerReference gcd = Arithmetic::GCD(numerator, denominator);
-    numerator = IntegerReference::Division(numerator, gcd).quotient;
-    denominator = IntegerReference::Division(denominator, gcd).quotient;
+    Integer gcd = Arithmetic::GCD(numerator, denominator);
+    numerator = Integer::Division(numerator, gcd).quotient;
+    denominator = Integer::Division(denominator, gcd).quotient;
   }
-  if (numerator.isAllocationFailure() || denominator.isAllocationFailure()) {
-    *this = RationalReference(ExpressionNode::FailedAllocationStaticNode());
-  }
-  *this = RationalReference(sizeof(RationalNode)+sizeof(native_uint_t)*(numerator.typedNode()->numberOfDigits()+denominator.typedNode()->numberOfDigits()));
-  if (isAllocationFailure()) {
+  if (numerator.node()->isAllocationFailure() || denominator.node()->isAllocationFailure()) {
+    *this = Rational(RationalNode::FailedAllocationStaticNode());
     return;
   }
+  *this = Rational(sizeof(RationalNode)+sizeof(native_uint_t)*(numerator.node()->numberOfDigits()+denominator.node()->numberOfDigits()));
   bool negative = (numerator.sign() == ExpressionNode::Sign::Positive && denominator.sign() == ExpressionNode::Sign::Negative) || (denominator.sign() == ExpressionNode::Sign::Positive && numerator.sign() == ExpressionNode::Sign::Negative);
-  typedNode()->setDigits(numerator.typedNode()->digits(), numerator.typedNode()->numberOfDigits(), denominator.typedNode()->digits(), denominator.typedNode()->numberOfDigits(), negative);
+  node()->setDigits(numerator.node()->digits(), numerator.node()->numberOfDigits(), denominator.node()->digits(), denominator.node()->numberOfDigits(), negative);
   return;
 }
 
-RationalReference::RationalReference(const IntegerReference numerator) {
-  if (numerator.isAllocationFailure()) {
-    *this = RationalReference(ExpressionNode::FailedAllocationStaticNode());
+Rational::Rational(const Integer numerator) :
+  Number(nullptr)
+{
+  if (numerator.node()->isAllocationFailure()) {
+    *this = Rational(RationalNode::FailedAllocationStaticNode());
   }
-  *this = RationalReference(numerator.typedNode(), numerator.sign() == ExpressionNode::Sign::Negative);
+  *this = Rational(numerator.node(), numerator.sign() == ExpressionNode::Sign::Negative);
 }
 
-RationalReference::RationalReference(const NaturalIntegerAbstract * numerator, bool negative) {
-  *this = RationalReference(sizeof(RationalNode)+sizeof(native_uint_t)*(numerator->numberOfDigits()+1));
-  if (isAllocationFailure()) {
-    return;
-  }
+Rational::Rational(const NaturalIntegerAbstract * numerator, bool negative) : Number(nullptr) {
+  *this = Rational(sizeof(RationalNode)+sizeof(native_uint_t)*(numerator->numberOfDigits()+1));
   native_uint_t one = 1;
-  typedNode()->setDigits(numerator->digits(), numerator->numberOfDigits(), &one, 1, negative);
+  node()->setDigits(numerator->digits(), numerator->numberOfDigits(), &one, 1, negative);
   return;
 }
 
-RationalReference::RationalReference(native_int_t i) {
-  *this = RationalReference(sizeof(RationalNode)+sizeof(native_uint_t)*2);
-  if (isAllocationFailure()) {
-    return;
-  }
+Rational::Rational(native_int_t i) : Number(nullptr) {
+  *this = Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2);
   native_uint_t absI = i < 0 ? -i : i;
   native_uint_t one = 1;
-  typedNode()->setDigits(&absI, 1, &one, 1, i < 0);
+  node()->setDigits(&absI, 1, &one, 1, i < 0);
   return;
 }
 
-RationalReference::RationalReference(native_int_t i, native_int_t j) {
+Rational::Rational(native_int_t i, native_int_t j) : Number(nullptr) {
   assert(j != 0);
-  *this = RationalReference(sizeof(RationalNode)+sizeof(native_uint_t)*2);
-  if (isAllocationFailure()) {
-    return;
-  }
+  *this = Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2);
   native_uint_t absI = i < 0 ? -i : i;
   native_uint_t absJ = j < 0 ? -j : j;
-  typedNode()->setDigits(&absI, 1, &absJ, 1, (i < 0 && j > 0) || (i > 0 && j < 0));
+  node()->setDigits(&absI, 1, &absJ, 1, (i < 0 && j > 0) || (i > 0 && j < 0));
   return;
 }
 
-bool RationalReference::isOne() const {
-  if (isAllocationFailure()) {
-    return false;
-  }
-  return typedNode()->isOne();
-}
 
-bool RationalReference::numeratorOrDenominatorIsInfinity() const {
-  if (isAllocationFailure()) {
-    return false;
-  }
-  return typedNode()->numerator().isInfinity() || typedNode()->denominator().isInfinity();
+bool Rational::numeratorOrDenominatorIsInfinity() const {
+  return node()->numerator().isInfinity() || node()->denominator().isInfinity();
 }
 
 // Basic operations
 
-RationalReference RationalReference::Addition(const RationalReference i, const RationalReference j) {
-  if (i.isAllocationFailure() || j.isAllocationFailure()) {
-    return RationalReference(ExpressionNode::FailedAllocationStaticNode());
-  }
-  NaturalIntegerPointer in = i.typedNode()->numerator();
-  NaturalIntegerPointer id = i.typedNode()->denominator();
-  NaturalIntegerPointer jn = j.typedNode()->numerator();
-  NaturalIntegerPointer jd = j.typedNode()->denominator();
-  IntegerReference newDenominator = NaturalIntegerAbstract::umult(&id, &jd);
-  IntegerReference newNumeratorPart1 = NaturalIntegerAbstract::umult(&in, &jd);
-  IntegerReference newNumeratorPart2 = NaturalIntegerAbstract::umult(&jn, &id);
+Rational Rational::Addition(const Rational i, const Rational j) {
+  NaturalIntegerPointer in = i.node()->numerator();
+  NaturalIntegerPointer id = i.node()->denominator();
+  NaturalIntegerPointer jn = j.node()->numerator();
+  NaturalIntegerPointer jd = j.node()->denominator();
+  Integer newDenominator = NaturalIntegerAbstract::umult(&id, &jd);
+  Integer newNumeratorPart1 = NaturalIntegerAbstract::umult(&in, &jd);
+  Integer newNumeratorPart2 = NaturalIntegerAbstract::umult(&jn, &id);
   newNumeratorPart1.setNegative(i.sign() == ExpressionNode::Sign::Negative);
   newNumeratorPart2.setNegative(j.sign() == ExpressionNode::Sign::Negative);
-  IntegerReference newNumerator = IntegerReference::Addition(newNumeratorPart1, newNumeratorPart2);
-  return RationalReference(newNumerator, newDenominator);
+  Integer newNumerator = Integer::Addition(newNumeratorPart1, newNumeratorPart2);
+  return Rational(newNumerator, newDenominator);
 }
 
-RationalReference RationalReference::Multiplication(const RationalReference i, const RationalReference j) {
-  if (i.isAllocationFailure() || j.isAllocationFailure()) {
-    return RationalReference(ExpressionNode::FailedAllocationStaticNode());
-  }
-  NaturalIntegerPointer in = i.typedNode()->numerator();
-  NaturalIntegerPointer id = i.typedNode()->denominator();
-  NaturalIntegerPointer jn = j.typedNode()->numerator();
-  NaturalIntegerPointer jd = j.typedNode()->denominator();
-  IntegerReference newNumerator = NaturalIntegerAbstract::umult(&in, &jn);
-  IntegerReference newDenominator = NaturalIntegerAbstract::umult(&id, &jd);
+Rational Rational::Multiplication(const Rational i, const Rational j) {
+  NaturalIntegerPointer in = i.node()->numerator();
+  NaturalIntegerPointer id = i.node()->denominator();
+  NaturalIntegerPointer jn = j.node()->numerator();
+  NaturalIntegerPointer jd = j.node()->denominator();
+  Integer newNumerator = NaturalIntegerAbstract::umult(&in, &jn);
+  Integer newDenominator = NaturalIntegerAbstract::umult(&id, &jd);
   newNumerator.setNegative(i.sign() != j.sign());
-  return RationalReference(newNumerator, newDenominator);
+  return Rational(newNumerator, newDenominator);
 }
 
-RationalReference RationalReference::IntegerPower(const RationalReference i, const RationalReference j) {
-  if (i.isAllocationFailure() || j.isAllocationFailure()) {
-    return RationalReference(ExpressionNode::FailedAllocationStaticNode());
-  }
-  NaturalIntegerPointer in = i.typedNode()->numerator();
-  NaturalIntegerPointer id = i.typedNode()->denominator();
-  NaturalIntegerPointer jn = j.typedNode()->numerator();
-  IntegerReference newNumerator = NaturalIntegerPointer::upow(&in, &jn);
-  IntegerReference newDenominator = NaturalIntegerPointer::upow(&id, &jn);
+Rational Rational::IntegerPower(const Rational i, const Rational j) {
+  NaturalIntegerPointer in = i.node()->numerator();
+  NaturalIntegerPointer id = i.node()->denominator();
+  NaturalIntegerPointer jn = j.node()->numerator();
+  Integer newNumerator = NaturalIntegerPointer::upow(&in, &jn);
+  Integer newDenominator = NaturalIntegerPointer::upow(&id, &jn);
   if (j.sign() == ExpressionNode::Sign::Negative) {
-    return RationalReference(newDenominator, newNumerator);
+    return Rational(newDenominator, newNumerator);
   }
-  return RationalReference(newNumerator, newDenominator);
+  return Rational(newNumerator, newDenominator);
+}
+
+Expression Rational::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+  if (sign() == ExpressionNode::Sign::Negative) {
+    Expression abs = setSign(ExpressionNode::Sign::Positive);
+    return Opposite(abs);
+  }
+  return *this;
+}
+
+Expression Rational::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
+  NaturalIntegerPointer d = node()->denominator();
+  if (d.isOne()) {
+    return Expression();
+  }
+  assert(!d.isInfinity());
+  return Rational(&d, false);
+}
+
+Expression Rational::setSign(ExpressionNode::Sign s) const {
+  assert(s != ExpressionNode::Sign::Unknown);
+  Rational result = *this;
+  result.node()->setNegative(s == ExpressionNode::Sign::Negative);
+  return result;
 }
 
 }

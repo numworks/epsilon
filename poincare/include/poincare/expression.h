@@ -19,6 +19,7 @@ class Expression : public TreeByValue {
   friend class SymbolNode;
 public:
   /* Constructor & Destructor */
+  Expression() : Expression(nullptr) {}
   virtual ~Expression() = default;
   static Expression parse(char const * string);
   Expression replaceSymbolWithExpression(char symbol, Expression expression) { return node()->replaceSymbolWithExpression(symbol, expression); }

@@ -154,7 +154,7 @@ public:
 
 protected:
   // Private methods used in simplification process
-  /*!*/ virtual Expression cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Hierarchy */
   ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }

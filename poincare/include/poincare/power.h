@@ -42,7 +42,7 @@ private:
   int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
-  Expression * cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression * denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
   Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, Preferences::AngleUnit angleUnit);
   Expression * removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit);

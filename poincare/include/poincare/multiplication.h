@@ -44,7 +44,7 @@ private:
   void factorizeBase(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit);
   void factorizeExponent(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit);
   Expression * distributeOnOperandAtIndex(int index, Context & context, Preferences::AngleUnit angleUnit);
-  Expression * cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression * denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
   void addMissingFactors(Expression * factor, Context & context, Preferences::AngleUnit angleUnit);
   void factorizeSineAndCosine(Expression * o1, Expression * o2, Context & context, Preferences::AngleUnit angleUnit);
   static bool HaveSameNonRationalFactors(const Expression * e1, const Expression * e2);

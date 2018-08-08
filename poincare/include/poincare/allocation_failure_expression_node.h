@@ -13,6 +13,7 @@ template <typename T>
 class AllocationFailureExpressionNode : public T {
 public:
   // ExpressionNode
+  ExpressionNode::Sign sign() const override { return ExpressionNode::Sign::Unknown; }
   ExpressionNode::Type type() const override { return ExpressionNode::Type::AllocationFailure; }
   Evaluation<float> approximate(ExpressionNode::SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return Complex<float>::Undefined(); }
   Evaluation<double> approximate(ExpressionNode::DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return Complex<double>::Undefined(); }

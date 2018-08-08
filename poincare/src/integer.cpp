@@ -2,7 +2,7 @@
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
 //#include <poincare/char_layout_node.h>
-//#include <poincare/rational.h>
+#include <poincare/rational.h>
 #include <cmath>
 #include <utility>
 extern "C" {
@@ -216,7 +216,7 @@ Integer NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, const Nat
   if (size > k_maxNumberOfDigits) {
     return Integer::Overflow();
   }
-  return Integer::Integer(digits, size, false);
+  return Integer(digits, size, false);
 }
 
 Integer NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b){
@@ -253,7 +253,7 @@ Integer NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const Na
   if (size > k_maxNumberOfDigits + 1) {
     return Integer::Overflow();
   }
-  return Integer::Integer(digits, size, false);
+  return Integer(digits, size, false);
 }
 
 // TODO: OPTIMIZE

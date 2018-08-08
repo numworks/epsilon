@@ -7,7 +7,13 @@ namespace Poincare {
 
 class RationalNode : public NumberNode {
 public:
-  void setDigits(native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative);
+  RationalNode() :
+    m_numberOfDigitsNumerator(0),
+    m_numberOfDigitsDenominator(0) {}
+  virtual void setDigits(native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative);
+
+  // Allocation Failure
+  static RationalNode * FailedAllocationStaticNode();
 
   NaturalIntegerPointer numerator() const;
   NaturalIntegerPointer denominator() const;
@@ -18,14 +24,13 @@ public:
   const char * description() const override { return "Rational";  }
 #endif
 
-  // Serialization Node
-  bool needsParenthesesWithParent(SerializableNode * e) const override;
+  // SerializationHelperInterface
+  bool needsParenthesesWithParent(const SerializationHelperInterface * e) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Expression subclassing
   Type type() const override { return Type::Rational; }
   Sign sign() const override;
-  void setSign(Sign s);
 
   // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -46,11 +51,8 @@ public:
   static int NaturalOrder(const RationalNode i, const RationalNode j);
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override {
-    setSign(s);
-    return Expression(this);
-  }
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   Expression cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const override;
   bool m_negative;
   size_t m_numberOfDigitsNumerator;
@@ -58,17 +60,22 @@ private:
   native_uint_t m_digits[0];
 };
 
-class RationalReference : public NumberReference {
+class AllocationFailureRationalNode : public AllocationFailureExpressionNode<RationalNode> {
+public:
+  void setDigits(native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative) override {};
+};
+
+class Rational : public Number {
 public:
   /* The constructor build a irreductible fraction */
-  RationalReference(IntegerReference numerator, IntegerReference denominator);
-  RationalReference(const IntegerReference numerator);
-  RationalReference(const NaturalIntegerAbstract * numerator, bool negative);
-  RationalReference(native_int_t i);
-  RationalReference(native_int_t i, native_int_t j);
+  Rational(Integer numerator, Integer denominator);
+  Rational(const Integer numerator);
+  Rational(const NaturalIntegerAbstract * numerator, bool negative);
+  Rational(native_int_t i);
+  Rational(native_int_t i, native_int_t j);
 
   // TreeNode
-  RationalNode * typedNode() const { assert(node()->type() == ExpressionNode::Type::Rational); return static_cast<RationalNode *>(node()); }
+  RationalNode * node() const override { return static_cast<RationalNode *>(Number::node()); }
 
   // Properties
   bool isOne() const;
@@ -77,14 +84,19 @@ public:
   // Arithmetic
   /* Warning: when using this function, always assert that the result does not
    * involve infinity numerator or denominator or handle these cases. */
-  static RationalReference Addition(const RationalReference i, const RationalReference j);
-  static RationalReference Multiplication(const RationalReference i, const RationalReference j);
+  static Rational Addition(const Rational i, const Rational j);
+  static Rational Multiplication(const Rational i, const Rational j);
   // IntegerPower of (p1/q1)^(p2/q2) --> (p1^p2)/(q1^p2)
-  static RationalReference IntegerPower(const RationalReference i, const RationalReference j);
-  static int NaturalOrder(const RationalReference i, const RationalReference j);
+  static Rational IntegerPower(const Rational i, const Rational j);
+  static int NaturalOrder(const Rational i, const Rational j);
 
 private:
-  RationalReference(size_t size) : NumberReference(TreePool::sharedPool()->createTreeNode<RationalNode>(size)) {}
+  Rational(size_t size) : Number(TreePool::sharedPool()->createTreeNode<RationalNode>(size)) {}
+
+  /* Simplification */
+  Expression setSign(ExpressionNode::Sign s);
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

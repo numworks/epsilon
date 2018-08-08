@@ -5,10 +5,13 @@ SFLAGS += -Ipoincare/include
 objs += $(addprefix poincare/src/,\
   tree_node.o\
   tree_pool.o\
-  tree_reference.o\
+  tree_by_reference.o\
+  tree_by_value.o\
+  undefined.o\
+  infinity.o\
 )
 
-objs += $(addprefix poincare/src/,\
+objsExpected += $(addprefix poincare/src/,\
   binomial_coefficient_layout_node.o\
   bracket_layout_node.o\
   bracket_pair_layout_node.o\
@@ -36,7 +39,7 @@ objs += $(addprefix poincare/src/,\
   vertical_offset_layout_node.o\
 )
 
-objs += $(addprefix poincare/src/,\
+objsExpected += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
   approximation_helper.o\

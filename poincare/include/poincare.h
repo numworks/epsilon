@@ -3,10 +3,10 @@
 
 #define MATRICES_ARE_DEFINED 1
 
+#if 0
 #include <poincare/absolute_value.h>
 #include <poincare/absolute_value_layout_node.h>
 #include <poincare/addition.h>
-#include <poincare/approximation.h>
 #include <poincare/allocation_failed_layout_node.h>
 #include <poincare/arc_cosine.h>
 #include <poincare/arc_sine.h>
@@ -37,6 +37,7 @@
 #include <poincare/expression_array.h>
 #include <poincare/factor.h>
 #include <poincare/factorial.h>
+#include <poincare/float.h>
 #include <poincare/floor.h>
 #include <poincare/floor_layout_node.h>
 #include <poincare/frac_part.h>
@@ -102,5 +103,9 @@
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
 #include <poincare/vertical_offset_layout_node.h>
+#else
 
+#include <poincare/print_float.h>
+
+#endif
 #endif

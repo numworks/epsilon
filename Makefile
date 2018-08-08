@@ -31,9 +31,9 @@ include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
 include python/Makefile
-include escher/Makefile
+#include escher/Makefile
 # Executable Makefiles
-include apps/Makefile
+#include apps/Makefile
 include build/struct_layout/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 

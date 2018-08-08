@@ -12,6 +12,8 @@ namespace Poincare {
 template <typename T>
 class AllocationFailureExpressionNode : public T {
 public:
+  AllocationFailureExpressionNode() : T() {}
+  AllocationFailureExpressionNode(T node) : T(node) {}
   // ExpressionNode
   ExpressionNode::Sign sign() const override { return ExpressionNode::Sign::Unknown; }
   ExpressionNode::Type type() const override { return ExpressionNode::Type::AllocationFailure; }

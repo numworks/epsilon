@@ -2,14 +2,13 @@
 #define POINCARE_UNDEFINED_H
 
 #include <poincare/number.h>
+#include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
 
 class UndefinedNode : public NumberNode {
 public:
-  static UndefinedNode * FailedAllocationStaticNode() {
-    return static_cast<UndefinedNode *>(ExpressionNode::FailedAllocationStaticNode());
-  }
+  static UndefinedNode * FailedAllocationStaticNode();
 
   // TreeNode
   size_t size() const override { return sizeof(UndefinedNode); }
@@ -34,6 +33,9 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
   template<typename T> Evaluation<T> templatedApproximate() const;
+};
+
+class AllocationFailureUndefinedNode : public AllocationFailureExpressionNode<UndefinedNode> {
 };
 
 class Undefined : public Number {

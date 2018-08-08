@@ -78,10 +78,10 @@ int MatrixNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::Pr
 }
 
 template<typename T>
-EvaluationReference<T> MatrixNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> MatrixNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   MatrixComplexReference<T> matrix;
   for (int i = 0; i < numberOfChildren(); i++) {
-    EvaluationReference<T> operandEvaluation = childAtIndex(i)->approximate(T(), context, angleUnit);
+    Evaluation<T> operandEvaluation = childAtIndex(i)->approximate(T(), context, angleUnit);
     if (operandEvaluation.node()->type() != Evaluation<T>::Type::Complex) {
       result.addChildTreeAtIndex(ComplexReference<T>::Undefined(), i, i);
     } else {

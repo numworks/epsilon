@@ -29,10 +29,10 @@ public:
   Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
 
   // Approximation
-  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<float>();
   }
-  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templatedApproximate<double>();
   }
 
@@ -51,7 +51,7 @@ private:
   // Worst case is -1.2345678901234E-1000
   constexpr static int k_maxBufferSize = PrintFloat::k_numberOfStoredSignificantDigits+1+1+1+1+4+1;
   int convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const;
-  template<typename T> EvaluationReference<T> templatedApproximate() const;
+  template<typename T> Evaluation<T> templatedApproximate() const;
 
   bool m_negative;
   int m_exponent;

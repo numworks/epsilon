@@ -17,12 +17,12 @@ private:
   virtual LayoutRef createSequenceLayout(LayoutRef subscriptLayout, LayoutRef superscriptLayout, LayoutRef argumentLayout) const = 0;
   virtual const char * name() const = 0;
   /* Evaluation */
-  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> EvaluationReference<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
   virtual int emptySequenceValue() const = 0;
-  virtual EvaluationReference<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> * a, Evaluation<float> * b) const = 0;
-  virtual EvaluationReference<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> * a, Evaluation<double> * b) const = 0;
+  virtual Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> * a, Evaluation<float> * b) const = 0;
+  virtual Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> * a, Evaluation<double> * b) const = 0;
 };
 
 }

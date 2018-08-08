@@ -71,7 +71,7 @@ ExpressionReference PredictionInterval::shallowReduce(Context& context, Preferen
 }
 
 template<typename T>
-EvaluationReference<T> PredictionInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> PredictionInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> * pInput = operand(0)->privateApproximate(T(), context, angleUnit);
   Evaluation<T> * nInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T p = static_cast<Complex<T> *>(pInput)->toScalar();

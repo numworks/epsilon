@@ -20,13 +20,13 @@ private:
   }
   const char * name() const { return "randint"; }
   /* Evaluation */
-  EvaluationReference<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<float>(context, angleUnit);
   }
-  EvaluationReference<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return templateApproximate<double>(context, angleUnit);
   }
-  template <typename T> EvaluationReference<T> templateApproximate()Context& context, Preferences::AngleUnit angleUnit) const;
+  template <typename T> Evaluation<T> templateApproximate()Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

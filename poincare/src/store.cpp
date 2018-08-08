@@ -42,7 +42,7 @@ LayoutRef Store::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 template<typename T>
-EvaluationReference<T> Store::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+Evaluation<T> Store::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   context.setExpressionForSymbolName(value(), symbol(), context);
   if (context.expressionForSymbol(symbol()) != nullptr) {
     return context.expressionForSymbol(symbol())->privateApproximate(T(), context, angleUnit);

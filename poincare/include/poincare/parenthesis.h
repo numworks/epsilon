@@ -23,9 +23,11 @@ public:
 
   // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
+    return LayoutEngine::writePrefixSerializableRefTextInBuffer(Expression(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
+  }
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
@@ -34,12 +36,9 @@ private:
  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class Parenthesis : public Expression {
+class ParenthesisReference : public Expression {
 public:
-  Parenthesis(const ParenthesisNode * n) : Expression(n) {}
-  Parenthesis(Expression exp) :
-    Expression(TreePool::sharedPool()->createTreeNode<ParenthesisNode>())
-  {
+  ParenthesisReference(Expression exp) : Expression(TreePool::sharedPool()->createTreeNode<ParenthesisNode>()) {
     replaceChildAtIndexInPlace(0, exp);
   }
   // Expression

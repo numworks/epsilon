@@ -14,7 +14,7 @@ public:
   Sign sign() const override { return Sign::Positive; }
   template<typename T> static T random();
 private:
-  ExpressionReference setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutEngine::createPrefixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());

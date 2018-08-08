@@ -118,7 +118,7 @@ int MatrixReference::numberOfColumns() const {
 }
 
 void MatrixReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
-  ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+  Expression::addChildTreeAtIndex(t, index, currentNumberOfChildren);
   if (isAllocationFailure()) {
     return;
   }
@@ -133,7 +133,7 @@ int MatrixReference::rank(Context & context, Preferences::AngleUnit angleUnit, b
   int i = rank-1;
   while (i >= 0) {
     int j = m.numberOfColumns()-1;
-    ExpressionReference child = matrixChild(i,j);
+    Expression child = matrixChild(i,j);
     if (child.isAllocationFailure()) {
       return 0;
     }
@@ -200,7 +200,7 @@ void MatrixReference::setNumberOfColumns(int columns) {
 
 void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, MultiplicationReference determinant) {
   // The matrix has to be reduced to be able to spot 0 inside it
-  ExpressionReference reduced = deepReduce(context, angleUnit);
+  Expression reduced = deepReduce(context, angleUnit);
   /* The MatrixNode should change only in 2 cases:
    * - Allocation failure
    * - One of the child is Undefined
@@ -236,12 +236,12 @@ void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angl
         if (determinant) { determinant.addChildTreeAtIndex(RationalReference(-1), 0, determinant.numberOfChildren()); }
       }
       /* Set to 1 M[h][k] by linear combination */
-      ExpressionReference divisor = matrixChild(h, k);
+      Expression divisor = matrixChild(h, k);
       // Update determinant: det *= divisor
       if (determinant) { determinant.addChildTreeAtIndex(divisor.clone()); }
       for (int j = k+1; j < n; j++) {
-        ExpressionReference opHJ = matrixChild(h, j);
-        ExpressionReference newOpHJ = DivisionReference(opHJ, divisor.clone());
+        Expression opHJ = matrixChild(h, j);
+        Expression newOpHJ = DivisionReference(opHJ, divisor.clone());
         replaceTreeChildAtIndex(h*n+j, newOpHJ);
         newOpHJ.node()->shallowReduce(context, angleUnit);
       }
@@ -250,10 +250,10 @@ void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angl
       /* Set to 0 all M[i][j] i != h, j > k by linear combination */
       for (int i = 0; i < m; i++) {
         if (i == h) { continue; }
-        ExpressionReference factor = matrixChild(i, k);
+        Expression factor = matrixChild(i, k);
         for (int j = k+1; j < n; j++) {
-          ExpressionReference opIJ = matrixChild(i, j);
-          ExpressionReference newOpIJ = SubtractionReference(opIJ, MultiplicationReference(matrixChild(h, j).clone(), factor.clone()));
+          Expression opIJ = matrixChild(i, j);
+          Expression newOpIJ = SubtractionReference(opIJ, MultiplicationReference(matrixChild(h, j).clone(), factor.clone()));
           replaceTreeChildAtIndex(i*n+j, newOpIJ);
           newOpIJ.childAtIndex(1)->node()->shallowReduce(context, angleUnit);
           newOpIJ.node()->shallowReduce(context, angleUnit);

@@ -32,7 +32,7 @@ public:
     return nullptr;
   }
 private:
-  ExpressionReference shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override { return this; }
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override { return this; }
 };
 
 }

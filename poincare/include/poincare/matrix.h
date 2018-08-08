@@ -47,7 +47,7 @@ private:
   int m_numberOfColumns;
 };
 
-class MatrixReference : public ExpressionReference {
+class MatrixReference : public Expression {
   template<typename T> friend class MatrixComplexNode;
   friend class GlobalContext;
 public:
@@ -55,25 +55,25 @@ public:
   int numberOfRows() const;
   int numberOfColumns() const;
   void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
-  ExpressionReference matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
+  Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */
   int rank(Context & context, Preferences::AngleUnit angleUnit, bool inPlace);
   // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
 #if MATRIX_EXACT_REDUCING
-  ExpressionReference trace() const;
-  ExpressionReference determinant() const;
+  Expression trace() const;
+  Expression determinant() const;
   MatrixReference transpose() const;
   static MatrixReference createIdentity(int dim);
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
-  ExpressionReference inverse(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression inverse(Context & context, Preferences::AngleUnit angleUnit) const;
 #endif
 private:
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;
 
-  MatrixReference(TreeNode * node) : ExpressionReference(node) {}
+  MatrixReference(TreeNode * node) : Expression(node) {}
   MatrixNode * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixNode *>(node()); }
   void setNumberOfRows(int rows);
   void setNumberOfColumns(int columns);

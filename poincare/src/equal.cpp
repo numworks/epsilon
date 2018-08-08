@@ -38,7 +38,7 @@ Expression * Equal::standardEquation(Context & context, Preferences::AngleUnit a
   return sub;
 }
 
-ExpressionReference Equal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Equal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

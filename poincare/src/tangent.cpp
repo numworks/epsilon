@@ -33,7 +33,7 @@ std::complex<T> Tangent::computeOnComplex(const std::complex<T> c, Preferences::
   return Trigonometry::RoundToMeaningfulDigits(res);
 }
 
-ExpressionReference Tangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Tangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

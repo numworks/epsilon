@@ -16,7 +16,7 @@ Expression * Determinant::clone() const {
   return a;
 }
 
-ExpressionReference Determinant::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Determinant::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

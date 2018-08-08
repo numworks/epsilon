@@ -25,7 +25,7 @@ int PredictionInterval::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-ExpressionReference PredictionInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression PredictionInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

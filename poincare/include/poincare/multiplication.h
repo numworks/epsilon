@@ -32,13 +32,13 @@ public:
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
 private:
   /* Property */
-  ExpressionReference setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   /* Layout */
   bool needsParenthesisWithParent(SerializableNode * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   /* Simplification */
-  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   Expression * privateShallowReduce(Context& context, Preferences::AngleUnit angleUnit, bool expand, bool canBeInterrupted);
   void mergeMultiplicationOperands();
   void factorizeBase(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit);

@@ -17,12 +17,12 @@ LayoutRef ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplay
   return LayoutEngine::createParenthesedLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
-int ParenthesisNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutEngine::writePrefixSerializableRefTextInBuffer(Parenthesis(const_cast<ParenthesisNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
-}
-
-Expression ParenthesisNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  return Parenthesis(this).shallowReduce(context, angleUnit);
+Expression ParenthesisNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+  Expression e = ExpressionNode::shallowReduce(context, angleUnit);
+  if (e.node() != this) {
+    return e;
+  }
+  return Expression(childAtIndex(0));
 }
 
 template<typename T>

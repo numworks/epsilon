@@ -22,7 +22,7 @@ Expression * Factor::clone() const {
   return b;
 }
 
-ExpressionReference Factor::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Factor::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * op = editableOperand(0);
   if (op->type() != Type::Rational) {
     return new Undefined();

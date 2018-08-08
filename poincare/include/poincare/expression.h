@@ -15,6 +15,7 @@ class Context;
 class Expression : public TreeByValue {
   friend class ExpressionNode;
   friend class NAryExpressionNode;
+  friend class SubtractionNode;
   friend class SymbolNode;
 public:
   /* Constructor & Destructor */
@@ -39,6 +40,7 @@ public:
   static bool shouldStopProcessing();
 
   /* Properties */
+  ExpressionNode::Type type() const { return node()->type(); }
   ExpressionNode::Sign sign() const { return node()->sign(); }
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   bool isNumber() const { return node()->isNumber(); }

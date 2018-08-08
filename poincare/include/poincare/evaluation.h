@@ -46,6 +46,10 @@ public:
     assert(!TreeByValue::node()->isGhost());
     return static_cast<EvaluationNode<T> *>(TreeByValue::node());
   }
+  /* Hierarchy */
+  Evaluation<T> childAtIndex(int i) const {
+    return Evaluation<T>(static_cast<EvaluationNode<T> *>(TreeByReference::treeChildAtIndex(i).node()));
+  }
   typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }
   bool isUndefined() const { return node()->isUndefined(); }
   T toScalar() const { return node()->toScalar(); }
@@ -55,7 +59,7 @@ public:
   Evaluation inverse() const { return node()->inverse(); }
   Evaluation transpose() const { return node()->transpose(); }
 protected:
-  //Evaluation(EvaluationNode * n) : TreeByValue(n) {}
+  Evaluation(EvaluationNode<T> * n) : TreeByValue(n) {}
   //Evaluation() : TreeByValue() {}
 };
 

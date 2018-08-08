@@ -19,7 +19,7 @@ Expression * MatrixInverse::clone() const {
   return a;
 }
 
-ExpressionReference MatrixInverse::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression MatrixInverse::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

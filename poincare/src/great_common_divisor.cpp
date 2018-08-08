@@ -19,7 +19,7 @@ Expression * GreatCommonDivisor::clone() const {
   return a;
 }
 
-ExpressionReference GreatCommonDivisor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression GreatCommonDivisor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

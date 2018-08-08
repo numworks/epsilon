@@ -21,7 +21,7 @@ public:
 
   // Commutative properties
   void sortOperands(ExpressionOrder order, bool canBeInterrupted);
-  ExpressionReference squashUnaryHierarchy();
+  Expression squashUnaryHierarchy();
 
 protected:
   int m_numberOfChildren;
@@ -30,23 +30,23 @@ private:
   int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;
 };
 
-class NAryExpressionRef : public ExpressionReference {
+class NAryExpressionRef : public Expression {
 public:
   void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override {
-    ExpressionReference::addChildTreeAtIndex(t, index, currentNumberOfChildren);
+    Expression::addChildTreeAtIndex(t, index, currentNumberOfChildren);
   }
   // Remove puts a child at the end of the pool
   void removeChildAtIndex(int i) override {
-    ExpressionReference::removeChildAtIndex(i);
+    Expression::removeChildAtIndex(i);
   }
   void removeChild(TreeReference t, int childNumberOfChildren) override {
-    ExpressionReference::removeChild(t, childNumberOfChildren);
+    Expression::removeChild(t, childNumberOfChildren);
   }
   void removeChildren(int currentNumberOfChildren) {
-    ExpressionReference::removeChildren(currentNumberOfChildren);
+    Expression::removeChildren(currentNumberOfChildren);
   }
   void removeChildrenAndDestroy(int currentNumberOfChildren) {
-    ExpressionReference::removeChildren(currentNumberOfChildren);
+    Expression::removeChildren(currentNumberOfChildren);
   }
 };
 

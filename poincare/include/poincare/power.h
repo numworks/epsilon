@@ -28,7 +28,7 @@ private:
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
   constexpr static int k_maxExactPowerMatrix = 100;
   /* Property */
-  ExpressionReference setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool needsParenthesisWithParent(SerializableNode * parentNode) const override;
@@ -37,7 +37,7 @@ private:
   }
   static const char * name() { return "^"; }
   /* Simplify */
-  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;

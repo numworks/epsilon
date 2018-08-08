@@ -32,7 +32,7 @@ std::complex<T> Cosine::computeOnComplex(const std::complex<T> c, Preferences::A
   return Trigonometry::RoundToMeaningfulDigits(res);
 }
 
-ExpressionReference Cosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Cosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

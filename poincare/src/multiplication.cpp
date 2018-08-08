@@ -43,7 +43,7 @@ int Multiplication::polynomialDegree(char symbolName) const {
   return degree;
 }
 
-int Multiplication::getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const {
+int Multiplication::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg < 0 || deg > k_maxPolynomialDegree) {
     return -1;
@@ -174,7 +174,7 @@ static inline const Expression * Base(const Expression * e) {
   return e;
 }
 
-ExpressionReference Multiplication::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Multiplication::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   return privateShallowReduce(context, angleUnit, true, true);
 }
 

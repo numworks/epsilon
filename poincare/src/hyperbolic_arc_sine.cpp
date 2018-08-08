@@ -17,7 +17,7 @@ Expression * HyperbolicArcSine::clone() const {
   return a;
 }
 
-ExpressionReference HyperbolicArcSine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression HyperbolicArcSine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

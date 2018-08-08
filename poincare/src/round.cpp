@@ -19,7 +19,7 @@ Expression * Round::clone() const {
   return c;
 }
 
-ExpressionReference Round::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Round::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

@@ -132,8 +132,8 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool can
 
 // Simplification
 
-ExpressionReference RationalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  ExpressionReference reference(this);
+Expression RationalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+  Expression reference(this);
   if (m_negative) {
     m_negative = false;
     return OppositeReference(reference);
@@ -141,9 +141,9 @@ ExpressionReference RationalNode::shallowBeautify(Context & context, Preferences
   return reference;
 }
 
-ExpressionReference RationalNode::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression RationalNode::cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
   if (denominator().isOne()) {
-    return ExpressionReference(nullptr);
+    return Expression(nullptr);
   }
   NaturalIntegerPointer d = denominator();
   assert(!d.isInfinity());

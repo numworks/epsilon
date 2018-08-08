@@ -83,7 +83,7 @@ int Power::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-int Power::getPolynomialCoefficients(char symbolName, ExpressionReference coefficients[]) const {
+int Power::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg <= 0) {
     return Expression::privateGetPolynomialCoefficients(symbolName, coefficients);
@@ -205,7 +205,7 @@ int Power::simplificationOrderGreaterType(const Expression * e, bool canBeInterr
   return SimplificationOrder(operand(1), &one, canBeInterrupted);
 }
 
-ExpressionReference Power::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -665,7 +665,7 @@ Expression * Power::CreateNthRootOfUnity(const Rational r) {
 #endif
 }
 
-ExpressionReference Power::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Power::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
   if (operand(1)->sign() == Sign::Negative) {
     Expression * p = cloneDenominator(context, angleUnit);

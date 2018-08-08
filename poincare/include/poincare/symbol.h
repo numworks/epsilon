@@ -37,7 +37,7 @@ public:
   int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
@@ -50,7 +50,7 @@ private:
   char m_name;
 };
 
-class Symbol : public Expression {
+class SymbolReference : public Expression {
 public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
@@ -85,9 +85,10 @@ public:
     X3,
     Y3 = 29
   };
-  Symbol(const SymbolNode * n) : Expression(n) {}
-  Symbol(const char name) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
-    node()->setName(name);
+  SymbolReference(const char name) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
+    if (!node->isAllocationFailure()) {
+      static_cast<SymbolNode *>(node)->setName(name);
+    }
   }
 
   // Symbol properties

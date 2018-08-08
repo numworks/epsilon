@@ -46,12 +46,12 @@ public:
   static int NaturalOrder(const RationalNode i, const RationalNode j);
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
-  ExpressionReference shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
-  ExpressionReference setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override {
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override {
     setSign(s);
-    return ExpressionReference(this);
+    return Expression(this);
   }
-  ExpressionReference cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression cloneDenominator(Context & context, Preferences::AngleUnit angleUnit) const override;
   bool m_negative;
   size_t m_numberOfDigitsNumerator;
   size_t m_numberOfDigitsDenominator;

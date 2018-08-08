@@ -59,7 +59,7 @@ Expression * Logarithm::simpleShallowReduce(Context & context, Preferences::Angl
   return this;
 }
 
-ExpressionReference Logarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Logarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

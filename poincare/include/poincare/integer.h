@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <poincare/number.h>
 #include <poincare/complex.h>
+#include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
 
@@ -103,9 +104,9 @@ public:
   IntegerNode() :
     NaturalIntegerAbstract(),
     m_negative(false) {}
-  void setDigits(native_int_t i);
-  void setDigits(double_native_int_t i);
-  void setDigits(const native_uint_t * digits, size_t size, bool negative);
+  virtual void setDigits(native_int_t i);
+  virtual void setDigits(double_native_int_t i);
+  virtual void setDigits(const native_uint_t * digits, size_t size, bool negative);
 
   // Getters
   native_uint_t * digits() const override { return (native_uint_t *)m_digits; }
@@ -114,7 +115,7 @@ public:
   Type type() const override { return Type::Integer; }
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override { return Integer(this).shallowReduce(context, angleUnit); }
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return Complex<float>(templatedApproximate<float>()); }
@@ -133,7 +134,7 @@ public:
 
   // ExpressionNode
   Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override { Integer(this).setSign(s, context, angleUnit); }
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   void setNegative(bool negative);
 
@@ -152,25 +153,13 @@ private:
   native_uint_t m_digits[0];
 };
 
-class AllocationFailureIntegerNode : public IntegerNode, public AllocationFailedExpressionNode {
-public
-  // ExpressionNode
-  using AllocationFailedExpressionNode::type;
-  using AllocationFailedExpressionNode::approximate;
-  using AllocationFailedExpressionNode::writeTextInBuffer;
-  using AllocationFailedExpressionNode::createLayout;
-  using AllocationFailedExpressionNode::numberOfChildren;
-  using AllocationFailedExpressionNode::isAllocationFailure;
-  size_t size() const override { return sizeof(AllocationFailureIntegerNode); }
-#if TREE_LOG
-  const char * description() const override { return "AllocationFailureIntegerNode";  }
-#endif
-
+class AllocationFailureIntegerNode : public AllocationFailureExpressionNode<IntegerNode> {
+public:
   // IntegerNode
   bool isZero() const override { return false; }
   void setDigits(native_int_t i) override {}
-  void setDigits(double_native_int_t i);
-  void setDigits(const native_uint_t * digits, size_t size, bool negative);
+  void setDigits(double_native_int_t i) override {}
+  void setDigits(const native_uint_t * digits, size_t size, bool negative) override {}
 };
 
 class Integer : public Number {
@@ -180,7 +169,7 @@ friend class IntegerNode;
 friend class Rational;
 friend class Decimal;
 public:
-  Integer(TreeNode * n) : Number(n) {}
+  Integer(IntegerNode * n) : Number(n) {}
   Integer(const char * digits, size_t length, bool negative);
   Integer(const NaturalIntegerAbstract * naturalInteger);
   Integer(native_int_t i);
@@ -191,37 +180,37 @@ public:
   int extractedInt() const;
 
    // Comparison
-  static int NaturalOrder(const Integer i, const Integer j);
-
+  static int NaturalOrder(const Integer i, const Integer j) { return IntegerNode::NaturalOrder(i.node(), j.node()); }
   // Properties
-  virtual bool isZero() const;
-  bool isOne() const;
-  bool isInfinity() const;
-  bool isEven() const;
+  bool isZero() const { return node()->isZero(); }
+  bool isOne() const { return node()->isOne(); }
+  bool isInfinity() const { return node()->isInfinity(); }
+  bool isEven() const { return node()->isEven(); }
   bool isNegative() const { return node()->sign() == ExpressionNode::Sign::Negative; }
-  void setNegative(bool negative);
-  static int NumberOfBase10Digits(const Integer i);
+  void setNegative(bool negative) { return node()->setNegative(negative); }
+  static int NumberOfBase10Digits(const Integer i) { return NaturalIntegerAbstract::NumberOfBase10Digits(i.node()); }
 
   // Arithmetic
-  static Integer Addition(const Integer i, const Integer j);
-  static Integer Subtraction(const Integer i, const Integer j);
+  static Integer Addition(const Integer i, const Integer j) { return addition(i, j, false); }
+  static Integer Subtraction(const Integer i, const Integer j) { return addition(i, j, true); }
   static Integer Multiplication(const Integer i, const Integer j);
   static IntegerDivision Division(const Integer numerator, const Integer denominator);
   static Integer Power(const Integer i, const Integer j);
   static Integer Factorial(const Integer i);
 private:
   // TreeNode
-  IntegerNode * typedNode() const { assert(node()->type() == ExpressionNode::Type::Integer); return static_cast<IntegerNode *>(node()); }
+  IntegerNode * node() const override { return static_cast<IntegerNode *>(Expression::node()); }
 
   Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative);
   Integer(size_t size) : Number(TreePool::sharedPool()->createTreeNode<IntegerNode>(size)) {
   }
   static Integer addition(const Integer a, const Integer b, bool inverseBNegative);
-  size_t numberOfDigits() const { return typedNode()->numberOfDigits(); }
-  uint32_t digit(int i) const { return typedNode()->digit(i); }
+  size_t numberOfDigits() const { return node()->numberOfDigits(); }
+  uint32_t digit(int i) const { return node()->digit(i); }
 
   // Simplification
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 };
 
 struct IntegerDivision {

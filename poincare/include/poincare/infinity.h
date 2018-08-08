@@ -2,7 +2,6 @@
 #define POINCARE_INFINITY_H
 
 #include <poincare/number.h>
-#include <poincare/allocation_failed_expression_node.h>
 
 namespace Poincare {
 
@@ -40,26 +39,13 @@ private:
   bool m_negative;
 };
 
-class AllocationFailureInfinityNode : public InfinityNode, public AllocationFailedExpressionNode {
-  using AllocationFailedExpressionNode::type;
-  using AllocationFailedExpressionNode::approximate;
-  using AllocationFailedExpressionNode::writeTextInBuffer;
-  using AllocationFailedExpressionNode::createLayout;
-  using AllocationFailedExpressionNode::numberOfChildren;
-  using AllocationFailedExpressionNode::isAllocationFailure;
-  size_t size() const override { return sizeof(AllocationFailureInfinityNode); }
-#if TREE_LOG
-  const char * description() const override { return "AllocationFailureInfinityNode";  }
-#endif
-};
-
 class Infinity : public Number {
 public:
   Infinity(bool negative) : Number(TreePool::sharedPool()->createTreeNode<InfinityNode>()) {
     node()->setNegative(negative);
   }
 private:
-  InfinityNode * node() { return static_cast<InfinityNode *>(Number::node()); }
+  InfinityNode * node() const override { return static_cast<InfinityNode *>(Number::node()); }
 };
 
 }

@@ -18,7 +18,7 @@ Expression * PermuteCoefficient::clone() const {
   return b;
 }
 
-ExpressionReference PermuteCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression PermuteCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

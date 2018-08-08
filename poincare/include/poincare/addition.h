@@ -40,7 +40,7 @@ private:
   static const char * name() { return "+"; }
 
   /* Simplification */
-  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression * factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit);
   void factorizeOperands(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit);

@@ -40,8 +40,8 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
   // Simplification
-  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
-  ExpressionReference shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) override;
 
   // Layout
   bool needsParenthesisWithParent(SerializableNode * parentNode) const override;

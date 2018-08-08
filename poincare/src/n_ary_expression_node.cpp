@@ -7,7 +7,7 @@ extern "C" {
 namespace Poincare {
 
 void NAryExpressionNode::sortOperands(ExpressionOrder order, bool canBeInterrupted) {
-  ExpressionReference reference(this);
+  Expression reference(this);
   for (int i = reference.numberOfChildren()-1; i > 0; i--) {
     bool isSorted = true;
     for (int j = 0; j < reference.numberOfChildren()-1; j++) {
@@ -28,11 +28,11 @@ void NAryExpressionNode::sortOperands(ExpressionOrder order, bool canBeInterrupt
   }
 }
 
-ExpressionReference NAryExpressionNode::squashUnaryHierarchy() {
-  ExpressionReference reference(this);
+Expression NAryExpressionNode::squashUnaryHierarchy() {
+  Expression reference(this);
   if (reference.numberOfChildren() == 1) {
     assert(parent() != nullptr);
-    ExpressionReference o = reference.childAtIndex(0);
+    Expression o = reference.childAtIndex(0);
     reference.replaceWith(o);
     return o;
   }

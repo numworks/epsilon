@@ -23,7 +23,7 @@ private:
   }
   const char * name() const { return "factor"; }
   /* Simplification */
-  ExpressionReference shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) override;
   Expression * createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit);
   /* Evaluation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }

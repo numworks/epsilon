@@ -28,7 +28,7 @@ int Store::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFl
   return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x90");
 }
 
-ExpressionReference Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   context.setExpressionForSymbolName(value(), symbol(), context);
   return replaceWith(editableOperand(1), true)->shallowReduce(context, angleUnit);
 }

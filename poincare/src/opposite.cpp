@@ -84,12 +84,12 @@ Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit ang
 }
 #if 0
 
-ExpressionReference OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  ExpressionReference e = ExpressionNode::shallowReduce(context, angleUnit);
+Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+  Expression e = ExpressionNode::shallowReduce(context, angleUnit);
   if (e.node() != this) {
     return e;
   }
-  const ExpressionReference child = ExpressionReference(childAtIndex(0));
+  const Expression child = Expression(childAtIndex(0));
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
     return SimplificationEngine::map(this, context, angleUnit);

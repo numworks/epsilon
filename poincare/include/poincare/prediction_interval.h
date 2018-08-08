@@ -21,7 +21,7 @@ private:
   }
   const char * name() const { return "prediction95"; }
   /* Simplification */
-  ExpressionReference shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
   Evaluation<float> approximate(Expression::SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> * privateApproximate(Expression::DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }

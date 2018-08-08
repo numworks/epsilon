@@ -16,7 +16,7 @@ Expression * MatrixDimension::clone() const {
   return a;
 }
 
-ExpressionReference MatrixDimension::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression MatrixDimension::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

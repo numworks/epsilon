@@ -27,7 +27,7 @@ LayoutRef AbsoluteValue::createLayout(Preferences::PrintFloatMode floatDisplayMo
   return AbsoluteValueLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-ExpressionReference AbsoluteValue::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression AbsoluteValue::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;

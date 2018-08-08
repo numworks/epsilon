@@ -406,7 +406,7 @@ void IntegerNode::setDigits(const native_uint_t * digits, size_t size, bool nega
   m_negative = negative;
 }
 
-ExpressionReference IntegerNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+Expression IntegerNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return RationalReference(IntegerReference((NaturalIntegerAbstract *)this), IntegerReference(1));
 }
 
@@ -446,7 +446,7 @@ size_t IntegerNode::size() const {
   return m_numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode);
 }
 
-ExpressionReference IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   setNegative(s == Sign::Negative);
   return IntegerReference((NaturalIntegerAbstract *)this);
 }

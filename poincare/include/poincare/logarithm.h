@@ -19,7 +19,7 @@ private:
     return LayoutEngine::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "log");
   }
   /* Simplification */
-  ExpressionReference shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression * simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   bool parentIsAPowerOfSameBase() const;

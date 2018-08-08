@@ -36,7 +36,7 @@ bool Factorial::needParenthesisWithParent(const Expression * e) const {
 
 /* Simplification */
 
-ExpressionReference Factorial::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
@@ -66,7 +66,7 @@ ExpressionReference Factorial::shallowReduce(Context& context, Preferences::Angl
   return this;
 }
 
-ExpressionReference Factorial::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Factorial::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
   // +(a,b)! ->(+(a,b))!
   if (operand(0)->type() == Type::Addition || operand(0)->type() == Type::Multiplication || operand(0)->type() == Type::Power) {
     const Expression * o[1] = {operand(0)};

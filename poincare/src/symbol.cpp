@@ -33,7 +33,14 @@ ExpressionNode::Sign SymbolNode::sign() const {
 }
 
 Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression expression) {
-  return Symbol(this).replaceSymbolWithExpression(symbol, expression);
+  if (m_name == symbol) {
+    Expression value = expression.clone();
+    if (parent() && value.needsParenthesisWithParent(parent())) {
+      value = ParenthesisReference(value);
+    }
+    return value;
+  }
+  return Expression(this);
 }
 
 int SymbolNode::polynomialDegree(char symbol) const {
@@ -44,7 +51,13 @@ int SymbolNode::polynomialDegree(char symbol) const {
 }
 
 int SymbolNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  return Symbol(this).getPolynomialCoefficients(symbolName, coefficients);
+  if (m_name == symbolName) {
+    coefficients[0] = RationalReference(0);
+    coefficients[1] = RationalReference(1);
+    return 1;
+  }
+  coefficients[0] = SymbolReference(m_name);
+  return 0;
 }
 
 int SymbolNode::getVariables(isVariableTest isVariable, char * variables) const {
@@ -140,8 +153,22 @@ int SymbolNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::Pr
   return 1;
 }
 
-Expression SymbolNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  return Symbol(this).shallowReduce(context, angleUnit);
+Expression SymbolNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+  // Do not replace symbols in expression of type: 3->A
+  if (parent() && parent()->type() == Type::Store && parent()->childAtIndex(1) == this) {
+    return this;
+  }
+  const Expression e = context.expressionForSymbol(SymbolReference(m_name));
+  if (e.isDefined() && hasAnExactRepresentation(context)) { // TODO: later AZ should be replaced.
+    /* The stored expression had been beautified which forces to call deepReduce. */
+    return e.clone().deepReduce(context, angleUnit);
+  }
+  return Expression(this);
+}
+
+bool SymbolNode::hasAnExactRepresentation(Context & context) const {
+  // TODO: so far, no symbols can be exact but A, ..Z should be able to hold exact values later.
+  return false;
 }
 
 template<typename T>
@@ -149,7 +176,7 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
   if (m_name == Ion::Charset::IComplex) {
     return Complex<T>(0.0, 1.0);
   }
-  const Expression e = context.expressionForSymbol(Symbol(m_name));
+  const Expression e = context.expressionForSymbol(SymbolReference(m_name));
   if (e.isDefined()) {
     return e.node()->approximate(T(), context, angleUnit);
   }

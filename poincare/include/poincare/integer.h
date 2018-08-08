@@ -114,7 +114,7 @@ public:
   Type type() const override { return Type::Integer; }
 
   // Simplification
-  ExpressionReference shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return ComplexReference<float>(templatedApproximate<float>()); }
@@ -133,7 +133,7 @@ public:
 
   // ExpressionNode
   Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
-  ExpressionReference setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   void setNegative(bool negative);
 

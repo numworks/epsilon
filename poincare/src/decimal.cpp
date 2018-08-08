@@ -58,12 +58,12 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canB
   return ((int)sign())*unsignedComparison;
 }
 
-ExpressionReference DecimalNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  ExpressionReference e = ExpressionNode::shallowReduce(context, angleUnit);
+Expression DecimalNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+  Expression e = ExpressionNode::shallowReduce(context, angleUnit);
   if (e.node() != this) {
     return e;
   }
-  ExpressionReference reference(this);
+  Expression reference(this);
   NaturalIntegerPointer m = mantissa();
   IntegerReference numerator(&m);
   removeZeroAtTheEnd(&numerator);
@@ -87,8 +87,8 @@ ExpressionReference DecimalNode::shallowReduce(Context& context, Preferences::An
   return RationalReference(numerator, denominator);
 }
 
-ExpressionReference DecimalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  ExpressionReference reference(this);
+Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+  Expression reference(this);
   if (m_negative) {
     m_negative = false;
     return OppositeReference(reference);

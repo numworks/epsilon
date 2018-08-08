@@ -35,7 +35,7 @@ ExpressionNode::Sign SymbolNode::sign() const {
 Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression expression) {
   if (m_name == symbol) {
     Expression value = expression.clone();
-    if (parent() && value.needsParenthesisWithParent(parent())) {
+    if (parent() && value.needsParenthesesWithParent(parent())) {
       value = ParenthesisReference(value);
     }
     return value;
@@ -136,7 +136,7 @@ LayoutRef SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return LayoutHelper::String(&m_name, 1);
 }
 
-int SymbolNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -335,7 +335,7 @@ Expression Symbol::replaceSymbolWithExpression(char symbol, Expression expressio
   if (name() == symbol) {
     Expression value = expression.clone();
     Expression p = parent();
-    if (p.isDefined() && value.needsParenthesisWithParent(p)) {
+    if (p.isDefined() && value.needsParenthesesWithParent(p)) {
       value = Parenthesis(value);
     }
     return value;

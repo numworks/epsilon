@@ -1,15 +1,14 @@
 #ifndef POINCARE_SERIALIZATION_HELPER_H
 #define POINCARE_SERIALIZATION_HELPER_H
 
-#include <poincare/expression.h>
-#include <poincare/horizontal_layout_node.h>
+#include <poincare/serialization_helper_interface.h>
 
 namespace Poincare {
 
 namespace SerializationHelper {
   /* SerializableReference to Text */
   static int Infix(
-      const SerializableReference serializableRef,
+      const SerializationHelperInterface * interface,
       char * buffer,
       int bufferSize,
       Preferences::PrintFloatMode floatDisplayMode,
@@ -19,7 +18,7 @@ namespace SerializationHelper {
       int lastChildIndex = -1);
 
   static int Prefix(
-      const SerializableReference serializableRef,
+      const SerializationHelperInterface * interface,
       char * buffer,
       int bufferSize,
       Preferences::PrintFloatMode floatDisplayMode,

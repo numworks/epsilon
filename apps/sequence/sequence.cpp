@@ -254,7 +254,7 @@ Poincare::ExpressionLayout * Sequence::definitionName() {
 
 Poincare::ExpressionLayout * Sequence::firstInitialConditionName() {
   char buffer[k_initialRankNumberOfDigits+1];
-  Integer(m_initialRank).writeTextInBuffer(buffer, k_initialRankNumberOfDigits+1);
+  Integer(m_initialRank).serialize(buffer, k_initialRankNumberOfDigits+1);
   if (m_firstInitialConditionName == nullptr
       && (m_type == Type::SingleRecurrence
        || m_type == Type::DoubleRecurrence))
@@ -270,7 +270,7 @@ Poincare::ExpressionLayout * Sequence::firstInitialConditionName() {
 
 Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
   char buffer[k_initialRankNumberOfDigits+1];
-  Integer(m_initialRank+1).writeTextInBuffer(buffer, k_initialRankNumberOfDigits+1);
+  Integer(m_initialRank+1).serialize(buffer, k_initialRankNumberOfDigits+1);
   if (m_secondInitialConditionName == nullptr) {
     if (m_type == Type::DoubleRecurrence) {
       ExpressionLayout * indexLayout = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Large);

@@ -33,7 +33,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
     }
     char buffer[TextField::maxBufferSize()];
     int bufferSize = TextField::maxBufferSize();
-    int length = layoutField->writeTextInBuffer(buffer, bufferSize);
+    int length = layoutField->serialize(buffer, bufferSize);
     Expression * exp = Expression::parse(buffer);
     if (exp != nullptr) {
       delete exp;

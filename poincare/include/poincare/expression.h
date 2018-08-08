@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_REFERENCE_H
 #define POINCARE_EXPRESSION_REFERENCE_H
 
-#include <poincare/serializable_reference.h>
 #include <poincare/tree_by_value.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
@@ -13,7 +12,7 @@ namespace Poincare {
 
 class Context;
 
-class Expression : public SerializableReference, public TreeByValue {
+class Expression : public TreeByValue {
   friend class ExpressionNode;
   friend class NAryExpressionNode;
   friend class SymbolNode;
@@ -25,8 +24,8 @@ public:
 
   /* Reference */
   ExpressionNode * node() const override {
-    assert(!SerializableReference::node()->isGhost());
-    return static_cast<ExpressionNode *>(SerializableReference::node());
+    assert(!TreeByValue::node()->isGhost());
+    return static_cast<ExpressionNode *>(TreeByValue::node());
   }
 
   /* Circuit breaker */
@@ -89,7 +88,7 @@ public:
 
   /* Layout Helper */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return this->node()->createLayout(floatDisplayMode, numberOfSignificantDigits); }
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const { return this->node()->writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const { return this->node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
 
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
@@ -112,7 +111,7 @@ public:
   Coordinate2D nextIntersection(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const;
 
 protected:
-  Expression(const ExpressionNode * n) : SerializableReference(n), TreeByValue(n) {}
+  Expression(const ExpressionNode * n) : TreeByValue(n) {}
   /* Hierarchy */
   Expression childAtIndex(int i) const {
     return Expression(static_cast<ExpressionNode *>(TreeByReference::treeChildAtIndex(i).node()));

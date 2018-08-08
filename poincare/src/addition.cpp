@@ -56,7 +56,7 @@ int Addition::getPolynomialCoefficients(char symbolName, Expression coefficients
 
 /* Layout */
 
-bool Addition::needParenthesisWithParent(const Expression * e) const {
+bool Addition::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 6);
 }

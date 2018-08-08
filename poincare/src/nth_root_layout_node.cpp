@@ -156,7 +156,7 @@ void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");
-int NthRootLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   // Case: root(x,n)
   if (m_hasIndex
       && (const_cast<NthRootLayoutNode *>(this))->indexLayout()
@@ -187,7 +187,7 @@ int NthRootLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferen
     return bufferSize-1;
   }
 
-  numberOfChar += (const_cast<NthRootLayoutNode *>(this))->radicandLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += (const_cast<NthRootLayoutNode *>(this))->radicandLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   buffer[numberOfChar++] = ')';

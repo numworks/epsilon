@@ -71,7 +71,7 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
   int numberOfLines = bounds().height() / charSize.height() + 1;
   for (int i=0; i<numberOfLines; i++) {
     Poincare::Integer line(i + firstLine + 1);
-    line.writeTextInBuffer(lineNumber, 4);
+    line.serialize(lineNumber, 4);
     KDCoordinate leftPadding = (2 - strlen(lineNumber)) * charSize.width();
     ctx->drawString(
       lineNumber,

@@ -20,7 +20,7 @@ Expression * SquareRoot::clone() const {
 }
 
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");
-int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int SquareRoot::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
 }
 

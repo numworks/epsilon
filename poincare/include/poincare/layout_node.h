@@ -1,7 +1,8 @@
 #ifndef POINCARE_LAYOUT_NODE_H
 #define POINCARE_LAYOUT_NODE_H
 
-#include <poincare/serializable_node.h>
+#include <poincare/tree_node.h>
+#include <poincare/serialization_helper_interface.h>
 #include <kandinsky.h>
 #include <ion/charset.h>
 
@@ -22,7 +23,7 @@ class LayoutReference;
  * We tackle this by not handling any event when the cursor points to an
  * AllocationFailure layout. */
 
-class LayoutNode : public SerializableNode {
+class LayoutNode : public TreeNode, public SerializationHelperInterface {
   friend class LayoutReference;
 public:
   enum class VerticalDirection {
@@ -32,7 +33,7 @@ public:
 
   // Constructor
   LayoutNode() :
-    SerializableNode(),
+    TreeNode(),
     m_baseline(0),
     m_frame(KDRectZero),
     m_baselined(false),
@@ -48,6 +49,10 @@ public:
   KDSize layoutSize();
   KDCoordinate baseline();
   virtual void invalidAllSizesPositionsAndBaselines();
+
+  // SerializationHelperInterface
+  SerializationHelperInterface * serializableChildAtIndex(int i) const override { return childAtIndex(i); }
+  int numberOfSerializableChildren() const override { return numberOfChildren(); }
 
   // TreeNode
   static TreeNode * FailedAllocationStaticNode();

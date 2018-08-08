@@ -78,7 +78,7 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   Expression::Simplify(&e, globalContext, angleUnit);
   Expression * m = process(e, globalContext, angleUnit, complexFormat);
   char buffer[500];
-  m->writeTextInBuffer(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);
+  m->serialize(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);
   translate_in_ASCII_chars(buffer);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   print_expression(e, 0);
@@ -119,7 +119,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
   ExpressionLayout * el = e->createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
   int bufferSize = 255;
   char buffer[bufferSize];
-  el->writeTextInBuffer(buffer, bufferSize);
+  el->serialize(buffer, bufferSize);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- serialized to: " << buffer << " ----\n"  << endl;
 #endif
@@ -131,7 +131,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
 void assert_expression_layout_serialize_to(Poincare::ExpressionLayout * layout, const char * serialization) {
   int bufferSize = 255;
   char buffer[bufferSize];
-  layout->writeTextInBuffer(buffer, bufferSize);
+  layout->serialize(buffer, bufferSize);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Serialize: " << serialization << "----"  << endl;
   cout << "---- serialized to: " << buffer << " ----"  << endl;

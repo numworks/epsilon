@@ -32,7 +32,7 @@ public:
   size_t numberOfDigits() const { return m_numberOfDigits; }
 
   // Layout
-  int writeTextInBuffer(char * buffer, int bufferSize) const;
+  int serialize(char * buffer, int bufferSize) const;
   LayoutReference createLayout() const;
 
   // Approximation
@@ -123,7 +123,7 @@ public:
 
   // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 
   // TreeNode
   size_t size() const override;

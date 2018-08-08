@@ -194,7 +194,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the argument
-  numberOfChar += const_cast<SequenceLayoutNode *>(this)->argumentLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += const_cast<SequenceLayoutNode *>(this)->argumentLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
@@ -202,7 +202,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the lower bound
-  numberOfChar += const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the comma
@@ -210,7 +210,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(const char * operatorName, cha
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the upper bound
-  numberOfChar += const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the closing parenthesis

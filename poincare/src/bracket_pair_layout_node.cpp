@@ -97,7 +97,7 @@ void BracketPairLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
   }
 }
 
-int BracketPairLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int BracketPairLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -109,7 +109,7 @@ int BracketPairLayoutNode::writeTextInBuffer(char * buffer, int bufferSize, Pref
   if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
   // Write the argument
-  numberOfChar += const_cast<Poincare::BracketPairLayoutNode *>(this)->childLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += const_cast<Poincare::BracketPairLayoutNode *>(this)->childLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Write the closing bracket

@@ -33,7 +33,7 @@ int Subtraction::polynomialDegree(char symbolName) const {
 
 /* Layout */
 
-bool Subtraction::needParenthesisWithParent(const Expression * e) const {
+bool Subtraction::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
   Type types[] = {Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
   return e->isOfType(types, 6);
 }

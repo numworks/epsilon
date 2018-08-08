@@ -40,7 +40,7 @@ static inline int8_t sign(bool negative) {
 
 // Layout
 
-int NaturalIntegerAbstract::writeTextInBuffer(char * buffer, int bufferSize) const {
+int NaturalIntegerAbstract::serialize(char * buffer, int bufferSize) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -81,7 +81,7 @@ int NaturalIntegerAbstract::writeTextInBuffer(char * buffer, int bufferSize) con
 
 LayoutRef NaturalIntegerAbstract::createLayout() const {
   char buffer[k_maxNumberOfDigitsBase10];
-  int numberOfChars = writeTextInBuffer(buffer, k_maxNumberOfDigitsBase10);
+  int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10);
   return LayoutHelper::String(buffer, numberOfChars);
 }
 
@@ -426,7 +426,7 @@ LayoutRef IntegerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode
   return naturalLayout;
 }
 
-int IntegerNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int IntegerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -438,7 +438,7 @@ int IntegerNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::P
   if (numberOfChar >= bufferSize-1) {
     return bufferSize-1;
   }
-  numberOfChar += NaturalIntegerAbstract::writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+  numberOfChar += NaturalIntegerAbstract::serialize(buffer+numberOfChar, bufferSize-numberOfChar);
   return numberOfChar;
 }
 

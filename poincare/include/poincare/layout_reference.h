@@ -2,21 +2,20 @@
 #define POINCARE_LAYOUT_REFERENCE_H
 
 #include <poincare/layout_node.h>
-#include <poincare/serializable_reference.h>
+#include <poincare/tree_by_reference.h>
 
 namespace Poincare {
 
 class LayoutCursor;
 
-class LayoutReference : public SerializableReference {
+class LayoutReference : public TreeByReference {
   friend class LayoutCursor;
 public:
   using TreeByReference::operator==;
   using TreeByReference::operator!=;
 
   LayoutReference(LayoutNode * node) :
-    TreeByReference(node),
-    SerializableReference(node) {}
+    TreeByReference(node) {}
 
   LayoutReference clone() const {
     TreeByReference c = TreeByReference::clone();
@@ -26,8 +25,8 @@ public:
   }
 
   LayoutNode * node() const override {
-    assert(!SerializableReference::node()->isGhost());
-    return static_cast<LayoutNode *>(SerializableReference::node());
+    assert(!TreeByReference::node()->isGhost());
+    return static_cast<LayoutNode *>(TreeByReference::node());
   }
 
   // Rendering

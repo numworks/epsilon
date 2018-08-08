@@ -17,7 +17,7 @@ LayoutRef ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplay
   return LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
 }
 
-int ParenthesisNode::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(Parenthesis(const_cast<ParenthesisNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 

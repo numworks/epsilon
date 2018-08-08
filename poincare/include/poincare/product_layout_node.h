@@ -9,7 +9,7 @@ namespace Poincare {
 class ProductLayoutNode : public SequenceLayoutNode {
 public:
   using SequenceLayoutNode::SequenceLayoutNode;
-  int writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   size_t size() const override { return sizeof(ProductLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "ProductLayout"; }

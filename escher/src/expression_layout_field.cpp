@@ -174,8 +174,8 @@ bool ExpressionLayoutField::hasText() const {
   return expressionLayout()->hasText();
 }
 
-int ExpressionLayoutField::writeTextInBuffer(char * buffer, int bufferLength) {
-  return expressionLayout()->writeTextInBuffer(buffer, bufferLength);
+int ExpressionLayoutField::serialize(char * buffer, int bufferLength) {
+  return expressionLayout()->serialize(buffer, bufferLength);
 }
 
 bool ExpressionLayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {

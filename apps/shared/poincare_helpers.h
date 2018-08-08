@@ -17,7 +17,7 @@ inline int ConvertFloatToText(T d, char * buffer, int bufferSize, int numberOfSi
 }
 
 inline int WriteTextInBuffer(const Poincare::Expression * e, char * buffer, int bufferSize, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits) {
-  return e->writeTextInBuffer(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits);
+  return e->serialize(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits);
 }
 
 template <class T>

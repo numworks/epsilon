@@ -30,7 +30,7 @@ Expression * Factorial::clone() const {
 
 /* Layout */
 
-bool Factorial::needParenthesisWithParent(const Expression * e) const {
+bool Factorial::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
   return e->type() == Type::Factorial;
 }
 
@@ -100,18 +100,18 @@ LayoutRef Factorial::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return result;
 }
 
-int Factorial::writeTextInBuffer(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int Factorial::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
-  if (operand(0)->needParenthesisWithParent(this)) {
+  if (operand(0)->needsParenthesesWithParent(this)) {
     buffer[numberOfChar++] = '(';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
-  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (operand(0)->needParenthesisWithParent(this)) {
+  numberOfChar += operand(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  if (operand(0)->needsParenthesesWithParent(this)) {
     buffer[numberOfChar++] = ')';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }

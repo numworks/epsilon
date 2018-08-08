@@ -1,8 +1,8 @@
 #include <poincare/integer.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/rational.h>
+//#include <poincare/char_layout_node.h>
+//#include <poincare/rational.h>
 #include <cmath>
 #include <utility>
 extern "C" {
@@ -49,9 +49,9 @@ int NaturalIntegerAbstract::serialize(char * buffer, int bufferSize) const {
     return PrintFloat::convertFloatToText<float>(INFINITY, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
 
-  IntegerReference base(10);
-  IntegerReference ref(this);
-  IntegerDivisionReference d = IntegerReference::Division(ref, base);
+  Integer base(10);
+  Integer ref(this);
+  IntegerDivision d = Integer::Division(ref, base);
   int size = 0;
   if (bufferSize == 1) {
     return 0;
@@ -66,7 +66,7 @@ int NaturalIntegerAbstract::serialize(char * buffer, int bufferSize) const {
       return strlcpy(buffer, "undef", bufferSize);
     }
     buffer[size++] = c;
-    d = IntegerReference::Division(d.quotient, base);
+    d = Integer::Division(d.quotient, base);
   }
   buffer[size] = 0;
 
@@ -79,7 +79,7 @@ int NaturalIntegerAbstract::serialize(char * buffer, int bufferSize) const {
   return size;
 }
 
-LayoutRef NaturalIntegerAbstract::createLayout() const {
+HorizontalLayoutRef NaturalIntegerAbstract::createLayout() const {
   char buffer[k_maxNumberOfDigitsBase10];
   int numberOfChars = serialize(buffer, k_maxNumberOfDigitsBase10);
   return LayoutHelper::String(buffer, numberOfChars);
@@ -155,12 +155,12 @@ T NaturalIntegerAbstract::approximate() const {
 
 int NaturalIntegerAbstract::NumberOfBase10Digits(const NaturalIntegerAbstract * i) {
   int numberOfDigits = 1;
-  IntegerReference ref(i);
-  IntegerReference base(10);
-  IntegerDivisionReference d = IntegerReference::Division(ref, base);
+  Integer ref(i);
+  Integer base(10);
+  IntegerDivision d = Integer::Division(ref, base);
   while (!d.quotient.isZero()) {
     ref = d.quotient;
-    d = IntegerReference::Division(ref, base);
+    d = Integer::Division(ref, base);
     numberOfDigits++;
   }
   return numberOfDigits;
@@ -187,7 +187,7 @@ int8_t NaturalIntegerAbstract::ucmp(const NaturalIntegerAbstract * a, const Natu
   return 0;
 }
 
-IntegerReference NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b, bool subtract) {
+Integer NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b, bool subtract) {
   size_t size = max(a->m_numberOfDigits, b->m_numberOfDigits);
   if (!subtract) {
     // Addition can overflow
@@ -195,7 +195,7 @@ IntegerReference NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, 
   }
   // Overflow
   if (size > k_maxNumberOfDigits + 1) {
-    return IntegerReference::Overflow();
+    return Integer::Overflow();
   }
   native_uint_t digits[k_maxNumberOfDigits+1];
   bool carry = false;
@@ -214,16 +214,16 @@ IntegerReference NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, 
     size--;
   }
   if (size > k_maxNumberOfDigits) {
-    return IntegerReference::Overflow();
+    return Integer::Overflow();
   }
-  return IntegerReference::IntegerReference(digits, size, false);
+  return Integer::Integer(digits, size, false);
 }
 
-IntegerReference NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b){
+Integer NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b){
   size_t size = a->m_numberOfDigits + b->m_numberOfDigits;
   // Overflow
   if (size > k_maxNumberOfDigits + 1) {
-    return IntegerReference::Overflow();
+    return Integer::Overflow();
   }
 
   native_uint_t digits[k_maxNumberOfDigits+1];
@@ -251,61 +251,49 @@ IntegerReference NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a,
   }
   // Overflow
   if (size > k_maxNumberOfDigits + 1) {
-    return IntegerReference::Overflow();
+    return Integer::Overflow();
   }
-  return IntegerReference::IntegerReference(digits, size, false);
+  return Integer::Integer(digits, size, false);
 }
 
 // TODO: OPTIMIZE
-IntegerDivisionReference NaturalIntegerAbstract::udiv(const NaturalIntegerAbstract * numerator, const NaturalIntegerAbstract * denominator) {
+IntegerDivision NaturalIntegerAbstract::udiv(const NaturalIntegerAbstract * numerator, const NaturalIntegerAbstract * denominator) {
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
    * (Algorithm 1.6) */
   assert(!denominator->isZero());
   if (ucmp(numerator,denominator) < 0) {
-    IntegerDivisionReference div = {.quotient = IntegerReference(0), .remainder = IntegerReference(numerator)};
+    IntegerDivision div = {.quotient = Integer(0), .remainder = Integer(numerator)};
     return div;
   }
 
-  IntegerReference A(numerator);
-  IntegerReference B(denominator);
+  Integer A(numerator);
+  Integer B(denominator);
   native_int_t base = 1 << 16;
   // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
-  // Afterwards, we require B to hold Integer node, we check then for allocation failures
-  if (B.isAllocationFailure()) {
-    return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
-  }
-  native_int_t d = base/(native_int_t)(B.typedNode()->halfDigit(B.typedNode()->numberOfHalfDigits()-1)+1);
-  A = IntegerReference::Multiplication(IntegerReference(d), A);
-  B = IntegerReference::Multiplication(IntegerReference(d), B);
+  native_int_t d = base/(native_int_t)(B.node()->halfDigit(B.node()->numberOfHalfDigits()-1)+1);
+  A = Integer::Multiplication(Integer(d), A);
+  B = Integer::Multiplication(Integer(d), B);
 
-  // Afterwards, we require A and B to hold Integer node, we check then for allocation failures
-  if (A.isAllocationFailure() || B.isAllocationFailure()) {
-    return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
-  }
-  int n = B.typedNode()->numberOfHalfDigits();
-  int m = A.typedNode()->numberOfHalfDigits()-n;
+  int n = B.node()->numberOfHalfDigits();
+  int m = A.node()->numberOfHalfDigits()-n;
   half_native_uint_t qDigits[k_maxNumberOfDigits+1];
   memset(qDigits, 0, (m/2+1)*sizeof(native_uint_t));
-  IntegerReference betam = IntegerWithHalfDigitAtIndex(1, m+1);
-  IntegerReference betaMB = IntegerReference::Multiplication(betam, B); // TODO: can swift all digits by m! B.swift16(mg)
-  if (IntegerReference::NaturalOrder(A,betaMB) > 0) {
+  Integer betam = IntegerWithHalfDigitAtIndex(1, m+1);
+  Integer betaMB = Integer::Multiplication(betam, B); // TODO: can swift all digits by m! B.swift16(mg)
+  if (Integer::NaturalOrder(A,betaMB) > 0) {
     qDigits[m] = 1;
-    A = IntegerReference::Subtraction(A, betaMB);
+    A = Integer::Subtraction(A, betaMB);
   }
   for (int j = m-1; j >= 0; j--) {
-    // Afterwards, we require A to hold Integer node, we check then for allocation failure
-    if (A.isAllocationFailure()) {
-      return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
-    }
-    native_uint_t qj2 = ((native_uint_t)A.typedNode()->halfDigit(n+j)*base+(native_uint_t)A.typedNode()->halfDigit(n+j-1))/(native_uint_t)B.typedNode()->halfDigit(n-1);
+    native_uint_t qj2 = ((native_uint_t)A.node()->halfDigit(n+j)*base+(native_uint_t)A.node()->halfDigit(n+j-1))/(native_uint_t)B.node()->halfDigit(n-1);
     half_native_uint_t baseMinus1 = (1 << 16) -1;
     qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1;
-    IntegerReference factor = qDigits[j] > 0 ? IntegerWithHalfDigitAtIndex(qDigits[j], j+1) : IntegerReference(0);
-    A = IntegerReference::Subtraction(A, IntegerReference::Multiplication(factor, B));
-    IntegerReference m = IntegerReference::Multiplication(IntegerWithHalfDigitAtIndex(1, j+1), B);
+    Integer factor = qDigits[j] > 0 ? IntegerWithHalfDigitAtIndex(qDigits[j], j+1) : Integer(0);
+    A = Integer::Subtraction(A, Integer::Multiplication(factor, B));
+    Integer m = Integer::Multiplication(IntegerWithHalfDigitAtIndex(1, j+1), B);
     while (A.sign() == ExpressionNode::Sign::Negative) {
       qDigits[j] = qDigits[j]-1;
-      A = IntegerReference::Addition(A, m);
+      A = Integer::Addition(A, m);
     }
   }
   int qNumberOfDigits = m+1;
@@ -313,52 +301,46 @@ IntegerDivisionReference NaturalIntegerAbstract::udiv(const NaturalIntegerAbstra
     qNumberOfDigits--;
   }
   int qNumberOfDigitsInBase32 = qNumberOfDigits%2 == 1 ? qNumberOfDigits/2+1 : qNumberOfDigits/2;
-  IntegerDivisionReference div = {.quotient = IntegerReference((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
+  IntegerDivision div = {.quotient = Integer((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
   if (d != 1 && !div.remainder.isZero()) {
-    IntegerReference dReference(d);
-    if (div.remainder.isAllocationFailure() || dReference.isAllocationFailure()) {
-      return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
-    }
-    div.remainder = udiv(div.remainder.typedNode(), dReference.typedNode()).quotient;
+    Integer dInteger(d);
+    div.remainder = udiv(div.remainder.node(), dInteger.node()).quotient;
   }
   return div;
 }
 
-IntegerReference NaturalIntegerAbstract::upow(const NaturalIntegerAbstract * i, const NaturalIntegerAbstract * j) {
+Integer NaturalIntegerAbstract::upow(const NaturalIntegerAbstract * i, const NaturalIntegerAbstract * j) {
   // TODO: optimize with dichotomia
-  IntegerReference index(j);
-  IntegerReference result(1);
+  Integer index(j);
+  Integer result(1);
   while (!index.isZero()) {
-    result = IntegerReference::Multiplication(result, i);
-    index = IntegerReference::Subtraction(index, IntegerReference(1));
+    result = Integer::Multiplication(result, i);
+    index = Integer::Subtraction(index, Integer(1));
   }
   return result;
 }
 
-IntegerReference NaturalIntegerAbstract::ufact(const NaturalIntegerAbstract * i) {
-  IntegerReference j(2);
-  if (j.isAllocationFailure()) {
-    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
-  }
-  IntegerReference result(1);
-  while (ucmp(i,j.typedNode()) > 0) {
-    result = IntegerReference::Multiplication(j, result);
-    j = IntegerReference::Addition(j, IntegerReference(1));
+Integer NaturalIntegerAbstract::ufact(const NaturalIntegerAbstract * i) {
+  Integer j(2);
+  Integer result(1);
+  while (ucmp(i,j.node()) > 0) {
+    result = Integer::Multiplication(j, result);
+    j = Integer::Addition(j, Integer(1));
   }
   return result;
 }
 
-IntegerReference NaturalIntegerAbstract::IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index) {
+Integer NaturalIntegerAbstract::IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index) {
   assert(halfDigit != 0);
   // Overflow
   if ((index + 1)/2) {
-    return IntegerReference::Overflow();
+    return Integer::Overflow();
   }
   half_native_uint_t digits[k_maxNumberOfDigits+1];
   memset(digits, 0, (index+1)/2*sizeof(native_uint_t));
   digits[index-1] = halfDigit;
   int indexInBase32 = index%2 == 1 ? index/2+1 : index/2;
-  return IntegerReference((native_uint_t *)digits, indexInBase32, false);
+  return Integer((native_uint_t *)digits, indexInBase32, false);
 }
 
 /* Natural Integer Pointer */
@@ -370,6 +352,11 @@ NaturalIntegerPointer::NaturalIntegerPointer(native_uint_t * buffer, size_t size
 }
 
 /* Integer Node */
+
+IntegerNode * IntegerNode::FailedAllocationStaticNode() {
+  static AllocationFailureIntegerNode failure;
+  return &failure;
+}
 
 void IntegerNode::setDigits(native_int_t i) {
   if (i == 0) {
@@ -406,20 +393,20 @@ void IntegerNode::setDigits(const native_uint_t * digits, size_t size, bool nega
   m_negative = negative;
 }
 
-Expression IntegerNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return RationalReference(IntegerReference((NaturalIntegerAbstract *)this), IntegerReference(1));
-}
-
 template<typename T>
 T IntegerNode::templatedApproximate() const {
   T a = NaturalIntegerAbstract::approximate<T>();
   return m_negative ? -a : a;
 }
 
+Expression IntegerNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Integer(this).shallowReduce(context, angleUnit);
+}
+
 // Layout
 
 LayoutRef IntegerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  LayoutRef naturalLayout = NaturalIntegerAbstract::createLayout();
+  HorizontalLayoutRef naturalLayout = NaturalIntegerAbstract::createLayout();
   if (m_negative) {
     naturalLayout.addChildAtIndex(CharLayoutRef('-'), 0, naturalLayout.numberOfChildren(), nullptr);
   }
@@ -447,8 +434,7 @@ size_t IntegerNode::size() const {
 }
 
 Expression IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
-  setNegative(s == Sign::Negative);
-  return IntegerReference((NaturalIntegerAbstract *)this);
+  return Integer(this).setSign(s, context, angleUnit);
 }
 
 void IntegerNode::setNegative(bool negative) {
@@ -468,21 +454,20 @@ int IntegerNode::NaturalOrder(const IntegerNode * i, const IntegerNode * j) {
   return ::Poincare::sign(i->sign() == Sign::Negative)*ucmp(i, j);
 }
 
-/* IntegerReference */
+/* Integer */
 
-IntegerReference::IntegerReference(const native_uint_t * digits, size_t numberOfDigits, bool negative) :
-  IntegerReference(numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode))
+Integer::Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative) :
+  Integer(numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode))
 {
-  if (node()->isAllocationFailure()) {
-    return;
-  }
   if (numberOfDigits == 1 && digits[0] == 0) {
     negative = false;
   }
-  typedNode()->setDigits(digits, numberOfDigits, negative);
+  node()->setDigits(digits, numberOfDigits, negative);
 }
 
-IntegerReference::IntegerReference(const char * digits, size_t length, bool negative) {
+Integer::Integer(const char * digits, size_t length, bool negative) :
+  Number(nullptr)
+{
   if (digits != nullptr && digits[0] == '-') {
     negative = true;
     digits++;
@@ -501,124 +486,54 @@ IntegerReference::IntegerReference(const char * digits, size_t length, bool nega
     }
   }
   buffer[size++] = d;
-  *this = IntegerReference(buffer, size, negative);
+  *this = Integer(buffer, size, negative);
 }
 
-IntegerReference::IntegerReference(const NaturalIntegerAbstract * naturalInteger) :
-  IntegerReference(naturalInteger->numberOfDigits()*sizeof(native_uint_t)+sizeof(IntegerNode))
+Integer::Integer(const NaturalIntegerAbstract * naturalInteger) :
+  Integer(naturalInteger->numberOfDigits()*sizeof(native_uint_t)+sizeof(IntegerNode))
 {
-  if (!node()->isAllocationFailure()) {
-    typedNode()->setDigits(naturalInteger->digits(), naturalInteger->numberOfDigits(), false);
-  }
+  node()->setDigits(naturalInteger->digits(), naturalInteger->numberOfDigits(), false);
 }
 
-IntegerReference::IntegerReference(native_int_t i) :
-  IntegerReference(i == 0 ? sizeof(IntegerNode) : sizeof(IntegerNode)+sizeof(native_uint_t))
+Integer::Integer(native_int_t i) :
+  Integer(i == 0 ? sizeof(IntegerNode) : sizeof(IntegerNode)+sizeof(native_uint_t))
 {
-  if (!node()->isAllocationFailure()) {
-    typedNode()->setDigits(i);
-  }
+  node()->setDigits(i);
 }
 
-IntegerReference::IntegerReference(double_native_int_t i)
+Integer::Integer(double_native_int_t i) :
+  Number(nullptr)
 {
   double_native_uint_t j = i;
   if (i == 0) {
-    *this = IntegerReference(sizeof(IntegerNode));
+    *this = Integer(sizeof(IntegerNode));
   } else if (j <= 0xFFFFFFFF) {
-    *this = IntegerReference(sizeof(IntegerNode)+sizeof(native_uint_t));
+    *this = Integer(sizeof(IntegerNode)+sizeof(native_uint_t));
   } else {
-    *this = IntegerReference(sizeof(IntegerNode)+2*sizeof(native_uint_t));
+    *this = Integer(sizeof(IntegerNode)+2*sizeof(native_uint_t));
   }
-  if (!node()->isAllocationFailure()) {
-    typedNode()->setDigits(i);
-  }
+  node()->setDigits(i);
 }
 
-int IntegerReference::extractedInt() const {
-  if (isAllocationFailure()) {
-    return 0;
-  }
+int Integer::extractedInt() const {
   assert(numberOfDigits() == 1 && digit(0) <= k_maxExtractableInteger);
   return node()->sign() == ExpressionNode::Sign::Negative ? -digit(0) : digit(0);
 }
 
-int IntegerReference::NaturalOrder(const IntegerReference i, const IntegerReference j) {
-  if (i.isAllocationFailure() || j.isAllocationFailure()) {
-    return 0;
-  }
-  return IntegerNode::NaturalOrder(i.typedNode(), j.typedNode());
-}
-
-bool IntegerReference::isZero() const {
-  if (isAllocationFailure()) {
-    return false;
-  }
-  return typedNode()->isZero();
-}
-
-bool IntegerReference::isOne() const {
-  if (isAllocationFailure()) {
-    return false;
-  }
-  return typedNode()->isOne();
-}
-
-bool IntegerReference::isInfinity() const {
-  if (isAllocationFailure()) {
-    return false;
-  }
-  return typedNode()->isInfinity();
-}
-
-bool IntegerReference::isEven() const {
-  if (isAllocationFailure()) {
-    return false;
-  }
-  return typedNode()->isEven();
-}
-
-void IntegerReference::setNegative(bool negative) {
-  if (!isAllocationFailure()) {
-    return typedNode()->setNegative(negative);
-  }
-}
-
-int IntegerReference::NumberOfBase10Digits(IntegerReference i) {
-  if (!i.isAllocationFailure()) {
-    return NaturalIntegerAbstract::numberOfBase10Digits(i.typedNode());
-  }
-  return 0;
-}
-
 // Arithmetic
 
-IntegerReference IntegerReference::Addition(const IntegerReference a, const IntegerReference b) {
-  return addition(a, b, false);
-}
-
-IntegerReference IntegerReference::Subtraction(const IntegerReference a, const IntegerReference b) {
-  return addition(a, b, true);
-}
-
-IntegerReference IntegerReference::Multiplication(const IntegerReference a, const IntegerReference b) {
-  if (a.isAllocationFailure() || b.isAllocationFailure()) {
-    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
-  }
-  IntegerReference um = IntegerNode::umult(a.typedNode(), b.typedNode());
+Integer Integer::Multiplication(const Integer a, const Integer b) {
+  Integer um = IntegerNode::umult(a.node(), b.node());
   um.setNegative(a.sign() != b.sign());
   return um;
 }
 
-IntegerDivisionReference IntegerReference::Division(const IntegerReference numerator, const IntegerReference denominator) {
-  if (numerator.isAllocationFailure() || denominator.isAllocationFailure()) {
-    return {.quotient = IntegerReference(ExpressionNode::FailedAllocationStaticNode()), .remainder = IntegerReference(ExpressionNode::FailedAllocationStaticNode())};
-  }
-  IntegerDivisionReference ud = IntegerNode::udiv(numerator.typedNode(), denominator.typedNode());
+IntegerDivision Integer::Division(const Integer numerator, const Integer denominator) {
+  IntegerDivision ud = IntegerNode::udiv(numerator.node(), denominator.node());
   if (numerator.sign() == ExpressionNode::Sign::Positive && denominator.sign() == ExpressionNode::Sign::Positive) {
     return ud;
   }
-  if (NaturalOrder(ud.remainder, IntegerReference(0)) == 0) {
+  if (NaturalOrder(ud.remainder, Integer(0)) == 0) {
     if (numerator.sign() == ExpressionNode::Sign::Positive || denominator.sign() == ExpressionNode::Sign::Positive) {
       ud.quotient.setNegative(true);
     }
@@ -627,11 +542,11 @@ IntegerDivisionReference IntegerReference::Division(const IntegerReference numer
   if (numerator.sign() == ExpressionNode::Sign::Negative) {
     if (denominator.sign() == ExpressionNode::Sign::Negative) {
       ud.remainder.setNegative(true);
-      ud.quotient = Addition(ud.quotient, IntegerReference(1));
+      ud.quotient = Addition(ud.quotient, Integer(1));
       ud.remainder = Subtraction(ud.remainder, denominator);
    } else {
       ud.quotient.setNegative(true);
-      ud.quotient = Subtraction(ud.quotient, IntegerReference(1));
+      ud.quotient = Subtraction(ud.quotient, Integer(1));
       ud.remainder = Subtraction(denominator, ud.remainder);
     }
   } else {
@@ -641,31 +556,22 @@ IntegerDivisionReference IntegerReference::Division(const IntegerReference numer
   return ud;
 }
 
-IntegerReference IntegerReference::Power(const IntegerReference i, const IntegerReference j) {
-  if (i.isAllocationFailure() || j.isAllocationFailure()) {
-    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
-  }
+Integer Integer::Power(const Integer i, const Integer j) {
   assert(j.sign() == ExpressionNode::Sign::Positive);
-  IntegerReference upow = IntegerNode::upow(i.typedNode(), j.typedNode());
+  Integer upow = IntegerNode::upow(i.node(), j.node());
   upow.setNegative(i.sign() == ExpressionNode::Sign::Negative && !j.isEven());
   return upow;
 }
 
-IntegerReference IntegerReference::Factorial(const IntegerReference i) {
-  if (i.isAllocationFailure()) {
-    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
-  }
+Integer Integer::Factorial(const Integer i) {
   assert(i.sign() == ExpressionNode::Sign::Positive);
-  return IntegerNode::ufact(i.typedNode());
+  return IntegerNode::ufact(i.node());
 }
 
-IntegerReference IntegerReference::addition(const IntegerReference a, const IntegerReference b, bool inverseBNegative) {
-  if (a.isAllocationFailure() || b.isAllocationFailure()) {
-    return IntegerReference(ExpressionNode::FailedAllocationStaticNode());
-  }
+Integer Integer::addition(const Integer a, const Integer b, bool inverseBNegative) {
   bool bNegative = (inverseBNegative ? b.sign() == ExpressionNode::Sign::Positive : b.sign() == ExpressionNode::Sign::Negative);
   if ((a.sign() == ExpressionNode::Sign::Negative) == bNegative) {
-    IntegerReference us = IntegerNode::usum(a.typedNode(), b.typedNode(), false);
+    Integer us = IntegerNode::usum(a.node(), b.node(), false);
     us.setNegative(a.sign() == ExpressionNode::Sign::Negative);
     return us;
   } else {
@@ -674,16 +580,26 @@ IntegerReference IntegerReference::addition(const IntegerReference a, const Inte
      * 1/abs(a)>abs(b) : s = sign*udiff(a, b)
      * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
      * sign? sign of the greater! */
-    if (IntegerNode::ucmp(a.typedNode(), b.typedNode()) >= 0) {
-      IntegerReference us = IntegerNode::usum(a.typedNode(), b.typedNode(), true);
+    if (IntegerNode::ucmp(a.node(), b.node()) >= 0) {
+      Integer us = IntegerNode::usum(a.node(), b.node(), true);
       us.setNegative(a.sign() == ExpressionNode::Sign::Negative);
       return us;
     } else {
-      IntegerReference us = IntegerNode::usum(a.typedNode(), b.typedNode(), true);
+      Integer us = IntegerNode::usum(a.node(), b.node(), true);
       us.setNegative(bNegative);
       return us;
     }
   }
+}
+
+Expression Integer::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Rational(*this, Integer(1));
+}
+
+Expression Integer::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+  Integer signedInteger = *this;
+  signedInteger.setNegative(s == ExpressionNode::Sign::Negative);
+  return signedInteger;
 }
 
 }

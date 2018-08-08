@@ -11,12 +11,6 @@ namespace Poincare {
 template <typename T>
 class AllocationFailureLayoutNode : public AllocationFailureNode<T> {
 public:
-  // TreeNode
-  size_t size() const override { return sizeof(AllocationFailureLayoutNode<T>); }
-#if TREE_LOG
-  const char * description() const override { return "AllocationFailureLayout";  }
-#endif
-
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     assert(false);
@@ -30,6 +24,12 @@ public:
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override { return LayoutCursor(); }
   void deleteBeforeCursor(LayoutCursor * cursor) override {}
+
+  // TreeNode
+  size_t size() const override { return sizeof(AllocationFailureLayoutNode<T>); }
+#if TREE_LOG
+  const char * description() const override { return "AllocationFailureLayout";  }
+#endif
 
 protected:
   // LayoutNode

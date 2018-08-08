@@ -1,6 +1,7 @@
 #ifndef POINCARE_ALLOCATION_FAILURE_EXPRESSION_NODE_H
 #define POINCARE_ALLOCATION_FAILURE_EXPRESSION_NODE_H
 
+#include <poincare/allocation_failure_node.h>
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
 #include <poincare/complex.h>
@@ -11,11 +12,8 @@
 namespace Poincare {
 
 template <typename T>
-class AllocationFailureExpressionNode : public T {
+class AllocationFailureExpressionNode : public AllocationFailureNode<T> {
 public:
-  AllocationFailureExpressionNode() : T() {}
-  AllocationFailureExpressionNode(T node) : T(node) {}
-
   // ExpressionNode
   ExpressionNode::Sign sign() const override { return ExpressionNode::Sign::Unknown; }
   ExpressionNode::Type type() const override { return ExpressionNode::Type::AllocationFailure; }
@@ -35,8 +33,6 @@ public:
 #if TREE_LOG
   const char * description() const override { return "AllocationFailureExpression";  }
 #endif
-  int numberOfChildren() const override { return 0; }
-  bool isAllocationFailure() const override { return true; }
 };
 
 

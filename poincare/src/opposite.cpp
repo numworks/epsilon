@@ -70,12 +70,9 @@ Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit 
 
 Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression result = Expression::shallowReduce(context, angleUnit);
-#if 0
-  // TODO: handle isFailed or isUndefined
-  if (result.hasFailure()) {
+  if (result.isUndefinedOrAllocationFailure()) {
     return result;
   }
-#endif
   Expression child = result.childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
 #endif

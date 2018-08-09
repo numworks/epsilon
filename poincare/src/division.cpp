@@ -67,12 +67,9 @@ template<typename T> MatrixComplex<T> Division::computeOnMatrices(const MatrixCo
 // Division
 Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression result = Expression::shallowReduce(context, angleUnit);
-#if 0
-  // TODO: handle isFailed or isUndefined
-  if (result.hasFailure()) {
+  if (result.isUndefinedOrAllocationFailure()) {
     return result;
   }
-#endif
   Power p = Power(operand(1), Rational(-1));
   p = p.shallowReduce(context, angleUnit); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
   Multiplication m = Multiplication(operand(0), p);

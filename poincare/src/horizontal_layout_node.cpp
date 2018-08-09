@@ -8,6 +8,7 @@ static inline KDCoordinate maxCoordinate(KDCoordinate c1, KDCoordinate c2) { ret
 
 HorizontalLayoutNode * HorizontalLayoutNode::FailedAllocationStaticNode() {
   static AllocationFailureLayoutNode<HorizontalLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

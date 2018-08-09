@@ -32,6 +32,7 @@ namespace Poincare {
 
 PowerNode * PowerNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<PowerNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

@@ -6,6 +6,7 @@ namespace Poincare {
 
 ParenthesisNode * ParenthesisNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<ParenthesisNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

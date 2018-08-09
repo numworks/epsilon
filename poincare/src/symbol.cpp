@@ -15,6 +15,7 @@ namespace Poincare {
 
 SymbolNode * SymbolNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<SymbolNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

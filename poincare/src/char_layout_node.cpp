@@ -6,6 +6,7 @@ namespace Poincare {
 
 CharLayoutNode * CharLayoutNode::FailedAllocationStaticNode() {
   static AllocationFailureLayoutNode<CharLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

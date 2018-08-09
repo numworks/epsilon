@@ -12,6 +12,7 @@ static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? 
 
 FractionLayoutNode * FractionLayoutNode::FailedAllocationStaticNode() {
   static AllocationFailureLayoutNode<FractionLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

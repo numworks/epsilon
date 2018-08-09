@@ -88,7 +88,6 @@ public:
 
   /* Allocation failure */
   static ExpressionNode * FailedAllocationStaticNode();
-  ExpressionNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;

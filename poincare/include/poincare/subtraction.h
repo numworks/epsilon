@@ -10,6 +10,7 @@ namespace Poincare {
 class SubtractionNode : public ExpressionNode {
 public:
   static SubtractionNode * FailedAllocationStaticNode();
+  SubtractionNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(SubtractionNode); }

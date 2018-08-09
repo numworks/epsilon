@@ -77,13 +77,6 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Expression subclassing
 
-ExpressionNode::Sign RationalNode::sign() const {
-  if (m_negative) {
-    return Sign::Negative;
-  }
-  return Sign::Positive;
-}
-
 Expression RationalNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Rational(this).setSign(s);
 }

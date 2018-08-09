@@ -17,7 +17,7 @@ private:
 class SumLayoutRef : public LayoutReference {
 public:
   SumLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<SumLayoutNode>(), true)
+    LayoutReference(TreePool::sharedPool()->createTreeNode<SumLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, argument);
     replaceChildAtIndexInPlace(1, lowerB);

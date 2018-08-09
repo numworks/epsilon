@@ -1,7 +1,7 @@
-#ifndef POINCARE_NARY_EXPRESSION_NODE_H
-#define POINCARE_NARY_EXPRESSION_NODE_H
+#ifndef POINCARE_N_ARY_EXPRESSION_NODE_H
+#define POINCARE_N_ARY_EXPRESSION_NODE_H
 
-#include <poincare/expression_reference.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
@@ -9,8 +9,9 @@ class NAryExpressionNode : public ExpressionNode { // TODO: VariableArityExpress
 public:
   //Tree
   int numberOfChildren() const override { return m_numberOfChildren; }
-  void incrementNumberOfChildren(int increment = 1) { m_numberOfChildren+= increment; }
-  void decrementNumberOfChildren(int decrement = 1) {
+  void incrementNumberOfChildren(int increment = 1) override { /*TODO override for alloc fail ?*/ m_numberOfChildren+= increment; }
+  void decrementNumberOfChildren(int decrement = 1) override {
+    /*TODO override for alloc fail ?*/
     assert(m_numberOfChildren >= decrement);
     m_numberOfChildren-= decrement;
   }
@@ -30,16 +31,16 @@ private:
   int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;
 };
 
-class NAryExpressionRef : public Expression {
+class NAryExpression : public Expression {
 public:
-  void addChildAtIndexInPlace(TreeReference t, int index, int currentNumberOfChildren) override {
+  void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
     Expression::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
   }
   // Remove puts a child at the end of the pool
   void removeChildAtIndexInPlace(int i) override {
     Expression::removeChildAtIndexInPlace(i);
   }
-  void removeChildInPlace(TreeReference t, int childNumberOfChildren) override {
+  void removeChildInPlace(TreeByReference t, int childNumberOfChildren) {
     Expression::removeChildInPlace(t, childNumberOfChildren);
   }
   void removeChildrenInPlace(int currentNumberOfChildren) {

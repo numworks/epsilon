@@ -33,7 +33,7 @@ Expression NAryExpressionNode::squashUnaryHierarchy() {
   if (reference.numberOfChildren() == 1) {
     assert(parent() != nullptr);
     Expression o = reference.childAtIndex(0);
-    reference.replaceWith(o);
+    reference.replaceWithInPlace(o);
     return o;
   }
   return reference;
@@ -42,7 +42,7 @@ Expression NAryExpressionNode::squashUnaryHierarchy() {
 // Private
 
 int NAryExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
-  int m = this->numberOfChildren();
+  int m = numberOfChildren();
   int n = e->numberOfChildren();
   for (int i = 1; i <= m; i++) {
     // The NULL node is the least node type.

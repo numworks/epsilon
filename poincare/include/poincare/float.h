@@ -20,7 +20,10 @@ namespace Poincare {
 template<typename T>
 class FloatNode : public NumberNode {
 public:
+  FloatNode() : m_value(0.0) {}
+
   static FloatNode * FailedAllocationStaticNode();
+  FloatNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   void setFloat(T a) { m_value = a; }
   T value() const { return m_value; }
@@ -48,16 +51,16 @@ public:
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
 private:
-  template<typename U> Evaluation<U> * templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  template<typename U> Evaluation<U> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
     return Complex<U>((U)m_value);
   }
   T m_value;
 };
 
 template<typename T>
-class FloatReference : public Number {
+class Float : public Number {
 public:
-  FloatReference(T value) : Number(TreePool::sharedPool()->createTreeNode<FloatNode<T>>()) {
+  Float(T value) : Number(TreePool::sharedPool()->createTreeNode<FloatNode<T>>()) {
     node()->setFloat(value);
   }
 private:

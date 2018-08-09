@@ -134,7 +134,7 @@ Expression RationalNode::shallowBeautify(Context & context, Preferences::AngleUn
 }
 
 Expression RationalNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Rational(this).shallowBeautify(context, angleUnit);
+  return Rational(this).denominator(context, angleUnit);
 }
 
 /* Rational  */

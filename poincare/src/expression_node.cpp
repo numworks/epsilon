@@ -5,7 +5,7 @@
 namespace Poincare {
 
 Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression expression) const {
-  Expression(this).privateReplaceSymbolWithExpression(symbol, expression);
+  return Expression(this).privateReplaceSymbolWithExpression(symbol, expression);
 }
 
 Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {

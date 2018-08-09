@@ -53,7 +53,7 @@ public:
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
   ExpressionNode::Sign sign() const { return node()->sign(); }
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const { node()->setSign(s, context, angleUnit); }
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const { return node()->setSign(s, context, angleUnit); }
   bool isUndefinedOrAllocationFailure() const { return node()->type() == ExpressionNode::Type::Undefined || node()->type() == ExpressionNode::Type::AllocationFailure; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
@@ -139,9 +139,9 @@ private:
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(symbolName, coefficients); }
 
   /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const { node()->shallowReduce(context, angleUnit); }
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const { return node()->shallowReduce(context, angleUnit); }
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit) const;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const { node()->shallowBeautify(context, angleUnit); }
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Approximation */

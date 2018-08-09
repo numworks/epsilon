@@ -88,9 +88,6 @@ public:
     EmptyExpression
    };
 
-  /* Allocation failure */
-  static ExpressionNode * FailedAllocationStaticNode();
-
   /* Poor man's RTTI */
   virtual Type type() const = 0;
 
@@ -135,7 +132,6 @@ public:
    * (ie +, *, ^, !) have specific rules to group like terms together and thus
    * reimplement simplificationOrderGreaterType. */
   virtual int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const { return -1; }
-  //TODO: What should be the implementation for complex?
   virtual int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const { return 0; }
 
   /* Layout Helper */

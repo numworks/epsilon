@@ -80,7 +80,7 @@ class Decimal : public Number {
 friend class Number;
 friend class DecimalNode;
 public:
-  static int exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
+  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
   Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent);
   Decimal(const DecimalNode * node) : Number(node) {}
   constexpr static int k_maxExponentLength = 4;

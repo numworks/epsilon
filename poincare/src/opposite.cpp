@@ -15,6 +15,7 @@ namespace Poincare {
 
 OppositeNode * OppositeNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<OppositeNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

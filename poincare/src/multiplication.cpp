@@ -21,6 +21,7 @@ namespace Poincare {
 
 MultiplicationNode * MultiplicationNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<MultiplicationNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

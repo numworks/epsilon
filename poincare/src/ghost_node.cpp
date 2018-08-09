@@ -3,9 +3,9 @@
 namespace Poincare {
 
 GhostNode * GhostNode::FailedAllocationStaticNode() {
-  static AllocationFailedGhostNode FailureNode;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&FailureNode);
-  return &FailureNode;
+  static AllocationFailedGhostNode failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
 }

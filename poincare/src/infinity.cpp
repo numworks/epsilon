@@ -12,6 +12,7 @@ namespace Poincare {
 
 InfinityNode * InfinityNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<InfinityNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

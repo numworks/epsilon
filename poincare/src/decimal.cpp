@@ -32,6 +32,7 @@ void DecimalNode::setValue(native_uint_t * mantissaDigits, size_t mantissaSize, 
 
 DecimalNode * DecimalNode::FailedAllocationStaticNode() {
   static AllocationFailureDecimalNode failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

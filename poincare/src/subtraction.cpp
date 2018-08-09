@@ -11,6 +11,7 @@ namespace Poincare {
 
 SubtractionNode * SubtractionNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<SubtractionNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

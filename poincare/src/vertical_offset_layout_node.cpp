@@ -11,6 +11,7 @@ namespace Poincare {
 
 VerticalOffsetLayoutNode * VerticalOffsetLayoutNode::FailedAllocationStaticNode() {
   static AllocationFailureLayoutNode<VerticalOffsetLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

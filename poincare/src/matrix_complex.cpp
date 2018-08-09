@@ -1,5 +1,4 @@
 #include <poincare/matrix_complex.h>
-#include <poincare/allocation_failure_evaluation_node.h>
 //#include <poincare/matrix.h>
 #include <poincare/expression.h>
 //#include <poincare/undefined.h>
@@ -12,7 +11,7 @@ namespace Poincare {
 
 template<typename T>
 MatrixComplexNode<T> * MatrixComplexNode<T>::FailedAllocationStaticNode() {
-  static AllocationFailureEvaluationNode<MatrixComplexNode, T> failure;
+  static AllocationFailureMatrixComplexNode<T> failure;
   return &failure;
 }
 
@@ -41,7 +40,7 @@ template<typename T>
 Expression MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
   return Undefined();/* TODO
   Matrix matrix;
-  for (int i = 0; i < numberOfComplexOperands(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     EvaluationNode<T> * child = childAtIndex(i);
     if (child->type() == EvaluationNode<T>::Type::Complex) {
       matrix.addChildTreeAtIndex(child->complexToExpression(complexFormat), i, i);
@@ -55,7 +54,7 @@ Expression MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat 
 
 template<typename T>
 std::complex<T> MatrixComplexNode<T>::trace() const {
-  if (numberOfRows() != numberOfColumns()) {
+  if (numberOfRows() != numberOfColumns() || numberOfRows() == 0) {
     return std::complex<T>(NAN, NAN);
   }
   int dim = numberOfRows();
@@ -73,7 +72,7 @@ std::complex<T> MatrixComplexNode<T>::trace() const {
 
 template<typename T>
 std::complex<T> MatrixComplexNode<T>::determinant() const {
-/* TODO  if (numberOfRows() != numberOfColumns() || numberOfComplexOperands() > Matrix::k_maxNumberOfCoefficients) {
+/* TODO  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
     return std::complex<T>(NAN, NAN);
   }
   std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
@@ -91,7 +90,7 @@ std::complex<T> MatrixComplexNode<T>::determinant() const {
 
 template<typename T>
 Evaluation<T> MatrixComplexNode<T>::inverse() const {
-/* TODO  if (numberOfRows() != numberOfColumns() || numberOfComplexOperands() > Matrix::k_maxNumberOfCoefficients) {
+/* TODO  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
     return MatrixComplex<T>::Undefined();
   }
   std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];

@@ -2,6 +2,7 @@
 #define POINCARE_MATRIX_COMPLEX_H
 
 #include <poincare/evaluation.h>
+#include <poincare/allocation_failure_evaluation_node.h>
 #include <poincare/complex.h>
 
 namespace Poincare {
@@ -13,6 +14,7 @@ template<typename T>
 class MatrixComplexNode : public EvaluationNode<T> {
 public:
   static MatrixComplexNode<T> * FailedAllocationStaticNode();
+  MatrixComplexNode<T> * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   MatrixComplexNode() :
     EvaluationNode<T>(),
@@ -31,11 +33,10 @@ public:
 
   // EvaluationNode
   typename EvaluationNode<T>::Type type() const override { return EvaluationNode<T>::Type::MatrixComplex; }
-  int numberOfComplexOperands() const { return m_numberOfRows*m_numberOfColumns; }
   int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
-  void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
-  void setNumberOfColumns(int columns) { assert(columns >= 0); m_numberOfColumns = columns; }
+  virtual void setNumberOfRows(int rows) { assert(rows >= 0); m_numberOfRows = rows; }
+  virtual void setNumberOfColumns(int columns) { assert(columns >= 0); m_numberOfColumns = columns; }
   bool isUndefined() const override;
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
   std::complex<T> trace() const override;
@@ -45,6 +46,12 @@ public:
 private:
   int m_numberOfRows;
   int m_numberOfColumns;
+};
+
+template<typename T>
+class AllocationFailureMatrixComplexNode : public AllocationFailureEvaluationNode<MatrixComplexNode, T> {
+  void setNumberOfRows(int rows) override {}
+  void setNumberOfColumns(int columns) override {}
 };
 
 template<typename T>

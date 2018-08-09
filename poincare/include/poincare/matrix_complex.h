@@ -22,7 +22,7 @@ public:
     m_numberOfColumns(0)
   {}
 
-  ComplexNode<T> * complexAtIndex(int index);
+  std::complex<T> complexAtIndex(int index) const;
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixComplexNode<T>); }
@@ -66,8 +66,8 @@ public:
   }
   static MatrixComplex<T> createIdentity(int dim);
   MatrixComplex<T> inverse() const { return node()->inverse(); }
-  Complex<T> complexAtIndex(int index) {
-    return Complex<T>(node()->complexAtIndex(index));
+  std::complex<T> complexAtIndex(int index) const {
+    return node()->complexAtIndex(index);
   }
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }

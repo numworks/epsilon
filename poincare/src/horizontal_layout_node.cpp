@@ -6,6 +6,11 @@ namespace Poincare {
 
 static inline KDCoordinate maxCoordinate(KDCoordinate c1, KDCoordinate c2) { return c1 > c2 ? c1 : c2; }
 
+HorizontalLayoutNode * HorizontalLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<HorizontalLayoutNode> failure;
+  return &failure;
+}
+
 // LayoutNode
 
 void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {

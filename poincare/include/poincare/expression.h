@@ -114,6 +114,7 @@ public:
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Approximation Helper */
+  template<typename U> static U epsilon();
   template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const;
   template<typename U> U approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
   template<typename U> static U approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit);
@@ -143,9 +144,6 @@ private:
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
-
-  /* Approximation */
-  template<typename U> static U epsilon();
 
   /* Expression roots/extrema solver*/
   constexpr static double k_solverPrecision = 1.0E-5;

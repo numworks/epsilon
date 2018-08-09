@@ -206,7 +206,7 @@ template<typename T> Evaluation<T> DecimalNode::templatedApproximate() const {
   return Complex<T>(m_negative ? -result : result);
 }
 
-int Decimal::exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
+int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
   int base = 10;
   int exp = 0;
   for (int i = 0; i < exponentLength; i++) {

@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-static AdditionNode * FailedAllocationStaticNode() {
+AdditionNode * AdditionNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<AdditionNode> failure;
   return &failure;
 }

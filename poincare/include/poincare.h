@@ -105,6 +105,23 @@
 #include <poincare/vertical_offset_layout_node.h>
 #else
 
+#include <poincare/addition.h>
+#include <poincare/matrix_complex.h>
+#include <poincare/multiplication.h>
+#include <poincare/power.h>
+#include <poincare/subtraction.h>
+#include <poincare/undefined.h>
+#include <poincare/infinity.h>
+#include <poincare/integer.h>
+#include <poincare/opposite.h>
+#include <poincare/decimal.h>
+#include <poincare/rational.h>
+#include <poincare/symbol.h>
+#include <poincare/float.h>
+#include <poincare/parenthesis.h>
+#include <poincare/division.h>
+#include <poincare/undefined.h>
+
 #include <poincare/print_float.h>
 
 #endif

@@ -20,6 +20,9 @@ class Expression : public TreeByValue {
   friend class Opposite;
   friend class Symbol;
   friend class Decimal;
+  friend class Division;
+  friend class NAryExpressionNode;
+  friend class Parenthesis;
 public:
   /* Constructor & Destructor */
   Expression() : Expression(nullptr) {}

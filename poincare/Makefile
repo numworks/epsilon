@@ -20,6 +20,9 @@ objs += $(addprefix poincare/src/,\
   symbol.o\
   float.o\
   number.o\
+  n_ary_expression_node.o\
+  parenthesis.o\
+  division.o\
 )
 
 objsExpected += $(addprefix poincare/src/,\

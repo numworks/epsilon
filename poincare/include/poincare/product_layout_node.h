@@ -24,7 +24,7 @@ private:
 class ProductLayoutRef : public LayoutReference {
 public:
   ProductLayoutRef(LayoutRef argument, LayoutRef lowerB, LayoutRef upperB) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>(), true)
+    LayoutReference(TreePool::sharedPool()->createTreeNode<ProductLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, argument);
     replaceChildAtIndexInPlace(1, lowerB);

@@ -68,11 +68,10 @@ Expression Division::shallowReduce(Context & context, Preferences::AngleUnit ang
   if (result.isUndefinedOrAllocationFailure()) {
     return result;
   }
-  Power p = Power(childAtIndex(1), Rational(-1));
-  Expression e = p.shallowReduce(context, angleUnit); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
-  Multiplication m = Multiplication(childAtIndex(0), e);
+  Expression p = Power(childAtIndex(1), Rational(-1));
+  p = p.shallowReduce(context, angleUnit); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
+  Multiplication m = Multiplication(childAtIndex(0), p);
   return m.shallowReduce(context, angleUnit);
 }
-
 
 }

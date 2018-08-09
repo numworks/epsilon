@@ -36,6 +36,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Float; }
+  //int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override; // TODO: implement!
 
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {

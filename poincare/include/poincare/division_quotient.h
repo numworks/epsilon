@@ -18,7 +18,7 @@ private:
     return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   const char * name() const { return "quo"; }
   /* Simplification */

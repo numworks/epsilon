@@ -7,7 +7,7 @@ extern "C" {
 #include <poincare/division.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
-#include <poincare/tangent.h>
+//#include <poincare/tangent.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <cmath>
@@ -15,64 +15,70 @@ extern "C" {
 
 namespace Poincare {
 
-int Division::polynomialDegree(char symbolName) const {
+DivisionNode * FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<DivisionNode> failure;
+  return &failure;
+}
+
+int DivisionNode::polynomialDegree(char symbolName) const {
   if (childAtIndex(1)->polynomialDegree(symbolName) != 0) {
     return -1;
   }
   return childAtIndex(0)->polynomialDegree(symbolName);
 }
 
-bool Division::needsParenthesesWithParent(const SerializationHelperInterface * parent) const {
+bool DivisionNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
   Type types[] = {Type::Division, Type::Power, Type::Factorial};
-  return static_cast<ExpressionNode *>(parent)->isOfType(types, 3);
+  return static_cast<const ExpressionNode *>(e)->isOfType(types, 3);
 }
 
-Expression Division::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  return Division(this).shallowReduce(context, angleUnit);
-}
-
-LayoutRef Division::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  const Expression * numerator = operand(0)->type() == Type::Parenthesis ? operand(0)->operand(0) : operand(0);
-  const Expression * denominator = operand(1)->type() == Type::Parenthesis ? operand(1)->operand(0) : operand(1);
+LayoutRef DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  const ExpressionNode * numerator = childAtIndex(0)->type() == Type::Parenthesis ? childAtIndex(0)->childAtIndex(0) : childAtIndex(0);
+  const ExpressionNode * denominator = childAtIndex(1)->type() == Type::Parenthesis ? childAtIndex(1)->childAtIndex(0) : childAtIndex(1);
   return FractionLayoutRef(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Complex<T> Division::compute(const std::complex<T> c, const std::complex<T> d) {
+Expression DivisionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Division(this).shallowReduce(context, angleUnit);
+}
+
+template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d) {
   return Complex<T>(c/d);
 }
 
-template<typename T> MatrixComplex<T> Division::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {
-  MatrixComplex<T> * inverse = n.createInverse();
-  if (inverse == nullptr) {
+template<typename T> MatrixComplex<T> DivisionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {
+  Evaluation<T> inverse = n.inverse();
+  if (inverse.isUndefined()) {
     return MatrixComplex<T>::Undefined();
   }
-  MatrixComplex<T> result = Multiplication::computeOnComplexAndMatrix<T>(c, *inverse);
-  delete inverse;
+  assert(inverse.node()->type() == EvaluationNode<T>::Type::MatrixComplex || inverse.node()->type() == EvaluationNode<T>::Type::AllocationFailure);
+  MatrixComplex<T> result = MultiplicationNode::computeOnComplexAndMatrix<T>(c, MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(inverse.node())));
   return result;
 }
 
-template<typename T> MatrixComplex<T> Division::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
+template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
   if (m.numberOfColumns() != n.numberOfColumns()) {
     return MatrixComplex<T>::Undefined();
   }
-  MatrixComplex<T> * inverse = n.createInverse();
-  if (inverse == nullptr) {
+  Evaluation<T> inverse = n.inverse();
+  if (inverse.isUndefined()) {
     return MatrixComplex<T>::Undefined();
   }
-  MatrixComplex<T> result = Multiplication::computeOnMatrices<T>(m, *inverse);
-  delete inverse;
+  assert(inverse.node()->type() == EvaluationNode<T>::Type::MatrixComplex || inverse.node()->type() == EvaluationNode<T>::Type::AllocationFailure);
+  MatrixComplex<T> result = MultiplicationNode::computeOnMatrices<T>(m, MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(inverse.node())));
   return result;
 }
 
 // Division
-Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
+
+Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression result = Expression::shallowReduce(context, angleUnit);
   if (result.isUndefinedOrAllocationFailure()) {
     return result;
   }
-  Power p = Power(operand(1), Rational(-1));
+  Power p = Power(childAtIndex(1), Rational(-1));
   p = p.shallowReduce(context, angleUnit); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
-  Multiplication m = Multiplication(operand(0), p);
+  Multiplication m = Multiplication(childAtIndex(0), p);
   return m.shallowReduce(context, angleUnit);
 }
 

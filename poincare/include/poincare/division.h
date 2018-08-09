@@ -11,8 +11,11 @@ class Division;
 
 class DivisionNode : public ExpressionNode {
 public:
-  // TreeNode
+  // Allocation Failure
   static DivisionNode * FailedAllocationStaticNode();
+  DivisionNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
   size_t size() const override { return sizeof(DivisionNode); }
 #if TREE_LOG
   const char * description() const override { return "Division";  }
@@ -38,7 +41,7 @@ public:
   }
 
   // Layout
-  virtual bool needsParenthesesWithParent(const SerializationHelperInterface * parent) const;
+  bool needsParenthesesWithParent(const SerializationHelperInterface * parent) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "/");
@@ -59,11 +62,11 @@ private:
 class Division : public Expression {
 public:
   Division(Expression numerator, Expression denominator) {
-    addChild(numberator);
-    addChild(denominator);
+    replaceChildAtIndexInPlace(0, numerator);
+    replaceChildAtIndexInPlace(1, denominator);
   }
   Division(const DivisionNode * n) : Expression(n) {}
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

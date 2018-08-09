@@ -15,6 +15,7 @@ namespace Poincare {
 
 class ExpressionNode : public TreeNode, public SerializationHelperInterface {
   friend class SymbolNode;
+  friend class DivisionNode;
   friend class NAryExpressionNode;
 public:
    enum class Type : uint8_t {

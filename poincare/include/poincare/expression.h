@@ -23,6 +23,7 @@ class Expression : public TreeByValue {
   friend class Division;
   friend class NAryExpressionNode;
   friend class Parenthesis;
+  friend class Power;
 public:
   /* Constructor & Destructor */
   Expression() : Expression(nullptr) {}
@@ -133,7 +134,7 @@ protected:
 
 private:
   /* Properties */
-  int getPolynomialCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
+  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 
   /* Simplification */
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;

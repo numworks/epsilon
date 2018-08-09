@@ -31,8 +31,6 @@ public:
   virtual Expression complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
   virtual std::complex<T> trace() const = 0;
   virtual std::complex<T> determinant() const = 0;
-  virtual Evaluation<T> inverse() const = 0;
-  virtual Evaluation<T> transpose() const = 0;
 
   // TreeNode
   static TreeNode * FailedAllocationStaticNode();
@@ -56,8 +54,6 @@ public:
   Expression complexToExpression(Preferences::ComplexFormat complexFormat) const;
   std::complex<T> trace() const { return node()->trace(); }
   std::complex<T> determinant() const { return node()->determinant(); }
-  Evaluation inverse() const { return node()->inverse(); }
-  Evaluation transpose() const { return node()->transpose(); }
 protected:
   Evaluation(EvaluationNode<T> * n) : TreeByValue(n) {}
   //Evaluation() : TreeByValue() {}

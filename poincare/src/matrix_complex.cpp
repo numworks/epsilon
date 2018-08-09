@@ -89,7 +89,7 @@ std::complex<T> MatrixComplexNode<T>::determinant() const {
 }
 
 template<typename T>
-Evaluation<T> MatrixComplexNode<T>::inverse() const {
+MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
 /* TODO  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
     return MatrixComplex<T>::Undefined();
   }
@@ -110,7 +110,7 @@ Evaluation<T> MatrixComplexNode<T>::inverse() const {
 }
 
 template<typename T>
-Evaluation<T> MatrixComplexNode<T>::transpose() const {
+MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
   // Intentionally swapping dimensions for transpose
   MatrixComplex<T> result;
   for (int i = 0; i < numberOfRows(); i++) {

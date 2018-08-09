@@ -47,12 +47,8 @@ template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, c
 }
 
 template<typename T> MatrixComplex<T> DivisionNode::computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n) {
-  Evaluation<T> inverse = n.inverse();
-  if (inverse.isUndefined()) {
-    return MatrixComplex<T>::Undefined();
-  }
-  assert(inverse.node()->type() == EvaluationNode<T>::Type::MatrixComplex || inverse.node()->type() == EvaluationNode<T>::Type::AllocationFailure);
-  MatrixComplex<T> result = MultiplicationNode::computeOnComplexAndMatrix<T>(c, MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(inverse.node())));
+  MatrixComplex<T> inverse = n.inverse();
+  MatrixComplex<T> result = MultiplicationNode::computeOnComplexAndMatrix<T>(c, inverse);
   return result;
 }
 
@@ -60,12 +56,8 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
   if (m.numberOfColumns() != n.numberOfColumns()) {
     return MatrixComplex<T>::Undefined();
   }
-  Evaluation<T> inverse = n.inverse();
-  if (inverse.isUndefined()) {
-    return MatrixComplex<T>::Undefined();
-  }
-  assert(inverse.node()->type() == EvaluationNode<T>::Type::MatrixComplex || inverse.node()->type() == EvaluationNode<T>::Type::AllocationFailure);
-  MatrixComplex<T> result = MultiplicationNode::computeOnMatrices<T>(m, MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(inverse.node())));
+  MatrixComplex<T> inverse = n.inverse();
+  MatrixComplex<T> result = MultiplicationNode::computeOnMatrices<T>(m, inverse);
   return result;
 }
 

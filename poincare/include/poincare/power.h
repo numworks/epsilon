@@ -2,9 +2,9 @@
 #define POINCARE_POWER_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/rational.h>
 #include <poincare/multiplication.h>
-#include <poincare/char_layout_node.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -19,14 +19,14 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(PowerNode); }
 #if TREE_LOG
-  const char * description() const override { return "Division";  }
+  const char * description() const override { return "Power";  }
 #endif
   int numberOfChildren() const override { return 2; }
 
   // Properties
-  virtual Type type() const override { return Type::Power; }
-  virtual Sign sign() const override;
-  virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
+  Type type() const override { return Type::Power; }
+  Sign sign() const override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
 
   int polynomialDegree(char symbolName) const override;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
@@ -36,23 +36,25 @@ private:
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
   constexpr static int k_maxExactPowerMatrix = 100;
 
-  /* Layout */
+  // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
-  /* Serialize */
+  // Serialize
   bool needsParenthesesWithParent(const SerializationHelperInterface * parent) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   static const char * name() { return "^"; }
+
   /* Simplify */
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
-  int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const override;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
+  int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
-  Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
-  Expression * denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
-  Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
+  Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
+#if 0
+   Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
+   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
   Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, Preferences::AngleUnit angleUnit);
   Expression * removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit);
   bool parentIsALogarithmOfSameBase() const;
@@ -63,6 +65,7 @@ private:
   static const Rational * RadicandInExpression(const Expression * e);
   static const Rational * RationalFactorInExpression(const Expression * e);
   static bool RationalExponentShouldNotBeReduced(const Rational * b, const Rational * r);
+#endif
   /* Evaluation */
   constexpr static int k_maxApproximatePowerMatrix = 1000;
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n);
@@ -80,10 +83,10 @@ class Power : public Expression {
 public:
   Power(Expression base, Expression exponent);
   Power(const PowerNode * n) : Expression(n) {}
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
-  Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
 };
 

@@ -41,8 +41,8 @@ public:
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
   std::complex<T> trace() const override;
   std::complex<T> determinant() const override;
-  Evaluation<T> inverse() const override;
-  Evaluation<T> transpose() const override;
+  MatrixComplex<T> inverse() const;
+  MatrixComplex<T> transpose() const;
 private:
   int m_numberOfRows;
   int m_numberOfColumns;
@@ -65,6 +65,7 @@ public:
     return MatrixComplex<T>((std::complex<T> *)&undef, 1, 1);
   }
   static MatrixComplex<T> createIdentity(int dim);
+  MatrixComplex<T> inverse() const { return node()->inverse(); }
   Complex<T> complexAtIndex(int index) {
     return Complex<T>(node()->complexAtIndex(index));
   }

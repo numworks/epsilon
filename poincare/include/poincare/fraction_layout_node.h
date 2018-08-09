@@ -11,6 +11,10 @@ class FractionLayoutNode : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
+  // AllocationFailure
+  static FractionLayoutNode * FailedAllocationStaticNode();
+  FractionLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
@@ -54,7 +58,7 @@ private:
 class FractionLayoutRef : public LayoutReference {
 public:
   FractionLayoutRef(LayoutRef numerator, LayoutRef denominator) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<FractionLayoutNode>(), true)
+    LayoutReference(TreePool::sharedPool()->createTreeNode<FractionLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, numerator);
     replaceChildAtIndexInPlace(1, denominator);

@@ -1,7 +1,7 @@
 #include <poincare/integer.h>
 #include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
-//#include <poincare/char_layout_node.h>
+#include <poincare/char_layout_node.h>
 #include <poincare/rational.h>
 #include <cmath>
 #include <utility>

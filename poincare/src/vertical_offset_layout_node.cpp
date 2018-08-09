@@ -9,6 +9,11 @@
 
 namespace Poincare {
 
+VerticalOffsetLayoutNode * VerticalOffsetLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<VerticalOffsetLayoutNode> failure;
+  return &failure;
+}
+
 void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (indiceLayout() != nullptr
       && cursor->layoutNode() == indiceLayout()

@@ -105,10 +105,13 @@ X2 { poincare_expression_yylval.character = Symbol::SpecialSymbols::X2; return S
 Y2 { poincare_expression_yylval.character = Symbol::SpecialSymbols::Y2; return SYMBOL; }
 X3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::X3; return SYMBOL; }
 Y3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::Y3; return SYMBOL; }
+ /*
 acos { poincare_expression_yylval.expression = new ArcCosine(); return FUNCTION; }
 acosh { poincare_expression_yylval.expression = new HyperbolicArcCosine(); return FUNCTION; }
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
+*/
 ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
+ /*
 arg { poincare_expression_yylval.expression = new ComplexArgument(); return FUNCTION; }
 asin { poincare_expression_yylval.expression = new ArcSine(); return FUNCTION; }
 asinh { poincare_expression_yylval.expression = new HyperbolicArcSine(); return FUNCTION; }
@@ -151,11 +154,12 @@ tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 tanh { poincare_expression_yylval.expression = new HyperbolicTangent(); return FUNCTION; }
 trace { poincare_expression_yylval.expression = new MatrixTrace(); return FUNCTION; }
 transpose { poincare_expression_yylval.expression = new MatrixTranspose(); return FUNCTION; }
-undef { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED; }
-inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED; }
+ */
+undef { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
+inf { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 \x8a { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8d { return EE; }
-\x91 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }
+ /*\x91 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }*/
 \x8c { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8f { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x90 { return STO; }
@@ -177,7 +181,10 @@ inf { poincare_expression_yylval.expression = new Undefined(); return UNDEFINED;
 \, { return COMMA; }
 \. { return DOT; }
 \_ { return UNDERSCORE; }
+ /*
 \x97 { poincare_expression_yylval.expression = new EmptyExpression(); return EMPTY; }
+ */
+
 [ ]+ /* Ignore whitespaces */
 . { return UNDEFINED_SYMBOL; }
 

@@ -88,7 +88,7 @@ public:
     X3,
     Y3 = 29
   };
-  Symbol(const char name) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
+  Symbol(const char name = 0) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
     node()->setName(name);
   }
   Symbol(const SymbolNode * node) : Expression(node) {}

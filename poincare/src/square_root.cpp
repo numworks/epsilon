@@ -21,7 +21,7 @@ Expression * SquareRoot::clone() const {
 
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");
 int SquareRoot::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::writePrefixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
 }
 
 template<typename T>

@@ -1,6 +1,6 @@
 #include <poincare/parenthesis.h>
 #include <poincare/allocation_failure_expression_node.h>
-#include <assert.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -18,7 +18,7 @@ LayoutRef ParenthesisNode::createLayout(Preferences::PrintFloatMode floatDisplay
 }
 
 int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(Parenthesis(const_cast<ParenthesisNode *>(this)), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
 Expression ParenthesisNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
@@ -32,7 +32,7 @@ Evaluation<T> ParenthesisNode::templatedApproximate(Context& context, Preference
 
 Expression Parenthesis::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = Expression::shallowReduce(context, angleUnit);
-  if (e != *this) {
+  if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
   return childAtIndex(0);

@@ -2,6 +2,7 @@
 #define POINCARE_ARITHMETIC_H
 
 #include <poincare/integer.h>
+
 namespace Poincare {
 
 class Arithmetic {

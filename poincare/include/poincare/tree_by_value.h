@@ -18,6 +18,7 @@ public:
   TreeByValue& operator=(const TreeByValue& tr);
 
   bool isDefined() const { return TreeByReference::isDefined(); }
+  bool isAllocationFailure() const { return TreeByReference::isAllocationFailure(); }
 
   TreeNode * node() const override { return TreeByReference::node(); }
 

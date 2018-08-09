@@ -4,6 +4,7 @@ SFLAGS += -Ipoincare/include
 #include poincare/src/simplification/Makefile
 objs += $(addprefix poincare/src/,\
   addition.o\
+  arithmetic.o\
   matrix_complex.o\
   multiplication.o\
   power.o\

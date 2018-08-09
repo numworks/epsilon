@@ -7,6 +7,18 @@
 
 %{
 #include <poincare.h>
+
+struct YYSTYPE {
+  Poincare::Expression expression;
+  Poincare::Symbol symbol;
+  struct {
+    char * address;
+    int length;
+  } string;
+  char character;
+};
+
+
 /* The lexer manipulates tokens defined by the parser, so we need the following
  * inclusion order. */
 #include "expression_parser.hpp"
@@ -20,8 +32,9 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
  * instead we do provide regular memcpy. Let's instruct Bison to use it. */
 #define YYCOPY(To, From, Count) memcpy(To, From, (Count)*sizeof(*(From)))
 
-%}
 
+#if 0
+//TODO move comments
 
 /* All symbols (both terminals and non-terminals) may have a value associated
  * with them. In our case, it's going to be either an Expression (for example,
@@ -48,6 +61,10 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
   } string;
   char character;
 }
+#endif
+
+%}
+
 
 /* The INTEGER token uses the "string" part of the union to store its value */
 %token <string> DIGITS
@@ -129,9 +146,9 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 %type <expression> exp;
 %type <expression> number;
 %type <symbol> symb;
-%type <listData> lstData;
+/* TODO %type <listData> lstData; */
 /* MATRICES_ARE_DEFINED */
-%type <matrixData> mtxData;
+/* TODO %type <matrixData> mtxData; */
 
 /* FIXME: no destructors, Expressions are GCed */
 /* During error recovery, some symbols need to be discarded. We need to tell
@@ -180,7 +197,7 @@ mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, 
  * of the exponent digits is above 4 (0.00...-256 times-...01E1256=1E1000 is
  * accepted and 1000-...256times...-0E10000 = 1E10256, 10256 does not overflow
  * an int32_t). */
-number : DIGITS { $$ = Poincare::Rational(Poincare::Integer($1.address, false)); }
+number : DIGITS { $$ = Poincare::Rational(Poincare::Integer($1.address, $1.length, false)); }
 
 /*
        | DOT DIGITS { $$ = Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, nullptr, 0, false)); }
@@ -220,7 +237,7 @@ $4->detachOperands(); delete $4; $7->detachOperands(); delete $7; arguments->det
        ;
 
 bang   : term               { $$ = $1; }
-       | term BANG          { $$ = Poincare::Factorial($1); }
+      /* | term BANG          { $$ = Poincare::Factorial($1); }*/
        ;
 
 factor : bang               { $$ = $1; }
@@ -237,7 +254,7 @@ exp    : pow                { $$ = $1; }
        | exp MULTIPLY exp   { $$ = Poincare::Multiplication($1,$3); }
        | exp MINUS exp      { $$ = Poincare::Subtraction($1,$3); }
        | MINUS exp %prec UNARY_MINUS { $$ = Poincare::Opposite($2); }
-       | exp PLUS exp     { $$ = Poincare::Addition($1;$3); }
+       | exp PLUS exp     { $$ = Poincare::Addition($1,$3); }
        ;
 
 final_exp : exp             { $$ = $1; }

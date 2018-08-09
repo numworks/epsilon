@@ -74,7 +74,10 @@ class Addition : public NAryExpression {
 public:
   Addition(const AdditionNode * n) : NAryExpression(n) {}
   Addition() : NAryExpression(TreePool::sharedPool()->createTreeNode<AdditionNode>()) {}
-
+  Addition(Expression e1, Expression e2) : Addition() {
+    addChildAtIndexInPlace(e2, 0, 0);
+    addChildAtIndexInPlace(e1, 0, numberOfChildren());
+  }
   // Expression
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;

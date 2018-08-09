@@ -75,7 +75,7 @@ public:
     assert(isDefined());
     return TreeByReference(node()->parent());
   }
-  TreeByReference treeChildAtIndex(int i) const {
+  TreeByReference childAtIndex(int i) const {
     assert(isDefined());
     return TreeByReference(node()->childAtIndex(i));
   }
@@ -90,7 +90,7 @@ public:
   void replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild);
   void replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild) {
     assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
-    TreeByReference oldChild = treeChildAtIndex(oldChildIndex);
+    TreeByReference oldChild = childAtIndex(oldChildIndex);
     replaceChildInPlace(oldChild, newChild);
   }
   void replaceWithAllocationFailureInPlace(int currentNumberOfChildren);

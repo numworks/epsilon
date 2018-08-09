@@ -33,7 +33,7 @@ public:
 
   /* Hierarchy */
   Expression childAtIndex(int i) const {
-    return Expression(static_cast<ExpressionNode *>(TreeByReference::treeChildAtIndex(i).node()));
+    return Expression(static_cast<ExpressionNode *>(TreeByValue::childAtIndex(i).node()));
   }
 
   /* Circuit breaker */

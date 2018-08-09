@@ -17,7 +17,6 @@ class Expression : public TreeByValue {
   friend class ExpressionNode;
   friend class NAryExpressionNode;
   friend class SubtractionNode;
-  friend class SymbolNode;
 public:
   /* Constructor & Destructor */
   Expression() : Expression(nullptr) {}
@@ -32,6 +31,9 @@ public:
   }
 
   /* Hierarchy */
+  Expression parent() const {
+    return Expression(static_cast<ExpressionNode *>(TreeByReference::parent().node()));
+  }
   Expression childAtIndex(int i) const {
     return Expression(static_cast<ExpressionNode *>(TreeByValue::childAtIndex(i).node()));
   }
@@ -102,7 +104,8 @@ public:
 
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
-  void simplify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Approximation Helper */
   template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const;
@@ -130,9 +133,8 @@ private:
   int getPolynomialCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Simplification */
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Approximation */
   template<typename U> static U epsilon();

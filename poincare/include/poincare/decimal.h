@@ -14,9 +14,19 @@ namespace Poincare {
 
 class DecimalNode : public NumberNode {
 public:
-  void setValue(native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative);
+  DecimalNode() :
+    m_negative(false),
+    m_exponent(0),
+    m_numberOfDigitsInMantissa(0) {}
+
+  virtual void setValue(native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative);
+
+  // Allocation Failure
+  static DecimalNode * FailedAllocationStaticNode();
+  DecimalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   NaturalIntegerPointer mantissa() const;
+  int exponent() const { return m_exponent; }
 
   // TreeNode
   size_t size() const override { return sizeof(DecimalNode); }
@@ -40,13 +50,15 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
-  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const override;
+
+  // Serialization
+  bool needsParenthesesWithParent(const SerializationHelperInterface * e) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 
   // Layout
-  bool needsParenthesesWithParent(SerializableNode * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 private:
   // Worst case is -1.2345678901234E-1000
   constexpr static int k_maxBufferSize = PrintFloat::k_numberOfStoredSignificantDigits+1+1+1+1+4+1;
@@ -59,20 +71,30 @@ private:
   native_uint_t m_mantissa[0];
 };
 
-class DecimalReference : public NumberReference {
+class AllocationFailureDecimalNode : public AllocationFailureExpressionNode<DecimalNode> {
+public:
+  void setValue(native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative) override {}
+};
+
+class Decimal : public Number {
 friend class Number;
+friend class DecimalNode;
 public:
   static int exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
-  DecimalReference(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent);
+  Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent);
+  Decimal(const DecimalNode * node) : Number(node) {}
   constexpr static int k_maxExponentLength = 4;
 private:
-  DecimalReference(TreeNode * n) : NumberReference(n) {}
-  template <typename T> DecimalReference(T f);
-  DecimalReference(IntegerReference m, int e);
-  DecimalReference(size_t size) : NumberReference() {
+  DecimalNode * node() const override { return static_cast<DecimalNode *>(Number::node()); }
+  template <typename T> Decimal(T f);
+  Decimal(Integer m, int e);
+  Decimal(size_t size) : Number(nullptr) {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<DecimalNode>(size);
     m_identifier = node->identifier();
   }
+  // Simplification
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

@@ -1,23 +1,11 @@
 #include <poincare/expression_node.h>
-//#include <poincare/undefined.h>
-#include <poincare/allocation_failed_expression_node.h>
+#include <poincare/undefined.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-ExpressionNode * ExpressionNode::FailedAllocationStaticNode() {
-  static AllocationFailedExpressionNode FailureNode;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&FailureNode);
-  return &FailureNode;
-}
-
 Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression expression) const {
-  Expression e = Expression(this);
-  int nbChildren = e.numberOfChildren();
-  for (int i = 0; i < nbChildren; i++) {
-    Expression newChild = e.childAtIndex(i).node()->replaceSymbolWithExpression(symbol, expression);
-    e.replaceChildAtIndexInPlace(i, newChild);
-  }
-  return e;
+  Expression(this).privateReplaceSymbolWithExpression(symbol, expression);
 }
 
 Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
@@ -87,10 +75,10 @@ int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const Express
   }
 }
 
-Expression ExpressionNode::reduce(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
   for (int i = 0; i < numberOfChildren(); i++) {
     if (childAtIndex(i)->isAllocationFailure()) {
-      return failedAllocationStaticNode();
+      return UndefinedNode::FailedAllocationStaticNode();
     }
     if (childAtIndex(i)->type() == Type::Undefined) {
       return Undefined();
@@ -99,8 +87,8 @@ Expression ExpressionNode::reduce(Context & context, Preferences::AngleUnit angl
   return Expression(this);
 }
 
-Expression Expression::beautify(Context & context, Preferences::AngleUnit angleUnit) const {
-  return *this;
+Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Expression(this);
 }
 
 bool ExpressionNode::isOfType(Type * types, int length) const {

@@ -1,40 +1,41 @@
 #include <poincare/multiplication.h>
 #include <poincare/addition.h>
-#include <poincare/arithmetic.h>
-#include <poincare/division.h>
-#include <poincare/matrix.h>
+//#include <poincare/arithmetic.h>
+//#include <poincare/division.h>
+#include <poincare/layout_helper.h>
+//#include <poincare/matrix.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
-#include <poincare/power.h>
+//#include <poincare/power.h>
 #include <poincare/rational.h>
-#include <poincare/simplification_root.h>
+#include <poincare/serialization_helper.h>
+//#include <poincare/simplification_root.h>
 #include <poincare/subtraction.h>
-#include <poincare/tangent.h>
+//#include <poincare/tangent.h>
 #include <poincare/undefined.h>
 #include <cmath>
 #include <ion.h>
-extern "C" {
 #include <assert.h>
-#include <stdlib.h>
-}
 
 namespace Poincare {
 
-Expression::Type Multiplication::type() const {
-  return Expression::Type::Multiplication;
+static MultiplicationNode * FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<MultiplicationNode> failure;
+  return &failure;
 }
 
-Expression * Multiplication::clone() const {
-  if (numberOfChildren() == 0) {
-    return new Multiplication();
+ExpressionNode::Sign MultiplicationNode::sign() const {
+  int sign = 1;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    sign *= (int)childAtIndex(i)->sign();
   }
-  return new Multiplication(operands(), numberOfChildren(), true);
+  return (Sign)sign;
 }
 
-int Multiplication::polynomialDegree(char symbolName) const {
+int MultiplicationNode::polynomialDegree(char symbolName) const {
   int degree = 0;
   for (int i = 0; i < numberOfChildren(); i++) {
-    int d = operand(i)->polynomialDegree(symbolName);
+    int d = childAtIndex(i)->polynomialDegree(symbolName);
     if (d < 0) {
       return -1;
     }
@@ -43,103 +44,44 @@ int Multiplication::polynomialDegree(char symbolName) const {
   return degree;
 }
 
-int Multiplication::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
+int MultiplicationNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(symbolName);
-  if (deg < 0 || deg > k_maxPolynomialDegree) {
+  if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
     return -1;
   }
   // Initialization of coefficients
   for (int i = 1; i <= deg; i++) {
-    coefficients[i] = RationalReference(0);
+    coefficients[i] = Rational(0);
   }
-  coefficients[0] = RationalReference(1);
+  coefficients[0] = Rational(1);
 
-  Expression * intermediateCoefficients[k_maxNumberOfPolynomialCoefficients];
+  Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Let's note result = a(0)+a(1)*X+a(2)*X^2+a(3)*x^3+..
   for (int i = 0; i < numberOfChildren(); i++) {
-    // operand(i) = b(0)+b(1)*X+b(2)*X^2+b(3)*x^3+...
-    int degI = operand(i)->privateGetPolynomialCoefficients(symbolName, intermediateCoefficients);
-    assert(degI <= k_maxPolynomialDegree);
+    // childAtIndex(i) = b(0)+b(1)*X+b(2)*X^2+b(3)*x^3+...
+    int degI = childAtIndex(i)->getPolynomialCoefficients(symbolName, intermediateCoefficients);
+    assert(degI <= Expression::k_maxPolynomialDegree);
     for (int j = deg; j > 0; j--) {
       // new coefficients[j] = b(0)*a(j)+b(1)*a(j-1)+b(2)*a(j-2)+...
-      Addition * a = new Addition();
+      Addition a;
       int jbis = j > degI ? degI : j;
       for (int l = 0; l <= jbis ; l++) {
         // Always copy the a and b coefficients are they are used multiple times
-        a->addOperand(new Multiplication(intermediateCoefficients[l], coefficients[j-l], true));
+        a.addChildAtIndexInPlace(Multiplication(intermediateCoefficients[l], coefficients[j-l]), a.numberOfChildren(), a.numberOfChildren());
       }
       /* a(j) and b(j) are used only to compute coefficient at rank >= j, we
        * can delete them as we compute new coefficient by decreasing ranks. */
-      delete coefficients[j];
-      if (j <= degI) { delete intermediateCoefficients[j]; };
+      // TODO remove if (j <= degI) { delete intermediateCoefficients[j]; };
       coefficients[j] = a;
     }
     // new coefficients[0] = a(0)*b(0)
-    coefficients[0] = new Multiplication(coefficients[0], intermediateCoefficients[0], false);
+    coefficients[0] = Multiplication(coefficients[0], intermediateCoefficients[0]);
   }
   return deg;
 }
 
-bool Multiplication::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
-  Type types[] = {Type::Division, Type::Power, Type::Factorial};
-  return e->isOfType(types, 3);
-}
-
-LayoutRef Multiplication::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
-  return LayoutHelper::Infix(this, floatDisplayMode, numberOfSignificantDigits, middleDotString);
-}
-
-int Multiplication::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  const char multiplicationString[] = {Ion::Charset::MultiplicationSign, 0};
-  return LayoutHelper::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, multiplicationString);
-}
-
-Expression::Sign Multiplication::sign() const {
-  int sign = 1;
-  for (int i = 0; i < numberOfChildren(); i++) {
-    sign *= (int)operand(i)->sign();
-  }
-  return (Sign)sign;
-}
-
-Expression * Multiplication::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
-  assert(s == Sign::Positive);
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (operand(i)->sign() == Sign::Negative) {
-      editableOperand(i)->setSign(s, context, angleUnit);
-    }
-  }
-  return shallowReduce(context, angleUnit);
-}
-
 template<typename T>
-std::complex<T> Multiplication::compute(const std::complex<T> c, const std::complex<T> d) {
-  return c*d;
-}
-
-template<typename T>
-MatrixComplex<T> Multiplication::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
-  if (m.numberOfColumns() != n.numberOfRows()) {
-    return MatrixComplex<T>::Undefined();
-  }
-  std::complex<T> * operands = new std::complex<T> [m.numberOfRows()*n.numberOfColumns()];
-  for (int i = 0; i < m.numberOfRows(); i++) {
-    for (int j = 0; j < n.numberOfColumns(); j++) {
-      std::complex<T> c(0.0);
-      for (int k = 0; k < m.numberOfColumns(); k++) {
-        c += m.complexOperand(i*m.numberOfColumns()+k)*n.complexOperand(k*n.numberOfColumns()+j);
-      }
-      operands[i*n.numberOfColumns()+j] = c;
-    }
-  }
-  MatrixComplex<T> result = MatrixComplex<T>(operands, m.numberOfRows(), n.numberOfColumns());
-  delete[] operands;
-  return result;
-}
-
-template<typename T>
-void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns) {
+void MultiplicationNode::computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns) {
   for (int i = 0; i < mNumberOfRows; i++) {
     for (int j = 0; j < nNumberOfColumns; j++) {
       T res = 0.0f;
@@ -151,45 +93,108 @@ void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColu
   }
 }
 
-bool Multiplication::HaveSameNonRationalFactors(const Expression * e1, const Expression * e2) {
-  int numberOfNonRationalFactors1 = e1->operand(0)->type() == Type::Rational ? e1->numberOfChildren()-1 : e1->numberOfChildren();
-  int numberOfNonRationalFactors2 = e2->operand(0)->type() == Type::Rational ? e2->numberOfChildren()-1 : e2->numberOfChildren();
-  if (numberOfNonRationalFactors1 != numberOfNonRationalFactors2) {
-    return false;
+template<typename T>
+MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
+  if (m.numberOfColumns() != n.numberOfRows()) {
+    return MatrixComplex<T>::Undefined();
   }
-  int firstNonRationalOperand1 = e1->operand(0)->type() == Type::Rational ? 1 : 0;
-  int firstNonRationalOperand2 = e2->operand(0)->type() == Type::Rational ? 1 : 0;
-  for (int i = 0; i < numberOfNonRationalFactors1; i++) {
-    if (!(e1->operand(firstNonRationalOperand1+i)->isIdenticalTo(e2->operand(firstNonRationalOperand2+i)))) {
-      return false;
+  MatrixComplex<T> result;
+  for (int i = 0; i < m.numberOfRows(); i++) {
+    for (int j = 0; j < n.numberOfColumns(); j++) {
+      std::complex<T> c(0.0);
+      for (int k = 0; k < m.numberOfColumns(); k++) {
+        c += m.complexOperand(i*m.numberOfColumns()+k)*n.complexOperand(k*n.numberOfColumns()+j);
+      }
+      result.addChildAtIndexInPlace(Complex<T>(c), i*n.numberOfColumns()+j, result.numberOfChildren);
     }
   }
-  return true;
+  MatrixComplex<T> result.setDimensions(m.numberOfRows(), n.numberOfColumns());
+  return result;
 }
 
-static inline const Expression * Base(const Expression * e) {
-  if (e->type() == Expression::Type::Power) {
-    return e->operand(0);
+Expression MultiplicationNode::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+  assert(s == Sign::Positive);
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (childAtIndex(i)->sign() == Sign::Negative) {
+      childAtIndex(i)->setSign(s, context, angleUnit);
+    }
   }
-  return e;
+  return shallowReduce(context, angleUnit);
 }
 
-Expression Multiplication::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+bool MultiplicationNode::needsParenthesesWithParent(const SerializationHelperInterface * parentNode) const {
+  Type types[] = {Type::Division, Type::Power, Type::Factorial};
+  return static_cast<const ExpressionNode *>(parentNode)->isOfType(types, 3);
+}
+
+LayoutRef MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
+  return LayoutHelper::Infix(Expression(this), floatDisplayMode, numberOfSignificantDigits, middleDotString);
+}
+
+int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  const char multiplicationString[] = {Ion::Charset::MultiplicationSign, 0};
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, multiplicationString);
+}
+
+Expression MultiplicationNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Multiplication(this).shallowReduce(context, angleUnit);
+}
+
+Expression MultiplicationNode::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Multiplication(this).shallowBeautify(context, angleUnit);
+}
+
+Expression MultiplicationNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
+  Expression e = *this;
+  return e;
+  //TODO
+#if 0
+  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
+  // WARNING: we do not want to change the expression but to create a new one.
+  SimplificationRoot root(clone());
+  Expression * e = ((Multiplication *)root.childAtIndex(0))->mergeNegativePower(context, angleUnit);
+  Expression * result = nullptr;
+  if (e->type() == Type::Power) {
+    result = static_cast<Power *>(e)->denominator(context, angleUnit);
+  } else {
+    assert(e->type() == Type::Multiplication);
+    for (int i = 0; i < e->numberOfChildren(); i++) {
+      // a*b^(-1)*... -> a*.../b
+      if (e->childAtIndex(i)->type() == Type::Power && e->childAtIndex(i)->childAtIndex(1)->type() == Type::Rational && static_cast<const Rational *>(e->childAtIndex(i)->childAtIndex(1))->isMinusOne()) {
+        Power * p = static_cast<Power *>(e->editableOperand(i));
+        result = p->editableOperand(0);
+        p->detachOperand((result));
+      }
+    }
+  }
+  root.detachOperand(e);
+  delete e;
+  return result;
+#endif
+}
+
+// MULTIPLICATION
+
+Expression Multiplication::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   return privateShallowReduce(context, angleUnit, true, true);
 }
 
-Expression * Multiplication::privateShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool shouldExpand, bool canBeInterrupted) {
+Expression Multiplication::privateShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool shouldExpand, bool canBeInterrupted) const {
+  return Expression::shallowReduce(context, angleUnit);;
+  //TODO
+#if 0
   Expression * e = Expression::shallowReduce(context, angleUnit);
   if (e != this) {
     return e;
   }
-  /* Step 1: Multiplication is associative, so let's start by merging children
+  /* Step 1: MultiplicationNode is associative, so let's start by merging children
    * which also are multiplications themselves. */
   mergeMultiplicationOperands();
 
   /* Step 2: If any of the operand is zero, the multiplication result is zero */
   for (int i = 0; i < numberOfChildren(); i++) {
-    const Expression * o = operand(i);
+    const Expression * o = childAtIndex(i);
     if (o->type() == Type::Rational && static_cast<const Rational *>(o)->isZero()) {
       return replaceWith(RationalReference(0), true);
     }
@@ -215,7 +220,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
      * (the last operand is the result matrix so we start at
      * numberOfChildren()-2)*/
     int k = numberOfChildren()-2;
-    while (k >= 0 && operand(k)->type() == Type::Matrix) {
+    while (k >= 0 && childAtIndex(k)->type() == Type::Matrix) {
       Matrix * currentMatrix = static_cast<Matrix *>(editableOperand(k));
       int on = currentMatrix->numberOfRows();
       int om = currentMatrix->numberOfColumns();
@@ -306,12 +311,12 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression * o1 = editableOperand(i);
     if (Base(o1)->type() == Type::Sine && TermHasRationalExponent(o1)) {
-      const Expression * x = Base(o1)->operand(0);
+      const Expression * x = Base(o1)->childAtIndex(0);
       /* Thanks to the SimplificationOrder, Cosine-base factors are after
        * Sine-base factors */
       for (int j = i+1; j < numberOfChildren(); j++) {
         Expression * o2 = editableOperand(j);
-        if (Base(o2)->type() == Type::Cosine && TermHasRationalExponent(o2) && Base(o2)->operand(0)->isIdenticalTo(x)) {
+        if (Base(o2)->type() == Type::Cosine && TermHasRationalExponent(o2) && Base(o2)->childAtIndex(0)->isIdenticalTo(x)) {
           factorizeSineAndCosine(o1, o2, context, angleUnit);
           break;
         }
@@ -340,7 +345,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
       continue;
     }
     if (o->type() == Type::Rational) {
-      if (operand(0)->type() == Type::Rational) {
+      if (childAtIndex(0)->type() == Type::Rational) {
         Rational * o0 = static_cast<Rational *>(editableOperand(0));
         Rational m = Rational::Multiplication(*o0, *(static_cast<Rational *>(o)));
         replaceOperand(o0, new Rational(m), true);
@@ -353,7 +358,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
     }
     i++;
   }
-  if (operand(0)->type() == Type::Rational && static_cast<Rational *>(editableOperand(0))->isOne() && numberOfChildren() > 1) {
+  if (childAtIndex(0)->type() == Type::Rational && static_cast<Rational *>(editableOperand(0))->isOne() && numberOfChildren() > 1) {
     removeOperand(editableOperand(0), true);
   }
 
@@ -366,7 +371,7 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b). */
   if (shouldExpand && parent()->type() != Type::Multiplication) {
     for (int i=0; i<numberOfChildren(); i++) {
-      if (operand(i)->type() == Type::Addition) {
+      if (childAtIndex(i)->type() == Type::Addition) {
         return distributeOnOperandAtIndex(i, context, angleUnit);
       }
     }
@@ -376,28 +381,56 @@ Expression * Multiplication::privateShallowReduce(Context & context, Preferences
   Expression * result = squashUnaryHierarchy();
 
   return result;
+#endif
+}
+
+bool Multiplication::HaveSameNonRationalFactors(const Expression e1, const Expression e2) {
+  assert(e1.numberOfChildren() > 0);
+  assert(e2.numberOfChildren() > 0);
+  int numberOfNonRationalFactors1 = e1.childAtIndex(0).type() == ExpressionNode::Type::Rational ? e1.numberOfChildren()-1 : e1.numberOfChildren();
+  int numberOfNonRationalFactors2 = e2.childAtIndex(0).type() == ExpressionNode::Type::Rational ? e2.numberOfChildren()-1 : e2.numberOfChildren();
+  if (numberOfNonRationalFactors1 != numberOfNonRationalFactors2) {
+    return false;
+  }
+  int firstNonRationalOperand1 = e1.childAtIndex(0).type() == ExpressionNode::Type::Rational ? 1 : 0;
+  int firstNonRationalOperand2 = e2.childAtIndex(0).type() == ExpressionNode::Type::Rational ? 1 : 0;
+  for (int i = 0; i < numberOfNonRationalFactors1; i++) {
+    if (!(e1.childAtIndex(firstNonRationalOperand1+i).isIdenticalTo(e2.childAtIndex(firstNonRationalOperand2+i)))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+static inline const Expression Base(const Expression e) {
+  if (e.type() == ExpressionNode::Type::Power) {
+    return e.childAtIndex(0);
+  }
+  return e;
 }
 
 void Multiplication::mergeMultiplicationOperands() {
   // Multiplication is associative: a*(b*c)->a*b*c
   int i = 0;
-  int initialNumberOfOperands = numberOfChildren();
-  while (i < initialNumberOfOperands) {
-    Expression * o = editableOperand(i);
-    if (o->type() == Type::Multiplication) {
-      mergeOperands(static_cast<Multiplication *>(o)); // TODO: ensure that matrix operands are not swapped to implement MATRIX_EXACT_REDUCING
+  int initialNumberOfChildren = numberOfChildren();
+  while (i < initialNumberOfChildren) {
+    Expression c = childAtIndex(i);
+    if (c.type() == ExpressionNode::Type::Multiplication) {
+      mergeChildrenAtIndexInPlace(c); // TODO: ensure that matrix operands are not swapped to implement MATRIX_EXACT_REDUCING
       continue;
     }
     i++;
   }
 }
 
-void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Context & context, Preferences::AngleUnit angleUnit) {
-  assert(o1->parent() == this && o2->parent() == this);
+void Multiplication::factorizeSineAndCosine(Expression e1, Expression e2, Context & context, Preferences::AngleUnit angleUnit) {
+  // TODO Warning!! e1 and e2 are copies, so their parent is not this !!
+#if 0
+  assert(e1->parent() == this && o2->parent() == this);
   /* This function turn sin(x)^p * cos(x)^q into either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
-  const Expression * x = Base(o1)->operand(0);
+  const Expression * x = Base(o1)->childAtIndex(0);
   Rational p = o1->type() == Type::Power ? *(static_cast<Rational *>(o1->editableOperand(1))) : Rational(1);
   Rational q = o2->type() == Type::Power ? *(static_cast<Rational *>(o2->editableOperand(1))) : Rational(1);
   /* If p and q have the same sign, we cannot replace them by a tangent */
@@ -412,14 +445,14 @@ void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Co
   Expression * tan = new Tangent(x, true);
   if (Rational::NaturalOrder(absP, absQ) < 0) {
     if (o1->type() == Type::Power) {
-      o1->replaceOperand(o1->operand(0), tan, true);
+      o1->replaceOperand(o1->childAtIndex(0), tan, true);
     } else {
       replaceOperand(o1, tan, true);
       o1 = tan;
     }
     o1->shallowReduce(context, angleUnit);
     if (o2->type() == Type::Power) {
-      o2->replaceOperand(o2->operand(1), new Rational(sumPQ), true);
+      o2->replaceOperand(o2->childAtIndex(1), new Rational(sumPQ), true);
     } else {
       Expression * newO2 = new Power(o2, new Rational(sumPQ), false);
       replaceOperand(o2, newO2, false);
@@ -428,8 +461,8 @@ void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Co
     o2->shallowReduce(context, angleUnit);
   } else {
     if (o2->type() == Type::Power) {
-      o2->replaceOperand(o2->operand(1), new Rational(Rational::Multiplication(q, Rational(-1))), true);
-      o2->replaceOperand(o2->operand(0), tan, true);
+      o2->replaceOperand(o2->childAtIndex(1), new Rational(Rational::Multiplication(q, Rational(-1))), true);
+      o2->replaceOperand(o2->childAtIndex(0), tan, true);
     } else {
       Expression * newO2 = new Power(tan, new Rational(-1), false);
       replaceOperand(o2, newO2, true);
@@ -437,7 +470,7 @@ void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Co
     }
     o2->shallowReduce(context, angleUnit);
     if (o1->type() == Type::Power) {
-      o1->replaceOperand(o1->operand(1), new Rational(sumPQ), true);
+      o1->replaceOperand(o1->childAtIndex(1), new Rational(sumPQ), true);
     } else {
       Expression * newO1 = new Power(o1, new Rational(sumPQ), false);
       replaceOperand(o1, newO1, false);
@@ -445,9 +478,11 @@ void Multiplication::factorizeSineAndCosine(Expression * o1, Expression * o2, Co
     }
     o1->shallowReduce(context, angleUnit);
   }
+#endif
 }
 
-void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit) {
+void Multiplication::factorizeBase(Expression e1, Expression e2, Context & context, Preferences::AngleUnit angleUnit) {
+#if 0
   /* This function factorizes two operands which have a common base. For example
    * if this is Multiplication(pi^2, pi^3), then pi^2 and pi^3 could be merged
    * and this turned into Multiplication(pi^5). */
@@ -463,7 +498,7 @@ void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & c
   Power * p = nullptr;
   if (e1->type() == Type::Power) {
     // If e1 is a power, replace the initial exponent with the new one
-    e1->replaceOperand(e1->operand(1), s, true);
+    e1->replaceOperand(e1->childAtIndex(1), s, true);
     p = static_cast<Power *>(e1);
   } else {
     // Otherwise, create a new Power node
@@ -480,19 +515,21 @@ void Multiplication::factorizeBase(Expression * e1, Expression * e2, Context & c
   if (reducedP->type() == Type::Multiplication) {
     mergeMultiplicationOperands();
   }
+#endif
 }
 
-void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit) {
+void Multiplication::factorizeExponent(Expression e1, Expression e2, Context & context, Preferences::AngleUnit angleUnit) {
+#if 0
   /* This function factorizes operands which share a common exponent. For
    * example, it turns Multiplication(2^x,3^x) into Multiplication(6^x). */
   assert(e1->parent() == this && e2->parent() == this);
 
-  const Expression * base1 = e1->operand(0)->clone();
-  const Expression * base2 = e2->operand(0);
+  const Expression * base1 = e1->childAtIndex(0)->clone();
+  const Expression * base2 = e2->childAtIndex(0);
   e2->detachOperand(base2);
   Expression * m = new Multiplication(base1, base2, false);
   removeOperand(e2, true);
-  e1->replaceOperand(e1->operand(0), m, true);
+  e1->replaceOperand(e1->childAtIndex(0), m, true);
 
   m->shallowReduce(context, angleUnit); // 2^x*3^x -> (2*3)^x -> 6^x
   Expression * reducedE1 = e1->shallowReduce(context, angleUnit); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
@@ -502,11 +539,15 @@ void Multiplication::factorizeExponent(Expression * e1, Expression * e2, Context
   if (reducedE1->type() == Type::Multiplication) {
     mergeMultiplicationOperands();
   }
+#endif
 }
 
-Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, Preferences::AngleUnit angleUnit) {
   // This function turns a*(b+c) into a*b + a*c
   // We avoid deleting and creating a new addition
+  Addition a = Addition(childAtIndex(i));
+  return a; //TODO
+#if 0
   Addition * a = static_cast<Addition *>(editableOperand(i));
   removeOperand(a, false);
   for (int j = 0; j < a->numberOfChildren(); j++) {
@@ -518,37 +559,43 @@ Expression * Multiplication::distributeOnOperandAtIndex(int i, Context & context
   }
   replaceWith(a, true);
   return a->shallowReduce(context, angleUnit); // Order terms, put under a common denominator if needed
+#endif
 }
 
-const Expression * Multiplication::CreateExponent(Expression * e) {
-  return e->type() == Type::Power ? e->operand(1)->clone() : RationalReference(1);
+const Expression Multiplication::CreateExponent(Expression e) {
+  Expression result = e.type() == ExpressionNode::Type::Power ? e.childAtIndex(1) : Rational(1);
+  return result;
 }
 
-bool Multiplication::TermsHaveIdenticalBase(const Expression * e1, const Expression * e2) {
-  return Base(e1)->isIdenticalTo(Base(e2));
+bool Multiplication::TermsHaveIdenticalBase(const Expression e1, const Expression e2) {
+  return Base(e1).isIdenticalTo(Base(e2));
 }
 
-bool Multiplication::TermsHaveIdenticalExponent(const Expression * e1, const Expression * e2) {
+bool Multiplication::TermsHaveIdenticalExponent(const Expression e1, const Expression e2) {
   /* Note: We will return false for e1=2 and e2=Pi, even though one could argue
    * that these have the same exponent whose value is 1. */
-  return e1->type() == Type::Power && e2->type() == Type::Power && (e1->operand(1)->isIdenticalTo(e2->operand(1)));
+  return e1.type() == ExpressionNode::Type::Power && e2.type() == ExpressionNode::Type::Power && (e1.childAtIndex(1).isIdenticalTo(e2.childAtIndex(1)));
 }
 
-bool Multiplication::TermHasRationalBase(const Expression * e) {
-  return Base(e)->type() == Type::Rational;
+bool Multiplication::TermHasRationalBase(const Expression e) {
+  return Base(e).type() == ExpressionNode::Type::Rational;
 }
 
-bool Multiplication::TermHasRationalExponent(const Expression * e) {
-  if (e->type() != Type::Power) {
+bool Multiplication::TermHasRationalExponent(const Expression e) {
+  if (e.type() != ExpressionNode::Type::Power) {
     return true;
   }
-  if (e->operand(1)->type() == Type::Rational) {
+  if (e.childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     return true;
   }
   return false;
 }
 
-Expression * Multiplication::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Multiplication::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
+  Expression e = *this;
+  return e;
+  // TODO
+#if 0
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Adding parenthesis if needed (a*(b+c) is not a*b+c)
@@ -556,8 +603,8 @@ Expression * Multiplication::shallowBeautify(Context & context, Preferences::Ang
    *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
 
   // Step 1: Turn -n*A into -(n*A)
-  if (operand(0)->type() == Type::Rational && operand(0)->sign() == Sign::Negative) {
-    if (static_cast<const Rational *>(operand(0))->isMinusOne()) {
+  if (childAtIndex(0)->type() == Type::Rational && childAtIndex(0)->sign() == Sign::Negative) {
+    if (static_cast<const Rational *>(childAtIndex(0))->isMinusOne()) {
       removeOperand(editableOperand(0), true);
     } else {
       editableOperand(0)->setSign(Sign::Positive, context, angleUnit);
@@ -579,7 +626,7 @@ Expression * Multiplication::shallowBeautify(Context & context, Preferences::Ang
 
   // Step 3: Add Parenthesis if needed
   for (int i = 0; i < numberOfChildren(); i++) {
-    const Expression * o = operand(i);
+    const Expression * o = childAtIndex(i);
     if (o->type() == Type::Addition ) {
       Parenthesis * p = new Parenthesis(o, false);
       replaceOperand(o, p, false);
@@ -588,7 +635,7 @@ Expression * Multiplication::shallowBeautify(Context & context, Preferences::Ang
 
   // Step 4: Create a Division if needed
   for (int i = 0; i < numberOfChildren(); i++) {
-    if (!(operand(i)->type() == Type::Power && operand(i)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(operand(i)->operand(1))->isMinusOne())) {
+    if (!(childAtIndex(i)->type() == Type::Power && childAtIndex(i)->childAtIndex(1)->type() == Type::Rational && static_cast<const Rational *>(childAtIndex(i)->childAtIndex(1))->isMinusOne())) {
       continue;
     }
 
@@ -610,36 +657,17 @@ Expression * Multiplication::shallowBeautify(Context & context, Preferences::Ang
   }
 
   return this;
+#endif
 }
 
-Expression * Multiplication::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
-  // WARNING: we do not want to change the expression but to create a new one.
-  SimplificationRoot root(clone());
-  Expression * e = ((Multiplication *)root.operand(0))->mergeNegativePower(context, angleUnit);
-  Expression * result = nullptr;
-  if (e->type() == Type::Power) {
-    result = static_cast<Power *>(e)->denominator(context, angleUnit);
-  } else {
-    assert(e->type() == Type::Multiplication);
-    for (int i = 0; i < e->numberOfChildren(); i++) {
-      // a*b^(-1)*... -> a*.../b
-      if (e->operand(i)->type() == Type::Power && e->operand(i)->operand(1)->type() == Type::Rational && static_cast<const Rational *>(e->operand(i)->operand(1))->isMinusOne()) {
-        Power * p = static_cast<Power *>(e->editableOperand(i));
-        result = p->editableOperand(0);
-        p->detachOperand((result));
-      }
-    }
-  }
-  root.detachOperand(e);
-  delete e;
-  return result;
-}
-
-Expression * Multiplication::mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit) {
+Expression Multiplication::mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit) {
+  Expression e = *this;
+  return e;
+  //TODO
+#if 0
   Multiplication * m = new Multiplication();
   // Special case for rational p/q: if q != 1, q should be at denominator
-  if (operand(0)->type() == Type::Rational && !static_cast<const Rational *>(operand(0))->denominator().isOne()) {
+  if (childAtIndex(0)->type() == Type::Rational && !static_cast<const Rational *>(childAtIndex(0))->denominator().isOne()) {
     Rational * r = static_cast<Rational *>(editableOperand(0));
     m->addOperand(new Rational(r->denominator()));
     if (r->numerator().isOne()) {
@@ -650,7 +678,7 @@ Expression * Multiplication::mergeNegativePower(Context & context, Preferences::
   }
   int i = 0;
   while (i < numberOfChildren()) {
-    if (operand(i)->type() == Type::Power && operand(i)->operand(1)->sign() == Sign::Negative) {
+    if (childAtIndex(i)->type() == Type::Power && childAtIndex(i)->childAtIndex(1)->sign() == Sign::Negative) {
       Expression * e = editableOperand(i);
       e->editableOperand(1)->setSign(Sign::Positive, context, angleUnit);
       removeOperand(e, false);
@@ -670,9 +698,13 @@ Expression * Multiplication::mergeNegativePower(Context & context, Preferences::
   addOperand(p);
   sortOperands(SimplificationOrder, true);
   return squashUnaryHierarchy();
+#endif
 }
 
 void Multiplication::addMissingFactors(Expression * factor, Context & context, Preferences::AngleUnit angleUnit) {
+  return;
+  //TODO
+#if 0
   if (factor->type() == Type::Multiplication) {
     for (int j = 0; j < factor->numberOfChildren(); j++) {
       addMissingFactors(factor->editableOperand(j), context, angleUnit);
@@ -682,7 +714,7 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, P
   /* Special case when factor is a Rational: if 'this' has already a rational
    * operand, we replace it by its LCM with factor ; otherwise, we simply add
    * factor as an operand. */
-  if (numberOfChildren() > 0 && operand(0)->type() == Type::Rational && factor->type() == Type::Rational) {
+  if (numberOfChildren() > 0 && childAtIndex(0)->type() == Type::Rational && factor->type() == Type::Rational) {
     Rational * f = static_cast<Rational *>(factor);
     Rational * o = static_cast<Rational *>(editableOperand(0));
     assert(f->denominator().isOne());
@@ -695,7 +727,7 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, P
     /* If factor is not a rational, we merge it with the operand of identical
      * base if any. Otherwise, we add it as an new operand. */
     for (int i = 0; i < numberOfChildren(); i++) {
-      if (TermsHaveIdenticalBase(operand(i), factor)) {
+      if (TermsHaveIdenticalBase(childAtIndex(i), factor)) {
         Expression * sub = new Subtraction(CreateExponent(editableOperand(i)), CreateExponent(factor), false);
         Reduce((Expression **)&sub, context, angleUnit);
         if (sub->sign() == Sign::Negative) { // index[0] < index[1]
@@ -722,12 +754,13 @@ void Multiplication::addMissingFactors(Expression * factor, Context & context, P
   }
   addOperand(factor->clone());
   sortOperands(SimplificationOrder, false);
+#endif
 }
 
-template MatrixComplex<float> Multiplication::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>);
-template MatrixComplex<double> Multiplication::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>);
-template std::complex<float> Multiplication::compute<float>(const std::complex<float>, const std::complex<float>);
-template std::complex<double> Multiplication::compute<double>(const std::complex<double>, const std::complex<double>);
-template void Multiplication::computeOnArrays<double>(double * m, double * n, double * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
+template MatrixComplex<float> MultiplicationNode::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>);
+template MatrixComplex<double> MultiplicationNode::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>);
+template Complex<float> MultiplicationNode::compute<float>(const std::complex<float>, const std::complex<float>);
+template Complex<double> MultiplicationNode::compute<double>(const std::complex<double>, const std::complex<double>);
+template void MultiplicationNode::computeOnArrays<double>(double * m, double * n, double * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
 
 }

@@ -6,6 +6,7 @@ objs += $(addprefix poincare/src/,\
   addition.o\
   matrix_complex.o\
   multiplication.o\
+  power.o\
   tree_node.o\
   tree_pool.o\
   tree_by_reference.o\

@@ -47,7 +47,7 @@ static inline Number CreateNumber(double d) {
   }
 }
 
-Number Number::Integer(const char * digits, size_t length, bool negative) {
+Number Number::ParseInteger(const char * digits, size_t length, bool negative) {
   Integer i(digits, length, negative);
   if (!i.isInfinity()) {
     return i;
@@ -63,7 +63,8 @@ Number Number::Integer(const char * digits, size_t length, bool negative) {
   return Decimal(digits, length, nullptr, 0, negative, exponent);
 }
 
-template <typename T> static Number Number::Decimal(T f) {
+template <typename T>
+Number Number::ParseDecimal(T f) {
   if (std::isnan(f)) {
     return Undefined();
   }
@@ -76,13 +77,13 @@ template <typename T> static Number Number::Decimal(T f) {
 Number Number::BinaryOperation(const Number i, const Number j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
   if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
   // Integer + Integer
-    Integer k = integerOp(Integer(i.node()), Integer(j.node()));
+    Integer k = integerOp(Integer(static_cast<IntegerNode *>(i.node())), Integer(static_cast<IntegerNode *>(j.node())));
     if (!k.isInfinity()) {
       return k;
     }
   } else if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Rational) {
   // Integer + Rational
-    Rational r = rationalOp(Rational(Integer(i.node())), Rational(j.node()));
+    Rational r = rationalOp(Rational(Integer(static_cast<IntegerNode *>(i.node()))), Rational(static_cast<RationalNode *>(j.node())));
     if (!r.numeratorOrDenominatorIsInfinity()) {
       return r;
     }
@@ -91,13 +92,13 @@ Number Number::BinaryOperation(const Number i, const Number j, IntegerBinaryOper
     return Number::BinaryOperation(j, i, integerOp, rationalOp, doubleOp);
   } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
   // Rational + Rational
-    Rational a = rationalOp(Rational(i.node()), Rational(j.node()));
+    Rational a = rationalOp(Rational(static_cast<RationalNode *>(i.node())), Rational(static_cast<RationalNode *>(j.node())));
     if (!a.numeratorOrDenominatorIsInfinity()) {
       return a;
     }
   }
   // one of the operand is Undefined/Infinity/Float or the Integer/Rational addition overflowed
-  double a = doubleOp(i.numberNode()->doubleApproximation(), j.numberNode()->doubleApproximation());
+  double a = doubleOp(i.node()->doubleApproximation(), j.node()->doubleApproximation());
   return CreateNumber(a);
 }
 

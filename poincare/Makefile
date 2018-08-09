@@ -19,6 +19,7 @@ objs += $(addprefix poincare/src/,\
   rational.o\
   symbol.o\
   float.o\
+  number.o\
 )
 
 objsExpected += $(addprefix poincare/src/,\

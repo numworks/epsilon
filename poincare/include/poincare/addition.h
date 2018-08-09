@@ -1,27 +1,41 @@
 #ifndef POINCARE_ADDITION_H
 #define POINCARE_ADDITION_H
 
-#include <poincare/dynamic_hierarchy.h>
-#include <poincare/rational.h>
-#include <poincare/layout_helper.h>
 #include <poincare/approximation_helper.h>
+#include <poincare/layout_helper.h>
+#include <poincare/n_ary_expression_node.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-class Addition : public DynamicHierarchy {
-  using DynamicHierarchy::DynamicHierarchy;
-  friend class Logarithm;
+class AdditionNode : public NAryExpressionNode {
+/* TODO friend class Logarithm;
   friend class Multiplication;
   friend class Subtraction;
   friend class Power;
   friend class Complex<float>;
-  friend class Complex<double>;
+  friend class Complex<double>;*/
 public:
-  Type type() const override;
+  using NAryExpressionNode::NAryExpressionNode;
+
+  // Tree
+  static AdditionNode * FailedAllocationStaticNode();
+  AdditionNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+  size_t size() const override { return sizeof(AdditionNode); }
+#if TREE_LOG
+  const char * description() const override { return "Addition";  }
+#endif
+
+  // ExpressionNode
+
+  // Properties
+  Type type() const override { return Type::Addition; }
   int polynomialDegree(char symbolName) const override;
-  int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
-  /* Evaluation */
-  template<typename T> static std::complex<T> compute(const std::complex<T> c, const std::complex<T> d);
+  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
+
+  // Evaluation
+  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c+d); }
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
     return ApproximationHelper::ElementWiseOnComplexMatrices(m, n, compute<T>);
   }
@@ -29,23 +43,23 @@ public:
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
 private:
-  /* Layout */
-  bool needsParenthesesWithParent(SerializableNode * parentNode) const override;
+  // Layout
+  bool needsParenthesesWithParent(const SerializationHelperInterface * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Infix(this, floatDisplayMode, numberOfSignificantDigits, name());
+    return LayoutHelper::Infix(Expression(this), floatDisplayMode, numberOfSignificantDigits, name());
   }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   static const char * name() { return "+"; }
 
-  /* Simplification */
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
-  Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
-  Expression * factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit);
-  void factorizeOperands(Expression * e1, Expression * e2, Context & context, Preferences::AngleUnit angleUnit);
-  static const Rational RationalFactor(Expression * e);
-  static bool TermsHaveIdenticalNonRationalFactors(const Expression * e1, const Expression * e2);
+  // Simplification
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  void factorizeOperands(Expression e1, Expression e2, Context & context, Preferences::AngleUnit angleUnit);
+  static const Rational RationalFactor(Expression e);
+  static bool TermsHaveIdenticalNonRationalFactors(const Expression e1, const Expression e2);
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
@@ -56,6 +70,16 @@ private:
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
    }
+};
+
+class Addition : public NAryExpression {
+public:
+  Addition(const AdditionNode * n) : NAryExpression(n) {}
+  Addition() : NAryExpression(TreePool::sharedPool()->createTreeNode<AdditionNode>()) {}
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

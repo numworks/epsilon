@@ -1,7 +1,6 @@
 #ifndef POINCARE_POWER_H
 #define POINCARE_POWER_H
 
-#include <poincare/static_hierarchy.h>
 #include <poincare/approximation_helper.h>
 #include <poincare/rational.h>
 #include <poincare/multiplication.h>
@@ -13,8 +12,11 @@ class Power;
 
 class PowerNode : public ExpressionNode {
 public:
-  // TreeNode
+  // Allocation Failure
   static PowerNode * FailedAllocationStaticNode();
+  PowerNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
   size_t size() const override { return sizeof(PowerNode); }
 #if TREE_LOG
   const char * description() const override { return "Division";  }
@@ -27,22 +29,25 @@ public:
   virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
 
   int polynomialDegree(char symbolName) const override;
-  int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
-  template<typename T> static std::complex<T> compute(const std::complex<T> c, const std::complex<T> d);
+  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
+
 private:
+  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
   constexpr static int k_maxExactPowerMatrix = 100;
-  /* Property */
+
   /* Layout */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  bool needsParenthesesWithParent(SerializableNode * parentNode) const override;
+
+  /* Serialize */
+  bool needsParenthesesWithParent(const SerializationHelperInterface * parent) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   static const char * name() { return "^"; }
   /* Simplify */
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
-  Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
   int simplificationOrderGreaterType(const Expression * e, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
@@ -75,9 +80,10 @@ class Power : public Expression {
 public:
   Power(Expression base, Expression exponent);
   Power(const PowerNode * n) : Expression(n) {}
-
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression * shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 
 };
 

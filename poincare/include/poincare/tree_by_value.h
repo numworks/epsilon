@@ -33,6 +33,10 @@ public:
   void replaceChildAtIndexInPlace(int oldChildIndex, TreeByValue newChild) {
     TreeByReference::replaceChildAtIndexInPlace(oldChildIndex, newChild);
   }
+  void replaceWithInPlace(TreeByReference t) {
+    TreeByReference::replaceWithInPlace(t);
+  }
+
   // Merge
   void mergeChildrenAtIndexInPlace(TreeByValue t, int i) {
     TreeByReference::mergeChildrenAtIndexInPlace(t, i);
@@ -51,10 +55,6 @@ protected:
   // Add
   void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
     TreeByReference::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
-  }
-  // Remove puts a child at the end of the pool
-  void removeChildInPlace(TreeByValue t, int childNumberOfChildren) {
-    TreeByReference::removeChildInPlace(t, childNumberOfChildren);
   }
 };
 

@@ -14,10 +14,9 @@ class HorizontalLayoutNode : public LayoutNode {
   friend class LayoutReference;
 public:
 
-  static HorizontalLayoutNode * FailedAllocationStaticNode() {
-    // TODO: Check this is OK
-    return static_cast<HorizontalLayoutNode *>(LayoutNode::FailedAllocationStaticNode());
-  }
+  // AllocationFailure
+  static HorizontalLayoutNode * FailedAllocationStaticNode();
+  HorizontalLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   HorizontalLayoutNode() :
     LayoutNode(),

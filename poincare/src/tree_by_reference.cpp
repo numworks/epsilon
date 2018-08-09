@@ -143,10 +143,10 @@ void TreeByReference::swapChildrenInPlace(int i, int j) {
   }
   int firstChildIndex = i < j ? i : j;
   int secondChildIndex = i > j ? i : j;
-  TreeByReference firstChild = treeChildAtIndex(firstChildIndex);
-  TreeByReference secondChild = treeChildAtIndex(secondChildIndex);
+  TreeByReference firstChild = childAtIndex(firstChildIndex);
+  TreeByReference secondChild = childAtIndex(secondChildIndex);
   TreePool::sharedPool()->move(firstChild.node()->nextSibling(), secondChild.node(), secondChild.numberOfChildren());
-  TreePool::sharedPool()->move(treeChildAtIndex(secondChildIndex).node()->nextSibling(), firstChild.node(), firstChild.numberOfChildren());
+  TreePool::sharedPool()->move(childAtIndex(secondChildIndex).node()->nextSibling(), firstChild.node(), firstChild.numberOfChildren());
 }
 
 /* Protected */
@@ -179,7 +179,7 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
 void TreeByReference::removeChildAtIndexInPlace(int i) {
   assert(isDefined());
   assert(i >= 0 && i < numberOfChildren());
-  TreeByReference t = treeChildAtIndex(i);
+  TreeByReference t = childAtIndex(i);
   removeChildInPlace(t, t.numberOfChildren());
 }
 
@@ -193,7 +193,7 @@ void TreeByReference::removeChildInPlace(TreeByReference t, int childNumberOfChi
 void TreeByReference::removeChildrenInPlace(int currentNumberOfChildren) {
   assert(isDefined());
   for (int i = 0; i < currentNumberOfChildren; i++) {
-    TreeByReference childRef = treeChildAtIndex(0);
+    TreeByReference childRef = childAtIndex(0);
     TreePool::sharedPool()->move(TreePool::sharedPool()->last(), childRef.node(), childRef.numberOfChildren());
     childRef.node()->release(childRef.numberOfChildren());
   }

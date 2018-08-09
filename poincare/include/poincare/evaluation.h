@@ -48,7 +48,7 @@ public:
   }
   /* Hierarchy */
   Evaluation<T> childAtIndex(int i) const {
-    return Evaluation<T>(static_cast<EvaluationNode<T> *>(TreeByReference::treeChildAtIndex(i).node()));
+    return Evaluation<T>(static_cast<EvaluationNode<T> *>(TreeByValue::childAtIndex(i).node()));
   }
   typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }
   bool isUndefined() const { return node()->isUndefined(); }

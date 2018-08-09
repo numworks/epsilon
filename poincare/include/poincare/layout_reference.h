@@ -69,7 +69,7 @@ public:
 
   // Tree
   LayoutReference childAtIndex(int i) {
-    TreeByReference treeRefChild = TreeByReference::treeChildAtIndex(i);
+    TreeByReference treeRefChild = TreeByReference::childAtIndex(i);
     return LayoutReference(static_cast<LayoutNode *>(treeRefChild.node()));
   }
   //int indexInParent() const { return this->node()->indexInParent(); }

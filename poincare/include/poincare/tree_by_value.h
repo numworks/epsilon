@@ -10,7 +10,7 @@ namespace Poincare {
  * else it is copied so it is no longer a child. This is important for instance
  * in indexOfChild and in replaceChild. */
 
-class TreeByValue : virtual protected TreeByReference {
+class TreeByValue : protected TreeByReference {
 public:
   /* Constructors */
   TreeByValue(const TreeByValue & tr);
@@ -19,10 +19,12 @@ public:
 
   bool isDefined() const { return TreeByReference::isDefined(); }
 
+  TreeNode * node() const override { return TreeByReference::node(); }
+
   /* Hierarchy */
   int numberOfChildren() const { return TreeByReference::numberOfChildren(); }
   TreeByValue parent() const { return TreeByValue(TreeByReference::parent()); }
-  TreeByValue treeChildAtIndex(int i) const { return TreeByValue(TreeByReference::treeChildAtIndex(i)); }
+  TreeByValue childAtIndex(int i) const { return TreeByValue(TreeByReference::childAtIndex(i)); }
   int indexOfChild(TreeByReference t) const { return TreeByReference::indexOfChild(t); }
 
   /* Hierarchy operations */
@@ -48,7 +50,7 @@ public:
 
 protected:
   /* Constructor */
-  TreeByValue(TreeByReference t) : TreeByReference(node()) {}
+  TreeByValue(TreeByReference t) : TreeByReference(t.node()) {}
   TreeByValue(const TreeNode * n) : TreeByReference(n) {}
 
   /* Hierarchy operations */

@@ -89,7 +89,7 @@ HorizontalLayoutRef NaturalIntegerAbstract::createLayout() const {
 
 template<typename T>
 T NaturalIntegerAbstract::approximate() const {
-  if (isZero()) {
+  if (m_numberOfDigits == 0) {
     /* This special case for 0 is needed, because the current algorithm assumes
      * that the big integer is non zero, thus puts the exponent to 126 (integer
      * area), the issue is that when the mantissa is 0, a "shadow bit" is
@@ -110,7 +110,8 @@ T NaturalIntegerAbstract::approximate() const {
 
   uint16_t exponent = IEEE754<T>::exponentOffset();
   /* Escape case if the exponent is too big to be stored */
-  if ((m_numberOfDigits-1)*32+numberOfBitsInLastDigit-1> IEEE754<T>::maxExponent()-IEEE754<T>::exponentOffset()) {
+  assert(m_numberOfDigits > 0);
+  if (((int)m_numberOfDigits-1)*32+numberOfBitsInLastDigit-1> IEEE754<T>::maxExponent()-IEEE754<T>::exponentOffset()) {
     return INFINITY;
   }
   exponent += (m_numberOfDigits-1)*32;
@@ -122,7 +123,7 @@ T NaturalIntegerAbstract::approximate() const {
    * the resulting uint64_t (as required by IEEE754). */
   assert(IEEE754<T>::size()-numberOfBitsInLastDigit >= 0 && IEEE754<T>::size()-numberOfBitsInLastDigit < 64); // Shift operator behavior is undefined if the right operand is negative, or greater than or equal to the length in bits of the promoted left operand
   mantissa |= ((uint64_t)lastDigit << (IEEE754<T>::size()-numberOfBitsInLastDigit));
-  int digitIndex = 2;
+  size_t digitIndex = 2;
   int numberOfBits = numberOfBitsInLastDigit;
   /* Complete the mantissa by inserting, from left to right, every digit of the
    * Integer from the most significant one to the last from. We break when
@@ -333,13 +334,14 @@ Integer NaturalIntegerAbstract::ufact(const NaturalIntegerAbstract * i) {
 Integer NaturalIntegerAbstract::IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index) {
   assert(halfDigit != 0);
   // Overflow
-  if ((index + 1)/2) {
+  int indexInBase32 = index%2 == 1 ? index/2+1 : index/2;
+  if (indexInBase32 > k_maxNumberOfDigits) {
     return Integer::Overflow();
   }
   half_native_uint_t digits[k_maxNumberOfDigits+1];
-  memset(digits, 0, (index+1)/2*sizeof(native_uint_t));
+  memset(digits, 0, indexInBase32*sizeof(native_uint_t));
+  assert(index > 0);
   digits[index-1] = halfDigit;
-  int indexInBase32 = index%2 == 1 ? index/2+1 : index/2;
   return Integer((native_uint_t *)digits, indexInBase32, false);
 }
 

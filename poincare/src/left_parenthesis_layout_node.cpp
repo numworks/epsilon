@@ -47,6 +47,12 @@ void LeftParenthesisLayoutNode::RenderWithChildHeight(KDCoordinate childHeight, 
       expressionColor);
 }
 
+LeftParenthesisLayoutNode * LeftParenthesisLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<LeftParenthesisLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
+
 bool LeftParenthesisLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
   if (*numberOfOpenParenthesis == 0 && goingLeft) {
     return false;

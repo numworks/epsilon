@@ -129,7 +129,7 @@ bool MultiplicationNode::needsParenthesesWithParent(const SerializationHelperInt
 
 LayoutRef MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   const char middleDotString[] = {Ion::Charset::MiddleDot, 0};
-  return LayoutHelper::Infix(Expression(this), floatDisplayMode, numberOfSignificantDigits, middleDotString);
+  return LayoutHelper::Infix(Multiplication(this), floatDisplayMode, numberOfSignificantDigits, middleDotString);
 }
 
 int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

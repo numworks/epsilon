@@ -13,11 +13,13 @@ namespace Poincare {
 class Context;
 
 class Expression : public TreeByValue {
-  friend class AdditionNode;
   friend class ExpressionNode;
-  friend class MultiplicationNode;
-  friend class NAryExpressionNode;
-  friend class SubtractionNode;
+  friend class Multiplication;
+  friend class Subtraction;
+  friend class Addition;
+  friend class Opposite;
+  friend class Symbol;
+  friend class Decimal;
 public:
   /* Constructor & Destructor */
   Expression() : Expression(nullptr) {}
@@ -106,7 +108,6 @@ public:
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Approximation Helper */
   template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const;
@@ -126,14 +127,14 @@ public:
 
 protected:
   Expression(const ExpressionNode * n) : TreeByValue(n) {}
-  /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
 private:
   /* Properties */
   int getPolynomialCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Simplification */
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 

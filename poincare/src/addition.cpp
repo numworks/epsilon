@@ -53,6 +53,10 @@ bool AdditionNode::needsParenthesesWithParent(const SerializationHelperInterface
   return static_cast<const ExpressionNode *>(parentNode)->isOfType(types, 6);
 }
 
+LayoutRef AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, name());
+}
+
 // Simplication
 
 Expression AdditionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {

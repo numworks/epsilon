@@ -8,6 +8,8 @@ namespace Poincare {
 class SymbolNode : public ExpressionNode {
   friend class Store;
 public:
+  SymbolNode() : m_name(0) {}
+
   static SymbolNode * FailedAllocationStaticNode();
   SymbolNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
@@ -38,20 +40,20 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   /* Simplification */
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  bool hasAnExactRepresentation(Context & context) const;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
 
 private:
-  bool hasAnExactRepresentation(Context & context) const;
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 
   char m_name;
 };
 
-class SymbolReference : public Expression {
+class Symbol : public Expression {
 public:
   enum SpecialSymbols : char {
     /* We can use characters from 1 to 31 as they do not correspond to usual
@@ -86,11 +88,10 @@ public:
     X3,
     Y3 = 29
   };
-  SymbolReference(const char name) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
-    if (!node->isAllocationFailure()) {
-      static_cast<SymbolNode *>(node)->setName(name);
-    }
+  Symbol(const char name) : Expression(TreePool::sharedPool()->createTreeNode<SymbolNode>()) {
+    node()->setName(name);
   }
+  Symbol(const SymbolNode * node) : Expression(node) {}
 
   // Symbol properties
   static const char * textForSpecialSymbols(char name);
@@ -104,11 +105,11 @@ public:
 
   // Expression
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
-  Expression replaceSymbolWithExpression(char symbol, Expression expression);
+  Expression replaceSymbolWithExpression(char symbol, Expression expression) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 private:
-  SymbolNode * node() { return static_cast<SymbolNode *>(Expression::node()); }
-  char name() { return node()->name(); }
+  SymbolNode * node() const override { return static_cast<SymbolNode *>(Expression::node()); }
+  char name() const { return node()->name(); }
 };
 
 }

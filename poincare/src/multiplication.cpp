@@ -19,7 +19,7 @@
 
 namespace Poincare {
 
-static MultiplicationNode * FailedAllocationStaticNode() {
+MultiplicationNode * MultiplicationNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<MultiplicationNode> failure;
   return &failure;
 }

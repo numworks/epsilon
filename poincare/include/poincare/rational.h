@@ -8,12 +8,14 @@ namespace Poincare {
 class RationalNode : public NumberNode {
 public:
   RationalNode() :
+    m_negative(false),
     m_numberOfDigitsNumerator(0),
     m_numberOfDigitsDenominator(0) {}
   virtual void setDigits(native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative);
 
   // Allocation Failure
   static RationalNode * FailedAllocationStaticNode();
+  RationalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   NaturalIntegerPointer numerator() const;
   NaturalIntegerPointer denominator() const;
@@ -31,7 +33,7 @@ public:
 
   // Expression subclassing
   Type type() const override { return Type::Rational; }
-  Sign sign() const override;
+  Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
 
   // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

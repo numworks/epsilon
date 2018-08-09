@@ -111,6 +111,7 @@ public:
 
   // Allocation Failure
   static IntegerNode * FailedAllocationStaticNode();
+  IntegerNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // Getters
   native_uint_t * digits() const override { return (native_uint_t *)m_digits; }

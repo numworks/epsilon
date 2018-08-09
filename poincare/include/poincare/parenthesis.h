@@ -9,6 +9,7 @@ namespace Poincare {
 class ParenthesisNode : public ExpressionNode {
 public:
   static ParenthesisNode * FailedAllocationStaticNode();
+  ParenthesisNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(ParenthesisNode); }

@@ -9,6 +9,7 @@ namespace Poincare {
 class UndefinedNode : public NumberNode {
 public:
   static UndefinedNode * FailedAllocationStaticNode();
+  UndefinedNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(UndefinedNode); }

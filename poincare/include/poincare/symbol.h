@@ -9,6 +9,7 @@ class SymbolNode : public ExpressionNode {
   friend class Store;
 public:
   static SymbolNode * FailedAllocationStaticNode();
+  SymbolNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   void setName(const char name) { m_name = name; }
   char name() const { return m_name; }

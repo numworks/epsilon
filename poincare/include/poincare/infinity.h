@@ -10,6 +10,7 @@ class AllocationFailureInfinityNode;
 class InfinityNode : public NumberNode {
 public:
   static InfinityNode * FailedAllocationStaticNode();
+  InfinityNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   void setNegative(bool negative) { m_negative = negative; }
 

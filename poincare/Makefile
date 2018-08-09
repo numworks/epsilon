@@ -28,6 +28,7 @@ objs += $(addprefix poincare/src/,\
   expression_node.o\
   expression.o\
   serialization_helper.o\
+  approximation_helper.o\
 )
 
 objsExpected += $(addprefix poincare/src/,\

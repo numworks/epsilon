@@ -1,6 +1,6 @@
 #include <poincare/approximation_helper.h>
 #include <poincare/evaluation.h>
-#include <poincare/matrix.h>
+#include <poincare/matrix_complex.h>
 #include <cmath>
 extern "C" {
 #include <assert.h>
@@ -29,21 +29,16 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   assert(expression->numberOfChildren() == 1);
   Evaluation<T> input = expression->childAtIndex(0)->approximate(T(), context, angleUnit);
   if (input.node()->type() == EvaluationNode<T>::Type::AllocationFailure) {
-    return Evaluation<T>(EvaluationNode<T>::FailedAllocationStaticNode());
+    return Complex<T>::Undefined();
   } else if (input.node()->type() == EvaluationNode<T>::Type::Complex) {
     const ComplexNode<T> * c = static_cast<ComplexNode<T> *>(input.node());
     return compute(*c, angleUnit);
   } else {
     assert(input.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-    MatrixComplex<T> m = MatrixComplex<T>(input.node());
+    MatrixComplex<T> m = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(input.node()));
     MatrixComplex<T> result;
-    for (int i = 0; i < result.numberOfRows()*result.numberOfColumns(); i++) {
-      ComplexNode<T> * child = static_cast<MatrixComplexNode<T> *>(m.node())->childAtIndex(i);
-      if (child) {
-        result.addChildTreeAtIndex(compute(*child, angleUnit), i, i);
-      } else {
-        result.addChildTreeAtIndex(Complex<T>::Undefined(), i, i);
-      }
+    for (int i = 0; i < result.numberOfChildren(); i++) {
+      result.addChildAtIndexInPlace(compute(m.complexAtIndex(i), angleUnit), i, i);
     }
     result.setDimensions(m.numberOfRows(), m.numberOfColumns());
     return result;
@@ -53,10 +48,10 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
 template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const ExpressionNode * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexAndComplexReduction<T> computeOnComplexes, ComplexAndMatrixReduction<T> computeOnComplexAndMatrix, MatrixAndComplexReduction<T> computeOnMatrixAndComplex, MatrixAndMatrixReduction<T> computeOnMatrices) {
   Evaluation<T> result = expression->childAtIndex(0)->approximate(T(), context, angleUnit);
   for (int i = 1; i < expression->numberOfChildren(); i++) {
-    Evaluation<T> intermediateResult(nullptr);
+    Evaluation<T> intermediateResult;
     Evaluation<T> nextOperandEvaluation = expression->childAtIndex(i)->approximate(T(), context, angleUnit);
     if (result.node()->type() == EvaluationNode<T>::Type::AllocationFailure || nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::AllocationFailure) {
-      return Evaluation<T>(EvaluationNode<T>::FailedAllocationStaticNode());
+      return Complex<T>::Undefined();
     }
     if (result.node()->type() == EvaluationNode<T>::Type::Complex && nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::Complex) {
       const ComplexNode<T> * c = static_cast<const ComplexNode<T> *>(result.node());
@@ -65,18 +60,18 @@ template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const Expressi
     } else if (result.node()->type() == EvaluationNode<T>::Type::Complex) {
       assert(nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
       const ComplexNode<T> * c = static_cast<const ComplexNode<T> *>(result.node());
-      MatrixComplex<T> n = MatrixComplex<T>(nextOperandEvaluation.node());
+      MatrixComplex<T> n = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(nextOperandEvaluation.node()));
       intermediateResult = computeOnComplexAndMatrix(*c, n);
     } else if (nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::Complex) {
       assert(result.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-      MatrixComplex<T> m = MatrixComplex<T>(result.node());
+      MatrixComplex<T> m = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(result.node()));
       const ComplexNode<T> * d = static_cast<const ComplexNode<T> *>(nextOperandEvaluation.node());
       intermediateResult = computeOnMatrixAndComplex(m, *d);
     } else {
       assert(result.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
       assert(nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-      MatrixComplex<T> m = MatrixComplex<T>(result.node());
-      MatrixComplex<T> n = MatrixComplex<T>(nextOperandEvaluation.node());
+      MatrixComplex<T> m = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(result.node()));
+      MatrixComplex<T> n = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(nextOperandEvaluation.node()));
       intermediateResult = computeOnMatrices(m, n);
     }
     result = intermediateResult;
@@ -88,38 +83,21 @@ template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const Expressi
 }
 
 template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(const MatrixComplex<T> m, const std::complex<T> c, ComplexAndComplexReduction<T> computeOnComplexes) {
-  if (m.isAllocationFailure()) {
-    return MatrixComplex<T>(EvaluationNode<T>::FailedAllocationStaticNode());
-  }
   MatrixComplex<T> matrix;
   for (int i = 0; i < m.numberOfChildren(); i++) {
-    ComplexNode<T> * child = static_cast<MatrixComplexNode<T> *>(m.node())->childAtIndex(i);
-    if (child) {
-      matrix.addChildTreeAtIndex(computeOnComplexes(*child, c), i, i);
-    } else {
-      matrix.addChildTreeAtIndex(Complex<T>::Undefined(), i, i);
-    }
+    matrix.addChildAtIndexInPlace(computeOnComplexes(m.complexAtIndex(i), c), i, i);
   }
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
   return matrix;
 }
 
 template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnComplexMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n, ComplexAndComplexReduction<T> computeOnComplexes) {
-  if (m.isAllocationFailure() || n.isAllocationFailure()) {
-    return MatrixComplex<T>(EvaluationNode<T>::FailedAllocationStaticNode());
-  }
   if (m.numberOfRows() != n.numberOfRows() || m.numberOfColumns() != n.numberOfColumns()) {
     return MatrixComplex<T>::Undefined();
   }
   MatrixComplex<T> matrix;
   for (int i = 0; i < m.numberOfChildren(); i++) {
-    ComplexNode<T> * childM = static_cast<MatrixComplexNode<T> *>(m.node())->childAtIndex(i);
-    ComplexNode<T> * childN = static_cast<MatrixComplexNode<T> *>(n.node())->childAtIndex(i);
-    if (childM && childN) {
-      matrix.addChildTreeAtIndex(computeOnComplexes(*childM, *childN), i, i);
-    } else {
-      matrix.addChildTreeAtIndex(Complex<T>::Undefined(), i, i);
-    }
+    matrix.addChildAtIndexInPlace(computeOnComplexes(m.complexAtIndex(i), n.complexAtIndex(i)), i, i);
   }
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
   return matrix;

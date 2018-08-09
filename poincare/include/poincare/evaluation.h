@@ -40,6 +40,7 @@ public:
     assert(!TreeByValue::node()->isGhost());
     return static_cast<EvaluationNode<T> *>(TreeByValue::node());
   }
+  Evaluation() : Evaluation(nullptr) {}
   /* Hierarchy */
   Evaluation<T> childAtIndex(int i) const {
     return Evaluation<T>(static_cast<EvaluationNode<T> *>(TreeByValue::childAtIndex(i).node()));
@@ -52,7 +53,6 @@ public:
   std::complex<T> determinant() const { return node()->determinant(); }
 protected:
   Evaluation(EvaluationNode<T> * n) : TreeByValue(n) {}
-  //Evaluation() : TreeByValue() {}
 };
 
 }

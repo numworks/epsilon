@@ -25,6 +25,9 @@ static MultiplicationNode * FailedAllocationStaticNode() {
 }
 
 ExpressionNode::Sign MultiplicationNode::sign() const {
+  if (numberOfChildren() == 0) {
+    return Sign::Unknown;
+  }
   int sign = 1;
   for (int i = 0; i < numberOfChildren(); i++) {
     sign *= (int)childAtIndex(i)->sign();
@@ -113,13 +116,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
 }
 
 Expression MultiplicationNode::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
-  assert(s == Sign::Positive);
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i)->sign() == Sign::Negative) {
-      childAtIndex(i)->setSign(s, context, angleUnit);
-    }
-  }
-  return shallowReduce(context, angleUnit);
+  return Multiplication(this).setSign(s, context, angleUnit);
 }
 
 bool MultiplicationNode::needsParenthesesWithParent(const SerializationHelperInterface * parentNode) const {
@@ -175,6 +172,17 @@ Expression MultiplicationNode::denominator(Context & context, Preferences::Angle
 }
 
 // MULTIPLICATION
+
+Expression Multiplication::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+  assert(s == ExpressionNode::Sign::Positive);
+  Expression result = *this;
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (childAtIndex(i).sign() == ExpressionNode::Sign::Negative) {
+      result.replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, context, angleUnit));
+    }
+  }
+  return result.shallowReduce(context, angleUnit);
+}
 
 Expression Multiplication::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   return privateShallowReduce(context, angleUnit, true, true);

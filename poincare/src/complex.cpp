@@ -23,6 +23,13 @@ extern "C" {
 namespace Poincare {
 
 template<typename T>
+ComplexNode<T> * ComplexNode<T>::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<ComplexNode<T>> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
+
+template<typename T>
 void ComplexNode<T>::setComplex(std::complex<T> c) {
   this->real(c.real());
   this->imag(c.imag());

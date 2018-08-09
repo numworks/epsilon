@@ -12,8 +12,11 @@ class OppositeNode : public ExpressionNode {
 public:
   template<typename T> static Complex<T> compute(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) { return Complex<T>(-c); }
 
-  // TreeNode
+  // Allocation Failure
   static OppositeNode * FailedAllocationStaticNode();
+  OppositeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
   size_t size() const override { return sizeof(OppositeNode); }
 #if TREE_LOG
   const char * description() const override { return "Opposite";  }

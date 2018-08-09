@@ -17,8 +17,6 @@ public:
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override { return Undefined(); }
   std::complex<U> trace() const override { return std::complex<U>(NAN); }
   std::complex<U> determinant() const override { return std::complex<U>(NAN); }
-  Evaluation<U> inverse() const override { return Complex<U>::Undefined(); }
-  virtual Evaluation<U> transpose() const override { return Complex<U>::Undefined(); }
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailureEvaluationNode<T, U>); }
 #if TREE_LOG

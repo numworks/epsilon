@@ -14,9 +14,10 @@ namespace Poincare {
  * 'this' outdated. They should only be called in a wrapper on Expression. */
 
 class ExpressionNode : public TreeNode, public SerializationHelperInterface {
-  friend class SymbolNode;
   friend class DivisionNode;
   friend class NAryExpressionNode;
+  friend class PowerNode;
+  friend class SymbolNode;
 public:
    enum class Type : uint8_t {
     AllocationFailure = 0,

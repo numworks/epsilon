@@ -27,8 +27,6 @@ public:
   Expression complexToExpression(Preferences::Preferences::ComplexFormat complexFormat) const override;
   std::complex<T> trace() const override { return *this; }
   std::complex<T> determinant() const override { return *this; }
-  Evaluation<T> inverse() const override;
-  Evaluation<T> transpose() const override { return Complex<T>(*this); }
 };
 
 template<typename T>

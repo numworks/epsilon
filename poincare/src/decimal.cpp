@@ -11,15 +11,15 @@
 
 namespace Poincare {
 
-void removeZeroAtTheEnd(IntegerReference * i) {
+void removeZeroAtTheEnd(Integer * i) {
   if (i->isZero()) {
     return;
   }
-  IntegerReference base = IntegerReference(10);
-  IntegerDivisionReference d = IntegerReference::Division(*i, base);
+  Integer base = Integer(10);
+  IntegerDivision d = Integer::Division(*i, base);
   while (d.remainder.isZero()) {
     *i = d.quotient;
-    d = IntegerReference::Division(*i, base);
+    d = Integer::Division(*i, base);
   }
 }
 
@@ -28,6 +28,11 @@ void DecimalNode::setValue(native_uint_t * mantissaDigits, size_t mantissaSize, 
   m_exponent = exponent;
   m_numberOfDigitsInMantissa = mantissaSize;
   memcpy(m_mantissa, mantissaDigits, mantissaSize*sizeof(native_uint_t));
+}
+
+DecimalNode * DecimalNode::FailedAllocationStaticNode() {
+  static AllocationFailureDecimalNode failure;
+  return &failure;
 }
 
 NaturalIntegerPointer DecimalNode::mantissa() const {
@@ -58,50 +63,20 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canB
   return ((int)sign())*unsignedComparison;
 }
 
-Expression DecimalNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression e = ExpressionNode::shallowReduce(context, angleUnit);
-  if (e.node() != this) {
-    return e;
-  }
-  Expression reference(this);
-  NaturalIntegerPointer m = mantissa();
-  IntegerReference numerator(&m);
-  removeZeroAtTheEnd(&numerator);
-  int numberOfDigits = IntegerReference::NumberOfBase10Digits(numerator);
-  IntegerReference denominator(1);
-  if (m_exponent >= numberOfDigits-1) {
-    numerator = IntegerReference::Multiplication(numerator, IntegerReference::Power(IntegerReference(10), IntegerReference(m_exponent-numberOfDigits+1)));
-  } else {
-    denominator = IntegerReference::Power(IntegerReference(10), IntegerReference(numberOfDigits-1-m_exponent));
-  }
-  // Do not reduce decimal to rational if the exponent is too big or too small.
-  if (numerator.isInfinity()) {
-    assert(!denominator.isInfinity());
-    return InfinityReference(m_negative);
-  }
-  if (denominator.isInfinity()) {
-    assert(!denominator.isInfinity());
-    return RationalReference(0);
-  }
-  numerator.setNegative(m_negative);
-  return RationalReference(numerator, denominator);
+Expression DecimalNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Decimal(this).shallowReduce(context, angleUnit);
 }
 
-Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression reference(this);
-  if (m_negative) {
-    m_negative = false;
-    return OppositeReference(reference);
-  }
-  return reference;
+Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Decimal(this).shallowBeautify(context, angleUnit);
 }
 
-bool DecimalNode::needsParenthesesWithParent(SerializableNode * parentNode) const {
+bool DecimalNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
   if (!m_negative) {
     return false;
   }
   Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
-  return static_cast<ExpressionNode *>(parentNode)->isOfType(types, 7);
+  return static_cast<const ExpressionNode *>(e)->isOfType(types, 7);
 }
 
 LayoutRef DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -130,17 +105,17 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
   char tempBuffer[PrintFloat::k_numberOfStoredSignificantDigits+1];
   // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
   NaturalIntegerPointer m = mantissa();
-  IntegerReference mantissaRef(&m);
-  int numberOfDigitsInMantissa = IntegerReference::NumberOfBase10Digits(mantissaRef);
+  Integer mantissaRef(&m);
+  int numberOfDigitsInMantissa = Integer::NumberOfBase10Digits(mantissaRef);
   if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
-    IntegerDivisionReference d = IntegerReference::Division(mantissaRef, IntegerReference((int64_t)std::pow(10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)));
+    IntegerDivision d = Integer::Division(mantissaRef, Integer((int64_t)std::pow(10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)));
     mantissaRef = d.quotient;
-    if (IntegerReference::NaturalOrder(d.remainder, IntegerReference((int64_t)(5.0*std::pow(10.0, numberOfDigitsInMantissa-numberOfSignificantDigits-1)))) >= 0) {
-      mantissaRef = IntegerReference::Addition(mantissaRef, IntegerReference(1));
+    if (Integer::NaturalOrder(d.remainder, Integer((int64_t)(5.0*std::pow(10.0, numberOfDigitsInMantissa-numberOfSignificantDigits-1)))) >= 0) {
+      mantissaRef = Integer::Addition(mantissaRef, Integer(1));
       // if 9999 was rounded to 10000, we need to update exponent and mantissa
-      if (IntegerReference::NumberOfBase10Digits(mantissaRef) > numberOfSignificantDigits) {
+      if (Integer::NumberOfBase10Digits(mantissaRef) > numberOfSignificantDigits) {
         exponent++;
-        mantissaRef = IntegerReference::Division(mantissaRef, IntegerReference(10)).quotient;
+        mantissaRef = Integer::Division(mantissaRef, Integer(10)).quotient;
       }
     }
     removeZeroAtTheEnd(&mantissaRef);
@@ -184,7 +159,7 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     }
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
     buffer[currentChar++] = Ion::Charset::Exponent;
-    currentChar += IntegerReference(exponent).serialize(buffer+currentChar, bufferSize-currentChar, mode, numberOfSignificantDigits);
+    currentChar += Integer(exponent).serialize(buffer+currentChar, bufferSize-currentChar, mode, numberOfSignificantDigits);
     return currentChar;
   }
   /* Case 1: Decimal mode */
@@ -231,7 +206,7 @@ template<typename T> Evaluation<T> DecimalNode::templatedApproximate() const {
   return Complex<T>(m_negative ? -result : result);
 }
 
-int DecimalReference::exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
+int Decimal::exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
   int base = 10;
   int exp = 0;
   for (int i = 0; i < exponentLength; i++) {
@@ -264,39 +239,72 @@ int DecimalReference::exponent(const char * integralPart, int integralPartLength
   return exp;
 }
 
-DecimalReference::DecimalReference(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent) {
-  IntegerReference zero(0);
-  IntegerReference base(10);
-  IntegerReference numerator(integralPart, integralPartLength, negative);
+Decimal::Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent) : Number(nullptr) {
+  Integer zero(0);
+  Integer base(10);
+  Integer numerator(integralPart, integralPartLength, negative);
   for (int i = 0; i < fractionalPartLength; i++) {
-    numerator = IntegerReference::Multiplication(numerator, base);
-    numerator = IntegerReference::Addition(numerator, IntegerReference(*fractionalPart-'0'));
+    numerator = Integer::Multiplication(numerator, base);
+    numerator = Integer::Addition(numerator, Integer(*fractionalPart-'0'));
     fractionalPart++;
   }
-  *this = DecimalReference(numerator, exponent);
+  *this = Decimal(numerator, exponent);
 }
 
 template <typename T>
-DecimalReference::DecimalReference(T f) {
+Decimal::Decimal(T f) : Number(nullptr) {
   assert(!std::isnan(f) && !std::isinf(f));
   int exp = IEEE754<T>::exponentBase10(f);
   int64_t mantissaf = std::round((double)f * std::pow((double)10.0, (double)(-exp+PrintFloat::k_numberOfStoredSignificantDigits+1)));
-  IntegerReference m(mantissaf);
-  *this= DecimalReference(IntegerReference(mantissaf), exp);
+  Integer m(mantissaf);
+  *this= Decimal(Integer(mantissaf), exp);
 }
 
-DecimalReference::DecimalReference(IntegerReference m, int e) {
-  if (m.isAllocationFailure()) {
-    *this = DecimalReference(ExpressionNode::FailedAllocationStaticNode());
-    return;
-  }
-  *this = DecimalReference(sizeof(DecimalNode)+sizeof(native_uint_t)*m.numberOfDigits());
-  if (!node()->isAllocationFailure()) {
-    static_cast<DecimalNode *>(node())->setValue(m.typedNode()->digits(), m.typedNode()->numberOfDigits(), e, m.isNegative());
-  }
+Decimal::Decimal(Integer m, int e) {
+  *this = Decimal(sizeof(DecimalNode)+sizeof(native_uint_t)*m.numberOfDigits());
+  node()->setValue(m.node()->digits(), m.node()->numberOfDigits(), e, m.isNegative());
 }
 
-template DecimalReference::DecimalReference(double);
-template DecimalReference::DecimalReference(float);
+Expression Decimal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression e = Expression::shallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
+    return e;
+  }
+  // this = e
+  bool negative = sign() == ExpressionNode::Sign::Negative;
+  int exp = node()->exponent();
+  NaturalIntegerPointer m = node()->mantissa();
+  Integer numerator(&m);
+  removeZeroAtTheEnd(&numerator);
+  int numberOfDigits = Integer::NumberOfBase10Digits(numerator);
+  Integer denominator(1);
+  if (exp >= numberOfDigits-1) {
+    numerator = Integer::Multiplication(numerator, Integer::Power(Integer(10), Integer(exp-numberOfDigits+1)));
+  } else {
+    denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-exp));
+  }
+  // Do not reduce decimal to rational if the exponent is too big or too small.
+  if (numerator.isInfinity()) {
+    assert(!denominator.isInfinity());
+    return Infinity(negative);
+  }
+  if (denominator.isInfinity()) {
+    assert(!denominator.isInfinity());
+    return Rational(0);
+  }
+  numerator.setNegative(negative);
+  return Rational(numerator, denominator);
+}
+
+Expression Decimal::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+  if (sign() == ExpressionNode::Sign::Negative) {
+    Expression abs = setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+    return Opposite(abs);
+  }
+  return *this;
+}
+
+template Decimal::Decimal(double);
+template Decimal::Decimal(float);
 
 }

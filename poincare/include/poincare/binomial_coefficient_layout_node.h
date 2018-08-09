@@ -43,7 +43,7 @@ private:
 class BinomialCoefficientLayoutRef : public LayoutReference {
 public:
   BinomialCoefficientLayoutRef(LayoutRef n, LayoutRef k) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>(), true)
+    LayoutReference(TreePool::sharedPool()->createTreeNode<BinomialCoefficientLayoutNode>())
   {
     replaceChildAtIndexInPlace(0, n);
     replaceChildAtIndexInPlace(1, k);

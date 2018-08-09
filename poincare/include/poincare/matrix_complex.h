@@ -58,6 +58,7 @@ template<typename T>
 class MatrixComplex : public Evaluation<T> {
   friend class MatrixComplexNode<T>;
 public:
+  MatrixComplex(MatrixComplexNode<T> * node) : Evaluation<T>(node) {}
   MatrixComplex() : Evaluation<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >()) {}
   static MatrixComplex<T> Undefined() {
     std::complex<T> undef = std::complex<T>(NAN, NAN);

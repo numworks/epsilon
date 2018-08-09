@@ -45,9 +45,7 @@ public:
 private:
   // Layout
   bool needsParenthesesWithParent(const SerializationHelperInterface * parentNode) const override;
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Infix(Expression(this), floatDisplayMode, numberOfSignificantDigits, name());
-  }
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }

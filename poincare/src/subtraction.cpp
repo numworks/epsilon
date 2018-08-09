@@ -35,7 +35,7 @@ bool SubtractionNode::needsParenthesesWithParent(const SerializationHelperInterf
 }
 
 LayoutRef SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Infix(Expression(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Infix(Subtraction(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
 int SubtractionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

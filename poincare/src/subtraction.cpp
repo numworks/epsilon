@@ -1,11 +1,10 @@
 #include <poincare/subtraction.h>
 #include <poincare/allocation_failure_expression_node.h>
 #include <poincare/serialization_helper.h>
-//#include <poincare/addition.h>
-//#include <poincare/matrix.h>
-//#include <poincare/multiplication.h>
+#include <poincare/addition.h>
+#include <poincare/multiplication.h>
 #include <poincare/opposite.h>
-//#include <poincare/rational.h>
+#include <poincare/rational.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -62,10 +61,10 @@ Expression Subtraction::shallowReduce(Context& context, Preferences::AngleUnit a
   if (e.type() == ExpressionNode::Type::AllocationFailure || e.type() == ExpressionNode::Type::Undefined ) { //TODO use Expression method to make the ||
     return e;
   }
-  /*Multiplication m = Multiplication(Rational(-1), childAtIndex(1));
-  Expression mReduced = m.shallowReduce(context, angleUnit);
-  Addition a = Addition(childAtIndex(0), mReduced);
-  return a.shallowReduce(context, angleUnit);*/
+  Expression m = Multiplication(Rational(-1), childAtIndex(1));
+  m = m.shallowReduce(context, angleUnit);
+  Addition a = Addition(childAtIndex(0), m);
+  return a.shallowReduce(context, angleUnit);
 }
 
 }

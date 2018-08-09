@@ -44,6 +44,7 @@ public:
   ExpressionNode::Type type() const { return node()->type(); }
   ExpressionNode::Sign sign() const { return node()->sign(); }
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  bool isUndefinedOrAllocationFailure() const { return node()->type() == ExpressionNode::Type::Undefined || node()->type() == ExpressionNode::Type::AllocationFailure; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
   typedef bool (*ExpressionTest)(const Expression e, Context & context);

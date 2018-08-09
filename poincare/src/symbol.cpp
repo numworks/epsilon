@@ -33,14 +33,7 @@ ExpressionNode::Sign SymbolNode::sign() const {
 }
 
 Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression expression) const {
-  if (m_name == symbol) {
-    Expression value = expression.clone();
-    if (parent() && value.needsParenthesesWithParent(parent())) {
-      value = ParenthesisReference(value);
-    }
-    return value;
-  }
-  return Expression(this);
+  return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
 int SymbolNode::polynomialDegree(char symbol) const {
@@ -51,13 +44,7 @@ int SymbolNode::polynomialDegree(char symbol) const {
 }
 
 int SymbolNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  if (m_name == symbolName) {
-    coefficients[0] = RationalReference(0);
-    coefficients[1] = RationalReference(1);
-    return 1;
-  }
-  coefficients[0] = SymbolReference(m_name);
-  return 0;
+  return Symbol(this).getPolynomialCoefficients(symbolName, coefficients);
 }
 
 int SymbolNode::getVariables(isVariableTest isVariable, char * variables) const {
@@ -131,7 +118,7 @@ LayoutRef SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
           VerticalOffsetLayoutNode::Type::Subscript));
   }
   if (Symbol::isMatrixSymbol(m_name) || Symbol::isSeriesSymbol(m_name) || Symbol::isRegressionSymbol(m_name)) {
-    return LayoutHelper::String(SymbolReference::textForSpecialSymbols(m_name), 2);
+    return LayoutHelper::String(Symbol::textForSpecialSymbols(m_name), 2);
   }
   return LayoutHelper::String(&m_name, 1);
 }
@@ -153,17 +140,8 @@ int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return 1;
 }
 
-Expression SymbolNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  // Do not replace symbols in expression of type: 3->A
-  if (parent() && parent()->type() == Type::Store && parent()->childAtIndex(1) == this) {
-    return this;
-  }
-  const Expression e = context.expressionForSymbol(SymbolReference(m_name));
-  if (e.isDefined() && hasAnExactRepresentation(context)) { // TODO: later AZ should be replaced.
-    /* The stored expression had been beautified which forces to call deepReduce. */
-    return e.clone().deepReduce(context, angleUnit);
-  }
-  return Expression(this);
+Expression SymbolNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Symbol(this).shallowReduce(context, angleUnit);
 }
 
 bool SymbolNode::hasAnExactRepresentation(Context & context) const {
@@ -176,7 +154,7 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
   if (m_name == Ion::Charset::IComplex) {
     return Complex<T>(0.0, 1.0);
   }
-  const Expression e = context.expressionForSymbol(SymbolReference(m_name));
+  const Expression e = context.expressionForSymbol(Symbol(m_name));
   if (e.isDefined()) {
     return e.node()->approximate(T(), context, angleUnit);
   }
@@ -316,26 +294,31 @@ bool Symbol::isApproximate(char c, Context & context) {
   return false;
 }
 
-Expression Symbol::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Symbol::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+// TODO: avoid ExpressionRef comparison ? 2 solutions:
+// - Compare identifiant
+// - virtualize deepReduce to do nothing on the second child of Store?
+#if 0
   // Do not replace symbols in expression of type: 3->A
   Expression p = parent();
-  if (p.isDefined() && p.type() == Type::Store && p.childAtIndex(1) == *this) {
+  if (p.isDefined() && p.type() == ExpressionNode::Type::Store && p.childAtIndex(1) == *this) {
     return *this;
   }
+#endif
   const Expression e = context.expressionForSymbol(*this);
-  if (e.isDefined() && hasAnExactRepresentation(context)) {
+  if (e.isDefined() && node()->hasAnExactRepresentation(context)) {
     // TODO: later AZ should be replaced.
     /* The stored expression had been beautified which forces to call deepReduce. */
-    return e.clone().deepReduce(context, angleUnit);
+    return e.deepReduce(context, angleUnit);
   }
   return *this;
 }
 
-Expression Symbol::replaceSymbolWithExpression(char symbol, Expression expression) {
+Expression Symbol::replaceSymbolWithExpression(char symbol, Expression expression) const {
   if (name() == symbol) {
-    Expression value = expression.clone();
+    Expression value = expression;
     Expression p = parent();
-    if (p.isDefined() && value.needsParenthesesWithParent(p)) {
+    if (p.isDefined() && value.node()->needsParenthesesWithParent(p.node())) {
       value = Parenthesis(value);
     }
     return value;

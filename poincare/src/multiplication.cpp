@@ -103,12 +103,12 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
     for (int j = 0; j < n.numberOfColumns(); j++) {
       std::complex<T> c(0.0);
       for (int k = 0; k < m.numberOfColumns(); k++) {
-        c += m.complexOperand(i*m.numberOfColumns()+k)*n.complexOperand(k*n.numberOfColumns()+j);
+        c += const_cast<MatrixComplex<T> *>(&m)->complexAtIndex(i*m.numberOfColumns()+k)*const_cast<MatrixComplex<T> *>(&n)->complexAtIndex(k*n.numberOfColumns()+j);
       }
-      result.addChildAtIndexInPlace(Complex<T>(c), i*n.numberOfColumns()+j, result.numberOfChildren);
+      result.addChildAtIndexInPlace(Complex<T>(c), i*n.numberOfColumns()+j, result.numberOfChildren());
     }
   }
-  MatrixComplex<T> result.setDimensions(m.numberOfRows(), n.numberOfColumns());
+  result.setDimensions(m.numberOfRows(), n.numberOfColumns());
   return result;
 }
 
@@ -146,7 +146,7 @@ Expression MultiplicationNode::shallowBeautify(Context& context, Preferences::An
 }
 
 Expression MultiplicationNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression e = *this;
+  Expression e = Multiplication(this);
   return e;
   //TODO
 #if 0
@@ -416,7 +416,7 @@ void Multiplication::mergeMultiplicationOperands() {
   while (i < initialNumberOfChildren) {
     Expression c = childAtIndex(i);
     if (c.type() == ExpressionNode::Type::Multiplication) {
-      mergeChildrenAtIndexInPlace(c); // TODO: ensure that matrix operands are not swapped to implement MATRIX_EXACT_REDUCING
+      mergeChildrenAtIndexInPlace(c, numberOfChildren()); // TODO: ensure that matrix operands are not swapped to implement MATRIX_EXACT_REDUCING
       continue;
     }
     i++;
@@ -545,7 +545,7 @@ void Multiplication::factorizeExponent(Expression e1, Expression e2, Context & c
 Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, Preferences::AngleUnit angleUnit) {
   // This function turns a*(b+c) into a*b + a*c
   // We avoid deleting and creating a new addition
-  Addition a = Addition(childAtIndex(i));
+  Expression a;
   return a; //TODO
 #if 0
   Addition * a = static_cast<Addition *>(editableOperand(i));
@@ -591,8 +591,8 @@ bool Multiplication::TermHasRationalExponent(const Expression e) {
   return false;
 }
 
-Expression Multiplication::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = *this;
+Expression Multiplication::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+  Expression e;
   return e;
   // TODO
 #if 0
@@ -701,7 +701,7 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::An
 #endif
 }
 
-void Multiplication::addMissingFactors(Expression * factor, Context & context, Preferences::AngleUnit angleUnit) {
+void Multiplication::addMissingFactors(Expression factor, Context & context, Preferences::AngleUnit angleUnit) {
   return;
   //TODO
 #if 0

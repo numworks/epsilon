@@ -15,6 +15,7 @@ class Context;
 class Expression : public TreeByValue {
   friend class AdditionNode;
   friend class ExpressionNode;
+  friend class MultiplicationNode;
   friend class NAryExpressionNode;
   friend class SubtractionNode;
 public:

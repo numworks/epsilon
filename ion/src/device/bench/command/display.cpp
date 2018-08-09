@@ -1,6 +1,7 @@
 #include "command.h"
 #include <ion.h>
 #include <ion/src/device/display.h>
+#include <poincare.h>
 
 namespace Ion {
 namespace Device {
@@ -46,6 +47,8 @@ void Display(const char * input) {
     }
   }
 
+  int numberOfInvalidPixels = 0;
+
   for (int i=0; i<Ion::Display::Width/stampWidth; i++) {
     for (int j=0; j<Ion::Display::Height/stampHeight; j++) {
       for (int i=0;i<stampWidth*stampHeight; i++) {
@@ -54,14 +57,15 @@ void Display(const char * input) {
       Ion::Display::pullRect(KDRect(i*stampWidth, j*stampHeight, stampWidth, stampHeight), stamp);
       for (int i=0;i<stampWidth*stampHeight; i++) {
         if (stamp[i] != c) {
-          reply(sKO);
-          return;
+          numberOfInvalidPixels++;
         }
       }
     }
   }
 
-  reply(sOK);
+  char response[16] = {'D', 'E', 'L', 'T', 'A', '='};
+  Poincare::Integer(numberOfInvalidPixels).writeTextInBuffer(response+6, sizeof(response)-6);
+  reply(response);
 }
 
 }

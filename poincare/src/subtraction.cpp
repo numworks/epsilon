@@ -46,7 +46,7 @@ template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix
   MatrixComplex<T> opposite = computeOnMatrixAndComplex(m, c);
   MatrixComplex<T> result;
   for (int i = 0; i < opposite.numberOfChildren(); i++) {
-    result.addChildAtIndexInPlace(OppositeNode::compute(*(static_cast<ComplexNode<T> *>(opposite.complexAtIndex(i).node()))), i, i);
+    result.addChildAtIndexInPlace(OppositeNode::compute(opposite.complexAtIndex(i)), i, i);
   }
   result.setDimensions(opposite.numberOfRows(), opposite.numberOfColumns());
   return result;

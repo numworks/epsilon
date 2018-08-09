@@ -17,12 +17,12 @@ MatrixComplexNode<T> * MatrixComplexNode<T>::FailedAllocationStaticNode() {
 }
 
 template<typename T>
-ComplexNode<T> * MatrixComplexNode<T>::complexAtIndex(int index) {
+std::complex<T> MatrixComplexNode<T>::complexAtIndex(int index) const {
   EvaluationNode<T> * child = EvaluationNode<T>::childAtIndex(index);
   if (child->type() == EvaluationNode<T>::Type::Complex) {
-    return static_cast<ComplexNode<T> *>(child);
+    return *(static_cast<ComplexNode<T> *>(child));
   }
-  return static_cast<ComplexNode<T> *>(Complex<T>::Undefined().node());
+  return std::complex<T>(NAN, NAN);
 }
 
 template<typename T>
@@ -61,12 +61,10 @@ std::complex<T> MatrixComplexNode<T>::trace() const {
   int dim = numberOfRows();
   std::complex<T> c = std::complex<T>(0);
   for (int i = 0; i < dim; i++) {
-    ComplexNode<T> * child = const_cast<MatrixComplexNode<T> *>(this)->complexAtIndex(i*dim+i);
-    if (child->isUndefined()) {
-      c = std::complex<T>(NAN, NAN);
-      break;
+    c += complexAtIndex(i*dim+i);
+    if (std::isnan(c.real()) || std::isnan(c.imag())) {
+      return std::complex<T>(NAN, NAN);
     }
-    c += *child;
   }
   return c;
 }
@@ -116,8 +114,7 @@ MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
   MatrixComplex<T> result;
   for (int i = 0; i < numberOfRows(); i++) {
     for (int j = 0; j < numberOfColumns(); j++) {
-      ComplexNode<T> * child = const_cast<MatrixComplexNode<T> *>(this)->complexAtIndex(i*numberOfColumns()+i);
-      result.addChildAtIndexInPlace(Complex<T>(child), j*numberOfRows()+i, j*numberOfRows()+i);
+      result.addChildAtIndexInPlace(Complex<T>(complexAtIndex(i*numberOfColumns()+i)), j*numberOfRows()+i, j*numberOfRows()+i);
     }
   }
   result.setDimensions(numberOfColumns(), numberOfRows());

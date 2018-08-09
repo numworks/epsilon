@@ -107,7 +107,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
     for (int j = 0; j < n.numberOfColumns(); j++) {
       std::complex<T> c(0.0);
       for (int k = 0; k < m.numberOfColumns(); k++) {
-        c += const_cast<MatrixComplex<T> *>(&m)->complexAtIndex(i*m.numberOfColumns()+k)*const_cast<MatrixComplex<T> *>(&n)->complexAtIndex(k*n.numberOfColumns()+j);
+        c += m.complexAtIndex(i*m.numberOfColumns()+k)*n.complexAtIndex(k*n.numberOfColumns()+j);
       }
       result.addChildAtIndexInPlace(Complex<T>(c), i*n.numberOfColumns()+j, result.numberOfChildren());
     }

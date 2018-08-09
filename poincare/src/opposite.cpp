@@ -3,7 +3,7 @@
 #include <poincare/horizontal_layout_node.h>
 #include <cmath>
 #include <poincare/layout_helper.h>
-//#include <poincare/multiplication.h>
+#include <poincare/multiplication.h>
 #include <poincare/rational.h>
 #include <poincare/simplification_helper.h>
 extern "C" {
@@ -77,8 +77,8 @@ Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit ang
   Expression child = result.childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
 #endif
-  // TODO result = Multiplication(Rational(-1), child);
-  // TODO return result.shallowReduce(context, angleUnit);
+  result = Multiplication(Rational(-1), child);
+  return result.shallowReduce(context, angleUnit);
 }
 #if 0
 

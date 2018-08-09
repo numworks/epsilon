@@ -15,8 +15,9 @@ extern "C" {
 
 namespace Poincare {
 
-DivisionNode * FailedAllocationStaticNode() {
+DivisionNode * DivisionNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<DivisionNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

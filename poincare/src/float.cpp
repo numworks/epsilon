@@ -5,6 +5,7 @@ namespace Poincare {
 
 template<typename T> FloatNode<T> * FloatNode<T>::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<FloatNode<T>> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

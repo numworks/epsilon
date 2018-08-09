@@ -355,6 +355,7 @@ NaturalIntegerPointer::NaturalIntegerPointer(native_uint_t * buffer, size_t size
 
 IntegerNode * IntegerNode::FailedAllocationStaticNode() {
   static AllocationFailureIntegerNode failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
 

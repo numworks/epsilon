@@ -101,11 +101,11 @@ int Power::getPolynomialCoefficients(char symbolName, Expression coefficients[])
   return -1;
 }
 
-Expression PowerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression PowerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
   return Power(this).setSign(s, context, angleUnit);
 }
 
-Expression Power::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Power::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
   assert(s == Sign::Positive);
   assert(childAtIndex(0).sign() == Sign::Negative);
   return Power(childAtIndex(0).setSign(Sign::Positive, context, angleUnit), childAtIndex(1));

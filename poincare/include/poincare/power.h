@@ -24,7 +24,7 @@ public:
   // Properties
   virtual Type type() const override { return Type::Power; }
   virtual Sign sign() const override;
-  virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
 
   int polynomialDegree(char symbolName) const override;
   int privateGetPolynomialCoefficients(char symbolName, Expression * coefficients[]) const override;
@@ -76,8 +76,8 @@ public:
   Power(Expression base, Expression exponent);
   Power(const PowerNode * n) : Expression(n) {}
 
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
 };
 

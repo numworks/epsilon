@@ -18,7 +18,7 @@ Expression * AbsoluteValue::clone() const {
   return a;
 }
 
-Expression * AbsoluteValue::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression * AbsoluteValue::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
   assert(s == Sign::Positive);
   return this;
 }

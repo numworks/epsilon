@@ -32,7 +32,7 @@ ExpressionNode::Sign SymbolNode::sign() const {
   return Sign::Unknown;
 }
 
-Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression expression) {
+Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression expression) const {
   if (m_name == symbol) {
     Expression value = expression.clone();
     if (parent() && value.needsParenthesesWithParent(parent())) {

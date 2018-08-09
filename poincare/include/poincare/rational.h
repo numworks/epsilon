@@ -55,7 +55,7 @@ public:
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
   bool m_negative;
   size_t m_numberOfDigitsNumerator;

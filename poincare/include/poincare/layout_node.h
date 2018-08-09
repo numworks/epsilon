@@ -56,7 +56,6 @@ public:
 
   // TreeNode
   static TreeNode * FailedAllocationStaticNode();
-  TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   LayoutNode * next() const override { return static_cast<LayoutNode *>(TreeNode::next()); }
   LayoutNode * nextSibling() const override { return static_cast<LayoutNode *>(TreeNode::nextSibling()); }

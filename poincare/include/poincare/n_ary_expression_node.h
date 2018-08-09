@@ -33,6 +33,7 @@ private:
 
 class NAryExpression : public Expression {
 public:
+  NAryExpression(const NAryExpressionNode * n) : Expression(n) {}
   void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
     Expression::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
   }

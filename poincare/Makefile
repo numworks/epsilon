@@ -3,6 +3,7 @@ SFLAGS += -Ipoincare/include
 #include poincare/src/simplify/Makefile
 #include poincare/src/simplification/Makefile
 objs += $(addprefix poincare/src/,\
+  addition.o\
   matrix_complex.o\
   tree_node.o\
   tree_pool.o\

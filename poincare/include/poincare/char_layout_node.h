@@ -26,8 +26,11 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 
-  // TreeNode
+  // AllocationFailure
   static CharLayoutNode * FailedAllocationStaticNode();
+  CharLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
   size_t size() const override { return sizeof(CharLayoutNode); }
   int numberOfChildren() const override { return 0; }
 #if TREE_LOG

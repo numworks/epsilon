@@ -61,7 +61,7 @@ private:
 
 class Division : public Expression {
 public:
-  Division(Expression numerator, Expression denominator) {
+  Division(Expression numerator, Expression denominator) : Expression(TreePool::sharedPool()->createTreeNode<DivisionNode>()) {
     replaceChildAtIndexInPlace(0, numerator);
     replaceChildAtIndexInPlace(1, denominator);
   }

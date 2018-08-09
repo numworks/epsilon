@@ -32,7 +32,7 @@ public:
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
 private:
   /* Property */
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
   /* Layout */
   bool needsParenthesesWithParent(SerializableNode * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

@@ -3,6 +3,7 @@
 
 #include <poincare/layout_helper.h>
 #include <poincare/parenthesis_layout_node.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -22,7 +23,8 @@ public:
   }
 
   // TreeNode
-  size_t size() const override { return sizeof(LeftParenthesisLayoutNode); }
+  static LeftParenthesisLayoutNode * FailedAllocationStaticNode();
+  LeftParenthesisLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 #if TREE_LOG
   const char * description() const override { return "Left parenthesis"; }
 #endif

@@ -8,34 +8,34 @@
 
 namespace Poincare {
 
-LayoutRef LayoutHelper::Infix(const Expression * expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
-  int numberOfChildren = expression->numberOfChildren();
+LayoutRef LayoutHelper::Infix(const Expression expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
+  int numberOfChildren = expression.numberOfChildren();
   assert(numberOfChildren > 1);
   HorizontalLayoutRef result;
-  result.addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, 0);
+  result.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, 0);
   for (int i = 1; i < numberOfChildren; i++) {
     result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), result.numberOfChildren(), true);
     result.addOrMergeChildAtIndex(
-        expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+        expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits),
         result.numberOfChildren(),
         true);
   }
   return result;
 }
 
-LayoutRef LayoutHelper::Prefix(const Expression * expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
+LayoutRef LayoutHelper::Prefix(const Expression expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
   HorizontalLayoutRef result;
   // Add the operator name.
   result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), 0, true);
 
   // Create the layout of arguments separated by commas.
   HorizontalLayoutRef args;
-  int numberOfChildren = expression->numberOfChildren();
+  int numberOfChildren = expression.numberOfChildren();
   if (numberOfChildren > 0) {
-    args.addOrMergeChildAtIndex(expression->operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
+    args.addOrMergeChildAtIndex(expression.childAtIndex(0).createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
     for (int i = 1; i < numberOfChildren; i++) {
       args.addChildAtIndex(CharLayoutRef(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
-      args.addOrMergeChildAtIndex(expression->operand(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
+      args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits), args.numberOfChildren(), true);
     }
   }
   // Add the parenthesed arguments.
@@ -45,11 +45,11 @@ LayoutRef LayoutHelper::Prefix(const Expression * expression, Preferences::Print
 
 LayoutRef LayoutHelper::Parentheses(LayoutRef layoutRef, bool cloneLayout) {
   HorizontalLayoutRef result;
-  result.addChildAtIndex(LeftParenthesisLayoutRef(), 0, 0);
+  result.addChildAtIndex(LeftParenthesisLayoutRef(), 0, 0, nullptr);
   if (layoutRef.isDefined()) {
     result.addOrMergeChildAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1, true);
   }
-  result.addChildAtIndex(RightParenthesisLayoutRef(), result.numberOfChildren(), result.numberOfChildren());
+  result.addChildAtIndex(RightParenthesisLayoutRef(), result.numberOfChildren(), result.numberOfChildren(), nullptr);
   return result;
 }
 

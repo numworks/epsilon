@@ -103,7 +103,7 @@ Expression::Sign Multiplication::sign() const {
   return (Sign)sign;
 }
 
-Expression * Multiplication::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression * Multiplication::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
   assert(s == Sign::Positive);
   for (int i = 0; i < numberOfChildren(); i++) {
     if (operand(i)->sign() == Sign::Negative) {

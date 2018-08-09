@@ -22,7 +22,7 @@ public:
   Expression() : Expression(nullptr) {}
   virtual ~Expression() = default;
   static Expression parse(char const * string);
-  Expression replaceSymbolWithExpression(char symbol, Expression expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
+  Expression replaceSymbolWithExpression(char symbol, Expression expression) const { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Reference */
   ExpressionNode * node() const override {
@@ -43,7 +43,7 @@ public:
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
   ExpressionNode::Sign sign() const { return node()->sign(); }
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   bool isUndefinedOrAllocationFailure() const { return node()->type() == ExpressionNode::Type::Undefined || node()->type() == ExpressionNode::Type::AllocationFailure; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;

@@ -10,7 +10,7 @@ ExpressionNode * ExpressionNode::FailedAllocationStaticNode() {
   return &FailureNode;
 }
 
-Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression expression) {
+Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression expression) const {
   Expression e = Expression(this);
   int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
@@ -20,7 +20,7 @@ Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression e
   return e;
 }
 
-Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
   assert(false);
   return Expression(nullptr);
 }

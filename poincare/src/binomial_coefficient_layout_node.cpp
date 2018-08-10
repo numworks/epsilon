@@ -1,4 +1,5 @@
 #include <poincare/binomial_coefficient_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/left_parenthesis_layout_node.h>
 #include <poincare/right_parenthesis_layout_node.h>
 #include <poincare/layout_helper.h>
@@ -7,6 +8,12 @@
 namespace Poincare {
 
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
+BinomialCoefficientLayoutNode * BinomialCoefficientLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<BinomialCoefficientLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
 
 void BinomialCoefficientLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Left

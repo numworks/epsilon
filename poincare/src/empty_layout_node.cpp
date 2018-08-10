@@ -5,6 +5,12 @@
 
 namespace Poincare {
 
+EmptyLayoutNode * EmptyLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<EmptyLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
+
 void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   cursor->setPosition(LayoutCursor::Position::Left);
   LayoutNode * p = parent();

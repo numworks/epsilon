@@ -43,6 +43,9 @@ public:
   KDCoordinate baseline() { return this->node()->baseline(); }
   void invalidAllSizesPositionsAndBaselines() { return this->node()->invalidAllSizesPositionsAndBaselines(); }
 
+  // Serialization
+  int serialize(char * buffer, int bufferSize) const { return this->node()->serialize(buffer, bufferSize); }
+
   // Layout properties
   KDPoint positionOfChild(LayoutReference child) { return this->node()->positionOfChild(child.node()); }
   bool mustHaveLeftSibling() const { return const_cast<LayoutReference *>(this)->node()->mustHaveLeftSibling(); }

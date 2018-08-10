@@ -1,13 +1,13 @@
 #include <poincare/layout_cursor.h>
-#include <ion/charset.h>
-#include <poincare/layout_reference.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/fraction_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
+#include <poincare/layout_reference.h>
 #include <poincare/matrix_layout_node.h>
 #include <poincare/nth_root_layout_node.h>
 #include <poincare/vertical_offset_layout_node.h>
+#include <ion/charset.h>
 #include <stdio.h>
 
 namespace Poincare {

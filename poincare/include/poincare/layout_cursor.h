@@ -121,19 +121,6 @@ public:
   void performBackspace() { m_layoutRef.deleteBeforeCursor(this); }
   void clearLayout();
 
-  // Debug
-  void log() {
-#if TREE_LOG
-    printf("Pointed Layout id %d, cursor position ", m_layoutRef.identifier());
-    if (m_position == Position::Left) {
-      printf("Left");
-    } else {
-      printf("Right");
-    }
-    printf("\n");
-#endif
-  }
-
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
   KDCoordinate layoutHeight();

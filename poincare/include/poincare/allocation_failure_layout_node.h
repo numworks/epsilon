@@ -69,9 +69,14 @@ public:
   void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override {}
 
   // TreeNode
+  void incrementNumberOfChildren(int increment = 1) override {}
+  void decrementNumberOfChildren(int decrement = 1) override {}
+  void eraseNumberOfChildren() override {}
   size_t size() const override { return sizeof(AllocationFailureLayoutNode<T>); }
-#if TREE_LOG
-  const char * description() const override { return "AllocationFailureLayout";  }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "AllocationFailureLayout";
+  }
 #endif
 
 protected:

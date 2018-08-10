@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 /* What's in a TreeNode, really?
- *  - a vtable
+ *  - a vtable pointer
  *  - an identifier
  *  - a reference counter
  */

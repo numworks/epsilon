@@ -8,7 +8,7 @@ namespace Poincare {
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
 void BracketLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->layoutReference() == this);
+  assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Go Left.
     cursor->setPosition(LayoutCursor::Position::Left);
@@ -23,7 +23,7 @@ void BracketLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecom
 }
 
 void BracketLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->layoutReference() == this);
+  assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Go Right.
     cursor->setPosition(LayoutCursor::Position::Right);

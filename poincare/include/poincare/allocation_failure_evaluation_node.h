@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-template <template<typename> typename T, typename U>
+template <template<typename> class T, class U>
 class AllocationFailureEvaluationNode : public T<U> {
 public:
   // EvaluationNode

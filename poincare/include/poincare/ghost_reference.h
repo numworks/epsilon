@@ -1,5 +1,5 @@
-#ifndef POINCARE_GHOST_NODE_H
-#define POINCARE_GHOST_NODE_H
+#ifndef POINCARE_GHOST_REFERENCE_H
+#define POINCARE_GHOST_REFERENCE_H
 
 #include <poincare/ghost_node.h>
 #include <poincare/tree_by_reference.h>

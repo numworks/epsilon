@@ -89,10 +89,10 @@ void CalculationStore::tidy() {
   }
 }
 
-Expression * CalculationStore::ansExpression(Context * context) {
+Expression CalculationStore::ansExpression(Context * context) {
   if (numberOfCalculations() == 0) {
     static Rational defaultExpression(0);
-    return &defaultExpression;
+    return defaultExpression;
   }
   Calculation * lastCalculation = calculationAtIndex(numberOfCalculations()-1);
   /* Special case: the exact output is a Store/Equal expression.
@@ -100,10 +100,10 @@ Expression * CalculationStore::ansExpression(Context * context) {
    * To avoid turning 'ans->A' in '2->A->A' (or 2->A=A) which cannot be parsed),
    * ans is replaced by the approximation output in when any Store or Equal
    * expression appears.*/
-  bool exactOuptutInvolvesStoreEqual = lastCalculation->exactOutput(context)->recursivelyMatches([](const Expression * e, Context & context) {
-          return e->type() == Expression::Type::Store || e->type() == Expression::Type::Equal;
+  bool exactOuptutInvolvesStoreEqual = lastCalculation->exactOutput(context).recursivelyMatches([](const Expression e, Context & context) {
+          return e.type() == ExpressionNode::Type::Store || e.type() == ExpressionNode::Type::Equal;
         }, *context);
-  if (lastCalculation->input()->isApproximate(*context) || exactOuptutInvolvesStoreEqual) {
+  if (lastCalculation->input().isApproximate(*context) || exactOuptutInvolvesStoreEqual) {
     return lastCalculation->approximateOutput(context);
   }
   return lastCalculation->exactOutput(context);

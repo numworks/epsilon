@@ -91,14 +91,13 @@ bool App::textInputIsCorrect(const char * text) {
   /* Here, we check that the expression entered by the user can be printed with
    * less than k_printedExpressionLength characters. Otherwise, we prevent the
    * user from adding this expression to the calculation store. */
-  Expression * exp = Expression::parse(text);
-  if (exp == nullptr) {
+  Expression exp = Expression::parse(text);
+  if (!exp.isDefined()) {
     return false;
   }
-  Expression::ReplaceSymbolWithExpression(&exp, Symbol::SpecialSymbols::Ans, static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext()));
+  exp = exp.replaceSymbolWithExpression(Symbol::SpecialSymbols::Ans, static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext()));
   char buffer[Calculation::k_printedExpressionSize];
   int length = PoincareHelpers::Serialize(exp, buffer, sizeof(buffer));
-  delete exp;
   /* if the buffer is totally full, it is VERY likely that writeTextInBuffer
    * escaped before printing utterly the expression. */
   if (length >= Calculation::k_printedExpressionSize-1) {

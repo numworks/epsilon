@@ -39,10 +39,9 @@ void Calculation::reset() {
   tidy();
 }
 
-void Calculation::setContent(const char * c, Context * context, Expression * ansExpression) {
+void Calculation::setContent(const char * c, Context * context, Expression ansExpression) {
   reset();
-  m_input = Expression::parse(c);
-  Expression::ReplaceSymbolWithExpression(&m_input, Symbol::SpecialSymbols::Ans, ansExpression);
+  m_input = Expression::parse(c).replaceSymbolWithExpression(Symbol::SpecialSymbols::Ans, ansExpression);
   /* We do not store directly the text enter by the user because we do not want
    * to keep Ans symbol in the calculation store. */
   PoincareHelpers::Serialize(m_input, m_inputText, sizeof(m_inputText));
@@ -143,7 +142,7 @@ void Calculation::tidy() {
   m_equalSign = EqualSign::Unknown;
 }
 
-Expression * Calculation::exactOutput(Context * context) {
+Expression Calculation::exactOutput(Context * context) {
   if (!m_exactOutput.isDefined()) {
     /* Because the angle unit might have changed, we do not simplify again. We
      * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
@@ -161,7 +160,7 @@ LayoutRef Calculation::createExactOutputLayout(Context * context) {
   return PoincareHelpers::CreateLayout(exactOutput(context));
 }
 
-Expression * Calculation::approximateOutput(Context * context) {
+Expression Calculation::approximateOutput(Context * context) {
   if (!m_approximateOutput.isDefined()) {
     /* To ensure that the expression 'm_output' is a matrix or a complex, we
      * call 'evaluate'. */

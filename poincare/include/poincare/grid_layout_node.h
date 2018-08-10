@@ -96,7 +96,7 @@ public:
     LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
 private:
-  GridLayoutNode * node() const { return static_cast<GridLayoutNode *>(LayoutReference::node()); }
+  virtual GridLayoutNode * node() const override { return static_cast<GridLayoutNode *>(LayoutReference::node()); }
   void setNumberOfRows(int rows) {
     assert(rows >= 0);
     node()->setNumberOfRows(rows);

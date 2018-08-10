@@ -15,7 +15,7 @@ public:
     assert(m_numberOfChildren >= decrement);
     m_numberOfChildren-= decrement;
   }
-  void eraseNumberOfChildren() { m_numberOfChildren = 0; }
+  void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
 
   // Comparison
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
@@ -34,22 +34,11 @@ private:
 class NAryExpression : public Expression {
 public:
   NAryExpression(const NAryExpressionNode * n) : Expression(n) {}
-  void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
-    Expression::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
-  }
-  // Remove puts a child at the end of the pool
-  void removeChildAtIndexInPlace(int i) override {
-    Expression::removeChildAtIndexInPlace(i);
-  }
-  void removeChildInPlace(TreeByReference t, int childNumberOfChildren) {
-    Expression::removeChildInPlace(t, childNumberOfChildren);
-  }
-  void removeChildrenInPlace(int currentNumberOfChildren) {
-    Expression::removeChildrenInPlace(currentNumberOfChildren);
-  }
-  void removeChildrenAndDestroyInPlace(int currentNumberOfChildren) {
-    Expression::removeChildrenAndDestroyInPlace(currentNumberOfChildren);
-  }
+  using Expression::addChildAtIndexInPlace;
+  using Expression::removeChildrenInPlace;
+  using Expression::removeChildrenAndDestroyInPlace;
+  using Expression::removeChildAtIndexInPlace;
+  using Expression::removeChildInPlace;
 };
 
 }

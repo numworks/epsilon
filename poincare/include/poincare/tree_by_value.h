@@ -55,15 +55,12 @@ protected:
   TreeByValue(const TreeNode * n) : TreeByReference(n) {}
 
   /* Hierarchy operations */
-  // Add
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
   void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
     TreeByReference::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
   }
-  /*
-private:
-  // Fix 
-  using TreeByReference::addChildAtIndexInPlace;
-  */
+#pragma clang diagnostic pop
 };
 
 }

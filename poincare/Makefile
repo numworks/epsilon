@@ -16,7 +16,12 @@ objs += $(addprefix poincare/src/,\
   fraction_layout_node.o\
   grid_layout_node.o\
   horizontal_layout_node.o\
+  integral_layout_node.o\
+  left_parenthesis_layout_node.o\
+  left_square_bracket_layout_node.o\
   matrix_layout_node.o\
+  right_parenthesis_layout_node.o\
+  right_square_bracket_layout_node.o\
 )
 
 objs += $(addprefix poincare/src/,\

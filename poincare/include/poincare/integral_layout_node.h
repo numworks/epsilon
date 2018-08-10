@@ -29,6 +29,8 @@ public:
   char XNTChar() const override { return 'x'; }
 
   // TreeNode
+  static IntegralLayoutNode * FailedAllocationStaticNode();
+  IntegralLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(IntegralLayoutNode); }
   int numberOfChildren() const override { return 3; }
 #if TREE_LOG

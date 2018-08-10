@@ -1,4 +1,5 @@
 #include <poincare/left_parenthesis_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <assert.h>
 #include <stdlib.h>
 

@@ -79,11 +79,11 @@ bool VariableBoxController::ContentViewController::handleEvent(Ion::Events::Even
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     if (m_currentPage == Page::Scalar) {
       const Symbol symbol('A'+selectedRow());
-      m_context->setExpressionForSymbolName(nullptr, &symbol, *m_context);
+      m_context->setExpressionForSymbolName(Expression(), symbol, *m_context);
     }
     if (m_currentPage == Page::Matrix) {
       const Symbol symbol = Symbol::matrixSymbol('0'+(char)selectedRow());
-      m_context->setExpressionForSymbolName(nullptr, &symbol, *m_context);
+      m_context->setExpressionForSymbolName(Expression(), symbol, *m_context);
     }
     m_selectableTableView.reloadData();
     return true;
@@ -138,7 +138,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
   char label[3];
   putLabelAtIndexInBuffer(index, label);
   myCell->setLabel(label);
-  const Expression * evaluation = expressionForIndex(index);
+  const Expression evaluation = expressionForIndex(index);
   if (m_currentPage == Page::Scalar) {
     myCell->displayExpression(false);
     char buffer[PrintFloat::k_maxComplexBufferLength];

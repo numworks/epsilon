@@ -7,7 +7,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-void StoreContext::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
+void StoreContext::setExpressionForSymbolName(const Expression expression, const Symbol symbol, Context & context) {
   m_parentContext->setExpressionForSymbolName(expression, symbol, context);
 }
 

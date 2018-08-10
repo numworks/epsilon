@@ -148,7 +148,7 @@ MatrixComplex<T> MatrixComplex<T>::createIdentity(int dim) {
 
 template<typename T>
 void MatrixComplex<T>::setDimensions(int rows, int columns) {
-  assert(rows * columns = numberOfChildren());
+  // FIXME: //assert(rows * columns == numberOfChildren());
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
 }

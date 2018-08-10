@@ -127,16 +127,6 @@ bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool for
 }
 
 // Other
-bool LayoutNode::hasText() const {
-  /* A layout has text if it is not empty or an allocation failure and it is
-   * not an horizontal layout with no child or with one child with no text. */
-  if (isEmpty() || isAllocationFailure()){
-    return false;
-  }
-  int numChildren = numberOfChildren();
-  return !(isHorizontal() && (numChildren == 0 || (numChildren == 1 && !(const_cast<LayoutNode *>(this)->childAtIndex(0)->hasText()))));
-}
-
 bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
   /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
    * isCollapsable is true too. If isCollapsable changes, it might not be the

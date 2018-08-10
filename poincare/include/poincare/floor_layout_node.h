@@ -3,6 +3,7 @@
 
 #include <poincare/bracket_pair_layout_node.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -14,6 +15,8 @@ public:
   }
 
   // TreeNode
+  static FloorLayoutNode * FailedAllocationStaticNode();
+  FloorLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(FloorLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "FloorLayout"; }

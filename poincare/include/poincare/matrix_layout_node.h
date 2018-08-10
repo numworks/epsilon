@@ -80,7 +80,10 @@ public:
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }
   void setDimensions(int rows, int columns);
-  void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) override;
+  //void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) override;
+  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
+    LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
+  }
 private:
   MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(LayoutReference::node()); }
   void setNumberOfRows(int rows) {

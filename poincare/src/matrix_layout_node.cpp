@@ -300,10 +300,10 @@ void MatrixLayoutRef::setDimensions(int rows, int columns) {
   setNumberOfColumns(columns);
 }
 
-void MatrixLayoutRef::addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) {
+/*void MatrixLayoutRef::addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) {
   TreeByReference::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
   setNumberOfRows(1);
   setNumberOfColumns(currentNumberOfChildren + 1);
-}
+}*/
 
 }

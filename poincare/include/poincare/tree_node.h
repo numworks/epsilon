@@ -36,13 +36,6 @@ public:
     m_referenceCounter = refCount;
   }
 
-  void deepResetReferenceCounter() { //TODO make this method private with friends that can access it
-    setReferenceCounter(0);
-    for (TreeNode * t : depthFirstChildren()) {
-      t->setReferenceCounter(1);
-    }
-  }
-
   // Ghost
   virtual bool isGhost() const { return false; }
 

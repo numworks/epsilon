@@ -81,6 +81,7 @@ void TreeByReference::buildGhostChildren() {
     renameNode(copy, false);
     for (TreeNode * child : copy->depthFirstChildren()) {
       renameNode(child, false);
+      child->retain();
     }
     return copy;
   }

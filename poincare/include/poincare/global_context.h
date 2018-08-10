@@ -2,9 +2,10 @@
 #define POINCARE_GLOBAL_CONTEXT_H
 
 #include <poincare/context.h>
-#include <poincare/matrix.h>
-#include <poincare/approximation.h>
+//#include <poincare/matrix.h>
+#include <poincare/float.h>
 #include <poincare/decimal.h>
+#include <poincare/symbol.h>
 
 namespace Poincare {
 
@@ -17,22 +18,21 @@ public:
   GlobalContext();
   /* The expression recorded in global context is already a expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
-  const Expression expressionForSymbol(const SymbolReference symbol) override;
-  LayoutRef layoutForSymbol(const SymbolReference symbol, int numberOfSignificantDigits);
-  void setExpressionForSymbolName(const Expression expression, const SymbolReference symbol, Context & context) override;
+  const Expression expressionForSymbol(const Symbol symbol) override;
+  //LayoutRef layoutForSymbol(const Symbol symbol, int numberOfSignificantDigits);
+  void setExpressionForSymbolName(const Expression expression, const Symbol symbol, Context & context) override;
   static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
   static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
 private:
-  static Decimal * defaultExpression();
-  int symbolIndex(const Symbol * symbol) const;
+  static Decimal defaultExpression();
+  int symbolIndex(const Symbol symbol) const;
   Expression m_expressions[k_maxNumberOfScalarExpressions];
-  MatrixReference m_matrixExpressions[k_maxNumberOfMatrixExpressions];
+  //Matrix m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   /* Matrix layout memoization */
-  LayoutRef m_matrixLayouts[k_maxNumberOfMatrixExpressions];
-  Approximation<double> m_pi;
-  Approximation<double> m_e;
-  Approximation<double> m_i;
+  //LayoutRef m_matrixLayouts[k_maxNumberOfMatrixExpressions];
+  Float<double> m_pi;
+  Float<double> m_e;
 };
 
 }

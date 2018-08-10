@@ -83,11 +83,11 @@ public:
   static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
   Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent);
   Decimal(const DecimalNode * node) : Number(node) {}
+  Decimal(Integer m, int e);
   constexpr static int k_maxExponentLength = 4;
 private:
   DecimalNode * node() const override { return static_cast<DecimalNode *>(Number::node()); }
   template <typename T> Decimal(T f);
-  Decimal(Integer m, int e);
   Decimal(size_t size) : Number(nullptr) {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<DecimalNode>(size);
     m_identifier = node->identifier();

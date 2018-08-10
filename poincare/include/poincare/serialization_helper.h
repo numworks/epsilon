@@ -7,7 +7,7 @@ namespace Poincare {
 
 namespace SerializationHelper {
   /* SerializableReference to Text */
-  static int Infix(
+  int Infix(
       const SerializationHelperInterface * interface,
       char * buffer,
       int bufferSize,
@@ -17,7 +17,7 @@ namespace SerializationHelper {
       int firstChildIndex = 0,
       int lastChildIndex = -1);
 
-  static int Prefix(
+  int Prefix(
       const SerializationHelperInterface * interface,
       char * buffer,
       int bufferSize,
@@ -27,7 +27,7 @@ namespace SerializationHelper {
       bool writeFirstChild = true);
 
   /* Write one char in buffer */
-  static int Char(char * buffer, int bufferSize, char charToWrite);
+  int Char(char * buffer, int bufferSize, char charToWrite);
 };
 
 }

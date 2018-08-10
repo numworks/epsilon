@@ -542,8 +542,8 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixC
 // Power
 
 Expression Power::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
-  assert(s == Sign::Positive);
-  assert(childAtIndex(0).sign() == Sign::Negative);
+  assert(s == ExpressionNode::Sign::Positive);
+  assert(childAtIndex(0).sign() == ExpressionNode::Sign::Negative);
   return Power(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit), childAtIndex(1));
 }
 

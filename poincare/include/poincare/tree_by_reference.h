@@ -110,6 +110,10 @@ protected:
     setIdentifierAndRetain(node->identifier());
   }
   TreeByReference() : m_identifier(-1) {}
+  void setIdentifierAndRetain(int newId) {
+    m_identifier = newId;
+    node()->retain();
+  }
   /* Hierarchy operations */
   // Add
   virtual void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren);
@@ -125,11 +129,6 @@ private:
 
   // Add ghost children on layout construction
   void buildGhostChildren();
-
-  void setIdentifierAndRetain(int newId) {
-    m_identifier = newId;
-    node()->retain();
-  }
 };
 
 }

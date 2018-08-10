@@ -57,8 +57,9 @@ QUIZ_CASE(tree_by_value_deep_copies) {
   assert_pool_size(0);
   BlobByValue b1(1);
   BlobByValue b2(2);
+  assert_pool_size(2);
   PairByValue p(b1, b2);
-  assert_pool_size(3);
+  assert_pool_size(5);
   PairByValue p2 = p;
-  assert_pool_size(6);
+  assert_pool_size(8);
 }

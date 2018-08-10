@@ -57,6 +57,7 @@ QUIZ_CASE(tree_by_reference_does_not_copy) {
   assert_pool_size(0);
   BlobByReference b1(1);
   BlobByReference b2(2);
+  assert_pool_size(2);
   PairByReference p(b1, b2);
   assert_pool_size(3);
   PairByReference p2 = p;

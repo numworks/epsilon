@@ -123,4 +123,6 @@ Number Number::Power(const Number i, const Number j) {
     );
 }
 
+template Number Number::DecimalNumber<float>(float);
+template Number Number::DecimalNumber<double>(double);
 }

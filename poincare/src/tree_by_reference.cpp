@@ -1,5 +1,8 @@
 #include <poincare/tree_by_reference.h>
 #include <poincare/ghost_reference.h>
+#if POINCARE_TREE_LOG
+#include <iostream>
+#endif
 
 namespace Poincare {
 
@@ -148,6 +151,13 @@ void TreeByReference::swapChildrenInPlace(int i, int j) {
   TreePool::sharedPool()->move(firstChild.node()->nextSibling(), secondChild.node(), secondChild.numberOfChildren());
   TreePool::sharedPool()->move(childAtIndex(secondChildIndex).node()->nextSibling(), firstChild.node(), firstChild.numberOfChildren());
 }
+
+#if POINCARE_TREE_LOG
+void TreeByReference::log() const {
+  node()->log(std::cout);
+  std::cout << std::endl;
+}
+#endif
 
 /* Protected */
 

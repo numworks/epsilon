@@ -20,6 +20,11 @@ MatrixNode * MatrixNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
+void MatrixNode::didAddChildAtIndex(int newNumberOfChildren) {
+  setNumberOfRows(1);
+  setNumberOfColumns(newNumberOfChildren);
+}
+
 int MatrixNode::polynomialDegree(char symbolName) const {
   return -1;
 }
@@ -97,12 +102,6 @@ void Matrix::setDimensions(int rows, int columns) {
   }
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
-}
-
-void Matrix::addChildAtIndexInPlace(Expression t, int index, int currentNumberOfChildren) {
-  Expression::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
-  setNumberOfRows(1);
-  setNumberOfColumns(currentNumberOfChildren + 1);
 }
 
 int Matrix::rank(Context & context, Preferences::AngleUnit angleUnit) {

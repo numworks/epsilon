@@ -33,6 +33,7 @@ public:
   static MatrixLayoutNode * FailedAllocationStaticNode();
   MatrixLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(MatrixLayoutNode); }
+  void didAddChildAtIndex(int newNumberOfChildren) override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "MatrixLayout";
@@ -80,7 +81,6 @@ public:
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }
   void setDimensions(int rows, int columns);
-  //void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) override;
   void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
     LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }

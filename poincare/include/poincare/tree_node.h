@@ -74,6 +74,8 @@ public:
   bool hasChild(const TreeNode * child) const;
   bool hasAncestor(const TreeNode * node, bool includeSelf) const;
   bool hasSibling(const TreeNode * e) const;
+  // AddChild collateral effect
+  virtual void didAddChildAtIndex(int newNumberOfChildren) {}
 
   template <typename T>
   class Iterator {

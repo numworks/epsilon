@@ -52,7 +52,7 @@ private:
     Page pageAtIndex(int index);
     void putLabelAtIndexInBuffer(int index, char * buffer);
     I18n::Message nodeLabelAtIndex(int index);
-    const Poincare::Expression * expressionForIndex(int index);
+    const Poincare::Expression expressionForIndex(int index);
     Poincare::LayoutRef layoutRefForIndex(int index);
     Poincare::GlobalContext * m_context;
     Responder * m_sender;

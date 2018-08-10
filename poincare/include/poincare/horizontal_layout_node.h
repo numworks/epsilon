@@ -1,9 +1,9 @@
 #ifndef POINCARE_HORIZONTAL_LAYOUT_NODE_H
 #define POINCARE_HORIZONTAL_LAYOUT_NODE_H
 
-#include "layout_reference.h"
-#include "layout_node.h"
-#include "layout_cursor.h"
+#include <poincare/layout_reference.h>
+#include <poincare/layout_node.h>
+#include <poincare/layout_cursor.h>
 
 namespace Poincare {
 

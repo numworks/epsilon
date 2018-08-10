@@ -8,13 +8,17 @@
 %{
 #include <poincare.h>
 
+
+// FIXME
+// TODO: This is copy-pasted. Share it in header
+
 /* Usually, YYSTYPE is defined as the union of the objects it might be. Here,
  * some of these objects are non-trivial (specific copy-constructors and
  * destructors), so they cannot be part of a union. We must use a struct to
  * define YYSTYPE. */
 struct OurNodeValue{
     Poincare::Expression expression;
-    Poincare::Symbol symbol;
+    //Poincare::Symbol symbol;
     struct {
       char * address;
       int length;
@@ -150,7 +154,7 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 %type <expression> pow;
 %type <expression> exp;
 %type <expression> number;
-%type <symbol> symb;
+%type <expression> symb;
 /* TODO %type <listData> lstData; */
 /* MATRICES_ARE_DEFINED */
 /* TODO %type <matrixData> mtxData; */

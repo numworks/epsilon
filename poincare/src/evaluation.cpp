@@ -1,5 +1,4 @@
 #include <poincare/evaluation.h>
-#include <poincare/allocation_failed_evaluation.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -9,10 +8,7 @@ Expression Evaluation<T>::complexToExpression(Preferences::ComplexFormat complex
   return node()->complexToExpression(complexFormat);
 }
 
-template Expression EvaluationNode<float>::complexToExpression(Preferences::ComplexFormat) const;
-template Expression EvaluationNode<double>::complexToExpression(Preferences::ComplexFormat) const;
-
-template class Evaluation<float>;
-template class Evaluation<double>;
+template Expression Evaluation<float>::complexToExpression(Preferences::ComplexFormat) const;
+template Expression Evaluation<double>::complexToExpression(Preferences::ComplexFormat) const;
 
 }

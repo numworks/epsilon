@@ -130,6 +130,8 @@ Complex<T>::Complex(std::complex<T> c) :
   }
 }
 
+template class ComplexNode<float>;
+template class ComplexNode<double>;
 template class Complex<float>;
 template class Complex<double>;
 

@@ -100,6 +100,11 @@ public:
   // Swap
   void swapChildrenInPlace(int i, int j);
 
+  /* Logging */
+#if POINCARE_TREE_LOG
+  void log() const;
+#endif
+
 protected:
   /* Constructor */
   TreeByReference(const TreeNode * node) {

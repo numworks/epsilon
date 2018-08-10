@@ -55,8 +55,6 @@ public:
   int numberOfSerializableChildren() const override { return numberOfChildren(); }
 
   // TreeNode
-  static TreeNode * FailedAllocationStaticNode();
-
   LayoutNode * next() const override { return static_cast<LayoutNode *>(TreeNode::next()); }
   LayoutNode * nextSibling() const override { return static_cast<LayoutNode *>(TreeNode::nextSibling()); }
 

@@ -7,6 +7,11 @@ objs += $(addprefix poincare/src/,\
   binomial_coefficient_layout_node.o\
   bracket_layout_node.o\
   bracket_pair_layout_node.o\
+  ceiling_layout_node.o\
+  floor_layout_node.o\
+)
+
+objs += $(addprefix poincare/src/,\
   addition.o\
   arithmetic.o\
   expression_lexer.o\

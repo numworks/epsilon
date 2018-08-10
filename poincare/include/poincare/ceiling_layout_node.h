@@ -3,6 +3,7 @@
 
 #include <poincare/bracket_pair_layout_node.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -13,6 +14,8 @@ public:
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "ceil");
   }
   // TreeNode
+  static CeilingLayoutNode * FailedAllocationStaticNode();
+  CeilingLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(CeilingLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "CeilingLayout"; }

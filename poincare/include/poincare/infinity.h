@@ -16,8 +16,10 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(InfinityNode); }
-#if TREE_LOG
-  const char * description() const override { return "Infinity";  }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream stream) {
+    stream << "Infinity";
+  }
 #endif
 
   // Properties

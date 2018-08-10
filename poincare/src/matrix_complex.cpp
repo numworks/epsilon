@@ -160,6 +160,9 @@ void MatrixComplex<T>::addChildAtIndexInPlace(Complex<T> t, int index, int curre
   setNumberOfColumns(currentNumberOfChildren + 1);
 }
 
+template class MatrixComplexNode<float>;
+template class MatrixComplexNode<double>;
+
 template class MatrixComplex<float>;
 template class MatrixComplex<double>;
 

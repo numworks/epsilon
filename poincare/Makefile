@@ -29,7 +29,6 @@ objs += $(addprefix poincare/src/,\
   right_parenthesis_layout_node.o\
   right_square_bracket_layout_node.o\
   sequence_layout_node.o\
-  square_bracket_layout_node.o\
   sum_layout_node.o\
   vertical_offset_layout_node.o\
 )

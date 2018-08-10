@@ -107,9 +107,11 @@ public:
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression replaceSymbolWithExpression(char symbol, Expression expression) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
+
+  // Symbol
+  char name() const { return node()->name(); }
 private:
   SymbolNode * node() const override { return static_cast<SymbolNode *>(Expression::node()); }
-  char name() const { return node()->name(); }
 };
 
 }

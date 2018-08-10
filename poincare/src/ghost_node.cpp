@@ -1,4 +1,5 @@
 #include <poincare/ghost_node.h>
+#include <poincare/tree_pool.h>
 
 namespace Poincare {
 

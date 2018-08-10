@@ -122,7 +122,7 @@
 #include <poincare/parenthesis.h>
 #include <poincare/division.h>
 #include <poincare/undefined.h>
-
+#include <poincare/matrix.h>
 #include <poincare/print_float.h>
 
 #endif

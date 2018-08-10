@@ -250,9 +250,9 @@ bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
   while (currentAncestor.isDefined()) {
     if (currentAncestor.isMatrix()) {
       if (add) {
-        MatrixLayoutRef(currentAncestor.node()).addGreySquares();
+        MatrixLayoutRef(static_cast<MatrixLayoutNode *>(currentAncestor.node())).addGreySquares();
       } else {
-        MatrixLayoutRef(currentAncestor.node()).removeGreySquares();
+        MatrixLayoutRef(static_cast<MatrixLayoutNode *>(currentAncestor.node())).removeGreySquares();
       }
       changedSquares = true;
     }

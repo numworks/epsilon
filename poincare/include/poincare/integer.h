@@ -183,6 +183,8 @@ friend class Decimal;
 public:
   Integer(IntegerNode * n) : Number(n) {}
   Integer(const char * digits, size_t length, bool negative);
+  Integer(const char * digits) : Integer(digits, strlen(digits), false) {
+  }
   Integer(const NaturalIntegerAbstract * naturalInteger);
   Integer(native_int_t i);
   Integer(double_native_int_t i);

@@ -15,6 +15,11 @@ MatrixLayoutNode * MatrixLayoutNode::FailedAllocationStaticNode() {
 
 // MatrixLayoutNode
 
+void MatrixLayoutNode::didAddChildAtIndex(int newNumberOfChildren) {
+  setNumberOfRows(1);
+  setNumberOfColumns(newNumberOfChildren);
+}
+
 void MatrixLayoutNode::addGreySquares() {
   if (!hasGreySquares()) {
     LayoutRef thisRef(this);
@@ -299,11 +304,5 @@ void MatrixLayoutRef::setDimensions(int rows, int columns) {
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
 }
-
-/*void MatrixLayoutRef::addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) {
-  TreeByReference::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
-  setNumberOfRows(1);
-  setNumberOfColumns(currentNumberOfChildren + 1);
-}*/
 
 }

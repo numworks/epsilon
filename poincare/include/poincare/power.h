@@ -81,7 +81,10 @@ private:
 
 class Power : public Expression {
 public:
-  Power(Expression base, Expression exponent);
+  Power(Expression base, Expression exponent) : Expression(TreePool::sharedPool()->createTreeNode<PowerNode>()) {
+    replaceChildAtIndexInPlace(0, base);
+    replaceChildAtIndexInPlace(1, exponent);
+  }
   Power(const PowerNode * n) : Expression(n) {}
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;

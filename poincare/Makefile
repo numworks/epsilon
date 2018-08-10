@@ -153,6 +153,10 @@ objsExpected += $(addprefix poincare/src/,\
 )
 
 tests += $(addprefix poincare/test/,\
+  tree/tree_by_value.cpp\
+)
+
+testsExpected += $(addprefix poincare/test/,\
   addition.cpp\
   arithmetic.cpp\
   binomial_coefficient_layout.cpp\

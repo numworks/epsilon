@@ -1,10 +1,17 @@
 #include <poincare/product_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 
 namespace Poincare {
 
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
+ProductLayoutNode * ProductLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<ProductLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
 
 int ProductLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SequenceLayoutNode::writeDerivedClassInBuffer("product", buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);

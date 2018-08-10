@@ -12,6 +12,13 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   static SumLayoutNode * FailedAllocationStaticNode();
   SumLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+  size_t size() const override { return sizeof(SumLayoutNode); }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "SumLayout";
+  }
+#endif
+
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };

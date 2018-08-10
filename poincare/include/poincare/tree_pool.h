@@ -98,8 +98,8 @@ void TreeByReference::buildGhostChildren() {
   }
 
 #if POINCARE_TREE_LOG
-  void flatLog(std::ostream stream);
-  void treeLog(std::ostream stream);
+  void flatLog(std::ostream & stream);
+  void treeLog(std::ostream & stream);
 #endif
 
   int numberOfNodes() const {

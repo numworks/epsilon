@@ -27,11 +27,7 @@ public:
   char XNTChar() const override { return 'n'; }
 
   // TreeNode
-  size_t size() const override { return sizeof(SequenceLayoutNode); }
   int numberOfChildren() const override { return 3; }
-#if TREE_LOG
-  const char * description() const override { return "Sequence Layout"; }
-#endif
 
 protected:
   constexpr static KDCoordinate k_boundHeightMargin = 2;

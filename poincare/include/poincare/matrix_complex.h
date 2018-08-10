@@ -26,10 +26,16 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixComplexNode<T>); }
-#if TREE_LOG
-  const char * description() const override { return "Evaluation matrix complex";  }
-#endif
   int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "MatrixComplex";
+  }
+  virtual void logAttributes(std::ostream & stream) const {
+    stream << " rows=\"" << m_numberOfRows << "\"";
+    stream << " columns=\"" << m_numberOfColumns << "\"";
+  }
+#endif
 
   // EvaluationNode
   typename EvaluationNode<T>::Type type() const override { return EvaluationNode<T>::Type::MatrixComplex; }

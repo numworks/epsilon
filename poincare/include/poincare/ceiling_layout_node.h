@@ -17,8 +17,10 @@ public:
   static CeilingLayoutNode * FailedAllocationStaticNode();
   CeilingLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(CeilingLayoutNode); }
-#if TREE_LOG
-  const char * description() const override { return "CeilingLayout"; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "CeilingLayout";
+  }
 #endif
 
 protected:

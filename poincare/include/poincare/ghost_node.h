@@ -12,9 +12,12 @@ public:
   // TreeNode
   int numberOfChildren() const override { return 0; }
   size_t size() const override { return sizeof(GhostNode); }
-#if TREE_LOG
-  const char * description() const override { return "Ghost";  }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "Ghost";
+  }
 #endif
+
   // Ghost
   bool isGhost() const override { return true; }
   // Allocation Failure

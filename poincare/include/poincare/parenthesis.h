@@ -13,10 +13,12 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(ParenthesisNode); }
-#if TREE_LOG
-  const char * description() const override { return "Parenthesis";  }
-#endif
   int numberOfChildren() const override { return 1; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "Parenthesis";
+  }
+#endif
 
   // Properties
   Type type() const override { return Type::Parenthesis; }

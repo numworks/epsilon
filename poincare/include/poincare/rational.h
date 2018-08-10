@@ -23,8 +23,10 @@ public:
 
   // TreeNode
   size_t size() const override;
-#if TREE_LOG
-  const char * description() const override { return "Rational";  }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "Rational";
+  }
 #endif
 
   // SerializationHelperInterface

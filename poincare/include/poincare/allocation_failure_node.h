@@ -13,11 +13,15 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailureNode<T>); }
-#if TREE_LOG
-  const char * description() const override { return "AllocationFailure";  }
-#endif
   int numberOfChildren() const override { return 0; }
   bool isAllocationFailure() const override { return true; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "AllocationFailure[";
+    T::logNodeName(stream);
+    stream << "]";
+  }
+#endif
 };
 
 }

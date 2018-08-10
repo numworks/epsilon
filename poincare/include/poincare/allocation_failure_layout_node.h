@@ -1,10 +1,10 @@
 #ifndef POINCARE_ALLOCATION_FAILURE_LAYOUT_NODE_H
 #define POINCARE_ALLOCATION_FAILURE_LAYOUT_NODE_H
 
-#include "allocation_failure_node.h"
-#include "layout_node.h"
-#include "layout_reference.h"
-#include "layout_cursor.h"
+#include <poincare/allocation_failure_node.h>
+#include <poincare/layout_node.h>
+#include <poincare/layout_reference.h>
+#include <poincare/layout_cursor.h>
 
 namespace Poincare {
 

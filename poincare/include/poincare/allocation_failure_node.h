@@ -1,6 +1,8 @@
 #ifndef POINCARE_ALLOCATION_FAILURE_NODE_H
 #define POINCARE_ALLOCATION_FAILURE_NODE_H
 
+#include <stddef.h>
+
 namespace Poincare {
 
 template <typename T>

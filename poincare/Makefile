@@ -5,6 +5,9 @@ SFLAGS += -Ipoincare/include
 objs += $(addprefix poincare/src/,\
   addition.o\
   arithmetic.o\
+  expression_lexer.o\
+  expression_parser.o\
+  layout_helper.o\
   matrix_complex.o\
   multiplication.o\
   power.o\

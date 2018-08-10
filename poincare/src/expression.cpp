@@ -10,8 +10,8 @@
 #include <ion.h>
 #include <cmath>
 #include <float.h>
-//#include "expression_parser.hpp"
-//#include "expression_lexer.hpp"
+#include "expression_parser.hpp"
+#include "expression_lexer.hpp"
 
 int poincare_expression_yyparse(Poincare::Expression * expressionOutput);
 

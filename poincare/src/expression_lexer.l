@@ -40,6 +40,19 @@
  * requires feature. */
 #include <cmath>
 #include <poincare.h>
+
+struct OurNodeValue{
+    Poincare::Expression expression;
+    Poincare::Symbol symbol;
+    struct {
+      char * address;
+      int length;
+    } string;
+    char character;
+};
+#define YYSTYPE OurNodeValue
+
+
 #include "expression_parser.hpp"
 using namespace Poincare;
 

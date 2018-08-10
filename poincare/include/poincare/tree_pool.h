@@ -148,9 +148,9 @@ private:
 
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
 
-  class AllPool {
+  class Nodes {
   public:
-    AllPool(TreeNode * node) : m_node(node) {}
+    Nodes(TreeNode * node) : m_node(node) {}
     class Iterator : public TreeNode::Iterator<TreeNode> {
     public:
       using TreeNode::Iterator<TreeNode>::Iterator;
@@ -164,11 +164,11 @@ private:
   private:
     TreeNode * m_node;
   };
-  AllPool allNodes() { return AllPool(*(begin())); }
+  Nodes allNodes() { return Nodes(*(begin())); }
 
-  class Roots {
+  class RootNodes {
   public:
-    Roots(TreeNode * node) : m_node(node) {}
+    RootNodes(TreeNode * node) : m_node(node) {}
     class Iterator : public TreeNode::Iterator<TreeNode> {
     public:
       using TreeNode::Iterator<TreeNode>::Iterator;
@@ -182,7 +182,7 @@ private:
   private:
     TreeNode * m_node;
   };
-  Roots roots() { return Roots(*(begin())); }
+  RootNodes roots() { return RootNodes(*(begin())); }
 
   TreeNode::DepthFirst<TreeNode>::Iterator begin() const { return TreeNode::DepthFirst<TreeNode>::Iterator(first()); }
   TreeNode::DepthFirst<TreeNode>::Iterator end() const { return TreeNode::DepthFirst<TreeNode>::Iterator(last()); }

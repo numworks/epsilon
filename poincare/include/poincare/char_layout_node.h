@@ -75,6 +75,7 @@ public:
 
   KDText::FontSize fontSize() const { return const_cast<CharLayoutRef *>(this)->node()->fontSize(); }
 private:
+  using LayoutReference::node;
   CharLayoutNode * node() { return static_cast<CharLayoutNode *>(LayoutReference::node());}
 };
 

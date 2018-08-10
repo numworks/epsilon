@@ -8,13 +8,10 @@
 %{
 #include <poincare.h>
 
-/* TODO Comment
-  Usually, YYSTYPE is defined as the union of the objects it might be. Here, these objects are non-trivial, as some have comple constructors and destructors
-  struct et pas union car constructeurs/compliqués donc si union on ne sait pas comment appeler
- on a besoin de mettre la meme chose dans le lexer car on arrive pas à mettre la struc dans expression_parser.hpp qui est inclus dans expression_lexer normalement pour ça
-
-
-*/
+/* Usually, YYSTYPE is defined as the union of the objects it might be. Here,
+ * some of these objects are non-trivial (specific copy-constructors and
+ * destructors), so they cannot be part of a union. We must use a struct to
+ * define YYSTYPE. */
 struct OurNodeValue{
     Poincare::Expression expression;
     Poincare::Symbol symbol;

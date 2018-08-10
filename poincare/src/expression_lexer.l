@@ -41,6 +41,9 @@
 #include <cmath>
 #include <poincare.h>
 
+/* YYSTYPE is already defined in expression_parser.y but the genereated code is
+ * included in expression_parser.cpp, not .hpp, so we cannot use it here. We
+ * thus copy-pasted the YYSTYPE definition. */
 struct OurNodeValue{
     Poincare::Expression expression;
     Poincare::Symbol symbol;

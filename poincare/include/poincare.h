@@ -105,6 +105,7 @@
 #include <poincare/vertical_offset_layout_node.h>
 #else
 
+#include <poincare/global_context.h>
 #include <poincare/addition.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/multiplication.h>

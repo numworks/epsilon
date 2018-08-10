@@ -8,15 +8,23 @@
 %{
 #include <poincare.h>
 
-struct YYSTYPE {
-  Poincare::Expression expression;
-  Poincare::Symbol symbol;
-  struct {
-    char * address;
-    int length;
-  } string;
-  char character;
+/* TODO Comment
+  Usually, YYSTYPE is defined as the union of the objects it might be. Here, these objects are non-trivial, as some have comple constructors and destructors
+  struct et pas union car constructeurs/compliqués donc si union on ne sait pas comment appeler
+ on a besoin de mettre la meme chose dans le lexer car on arrive pas à mettre la struc dans expression_parser.hpp qui est inclus dans expression_lexer normalement pour ça
+
+
+*/
+struct OurNodeValue{
+    Poincare::Expression expression;
+    Poincare::Symbol symbol;
+    struct {
+      char * address;
+      int length;
+    } string;
+    char character;
 };
+#define YYSTYPE OurNodeValue
 
 
 /* The lexer manipulates tokens defined by the parser, so we need the following

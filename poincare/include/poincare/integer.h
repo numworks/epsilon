@@ -138,9 +138,15 @@ public:
     stream << "Integer";
   }
   virtual void logAttributes(std::ostream & stream) const override {
-    char buffer[256];
-    serialize(buffer, sizeof(buffer));
-    stream << " value=\"" << buffer << "\"";
+    stream << " numberOfDigits=\"" << m_numberOfDigits << "\"";
+    stream << " digits=\"";
+    for (int i=0; i<m_numberOfDigits; i++) {
+      stream << m_digits[i];
+      if (i != (m_numberOfDigits-1)) {
+        stream << ",";
+      }
+    }
+    stream << "\"";
   }
 #endif
 

@@ -3,6 +3,8 @@ SFLAGS += -Ipoincare/include
 #include poincare/src/simplify/Makefile
 #include poincare/src/simplification/Makefile
 objs += $(addprefix poincare/src/,\
+  absolute_value_layout_node.o\
+  binomial_coefficient_layout_node.o\
   addition.o\
   arithmetic.o\
   expression_lexer.o\

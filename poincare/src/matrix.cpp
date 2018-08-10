@@ -3,6 +3,10 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/matrix.h>
+#include <poincare/rational.h>
+#include <poincare/division.h>
+#include <poincare/subtraction.h>
+#include <poincare/matrix_complex.h>
 #include <poincare/matrix_layout_node.h>
 #include <cmath>
 #include <float.h>
@@ -10,24 +14,22 @@ extern "C" {
 
 namespace Poincare {
 
+MatrixNode * MatrixNode::FailedAllocationStaticNode() {
+  static AllocationFailureMatrixNode failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
+
 int MatrixNode::polynomialDegree(char symbolName) const {
   return -1;
 }
 
 LayoutRef MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   MatrixLayoutRef layout;
-  /* To keep track of the number of children, number of columns is set to 1 and
-   * number of rows is incremented with each child addition. The real number of
-   * rows and columns is properly set once all children are added. */
-  layout.setNumberOfRows(0);
-  layout.setNumberOfColumns(1);
-  LayoutRef castedLayout(layout.node());
   for (int i = 0; i < numberOfChildren(); i++) {
-    castedLayout.addChildAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
-    layout.setNumberOfRows(i+1);
+    layout.addChildAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
   }
-  layout.setNumberOfRows(m_numberOfRows);
-  layout.setNumberOfColumns(m_numberOfColumns);
+  layout.setDimensions(m_numberOfRows, m_numberOfColumns);
   return layout;
 }
 
@@ -81,62 +83,34 @@ template<typename T>
 Evaluation<T> MatrixNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   MatrixComplex<T> matrix;
   for (int i = 0; i < numberOfChildren(); i++) {
-    Evaluation<T> operandEvaluation = childAtIndex(i)->approximate(T(), context, angleUnit);
-    if (operandEvaluation.node()->type() != Evaluation<T>::Type::Complex) {
-      result.addChildTreeAtIndex(Complex<T>::Undefined(), i, i);
-    } else {
-      result.addChildTreeAtIndex(compute(*child, angleUnit), i, i);
-    }
+    matrix.addChildAtIndexInPlace(childAtIndex(i)->approximate(T(), context, angleUnit), i, i);
   }
-  matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
+  matrix.setDimensions(numberOfRows(), numberOfColumns());
   return matrix;
 }
 
-// MATRIX REFERENCE
+// MATRIX
 
-void MatrixReference::setDimensions(int rows, int columns) {
-  if (isAllocationFailure()) {
-    return;
+void Matrix::setDimensions(int rows, int columns) {
+  if (node()->type() != ExpressionNode::Type::AllocationFailure) {
+    assert(rows * columns == node()->numberOfChildren());
   }
-  assert(rows * columns = numberOfChildren());
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
 }
 
-int MatrixReference::numberOfRows() const {
-  if (isAllocationFailure()) {
-    return 0;
-  }
-  return typedNode()->numberOfRows();
-}
-
-int MatrixReference::numberOfColumns() const {
-  if (isAllocationFailure()) {
-    return 0;
-  }
-  return typedNode()->numberOfColumns();
-}
-
-void MatrixReference::addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) {
-  Expression::addChildTreeAtIndex(t, index, currentNumberOfChildren);
-  if (isAllocationFailure()) {
-    return;
-  }
+void Matrix::addChildAtIndexInPlace(Expression t, int index, int currentNumberOfChildren) {
+  Expression::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
   setNumberOfRows(1);
   setNumberOfColumns(currentNumberOfChildren + 1);
 }
 
-int MatrixReference::rank(Context & context, Preferences::AngleUnit angleUnit, bool inPlace) {
-  MatrixReference m = inPlace ? MatrixReference(this) : MatrixReference(clone().node());
-  m.rowCanonize(context, angleUnit);
+int Matrix::rank(Context & context, Preferences::AngleUnit angleUnit) {
+  Matrix m = rowCanonize(context, angleUnit);
   int rank = m.numberOfRows();
   int i = rank-1;
   while (i >= 0) {
     int j = m.numberOfColumns()-1;
-    Expression child = matrixChild(i,j);
-    if (child.isAllocationFailure()) {
-      return 0;
-    }
     while (j >= i && matrixChild(i,j).isRationalZero()) {
       j--;
     }
@@ -151,7 +125,7 @@ int MatrixReference::rank(Context & context, Preferences::AngleUnit angleUnit, b
 }
 
 template<typename T>
-int MatrixReference::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
+int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   if (numberOfRows != numberOfColumns) {
     return -1;
   }
@@ -182,35 +156,20 @@ int MatrixReference::ArrayInverse(T * array, int numberOfRows, int numberOfColum
   return 0;
 }
 
-void MatrixReference::setNumberOfRows(int rows) {
-  if (isAllocationFailure()) {
-    return;
-  }
-  assert(rows >= 0);
-  typedNode()->setNumberOfRows(rows);
-}
-
-void MatrixReference::setNumberOfColumns(int columns) {
-  if (isAllocationFailure()) {
-    return;
-  }
-  assert(columns >= 0);
-  typedNode()->setNumberOfColumns(columns);
-}
-
-void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, MultiplicationReference determinant) {
+Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication determinant) {
   // The matrix has to be reduced to be able to spot 0 inside it
   Expression reduced = deepReduce(context, angleUnit);
   /* The MatrixNode should change only in 2 cases:
    * - Allocation failure
    * - One of the child is Undefined
    */
-  if (reduced != *this) {
-    return;
+  if (reduced.type() != ExpressionNode::Type::Matrix) {
+    return Matrix();
   }
+  Matrix matrix = Matrix(static_cast<MatrixNode *>(reduced.node()));
 
-  int m = numberOfRows();
-  int n = numberOfColumns();
+  int m = matrix.numberOfRows();
+  int n = matrix.numberOfColumns();
 
   int h = 0; // row pivot
   int k = 0; // column pivot
@@ -218,34 +177,34 @@ void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angl
   while (h < m && k < n) {
     // Find the first non-null pivot
     int iPivot = h;
-    while (iPivot < m && matrixChild(iPivot, k).isRationalZero()) {
+    while (iPivot < m && matrix.matrixChild(iPivot, k).isRationalZero()) {
       iPivot++;
     }
     if (iPivot == m) {
       // No non-null coefficient in this column, skip
       k++;
       // Update determinant: det *= 0
-      if (determinant) { determinant.addChildTreeAtIndex(RationalReference(0), 0, determinant.numberOfChildren()); }
+      if (determinant.isDefined()) { determinant.addChildAtIndexInPlace(Rational(0), 0, determinant.numberOfChildren()); }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
         for (int col = h; col < n; col++) {
-          swapChildrenInPlace(iPivot*n+col, h*n+col);
+          matrix.swapChildrenInPlace(iPivot*n+col, h*n+col);
         }
         // Update determinant: det *= -1
-        if (determinant) { determinant.addChildTreeAtIndex(RationalReference(-1), 0, determinant.numberOfChildren()); }
+        if (determinant.isDefined()) { determinant.addChildAtIndexInPlace(Rational(-1), 0, determinant.numberOfChildren()); }
       }
       /* Set to 1 M[h][k] by linear combination */
       Expression divisor = matrixChild(h, k);
       // Update determinant: det *= divisor
-      if (determinant) { determinant.addChildTreeAtIndex(divisor.clone()); }
+      if (determinant.isDefined()) { determinant.addChildAtIndexInPlace(divisor, 0, determinant.numberOfChildren()); }
       for (int j = k+1; j < n; j++) {
         Expression opHJ = matrixChild(h, j);
-        Expression newOpHJ = DivisionReference(opHJ, divisor.clone());
-        replaceTreeChildAtIndex(h*n+j, newOpHJ);
-        newOpHJ.node()->shallowReduce(context, angleUnit);
+        Expression newOpHJ = Division(opHJ, divisor);
+        newOpHJ = newOpHJ.shallowReduce(context, angleUnit);
+        matrix.replaceChildAtIndexInPlace(h*n+j, newOpHJ);
       }
-      matrixChild(h, k).replaceWith(RationalReference(1));
+      matrix.replaceChildAtIndexInPlace(h*n+k, Rational(1));
 
       /* Set to 0 all M[i][j] i != h, j > k by linear combination */
       for (int i = 0; i < m; i++) {
@@ -253,21 +212,20 @@ void MatrixReference::rowCanonize(Context & context, Preferences::AngleUnit angl
         Expression factor = matrixChild(i, k);
         for (int j = k+1; j < n; j++) {
           Expression opIJ = matrixChild(i, j);
-          Expression newOpIJ = SubtractionReference(opIJ, MultiplicationReference(matrixChild(h, j).clone(), factor.clone()));
-          replaceTreeChildAtIndex(i*n+j, newOpIJ);
-          newOpIJ.childAtIndex(1)->node()->shallowReduce(context, angleUnit);
-          newOpIJ.node()->shallowReduce(context, angleUnit);
+          Expression newOpIJ = Subtraction(opIJ, Multiplication(matrixChild(h, j), factor).shallowReduce(context, angleUnit)).shallowReduce(context, angleUnit);
+          matrix.replaceChildAtIndexInPlace(i*n+j, newOpIJ);
         }
-        matrixChild(i, k).replaceWith(RationalReference(0));
+        matrix.replaceChildAtIndexInPlace(i*n+k, Rational(0));
       }
       h++;
       k++;
     }
   }
+  return matrix;
 }
 
 template<typename T>
-void MatrixReference::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * determinant) {
+void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * determinant) {
   int h = 0; // row pivot
   int k = 0; // column pivot
 
@@ -319,11 +277,11 @@ void MatrixReference::ArrayRowCanonize(T * array, int numberOfRows, int numberOf
 }
 
 #if MATRIX_EXACT_REDUCING
-MatrixReference MatrixReference::transpose() const {
-  MatrixReference matrix();
+Matrix Matrix::transpose() const {
+  Matrix matrix();
   for (int i = 0; i < m_numberOfRows; i++) {
     for (int j = 0; j < m_numberOfColumns; j++) {
-      addChildTreeAtIndex(childAtIndex(i*m_numberOfRows+j).clone(), j*m_numberOfRows+i, j*m_numberOfRows+i);
+      matrix.addChildAtIndexInPlace(childAtIndex(i*m_numberOfRows+j), j*m_numberOfRows+i, j*m_numberOfRows+i);
     }
   }
   // Intentionally swapping dimensions for transpose
@@ -331,48 +289,44 @@ MatrixReference MatrixReference::transpose() const {
   return matrix;
 }
 
-Matrix * MatrixReference::createIdentity(int dim) {
-  MatrixReference matrix();
+Matrix Matrix::createIdentity(int dim) {
+  Matrix matrix();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      if (i == j) {
-        addChildTreeAtIndex(childAtIndex(RationalReference(1), i*dim+j, i*dim+j);
-      } else {
-        addChildTreeAtIndex(childAtIndex(RationalReference(0), i*dim+j, i*dim+j);
-      }
+      matrix.addChildAtIndexInPlace(i == j ? Rational(1) : Rational(0), i*dim+j, i*dim+j);
     }
   }
   matrix.setDimensions(dim, dim);
   return matrix;
 }
 
-Expression * MatrixReference::inverse(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Matrix::inverse(Context & context, Preferences::AngleUnit angleUnit) const {
   if (m_numberOfRows != m_numberOfColumns) {
-    return UndefinedReference();
+    return Undefined();
   }
   int dim = m_numberOfRows;
   /* Create the matrix inv = (A|I) with A the input matrix and I the dim identity matrix */
-  MatrixReference AI;
+  Matrix AI;
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      addChildTreeAtIndex(matrixChild(i, j).clone(), i*2*dim+j, i*2*dim+j);
+      AI.addChildAtIndexInPlace(matrixChild(i, j), i*2*dim+j, i*2*dim+j);
     }
     for (int j = dim; j < 2*dim; j++) {
-      addChildTreeAtIndex(j-dim == i ? RationalReference(1) : RationalReference(0), i*2*dim+j, i*2*dim+j);
+      AI.addChildAtIndexInPlace(j-dim == i ? Rational(1) : Rational(0), i*2*dim+j, i*2*dim+j);
     }
   }
   AI.setDimensions(dim, 2*dim);
-  AI.rowCanonize(context, angleUnit);
+  AI = AI.rowCanonize(context, angleUnit);
   // Check inversibility
   for (int i = 0; i < dim; i++) {
-    if (AI.matrixChild(i, i)->type() != Type::Rational || !static_cast<RationalNode *>(AI.matrixChild(i, i)->node())->isOne()) {
-      return UndefinedReference();
+    if (AI.matrixChild(i, i)->type() != ExpressionNode::Type::Rational || !static_cast<RationalNode *>(AI.matrixChild(i, i)->node())->isOne()) {
+      return Undefined();
     }
   }
-  MatrixReference inverse();
+  Matrix inverse();
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      addChildTreeAtIndex(AI.matrixChild(i, j+dim), i*dim+j, i*dim+j);
+      addChildAtIndexInPlace(AI.matrixChild(i, j+dim), i*dim+j, i*dim+j);
     }
   }
   inverse.setDimensions(dim, dim);
@@ -381,11 +335,11 @@ Expression * MatrixReference::inverse(Context & context, Preferences::AngleUnit 
 
 #endif
 
-template int MatrixReference::ArrayInverse<float>(float *, int, int);
-template int MatrixReference::ArrayInverse<double>(double *, int, int);
-template int MatrixReference::ArrayInverse<std::complex<float>>(std::complex<float> *, int, int);
-template int MatrixReference::ArrayInverse<std::complex<double>>(std::complex<double> *, int, int);
-template void MatrixReference::ArrayRowCanonize<std::complex<float> >(std::complex<float>*, int, int, std::complex<float>*);
-template void MatrixReference::ArrayRowCanonize<std::complex<double> >(std::complex<double>*, int, int, std::complex<double>*);
+template int Matrix::ArrayInverse<float>(float *, int, int);
+template int Matrix::ArrayInverse<double>(double *, int, int);
+template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float> *, int, int);
+template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double> *, int, int);
+template void Matrix::ArrayRowCanonize<std::complex<float> >(std::complex<float>*, int, int, std::complex<float>*);
+template void Matrix::ArrayRowCanonize<std::complex<double> >(std::complex<double>*, int, int, std::complex<double>*);
 
 }

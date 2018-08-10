@@ -72,6 +72,7 @@ objs += $(addprefix poincare/src/,\
   ghost_node.o\
   preferences.o\
   evaluation.o\
+  matrix.o\
 )
 
 objsExpected += $(addprefix poincare/src/,\

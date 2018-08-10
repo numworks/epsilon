@@ -148,13 +148,18 @@ MatrixComplex<T> MatrixComplex<T>::createIdentity(int dim) {
 
 template<typename T>
 void MatrixComplex<T>::setDimensions(int rows, int columns) {
-  // FIXME: //assert(rows * columns == numberOfChildren());
+  if (node()->type() != EvaluationNode<T>::Type::AllocationFailure) {
+    assert(rows * columns == node()->numberOfChildren());
+  }
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
 }
 
 template<typename T>
-void MatrixComplex<T>::addChildAtIndexInPlace(Complex<T> t, int index, int currentNumberOfChildren) {
+void MatrixComplex<T>::addChildAtIndexInPlace(Evaluation<T> t, int index, int currentNumberOfChildren) {
+  if (t.type() != EvaluationNode<T>::Type::Complex) {
+    t = Complex<T>::Undefined();
+  }
   Evaluation<T>::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
   setNumberOfRows(1);
   setNumberOfColumns(currentNumberOfChildren + 1);

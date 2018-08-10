@@ -222,7 +222,7 @@ template<typename U>
 Expression Expression::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const {
   if (isDefined()) {
     Evaluation<U> e = node()->approximate(U(), context, angleUnit);
-    return e->complexToExpression(complexFormat);
+    return e.complexToExpression(complexFormat);
   }
   return Undefined();
 }
@@ -230,7 +230,7 @@ Expression Expression::approximate(Context& context, Preferences::AngleUnit angl
 template<typename U>
 U Expression::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<U> evaluation = node()->approximate(U(), context, angleUnit);
-  return evaluation->toScalar();
+  return evaluation.toScalar();
 }
 
 template<typename U>
@@ -576,4 +576,17 @@ double Expression::brentRoot(char symbol, double ax, double bx, double precision
 }
 
 #endif
+
+template float Expression::epsilon<float>();
+template double Expression::epsilon<double>();
+
+template Expression Expression::approximate<float>(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const;
+template Expression Expression::approximate<double>(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const;
+
+template float Expression::approximateToScalar<float>(Context& context, Preferences::AngleUnit angleUnit) const;
+template double Expression::approximateToScalar<double>(Context& context, Preferences::AngleUnit angleUnit) const;
+
+template float Expression::approximateToScalar<float>(const char * text, Context& context, Preferences::AngleUnit angleUnit);
+template double Expression::approximateToScalar<double>(const char * text, Context& context, Preferences::AngleUnit angleUnit);
+
 }

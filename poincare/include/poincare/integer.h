@@ -139,6 +139,7 @@ public:
   }
   virtual void logAttributes(std::ostream & stream) const override {
     stream << " numberOfDigits=\"" << m_numberOfDigits << "\"";
+    stream << " negative=\"" << m_negative << "\"";
     stream << " digits=\"";
     for (int i=0; i<m_numberOfDigits; i++) {
       stream << m_digits[i];

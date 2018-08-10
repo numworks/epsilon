@@ -9,4 +9,7 @@ Expression Evaluation<T>::complexToExpression(Preferences::ComplexFormat complex
   return node()->complexToExpression(complexFormat);
 }
 
+template class Evaluation<float>;
+template class Evaluation<double>;
+
 }

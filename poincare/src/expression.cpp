@@ -6,7 +6,7 @@
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
 #include <poincare/symbol.h>
-//#include <poincare/variable_context.h>
+#include <poincare/variable_context.h>
 #include <ion.h>
 #include <cmath>
 #include <float.h>
@@ -239,14 +239,12 @@ U Expression::approximateToScalar(const char * text, Context& context, Preferenc
   return exp.approximateToScalar<U>(context, angleUnit);
 }
 
-#if 0
 template<typename U>
 U Expression::approximateWithValueForSymbol(char symbol, U x, Context & context, Preferences::AngleUnit angleUnit) const {
   VariableContext<U> variableContext = VariableContext<U>(symbol, &context);
   variableContext.setApproximationForVariable(x);
   return approximateToScalar<U>(variableContext, angleUnit);
 }
-#endif
 
 template<typename U>
 U Expression::epsilon() {
@@ -256,7 +254,6 @@ U Expression::epsilon() {
 
 /* Expression roots/extrema solver*/
 
-#if 0
 typename Expression::Coordinate2D Expression::nextMinimum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
   return nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = nullptr) {
         return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
@@ -575,8 +572,6 @@ double Expression::brentRoot(char symbol, double ax, double bx, double precision
   return NAN;
 }
 
-#endif
-
 template float Expression::epsilon<float>();
 template double Expression::epsilon<double>();
 
@@ -588,5 +583,8 @@ template double Expression::approximateToScalar<double>(Context& context, Prefer
 
 template float Expression::approximateToScalar<float>(const char * text, Context& context, Preferences::AngleUnit angleUnit);
 template double Expression::approximateToScalar<double>(const char * text, Context& context, Preferences::AngleUnit angleUnit);
+
+template float Expression::approximateWithValueForSymbol(char symbol, float x, Context & context, Preferences::AngleUnit angleUnit) const;
+template double Expression::approximateWithValueForSymbol(char symbol, double x, Context & context, Preferences::AngleUnit angleUnit) const;
 
 }

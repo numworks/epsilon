@@ -33,6 +33,7 @@ public:
   bool isHorizontal() const override { return true; }
   bool isEmpty() const override { return m_numberOfChildren == 1 && const_cast<HorizontalLayoutNode *>(this)->childAtIndex(0)->isEmpty(); }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return m_numberOfChildren != 0; }
+  bool hasText() const override;
 
   // TreeNode
   size_t size() const override { return sizeof(HorizontalLayoutNode); }

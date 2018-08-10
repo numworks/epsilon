@@ -17,6 +17,12 @@ MatrixComplexNode<T> * MatrixComplexNode<T>::FailedAllocationStaticNode() {
 }
 
 template<typename T>
+void MatrixComplexNode<T>::didAddChildAtIndex(int newNumberOfChildren) {
+  setNumberOfRows(1);
+  setNumberOfColumns(newNumberOfChildren);
+}
+
+template<typename T>
 std::complex<T> MatrixComplexNode<T>::complexAtIndex(int index) const {
   EvaluationNode<T> * child = EvaluationNode<T>::childAtIndex(index);
   if (child->type() == EvaluationNode<T>::Type::Complex) {
@@ -161,8 +167,6 @@ void MatrixComplex<T>::addChildAtIndexInPlace(Evaluation<T> t, int index, int cu
     t = Complex<T>::Undefined();
   }
   Evaluation<T>::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
-  setNumberOfRows(1);
-  setNumberOfColumns(currentNumberOfChildren + 1);
 }
 
 template class MatrixComplexNode<float>;

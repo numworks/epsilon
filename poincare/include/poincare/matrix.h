@@ -27,6 +27,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(MatrixNode); }
   int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
+  void didAddChildAtIndex(int newNumberOfChildren) override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Matrix";
@@ -73,7 +74,9 @@ public:
   void setDimensions(int rows, int columns);
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
-  void addChildAtIndexInPlace(Expression t, int index, int currentNumberOfChildren);
+  void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
+    Expression::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
+  }
 
   Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 

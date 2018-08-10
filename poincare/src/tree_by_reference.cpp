@@ -172,6 +172,8 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
   TreePool::sharedPool()->move(newChildPosition, t.node(), t.numberOfChildren());
   t.node()->retain();
   node()->incrementNumberOfChildren();
+
+  node()->didAddChildAtIndex(numberOfChildren());
 }
 
 // Remove

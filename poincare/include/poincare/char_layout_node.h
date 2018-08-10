@@ -61,19 +61,13 @@ public:
   CharLayoutRef(char c, KDText::FontSize fontSize = KDText::FontSize::Large) :
     LayoutReference(TreePool::sharedPool()->createTreeNode<CharLayoutNode>())
   {
-    if (!(this->node()->isAllocationFailure())) {
-      static_cast<CharLayoutNode *>(node())->setChar(c);
-      static_cast<CharLayoutNode *>(node())->setFontSize(fontSize);
-    }
+    node()->setChar(c);
+    node()->setFontSize(fontSize);
   }
 
-  KDText::FontSize fontSize() const {
-    if (!(this->node()->isAllocationFailure())) {
-      return static_cast<CharLayoutNode *>(node())->fontSize();
-    }
-    // TODO put an assert false?
-    return KDText::FontSize::Large;
-  }
+  KDText::FontSize fontSize() const { return const_cast<CharLayoutRef *>(this)->node()->fontSize(); }
+private:
+  CharLayoutNode * node() { return static_cast<CharLayoutNode *>(LayoutReference::node());}
 };
 
 }

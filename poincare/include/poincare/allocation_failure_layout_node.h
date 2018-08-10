@@ -22,8 +22,37 @@ public:
   }
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
+  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override {}
+  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override {}
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override { return LayoutCursor(); }
   void deleteBeforeCursor(LayoutCursor * cursor) override {}
+  bool shouldCollapseSiblingsOnLeft() const override { return false; }
+  bool shouldCollapseSiblingsOnRight() const override { return false; }
+  int leftCollapsingAbsorbingChildIndex() const override { return 0; }
+  int rightCollapsingAbsorbingChildIndex() const override { return 0; }
+  void didCollapseSiblings(LayoutCursor * cursor) override {}
+  LayoutNode * layoutToPointWhenInserting() override { return this; }
+  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return false; }
+  bool canBeOmittedMultiplicationLeftFactor() const override { return false; }
+  bool canBeOmittedMultiplicationRightFactor() const override { return false; }
+  bool mustHaveLeftSibling() const override { return false; }
+  bool isVerticalOffset() const override { return false; }
+  bool isHorizontal() const override { return false; }
+  bool isLeftParenthesis() const override { return false; }
+  bool isRightParenthesis() const override { return false; }
+  bool isLeftBracket() const override { return false; }
+  bool isRightBracket() const override { return false; }
+  bool isEmpty() const override { return false; }
+  bool isMatrix() const override { return false; }
+  bool hasUpperLeftIndex() const override { return false; }
+
+  bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) override { return false; }
+  bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override { return false; }
+  void willAddSiblingToEmptyChildAtIndex(int childIndex) override {}
+  bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override { return false; }
+  void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override {}
+  bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override { return false; }
+  void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override {}
 
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailureLayoutNode<T>); }
@@ -33,6 +62,7 @@ public:
 
 protected:
   // LayoutNode
+  void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override {}
   KDSize computeSize() override { return KDSizeZero; }
   KDCoordinate computeBaseline() override { return 0; }
   KDPoint positionOfChild(LayoutNode * child) override {
@@ -41,10 +71,6 @@ protected:
   }
 
 private:
-  bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override { return false; }
-  bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override { return false; }
-  bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override { return false; }
-
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
 };
 

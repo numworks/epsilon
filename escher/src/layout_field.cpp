@@ -78,12 +78,11 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   } else if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
     m_contentView.cursor()->addEmptyMatrixLayout();
   } else {
-    Expression * resultExpression = Expression::parse(text);
-    if (resultExpression == nullptr) {
+    Expression resultExpression = Expression::parse(text);
+    if (!resultExpression.isDefined()) {
       m_contentView.cursor()->insertText(text);
     } else {
-      LayoutRef resultLayoutRef = resultExpression->createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
-      delete resultExpression;
+      LayoutRef resultLayoutRef = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
       if (currentNumberOfLayouts + resultLayoutRef.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
         return true;
       }

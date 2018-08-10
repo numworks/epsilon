@@ -605,4 +605,7 @@ Expression Integer::setSign(ExpressionNode::Sign s, Context & context, Preferenc
   return signedInteger;
 }
 
+template float IntegerNode::templatedApproximate<float>() const;
+template double IntegerNode::templatedApproximate<double>() const;
+
 }

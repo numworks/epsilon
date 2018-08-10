@@ -36,13 +36,14 @@ public:
    * or Infinity in case of overflow. Decimal are not taken into
    * account as it is not an internal node - it will always be turned into a
    * Rational/Float beforehand. */
+  // TODO: Use references for Addition / Multiplication / Power
   static Number Addition(const Number i, const Number j);
   static Number Multiplication(const Number i, const Number j);
   static Number Power(const Number i, const Number j);
 protected:
   NumberNode * node() const override { return static_cast<NumberNode *>(Expression::node()); }
 private:
-  typedef Integer (*IntegerBinaryOperation)(const Integer i, const Integer j);
+  typedef Integer (*IntegerBinaryOperation)(const Integer & i, const Integer & j);
   typedef Rational (*RationalBinaryOperation)(const Rational i, const Rational j);
   typedef double (*DoubleBinaryOperation)(double i, double j);
   static Number BinaryOperation(const Number i, const Number j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp);

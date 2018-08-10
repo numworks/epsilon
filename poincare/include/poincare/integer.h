@@ -192,7 +192,7 @@ public:
   int extractedInt() const;
 
    // Comparison
-  static int NaturalOrder(const Integer i, const Integer j) { return IntegerNode::NaturalOrder(i.node(), j.node()); }
+  static int NaturalOrder(const Integer & i, const Integer & j) { return IntegerNode::NaturalOrder(i.node(), j.node()); }
   // Properties
   bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
@@ -203,12 +203,12 @@ public:
   static int NumberOfBase10Digits(const Integer i) { return NaturalIntegerAbstract::NumberOfBase10Digits(i.node()); }
 
   // Arithmetic
-  static Integer Addition(const Integer i, const Integer j) { return addition(i, j, false); }
-  static Integer Subtraction(const Integer i, const Integer j) { return addition(i, j, true); }
-  static Integer Multiplication(const Integer i, const Integer j);
-  static IntegerDivision Division(const Integer numerator, const Integer denominator);
-  static Integer Power(const Integer i, const Integer j);
-  static Integer Factorial(const Integer i);
+  static Integer Addition(const Integer & i, const Integer & j) { return addition(i, j, false); }
+  static Integer Subtraction(const Integer & i, const Integer & j) { return addition(i, j, true); }
+  static Integer Multiplication(const Integer & i, const Integer & j);
+  static IntegerDivision Division(const Integer & numerator, const Integer & denominator);
+  static Integer Power(const Integer & i, const Integer & j);
+  static Integer Factorial(const Integer & i);
 private:
   // TreeNode
   IntegerNode * node() const override { return static_cast<IntegerNode *>(Number::node()); }
@@ -216,7 +216,7 @@ private:
   Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative);
   Integer(size_t size) : Number(TreePool::sharedPool()->createTreeNode<IntegerNode>(size)) {
   }
-  static Integer addition(const Integer a, const Integer b, bool inverseBNegative);
+  static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative);
   size_t numberOfDigits() const { return node()->numberOfDigits(); }
   uint32_t digit(int i) const { return node()->digit(i); }
 

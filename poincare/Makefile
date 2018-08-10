@@ -35,6 +35,7 @@ objs += $(addprefix poincare/src/,\
   layout_helper.o\
   simplification_helper.o\
   global_context.o\
+  variable_context.o\
 )
 
 objsExpected += $(addprefix poincare/src/,\

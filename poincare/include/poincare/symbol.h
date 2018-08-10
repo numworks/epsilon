@@ -23,6 +23,9 @@ public:
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Symbol";
   }
+  virtual void logAttributes(std::ostream & stream) const override {
+    stream << " name=\"" << m_name << "\"";
+  }
 #endif
 
   // Expression Properties

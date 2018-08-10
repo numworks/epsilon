@@ -26,10 +26,16 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixNode); }
-#if TREE_LOG
-  const char * description() const override { return "Matrix";  }
-#endif
   int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Matrix";
+  }
+  virtual void logAttributes(std::ostream & stream) const override {
+    stream << " rows=\"" << m_numberOfRows << "\"";
+    stream << " columns=\"" << m_numberOfColumns << "\"";
+  }
+#endif
 
   // Properties
   Type type() const override { return Type::Matrix; }

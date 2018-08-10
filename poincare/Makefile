@@ -39,6 +39,7 @@ objs += $(addprefix poincare/src/,\
   variable_context.o\
   print_float.o\
   ghost_node.o\
+  preferences.o\
 )
 
 objsExpected += $(addprefix poincare/src/,\

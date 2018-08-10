@@ -189,6 +189,7 @@ objsExpected += $(addprefix poincare/src/,\
 tests += $(addprefix poincare/test/,\
   tree/tree_by_value.cpp\
   tree/tree_by_reference.cpp\
+  integer.cpp\
 )
 
 testsExpected += $(addprefix poincare/test/,\

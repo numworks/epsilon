@@ -525,13 +525,13 @@ int Integer::extractedInt() const {
 
 // Arithmetic
 
-Integer Integer::Multiplication(const Integer a, const Integer b) {
+Integer Integer::Multiplication(const Integer & a, const Integer & b) {
   Integer um = IntegerNode::umult(a.node(), b.node());
   um.setNegative(a.sign() != b.sign());
   return um;
 }
 
-IntegerDivision Integer::Division(const Integer numerator, const Integer denominator) {
+IntegerDivision Integer::Division(const Integer & numerator, const Integer & denominator) {
   IntegerDivision ud = IntegerNode::udiv(numerator.node(), denominator.node());
   if (numerator.sign() == ExpressionNode::Sign::Positive && denominator.sign() == ExpressionNode::Sign::Positive) {
     return ud;
@@ -559,19 +559,19 @@ IntegerDivision Integer::Division(const Integer numerator, const Integer denomin
   return ud;
 }
 
-Integer Integer::Power(const Integer i, const Integer j) {
+Integer Integer::Power(const Integer & i, const Integer & j) {
   assert(j.sign() == ExpressionNode::Sign::Positive);
   Integer upow = IntegerNode::upow(i.node(), j.node());
   upow.setNegative(i.sign() == ExpressionNode::Sign::Negative && !j.isEven());
   return upow;
 }
 
-Integer Integer::Factorial(const Integer i) {
+Integer Integer::Factorial(const Integer & i) {
   assert(i.sign() == ExpressionNode::Sign::Positive);
   return IntegerNode::ufact(i.node());
 }
 
-Integer Integer::addition(const Integer a, const Integer b, bool inverseBNegative) {
+Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative) {
   bool bNegative = (inverseBNegative ? b.sign() == ExpressionNode::Sign::Positive : b.sign() == ExpressionNode::Sign::Negative);
   if ((a.sign() == ExpressionNode::Sign::Negative) == bNegative) {
     Integer us = IntegerNode::usum(a.node(), b.node(), false);

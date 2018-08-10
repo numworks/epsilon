@@ -69,7 +69,7 @@ Number Number::DecimalNumber(T f) {
     return Undefined();
   }
   if (std::isinf(f)) {
-    return Infinite(f < 0.0);
+    return Infinity(f < 0.0);
   }
   return Decimal(f);
 }

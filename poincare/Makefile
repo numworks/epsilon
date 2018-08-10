@@ -9,6 +9,7 @@ objs += $(addprefix poincare/src/,\
   expression_parser.o\
   layout_helper.o\
   matrix_complex.o\
+  complex.o\
   multiplication.o\
   power.o\
   tree_node.o\

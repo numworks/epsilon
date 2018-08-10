@@ -18,10 +18,16 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(ComplexNode<T>); }
-#if TREE_LOG
-  const char * description() const override { return "Evaluation complex";  }
-#endif
   int numberOfChildren() const override { return 0; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "Complex";
+  }
+  virtual void logAttributes(std::ostream & stream) const {
+    stream << " real=\"" << this->real() << "\"";
+    stream << " imag=\"" << this->imag() << "\"";
+  }
+#endif
 
   void setComplex(std::complex<T> c);
   typename Poincare::EvaluationNode<T>::Type type() const override { return Poincare::EvaluationNode<T>::Type::Complex; }

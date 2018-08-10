@@ -2,10 +2,6 @@
 #include <string.h>
 #include <stdint.h>
 
-#if POINCARE_TREE_LOG
-#include <iostream>
-#endif
-
 namespace Poincare {
 
 TreePool * TreePool::sharedPool() {
@@ -99,8 +95,8 @@ void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveS
 }
 
 #if POINCARE_TREE_LOG
-void TreePool::flatLog(std::ostream stream) {
-  size_t size static_cast<char *>(m_cursor) - static_cast<char *>(m_buffer);
+void TreePool::flatLog(std::ostream & stream) {
+  size_t size = static_cast<char *>(m_cursor) - static_cast<char *>(m_buffer);
   stream << "<TreePool format=\"flat\" size=\"" << size << "\">";
   for (TreeNode * node : allNodes()) {
     node->log(stream, false);
@@ -108,7 +104,7 @@ void TreePool::flatLog(std::ostream stream) {
   stream << "</TreePool>";
 }
 
-void TreePool::treeLog() {
+void TreePool::treeLog(std::ostream & stream) {
   stream << "<TreePool format=\"tree\" size=\"" << (int)(m_cursor-m_buffer) << "\">";
   for (TreeNode * node : roots()) {
     node->log(stream, true);

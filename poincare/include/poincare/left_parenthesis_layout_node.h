@@ -25,8 +25,10 @@ public:
   // TreeNode
   static LeftParenthesisLayoutNode * FailedAllocationStaticNode();
   LeftParenthesisLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-#if TREE_LOG
-  const char * description() const override { return "Left parenthesis"; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "LeftParenthesisLayout";
+  }
 #endif
 
 protected:

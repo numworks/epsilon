@@ -18,10 +18,12 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(PowerNode); }
-#if TREE_LOG
-  const char * description() const override { return "Power";  }
-#endif
   int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "Power";
+  }
+#endif
 
   // Properties
   Type type() const override { return Type::Power; }

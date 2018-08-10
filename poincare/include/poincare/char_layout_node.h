@@ -33,11 +33,12 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(CharLayoutNode); }
   int numberOfChildren() const override { return 0; }
-#if TREE_LOG
-  const char * description() const override {
-    static char Description[] = "Char a";
-    Description[5] = m_char;
-    return Description;
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "CharLayout";
+  }
+  virtual void logAttributes(std::ostream & stream) const {
+    stream << " char=\"" << m_char << "\"";
   }
 #endif
 

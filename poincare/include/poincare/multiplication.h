@@ -23,8 +23,10 @@ public:
   static MultiplicationNode * FailedAllocationStaticNode();
   MultiplicationNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(MultiplicationNode); }
-#if TREE_LOG
-  const char * description() const override { return "Multiplication";  }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "Multiplication";
+  }
 #endif
 
   Type type() const override { return Type::Multiplication; }

@@ -19,9 +19,12 @@ public:
   static LeftSquareBracketLayoutNode * FailedAllocationStaticNode();
   LeftSquareBracketLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(LeftSquareBracketLayoutNode); }
-#if TREE_LOG
-  const char * description() const override { return "LeftSquareBracketLayout"; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "LeftSquareBracketLayout";
+  }
 #endif
+
 protected:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
 };

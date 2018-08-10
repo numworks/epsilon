@@ -59,6 +59,11 @@ protected:
   void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
     TreeByReference::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
   }
+  /*
+private:
+  // Fix 
+  using TreeByReference::addChildAtIndexInPlace;
+  */
 };
 
 }

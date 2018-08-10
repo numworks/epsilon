@@ -147,7 +147,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
     return;
   }
   myCell->displayExpression(true);
-  if (evaluation) {
+  if (evaluation.isDefined()) {
     /* TODO: implement list contexts */
     // TODO: handle matrix and scalar!
     LayoutRef layoutR = layoutRefForIndex(index);
@@ -237,27 +237,27 @@ I18n::Message VariableBoxController::ContentViewController::nodeLabelAtIndex(int
   return labels[index];
 }
 
-const Expression * VariableBoxController::ContentViewController::expressionForIndex(int index) {
+const Expression VariableBoxController::ContentViewController::expressionForIndex(int index) {
   if (m_currentPage == Page::Scalar) {
     const Symbol symbol = Symbol('A'+index);
-    return m_context->expressionForSymbol(&symbol);
+    return m_context->expressionForSymbol(symbol);
   }
   if (m_currentPage == Page::Matrix) {
     const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->expressionForSymbol(&symbol);
+    return m_context->expressionForSymbol(symbol);
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {
-    return nullptr;
+    return Expression();
   }
 #endif
-  return nullptr;
+  return Expression();
 }
 
 LayoutRef VariableBoxController::ContentViewController::layoutRefForIndex(int index) {
   if (m_currentPage == Page::Matrix) {
     const Symbol symbol = Symbol::matrixSymbol('0'+(char)index);
-    return m_context->layoutForSymbol(&symbol, Constant::ShortNumberOfSignificantDigits);
+    return m_context->layoutForSymbol(symbol, Constant::ShortNumberOfSignificantDigits);
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {

@@ -270,7 +270,7 @@ final_exp : exp             { $$ = $1; }
 */
 %%
 
-void poincare_expression_yyerror(Poincare::Expression ** expressionOutput, const char * msg) {
+void poincare_expression_yyerror(Poincare::Expression * expressionOutput, const char * msg) {
   // Handle the error!
   // TODO: handle explicitely different type of errors (division by 0, missing parenthesis). This should call back the container to display a pop up with a message corresponding to the error?
 }

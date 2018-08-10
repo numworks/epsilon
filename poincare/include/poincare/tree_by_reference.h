@@ -121,6 +121,9 @@ protected:
 
   int m_identifier;
 private:
+  // AddChild collateral effect
+  virtual void didAddChildAtIndex(int newNumberOfChildren) {}
+
   void setTo(const TreeByReference & tr);
 
   // Add ghost children on layout construction

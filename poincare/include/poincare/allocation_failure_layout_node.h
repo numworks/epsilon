@@ -62,7 +62,7 @@ public:
 
 protected:
   // LayoutNode
-  void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override {}
+  void moveCursorVertically(LayoutNode::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) override {}
   KDSize computeSize() override { return KDSizeZero; }
   KDCoordinate computeBaseline() override { return 0; }
   KDPoint positionOfChild(LayoutNode * child) override {

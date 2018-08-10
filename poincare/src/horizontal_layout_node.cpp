@@ -1,6 +1,8 @@
 #include <poincare/horizontal_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -238,7 +240,7 @@ bool HorizontalLayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor
     assert(childAtIndex(0) == l);
     LayoutNode * p = parent();
     if (p != nullptr) {
-      LayoutRef(p).removeChild(this, cursor);
+      LayoutRef(p).removeChild(HorizontalLayoutRef(this), cursor);
       // WARNING: Do not call "this" afterwards
       return false;
     }

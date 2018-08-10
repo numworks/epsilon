@@ -9,6 +9,8 @@ namespace Poincare {
 class LayoutCursor;
 
 class LayoutReference : public TreeByReference {
+  friend class GridLayoutNode;
+  friend class HorizontalLayoutNode;
   friend class LayoutCursor;
 public:
   using TreeByReference::operator==;

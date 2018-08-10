@@ -20,18 +20,32 @@ public:
     return strlcpy(buffer, description(), bufferSize < descriptionLength ? bufferSize : descriptionLength);
     */
   }
+
+  // Rendering
+  void invalidAllSizesPositionsAndBaselines() override {}
+
+  // Tree navigation
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override {}
   void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override {}
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override {}
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override { return LayoutCursor(); }
-  void deleteBeforeCursor(LayoutCursor * cursor) override {}
+
+  // Tree modification
+
+  // Collapse
   bool shouldCollapseSiblingsOnLeft() const override { return false; }
   bool shouldCollapseSiblingsOnRight() const override { return false; }
-  int leftCollapsingAbsorbingChildIndex() const override { return 0; }
-  int rightCollapsingAbsorbingChildIndex() const override { return 0; }
+  int leftCollapsingAbsorbingChildIndex() const override { assert(false); return 0; }
+  int rightCollapsingAbsorbingChildIndex() const override { assert(false); return 0; }
   void didCollapseSiblings(LayoutCursor * cursor) override {}
+
+  //User input
+  void deleteBeforeCursor(LayoutCursor * cursor) override {}
+
+  // Other
   LayoutNode * layoutToPointWhenInserting() override { return this; }
+  bool hasText() const override { return false; }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return false; }
   bool canBeOmittedMultiplicationLeftFactor() const override { return false; }
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
@@ -45,7 +59,6 @@ public:
   bool isEmpty() const override { return false; }
   bool isMatrix() const override { return false; }
   bool hasUpperLeftIndex() const override { return false; }
-  bool hasText() const override { return false; }
 
   bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) override { return false; }
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override { return false; }

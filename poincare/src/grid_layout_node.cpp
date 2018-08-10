@@ -1,10 +1,17 @@
 #include <poincare/grid_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/layout_helper.h>
 
 namespace Poincare {
 
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
+GridLayoutNode * GridLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<GridLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
 
 // LayoutNode
 
@@ -90,11 +97,16 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
+void GridLayoutNode::didAddChildAtIndex(int newNumberOfChildren) {
+  GridLayoutRef(this).setDimensions(1, newNumberOfChildren);
+}
+
 // Protected
 void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
-  LayoutRef thisRef = LayoutRef(this);
+  GridLayoutRef thisRef = GridLayoutRef(this);
   int previousNumberOfChildren = numberOfChildren();
   int columnsCount = m_numberOfColumns;
+  int previousRowCount = m_numberOfRows;
   for (int i = 0; i < columnsCount; i++) {
     thisRef.addChildAtIndex(
         EmptyLayoutRef(color),
@@ -103,13 +115,11 @@ void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
         nullptr);
     // WARNING: Do not access "this" afterwards
   }
-  if (!thisRef.isAllocationFailure()) {
-    m_numberOfRows++;
-  }
+  thisRef.setDimensions(previousRowCount + 1, columnsCount);
 }
 
 void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
-  LayoutRef thisRef = LayoutRef(this);
+  GridLayoutRef thisRef = GridLayoutRef(this);
   int previousNumberOfChildren = numberOfChildren();
   int rowsCount = m_numberOfRows;
   int futureColumnsCount = m_numberOfColumns + 1;
@@ -121,9 +131,7 @@ void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
         nullptr);
     // WARNING: Do not access "this" afterwards
   }
-  if (!thisRef.isAllocationFailure()) {
-    m_numberOfColumns++;
-  }
+  thisRef.setDimensions(rowsCount, futureColumnsCount);
 }
 
 void GridLayoutNode::deleteRowAtIndex(int index) {
@@ -257,6 +265,17 @@ KDCoordinate GridLayoutNode::width() const {
   }
   totalWidth += (m_numberOfColumns-1)*k_gridEntryMargin;
   return totalWidth;
+}
+
+// Grid Layout Reference
+void GridLayoutRef::setDimensions(int rows, int columns) {
+  if (!isAllocationFailure()) {
+    /* If the node is an allocation failure, setNumberOfRows and
+     * setNumberOfColumns will do nothing. */
+    assert(rows * columns == numberOfChildren());
+  }
+  setNumberOfRows(rows);
+  setNumberOfColumns(columns);
 }
 
 }

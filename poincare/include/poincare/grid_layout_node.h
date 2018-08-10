@@ -40,22 +40,27 @@ public:
   }
 
   // TreeNode
+  static GridLayoutNode * FailedAllocationStaticNode();
+  GridLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(GridLayoutNode); }
+  void didAddChildAtIndex(int newNumberOfChildren) override;
   int numberOfChildren() const override { return m_numberOfRows * m_numberOfColumns; }
   void eraseNumberOfChildren() override {
     m_numberOfRows = 0;
     m_numberOfColumns = 0;
   }
-#if TREE_LOG
-  const char * description() const override { return "GridLayout"; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "GridLayout";
+  }
 #endif
 
 protected:
   // GridLayoutNode
-  void addEmptyRow(EmptyLayoutNode::Color color);
-  void addEmptyColumn(EmptyLayoutNode::Color color);
-  void deleteRowAtIndex(int index);
-  void deleteColumnAtIndex(int index);
+  virtual void addEmptyRow(EmptyLayoutNode::Color color);
+  virtual void addEmptyColumn(EmptyLayoutNode::Color color);
+  virtual void deleteRowAtIndex(int index);
+  virtual void deleteColumnAtIndex(int index);
   bool childIsRightOfGrid(int index) const;
   bool childIsLeftOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
@@ -80,6 +85,26 @@ private:
   KDCoordinate columnWidth(int j) const;
   KDCoordinate width() const;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override {}
+};
+
+class GridLayoutRef : public LayoutReference {
+public:
+  GridLayoutRef(const GridLayoutNode * n) : LayoutReference(n) {}
+  GridLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<GridLayoutNode>()) {}
+  void setDimensions(int rows, int columns);
+  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
+    LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
+  }
+private:
+  GridLayoutNode * node() const { return static_cast<GridLayoutNode *>(LayoutReference::node()); }
+  void setNumberOfRows(int rows) {
+    assert(rows >= 0);
+    node()->setNumberOfRows(rows);
+  }
+  void setNumberOfColumns(int columns) {
+    assert(columns >= 0);
+    node()->setNumberOfColumns(columns);
+  }
 };
 
 }

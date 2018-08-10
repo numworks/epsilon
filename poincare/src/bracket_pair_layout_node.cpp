@@ -76,14 +76,14 @@ void BracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     LayoutRef rootRef = LayoutRef(root());
     LayoutRef thisRef = LayoutRef(this);
     LayoutRef child = childLayout();
-    replaceChildWithGhostInPlace(child);
+    thisRef.replaceChildWithGhostInPlace(child);
     // WARNING: do not call "this" afterwards
     if (rootRef.isAllocationFailure()) {
       cursor->setLayoutReference(rootRef);
       return;
     }
     cursor->setLayoutReference(thisRef.childAtIndex(0));
-    cursor->setPosition(LayoutNode::Position::Left);
+    cursor->setPosition(LayoutCursor::Position::Left);
     thisRef.replaceWith(child, cursor);
     return;
   }

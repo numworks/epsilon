@@ -1,4 +1,4 @@
-//#include <quiz.h>
+#include <quiz.h>
 #include <poincare.h>
 #include <assert.h>
 
@@ -14,8 +14,7 @@ static void assert_pool_size(int i) {
   assert(pool_size() == i);
 }
 
-void foobar() {
-//QUIZ_CASE(tree_by_values_are_stored_in_pool) {
+QUIZ_CASE(tree_by_values_are_stored_in_pool) {
   assert_pool_size(0);
   {
     BlobByValue b(0);
@@ -24,8 +23,7 @@ void foobar() {
   assert_pool_size(0);
 }
 
-void foobaz() {
-//QUIZ_CASE(tree_by_values_allocation_failures) {
+QUIZ_CASE(tree_by_values_allocation_failures) {
   assert_pool_size(0);
   BlobByValue b(1);
   assert_pool_size(1);

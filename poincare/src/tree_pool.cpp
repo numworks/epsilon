@@ -2,6 +2,10 @@
 #include <string.h>
 #include <stdint.h>
 
+#if POINCARE_TREE_LOG
+#include <iostream>
+#endif
+
 namespace Poincare {
 
 TreePool * TreePool::sharedPool() {
@@ -94,21 +98,24 @@ void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveS
   }
 }
 
-
-
-#include <stdio.h>
-
-void TreePool::log() {
-#if TREE_LOG
-  printf("POOL:");
-  for (TreeNode * node : *this) {
-    printf("|(%03d|%s|%03d|%p)\n", node->m_identifier, node->description(), node->retainCount(), node);
+#if POINCARE_TREE_LOG
+void TreePool::flatLog(std::ostream stream) {
+  size_t size static_cast<char *>(m_cursor) - static_cast<char *>(m_buffer);
+  stream << "<TreePool format=\"flat\" size=\"" << size << "\">";
+  for (TreeNode * node : allNodes()) {
+    node->log(stream, false);
   }
-  printf("|\n");
-
-  //logNodeForIdentifierArray();
-#endif
+  stream << "</TreePool>";
 }
+
+void TreePool::treeLog() {
+  stream << "<TreePool format=\"tree\" size=\"" << (int)(m_cursor-m_buffer) << "\">";
+  for (TreeNode * node : roots()) {
+    node->log(stream, true);
+  }
+  stream << "</TreePool>";
+}
+#endif
 
 void * TreePool::alloc(size_t size) {
   if (m_cursor >= m_buffer + BufferSize || m_cursor + size > m_buffer + BufferSize) {

@@ -5,6 +5,9 @@
 #include <stddef.h>
 #include <string.h>
 #include <new>
+#if POINCARE_TREE_LOG
+#include <ostream>
+#endif
 
 namespace Poincare {
 
@@ -94,8 +97,10 @@ void TreeByReference::buildGhostChildren() {
     return identifierOfStaticNodeAtIndex(nodeID);
   }
 
-  // Debug
-  void log();
+#if POINCARE_TREE_LOG
+  void flatLog(std::ostream stream);
+  void treeLog(std::ostream stream);
+#endif
 
   int numberOfNodes() const {
     int count = 0;

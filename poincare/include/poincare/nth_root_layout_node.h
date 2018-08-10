@@ -31,6 +31,8 @@ public:
   bool hasUpperLeftIndex() const override { return m_hasIndex; }
 
   // TreeNode
+  static NthRootLayoutNode * FailedAllocationStaticNode();
+  NthRootLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(NthRootLayoutNode); }
   int numberOfChildren() const override { return m_hasIndex ? 2 : 1; }
 #if TREE_LOG
@@ -72,10 +74,8 @@ public:
 
   NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {
     replaceChildAtIndexInPlace(0, radicand);
-    addChildTreeAtIndex(index, 1, 1);
-    if (!node()->isAllocationFailure()) {
-      static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);
-    }
+    addChildAtIndexInPlace(index, 1, 1);
+    static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);
   }
 
 private:

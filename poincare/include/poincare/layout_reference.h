@@ -12,6 +12,7 @@ class LayoutReference : public TreeByReference {
   friend class GridLayoutNode;
   friend class HorizontalLayoutNode;
   friend class LayoutCursor;
+  friend class VerticalOffsetLayoutNode;
 public:
   using TreeByReference::operator==;
   using TreeByReference::operator!=;

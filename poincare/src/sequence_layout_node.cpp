@@ -13,8 +13,8 @@ constexpr char SequenceLayoutNode::k_nEquals[];
 
 void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Left
-      && ((lowerBoundLayout() && cursor->layoutReference() == lowerBoundLayout())
-        || (upperBoundLayout() && cursor->layoutReference() == upperBoundLayout())))
+      && ((lowerBoundLayout() && cursor->layoutNode() == lowerBoundLayout())
+        || (upperBoundLayout() && cursor->layoutNode() == upperBoundLayout())))
   {
     // Case: Left of the bounds. Go Left of the sequence.
     cursor->setLayoutNode(this);
@@ -22,7 +22,7 @@ void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   }
   if (cursor->position() == LayoutCursor::Position::Left
       && argumentLayout()
-      && cursor->layoutReference() == argumentLayout())
+      && cursor->layoutNode() == argumentLayout())
   {
     // Case: Left of the argument. Go Right of the lower bound.
     assert(lowerBoundLayout() != nullptr);
@@ -30,7 +30,7 @@ void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
   }
-  assert(cursor->layoutReference() == this);
+  assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Go to the argument and move Left.
     assert(argumentLayout() != nullptr);
@@ -48,8 +48,8 @@ void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
 
 void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Right
-      && ((lowerBoundLayout() && cursor->layoutReference() == lowerBoundLayout())
-        || (upperBoundLayout() && cursor->layoutReference() == upperBoundLayout())))
+      && ((lowerBoundLayout() && cursor->layoutNode() == lowerBoundLayout())
+        || (upperBoundLayout() && cursor->layoutNode() == upperBoundLayout())))
   {
     // Case: Right of the bounds. Go Left of the argument.
     assert(argumentLayout() != nullptr);
@@ -59,13 +59,13 @@ void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   }
   if (cursor->position() == LayoutCursor::Position::Right
       && argumentLayout()
-      && cursor->layoutReference() == argumentLayout())
+      && cursor->layoutNode() == argumentLayout())
   {
     // Case: Right of the argument. Go Right.
     cursor->setLayoutNode(this);
     return;
   }
-  assert(cursor->layoutReference() == this);
+  assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Go to the upper bound
     assert(upperBoundLayout() != nullptr);

@@ -1,5 +1,7 @@
 #include <poincare/nth_root_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <ion/charset.h>
 #include <assert.h>
 
@@ -17,6 +19,12 @@ const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode
   {0xFF, 0xFF, 0xFF, 0x00, 0xFF},
   {0xFF, 0xFF, 0xFF, 0xFF, 0x00},
 };
+
+NthRootLayoutNode * NthRootLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<NthRootLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
 
 void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (radicandLayout()
@@ -162,11 +170,11 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
       && (const_cast<NthRootLayoutNode *>(this))->indexLayout()
       && !(const_cast<NthRootLayoutNode *>(this))->indexLayout()->isEmpty())
   {
-    return SerializationHelper::Prefix(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "root");
   }
   // Case: squareRoot(x)
   if (!m_hasIndex) {
-    return SerializationHelper::Prefix(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
   }
   // Case: root(x,empty)
   // Write "'SquareRootSymbol'('radicandLayout')".

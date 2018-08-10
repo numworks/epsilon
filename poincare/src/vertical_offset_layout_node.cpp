@@ -1,4 +1,5 @@
 #include <poincare/vertical_offset_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/layout_helper.h>
 #include <poincare/left_parenthesis_layout_node.h>
@@ -190,7 +191,7 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
   }
   assert(m_type == Type::Superscript);
   // If the layout is a superscript, write "^(indice)"
-  int numberOfChar = SerializationHelper::Prefix(SerializableRef(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "^");
+  int numberOfChar = SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "^");
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Add a multiplication if omitted.

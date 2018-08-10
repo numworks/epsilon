@@ -17,7 +17,8 @@ public:
 
   // TreeNode
   static LeftSquareBracketLayoutNode * FailedAllocationStaticNode();
-  LeftSquareBracketLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }  size_t size() const override { return sizeof(LeftSquareBracketLayoutNode); }
+  LeftSquareBracketLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+  size_t size() const override { return sizeof(LeftSquareBracketLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "LeftSquareBracketLayout"; }
 #endif

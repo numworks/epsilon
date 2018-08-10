@@ -74,32 +74,24 @@ private:
 
 class EmptyLayoutRef : public LayoutReference {
 public:
+  EmptyLayoutRef(const EmptyLayoutNode * n) : LayoutReference(n) {}
   EmptyLayoutRef(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true) :
     LayoutReference(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>())
   {
-    if (!(node()->isAllocationFailure())) {
-      typedNode()->setColor(color);
-      typedNode()->setVisible(visible);
-      typedNode()->setFontSize(fontSize);
-      typedNode()->setMargins(margins);
-    }
+    node()->setColor(color);
+    node()->setVisible(visible);
+    node()->setFontSize(fontSize);
+    node()->setMargins(margins);
   }
   void setVisible(bool visible) {
-    if (!(node()->isAllocationFailure())) {
-      typedNode()->setVisible(visible);
-    }
+    node()->setVisible(visible);
   }
 
   void setColor(EmptyLayoutNode::Color color) {
-    if (!(node()->isAllocationFailure())) {
-      typedNode()->setColor(color);
-    }
+    node()->setColor(color);
   }
 private:
-  EmptyLayoutNode * typedNode() {
-    assert(!isAllocationFailure());
-    return static_cast<EmptyLayoutNode *>(node());
-  }
+  EmptyLayoutNode * node() { return static_cast<EmptyLayoutNode *>(LayoutReference::node()); }
 };
 
 }

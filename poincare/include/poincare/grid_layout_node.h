@@ -23,8 +23,8 @@ public:
     m_numberOfColumns(0)
   {}
 
-  void setNumberOfRows(int numberOfRows) { m_numberOfRows = numberOfRows; }
-  void setNumberOfColumns(int numberOfColumns) { m_numberOfColumns = numberOfColumns; }
+  virtual void setNumberOfRows(int numberOfRows) { m_numberOfRows = numberOfRows; }
+  virtual void setNumberOfColumns(int numberOfColumns) { m_numberOfColumns = numberOfColumns; }
   KDSize gridSize() const { return KDSize(width(), height()); }
 
   // LayoutNode

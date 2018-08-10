@@ -14,7 +14,7 @@ public:
   using TreeByReference::operator==;
   using TreeByReference::operator!=;
 
-  LayoutReference(LayoutNode * node = nullptr) :
+  LayoutReference(const LayoutNode * node = nullptr) :
     TreeByReference(node) {}
 
   LayoutReference clone() const {

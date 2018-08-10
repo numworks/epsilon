@@ -1,10 +1,17 @@
 #include <poincare/matrix_layout_node.h>
 #include <poincare/bracket_pair_layout_node.h>
 #include <poincare/empty_layout_node.h>
-#include <poincare/square_bracket_layout_node.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/square_bracket_layout_node.h>
 
 namespace Poincare {
+
+MatrixLayoutNode * MatrixLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureMatrixLayoutNode failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
 
 // MatrixLayoutNode
 
@@ -126,7 +133,7 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
     buffer[numberOfChar++] = '[';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
 
-    numberOfChar += SerializationHelper::Infix(SerializableRef(this), buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
+    numberOfChar += SerializationHelper::Infix(this, buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits, ",", i*m_numberOfColumns, i* m_numberOfColumns + maxColumnIndex);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     buffer[numberOfChar++] = ']';
@@ -288,37 +295,15 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
 
 // Matrix Layout Reference
 void MatrixLayoutRef::setDimensions(int rows, int columns) {
-  if (isAllocationFailure()) {
-    return;
-  }
-  assert(rows * columns = numberOfChildren());
+  assert(rows * columns == numberOfChildren());
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
 }
 
-void MatrixLayoutRef::addChildAtIndexInPlace(TreeReference t, int index, int currentNumberOfChildren) {
+void MatrixLayoutRef::addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) {
   TreeByReference::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
-  if (isAllocationFailure()) {
-    return;
-  }
   setNumberOfRows(1);
   setNumberOfColumns(currentNumberOfChildren + 1);
-}
-
-void MatrixLayoutRef::setNumberOfRows(int rows) {
- if (isAllocationFailure()) {
-    return;
-  }
-  assert(rows >= 0);
-  typedNode()->setNumberOfRows(rows);
-}
-
-void MatrixLayoutRef::setNumberOfColumns(int columns) {
-  if (isAllocationFailure()) {
-    return;
-  }
-  assert(columns >= 0);
-  typedNode()->setNumberOfColumns(columns);
 }
 
 }

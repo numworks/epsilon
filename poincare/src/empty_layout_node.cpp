@@ -59,7 +59,7 @@ KDCoordinate EmptyLayoutNode::computeBaseline() {
 void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
   /* The two cursor positions around an EmptyLayoutNode are equivalent, so both
    * should be checked. */
-  assert(cursor->layoutReference() == this);
+  assert(cursor->layoutNode() == this);
   LayoutCursor cursorResult = cursor->clone();
   LayoutNode::moveCursorVertically(direction, &cursorResult, shouldRecomputeLayout, equivalentPositionVisited);
   if (cursorResult.isDefined()) {

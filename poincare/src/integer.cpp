@@ -474,6 +474,7 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
   if (digits != nullptr && digits[0] == '-') {
     negative = true;
     digits++;
+    length--;
   }
   native_uint_t buffer[IntegerNode::k_maxNumberOfDigits];
   double_native_uint_t d = 0;

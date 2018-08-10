@@ -1,10 +1,17 @@
 #include <poincare/condensed_sum_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <string.h>
 #include <assert.h>
 
 namespace Poincare {
 
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
+
+CondensedSumLayoutNode * CondensedSumLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<CondensedSumLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
 
 KDCoordinate CondensedSumLayoutNode::computeBaseline() {
   KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->layoutSize();

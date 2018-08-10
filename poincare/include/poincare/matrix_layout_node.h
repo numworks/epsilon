@@ -1,9 +1,10 @@
 #ifndef POINCARE_MATRIX_LAYOUT_NODE_H
 #define POINCARE_MATRIX_LAYOUT_NODE_H
 
-#include "layout_reference.h"
-#include "grid_layout_node.h"
-#include "layout_cursor.h"
+#include <poincare/allocation_failure_layout_node.h>
+#include <poincare/grid_layout_node.h>
+#include <poincare/layout_cursor.h>
+#include <poincare/layout_reference.h>
 
 namespace Poincare {
 
@@ -29,6 +30,8 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // TreeNode
+  static MatrixLayoutNode * FailedAllocationStaticNode();
+  MatrixLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(MatrixLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "MatrixLayout"; }
@@ -52,57 +55,40 @@ private:
   void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };
 
+class AllocationFailureMatrixLayoutNode : public AllocationFailureLayoutNode<MatrixLayoutNode> {
+  void setNumberOfRows(int numberOfRows) override {}
+  void setNumberOfColumns(int numberOfColumns) override {}
+};
+
 class MatrixLayoutRef : public LayoutReference {
   friend class MatrixLayoutNode;
 public:
+  MatrixLayoutRef(const MatrixLayoutNode * n) : LayoutReference(n) {}
   MatrixLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
-
   MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) :
     MatrixLayoutRef()
   {
-    addChildTreeAtIndex(l1, 0, 0);
-    addChildTreeAtIndex(l2, 1, 1);
-    addChildTreeAtIndex(l3, 2, 2);
-    addChildTreeAtIndex(l4, 3, 3);
+    addChildAtIndexInPlace(l1, 0, 0);
+    addChildAtIndexInPlace(l2, 1, 1);
+    addChildAtIndexInPlace(l3, 2, 2);
+    addChildAtIndexInPlace(l4, 3, 3);
     setDimensions(2, 2);
   }
-
-  void setNumberOfRows(int count) {
-    if (!(node()->isAllocationFailure())) {
-      typedNode()->setNumberOfRows(count);
-    }
-  }
-  void setNumberOfColumns(int count) {
-    if (!(node()->isAllocationFailure())) {
-      typedNode()->setNumberOfColumns(count);
-    }
-  }
-
-  bool hasGreySquares() const {
-    if (!(node()->isAllocationFailure())) {
-      return typedNode()->hasGreySquares();
-    }
-    assert(false);
-    return true;
-  }
-
-  void addGreySquares() {
-    if (!(node()->isAllocationFailure())) {
-      return typedNode()->addGreySquares();
-    }
-  }
-
-  void removeGreySquares() {
-    if (!(node()->isAllocationFailure())) {
-      return typedNode()->removeGreySquares();
-    }
-  }
+  bool hasGreySquares() const { node()->hasGreySquares(); }
+  void addGreySquares() { node()->addGreySquares(); }
+  void removeGreySquares() { node()->removeGreySquares(); }
   void setDimensions(int rows, int columns);
-  void addChildTreeAtIndex(TreeReference t, int index, int currentNumberOfChildren) override;
+  void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) override;
 private:
-  MatrixLayoutNode * typedNode() const { assert(!isAllocationFailure()); return static_cast<MatrixLayotuNode *>(node()); }
-  void setNumberOfRows(int rows);
-  void setNumberOfColumns(int columns);
+  MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(LayoutReference::node()); }
+  void setNumberOfRows(int rows) {
+    assert(rows >= 0);
+    node()->setNumberOfRows(rows);
+  }
+  void setNumberOfColumns(int columns) {
+    assert(columns >= 0);
+    node()->setNumberOfColumns(columns);
+  }
 };
 
 }

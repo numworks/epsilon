@@ -207,7 +207,7 @@ void LayoutReference::collapseOnDirection(HorizontalDirection direction, int abs
   if (!absorbingChild.isDefined() || !absorbingChild.isHorizontal()) {
     return;
   }
-  HorizontalLayoutRef horizontalAbsorbingChild = HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(static_cast<HorizontalLayoutNode *>(absorbingChild.node()));
+  HorizontalLayoutRef horizontalAbsorbingChild = HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(absorbingChild.node()));
   if (direction == HorizontalDirection::Right && idxInParent < numberOfSiblings - 1) {
     canCollapse = !(p.childAtIndex(idxInParent+1).mustHaveLeftSibling());
   }

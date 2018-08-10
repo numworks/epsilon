@@ -36,6 +36,7 @@ public:
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool isEmpty() const override { return true; }
+  bool hasText() const override { return false; }
 
   // TreeNode
   static EmptyLayoutNode * FailedAllocationStaticNode();

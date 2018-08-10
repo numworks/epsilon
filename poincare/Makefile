@@ -8,6 +8,7 @@ objs += $(addprefix poincare/src/,\
   bracket_layout_node.o\
   bracket_pair_layout_node.o\
   ceiling_layout_node.o\
+  char_layout_node.o\
   floor_layout_node.o\
 )
 

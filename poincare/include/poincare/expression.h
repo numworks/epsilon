@@ -24,6 +24,7 @@ class Expression : public TreeByValue {
   friend class NAryExpressionNode;
   friend class Parenthesis;
   friend class Power;
+  friend class Matrix;
 public:
   /* Constructor & Destructor */
   Expression() : Expression(nullptr) {}

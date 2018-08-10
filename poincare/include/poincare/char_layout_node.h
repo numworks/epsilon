@@ -1,22 +1,24 @@
 #ifndef POINCARE_CHAR_LAYOUT_NODE_H
 #define POINCARE_CHAR_LAYOUT_NODE_H
 
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_reference.h>
+#include <ion/charset.h>
 
 namespace Poincare {
 
 class CharLayoutNode : public LayoutNode {
 public:
-  CharLayoutNode(char c = 'a', KDText::FontSize fontSize = KDText::FontSize::Large) :
+  CharLayoutNode(char c = Ion::Charset::Empty, KDText::FontSize fontSize = KDText::FontSize::Large) :
     LayoutNode(),
     m_char(c),
     m_fontSize(fontSize)
   {}
 
   // CharLayout
-  void setChar(char c) { m_char = c; }
+  virtual void setChar(char c) { m_char = c; }
   KDText::FontSize fontSize() const { return m_fontSize; }
   void setFontSize(KDText::FontSize fontSize) { m_fontSize = fontSize; }
 
@@ -55,6 +57,11 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   char m_char;
   KDText::FontSize m_fontSize;
+};
+
+class AllocationFailureCharLayoutNode : public AllocationFailureLayoutNode<CharLayoutNode> {
+public:
+  void setChar(char c) override {}
 };
 
 class CharLayoutRef : public LayoutReference {

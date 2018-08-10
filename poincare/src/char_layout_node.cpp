@@ -1,13 +1,11 @@
 #include <poincare/char_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <ion/charset.h>
 
 namespace Poincare {
 
 CharLayoutNode * CharLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<CharLayoutNode> failure;
+  static AllocationFailureCharLayoutNode failure;
   TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }

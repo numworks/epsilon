@@ -10,9 +10,11 @@ namespace Poincare {
 class CeilingLayoutNode : public BracketPairLayoutNode {
 public:
   using BracketPairLayoutNode::BracketPairLayoutNode;
+
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "ceil");
   }
+
   // TreeNode
   static CeilingLayoutNode * FailedAllocationStaticNode();
   CeilingLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }

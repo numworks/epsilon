@@ -15,11 +15,6 @@ MatrixLayoutNode * MatrixLayoutNode::FailedAllocationStaticNode() {
 
 // MatrixLayoutNode
 
-void MatrixLayoutNode::didAddChildAtIndex(int newNumberOfChildren) {
-  setNumberOfRows(1);
-  setNumberOfColumns(newNumberOfChildren);
-}
-
 void MatrixLayoutNode::addGreySquares() {
   if (!hasGreySquares()) {
     LayoutRef thisRef(this);
@@ -252,7 +247,9 @@ bool MatrixLayoutNode::isColumnEmpty(int index) const {
 }
 
 bool MatrixLayoutNode::hasGreySquares() const {
-  assert(m_numberOfRows*m_numberOfColumns - 1 >= 0);
+  if (numberOfChildren() == 0) {
+    return false;
+  }
   LayoutNode * lastChild = const_cast<MatrixLayoutNode *>(this)->childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
   if (lastChild->isEmpty()
       && !lastChild->isHorizontal()
@@ -296,13 +293,6 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
     cursor->setLayoutNode(childAtIndex(newIndex));
     cursor->setPosition(LayoutCursor::Position::Right);
   }
-}
-
-// Matrix Layout Reference
-void MatrixLayoutRef::setDimensions(int rows, int columns) {
-  assert(rows * columns == numberOfChildren());
-  setNumberOfRows(rows);
-  setNumberOfColumns(columns);
 }
 
 }

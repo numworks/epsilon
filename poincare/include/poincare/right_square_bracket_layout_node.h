@@ -3,6 +3,7 @@
 
 #include <poincare/square_bracket_layout_node.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
@@ -15,6 +16,8 @@ public:
   bool isRightBracket() const override { return true; }
 
   // TreeNode
+  static RightSquareBracketLayoutNode * FailedAllocationStaticNode();
+  RightSquareBracketLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(RightSquareBracketLayoutNode); }
 #if TREE_LOG
   const char * description() const override { return "RightSquareBracketLayout"; }

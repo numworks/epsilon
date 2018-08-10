@@ -3,6 +3,7 @@
 
 #include <poincare/parenthesis_layout_node.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 

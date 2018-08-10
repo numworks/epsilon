@@ -1,6 +1,8 @@
 #include <poincare/integral_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
+#include <poincare/serialization_helper.h>
 #include <string.h>
 #include <assert.h>
 
@@ -21,6 +23,12 @@ const uint8_t bottomSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayo
   {0xFF, 0x00, 0xFF, 0xFF},
   {0xFF, 0xFF, 0x00, 0x00},
 };
+
+IntegralLayoutNode * IntegralLayoutNode::FailedAllocationStaticNode() {
+  static AllocationFailureLayoutNode<IntegralLayoutNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
+}
 
 void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Left

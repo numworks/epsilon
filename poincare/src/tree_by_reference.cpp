@@ -24,7 +24,6 @@ TreeByReference TreeByReference::clone() const {
     return TreeByReference(TreePool::sharedPool()->node(allocationFailureNodeId));
   }
   TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(myNode);
-  nodeCopy->deepResetReferenceCounter();
   return TreeByReference(nodeCopy);
 }
 
@@ -97,6 +96,7 @@ void TreeByReference::replaceWithAllocationFailureInPlace(int currentNumberOfChi
   //TODO static assert that the size is smaller
   TreeNode * newAllocationFailureNode = TreePool::sharedPool()->deepCopy(staticAllocFailNode);
   newAllocationFailureNode->rename(m_identifier, true);
+  newAllocationFailureNode->retain();
   if (p.isDefined()) {
     assert(indexInParentNode >= 0);
     /* Set the refCount to previousRefCount-1 because the previous parent is

@@ -30,7 +30,7 @@ void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
     TreePool::sharedPool()->unregisterNode(this);
   }
   m_identifier = identifier;
-  m_referenceCounter = 1;
+  m_referenceCounter = 0;
   TreePool::sharedPool()->registerNode(this);
 }
 
@@ -187,7 +187,7 @@ bool TreeNode::hasSibling(const TreeNode * e) const {
 
 TreeNode::TreeNode() :
   m_identifier(TreePool::NoNodeIdentifier),
-  m_referenceCounter(1)
+  m_referenceCounter(0)
 {
 }
 

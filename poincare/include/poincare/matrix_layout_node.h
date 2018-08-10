@@ -74,7 +74,7 @@ public:
     addChildAtIndexInPlace(l4, 3, 3);
     setDimensions(2, 2);
   }
-  bool hasGreySquares() const { node()->hasGreySquares(); }
+  bool hasGreySquares() const { return node()->hasGreySquares(); }
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }
   void setDimensions(int rows, int columns);

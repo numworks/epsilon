@@ -20,8 +20,15 @@ objs += $(addprefix poincare/src/,\
   left_parenthesis_layout_node.o\
   left_square_bracket_layout_node.o\
   matrix_layout_node.o\
+  nth_root_layout_node.o\
+  parenthesis_layout_node.o\
+  product_layout_node.o\
   right_parenthesis_layout_node.o\
   right_square_bracket_layout_node.o\
+  sequence_layout_node.o\
+  square_bracket_layout_node.o\
+  sum_layout_node.o\
+  vertical_offset_layout_node.o\
 )
 
 objs += $(addprefix poincare/src/,\

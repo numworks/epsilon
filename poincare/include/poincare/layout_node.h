@@ -146,7 +146,7 @@ protected:
    * the layout is under that bar, the baseline is negative. */
   KDCoordinate m_baseline;
   KDRect m_frame;
-  bool m_baselined;
+  bool m_baselined; // TODO Do not use so much space for 3 bools
   bool m_positioned;
   bool m_sized;
 private:

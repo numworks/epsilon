@@ -15,7 +15,7 @@ LayoutCursor LayoutReference::cursor() const {
 }
 
 LayoutCursor LayoutReference::equivalentCursor(LayoutCursor * cursor) {
-  return this->node()->equivalentCursor(cursor);
+  return node()->equivalentCursor(cursor);
 }
 
 // Tree modification
@@ -34,7 +34,7 @@ void LayoutReference::replaceChild(LayoutRef oldChild, LayoutRef newChild, Layou
       cursor->setLayoutReference(newChild);
     }
   }
-  this->node()->didReplaceChildAtIndex(childIndex, cursor, force);
+  node()->didReplaceChildAtIndex(childIndex, cursor, force);
 }
 
 void LayoutReference::replaceChildWithEmpty(LayoutRef oldChild, LayoutCursor * cursor) {
@@ -92,14 +92,14 @@ void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef 
 void LayoutReference::addChildAtIndex(LayoutRef l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
   int newIndex = index;
   int newCurrentNumberOfChildren = currentNumberOfChildren;
-  if (!this->node()->willAddChildAtIndex(l.node(), &newIndex, &newCurrentNumberOfChildren, cursor)) {
+  if (!node()->willAddChildAtIndex(l.node(), &newIndex, &newCurrentNumberOfChildren, cursor)) {
     return;
   }
   LayoutRef nextPointedLayout(nullptr);
   LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
   if (cursor != nullptr) {
     if (newIndex < this->numberOfChildren()) {
-      nextPointedLayout = this->childAtIndex(newIndex);
+      nextPointedLayout = childAtIndex(newIndex);
       nextPosition = LayoutCursor::Position::Left;
     } else {
       nextPointedLayout = *this;
@@ -107,10 +107,10 @@ void LayoutReference::addChildAtIndex(LayoutRef l, int index, int currentNumberO
     }
   }
 
-  this->addChildAtIndexInPlace(l, newIndex, newCurrentNumberOfChildren);
+  addChildAtIndexInPlace(l, newIndex, newCurrentNumberOfChildren);
 
   if (cursor != nullptr) {
-    if (this->isAllocationFailure()) {
+    if (isAllocationFailure()) {
       cursor->setLayoutReference(*this);
     } else {
       cursor->setLayoutReference(nextPointedLayout);
@@ -245,7 +245,7 @@ void LayoutReference::collapseOnDirection(HorizontalDirection direction, int abs
 
 void LayoutReference::collapseSiblings(LayoutCursor * cursor) {
   LayoutRef rootLayout = root();
-  if (this->node()->shouldCollapseSiblingsOnRight()) {
+  if (node()->shouldCollapseSiblingsOnRight()) {
     LayoutReference absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
       LayoutRef horRef = HorizontalLayoutRef(absorbingChild.clone());
@@ -256,7 +256,7 @@ void LayoutReference::collapseSiblings(LayoutCursor * cursor) {
     }
     collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
   }
-  if (this->node()->shouldCollapseSiblingsOnLeft()) {
+  if (node()->shouldCollapseSiblingsOnLeft()) {
     LayoutReference absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
       replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor, true);
@@ -266,7 +266,7 @@ void LayoutReference::collapseSiblings(LayoutCursor * cursor) {
     }
     collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
   }
-  this->node()->didCollapseSiblings(cursor);
+  node()->didCollapseSiblings(cursor);
 }
 
 }

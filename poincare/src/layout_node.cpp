@@ -113,7 +113,7 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
-  // Case: Right. Delete the layout.
+  // Case: Right. Delete the layout (or replace it with an EmptyLayout).
   LayoutRef(p).removeChild(LayoutRef(this), cursor);
   // WARNING: Do no use "this" afterwards
 }

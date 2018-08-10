@@ -20,8 +20,10 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(ParenthesisLayoutNode); }
-#if TREE_LOG
-  const char * description() const override { return "ParenthesisLayout"; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "ParenthesisLayout";
+  }
 #endif
 
 protected:

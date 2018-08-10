@@ -4,19 +4,18 @@ extern "C" {
 #include <stdlib.h>
 }
 #include <poincare/complex.h>
-//#include <poincare/division.h>
-//#include <poincare/matrix.h>
+#include <poincare/division.h>
 #include <poincare/expression.h>
-//#include <poincare/undefined.h>
-//#include <poincare/infinity.h>
-//#include <poincare/decimal.h>
-//#include <poincare/multiplication.h>
-//#include <poincare/opposite.h>
-//#include <poincare/addition.h>
-//#include <poincare/subtraction.h>
-//#include <poincare/matrix.h>
-//#include <poincare/power.h>
-//#include <poincare/symbol.h>
+#include <poincare/allocation_failure_evaluation_node.h>
+#include <poincare/undefined.h>
+#include <poincare/infinity.h>
+#include <poincare/decimal.h>
+#include <poincare/multiplication.h>
+#include <poincare/opposite.h>
+#include <poincare/addition.h>
+#include <poincare/subtraction.h>
+#include <poincare/power.h>
+#include <poincare/symbol.h>
 #include <ion.h>
 #include <cmath>
 
@@ -24,7 +23,7 @@ namespace Poincare {
 
 template<typename T>
 ComplexNode<T> * ComplexNode<T>::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<ComplexNode<T>> failure;
+  static AllocationFailureEvaluationNode<ComplexNode, T> failure;
   TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
@@ -57,18 +56,18 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
   switch (complexFormat) {
     case Preferences::ComplexFormat::Cartesian:
     {
-      Expression real(nullptr);
-      Expression imag(nullptr);
+      Expression real;
+      Expression imag;
       if (this->real() != 0 || this->imag() == 0) {
-        real = Number::Decimal<T>(this->real());
+        real = Number::DecimalNumber<T>(this->real());
       }
       if (this->imag() != 0) {
         if (this->imag() == 1.0 || this->imag() == -1) {
           imag = Symbol(Ion::Charset::IComplex);
         } else if (this->imag() > 0) {
-          imag = Multiplication(Number::Decimal(this->imag()), Symbol(Ion::Charset::IComplex));
+          imag = Multiplication(Number::DecimalNumber(this->imag()), Symbol(Ion::Charset::IComplex));
         } else {
-          imag = Multiplication(Number::Decimal(-this->imag()), Symbol(Ion::Charset::IComplex));
+          imag = Multiplication(Number::DecimalNumber(-this->imag()), Symbol(Ion::Charset::IComplex));
         }
       }
       if (!imag.isDefined()) {
@@ -89,23 +88,23 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
     default:
     {
       assert(complexFormat == Preferences::ComplexFormat::Polar);
-      Expression norm(nullptr);
-      Expression exp(nullptr);
+      Expression norm;
+      Expression exp;
       T r = std::abs(*this);
       T th = std::arg(*this);
       if (r != 1 || th == 0) {
-        norm = Number::Decimal(r);
+        norm = Number::DecimalNumber(r);
       }
       if (r != 0 && th != 0) {
-        Expression arg(nullptr);
+        Expression arg;
         if (th == 1.0) {
           arg = Symbol(Ion::Charset::IComplex);
         } else if (th == -1.0) {
           arg = Opposite(Symbol(Ion::Charset::IComplex));
         } else if (th > 0) {
-          arg = Multiplication(Number::Decimal(th), Symbol(Ion::Charset::IComplex));
+          arg = Multiplication(Number::DecimalNumber(th), Symbol(Ion::Charset::IComplex));
         } else {
-          arg = OppositeRefrence(Multiplication(Number::Decimal(-th), Symbol(Ion::Charset::IComplex)));
+          arg = Opposite(Multiplication(Number::DecimalNumber(-th), Symbol(Ion::Charset::IComplex)));
         }
         exp = Power(Symbol(Ion::Charset::Exponential), arg);
       }
@@ -118,11 +117,6 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
       }
     }
   }
-}
-
-template<typename T>
-Evaluation<T> ComplexNode<T>::inverse() const {
-  return Complex<T>(Division::compute(std::complex<T>(1.0), *this));
 }
 
 template<typename T>

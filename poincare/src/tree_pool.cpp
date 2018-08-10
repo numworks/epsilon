@@ -102,6 +102,7 @@ void TreePool::flatLog(std::ostream & stream) {
     node->log(stream, false);
   }
   stream << "</TreePool>";
+  stream << std::endl;
 }
 
 void TreePool::treeLog(std::ostream & stream) {
@@ -110,6 +111,7 @@ void TreePool::treeLog(std::ostream & stream) {
     node->log(stream, true);
   }
   stream << "</TreePool>";
+  stream << std::endl;
 }
 #endif
 

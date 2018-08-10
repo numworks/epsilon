@@ -20,7 +20,7 @@ public:
   size_t size() const override { return sizeof(SymbolNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const {
+  virtual void logNodeName(std::ostream & stream) const override {
     stream << "Symbol";
   }
 #endif

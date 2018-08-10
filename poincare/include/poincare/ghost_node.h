@@ -2,8 +2,6 @@
 #define POINCARE_GHOST_NODE_H
 
 #include "tree_node.h"
-#include "tree_pool.h"
-#include "tree_by_reference.h"
 
 namespace Poincare {
 
@@ -23,11 +21,6 @@ public:
   // Allocation Failure
   static GhostNode * FailedAllocationStaticNode();
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-};
-
-class GhostReference : public TreeByReference {
-public:
-  GhostReference() : TreeByReference(TreePool::sharedPool()->createTreeNode<GhostNode>()) {}
 };
 
 class AllocationFailedGhostNode : public GhostNode {

@@ -2,6 +2,7 @@
 #define POINCARE_TREE_POOL_H
 
 #include "tree_node.h"
+#include <poincare/ghost_node.h>
 #include <stddef.h>
 #include <string.h>
 #include <new>
@@ -43,26 +44,25 @@ public:
 
     // Ensure the pool is syntactially correct by creating ghost children if needed.
     // It's needed for children that have a fixed, non-zero number of children.
-    for (int i=0; i<node->numberOfChildren(); i++) {
-      assert(false);
-      // TODO! :-D
-#if 0
-      // It used to be this:
-void TreeByReference::buildGhostChildren() {
-  assert(isDefined());
-  for (int i = 0; i < numberOfChildren(); i++) {
-    // Add a ghost child
-    GhostReference ghost;
-    if (ghost.isAllocationFailure()) {
-      replaceWithAllocationFailureInPlace(numberOfChildren());
-      return;
+    for (int i = 0; i < node->numberOfChildren(); i++) {
+      TreeNode * ghost = createTreeNode<GhostNode>();
+      if (ghost->isAllocationFailure()) {
+        /* There is no room to create the node and all of its children, so
+         * delete the node, the children already built and return an allocation
+         * failure node. */
+        // Discard the node and its first children
+        discardTreeNode(node);
+        for (int j = 0; j < i; j++) {
+          /* The pool has been compacted, so the next child to discard is at the
+           * address "node" */
+          discardTreeNode(node);
+        }
+        // Return an allocation failure node
+        T::FailedAllocationStaticNode()->retain();
+        return T::FailedAllocationStaticNode();
+      }
+      move(node->next(), ghost, 0);
     }
-    TreePool::sharedPool()->move(node()->next(), ghost.node(), 0);
-  }
-}
-#endif
-    }
-
     return node;
   }
 

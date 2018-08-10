@@ -1,5 +1,5 @@
 #include <poincare/tree_by_reference.h>
-#include <poincare/ghost_node.h>
+#include <poincare/ghost_reference.h>
 
 namespace Poincare {
 

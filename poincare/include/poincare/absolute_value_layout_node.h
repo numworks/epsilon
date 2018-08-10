@@ -21,7 +21,7 @@ public:
   AbsoluteValueLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(AbsoluteValueLayoutNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const {
+  virtual void logNodeName(std::ostream & stream) const override {
     stream << "AbsoluteValueLayout";
   }
 #endif

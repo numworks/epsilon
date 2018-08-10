@@ -31,10 +31,10 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(FloatNode<T>); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const {
+  virtual void logNodeName(std::ostream & stream) const override {
     stream << "Float";
   }
-  virtual void logAttributes(std::ostream & stream) const {
+  virtual void logAttributes(std::ostream & stream) const override {
     stream << " value=\"" << m_value << "\"";
   }
 #endif

@@ -26,7 +26,7 @@ public:
   static LeftParenthesisLayoutNode * FailedAllocationStaticNode();
   LeftParenthesisLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const {
+  virtual void logNodeName(std::ostream & stream) const override {
     stream << "LeftParenthesisLayout";
   }
 #endif

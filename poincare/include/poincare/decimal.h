@@ -31,10 +31,10 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(DecimalNode); }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const {
+  virtual void logNodeName(std::ostream & stream) const override {
     stream << "Decimal";
   }
-  virtual void logAttributes(std::ostream & stream) const {
+  virtual void logAttributes(std::ostream & stream) const override {
     char buffer[256];
     serialize(buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";

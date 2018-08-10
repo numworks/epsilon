@@ -28,10 +28,10 @@ public:
   size_t size() const override { return sizeof(MatrixComplexNode<T>); }
   int numberOfChildren() const override { return m_numberOfRows*m_numberOfColumns; }
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const {
+  virtual void logNodeName(std::ostream & stream) const override {
     stream << "MatrixComplex";
   }
-  virtual void logAttributes(std::ostream & stream) const {
+  virtual void logAttributes(std::ostream & stream) const override {
     stream << " rows=\"" << m_numberOfRows << "\"";
     stream << " columns=\"" << m_numberOfColumns << "\"";
   }

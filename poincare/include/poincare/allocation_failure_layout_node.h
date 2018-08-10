@@ -45,6 +45,7 @@ public:
   bool isEmpty() const override { return false; }
   bool isMatrix() const override { return false; }
   bool hasUpperLeftIndex() const override { return false; }
+  bool hasText() const override { return false; }
 
   bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) override { return false; }
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override { return false; }

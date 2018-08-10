@@ -21,7 +21,7 @@ i18n_files += $(addprefix apps/calculation/,\
   base.pt.i18n\
 )
 
-tests += $(addprefix apps/calculation/test/,\
+testsExpected += $(addprefix apps/calculation/test/,\
   calculation_store.cpp\
 )
 test_objs += $(addprefix apps/calculation/, calculation.o calculation_store.o)

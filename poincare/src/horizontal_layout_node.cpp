@@ -183,11 +183,11 @@ int HorizontalLayoutNode::serialize(char * buffer, int bufferSize, Preferences::
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "");
 }
 
-bool HorizontalLayoutNode::hasText() const override {
-  if (numberOfChildren() == 0 || ) {
+bool HorizontalLayoutNode::hasText() const {
+  if (numberOfChildren() == 0) {
     return false;
   }
-  if (numberOfChildren() ==  1 && !(const_cast<HorizontalLayoutNode *>(this)->childAtIndex(0)->hasText())) {
+  if (numberOfChildren() == 1 && !(const_cast<HorizontalLayoutNode *>(this)->childAtIndex(0)->hasText())) {
     return false;
   }
   return true;

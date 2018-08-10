@@ -30,8 +30,8 @@ public:
   using Expression::Expression;
   /* Return either a Integer, a Decimal or an Infinity. */
   static Number ParseInteger(const char * digits, size_t length, bool negative);
-  /* Return either a DecimalInteger or an Infinity. */
-  template <typename T> static Number ParseDecimal(T f);
+  /* Return either a DecimalInteger or an Infinity or an Undefined. */
+  template <typename T> static Number DecimalNumber(T f);
   /* This set of Functions return either a Rational or a Float
    * or Infinity in case of overflow. Decimal are not taken into
    * account as it is not an internal node - it will always be turned into a

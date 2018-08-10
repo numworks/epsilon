@@ -64,7 +64,7 @@ Number Number::ParseInteger(const char * digits, size_t length, bool negative) {
 }
 
 template <typename T>
-Number Number::ParseDecimal(T f) {
+Number Number::DecimalNumber(T f) {
   if (std::isnan(f)) {
     return Undefined();
   }

@@ -13,6 +13,7 @@ class PairNode : public TreeNode {
 public:
   static PairNode * FailedAllocationStaticNode() {
     static AllocationFailureNode<PairNode> failureNode;
+    TreePool::sharedPool()->registerStaticNodeIfRequired(&failureNode);
     return &failureNode;
   }
   virtual PairNode * failedAllocationStaticNode() override {

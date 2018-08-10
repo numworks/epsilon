@@ -5,7 +5,6 @@
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
 #include <poincare/complex.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/char_layout_node.h>
 #include <stdio.h>
 

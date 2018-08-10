@@ -14,8 +14,12 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(SubtractionNode); }
-  const char * description() const override { return "Subtraction";  }
   int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "Subtraction";
+  }
+#endif
 
   // ExpressionNode
 

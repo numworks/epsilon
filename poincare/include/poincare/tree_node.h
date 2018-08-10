@@ -1,18 +1,20 @@
 #ifndef POINCARE_TREE_NODE_H
 #define POINCARE_TREE_NODE_H
 
+#define POINCARE_TREE_LOG 1
+
 #include <assert.h>
 #include <stddef.h>
 #include <strings.h>
-
-#include <stdio.h>
+#if POINCARE_TREE_LOG
+#include <ostream>
+#endif
 
 /* What's in a TreeNode, really?
  *  - a vtable pointer
  *  - an identifier
  *  - a reference counter
  */
-#define TREE_LOG 0
 
 namespace Poincare {
 
@@ -40,8 +42,6 @@ public:
       t->setReferenceCounter(1);
     }
   }
-
-  virtual const char * description() const { return "UNKNOWN";}
 
   // Ghost
   virtual bool isGhost() const { return false; }
@@ -153,11 +153,11 @@ public:
   }
 
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream stream) = 0;
-  virtual void logAttributes(std::ostream stream) {
+  virtual void logNodeName(std::ostream & stream) const = 0;
+  virtual void logAttributes(std::ostream & stream) const {
   }
 
-  void log(std::ostream stream, bool recursive = true) {
+  void log(std::ostream & stream, bool recursive = true) {
     stream << "<";
     logNodeName(stream);
     stream << " id=\"" << m_identifier << "\"";
@@ -166,13 +166,13 @@ public:
     logAttributes(stream);
     stream << ">";
     if (recursive) {
-      for (TreeNode * child : node->depthFirstChildren()) {
-        t->log(stream, recursive);
+      for (TreeNode * child : depthFirstChildren()) {
+        child->log(stream, recursive);
       }
     }
     stream << "</";
     logNodeName(stream);
-    stream << ">"
+    stream << ">";
   }
 #endif
 

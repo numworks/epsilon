@@ -26,8 +26,10 @@ public:
   BinomialCoefficientLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(BinomialCoefficientLayoutNode); }
   int numberOfChildren() const override { return 2; }
-#if TREE_LOG
-  const char * description() const override { return "BinomialCoefficientLayout"; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "BinomialCoefficientLayout";
+  }
 #endif
 
 protected:

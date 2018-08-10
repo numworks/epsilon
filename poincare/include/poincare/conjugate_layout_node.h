@@ -22,9 +22,9 @@ public:
   ConjugateLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(ConjugateLayoutNode); }
   int numberOfChildren() const override { return 1; }
-#if TREE_LOG
-  const char * description() const override {
-    return "ConjugateLayout";
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "ConjugateLayout";
   }
 #endif
 

@@ -133,8 +133,15 @@ public:
 
   // TreeNode
   size_t size() const override;
-#if TREE_LOG
-  const char * description() const override { return "Integer";  }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "Integer";
+  }
+  virtual void logAttributes(std::ostream & stream) const {
+    char buffer[256];
+    serialize(buffer, sizeof(buffer));
+    stream << " value=\"" << buffer << "\"";
+  }
 #endif
 
   // ExpressionNode

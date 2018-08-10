@@ -43,8 +43,10 @@ public:
     m_numberOfChildren-= decrement;
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
-#if TREE_LOG
-  const char * description() const override { return "Horizontal Layout"; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const {
+    stream << "HorizontalLayout";
+  }
 #endif
 
 protected:

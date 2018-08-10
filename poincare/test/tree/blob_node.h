@@ -23,7 +23,7 @@ public:
   int data() { return m_data; }
   void setData(int data) { m_data = data; }
   virtual int numberOfChildren() const override { return 0; }
-  #if POINCARE_TREE_LOG
+#if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Blob";
   }

@@ -32,8 +32,8 @@ public:
 class PairByReference : public TreeByReference {
 public:
   PairByReference(TreeByReference t1, TreeByReference t2) : TreeByReference(TreePool::sharedPool()->createTreeNode<PairNode>()) {
-    replaceChildAtIndexInPlace(0, t1); // TODO: Is that the correct way to do this?
-    replaceChildAtIndexInPlace(1, t2); // TODO: Is that the correct way to do this?
+    replaceChildAtIndexInPlace(0, t1);
+    replaceChildAtIndexInPlace(1, t2);
   }
 };
 

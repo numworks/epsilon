@@ -33,7 +33,6 @@ public:
   static MatrixLayoutNode * FailedAllocationStaticNode();
   MatrixLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(MatrixLayoutNode); }
-  void didAddChildAtIndex(int newNumberOfChildren) override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "MatrixLayout";
@@ -61,13 +60,18 @@ private:
 class AllocationFailureMatrixLayoutNode : public AllocationFailureLayoutNode<MatrixLayoutNode> {
   void setNumberOfRows(int numberOfRows) override {}
   void setNumberOfColumns(int numberOfColumns) override {}
+protected:
+  void addEmptyRow(EmptyLayoutNode::Color color) override {}
+  void addEmptyColumn(EmptyLayoutNode::Color color) override {}
+  void deleteRowAtIndex(int index) override {}
+  void deleteColumnAtIndex(int index) override {}
 };
 
-class MatrixLayoutRef : public LayoutReference {
+class MatrixLayoutRef : public GridLayoutRef {
   friend class MatrixLayoutNode;
 public:
-  MatrixLayoutRef(const MatrixLayoutNode * n) : LayoutReference(n) {}
-  MatrixLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
+  MatrixLayoutRef(const MatrixLayoutNode * n) : GridLayoutRef(n) {}
+  MatrixLayoutRef() : GridLayoutRef(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
   MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) :
     MatrixLayoutRef()
   {
@@ -80,20 +84,8 @@ public:
   bool hasGreySquares() const { return node()->hasGreySquares(); }
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }
-  void setDimensions(int rows, int columns);
-  void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
-    LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
-  }
 private:
   MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(LayoutReference::node()); }
-  void setNumberOfRows(int rows) {
-    assert(rows >= 0);
-    node()->setNumberOfRows(rows);
-  }
-  void setNumberOfColumns(int columns) {
-    assert(columns >= 0);
-    node()->setNumberOfColumns(columns);
-  }
 };
 
 }

@@ -87,7 +87,7 @@ void LayoutCursor::addEmptyMatrixLayout() {
       EmptyLayoutRef(EmptyLayoutNode::Color::Yellow),
       EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
       EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
-      EmptyLayoutRef(EmptyLayoutNode::Color::Grey);
+      EmptyLayoutRef(EmptyLayoutNode::Color::Grey));
   LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, matrixLayout, false);
   if (!rootRef.isAllocationFailure()) {
@@ -222,7 +222,7 @@ void LayoutCursor::addLayoutAndMoveCursor(LayoutRef l) {
 void LayoutCursor::clearLayout() {
   LayoutRef rootLayoutR = m_layoutRef.root();
   assert(rootLayoutR.isHorizontal());
-  rootLayoutR.removeChildrenInPlace();
+  rootLayoutR.removeChildrenInPlace(rootLayoutR.numberOfChildren());
   m_layoutRef = rootLayoutR;
 }
 

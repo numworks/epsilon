@@ -1,5 +1,5 @@
 #include <poincare/layout_node.h>
-#include <poincare/allocation_failed_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_reference.h>
@@ -63,14 +63,6 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
   for (LayoutNode * l : children()) {
     l->invalidAllSizesPositionsAndBaselines();
   }
-}
-
-// TreeNode
-
-TreeNode * LayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailedLayoutNode failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
 }
 
 // Tree navigation

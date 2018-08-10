@@ -11,6 +11,7 @@ class LayoutCursor;
 class LayoutReference : public TreeByReference {
   friend class GridLayoutNode;
   friend class HorizontalLayoutNode;
+  friend class LayoutNode;
   friend class LayoutCursor;
   friend class VerticalOffsetLayoutNode;
 public:

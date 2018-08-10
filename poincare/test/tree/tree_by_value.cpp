@@ -33,13 +33,30 @@ static void assert_pool_size(int i) {
 #endif
 }
 
-QUIZ_CASE(tree_by_values_are_stored_in_pool) {
+QUIZ_CASE(tree_by_values_are_discared_after_block) {
   assert_pool_size(0);
   {
     BlobByValue b(0);
     assert_pool_size(1);
   }
   assert_pool_size(0);
+}
+
+void make_temp_blob() {
+  BlobByValue b(5);
+}
+QUIZ_CASE(tree_by_values_are_discared_after_function_call) {
+  assert_pool_size(0);
+  make_temp_blob();
+  assert_pool_size(0);
+}
+
+QUIZ_CASE(tree_by_values_can_be_copied) {
+  assert_pool_size(0);
+  BlobByValue b(123);
+  assert_pool_size(1);
+  TreeByValue t = b;
+  assert_pool_size(2);
 }
 
 TreeByValue blob_with_data_3() {

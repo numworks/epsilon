@@ -13,6 +13,7 @@ class BlobNode : public TreeNode {
 public:
   static BlobNode * FailedAllocationStaticNode() {
     static AllocationFailureNode<BlobNode> failureNode;
+    TreePool::sharedPool()->registerStaticNodeIfRequired(&failureNode);
     return &failureNode;
   }
   virtual BlobNode * failedAllocationStaticNode() override {

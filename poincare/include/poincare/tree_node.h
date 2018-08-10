@@ -152,6 +152,30 @@ public:
     return node;
   }
 
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream stream) = 0;
+  virtual void logAttributes(std::ostream stream) {
+  }
+
+  void log(std::ostream stream, bool recursive = true) {
+    stream << "<";
+    logNodeName(stream);
+    stream << " id=\"" << m_identifier << "\"";
+    stream << " refCount=\"" << m_referenceCounter << "\"";
+    stream << " size=\"" << size() << "\"";
+    logAttributes(stream);
+    stream << ">";
+    if (recursive) {
+      for (TreeNode * child : node->depthFirstChildren()) {
+        t->log(stream, recursive);
+      }
+    }
+    stream << "</";
+    logNodeName(stream);
+    stream << ">"
+  }
+#endif
+
 protected:
   TreeNode();
 

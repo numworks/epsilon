@@ -34,17 +34,14 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
     char buffer[TextField::maxBufferSize()];
     int bufferSize = TextField::maxBufferSize();
     int length = layoutField->serialize(buffer, bufferSize);
-    Expression * exp = Expression::parse(buffer);
-    if (exp != nullptr) {
-      delete exp;
-    }
+    Expression exp = Expression::parse(buffer);
     if (length >= bufferSize-1) {
       /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
        * escaped before printing utterly the expression. */
       displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    if (exp == nullptr) {
+    if (!exp.isDefined()) {
       layoutField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }

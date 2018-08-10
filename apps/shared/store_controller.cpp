@@ -72,8 +72,8 @@ bool StoreController::textFieldShouldFinishEditing(TextField * textField, Ion::E
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (textField == contentView()->formulaInputView()->textField()) {
     // Handle formula input
-    Expression * expression = Expression::parse(textField->text());
-    if (expression == nullptr) {
+    Expression expression = Expression::parse(textField->text());
+    if (!expression.isDefined()) {
       app()->displayWarning(I18n::Message::SyntaxError);
       return false;
     }
@@ -81,7 +81,6 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
     if (fillColumnWithFormula(expression)) {
       app()->setFirstResponder(contentView());
     }
-    delete expression;
     return true;
   }
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
@@ -269,12 +268,12 @@ void StoreController::unloadView(View * view) {
   delete view;
 }
 
-bool StoreController::privateFillColumnWithFormula(Expression * formula, Expression::isVariableTest isVariable) {
+bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {
   int currentColumn = selectedColumn();
   // Fetch the series used in the formula to compute the size of the filled in series
   char variables[Expression::k_maxNumberOfVariables];
   variables[0] = 0;
-  formula->getVariables(isVariable, variables);
+  formula.getVariables(isVariable, variables);
   int numberOfValuesToCompute = -1;
   int index = 0;
   while (variables[index] != 0) {

@@ -41,7 +41,7 @@ void Function::setActive(bool active) {
 
 template<typename T>
 T Function::templatedApproximateAtAbscissa(T x, Poincare::Context * context) const {
-  return expression(context)->approximateWithValueForSymbol(symbol(), x, *context, Preferences::sharedPreferences()->angleUnit());
+  return expression(context).approximateWithValueForSymbol(symbol(), x, *context, Preferences::sharedPreferences()->angleUnit());
 }
 
 }

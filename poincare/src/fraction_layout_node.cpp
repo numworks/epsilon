@@ -1,7 +1,9 @@
 #include <poincare/fraction_layout_node.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <ion/charset.h>
 #include <escher/metric.h>
 #include <assert.h>

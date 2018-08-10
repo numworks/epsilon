@@ -60,11 +60,11 @@ void Calculation::setContent(const char * c, Context * context, Expression * ans
   Expression::ReplaceSymbolWithExpression(&m_input, Symbol::SpecialSymbols::Ans, ansExpression);
   /* We do not store directly the text enter by the user because we do not want
    * to keep Ans symbol in the calculation store. */
-  PoincareHelpers::WriteTextInBuffer(m_input, m_inputText, sizeof(m_inputText));
+  PoincareHelpers::Serialize(m_input, m_inputText, sizeof(m_inputText));
   m_exactOutput = PoincareHelpers::ParseAndSimplify(m_inputText, *context);
-  PoincareHelpers::WriteTextInBuffer(m_exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
+  PoincareHelpers::Serialize(m_exactOutput, m_exactOutputText, sizeof(m_exactOutputText));
   m_approximateOutput = PoincareHelpers::Approximate<double>(m_exactOutput, *context);
-  PoincareHelpers::WriteTextInBuffer(m_approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
+  PoincareHelpers::Serialize(m_approximateOutput, m_approximateOutputText, sizeof(m_approximateOutputText));
 }
 
 KDCoordinate Calculation::height(Context * context) {

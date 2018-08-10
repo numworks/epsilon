@@ -68,8 +68,12 @@ class Matrix : public Expression {
   template<typename T> friend class MatrixComplexNode;
   friend class GlobalContext;
 public:
-  Matrix(MatrixNode * node) : Expression(node) {}
+  Matrix(const MatrixNode * node) : Expression(node) {}
   Matrix() : Expression(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {}
+  Matrix(Expression e) : Matrix() {
+    addChildAtIndexInPlace(e, 0, 0);
+    setDimensions(1,1);
+  }
 
   void setDimensions(int rows, int columns);
   int numberOfRows() const { return node()->numberOfRows(); }

@@ -121,6 +121,7 @@ protected:
       node()->retain();
     }
   }
+  void setTo(const TreeByReference & tr);
   /* Hierarchy operations */
   // Add
   virtual void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren);
@@ -131,9 +132,8 @@ protected:
   virtual void removeChildrenAndDestroyInPlace(int currentNumberOfChildren);
 
   int m_identifier;
-private:
-  void setTo(const TreeByReference & tr);
 
+private:
   // Add ghost children on layout construction
   void buildGhostChildren();
 };

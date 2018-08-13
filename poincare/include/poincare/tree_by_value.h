@@ -17,6 +17,8 @@ public:
   /* Operators */
   TreeByValue& operator=(const TreeByValue& tr);
 
+  virtual ~TreeByValue() = default;
+
   bool isDefined() const { return TreeByReference::isDefined(); }
   bool isAllocationFailure() const { return TreeByReference::isAllocationFailure(); }
 

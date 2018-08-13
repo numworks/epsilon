@@ -444,7 +444,9 @@ Integer::Integer(size_t size, const native_uint_t * digits, size_t numberOfDigit
 
 Integer::Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative) :
   Integer(numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode), digits, numberOfDigits, negative)
-{}
+{
+  assert(numberOfDigits <= NaturalIntegerAbstract::k_maxNumberOfDigits);
+}
 
 Integer::Integer(const char * digits, size_t length, bool negative) :
   Number(nullptr)
@@ -464,7 +466,7 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
         d = 0;
       }
       if (size >= NaturalIntegerAbstract::k_maxNumberOfDigits) {
-        *this = Integer::Overflow();
+        *this = Overflow();
         return;
       }
       d = 10*d+(*digits-'0');
@@ -472,7 +474,7 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
     }
   }
   buffer[size++] = d;
-  *this = Integer(buffer, size, negative);
+  new (this) Integer(buffer, size, negative);
 }
 
 Integer::Integer(const NaturalIntegerAbstract * naturalInteger) :
@@ -484,19 +486,19 @@ Integer::Integer(native_int_t i) :
   Number(nullptr)
 {
   if (i == 0) {
-    *this = Integer((const native_uint_t *)nullptr, 0, false);
+    new (this) Integer((const native_uint_t *)nullptr, 0, false);
     return;
   }
   native_uint_t digits[1];
   digits[0] = i < 0 ? -i : i;
-  *this = Integer(digits, 1, i < 0);
+  new (this) Integer(digits, 1, i < 0);
 }
 
 Integer::Integer(double_native_int_t i) :
   Number(nullptr)
 {
   if (i == 0) {
-    *this = Integer((const native_uint_t *)nullptr, 0, false);
+    new (this) Integer((const native_uint_t *)nullptr, 0, false);
     return;
   }
   double_native_uint_t j = i < 0 ? -i : i;
@@ -505,10 +507,10 @@ Integer::Integer(double_native_int_t i) :
   native_uint_t mostSignificantDigit = *(digits+1);
   native_uint_t digitsArray[2] = {leastSignificantDigit, mostSignificantDigit};
   if (mostSignificantDigit == 0) {
-    *this = Integer(digitsArray, 1, i < 0);
+    new (this) Integer(digitsArray, 1, i < 0);
     return;
   }
-  *this = Integer(digitsArray, 2, i < 0);
+  new (this) Integer(digitsArray, 2, i < 0);
 }
 
 int Integer::extractedInt() const {

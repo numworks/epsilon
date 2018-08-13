@@ -348,13 +348,9 @@ Integer NaturalIntegerAbstract::IntegerWithHalfDigitAtIndex(half_native_uint_t h
 /* Natural Integer Pointer */
 
 NaturalIntegerPointer::NaturalIntegerPointer(native_uint_t * buffer, size_t size) :
-  NaturalIntegerAbstract(size),
-  m_digits(nullptr)
-{
-  if (size <= k_maxNumberOfDigits && size > 0) {
-    m_digits = buffer;
-  }
-}
+  NaturalIntegerAbstract(size > k_maxNumberOfDigits ? k_maxNumberOfDigits+1 : size),
+  m_digits(size > k_maxNumberOfDigits || size == 0 ? nullptr : buffer)
+{}
 
 /* Integer Node */
 
@@ -447,10 +443,13 @@ Integer::Integer(size_t size, const native_uint_t * digits, size_t numberOfDigit
 }
 
 Integer::Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative) :
-  Integer(numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode), digits, numberOfDigits, negative)
-{
-  assert(numberOfDigits <= NaturalIntegerAbstract::k_maxNumberOfDigits);
-}
+  Integer(
+    numberOfDigits > NaturalIntegerAbstract::k_maxNumberOfDigits ? sizeof(IntegerNode) : numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode),
+    numberOfDigits > NaturalIntegerAbstract::k_maxNumberOfDigits ? nullptr : digits,
+    numberOfDigits > NaturalIntegerAbstract::k_maxNumberOfDigits ? NaturalIntegerAbstract::k_maxNumberOfDigits+1 : numberOfDigits,
+    negative
+  )
+{}
 
 Integer::Integer(const char * digits, size_t length, bool negative) :
   Integer(0)
@@ -460,9 +459,6 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
     digits++;
     length--;
   }
-
-  //Integer result = Integer(0);
-
   if (digits != nullptr) {
     Integer base(10);
     for (size_t i = 0; i < length; i++) {

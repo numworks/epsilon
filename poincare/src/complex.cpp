@@ -123,11 +123,9 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
 
 template<typename T>
 Complex<T>::Complex(std::complex<T> c) :
-  Evaluation<T>()
+  Evaluation<T>(TreePool::sharedPool()->createTreeNode<ComplexNode<T>>())
 {
-  TreeNode * node = TreePool::sharedPool()->createTreeNode<ComplexNode<T>>();
-  TreeByReference::setIdentifierAndRetain(node->identifier());
-  static_cast<ComplexNode<T> *>(node)->setComplex(c);
+  static_cast<ComplexNode<T> *>(this->node())->setComplex(c);
 }
 
 template class ComplexNode<float>;

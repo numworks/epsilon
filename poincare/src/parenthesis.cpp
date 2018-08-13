@@ -36,7 +36,8 @@ Expression Parenthesis::shallowReduce(Context& context, Preferences::AngleUnit a
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  return childAtIndex(0);
+  Expression result = childAtIndex(0);
+  return result;
 }
 
 }

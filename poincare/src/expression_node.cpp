@@ -80,7 +80,8 @@ Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUn
 }
 
 Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Expression(this);
+  Expression result = Expression(this);
+  return result;
 }
 
 bool ExpressionNode::isOfType(Type * types, int length) const {

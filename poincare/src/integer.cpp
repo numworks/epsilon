@@ -348,9 +348,12 @@ Integer NaturalIntegerAbstract::IntegerWithHalfDigitAtIndex(half_native_uint_t h
 /* Natural Integer Pointer */
 
 NaturalIntegerPointer::NaturalIntegerPointer(native_uint_t * buffer, size_t size) :
-  NaturalIntegerAbstract(size)
+  NaturalIntegerAbstract(size),
+  m_digits(nullptr)
 {
-  memcpy(m_digits, buffer, size*sizeof(native_uint_t));
+  if (size <= k_maxNumberOfDigits && size > 0) {
+    m_digits = buffer;
+  }
 }
 
 /* Integer Node */
@@ -362,7 +365,9 @@ IntegerNode * IntegerNode::FailedAllocationStaticNode() {
 }
 
 void IntegerNode::setDigits(const native_uint_t * digits, size_t size, bool negative) {
-  memcpy(m_digits, digits, size*sizeof(native_uint_t));
+  if (digits) {
+    memcpy(m_digits, digits, size*sizeof(native_uint_t));
+  }
   m_numberOfDigits = size;
   m_negative = negative;
 }
@@ -457,6 +462,10 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
       if (d*10+(*digits-'0') > 0xFFFFFFFF) {
         buffer[size++] = d;
         d = 0;
+      }
+      if (size >= NaturalIntegerAbstract::k_maxNumberOfDigits) {
+        *this = Integer::Overflow();
+        return;
       }
       d = 10*d+(*digits-'0');
       digits++;

@@ -98,7 +98,7 @@ public:
   static int NaturalOrder(const Rational i, const Rational j);
 
 private:
-  Rational(size_t size) : Number(TreePool::sharedPool()->createTreeNode<RationalNode>(size)) {}
+  Rational(size_t size, native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative);
 
   /* Simplification */
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;

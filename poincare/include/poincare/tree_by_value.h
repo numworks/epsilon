@@ -42,10 +42,6 @@ public:
     TreeByReference::replaceWithInPlace(t);
   }
 
-  // Merge
-  void mergeChildrenAtIndexInPlace(TreeByValue t, int i) {
-    TreeByReference::mergeChildrenAtIndexInPlace(t, i);
-  }
   // Swap
   void swapChildrenInPlace(int i, int j) {
     TreeByReference::swapChildrenInPlace(i, j);

@@ -95,10 +95,7 @@ public:
 private:
   DecimalNode * node() const override { return static_cast<DecimalNode *>(Number::node()); }
   template <typename T> Decimal(T f);
-  Decimal(size_t size) : Number(nullptr) {
-    TreeNode * node = TreePool::sharedPool()->createTreeNode<DecimalNode>(size);
-    TreeByReference::setIdentifierAndRetain(node->identifier());
-  }
+  Decimal(size_t size, Integer m, int e);
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;

@@ -19,8 +19,12 @@ void RationalNode::setDigits(native_uint_t * numeratorDigits, size_t numeratorSi
   m_numberOfDigitsNumerator = numeratorSize;
   m_numberOfDigitsDenominator = denominatorSize;
   size_t numeratorCopySize = numeratorSize*sizeof(native_uint_t);
-  memcpy(m_digits, numeratorDigits, numeratorCopySize);
-  memcpy(m_digits + numeratorCopySize, denominatorDigits, denominatorSize*sizeof(native_uint_t));
+  if (numeratorDigits) {
+    memcpy(m_digits, numeratorDigits, numeratorCopySize);
+  }
+  if (denominatorDigits) {
+    memcpy(m_digits + numeratorCopySize, denominatorDigits, denominatorSize*sizeof(native_uint_t));
+  }
 }
 
 RationalNode * RationalNode::FailedAllocationStaticNode() {
@@ -154,42 +158,44 @@ Rational::Rational(Integer numerator, Integer denominator) :
     denominator = Integer::Division(denominator, gcd).quotient;
   }
   if (numerator.node()->isAllocationFailure() || denominator.node()->isAllocationFailure()) {
-    *this = Rational(RationalNode::FailedAllocationStaticNode());
+    new (this) Rational(RationalNode::FailedAllocationStaticNode());
     return;
   }
   bool negative = (numerator.sign() == ExpressionNode::Sign::Positive && denominator.sign() == ExpressionNode::Sign::Negative) || (denominator.sign() == ExpressionNode::Sign::Positive && numerator.sign() == ExpressionNode::Sign::Negative);
-  *this = Rational(sizeof(RationalNode)+sizeof(native_uint_t)*(numerator.node()->numberOfDigits()+denominator.node()->numberOfDigits()), numerator.node()->digits(), numerator.node()->numberOfDigits(), denominator.node()->digits(), denominator.node()->numberOfDigits(), negative);
-  return;
+  size_t size = sizeof(RationalNode);
+  size += numerator.isInfinity() ? 0 : sizeof(native_uint_t)*numerator.node()->numberOfDigits();
+  size += denominator.isInfinity() ? 0 : sizeof(native_uint_t)*denominator.node()->numberOfDigits();
+  new (this) Rational(size, numerator.node()->digits(), numerator.node()->numberOfDigits(), denominator.node()->digits(), denominator.node()->numberOfDigits(), negative);
 }
 
 Rational::Rational(const Integer numerator) :
   Number(nullptr)
 {
   if (numerator.node()->isAllocationFailure()) {
-    *this = Rational(RationalNode::FailedAllocationStaticNode());
+    new (this) Rational(RationalNode::FailedAllocationStaticNode());
   }
-  *this = Rational(numerator.node(), numerator.sign() == ExpressionNode::Sign::Negative);
+  new (this) Rational(numerator.node(), numerator.sign() == ExpressionNode::Sign::Negative);
 }
 
 Rational::Rational(const NaturalIntegerAbstract * numerator, bool negative) : Number(nullptr) {
   native_uint_t one = 1;
-  *this = Rational(sizeof(RationalNode)+sizeof(native_uint_t)*(numerator->numberOfDigits()+1), numerator->digits(), numerator->numberOfDigits(), &one, 1, negative);
+  size_t size = sizeof(RationalNode) + sizeof(native_uint_t);
+  size += numerator->isInfinity() ? sizeof(native_uint_t)*numerator->numberOfDigits() : 0;
+  new (this) Rational(size, numerator->digits(), numerator->numberOfDigits(), &one, 1, negative);
   return;
 }
 
 Rational::Rational(native_int_t i) : Number(nullptr)  {
   native_uint_t absI = i < 0 ? -i : i;
   native_uint_t one = 1;
-  *this = Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &one, 1, i < 0);
-  return;
+  new (this) Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &one, 1, i < 0);
 }
 
 Rational::Rational(native_int_t i, native_int_t j) : Number(nullptr) {
   assert(j != 0);
   native_uint_t absI = i < 0 ? -i : i;
   native_uint_t absJ = j < 0 ? -j : j;
-  *this = Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &absJ, 1, (i < 0 && j > 0) || (i > 0 && j < 0));
-  return;
+  new (this) Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &absJ, 1, (i < 0 && j > 0) || (i > 0 && j < 0));
 }
 
 bool Rational::numeratorOrDenominatorIsInfinity() const {
@@ -236,12 +242,10 @@ Rational Rational::IntegerPower(const Rational i, const Rational j) {
 }
 
 Rational::Rational(size_t size, native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative) :
-  Number(nullptr)
+  Number(TreePool::sharedPool()->createTreeNode<RationalNode>(size))
 {
   assert(j != 0);
-  TreeNode * node = TreePool::sharedPool()->createTreeNode<RationalNode>(size);
-  TreeByReference::setIdentifierAndRetain(node->identifier());
-  static_cast<RationalNode *>(node)->setDigits(i, numeratorSize, j, denominatorSize, negative);
+  static_cast<RationalNode *>(node())->setDigits(i, numeratorSize, j, denominatorSize, negative);
 }
 
 Expression Rational::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {

@@ -249,7 +249,7 @@ Decimal::Decimal(const char * integralPart, int integralPartLength, const char *
     numerator = Integer::Addition(numerator, Integer(*fractionalPart-'0'));
     fractionalPart++;
   }
-  *this = Decimal(numerator, exponent);
+  new (this) Decimal(numerator, exponent);
 }
 
 template <typename T>
@@ -258,11 +258,16 @@ Decimal::Decimal(T f) : Number(nullptr) {
   int exp = IEEE754<T>::exponentBase10(f);
   int64_t mantissaf = std::round((double)f * std::pow((double)10.0, (double)(-exp+PrintFloat::k_numberOfStoredSignificantDigits+1)));
   Integer m(mantissaf);
-  *this= Decimal(Integer(mantissaf), exp);
+  new (this) Decimal(Integer(mantissaf), exp);
 }
 
 Decimal::Decimal(Integer m, int e) {
-  *this = Decimal(sizeof(DecimalNode)+sizeof(native_uint_t)*m.numberOfDigits());
+  size_t s = sizeof(DecimalNode);
+  s += m.isInfinity() ? 0 : sizeof(native_uint_t)*m.numberOfDigits();
+  new (this) Decimal(s, m, e);
+}
+
+Decimal::Decimal(size_t size, Integer m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {
   node()->setValue(m.node()->digits(), m.node()->numberOfDigits(), e, m.isNegative());
 }
 

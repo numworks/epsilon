@@ -2,10 +2,25 @@
 #include <poincare.h>
 #include <assert.h>
 
-#include <iostream>
-
+#include "tree/helpers.h"
 
 using namespace Poincare;
+
+QUIZ_CASE(poincare_integer_constructor) {
+  Integer a("123");
+  Integer na("-123");
+  Integer b("12345678910111213141516");
+  Integer nb("-12345678910111213141516");
+  Integer c(12314);
+  Integer nc(-12314);
+  Integer d((int64_t)1234567891011121314);
+  Integer nd((int64_t)(-1234567891011121314));
+  Integer e = Integer::Overflow();
+  assert_pool_size(9);
+#if POINCARE_TREE_LOG
+  log_pool();
+#endif
+}
 
 static inline void assert_equal(const Integer i, const Integer j) {
   assert(Integer::NaturalOrder(i, j) == 0);
@@ -14,40 +29,34 @@ static inline void assert_not_equal(const Integer i, const Integer j) {
   assert(Integer::NaturalOrder(i, j) != 0);
 }
 
+static inline void assert_lower(const Integer i, const Integer j) {
+  assert(Integer::NaturalOrder(i, j) < 0);
+}
 
-QUIZ_CASE(poincare_integer) {
-  Poincare::TreePool::sharedPool()->flatLog(std::cout);
-  Integer i(123);
-  Poincare::TreePool::sharedPool()->flatLog(std::cout);
-  Integer j(123);
-  Poincare::TreePool::sharedPool()->flatLog(std::cout);
-  Integer k("123");
-  Integer l("456");
-  Poincare::TreePool::sharedPool()->flatLog(std::cout);
+static inline void assert_greater(const Integer i, const Integer j) {
+  assert(Integer::NaturalOrder(i, j) > 0);
+}
 
+QUIZ_CASE(poincare_integer_compare) {
   assert_equal(Integer(123), Integer(123));
+  assert_equal(Integer(-123), Integer(-123));
   assert_equal(Integer("123"), Integer(123));
   assert_not_equal(Integer("-123"), Integer(123));
   assert_equal(Integer("-123"), Integer(-123));
   assert_equal(Integer((int64_t)1234567891011121314), Integer((int64_t)1234567891011121314));
+  assert_equal(Integer("1234567891011121314"), Integer((int64_t)1234567891011121314));
+  assert_not_equal(Integer("-1234567891011121314"), Integer((int64_t)1234567891011121314));
+  assert_lower(Integer(123), Integer(456));
+  assert_greater(Integer(456), Integer(123));
+  assert_lower(Integer(-100), Integer(2));
+  assert_lower(Integer(-200), Integer(-100));
+  assert_lower(Integer(123), Integer("123456789123456789"));
+  assert_lower(Integer(-123), Integer("123456789123456789"));
+  assert_lower(Integer("123456789123456788"), Integer("123456789123456789"));
+  assert_lower(Integer("-1234567891234567892109209109"), Integer("123456789123456789"));
+  assert_greater(Integer("123456789123456789"), Integer("123456789123456788"));
   //FIXME: assert(Integer("0x2BABE") == Integer(178878));
   //FIXME: assert(Integer("0b1011") == Integer(11));
-}
-
-
-QUIZ_CASE(poincare_integer_compare) {
-#if 0
-  assert(Integer(123).isLowerThan(Integer(456)));
-  assert(!Integer(123).isLowerThan(Integer(123)));
-  assert(!Integer(-123).isLowerThan(Integer(-123)));
-  assert(Integer(-100).isLowerThan(Integer(2)));
-  assert(Integer(-200).isLowerThan(Integer(-100)));
-  assert(Integer(123).isLowerThan(Integer("123456789123456789")));
-  assert(Integer(-123).isLowerThan(Integer("123456789123456789")));
-  assert(Integer("123456789123456788").isLowerThan(Integer("123456789123456789")));
-  assert(Integer("-1234567891234567892109209109").isLowerThan(Integer("123456789123456789")));
-  assert(!Integer("123456789123456789").isLowerThan(Integer("123456789123456788")));
-#endif
 }
 
 QUIZ_CASE(poincare_integer_addition) {

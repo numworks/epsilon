@@ -121,17 +121,19 @@ QUIZ_CASE(poincare_integer_subtraction) {
   assert_sub_to(Integer("65537"), Integer("65537"), Integer("0"));
 }
 
+static inline void assert_mult_to(const Integer i, const Integer j, const Integer k) {
+  assert(Integer::NaturalOrder(Integer::Multiplication(i, j), k) == 0);
+}
+
 QUIZ_CASE(poincare_integer_multiplication) {
-#if 0
-  assert(Integer::Multiplication(Integer(12), Integer(34)).isEqualTo(Integer(408)));
-  assert(Integer::Multiplication(Integer(56), Integer(0)).isEqualTo(Integer(0)));
-  assert(Integer::Multiplication(Integer(-12), Integer(34)).isEqualTo(Integer(-408)));
-  assert(Integer::Multiplication(Integer(-12), Integer(-34)).isEqualTo(Integer(408)));
-  assert(Integer::Multiplication(Integer(123456), Integer(654321)).isEqualTo(Integer("80779853376")));
-  assert(Integer::Multiplication(Integer("9999999999"), Integer("9999999999")).isEqualTo(Integer("99999999980000000001")));
-  assert(Integer::Multiplication(Integer("-23"), Integer("0")).isEqualTo(Integer("0")));
-  assert(Integer::Multiplication(Integer("-23456787654567765456"), Integer("0")).isEqualTo(Integer("0")));
-#endif
+  assert_mult_to(Integer(12), Integer(34), Integer(408));
+  assert_mult_to(Integer(56), Integer(0), Integer(0));
+  assert_mult_to(Integer(-12), Integer(34), Integer(-408));
+  assert_mult_to(Integer(-12), Integer(-34), Integer(408));
+  assert_mult_to(Integer(123456), Integer(654321), Integer("80779853376"));
+  assert_mult_to(Integer("9999999999"), Integer("9999999999"), Integer("99999999980000000001"));
+  assert_mult_to(Integer("-23"), Integer("0"), Integer("0"));
+  assert_mult_to(Integer("-23456787654567765456"), Integer("0"), Integer("0"));
 }
 
 QUIZ_CASE(poincare_integer_divide) {

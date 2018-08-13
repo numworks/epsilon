@@ -191,7 +191,7 @@ public:
   Integer(const NaturalIntegerAbstract * naturalInteger);
   Integer(native_int_t i);
   Integer(double_native_int_t i);
-  static Integer Overflow() { return Integer((native_uint_t *)nullptr, IntegerNode::k_maxNumberOfDigits+1, false); }
+  static Integer Overflow() { return Integer(sizeof(IntegerNode), (native_uint_t *)nullptr, IntegerNode::k_maxNumberOfDigits+1, false); }
 
   constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
   int extractedInt() const;

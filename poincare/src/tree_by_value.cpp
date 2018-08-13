@@ -10,7 +10,7 @@ TreeByValue::TreeByValue(const TreeByValue & tr) :
 /* Operators */
 TreeByValue& TreeByValue::operator=(const TreeByValue& tr) {
   TreeByReference t = tr.clone();
-  setIdentifierAndRetain(t.identifier());
+  setTo(t);
   return *this;
 }
 

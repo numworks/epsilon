@@ -2,6 +2,7 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/approximation_helper.h>
+#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/layout_helper.h>
 #include <poincare/n_ary_expression_node.h>
 #include <poincare/rational.h>
@@ -10,6 +11,7 @@
 namespace Poincare {
 
 class AdditionNode : public NAryExpressionNode {
+  friend class Addition;
 /* TODO friend class Logarithm;
   friend class Multiplication;
   friend class Subtraction;
@@ -57,9 +59,9 @@ private:
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
-  void factorizeOperands(Expression e1, Expression e2, Context & context, Preferences::AngleUnit angleUnit);
+  virtual void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit);
   static const Rational RationalFactor(Expression e);
-  static bool TermsHaveIdenticalNonRationalFactors(const Expression e1, const Expression e2);
+
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
@@ -70,6 +72,10 @@ private:
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
    }
+};
+
+class AllocationFailureAdditionNode : public AllocationFailureNode<AdditionNode> {
+  void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) override {}
 };
 
 class Addition : public NAryExpression {
@@ -83,6 +89,16 @@ public:
   // Expression
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
+private:
+  static bool TermsHaveIdenticalNonRationalFactors(const Expression e1, const Expression e2);
+  Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) {
+    return node()->factorizeOnCommonDenominator(context, angleUnit);
+  }
+  void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) {
+    return node()->factorizeChildrenAtIndexesInPlace(index1, index2, context, angleUnit);
+  }
+  AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }
+
 };
 
 }

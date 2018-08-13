@@ -7,8 +7,8 @@
 namespace Poincare {
 
 class MultiplicationNode : public NAryExpressionNode {
-/*  friend class Addition;
-  friend class Division;
+  friend class Addition;
+/*  friend class Division;
   friend class Logarithm;
   friend class Opposite;
   friend class Power;
@@ -69,6 +69,8 @@ private:
 };
 
 class Multiplication : public NAryExpression {
+  friend class AdditionNode;
+  friend class Addition;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   Multiplication() : NAryExpression(TreePool::sharedPool()->createTreeNode<MultiplicationNode>()) {}

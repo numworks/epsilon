@@ -21,7 +21,7 @@ public:
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
 
   // Commutative properties
-  void sortOperandsInPlace(ExpressionOrder order, bool canBeInterrupted);
+  void sortChildrenInPlace(ExpressionOrder order, bool canBeInterrupted);
   Expression squashUnaryHierarchy();
 
 protected:
@@ -39,6 +39,15 @@ public:
   using Expression::removeChildrenAndDestroyInPlace;
   using Expression::removeChildAtIndexInPlace;
   using Expression::removeChildInPlace;
+  typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
+  void sortChildrenInPlace(ExpressionOrder order, bool canBeInterrupted) {
+    node()->sortChildrenInPlace(order, canBeInterrupted);
+  }
+  Expression squashUnaryHierarchy() {
+    return node()->squashUnaryHierarchy();
+  }
+protected:
+  NAryExpressionNode * node() const { return static_cast<NAryExpressionNode *>(Expression::node()); }
 };
 
 }

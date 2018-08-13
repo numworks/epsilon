@@ -17,6 +17,7 @@ class Expression : public TreeByValue {
   friend class Multiplication;
   friend class Subtraction;
   friend class Addition;
+  friend class AdditionNode;
   friend class Opposite;
   friend class Symbol;
   friend class Decimal;

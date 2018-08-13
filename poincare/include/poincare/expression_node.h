@@ -14,6 +14,7 @@ namespace Poincare {
  * 'this' outdated. They should only be called in a wrapper on Expression. */
 
 class ExpressionNode : public TreeNode, public SerializationHelperInterface {
+  friend class AdditionNode;
   friend class DivisionNode;
   friend class NAryExpressionNode;
   friend class PowerNode;

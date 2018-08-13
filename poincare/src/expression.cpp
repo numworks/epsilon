@@ -134,6 +134,22 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
   return true;
 }
 
+Expression Expression::simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression childI = childAtIndex(i);
+    if (childI.isAllocationFailure()) {
+      return Expression(UndefinedNode::FailedAllocationStaticNode());
+    }
+    if (childI.type() == ExpressionNode::Type::Undefined) {
+      return Undefined();
+    }
+  }
+  Expression thisCopy = *this;
+  return thisCopy;
+}
+
+// Private
+
 Expression Expression::privateReplaceSymbolWithExpression(char symbol, Expression expression) const {
   Expression e = *this;
   int nbChildren = numberOfChildren();

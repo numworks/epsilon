@@ -76,15 +76,7 @@ int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const Express
 }
 
 Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i)->isAllocationFailure()) {
-      return UndefinedNode::FailedAllocationStaticNode();
-    }
-    if (childAtIndex(i)->type() == Type::Undefined) {
-      return Undefined();
-    }
-  }
-  return Expression(this);
+  return Expression(this).simpleShallowReduce(context, angleUnit);
 }
 
 Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {

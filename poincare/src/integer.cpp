@@ -211,7 +211,7 @@ Integer NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, const Nat
       carry = (aDigit > result) || (bDigit > result); // There's been an overflow
     }
   }
-  while (digits[size-1] == 0 && size>1) {
+  while (digits[size-1] == 0 && size>0) {
     size--;
   }
   if (size > k_maxNumberOfDigits) {
@@ -247,7 +247,7 @@ Integer NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const Na
     digits[i+b->m_numberOfDigits] += carry;
   }
 
-  while (digits[size-1] == 0 && size>1) {
+  while (digits[size-1] == 0 && size>0) {
     size--;
   }
   // Overflow

@@ -43,42 +43,40 @@ void translate_in_ASCII_chars(char * expression) {
   }
 }
 
-Expression * parse_expression(const char * expression) {
+Expression parse_expression(const char * expression) {
   quiz_print(expression);
   char buffer[200];
   strlcpy(buffer, expression, sizeof(buffer));
   translate_in_special_chars(buffer);
-  Expression * result = Expression::parse(buffer);
-  assert(result);
+  Expression result = Expression::parse(buffer);
+  assert(result.isDefined());
   return result;
 }
 
-void assert_parsed_expression_type(const char * expression, Poincare::Expression::Type type) {
-  Expression * e = parse_expression(expression);
-  assert(e->type() == type);
-  delete e;
+void assert_parsed_expression_type(const char * expression, Poincare::ExpressionNode::Type type) {
+  Expression e = parse_expression(expression);
+  assert(e.type() == type);
 }
 
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, char symbolName) {
   GlobalContext globalContext;
-  Expression * e = parse_expression(expression);
-  Expression::Simplify(&e, globalContext, Radian);
-  assert(e->polynomialDegree(symbolName) == degree);
-  delete e;
+  Expression e = parse_expression(expression);
+  e.simplify(globalContext, Radian);
+  assert(e.polynomialDegree(symbolName) == degree);
 }
 
-typedef Expression * (*ProcessExpression)(Expression *, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
+typedef Expression (*ProcessExpression)(Expression, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
 
 void assert_parsed_expression_process_to(const char * expression, const char * result, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, ProcessExpression process, int numberOfSignifiantDigits = PrintFloat::k_numberOfStoredSignificantDigits) {
   GlobalContext globalContext;
-  Expression * e = parse_expression(expression);
+  Expression e = parse_expression(expression);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << " Entry expression: " << expression << "----"  << endl;
 #endif
-  Expression::Simplify(&e, globalContext, angleUnit);
-  Expression * m = process(e, globalContext, angleUnit, complexFormat);
+  e.simplify(globalContext, angleUnit);
+  Expression m = process(e, globalContext, angleUnit, complexFormat);
   char buffer[500];
-  m->serialize(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);
+  m.serialize(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);
   translate_in_ASCII_chars(buffer);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   print_expression(e, 0);
@@ -86,10 +84,6 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   cout << "----- compared to: " << result << " ----\n"  << endl;
 #endif
   assert(strcmp(buffer, result) == 0);
-  delete e;
-  if (e != m) {
-    delete m;
-  }
 }
 
 template<typename T>
@@ -99,8 +93,8 @@ void assert_parsed_expression_evaluates_to(const char * expression, const char *
 #endif
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, angleUnit, complexFormat, [](Expression * e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
-        return e->approximate<T>(context, angleUnit, complexFormat);
+  assert_parsed_expression_process_to(expression, approximation, angleUnit, complexFormat, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
+        return e.approximate<T>(context, angleUnit, complexFormat);
       }, numberOfDigits);
 }
 
@@ -108,9 +102,10 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "--------- Simplification ---------" << endl;
 #endif
-  assert_parsed_expression_process_to(expression, simplifiedExpression, angleUnit, Preferences::ComplexFormat::Cartesian, [](Expression * e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) { return e; });
+  assert_parsed_expression_process_to(expression, simplifiedExpression, angleUnit, Preferences::ComplexFormat::Cartesian, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) { return e; });
 }
 
+#if 0
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {
   Expression * e = parse_expression(expressionLayout);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
@@ -140,5 +135,6 @@ void assert_expression_layout_serialize_to(Poincare::ExpressionLayout * layout, 
   assert(strcmp(serialization, buffer) == 0);
 }
 
+#endif
 template void assert_parsed_expression_evaluates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
 template void assert_parsed_expression_evaluates_to<double>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);

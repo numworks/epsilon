@@ -61,6 +61,7 @@ public:
         T::FailedAllocationStaticNode()->retain();
         return T::FailedAllocationStaticNode();
       }
+      ghost->retain();
       move(node->next(), ghost, 0);
     }
     return node;

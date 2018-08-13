@@ -18,8 +18,9 @@ void RationalNode::setDigits(native_uint_t * numeratorDigits, size_t numeratorSi
   m_negative = negative;
   m_numberOfDigitsNumerator = numeratorSize;
   m_numberOfDigitsDenominator = denominatorSize;
-  memcpy(m_digits, numeratorDigits, numeratorSize*sizeof(native_uint_t));
-  memcpy(m_digits + m_numberOfDigitsNumerator, denominatorDigits, denominatorSize*sizeof(native_uint_t));
+  size_t numeratorCopySize = numeratorSize*sizeof(native_uint_t);
+  memcpy(m_digits, numeratorDigits, numeratorCopySize);
+  memcpy(m_digits + numeratorCopySize, denominatorDigits, denominatorSize*sizeof(native_uint_t));
 }
 
 RationalNode * RationalNode::FailedAllocationStaticNode() {

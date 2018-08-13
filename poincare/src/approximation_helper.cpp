@@ -46,6 +46,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
 }
 
 template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const ExpressionNode * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexAndComplexReduction<T> computeOnComplexes, ComplexAndMatrixReduction<T> computeOnComplexAndMatrix, MatrixAndComplexReduction<T> computeOnMatrixAndComplex, MatrixAndMatrixReduction<T> computeOnMatrices) {
+  assert(expression->numberOfChildren() > 0);
   Evaluation<T> result = expression->childAtIndex(0)->approximate(T(), context, angleUnit);
   for (int i = 1; i < expression->numberOfChildren(); i++) {
     Evaluation<T> intermediateResult;

@@ -409,7 +409,11 @@ int IntegerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 size_t IntegerNode::size() const {
-  return m_numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode);
+  size_t baseSize = sizeof(IntegerNode);
+  if (isInfinity()) {
+    return baseSize;
+  }
+  return m_numberOfDigits*sizeof(native_uint_t)+baseSize;
 }
 
 Expression IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {

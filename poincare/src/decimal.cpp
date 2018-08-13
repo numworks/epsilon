@@ -40,6 +40,14 @@ NaturalIntegerPointer DecimalNode::mantissa() const {
   return NaturalIntegerPointer((native_uint_t *)m_mantissa, m_numberOfDigitsInMantissa);
 }
 
+size_t DecimalNode::size() const {
+  size_t s = sizeof(DecimalNode);
+  if (!mantissa().isInfinity()) {
+    s += sizeof(native_uint_t)*m_numberOfDigitsInMantissa;
+  }
+  return s;
+}
+
 int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
   assert(e->type() == Type::Decimal);
   const DecimalNode * other = static_cast<const DecimalNode *>(e);

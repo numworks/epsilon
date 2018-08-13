@@ -44,7 +44,14 @@ NaturalIntegerPointer RationalNode::denominator() const {
 // Tree Node
 
 size_t RationalNode::size() const {
-  return sizeof(RationalNode)+sizeof(native_uint_t)*(m_numberOfDigitsNumerator+m_numberOfDigitsDenominator);
+  size_t s = sizeof(RationalNode);
+  if (!numerator().isInfinity()) {
+    s += sizeof(native_uint_t)*m_numberOfDigitsNumerator;
+  }
+  if (!denominator().isInfinity()) {
+    s += sizeof(native_uint_t)*m_numberOfDigitsDenominator;
+  }
+  return s;
 }
 
 // Serialization Node

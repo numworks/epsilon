@@ -48,6 +48,9 @@ public:
   void swapChildrenInPlace(int i, int j) {
     TreeByReference::swapChildrenInPlace(i, j);
   }
+#if POINCARE_TREE_LOG
+  using TreeByReference::log;
+#endif
 
 protected:
   /* Constructor */

@@ -36,6 +36,7 @@ objs += $(addprefix poincare/src/,\
 objs += $(addprefix poincare/src/,\
   addition.o\
   arithmetic.o\
+  exception_expression_node.o\
   expression_lexer.o\
   expression_parser.o\
   layout_helper.o\

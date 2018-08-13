@@ -36,6 +36,9 @@ public:
     m_referenceCounter = refCount;
   }
 
+  // Exception
+  virtual bool isException() const { return false; }
+
   // Ghost
   virtual bool isGhost() const { return false; }
 

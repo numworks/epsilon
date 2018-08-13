@@ -1,0 +1,18 @@
+#include <quiz.h>
+#include <poincare.h>
+
+using namespace Poincare;
+
+QUIZ_CASE(expression_can_start_uninitialized) {
+  Expression e;
+  {
+    Integer i(1);
+    e = i;
+  }
+}
+
+QUIZ_CASE(expression_can_be_copied_even_if_uninitialized) {
+  Expression e;
+  Expression f;
+  f = e;
+}

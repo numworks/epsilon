@@ -361,35 +361,6 @@ IntegerNode * IntegerNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-void IntegerNode::setDigits(native_int_t i) {
-  if (i == 0) {
-    m_numberOfDigits = 0;
-    m_negative = false;
-    return;
-  }
-  m_negative = i < 0;
-  m_digits[0] = i < 0 ? -i : i;
-  m_numberOfDigits = 1;
-}
-
-void IntegerNode::setDigits(double_native_int_t i) {
-  if (i == 0) {
-    m_numberOfDigits = 0;
-    m_negative = false;
-    return;
-  }
-  double_native_uint_t j = i < 0 ? -i : i;
-  native_uint_t * digits = (native_uint_t *)&j;
-  native_uint_t leastSignificantDigit = *digits;
-  native_uint_t mostSignificantDigit = *(digits+1);
-  m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
-  m_digits[0] = leastSignificantDigit;
-  if (m_numberOfDigits > 1) {
-    m_digits[1] = mostSignificantDigit;
-  }
-  m_negative = i < 0;
-
-}
 void IntegerNode::setDigits(const native_uint_t * digits, size_t size, bool negative) {
   memcpy(m_digits, digits, size*sizeof(native_uint_t));
   m_numberOfDigits = size;
@@ -459,14 +430,16 @@ int IntegerNode::NaturalOrder(const IntegerNode * i, const IntegerNode * j) {
 
 /* Integer */
 
-Integer::Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative) :
-  Integer(numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode))
-{
+Integer::Integer(size_t size, const native_uint_t * digits, size_t numberOfDigits, bool negative) : Number(TreePool::sharedPool()->createTreeNode<IntegerNode>(size)) {
   if (numberOfDigits == 1 && digits[0] == 0) {
     negative = false;
   }
   node()->setDigits(digits, numberOfDigits, negative);
 }
+
+Integer::Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative) :
+  Integer(numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode), digits, numberOfDigits, negative)
+{}
 
 Integer::Integer(const char * digits, size_t length, bool negative) :
   Number(nullptr)
@@ -494,29 +467,39 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
 }
 
 Integer::Integer(const NaturalIntegerAbstract * naturalInteger) :
-  Integer(naturalInteger->numberOfDigits()*sizeof(native_uint_t)+sizeof(IntegerNode))
+  Integer(naturalInteger->digits(), naturalInteger->numberOfDigits(), false)
 {
-  node()->setDigits(naturalInteger->digits(), naturalInteger->numberOfDigits(), false);
 }
 
 Integer::Integer(native_int_t i) :
-  Integer(i == 0 ? sizeof(IntegerNode) : sizeof(IntegerNode)+sizeof(native_uint_t))
+  Number(nullptr)
 {
-  node()->setDigits(i);
+  if (i == 0) {
+    *this = Integer((const native_uint_t *)nullptr, 0, false);
+    return;
+  }
+  native_uint_t digits[1];
+  digits[0] = i < 0 ? -i : i;
+  *this = Integer(digits, 1, i < 0);
 }
 
 Integer::Integer(double_native_int_t i) :
   Number(nullptr)
 {
-  double_native_uint_t j = i;
   if (i == 0) {
-    *this = Integer(sizeof(IntegerNode));
-  } else if (j <= 0xFFFFFFFF) {
-    *this = Integer(sizeof(IntegerNode)+sizeof(native_uint_t));
-  } else {
-    *this = Integer(sizeof(IntegerNode)+2*sizeof(native_uint_t));
+    *this = Integer((const native_uint_t *)nullptr, 0, false);
+    return;
   }
-  node()->setDigits(i);
+  double_native_uint_t j = i < 0 ? -i : i;
+  native_uint_t * digits = (native_uint_t *)&j;
+  native_uint_t leastSignificantDigit = *digits;
+  native_uint_t mostSignificantDigit = *(digits+1);
+  native_uint_t digitsArray[2] = {leastSignificantDigit, mostSignificantDigit};
+  if (mostSignificantDigit == 0) {
+    *this = Integer(digitsArray, 1, i < 0);
+    return;
+  }
+  *this = Integer(digitsArray, 2, i < 0);
 }
 
 int Integer::extractedInt() const {

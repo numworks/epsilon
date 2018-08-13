@@ -105,8 +105,6 @@ public:
   IntegerNode() :
     NaturalIntegerAbstract(),
     m_negative(false) {}
-  virtual void setDigits(native_int_t i);
-  virtual void setDigits(double_native_int_t i);
   virtual void setDigits(const native_uint_t * digits, size_t size, bool negative);
 
   // Allocation Failure
@@ -176,8 +174,6 @@ class AllocationFailureIntegerNode : public AllocationFailureExpressionNode<Inte
 public:
   // IntegerNode
   bool isZero() const override { return false; }
-  void setDigits(native_int_t i) override {}
-  void setDigits(double_native_int_t i) override {}
   void setDigits(const native_uint_t * digits, size_t size, bool negative) override {}
 };
 
@@ -223,8 +219,7 @@ private:
   IntegerNode * node() const override { return static_cast<IntegerNode *>(Number::node()); }
 
   Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative);
-  Integer(size_t size) : Number(TreePool::sharedPool()->createTreeNode<IntegerNode>(size)) {
-  }
+  Integer(size_t size, const native_uint_t * digits, size_t numberOfDigits, bool negative);
   static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative);
   size_t numberOfDigits() const { return node()->numberOfDigits(); }
   uint32_t digit(int i) const { return node()->digit(i); }

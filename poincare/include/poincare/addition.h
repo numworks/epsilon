@@ -98,7 +98,6 @@ private:
     return node()->factorizeChildrenAtIndexesInPlace(index1, index2, context, angleUnit);
   }
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }
-
 };
 
 }

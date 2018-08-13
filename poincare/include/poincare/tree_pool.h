@@ -117,7 +117,7 @@ public:
 private:
   constexpr static int BufferSize = 1024;//2048;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
-  constexpr static int MaxNumberOfStaticNodes = 5; // GhostLayoutNode, AllocationFailedLayoutNode, GhostExpressionNode, AllocationFailedExpressionNode, AllocationFailedEvaluationNode
+  constexpr static int MaxNumberOfStaticNodes = 200; // TODO: count how may are needed
 
   // TreeNode
   void discardTreeNode(TreeNode * node) {

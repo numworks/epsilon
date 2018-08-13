@@ -132,6 +132,7 @@ public:
 
 protected:
   Expression(const ExpressionNode * n) : TreeByValue(n) {}
+  Expression simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
 private:
   /* Properties */

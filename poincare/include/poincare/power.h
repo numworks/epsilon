@@ -92,9 +92,7 @@ public:
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
-
 };
-
 
 }
 

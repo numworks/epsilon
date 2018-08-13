@@ -581,7 +581,7 @@ Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNeg
       us.setNegative(a.sign() == ExpressionNode::Sign::Negative);
       return us;
     } else {
-      Integer us = IntegerNode::usum(a.node(), b.node(), true);
+      Integer us = IntegerNode::usum(b.node(), a.node(), true);
       us.setNegative(bNegative);
       return us;
     }

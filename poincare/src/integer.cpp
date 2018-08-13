@@ -385,7 +385,7 @@ void IntegerNode::setDigits(double_native_int_t i) {
   m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
   m_digits[0] = leastSignificantDigit;
   if (m_numberOfDigits > 1) {
-    digits[1] = mostSignificantDigit;
+    m_digits[1] = mostSignificantDigit;
   }
   m_negative = i < 0;
 

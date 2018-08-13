@@ -29,11 +29,12 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailureExpressionNode<T>); }
-#if TREE_LOG
-  const char * description() const override { return "AllocationFailureExpression";  }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "AllocationFailureExpression";
+  }
 #endif
 };
-
 
 }
 

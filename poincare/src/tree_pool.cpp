@@ -124,10 +124,9 @@ void * TreePool::alloc(size_t size) {
   return result;
 }
 
-void TreePool::dealloc(TreeNode * node) {
+void TreePool::dealloc(TreeNode * node, size_t size) {
   char * ptr = reinterpret_cast<char *>(node);
   assert(ptr >= m_buffer && ptr < m_cursor);
-  size_t size = node->size();
 
   // Step 1 - Compact the pool
   memmove(

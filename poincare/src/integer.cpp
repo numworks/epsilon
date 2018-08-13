@@ -421,7 +421,7 @@ Expression IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUni
 }
 
 void IntegerNode::setNegative(bool negative) {
-  if (numberOfDigits() > 0) { // Zero cannot be negative
+  if (numberOfDigits() == 0) { // Zero cannot be negative
     return;
   }
   m_negative = negative;
@@ -453,32 +453,26 @@ Integer::Integer(const native_uint_t * digits, size_t numberOfDigits, bool negat
 }
 
 Integer::Integer(const char * digits, size_t length, bool negative) :
-  Number(nullptr)
+  Integer(0)
 {
   if (digits != nullptr && digits[0] == '-') {
     negative = true;
     digits++;
     length--;
   }
-  native_uint_t buffer[IntegerNode::k_maxNumberOfDigits];
-  double_native_uint_t d = 0;
-  int size = 0;
+
+  //Integer result = Integer(0);
+
   if (digits != nullptr) {
-    for (size_t s = 0; s < length; s++) {
-      if (d*10+(*digits-'0') > 0xFFFFFFFF) {
-        buffer[size++] = d;
-        d = 0;
-      }
-      if (size >= NaturalIntegerAbstract::k_maxNumberOfDigits) {
-        *this = Overflow();
-        return;
-      }
-      d = 10*d+(*digits-'0');
+    Integer base(10);
+    for (size_t i = 0; i < length; i++) {
+      *this = Multiplication(*this, base);
+      *this = Addition(*this, Integer(*digits-'0'));
       digits++;
     }
   }
-  buffer[size++] = d;
-  new (this) Integer(buffer, size, negative);
+
+  setNegative(isZero() ? false : negative);
 }
 
 Integer::Integer(const NaturalIntegerAbstract * naturalInteger) :

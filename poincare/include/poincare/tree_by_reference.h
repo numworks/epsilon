@@ -117,7 +117,9 @@ protected:
   TreeByReference() : m_identifier(-1) {}
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;
-    node()->retain();
+    if (isDefined()) {
+      node()->retain();
+    }
   }
   /* Hierarchy operations */
   // Add

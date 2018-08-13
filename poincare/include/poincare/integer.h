@@ -139,10 +139,14 @@ public:
     stream << " numberOfDigits=\"" << m_numberOfDigits << "\"";
     stream << " negative=\"" << m_negative << "\"";
     stream << " digits=\"";
-    for (int i=0; i<m_numberOfDigits; i++) {
-      stream << m_digits[i];
-      if (i != (m_numberOfDigits-1)) {
-        stream << ",";
+    if (isInfinity()) {
+      stream << "nullptr";
+    } else {
+      for (int i=0; i<m_numberOfDigits; i++) {
+        stream << m_digits[i];
+        if (i != (m_numberOfDigits-1)) {
+          stream << ",";
+        }
       }
     }
     stream << "\"";

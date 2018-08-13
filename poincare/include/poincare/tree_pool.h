@@ -122,8 +122,9 @@ private:
   // TreeNode
   void discardTreeNode(TreeNode * node) {
     int nodeIdentifier = node->identifier();
+    size_t size = node->size();
     node->~TreeNode();
-    dealloc(node);
+    dealloc(node, size);
     freeIdentifier(nodeIdentifier);
   }
 
@@ -192,7 +193,7 @@ private:
 
   // Pool memory
   void * alloc(size_t size);
-  void dealloc(TreeNode * ptr);
+  void dealloc(TreeNode * ptr, size_t size);
   bool insert(char * destination, char * source, size_t length);
   void moveNodes(TreeNode * destination, TreeNode * source, size_t moveLength);
 

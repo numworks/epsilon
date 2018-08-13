@@ -34,7 +34,7 @@ public:
 
   /* Reference */
   ExpressionNode * node() const override {
-    assert(!TreeByValue::node()->isGhost());
+    assert(TreeByValue::node() == nullptr || !TreeByValue::node()->isGhost());
     return static_cast<ExpressionNode *>(TreeByValue::node());
   }
 

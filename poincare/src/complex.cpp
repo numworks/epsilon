@@ -126,10 +126,8 @@ Complex<T>::Complex(std::complex<T> c) :
   Evaluation<T>()
 {
   TreeNode * node = TreePool::sharedPool()->createTreeNode<ComplexNode<T>>();
-  this->m_identifier = node->identifier();
-  if (!(node->isAllocationFailure())) {
-    static_cast<ComplexNode<T> *>(node)->setComplex(c);
-  }
+  TreeByReference::setIdentifierAndRetain(node->identifier());
+  static_cast<ComplexNode<T> *>(node)->setComplex(c);
 }
 
 template class ComplexNode<float>;

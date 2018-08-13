@@ -97,7 +97,7 @@ private:
   template <typename T> Decimal(T f);
   Decimal(size_t size) : Number(nullptr) {
     TreeNode * node = TreePool::sharedPool()->createTreeNode<DecimalNode>(size);
-    m_identifier = node->identifier();
+    TreeByReference::setIdentifierAndRetain(node->identifier());
   }
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;

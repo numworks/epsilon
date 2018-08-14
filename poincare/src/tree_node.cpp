@@ -38,7 +38,7 @@ void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
 
 TreeNode * TreeNode::parent() const {
   if (isStatic()) {
-    return nullptr;
+    return uninitializedStaticNode();
   }
   /* Choose between these algorithms: the first has complexity O(numberNodes)
    * but uses O(3maxNumberNodes) space. The second is much clearer for the

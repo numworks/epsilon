@@ -72,17 +72,17 @@ TreeNode * TreeNode::parent() const {
 #else
   for (TreeNode * node : TreePool::sharedPool()->allNodes()) {
     if (node == this) {
-      return nullptr;
+      return uninitializedStaticNode();
     }
     if (node->hasChild(this)) {
       return node;
     }
   }
   if (isAllocationFailure()) {
-    return nullptr;
+    return uninitializedStaticNode();
   }
   assert(false);
-  return nullptr;
+  return uninitializedStaticNode();
 #endif
 }
 
@@ -96,7 +96,7 @@ TreeNode * TreeNode::root() {
     }
   }
   assert(false);
-  return nullptr;
+  return uninitializedStaticNode();
 }
 
 int TreeNode::numberOfDescendants(bool includeSelf) const {

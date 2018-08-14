@@ -25,7 +25,7 @@ Expression::Expression() : Expression(UninitializedExpressionNode::Uninitialized
 
 Expression Expression::parse(char const * string) {
   if (string[0] == 0) {
-    return nullptr;
+    return Expression();
   }
   YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
   Expression expression;

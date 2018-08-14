@@ -2,20 +2,14 @@
 #define POINCARE_TEST_PAIR_NODE_H
 
 #include <poincare/tree_node.h>
-#include <poincare/allocation_failure_node.h>
 #include <poincare/tree_by_reference.h>
 #include <poincare/tree_by_value.h>
 
 namespace Poincare {
 
-
 class PairNode : public TreeNode {
 public:
-  static PairNode * FailedAllocationStaticNode() {
-    static AllocationFailureNode<PairNode> failureNode;
-    TreePool::sharedPool()->registerStaticNodeIfRequired(&failureNode);
-    return &failureNode;
-  }
+  static PairNode * FailedAllocationStaticNode();
   virtual PairNode * failedAllocationStaticNode() override {
     return PairNode::FailedAllocationStaticNode();
   }
@@ -28,6 +22,16 @@ public:
 #endif
 };
 
+class AllocationFailurePairNode : public PairNode {
+  size_t size() const override { return sizeof(AllocationFailurePairNode); }
+  bool isAllocationFailure() const override { return true; }
+  int numberOfChildren() const override { return 0; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "AllocationFailurePair";
+  }
+#endif
+};
 
 class PairByReference : public TreeByReference {
 public:

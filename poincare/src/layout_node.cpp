@@ -144,6 +144,12 @@ bool LayoutNode::canBeOmittedMultiplicationRightFactor() const {
   return isCollapsable(&numberOfOpenParentheses, false) && !isVerticalOffset();
 }
 
+// TreeNode
+
+TreeNode * LayoutNode::uninitializedStaticNode() const {
+  return LayoutReference().node();
+}
+
 // Private
 
 void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {

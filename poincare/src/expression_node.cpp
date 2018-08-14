@@ -93,6 +93,10 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
   return false;
 }
 
+TreeNode * ExpressionNode::uninitializedStaticNode() const {
+  return Expression().node();
+}
+
 Expression ExpressionNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
   return Expression();
 }

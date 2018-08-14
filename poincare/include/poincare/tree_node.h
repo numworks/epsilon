@@ -38,6 +38,7 @@ public:
 
   // Uninitialized node
   virtual bool isUninitialized() const { return false; }
+  virtual TreeNode * uninitializedStaticNode() const = 0;
 
   // Ghost
   virtual bool isGhost() const { return false; }

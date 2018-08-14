@@ -129,6 +129,10 @@ public:
   virtual void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
   virtual bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force);
   virtual void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
+
+  // TreeNode
+  TreeNode * uninitializedStaticNode() const override;
+
 protected:
   // Tree navigation
   virtual void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited);

@@ -44,49 +44,38 @@ public:
   bool isStatic() const { return node()->isStatic(); }
 
   int nodeRetainCount() const {
-    assert(!isUninitialized());
     return node()->retainCount();
   }
   void incrementNumberOfChildren(int increment = 1) {
-    assert(!isUninitialized());
     node()->incrementNumberOfChildren(increment);
   }
   void decrementNumberOfChildren(int decrement = 1) {
-    assert(!isUninitialized());
     node()->decrementNumberOfChildren(decrement);
   }
   int numberOfDescendants(bool includeSelf) const {
-    assert(!isUninitialized());
     return node()->numberOfDescendants(includeSelf);
   }
 
   /* Hierarchy */
   bool hasChild(TreeByReference t) const {
-    assert(!isUninitialized());
     return node()->hasChild(t.node());
   }
   bool hasSibling(TreeByReference t) const {
-    assert(!isUninitialized());
     return node()->hasSibling(t.node());
   }
   bool hasAncestor(TreeByReference t, bool includeSelf) const {
-    assert(!isUninitialized());
     return node()->hasAncestor(t.node(), includeSelf);
   }
   int numberOfChildren() const {
-    assert(!isUninitialized());
     return node()->numberOfChildren();
   }
   TreeByReference parent() const {
-    assert(!isUninitialized());
     return TreeByReference(node()->parent());
   }
   TreeByReference childAtIndex(int i) const {
-    assert(!isUninitialized());
     return TreeByReference(node()->childAtIndex(i));
   }
   int indexOfChild(TreeByReference t) const {
-    assert(!isUninitialized());
     return node()->indexOfChild(t.node());
   }
 

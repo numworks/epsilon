@@ -311,7 +311,7 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
    * pi+(-1)*pi. We don't remove the last zero if it's the only child left
    * though. */
   i = 0;
-  while (i < numberOfChildren()) {
+  while (i < thisCopy.numberOfChildren()) {
     Expression e = thisCopy.childAtIndex(i);
     if (e.type() == ExpressionNode::Type::Rational && static_cast<RationalNode *>(e.node())->isZero() && thisCopy.numberOfChildren() > 1) {
       thisCopy.removeChildAtIndexInPlace(i);

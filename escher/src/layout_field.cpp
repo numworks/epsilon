@@ -87,7 +87,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
         return true;
       }
       // Find the pointed layout.
-      LayoutRef pointedLayoutRef();
+      LayoutRef pointedLayoutRef;
       if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
         /* Special case: if the text is "random()", the cursor should not be set
          * inside the parentheses. */

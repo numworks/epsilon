@@ -9,4 +9,7 @@ UninitializedEvaluationNode<T> * UninitializedEvaluationNode<T>::UninitializedEv
   return &exception;
 }
 
+template UninitializedEvaluationNode<float> * UninitializedEvaluationNode<float>::UninitializedEvaluationStaticNode();
+template UninitializedEvaluationNode<double> * UninitializedEvaluationNode<double>::UninitializedEvaluationStaticNode();
+
 }

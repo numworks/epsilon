@@ -105,6 +105,10 @@ T NaturalIntegerAbstract::approximate() const {
   * - the mantissa is the beginning of our BigInt, discarding the first bit
   */
 
+  if (isInfinity()) {
+    return INFINITY;
+  }
+
   native_uint_t lastDigit = digit(m_numberOfDigits-1);
   uint8_t numberOfBitsInLastDigit = log2(lastDigit);
 
@@ -155,6 +159,7 @@ T NaturalIntegerAbstract::approximate() const {
 // Properties
 
 int NaturalIntegerAbstract::NumberOfBase10Digits(const NaturalIntegerAbstract * i) {
+  assert(!i->isInfinity());
   int numberOfDigits = 1;
   Integer ref(i);
   Integer base(10);

@@ -16,9 +16,13 @@ TreeByReference::~TreeByReference() {
 /* Clone */
 
 TreeByReference TreeByReference::clone() const {
-  if (isUninitialized()){
-    return TreeByReference();
+  if (isStatic()) {
+    // Static nodes are not copied
+    return TreeByReference(node());
   }
+  /* TODO Remove ? if (isUninitialized()) {
+    return TreeByReference();
+  }*/
   TreeNode * myNode = node();
   if (myNode->isAllocationFailure()) {
     int allocationFailureNodeId = myNode->allocationFailureNodeIdentifier();

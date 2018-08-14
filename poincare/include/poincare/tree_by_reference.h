@@ -10,8 +10,12 @@ class TreeByReference {
   friend class TreeNode;
 public:
   /* Constructors */
-  TreeByReference(const TreeByReference & tr) : m_identifier(TreePool::NoNodeIdentifier) { setTo(tr); }
-  TreeByReference(TreeByReference&& tr) : m_identifier(TreePool::NoNodeIdentifier) { setTo(tr); }
+  TreeByReference(const TreeByReference & tr) : m_identifier(TreePool::NoNodeIdentifier) {
+    setIdentifierAndRetain(tr.identifier());
+  }
+  TreeByReference(TreeByReference&& tr) : m_identifier(TreePool::NoNodeIdentifier) {
+    setIdentifierAndRetain(tr.identifier());
+  }
   ~TreeByReference();
 
   /* Operators */
@@ -108,10 +112,7 @@ public:
 protected:
   /* Constructor */
   TreeByReference(const TreeNode * node) {
-    if (node == nullptr) {
-      m_identifier = TreePool::NoNodeIdentifier;
-      return;
-    }
+    assert(node != nullptr);
     setIdentifierAndRetain(node->identifier());
   }
   TreeByReference() : m_identifier(-1) {}

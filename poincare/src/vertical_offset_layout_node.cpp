@@ -271,7 +271,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
         assert(cursor->position() == LayoutCursor::Position::Left);
         parentRef.addChildAtIndex(rightParenthesis, idxInParent, parentRef.numberOfChildren(), nullptr);
       }
-      if (rightParenthesis.parent().isDefined()) {
+      if (!rightParenthesis.parent().isUninitialized()) {
         cursor->setLayoutReference(rightParenthesis);
       }
       if (rootLayout.isAllocationFailure()) {

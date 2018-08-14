@@ -22,7 +22,7 @@ void VariableContext<T>::setApproximationForVariable(T value) {
 template<typename T>
 void VariableContext<T>::setExpressionForSymbolName(const Expression expression, const Symbol symbol, Context & context) {
   if (symbol.name() == m_name) {
-    if (!expression.isDefined()) {
+    if (expression.isUninitialized()) {
       return;
     }
     m_value = Float<T>(expression.approximateToScalar<T>(context, Preferences::sharedPreferences()->angleUnit()));

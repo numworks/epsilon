@@ -79,7 +79,7 @@ bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, I
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->textFieldShouldFinishEditing(event)) {
     Expression exp = Expression::parse(textField->text());
-    if (!exp.isDefined()) {
+    if (exp.isUninitialized()) {
       textField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }

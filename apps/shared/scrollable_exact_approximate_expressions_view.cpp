@@ -70,10 +70,10 @@ Poincare::LayoutRef ScrollableExactApproximateExpressionsView::ContentCell::layo
 }
 
 int ScrollableExactApproximateExpressionsView::ContentCell::numberOfSubviews() const {
-  if (m_exactExpressionView.layoutRef().isDefined()) {
-    return 3;
+  if (m_exactExpressionView.layoutRef().isUninitialized()) {
+    return 1;
   }
-  return 1;
+  return 3;
 }
 
 View * ScrollableExactApproximateExpressionsView::ContentCell::subviewAtIndex(int index) {
@@ -115,7 +115,7 @@ void ScrollableExactApproximateExpressionsView::setEqualMessage(I18n::Message eq
 }
 
 void ScrollableExactApproximateExpressionsView::didBecomeFirstResponder() {
-  if (!m_contentCell.exactExpressionView()->layoutRef().isDefined()) {
+  if (m_contentCell.exactExpressionView()->layoutRef().isUninitialized()) {
     setSelectedSubviewType(SubviewType::ApproximativeOutput);
   } else {
     setSelectedSubviewType(SubviewType::ExactOutput);

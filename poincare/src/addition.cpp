@@ -75,7 +75,7 @@ Expression AdditionNode::factorizeOnCommonDenominator(Context & context, Prefere
   Multiplication commonDenominator = Multiplication();
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression denominator = childAtIndex(i)->denominator(context, angleUnit);
-    if (denominator.isDefined()) {
+    if (!denominator.isUninitialized()) {
       // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
       commonDenominator.addMissingFactors(denominator, context, angleUnit);
     }

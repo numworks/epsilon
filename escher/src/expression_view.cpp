@@ -42,7 +42,7 @@ int ExpressionView::numberOfLayouts() const {
 }
 
 KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
-  if (!m_layoutRef.isDefined()) {
+  if (m_layoutRef.isUninitialized()) {
     return KDSizeZero;
   }
   KDSize expressionSize = m_layoutRef.layoutSize();
@@ -60,7 +60,7 @@ KDPoint ExpressionView::absoluteDrawingOrigin() const {
 
 void ExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
-  if (m_layoutRef.isDefined()) {
+  if (!m_layoutRef.isUninitialized()) {
     m_layoutRef.draw(ctx, drawingOrigin(), m_textColor, m_backgroundColor);
   }
 }

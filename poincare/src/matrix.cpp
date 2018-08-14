@@ -183,7 +183,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
       // No non-null coefficient in this column, skip
       k++;
       // Update determinant: det *= 0
-      if (determinant.isDefined()) { determinant.addChildAtIndexInPlace(Rational(0), 0, determinant.numberOfChildren()); }
+      if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(Rational(0), 0, determinant.numberOfChildren()); }
     } else {
       // Swap row h and iPivot
       if (iPivot != h) {
@@ -191,12 +191,12 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
           matrix.swapChildrenInPlace(iPivot*n+col, h*n+col);
         }
         // Update determinant: det *= -1
-        if (determinant.isDefined()) { determinant.addChildAtIndexInPlace(Rational(-1), 0, determinant.numberOfChildren()); }
+        if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(Rational(-1), 0, determinant.numberOfChildren()); }
       }
       /* Set to 1 M[h][k] by linear combination */
       Expression divisor = matrixChild(h, k);
       // Update determinant: det *= divisor
-      if (determinant.isDefined()) { determinant.addChildAtIndexInPlace(divisor, 0, determinant.numberOfChildren()); }
+      if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(divisor, 0, determinant.numberOfChildren()); }
       for (int j = k+1; j < n; j++) {
         Expression opHJ = matrixChild(h, j);
         Expression newOpHJ = Division(opHJ, divisor);

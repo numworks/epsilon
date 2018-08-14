@@ -39,7 +39,7 @@ ExpressionModel * ExpressionModelStore::definedModelAtIndex(int i) {
   assert(i>=0 && i<m_numberOfModels);
   int index = 0;
   for (int k = 0; k < m_numberOfModels; k++) {
-    if (modelAtIndex(k)->isDefined()) {
+    if (!modelAtIndex(k)->isUninitialized()) {
       if (i == index) {
         return modelAtIndex(k);
       }
@@ -53,7 +53,7 @@ ExpressionModel * ExpressionModelStore::definedModelAtIndex(int i) {
 int ExpressionModelStore::numberOfDefinedModels() {
   int result = 0;
   for (int i = 0; i < m_numberOfModels; i++) {
-    if (modelAtIndex(i)->isDefined()) {
+    if (!modelAtIndex(i)->isUninitialized()) {
       result++;
     }
   }

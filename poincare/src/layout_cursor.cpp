@@ -173,7 +173,7 @@ void LayoutCursor::insertText(const char * text) {
       newChild = CharLayoutRef(Ion::Charset::MiddleDot);
     } else if (text[i] == '(') {
       newChild = CharLayoutRef('('); //TODO
-      if (!pointedChild.isDefined()) {
+      if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
     } else if (text[i] == ')') {
@@ -205,7 +205,7 @@ void LayoutCursor::insertText(const char * text) {
     }
     m_layoutRef.addSibling(this, newChild, true);
   }
-  if (pointedChild.isDefined() && pointedChild.parent().isDefined()) {
+  if (!pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layoutRef = pointedChild;
   }
 }
@@ -276,7 +276,7 @@ bool LayoutCursor::baseForNewPowerLayout() {
       return true;
     }
     LayoutCursor equivalentLayoutCursor = m_layoutRef.equivalentCursor(this);
-    if (!equivalentLayoutCursor.layoutReference().isDefined()
+    if (equivalentLayoutCursor.layoutReference().isUninitialized()
         || (equivalentLayoutCursor.layoutReference().isHorizontal()
           && equivalentLayoutCursor.position() == Position::Left))
     {
@@ -300,12 +300,12 @@ bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
   } else {
     // Check the equivalent cursor position
     LayoutRef equivalentPointedLayout = m_layoutRef.equivalentCursor(this).layoutReference();
-    if (equivalentPointedLayout.isDefined() && equivalentPointedLayout.isEmpty()) {
+    if (!equivalentPointedLayout.isUninitialized() && equivalentPointedLayout.isEmpty()) {
       adjacentEmptyLayout = equivalentPointedLayout;
     }
   }
 
-  if (!adjacentEmptyLayout.isDefined()) {
+  if (adjacentEmptyLayout.isUninitialized()) {
     return false;
   }
   /* Change the visibility of the neighbouring empty layout: it might be either

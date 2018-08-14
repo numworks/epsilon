@@ -156,10 +156,10 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
     return Complex<T>(0.0, 1.0);
   }
   const Expression e = context.expressionForSymbol(Symbol(m_name));
-  if (e.isDefined()) {
-    return e.node()->approximate(T(), context, angleUnit);
+  if (e.isUninitialized()) {
+    return Complex<T>::Undefined();
   }
-  return Complex<T>::Undefined();
+  return e.node()->approximate(T(), context, angleUnit);
 }
 
 const char * Symbol::textForSpecialSymbols(char name) {
@@ -302,12 +302,12 @@ Expression Symbol::shallowReduce(Context& context, Preferences::AngleUnit angleU
 #if 0
   // Do not replace symbols in expression of type: 3->A
   Expression p = parent();
-  if (p.isDefined() && p.type() == ExpressionNode::Type::Store && p.childAtIndex(1) == *this) {
+  if (!p.isUninitialized() && p.type() == ExpressionNode::Type::Store && p.childAtIndex(1) == *this) {
     return *this;
   }
 #endif
   const Expression e = context.expressionForSymbol(*this);
-  if (e.isDefined() && node()->hasAnExactRepresentation(context)) {
+  if (!e.isUninitialized() && node()->hasAnExactRepresentation(context)) {
     // TODO: later AZ should be replaced.
     /* The stored expression had been beautified which forces to call deepReduce. */
     return e.deepReduce(context, angleUnit);
@@ -319,7 +319,7 @@ Expression Symbol::replaceSymbolWithExpression(char symbol, Expression expressio
   if (name() == symbol) {
     Expression value = expression;
     Expression p = parent();
-    if (p.isDefined() && value.node()->needsParenthesesWithParent(p.node())) {
+    if (!p.isUninitialized() && value.node()->needsParenthesesWithParent(p.node())) {
       value = Parenthesis(value);
     }
     return value;

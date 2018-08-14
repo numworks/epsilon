@@ -44,14 +44,7 @@ NaturalIntegerPointer RationalNode::denominator() const {
 // Tree Node
 
 size_t RationalNode::size() const {
-  size_t s = sizeof(RationalNode);
-  if (!numerator().isInfinity()) {
-    s += sizeof(native_uint_t)*m_numberOfDigitsNumerator;
-  }
-  if (!denominator().isInfinity()) {
-    s += sizeof(native_uint_t)*m_numberOfDigitsDenominator;
-  }
-  return s;
+  return sizeof(RationalNode) + sizeof(native_uint_t)*(m_numberOfDigitsNumerator + m_numberOfDigitsDenominator);
 }
 
 // Serialization Node
@@ -167,9 +160,7 @@ Rational::Rational(Integer numerator, Integer denominator) : Number() {
     return;
   }
   bool negative = (numerator.sign() == ExpressionNode::Sign::Positive && denominator.sign() == ExpressionNode::Sign::Negative) || (denominator.sign() == ExpressionNode::Sign::Positive && numerator.sign() == ExpressionNode::Sign::Negative);
-  size_t size = sizeof(RationalNode);
-  size += numerator.isInfinity() ? 0 : sizeof(native_uint_t)*numerator.node()->numberOfDigits();
-  size += denominator.isInfinity() ? 0 : sizeof(native_uint_t)*denominator.node()->numberOfDigits();
+  size_t size = sizeof(RationalNode) + sizeof(native_uint_t)*(numerator.node()->numberOfDigits() + denominator.node()->numberOfDigits());
   new (this) Rational(size, numerator.node()->digits(), numerator.node()->numberOfDigits(), denominator.node()->digits(), denominator.node()->numberOfDigits(), negative);
 }
 
@@ -182,8 +173,7 @@ Rational::Rational(const Integer numerator) : Number() {
 
 Rational::Rational(const NaturalIntegerAbstract * numerator, bool negative) : Number() {
   native_uint_t one = 1;
-  size_t size = sizeof(RationalNode) + sizeof(native_uint_t);
-  size += numerator->isInfinity() ? sizeof(native_uint_t)*numerator->numberOfDigits() : 0;
+  size_t size = sizeof(RationalNode) + sizeof(native_uint_t)*(numerator->numberOfDigits() +1);
   new (this) Rational(size, numerator->digits(), numerator->numberOfDigits(), &one, 1, negative);
   return;
 }

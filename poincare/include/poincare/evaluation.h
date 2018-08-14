@@ -19,6 +19,7 @@ template<typename T>
 class EvaluationNode : public TreeNode {
 public:
   enum class Type : uint8_t {
+    Exception,
     AllocationFailure,
     Complex,
     MatrixComplex

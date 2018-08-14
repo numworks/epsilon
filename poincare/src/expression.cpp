@@ -21,14 +21,14 @@ namespace Poincare {
 #include <stdio.h>
 
 /* Constructor & Destructor */
-Expression::Expression() : Expression(UninitializedExpressionNode:UninitializedExpressionStaticNode) {}
+Expression::Expression() : Expression(UninitializedExpressionNode::UninitializedExpressionStaticNode()) {}
 
 Expression Expression::parse(char const * string) {
   if (string[0] == 0) {
     return nullptr;
   }
   YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
-  Expression expression();
+  Expression expression;
   if (poincare_expression_yyparse(&expression) != 0) {
     // Parsing failed because of invalid input or memory exhaustion
     expression = Expression();

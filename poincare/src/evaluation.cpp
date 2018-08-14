@@ -12,6 +12,8 @@ Expression Evaluation<T>::complexToExpression(Preferences::ComplexFormat complex
   return node()->complexToExpression(complexFormat);
 }
 
+template Evaluation<float>::Evaluation();
+template Evaluation<double>::Evaluation();
 template Expression Evaluation<float>::complexToExpression(Preferences::ComplexFormat) const;
 template Expression Evaluation<double>::complexToExpression(Preferences::ComplexFormat) const;
 

@@ -69,6 +69,8 @@ public:
 
   void move(TreeNode * destination, TreeNode * source, int realNumberOfSourceChildren);
   void moveChildren(TreeNode * destination, TreeNode * sourceParent);
+  void removeChildren(TreeNode * node, int nodeNumberOfChildren);
+  void removeChildrenAndDestroy(TreeNode * nodeToDestroy, int nodeNumberOfChildren);
 
   TreeNode * deepCopy(TreeNode * node) {
     size_t size = node->deepSize(-1);

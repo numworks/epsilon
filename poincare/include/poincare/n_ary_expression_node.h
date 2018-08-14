@@ -36,7 +36,6 @@ public:
   NAryExpression(const NAryExpressionNode * n) : Expression(n) {}
   using Expression::addChildAtIndexInPlace;
   using Expression::removeChildrenInPlace;
-  using Expression::removeChildrenAndDestroyInPlace;
   using Expression::removeChildAtIndexInPlace;
   using Expression::removeChildInPlace;
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);

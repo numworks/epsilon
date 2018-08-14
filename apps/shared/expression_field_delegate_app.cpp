@@ -41,7 +41,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
       displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    if (!exp.isDefined()) {
+    if (exp.isUninitialized()) {
       layoutField->app()->displayWarning(I18n::Message::SyntaxError);
       return true;
     }

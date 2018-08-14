@@ -100,7 +100,7 @@ const char * Calculation::approximateOutputText() {
 }
 
 Expression Calculation::input() {
-  if (!m_input.isDefined()) {
+  if (m_input.isUninitialized()) {
     m_input = Expression::parse(m_inputText);
   }
   return m_input;
@@ -143,13 +143,13 @@ void Calculation::tidy() {
 }
 
 Expression Calculation::exactOutput(Context * context) {
-  if (!m_exactOutput.isDefined()) {
+  if (m_exactOutput.isUninitialized()) {
     /* Because the angle unit might have changed, we do not simplify again. We
      * thereby avoid turning cos(Pi/4) into sqrt(2)/2 and displaying
      * 'sqrt(2)/2 = 0.999906' (which is totally wrong) instead of
      * 'cos(pi/4) = 0.999906' (which is true in degree). */
     m_exactOutput = Expression::parse(m_exactOutputText);
-    if (!m_exactOutput.isDefined()) {
+    if (m_exactOutput.isUninitialized()) {
       m_exactOutput = Undefined();
     }
   }
@@ -161,7 +161,7 @@ LayoutRef Calculation::createExactOutputLayout(Context * context) {
 }
 
 Expression Calculation::approximateOutput(Context * context) {
-  if (!m_approximateOutput.isDefined()) {
+  if (m_approximateOutput.isUninitialized()) {
     /* To ensure that the expression 'm_output' is a matrix or a complex, we
      * call 'evaluate'. */
     Expression exp = Expression::parse(m_approximateOutputText);

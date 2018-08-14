@@ -19,7 +19,7 @@ public:
 
   virtual ~TreeByValue() = default;
 
-  bool isDefined() const { return TreeByReference::isDefined(); }
+  bool isUninitialized() const { return TreeByReference::isUninitialized(); }
   bool isAllocationFailure() const { return TreeByReference::isAllocationFailure(); }
 
   TreeNode * node() const override { return TreeByReference::node(); }

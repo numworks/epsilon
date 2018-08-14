@@ -48,7 +48,7 @@ public:
   }
 
   // Definition
-  bool isDefined() const { return m_layoutRef.isDefined(); }
+  bool isDefined() const { return !m_layoutRef.isUninitialized(); }
 
   // Getters and setters
   LayoutRef layoutReference() { return m_layoutRef; }

@@ -46,7 +46,7 @@ LayoutRef LayoutHelper::Prefix(const Expression expression, Preferences::PrintFl
 LayoutRef LayoutHelper::Parentheses(LayoutRef layoutRef, bool cloneLayout) {
   HorizontalLayoutRef result;
   result.addChildAtIndex(LeftParenthesisLayoutRef(), 0, 0, nullptr);
-  if (layoutRef.isDefined()) {
+  if (!layoutRef.isUninitialized()) {
     result.addOrMergeChildAtIndex(cloneLayout ? layoutRef.clone() : layoutRef, 1, true);
   }
   result.addChildAtIndex(RightParenthesisLayoutRef(), result.numberOfChildren(), result.numberOfChildren(), nullptr);

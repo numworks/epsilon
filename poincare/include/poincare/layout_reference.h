@@ -92,7 +92,7 @@ public:
   void replaceChildWithEmpty(LayoutReference oldChild, LayoutCursor * cursor = nullptr);
   void replaceWith(LayoutReference newChild, LayoutCursor * cursor) {
     LayoutReference p = parent();
-    assert(p.isDefined());
+    assert(!p.isUninitialized());
     p.replaceChild(*this, newChild, cursor);
   }
   void replaceWithJuxtapositionOf(LayoutReference leftChild, LayoutReference rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle = false);

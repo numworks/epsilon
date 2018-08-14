@@ -80,7 +80,7 @@ void TreeByReference::replaceWithAllocationFailureInPlace(int currentNumberOfChi
   TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode();
 
   // Release all children and delete the node in the pool
-  removeChildrenAndDestroyInPlace(currentNumberOfChildren);
+  TreePool::sharedPool()->removeChildrenAndDestroy(node(), currentNumberOfChildren);
   /* WARNING: If we called "p.decrementNumberOfChildren()" here, the number of
    * children of the parent layout would be:
    * -> numberOfChildren() for "dynamic trees" that have a m_numberOfChildren
@@ -202,17 +202,7 @@ void TreeByReference::removeChildInPlace(TreeByReference t, int childNumberOfChi
 
 void TreeByReference::removeChildrenInPlace(int currentNumberOfChildren) {
   assert(!isUninitialized());
-  for (int i = 0; i < currentNumberOfChildren; i++) {
-    TreeByReference childRef = childAtIndex(0);
-    TreePool::sharedPool()->move(TreePool::sharedPool()->last(), childRef.node(), childRef.numberOfChildren());
-    childRef.node()->release(childRef.numberOfChildren());
-  }
-  node()->eraseNumberOfChildren();
-}
-
-void TreeByReference::removeChildrenAndDestroyInPlace(int currentNumberOfChildren) {
-  removeChildrenInPlace(currentNumberOfChildren);
-  TreePool::sharedPool()->discardTreeNode(node());
+  TreePool::sharedPool()->removeChildren(node(), currentNumberOfChildren);
 }
 
 /* Private */

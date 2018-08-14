@@ -73,6 +73,7 @@ private:
   static Integer IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index);
 
   uint16_t numberOfHalfDigits() const {
+    if (m_numberOfDigits == 0) { return 0; }
     native_uint_t d = digit(m_numberOfDigits-1);
     native_uint_t halfBase = 1 << (8*sizeof(half_native_uint_t));
     return (d >= halfBase ? 2*m_numberOfDigits : 2*m_numberOfDigits-1);

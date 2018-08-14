@@ -1,13 +1,14 @@
 #ifndef POINCARE_TREE_BY_REFERENCE_H
 #define POINCARE_TREE_BY_REFERENCE_H
 
-#include "tree_pool.h"
+#include <poincare/tree_pool.h>
 #include <stdio.h>
 
 namespace Poincare {
 
 class TreeByReference {
   friend class TreeNode;
+  friend class TreePool;
 public:
   /* Constructors */
   TreeByReference(const TreeByReference & tr) : m_identifier(TreePool::NoNodeIdentifier) {
@@ -129,7 +130,6 @@ protected:
   virtual void removeChildAtIndexInPlace(int i);
   virtual void removeChildInPlace(TreeByReference t, int childNumberOfChildren);
   virtual void removeChildrenInPlace(int currentNumberOfChildren);
-  virtual void removeChildrenAndDestroyInPlace(int currentNumberOfChildren);
 
   int m_identifier;
 

@@ -1,4 +1,5 @@
 #include <poincare/tree_pool.h>
+#include <poincare/tree_by_reference.h>
 #include <string.h>
 #include <stdint.h>
 
@@ -61,6 +62,21 @@ void TreePool::move(TreeNode * destination, TreeNode * source, int realNumberOfS
 void TreePool::moveChildren(TreeNode * destination, TreeNode * sourceParent) {
   size_t moveSize = sourceParent->deepSize(-1) - sourceParent->size();
   moveNodes(destination, sourceParent->next(), moveSize);
+}
+
+void TreePool::removeChildren(TreeNode * node, int nodeNumberOfChildren) {
+  for (int i = 0; i < nodeNumberOfChildren; i++) {
+    TreeNode * child = node->childAtIndex(0);
+    TreeNode * newAddress = last();
+    move(newAddress, child, child->numberOfChildren());
+    newAddress->release(newAddress->numberOfChildren());
+  }
+  node->eraseNumberOfChildren();
+}
+
+void TreePool::removeChildrenAndDestroy(TreeNode * nodeToDestroy, int nodeNumberOfChildren) {
+  removeChildren(nodeToDestroy, nodeNumberOfChildren);
+  discardTreeNode(nodeToDestroy);
 }
 
 void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveSize) {

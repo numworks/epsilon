@@ -23,8 +23,9 @@ public:
    enum class Type : uint8_t {
     Exception = 0,
     AllocationFailure = 1,
-    Undefined = 2,
-    Integer = 3,
+    Uninitialized = 2,
+    Undefined = 3,
+    Integer = 4,
     Rational,
     Decimal,
     Float,

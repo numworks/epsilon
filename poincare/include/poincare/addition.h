@@ -74,7 +74,7 @@ private:
    }
 };
 
-class AllocationFailureAdditionNode : public AllocationFailureNode<AdditionNode> {
+class AllocationFailureAdditionNode : public AllocationFailureExpressionNode<AdditionNode> {
   void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) override {}
 };
 

@@ -2,20 +2,14 @@
 #define POINCARE_TEST_BLOB_NODE_H
 
 #include <poincare/tree_node.h>
-#include <poincare/allocation_failure_node.h>
 #include <poincare/tree_by_reference.h>
 #include <poincare/tree_by_value.h>
 
 namespace Poincare {
 
-
 class BlobNode : public TreeNode {
 public:
-  static BlobNode * FailedAllocationStaticNode() {
-    static AllocationFailureNode<BlobNode> failureNode;
-    TreePool::sharedPool()->registerStaticNodeIfRequired(&failureNode);
-    return &failureNode;
-  }
+  static BlobNode * FailedAllocationStaticNode();
   virtual BlobNode * failedAllocationStaticNode() override {
     return BlobNode::FailedAllocationStaticNode();
   }
@@ -30,6 +24,16 @@ public:
 #endif
 private:
   int m_data;
+};
+
+class AllocationFailureBlobNode : public BlobNode {
+  size_t size() const override { return sizeof(AllocationFailureBlobNode); }
+  bool isAllocationFailure() const override { return true; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "AllocationFailureBlob";
+  }
+#endif
 };
 
 

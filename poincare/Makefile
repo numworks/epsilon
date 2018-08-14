@@ -36,7 +36,6 @@ objs += $(addprefix poincare/src/,\
 objs += $(addprefix poincare/src/,\
   addition.o\
   arithmetic.o\
-  exception_expression_node.o\
   expression_lexer.o\
   expression_parser.o\
   layout_helper.o\
@@ -74,6 +73,9 @@ objs += $(addprefix poincare/src/,\
   preferences.o\
   evaluation.o\
   matrix.o\
+  uninitialized_evaluation_node.o\
+  uninitialized_expression_node.o\
+  uninitialized_layout_node.o\
 )
 
 objsExpected += $(addprefix poincare/src/,\
@@ -188,6 +190,8 @@ objsExpected += $(addprefix poincare/src/,\
 )
 
 tests += $(addprefix poincare/test/,\
+  tree/blob_node.cpp\
+  tree/pair_node.cpp\
   tree/tree_by_value.cpp\
   tree/tree_by_reference.cpp\
   integer.cpp\

@@ -67,8 +67,11 @@ void TreePool::moveChildren(TreeNode * destination, TreeNode * sourceParent) {
 void TreePool::removeChildren(TreeNode * node, int nodeNumberOfChildren) {
   for (int i = 0; i < nodeNumberOfChildren; i++) {
     TreeNode * child = node->childAtIndex(0);
-    TreeNode * newAddress = last();
-    move(newAddress, child, child->numberOfChildren());
+    int childNumberOfChildren = child->numberOfChildren();
+    /* The new child will be put at the address last(), but removed from its
+     * previous position, hence the newAddress we use. */
+    TreeNode * newAddress = (TreeNode *)((char *)last() - (char *)child->deepSize(childNumberOfChildren));
+    move(last(), child, childNumberOfChildren);
     newAddress->release(newAddress->numberOfChildren());
   }
   node->eraseNumberOfChildren();

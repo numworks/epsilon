@@ -476,9 +476,7 @@ Integer::Integer(const NaturalIntegerAbstract * naturalInteger) :
 {
 }
 
-Integer::Integer(native_int_t i) :
-  Number(nullptr)
-{
+Integer::Integer(native_int_t i) : Number() {
   if (i == 0) {
     new (this) Integer((const native_uint_t *)nullptr, 0, false);
     return;
@@ -488,9 +486,7 @@ Integer::Integer(native_int_t i) :
   new (this) Integer(digits, 1, i < 0);
 }
 
-Integer::Integer(double_native_int_t i) :
-  Number(nullptr)
-{
+Integer::Integer(double_native_int_t i) : Number() {
   if (i == 0) {
     new (this) Integer((const native_uint_t *)nullptr, 0, false);
     return;

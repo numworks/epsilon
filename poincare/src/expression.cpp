@@ -6,6 +6,7 @@
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
 #include <poincare/symbol.h>
+#include <poincare/uninitialized_expression_node.h>
 #include <poincare/variable_context.h>
 #include <ion.h>
 #include <cmath>
@@ -20,16 +21,17 @@ namespace Poincare {
 #include <stdio.h>
 
 /* Constructor & Destructor */
+Expression::Expression() : Expression(UninitializedExpressionNode:UninitializedExpressionStaticNode) {}
 
 Expression Expression::parse(char const * string) {
   if (string[0] == 0) {
     return nullptr;
   }
   YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
-  Expression expression(nullptr);
+  Expression expression();
   if (poincare_expression_yyparse(&expression) != 0) {
     // Parsing failed because of invalid input or memory exhaustion
-    expression = Expression(nullptr);
+    expression = Expression();
   }
   poincare_expression_yy_delete_buffer(buf);
 
@@ -126,9 +128,9 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
   }
   if (isMultivariablePolynomial) {
     for (int i = 0; i < index; i++) {
-      coefficients[i] = Expression(nullptr);
+      coefficients[i] = Expression();
     }
-    constant[0] = Expression(nullptr);
+    constant[0] = Expression();
     return false;
   }
   return true;
@@ -220,7 +222,7 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
   Expression e = deepReduce(context, angleUnit);
   e = e.deepBeautify(context, angleUnit);
   if (sSimplificationHasBeenInterrupted) {
-    e = Expression(nullptr);
+    e = Expression();
   }
   return e;
 }
@@ -283,20 +285,20 @@ U Expression::epsilon() {
 /* Expression roots/extrema solver*/
 
 typename Expression::Coordinate2D Expression::nextMinimum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
-  return nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = nullptr) {
+  return nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
         return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit);
 }
 
 typename Expression::Coordinate2D Expression::nextMaximum(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
-  Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = nullptr) {
+  Coordinate2D minimumOfOpposite = nextMinimumOfExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
         return -expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit);
   return {.abscissa = minimumOfOpposite.abscissa, .value = -minimumOfOpposite.value};
 }
 
 double Expression::nextRoot(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit) const {
-  return nextIntersectionWithExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = nullptr) {
+  return nextIntersectionWithExpression(symbol, start, step, max, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1 = Expression()) {
         return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
       }, context, angleUnit, nullptr);
 }

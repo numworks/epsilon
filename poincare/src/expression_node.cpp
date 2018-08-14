@@ -10,7 +10,7 @@ Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression e
 
 Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
   assert(false);
-  return Expression(nullptr);
+  return Expression();
 }
 
 int ExpressionNode::polynomialDegree(char symbolName) const {
@@ -94,7 +94,7 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
 }
 
 Expression ExpressionNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Expression(nullptr);
+  return Expression();
 }
 
 }

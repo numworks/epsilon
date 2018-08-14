@@ -1,13 +1,15 @@
 #include <poincare/layout_reference.h>
-#include <poincare/layout_cursor.h>
 #include <poincare/bracket_pair_layout_node.h>
+#include <poincare/char_layout_node.h>
 #include <poincare/empty_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/char_layout_node.h>
-#include <poincare/horizontal_layout_node.h>
+#include <poincare/uninitialized_layout_node.h>
 
 namespace Poincare {
+
+LayoutReference::LayoutReference() : LayoutReference(UninitializedLayoutNode::UninitializedLayoutStaticNode()) {}
 
 // Cursor
 LayoutCursor LayoutReference::cursor() const {
@@ -95,7 +97,7 @@ void LayoutReference::addChildAtIndex(LayoutRef l, int index, int currentNumberO
   if (!node()->willAddChildAtIndex(l.node(), &newIndex, &newCurrentNumberOfChildren, cursor)) {
     return;
   }
-  LayoutRef nextPointedLayout(nullptr);
+  LayoutRef nextPointedLayout;
   LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
   if (cursor != nullptr) {
     if (newIndex < this->numberOfChildren()) {
@@ -137,7 +139,7 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
      * handle the insertion of the new sibling. Do not enter the special case if
      * "this" is a VerticalOffsetLayout, to avoid an infinite loop. */
     if (!isVerticalOffset()) {
-      LayoutRef neighbour(nullptr);
+      LayoutRef neighbour;
       if (cursor->position() == LayoutCursor::Position::Left && indexInParent > 0) {
         neighbour = p.childAtIndex(indexInParent - 1);
       } else if (cursor->position() == LayoutCursor::Position::Right && indexInParent < p.numberOfChildren() - 1) {
@@ -211,7 +213,7 @@ void LayoutReference::collapseOnDirection(HorizontalDirection direction, int abs
   if (direction == HorizontalDirection::Right && idxInParent < numberOfSiblings - 1) {
     canCollapse = !(p.childAtIndex(idxInParent+1).mustHaveLeftSibling());
   }
-  LayoutRef sibling(nullptr);
+  LayoutRef sibling;
   bool forceCollapse = false;
   while (canCollapse) {
     if (direction == HorizontalDirection::Right && idxInParent == numberOfSiblings - 1) {

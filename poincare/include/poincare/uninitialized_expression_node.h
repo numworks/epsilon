@@ -11,6 +11,8 @@ namespace Poincare {
 
 class UninitializedExpressionNode : public ExceptionExpressionNode<ExpressionNode> {
 public:
+  static UninitializedExpressionNode * UninitializedExpressionStaticNode();
+
   // ExpressionNode
   ExpressionNode::Sign sign() const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::sign(); }
   ExpressionNode::Type type() const override { assert(false); return ExpressionNode::Type::Uninitialized; } // TODO assert(false) ?
@@ -31,13 +33,6 @@ public:
     stream << "UninitializedExpression";
   }
 #endif
-};
-
-class UninitializedExpression : public Expression {
-public:
-  UninitializedExpression() : Expression(UninitializedExpressionStaticNode()) {}
-private:
-  static UninitializedExpressionNode * UninitializedExpressionStaticNode();
 };
 
 }

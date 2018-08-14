@@ -162,7 +162,7 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
   }
   LayoutNode * p = parent();
   if (p == nullptr) {
-    cursor->setLayoutNode(nullptr);
+    cursor->setLayoutReference(LayoutReference());
     return;
   }
   if (direction == VerticalDirection::Up) {

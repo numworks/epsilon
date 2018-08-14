@@ -381,7 +381,7 @@ void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index,
   int newIndex = index;
   removeEmptyChildBeforeInsertionAtIndex(&newIndex, nullptr, shouldRemoveOnLeft);
 
-  LayoutRef nextPointedLayout(nullptr);
+  LayoutRef nextPointedLayout;
   LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
   if (newIndex < numberOfChildren()) {
     nextPointedLayout = childAtIndex(newIndex);

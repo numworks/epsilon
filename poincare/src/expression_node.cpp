@@ -5,7 +5,7 @@
 namespace Poincare {
 
 Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression expression) const {
-  return Expression(this).privateReplaceSymbolWithExpression(symbol, expression);
+  return Expression(this).defaultReplaceSymbolWithExpression(symbol, expression);
 }
 
 Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
@@ -23,6 +23,7 @@ int ExpressionNode::polynomialDegree(char symbolName) const {
 }
 
 int ExpressionNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
+  return Expression(this).defaultGetPolynomialCoefficients(symbolName, coefficients);
   int deg = polynomialDegree(symbolName);
   if (deg == 0) {
     coefficients[0] = Expression(this);
@@ -76,12 +77,11 @@ int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const Express
 }
 
 Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Expression(this).simpleShallowReduce(context, angleUnit);
+  return Expression(this).defaultShallowReduce(context, angleUnit);
 }
 
 Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression result = Expression(this);
-  return result;
+  return Expression(this).defaultShallowBeautify(context, angleUnit);
 }
 
 bool ExpressionNode::isOfType(Type * types, int length) const {

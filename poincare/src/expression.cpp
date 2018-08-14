@@ -134,7 +134,7 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
   return true;
 }
 
-Expression Expression::simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Expression::defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression childI = childAtIndex(i);
     if (childI.isAllocationFailure()) {
@@ -144,19 +144,31 @@ Expression Expression::simpleShallowReduce(Context & context, Preferences::Angle
       return Undefined();
     }
   }
-  Expression thisCopy = *this;
-  return thisCopy;
+  return *this;
+}
+
+Expression Expression::defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+  return *this;
 }
 
 // Private
 
-Expression Expression::privateReplaceSymbolWithExpression(char symbol, Expression expression) const {
+Expression Expression::defaultReplaceSymbolWithExpression(char symbol, Expression expression) const {
   Expression e = *this;
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     e.replaceChildAtIndexInPlace(i, childAtIndex(i).replaceSymbolWithExpression(symbol, expression));
   }
   return e;
+}
+
+int Expression::defaultGetPolynomialCoefficients(char symbol, Expression coefficients[]) const {
+  int deg = polynomialDegree(symbol);
+  if (deg == 0) {
+    coefficients[0] = *this;
+    return 0;
+  }
+  return -1;
 }
 
 int Expression::getPolynomialReducedCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const {

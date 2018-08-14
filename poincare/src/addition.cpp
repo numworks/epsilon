@@ -209,7 +209,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
 }
 
 Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Expression::simpleShallowReduce(context, angleUnit);
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }

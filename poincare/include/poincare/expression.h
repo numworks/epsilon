@@ -133,11 +133,13 @@ public:
 
 protected:
   Expression(const ExpressionNode * n) : TreeByValue(n) {}
-  Expression simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
 private:
   /* Properties */
-  Expression privateReplaceSymbolWithExpression(char symbol, Expression expression) const;
+  Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression) const;
+  int defaultGetPolynomialCoefficients(char symbol, Expression expression[]) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(symbolName, coefficients); }
 
   /* Simplification */

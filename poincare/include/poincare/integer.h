@@ -196,7 +196,7 @@ public:
   Integer(const NaturalIntegerAbstract * naturalInteger);
   Integer(native_int_t i);
   Integer(double_native_int_t i);
-  static Integer Overflow() { return Integer(sizeof(IntegerNode), (native_uint_t *)nullptr, IntegerNode::k_maxNumberOfDigits+1, false); }
+  static Integer Overflow() { return Integer((native_uint_t *)nullptr, IntegerNode::k_maxNumberOfDigits+1, false); }
 
   constexpr static int k_maxExtractableInteger = 0x7FFFFFFF;
   int extractedInt() const;
@@ -223,7 +223,7 @@ private:
   // TreeNode
   IntegerNode * node() const override { return static_cast<IntegerNode *>(Number::node()); }
 
-  Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative);
+  Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(size_t size, const native_uint_t * digits, size_t numberOfDigits, bool negative);
   static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative);
   size_t numberOfDigits() const { return node()->numberOfDigits(); }

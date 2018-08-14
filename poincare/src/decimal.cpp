@@ -41,11 +41,7 @@ NaturalIntegerPointer DecimalNode::mantissa() const {
 }
 
 size_t DecimalNode::size() const {
-  size_t s = sizeof(DecimalNode);
-  if (!mantissa().isInfinity()) {
-    s += sizeof(native_uint_t)*m_numberOfDigitsInMantissa;
-  }
-  return s;
+  return sizeof(DecimalNode)+ sizeof(native_uint_t)*m_numberOfDigitsInMantissa;
 }
 
 int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
@@ -269,11 +265,9 @@ Decimal::Decimal(T f) : Number() {
   new (this) Decimal(Integer(mantissaf), exp);
 }
 
-Decimal::Decimal(Integer m, int e) {
-  size_t s = sizeof(DecimalNode);
-  s += m.isInfinity() ? 0 : sizeof(native_uint_t)*m.numberOfDigits();
-  new (this) Decimal(s, m, e);
-}
+Decimal::Decimal(Integer m, int e) :
+  Decimal(sizeof(DecimalNode)+m.numberOfDigits()*sizeof(native_uint_t), m, e) {}
+
 
 Decimal::Decimal(size_t size, Integer m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {
   node()->setValue(m.node()->digits(), m.node()->numberOfDigits(), e, m.isNegative());

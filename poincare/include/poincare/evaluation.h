@@ -32,6 +32,9 @@ public:
   virtual Expression complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
   virtual std::complex<T> trace() const = 0;
   virtual std::complex<T> determinant() const = 0;
+
+  // TreeNode
+  TreeNode * uninitializedStaticNode() const override;
 };
 
 template<typename T>

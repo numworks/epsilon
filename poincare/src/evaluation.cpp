@@ -5,6 +5,11 @@
 namespace Poincare {
 
 template<typename T>
+TreeNode * EvaluationNode<T>::uninitializedStaticNode() const {
+  return Evaluation<T>().node();
+}
+
+template<typename T>
 Evaluation<T>::Evaluation() : Evaluation<T>(UninitializedEvaluationNode<T>::UninitializedEvaluationStaticNode()) {}
 
 template<typename T>
@@ -12,6 +17,8 @@ Expression Evaluation<T>::complexToExpression(Preferences::ComplexFormat complex
   return node()->complexToExpression(complexFormat);
 }
 
+template TreeNode * EvaluationNode<float>::uninitializedStaticNode() const;
+template TreeNode * EvaluationNode<double>::uninitializedStaticNode() const;
 template Evaluation<float>::Evaluation();
 template Evaluation<double>::Evaluation();
 template Expression Evaluation<float>::complexToExpression(Preferences::ComplexFormat) const;

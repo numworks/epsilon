@@ -21,14 +21,33 @@ public:
   // Allocation Failure
   static GhostNode * FailedAllocationStaticNode();
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+  // Uninitialized
+  TreeNode * uninitializedStaticNode() const override;
+};
+
+class UninitializedGhostNode : public GhostNode {
+public:
+  static UninitializedGhostNode * UninitializedGhostStaticNode();
+
+  size_t size() const override { return sizeof(UninitializedGhostNode); }
+  bool isUninitialized() const override { return true; }
+  GhostNode * failedAllocationStaticNode() override { assert(false); return nullptr; } //TODO ?
+  int numberOfChildren() const override { return 0; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "UninitializedGhost";
+  }
+#endif
 };
 
 class AllocationFailedGhostNode : public GhostNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(AllocationFailedGhostNode); }
-#if TREE_LOG
-  const char * description() const override { return "AllocationFailedGhost";  }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "AllocationFailedGhost";
+  }
 #endif
   bool isAllocationFailure() const override { return true; }
 };

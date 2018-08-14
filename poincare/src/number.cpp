@@ -37,16 +37,6 @@ double NumberNode::doubleApproximation() const {
   }
 }
 
-static inline Number CreateNumber(double d) {
-  if (std::isnan(d)) {
-    return Undefined();
-  } else if (std::isinf(d)) {
-    return Infinity(d < 0.0);
-  } else {
-    return Float<double>(d);
-  }
-}
-
 Number Number::ParseInteger(const char * digits, size_t length, bool negative) {
   Integer i(digits, length, negative);
   if (!i.isInfinity()) {
@@ -74,6 +64,16 @@ Number Number::DecimalNumber(T f) {
   return Decimal(f);
 }
 
+Number Number::FloatNumber(double d) {
+  if (std::isnan(d)) {
+    return Undefined();
+  } else if (std::isinf(d)) {
+    return Infinity(d < 0.0);
+  } else {
+    return Float<double>(d);
+  }
+}
+
 Number Number::BinaryOperation(const Number i, const Number j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
   if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
   // Integer + Integer
@@ -99,7 +99,7 @@ Number Number::BinaryOperation(const Number i, const Number j, IntegerBinaryOper
   }
   // one of the operand is Undefined/Infinity/Float or the Integer/Rational addition overflowed
   double a = doubleOp(i.node()->doubleApproximation(), j.node()->doubleApproximation());
-  return CreateNumber(a);
+  return FloatNumber(a);
 }
 
 Number Number::Addition(const Number i, const Number j) {

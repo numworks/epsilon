@@ -292,7 +292,10 @@ Expression Decimal::shallowReduce(Context& context, Preferences::AngleUnit angle
     denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-exp));
   }
   numerator.setNegative(negative);
-  return Rational(numerator, denominator).shallowReduce(context, angleUnit);
+  if (numerator.isInfinity() || denominator.isInfinity()) {
+    return Number::FloatNumber(m.approximate<double>()*std::pow(10.0, (double)exp));
+  }
+  return Rational(numerator, denominator);
 }
 
 Expression Decimal::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {

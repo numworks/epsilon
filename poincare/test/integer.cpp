@@ -134,31 +134,36 @@ QUIZ_CASE(poincare_integer_multiplication) {
   assert_mult_to(Integer("9999999999"), Integer("9999999999"), Integer("99999999980000000001"));
   assert_mult_to(Integer("-23"), Integer("0"), Integer("0"));
   assert_mult_to(Integer("-23456787654567765456"), Integer("0"), Integer("0"));
+  assert_mult_to(Integer("3293920983030066"), Integer(720), Integer("2371623107781647520"));
+  assert_mult_to(Integer("389282362616"), Integer(720), Integer("280283301083520"));
+}
+
+static inline void assert_div_to(const Integer i, const Integer j, const Integer q, const Integer r) {
+  assert(Integer::NaturalOrder(Integer::Division(i, j).quotient, q) == 0);
+  assert(Integer::NaturalOrder(Integer::Division(i, j).remainder, r) == 0);
 }
 
 QUIZ_CASE(poincare_integer_divide) {
-#if 0
-  assert(Integer::Division(Integer(8), Integer(4)).quotient.isEqualTo(Integer(2)) && Integer::Division(Integer(8), Integer(4)).remainder.isEqualTo(Integer(0)));
-  assert(Integer::Division(Integer("3293920983030066"), Integer(38928)).quotient.isEqualTo(Integer("84615726033")) && Integer::Division(Integer("3293920983030066"), Integer(38928)).remainder.isEqualTo(Integer(17442)));
-  assert(Integer::Division(Integer("3293920983030066"), Integer("389282362616")).quotient.isEqualTo(Integer(8461)) && Integer::Division(Integer("3293920983030066"), Integer("389282362616")).remainder.isEqualTo(Integer("202912936090")));
-  assert(Integer::Division(Integer("-18940566"), Integer("499030")).quotient.isEqualTo(Integer(-38)) && Integer::Division(Integer("-18940566"), Integer("499030")).remainder.isEqualTo(Integer("22574")));
-  assert(Integer::Division(Integer("234567909876"), Integer("-234567898")).quotient.isEqualTo(Integer(-1000)) && Integer::Division(Integer("234567909876"), Integer("-234567898")).remainder.isEqualTo(Integer("11876")));
-  assert(Integer::Division(Integer("-567"), Integer("-12")).quotient.isEqualTo(Integer(48)) && Integer::Division(Integer("-567"), Integer("-12")).remainder.isEqualTo(Integer("9")));
-  assert(Integer::Division(Integer("-576"), Integer("-12")).quotient.isEqualTo(Integer(48)) && Integer::Division(Integer("-576"), Integer("-12")).remainder.isEqualTo(Integer("0")));
-  assert(Integer::Division(Integer("576"), Integer("-12")).quotient.isEqualTo(Integer(-48)) && Integer::Division(Integer("576"), Integer("-12")).remainder.isEqualTo(Integer("0")));
-  assert(Integer::Division(Integer("-576"), Integer("12")).quotient.isEqualTo(Integer(-48)) && Integer::Division(Integer("-576"), Integer("12")).remainder.isEqualTo(Integer("0")));
- assert(Integer::Division(Integer("12345678910111213141516171819202122232425"), Integer("10")).remainder.isEqualTo(Integer("5")));
-  assert(Integer::Division(Integer("12345678910111213141516171819202122232425"), Integer("10")).quotient.isEqualTo(Integer("1234567891011121314151617181920212223242")));
-  assert(Integer::Division(Integer("1234567891011121314151617181920212223242"), Integer("10")).quotient.isEqualTo(Integer("123456789101112131415161718192021222324")) && Integer::Division(Integer("1234567891011121314151617181920212223242"), Integer("10")).remainder.isEqualTo(Integer("2")));
-  assert(Integer::Division(Integer("123456789101112131415161718192021222324"), Integer("10")).quotient.isEqualTo(Integer("12345678910111213141516171819202122232")) && Integer::Division(Integer("123456789101112131415161718192021222324"), Integer("10")).remainder.isEqualTo(Integer("4")));
-  assert(Integer::Division(Integer("12345678910111213141516171819202122232"), Integer("10")).quotient.isEqualTo(Integer("1234567891011121314151617181920212223")) && Integer::Division(Integer("12345678910111213141516171819202122232"), Integer("10")).remainder.isEqualTo(Integer("2")));
-  assert(Integer::Division(Integer("1234567891011121314151617181920212223"), Integer("10")).quotient.isEqualTo(Integer("123456789101112131415161718192021222")) && Integer::Division(Integer("1234567891011121314151617181920212223"), Integer("10")).remainder.isEqualTo(Integer("3")));
-  assert(Integer::Division(Integer("123456789101112131415161718192021222"), Integer("10")).quotient.isEqualTo(Integer("12345678910111213141516171819202122")) && Integer::Division(Integer("123456789101112131415161718192021222"), Integer("10")).remainder.isEqualTo(Integer("2")));
-  assert(Integer::Division(Integer("12345678910111213141516171819202122"), Integer("10")).quotient.isEqualTo(Integer("1234567891011121314151617181920212")) && Integer::Division(Integer("12345678910111213141516171819202122"), Integer("10")).remainder.isEqualTo(Integer("2")));
-  assert(Integer::Division(Integer("0"), Integer("-10")).quotient.isEqualTo(Integer("0")) && Integer::Division(Integer("0"), Integer("-10")).remainder.isEqualTo(Integer("0")));
-  assert(Integer::Division(Integer("0"), Integer("-123456789098760")).quotient.isEqualTo(Integer("0")) && Integer::Division(Integer("0"), Integer("-123456789098760")).remainder.isEqualTo(Integer("0")));
-  assert(Integer::Division(Integer("2305843009213693952"), Integer("2305843009213693921")).quotient.isEqualTo(Integer("1")) && Integer::Division(Integer("2305843009213693952"), Integer("2305843009213693921")).remainder.isEqualTo(Integer("31")));
-#endif
+  assert_div_to(Integer("146097313984800"), Integer(720), Integer("202912936090"), Integer(0));
+  assert_div_to(Integer(8), Integer(4), Integer(2), Integer(0));
+  assert_div_to(Integer("3293920983030066"), Integer(38928), Integer("84615726033"), Integer(17442));
+  assert_div_to(Integer("3293920983030066"), Integer("389282362616"), Integer(8461), Integer("202912936090"));
+  assert_div_to(Integer("-18940566"), Integer("499030"), Integer(-38), Integer("22574"));
+  assert_div_to(Integer("234567909876"), Integer("-234567898"), Integer(-1000), Integer("11876"));
+  assert_div_to(Integer("-567"), Integer("-12"), Integer(48), Integer("9"));
+  assert_div_to(Integer("-576"), Integer("-12"), Integer(48), Integer("0"));
+  assert_div_to(Integer("576"), Integer("-12"), Integer(-48), Integer("0"));
+  assert_div_to(Integer("-576"), Integer("12"), Integer(-48), Integer("0"));
+  assert_div_to(Integer("12345678910111213141516171819202122232425"), Integer("10"), Integer("1234567891011121314151617181920212223242"), Integer("5"));
+  assert_div_to(Integer("1234567891011121314151617181920212223242"), Integer("10"), Integer("123456789101112131415161718192021222324"), Integer("2"));
+  assert_div_to(Integer("123456789101112131415161718192021222324"), Integer("10"), Integer("12345678910111213141516171819202122232"), Integer("4"));
+  assert_div_to(Integer("12345678910111213141516171819202122232"), Integer("10"), Integer("1234567891011121314151617181920212223"), Integer("2"));
+  assert_div_to(Integer("1234567891011121314151617181920212223"), Integer("10"), Integer("123456789101112131415161718192021222"), Integer("3"));
+  assert_div_to(Integer("123456789101112131415161718192021222"), Integer("10"), Integer("12345678910111213141516171819202122"), Integer("2"));
+  assert_div_to(Integer("12345678910111213141516171819202122"), Integer("10"), Integer("1234567891011121314151617181920212"), Integer("2"));
+  assert_div_to(Integer("0"), Integer("-10"), Integer("0"), Integer("0"));
+  assert_div_to(Integer("0"), Integer("-123456789098760"), Integer("0"), Integer("0"));
+  assert_div_to(Integer("2305843009213693952"), Integer("2305843009213693921"), Integer("1"), Integer("31"));
 }
 
 #if 0

@@ -277,8 +277,8 @@ IntegerDivision NaturalIntegerAbstract::udiv(const NaturalIntegerAbstract * nume
 
   int n = B.node()->numberOfHalfDigits();
   int m = A.node()->numberOfHalfDigits()-n;
-  half_native_uint_t qDigits[k_maxNumberOfDigits+1];
-  memset(qDigits, 0, (m/2+1)*sizeof(native_uint_t));
+  half_native_uint_t qDigits[2*k_maxNumberOfDigits]; // qDigits is a half_native_uint_t array
+  memset(qDigits, 0, 2*k_maxNumberOfDigits*sizeof(half_native_uint_t));
   Integer betam = IntegerWithHalfDigitAtIndex(1, m+1);
   Integer betaMB = Integer::Multiplication(betam, B); // TODO: can swift all digits by m! B.swift16(mg)
   if (Integer::NaturalOrder(A,betaMB) > 0) {

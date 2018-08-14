@@ -154,9 +154,7 @@ Expression RationalNode::denominator(Context & context, Preferences::AngleUnit a
 
 // Constructors
 
-Rational::Rational(Integer numerator, Integer denominator) :
-  Number(nullptr)
-{
+Rational::Rational(Integer numerator, Integer denominator) : Number() {
   assert(!denominator.isZero());
   if (!numerator.isOne() && !denominator.isOne()) {
     // Avoid computing GCD if possible
@@ -175,16 +173,14 @@ Rational::Rational(Integer numerator, Integer denominator) :
   new (this) Rational(size, numerator.node()->digits(), numerator.node()->numberOfDigits(), denominator.node()->digits(), denominator.node()->numberOfDigits(), negative);
 }
 
-Rational::Rational(const Integer numerator) :
-  Number(nullptr)
-{
+Rational::Rational(const Integer numerator) : Number() {
   if (numerator.node()->isAllocationFailure()) {
     new (this) Rational(RationalNode::FailedAllocationStaticNode());
   }
   new (this) Rational(numerator.node(), numerator.sign() == ExpressionNode::Sign::Negative);
 }
 
-Rational::Rational(const NaturalIntegerAbstract * numerator, bool negative) : Number(nullptr) {
+Rational::Rational(const NaturalIntegerAbstract * numerator, bool negative) : Number() {
   native_uint_t one = 1;
   size_t size = sizeof(RationalNode) + sizeof(native_uint_t);
   size += numerator->isInfinity() ? sizeof(native_uint_t)*numerator->numberOfDigits() : 0;
@@ -192,13 +188,13 @@ Rational::Rational(const NaturalIntegerAbstract * numerator, bool negative) : Nu
   return;
 }
 
-Rational::Rational(native_int_t i) : Number(nullptr)  {
+Rational::Rational(native_int_t i) : Number()  {
   native_uint_t absI = i < 0 ? -i : i;
   native_uint_t one = 1;
   new (this) Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &one, 1, i < 0);
 }
 
-Rational::Rational(native_int_t i, native_int_t j) : Number(nullptr) {
+Rational::Rational(native_int_t i, native_int_t j) : Number() {
   assert(j != 0);
   native_uint_t absI = i < 0 ? -i : i;
   native_uint_t absJ = j < 0 ? -j : j;

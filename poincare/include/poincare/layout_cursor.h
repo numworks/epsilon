@@ -29,7 +29,7 @@ public:
   };
 
   LayoutCursor() :
-    m_layoutRef(nullptr),
+    m_layoutRef(),
     m_position(Position::Right)
   {}
 

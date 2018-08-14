@@ -9,9 +9,9 @@ namespace Calculation {
 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
-  m_inputLayout(nullptr),
-  m_exactOutputLayout(nullptr),
-  m_approximateOutputLayout(nullptr),
+  m_inputLayout(),
+  m_exactOutputLayout(),
+  m_approximateOutputLayout(),
   m_inputView(this),
   m_scrollableOutputView(this),
   m_selectedSubviewType(HistoryViewCell::SubviewType::Output)
@@ -101,7 +101,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation) {
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
   if (m_exactOutputLayout.isDefined()) {
-    m_exactOutputLayout = Poincare::LayoutRef(nullptr);
+    m_exactOutputLayout = Poincare::LayoutRef();
   }
   if (!calculation->shouldOnlyDisplayApproximateOutput(calculationApp->localContext())) {
     m_exactOutputLayout = calculation->createExactOutputLayout(calculationApp->localContext());

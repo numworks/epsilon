@@ -159,7 +159,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
     PrintFloat::convertFloatToText<float>(matrixEvaluation.numberOfColumns(), buffer+numberOfChars, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);
     myCell->setSubtitle(buffer);
   } else {
-    myCell->setLayoutRef(LayoutRef(nullptr));
+    myCell->setLayoutRef(LayoutRef());
     myCell->setSubtitle(I18n::translate(I18n::Message::Empty));
   }
 }
@@ -261,10 +261,10 @@ LayoutRef VariableBoxController::ContentViewController::layoutRefForIndex(int in
   }
 #if LIST_VARIABLES
   if (m_currentPage == Page::List) {
-    return nullptr;
+    return LayoutRef();
   }
 #endif
-  return nullptr;
+  return LayoutRef();
 }
 
 VariableBoxController::VariableBoxController(GlobalContext * context) :

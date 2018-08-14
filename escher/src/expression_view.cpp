@@ -3,7 +3,7 @@ using namespace Poincare;
 
 ExpressionView::ExpressionView(float horizontalAlignment, float verticalAlignment,
     KDColor textColor, KDColor backgroundColor) :
-  m_layoutRef(nullptr),
+  m_layoutRef(),
   m_horizontalAlignment(horizontalAlignment),
   m_verticalAlignment(verticalAlignment),
   m_textColor(textColor),

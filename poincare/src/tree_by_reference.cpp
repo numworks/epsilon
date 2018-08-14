@@ -19,7 +19,7 @@ TreeByReference::~TreeByReference() {
 
 TreeByReference TreeByReference::clone() const {
   if (!isDefined()){
-    return TreeByReference(nullptr);
+    return TreeByReference();
   }
   TreeNode * myNode = node();
   if (myNode->isAllocationFailure()) {

@@ -3,7 +3,7 @@
 namespace Poincare {
 
 template<typename T>
-UninitializedEvaluationNode<T> * UninitializedEvaluation<T>::UninitializedEvaluationStaticNode() {
+UninitializedEvaluationNode<T> * UninitializedEvaluationNode<T>::UninitializedEvaluationStaticNode() {
   static UninitializedEvaluationNode<T> exception;
   TreePool::sharedPool()->registerStaticNodeIfRequired(&exception);
   return &exception;

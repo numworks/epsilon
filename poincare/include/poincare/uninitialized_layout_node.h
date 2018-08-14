@@ -11,6 +11,8 @@ namespace Poincare {
 
 class UninitializedLayoutNode : public ExceptionLayoutNode<LayoutNode> {
 public:
+  static UninitializedLayoutNode * UninitializedLayoutStaticNode();
+
   // LayoutNode
   // Rendering
   void invalidAllSizesPositionsAndBaselines() override { assert(false); ExceptionLayoutNode<LayoutNode>::invalidAllSizesPositionsAndBaselines(); }
@@ -77,13 +79,6 @@ protected:
 
 private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override { assert(false); ExceptionLayoutNode<LayoutNode>::render(ctx, p, expressionColor, backgroundColor); }
-};
-
-class UninitializedLayoutReference : public LayoutReference {
-public:
-  UninitializedLayoutReference() : LayoutReference(UninitializedLayoutStaticNode()) {}
-private:
-  static UninitializedLayoutNode * UninitializedLayoutStaticNode();
 };
 
 }

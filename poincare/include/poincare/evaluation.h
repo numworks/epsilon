@@ -37,11 +37,12 @@ public:
 template<typename T>
 class Evaluation : public TreeByValue {
 public:
+  Evaluation();
   EvaluationNode<T> * node() const override {
     assert(TreeByValue::node() == nullptr || !TreeByValue::node()->isGhost());
     return static_cast<EvaluationNode<T> *>(TreeByValue::node());
   }
-  Evaluation() : Evaluation(nullptr) {}
+
   /* Hierarchy */
   Evaluation<T> childAtIndex(int i) const {
     return Evaluation<T>(static_cast<EvaluationNode<T> *>(TreeByValue::childAtIndex(i).node()));

@@ -248,7 +248,7 @@ int Decimal::Exponent(const char * integralPart, int integralPartLength, const c
   return exp;
 }
 
-Decimal::Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent) : Number(nullptr) {
+Decimal::Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent) : Number() {
   Integer zero(0);
   Integer base(10);
   Integer numerator(integralPart, integralPartLength, negative);
@@ -261,7 +261,7 @@ Decimal::Decimal(const char * integralPart, int integralPartLength, const char *
 }
 
 template <typename T>
-Decimal::Decimal(T f) : Number(nullptr) {
+Decimal::Decimal(T f) : Number() {
   assert(!std::isnan(f) && !std::isinf(f));
   int exp = IEEE754<T>::exponentBase10(f);
   int64_t mantissaf = std::round((double)f * std::pow((double)10.0, (double)(-exp+PrintFloat::k_numberOfStoredSignificantDigits+1)));

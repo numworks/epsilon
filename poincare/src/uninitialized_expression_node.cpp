@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-UninitializedExpressionNode * UninitializedExpression::UninitializedExpressionStaticNode() {
+UninitializedExpressionNode * UninitializedExpressionNode::UninitializedExpressionStaticNode() {
   static UninitializedExpressionNode exception;
   TreePool::sharedPool()->registerStaticNodeIfRequired(&exception);
   return &exception;

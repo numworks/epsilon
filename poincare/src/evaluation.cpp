@@ -1,7 +1,11 @@
 #include <poincare/evaluation.h>
 #include <poincare/expression.h>
+#include <poincare/uninitialized_evaluation_node.h>
 
 namespace Poincare {
+
+template<typename T>
+Evaluation<T>::Evaluation() : Evaluation<T>(UninitializedEvaluationNode<T>::UninitializedEvaluationStaticNode()) {}
 
 template<typename T>
 Expression Evaluation<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {

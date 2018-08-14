@@ -13,6 +13,7 @@ namespace Poincare {
 template<typename T>
 class UninitializedEvaluationNode : public ExceptionEvaluationNode<EvaluationNode, T> {
 public:
+  static UninitializedEvaluationNode<T> * UninitializedEvaluationStaticNode();
   // TreeNode
   bool isUninitialized() const override { return true; }
   TreeNode * failedAllocationStaticNode() override { /*TODO*/ assert(false); return nullptr; /* Or call parent method ?*/ }
@@ -22,14 +23,6 @@ public:
     stream << "UninitializedEvaluation";
   }
 #endif
-};
-
-template<typename T>
-class UninitializedEvaluation : public Expression {
-public:
-  UninitializedEvaluation() : Expression(UninitializedEvaluationStaticNode()) {}
-private:
-  static UninitializedEvaluationNode<T> * UninitializedEvaluationStaticNode();
 };
 
 }

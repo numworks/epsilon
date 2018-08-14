@@ -19,7 +19,7 @@ public:
     return nullptr;
   }
   virtual Poincare::LayoutRef layoutRef() const {
-    return Poincare::LayoutRef(nullptr);
+    return Poincare::LayoutRef();
   }
 protected:
   bool m_highlighted;

@@ -50,7 +50,7 @@ void ExpressionModel::setContent(const char * c) {
 // TODO: the previous expression and layout are going to be destroyed as soon as we call expression(). Should we optimize this?
 #if 0
   if (m_layoutRef.isDefined()) {
-    m_layoutRef = LayoutRef(nullptr);
+    m_layoutRef = LayoutRef();
   }
   if (m_expression != nullptr) {
     delete m_expression;
@@ -67,7 +67,7 @@ void ExpressionModel::tidy() {
 
 
   if (m_layoutRef.isDefined()) {
-    m_layoutRef = LayoutRef(nullptr);
+    m_layoutRef = LayoutRef();
   }
   if (m_expression != nullptr) {
     delete m_expression;

@@ -162,8 +162,8 @@ void LayoutCursor::insertText(const char * text) {
   if (textLength <= 0) {
     return;
   }
-  LayoutRef newChild(nullptr);
-  LayoutRef pointedChild(nullptr);
+  LayoutRef newChild;
+  LayoutRef pointedChild;
   bool specialUnderScore = false;
   for (int i = 0; i < textLength; i++) {
     if (text[i] == Ion::Charset::Empty) {
@@ -292,7 +292,7 @@ bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
   }
   /* Find Empty layouts adjacent to the cursor: Check the pointed layout and the
    * equivalent cursor positions */
-  LayoutRef adjacentEmptyLayout(nullptr);
+  LayoutRef adjacentEmptyLayout;
 
   if (m_layoutRef.isEmpty()) {
     // Check the pointed layout

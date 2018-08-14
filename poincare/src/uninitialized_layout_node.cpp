@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-UninitializedLayoutNode * UninitializedLayoutReference::UninitializedLayoutStaticNode() {
+UninitializedLayoutNode * UninitializedLayoutNode::UninitializedLayoutStaticNode() {
   static UninitializedLayoutNode exception;
   TreePool::sharedPool()->registerStaticNodeIfRequired(&exception);
   return &exception;

@@ -87,7 +87,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
         return true;
       }
       // Find the pointed layout.
-      LayoutRef pointedLayoutRef(nullptr);
+      LayoutRef pointedLayoutRef();
       if (strcmp(text, I18n::translate(I18n::Message::RandomCommandWithArg)) == 0) {
         /* Special case: if the text is "random()", the cursor should not be set
          * inside the parentheses. */
@@ -103,8 +103,8 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
           }
         }
       }
-      /* Insert the layout. If pointedLayout is nullptr, the cursor will be on the
-       * right of the inserted layout. */
+      /* Insert the layout. If pointedLayout is uninitialized, the cursor will
+       * be on the right of the inserted layout. */
       insertLayoutAtCursor(resultLayoutRef, pointedLayoutRef, forceCursorRightOfText);
     }
   }
@@ -256,7 +256,7 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
 
   bool layoutWillBeMerged = layoutR.isHorizontal();
-  LayoutRef lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : LayoutRef(nullptr);
+  LayoutRef lastMergedLayoutChild = layoutWillBeMerged ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : LayoutRef();
 
   // Add the layout
   m_contentView.cursor()->addLayoutAndMoveCursor(layoutR);
@@ -266,7 +266,7 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
     m_contentView.cursor()->setLayoutReference(layoutRef());
   } else if(!forceCursorRightOfLayout) {
     if (pointedLayoutR.isDefined() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
-      // Make sure the layout was inserted (its parent is not nullptr)
+      // Make sure the layout was inserted (its parent is not uninitialized)
       m_contentView.cursor()->setLayoutReference(pointedLayoutR);
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
     } else if (!layoutWillBeMerged) {

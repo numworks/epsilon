@@ -7,6 +7,7 @@ extern "C" {
 }
 #include <poincare/arithmetic.h>
 #include <poincare/opposite.h>
+#include <poincare/infinity.h>
 #include <poincare/fraction_layout_node.h>
 #include <poincare/char_layout_node.h>
 
@@ -135,6 +136,10 @@ int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool can
 
 // Simplification
 
+Expression RationalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Rational(this).shallowReduce(context, angleUnit);
+}
+
 Expression RationalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
   return Rational(this).shallowBeautify(context, angleUnit);
 }
@@ -241,6 +246,21 @@ Rational::Rational(size_t size, native_uint_t * i, size_t numeratorSize, native_
   static_cast<RationalNode *>(node())->setDigits(i, numeratorSize, j, denominatorSize, negative);
 }
 
+Expression Rational::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  if (node()->numerator().isInfinity() && node()->denominator().isInfinity()) {
+    return Undefined();
+  }
+  // Turn into Infinite if the numerator is too big.
+  if (node()->numerator().isInfinity()) {
+    return Infinity(sign() == ExpressionNode::Sign::Negative);
+  }
+  // Turn into 0 if the denominator is too big.
+  if (node()->denominator().isInfinity()) {
+    return Rational(0);
+  }
+  return *this;
+}
+
 Expression Rational::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
   if (sign() == ExpressionNode::Sign::Negative) {
     Expression abs = setSign(ExpressionNode::Sign::Positive);
@@ -254,7 +274,9 @@ Expression Rational::denominator(Context & context, Preferences::AngleUnit angle
   if (d.isOne()) {
     return Expression();
   }
-  assert(!d.isInfinity());
+  if (d.isInfinity()) {
+    return Infinity(false);
+  }
   return Rational(&d, false);
 }
 

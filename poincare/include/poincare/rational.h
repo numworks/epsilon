@@ -56,6 +56,7 @@ public:
   static int NaturalOrder(const RationalNode i, const RationalNode j);
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
@@ -96,6 +97,9 @@ public:
   // IntegerPower of (p1/q1)^(p2/q2) --> (p1^p2)/(q1^p2)
   static Rational IntegerPower(const Rational i, const Rational j);
   static int NaturalOrder(const Rational i, const Rational j);
+
+  // Simplification
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
 private:
   Rational(size_t size, native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative);

@@ -291,17 +291,8 @@ Expression Decimal::shallowReduce(Context& context, Preferences::AngleUnit angle
   } else {
     denominator = Integer::Power(Integer(10), Integer(numberOfDigits-1-exp));
   }
-  // Do not reduce decimal to rational if the exponent is too big or too small.
-  if (numerator.isInfinity()) {
-    assert(!denominator.isInfinity());
-    return Infinity(negative);
-  }
-  if (denominator.isInfinity()) {
-    assert(!denominator.isInfinity());
-    return Rational(0);
-  }
   numerator.setNegative(negative);
-  return Rational(numerator, denominator);
+  return Rational(numerator, denominator).shallowReduce(context, angleUnit);
 }
 
 Expression Decimal::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {

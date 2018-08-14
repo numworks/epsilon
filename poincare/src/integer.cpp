@@ -405,11 +405,7 @@ int IntegerNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 size_t IntegerNode::size() const {
-  size_t baseSize = sizeof(IntegerNode);
-  if (isInfinity()) {
-    return baseSize;
-  }
-  return m_numberOfDigits*sizeof(native_uint_t)+baseSize;
+  return m_numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode);
 }
 
 Expression IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
@@ -442,13 +438,14 @@ Integer::Integer(size_t size, const native_uint_t * digits, size_t numberOfDigit
   node()->setDigits(digits, numberOfDigits, negative);
 }
 
-Integer::Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative) :
-  Integer(
-    numberOfDigits > NaturalIntegerAbstract::k_maxNumberOfDigits ? sizeof(IntegerNode) : numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode),
-    numberOfDigits > NaturalIntegerAbstract::k_maxNumberOfDigits ? nullptr : digits,
-    numberOfDigits > NaturalIntegerAbstract::k_maxNumberOfDigits ? NaturalIntegerAbstract::k_maxNumberOfDigits+1 : numberOfDigits,
-    negative
-  )
+size_t cappedNumberOfDigits(size_t numberOfDigits, bool enableOverflow) {
+  if (!enableOverflow && numberOfDigits > NaturalIntegerAbstract::k_maxNumberOfDigits) {
+    return NaturalIntegerAbstract::k_maxNumberOfDigits+1;
+  }
+  return numberOfDigits;
+}
+Integer::Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative, bool enableOverflow) :
+  Integer(sizeof(IntegerNode)+cappedNumberOfDigits(numberOfDigits, enableOverflow)*sizeof(native_uint_t), digits, cappedNumberOfDigits(numberOfDigits, enableOverflow), negative)
 {}
 
 Integer::Integer(const char * digits, size_t length, bool negative) :

@@ -237,7 +237,7 @@ void LayoutNode::scoreCursorInDescendantsVertically (
 bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
   bool changedSquares = false;
   LayoutRef currentAncestor = LayoutRef(parent());
-  while (currentAncestor.isDefined()) {
+  while (!currentAncestor.isUninitialized()) {
     if (currentAncestor.isMatrix()) {
       if (add) {
         MatrixLayoutRef(static_cast<MatrixLayoutNode *>(currentAncestor.node())).addGreySquares();

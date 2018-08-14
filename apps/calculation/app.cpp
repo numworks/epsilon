@@ -92,7 +92,7 @@ bool App::textInputIsCorrect(const char * text) {
    * less than k_printedExpressionLength characters. Otherwise, we prevent the
    * user from adding this expression to the calculation store. */
   Expression exp = Expression::parse(text);
-  if (!exp.isDefined()) {
+  if (exp.isUninitialized()) {
     return false;
   }
   exp = exp.replaceSymbolWithExpression(Symbol::SpecialSymbols::Ans, static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext()));

@@ -49,7 +49,7 @@ Expression parse_expression(const char * expression) {
   strlcpy(buffer, expression, sizeof(buffer));
   translate_in_special_chars(buffer);
   Expression result = Expression::parse(buffer);
-  assert(result.isDefined());
+  assert(!result.isUninitialized());
   return result;
 }
 

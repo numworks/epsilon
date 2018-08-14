@@ -73,7 +73,7 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
   if (textField == contentView()->formulaInputView()->textField()) {
     // Handle formula input
     Expression expression = Expression::parse(textField->text());
-    if (!expression.isDefined()) {
+    if (expression.isUninitialized()) {
       app()->displayWarning(I18n::Message::SyntaxError);
       return false;
     }

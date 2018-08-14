@@ -201,11 +201,13 @@ bool Expression::isEqualToItsApproximationLayout(Expression approximation, int b
 
 Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
   Expression exp = parse(text);
-  if (!exp.isDefined()) {
+  if (exp.isUninitialized()) {
     return Undefined();
   }
   Expression reduced = exp.simplify(context, angleUnit);
-  if (!reduced.isDefined()) {
+  /* simplify might have been interrupted, in which case the resulting
+   * expression is uninitialized, so we need to check that. */
+  if (reduced.isUninitialized()) {
     return exp;
   }
   return reduced;
@@ -250,11 +252,8 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
 
 template<typename U>
 Expression Expression::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const {
-  if (isDefined()) {
-    Evaluation<U> e = node()->approximate(U(), context, angleUnit);
-    return e.complexToExpression(complexFormat);
-  }
-  return Undefined();
+  Evaluation<U> e = node()->approximate(U(), context, angleUnit);
+  return e.complexToExpression(complexFormat);
 }
 
 template<typename U>
@@ -487,17 +486,17 @@ double Expression::nextIntersectionWithExpression(char symbol, double start, dou
   double extremumMax = std::isnan(result) ? max : result;
   Coordinate2D resultExtremum[2] = {
     nextMinimumOfExpression(symbol, start, step, extremumMax, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
-        if (expression1.isDefined()) {
-          return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression1.approximateWithValueForSymbol(symbol, x, context, angleUnit);
-        } else {
+        if (expression1.isUninitialized()) {
           return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
+        } else {
+          return expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression1.approximateWithValueForSymbol(symbol, x, context, angleUnit);
         }
       }, context, angleUnit, expression, true),
     nextMinimumOfExpression(symbol, start, step, extremumMax, [](char symbol, double x, Context & context, Preferences::AngleUnit angleUnit, const Expression expression0, const Expression expression1) {
-        if (expression1.isDefined()) {
-          return expression1.approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
-        } else {
+        if (expression1.isUninitialized()) {
           return -expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
+        } else {
+          return expression1.approximateWithValueForSymbol(symbol, x, context, angleUnit)-expression0.approximateWithValueForSymbol(symbol, x, context, angleUnit);
         }
       }, context, angleUnit, expression, true)};
   for (int i = 0; i < 2; i++) {

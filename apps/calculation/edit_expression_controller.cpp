@@ -154,11 +154,10 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
 
 bool EditExpressionController::inputViewDidFinishEditing(const char * text, LayoutRef layoutR) {
   App * calculationApp = (App *)app();
-  if (!layoutR.isDefined()) {
+  if (layoutR.isUninitialized()) {
     assert(text);
     strlcpy(m_cacheBuffer, text, Calculation::k_printedExpressionSize);
   } else {
-    assert(layoutR.isDefined());
     layoutR.serialize(m_cacheBuffer, Calculation::k_printedExpressionSize);
   }
   m_calculationStore->push(m_cacheBuffer, calculationApp->localContext());

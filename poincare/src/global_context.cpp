@@ -43,7 +43,7 @@ const Expression GlobalContext::expressionForSymbol(const Symbol symbol) {
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return Expression();
   }
-  if (m_expressions[index].isDefined()) {
+  if (!m_expressions[index].isUninitialized()) {
     return m_expressions[index];
   }
   return defaultExpression();
@@ -52,7 +52,7 @@ const Expression GlobalContext::expressionForSymbol(const Symbol symbol) {
 LayoutRef GlobalContext::layoutForSymbol(const Symbol symbol, int numberOfSignificantDigits) {
   if (Symbol::isMatrixSymbol(symbol.name())) {
     int index = symbolIndex(symbol);
-    if (!m_matrixLayouts[index].isDefined()) {
+    if (m_matrixLayouts[index].isUninitialized()) {
       m_matrixLayouts[index] = m_matrixExpressions[index].createLayout(Preferences::PrintFloatMode::Decimal, numberOfSignificantDigits);
     }
     return m_matrixLayouts[index];
@@ -65,8 +65,8 @@ void GlobalContext::setExpressionForSymbolName(const Expression expression, cons
  if (Symbol::isMatrixSymbol(symbol.name())) {
     int indexMatrix = symbol.name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
-    Expression evaluation = expression.isDefined() ? expression.approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()) : Expression(); // evaluate before deleting anything (to be able to evaluate M1+2->M1)
-    if (evaluation.isDefined()) {
+    Expression evaluation = expression.isUninitialized() ? Expression() : expression.approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()); // evaluate before deleting anything (to be able to evaluate M1+2->M1)
+    if (!evaluation.isUninitialized()) {
       if (evaluation.type() != ExpressionNode::Type::Matrix) {
         m_matrixExpressions[indexMatrix] = Matrix(evaluation);
       } else {
@@ -78,8 +78,8 @@ void GlobalContext::setExpressionForSymbolName(const Expression expression, cons
   if (index < 0 || index >= k_maxNumberOfScalarExpressions) {
     return;
   }
-  Expression evaluation = expression.isDefined() ? expression.approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()) : Expression(); // evaluate before deleting anything (to be able to evaluate A+2->A)
-  if (!evaluation.isDefined()) {
+  Expression evaluation = expression.isUninitialized() ? Expression() : expression.approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()); // evaluate before deleting anything (to be able to evaluate A+2->A)
+  if (evaluation.isUninitialized()) {
     return;
   }
   if (evaluation.type() == ExpressionNode::Type::Matrix) {

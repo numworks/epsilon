@@ -72,9 +72,9 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
           imag = Multiplication(Number::DecimalNumber(-this->imag()), Symbol(Ion::Charset::IComplex));
         }
       }
-      if (!imag.isDefined()) {
+      if (imag.isUninitialized()) {
         return real;
-      } else if (!real.isDefined()) {
+      } else if (real.isUninitialized()) {
         if (this->imag() > 0) {
           return imag;
         } else {
@@ -110,9 +110,9 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
         }
         exp = Power(Symbol(Ion::Charset::Exponential), arg);
       }
-      if (!exp.isDefined()) {
+      if (exp.isUninitialized()) {
         return norm;
-      } else if (!norm.isDefined()) {
+      } else if (norm.isUninitialized()) {
         return exp;
       } else {
         return Multiplication(norm, exp);

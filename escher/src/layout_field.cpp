@@ -79,7 +79,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     m_contentView.cursor()->addEmptyMatrixLayout();
   } else {
     Expression resultExpression = Expression::parse(text);
-    if (!resultExpression.isDefined()) {
+    if (resultExpression.isUninitialized()) {
       m_contentView.cursor()->insertText(text);
     } else {
       LayoutRef resultLayoutRef = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
@@ -248,7 +248,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
 }
 
 void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayoutR, bool forceCursorRightOfLayout) {
-  if (!layoutR.isDefined() || layoutRef().isAllocationFailure()) {
+  if (layoutR.isUninitialized() || layoutRef().isAllocationFailure()) {
     return;
   }
 
@@ -265,7 +265,7 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
   if (layoutRef().isAllocationFailure()) {
     m_contentView.cursor()->setLayoutReference(layoutRef());
   } else if(!forceCursorRightOfLayout) {
-    if (pointedLayoutR.isDefined() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
+    if (!pointedLayoutR.isUninitialized() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
       // Make sure the layout was inserted (its parent is not uninitialized)
       m_contentView.cursor()->setLayoutReference(pointedLayoutR);
       m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
@@ -292,7 +292,7 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
   if (!layoutWillBeMerged) {
     scrollRightOfLayout(layoutR);
   } else {
-    assert(lastMergedLayoutChild.isDefined());
+    assert(!lastMergedLayoutChild.isUninitialized());
     scrollRightOfLayout(lastMergedLayoutChild);
   }
   scrollToCursor();

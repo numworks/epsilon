@@ -23,7 +23,7 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
     return Metric::StoreRowHeight;
   }
   ExpressionModel * m = modelStore()->modelAtIndex(j);
-  if (!m->layoutRef().isDefined()) {
+  if (m->layoutRef().isUninitialized()) {
     return Metric::StoreRowHeight;
   }
   KDCoordinate modelSize = m->layoutRef().layoutSize().height();

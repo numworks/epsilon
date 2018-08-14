@@ -38,53 +38,54 @@ public:
   int identifier() const { return m_identifier; }
   virtual TreeNode * node() const { return TreePool::sharedPool()->node(m_identifier); }
 
-  bool isDefined() const { return m_identifier != TreePool::NoNodeIdentifier && node() != nullptr; }
-  bool isAllocationFailure() const { return isDefined() && node()->isAllocationFailure(); }
+  bool isUninitialized() const { return node()->isUninitialized(); }
+  bool isAllocationFailure() const { return node()->isAllocationFailure(); }
+  bool isStatic() const { return node()->isStatic(); }
 
   int nodeRetainCount() const {
-    assert(isDefined());
+    assert(!isUninitialized());
     return node()->retainCount();
   }
   void incrementNumberOfChildren(int increment = 1) {
-    assert(isDefined());
+    assert(!isUninitialized());
     node()->incrementNumberOfChildren(increment);
   }
   void decrementNumberOfChildren(int decrement = 1) {
-    assert(isDefined());
+    assert(!isUninitialized());
     node()->decrementNumberOfChildren(decrement);
   }
   int numberOfDescendants(bool includeSelf) const {
-    assert(isDefined());
+    assert(!isUninitialized());
     return node()->numberOfDescendants(includeSelf);
   }
 
   /* Hierarchy */
   bool hasChild(TreeByReference t) const {
-    assert(isDefined());
+    assert(!isUninitialized());
     return node()->hasChild(t.node());
   }
   bool hasSibling(TreeByReference t) const {
-    assert(isDefined());
+    assert(!isUninitialized());
     return node()->hasSibling(t.node());
   }
   bool hasAncestor(TreeByReference t, bool includeSelf) const {
-    assert(isDefined());
+    assert(!isUninitialized());
     return node()->hasAncestor(t.node(), includeSelf);
   }
   int numberOfChildren() const {
-    assert(isDefined());
+    assert(!isUninitialized());
     return node()->numberOfChildren();
   }
   TreeByReference parent() const {
-    assert(isDefined());
+    assert(!isUninitialized());
     return TreeByReference(node()->parent());
   }
   TreeByReference childAtIndex(int i) const {
-    assert(isDefined());
+    assert(!isUninitialized());
     return TreeByReference(node()->childAtIndex(i));
   }
   int indexOfChild(TreeByReference t) const {
-    assert(isDefined());
+    assert(!isUninitialized());
     return node()->indexOfChild(t.node());
   }
 
@@ -118,9 +119,7 @@ protected:
   TreeByReference() : m_identifier(-1) {}
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;
-    if (isDefined()) {
-      node()->retain();
-    }
+    node()->retain();
   }
   void setTo(const TreeByReference & tr);
   /* Hierarchy operations */

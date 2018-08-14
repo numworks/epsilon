@@ -50,7 +50,7 @@ void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef 
     return;
   }
   LayoutReference p = parent();
-  assert(p.isDefined());
+  assert(!p.isUninitialized());
   if (!p.isHorizontal()) {
     /* One of the children to juxtapose might be "this", so we cannot just call
      * replaceWith. */
@@ -130,7 +130,7 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
    * root layout. */
   LayoutRef rootLayout = root();
   LayoutRef p = parent();
-  assert(p.isDefined());
+  assert(!p.isUninitialized());
   if (p.isHorizontal()) {
     int indexInParent = p.indexOfChild(*this);
     int siblingIndex = cursor->position() == LayoutCursor::Position::Left ? indexInParent : indexInParent + 1;
@@ -145,7 +145,7 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
       } else if (cursor->position() == LayoutCursor::Position::Right && indexInParent < p.numberOfChildren() - 1) {
         neighbour = p.childAtIndex(indexInParent + 1);
       }
-      if (neighbour.isDefined() && neighbour.isVerticalOffset()) {
+      if (!neighbour.isUninitialized() && neighbour.isVerticalOffset()) {
         if (moveCursor) {
           cursor->setLayoutReference(neighbour);
           cursor->setPosition(cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left);
@@ -198,7 +198,7 @@ void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force
 
 void LayoutReference::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {
   LayoutRef p = parent();
-  if (!p.isDefined() || !p.isHorizontal()) {
+  if (p.isUninitialized() || !p.isHorizontal()) {
     return;
   }
   int idxInParent = p.indexOfChild(*this);
@@ -206,7 +206,7 @@ void LayoutReference::collapseOnDirection(HorizontalDirection direction, int abs
   int numberOfOpenParenthesis = 0;
   bool canCollapse = true;
   LayoutRef absorbingChild = childAtIndex(absorbingChildIndex);
-  if (!absorbingChild.isDefined() || !absorbingChild.isHorizontal()) {
+  if (absorbingChild.isUninitialized() || !absorbingChild.isHorizontal()) {
     return;
   }
   HorizontalLayoutRef horizontalAbsorbingChild = HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(absorbingChild.node()));

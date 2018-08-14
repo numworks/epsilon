@@ -9,16 +9,14 @@ namespace Poincare {
 /* Constructors */
 
 TreeByReference::~TreeByReference() {
-  if (isDefined()) {
-    assert(node()->identifier() == m_identifier);
-    node()->release(numberOfChildren()); //TODO No malformed nodes ?
-  }
+  assert(node()->identifier() == m_identifier);
+  node()->release(numberOfChildren()); //TODO No malformed nodes ?
 }
 
 /* Clone */
 
 TreeByReference TreeByReference::clone() const {
-  if (!isDefined()){
+  if (isUninitialized()){
     return TreeByReference();
   }
   TreeNode * myNode = node();
@@ -33,12 +31,12 @@ TreeByReference TreeByReference::clone() const {
 /* Hierarchy operations */
 
 void TreeByReference::replaceWithInPlace(TreeByReference t) {
-  assert(isDefined());
+  assert(!isUninitialized());
   if (isAllocationFailure()) {
     return;
   }
   TreeByReference p = parent();
-  if (p.isDefined()) {
+  if (!p.isUninitialized()) {
     p.replaceChildInPlace(*this, t);
   }
 }
@@ -48,7 +46,7 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
     return;
   }
 
-  assert(isDefined());
+  assert(!isUninitialized());
   if (isAllocationFailure()) {
     return;
   }
@@ -58,7 +56,7 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
   }
 
   // Move the new child
-  assert(!newChild.parent().isDefined());
+  assert(newChild.parent().isUninitialized());
   TreePool::sharedPool()->move(oldChild.node(), newChild.node(), newChild.numberOfChildren());
   /* We could have moved the new node to oldChild.node()->nextSibling(), but
    * nextSibling is not computed correctly if we inserted an
@@ -74,9 +72,9 @@ void TreeByReference::replaceWithAllocationFailureInPlace(int currentNumberOfChi
   if (isAllocationFailure()) {
     return;
   }
-  assert(isDefined());
+  assert(!isUninitialized());
   TreeByReference p = parent();
-  bool hasParent = p.isDefined();
+  bool hasParent = !p.isUninitialized();
   int indexInParentNode = hasParent ? node()->indexInParent() : -1;
   int currentRetainCount = node()->retainCount();
   TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode();
@@ -100,7 +98,7 @@ void TreeByReference::replaceWithAllocationFailureInPlace(int currentNumberOfChi
   TreeNode * newAllocationFailureNode = TreePool::sharedPool()->deepCopy(staticAllocFailNode);
   newAllocationFailureNode->rename(m_identifier, true);
   newAllocationFailureNode->retain();
-  if (p.isDefined()) {
+  if (hasParent) {
     assert(indexInParentNode >= 0);
     /* Set the refCount to previousRefCount-1 because the previous parent is
      * no longer retaining the node. When we add this node to the parent, it
@@ -138,7 +136,7 @@ void TreeByReference::mergeChildrenAtIndexInPlace(TreeByReference t, int i) {
 }
 
 void TreeByReference::swapChildrenInPlace(int i, int j) {
-  assert(isDefined());
+  assert(!isStatic());
   assert(i >= 0 && i < numberOfChildren());
   assert(j >= 0 && j < numberOfChildren());
   if (i == j) {
@@ -163,7 +161,7 @@ void TreeByReference::log() const {
 
 // Add
 void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) {
-  assert(isDefined());
+  assert(!isUninitialized());
   if (node()->isAllocationFailure()) {
     return;
   }
@@ -173,7 +171,7 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
   }
   assert(index >= 0 && index <= currentNumberOfChildren);
 
-  assert(!t.parent().isDefined());
+  assert(t.parent().isUninitialized());
   // Move t
   TreeNode * newChildPosition = node()->next();
   for (int i = 0; i < index; i++) {
@@ -189,21 +187,21 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
 // Remove
 
 void TreeByReference::removeChildAtIndexInPlace(int i) {
-  assert(isDefined());
+  assert(!isUninitialized());
   assert(i >= 0 && i < numberOfChildren());
   TreeByReference t = childAtIndex(i);
   removeChildInPlace(t, t.numberOfChildren());
 }
 
 void TreeByReference::removeChildInPlace(TreeByReference t, int childNumberOfChildren) {
-  assert(isDefined());
+  assert(!isUninitialized());
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), childNumberOfChildren);
   t.node()->release(childNumberOfChildren);
   node()->decrementNumberOfChildren();
 }
 
 void TreeByReference::removeChildrenInPlace(int currentNumberOfChildren) {
-  assert(isDefined());
+  assert(!isUninitialized());
   for (int i = 0; i < currentNumberOfChildren; i++) {
     TreeByReference childRef = childAtIndex(0);
     TreePool::sharedPool()->move(TreePool::sharedPool()->last(), childRef.node(), childRef.numberOfChildren());

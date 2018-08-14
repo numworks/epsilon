@@ -20,14 +20,14 @@ const char * ExpressionModel::text() const {
 }
 
 Poincare::Expression ExpressionModel::expression(Poincare::Context * context) const {
-  if (!m_expression.isDefined()) {
+  if (m_expression.isUninitialized()) {
     m_expression = PoincareHelpers::ParseAndSimplify(m_text, *context);
   }
   return m_expression;
 }
 
 LayoutRef ExpressionModel::layoutRef() {
-  if (!m_layoutRef.isDefined()) {
+  if (m_layoutRef.isUninitialized()) {
     Expression nonSimplifiedExpression = Expression::parse(m_text);
     m_layoutRef = PoincareHelpers::CreateLayout(nonSimplifiedExpression);
   }
@@ -49,7 +49,7 @@ void ExpressionModel::setContent(const char * c) {
    * the m_layout and m_expression. */
 // TODO: the previous expression and layout are going to be destroyed as soon as we call expression(). Should we optimize this?
 #if 0
-  if (m_layoutRef.isDefined()) {
+  if (!m_layoutRef.isUninitialized()) {
     m_layoutRef = LayoutRef();
   }
   if (m_expression != nullptr) {
@@ -66,7 +66,7 @@ void ExpressionModel::tidy() {
   m_expression = Expression(); ?
 
 
-  if (m_layoutRef.isDefined()) {
+  if (!m_layoutRef.isUninitialized()) {
     m_layoutRef = LayoutRef();
   }
   if (m_expression != nullptr) {

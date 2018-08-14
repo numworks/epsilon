@@ -517,7 +517,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
   }
   if (power < 0) {
     MatrixComplex<T> inverse = m.inverse();
-    if (!inverse.isDefined()) {
+    if (inverse.isUninitialized()) {
       return MatrixComplex<T>::Undefined();
     }
     Complex<T> minusC = Complex<T>(-d);

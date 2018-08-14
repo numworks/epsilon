@@ -147,7 +147,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
     return;
   }
   myCell->displayExpression(true);
-  if (evaluation.isDefined()) {
+  if (!evaluation.isUninitialized()) {
     /* TODO: implement list contexts */
     // TODO: handle matrix and scalar!
     LayoutRef layoutR = layoutRefForIndex(index);
@@ -169,7 +169,7 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
     return Metric::ToolboxRowHeight;
   }
   LayoutRef layoutR = layoutRefForIndex(index);
-  if (layoutR.isDefined()) {
+  if (!layoutR.isUninitialized()) {
     return layoutR.layoutSize().height()+k_leafMargin;
   }
   return Metric::ToolboxRowHeight;

@@ -135,7 +135,7 @@ int TextArea::indentationBeforeCursor() const {
 
 /* TextArea::Text */
 
-size_t TextArea::Text::indexAtPosition(Position p) {
+size_t TextArea::Text::indexAtPosition(Position p) const {
   assert(m_buffer != nullptr);
   if (p.line() < 0) {
     return 0;

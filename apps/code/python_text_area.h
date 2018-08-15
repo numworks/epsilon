@@ -26,6 +26,7 @@ protected:
     void unloadSyntaxHighlighter();
     void clearRect(KDContext * ctx, KDRect rect) const override;
     void drawLine(KDContext * ctx, int line, const char * text, size_t length, int fromColumn, int toColumn) const override;
+    void drawRect(KDContext * ctx, KDRect rect) const override;
     KDRect dirtyRectFromCursorPosition(size_t index, bool lineBreak) const override;
   private:
     static constexpr size_t k_pythonHeapSize = 4096;

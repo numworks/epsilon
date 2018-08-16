@@ -27,27 +27,7 @@ public:
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Rational";
   }
-  virtual void logAttributes(std::ostream & stream) const override {
-    stream << " negative=\"" << m_negative << "\"";
-    stream << " numberNumDigits=\"" << m_numberOfDigitsNumerator << "\"";
-    stream << " Num=\"";
-    for (int i=0; i<m_numberOfDigitsNumerator; i++) {
-      stream << m_digits[i];
-      if (i != (m_numberOfDigitsNumerator-1)) {
-        stream << ",";
-      }
-    }
-    stream << "\"";
-    stream << " numberDenDigits=\"" << m_numberOfDigitsDenominator << "\"";
-    stream << " Den=\"";
-    for (int i=m_numberOfDigitsNumerator; i<m_numberOfDigitsDenominator+m_numberOfDigitsNumerator; i++) {
-      stream << m_digits[i];
-      if (i != (m_numberOfDigitsDenominator+m_numberOfDigitsNumerator-1)) {
-        stream << ",";
-      }
-    }
-    stream << "\"";
-  }
+  virtual void logAttributes(std::ostream & stream) const override;
 #endif
 
   // SerializationHelperInterface
@@ -93,9 +73,12 @@ public:
 };
 
 class Rational : public Number {
-friend class RationalNode;
+  friend class RationalNode;
+  friend class PowerNode;
+  friend class Power;
 public:
   /* The constructor build a irreductible fraction */
+  Rational() : Number() {} // Unitialized expression constructor
   Rational(const RationalNode * node) : Number(node) {}
   Rational(Integer numerator, Integer denominator);
   Rational(const Integer numerator);
@@ -107,7 +90,17 @@ public:
   RationalNode * node() const override { return static_cast<RationalNode *>(Number::node()); }
 
   // Properties
+  Integer integerNumerator() const;
+  NaturalIntegerPointer naturalIntegerPointerNumerator() { return node()->numerator(); }
+  Integer integerDenominator() const;
+
+  // BasicTest
+  bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
+  bool isMinusOne() const { return node()->isMinusOne(); }
+  bool isHalf() const { return node()->isHalf(); }
+  bool isMinusHalf() const { return node()->isMinusHalf(); }
+  bool isTen() const { return node()->isTen(); }
   bool numeratorOrDenominatorIsInfinity() const;
 
   // Arithmetic
@@ -115,8 +108,8 @@ public:
    * involve infinity numerator or denominator or handle these cases. */
   static Rational Addition(const Rational i, const Rational j);
   static Rational Multiplication(const Rational i, const Rational j);
-  // IntegerPower of (p1/q1)^(p2/q2) --> (p1^p2)/(q1^p2)
-  static Rational IntegerPower(const Rational i, const Rational j);
+  // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
+  static Rational IntegerPower(const Rational i, const NaturalIntegerPointer j, ExpressionNode::Sign jSign);
   static int NaturalOrder(const Rational i, const Rational j);
 
   // Simplification
@@ -124,6 +117,7 @@ public:
 
 private:
   Rational(size_t size, native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative);
+  RationalNode * node() { return static_cast<RationalNode *>(Number::node()); }
 
   /* Simplification */
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;

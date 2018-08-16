@@ -75,8 +75,11 @@ public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   Multiplication() : NAryExpression(TreePool::sharedPool()->createTreeNode<MultiplicationNode>()) {}
   Multiplication(Expression e1, Expression e2) : Multiplication() {
-    addChildAtIndexInPlace(e1, 0, 0);
+    addChildAtIndexInPlace(e2, 0, 0);
     addChildAtIndexInPlace(e1, 0, numberOfChildren());
+  }
+  Multiplication(Expression e1, Expression e2, Expression e3) : Multiplication(e2, e3) {
+    addChildAtIndexInPlace(e3, 0, numberOfChildren());
   }
 
   // Expression

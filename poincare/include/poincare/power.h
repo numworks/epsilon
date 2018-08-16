@@ -36,7 +36,6 @@ public:
 private:
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
-  constexpr static int k_maxExactPowerMatrix = 100;
 
   // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -48,27 +47,13 @@ private:
   }
   static const char * name() { return "^"; }
 
-  /* Simplify */
+  // Simplify
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
   int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const override;
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
-#if 0
-   Expression * simplifyPowerPower(Power * p, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
-   Expression * simplifyPowerMultiplication(Multiplication * m, Expression * r, Context & context, Preferences::AngleUnit angleUnit);
-  Expression * simplifyRationalRationalPower(Expression * result, Rational * a, Rational * b, Context & context, Preferences::AngleUnit angleUnit);
-  Expression * removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit);
-  bool parentIsALogarithmOfSameBase() const;
-  bool isNthRootOfUnity() const;
-  static Expression * CreateSimplifiedIntegerRationalPower(Integer i, Rational * r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
-  static Expression * CreateNthRootOfUnity(const Rational r);
-  static bool TermIsARationalSquareRootOrRational(const Expression * e);
-  static const Rational * RadicandInExpression(const Expression * e);
-  static const Rational * RationalFactorInExpression(const Expression * e);
-  static bool RationalExponentShouldNotBeReduced(const Rational * b, const Rational * r);
-#endif
-  /* Evaluation */
+  // Evaluation
   constexpr static int k_maxApproximatePowerMatrix = 1000;
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n);
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d);
@@ -92,6 +77,24 @@ public:
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+
+private:
+  constexpr static int k_maxExactPowerMatrix = 100;
+
+  // Simplification
+  Expression simplifyPowerPower(Power p, Expression r, Context & context, Preferences::AngleUnit angleUnit);
+  Expression simplifyPowerMultiplication(Multiplication m, Expression r, Context & context, Preferences::AngleUnit angleUnit);
+  Expression simplifyRationalRationalPower(Rational a, Rational b, Context & context, Preferences::AngleUnit angleUnit);
+
+  static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
+  Expression removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit);
+  bool parentIsALogarithmOfSameBase() const;
+  bool isNthRootOfUnity() const;
+  static Expression CreateNthRootOfUnity(const Rational r);
+  static bool TermIsARationalSquareRootOrRational(const Expression e);
+  static const Rational RadicandInExpression(const Expression e);
+  static const Rational RationalFactorInExpression(const Expression e);
+  static bool RationalExponentShouldNotBeReduced(const Rational b, const Rational r);
 };
 
 }

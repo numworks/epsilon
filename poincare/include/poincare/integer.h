@@ -52,8 +52,8 @@ public:
   // Arithmetic
   /* buffer has to be k_maxNumberOfDigits+1 to allow ...*/
   static int8_t ucmp(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b); // -1, 0, or 1
-  static Integer usum(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b, bool subtract);
-  static Integer umult(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b);
+  static Integer usum(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b, bool subtract, bool oneDigitOverflow = false);
+  static Integer umult(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b, bool oneDigitOverflow = false);
   static IntegerDivision udiv(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b);
   static Integer upow(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b);
   static Integer ufact(const NaturalIntegerAbstract * a);
@@ -140,14 +140,11 @@ public:
     stream << " numberOfDigits=\"" << m_numberOfDigits << "\"";
     stream << " negative=\"" << m_negative << "\"";
     stream << " digits=\"";
-    if (isInfinity()) {
-      stream << "nullptr";
-    } else {
-      for (int i=0; i<m_numberOfDigits; i++) {
-        stream << m_digits[i];
-        if (i != (m_numberOfDigits-1)) {
-          stream << ",";
-        }
+
+    for (int i=0; i<m_numberOfDigits; i++) {
+      stream << m_digits[i];
+      if (i != (m_numberOfDigits-1)) {
+        stream << ",";
       }
     }
     stream << "\"";
@@ -215,7 +212,7 @@ public:
   // Arithmetic
   static Integer Addition(const Integer & i, const Integer & j) { return addition(i, j, false); }
   static Integer Subtraction(const Integer & i, const Integer & j) { return addition(i, j, true); }
-  static Integer Multiplication(const Integer & i, const Integer & j);
+  static Integer Multiplication(const Integer & i, const Integer & j) { return multiplication(i, j); }
   static IntegerDivision Division(const Integer & numerator, const Integer & denominator);
   static Integer Power(const Integer & i, const Integer & j);
   static Integer Factorial(const Integer & i);
@@ -225,7 +222,8 @@ private:
 
   Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(size_t size, const native_uint_t * digits, size_t numberOfDigits, bool negative);
-  static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative);
+  static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative, bool enableOneDigitOverflow = false);
+  static Integer multiplication(const Integer & a, const Integer & b, bool enableOneDigitOverflow = false);
   size_t numberOfDigits() const { return node()->numberOfDigits(); }
   uint32_t digit(int i) const { return node()->digit(i); }
 

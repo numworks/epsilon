@@ -413,7 +413,7 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       }
     }
   }
-  // a^(b+c) -> Rational(a^b)*a^c with a and b rational and a != 0
+  // a^(b+c+...) -> Rational(a^b)*a^c with a and b rational and a != 0
   if (!letPowerAtRoot && operand(0)->type() == Type::Rational && !static_cast<const Rational *>(operand(0))->isZero() && operand(1)->type() == Type::Addition) {
     Addition * a = static_cast<Addition *>(editableOperand(1));
     // Check is b is rational
@@ -423,11 +423,11 @@ Expression * Power::shallowReduce(Context& context, AngleUnit angleUnit) {
       if (RationalExponentShouldNotBeReduced(rationalBase, rationalIndex)) {
         return this;
       }
-      Power * p1 = static_cast<Power *>(clone());
-      replaceOperand(a, a->editableOperand(1), true);
+      Power * p1 = new Power(editableOperand(0), a->editableOperand(0), true); // a^b
       Power * p2 = static_cast<Power *>(clone());
+      static_cast<Addition *>(p2->editableOperand(1))->removeOperand(p2->editableOperand(1)->editableOperand(0), true); // p2 = a^(c+...)
       Multiplication * m = new Multiplication(p1, p2, false);
-      simplifyRationalRationalPower(p1, static_cast<Rational *>(p1->editableOperand(0)), static_cast<Rational *>(p1->editableOperand(1)->editableOperand(0)), context, angleUnit);
+      simplifyRationalRationalPower(p1, static_cast<Rational *>(p1->editableOperand(0)), static_cast<Rational *>(p1->editableOperand(1)), context, angleUnit);
       replaceWith(m, true);
       return m->shallowReduce(context, angleUnit);
     }

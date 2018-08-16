@@ -98,7 +98,7 @@ using namespace Poincare;
    * refered to Pi symbols. This artefact leads to the following lexer rules
    * starting with \x. */
 
-[0-9]+ { poincare_expression_yylval.string.address = yytext; poincare_expression_yylval.string.length = yyleng; return DIGITS; }
+[0-9]+ { poincare_expression_yylval.expression = Poincare::Number::ParseInteger(yytext, yyleng, false); return DIGITS; }
 [A-Za-z] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 M[0-9] { poincare_expression_yylval.character = Symbol::matrixSymbol(yytext[1]); return SYMBOL; }
 u\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un; return SYMBOL; }

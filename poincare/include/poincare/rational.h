@@ -27,6 +27,29 @@ public:
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Rational";
   }
+  virtual void logAttributes(std::ostream & stream) const override {
+    stream << " numberOfDigitsInNumerator=\"" << m_numberOfDigitsNumerator << "\"";
+    stream << " numberOfDigitsInDenominator=\"" << m_numberOfDigitsDenominator << "\"";
+    stream << " negative=\"" << m_negative << "\"";
+    stream << " Numerator digits=\"";
+
+    for (int i=0; i<m_numberOfDigitsNumerator; i++) {
+      stream << m_digits[i];
+      if (i != (m_numberOfDigitsNumerator-1)) {
+        stream << ",";
+      }
+    }
+    stream << "\"";
+
+    stream << " Denominator digits=\"";
+    for (int i=m_numberOfDigitsNumerator; i<m_numberOfDigitsDenominator+m_numberOfDigitsNumerator; i++) {
+      stream << m_digits[i];
+      if (i != (m_numberOfDigitsDenominator+m_numberOfDigitsNumerator-1)) {
+        stream << ",";
+      }
+    }
+    stream << "\"";
+  }
 #endif
 
   // SerializationHelperInterface

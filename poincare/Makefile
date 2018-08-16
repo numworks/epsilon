@@ -196,6 +196,7 @@ tests += $(addprefix poincare/test/,\
   tree/tree_by_reference.cpp\
   integer.cpp\
   expression.cpp\
+  helper.cpp\
 )
 
 testsExpected += $(addprefix poincare/test/,\

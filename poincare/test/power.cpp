@@ -89,4 +89,5 @@ QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("(1+R(2)+R(3))^5", "296+224*R(2)+184*R(3)+120*R(6)");
   assert_parsed_expression_simplify_to("(P+R(2)+R(3)+x)^(-3)", "1/(11*R(2)+9*R(3)+15*x+6*R(6)*x+3*R(2)*x^2+3*R(3)*x^2+x^3+15*P+6*R(6)*P+6*R(2)*x*P+6*R(3)*x*P+3*x^2*P+3*R(2)*P^2+3*R(3)*P^2+3*x*P^2+P^3)");
   assert_parsed_expression_simplify_to("1.006666666666667^60", "(1006666666666667/1000000000000000)^60");
+  assert_parsed_expression_simplify_to("2^(6+P+x)", "64*2^(x+P)");
 }

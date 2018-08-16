@@ -58,6 +58,30 @@ bool RationalNode::needsParenthesesWithParent(const SerializationHelperInterface
   return static_cast<const ExpressionNode *>(e)->isOfType(types, 3);
 }
 
+#if POINCARE_TREE_LOG
+void RationalNode::logAttributes(std::ostream & stream) const {
+  stream << " negative=\"" << m_negative << "\"";
+  stream << " numberNumDigits=\"" << m_numberOfDigitsNumerator << "\"";
+  stream << " Num=\"";
+  for (int i=0; i<m_numberOfDigitsNumerator; i++) {
+    stream << m_digits[i];
+    if (i != (m_numberOfDigitsNumerator-1)) {
+      stream << ",";
+    }
+  }
+  stream << "\"";
+  stream << " numberDenDigits=\"" << m_numberOfDigitsDenominator << "\"";
+  stream << " Den=\"";
+  for (int i=m_numberOfDigitsNumerator; i<m_numberOfDigitsDenominator+m_numberOfDigitsNumerator; i++) {
+    stream << m_digits[i];
+    if (i != (m_numberOfDigitsDenominator+m_numberOfDigitsNumerator-1)) {
+      stream << ",";
+    }
+  }
+  stream << "\"";
+}
+#endif
+
 int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
@@ -196,6 +220,16 @@ Rational::Rational(native_int_t i, native_int_t j) : Number() {
   new (this) Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &absJ, 1, (i < 0 && j > 0) || (i > 0 && j < 0));
 }
 
+Integer Rational::integerNumerator() const {
+  NaturalIntegerPointer n = const_cast<Rational *>(this)->node()->numerator();
+  return Integer(&n);
+}
+
+Integer Rational::integerDenominator() const{
+  NaturalIntegerPointer d = const_cast<Rational *>(this)->node()->denominator();
+  return Integer(&d);
+}
+
 bool Rational::numeratorOrDenominatorIsInfinity() const {
   return node()->numerator().isInfinity() || node()->denominator().isInfinity();
 }
@@ -227,13 +261,12 @@ Rational Rational::Multiplication(const Rational i, const Rational j) {
   return Rational(newNumerator, newDenominator);
 }
 
-Rational Rational::IntegerPower(const Rational i, const Rational j) {
+Rational Rational::IntegerPower(const Rational i, const NaturalIntegerPointer j, ExpressionNode::Sign jSign) {
   NaturalIntegerPointer in = i.node()->numerator();
   NaturalIntegerPointer id = i.node()->denominator();
-  NaturalIntegerPointer jn = j.node()->numerator();
-  Integer newNumerator = NaturalIntegerPointer::upow(&in, &jn);
-  Integer newDenominator = NaturalIntegerPointer::upow(&id, &jn);
-  if (j.sign() == ExpressionNode::Sign::Negative) {
+  Integer newNumerator = NaturalIntegerPointer::upow(&in, &j);
+  Integer newDenominator = NaturalIntegerPointer::upow(&id, &j);
+  if (jSign == ExpressionNode::Sign::Negative) {
     return Rational(newDenominator, newNumerator);
   }
   return Rational(newNumerator, newDenominator);

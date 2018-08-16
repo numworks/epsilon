@@ -42,10 +42,10 @@ public:
 
   // Properties
   static int NumberOfBase10Digits(const NaturalIntegerAbstract * i);
-  virtual bool isOne() const { return (m_numberOfDigits == 1 && digit(0) == 1); };
-  virtual bool isTwo() const { return (m_numberOfDigits == 1 && digit(0) == 2); };
-  virtual bool isTen() const { return (m_numberOfDigits == 1 && digit(0) == 10); };
-  virtual bool isZero() const { return (m_numberOfDigits == 0); };
+  virtual bool isOne() const { return (m_numberOfDigits == 1 && digit(0) == 1); }
+  virtual bool isTwo() const { return (m_numberOfDigits == 1 && digit(0) == 2); }
+  virtual bool isTen() const { return (m_numberOfDigits == 1 && digit(0) == 10); }
+  virtual bool isZero() const { return (m_numberOfDigits == 0); }
   bool isInfinity() const { return m_numberOfDigits > k_maxNumberOfDigits; }
   bool isEven() const { return (isZero() || ((digit(0) & 1) == 0)); }
 
@@ -158,8 +158,7 @@ public:
   void setNegative(bool negative);
 
   // Comparison
-  static int NaturalOrder(const IntegerNode * i, const IntegerNode * j);
-  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override {  return NaturalOrder(this, static_cast<const IntegerNode *>(e)); }
+  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
   // Properties
   bool isOne() const override { return (NaturalIntegerAbstract::isOne() && !m_negative); };
@@ -186,6 +185,7 @@ friend class IntegerNode;
 friend class Rational;
 friend class Decimal;
 public:
+  Integer() : Number() {} // Uninitialized constructor
   Integer(IntegerNode * n) : Number(n) {}
   Integer(const char * digits, size_t length, bool negative);
   Integer(const char * digits) : Integer(digits, strlen(digits), false) {
@@ -199,10 +199,14 @@ public:
   int extractedInt() const;
 
    // Comparison
-  static int NaturalOrder(const Integer & i, const Integer & j) { return IntegerNode::NaturalOrder(i.node(), j.node()); }
+  static int NaturalOrder(const Integer & i, const Integer & j);
+  bool isEqualTo(const Integer other) const {
+    return (NaturalOrder(*this, other) == 0);
+  }
   // Properties
   bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
+  bool isMinusOne() const { return node()->isMinusOne(); }
   bool isInfinity() const { return node()->isInfinity(); }
   bool isEven() const { return node()->isEven(); }
   bool isNegative() const { return node()->sign() == ExpressionNode::Sign::Negative; }

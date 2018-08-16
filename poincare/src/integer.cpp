@@ -427,14 +427,8 @@ void IntegerNode::setNegative(bool negative) {
   m_negative = negative;
 }
 
-int IntegerNode::NaturalOrder(const IntegerNode * i, const IntegerNode * j) {
-  if (i->sign() == Sign::Negative && j->sign() == Sign::Positive) {
-    return -1;
-  }
-  if (i->sign() == Sign::Positive && j->sign() == Sign::Negative) {
-    return 1;
-  }
-  return ::Poincare::sign(i->sign() == Sign::Negative)*ucmp(i, j);
+int IntegerNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
+  return Integer::NaturalOrder(Integer(this), Integer(static_cast<const IntegerNode *>(e)));
 }
 
 /* Integer */
@@ -593,6 +587,18 @@ Expression Integer::setSign(ExpressionNode::Sign s, Context & context, Preferenc
   Integer signedInteger = *this;
   signedInteger.setNegative(s == ExpressionNode::Sign::Negative);
   return signedInteger;
+}
+
+int Integer::NaturalOrder(const Integer & i, const Integer & j) {
+  if (i.sign() == ExpressionNode::Sign::Negative
+      && j.sign() == ExpressionNode::Sign::Positive) {
+    return -1;
+  }
+  if (i.sign() == ExpressionNode::Sign::Positive
+      && j.sign() == ExpressionNode::Sign::Negative) {
+    return 1;
+  }
+  return ::Poincare::sign(i.sign() == ExpressionNode::Sign::Negative)*IntegerNode::ucmp(static_cast<IntegerNode *>(i.node()), static_cast<IntegerNode *>(j.node()));
 }
 
 template float IntegerNode::templatedApproximate<float>() const;

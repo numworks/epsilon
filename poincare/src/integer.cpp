@@ -193,17 +193,17 @@ int8_t NaturalIntegerAbstract::ucmp(const NaturalIntegerAbstract * a, const Natu
   return 0;
 }
 
-Integer NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b, bool subtract) {
+Integer NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b, bool subtract, bool oneDigitOverflow) {
   size_t size = max(a->m_numberOfDigits, b->m_numberOfDigits);
   if (!subtract) {
     // Addition can overflow
     size++;
   }
   // Overflow
-  if (size > k_maxNumberOfDigits + 1) {
+  if (size > k_maxNumberOfDigits + oneDigitOverflow + 1) {
     return Integer::Overflow();
   }
-  native_uint_t digits[k_maxNumberOfDigits+1];
+  native_uint_t digits[k_maxNumberOfDigits+2]; // Enable overflowing of 2 digits (one for subtraction, one for oneDigitOverflow)
   bool carry = false;
   for (size_t i = 0; i < size; i++) {
     native_uint_t aDigit = (i >= a->m_numberOfDigits ? 0 : a->digit(i));
@@ -219,20 +219,20 @@ Integer NaturalIntegerAbstract::usum(const NaturalIntegerAbstract * a, const Nat
   while (digits[size-1] == 0 && size>0) {
     size--;
   }
-  if (size > k_maxNumberOfDigits) {
+  if (size > k_maxNumberOfDigits + oneDigitOverflow) {
     return Integer::Overflow();
   }
   return Integer(digits, size, false);
 }
 
-Integer NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b){
+Integer NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const NaturalIntegerAbstract * b, bool oneDigitOverflow) {
   size_t size = a->m_numberOfDigits + b->m_numberOfDigits;
   // Overflow
-  if (size > k_maxNumberOfDigits + 1) {
+  if (size > k_maxNumberOfDigits +  oneDigitOverflow + 1) {
     return Integer::Overflow();
   }
 
-  native_uint_t digits[k_maxNumberOfDigits+1];
+  native_uint_t digits[k_maxNumberOfDigits+2]; // Enable overflowing of 2 digits (one for ??, one for oneDigitOverflow)
   memset(digits, 0, size*sizeof(native_uint_t));
 
   double_native_uint_t carry = 0;
@@ -256,7 +256,7 @@ Integer NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const Na
     size--;
   }
   // Overflow
-  if (size > k_maxNumberOfDigits + 1) {
+  if (size > k_maxNumberOfDigits + oneDigitOverflow + 1) {
     return Integer::Overflow();
   }
   return Integer(digits, size, false);
@@ -264,6 +264,12 @@ Integer NaturalIntegerAbstract::umult(const NaturalIntegerAbstract * a, const Na
 
 // TODO: OPTIMIZE
 IntegerDivision NaturalIntegerAbstract::udiv(const NaturalIntegerAbstract * numerator, const NaturalIntegerAbstract * denominator) {
+  if (denominator->isInfinity()) {
+    return {.quotient = Integer(0), .remainder = Integer::Overflow()};
+  }
+  if(numerator->isInfinity()) {
+    return {.quotient = Integer::Overflow(), .remainder = Integer(0)};
+  }
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann
    * (Algorithm 1.6) */
   assert(!denominator->isZero());
@@ -277,29 +283,30 @@ IntegerDivision NaturalIntegerAbstract::udiv(const NaturalIntegerAbstract * nume
   native_int_t base = 1 << 16;
   // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
   native_int_t d = base/(native_int_t)(B.node()->halfDigit(B.node()->numberOfHalfDigits()-1)+1);
-  A = Integer::Multiplication(Integer(d), A);
-  B = Integer::Multiplication(Integer(d), B);
+  A = Integer::multiplication(Integer(d), A, true);
+  B = Integer::multiplication(Integer(d), B, true);
 
+  // TODO: enable oneDigitOverflowing addition, multiplication and subtraction
   int n = B.node()->numberOfHalfDigits();
   int m = A.node()->numberOfHalfDigits()-n;
-  half_native_uint_t qDigits[2*k_maxNumberOfDigits]; // qDigits is a half_native_uint_t array
-  memset(qDigits, 0, 2*k_maxNumberOfDigits*sizeof(half_native_uint_t));
+  half_native_uint_t qDigits[2*(k_maxNumberOfDigits+1)]; // qDigits is a half_native_uint_t array and enable one digit overflow
+  memset(qDigits, 0, 2*(k_maxNumberOfDigits+1)*sizeof(half_native_uint_t));
   Integer betam = IntegerWithHalfDigitAtIndex(1, m+1);
-  Integer betaMB = Integer::Multiplication(betam, B); // TODO: can swift all digits by m! B.swift16(mg)
-  if (Integer::NaturalOrder(A,betaMB) > 0) {
+  Integer betaMB = Integer::multiplication(betam, B, true); // TODO: can swift all digits by m! B.swift16(mg)
+  if (Integer::NaturalOrder(A,betaMB) >= 0) {
     qDigits[m] = 1;
-    A = Integer::Subtraction(A, betaMB);
+    A = Integer::addition(A, betaMB, true, true); // A-betaMB
   }
   for (int j = m-1; j >= 0; j--) {
     native_uint_t qj2 = ((native_uint_t)A.node()->halfDigit(n+j)*base+(native_uint_t)A.node()->halfDigit(n+j-1))/(native_uint_t)B.node()->halfDigit(n-1);
     half_native_uint_t baseMinus1 = (1 << 16) -1;
     qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1;
     Integer factor = qDigits[j] > 0 ? IntegerWithHalfDigitAtIndex(qDigits[j], j+1) : Integer(0);
-    A = Integer::Subtraction(A, Integer::Multiplication(factor, B));
-    Integer m = Integer::Multiplication(IntegerWithHalfDigitAtIndex(1, j+1), B);
+    A = Integer::addition(A, Integer::multiplication(factor, B, true), true, true); // A-factor*B
+    Integer m = Integer::multiplication(IntegerWithHalfDigitAtIndex(1, j+1), B, true);
     while (A.sign() == ExpressionNode::Sign::Negative) {
       qDigits[j] = qDigits[j]-1;
-      A = Integer::Addition(A, m);
+      A = Integer::addition(A, m, false, true);
     }
   }
   int qNumberOfDigits = m+1;
@@ -338,16 +345,12 @@ Integer NaturalIntegerAbstract::ufact(const NaturalIntegerAbstract * i) {
 
 Integer NaturalIntegerAbstract::IntegerWithHalfDigitAtIndex(half_native_uint_t halfDigit, int index) {
   assert(halfDigit != 0);
-  // Overflow
   int indexInBase32 = index%2 == 1 ? index/2+1 : index/2;
-  if (indexInBase32 > k_maxNumberOfDigits) {
-    return Integer::Overflow();
-  }
-  half_native_uint_t digits[k_maxNumberOfDigits+1];
+  half_native_uint_t digits[2*(k_maxNumberOfDigits+1)];
   memset(digits, 0, indexInBase32*sizeof(native_uint_t));
   assert(index > 0);
   digits[index-1] = halfDigit;
-  return Integer((native_uint_t *)digits, indexInBase32, false);
+  return Integer((native_uint_t *)digits, indexInBase32, false, true);
 }
 
 /* Natural Integer Pointer */
@@ -512,12 +515,6 @@ int Integer::extractedInt() const {
 
 // Arithmetic
 
-Integer Integer::Multiplication(const Integer & a, const Integer & b) {
-  Integer um = IntegerNode::umult(a.node(), b.node());
-  um.setNegative(a.sign() != b.sign());
-  return um;
-}
-
 IntegerDivision Integer::Division(const Integer & numerator, const Integer & denominator) {
   IntegerDivision ud = IntegerNode::udiv(numerator.node(), denominator.node());
   if (numerator.sign() == ExpressionNode::Sign::Positive && denominator.sign() == ExpressionNode::Sign::Positive) {
@@ -558,10 +555,10 @@ Integer Integer::Factorial(const Integer & i) {
   return IntegerNode::ufact(i.node());
 }
 
-Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative) {
+Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative, bool oneDigitOverflow) {
   bool bNegative = (inverseBNegative ? b.sign() == ExpressionNode::Sign::Positive : b.sign() == ExpressionNode::Sign::Negative);
   if ((a.sign() == ExpressionNode::Sign::Negative) == bNegative) {
-    Integer us = IntegerNode::usum(a.node(), b.node(), false);
+    Integer us = IntegerNode::usum(a.node(), b.node(), false, oneDigitOverflow);
     us.setNegative(a.sign() == ExpressionNode::Sign::Negative);
     return us;
   } else {
@@ -571,15 +568,21 @@ Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNeg
      * 2/abs(b)>abs(a) : s = sign*udiff(b, a)
      * sign? sign of the greater! */
     if (IntegerNode::ucmp(a.node(), b.node()) >= 0) {
-      Integer us = IntegerNode::usum(a.node(), b.node(), true);
+      Integer us = IntegerNode::usum(a.node(), b.node(), true, oneDigitOverflow);
       us.setNegative(a.sign() == ExpressionNode::Sign::Negative);
       return us;
     } else {
-      Integer us = IntegerNode::usum(b.node(), a.node(), true);
+      Integer us = IntegerNode::usum(b.node(), a.node(), true, oneDigitOverflow);
       us.setNegative(bNegative);
       return us;
     }
   }
+}
+
+Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDigitOverflow) {
+  Integer um = IntegerNode::umult(a.node(), b.node(), oneDigitOverflow);
+  um.setNegative(a.sign() != b.sign());
+  return um;
 }
 
 Expression Integer::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {

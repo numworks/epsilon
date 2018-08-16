@@ -336,7 +336,7 @@ Integer NaturalIntegerAbstract::upow(const NaturalIntegerAbstract * i, const Nat
 Integer NaturalIntegerAbstract::ufact(const NaturalIntegerAbstract * i) {
   Integer j(2);
   Integer result(1);
-  while (ucmp(i,j.node()) > 0) {
+  while (ucmp(i,j.node()) >= 0) {
     result = Integer::Multiplication(j, result);
     j = Integer::Addition(j, Integer(1));
   }

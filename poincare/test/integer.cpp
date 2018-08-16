@@ -197,6 +197,14 @@ QUIZ_CASE(poincare_integer_pow) {
   assert_pow_to(Integer("12345678910111213141516171819202122232425"), Integer(2), Integer("152415787751564791571474464067365843004067618915106260955633159458990465721380625"));
 }
 
+static inline void assert_factorial_to(const Integer i, const Integer j) {
+  assert(Integer::NaturalOrder(Integer::Factorial(i), j) == 0);
+}
+
+QUIZ_CASE(poincare_integer_factorial) {
+  assert_factorial_to(Integer(5), Integer(120));
+  assert_factorial_to(Integer(123), Integer("12146304367025329675766243241881295855454217088483382315328918161829235892362167668831156960612640202170735835221294047782591091570411651472186029519906261646730733907419814952960000000000000000000000000000"));
+}
 
 // Simplify 
 template<typename T>

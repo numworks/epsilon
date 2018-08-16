@@ -73,7 +73,7 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << " Entry expression: " << expression << "----"  << endl;
 #endif
-  e.simplify(globalContext, angleUnit);
+  e = e.simplify(globalContext, angleUnit);
   Expression m = process(e, globalContext, angleUnit, complexFormat);
   char buffer[500];
   m.serialize(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);

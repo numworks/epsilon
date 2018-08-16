@@ -118,7 +118,7 @@ public:
   }
 
 private:
-  constexpr static int BufferSize = 2048;
+  constexpr static int BufferSize = 4096;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
   constexpr static int MaxNumberOfStaticNodes = 200; // TODO: count how may are needed
 

@@ -73,7 +73,6 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << " Entry expression: " << expression << "----"  << endl;
 #endif
-  e = e.simplify(globalContext, angleUnit);
   Expression m = process(e, globalContext, angleUnit, complexFormat);
   char buffer[500];
   m.serialize(buffer, sizeof(buffer), DecimalMode, numberOfSignifiantDigits);
@@ -102,7 +101,16 @@ void assert_parsed_expression_simplify_to(const char * expression, const char * 
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "--------- Simplification ---------" << endl;
 #endif
-  assert_parsed_expression_process_to(expression, simplifiedExpression, angleUnit, Preferences::ComplexFormat::Cartesian, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) { return e; });
+  assert_parsed_expression_process_to(expression, simplifiedExpression, angleUnit, Preferences::ComplexFormat::Cartesian, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) { return e.simplify(context, angleUnit); });
+}
+
+void assert_parsed_expression_serialize_to(Expression expression, const char * serializedExpression, Preferences::PrintFloatMode mode, int numberOfSignifiantDigits) {
+#if POINCARE_TESTS_PRINT_EXPRESSIONS
+  cout << "--------- Serialization ---------" << endl;
+#endif
+  char buffer[500];
+  expression.serialize(buffer, sizeof(buffer), mode, numberOfSignifiantDigits);
+  assert(strcmp(buffer, serializedExpression) == 0);
 }
 
 #if 0

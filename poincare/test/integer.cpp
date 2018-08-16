@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "tree/helpers.h"
+#include "helper.h"
 
 using namespace Poincare;
 
@@ -212,7 +213,16 @@ QUIZ_CASE(poincare_integer_factorial) {
   assert_factorial_to(Integer(123), Integer("12146304367025329675766243241881295855454217088483382315328918161829235892362167668831156960612640202170735835221294047782591091570411651472186029519906261646730733907419814952960000000000000000000000000000"));
 }
 
-// Simplify 
+// Simplify
+
+QUIZ_CASE(poincare_integer_simplify) {
+  assert_parsed_expression_simplify_to("1234", "1234");
+  assert_parsed_expression_simplify_to("12342345698765345678909876545678907655678900987654", "12342345698765345678909876545678907655678900987654");
+  assert_parsed_expression_simplify_to("12342345698765345678909876545678907655678900987654", "12342345698765345678909876545678907655678900987654");
+  assert_parsed_expression_simplify_to(MaxIntegerString, MaxIntegerString);
+  assert_parsed_expression_simplify_to(OverflowedIntegerString, "inf");
+}
+
 template<typename T>
 void assert_integer_evals_to(const char * i, T result) {
   GlobalContext c;
@@ -259,6 +269,14 @@ QUIZ_CASE(poincare_integer_evaluate) {
   assert_integer_evals_to(MaxIntegerString, 179769313486231590772930519078902473361797697894230657273430081157732675805500963132708477322407536021120113879871393357658789768814416622492847430639474124377767893424865485276302219601246094119453082952085005768838150682342462881473913110540827237163350510684586298239947245938479716304835356329624224137215.0);
 }
 
-//Layout
-//
+//Serialize
+
+QUIZ_CASE(poincare_integer_serialize) {
+  assert_parsed_expression_serialize_to(Integer(-2), "-2");
+  assert_parsed_expression_serialize_to(Integer("2345678909876"), "2345678909876");
+  assert_parsed_expression_serialize_to(Integer("-2345678909876"), "-2345678909876");
+  assert_parsed_expression_serialize_to(MaxInteger(), MaxIntegerString);
+  assert_parsed_expression_serialize_to(OverflowedInteger(), "inf");
+}
+
 //SErialize

@@ -30,7 +30,11 @@ friend class Integer;
 friend class Rational;
 public:
   // Getters
-  uint32_t digit(int i) const { assert(i < m_numberOfDigits); return digits()[i]; }
+  uint32_t digit(int i) const {
+    if (i == 0 && m_numberOfDigits == 0) { return 0; }
+    assert(i < m_numberOfDigits);
+    return digits()[i];
+  }
   size_t numberOfDigits() const { return m_numberOfDigits; }
 
   // Layout

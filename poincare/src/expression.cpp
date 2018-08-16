@@ -11,6 +11,8 @@
 #include <ion.h>
 #include <cmath>
 #include <float.h>
+
+#include "expression_lexer_parser.h"
 #include "expression_parser.hpp"
 #include "expression_lexer.hpp"
 
@@ -33,6 +35,9 @@ Expression Expression::parse(char const * string) {
     // Parsing failed because of invalid input or memory exhaustion
     expression = Expression();
   }
+  /* YYVAL refers to the parsed Expression. We do not want to keep the
+   * expression alive if only YYVAL refers to it so we reset YYVAL here. */
+  poincare_expression_yylval.expression = Expression();
   poincare_expression_yy_delete_buffer(buf);
 
   return expression;

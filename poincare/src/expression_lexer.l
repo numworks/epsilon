@@ -39,22 +39,12 @@
  * compatibility with MacOS's default version (2.3) instead of using the code
  * requires feature. */
 #include <cmath>
-#include <poincare.h>
 
-/* YYSTYPE is already defined in expression_parser.y but the genereated code is
- * included in expression_parser.cpp, not .hpp, so we cannot use it here. We
- * thus copy-pasted the YYSTYPE definition. */
-struct OurNodeValue{
-    Poincare::Expression expression;
-    Poincare::Symbol symbol;
-    struct {
-      char * address;
-      int length;
-    } string;
-    char character;
-};
-#define YYSTYPE OurNodeValue
-
+/* YYSTYPE has to be defined in expression_parser.y, expression.cpp and here
+ * because the genereated code is included in expression_parser.cpp, not .hpp
+ * so we cannot use expression_parser.hpp here. We use an additional header
+ * which only define YYSTYPE. This should be discarded with Bison 3. */
+#include "expression_lexer_parser.h"
 
 #include "expression_parser.hpp"
 using namespace Poincare;

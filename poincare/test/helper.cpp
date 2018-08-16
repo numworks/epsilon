@@ -45,7 +45,7 @@ void translate_in_ASCII_chars(char * expression) {
 
 Expression parse_expression(const char * expression) {
   quiz_print(expression);
-  char buffer[200];
+  char buffer[500];
   strlcpy(buffer, expression, sizeof(buffer));
   translate_in_special_chars(buffer);
   Expression result = Expression::parse(buffer);

@@ -19,12 +19,11 @@ void RationalNode::setDigits(native_uint_t * numeratorDigits, size_t numeratorSi
   m_negative = negative;
   m_numberOfDigitsNumerator = numeratorSize;
   m_numberOfDigitsDenominator = denominatorSize;
-  size_t numeratorCopySize = numeratorSize*sizeof(native_uint_t);
   if (numeratorDigits) {
-    memcpy(m_digits, numeratorDigits, numeratorCopySize);
+    memcpy(m_digits, numeratorDigits, numeratorSize*sizeof(native_uint_t));
   }
   if (denominatorDigits) {
-    memcpy(m_digits + numeratorCopySize, denominatorDigits, denominatorSize*sizeof(native_uint_t));
+    memcpy(m_digits + numeratorSize, denominatorDigits, denominatorSize*sizeof(native_uint_t));
   }
 }
 

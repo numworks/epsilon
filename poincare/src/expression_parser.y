@@ -76,7 +76,7 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 
 
 /* The INTEGER token uses the "string" part of the union to store its value */
-%token <string> DIGITS
+%token <expression> DIGITS
 %token <character> SYMBOL
 %token <function> FUNCTION
 %token <expression> UNDEFINED
@@ -206,7 +206,7 @@ mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, 
  * of the exponent digits is above 4 (0.00...-256 times-...01E1256=1E1000 is
  * accepted and 1000-...256times...-0E10000 = 1E10256, 10256 does not overflow
  * an int32_t). */
-number : DIGITS { $$ = Poincare::Rational(Poincare::Integer($1.address, $1.length, false)); }
+number : DIGITS { $$ = $1; }
 
 /*
        | DOT DIGITS { $$ = Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, nullptr, 0, false)); }

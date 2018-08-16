@@ -12,21 +12,11 @@
 // FIXME
 // TODO: This is copy-pasted. Share it in header
 
-/* Usually, YYSTYPE is defined as the union of the objects it might be. Here,
- * some of these objects are non-trivial (specific copy-constructors and
- * destructors), so they cannot be part of a union. We must use a struct to
- * define YYSTYPE. */
-struct OurNodeValue{
-    Poincare::Expression expression;
-    //Poincare::Symbol symbol;
-    struct {
-      char * address;
-      int length;
-    } string;
-    char character;
-};
-#define YYSTYPE OurNodeValue
-
+/* YYSTYPE has to be defined in expression_lexer.y, expression.cpp and here
+ * because the genereated code is included in expression_parser.cpp, not .hpp
+ * so we use an additional header which only define YYSTYPE. This should be
+ * discarded with Bison 3. */
+#include "expression_lexer_parser.h"
 
 /* The lexer manipulates tokens defined by the parser, so we need the following
  * inclusion order. */

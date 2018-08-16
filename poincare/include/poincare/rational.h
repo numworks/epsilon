@@ -28,11 +28,9 @@ public:
     stream << "Rational";
   }
   virtual void logAttributes(std::ostream & stream) const override {
-    stream << " numberOfDigitsInNumerator=\"" << m_numberOfDigitsNumerator << "\"";
-    stream << " numberOfDigitsInDenominator=\"" << m_numberOfDigitsDenominator << "\"";
     stream << " negative=\"" << m_negative << "\"";
-    stream << " Numerator digits=\"";
-
+    stream << " numberNumDigits=\"" << m_numberOfDigitsNumerator << "\"";
+    stream << " Num=\"";
     for (int i=0; i<m_numberOfDigitsNumerator; i++) {
       stream << m_digits[i];
       if (i != (m_numberOfDigitsNumerator-1)) {
@@ -40,8 +38,8 @@ public:
       }
     }
     stream << "\"";
-
-    stream << " Denominator digits=\"";
+    stream << " numberDenDigits=\"" << m_numberOfDigitsDenominator << "\"";
+    stream << " Den=\"";
     for (int i=m_numberOfDigitsNumerator; i<m_numberOfDigitsDenominator+m_numberOfDigitsNumerator; i++) {
       stream << m_digits[i];
       if (i != (m_numberOfDigitsDenominator+m_numberOfDigitsNumerator-1)) {

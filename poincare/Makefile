@@ -195,7 +195,7 @@ tests += $(addprefix poincare/test/,\
   tree/tree_by_value.cpp\
   tree/tree_by_reference.cpp\
   integer.cpp\
-  expression.cpp\
+  rational.cpp\
   helper.cpp\
   parser.cpp\
 )

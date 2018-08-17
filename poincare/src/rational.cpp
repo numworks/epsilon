@@ -135,26 +135,26 @@ template<typename T> T RationalNode::templatedApproximate() const {
 
 // Comparison
 
-int RationalNode::NaturalOrder(const RationalNode i, const RationalNode j) {
-  if (i.sign() == Sign::Negative && j.sign() == Sign::Positive) {
+int RationalNode::NaturalOrder(const RationalNode * i, const RationalNode * j) {
+  if (i->sign() == Sign::Negative && j->sign() == Sign::Positive) {
     return -1;
   }
-  if (i.sign() == Sign::Positive && j.sign() == Sign::Negative) {
+  if (i->sign() == Sign::Positive && j->sign() == Sign::Negative) {
     return 1;
   }
-  NaturalIntegerPointer in = i.numerator();
-  NaturalIntegerPointer id = i.denominator();
-  NaturalIntegerPointer jn = j.numerator();
-  NaturalIntegerPointer jd = j.denominator();
+  NaturalIntegerPointer in = i->numerator();
+  NaturalIntegerPointer id = i->denominator();
+  NaturalIntegerPointer jn = j->numerator();
+  NaturalIntegerPointer jd = j->denominator();
   Integer i1 = NaturalIntegerAbstract::umult(&in, &jd);
   Integer i2 = NaturalIntegerAbstract::umult(&id, &jn);
-  return ((int)i.sign())*Integer::NaturalOrder(i1, i2);
+  return ((int)i->sign())*Integer::NaturalOrder(i1, i2);
 }
 
 int RationalNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
   assert(e->type() == ExpressionNode::Type::Rational);
   const RationalNode * other = static_cast<const RationalNode *>(e);
-  return NaturalOrder(*this, *other);
+  return NaturalOrder(this, other);
 }
 
 // Simplification

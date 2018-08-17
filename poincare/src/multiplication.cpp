@@ -190,10 +190,10 @@ Expression Multiplication::shallowReduce(Context& context, Preferences::AngleUni
 }
 
 Expression Multiplication::privateShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool shouldExpand, bool canBeInterrupted) const {
-  return Expression::shallowReduce(context, angleUnit);;
+  return Expression::defaultShallowReduce(context, angleUnit);;
   //TODO
 #if 0
-  Expression * e = Expression::shallowReduce(context, angleUnit);
+  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;
   }

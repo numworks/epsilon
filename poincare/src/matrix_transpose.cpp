@@ -18,7 +18,7 @@ Expression * MatrixTranspose::clone() const {
 }
 
 Expression MatrixTranspose::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
+  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;
   }

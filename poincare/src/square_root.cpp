@@ -37,7 +37,7 @@ std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, Preference
 }
 
 Expression SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
+  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;
   }

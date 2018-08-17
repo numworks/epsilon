@@ -11,7 +11,7 @@ static inline Integer MaxInteger() { return Integer(MaxIntegerString); }
 static inline Integer OverflowedInteger() { return Integer(OverflowedIntegerString); }
 
 QUIZ_CASE(poincare_integer_constructor) {
-  Integer staticZero();
+  Integer staticZero;
   Integer a("123");
   Integer na("-123");
   Integer b("12345678910111213141516");

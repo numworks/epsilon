@@ -140,6 +140,6 @@ QUIZ_CASE(poincare_rational_serialize) {
   assert_parsed_expression_serialize_to(Rational("2345678909876"), "2345678909876");
   assert_parsed_expression_serialize_to(Rational("-2345678909876", "5"), "-2345678909876/5");
   assert_parsed_expression_serialize_to(Rational(Integer(MaxIntegerString)), MaxIntegerString);
-  assert_parsed_expression_serialize_to(Rational(1, Integer::Overflow()), "1/inf");
+  assert_parsed_expression_serialize_to(Rational(Integer(1), Integer::Overflow()), "1/inf");
   assert_parsed_expression_serialize_to(Rational(Integer::Overflow()), "inf");
 }

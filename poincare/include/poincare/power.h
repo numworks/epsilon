@@ -34,8 +34,8 @@ public:
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
 
 private:
+  constexpr static int k_maxApproximatePowerMatrix = 1000;
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
-  constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
   // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -54,7 +54,6 @@ private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
   // Evaluation
-  constexpr static int k_maxApproximatePowerMatrix = 1000;
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> n);
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> d);
   template<typename T> static MatrixComplex<T> computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n);
@@ -67,6 +66,7 @@ private:
 };
 
 class Power : public Expression {
+  friend class PowerNode;
 public:
   Power(Expression base, Expression exponent) : Expression(TreePool::sharedPool()->createTreeNode<PowerNode>()) {
     replaceChildAtIndexInPlace(0, base);
@@ -80,14 +80,17 @@ public:
 
 private:
   constexpr static int k_maxExactPowerMatrix = 100;
+  constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
   // Simplification
-  Expression simplifyPowerPower(Power p, Expression r, Context & context, Preferences::AngleUnit angleUnit);
-  Expression simplifyPowerMultiplication(Multiplication m, Expression r, Context & context, Preferences::AngleUnit angleUnit);
-  Expression simplifyRationalRationalPower(Rational a, Rational b, Context & context, Preferences::AngleUnit angleUnit);
+  Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
+
+  Expression simplifyPowerPower(Power p, Expression r, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression simplifyPowerMultiplication(Multiplication m, Expression r, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression simplifyRationalRationalPower(Rational a, Rational b, Context & context, Preferences::AngleUnit angleUnit) const;
 
   static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
-  Expression removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit);
+  Expression removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
   bool parentIsALogarithmOfSameBase() const;
   bool isNthRootOfUnity() const;
   static Expression CreateNthRootOfUnity(const Rational r);

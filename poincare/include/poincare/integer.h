@@ -207,9 +207,13 @@ public:
   bool isEqualTo(const Integer & other) const {
     return (NaturalOrder(*this, other) == 0);
   }
+  bool isLowerThan(const Integer other) const {
+    return (NaturalOrder(*this, other) < 0);
+  }
   // Properties
   bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
+  bool isTwo() const { return node()->isTwo(); }
   bool isMinusOne() const { return node()->isMinusOne(); }
   bool isInfinity() const { return node()->isInfinity(); }
   bool isEven() const { return node()->isEven(); }

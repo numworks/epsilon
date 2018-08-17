@@ -29,13 +29,34 @@ class Expression : public TreeByValue {
 template<typename T>
   friend class ExceptionExpressionNode;
 public:
+  static bool isExpression() { return true; }
   /* Constructor & Destructor */
   Expression();
   virtual ~Expression() = default;
+  Expression clone() { return *this; }
   static Expression parse(char const * string);
+
+  template<class T> explicit operator T() const {
+
+    /* This operator allows static_casts from Expression to derived Expressions.
+     * The asserts ensure that the Expression can only be casted to another
+     * Expression, but this does not prevent Expression types mismatches (cast
+     * Float to Symbol for instance).
+     *
+     * The explicit keyword prevents implicit casts. This solves the following
+     * problem:
+     * Expression e;
+     * Symbol s = static_cast<Symbol>(e);
+     * e could be casted in const char * to use the Symbol(const char *)
+     * constructor, or e could be casted directly to S: it is ambiguous. */
+
+    assert(T::isExpression());
+    static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");
+    return *reinterpret_cast<T *>(const_cast<Expression *>(this));
+  }
+
   Expression replaceSymbolWithExpression(char symbol, Expression expression) const { return node()->replaceSymbolWithExpression(symbol, expression); }
 
-  Expression clone() { return *this; }
   /* Reference */
   ExpressionNode * node() const override {
     assert(TreeByValue::node() == nullptr || !TreeByValue::node()->isGhost());

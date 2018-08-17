@@ -41,6 +41,12 @@ template<typename T>
 class Evaluation : public TreeByValue {
 public:
   Evaluation();
+  template<class U> explicit operator U() const {
+    // See Expression::operator T() for explanations on this operator
+    // TODO add assertions to ensure that we cast only to evaluation subclasses
+    // Does not work :static_assert(sizeof(U) == sizeof(Evaluation<T>), "Size mismatch");
+    return *reinterpret_cast<U *>(const_cast<Evaluation<T> *>(this));
+  }
   EvaluationNode<T> * node() const override {
     assert(TreeByValue::node() == nullptr || !TreeByValue::node()->isGhost());
     return static_cast<EvaluationNode<T> *>(TreeByValue::node());

@@ -27,7 +27,7 @@ public:
 
 class Number : public Expression {
 public:
-  using Expression::Expression;
+  Number(const NumberNode * node) : Expression(node) {}
   /* Return either a Integer, a Decimal or an Infinity. */
   static Number ParseInteger(const char * digits, size_t length, bool negative);
   /* Return either a Decimal or an Infinity or an Undefined. */
@@ -43,6 +43,7 @@ public:
   static Number Multiplication(const Number i, const Number j);
   static Number Power(const Number i, const Number j);
 protected:
+  Number() : Expression() {}
   NumberNode * node() const override { return static_cast<NumberNode *>(Expression::node()); }
 private:
   typedef Integer (*IntegerBinaryOperation)(const Integer & i, const Integer & j);

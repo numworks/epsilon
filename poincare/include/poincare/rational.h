@@ -54,7 +54,7 @@ public:
   bool isMinusHalf() const { return numerator().isOne() && denominator().isTwo() && m_negative; }
   bool isTen() const { return numerator().isTen() && denominator().isOne() && !m_negative; }
 
-  static int NaturalOrder(const RationalNode i, const RationalNode j);
+  static int NaturalOrder(const RationalNode * i, const RationalNode * j);
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const override;

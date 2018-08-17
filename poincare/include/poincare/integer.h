@@ -204,7 +204,7 @@ public:
 
    // Comparison
   static int NaturalOrder(const Integer & i, const Integer & j);
-  bool isEqualTo(const Integer other) const {
+  bool isEqualTo(const Integer & other) const {
     return (NaturalOrder(*this, other) == 0);
   }
   // Properties
@@ -215,7 +215,7 @@ public:
   bool isEven() const { return node()->isEven(); }
   bool isNegative() const { return node()->sign() == ExpressionNode::Sign::Negative; }
   void setNegative(bool negative) { return node()->setNegative(negative); }
-  static int NumberOfBase10Digits(const Integer i) { return NaturalIntegerAbstract::NumberOfBase10Digits(i.node()); }
+  static int NumberOfBase10Digits(const Integer & i) { return NaturalIntegerAbstract::NumberOfBase10Digits(i.node()); }
 
   // Arithmetic
   static Integer Addition(const Integer & i, const Integer & j) { return addition(i, j, false); }

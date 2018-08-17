@@ -207,8 +207,12 @@ Rational::Rational(const NaturalIntegerAbstract * numerator, bool negative) : Nu
 }
 
 Rational::Rational(native_int_t i) : Number()  {
-  native_uint_t absI = i < 0 ? -i : i;
   native_uint_t one = 1;
+  if (i == 0) {
+    new (this) Rational(sizeof(RationalNode)+sizeof(native_uint_t), nullptr, 0, &one, 1, false);
+    return;
+  }
+  native_uint_t absI = i < 0 ? -i : i;
   new (this) Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &one, 1, i < 0);
 }
 

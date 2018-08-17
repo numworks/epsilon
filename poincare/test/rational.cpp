@@ -44,14 +44,21 @@ QUIZ_CASE(poincare_rational_compare) {
 }
 
 QUIZ_CASE(poincare_rational_properties) {
-}
-
-QUIZ_CASE(poincare_rational_sign) {
-#if 0
-  assert(Rational(-2).sign() == Expression::Sign::Negative);
-  assert(Rational(-2, 3).sign() == Expression::Sign::Negative);
-  assert(Rational(2, 3).sign() == Expression::Sign::Positive);
-#endif
+  assert(Rational(-2).sign() == ExpressionNode::Sign::Negative);
+  assert(Rational(-2, 3).sign() == ExpressionNode::Sign::Negative);
+  assert(Rational(2, 3).sign() == ExpressionNode::Sign::Positive);
+  assert(Rational(0).isZero());
+  assert(!Rational(231).isZero());
+  assert(Rational(1).isOne());
+  assert(!Rational(-1).isOne());
+  assert(!Rational(1).isMinusOne());
+  assert(Rational(-1).isMinusOne());
+  assert(Rational(1,2).isHalf());
+  assert(!Rational(-1).isHalf());
+  assert(Rational(-1,2).isMinusHalf());
+  assert(!Rational(3,2).isMinusHalf());
+  assert(Rational(10).isTen());
+  assert(!Rational(-1).isTen());
 }
 
 QUIZ_CASE(poincare_rational_evaluate) {

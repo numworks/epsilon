@@ -15,9 +15,9 @@ public:
 
   // ExpressionNode
   ExpressionNode::Sign sign() const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::sign(); }
-  ExpressionNode::Type type() const override { assert(false); return ExpressionNode::Type::Uninitialized; } // TODO assert(false) ?
-  Evaluation<float> approximate(ExpressionNode::SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::approximate(p, context, angleUnit); }
-  Evaluation<double> approximate(ExpressionNode::DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::approximate(p, context, angleUnit); }
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::setSign(s, context, angleUnit); }
+
+  ExpressionNode::Type type() const override { assert(false); return ExpressionNode::Type::Uninitialized; }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override {
     assert(false);
     return ExceptionExpressionNode<ExpressionNode>::serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
@@ -30,6 +30,7 @@ public:
    * so no need for an allocation failure. */
   TreeNode * failedAllocationStaticNode() override { assert(false); return nullptr; }
   size_t size() const override { return sizeof(UninitializedExpressionNode); }
+  Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::denominator(context, angleUnit); }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "UninitializedExpression";

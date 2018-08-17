@@ -26,6 +26,8 @@ class Expression : public TreeByValue {
   friend class Parenthesis;
   friend class Power;
   friend class Matrix;
+template<typename T>
+  friend class ExceptionExpressionNode;
 public:
   /* Constructor & Destructor */
   Expression();
@@ -33,6 +35,7 @@ public:
   static Expression parse(char const * string);
   Expression replaceSymbolWithExpression(char symbol, Expression expression) const { return node()->replaceSymbolWithExpression(symbol, expression); }
 
+  Expression clone() { return *this; }
   /* Reference */
   ExpressionNode * node() const override {
     assert(TreeByValue::node() == nullptr || !TreeByValue::node()->isGhost());

@@ -295,7 +295,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
     Expression * oi1 = editableOperand(i+1);
     if (TermsHaveIdenticalBase(oi, oi1)) {
       bool shouldFactorizeBase = true;
-      if (TermHasRationalBase(oi)) {
+      if (TermHasNumeralBase(oi)) {
         /* Combining powers of a given rational isn't straightforward. Indeed,
          * there are two cases we want to deal with:
          *  - 2*2^(1/2) or 2*2^pi, we want to keep as-is
@@ -306,7 +306,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
         factorizeBase(oi, oi1, context, angleUnit);
         continue;
       }
-    } else if (TermHasRationalBase(oi) && TermHasRationalBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
+    } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
       factorizeExponent(oi, oi1, context, angleUnit);
       continue;
     }
@@ -319,13 +319,13 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression * o1 = editableOperand(i);
-    if (Base(o1)->type() == Type::Sine && TermHasRationalExponent(o1)) {
+    if (Base(o1)->type() == Type::Sine && TermHasNumeralExponent(o1)) {
       const Expression * x = Base(o1)->childAtIndex(0);
       /* Thanks to the SimplificationOrder, Cosine-base factors are after
        * Sine-base factors */
       for (int j = i+1; j < numberOfChildren(); j++) {
         Expression * o2 = editableOperand(j);
-        if (Base(o2)->type() == Type::Cosine && TermHasRationalExponent(o2) && Base(o2)->childAtIndex(0)->isIdenticalTo(x)) {
+        if (Base(o2)->type() == Type::Cosine && TermHasNumeralExponent(o2) && Base(o2)->childAtIndex(0)->isIdenticalTo(x)) {
           factorizeSineAndCosine(o1, o2, context, angleUnit);
           break;
         }
@@ -393,18 +393,18 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
 #endif
 }
 
-bool Multiplication::HaveSameNonRationalFactors(const Expression e1, const Expression e2) {
+bool Multiplication::HaveSameNonNumeralFactors(const Expression e1, const Expression e2) {
   assert(e1.numberOfChildren() > 0);
   assert(e2.numberOfChildren() > 0);
-  int numberOfNonRationalFactors1 = e1.childAtIndex(0).type() == ExpressionNode::Type::Rational ? e1.numberOfChildren()-1 : e1.numberOfChildren();
-  int numberOfNonRationalFactors2 = e2.childAtIndex(0).type() == ExpressionNode::Type::Rational ? e2.numberOfChildren()-1 : e2.numberOfChildren();
-  if (numberOfNonRationalFactors1 != numberOfNonRationalFactors2) {
+  int numberOfNonNumeralFactors1 = e1.childAtIndex(0).type() == ExpressionNode::Type::Rational ? e1.numberOfChildren()-1 : e1.numberOfChildren();
+  int numberOfNonNumeralFactors2 = e2.childAtIndex(0).type() == ExpressionNode::Type::Rational ? e2.numberOfChildren()-1 : e2.numberOfChildren();
+  if (numberOfNonNumeralFactors1 != numberOfNonNumeralFactors2) {
     return false;
   }
-  int firstNonRationalOperand1 = e1.childAtIndex(0).type() == ExpressionNode::Type::Rational ? 1 : 0;
-  int firstNonRationalOperand2 = e2.childAtIndex(0).type() == ExpressionNode::Type::Rational ? 1 : 0;
-  for (int i = 0; i < numberOfNonRationalFactors1; i++) {
-    if (!(e1.childAtIndex(firstNonRationalOperand1+i).isIdenticalTo(e2.childAtIndex(firstNonRationalOperand2+i)))) {
+  int firstNonNumeralOperand1 = e1.childAtIndex(0).type() == ExpressionNode::Type::Rational ? 1 : 0;
+  int firstNonNumeralOperand2 = e2.childAtIndex(0).type() == ExpressionNode::Type::Rational ? 1 : 0;
+  for (int i = 0; i < numberOfNonNumeralFactors1; i++) {
+    if (!(e1.childAtIndex(firstNonNumeralOperand1+i).isIdenticalTo(e2.childAtIndex(firstNonNumeralOperand2+i)))) {
       return false;
     }
   }
@@ -584,11 +584,11 @@ bool Multiplication::TermsHaveIdenticalExponent(const Expression e1, const Expre
   return e1.type() == ExpressionNode::Type::Power && e2.type() == ExpressionNode::Type::Power && (e1.childAtIndex(1).isIdenticalTo(e2.childAtIndex(1)));
 }
 
-bool Multiplication::TermHasRationalBase(const Expression e) {
+bool Multiplication::TermHasNumeralBase(const Expression e) {
   return Base(e).type() == ExpressionNode::Type::Rational;
 }
 
-bool Multiplication::TermHasRationalExponent(const Expression e) {
+bool Multiplication::TermHasNumeralExponent(const Expression e) {
   if (e.type() != ExpressionNode::Type::Power) {
     return true;
   }

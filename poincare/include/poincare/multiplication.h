@@ -96,11 +96,11 @@ private:
   Expression distributeOnOperandAtIndex(int index, Context & context, Preferences::AngleUnit angleUnit);
   void addMissingFactors(Expression factor, Context & context, Preferences::AngleUnit angleUnit);
   void factorizeSineAndCosine(Expression o1, Expression o2, Context & context, Preferences::AngleUnit angleUnit);
-  static bool HaveSameNonRationalFactors(const Expression e1, const Expression e2);
+  static bool HaveSameNonNumeralFactors(const Expression e1, const Expression e2);
   static bool TermsHaveIdenticalBase(const Expression e1, const Expression e2);
   static bool TermsHaveIdenticalExponent(const Expression e1, const Expression e2);
-  static bool TermHasRationalBase(const Expression e);
-  static bool TermHasRationalExponent(const Expression e);
+  static bool TermHasNumeralBase(const Expression e);
+  static bool TermHasNumeralExponent(const Expression e);
   static const Expression CreateExponent(Expression e);
   /* Warning: mergeNegativePower doesnot always return  a multiplication:
    *      *(b^-1,c^-1) -> (bc)^-1 */

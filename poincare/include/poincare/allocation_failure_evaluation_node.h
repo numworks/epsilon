@@ -16,8 +16,11 @@ public:
   // TreeNode
   bool isAllocationFailure() const override { return true; }
   size_t size() const override { return sizeof(AllocationFailureEvaluationNode<T, U>); }
-#if TREE_LOG
-  const char * description() const override { return "AllocationFailureEvaluation";  }
+  TreeNode * uninitializedStaticNode() const override { assert(false); return nullptr; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "AllocationFailureEvaluation";
+  }
 #endif
 };
 

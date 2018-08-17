@@ -61,7 +61,9 @@ public:
 
   // TreeNode
   bool isUninitialized() const override { return true; }
-  TreeNode * failedAllocationStaticNode() override { /*TODO*/ assert(false); return nullptr; /* Or call parent method ?*/ }
+  /* There is only one static node, that should never be inserted in the pool,
+   * so no need for an allocation failure. */
+  TreeNode * failedAllocationStaticNode() override { assert(false); return nullptr; }
   size_t size() const override { return sizeof(UninitializedLayoutNode); }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {

@@ -121,8 +121,8 @@ void AdditionNode::factorizeChildrenAtIndexesInPlace(int index1, int index2, Con
   Expression e1 = childAtIndex(index1);
   Expression e2 = childAtIndex(index2);
 
-  // Step 1: Compute the new rational factor
-  Rational r = Rational(Rational::Addition(RationalFactor(e1), RationalFactor(e2)));
+  // Step 1: Compute the new numeral factor
+  Number r = Number::Addition(NumeralFactor(e1), NumeralFactor(e2));
 
   // Step 2: Get rid of one of the children
   Expression(this).removeChildAtIndexInPlace(index2);
@@ -137,7 +137,7 @@ void AdditionNode::factorizeChildrenAtIndexesInPlace(int index1, int index2, Con
 
   // Step 4: Use the new rational factor
   assert(m.numberOfChildren() > 0);
-  if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
+  if (m.childAtIndex(0).isNumber()) {
     /* The children were ordered before, so ant rational child of m would be on
      * the first position */
     m.replaceChildAtIndexInPlace(0, r);
@@ -152,9 +152,9 @@ void AdditionNode::factorizeChildrenAtIndexesInPlace(int index1, int index2, Con
   Expression(this).replaceChildAtIndexInPlace(index1, reducedM);
 }
 
-const Rational AdditionNode::RationalFactor(Expression e) {
-  if (e.type() == Type::Multiplication && e.childAtIndex(0).type() == Type::Rational) {
-    Rational result = Rational(static_cast<RationalNode *>(e.childAtIndex(0).node()));
+const Number AdditionNode::NumeralFactor(Expression e) {
+  if (e.type() == Type::Multiplication && e.childAtIndex(0).isNumber()) {
+    Number result = static_cast<Number>(e.childAtIndex(0));
     return result;
   }
   return Rational(1);
@@ -175,16 +175,16 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
   for (int i = 0; i < thisCopy.numberOfChildren(); i++) {
     Expression childI = thisCopy.childAtIndex(i);
     if (childI.type() != ExpressionNode::Type::Multiplication
-        || childI.childAtIndex(0).type() != ExpressionNode::Type::Rational
+        || !childI.childAtIndex(0).isNumber()
         || childI.childAtIndex(0).sign() != ExpressionNode::Sign::Negative)
     {
       // Ignore terms which are not like "(-r)*a"
       continue;
     }
 
-    Multiplication m = Multiplication(static_cast<MultiplicationNode *>(thisCopy.childAtIndex(i).node()));
+    Multiplication m = static_cast<Multiplication>(thisCopy.childAtIndex(i));
 
-    if (static_cast<RationalNode *>(m.childAtIndex(0).node())->isMinusOne()) {
+    if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(m.childAtIndex(0)).isMinusOne()) {
       m.removeChildAtIndexInPlace(0);
     } else {
       m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
@@ -209,9 +209,11 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
 }
 
 Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 
   Addition thisCopy = *this;
@@ -291,15 +293,15 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
   while (i < thisCopy.numberOfChildren()-1) {
     Expression e1 = thisCopy.childAtIndex(i);
     Expression e2 = thisCopy.childAtIndex(i+1);
-    if (e1.type() == ExpressionNode::Type::Rational && e2.type() == ExpressionNode::Type::Rational) {
-      Rational r1 = Rational(static_cast<RationalNode *>(e1.node()));
-      Rational r2 = Rational(static_cast<RationalNode *>(e2.node()));
-      Rational a = Rational::Addition(r1, r2);
+    if (e1.isNumber() && e2.isNumber()) {
+      Number r1 = static_cast<Number>(e1);
+      Number r2 = static_cast<Number>(e2);
+      Number a = Number::Addition(r1, r2);
       thisCopy.replaceChildAtIndexInPlace(i, a);
       thisCopy.removeChildAtIndexInPlace(i+1);
       continue;
     }
-    if (TermsHaveIdenticalNonRationalFactors(e1, e2)) {
+    if (TermsHaveIdenticalNonNumeralFactors(e1, e2)) {
       thisCopy.factorizeChildrenAtIndexesInPlace(i, i+1, context, angleUnit);
       continue;
     }
@@ -313,7 +315,7 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
   i = 0;
   while (i < thisCopy.numberOfChildren()) {
     Expression e = thisCopy.childAtIndex(i);
-    if (e.type() == ExpressionNode::Type::Rational && static_cast<RationalNode *>(e.node())->isZero() && thisCopy.numberOfChildren() > 1) {
+    if (e.type() == ExpressionNode::Type::Rational && static_cast<Rational>(e).isZero() && thisCopy.numberOfChildren() > 1) {
       thisCopy.removeChildAtIndexInPlace(i);
       continue;
     }
@@ -334,44 +336,44 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
   return result;
 }
 
-static inline int NumberOfNonRationalFactors(const Expression e) {
+static inline int NumberOfNonNumeralFactors(const Expression e) {
   if (e.type() != ExpressionNode::Type::Multiplication) {
     return 1; // Or (e->type() != Type::Rational);
   }
   int result = e.numberOfChildren();
-  if (e.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
+  if (e.childAtIndex(0).isNumber()) {
     result--;
   }
   return result;
 }
 
-static inline const Expression FirstNonRationalFactor(const Expression e) {
+static inline const Expression FirstNonNumeralFactor(const Expression e) {
   if (e.type() != ExpressionNode::Type::Multiplication) {
     return e;
   }
-  if (e.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
+  if (e.childAtIndex(0).isNumber()) {
     return e.numberOfChildren() > 1 ? e.childAtIndex(1) : Expression();
   }
   return e.childAtIndex(0);
 }
 
-bool Addition::TermsHaveIdenticalNonRationalFactors(const Expression e1, const Expression e2) {
+bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression e1, const Expression e2) {
   /* Return true if two expressions differ only by a rational factor. For
    * example, 2*pi and pi do, 2*pi and 2*ln(2) don't. */
 
-  int numberOfNonRationalFactorsInE1 = NumberOfNonRationalFactors(e1);
-  int numberOfNonRationalFactorsInE2 = NumberOfNonRationalFactors(e2);
+  int numberOfNonNumeralFactorsInE1 = NumberOfNonNumeralFactors(e1);
+  int numberOfNonNumeralFactorsInE2 = NumberOfNonNumeralFactors(e2);
 
-  if (numberOfNonRationalFactorsInE1 != numberOfNonRationalFactorsInE2) {
+  if (numberOfNonNumeralFactorsInE1 != numberOfNonNumeralFactorsInE2) {
     return false;
   }
 
-  int numberOfNonRationalFactors = numberOfNonRationalFactorsInE1;
-  if (numberOfNonRationalFactors == 1) {
-    return FirstNonRationalFactor(e1).isIdenticalTo(FirstNonRationalFactor(e2));
+  int numberOfNonNumeralFactors = numberOfNonNumeralFactorsInE1;
+  if (numberOfNonNumeralFactors == 1) {
+    return FirstNonNumeralFactor(e1).isIdenticalTo(FirstNonNumeralFactor(e2));
   } else {
-    assert(numberOfNonRationalFactors > 1);
-    return Multiplication::HaveSameNonRationalFactors(e1, e2);
+    assert(numberOfNonNumeralFactors > 1);
+    return Multiplication::HaveSameNonNumeralFactors(e1, e2);
   }
 }
 

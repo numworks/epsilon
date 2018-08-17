@@ -60,7 +60,7 @@ private:
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
   virtual void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit);
-  static const Rational RationalFactor(Expression e);
+  static const Number NumeralFactor(Expression e);
 
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
@@ -90,7 +90,7 @@ public:
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
 private:
-  static bool TermsHaveIdenticalNonRationalFactors(const Expression e1, const Expression e2);
+  static bool TermsHaveIdenticalNonNumeralFactors(const Expression e1, const Expression e2);
   Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) {
     return node()->factorizeOnCommonDenominator(context, angleUnit);
   }

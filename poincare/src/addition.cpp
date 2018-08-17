@@ -40,7 +40,7 @@ int AdditionNode::getPolynomialCoefficients(char symbolName, Expression coeffici
     int d = childAtIndex(i)->getPolynomialCoefficients(symbolName, intermediateCoefficients);
     assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
     for (int j = 0; j < d+1; j++) {
-      static_cast<Addition *>(&coefficients[j])->addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());
+      static_cast<Addition>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());
     }
   }
   return deg;
@@ -130,7 +130,7 @@ void AdditionNode::factorizeChildrenAtIndexesInPlace(int index1, int index2, Con
   // Step 3: Create a multiplication
   Multiplication m;
   if (e1.type() == ExpressionNode::Type::Multiplication) {
-    m = Multiplication(static_cast<MultiplicationNode *>(e1.node()));
+    m = static_cast<Multiplication>(e1);
   } else {
     m.addChildAtIndexInPlace(e1, 0, m.numberOfChildren());
   }
@@ -329,7 +329,7 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
   //TODO Emily Before: if (result == this && parent()->type() != Type::AdditionNode) {
   if (result.type() == ExpressionNode::Type::Addition) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
-    Addition a(static_cast<AdditionNode *>(result.node()));
+    Addition a = static_cast<Addition>(result);
     result = a.factorizeOnCommonDenominator(context, angleUnit);
   }
 

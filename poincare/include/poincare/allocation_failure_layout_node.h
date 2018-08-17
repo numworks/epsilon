@@ -10,6 +10,7 @@ class AllocationFailureLayoutNode : public ExceptionLayoutNode<T> {
 public:
   size_t size() const override { return sizeof(AllocationFailureLayoutNode<T>); }
   bool isAllocationFailure() const override { return true; }
+  TreeNode * uninitializedStaticNode() const override { assert(false); return nullptr; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "AllocationFailureLayout";

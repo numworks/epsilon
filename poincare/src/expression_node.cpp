@@ -24,12 +24,6 @@ int ExpressionNode::polynomialDegree(char symbolName) const {
 
 int ExpressionNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
   return Expression(this).defaultGetPolynomialCoefficients(symbolName, coefficients);
-  int deg = polynomialDegree(symbolName);
-  if (deg == 0) {
-    coefficients[0] = Expression(this);
-    return 0;
-  }
-  return -1;
 }
 
 int ExpressionNode::getVariables(isVariableTest isVariable, char * variables) const {
@@ -98,6 +92,7 @@ TreeNode * ExpressionNode::uninitializedStaticNode() const {
 }
 
 Expression ExpressionNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
+  assert(false);
   return Expression();
 }
 

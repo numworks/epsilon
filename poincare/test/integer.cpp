@@ -278,5 +278,3 @@ QUIZ_CASE(poincare_integer_serialize) {
   assert_parsed_expression_serialize_to(MaxInteger(), MaxIntegerString);
   assert_parsed_expression_serialize_to(OverflowedInteger(), "inf");
 }
-
-//SErialize

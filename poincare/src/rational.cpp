@@ -232,7 +232,7 @@ bool Rational::numeratorOrDenominatorIsInfinity() const {
 
 // Basic operations
 
-Rational Rational::Addition(const Rational i, const Rational j) {
+Rational Rational::Addition(const Rational & i, const Rational & j) {
   NaturalIntegerPointer in = i.node()->numerator();
   NaturalIntegerPointer id = i.node()->denominator();
   NaturalIntegerPointer jn = j.node()->numerator();
@@ -246,7 +246,7 @@ Rational Rational::Addition(const Rational i, const Rational j) {
   return Rational(newNumerator, newDenominator);
 }
 
-Rational Rational::Multiplication(const Rational i, const Rational j) {
+Rational Rational::Multiplication(const Rational & i, const Rational & j) {
   NaturalIntegerPointer in = i.node()->numerator();
   NaturalIntegerPointer id = i.node()->denominator();
   NaturalIntegerPointer jn = j.node()->numerator();
@@ -257,7 +257,7 @@ Rational Rational::Multiplication(const Rational i, const Rational j) {
   return Rational(newNumerator, newDenominator);
 }
 
-Rational Rational::IntegerPower(const Rational i, const NaturalIntegerPointer j, ExpressionNode::Sign jSign) {
+Rational Rational::IntegerPower(const Rational & i, const NaturalIntegerPointer & j, ExpressionNode::Sign jSign) {
   NaturalIntegerPointer in = i.node()->numerator();
   NaturalIntegerPointer id = i.node()->denominator();
   Integer newNumerator = NaturalIntegerPointer::upow(&in, &j);

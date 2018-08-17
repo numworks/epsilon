@@ -41,7 +41,9 @@ public:
 
   // Properties
   Type type() const override { return Type::Float; }
-  //int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override; // TODO: implement!
+  Sign sign() const override { return m_value < 0 ? Sign::Negative : Sign::Positive; }
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
+  int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {

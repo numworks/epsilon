@@ -599,8 +599,7 @@ bool Multiplication::TermHasRationalExponent(const Expression e) {
 }
 
 Expression Multiplication::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression e;
-  return e;
+  return *this;
   // TODO
 #if 0
   /* Beautifying a Multiplication consists in several possible operations:

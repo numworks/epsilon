@@ -33,7 +33,7 @@ std::complex<T> Cosine::computeOnComplex(const std::complex<T> c, Preferences::A
 }
 
 Expression Cosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::shallowReduce(context, angleUnit);
+  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;
   }

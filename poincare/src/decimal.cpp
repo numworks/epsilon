@@ -274,7 +274,7 @@ Decimal::Decimal(size_t size, Integer m, int e) : Number(TreePool::sharedPool()-
 }
 
 Expression Decimal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Expression::shallowReduce(context, angleUnit);
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }

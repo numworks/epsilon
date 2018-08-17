@@ -58,7 +58,7 @@ Expression SubtractionNode::shallowReduce(Context& context, Preferences::AngleUn
 }
 
 Expression Subtraction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Expression::shallowReduce(context, angleUnit);
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.type() == ExpressionNode::Type::AllocationFailure || e.type() == ExpressionNode::Type::Undefined ) { //TODO use Expression method to make the ||
     return e;
   }

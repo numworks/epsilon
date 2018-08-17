@@ -63,6 +63,7 @@ QUIZ_CASE(poincare_integer_compare) {
   assert_lower(Integer("123456789123456788"), Integer("123456789123456789"));
   assert_lower(Integer("-1234567891234567892109209109"), Integer("123456789123456789"));
   assert_greater(Integer("123456789123456789"), Integer("123456789123456788"));
+  assert_greater(Integer::Overflow(), Integer("123456789123456788"));
   //FIXME: assert(Integer("0x2BABE") == Integer(178878));
   //FIXME: assert(Integer("0b1011") == Integer(11));
 }

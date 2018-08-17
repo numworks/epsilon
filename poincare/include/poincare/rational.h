@@ -89,7 +89,7 @@ public:
 
   // Properties
   Integer integerNumerator() const;
-  NaturalIntegerPointer naturalIntegerPointerNumerator() { return node()->numerator(); }
+  NaturalIntegerPointer naturalIntegerPointerNumerator() const { return node()->numerator(); }
   Integer integerDenominator() const;
 
   // BasicTest
@@ -104,11 +104,11 @@ public:
   // Arithmetic
   /* Warning: when using this function, always assert that the result does not
    * involve infinity numerator or denominator or handle these cases. */
-  static Rational Addition(const Rational i, const Rational j);
-  static Rational Multiplication(const Rational i, const Rational j);
+  static Rational Addition(const Rational & i, const Rational & j);
+  static Rational Multiplication(const Rational & i, const Rational & j);
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
-  static Rational IntegerPower(const Rational i, const NaturalIntegerPointer j, ExpressionNode::Sign jSign);
-  static int NaturalOrder(const Rational i, const Rational j) { return RationalNode::NaturalOrder(i.node(), j.node()); }
+  static Rational IntegerPower(const Rational & i, const NaturalIntegerPointer & j, ExpressionNode::Sign jSign);
+  static int NaturalOrder(const Rational & i, const Rational & j) { return RationalNode::NaturalOrder(i.node(), j.node()); }
 
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;

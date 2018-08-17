@@ -113,9 +113,12 @@ Number Number::Multiplication(const Number i, const Number j) {
 Number Number::Power(const Number i, const Number j) {
   return BinaryOperation(i, j, Integer::Power,
       // Special case for Rational^Rational: we escape to Float if the index is not an Integer
-      [](const Rational i, const Rational j) {
-        // We return an overflown result to reach the escape case Float+Float
-        return Rational(Integer::Overflow());
+      [](const Rational & i, const Rational & j) {
+        if (!j.integerDenominator().isOne()) {
+          // We return an overflown result to reach the escape case Float+Float
+          return Rational(Integer::Overflow());
+        }
+        return Rational::IntegerPower(i, j.naturalIntegerPointerNumerator(), j.sign());
       },
       [](double a, double b) {
         return std::pow(a, b);

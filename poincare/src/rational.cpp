@@ -212,13 +212,6 @@ Rational::Rational(native_int_t i) : Number()  {
   new (this) Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &one, 1, i < 0);
 }
 
-Rational::Rational(native_int_t i, native_int_t j) : Number() {
-  assert(j != 0);
-  native_uint_t absI = i < 0 ? -i : i;
-  native_uint_t absJ = j < 0 ? -j : j;
-  new (this) Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &absJ, 1, (i < 0 && j > 0) || (i > 0 && j < 0));
-}
-
 Integer Rational::integerNumerator() const {
   NaturalIntegerPointer n = const_cast<Rational *>(this)->node()->numerator();
   return Integer(&n);

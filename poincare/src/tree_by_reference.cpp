@@ -46,6 +46,9 @@ void TreeByReference::replaceWithInPlace(TreeByReference t) {
 }
 
 void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild) {
+  assert(!oldChild.isUninitialized());
+  assert(!newChild.isUninitialized());
+
   if (oldChild == newChild) {
     return;
   }
@@ -56,6 +59,17 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
   }
   if (newChild.isAllocationFailure()) {
     replaceWithAllocationFailureInPlace(numberOfChildren());
+    return;
+  }
+
+  // If the new node is static, copy it in the pool and add the copy
+  if (newChild.isStatic()) {
+    TreeByReference newT = TreeByReference(TreePool::sharedPool()->deepCopy(newChild.node()));
+    if (newT.isAllocationFailure()) {
+      replaceWithAllocationFailureInPlace(numberOfChildren());
+      return;
+    }
+    replaceChildInPlace(oldChild, newT);
     return;
   }
 
@@ -166,7 +180,9 @@ void TreeByReference::log() const {
 // Add
 void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) {
   assert(!isUninitialized());
-  if (node()->isAllocationFailure()) {
+  assert(!t.isUninitialized());
+
+  if (isAllocationFailure()) {
     return;
   }
   if (t.isAllocationFailure()) {
@@ -174,8 +190,19 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
     return;
   }
   assert(index >= 0 && index <= currentNumberOfChildren);
-
   assert(t.parent().isUninitialized());
+
+  // If the new node is static, copy it in the pool and add the copy
+  if (t.isStatic()) {
+    TreeByReference newT = TreeByReference(TreePool::sharedPool()->deepCopy(t.node()));
+    if (newT.isAllocationFailure()) {
+      replaceWithAllocationFailureInPlace(currentNumberOfChildren);
+      return;
+    }
+    addChildAtIndexInPlace(newT, index, currentNumberOfChildren);
+    return;
+  }
+
   // Move t
   TreeNode * newChildPosition = node()->next();
   for (int i = 0; i < index; i++) {

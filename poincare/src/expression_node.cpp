@@ -92,7 +92,6 @@ TreeNode * ExpressionNode::uninitializedStaticNode() const {
 }
 
 Expression ExpressionNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  assert(false);
   return Expression();
 }
 

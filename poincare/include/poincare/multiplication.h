@@ -71,6 +71,7 @@ private:
 class Multiplication : public NAryExpression {
   friend class AdditionNode;
   friend class Addition;
+  friend class Power;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   Multiplication() : NAryExpression(TreePool::sharedPool()->createTreeNode<MultiplicationNode>()) {}

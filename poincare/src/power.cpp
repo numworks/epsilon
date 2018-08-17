@@ -513,44 +513,30 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
       return *this;
     }*/
 
-    // TODO Emily, please translate the following code :)
-
-    /*
-    Expression * result = childAtIndex(0);
-    Expression * a = result.clone();
+    Expression result = childAtIndex(0);
+    Expression a = result;
     for (int i = 2; i <= clippedN; i++) {
+      // result = result * (a0+a1+...+a(m-1) in its expanded form
       if (result.type() == ExpressionNode::Type::Addition) {
-        Expression * a0 = new Addition();
+        // We need a 'double' distribution and newA will hold the new expanded form
+        Addition newA = Addition();
         for (int j = 0; j < a.numberOfChildren(); j++) {
-          Multiplication * m = new Multiplication(result, a.childAtIndex(j), true);
-          SimplificationRoot rootM(m); // m need to have a parent when applying distributeOnOperandAtIndex
-          Expression * expandM = m.distributeOnOperandAtIndex(0, context, angleUnit);
-          rootM.detachOperands();
-          if (a0.type() == ExpressionNode::Type::Addition) {
-            static_cast<Addition *>(a0).addOperand(expandM);
-          } else {
-            a0 = new Addition(a0, expandM, false);
-          }
-          SimplificationRoot rootA0(a0); // a0 need a parent to be reduced.
-          a0 = a0.shallowReduce(context, angleUnit);
-          rootA0.detachOperands();
+          Expression m = Multiplication(result, a.childAtIndex(j)).distributeOnOperandAtIndex(0, context, angleUnit);
+          newA.addChildAtIndexInPlace(m ,0, newA.numberOfChildren());
         }
-        result = result.replaceWith(a0, true);
+        result = newA.shallowReduce(context, angleUnit);
       } else {
-        Multiplication * m = new Multiplication(a, result, true);
-        SimplificationRoot root(m);
-        result = result.replaceWith(m.distributeOnOperandAtIndex(0, context, angleUnit), true);
+        // Just distribute result on a
+        Multiplication m(a, result);
+        result = m.distributeOnOperandAtIndex(0, context, angleUnit);
         result = result.shallowReduce(context, angleUnit);
-        root.detachOperands();
       }
     }
-    delete a;
-    if (nr.sign() == Sign::Negative) {
-      nr.replaceWith(new Rational(-1), true);
-      return shallowReduce(context, angleUnit);
+    if (nr.sign() == ExpressionNode::Sign::Negative) {
+      return Power(result, Rational(-1)).shallowReduce(context, angleUnit);
     } else {
-      return replaceWith(result, true);
-    }*/
+      return result;
+    }
   }
 #if 0
   /* We could use the Newton formula instead which is quicker but not immediate

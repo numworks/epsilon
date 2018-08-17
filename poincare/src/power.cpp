@@ -254,7 +254,7 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   return result;
   //TODO
 #if 0
-  Expression * e = Expression::shallowReduce(context, angleUnit);
+  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;
   }

@@ -65,7 +65,7 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 // Division
 
 Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression result = Expression::shallowReduce(context, angleUnit);
+  Expression result = Expression::defaultShallowReduce(context, angleUnit);
   if (result.isUndefinedOrAllocationFailure()) {
     return result;
   }

@@ -13,6 +13,9 @@ Integer Arithmetic::LCM(const Integer a, const Integer b) {
 }
 
 Integer Arithmetic::GCD(const Integer a, const Integer b) {
+  if (a.isInfinity() || b.isInfinity()) {
+    return Integer::Overflow();
+  }
 
   Integer i = a;
   Integer j = b;

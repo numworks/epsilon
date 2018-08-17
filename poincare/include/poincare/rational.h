@@ -81,9 +81,8 @@ public:
   Rational(const RationalNode * node) : Number(node) {}
   Rational(Integer numerator, Integer denominator);
   Rational(const Integer numerator);
-  Rational(const NaturalIntegerAbstract * numerator, bool negative);
   Rational(native_int_t i);
-  Rational(native_int_t i, native_int_t j);
+  Rational(native_int_t i, native_int_t j) : Rational(Integer(i), Integer(j)) {}
 
   // TreeNode
   RationalNode * node() const override { return static_cast<RationalNode *>(Number::node()); }
@@ -109,13 +108,14 @@ public:
   static Rational Multiplication(const Rational i, const Rational j);
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
   static Rational IntegerPower(const Rational i, const NaturalIntegerPointer j, ExpressionNode::Sign jSign);
-  static int NaturalOrder(const Rational i, const Rational j);
+  static int NaturalOrder(const Rational i, const Rational j) { return RationalNode::NaturalOrder(i.node(), j.node()); }
 
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
 private:
   Rational(size_t size, native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative);
+  Rational(const NaturalIntegerAbstract * numerator, bool negative);
   RationalNode * node() { return static_cast<RationalNode *>(Number::node()); }
 
   /* Simplification */

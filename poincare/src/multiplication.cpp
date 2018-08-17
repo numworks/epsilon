@@ -552,23 +552,21 @@ void Multiplication::factorizeExponent(Expression e1, Expression e2, Context & c
 }
 
 Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, Preferences::AngleUnit angleUnit) {
-  // This function turns a*(b+c) into a*b + a*c
-  // We avoid deleting and creating a new addition
-  Expression a;
-  return a; //TODO
-#if 0
-  Addition * a = static_cast<Addition *>(editableOperand(i));
-  removeOperand(a, false);
-  for (int j = 0; j < a->numberOfChildren(); j++) {
-    Multiplication * m = static_cast<Multiplication *>(clone());
-    Expression * termJ = a->editableOperand(j);
-    a->replaceOperand(termJ, m, false);
-    m->addOperand(termJ);
-    m->shallowReduce(context, angleUnit); // pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
+  /* This method creates a*...*b*y... + a*...*c*y... + ... from
+   * a*...*(b+c+...)*y... */
+  assert(i >= 0 && i < numberOfChildren());
+  assert(childAtIndex(i).type() == ExpressionNode::Type::Addition);
+
+  Addition a;
+  int numberOfAdditionTerms = childAtIndex(i).numberOfChildren();
+  for (int j = 0; j < numberOfAdditionTerms; j++) {
+    Multiplication m = *this;
+    m.replaceChildAtIndexInPlace(i, childAtIndex(i).childAtIndex(j));
+    // Reduce m: pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
+    Expression reducedM = m.shallowReduce(context, angleUnit);
+    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
   }
-  replaceWith(a, true);
-  return a->shallowReduce(context, angleUnit); // Order terms, put under a common denominator if needed
-#endif
+  return a.shallowReduce(context, angleUnit); // Order terms, put under a common denominator if needed
 }
 
 const Expression Multiplication::CreateExponent(Expression e) {

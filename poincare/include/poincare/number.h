@@ -47,7 +47,7 @@ protected:
   NumberNode * node() const override { return static_cast<NumberNode *>(Expression::node()); }
 private:
   typedef Integer (*IntegerBinaryOperation)(const Integer & i, const Integer & j);
-  typedef Rational (*RationalBinaryOperation)(const Rational i, const Rational j);
+  typedef Rational (*RationalBinaryOperation)(const Rational & i, const Rational & j);
   typedef double (*DoubleBinaryOperation)(double i, double j);
   static Number BinaryOperation(const Number i, const Number j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp);
 };

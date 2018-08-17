@@ -549,6 +549,12 @@ Integer Integer::Factorial(const Integer & i) {
   return IntegerNode::ufact(i.node());
 }
 
+IntegerNode * Integer::StaticZero() {
+  static IntegerNode z;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&z);
+  return &z;
+}
+
 Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNegative, bool oneDigitOverflow) {
   bool bNegative = (inverseBNegative ? b.sign() == ExpressionNode::Sign::Positive : b.sign() == ExpressionNode::Sign::Negative);
   if ((a.sign() == ExpressionNode::Sign::Negative) == bNegative) {

@@ -189,7 +189,7 @@ friend class IntegerNode;
 friend class Rational;
 friend class Decimal;
 public:
-  Integer() : Number() {} // Uninitialized constructor
+  Integer() : Number(StaticZero()) {}
   Integer(IntegerNode * n) : Number(n) {}
   Integer(const char * digits, size_t length, bool negative);
   Integer(const char * digits) : Integer(digits, strlen(digits), false) {
@@ -230,6 +230,8 @@ private:
 
   Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(size_t size, const native_uint_t * digits, size_t numberOfDigits, bool negative);
+  static IntegerNode * StaticZero();
+
   static Integer addition(const Integer & a, const Integer & b, bool inverseBNegative, bool enableOneDigitOverflow = false);
   static Integer multiplication(const Integer & a, const Integer & b, bool enableOneDigitOverflow = false);
   size_t numberOfDigits() const { return node()->numberOfDigits(); }

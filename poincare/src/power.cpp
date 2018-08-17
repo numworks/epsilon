@@ -751,14 +751,14 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
     const Rational f2 = RationalFactorInExpression(childAtIndex(0).childAtIndex(1));
     const Rational r1 = RadicandInExpression(childAtIndex(0).childAtIndex(0));
     const Rational r2 = RadicandInExpression(childAtIndex(0).childAtIndex(1));
-    Integer n1 = (f1.isUninitialized() ? Integer(1) : f1.integerNumerator());
-    Integer d1 = (f1.isUninitialized() ? Integer(1) : f1.integerDenominator());
-    Integer p1 = (r1.isUninitialized() ? Integer(1) : r1.integerNumerator());
-    Integer q1 = (r1.isUninitialized() ? Integer(1) : r1.integerDenominator());
-    Integer n2 = (f2.isUninitialized() ? Integer(1) : f2.integerNumerator());
-    Integer d2 = (f2.isUninitialized() ? Integer(1) : f2.integerDenominator());
-    Integer p2 = (r2.isUninitialized() ? Integer(1) : r2.integerNumerator());
-    Integer q2 = (r2.isUninitialized() ? Integer(1) : r2.integerDenominator());
+    Integer n1 = f1.integerNumerator();
+    Integer d1 = f1.integerDenominator();
+    Integer p1 = r1.integerNumerator();
+    Integer q1 = r1.integerDenominator();
+    Integer n2 = f2.integerNumerator();
+    Integer d2 = f2.integerDenominator();
+    Integer p2 = r2.integerNumerator();
+    Integer q2 = r2.integerDenominator();
 
     // Compute the denominator = n1^2*d2^2*p1*q2 - n2^2*d1^2*p2*q1
     Integer denominator = Integer::Subtraction(
@@ -899,7 +899,7 @@ bool Power::TermIsARationalSquareRootOrRational(const Expression e) {
 
 const Rational Power::RadicandInExpression(const Expression e) {
   if (e.type() == ExpressionNode::Type::Rational) {
-    return Rational();
+    return Rational(1);
   } else if (e.type() == ExpressionNode::Type::Power) {
     assert(e.type() == ExpressionNode::Type::Power);
     assert(e.childAtIndex(0).type() == ExpressionNode::Type::Rational);
@@ -916,7 +916,7 @@ const Rational Power::RationalFactorInExpression(const Expression e) {
   if (e.type() == ExpressionNode::Type::Rational) {
     return Rational(static_cast<const RationalNode *>(e.node()));
   } else if (e.type() == ExpressionNode::Type::Power) {
-    return Rational();
+    return Rational(1);
   } else {
     assert(e.type() == ExpressionNode::Type::Multiplication);
     assert(e.childAtIndex(0).type() == ExpressionNode::Type::Rational);

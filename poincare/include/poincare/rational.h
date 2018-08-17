@@ -78,7 +78,6 @@ class Rational : public Number {
   friend class Power;
 public:
   /* The constructor build a irreductible fraction */
-  Rational() : Number() {} // Unitialized expression constructor
   Rational(const RationalNode * node) : Number(node) {}
   Rational(Integer numerator, Integer denominator);
   Rational(const Integer numerator);

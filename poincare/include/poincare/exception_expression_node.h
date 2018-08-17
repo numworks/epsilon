@@ -14,7 +14,7 @@ class ExceptionExpressionNode : public ExceptionNode<T> {
 public:
   // ExpressionNode
   ExpressionNode::Sign sign() const override { return ExpressionNode::Sign::Unknown; }
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const override {}
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const override { return Expression(this).clone(); }
   int polynomialDegree(char symbolName) const override { return -1; }
 
   Evaluation<float> approximate(ExpressionNode::SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return Complex<float>::Undefined(); }

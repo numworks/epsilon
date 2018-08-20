@@ -65,7 +65,7 @@ Expression PowerNode::setSign(Sign s, Context & context, Preferences::AngleUnit 
 }
 
 int PowerNode::polynomialDegree(char symbolName) const {
-  int deg = Power(this).polynomialDegree(symbolName);
+  int deg = ExpressionNode::polynomialDegree(symbolName);
   if (deg == 0) {
     return deg;
   }
@@ -293,6 +293,7 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
 
   /* Step 0: if both children are true complexes, the result is undefined. We
    * can assert that evaluations are Complex, as matrix are not simplified */
+
   Evaluation<float> c0Approximated = childAtIndex(0).node()->approximate(1.0f, context, angleUnit);
   Evaluation<float> c1Approximated = childAtIndex(1).node()->approximate(1.0f, context, angleUnit);
   Complex<float> c0 = static_cast<Complex<float> >(c0Approximated);
@@ -302,6 +303,7 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   if (bothChildrenComplexes) {
     return *this; // this is copied here
   }
+
 
   /* Step 1: We handle simple cases as x^0, x^1, 0^x and 1^x first for 2 reasons:
    * - we can assert this step that there is no division by 0:
@@ -344,20 +346,22 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
 
   /* Step 2: We look for square root and sum of square roots (two terms maximum
    * so far) at the denominator and move them to the numerator. */
-  Expression r = removeSquareRootsFromDenominator(context, angleUnit);
-  if (!r.isUninitialized()) {
-    return r;
+  {
+    Expression r = removeSquareRootsFromDenominator(context, angleUnit);
+    if (!r.isUninitialized()) {
+      return r;
+    }
   }
 
   if (childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     const Rational b = static_cast<Rational>(childAtIndex(1));
     // i^(p/q)
     if (childAtIndex(0).type() == ExpressionNode::Type::Symbol && static_cast<Symbol>(childAtIndex(0)).name() == Ion::Charset::IComplex) {
-      Rational r = Rational::Multiplication(b, Rational(1, 2));
-      return CreateNthRootOfUnity(r).shallowReduce(context, angleUnit);
+      Number r = Number::Multiplication(b, Rational(1, 2));
+      return CreateComplexExponent(r).shallowReduce(context, angleUnit);
     }
   }
-  bool letPowerAtRoot = parentIsALogarithmOfSameBase();
+  bool letPowerAtRoot = parentIsALogarithmOfSameBase(); //TODO: This uses the parent!
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
     Rational a = static_cast<Rational>(childAtIndex(0));
     // p^q with p, q rationals
@@ -370,16 +374,15 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
     }
   }
   // (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
-  if (!letPowerAtRoot && nonComplexNegativeChild0
+  if (!letPowerAtRoot
+      && nonComplexNegativeChild0
       && childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && static_cast<Rational>(childAtIndex(1)).integerNumerator().isOne()
-      && static_cast<Rational>(childAtIndex(1)).integerDenominator().isTwo())
+      && static_cast<Rational>(childAtIndex(1)).isHalf())
   {
     Expression m0 = Multiplication(Rational(-1), childAtIndex(0)).shallowReduce(context, angleUnit);
-    Power thisCopy = *this;
-    thisCopy.replaceChildAtIndexInPlace(0, m0);
-    Expression reducedThisCopy = thisCopy.shallowReduce(context, angleUnit);
-    Multiplication m1 = Multiplication(Symbol(Ion::Charset::IComplex), reducedThisCopy);
+    Power newPower = Power(m0, childAtIndex(1));
+    Expression reducedNewPower = newPower.shallowReduce(context, angleUnit);
+    Multiplication m1 = Multiplication(Symbol(Ion::Charset::IComplex), reducedNewPower);
     return m1.shallowReduce(context, angleUnit);
   }
   // e^(i*Pi*r) with r rational
@@ -392,14 +395,16 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
       const Expression pi = m.childAtIndex(m.numberOfChildren()-1);
       m.replaceChildAtIndexInPlace(numberOfChildren()-1, Rational(180));
     }
-    /* TODO Decomment
-       Expression reducedM = m.shallowReduce(context, angleUnit);
-       Cosine cos = Cosine(reducedM).shallowReduce(context, angleUnit);
-       Expression sinPart = Sine(reducedM).shallowReduce(context, angleUnit);
-       sinPart = Multiplication(sinPart, i).shallowReduce(context, angleUnit);
-       return Addition(cos, sinPart).shallowReduce(context, angleUnit);
-       */
+#if 0
+    Expression reducedM = m.shallowReduce(context, angleUnit);
+    Cosine cos = Cosine(reducedM).shallowReduce(context, angleUnit);
+    Expression sinPart = Sine(reducedM).shallowReduce(context, angleUnit);
+    sinPart = Multiplication(sinPart, i).shallowReduce(context, angleUnit);
+    return Addition(cos, sinPart).shallowReduce(context, angleUnit);
+#else
+    // TODO remove if 0 once we have cos
     return Rational(1);
+#endif
   }
   // x^log(y,x)->y if y > 0
   if (childAtIndex(1).type() == ExpressionNode::Type::Logarithm) {
@@ -704,9 +709,8 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
     m.addChildAtIndexInPlace(p, 1, m.numberOfChildren());
   }
   if (i.sign() == ExpressionNode::Sign::Negative) {
-    Expression nthRootOfUnity = CreateNthRootOfUnity(r);
-    Expression reduceRoot = nthRootOfUnity.shallowReduce(context, angleUnit);
-    m.addChildAtIndexInPlace(reduceRoot, m.numberOfChildren(), m.numberOfChildren());
+    Expression exp = CreateComplexExponent(r).shallowReduce(context, angleUnit);
+    m.addChildAtIndexInPlace(exp, m.numberOfChildren(), m.numberOfChildren());
   }
   m.sortChildrenInPlace(PowerNode::SimplificationOrder, false);
   return m;
@@ -859,11 +863,11 @@ bool Power::isNthRootOfUnity() const {
   return false;
 }
 
-Expression Power::CreateNthRootOfUnity(const Rational r) {
+Expression Power::CreateComplexExponent(const Expression r) {
+  // Returns e^(i*pi*r)
   const Symbol exp = Symbol(Ion::Charset::Exponential);
   const Symbol iComplex = Symbol(Ion::Charset::IComplex);
   const Symbol pi = Symbol(Ion::Charset::SmallPi);
-  const Expression multExpOperands[3] = {iComplex, pi, r};
   Multiplication mExp = Multiplication(iComplex, pi, r);
   mExp.sortChildrenInPlace(PowerNode::SimplificationOrder, false);
   return Power(exp, mExp);

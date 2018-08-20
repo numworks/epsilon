@@ -9,7 +9,7 @@ static void serializeChild(const SerializationHelperInterface * childInterface, 
   bool addParentheses = childInterface->needsParenthesesWithParent(interface);
   if (addParentheses) {
     buffer[*numberOfChar] = '(';
-    numberOfChar++;
+    *numberOfChar = *numberOfChar + 1;
     if (*numberOfChar >= bufferSize-1) {
       return;
     }
@@ -20,7 +20,7 @@ static void serializeChild(const SerializationHelperInterface * childInterface, 
   }
   if (addParentheses) {
     buffer[*numberOfChar] = ')';
-    numberOfChar++;
+    *numberOfChar = *numberOfChar + 1;
   }
 }
 

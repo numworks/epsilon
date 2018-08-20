@@ -42,6 +42,7 @@ public:
   static Number Addition(const Number & i, const Number & j);
   static Number Multiplication(const Number & i, const Number & j);
   static Number Power(const Number & i, const Number & j);
+  static int NaturalOrder(const Number & i, const Number & j);
 protected:
   Number() : Expression() {}
   NumberNode * node() const override { return static_cast<NumberNode *>(Expression::node()); }

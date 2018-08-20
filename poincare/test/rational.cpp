@@ -14,9 +14,6 @@ QUIZ_CASE(poincare_rational_constructor) {
   Rational e(Integer::Overflow());
   Rational f(Integer::Overflow(), Integer::Overflow());
   assert_pool_size(6);
-#if POINCARE_TREE_LOG
-  log_pool();
-#endif
 }
 
 static inline void assert_equal(const Rational i, const Rational j) {

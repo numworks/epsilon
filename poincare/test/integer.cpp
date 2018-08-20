@@ -22,9 +22,6 @@ QUIZ_CASE(poincare_integer_constructor) {
   Integer nd((int64_t)(-1234567891011121314));
   Integer e = Integer::Overflow();
   assert_pool_size(9);
-#if POINCARE_TREE_LOG
-  log_pool();
-#endif
 }
 
 static inline void assert_equal(const Integer i, const Integer j) {

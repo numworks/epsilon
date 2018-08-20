@@ -226,7 +226,7 @@ int Power::getPolynomialCoefficients(char symbolName, Expression coefficients[])
     if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
       return -1;
     }
-    Integer num = r.integerNumerator();
+    Integer num = r.unsignedIntegerNumerator();
     if (Integer::NaturalOrder(num, Integer(Integer::k_maxExtractableInteger)) > 0) {
       return -1;
     }
@@ -502,8 +502,7 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   {
     // Exponent n
     Rational nr = static_cast<Rational>(childAtIndex(1));
-    Integer n = nr.integerNumerator();
-    n.setNegative(false);
+    Integer n = nr.unsignedIntegerNumerator();
     /* If n is above 25, the resulting sum would have more than
      * k_maxNumberOfTermsInExpandedMultinome terms so we do not expand it. */
     if (Integer(k_maxNumberOfTermsInExpandedMultinome).isLowerThan(n) || n.isOne()) {
@@ -592,7 +591,7 @@ Expression Power::shallowBeautify(Context& context, Preferences::AngleUnit angle
     return d.shallowBeautify(context, angleUnit);
   }
   // TODO decomment when sqrt and nth root are ready
-  /*if (childAtIndex(1).type() == ExpressionNode::Type::Rational && static_cast<Rational>(childAtIndex(1)).integerNumerator().isOne()) {
+  /*if (childAtIndex(1).type() == ExpressionNode::Type::Rational && static_cast<Rational>(childAtIndex(1)).signedIntegerNumerator().isOne()) {
     Integer index = static_cast<Rational>(childAtIndex(1)).integerDenominator();
     if (index.isEqualTo(Integer(2))) {
       return SquareRoot(childAtIndex(0));
@@ -650,17 +649,17 @@ Expression Power::simplifyPowerMultiplication(Multiplication m, Expression r, Co
 Expression Power::simplifyRationalRationalPower(Rational a, Rational b, Context& context, Preferences::AngleUnit angleUnit) const {
   // this is a^b with a, b rationals
   if (b.integerDenominator().isOne()) {
-    return Rational::IntegerPower(a, b.naturalIntegerPointerNumerator(), b.sign());
+    return Rational::IntegerPower(a, b.signedIntegerNumerator());
   }
   Multiplication m;
   if (b.sign() == ExpressionNode::Sign::Negative) {
     b.setSign(ExpressionNode::Sign::Positive);
     Expression n = CreateSimplifiedIntegerRationalPower(a.integerDenominator(), b, false, context, angleUnit);
-    Expression d = CreateSimplifiedIntegerRationalPower(a.integerNumerator(), b, true, context, angleUnit);
+    Expression d = CreateSimplifiedIntegerRationalPower(a.signedIntegerNumerator(), b, true, context, angleUnit);
     m.addChildAtIndexInPlace(n, 0, 0);
     m.addChildAtIndexInPlace(d, 1, m.numberOfChildren());
   } else {
-    Expression n = CreateSimplifiedIntegerRationalPower(a.integerNumerator(), b, false, context, angleUnit);
+    Expression n = CreateSimplifiedIntegerRationalPower(a.signedIntegerNumerator(), b, false, context, angleUnit);
     Expression d = CreateSimplifiedIntegerRationalPower(a.integerDenominator(), b, true, context, angleUnit);
     m.addChildAtIndexInPlace(n, 0, 0);
     m.addChildAtIndexInPlace(d, 1, m.numberOfChildren());
@@ -689,7 +688,7 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bo
   Integer r2(1);
   int index = 0;
   while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {
-    Integer n = Integer::Multiplication(coefficients[index], r.integerNumerator());
+    Integer n = Integer::Multiplication(coefficients[index], r.signedIntegerNumerator());
     IntegerDivision div = Integer::Division(n, r.integerDenominator());
     r1 = Integer::Multiplication(r1, Integer::Power(factors[index], div.quotient));
     r2 = Integer::Multiplication(r2, Integer::Power(factors[index], div.remainder));
@@ -727,7 +726,7 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
      * and q integers. We'll turn those into sqrt(p*q)/q (or sqrt(p*q)/p). */
     Rational castedChild0 = static_cast<Rational>(childAtIndex(0));
     Rational castedChild1 = static_cast<Rational>(childAtIndex(1));
-    Integer p = castedChild0.integerNumerator();
+    Integer p = castedChild0.signedIntegerNumerator();
     assert(!p.isZero()); // We eliminated case of form 0^(-1/2) at first step of shallowReduce
     Integer q = castedChild0.integerDenominator();
     // We do nothing for terms of the form sqrt(p)
@@ -761,13 +760,13 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
     const Rational f2 = RationalFactorInExpression(childAtIndex(0).childAtIndex(1));
     const Rational r1 = RadicandInExpression(childAtIndex(0).childAtIndex(0));
     const Rational r2 = RadicandInExpression(childAtIndex(0).childAtIndex(1));
-    Integer n1 = f1.integerNumerator();
+    Integer n1 = f1.signedIntegerNumerator();
     Integer d1 = f1.integerDenominator();
-    Integer p1 = r1.integerNumerator();
+    Integer p1 = r1.signedIntegerNumerator();
     Integer q1 = r1.integerDenominator();
-    Integer n2 = f2.integerNumerator();
+    Integer n2 = f2.signedIntegerNumerator();
     Integer d2 = f2.integerDenominator();
-    Integer p2 = r2.integerNumerator();
+    Integer p2 = r2.signedIntegerNumerator();
     Integer q2 = r2.integerDenominator();
 
     // Compute the denominator = n1^2*d2^2*p1*q2 - n2^2*d1^2*p2*q1
@@ -947,8 +946,7 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational b, const Rational 
    * the GCD of the resulting numerator and denominator. Euclide algorithm's
    * complexity is apportionned to the number of decimal digits in the smallest
    * integer. */
-  Integer maxIntegerExponent = r.integerNumerator();
-  maxIntegerExponent.setNegative(false);
+  Integer maxIntegerExponent = r.unsignedIntegerNumerator();
   if (Integer::NaturalOrder(maxIntegerExponent, Integer(k_maxExactPowerMatrix)) > 0) {
     return true;
   }
@@ -958,8 +956,8 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational b, const Rational 
   Preferences::AngleUnit aU = Preferences::AngleUnit::Degree;
 
   double index = maxIntegerExponent.approximateToScalar<double>(context, aU);
-  double powerNumerator = std::pow(std::fabs(b.integerNumerator().approximateToScalar<double>(context, aU)), index);
-  double powerDenominator = std::pow(std::fabs(b.integerDenominator().approximateToScalar<double>(context, aU)), index);
+  double powerNumerator = std::pow(b.unsignedIntegerNumerator().approximateToScalar<double>(context, aU), index);
+  double powerDenominator = std::pow(b.integerDenominator().approximateToScalar<double>(context, aU), index);
   if (std::isnan(powerNumerator) || std::isnan(powerDenominator) || std::isinf(powerNumerator) || std::isinf(powerDenominator)) {
     return true;
   }

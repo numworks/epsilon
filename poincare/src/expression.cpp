@@ -235,12 +235,11 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
 }
 
 Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) const {
-  int nbChildren = numberOfChildren();
   Expression e = *this;
-  for (int i = 0; i < nbChildren; i++) {
-    e.replaceChildAtIndexInPlace(i, childAtIndex(i).deepReduce(context, angleUnit));
+  for (int i = 0; i < e.numberOfChildren(); i++) {
+    e.replaceChildAtIndexInPlace(i, e.childAtIndex(i).deepReduce(context, angleUnit));
   }
-  e = shallowReduce(context, angleUnit);
+  e = e.shallowReduce(context, angleUnit);
   return e;
 }
 

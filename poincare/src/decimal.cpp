@@ -44,6 +44,10 @@ size_t DecimalNode::size() const {
   return sizeof(DecimalNode)+ sizeof(native_uint_t)*m_numberOfDigitsInMantissa;
 }
 
+Expression DecimalNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+  return Decimal(this).setSign(s, context, angleUnit);
+}
+
 int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
   assert(e->type() == Type::Decimal);
   const DecimalNode * other = static_cast<const DecimalNode *>(e);
@@ -271,6 +275,12 @@ Decimal::Decimal(Integer m, int e) :
 
 Decimal::Decimal(size_t size, Integer m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {
   node()->setValue(m.node()->digits(), m.node()->numberOfDigits(), e, m.isNegative());
+}
+
+Expression Decimal::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+  Decimal result = *this;
+  result.node()->setNegative(s == ExpressionNode::Sign::Negative);
+  return result;
 }
 
 Expression Decimal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {

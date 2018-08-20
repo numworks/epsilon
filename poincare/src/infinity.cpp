@@ -16,6 +16,10 @@ InfinityNode * InfinityNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
+Expression InfinityNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+  return Infinity(s == Sign::Negative);
+}
+
 LayoutRef InfinityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[5];
   int numberOfChars = serialize(buffer, 5, floatDisplayMode, numberOfSignificantDigits);

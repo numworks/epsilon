@@ -157,12 +157,12 @@ void TreeByReference::mergeChildrenAtIndexInPlace(TreeByReference t, int i) {
   } else {
     TreePool::sharedPool()->moveChildren(node()->lastDescendant()->next(), t.node());
   }
+  node()->incrementNumberOfChildren(numberOfNewChildren);
   t.node()->eraseNumberOfChildren();
   // If t is a child, remove it
   if (node()->hasChild(t.node())) {
     removeChildInPlace(t, 0);
   }
-  node()->incrementNumberOfChildren(numberOfNewChildren);
 }
 
 void TreeByReference::swapChildrenInPlace(int i, int j) {

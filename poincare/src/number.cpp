@@ -74,7 +74,7 @@ Number Number::FloatNumber(double d) {
   }
 }
 
-Number Number::BinaryOperation(const Number i, const Number j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
+Number Number::BinaryOperation(const Number & i, const Number & j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
   if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
   // Integer + Integer
     Integer k = integerOp(Integer(static_cast<IntegerNode *>(i.node())), Integer(static_cast<IntegerNode *>(j.node())));
@@ -102,15 +102,15 @@ Number Number::BinaryOperation(const Number i, const Number j, IntegerBinaryOper
   return FloatNumber(a);
 }
 
-Number Number::Addition(const Number i, const Number j) {
+Number Number::Addition(const Number & i, const Number & j) {
   return BinaryOperation(i, j, Integer::Addition, Rational::Addition, [](double a, double b) { return a+b; });
 }
 
-Number Number::Multiplication(const Number i, const Number j) {
+Number Number::Multiplication(const Number & i, const Number & j) {
   return BinaryOperation(i, j, Integer::Multiplication, Rational::Multiplication, [](double a, double b) { return a*b; });
 }
 
-Number Number::Power(const Number i, const Number j) {
+Number Number::Power(const Number & i, const Number & j) {
   return BinaryOperation(i, j, Integer::Power,
       // Special case for Rational^Rational: we escape to Float if the index is not an Integer
       [](const Rational & i, const Rational & j) {

@@ -216,7 +216,14 @@ Rational::Rational(native_int_t i) : Number()  {
   new (this) Rational(sizeof(RationalNode)+sizeof(native_uint_t)*2, &absI, 1, &one, 1, i < 0);
 }
 
-Integer Rational::integerNumerator() const {
+Integer Rational::signedIntegerNumerator() const {
+  NaturalIntegerPointer n = const_cast<Rational *>(this)->node()->numerator();
+  Integer i(&n);
+  i.setNegative(node()->sign() == ExpressionNode::Sign::Negative);
+  return i;
+}
+
+Integer Rational::unsignedIntegerNumerator() const {
   NaturalIntegerPointer n = const_cast<Rational *>(this)->node()->numerator();
   return Integer(&n);
 }
@@ -257,12 +264,12 @@ Rational Rational::Multiplication(const Rational & i, const Rational & j) {
   return Rational(newNumerator, newDenominator);
 }
 
-Rational Rational::IntegerPower(const Rational & i, const NaturalIntegerPointer & j, ExpressionNode::Sign jSign) {
+Rational Rational::IntegerPower(const Rational & i, const Integer & j) {
   NaturalIntegerPointer in = i.node()->numerator();
   NaturalIntegerPointer id = i.node()->denominator();
-  Integer newNumerator = NaturalIntegerPointer::upow(&in, &j);
-  Integer newDenominator = NaturalIntegerPointer::upow(&id, &j);
-  if (jSign == ExpressionNode::Sign::Negative) {
+  Integer newNumerator = NaturalIntegerPointer::upow(&in, j.node());
+  Integer newDenominator = NaturalIntegerPointer::upow(&id, j.node());
+  if (j.isNegative()) {
     return Rational(newDenominator, newNumerator);
   }
   return Rational(newNumerator, newDenominator);

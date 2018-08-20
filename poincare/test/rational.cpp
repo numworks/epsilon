@@ -68,13 +68,13 @@ QUIZ_CASE(poincare_rational_addition) {
   assert_add_to(Rational("18446744073709551616","4294967296"), Rational(-8,9), Rational("38654705656",9));
 }
 
-static inline void assert_pow_to(const Rational i,const NaturalIntegerPointer j, ExpressionNode::Sign jSign, const Rational k) {
-  assert(Rational::NaturalOrder(Rational::IntegerPower(i, j, jSign), k) == 0);
+static inline void assert_pow_to(const Rational i,const Integer j, const Rational k) {
+  assert(Rational::NaturalOrder(Rational::IntegerPower(i, j), k) == 0);
 }
 
 QUIZ_CASE(poincare_rational_power) {
-  assert_pow_to(Rational(4,5), Rational(3).naturalIntegerPointerNumerator(), Rational(3).sign(), Rational(64,125));
-  assert_pow_to(Rational(4,5), Rational(-3).naturalIntegerPointerNumerator(), Rational(-3).sign(), Rational(125,64));
+  assert_pow_to(Rational(4,5), Rational(3).signedIntegerNumerator(), Rational(64,125));
+  assert_pow_to(Rational(4,5), Rational(-3).signedIntegerNumerator(), Rational(125,64));
 }
 
 // Simplify

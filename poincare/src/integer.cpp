@@ -280,6 +280,13 @@ IntegerDivision NaturalIntegerAbstract::udiv(const NaturalIntegerAbstract * nume
 
   Integer A(numerator);
   Integer B(denominator);
+  if (A.isAllocationFailure()) {
+    return {.quotient = A, .remainder = A};
+  }
+  if (B.isAllocationFailure()) {
+    return {.quotient = B, .remainder = B};
+  }
+
   native_int_t base = 1 << 16;
   // TODO: optimize by just swifting digit and finding 2^kB that makes B normalized
   native_int_t d = base/(native_int_t)(B.node()->halfDigit(B.node()->numberOfHalfDigits()-1)+1);

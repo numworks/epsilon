@@ -22,10 +22,10 @@ Integer Arithmetic::GCD(const Integer a, const Integer b) {
   i.setNegative(false);
   j.setNegative(false);
   do {
-    if (i.isZero()) {
+    if (j.isAllocationFailure() || i.isZero()) {
       return j;
     }
-    if (j.isZero()) {
+    if (i.isAllocationFailure() || j.isZero()) {
       return i;
     }
     if (Integer::NaturalOrder(i, j) > 0) {

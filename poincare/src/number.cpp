@@ -118,7 +118,7 @@ Number Number::Power(const Number i, const Number j) {
           // We return an overflown result to reach the escape case Float+Float
           return Rational(Integer::Overflow());
         }
-        return Rational::IntegerPower(i, j.naturalIntegerPointerNumerator(), j.sign());
+        return Rational::IntegerPower(i, j.signedIntegerNumerator());
       },
       [](double a, double b) {
         return std::pow(a, b);

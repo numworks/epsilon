@@ -88,8 +88,8 @@ public:
   RationalNode * node() const override { return static_cast<RationalNode *>(Number::node()); }
 
   // Properties
-  Integer integerNumerator() const;
-  NaturalIntegerPointer naturalIntegerPointerNumerator() const { return node()->numerator(); }
+  Integer signedIntegerNumerator() const;
+  Integer unsignedIntegerNumerator() const;
   Integer integerDenominator() const;
 
   // BasicTest
@@ -107,7 +107,7 @@ public:
   static Rational Addition(const Rational & i, const Rational & j);
   static Rational Multiplication(const Rational & i, const Rational & j);
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
-  static Rational IntegerPower(const Rational & i, const NaturalIntegerPointer & j, ExpressionNode::Sign jSign);
+  static Rational IntegerPower(const Rational & i, const Integer & j);
   static int NaturalOrder(const Rational & i, const Rational & j) { return RationalNode::NaturalOrder(i.node(), j.node()); }
 
   // Simplification

@@ -7,13 +7,14 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_rational_constructor) {
+  int initialPoolSize = pool_size();
   Rational a(Integer("123"), Integer("324"));
   Rational b(Integer("3456"));
   Rational c(123,324);
   Rational d(3456789);
   Rational e(Integer::Overflow());
   Rational f(Integer::Overflow(), Integer::Overflow());
-  assert_pool_size(6);
+  assert_pool_size(initialPoolSize+6);
 }
 
 static inline void assert_equal(const Rational i, const Rational j) {

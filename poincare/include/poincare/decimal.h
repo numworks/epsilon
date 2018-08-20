@@ -12,7 +12,10 @@ namespace Poincare {
  *  - native_uint_t m_mantissa[] = { 1234 }
  */
 
+class Decimal;
+
 class DecimalNode : public NumberNode {
+  friend class Decimal;
 public:
   DecimalNode() :
     m_negative(false),
@@ -44,6 +47,7 @@ public:
   // Properties
   Type type() const override { return Type::Decimal; }
   Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -71,7 +75,7 @@ private:
   constexpr static int k_maxBufferSize = PrintFloat::k_numberOfStoredSignificantDigits+1+1+1+1+4+1;
   int convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const;
   template<typename T> Evaluation<T> templatedApproximate() const;
-
+  void setNegative(bool negative) { m_negative = negative; }
   bool m_negative;
   int m_exponent;
   size_t m_numberOfDigitsInMantissa;
@@ -96,6 +100,7 @@ private:
   DecimalNode * node() const override { return static_cast<DecimalNode *>(Number::node()); }
   template <typename T> Decimal(T f);
   Decimal(size_t size, Integer m, int e);
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;

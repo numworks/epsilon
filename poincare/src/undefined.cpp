@@ -19,6 +19,10 @@ int UndefinedNode::polynomialDegree(char symbolName) const {
   return -1;
 }
 
+Expression UndefinedNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+  return Undefined();
+}
+
 LayoutRef UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[6];
   int numberOfChars = PrintFloat::convertFloatToText<float>(NAN, buffer, 6, numberOfSignificantDigits, floatDisplayMode);

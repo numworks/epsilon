@@ -9,9 +9,9 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_parser) {
-  assert_pool_size(0);
+  int initialPoolSize = pool_size();
   assert_parsed_expression_type("2+3", ExpressionNode::Type::Addition);
-  assert_pool_size(0);
+  assert_pool_size(initialPoolSize);
 #if 0
   assert_parsed_expression_evaluates_to<float>("-2-3", "-5");
   assert_parsed_expression_evaluates_to<float>("1.2*X^(1)", "3.261938");

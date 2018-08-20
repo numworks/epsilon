@@ -194,10 +194,11 @@ tests += $(addprefix poincare/test/,\
   tree/pair_node.cpp\
   tree/tree_by_value.cpp\
   tree/tree_by_reference.cpp\
-  integer.cpp\
-  rational.cpp\
+  addition.cpp\
   helper.cpp\
+  integer.cpp\
   parser.cpp\
+  rational.cpp\
 )
 
 testsExpected += $(addprefix poincare/test/,\

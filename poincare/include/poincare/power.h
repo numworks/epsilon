@@ -93,7 +93,7 @@ private:
   Expression removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
   bool parentIsALogarithmOfSameBase() const;
   bool isNthRootOfUnity() const;
-  static Expression CreateNthRootOfUnity(const Rational r);
+  static Expression CreateComplexExponent(const Expression r); // Returns e^(i*pi*r)
   static bool TermIsARationalSquareRootOrRational(const Expression e);
   static const Rational RadicandInExpression(const Expression e);
   static const Rational RationalFactorInExpression(const Expression e);

@@ -126,6 +126,31 @@ Number Number::Power(const Number & i, const Number & j) {
     );
 }
 
+int Number::NaturalOrder(const Number & i, const Number & j) {
+  if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
+  // Integer + Integer
+    return Integer::NaturalOrder(static_cast<Integer>(i), static_cast<Integer>(j));
+  } else if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Rational) {
+  // Integer + Rational
+    return Rational::NaturalOrder(Rational(static_cast<Integer>(i)), static_cast<Rational>(j));
+  } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Integer) {
+  // Rational + Integer
+    return -Number::NaturalOrder(j, i);
+  } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
+  // Rational + Rational
+    return Rational::NaturalOrder(static_cast<Rational>(i), static_cast<Rational>(j));
+  }
+  // one of the operand is Undefined/Infinity/Float or the Integer/Rational addition overflowed
+  if (i.node()->doubleApproximation() < j.node()->doubleApproximation()) {
+    return -1;
+  } else if (i.node()->doubleApproximation() == j.node()->doubleApproximation()) {
+    return 0;
+  } else {
+    assert(i.node()->doubleApproximation() > j.node()->doubleApproximation());
+    return 1;
+  }
+}
+
 template Number Number::DecimalNumber<float>(float);
 template Number Number::DecimalNumber<double>(double);
 }

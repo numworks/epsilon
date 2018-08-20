@@ -63,7 +63,7 @@ int SerializationHelper::Infix(
       return bufferSize-1;
     }
     // Write the child, with parentheses if needed
-    serializeChild(interface->serializableChildAtIndex(firstChildIndex), interface, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
+    serializeChild(interface->serializableChildAtIndex(i), interface, buffer, bufferSize, floatDisplayMode, numberOfDigits, &numberOfChar);
     if (numberOfChar >= bufferSize-1) {
       return bufferSize-1;
     }

@@ -77,13 +77,13 @@ Number Number::FloatNumber(double d) {
 Number Number::BinaryOperation(const Number & i, const Number & j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
   if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
   // Integer + Integer
-    Integer k = integerOp(Integer(static_cast<IntegerNode *>(i.node())), Integer(static_cast<IntegerNode *>(j.node())));
+    Integer k = integerOp(static_cast<Integer>(i), static_cast<Integer>(j));
     if (!k.isInfinity()) {
       return k;
     }
   } else if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Rational) {
   // Integer + Rational
-    Rational r = rationalOp(Rational(Integer(static_cast<IntegerNode *>(i.node()))), Rational(static_cast<RationalNode *>(j.node())));
+    Rational r = rationalOp(Rational(static_cast<Integer>(i)), static_cast<Rational>(j));
     if (!r.numeratorOrDenominatorIsInfinity()) {
       return r;
     }
@@ -92,7 +92,7 @@ Number Number::BinaryOperation(const Number & i, const Number & j, IntegerBinary
     return Number::BinaryOperation(j, i, integerOp, rationalOp, doubleOp);
   } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
   // Rational + Rational
-    Rational a = rationalOp(Rational(static_cast<RationalNode *>(i.node())), Rational(static_cast<RationalNode *>(j.node())));
+    Rational a = rationalOp(Rational(static_cast<Rational>(i)), Rational(static_cast<Rational>(j)));
     if (!a.numeratorOrDenominatorIsInfinity()) {
       return a;
     }

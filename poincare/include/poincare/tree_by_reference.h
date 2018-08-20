@@ -83,11 +83,7 @@ public:
   // Replace
   void replaceWithInPlace(TreeByReference t);
   void replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild);
-  void replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild) {
-    assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
-    TreeByReference oldChild = childAtIndex(oldChildIndex);
-    replaceChildInPlace(oldChild, newChild);
-  }
+  void replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild);
   void replaceWithAllocationFailureInPlace(int currentNumberOfChildren);
   void replaceChildWithGhostInPlace(TreeByReference t);
   // Merge

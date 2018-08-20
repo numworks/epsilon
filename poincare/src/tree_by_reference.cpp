@@ -86,6 +86,18 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
   oldChild.node()->release(oldChild.numberOfChildren());
 }
 
+void TreeByReference::replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild) {
+  if (oldChildIndex < 0 || oldChildIndex >= numberOfChildren()) {
+    /* The only case where the index might be out of range is when a tree has
+     * become an allocation failure, in which case we need to escape the invalid
+     * child removal. */
+    assert(isAllocationFailure());
+    return;
+  }
+  TreeByReference oldChild = childAtIndex(oldChildIndex);
+  replaceChildInPlace(oldChild, newChild);
+}
+
 void TreeByReference::replaceWithAllocationFailureInPlace(int currentNumberOfChildren) {
   if (isAllocationFailure()) {
     return;
@@ -219,7 +231,13 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
 
 void TreeByReference::removeChildAtIndexInPlace(int i) {
   assert(!isUninitialized());
-  assert(i >= 0 && i < numberOfChildren());
+  if (i < 0 || i >= numberOfChildren()) {
+    /* The only case where the index might be out of range is when a tree has
+     * become an allocation failure, in which case we need to escape the invalid
+     * child removal. */
+    assert(isAllocationFailure());
+    return;
+  }
   TreeByReference t = childAtIndex(i);
   removeChildInPlace(t, t.numberOfChildren());
 }

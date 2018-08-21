@@ -56,7 +56,7 @@ int MultiplicationNode::polynomialDegree(char symbolName) const {
 }
 
 int MultiplicationNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  Multiplication(this).getPolynomialCoefficients(symbolName, coefficients);
+  return Multiplication(this).getPolynomialCoefficients(symbolName, coefficients);
 }
 
 template<typename T>

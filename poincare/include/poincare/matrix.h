@@ -75,7 +75,6 @@ public:
   Matrix(const MatrixNode * node) : Expression(node) {}
   Matrix(Expression e) : Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {
     addChildAtIndexInPlace(e, 0, 0);
-    setDimensions(1,1);
   }
 
   void setDimensions(int rows, int columns);
@@ -83,7 +82,6 @@ public:
   int numberOfColumns() const { return node()->numberOfColumns(); }
   void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
     Expression::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
-    setDimensions(1, currentNumberOfChildren + 1);
   }
   void addChildrenAsRowInPlace(TreeByValue t, int i);
   Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }

@@ -653,9 +653,9 @@ Expression Power::simplifyRationalRationalPower(Rational a, Rational b, Context&
   }
   Multiplication m;
   if (b.sign() == ExpressionNode::Sign::Negative) {
-    b.setSign(ExpressionNode::Sign::Positive);
-    Expression n = CreateSimplifiedIntegerRationalPower(a.integerDenominator(), b, false, context, angleUnit);
-    Expression d = CreateSimplifiedIntegerRationalPower(a.signedIntegerNumerator(), b, true, context, angleUnit);
+    Rational signedB = static_cast<Rational>(b.setSign(ExpressionNode::Sign::Positive));
+    Expression n = CreateSimplifiedIntegerRationalPower(a.integerDenominator(), signedB, false, context, angleUnit);
+    Expression d = CreateSimplifiedIntegerRationalPower(a.signedIntegerNumerator(), signedB, true, context, angleUnit);
     m.addChildAtIndexInPlace(n, 0, 0);
     m.addChildAtIndexInPlace(d, 1, m.numberOfChildren());
   } else {

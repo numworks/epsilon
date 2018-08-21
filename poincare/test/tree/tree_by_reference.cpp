@@ -46,9 +46,9 @@ QUIZ_CASE(tree_by_reference_allocation_failures) {
   BlobByReference b(1);
   assert_pool_size(initialPoolSize+1);
   {
-    BlobByReference array[500];
+    BlobByReference array[10000];
     assert(pool_size() > initialPoolSize+1);
-    assert(pool_size() < 500);
+    assert(pool_size() < 10000);
   }
   assert_pool_size(initialPoolSize+1);
 }

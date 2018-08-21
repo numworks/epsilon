@@ -40,6 +40,7 @@ QUIZ_CASE(poincare_power_evaluate) {
 QUIZ_CASE(poincare_power_simplify) {
   assert_parsed_expression_simplify_to("3^4", "81");
   assert_parsed_expression_simplify_to("3^(-4)", "1/81");
+  assert_parsed_expression_simplify_to("(-3)^3", "-27");
 #if 0
   assert_parsed_expression_simplify_to("1256^(1/3)*x", "2*root(157,3)*x");
   assert_parsed_expression_simplify_to("1256^(-1/3)", "1/(2*root(157,3))");

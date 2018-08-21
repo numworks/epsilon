@@ -19,6 +19,7 @@ public:
 
   NaturalIntegerPointer numerator() const;
   NaturalIntegerPointer denominator() const;
+  bool isNegative() const { return m_negative; }
   void setNegative(bool negative) { m_negative = negative; }
 
   // TreeNode
@@ -93,6 +94,7 @@ public:
   Integer integerDenominator() const;
 
   // BasicTest
+  bool isNegative() const { return node()->isNegative(); }
   bool isZero() const { return node()->isZero(); }
   bool isOne() const { return node()->isOne(); }
   bool isMinusOne() const { return node()->isMinusOne(); }

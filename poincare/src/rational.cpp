@@ -268,6 +268,9 @@ Rational Rational::IntegerPower(const Rational & i, const Integer & j) {
   NaturalIntegerPointer in = i.node()->numerator();
   NaturalIntegerPointer id = i.node()->denominator();
   Integer newNumerator = NaturalIntegerPointer::upow(&in, j.node());
+  if (i.isNegative() && !j.isEven()) {
+    newNumerator.setNegative(true);
+  }
   Integer newDenominator = NaturalIntegerPointer::upow(&id, j.node());
   if (j.isNegative()) {
     return Rational(newDenominator, newNumerator);

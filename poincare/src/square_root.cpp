@@ -2,58 +2,56 @@
 #include <poincare/power.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/nth_root_layout_node.h>
-extern "C" {
 #include <assert.h>
-}
 #include <cmath>
 #include <ion.h>
 
 namespace Poincare {
 
-Expression::Type SquareRoot::type() const {
-  return Type::SquareRoot;
+SquareRootNode * SquareRootNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<SquareRootNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * SquareRoot::clone() const {
-  SquareRoot * a = new SquareRoot(m_operands, true);
-  return a;
+LayoutReference SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return NthRootLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 static_assert('\x91' == Ion::Charset::Root, "Unicode error");
-int SquareRoot::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int SquareRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x91");
 }
 
 template<typename T>
-std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::sqrt(c);
   /* Openbsd trigonometric functions are numerical implementation and thus are
    * approximative.
-   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
-   * avoid weird results as sqrt(-1) = 6E-16+i, we compute the argument of
-   * the result of sqrt(c) and if arg ~ 0 [Pi], we discard the residual imaginary
-   * part and if arg ~ Pi/2 [Pi], we discard the residual real part. */
-  return ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result);
+   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to avoid
+   * weird results as sqrt(-1) = 6E-16+i, we compute the argument of the result
+   * of sqrt(c) and if arg ~ 0 [Pi], we discard the residual imaginary part and
+   * if arg ~ Pi/2 [Pi], we discard the residual real part.*/
+  return Complex<T>(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
 }
 
+Expression SquareRootNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return SquareRoot(this).shallowReduce(context, angleUnit);
+}
+
+
 Expression SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e != this) {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  if (operand(0)->type() == Type::Matrix) {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
-  Power * p = new Power(operand(0), new Rational(1, 2), false);
-  detachOperands();
-  replaceWith(p, true);
-  return p->shallowReduce(context, angleUnit);
-}
-
-LayoutRef SquareRoot::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return NthRootLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  Power p = Power(childAtIndex(0), Rational(1, 2));
+  return p.shallowReduce(context, angleUnit);
 }
 
 }

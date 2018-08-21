@@ -145,9 +145,9 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 %type <expression> exp;
 %type <expression> number;
 %type <expression> symb;
-/* TODO %type <listData> lstData; */
+%type <matrix> lstData;
 /* MATRICES_ARE_DEFINED */
-/* TODO %type <matrixData> mtxData; */
+%type <matrix> mtxData;
 
 /* FIXME: no destructors, Expressions are GCed */
 /* During error recovery, some symbols need to be discarded. We need to tell
@@ -174,18 +174,15 @@ Root:
   }
   ;
 
-/*
-lstData: exp { $$ = new Poincare::ListData($1); }
-       | lstData COMMA exp { $$ = $1; $$->pushExpression($3); }
+lstData: exp { $$ = Poincare::Matrix($1); }
+       | lstData COMMA exp { $$ = $1; $$.addChildAtIndexInPlace($3, $$.numberOfChildren(), $$.numberOfChildren()); }
        ;
-*/
 
 /* MATRICES_ARE_DEFINED */
-/*
-mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = new Poincare::MatrixData($2, false); $2->detachOperands(); delete $2; }
-       | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3->numberOfChildren() != $1->numberOfColumns()) { delete $1; delete $3; YYERROR; } ; $$ = $1; $$->pushListData($3, false); $3->detachOperands(); delete $3; }
+
+mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Poincare::Matrix::EmptyMatrix(); $$.addChildrenAsRowInPlace($2, 0); }
+       | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3.numberOfChildren() != $1.numberOfColumns()) { YYERROR; } ; $$ = $1; $$.addChildrenAsRowInPlace($3, $$.numberOfChildren()); }
        ;
-*/
 
 /* When approximating expressions to double, results are bounded by 1E308 (and
  * 1E-308 for small numbers). We thus accept decimals whose exponents are in
@@ -230,9 +227,8 @@ $4->detachOperands(); delete $4; $7->detachOperands(); delete $7; arguments->det
 */
        | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = Poincare::Parenthesis($2); }
 /* MATRICES_ARE_DEFINED */
-/*
-       | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = new Poincare::Matrix($2); delete $2; }
-*/
+
+       | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = $2; }
        ;
 
 bang   : term               { $$ = $1; }

@@ -33,9 +33,10 @@ public:
   int polynomialDegree(char symbolName) const override;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
 
+  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
+
 private:
   constexpr static int k_maxApproximatePowerMatrix = 1000;
-  template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);
 
   // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

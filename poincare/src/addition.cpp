@@ -223,9 +223,8 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
   int i = 0;
   int initialNumberOfOperands = thisCopy.numberOfChildren();
   while (i < initialNumberOfOperands) {
-    Expression c = thisCopy.childAtIndex(i);
-    if (c.type() == ExpressionNode::Type::Addition) {
-      thisCopy.mergeChildrenAtIndexInPlace(thisCopy.childAtIndex(i), i);
+    if (thisCopy.childAtIndex(i).type() == ExpressionNode::Type::Addition) {
+      thisCopy.mergeChildrenAtIndexInPlace(thisCopy.childAtIndex(i), i); // The tree is passed by reference
       continue;
     }
     i++;

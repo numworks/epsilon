@@ -199,6 +199,7 @@ tests += $(addprefix poincare/test/,\
   integer.cpp\
   matrix.cpp\
   parser.cpp\
+  power.cpp\
   rational.cpp\
 )
 

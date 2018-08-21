@@ -167,6 +167,7 @@ private:
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(symbolName, coefficients); }
 
   /* Simplification */
+  Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const { return node()->shallowReduce(context, angleUnit); }
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const { return node()->shallowBeautify(context, angleUnit); }

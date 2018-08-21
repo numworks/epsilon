@@ -149,6 +149,7 @@ public:
   /* Simplification */
   /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
   /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Hierarchy */
   ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }
@@ -157,9 +158,6 @@ public:
   // TreeNode
   TreeNode * uninitializedStaticNode() const override;
 protected:
-  // Private methods used in simplification process
-  /*!*/ virtual Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
-
   /* Hierarchy */
   ExpressionNode * parent() const override { return static_cast<ExpressionNode *>(TreeNode::parent()); }
 

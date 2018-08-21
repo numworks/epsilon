@@ -24,11 +24,7 @@ ifeq ($(USE_LIBA),0)
 include liba/Makefile.bridge
 else
 SFLAGS += -ffreestanding -nostdinc -nostdlib
-ifneq ($(USE_LIBGCC),0)
-include liba/Makefile.libgcc
-else
 include liba/Makefile
-endif
 include libaxx/Makefile
 endif
 include ion/Makefile

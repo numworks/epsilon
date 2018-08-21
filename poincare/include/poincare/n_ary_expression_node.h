@@ -9,9 +9,8 @@ class NAryExpressionNode : public ExpressionNode { // TODO: VariableArityExpress
 public:
   //Tree
   int numberOfChildren() const override { return m_numberOfChildren; }
-  void incrementNumberOfChildren(int increment = 1) override { /*TODO override for alloc fail ?*/ m_numberOfChildren+= increment; }
+  void incrementNumberOfChildren(int increment = 1) override { m_numberOfChildren+= increment; }
   void decrementNumberOfChildren(int decrement = 1) override {
-    /*TODO override for alloc fail ?*/
     assert(m_numberOfChildren >= decrement);
     m_numberOfChildren-= decrement;
   }

@@ -43,6 +43,8 @@ public:
   static Number Multiplication(const Number & i, const Number & j);
   static Number Power(const Number & i, const Number & j);
   static int NaturalOrder(const Number & i, const Number & j);
+
+  Number setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const { return static_cast<Number>(Expression::setSign(s, context, angleUnit)); }
 protected:
   Number() : Expression() {}
   NumberNode * node() const override { return static_cast<NumberNode *>(Expression::node()); }

@@ -152,9 +152,9 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
     if (thisCopy.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(thisCopy.childAtIndex(0)).isMinusOne()) {
       thisCopy.removeChildAtIndexInPlace(0);
     } else {
-      thisCopy.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+      thisCopy.replaceChildAtIndexInPlace(0, childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit));
     }
-    return Opposite(static_cast<Multiplication>(thisCopy).squashUnaryHierarchy().shallowBeautify(context, angleUnit));
+    return Opposite(static_cast<Multiplication>(thisCopy).squashUnaryHierarchy());
   }
 
   /* Step 2: Merge negative powers: a*b^(-1)*c^(-pi)*d = a*(b*c^pi)^(-1)
@@ -430,7 +430,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
     }
     i++;
   }
-  if (thisCopy.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(thisCopy.childAtIndex(0)).isOne() && numberOfChildren() > 1) {
+  if (thisCopy.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(thisCopy.childAtIndex(0)).isOne() && thisCopy.numberOfChildren() > 1) {
     thisCopy.removeChildAtIndexInPlace(0);
   }
 
@@ -597,10 +597,8 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
     return;
   }
   Number sumPQ = Number::Addition(p, q);
-  Number absP = p;
-  absP.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
-  Number absQ = q;
-  absQ.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+  Number absP = p.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+  Number absQ = q.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
   // TODO: uncomment once Tangent is implemented
   /*Expression tan = Tangent(x);
   if (Number::NaturalOrder(absP, absQ) < 0) {

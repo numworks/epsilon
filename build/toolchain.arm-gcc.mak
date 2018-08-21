@@ -12,3 +12,4 @@ SFLAGS += -fdata-sections -ffunction-sections
 LDFLAGS += -Wl,--gc-sections
 endif
 SFLAGS += -mthumb -march=armv7e-m -mfloat-abi=hard -mcpu=cortex-m4 -mfpu=fpv4-sp-d16
+LDFLAGS += $(SFLAGS) -lgcc -Wl,-T,$(LDSCRIPT)

@@ -151,8 +151,9 @@ random { poincare_expression_yylval.expression = new Random(); return FUNCTION; 
 randint { poincare_expression_yylval.expression = new Randint(); return FUNCTION; }
 re { poincare_expression_yylval.expression = new RealPart(); return FUNCTION; }
 rem { poincare_expression_yylval.expression = new DivisionRemainder(); return FUNCTION; }
-root { poincare_expression_yylval.expression = new NthRoot(); return FUNCTION; }
-round { poincare_expression_yylval.expression = new Round(); return FUNCTION; }
+*/
+root { poincare_expression_yylval.expression = NthRoot(); return FUNCTION; }
+ /*round { poincare_expression_yylval.expression = new Round(); return FUNCTION; }
 sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
 sinh { poincare_expression_yylval.expression = new HyperbolicSine(); return FUNCTION; }
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
@@ -165,10 +166,10 @@ undef { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 inf { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 \x8a { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8d { return EE; }
- /*\x91 { poincare_expression_yylval.expression = new SquareRoot(); return FUNCTION; }*/
 \x8c { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8f { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x90 { return STO; }
+\x91 { poincare_expression_yylval.expression = SquareRoot(); return FUNCTION; }
 = { return EQUAL; }
 \+ { return PLUS; }
 \- { return MINUS; }

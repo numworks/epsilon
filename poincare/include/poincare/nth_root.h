@@ -40,6 +40,7 @@ private:
 
 class NthRoot : public Expression {
 public:
+  NthRoot() : Expression(TreePool::sharedPool()->createTreeNode<NthRootNode>()) {}
   NthRoot(const NthRootNode * n) : Expression(n) {}
   NthRoot(Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<NthRootNode>()) {
     replaceChildAtIndexInPlace(0, child1);

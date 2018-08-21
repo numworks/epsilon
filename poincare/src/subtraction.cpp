@@ -52,7 +52,6 @@ template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix
   return result;
 }
 
-
 Expression SubtractionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   return Subtraction(this).shallowReduce(context, angleUnit);
 }

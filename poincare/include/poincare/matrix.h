@@ -68,9 +68,12 @@ class Matrix : public Expression {
   template<typename T> friend class MatrixComplexNode;
   friend class GlobalContext;
 public:
+  static Matrix EmptyMatrix() {
+    return Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>());
+  }
+  Matrix() : Expression() {}
   Matrix(const MatrixNode * node) : Expression(node) {}
-  Matrix() : Expression(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {}
-  Matrix(Expression e) : Matrix() {
+  Matrix(Expression e) : Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {
     addChildAtIndexInPlace(e, 0, 0);
     setDimensions(1,1);
   }
@@ -80,8 +83,9 @@ public:
   int numberOfColumns() const { return node()->numberOfColumns(); }
   void addChildAtIndexInPlace(TreeByValue t, int index, int currentNumberOfChildren) {
     Expression::addChildAtIndexInPlace(t, index, currentNumberOfChildren);
+    setDimensions(1, currentNumberOfChildren + 1);
   }
-
+  void addChildrenAsRowInPlace(TreeByValue t, int i);
   Expression matrixChild(int i, int j) { return childAtIndex(i*numberOfColumns()+j); }
 
   /* Operation on matrix */

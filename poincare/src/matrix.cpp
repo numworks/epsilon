@@ -97,11 +97,24 @@ Evaluation<T> MatrixNode::templatedApproximate(Context& context, Preferences::An
 // MATRIX
 
 void Matrix::setDimensions(int rows, int columns) {
-  if (node()->type() != ExpressionNode::Type::AllocationFailure) {
-    assert(rows * columns == node()->numberOfChildren());
-  }
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
+}
+
+void Matrix::addChildrenAsRowInPlace(TreeByValue t, int i) {
+  if (t.isAllocationFailure()) {
+    replaceWithAllocationFailureInPlace(numberOfChildren());
+    return;
+  }
+  int previousNumberOfColumns = numberOfColumns();
+  if (previousNumberOfColumns > 0) {
+    assert(t.numberOfChildren() == numberOfColumns());
+  }
+  int previousNumberOfRows = numberOfRows();
+  for (int i = 0; i < t.numberOfChildren(); i++) {
+    addChildAtIndexInPlace(t.childAtIndex(i), numberOfChildren(), numberOfChildren());
+  }
+  setDimensions(previousNumberOfRows + 1, previousNumberOfColumns == 0 ? t.numberOfChildren() : previousNumberOfColumns);
 }
 
 int Matrix::rank(Context & context, Preferences::AngleUnit angleUnit) {

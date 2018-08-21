@@ -56,6 +56,7 @@ objs += $(addprefix poincare/src/,\
   matrix_complex.o\
   multiplication.o\
   n_ary_expression_node.o\
+  nth_root.o\
   number.o\
   parenthesis.o\
   power.o\

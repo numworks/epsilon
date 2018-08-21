@@ -43,7 +43,7 @@ public:
   NthRoot(const NthRootNode * n) : Expression(n) {}
   NthRoot(Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<NthRootNode>()) {
     replaceChildAtIndexInPlace(0, child1);
-    replaceChildAtIndexInPlace(0, child2);
+    replaceChildAtIndexInPlace(1, child2);
   }
 
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;

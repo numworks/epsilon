@@ -7,6 +7,8 @@ namespace Poincare {
 
 class NAryExpressionNode : public ExpressionNode { // TODO: VariableArityExpressionNode?
 public:
+  void setChildrenInPlace(Expression other) override { assert(false); }
+
   //Tree
   int numberOfChildren() const override { return m_numberOfChildren; }
   void incrementNumberOfChildren(int increment = 1) override { m_numberOfChildren+= increment; }

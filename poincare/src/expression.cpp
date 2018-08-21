@@ -158,6 +158,13 @@ Expression Expression::defaultShallowBeautify(Context & context, Preferences::An
   return *this;
 }
 
+void Expression::defaultSetChildrenInPlace(Expression other) {
+  assert(numberOfChildren() == other.numberOfChildren());
+  for (int i = 0; i < numberOfChildren(); i++) {
+    replaceChildAtIndexInPlace(i, other.childAtIndex(i));
+  }
+}
+
 // Private
 
 Expression Expression::defaultReplaceSymbolWithExpression(char symbol, Expression expression) const {

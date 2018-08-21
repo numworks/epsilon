@@ -87,6 +87,10 @@ bool ExpressionNode::isOfType(Type * types, int length) const {
   return false;
 }
 
+void ExpressionNode::setChildrenInPlace(Expression other) {
+  Expression(this).defaultSetChildrenInPlace(other);
+}
+
 TreeNode * ExpressionNode::uninitializedStaticNode() const {
   return Expression().node();
 }

@@ -8,12 +8,12 @@
 #include <poincare/global_context.h>
 //#include <poincare/matrix.h>
 //#include <poincare/matrix_inverse.h>
-//#include <poincare/nth_root.h>
+#include <poincare/nth_root.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 //#include <poincare/simplification_root.h>
 //#include <poincare/sine.h>
-//#include <poincare/square_root.h>
+#include <poincare/square_root.h>
 #include <poincare/symbol.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
@@ -590,14 +590,13 @@ Expression Power::shallowBeautify(Context& context, Preferences::AngleUnit angle
     Division d = Division(Rational(1), p);
     return d.shallowBeautify(context, angleUnit);
   }
-  // TODO decomment when sqrt and nth root are ready
-  /*if (childAtIndex(1).type() == ExpressionNode::Type::Rational && static_cast<Rational>(childAtIndex(1)).signedIntegerNumerator().isOne()) {
+  if (childAtIndex(1).type() == ExpressionNode::Type::Rational && static_cast<Rational>(childAtIndex(1)).signedIntegerNumerator().isOne()) {
     Integer index = static_cast<Rational>(childAtIndex(1)).integerDenominator();
     if (index.isEqualTo(Integer(2))) {
       return SquareRoot(childAtIndex(0));
     }
     return NthRoot(childAtIndex(0), Rational(index));
-  }*/
+  }
 
   // +(a,b)^c ->(+(a,b))^c and *(a,b)^c ->(*(a,b))^c
   if (childAtIndex(0).type() == ExpressionNode::Type::Addition

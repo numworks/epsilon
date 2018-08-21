@@ -46,9 +46,9 @@ QUIZ_CASE(tree_by_value_allocation_failures) {
   BlobByValue b(1);
   assert_pool_size(initialPoolSize+1);
   {
-    BlobByValue array[500];
+    BlobByValue array[10000];
     assert(pool_size() > 1);
-    assert(pool_size() < 500);
+    assert(pool_size() < 10000);
   }
   assert_pool_size(initialPoolSize+1);
 }

@@ -224,7 +224,7 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
   t.node()->retain();
   node()->incrementNumberOfChildren();
 
-  node()->didAddChildAtIndex(numberOfChildren());
+  node()->didAddChildAtIndex(currentNumberOfChildren+1);
 }
 
 // Remove

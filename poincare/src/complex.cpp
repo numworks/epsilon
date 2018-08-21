@@ -21,7 +21,10 @@ extern "C" {
 
 namespace Poincare {
 
-template<typename T> using AllocationFailureComplexNode = AllocationFailureEvaluationNode<ComplexNode, T>;
+template<typename T>
+class AllocationFailureComplexNode : public AllocationFailureEvaluationNode<ComplexNode, T > {
+  void setComplex(std::complex<T> c) override {}
+};
 
 template<typename T>
 ComplexNode<T> * ComplexNode<T>::FailedAllocationStaticNode() {
@@ -121,16 +124,7 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
   }
 }
 
-template<typename T>
-Complex<T>::Complex(std::complex<T> c) :
-  Evaluation<T>(TreePool::sharedPool()->createTreeNode<ComplexNode<T>>())
-{
-  static_cast<ComplexNode<T> *>(this->node())->setComplex(c);
-}
-
 template class ComplexNode<float>;
 template class ComplexNode<double>;
-template class Complex<float>;
-template class Complex<double>;
 
 }

@@ -35,48 +35,47 @@ objs += $(addprefix poincare/src/,\
 
 objs += $(addprefix poincare/src/,\
   addition.o\
+  approximation_helper.o\
   arithmetic.o\
-  expression_lexer.o\
-  expression_parser.o\
-  layout_helper.o\
-  matrix_complex.o\
   complex.o\
+  decimal.o\
+  division.o\
+  evaluation.o\
+  expression.o\
+  expression_lexer.o\
+  expression_node.o\
+  expression_parser.o\
+  float.o\
+  ghost_node.o\
+  global_context.o\
+  infinity.o\
+  integer.o\
+  layout_helper.o\
+  opposite.o\
+  matrix.o\
+  matrix_complex.o\
   multiplication.o\
+  n_ary_expression_node.o\
+  number.o\
+  parenthesis.o\
   power.o\
+  print_float.o\
+  preferences.o\
+  rational.o\
+  serialization_helper.o\
+  simplification_helper.o\
+  square_root.o\
+  subtraction.o\
+  symbol.o\
   tree_node.o\
   tree_pool.o\
   tree_by_reference.o\
   tree_by_value.o\
-  subtraction.o\
   undefined.o\
-  infinity.o\
-  integer.o\
-  opposite.o\
-  decimal.o\
-  rational.o\
-  symbol.o\
-  float.o\
-  number.o\
-  n_ary_expression_node.o\
-  parenthesis.o\
-  division.o\
-  expression_node.o\
-  expression.o\
-  serialization_helper.o\
-  approximation_helper.o\
-  layout_helper.o\
-  simplification_helper.o\
-  global_context.o\
-  variable_context.o\
-  print_float.o\
-  ghost_node.o\
-  preferences.o\
-  evaluation.o\
-  matrix.o\
-  square_root.o\
   uninitialized_evaluation_node.o\
   uninitialized_expression_node.o\
   uninitialized_layout_node.o\
+  variable_context.o\
 )
 
 objsExpected += $(addprefix poincare/src/,\

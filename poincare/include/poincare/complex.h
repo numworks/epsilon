@@ -29,7 +29,7 @@ public:
   }
 #endif
 
-  void setComplex(std::complex<T> c);
+  virtual void setComplex(std::complex<T> c);
   typename Poincare::EvaluationNode<T>::Type type() const override { return Poincare::EvaluationNode<T>::Type::Complex; }
   bool isUndefined() const override {
     return (std::isnan(this->real()) && std::isnan(this->imag()));
@@ -41,14 +41,21 @@ public:
 };
 
 template<typename T>
-class Complex : public std::complex<T>, public Evaluation<T> {
+class Complex : public Evaluation<T> {
 public:
   Complex(ComplexNode<T> * n) : Evaluation<T>(n) {}
   Complex(T a, T b = 0.0) : Complex(std::complex<T>(a, b)) {}
-  Complex(std::complex<T> c);
+  Complex(std::complex<T> c) : Evaluation<T>(TreePool::sharedPool()->createTreeNode<ComplexNode<T>>()) {
+    node()->setComplex(c);
+  }
   static Complex<T> Undefined() {
     return Complex<T>(NAN, NAN);
   }
+  std::complex<T> stdComplex() { return *node(); }
+  T real() { return node()->real(); }
+  T imag() { return node()->imag(); }
+private:
+  ComplexNode<T> * node() const override { return static_cast<ComplexNode<T> *>(Evaluation<T>::node()); }
 };
 
 

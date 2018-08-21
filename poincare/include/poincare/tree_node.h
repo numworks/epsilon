@@ -165,7 +165,7 @@ public:
     logAttributes(stream);
     stream << ">";
     if (recursive) {
-      for (TreeNode * child : depthFirstChildren()) {
+      for (TreeNode * child : directChildren()) {
         child->log(stream, recursive);
       }
     }

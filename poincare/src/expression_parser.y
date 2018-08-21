@@ -68,7 +68,7 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 /* The INTEGER token uses the "string" part of the union to store its value */
 %token <expression> DIGITS
 %token <character> SYMBOL
-%token <function> FUNCTION
+%token <expression> FUNCTION
 %token <expression> UNDEFINED
 %token <expression> EMPTY
 
@@ -222,8 +222,9 @@ for (int i = 0; i < $7->numberOfChildren(); i++) { arguments->pushExpression($7-
 for (int i = 0; i < $4->numberOfChildren(); i++) { arguments->pushExpression($4->operands()[i]); }
 $1->setArgument(arguments, totalNumberOfArguments, false);
 $4->detachOperands(); delete $4; $7->detachOperands(); delete $7; arguments->detachOperands(); delete arguments;}
-       | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands($3->numberOfChildren())) { delete $1; delete $3; YYERROR; } ; $1->setArgument($3, $3->numberOfChildren(), false); $3->detachOperands(); delete $3; }
-       | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands(0)) { delete $1; YYERROR; } ; }
+*/
+       | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; $$.setChildrenInPlace($3); }
+/*       | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands(0)) { delete $1; YYERROR; } ; }
 */
        | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = Poincare::Parenthesis($2); }
 /* MATRICES_ARE_DEFINED */

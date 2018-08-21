@@ -70,6 +70,7 @@ public:
   Expression childAtIndex(int i) const {
     return Expression(static_cast<ExpressionNode *>(TreeByValue::childAtIndex(i).node()));
   }
+  void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }
 
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();
@@ -161,6 +162,8 @@ protected:
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
 private:
+  /* Hierarchy*/
+  void defaultSetChildrenInPlace(Expression other);
   /* Properties */
   Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression) const;
   int defaultGetPolynomialCoefficients(char symbol, Expression expression[]) const;

@@ -63,8 +63,8 @@ public:
   Subtraction(Expression child1, Expression child2) :
     Expression(TreePool::sharedPool()->createTreeNode<SubtractionNode>())
   {
-    replaceChildAtIndexInPlace(0, child1); //TODO ?
-    replaceChildAtIndexInPlace(1, child2); //TODO ?
+    replaceChildAtIndexInPlace(0, child1);
+    replaceChildAtIndexInPlace(1, child2);
   }
 
   // Expression

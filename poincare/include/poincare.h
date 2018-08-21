@@ -125,6 +125,8 @@
 #include <poincare/undefined.h>
 #include <poincare/matrix.h>
 #include <poincare/print_float.h>
+#include <poincare/square_root.h>
+#include <poincare/nth_root.h>
 
 #endif
 #endif

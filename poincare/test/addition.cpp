@@ -59,7 +59,7 @@ QUIZ_CASE(poincare_addition_simplify) {
   assert_parsed_expression_simplify_to("-2-6", "-8");
   assert_parsed_expression_simplify_to("-A", "-A");
   assert_parsed_expression_simplify_to("A-A", "0");
-//  assert_parsed_expression_simplify_to("-5P+3P", "-2*P");
+  assert_parsed_expression_simplify_to("-5P+3P", "-2*P");
   assert_parsed_expression_simplify_to("1-3+A-5+2A-4A", "(-7)-A");
   assert_parsed_expression_simplify_to("A+B-A-B", "0");
   assert_parsed_expression_simplify_to("A+B+(-1)*A+(-1)*B", "0");

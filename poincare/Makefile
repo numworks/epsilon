@@ -197,6 +197,7 @@ tests += $(addprefix poincare/test/,\
   addition.cpp\
   helper.cpp\
   integer.cpp\
+  matrix.cpp\
   parser.cpp\
   rational.cpp\
 )

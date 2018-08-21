@@ -3,57 +3,55 @@
 #include <poincare/power.h>
 #include <poincare/undefined.h>
 #include <poincare/nth_root_layout_node.h>
-
-extern "C" {
 #include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-Expression::Type NthRoot::type() const {
-  return Type::NthRoot;
+NthRootNode * NthRootNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<NthRootNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * NthRoot::clone() const {
-  NthRoot * a = new NthRoot(m_operands, true);  return a;
+LayoutReference NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return NthRootLayoutRef(
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression NthRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
-    return replaceWith(new Undefined(), true);
-  }
-#endif
-  Power * invIndex = new Power(operand(1), new Rational(-1), false);
-  Power * p = new Power(operand(0), invIndex, false);
-  detachOperands();
-  invIndex->shallowReduce(context, angleUnit);
-  replaceWith(p, true);
-  return p->shallowReduce(context, angleUnit);
-}
-
-LayoutRef NthRoot::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return NthRootLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+Expression NthRootNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return NthRoot(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>
-Evaluation<T> NthRoot::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * base = operand(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * index = operand(1)->privateApproximate(T(), context, angleUnit);
+Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> base = childAtIndex(0)->approximate(T(), context, angleUnit);
+  Evaluation<T> index = childAtIndex(1)->approximate(T(), context, angleUnit);
   Complex<T> result = Complex<T>::Undefined();
-  if (base->type() == Evaluation<T>::Type::Complex && index->type() == Evaluation<T>::Type::Complex) {
-    Complex<T> * basec = static_cast<Complex<T> *>(base);
-    Complex<T> * indexc = static_cast<Complex<T> *>(index);
-    result = Power::compute(*basec, std::complex<T>(1)/(*indexc));
+  if (base.type() == EvaluationNode<T>::Type::Complex
+      && index.type() == EvaluationNode<T>::Type::Complex)
+  {
+    Complex<T> basec = static_cast<Complex<T> >(base);
+    Complex<T> indexc = static_cast<Complex<T> >(index);
+    result = PowerNode::compute(basec.stdComplex(), std::complex<T>(1)/(indexc.stdComplex()));
   }
-  delete base;
-  delete index;
-  return new Complex<T>(result);
+  return result;
+}
+
+Expression NthRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode:Type::Matrix) {
+    return Undefined();
+  }
+#endif
+  Expression invIndex = Power(childAtIndex(1), Rational(-1)).shallowReduce(context, angleUnit);
+  Power p = Power(childAtIndex(0), invIndex);
+  return p.shallowReduce(context, angleUnit);
 }
 
 }

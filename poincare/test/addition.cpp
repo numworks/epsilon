@@ -37,7 +37,6 @@ QUIZ_CASE(poincare_addition_evaluate) {
   assert_parsed_expression_evaluates_to<float>("I", "I");
   assert_parsed_expression_evaluates_to<float>("I+I", "2*I");
   assert_parsed_expression_evaluates_to<double>("2+I+4+I", "6+2*I");
-#if 0
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]+3", "[[4,5][6,7][8,9]]");
   assert_parsed_expression_evaluates_to<double>("[[1,2+I][3,4][5,6]]+3+I", "[[4+I,5+2*I][6+I,7+I][8+I,9+I]]");
@@ -45,7 +44,6 @@ QUIZ_CASE(poincare_addition_evaluate) {
   assert_parsed_expression_evaluates_to<double>("3+I+[[1,2+I][3,4][5,6]]", "[[4+I,5+2*I][6+I,7+I][8+I,9+I]]");
   assert_parsed_expression_evaluates_to<float>("[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", "[[2,4][6,8][10,12]]");
   assert_parsed_expression_evaluates_to<double>("[[1,2+I][3,4][5,6]]+[[1,2+I][3,4][5,6]]", "[[2,4+2*I][6,8][10,12]]");
-#endif
 #endif
 }
 

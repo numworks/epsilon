@@ -503,9 +503,9 @@ void Multiplication::factorizeExponent(int i, int j, Context & context, Preferen
    * example, it turns Multiplication(2^x,3^x) into Multiplication(6^x). */
 
   // Step 1: find the new base
-  Expression s = Multiplication(childAtIndex(i), childAtIndex(j)).shallowReduce(context, angleUnit); // 2^x*3^x -> (2*3)^x -> 6^x
+  Expression m = Multiplication(Base(childAtIndex(i)), Base(childAtIndex(j))).shallowReduce(context, angleUnit); // 2^x*3^x -> (2*3)^x -> 6^x
   // Step 2: create the new power
-  Expression p = Power(childAtIndex(i).childAtIndex(0), s).shallowReduce(context, angleUnit); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
+  Expression p = Power(m, childAtIndex(i).childAtIndex(1)).shallowReduce(context, angleUnit); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
   // Step 3: Replace one of the child
   replaceChildAtIndexInPlace(i, p);
   // Step 4: Get rid of the other child

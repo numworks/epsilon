@@ -89,6 +89,7 @@ public:
   // Expression
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
+  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 private:
   static bool TermsHaveIdenticalNonNumeralFactors(const Expression e1, const Expression e2);
   Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) {

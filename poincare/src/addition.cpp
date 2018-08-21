@@ -28,22 +28,7 @@ int AdditionNode::polynomialDegree(char symbolName) const {
 }
 
 int AdditionNode::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
-  int deg = polynomialDegree(symbolName);
-  if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
-    return -1;
-  }
-  for (int k = 0; k < deg+1; k++) {
-    coefficients[k] = Addition();
-  }
-  Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  for (int i = 0; i < numberOfChildren(); i++) {
-    int d = childAtIndex(i)->getPolynomialCoefficients(symbolName, intermediateCoefficients);
-    assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
-    for (int j = 0; j < d+1; j++) {
-      static_cast<Addition>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());
-    }
-  }
-  return deg;
+  return Addition(this).getPolynomialCoefficients(symbolName, coefficients);
 }
 
 // Private
@@ -158,6 +143,25 @@ const Number AdditionNode::NumeralFactor(Expression e) {
     return result;
   }
   return Rational(1);
+}
+
+int Addition::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
+  int deg = polynomialDegree(symbolName);
+  if (deg < 0 || deg > Expression::k_maxPolynomialDegree) {
+    return -1;
+  }
+  for (int k = 0; k < deg+1; k++) {
+    coefficients[k] = Addition();
+  }
+  Expression intermediateCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+  for (int i = 0; i < numberOfChildren(); i++) {
+    int d = childAtIndex(i).getPolynomialCoefficients(symbolName, intermediateCoefficients);
+    assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
+    for (int j = 0; j < d+1; j++) {
+      static_cast<Addition>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());
+    }
+  }
+  return deg;
 }
 
 Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {

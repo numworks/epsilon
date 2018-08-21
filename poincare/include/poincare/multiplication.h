@@ -29,12 +29,13 @@ public:
   }
 #endif
 
+  // Properties
   Type type() const override { return Type::Multiplication; }
   Sign sign() const override;
   int polynomialDegree(char symbolName) const override;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
 
-  // Evaluation
+  // Approximation
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d) { return Complex<T>(c*d); }
   template<typename T> static MatrixComplex<T> computeOnComplexAndMatrix(const std::complex<T> c, const MatrixComplex<T> m) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
@@ -49,6 +50,8 @@ private:
   // Layout
   bool needsParenthesesWithParent(const SerializationHelperInterface * parentNode) const override;
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+
+  // Serialize
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
@@ -56,7 +59,7 @@ private:
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
 
-  /* Evaluation */
+  /* Approximation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
     return ApproximationHelper::ElementWiseOnMatrixComplexAndComplex(m, c, compute<T>);
   }
@@ -87,15 +90,18 @@ public:
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
+  int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
+  Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 private:
   // Simplification
   Expression privateShallowReduce(Context& context, Preferences::AngleUnit angleUnit, bool expand, bool canBeInterrupted) const;
-  void mergeMultiplicationOperands();
-  void factorizeBase(Expression e1, Expression e2, Context & context, Preferences::AngleUnit angleUnit);
-  void factorizeExponent(Expression e1, Expression e2, Context & context, Preferences::AngleUnit angleUnit);
-  Expression distributeOnOperandAtIndex(int index, Context & context, Preferences::AngleUnit angleUnit);
+  void mergeMultiplicationChildrenInPlace();
+  void factorizeBase(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
+  void mergeInChildByFactorizingBase(int i, Expression e, Context & context, Preferences::AngleUnit angleUnit);
+  void factorizeExponent(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
+  Expression distributeOnOperandAtIndex(int index, Context & context, Preferences::AngleUnit angleUnit) const;
   void addMissingFactors(Expression factor, Context & context, Preferences::AngleUnit angleUnit);
-  void factorizeSineAndCosine(Expression o1, Expression o2, Context & context, Preferences::AngleUnit angleUnit);
+  void factorizeSineAndCosine(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
   static bool HaveSameNonNumeralFactors(const Expression e1, const Expression e2);
   static bool TermsHaveIdenticalBase(const Expression e1, const Expression e2);
   static bool TermsHaveIdenticalExponent(const Expression e1, const Expression e2);
@@ -104,7 +110,7 @@ private:
   static const Expression CreateExponent(Expression e);
   /* Warning: mergeNegativePower doesnot always return  a multiplication:
    *      *(b^-1,c^-1) -> (bc)^-1 */
-  Expression mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit);
+  Expression mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

@@ -530,8 +530,7 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, 
     Multiplication m = *this;
     m.replaceChildAtIndexInPlace(i, childAtIndex(i).childAtIndex(j));
     // Reduce m: pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
-    Expression reducedM = m.shallowReduce(context, angleUnit);
-    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+    a.addChildAtIndexInPlace(m.shallowReduce(context, angleUnit), a.numberOfChildren(), a.numberOfChildren());
   }
   return a.shallowReduce(context, angleUnit); // Order terms, put under a common denominator if needed
 }

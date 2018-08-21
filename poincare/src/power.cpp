@@ -185,7 +185,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(const
       return MatrixComplex<T>::Undefined();
     }
     Complex<T> minusC = Complex<T>(-d);
-    MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(inverse, minusC);
+    MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(inverse, minusC.stdComplex());
     return result;
   }
   MatrixComplex<T> result = MatrixComplex<T>::createIdentity(m.numberOfRows());

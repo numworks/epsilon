@@ -73,6 +73,7 @@ objs += $(addprefix poincare/src/,\
   preferences.o\
   evaluation.o\
   matrix.o\
+  square_root.o\
   uninitialized_evaluation_node.o\
   uninitialized_expression_node.o\
   uninitialized_layout_node.o\

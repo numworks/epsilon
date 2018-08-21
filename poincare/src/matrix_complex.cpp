@@ -1,7 +1,7 @@
 #include <poincare/matrix_complex.h>
-//#include <poincare/matrix.h>
+#include <poincare/matrix.h>
 #include <poincare/expression.h>
-//#include <poincare/undefined.h>
+#include <poincare/undefined.h>
 #include <ion.h>
 #include <cmath>
 #include <assert.h>
@@ -45,18 +45,17 @@ bool MatrixComplexNode<T>::isUndefined() const {
 
 template<typename T>
 Expression MatrixComplexNode<T>::complexToExpression(Preferences::ComplexFormat complexFormat) const {
-  return Undefined();/* TODO
-  Matrix matrix;
+  Matrix matrix = Matrix::EmptyMatrix();
   for (int i = 0; i < numberOfChildren(); i++) {
-    EvaluationNode<T> * child = childAtIndex(i);
+    EvaluationNode<T> * child = EvaluationNode<T>::childAtIndex(i);
     if (child->type() == EvaluationNode<T>::Type::Complex) {
-      matrix.addChildTreeAtIndex(child->complexToExpression(complexFormat), i, i);
+      matrix.addChildAtIndexInPlace(child->complexToExpression(complexFormat), i, i);
     } else {
-      matrix.addChildTreeAtIndex(Undefined(), i, i);
+      matrix.addChildAtIndexInPlace(Undefined(), i, i);
     }
   }
   matrix.setDimensions(numberOfRows(), numberOfColumns());
-  return matrix;*/
+  return matrix;
 }
 
 template<typename T>
@@ -77,40 +76,37 @@ std::complex<T> MatrixComplexNode<T>::trace() const {
 
 template<typename T>
 std::complex<T> MatrixComplexNode<T>::determinant() const {
-/* TODO  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
+  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
     return std::complex<T>(NAN, NAN);
   }
   std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
-  for (int i=0; i<m_numberOfRows*m_numberOfColumns; i++) {
-    EvaluationNode<T> * child = childAtIndex(i);
-    if (child->type() != EvaluationNode<T>::Type::Complex) {
-      return std::complex<T>(NAN, NAN);
-    }
-    operandsCopy[i] = *child;
-  }*/
+  for (int i = 0; i < numberOfChildren(); i++) {
+    operandsCopy[i] = complexAtIndex(i); // Returns complex<T>(NAN, NAN) if Node type is not Complex
+  }
   std::complex<T> determinant = std::complex<T>(1);
-  //TODO Matrix::ArrayRowCanonize(operandsCopy, m_numberOfRows, m_numberOfColumns, &determinant);
+  Matrix::ArrayRowCanonize(operandsCopy, m_numberOfRows, m_numberOfColumns, &determinant);
   return determinant;
 }
 
 template<typename T>
 MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
-/* TODO  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
+  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
     return MatrixComplex<T>::Undefined();
   }
   std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
-  for (int i=0; i<m_numberOfRows*m_numberOfColumns; i++) {
-    EvaluationNode<T> * child = childAtIndex(i);
+  for (int i = 0; i < numberOfChildren(); i++) {
+    EvaluationNode<T> * child = EvaluationNode<T>::childAtIndex(i);
     if (child->type() != EvaluationNode<T>::Type::Complex) {
-      return Evaluation<T>(EvaluationNode<T>::FailedAllocationStaticNode());
+      return MatrixComplex<T>::Undefined();
     }
-    operandsCopy[i] = *child;
+    operandsCopy[i] = complexAtIndex(i);
   }
   int result = Matrix::ArrayInverse(operandsCopy, m_numberOfRows, m_numberOfColumns);
   if (result == 0) {
-    // Intentionally swapping dimensions for inverse, although it doesn't make a difference because it is square
+    /* Intentionally swapping dimensions for inverse, although it doesn't make a
+     * difference because it is square. */
     return MatrixComplex<T>(operandsCopy, m_numberOfColumns, m_numberOfRows);
-  }*/
+  }
   return MatrixComplex<T>::Undefined();
 }
 
@@ -154,9 +150,6 @@ MatrixComplex<T> MatrixComplex<T>::createIdentity(int dim) {
 
 template<typename T>
 void MatrixComplex<T>::setDimensions(int rows, int columns) {
-  if (node()->type() != EvaluationNode<T>::Type::AllocationFailure) {
-    assert(rows * columns == node()->numberOfChildren());
-  }
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
 }

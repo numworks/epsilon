@@ -69,6 +69,7 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 %token <expression> DIGITS
 %token <character> SYMBOL
 %token <expression> FUNCTION
+%token <expression> LOGFUNCTION
 %token <expression> UNDEFINED
 %token <expression> EMPTY
 
@@ -126,7 +127,7 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 %nonassoc RIGHT_BRACKET
 %nonassoc LEFT_BRACE
 %nonassoc RIGHT_BRACE
-%nonassoc FUNCTION
+%nonassoc FUNCTION LOGFUNCTION
 %left COMMA
 %nonassoc UNDERSCORE
 %nonassoc DIGITS
@@ -224,6 +225,9 @@ $1->setArgument(arguments, totalNumberOfArguments, false);
 $4->detachOperands(); delete $4; $7->detachOperands(); delete $7; arguments->detachOperands(); delete arguments;}
 */
        | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; $$.setChildrenInPlace($3); }
+/* Special case for logarithm, as we do not now at first if it needs 1 or 2
+ * children */
+       | LOGFUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($3.numberOfChildren() == 1) { $$ = Poincare::Logarithm($3.childAtIndex(0)); } else if ($3.numberOfChildren() == 2) { $$ = Poincare::Logarithm($3.childAtIndex(0), $3.childAtIndex(1));} else { YYERROR; } ; }
 /*       | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands(0)) { delete $1; YYERROR; } ; }
 */
        | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = Poincare::Parenthesis($2); }

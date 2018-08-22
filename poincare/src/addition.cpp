@@ -225,8 +225,7 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
   /* Step 1: AdditionNode is associative, so let's start by merging children
    * which are additions. */
   int i = 0;
-  int initialNumberOfOperands = thisCopy.numberOfChildren();
-  while (i < initialNumberOfOperands) {
+  while (i < thisCopy.numberOfChildren()) {
     if (thisCopy.childAtIndex(i).type() == ExpressionNode::Type::Addition) {
       thisCopy.mergeChildrenAtIndexInPlace(thisCopy.childAtIndex(i), i); // The tree is passed by reference
       continue;

@@ -9,13 +9,12 @@
 namespace Poincare {
 
 template<int I>
-class LogarithmNode : public ExpressionNode  {
+class LogarithmNode : public ExpressionNode {
   /* TODO friend class NaperianLogarithm; */
 public:
-  LogarithmNode() : ExpressionNode() {}
   // Allocation Failure
   static LogarithmNode<I> * FailedAllocationStaticNode();
-  LogarithmNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+  LogarithmNode<I> * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }

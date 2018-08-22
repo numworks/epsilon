@@ -141,8 +141,9 @@ int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
 inverse { poincare_expression_yylval.expression = new MatrixInverse(); return FUNCTION; }
 lcm { poincare_expression_yylval.expression = new LeastCommonMultiple(); return FUNCTION; }
 ln { poincare_expression_yylval.expression = new NaperianLogarithm(); return FUNCTION; }
-log { poincare_expression_yylval.expression = new Logarithm(); return FUNCTION; }
-permute { poincare_expression_yylval.expression = new PermuteCoefficient(); return FUNCTION; }
+*/
+log { return LOGFUNCTION; }
+ /*permute { poincare_expression_yylval.expression = new PermuteCoefficient(); return FUNCTION; }
 prediction95 { poincare_expression_yylval.expression = new PredictionInterval(); return FUNCTION; }
 prediction { poincare_expression_yylval.expression = new SimplePredictionInterval(); return FUNCTION; }
 product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }

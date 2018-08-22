@@ -26,6 +26,8 @@ class Expression : public TreeByValue {
   friend class Parenthesis;
   friend class Power;
   friend class Matrix;
+template<int T>
+  friend class LogarithmNode;
 template<typename T>
   friend class ExceptionExpressionNode;
 public:

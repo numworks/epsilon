@@ -114,6 +114,7 @@
 #include <poincare/undefined.h>
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
+#include <poincare/logarithm.h>
 #include <poincare/number.h>
 #include <poincare/opposite.h>
 #include <poincare/decimal.h>

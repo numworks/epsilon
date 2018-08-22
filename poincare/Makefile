@@ -51,6 +51,7 @@ objs += $(addprefix poincare/src/,\
   infinity.o\
   integer.o\
   layout_helper.o\
+  logarithm.o\
   opposite.o\
   matrix.o\
   matrix_complex.o\
@@ -198,6 +199,7 @@ tests += $(addprefix poincare/test/,\
   addition.cpp\
   helper.cpp\
   integer.cpp\
+  logarithm.cpp\
   matrix.cpp\
   multiplication.cpp\
   parser.cpp\

@@ -58,6 +58,11 @@ void assert_parsed_expression_type(const char * expression, Poincare::Expression
   assert(e.type() == type);
 }
 
+void assert_parsed_expression_is(const char * expression, Poincare::Expression r) {
+  Expression e = parse_expression(expression);
+  assert(e.isIdenticalTo(r));
+}
+
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, char symbolName) {
   GlobalContext globalContext;
   Expression e = parse_expression(expression);

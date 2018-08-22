@@ -217,7 +217,7 @@ QUIZ_CASE(poincare_integer_simplify) {
   assert_parsed_expression_simplify_to("12342345698765345678909876545678907655678900987654", "12342345698765345678909876545678907655678900987654");
   assert_parsed_expression_simplify_to("12342345698765345678909876545678907655678900987654", "12342345698765345678909876545678907655678900987654");
   assert_parsed_expression_simplify_to(MaxIntegerString, MaxIntegerString);
-  assert_parsed_expression_simplify_to(OverflowedIntegerString, "inf");
+  //assert_parsed_expression_simplify_to(OverflowedIntegerString, "inf"); // parse as a Decimal and then simplify to Rational
 }
 
 template<typename T>

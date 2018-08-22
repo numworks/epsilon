@@ -215,7 +215,13 @@ template<typename T> Evaluation<T> DecimalNode::templatedApproximate() const {
   return Complex<T>(m_negative ? -result : result);
 }
 
-int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
+int Decimal::Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength) {
+  bool exponentNegative = false;
+  if (exponentLength > 0 && exponent[0] == '-') {
+    exponent++;
+    exponentNegative = true;
+    exponentLength--;
+  }
   int base = 10;
   int exp = 0;
   for (int i = 0; i < exponentLength; i++) {
@@ -248,15 +254,38 @@ int Decimal::Exponent(const char * integralPart, int integralPartLength, const c
   return exp;
 }
 
-Decimal::Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent) : Number() {
+Decimal::Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent) : Number() {
+  /* Create a Decimal whose mantissa has less than
+   * k_numberOfStoredSignificantDigits. We round exceeding number if necessary. */
   Integer zero(0);
   Integer base(10);
-  Integer numerator(integralPart, integralPartLength, negative);
+  // Get rid of useless preceeding 0s
+  while (*integralPart == '0' & integralPartLength > 1) {
+    integralPart++;
+    integralPartLength--;
+  }
+  //TODO: set a FLAG to tell that a rounding happened?
+  bool rounding = integralPartLength > PrintFloat::k_numberOfStoredSignificantDigits && integralPart[PrintFloat::k_numberOfStoredSignificantDigits] >= '5';
+  // Cap the length of the integralPart
+  integralPartLength = integralPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits : integralPartLength;
+  Integer numerator(integralPart, integralPartLength, false);
+  assert(!numerator.isInfinity());
+  // Special case for 0.??? : get rid of useless 0s in front of the integralPartLength
+  if (integralPartLength == 1 && integralPart[0] == '0') {
+    integralPartLength = 0;
+    while (*fractionalPart == '0') {
+      fractionalPart++;
+      fractionalPartLength--;
+    }
+  }
+  rounding |= integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits && fractionalPart[PrintFloat::k_numberOfStoredSignificantDigits-integralPartLength] >= '5';
+  fractionalPartLength = integralPartLength+fractionalPartLength > PrintFloat::k_numberOfStoredSignificantDigits ? PrintFloat::k_numberOfStoredSignificantDigits - integralPartLength : fractionalPartLength;
   for (int i = 0; i < fractionalPartLength; i++) {
     numerator = Integer::Multiplication(numerator, base);
     numerator = Integer::Addition(numerator, Integer(*fractionalPart-'0'));
     fractionalPart++;
   }
+  numerator = rounding ? Integer::Addition(numerator, Integer(1)) : numerator;
   new (this) Decimal(numerator, exponent);
 }
 

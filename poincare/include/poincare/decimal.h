@@ -91,12 +91,14 @@ class Decimal : public Number {
 friend class Number;
 friend class DecimalNode;
 public:
-  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative);
-  Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, bool negative, int exponent);
+  static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength);
+  Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent);
   Decimal(const DecimalNode * node) : Number(node) {}
   Decimal(Integer m, int e);
   constexpr static int k_maxExponentLength = 4;
+  constexpr static int k_maxExponent = 1000;
 private:
+  constexpr static int k_maxMantissaLength = 20;
   DecimalNode * node() const override { return static_cast<DecimalNode *>(Number::node()); }
   template <typename T> Decimal(T f);
   Decimal(size_t size, Integer m, int e);

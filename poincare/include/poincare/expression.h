@@ -28,6 +28,7 @@ class Expression : public TreeByValue {
   friend class Matrix;
 template<int T>
   friend class LogarithmNode;
+  friend class NaperianLogarithmNode;
 template<typename T>
   friend class ExceptionExpressionNode;
 public:

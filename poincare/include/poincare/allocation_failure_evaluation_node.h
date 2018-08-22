@@ -20,7 +20,7 @@ public:
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "AllocationFailureEvaluation";
-    T::logNodeName(stream);
+    T<U>::logNodeName(stream);
   }
 #endif
 };

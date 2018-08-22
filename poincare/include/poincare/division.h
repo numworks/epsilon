@@ -10,6 +10,8 @@ namespace Poincare {
 class Division;
 
 class DivisionNode : public ExpressionNode {
+template<int I>
+  friend class LogarithmNode;
 public:
   // Allocation Failure
   static DivisionNode * FailedAllocationStaticNode();

@@ -29,7 +29,7 @@ class Number : public Expression {
 public:
   Number(const NumberNode * node) : Expression(node) {}
   /* Return either a Integer, a Decimal or an Infinity. */
-  static Number ParseInteger(const char * digits, size_t length, bool negative);
+  static Number ParseDigits(const char * digits, size_t length);
   /* Return either a Decimal or an Infinity or an Undefined. */
   template <typename T> static Number DecimalNumber(T f);
   /* Return either a Float or an Infinity or an Undefined */

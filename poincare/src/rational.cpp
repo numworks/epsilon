@@ -286,17 +286,28 @@ Rational::Rational(size_t size, native_uint_t * i, size_t numeratorSize, native_
 }
 
 Expression Rational::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  // FIXME:
+  /* Infinite Rational should not exist as they aren't parsed and are supposed
+   * to be turn in Float if they should appear. We assert(false) so far, but
+   * the right behaviour would be to find the right float to represent them.
+   * However at that point, it is too late to find it. The issue is earlier... */
+#if 0
   if (node()->numerator().isInfinity() && node()->denominator().isInfinity()) {
+    assert(false);
     return Undefined();
   }
   // Turn into Infinite if the numerator is too big.
   if (node()->numerator().isInfinity()) {
+    assert(false);
     return Infinity(sign() == ExpressionNode::Sign::Negative);
   }
   // Turn into 0 if the denominator is too big.
   if (node()->denominator().isInfinity()) {
+    assert(false);
     return Rational(0);
   }
+#endif
+  assert(!numeratorOrDenominatorIsInfinity());
   return *this;
 }
 

@@ -88,7 +88,7 @@ using namespace Poincare;
    * refered to Pi symbols. This artefact leads to the following lexer rules
    * starting with \x. */
 
-[0-9]+ { poincare_expression_yylval.expression = Poincare::Number::ParseInteger(yytext, yyleng, false); return DIGITS; }
+(([0-9]*[.]?[0-9]+)|([0-9]+[.]?[0-9]*))(\x8d\-?[0-9]+)? { poincare_expression_yylval.expression = Poincare::Number::ParseDigits(yytext, yyleng); return DIGITS; }
 [A-Za-z] { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 M[0-9] { poincare_expression_yylval.character = Symbol::matrixSymbol(yytext[1]); return SYMBOL; }
 u\(n\) { poincare_expression_yylval.character = Symbol::SpecialSymbols::un; return SYMBOL; }
@@ -166,7 +166,6 @@ transpose { poincare_expression_yylval.expression = new MatrixTranspose(); retur
 undef { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 inf { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 \x8a { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
-\x8d { return EE; }
 \x8c { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x8f { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }
 \x90 { return STO; }
@@ -187,7 +186,6 @@ inf { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 \[ { return LEFT_BRACKET; }
 \] { return RIGHT_BRACKET; }
 \, { return COMMA; }
-\. { return DOT; }
 \_ { return UNDERSCORE; }
  /*
 \x97 { poincare_expression_yylval.expression = new EmptyExpression(); return EMPTY; }

@@ -37,20 +37,48 @@ double NumberNode::doubleApproximation() const {
   }
 }
 
-Number Number::ParseInteger(const char * digits, size_t length, bool negative) {
-  Integer i(digits, length, negative);
-  if (!i.isInfinity()) {
-    return i;
+Number Number::ParseDigits(const char * digits, size_t length) {
+  const char * integral = digits;
+  size_t integralLength = length;
+  const char * fractional = strchr(digits, '.');
+  size_t fractionalLength = 0;
+  if (fractional) {
+    integralLength = fractional - integral;
+    fractional++;
+    fractionalLength = length - integralLength - 1;
   }
-  if (digits != nullptr && digits[0] == '-') {
-    negative = true;
-    digits++;
+  const char * exponent = strchr(digits, Ion::Charset::Exponent);
+  size_t exponentLength = 0;
+  if (exponent) {
+    integralLength = fractional ? integralLength : exponent - integral;
+    fractionalLength = fractional ? exponent - fractional : 0;
+    exponent++;
+    exponentLength = length - integralLength - fractionalLength - (fractional ? 2 : 1);
   }
-  if (length > Decimal::k_maxExponentLength) {
-    return Infinity(negative);
+  // Integer
+  if (exponentLength == 0 && fractionalLength == 0) {
+    Integer i(digits, length, false);
+    if (!i.isInfinity()) {
+      return i;
+    }
   }
-  int exponent = Decimal::Exponent(digits, length, nullptr, 0, nullptr, 0, negative);
-  return Decimal(digits, length, nullptr, 0, negative, exponent);
+  // Avoid overflowing int
+  if (exponentLength > Decimal::k_maxExponentLength) {
+    assert(exponent);
+    if (exponent[0] == '-') {
+      return Decimal(0.0);
+    } else {
+      return Infinity(false);
+    }
+  }
+  // Avoid Decimal with exponent > k_maxExponentLength
+  int exp = Decimal::Exponent(integral, integralLength, fractional, fractionalLength, exponent, exponentLength);
+  if (exp > Decimal::k_maxExponent) {
+    return Infinity(false);
+  } else if (exp < -Decimal::k_maxExponent) {
+    return Decimal(0.0);
+  }
+  return Decimal(integral, integralLength, fractional, fractionalLength, exp);
 }
 
 template <typename T>

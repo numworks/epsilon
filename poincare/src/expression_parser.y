@@ -88,8 +88,6 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 %token RIGHT_BRACKET
 %token COMMA
 %token UNDERSCORE
-%token DOT
-%token EE
 %token STO
 %token EQUAL
 %token UNDEFINED_SYMBOL
@@ -131,8 +129,6 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
 %left COMMA
 %nonassoc UNDERSCORE
 %nonassoc DIGITS
-%nonassoc DOT
-%nonassoc EE
 %nonassoc UNDEFINED
 %nonassoc SYMBOL
 %nonassoc EMPTY

@@ -206,6 +206,7 @@ tests += $(addprefix poincare/test/,\
   parser.cpp\
   power.cpp\
   rational.cpp\
+  number.cpp\
 )
 
 testsExpected += $(addprefix poincare/test/,\

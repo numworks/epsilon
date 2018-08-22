@@ -16,6 +16,7 @@ public:
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Exception";
+    T::logNodeName(stream);
   }
 #endif
 };

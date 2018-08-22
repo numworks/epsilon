@@ -14,6 +14,7 @@ public:
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "AllocationFailureLayout";
+    T::logNodeName(stream);
   }
 #endif
 };

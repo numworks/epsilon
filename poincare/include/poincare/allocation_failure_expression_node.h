@@ -18,9 +18,8 @@ public:
   TreeNode * uninitializedStaticNode() const override { assert(false); return nullptr; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
-    stream << "AllocationFailureExpression[";
+    stream << "AllocationFailureExpression";
     T::logNodeName(stream);
-    stream << "]";
   }
 #endif
 };

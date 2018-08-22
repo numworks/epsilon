@@ -613,12 +613,11 @@ Expression Power::shallowBeautify(Context& context, Preferences::AngleUnit angle
 // Simplification
 Expression Power::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
   if (childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
-    Expression denominator = *this;
-    Expression newExponent = denominator.childAtIndex(1).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
-    if (newExponent.type() == ExpressionNode::Type::Rational && static_cast<Rational>(newExponent).isOne()) {
-      return denominator.childAtIndex(0);
+    Expression positivePowerClone = Power(childAtIndex(0), childAtIndex(1).setSign(ExpressionNode::Sign::Positive, context, angleUnit));
+    if (positivePowerClone.childAtIndex(1).type() == ExpressionNode::Type::Rational && static_cast<Rational>(positivePowerClone.childAtIndex(1)).isOne()) {
+      return positivePowerClone.childAtIndex(0);
     }
-    return denominator;
+    return positivePowerClone;
   }
   return Expression();
 }

@@ -140,8 +140,8 @@ im { poincare_expression_yylval.expression = new ImaginaryPart(); return FUNCTIO
 int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
 inverse { poincare_expression_yylval.expression = new MatrixInverse(); return FUNCTION; }
 lcm { poincare_expression_yylval.expression = new LeastCommonMultiple(); return FUNCTION; }
-ln { poincare_expression_yylval.expression = new NaperianLogarithm(); return FUNCTION; }
 */
+ln { poincare_expression_yylval.expression = NaperianLogarithm(); return FUNCTION; }
 log { return LOGFUNCTION; }
  /*permute { poincare_expression_yylval.expression = new PermuteCoefficient(); return FUNCTION; }
 prediction95 { poincare_expression_yylval.expression = new PredictionInterval(); return FUNCTION; }

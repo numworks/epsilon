@@ -7,7 +7,7 @@
 
 using namespace Poincare;
 
-// TODO remove the if 0 once decimal can be parsed
+// TODO remove the if 0 once decimal can be parsed and deep reduce multiplication works
 QUIZ_CASE(poincare_power_evaluate) {
   assert_parsed_expression_evaluates_to<float>("2^3", "8");
   assert_parsed_expression_evaluates_to<double>("(3+I)^4", "28+96*I");

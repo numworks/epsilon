@@ -545,6 +545,7 @@ IntegerDivision Integer::Division(const Integer & numerator, const Integer & den
 }
 
 Integer Integer::Power(const Integer & i, const Integer & j) {
+  // TODO assertion is false if j is allocation failure
   assert(j.sign() == ExpressionNode::Sign::Positive);
   Integer upow = IntegerNode::upow(i.node(), j.node());
   upow.setNegative(i.sign() == ExpressionNode::Sign::Negative && !j.isEven());

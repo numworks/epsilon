@@ -63,7 +63,7 @@ public:
   };
 
   class PSC : public Register16 {};
-  class ARR : public RegisterWidth {};
+  class ARR : public Register16 {};
   class CCR1 : public RegisterWidth {};
   class CCR2 : public RegisterWidth {};
   class CCR3 : public RegisterWidth {};

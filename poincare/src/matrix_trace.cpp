@@ -18,7 +18,7 @@ Expression * MatrixTrace::clone() const {
   return a;
 }
 
-Expression MatrixTrace::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression MatrixTrace::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;

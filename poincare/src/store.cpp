@@ -28,7 +28,7 @@ int Store::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode 
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x90");
 }
 
-Expression Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   context.setExpressionForSymbolName(value(), symbol(), context);
   return replaceWith(editableOperand(1), true)->shallowReduce(context, angleUnit);
 }

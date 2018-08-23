@@ -18,7 +18,7 @@ Expression * DivisionQuotient::clone() const {
   return a;
 }
 
-Expression DivisionQuotient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression DivisionQuotient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;

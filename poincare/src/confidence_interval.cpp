@@ -24,7 +24,7 @@ int ConfidenceInterval::polynomialDegree(char symbolName) const {
   return -1;
 }
 
-Expression ConfidenceInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression ConfidenceInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;

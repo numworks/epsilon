@@ -21,7 +21,7 @@ private:
   }
   const char * name() const { return "round"; }
   /* Simplification */
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
   /* Complex */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }

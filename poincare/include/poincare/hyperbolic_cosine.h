@@ -22,7 +22,7 @@ private:
   }
   const char * name() const { return "cosh"; }
   /* Simplification */
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
   /* Evaluation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, angleUnit,computeOnComplex<float>);

@@ -12,7 +12,7 @@ CosineNode * CosineNode::FailedAllocationStaticNode() {
 }
 
 float CosineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Trigonometry::characteristicXRange(this, context, angleUnit);
+  return Trigonometry::characteristicXRange(Cosine(this), context, angleUnit);
 }
 
 template<typename T>

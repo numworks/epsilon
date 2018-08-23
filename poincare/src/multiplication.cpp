@@ -11,7 +11,7 @@
 #include <poincare/serialization_helper.h>
 //#include <poincare/simplification_root.h>
 #include <poincare/subtraction.h>
-//#include <poincare/tangent.h>
+#include <poincare/tangent.h>
 #include <poincare/undefined.h>
 #include <cmath>
 #include <ion.h>
@@ -598,8 +598,7 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
   Number sumPQ = Number::Addition(p, q);
   Number absP = p.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
   Number absQ = q.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
-  // TODO: uncomment once Tangent is implemented
-  /*Expression tan = Tangent(x);
+  Expression tan = Tangent(x);
   if (Number::NaturalOrder(absP, absQ) < 0) {
     // replace sin(x)^p by tan(x)^p
     replaceChildAtIndexInPlace(i, Power(tan, p).shallowReduce(context, angleUnit));
@@ -610,7 +609,7 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
     replaceChildAtIndexInPlace(j, Power(tan, Number::Multiplication(q, Rational(-1)).shallowReduce(context, angleUnit)).shallowReduce(context, angleUnit));
     // replace sin(x)^p by sin(x)^(p+q)
     replaceChildAtIndexInPlace(i, Power(Base(childAtIndex(i)), sumPQ).shallowReduce(context, angleUnit));
-  }*/
+  }
 }
 
 bool Multiplication::HaveSameNonNumeralFactors(const Expression e1, const Expression e2) {

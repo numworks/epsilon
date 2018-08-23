@@ -109,6 +109,7 @@
 #include <poincare/addition.h>
 #include <poincare/cosine.h>
 #include <poincare/sine.h>
+#include <poincare/tangent.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>

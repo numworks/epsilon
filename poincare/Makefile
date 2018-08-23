@@ -38,6 +38,7 @@ objs += $(addprefix poincare/src/,\
   approximation_helper.o\
   arithmetic.o\
   complex.o\
+  cosine.o\
   decimal.o\
   derivative.o\
   division.o\
@@ -209,6 +210,7 @@ tests += $(addprefix poincare/test/,\
   power.cpp\
   rational.cpp\
   number.cpp\
+  trigo.cpp\
 )
 
 testsExpected += $(addprefix poincare/test/,\

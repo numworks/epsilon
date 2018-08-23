@@ -1,49 +1,43 @@
 #include <poincare/cosine.h>
-#include <poincare/hyperbolic_cosine.h>
-#include <poincare/symbol.h>
-#include <poincare/rational.h>
-#include <poincare/multiplication.h>
+#include <poincare/complex.h>
 #include <poincare/simplification_helper.h>
-#include <ion.h>
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-Expression::Type Cosine::type() const {
-  return Type::Cosine;
+CosineNode * CosineNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<CosineNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * Cosine::clone() const {
-  Cosine * a = new Cosine(m_operands, true);
-  return a;
-}
-
-float Cosine::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
+float CosineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(this, context, angleUnit);
 }
 
 template<typename T>
-std::complex<T> Cosine::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::cos(angleInput);
-  return Trigonometry::RoundToMeaningfulDigits(res);
+  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res));
 }
 
-Expression Cosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e != this) {
+Expression CosineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Cosine(this).shallowReduce(context, angleUnit);
+}
+
+Expression Cosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
+  Expression op = childAtIndex(0);
+  if (op.type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  return Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
+  return Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit);
 }
 
 }

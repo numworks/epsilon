@@ -1,5 +1,4 @@
 #include <poincare/trigonometry.h>
-//#include <poincare/hyperbolic_cosine.h>
 #include <poincare/symbol.h>
 #include <poincare/preferences.h>
 #include <poincare/undefined.h>

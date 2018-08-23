@@ -205,6 +205,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression e, Context& con
 
 static_assert('\x8A' == Ion::Charset::SmallPi, "Unicode error");
 constexpr const char * cheatTable[Trigonometry::k_numberOfEntries][5] =
+// Angle in Radian | Angle in Degree | Cosine | Sine | Tangent
 {{"-90",    "\x8A*(-2)^(-1)",    "",                                   "-1",                                 "undef"},
  {"-75",    "\x8A*(-5)*12^(-1)", "",                                   "(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", "-(3^(1/2)+2)"},
  {"-72",    "\x8A*2*(-5)^(-1)",  "",                                   "-(5/8+5^(1/2)/8)^(1/2)",             "-(5+2*5^(1/2))^(1/2)"},

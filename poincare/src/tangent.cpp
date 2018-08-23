@@ -1,57 +1,56 @@
 #include <poincare/tangent.h>
-#include <poincare/sine.h>
 #include <poincare/cosine.h>
 #include <poincare/division.h>
-#include <poincare/multiplication.h>
-#include <poincare/trigonometry.h>
-#include <poincare/hyperbolic_tangent.h>
+#include <poincare/layout_helper.h>
 #include <poincare/simplification_helper.h>
-extern "C" {
-#include <assert.h>
-}
+#include <poincare/sine.h>
+#include <poincare/trigonometry.h>
 #include <cmath>
 
 namespace Poincare {
 
-Expression::Type Tangent::type() const {
-  return Expression::Type::Tangent;
+TangentNode * TangentNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<TangentNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * Tangent::clone() const {
-  Tangent * a = new Tangent(m_operands, true);
-  return a;
+float TangentNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
+  return Trigonometry::characteristicXRange(Tangent(this), context, angleUnit);
 }
 
-float Tangent::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
-  return Trigonometry::characteristicXRange(this, context, angleUnit);
+LayoutReference TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
 template<typename T>
-std::complex<T> Tangent::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::tan(angleInput);
-  return Trigonometry::RoundToMeaningfulDigits(res);
+  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res));
 }
 
-Expression Tangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e != this) {
+Expression TangentNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Tangent(this).shallowReduce(context, angleUnit);
+}
+
+Expression Tangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
+  Expression op = childAtIndex(0);
+  if (op.type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  Expression * newExpression = Trigonometry::shallowReduceDirectFunction(this, context, angleUnit);
-  if (newExpression->type() == Type::Tangent) {
-    const Expression * op[1] = {newExpression->operand(0)};
-    Sine * s = new Sine(op, true);
-    Cosine * c = new Cosine(op, true);
-    Division * d = new Division(s, c, false);
-    newExpression = newExpression->replaceWith(d, true);
-    return newExpression->shallowReduce(context, angleUnit);
+  Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit);
+  if (newExpression.type() == ExpressionNode::Type::Tangent) {
+    Sine s = Sine(newExpression.childAtIndex(0));
+    Cosine c = Cosine(newExpression.childAtIndex(0));
+    Division d = Division(s, c);
+    return d.shallowReduce(context, angleUnit);
   }
   return newExpression;
 }

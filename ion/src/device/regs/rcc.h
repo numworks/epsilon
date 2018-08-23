@@ -107,6 +107,13 @@ public:
     REGS_BOOL_FIELD(SYSCFGEN, 14);
   };
 
+  class AHB1LPENR : public Register32 {
+  public:
+    using Register32::Register32;
+    REGS_BOOL_FIELD(GPIOBLPEN, 1);
+    REGS_BOOL_FIELD(GPIOCLPEN, 2);
+  };
+
   class APB1LPENR : public Register32 {
   public:
     using Register32::Register32;
@@ -128,6 +135,7 @@ public:
   REGS_REGISTER_AT(AHB3ENR, 0x38);
   REGS_REGISTER_AT(APB1ENR, 0x40);
   REGS_REGISTER_AT(APB2ENR, 0x44);
+  REGS_REGISTER_AT(AHB1LPENR, 0x50);
   REGS_REGISTER_AT(APB1LPENR, 0x60);
   REGS_REGISTER_AT(DCKCFGR2, 0x94);
 private:

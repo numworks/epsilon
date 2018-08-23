@@ -107,6 +107,7 @@
 
 #include <poincare/global_context.h>
 #include <poincare/addition.h>
+#include <poincare/cosine.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>

@@ -130,8 +130,9 @@ diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION
 dim { poincare_expression_yylval.expression = new MatrixDimension(); return FUNCTION; }
 det { poincare_expression_yylval.expression = new Determinant(); return FUNCTION; }
 conj { poincare_expression_yylval.expression = new Conjugate(); return FUNCTION; }
-cos { poincare_expression_yylval.expression = new Cosine(); return FUNCTION; }
-cosh { poincare_expression_yylval.expression = new HyperbolicCosine(); return FUNCTION; }
+*/
+cos { poincare_expression_yylval.expression = Cosine(); return FUNCTION; }
+ /*cosh { poincare_expression_yylval.expression = new HyperbolicCosine(); return FUNCTION; }
 factor { poincare_expression_yylval.expression = new Factor(); return FUNCTION; }
 floor { poincare_expression_yylval.expression = new Floor(); return FUNCTION; }
 frac { poincare_expression_yylval.expression = new FracPart(); return FUNCTION; }

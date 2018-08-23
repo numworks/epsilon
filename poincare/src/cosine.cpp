@@ -1,5 +1,6 @@
 #include <poincare/cosine.h>
 #include <poincare/complex.h>
+#include <poincare/layout_helper.h>
 #include <poincare/simplification_helper.h>
 #include <cmath>
 
@@ -20,6 +21,10 @@ Complex<T> CosineNode::computeOnComplex(const std::complex<T> c, Preferences::An
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::cos(angleInput);
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res));
+}
+
+LayoutReference CosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
 Expression CosineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {

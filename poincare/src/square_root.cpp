@@ -40,7 +40,7 @@ Expression SquareRootNode::shallowReduce(Context& context, Preferences::AngleUni
 }
 
 
-Expression SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

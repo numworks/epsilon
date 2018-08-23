@@ -58,10 +58,9 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     AppsContainer * container = (AppsContainer *)controller->app()->container();
     if (controller->isActivatingExamMode()) {
       container->reset();
-      Ion::LED::setBlinking(0.5, true, false, false);
-      Ion::LED::setLockState(true);
+      Ion::LED::setColor(KDColorRed);
+      Ion::LED::setBlinking(1.0f, 0.1f);
     } else {
-      Ion::LED::setLockState(false);
       Ion::LED::setColor(KDColorBlack);
     }
     container->refreshPreferences();

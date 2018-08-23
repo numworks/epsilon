@@ -17,23 +17,24 @@ namespace Device {
 enum Mode {
   PWM,
   BLINK
-} ;
+};
 
 enum Color {
   RED,
   GREEN,
   BLUE
-} ;
+};
 
 void init();
 void shutdown();
+void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen, float dutyCycleBlue, float period = 0.0f);
 void setColorStatus(Color color, bool enable);
 /* This call bypasses the timer, and immediately enforces a given LED state. */
-void enforceState(bool red, bool green, bool blue);
+//void enforceState(bool red, bool green, bool blue);
 
 void initGPIO();
 void shutdownGPIO();
-void initTimer(Mode mode, float blinkPeriod = 0);
+void initTimer();
 void shutdownTimer();
 
 constexpr static GPIOPin RGBPins[] = {
@@ -42,11 +43,6 @@ constexpr static GPIOPin RGBPins[] = {
 
 
 constexpr uint16_t PWMPeriod = 40000;
-
-inline uint16_t dutyCycleForUInt8(uint8_t value) {
-  /* This function is a linear function from colors [0->255] to duty cycles [0->PWMPeriod].*/
-  return ((uint32_t)value)*(PWMPeriod/255);
-}
 
 }
 }

@@ -69,6 +69,7 @@ objs += $(addprefix poincare/src/,\
   rational.o\
   serialization_helper.o\
   simplification_helper.o\
+  sine.o\
   square_root.o\
   subtraction.o\
   symbol.o\

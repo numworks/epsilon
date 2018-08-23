@@ -1,38 +1,67 @@
 #ifndef POINCARE_SINE_H
 #define POINCARE_SINE_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
 #include <poincare/approximation_helper.h>
+#include <poincare/expression.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/trigonometry.h>
 
 namespace Poincare {
 
-class Sine : public StaticHierarchy<1> {
-  using StaticHierarchy<1>::StaticHierarchy;
-  friend class Tangent;
-  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
+class SineNode : public ExpressionNode {
+  //friend class Tangent;
 public:
-  Type type() const override;
-  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
+  // Allocation Failure
+  static SineNode * FailedAllocationStaticNode();
+  SineNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(SineNode); }
+  int numberOfChildren() const override { return 1; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Sine";
+  }
+#endif
+
+  // Properties
+  Type type() const override { return Type::Sine; }
+  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const override;
+
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
+
 private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
+  // Layout
+  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
   }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   const char * name() const { return "sin"; }
-  /* Simplication */
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) override;
-  /* Evaluation */
+
+  // Simplication
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+
+  // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, angleUnit,computeOnComplex<float>);
   }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
+};
+
+class Sine : public Expression {
+public:
+  Sine() : Expression(TreePool::sharedPool()->createTreeNode<SineNode>()) {}
+  Sine(const SineNode * n) : Expression(n) {}
+  Sine(Expression operand) : Sine() {
+    replaceChildAtIndexInPlace(0, operand);
+  }
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

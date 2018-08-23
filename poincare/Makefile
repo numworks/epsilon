@@ -39,6 +39,7 @@ objs += $(addprefix poincare/src/,\
   arithmetic.o\
   complex.o\
   decimal.o\
+  derivative.o\
   division.o\
   evaluation.o\
   expression.o\

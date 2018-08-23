@@ -114,6 +114,8 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression e, Context& cont
       Expression newR = Rational(div.remainder, r.integerDenominator()).shallowReduce(context, angleUnit);
       if (angleUnit == Preferences::AngleUnit::Radian) {
         result.childAtIndex(0).replaceChildAtIndexInPlace(0, newR);
+        Expression reducedChild = result.childAtIndex(0).shallowReduce(context, angleUnit);
+        result.replaceChildAtIndexInPlace(0, reducedChild);
       } else {
         result.replaceChildAtIndexInPlace(0, newR);
       }

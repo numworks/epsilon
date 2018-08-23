@@ -20,7 +20,7 @@ Expression * Ceiling::clone() const {
   return c;
 }
 
-Expression Ceiling::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Ceiling::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;

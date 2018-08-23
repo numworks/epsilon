@@ -69,7 +69,7 @@ Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit 
 
 /* Simplification */
 
-Expression Opposite::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Opposite::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression result = Expression::defaultShallowReduce(context, angleUnit);
   if (result.isUndefinedOrAllocationFailure()) {
     return result;
@@ -82,7 +82,7 @@ Expression Opposite::shallowReduce(Context& context, Preferences::AngleUnit angl
 }
 #if 0
 
-Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = ExpressionNode::shallowReduce(context, angleUnit);
   if (e.node() != this) {
     return e;

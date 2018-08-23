@@ -31,7 +31,7 @@ int Integral::polynomialDegree(char symbolName) const {
   return Expression::polynomialDegree(symbolName);
 }
 
-Expression Integral::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
+Expression Integral::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression * e = Expression::defaultShallowReduce(context, angleUnit);
   if (e != this) {
     return e;

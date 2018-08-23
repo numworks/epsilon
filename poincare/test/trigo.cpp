@@ -9,8 +9,8 @@ using namespace Poincare;
 QUIZ_CASE(poincare_parse_trigo) {
   assert_parsed_expression_type("sin(0)", ExpressionNode::Type::Sine);
   assert_parsed_expression_type("cos(0)", ExpressionNode::Type::Cosine);
-#if 0
   assert_parsed_expression_type("tan(0)", ExpressionNode::Type::Tangent);
+#if 0
   assert_parsed_expression_type("cosh(0)", ExpressionNode::Type::HyperbolicCosine);
   assert_parsed_expression_type("sinh(0)", ExpressionNode::Type::HyperbolicSine);
   assert_parsed_expression_type("tanh(0)", ExpressionNode::Type::HyperbolicTangent);
@@ -66,7 +66,6 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("sin(I-4)", "1.16781-0.768163*I", Radian, Cartesian, 6);
   assert_parsed_expression_evaluates_to<float>("sin(I-4)", "(-0.069767)+0.017412*I", Degree, Cartesian, 6);
 
-#if 0
   /* tan: R  ->  R (tangent-style)
    *      Ri ->  Ri (odd)
    */
@@ -88,6 +87,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("tan(I-4)", "(-0.273553)+1.002811*I", Radian);
   assert_parsed_expression_evaluates_to<float>("tan(I-4)", "(-0.069905)+0.017537*I", Degree, Cartesian);
 
+#if 0
   /* acos: [-1,1]    ->  R
    *       ]-inf,-1[ -> Pi+R*i (odd imaginary)
    *       ]1, inf[  -> R*i (odd imaginary)
@@ -423,7 +423,6 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("sin(-60)", "-R(3)/2", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(612)", "-(R(2)*R(5+R(5)))/4", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(36)", "(R(2)*R(5-R(5)))/4", Preferences::AngleUnit::Degree);
-#if 0
   // -- tan
   assert_parsed_expression_simplify_to("tan(0)", "0");
   assert_parsed_expression_simplify_to("tan(P)", "0");
@@ -457,6 +456,7 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("tan(180045)", "1", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(-60)", "-R(3)", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("tan(tan(tan(tan(9))))", "tan(tan(tan(tan(9))))");
+#if 0
   // -- acos
   assert_parsed_expression_simplify_to("acos(-1/2)", "(2*P)/3");
   assert_parsed_expression_simplify_to("acos(-1.2)", "(-acos(6/5))+P");

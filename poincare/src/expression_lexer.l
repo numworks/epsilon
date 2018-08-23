@@ -160,8 +160,9 @@ root { poincare_expression_yylval.expression = NthRoot(); return FUNCTION; }
 sin { poincare_expression_yylval.expression = Sine(); return FUNCTION; }
  /*sinh { poincare_expression_yylval.expression = new HyperbolicSine(); return FUNCTION; }
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
-tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
-tanh { poincare_expression_yylval.expression = new HyperbolicTangent(); return FUNCTION; }
+*/
+tan { poincare_expression_yylval.expression = Tangent(); return FUNCTION; }
+ /*tanh { poincare_expression_yylval.expression = new HyperbolicTangent(); return FUNCTION; }
 trace { poincare_expression_yylval.expression = new MatrixTrace(); return FUNCTION; }
 transpose { poincare_expression_yylval.expression = new MatrixTranspose(); return FUNCTION; }
  */

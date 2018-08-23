@@ -75,6 +75,7 @@ objs += $(addprefix poincare/src/,\
   tree_pool.o\
   tree_by_reference.o\
   tree_by_value.o\
+  trigonometry.o\
   undefined.o\
   uninitialized_evaluation_node.o\
   uninitialized_expression_node.o\

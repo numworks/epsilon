@@ -27,6 +27,7 @@ class Expression : public TreeByValue {
   friend class Parenthesis;
   friend class Power;
   friend class Matrix;
+  friend class Trigonometry;
 template<int T>
   friend class LogarithmNode;
   friend class NaperianLogarithmNode;

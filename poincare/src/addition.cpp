@@ -191,7 +191,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
     if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(m.childAtIndex(0)).isMinusOne()) {
       m.removeChildAtIndexInPlace(0);
     } else {
-      m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+      m.replaceChildAtIndexInPlace(0, m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit));
     }
     Expression subtractant = m.squashUnaryHierarchy();
 

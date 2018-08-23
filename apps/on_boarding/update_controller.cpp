@@ -65,7 +65,7 @@ UpdateController::UpdateController() :
 }
 
 bool UpdateController::handleEvent(Ion::Events::Event event) {
-  if (event != Ion::Events::Back && event != Ion::Events::OnOff) {
+  if (event != Ion::Events::Back && event != Ion::Events::OnOff && event != Ion::Events::USBPlug && event != Ion::Events::USBEnumeration) {
     app()->dismissModalViewController();
     AppsContainer * appsContainer = (AppsContainer *)app()->container();
     if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {

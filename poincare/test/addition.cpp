@@ -68,11 +68,12 @@ QUIZ_CASE(poincare_addition_simplify) {
   assert_parsed_expression_simplify_to("1+1+ln(2)+(5+3*2)/9-4/7+1/98", "(2347+882*ln(2))/882");
   assert_parsed_expression_simplify_to("1+2+0+cos(2)", "3+cos(2)");
   assert_parsed_expression_simplify_to("A-A+2cos(2)+B-B-cos(2)", "cos(2)");
+#endif
 
+  assert_parsed_expression_simplify_to("x+3+P+2*x", "3+3*x+P");
   assert_parsed_expression_simplify_to("1/(x+1)+1/(P+2)", "(3+x+P)/(2+2*x+P+x*P)");
   assert_parsed_expression_simplify_to("1/x^2+1/(x^2*P)", "(1+P)/(x^2*P)");
   assert_parsed_expression_simplify_to("1/x^2+1/(x^3*P)", "(1+x*P)/(x^3*P)");
   assert_parsed_expression_simplify_to("4x/x^2+3P/(x^3*P)", "(3+4*x^2)/x^3");
   assert_parsed_expression_simplify_to("3^(1/2)+2^(-2*3^(1/2)*X^P)/2", "(1+2*2^(2*R(3)*X^P)*R(3))/(2*2^(2*R(3)*X^P))");
-#endif
 }

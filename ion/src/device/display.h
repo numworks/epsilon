@@ -65,6 +65,7 @@ enum class Command : uint16_t {
   Reset = 0x01,
   SleepIn = 0x10,
   SleepOut = 0x11,
+  GammaSet = 0x26,
   DisplayOff = 0x28,
   DisplayOn = 0x29,
   ColumnAddressSet = 0x2A,
@@ -74,7 +75,9 @@ enum class Command : uint16_t {
   TearingEffectLineOn = 0x35,
   MemoryAccessControl = 0x36,
   PixelFormatSet = 0x3A,
-  FrameRateControl = 0xC6
+  FrameRateControl = 0xC6,
+  PositiveVoltageGammaControl = 0xE0,
+  NegativeVoltageGammaControl = 0xE1
 };
 
 constexpr static GPIOPin FSMCPins[] = {

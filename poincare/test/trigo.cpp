@@ -7,9 +7,7 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_parse_trigo) {
-#if 0
   assert_parsed_expression_type("sin(0)", ExpressionNode::Type::Sine);
-#endif
   assert_parsed_expression_type("cos(0)", ExpressionNode::Type::Cosine);
 #if 0
   assert_parsed_expression_type("tan(0)", ExpressionNode::Type::Tangent);
@@ -47,7 +45,6 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("cos(I-4)", "(-1.008625)-0.889395*I", Radian);
   assert_parsed_expression_evaluates_to<float>("cos(I-4)", "0.997716+0.001218*I", Degree, Cartesian, 6);
 
-#if 0
   /* sin: R  ->  R (oscillator)
    *      Ri ->  Ri (odd)
    */
@@ -69,6 +66,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("sin(I-4)", "1.16781-0.768163*I", Radian, Cartesian, 6);
   assert_parsed_expression_evaluates_to<float>("sin(I-4)", "(-0.069767)+0.017412*I", Degree, Cartesian, 6);
 
+#if 0
   /* tan: R  ->  R (tangent-style)
    *      Ri ->  Ri (odd)
    */
@@ -389,7 +387,6 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("cos(-60)", "1/2", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(7380/5)", "(1+R(5))/4", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(112.5)", "-R(2-R(2))/2", Preferences::AngleUnit::Degree);
-#if 0
   // -- sin
   assert_parsed_expression_simplify_to("sin(0)", "0");
   assert_parsed_expression_simplify_to("sin(P)", "0");
@@ -426,6 +423,7 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("sin(-60)", "-R(3)/2", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(612)", "-(R(2)*R(5+R(5)))/4", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("sin(36)", "(R(2)*R(5-R(5)))/4", Preferences::AngleUnit::Degree);
+#if 0
   // -- tan
   assert_parsed_expression_simplify_to("tan(0)", "0");
   assert_parsed_expression_simplify_to("tan(P)", "0");

@@ -156,8 +156,9 @@ rem { poincare_expression_yylval.expression = new DivisionRemainder(); return FU
 */
 root { poincare_expression_yylval.expression = NthRoot(); return FUNCTION; }
  /*round { poincare_expression_yylval.expression = new Round(); return FUNCTION; }
-sin { poincare_expression_yylval.expression = new Sine(); return FUNCTION; }
-sinh { poincare_expression_yylval.expression = new HyperbolicSine(); return FUNCTION; }
+*/
+sin { poincare_expression_yylval.expression = Sine(); return FUNCTION; }
+ /*sinh { poincare_expression_yylval.expression = new HyperbolicSine(); return FUNCTION; }
 sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = new Tangent(); return FUNCTION; }
 tanh { poincare_expression_yylval.expression = new HyperbolicTangent(); return FUNCTION; }

@@ -1,17 +1,9 @@
 #include <ion/led.h>
 
-void Ion::LED::setColor(KDColor c) {
+KDColor getColor() {
+  return KDColorBlack;
 }
 
-void Ion::LED::setBlinking(float blinkPeriod, bool red, bool green, bool blue) {
-}
+void setColor(KDColor c) {}
 
-void Ion::LED::setCharging(bool isPlugged, bool isCharging) {
-}
-
-bool Ion::LED::getLockState() {
-  return false;
-}
-
-void Ion::LED::setLockState(bool state) {
-}
+void setBlinking(float period, float dutyCycle) {}

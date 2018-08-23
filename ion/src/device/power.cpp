@@ -9,6 +9,7 @@
 #include "regs/regs.h"
 
 void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
+  bool isLEDActive = Ion::LED::getColor() != KDColorBlack;
   if (checkIfPowerKeyReleased) {
     /* Wait until power is released to avoid restarting just after suspending */
     bool isPowerDown = true;
@@ -17,11 +18,11 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
       isPowerDown = scan.keyDown(Keyboard::Key::B2);
     }
   }
-  Device::shutdownPeripherals();
+  Device::shutdownPeripherals(isLEDActive);
 
   PWR.CR()->setLPDS(true); // Turn the regulator off. Takes longer to wake up.
   PWR.CR()->setFPDS(true); // Put the flash to sleep. Takes longer to wake up.
-  CM4.SCR()->setSLEEPDEEP(!Ion::LED::getLockState());
+  CM4.SCR()->setSLEEPDEEP(!isLEDActive);
 
   while (1) {
 #if EPSILON_LED_WHILE_CHARGING
@@ -29,7 +30,7 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
      * if the standby mode was stopped due to a "stop charging" event, we wait
      * a while to be sure that the plug state of the USB is up-to-date. */
     msleep(200);
-    Ion::LED::setCharging(Ion::USB::isPlugged(), Ion::Battery::isCharging());
+    //Ion::LED::setCharging(Ion::USB::isPlugged(), Ion::Battery::isCharging());
 #endif
 
     WakeUp::Device::onPowerKeyDown();
@@ -38,7 +39,7 @@ void Ion::Power::suspend(bool checkIfPowerKeyReleased) {
     WakeUp::Device::onChargingEvent();
 #endif
 
-    Device::shutdownClocks();
+    Device::shutdownClocks(isLEDActive);
 
    /* To enter sleep, we need to issue a WFE instruction, which waits for the
    * event flag to be set and then clears it. However, the event flag might

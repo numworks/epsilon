@@ -14,6 +14,7 @@ class Context;
 
 class Expression : public TreeByValue {
   friend class CosineNode;
+  friend class SineNode;
   friend class ExpressionNode;
   friend class Multiplication;
   friend class Subtraction;

@@ -15,15 +15,20 @@ KDColor Ion::LED::getColor() {
 void Ion::LED::setColor(KDColor c) {
   sLedColor = c;
 
+  /* Active RGB colors */
   Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::RED, true);
   Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::GREEN, true);
   Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::BLUE, true);
 
+  /* Set the PWM duty cycles to display the right color */
   constexpr float maxColorValue = (float)((1 << 8) -1);
   Device::setPeriodAndDutyCycles(Device::Mode::PWM, c.red()/maxColorValue, c.green()/maxColorValue, c.blue()/maxColorValue);
 }
 
 void Ion::LED::setBlinking(float period, float dutyCycle) {
+  /* We want to use the PWM at a slow rate to display a seeable blink.
+   * Consequently, we do not use PWM to display the right color anymore.
+   * Instead we 'project the color on 3 bits' : RED LED is active or not etc. */
   Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::RED, sLedColor.red() > 0);
   Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::GREEN, sLedColor.green() > 0);
   Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::BLUE, sLedColor.blue() > 0);

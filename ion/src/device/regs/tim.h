@@ -3,6 +3,7 @@
 
 #include "register.h"
 
+template <typename RegisterWidth>
 class TIM {
 public:
   class CR1 : Register16 {
@@ -63,10 +64,10 @@ public:
 
   class PSC : public Register16 {};
   class ARR : public Register16 {};
-  class CCR1 : public Register16 {};
-  class CCR2 : public Register16 {};
-  class CCR3 : public Register16 {};
-  class CCR4 : public Register16 {};
+  class CCR1 : public RegisterWidth {};
+  class CCR2 : public RegisterWidth {};
+  class CCR3 : public RegisterWidth {};
+  class CCR4 : public RegisterWidth {};
 
   constexpr TIM(int i) : m_index(i) {}
   REGS_REGISTER_AT(CR1, 0x0);
@@ -81,12 +82,19 @@ public:
   REGS_REGISTER_AT(BDTR, 0x44);
 private:
   constexpr uint32_t Base() const {
-    return (m_index == 1 ? 0x40010000 : 0x40000000 + 0x400*(m_index-2));
-  };
+    return (m_index == 1 ? 0x40010000 :
+            (m_index <= 7 ? 0x40000000 + 0x400*(m_index-2) :
+             (m_index == 8 ? 0x40010400 :
+              (m_index <= 11 ? 0x40014000 + 0x400*(m_index-9) :
+               0x40001800 + 0x400*(m_index-12)
+              )
+             )
+            )
+           );
+  }
   int m_index;
 };
 
-constexpr TIM TIM1(1);
-constexpr TIM TIM3(3);
+constexpr TIM<Register16> TIM3(3);
 
 #endif

@@ -1,38 +1,17 @@
 #include <poincare/hyperbolic_arc_tangent.h>
-#include <poincare/simplification_helper.h>
-#include <poincare/trigonometry.h>
-extern "C" {
-#include <assert.h>
-}
+#include <poincare/complex.h>
 #include <cmath>
 
 namespace Poincare {
 
-ExpressionNode::Type HyperbolicArcTangent::type() const {
-  return Type::HyperbolicArcTangent;
-}
-
-Expression * HyperbolicArcTangent::clone() const {
-  HyperbolicArcTangent * a = new HyperbolicArcTangent(m_operands, true);
-  return a;
-}
-
-Expression HyperbolicArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  Expression * op = childAtIndex(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
-  }
-#endif
-  return this;
+HyperbolicArcTangentNode * HyperbolicArcTangentNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<HyperbolicArcTangentNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
 template<typename T>
-std::complex<T> HyperbolicArcTangent::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::atanh(c);
   /* atanh has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued on
    * this cut. We followed the convention chosen by the lib c++ of llvm on
@@ -42,7 +21,7 @@ std::complex<T> HyperbolicArcTangent::computeOnComplex(const std::complex<T> c, 
   if (c.imag() == 0 && c.real() > 1) {
     result.imag(-result.imag()); // other side of the cut
   }
-  return Trigonometry::RoundToMeaningfulDigits(result);
+  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(result));
 }
 
 }

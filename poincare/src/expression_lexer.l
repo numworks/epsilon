@@ -112,21 +112,18 @@ Y2 { poincare_expression_yylval.character = Symbol::SpecialSymbols::Y2; return S
 X3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::X3; return SYMBOL; }
 Y3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::Y3; return SYMBOL; }
 acos { poincare_expression_yylval.expression = ArcCosine(); return FUNCTION; }
- /*
-acosh { poincare_expression_yylval.expression = new HyperbolicArcCosine(); return FUNCTION; }
-abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
+acosh { poincare_expression_yylval.expression = HyperbolicArcCosine(); return FUNCTION; }
+ /*abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 */
 ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
  /*
 arg { poincare_expression_yylval.expression = new ComplexArgument(); return FUNCTION; }
 */
 asin { poincare_expression_yylval.expression = ArcSine(); return FUNCTION; }
- /*
-asinh { poincare_expression_yylval.expression = new HyperbolicArcSine(); return FUNCTION; }
-*/
+asinh { poincare_expression_yylval.expression = HyperbolicArcSine(); return FUNCTION; }
 atan { poincare_expression_yylval.expression = ArcTangent(); return FUNCTION; }
- /*atanh { poincare_expression_yylval.expression = new HyperbolicArcTangent(); return FUNCTION; }
-binomial { poincare_expression_yylval.expression = new BinomialCoefficient(); return FUNCTION; }
+atanh { poincare_expression_yylval.expression = HyperbolicArcTangent(); return FUNCTION; }
+ /*binomial { poincare_expression_yylval.expression = new BinomialCoefficient(); return FUNCTION; }
 ceil { poincare_expression_yylval.expression = new Ceiling(); return FUNCTION; }
 confidence { poincare_expression_yylval.expression = new ConfidenceInterval(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }

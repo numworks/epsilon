@@ -4,7 +4,7 @@
 #include <poincare/arithmetic.h>
 #include <poincare/division.h>
 #include <poincare/multiplication.h>
-//#include <poincare/naperian_logarithm.h>
+#include <poincare/naperian_logarithm.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/simplification_helper.h>
@@ -238,7 +238,7 @@ Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit 
   Symbol e = Symbol(Ion::Charset::Exponential);
   Rational one(1);
   if (childAtIndex(1).isIdenticalTo(e)) {
-    // TODO return NaperianLogarithm(childAtIndex(0));
+    return NaperianLogarithm(childAtIndex(0));
   }
   if (childAtIndex(1).isIdenticalTo(one)) {
     return Logarithm(childAtIndex(0));

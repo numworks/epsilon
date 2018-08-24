@@ -103,9 +103,9 @@
 #include <poincare/undefined.h>
 #include <poincare/variable_context.h>
 #include <poincare/vertical_offset_layout_node.h>
+
 #else
 
-#include <poincare/global_context.h>
 #include <poincare/addition.h>
 #include <poincare/arc_cosine.h>
 #include <poincare/arc_sine.h>
@@ -113,6 +113,9 @@
 #include <poincare/cosine.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>
+#include <poincare/hyperbolic_arc_cosine.h>
+#include <poincare/hyperbolic_arc_sine.h>
+#include <poincare/hyperbolic_arc_tangent.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
@@ -120,6 +123,7 @@
 #include <poincare/undefined.h>
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
+#include <poincare/global_context.h>
 #include <poincare/logarithm.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/number.h>

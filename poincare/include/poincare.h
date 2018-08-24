@@ -116,6 +116,9 @@
 #include <poincare/hyperbolic_arc_cosine.h>
 #include <poincare/hyperbolic_arc_sine.h>
 #include <poincare/hyperbolic_arc_tangent.h>
+#include <poincare/hyperbolic_cosine.h>
+#include <poincare/hyperbolic_sine.h>
+#include <poincare/hyperbolic_tangent.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>

@@ -39,8 +39,8 @@ Expression * Equal::standardEquation(Context & context, Preferences::AngleUnit a
 }
 
 Expression Equal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e != this) {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
   if (operand(0)->isIdenticalTo(operand(1))) {

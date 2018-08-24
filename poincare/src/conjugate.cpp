@@ -20,8 +20,8 @@ LayoutRef Conjugate::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 Expression Conjugate::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e != this) {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
   Expression * op = editableOperand(0);

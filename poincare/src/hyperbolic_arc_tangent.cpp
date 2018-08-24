@@ -18,8 +18,8 @@ Expression * HyperbolicArcTangent::clone() const {
 }
 
 Expression HyperbolicArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e != this) {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
 #if MATRIX_EXACT_REDUCING

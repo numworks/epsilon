@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type MatrixTrace::type() const {
+ExpressionNode::Type MatrixTrace::type() const {
   return Type::MatrixTrace;
 }
 

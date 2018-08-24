@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type ImaginaryPart::type() const {
+ExpressionNode::Type ImaginaryPart::type() const {
   return Type::ImaginaryPart;
 }
 

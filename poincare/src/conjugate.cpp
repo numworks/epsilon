@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-Expression::Type Conjugate::type() const {
+ExpressionNode::Type Conjugate::type() const {
   return Type::Conjugate;
 }
 

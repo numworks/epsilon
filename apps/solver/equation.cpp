@@ -36,14 +36,14 @@ void Equation::tidy() {
 Expression * Equation::standardForm(Context * context) const {
   if (m_standardForm == nullptr) {
     Expression * e = expression(context);
-    if (e->type() == Expression::Type::Equal) {
+    if (e->type() == ExpressionNode::Type::Equal) {
       m_standardForm = static_cast<const Equal *>(e)->standardEquation(*context, Preferences::sharedPreferences()->angleUnit());
-    } else if (e->type() == Expression::Type::Rational && static_cast<Rational *>(e)->isOne()) {
+    } else if (e->type() == ExpressionNode::Type::Rational && static_cast<Rational *>(e)->isOne()) {
       // The equality was reduced which means the equality was always true.
       m_standardForm = RationalReference(0);
     } else {
       // The equality has an undefined operand
-      assert(e->type() == Expression::Type::Undefined);
+      assert(e->type() == ExpressionNode::Type::Undefined);
     }
   }
   return m_standardForm;

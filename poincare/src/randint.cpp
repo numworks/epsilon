@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Randint::type() const {
+ExpressionNode::Type Randint::type() const {
   return Type::Randint;
 }
 

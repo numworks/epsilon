@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type DivisionRemainder::type() const {
+ExpressionNode::Type DivisionRemainder::type() const {
   return Type::DivisionRemainder;
 }
 

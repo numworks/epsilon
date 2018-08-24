@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Floor::type() const {
+ExpressionNode::Type Floor::type() const {
   return Type::Floor;
 }
 

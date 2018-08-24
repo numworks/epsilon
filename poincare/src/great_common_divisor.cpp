@@ -10,7 +10,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type GreatCommonDivisor::type() const {
+ExpressionNode::Type GreatCommonDivisor::type() const {
   return Type::GreatCommonDivisor;
 }
 

@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type DivisionQuotient::type() const {
+ExpressionNode::Type DivisionQuotient::type() const {
   return Type::DivisionQuotient;
 }
 

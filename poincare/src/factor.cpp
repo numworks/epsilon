@@ -13,7 +13,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Factor::type() const {
+ExpressionNode::Type Factor::type() const {
   return Type::Factor;
 }
 

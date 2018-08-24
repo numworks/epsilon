@@ -12,7 +12,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Store::type() const {
+ExpressionNode::Type Store::type() const {
   return Type::Store;
 }
 

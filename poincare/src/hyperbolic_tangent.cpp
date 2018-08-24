@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type HyperbolicTangent::type() const {
+ExpressionNode::Type HyperbolicTangent::type() const {
   return Type::HyperbolicTangent;
 }
 

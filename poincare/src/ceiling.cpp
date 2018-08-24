@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Ceiling::type() const {
+ExpressionNode::Type Ceiling::type() const {
   return Type::Ceiling;
 }
 

@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type ConfidenceInterval::type() const {
+ExpressionNode::Type ConfidenceInterval::type() const {
   return Type::ConfidenceInterval;
 }
 

@@ -10,7 +10,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Sum::type() const {
+ExpressionNode::Type Sum::type() const {
   return Type::Sum;
 }
 

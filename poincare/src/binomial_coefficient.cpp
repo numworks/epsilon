@@ -11,7 +11,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type BinomialCoefficient::type() const {
+ExpressionNode::Type BinomialCoefficient::type() const {
   return Type::BinomialCoefficient;
 }
 

@@ -134,7 +134,7 @@ public:
    * (ie +, *, ^, !) have specific rules to group like terms together and thus
    * reimplement simplificationOrderGreaterType. */
   virtual int simplificationOrderGreaterType(const ExpressionNode * e, bool canBeInterrupted) const { return -1; }
-  virtual int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const { return 0; }
+  virtual int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const;
 
   /* Layout Helper */
   virtual LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;

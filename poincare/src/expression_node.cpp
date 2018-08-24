@@ -70,6 +70,24 @@ int ExpressionNode::SimplificationOrder(const ExpressionNode * e1, const Express
   }
 }
 
+int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    // The NULL node is the least node type.
+    if (e->numberOfChildren() <= i) {
+      return 1;
+    }
+    int childIOrder = SimplificationOrder(childAtIndex(i), e->childAtIndex(i), canBeInterrupted);
+    if (childIOrder != 0) {
+      return childIOrder;
+    }
+  }
+  // The NULL node is the least node type.
+  if (e->numberOfChildren() > numberOfChildren()) {
+    return -1;
+  }
+  return 0;
+}
+
 Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
   return Expression(this).defaultShallowReduce(context, angleUnit);
 }

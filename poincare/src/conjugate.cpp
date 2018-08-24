@@ -16,7 +16,7 @@ Expression * Conjugate::clone() const {
 }
 
 LayoutRef Conjugate::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return ConjugateLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return ConjugateLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 Expression Conjugate::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {

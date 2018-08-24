@@ -42,11 +42,11 @@ Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit ang
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  if (operand(0)->type() == Type::Matrix) {
+  if (childAtIndex(0)->type() == Type::Matrix) {
     return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
-  if (operand(0)->type() == Type::Rational) {
+  if (childAtIndex(0)->type() == Type::Rational) {
     Rational * r = static_cast<Rational *>(childAtIndex(0));
     if (!r->denominator().isOne() || r->sign() == Sign::Negative) {
       return replaceWith(new Undefined(), true);
@@ -57,7 +57,7 @@ Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit ang
     Rational * fact = new Rational(Integer::Factorial(r->numerator()));
     return replaceWith(fact, true);
   }
-  if (operand(0)->type() == Type::Symbol) {
+  if (childAtIndex(0)->type() == Type::Symbol) {
     Symbol * s = static_cast<Symbol *>(childAtIndex(0));
     if (s->name() == Ion::Charset::SmallPi || s->name() == Ion::Charset::Exponential) {
       return replaceWith(new Undefined(), true);
@@ -68,10 +68,10 @@ Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit ang
 
 Expression Factorial::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
   // +(a,b)! ->(+(a,b))!
-  if (operand(0)->type() == Type::Addition || operand(0)->type() == Type::Multiplication || operand(0)->type() == Type::Power) {
-    const Expression * o[1] = {operand(0)};
+  if (childAtIndex(0)->type() == Type::Addition || childAtIndex(0)->type() == Type::Multiplication || childAtIndex(0)->type() == Type::Power) {
+    const Expression * o[1] = {childAtIndex(0)};
     Parenthesis * p = new Parenthesis(o, true);
-    replaceOperand(operand(0), p, true);
+    replaceOperand(childAtIndex(0), p, true);
   }
   return this;
 }
@@ -94,7 +94,7 @@ std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, Preferences
 
 LayoutRef Factorial::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result;
-  result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
   result.addChildAtIndex(CharLayoutRef('!'), childrenCount, childrenCount, nullptr);
   return result;
@@ -106,12 +106,12 @@ int Factorial::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
   }
   buffer[bufferSize-1] = 0;
   int numberOfChar = 0;
-  if (operand(0)->needsParenthesesWithParent(this)) {
+  if (childAtIndex(0)->needsParenthesesWithParent(this)) {
     buffer[numberOfChar++] = '(';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
-  numberOfChar += operand(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
-  if (operand(0)->needsParenthesesWithParent(this)) {
+  numberOfChar += childAtIndex(0)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  if (childAtIndex(0)->needsParenthesesWithParent(this)) {
     buffer[numberOfChar++] = ')';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
@@ -125,14 +125,14 @@ int Factorial::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 
 #if 0
 int Factorial::simplificationOrderGreaterType(const Expression * e) const {
-  if (SimplificationOrder(operand(0),e) == 0) {
+  if (SimplificationOrder(childAtIndex(0),e) == 0) {
     return 1;
   }
-  return SimplificationOrder(operand(0), e);
+  return SimplificationOrder(childAtIndex(0), e);
 }
 
 int Factorial::simplificationOrderSameType(const Expression * e) const {
-  return SimplificationOrder(operand(0), e->childAtIndex(0));
+  return SimplificationOrder(childAtIndex(0), e->childAtIndex(0));
 }
 #endif
 

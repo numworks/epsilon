@@ -25,8 +25,8 @@ private:
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 
-  const Symbol * symbol() const { return static_cast<const Symbol *>(operand(1)); }
-  const Expression * value() const { return operand(0); }
+  const Symbol * symbol() const { return static_cast<const Symbol *>(childAtIndex(1)); }
+  const Expression * value() const { return childAtIndex(0); }
 };
 
 }

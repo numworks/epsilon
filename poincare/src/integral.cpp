@@ -21,8 +21,8 @@ Expression * Integral::clone() const {
 
 int Integral::polynomialDegree(char symbolName) const {
   if (symbolName == 'x') {
-    int da = operand(1)->polynomialDegree(symbolName);
-    int db = operand(2)->polynomialDegree(symbolName);
+    int da = childAtIndex(1)->polynomialDegree(symbolName);
+    int db = childAtIndex(2)->polynomialDegree(symbolName);
     if (da != 0 || db != 0) {
       return -1;
     }
@@ -37,7 +37,7 @@ Expression Integral::shallowReduce(Context& context, Preferences::AngleUnit angl
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix || operand(2)->type() == Type::Matrix) {
+  if (childAtIndex(0)->type() == Type::Matrix || childAtIndex(1)->type() == Type::Matrix || childAtIndex(2)->type() == Type::Matrix) {
     return replaceWith(new Undefined(), true);
   }
 #endif
@@ -46,10 +46,10 @@ Expression Integral::shallowReduce(Context& context, Preferences::AngleUnit angl
 
 template<typename T>
 Complex<T> * Integral::templatedApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * aInput = operand(1)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * aInput = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
   T a = aInput->toScalar();
   delete aInput;
-  Evaluation<T> * bInput = operand(2)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * bInput = childAtIndex(2)->privateApproximate(T(), context, angleUnit);
   T b = bInput->toScalar();
   delete bInput;
   if (std::isnan(a) || std::isnan(b)) {
@@ -65,14 +65,14 @@ Complex<T> * Integral::templatedApproximate(Context & context, Preferences::Angl
 
 LayoutRef Integral::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return IntegralLayoutRef(
-      operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      operand(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 template<typename T>
 T Integral::functionValueAtAbscissa(T x, Context & context, Preferences::AngleUnit angleUnit) const {
-  return operand(0)->approximateWithValueForSymbol('x', x, context, angleUnit);
+  return childAtIndex(0)->approximateWithValueForSymbol('x', x, context, angleUnit);
 }
 
 #ifdef LAGRANGE_METHOD

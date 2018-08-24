@@ -16,7 +16,7 @@ public:
   ListData& operator=(ListData&& other) = delete;
   int numberOfChildren() const;
   Expression ** operands() const;
-  const Expression * operand(int i) const;
+  const Expression * childAtIndex(int i) const;
   void pushExpression(Expression * operand);
   void detachOperands();
 private:

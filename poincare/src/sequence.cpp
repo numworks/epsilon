@@ -12,13 +12,13 @@ extern "C" {
 namespace Poincare {
 
 LayoutRef Sequence::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return createSequenceLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), operand(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return createSequenceLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 template<typename T>
 Evaluation<T> Sequence::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * aInput = operand(1)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * bInput = operand(2)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * aInput = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * bInput = childAtIndex(2)->privateApproximate(T(), context, angleUnit);
   T start = aInput->toScalar();
   T end = bInput->toScalar();
   delete aInput;
@@ -34,7 +34,7 @@ Evaluation<T> Sequence::templatedApproximate(Context& context, Preferences::Angl
       return new Complex<T>(Complex<T>::Undefined());
     }
     nContext.setApproximationForVariable((T)i);
-    Evaluation<T> * expression = operand(0)->privateApproximate(T(), nContext, angleUnit);
+    Evaluation<T> * expression = childAtIndex(0)->privateApproximate(T(), nContext, angleUnit);
     Evaluation<T> * newResult = evaluateWithNextTerm(T(), result, expression);
     delete result;
     delete expression;

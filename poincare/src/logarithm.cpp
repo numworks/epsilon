@@ -127,7 +127,7 @@ Expression Logarithm::shallowReduce(Context& context, Preferences::AngleUnit ang
   }
   // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
   if (!letLogAtRoot && op->type() == Type::Rational) {
-    const Rational * r = static_cast<const Rational *>(operand(0));
+    const Rational * r = static_cast<const Rational *>(childAtIndex(0));
     Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
     Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
     Addition * a = new Addition(n, d, false);
@@ -184,7 +184,7 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
       }
     }
     if (numberOfChildren() == 2) {
-      if (powerOperand0->isIdenticalTo(operand(1))){
+      if (powerOperand0->isIdenticalTo(childAtIndex(1))){
         return true;
       }
     }

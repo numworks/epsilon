@@ -63,8 +63,8 @@ Expression ConfidenceInterval::shallowReduce(Context& context, Preferences::Angl
 
 template<typename T>
 Evaluation<T> ConfidenceInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * fInput = operand(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * nInput = operand(1)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * fInput = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * nInput = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
   T f = static_cast<Complex<T> *>(fInput)->toScalar();
   T n = static_cast<Complex<T> *>(nInput)->toScalar();
   delete fInput;

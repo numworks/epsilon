@@ -23,7 +23,7 @@ Expression ArcSine::shallowReduce(Context& context, Preferences::AngleUnit angle
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  if (operand(0)->type() == Type::Matrix) {
+  if (childAtIndex(0)->type() == Type::Matrix) {
     return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif

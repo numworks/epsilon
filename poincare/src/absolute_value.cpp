@@ -24,7 +24,7 @@ Expression * AbsoluteValue::setSign(Sign s, Context & context, Preferences::Angl
 }
 
 LayoutRef AbsoluteValue::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return AbsoluteValueLayoutRef(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return AbsoluteValueLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 Expression AbsoluteValue::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {

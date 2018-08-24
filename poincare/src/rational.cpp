@@ -174,5 +174,7 @@ int Rational::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode 
   return numberOfChar;
 }
 
-}
+template Complex<float>* Rational::templatedApproximate<float>(Context&, Expression::AngleUnit) const;
+template Complex<double>* Rational::templatedApproximate<double>(Context&, Expression::AngleUnit) const;
 
+}

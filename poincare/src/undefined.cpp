@@ -37,5 +37,8 @@ int Undefined::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode
   return strlcpy(buffer, "undef", bufferSize);
 }
 
+template Complex<double>* Undefined::templatedApproximate<double>(Context&, Expression::AngleUnit) const;
+template Complex<float>* Undefined::templatedApproximate<float>(Context&, Expression::AngleUnit) const;
+
 }
 

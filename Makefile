@@ -52,7 +52,7 @@ test.$(EXE): $(objs)
 .SECONDARY: $(objs)
 %.$(EXE):
 	@echo "LD      $@"
-	$(Q) $(LD) $^ $(LDFLAGS) -o $@
+	$(Q) $(LD) $(SFLAGS) $^ $(LDFLAGS) -o $@
 
 %.o: %.c
 	@echo "CC      $@"

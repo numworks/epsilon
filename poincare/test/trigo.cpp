@@ -322,7 +322,6 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Radian, Cartesian, 6);
   assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Degree, Cartesian, 6);
 
-#if 0
   // WARNING: evaluate on branch cut can be multivalued
   assert_parsed_expression_evaluates_to<double>("acos(2)", "1.3169578969248*I", Radian);
   assert_parsed_expression_evaluates_to<double>("acos(2)", "75.456129290217*I", Degree);
@@ -333,7 +332,6 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("atan(2I)", "90+31.472923730945*I", Degree);
   assert_parsed_expression_evaluates_to<double>("asinh(2I)", "1.3169578969248+1.5707963267949*I", Radian);
   assert_parsed_expression_evaluates_to<double>("acosh(-2)", "1.3169578969248+3.1415926535898*I", Radian);
-#endif
 }
 
 QUIZ_CASE(poincare_trigo_simplify) {

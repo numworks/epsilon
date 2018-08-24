@@ -108,6 +108,7 @@
 #include <poincare/global_context.h>
 #include <poincare/addition.h>
 #include <poincare/arc_cosine.h>
+#include <poincare/arc_sine.h>
 #include <poincare/cosine.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>

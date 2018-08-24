@@ -1,37 +1,23 @@
 #include <poincare/arc_tangent.h>
-#include <poincare/trigonometry.h>
+#include <poincare/complex.h>
+#include <poincare/layout_helper.h>
 #include <poincare/simplification_helper.h>
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-ExpressionNode::Type ArcTangent::type() const {
-  return Type::ArcTangent;
+ArcTangentNode * ArcTangentNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<ArcTangentNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * ArcTangent::clone() const {
-  ArcTangent * a = new ArcTangent(m_operands, true);
-  return a;
-}
-
-Expression ArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0)->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
-  }
-#endif
-  return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
+LayoutReference ArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
 template<typename T>
-std::complex<T> ArcTangent::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::atan(c);
   /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then multivalued
    * on this cut. We followed the convention chosen by the lib c++ of llvm on
@@ -42,7 +28,24 @@ std::complex<T> ArcTangent::computeOnComplex(const std::complex<T> c, Preference
     result.real(-result.real()); // other side of the cut
   }
   result = Trigonometry::RoundToMeaningfulDigits(result);
-  return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
+  return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
+}
+
+Expression ArcTangentNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return ArcTangent(this).shallowReduce(context, angleUnit);
+}
+
+Expression ArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
+  }
+#endif
+  return Trigonometry::shallowReduceInverseFunction(*this, context, angleUnit);
 }
 
 }

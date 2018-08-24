@@ -1,34 +1,45 @@
 #ifndef POINCARE_HYPERBOLIC_SINE_H
 #define POINCARE_HYPERBOLIC_SINE_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
 #include <poincare/approximation_helper.h>
+#include <poincare/hyperbolic_trigonometric_function.h>
 
 namespace Poincare {
 
-class HyperbolicSine : public StaticHierarchy<1>  {
-  using StaticHierarchy<1>::StaticHierarchy;
+class HyperbolicSineNode : public HyperbolicTrigonometricFunctionNode {
 public:
-  Type type() const override;
-  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
+  // Allocation Failure
+  static HyperbolicSineNode * FailedAllocationStaticNode();
+  HyperbolicSineNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(HyperbolicSineNode); }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "HyperbolicSine";
+  }
+#endif
+
+  // Properties
+  Type type() const override { return Type::HyperbolicSine; }
 private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  const char * name() const { return "sinh"; }
-  /* Simplification */
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Evaluation */
+  const char * name() const override { return "sinh"; }
+  //Evaluation
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, angleUnit,computeOnComplex<float>);
   }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<double>(this, context, angleUnit, computeOnComplex<double>);
+  }
+};
+
+class HyperbolicSine : public HyperbolicTrigonometricFunction {
+public:
+  HyperbolicSine() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicSineNode>()) {}
+  HyperbolicSine(const HyperbolicSineNode * n) : HyperbolicTrigonometricFunction(n) {}
+  HyperbolicSine(Expression operand) : HyperbolicSine() {
+    replaceChildAtIndexInPlace(0, operand);
   }
 };
 

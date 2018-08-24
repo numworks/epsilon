@@ -1,42 +1,16 @@
 #include <poincare/hyperbolic_tangent.h>
-#include <poincare/hyperbolic_cosine.h>
-#include <poincare/hyperbolic_sine.h>
-#include <poincare/division.h>
-#include <poincare/simplification_helper.h>
-#include <poincare/trigonometry.h>
-extern "C" {
-#include <assert.h>
-}
-#include <cmath>
 
 namespace Poincare {
 
-ExpressionNode::Type HyperbolicTangent::type() const {
-  return Type::HyperbolicTangent;
-}
-
-Expression * HyperbolicTangent::clone() const {
-  HyperbolicTangent * a = new HyperbolicTangent(m_operands, true);
-  return a;
-}
-
-Expression HyperbolicTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  Expression * op = childAtIndex(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
-  }
-#endif
-  return this;
+HyperbolicTangentNode * HyperbolicTangentNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<HyperbolicTangentNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
 template<typename T>
-std::complex<T> HyperbolicTangent::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  return Trigonometry::RoundToMeaningfulDigits(std::tanh(c));
+Complex<T> HyperbolicTangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  return Complex<T>(Trigonometry::RoundToMeaningfulDigits(std::tanh(c)));
 }
 
 }

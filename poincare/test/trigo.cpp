@@ -10,11 +10,9 @@ QUIZ_CASE(poincare_parse_trigo) {
   assert_parsed_expression_type("sin(0)", ExpressionNode::Type::Sine);
   assert_parsed_expression_type("cos(0)", ExpressionNode::Type::Cosine);
   assert_parsed_expression_type("tan(0)", ExpressionNode::Type::Tangent);
-#if 0
   assert_parsed_expression_type("cosh(0)", ExpressionNode::Type::HyperbolicCosine);
   assert_parsed_expression_type("sinh(0)", ExpressionNode::Type::HyperbolicSine);
   assert_parsed_expression_type("tanh(0)", ExpressionNode::Type::HyperbolicTangent);
-#endif
   assert_parsed_expression_type("acos(0)", ExpressionNode::Type::ArcCosine);
   assert_parsed_expression_type("asin(0)", ExpressionNode::Type::ArcSine);
   assert_parsed_expression_type("atan(0)", ExpressionNode::Type::ArcTangent);
@@ -182,7 +180,6 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("atan(-I)", "-inf*I", Radian);
   assert_parsed_expression_evaluates_to<double>("atan(I)", "inf*I", Radian);
 
-#if 0
   /* cosh: R         -> R (even)
    *       R*i       -> R (oscillator)
    */
@@ -241,7 +238,6 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   // On C
   assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.00061*I", Radian);
   assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.00061*I", Degree);
-#endif
 
   /* acosh: [-1,1]       ->  R*i
    *        ]-inf,-1[    -> Pi*i+R (even on real)

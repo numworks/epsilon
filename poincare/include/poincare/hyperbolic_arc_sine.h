@@ -2,11 +2,11 @@
 #define POINCARE_HYPERBOLIC_ARC_SINE_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/hyperbolic_arc_trigonometric_function.h>
+#include <poincare/hyperbolic_trigonometric_function.h>
 
 namespace Poincare {
 
-class HyperbolicArcSineNode : public HyperbolicArcTrigonometricFunctionNode {
+class HyperbolicArcSineNode : public HyperbolicTrigonometricFunctionNode {
 public:
   // Allocation Failure
   static HyperbolicArcSineNode * FailedAllocationStaticNode();
@@ -34,10 +34,10 @@ private:
   }
 };
 
-class HyperbolicArcSine : public HyperbolicArcTrigonometricFunction {
+class HyperbolicArcSine : public HyperbolicTrigonometricFunction {
 public:
-  HyperbolicArcSine() : HyperbolicArcTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcSineNode>()) {}
-  HyperbolicArcSine(const HyperbolicArcSineNode * n) : HyperbolicArcTrigonometricFunction(n) {}
+  HyperbolicArcSine() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcSineNode>()) {}
+  HyperbolicArcSine(const HyperbolicArcSineNode * n) : HyperbolicTrigonometricFunction(n) {}
   HyperbolicArcSine(Expression operand) : HyperbolicArcSine() {
     replaceChildAtIndexInPlace(0, operand);
   }

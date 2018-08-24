@@ -23,7 +23,7 @@ Expression * Factor::clone() const {
 }
 
 Expression Factor::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * op = editableOperand(0);
+  Expression * op = childAtIndex(0);
   if (op->type() != Type::Rational) {
     return new Undefined();
   }

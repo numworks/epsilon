@@ -92,10 +92,10 @@ Expression Logarithm::shallowReduce(Context& context, Preferences::AngleUnit ang
 #if 0
   bool letLogAtRoot = parentIsAPowerOfSameBase();
   // log(x^y, b)->y*log(x, b) if x>0
-  if (!letLogAtRoot && op->type() == Type::Power && op->operand(0)->sign() == Sign::Positive) {
+  if (!letLogAtRoot && op->type() == Type::Power && op->childAtIndex(0)->sign() == Sign::Positive) {
     Power * p = static_cast<Power *>(op);
-    Expression * x = p->editableOperand(0);
-    Expression * y = p->editableOperand(1);
+    Expression * x = p->childAtIndex(0);
+    Expression * y = p->childAtIndex(1);
     p->detachOperands();
     replaceOperand(p, x, true);
     Expression * newLog = shallowReduce(context, angleUnit);
@@ -106,11 +106,11 @@ Expression Logarithm::shallowReduce(Context& context, Preferences::AngleUnit ang
   if (!letLogAtRoot && op->type() == Type::Multiplication) {
     Addition * a = new Addition();
     for (int i = 0; i<op->numberOfChildren()-1; i++) {
-      Expression * factor = op->editableOperand(i);
+      Expression * factor = op->childAtIndex(i);
       if (factor->sign() == Sign::Positive) {
         Expression * newLog = clone();
         static_cast<Multiplication *>(op)->removeOperand(factor, false);
-        newLog->replaceOperand(newLog->editableOperand(0), factor, true);
+        newLog->replaceOperand(newLog->childAtIndex(0), factor, true);
         a->addOperand(newLog);
         newLog->shallowReduce(context, angleUnit);
       }
@@ -167,17 +167,17 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::AngleU
 bool Logarithm::parentIsAPowerOfSameBase() const {
   // We look for expressions of types e^ln(x) or e^(ln(x)) where ln is this
   const Expression * parentExpression = parent();
-  bool thisIsPowerExponent = parentExpression->type() == Type::Power ? parentExpression->operand(1) == this : false;
+  bool thisIsPowerExponent = parentExpression->type() == Type::Power ? parentExpression->childAtIndex(1) == this : false;
   if (parentExpression->type() == Type::Parenthesis) {
     const Expression * parentParentExpression = parentExpression->parent();
     if (parentExpression == nullptr) {
       return false;
     }
-    thisIsPowerExponent = parentParentExpression->type() == Type::Power ? parentParentExpression->operand(1) == parentExpression : false;
+    thisIsPowerExponent = parentParentExpression->type() == Type::Power ? parentParentExpression->childAtIndex(1) == parentExpression : false;
     parentExpression = parentParentExpression;
   }
   if (thisIsPowerExponent) {
-    const Expression * powerOperand0 = parentExpression->operand(0);
+    const Expression * powerOperand0 = parentExpression->childAtIndex(0);
     if (numberOfChildren() == 1) {
       if (powerOperand0->type() == Type::Rational && static_cast<const Rational *>(powerOperand0)->isTen()) {
         return true;

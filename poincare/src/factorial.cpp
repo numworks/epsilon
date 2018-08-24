@@ -47,7 +47,7 @@ Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit ang
   }
 #endif
   if (operand(0)->type() == Type::Rational) {
-    Rational * r = static_cast<Rational *>(editableOperand(0));
+    Rational * r = static_cast<Rational *>(childAtIndex(0));
     if (!r->denominator().isOne() || r->sign() == Sign::Negative) {
       return replaceWith(new Undefined(), true);
     }
@@ -58,7 +58,7 @@ Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit ang
     return replaceWith(fact, true);
   }
   if (operand(0)->type() == Type::Symbol) {
-    Symbol * s = static_cast<Symbol *>(editableOperand(0));
+    Symbol * s = static_cast<Symbol *>(childAtIndex(0));
     if (s->name() == Ion::Charset::SmallPi || s->name() == Ion::Charset::Exponential) {
       return replaceWith(new Undefined(), true);
     }
@@ -132,7 +132,7 @@ int Factorial::simplificationOrderGreaterType(const Expression * e) const {
 }
 
 int Factorial::simplificationOrderSameType(const Expression * e) const {
-  return SimplificationOrder(operand(0), e->operand(0));
+  return SimplificationOrder(operand(0), e->childAtIndex(0));
 }
 #endif
 

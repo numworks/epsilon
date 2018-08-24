@@ -111,8 +111,8 @@ X2 { poincare_expression_yylval.character = Symbol::SpecialSymbols::X2; return S
 Y2 { poincare_expression_yylval.character = Symbol::SpecialSymbols::Y2; return SYMBOL; }
 X3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::X3; return SYMBOL; }
 Y3 { poincare_expression_yylval.character = Symbol::SpecialSymbols::Y3; return SYMBOL; }
+acos { poincare_expression_yylval.expression = ArcCosine(); return FUNCTION; }
  /*
-acos { poincare_expression_yylval.expression = new ArcCosine(); return FUNCTION; }
 acosh { poincare_expression_yylval.expression = new HyperbolicArcCosine(); return FUNCTION; }
 abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTION; }
 */

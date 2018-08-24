@@ -177,24 +177,29 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression e, Context& con
 
   /* Step 4. Handle negative arguments: arccos(-x) = Pi-arcos(x),
    * arcsin(-x) = -arcsin(x), arctan(-x)= -arctan(x) */
-  if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative || (e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(e.childAtIndex(0).childAtIndex(0)).isMinusOne())) {
+  if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative
+      || (e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
+        && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational
+        && static_cast<Rational>(e.childAtIndex(0).childAtIndex(0)).isMinusOne()))
+  {
     Expression newArgument;
     if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {
       newArgument = e.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
-      newArgument = newArgument.shallowReduce(context, angleUnit);
     } else {
       newArgument = e.childAtIndex(0);
       static_cast<Multiplication&>(newArgument).removeChildAtIndexInPlace(0);
-      newArgument = newArgument.shallowReduce(context, angleUnit);
     }
+    newArgument = newArgument.shallowReduce(context, angleUnit);
     Expression result = e.clone();
     result.replaceChildAtIndexInPlace(0, newArgument);
-    result = result.shallowReduce(context, angleUnit);
     if (result.type() == ExpressionNode::Type::ArcCosine) {
+      // Do the reduction after the if case, or it might change the result!
+      result = result.shallowReduce(context, angleUnit);
       Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Symbol(Ion::Charset::SmallPi)) : static_cast<Expression>(Rational(180));
       Subtraction s = Subtraction(pi, result);
       return s.shallowReduce(context, angleUnit);
     } else {
+      result = result.shallowReduce(context, angleUnit);
       Multiplication m = Multiplication(Rational(-1), result);
       return m.shallowReduce(context, angleUnit);
     }

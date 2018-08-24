@@ -18,6 +18,16 @@ static inline void assert_parsed_expression_is_equal_to(const char * exp, Expres
   assert(result.isIdenticalTo(e));
 }
 
+QUIZ_CASE(poincare_addition_cast_does_not_copy) {
+  Integer i1(1);
+  Integer i2(2);
+  Addition j(i1, i2);
+  Expression k = j;
+  assert(k.identifier() == (static_cast<Addition&>(k)).identifier());
+  assert(i1.identifier() == (static_cast<Expression&>(i1)).identifier());
+  assert(k.identifier() == (static_cast<Expression&>(k)).identifier());
+}
+
 QUIZ_CASE(poincare_addition_without_parsing) {
   Integer i1(1);
   Integer i2(2);

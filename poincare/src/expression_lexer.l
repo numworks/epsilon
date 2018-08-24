@@ -119,7 +119,9 @@ abs { poincare_expression_yylval.expression = new AbsoluteValue(); return FUNCTI
 ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
  /*
 arg { poincare_expression_yylval.expression = new ComplexArgument(); return FUNCTION; }
-asin { poincare_expression_yylval.expression = new ArcSine(); return FUNCTION; }
+*/
+asin { poincare_expression_yylval.expression = ArcSine(); return FUNCTION; }
+ /*
 asinh { poincare_expression_yylval.expression = new HyperbolicArcSine(); return FUNCTION; }
 atan { poincare_expression_yylval.expression = new ArcTangent(); return FUNCTION; }
 atanh { poincare_expression_yylval.expression = new HyperbolicArcTangent(); return FUNCTION; }

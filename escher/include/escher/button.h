@@ -6,6 +6,7 @@
 #include <escher/responder.h>
 #include <escher/message_text_view.h>
 #include <escher/invocation.h>
+#include <escher/palette.h>
 
 class Button : public HighlightCell, public Responder {
 public:
@@ -13,6 +14,7 @@ public:
   void setMessage(I18n::Message message);
   bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;
+  virtual KDColor highlightedBackgroundColor() const { return Palette::Select; }
   Responder * responder() override {
     return this;
   }

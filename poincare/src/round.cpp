@@ -25,11 +25,11 @@ Expression Round::shallowReduce(Context& context, Preferences::AngleUnit angleUn
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  if (operand(0)->type() == Type::Matrix || operand(1)->type() == Type::Matrix) {
+  if (childAtIndex(0)->type() == Type::Matrix || childAtIndex(1)->type() == Type::Matrix) {
     return replaceWith(new Undefined(), true);
   }
 #endif
-  if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Rational) {
+  if (childAtIndex(0)->type() == Type::Rational && childAtIndex(1)->type() == Type::Rational) {
     Rational * r1 = static_cast<Rational *>(childAtIndex(0));
     Rational * r2 = static_cast<Rational *>(childAtIndex(1));
     if (!r2->denominator().isOne()) {
@@ -54,8 +54,8 @@ Expression Round::shallowReduce(Context& context, Preferences::AngleUnit angleUn
 
 template<typename T>
 Complex<T> * Round::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * f1Input = operand(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * f2Input = operand(1)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * f1Input = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * f2Input = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
   T f1 = f1Input->toScalar();
   T f2 = f2Input->toScalar();
   delete f1Input;

@@ -35,7 +35,7 @@ Expression Determinant::shallowReduce(Context& context, Preferences::AngleUnit a
 // TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
 Evaluation<T> Determinant::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * input = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
   Complex<T> * result = new Complex<T>(input->createDeterminant());
   delete input;
   return result;

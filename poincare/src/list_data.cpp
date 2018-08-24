@@ -47,7 +47,7 @@ Expression ** ListData::operands() const {
   return m_operands;
 }
 
-const Expression * ListData::operand(int i) const {
+const Expression * ListData::childAtIndex(int i) const {
   assert(i >= 0);
   assert(i < m_numberOfChildren);
   return m_operands[i];

@@ -57,8 +57,8 @@ Expression LeastCommonMultiple::shallowReduce(Context& context, Preferences::Ang
 
 template<typename T>
 Complex<T> * LeastCommonMultiple::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * f1Input = operand(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * f2Input = operand(1)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * f1Input = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * f2Input = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
   T f1 = f1Input->toScalar();
   T f2 = f2Input->toScalar();
   delete f1Input;

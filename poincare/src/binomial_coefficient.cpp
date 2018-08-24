@@ -73,14 +73,14 @@ Expression BinomialCoefficient::shallowReduce(Context& context, Preferences::Ang
 
 LayoutRef BinomialCoefficient::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return BinomialCoefficientLayoutRef(
-      operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 template<typename T>
 Complex<T> * BinomialCoefficient::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * nInput = operand(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * kInput = operand(1)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * nInput = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * kInput = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
   T n = nInput->toScalar();
   T k = kInput->toScalar();
   delete nInput;

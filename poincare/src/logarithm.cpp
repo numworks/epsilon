@@ -57,8 +57,8 @@ template<typename T> Evaluation<T> LogarithmNode<2>::templatedApproximate(Contex
   Evaluation<T> n = childAtIndex(1)->approximate(T(), context, angleUnit);
   std::complex<T> result = std::complex<T>(NAN, NAN);
   if (x.type() == EvaluationNode<T>::Type::Complex && n.type() == EvaluationNode<T>::Type::Complex) {
-    std::complex<T> xc = (static_cast<Complex<T> >(x)).stdComplex();
-    std::complex<T> nc = (static_cast<Complex<T> >(n)).stdComplex();
+    std::complex<T> xc = (static_cast<Complex<T>&>(x)).stdComplex();
+    std::complex<T> nc = (static_cast<Complex<T>&>(n)).stdComplex();
     result = DivisionNode::compute<T>(computeOnComplex(xc, angleUnit).stdComplex(), computeOnComplex(nc, angleUnit).stdComplex()).stdComplex();
   }
   return Complex<T>(result);

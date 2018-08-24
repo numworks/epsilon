@@ -184,7 +184,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression e, Context& con
       newArgument = newArgument.shallowReduce(context, angleUnit);
     } else {
       newArgument = e.childAtIndex(0);
-      static_cast<Multiplication>(newArgument).removeChildAtIndexInPlace(0);
+      static_cast<Multiplication&>(newArgument).removeChildAtIndexInPlace(0);
       newArgument = newArgument.shallowReduce(context, angleUnit);
     }
     Expression result = e.clone();

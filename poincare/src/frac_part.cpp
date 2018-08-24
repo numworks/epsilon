@@ -22,7 +22,7 @@ Expression FracPart::shallowReduce(Context& context, Preferences::AngleUnit angl
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op = editableOperand(0);
+  Expression * op = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
     return SimplificationHelper::Map(this, context, angleUnit);

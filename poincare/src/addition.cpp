@@ -257,7 +257,7 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
      * other matrix */
     int i = numberOfChildren()-1;
     while (i >= 0 && childAtIndex(i)->type() == Type::Matrix) {
-      Matrix * currentMatrix = static_cast<Matrix *>(editableOperand(i));
+      Matrix * currentMatrix = static_cast<Matrix *>(childAtIndex(i));
       int on = currentMatrix->numberOfRows();
       int om = currentMatrix->numberOfColumns();
       if (on != n || om != m) {
@@ -266,9 +266,9 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
       // Dispatch the current matrix children in the created additions matrix
       for (int j = 0; j < n*m; j++) {
         AdditionNode * a = new AdditionNode();
-        Expression * resultMatrixEntryJ = resultMatrix->editableOperand(j);
+        Expression * resultMatrixEntryJ = resultMatrix->childAtIndex(j);
         resultMatrix->replaceOperand(resultMatrixEntryJ, a, false);
-        a->addOperand(currentMatrix->editableOperand(j));
+        a->addOperand(currentMatrix->childAtIndex(j));
         a->addOperand(resultMatrixEntryJ);
         a->shallowReduce(context, angleUnit);
       }
@@ -279,7 +279,7 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
     // Distribute the remaining addition on matrix children
     for (int i = 0; i < n*m; i++) {
       AdditionNode * a = static_cast<AdditionNode *>(clone());
-      Expression * entryI = resultMatrix->editableOperand(i);
+      Expression * entryI = resultMatrix->childAtIndex(i);
       resultMatrix->replaceOperand(entryI, a, false);
       a->addOperand(entryI);
       a->shallowReduce(context, angleUnit);

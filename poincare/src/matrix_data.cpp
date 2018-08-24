@@ -15,9 +15,9 @@ MatrixData::MatrixData(ListData * listData, bool clone) :
   m_operands = new const Expression *[m_numberOfColumns];
   for (int i = 0; i < m_numberOfColumns; i++) {
     if (clone) {
-      m_operands[i] = listData->operand(i)->clone();
+      m_operands[i] = listData->childAtIndex(i)->clone();
     } else {
-      m_operands[i] = listData->operand(i);
+      m_operands[i] = listData->childAtIndex(i);
     }
   }
 }
@@ -39,9 +39,9 @@ void MatrixData::pushListData(ListData * listData, bool clone) {
   }
   for (int i = 0; i < m_numberOfColumns; i++) {
     if (clone) {
-      newOperands[m_numberOfRows*m_numberOfColumns+i] = listData->operand(i)->clone();
+      newOperands[m_numberOfRows*m_numberOfColumns+i] = listData->childAtIndex(i)->clone();
     } else {
-      newOperands[m_numberOfRows*m_numberOfColumns+i] = listData->operand(i);
+      newOperands[m_numberOfRows*m_numberOfColumns+i] = listData->childAtIndex(i);
     }
   }
   delete[] m_operands;

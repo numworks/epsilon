@@ -24,8 +24,8 @@ Expression GreatCommonDivisor::shallowReduce(Context& context, Preferences::Angl
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op0 = editableOperand(0);
-  Expression * op1 = editableOperand(1);
+  Expression * op0 = childAtIndex(0);
+  Expression * op1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (op0->type() == Type::Matrix || op1->type() == Type::Matrix) {
     return replaceWith(new Undefined(), true);

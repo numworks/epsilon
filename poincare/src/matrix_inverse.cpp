@@ -24,7 +24,7 @@ Expression MatrixInverse::shallowReduce(Context& context, Preferences::AngleUnit
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op = editableOperand(0);
+  Expression * op = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
   if (!op->recursivelyMatches(Expression::IsMatrix)) {
     detachOperand(op);

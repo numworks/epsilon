@@ -30,8 +30,8 @@ Expression Round::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   }
 #endif
   if (operand(0)->type() == Type::Rational && operand(1)->type() == Type::Rational) {
-    Rational * r1 = static_cast<Rational *>(editableOperand(0));
-    Rational * r2 = static_cast<Rational *>(editableOperand(1));
+    Rational * r1 = static_cast<Rational *>(childAtIndex(0));
+    Rational * r2 = static_cast<Rational *>(childAtIndex(1));
     if (!r2->denominator().isOne()) {
       return replaceWith(new Undefined(), true);
     }

@@ -7,7 +7,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type RealPart::type() const {
+ExpressionNode::Type RealPart::type() const {
   return Type::RealPart;
 }
 

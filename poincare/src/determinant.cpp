@@ -7,7 +7,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Determinant::type() const {
+ExpressionNode::Type Determinant::type() const {
   return Type::Determinant;
 }
 

@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type HyperbolicArcTangent::type() const {
+ExpressionNode::Type HyperbolicArcTangent::type() const {
   return Type::HyperbolicArcTangent;
 }
 

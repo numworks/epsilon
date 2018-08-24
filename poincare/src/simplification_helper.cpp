@@ -4,7 +4,7 @@
 namespace Poincare {
 
 Expression SimplificationHelper::Map(Expression e, Context & context, Preferences::AngleUnit angleUnit) {
-  assert(e->numberOfChildren() == 1 && e->childAtIndex(0)->type() == Expression::Type::Matrix);
+  assert(e->numberOfChildren() == 1 && e->childAtIndex(0)->type() == ExpressionNode::Type::Matrix);
   Expression c = e.childAtIndex(0);
   Matrix matrix;
   for (int i = 0; i < c->numberOfChildren(); i++) {

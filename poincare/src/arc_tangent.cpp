@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type ArcTangent::type() const {
+ExpressionNode::Type ArcTangent::type() const {
   return Type::ArcTangent;
 }
 

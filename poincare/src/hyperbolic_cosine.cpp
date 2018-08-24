@@ -12,7 +12,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type HyperbolicCosine::type() const {
+ExpressionNode::Type HyperbolicCosine::type() const {
   return Type::HyperbolicCosine;
 }
 

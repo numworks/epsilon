@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type ArcSine::type() const {
+ExpressionNode::Type ArcSine::type() const {
   return Type::ArcSine;
 }
 

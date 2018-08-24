@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type FracPart::type() const {
+ExpressionNode::Type FracPart::type() const {
   return Type::FracPart;
 }
 

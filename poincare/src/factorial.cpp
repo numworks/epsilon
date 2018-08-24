@@ -19,7 +19,7 @@ Factorial::Factorial(const Expression * argument, bool clone) :
 {
 }
 
-Expression::Type Factorial::type() const {
+ExpressionNode::Type Factorial::type() const {
   return Type::Factorial;
 }
 

@@ -10,7 +10,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type MatrixInverse::type() const {
+ExpressionNode::Type MatrixInverse::type() const {
   return Type::MatrixInverse;
 }
 

@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type PermuteCoefficient::type() const {
+ExpressionNode::Type PermuteCoefficient::type() const {
   return Type::PermuteCoefficient;
 }
 

@@ -8,7 +8,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type MatrixTranspose::type() const {
+ExpressionNode::Type MatrixTranspose::type() const {
   return Type::MatrixTranspose;
 }
 

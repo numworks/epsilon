@@ -20,7 +20,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Equal::type() const {
+ExpressionNode::Type Equal::type() const {
   return Type::Equal;
 }
 

@@ -9,7 +9,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Product::type() const {
+ExpressionNode::Type Product::type() const {
   return Type::Product;
 }
 

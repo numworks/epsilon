@@ -17,197 +17,197 @@ void print_expression(const Expression * e, int indentationLevel) {
   }
   GlobalContext context;
   switch (e->type()) {
-    case Expression::Type::AbsoluteValue:
+    case ExpressionNode::Type::AbsoluteValue:
       std::cout << "AbsoluteValue";
       break;
-    case Expression::Type::Addition:
+    case ExpressionNode::Type::Addition:
       std::cout << "Addition";
       break;
-    case Expression::Type::Approximation:
+    case ExpressionNode::Type::Approximation:
       std::cout << "Approximation";
       break;
-    case Expression::Type::ArcCosine:
+    case ExpressionNode::Type::ArcCosine:
       std::cout << "ArcCosine";
       break;
-    case Expression::Type::ArcSine:
+    case ExpressionNode::Type::ArcSine:
       std::cout << "ArcSine";
       break;
-    case Expression::Type::ArcTangent:
+    case ExpressionNode::Type::ArcTangent:
       std::cout << "ArcTangent";
       break;
-    case Expression::Type::BinomialCoefficient:
+    case ExpressionNode::Type::BinomialCoefficient:
       std::cout << "BinomialCoefficient";
       break;
-    case Expression::Type::Ceiling:
+    case ExpressionNode::Type::Ceiling:
       std::cout << "Ceiling";
       break;
-    case Expression::Type::ComplexArgument:
+    case ExpressionNode::Type::ComplexArgument:
       std::cout << "ComplexArgument";
       break;
-    case Expression::Type::ConfidenceInterval:
+    case ExpressionNode::Type::ConfidenceInterval:
       std::cout << "ConfidenceInterval";
       break;
-    case Expression::Type::Conjugate:
+    case ExpressionNode::Type::Conjugate:
       std::cout << "Conjugate";
       break;
-    case Expression::Type::Cosine:
+    case ExpressionNode::Type::Cosine:
       std::cout << "Cosine";
       break;
-    case Expression::Type::Decimal:
+    case ExpressionNode::Type::Decimal:
       std::cout << "Decimal(";
       std::cout << e->approximateToScalar<double>(context, Preferences::AngleUnit::Radian);
       std::cout << ")";
       break;
-    case Expression::Type::Derivative:
+    case ExpressionNode::Type::Derivative:
       std::cout << "Derivative";
       break;
-    case Expression::Type::Determinant:
+    case ExpressionNode::Type::Determinant:
       std::cout << "Determinant";
       break;
-    case Expression::Type::Division:
+    case ExpressionNode::Type::Division:
       std::cout << "Division";
       break;
-    case Expression::Type::DivisionQuotient:
+    case ExpressionNode::Type::DivisionQuotient:
       std::cout << "DivisionQuotient";
       break;
-    case Expression::Type::DivisionRemainder:
+    case ExpressionNode::Type::DivisionRemainder:
       std::cout << "DivisionRemainder";
       break;
-    case Expression::Type::EmptyExpression:
+    case ExpressionNode::Type::EmptyExpression:
       std::cout << "EmptyExpression";
       break;
-    case Expression::Type::Equal:
+    case ExpressionNode::Type::Equal:
       std::cout << "Equal";
       break;
-    case Expression::Type::Factor:
+    case ExpressionNode::Type::Factor:
       std::cout << "Factor";
       break;
-    case Expression::Type::Factorial:
+    case ExpressionNode::Type::Factorial:
       std::cout << "Factorial";
       break;
-    case Expression::Type::Floor:
+    case ExpressionNode::Type::Floor:
       std::cout << "Floor";
       break;
-    case Expression::Type::FracPart:
+    case ExpressionNode::Type::FracPart:
       std::cout << "FracPart";
       break;
-    case Expression::Type::GreatCommonDivisor:
+    case ExpressionNode::Type::GreatCommonDivisor:
       std::cout << "GreatCommonDivisor";
       break;
-    case Expression::Type::HyperbolicArcCosine:
+    case ExpressionNode::Type::HyperbolicArcCosine:
       std::cout << "HyperbolicArcCosine";
       break;
-    case Expression::Type::HyperbolicArcSine:
+    case ExpressionNode::Type::HyperbolicArcSine:
       std::cout << "HyperbolicArcSine";
       break;
-    case Expression::Type::HyperbolicArcTangent:
+    case ExpressionNode::Type::HyperbolicArcTangent:
       std::cout << "HyperbolicArcTangent";
       break;
-    case Expression::Type::HyperbolicCosine:
+    case ExpressionNode::Type::HyperbolicCosine:
       std::cout << "HyperbolicCosine";
       break;
-    case Expression::Type::HyperbolicSine:
+    case ExpressionNode::Type::HyperbolicSine:
       std::cout << "HyperbolicSine";
       break;
-    case Expression::Type::HyperbolicTangent:
+    case ExpressionNode::Type::HyperbolicTangent:
       std::cout << "HyperbolicTangent";
       break;
-    case Expression::Type::ImaginaryPart:
+    case ExpressionNode::Type::ImaginaryPart:
       std::cout << "ImaginaryPart";
       break;
-    case Expression::Type::Integral:
+    case ExpressionNode::Type::Integral:
       std::cout << "Integral";
       break;
-    case Expression::Type::LeastCommonMultiple:
+    case ExpressionNode::Type::LeastCommonMultiple:
       std::cout << "LeastCommonMultiple";
       break;
-    case Expression::Type::Logarithm:
+    case ExpressionNode::Type::Logarithm:
       std::cout << "Logarithm";
       break;
-    case Expression::Type::Matrix:
+    case ExpressionNode::Type::Matrix:
       std::cout << "Matrix(Rows: ";
       std::cout << static_cast<const Matrix *>(e)->numberOfRows();
       std::cout << ", Columns: ";
       std::cout << static_cast<const Matrix *>(e)->numberOfColumns();
       std::cout << ")";
       break;
-    case Expression::Type::MatrixDimension:
+    case ExpressionNode::Type::MatrixDimension:
       std::cout << "MatrixDimension";
       break;
-    case Expression::Type::MatrixInverse:
+    case ExpressionNode::Type::MatrixInverse:
       std::cout << "MatrixInverse";
       break;
-    case Expression::Type::MatrixTrace:
+    case ExpressionNode::Type::MatrixTrace:
       std::cout << "MatrixTrace";
       break;
-    case Expression::Type::MatrixTranspose:
+    case ExpressionNode::Type::MatrixTranspose:
       std::cout << "MatrixTranspose";
       break;
-    case Expression::Type::Multiplication:
+    case ExpressionNode::Type::Multiplication:
       std::cout << "Multiplication";
       break;
-    case Expression::Type::NaperianLogarithm:
+    case ExpressionNode::Type::NaperianLogarithm:
         std::cout << "NaperianLogarithm";
       break;
-    case Expression::Type::NthRoot:
+    case ExpressionNode::Type::NthRoot:
       std::cout << "NthRoot";
       break;
-    case Expression::Type::Opposite:
+    case ExpressionNode::Type::Opposite:
       std::cout << "Opposite";
       break;
-    case Expression::Type::Parenthesis:
+    case ExpressionNode::Type::Parenthesis:
       std::cout << "Parenthesis";
       break;
-    case Expression::Type::PermuteCoefficient:
+    case ExpressionNode::Type::PermuteCoefficient:
       std::cout << "PermuteCoefficient";
       break;
-    case Expression::Type::PredictionInterval:
+    case ExpressionNode::Type::PredictionInterval:
       std::cout << "PredictionInterval";
       break;
-    case Expression::Type::Power:
+    case ExpressionNode::Type::Power:
       std::cout << "Power";
       break;
-    case Expression::Type::Product:
+    case ExpressionNode::Type::Product:
       std::cout << "Product";
       break;
-    case Expression::Type::Random:
+    case ExpressionNode::Type::Random:
       std::cout << "Random";
       break;
-    case Expression::Type::Randint:
+    case ExpressionNode::Type::Randint:
       std::cout << "Randint";
       break;
-    case Expression::Type::Rational:
+    case ExpressionNode::Type::Rational:
       std::cout << "Rational(";
       std::cout << static_cast<const Rational * >(e)->numerator().approximate<double>();
       std::cout << ", ";
       std::cout << static_cast<const Rational * >(e)->denominator().approximate<double>();
       std::cout << ")";
       break;
-    case Expression::Type::RealPart:
+    case ExpressionNode::Type::RealPart:
       std::cout << "RealPart";
       break;
-    case Expression::Type::Round:
+    case ExpressionNode::Type::Round:
       std::cout << "Round";
       break;
-    case Expression::Type::SimplificationRoot:
+    case ExpressionNode::Type::SimplificationRoot:
       std::cout << "SimplificationRoot";
       break;
-    case Expression::Type::Sine:
+    case ExpressionNode::Type::Sine:
       std::cout << "Sine";
       break;
-    case Expression::Type::SquareRoot:
+    case ExpressionNode::Type::SquareRoot:
       std::cout << "SquareRoot";
       break;
-    case Expression::Type::Store:
+    case ExpressionNode::Type::Store:
       std::cout << "Store";
       break;
-    case Expression::Type::Subtraction:
+    case ExpressionNode::Type::Subtraction:
       std::cout << "Subtraction";
       break;
-    case Expression::Type::Sum:
+    case ExpressionNode::Type::Sum:
       std::cout << "Sum";
       break;
-    case Expression::Type::Symbol:
+    case ExpressionNode::Type::Symbol:
       std::cout << "Symbol(";
       switch (((Symbol*)e)->name()) {
         case Ion::Charset::SmallPi:
@@ -224,10 +224,10 @@ void print_expression(const Expression * e, int indentationLevel) {
       }
       std::cout << ")";
       break;
-    case Expression::Type::Tangent:
+    case ExpressionNode::Type::Tangent:
       std::cout << "Tangent";
       break;
-    case Expression::Type::Undefined:
+    case ExpressionNode::Type::Undefined:
       std::cout << "Undefined";
       break;
   }

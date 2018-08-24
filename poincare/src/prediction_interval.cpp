@@ -12,7 +12,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type PredictionInterval::type() const {
+ExpressionNode::Type PredictionInterval::type() const {
   return Type::PredictionInterval;
 }
 

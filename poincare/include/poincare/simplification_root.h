@@ -18,7 +18,7 @@ public:
      * So we don't want it to be deleted when we're destroyed (parent destructor). */
   }
   int polynomialDegree(char symbolName) const override { return -1; }
-  Type type() const override { return Expression::Type::SimplificationRoot; }
+  Type type() const override { return ExpressionNode::Type::SimplificationRoot; }
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return nullptr;
   }

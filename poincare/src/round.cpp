@@ -10,7 +10,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type Round::type() const {
+ExpressionNode::Type Round::type() const {
   return Type::Round;
 }
 

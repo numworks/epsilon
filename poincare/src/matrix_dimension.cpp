@@ -7,7 +7,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type MatrixDimension::type() const {
+ExpressionNode::Type MatrixDimension::type() const {
   return Type::MatrixDimension;
 }
 

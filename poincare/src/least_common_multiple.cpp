@@ -10,7 +10,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type LeastCommonMultiple::type() const {
+ExpressionNode::Type LeastCommonMultiple::type() const {
   return Type::LeastCommonMultiple;
 }
 

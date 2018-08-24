@@ -16,47 +16,47 @@ void assert_exp_is_bounded(Expression * exp, T lowBound, T upBound, bool upBound
 }
 
 QUIZ_CASE(poincare_parse_function) {
-  assert_parsed_expression_type("abs(-1)", Expression::Type::AbsoluteValue);
-  assert_parsed_expression_type("arg(2+I)", Expression::Type::ComplexArgument);
-  assert_parsed_expression_type("binomial(10, 4)", Expression::Type::BinomialCoefficient);
-  assert_parsed_expression_type("ceil(0.2)", Expression::Type::Ceiling);
-  assert_parsed_expression_type("diff(2*x, 2)", Expression::Type::Derivative);
+  assert_parsed_expression_type("abs(-1)", ExpressionNode::Type::AbsoluteValue);
+  assert_parsed_expression_type("arg(2+I)", ExpressionNode::Type::ComplexArgument);
+  assert_parsed_expression_type("binomial(10, 4)", ExpressionNode::Type::BinomialCoefficient);
+  assert_parsed_expression_type("ceil(0.2)", ExpressionNode::Type::Ceiling);
+  assert_parsed_expression_type("diff(2*x, 2)", ExpressionNode::Type::Derivative);
 #if MATRICES_ARE_DEFINED
-  assert_parsed_expression_type("dim([[2]])", Expression::Type::MatrixDimension);
-  assert_parsed_expression_type("det([[1,2,3][4,5,6][7,8,9]])", Expression::Type::Determinant);
+  assert_parsed_expression_type("dim([[2]])", ExpressionNode::Type::MatrixDimension);
+  assert_parsed_expression_type("det([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::Determinant);
 #endif
-  assert_parsed_expression_type("confidence(0.1, 100)", Expression::Type::ConfidenceInterval);
-  assert_parsed_expression_type("conj(2)", Expression::Type::Conjugate);
-  assert_parsed_expression_type("factor(23/42)", Expression::Type::Factor);
-  assert_parsed_expression_type("floor(2.3)", Expression::Type::Floor);
-  assert_parsed_expression_type("frac(2.3)", Expression::Type::FracPart);
-  assert_parsed_expression_type("gcd(2,3)", Expression::Type::GreatCommonDivisor);
-  assert_parsed_expression_type("im(2+I)", Expression::Type::ImaginaryPart);
-  assert_parsed_expression_type("int(x, 2, 3)", Expression::Type::Integral);
+  assert_parsed_expression_type("confidence(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
+  assert_parsed_expression_type("conj(2)", ExpressionNode::Type::Conjugate);
+  assert_parsed_expression_type("factor(23/42)", ExpressionNode::Type::Factor);
+  assert_parsed_expression_type("floor(2.3)", ExpressionNode::Type::Floor);
+  assert_parsed_expression_type("frac(2.3)", ExpressionNode::Type::FracPart);
+  assert_parsed_expression_type("gcd(2,3)", ExpressionNode::Type::GreatCommonDivisor);
+  assert_parsed_expression_type("im(2+I)", ExpressionNode::Type::ImaginaryPart);
+  assert_parsed_expression_type("int(x, 2, 3)", ExpressionNode::Type::Integral);
 #if MATRICES_ARE_DEFINED
-  assert_parsed_expression_type("inverse([[1,2,3][4,5,6][7,8,9]])", Expression::Type::MatrixInverse);
+  assert_parsed_expression_type("inverse([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixInverse);
 #endif
-  assert_parsed_expression_type("lcm(2,3)", Expression::Type::LeastCommonMultiple);
-  assert_parsed_expression_type("ln(2)", Expression::Type::NaperianLogarithm);
-  assert_parsed_expression_type("log(2)", Expression::Type::Logarithm);
-  assert_parsed_expression_type("permute(10, 4)", Expression::Type::PermuteCoefficient);
-  assert_parsed_expression_type("prediction(0.1, 100)", Expression::Type::ConfidenceInterval);
-  assert_parsed_expression_type("prediction95(0.1, 100)", Expression::Type::PredictionInterval);
-  assert_parsed_expression_type("product(n, 4, 10)", Expression::Type::Product);
-  assert_parsed_expression_type("quo(29, 10)", Expression::Type::DivisionQuotient);
-  assert_parsed_expression_type("random()", Expression::Type::Random);
-  assert_parsed_expression_type("randint(1, 2)", Expression::Type::Randint);
-  assert_parsed_expression_type("re(2+I)", Expression::Type::RealPart);
-  assert_parsed_expression_type("rem(29, 10)", Expression::Type::DivisionRemainder);
-  assert_parsed_expression_type("root(2,3)", Expression::Type::NthRoot);
-  assert_parsed_expression_type("R(2)", Expression::Type::SquareRoot);
-  assert_parsed_expression_type("round(2,3)", Expression::Type::Round);
-  assert_parsed_expression_type("sum(n, 4, 10)", Expression::Type::Sum);
+  assert_parsed_expression_type("lcm(2,3)", ExpressionNode::Type::LeastCommonMultiple);
+  assert_parsed_expression_type("ln(2)", ExpressionNode::Type::NaperianLogarithm);
+  assert_parsed_expression_type("log(2)", ExpressionNode::Type::Logarithm);
+  assert_parsed_expression_type("permute(10, 4)", ExpressionNode::Type::PermuteCoefficient);
+  assert_parsed_expression_type("prediction(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
+  assert_parsed_expression_type("prediction95(0.1, 100)", ExpressionNode::Type::PredictionInterval);
+  assert_parsed_expression_type("product(n, 4, 10)", ExpressionNode::Type::Product);
+  assert_parsed_expression_type("quo(29, 10)", ExpressionNode::Type::DivisionQuotient);
+  assert_parsed_expression_type("random()", ExpressionNode::Type::Random);
+  assert_parsed_expression_type("randint(1, 2)", ExpressionNode::Type::Randint);
+  assert_parsed_expression_type("re(2+I)", ExpressionNode::Type::RealPart);
+  assert_parsed_expression_type("rem(29, 10)", ExpressionNode::Type::DivisionRemainder);
+  assert_parsed_expression_type("root(2,3)", ExpressionNode::Type::NthRoot);
+  assert_parsed_expression_type("R(2)", ExpressionNode::Type::SquareRoot);
+  assert_parsed_expression_type("round(2,3)", ExpressionNode::Type::Round);
+  assert_parsed_expression_type("sum(n, 4, 10)", ExpressionNode::Type::Sum);
 #if MATRICES_ARE_DEFINED
-  assert_parsed_expression_type("trace([[1,2,3][4,5,6][7,8,9]])", Expression::Type::MatrixTrace);
-  assert_parsed_expression_type("transpose([[1,2,3][4,5,6][7,8,9]])", Expression::Type::MatrixTranspose);
+  assert_parsed_expression_type("trace([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTrace);
+  assert_parsed_expression_type("transpose([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTranspose);
 #endif
-  assert_parsed_expression_type("6!", Expression::Type::Factorial);
+  assert_parsed_expression_type("6!", ExpressionNode::Type::Factorial);
 }
 
 

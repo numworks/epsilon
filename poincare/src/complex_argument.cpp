@@ -7,7 +7,7 @@ extern "C" {
 
 namespace Poincare {
 
-Expression::Type ComplexArgument::type() const {
+ExpressionNode::Type ComplexArgument::type() const {
   return Type::ComplexArgument;
 }
 

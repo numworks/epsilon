@@ -10,7 +10,7 @@
 
 namespace Poincare {
 
-Expression::Type Integral::type() const {
+ExpressionNode::Type Integral::type() const {
   return Type::Integral;
 }
 

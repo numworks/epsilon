@@ -55,7 +55,10 @@ public:
      * Expression e;
      * Symbol s = static_cast<Symbol>(e);
      * e could be casted in const char * to use the Symbol(const char *)
-     * constructor, or e could be casted directly to S: it is ambiguous. */
+     * constructor, or e could be casted directly to S: it is ambiguous.
+     *
+     * static_cast operator copy the Expression. To avoid copy, we call
+     * static_cast<Symbol &>(e) instead of static_cast<Symbol>(e). */
 
     assert(T::isExpression());
     static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");

@@ -115,7 +115,7 @@ void AdditionNode::factorizeChildrenAtIndexesInPlace(int index1, int index2, Con
   // Step 3: Create a multiplication
   Multiplication m;
   if (e1.type() == ExpressionNode::Type::Multiplication) {
-    m = static_cast<Multiplication>(e1);
+    m = static_cast<Multiplication&>(e1);
   } else {
     m.addChildAtIndexInPlace(e1, 0, m.numberOfChildren());
   }
@@ -158,7 +158,7 @@ int Addition::getPolynomialCoefficients(char symbolName, Expression coefficients
     int d = childAtIndex(i).getPolynomialCoefficients(symbolName, intermediateCoefficients);
     assert(d < Expression::k_maxNumberOfPolynomialCoefficients);
     for (int j = 0; j < d+1; j++) {
-      static_cast<Addition>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());
+      static_cast<Addition&>(coefficients[j]).addChildAtIndexInPlace(intermediateCoefficients[j], coefficients[j].numberOfChildren(), coefficients[j].numberOfChildren());
     }
   }
   return deg;
@@ -186,7 +186,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
       continue;
     }
 
-    Multiplication m = static_cast<Multiplication>(thisCopy.childAtIndex(i));
+    Multiplication m = static_cast<Multiplication&>(childI);
 
     if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(m.childAtIndex(0)).isMinusOne()) {
       m.removeChildAtIndexInPlace(0);
@@ -296,8 +296,8 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
     Expression e1 = thisCopy.childAtIndex(i);
     Expression e2 = thisCopy.childAtIndex(i+1);
     if (e1.isNumber() && e2.isNumber()) {
-      Number r1 = static_cast<Number>(e1);
-      Number r2 = static_cast<Number>(e2);
+      Number r1 = static_cast<Number&>(e1);
+      Number r2 = static_cast<Number&>(e2);
       Number a = Number::Addition(r1, r2);
       thisCopy.replaceChildAtIndexInPlace(i, a);
       thisCopy.removeChildAtIndexInPlace(i+1);
@@ -317,7 +317,7 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
   i = 0;
   while (i < thisCopy.numberOfChildren()) {
     Expression e = thisCopy.childAtIndex(i);
-    if (e.type() == ExpressionNode::Type::Rational && static_cast<Rational>(e).isZero() && thisCopy.numberOfChildren() > 1) {
+    if (e.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(e).isZero() && thisCopy.numberOfChildren() > 1) {
       thisCopy.removeChildAtIndexInPlace(i);
       continue;
     }
@@ -331,7 +331,7 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
   //TODO Emily Before: if (result == this && parent()->type() != Type::AdditionNode) {
   if (result.type() == ExpressionNode::Type::Addition) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
-    Addition a = static_cast<Addition>(result);
+    Addition a = static_cast<Addition&>(result);
     result = a.factorizeOnCommonDenominator(context, angleUnit);
   }
 

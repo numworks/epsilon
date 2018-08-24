@@ -32,8 +32,8 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::A
   if (base.type() == EvaluationNode<T>::Type::Complex
       && index.type() == EvaluationNode<T>::Type::Complex)
   {
-    Complex<T> basec = static_cast<Complex<T> >(base);
-    Complex<T> indexc = static_cast<Complex<T> >(index);
+    Complex<T> basec = static_cast<Complex<T> &>(base);
+    Complex<T> indexc = static_cast<Complex<T> &>(index);
     result = PowerNode::compute(basec.stdComplex(), std::complex<T>(1)/(indexc.stdComplex()));
   }
   return result;

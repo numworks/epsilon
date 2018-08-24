@@ -6,7 +6,9 @@
 namespace Ion {
 namespace LED {
 
+KDColor getColor();
 void setColor(KDColor c);
+void setBlinking(float period, float dutyCycle);
 
 }
 }

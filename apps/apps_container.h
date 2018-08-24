@@ -12,7 +12,6 @@
 #include "variable_box_controller.h"
 #include "exam_pop_up_controller.h"
 #include "exam_pop_up_controller_delegate.h"
-#include "led_timer.h"
 #include "battery_timer.h"
 #include "suspend_timer.h"
 #include "backlight_dimming_timer.h"
@@ -69,7 +68,6 @@ private:
   VariableBoxController m_variableBoxController;
   ExamPopUpController m_examPopUpController;
   OnBoarding::UpdateController m_updateController;
-  LedTimer m_ledTimer;
   BatteryTimer m_batteryTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;

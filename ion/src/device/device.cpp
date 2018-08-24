@@ -169,7 +169,7 @@ void initPeripherals() {
   SWD::Device::init();
 }
 
-void shutdownPeripherals() {
+void shutdownPeripherals(bool keepLEDAwake) {
   SWD::Device::shutdown();
   Console::Device::shutdown();
 #if USE_SD_CARD
@@ -177,7 +177,9 @@ void shutdownPeripherals() {
 #endif
   USB::Device::shutdown();
   Battery::Device::shutdown();
-  LED::Device::shutdown();
+  if (!keepLEDAwake) {
+    LED::Device::shutdown();
+  }
   Keyboard::Device::shutdown();
   Backlight::Device::shutdown();
   Display::Device::shutdown();
@@ -265,7 +267,7 @@ void initClocks() {
   RCC.AHB3ENR()->setFSMCEN(true);
 
   // APB1 bus
-  // We're using TIM3
+  // We're using TIM3 for the LEDs
   RCC.APB1ENR()->setTIM3EN(true);
   RCC.APB1ENR()->setPWREN(true);
 
@@ -279,15 +281,33 @@ void initClocks() {
   RCC.APB2ENR()->set(apb2enr);
 }
 
-void shutdownClocks() {
+void shutdownClocks(bool keepLEDAwake) {
   // APB2 bus
   RCC.APB2ENR()->set(0x00008000); // Reset value
 
-  // AHB1
-  RCC.APB1ENR()->set(0x00000400);
+  if (keepLEDAwake) {
+    /* TODO: enter sleep mode even if the LED is used and enable LED in low
+     * power mode. */
+    // Keep the LED going: peripheral clock enable in low power mode register
+    /*RCC.APB1LPENR()->setTIM3LPEN(true);
+    RCC.AHB1LPENR()->setGPIOBLPEN(true);
+    RCC.AHB1LPENR()->setGPIOCLPEN(true);*/
 
-  // AHB1 bus
-  RCC.AHB1ENR()->set(0); // Reset value
+    // APB1
+    class RCC::APB1ENR apb1enr(0x00000400);
+    apb1enr.setTIM3EN(true);
+    RCC.APB1ENR()->set(apb1enr);
+    // AHB1 bus
+    class RCC::AHB1ENR ahb1enr(0); // Reset value
+    ahb1enr.setGPIOBEN(true);
+    ahb1enr.setGPIOCEN(true);
+    RCC.AHB1ENR()->set(ahb1enr);
+  } else {
+    // APB1
+    RCC.APB1ENR()->set(0x00000400);
+    // AHB1 bus
+    RCC.AHB1ENR()->set(0); // Reset value
+  }
 
   RCC.AHB3ENR()->setFSMCEN(false);
 }

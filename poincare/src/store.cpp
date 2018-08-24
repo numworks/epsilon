@@ -30,7 +30,7 @@ int Store::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode 
 
 Expression Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   context.setExpressionForSymbolName(value(), symbol(), context);
-  return replaceWith(editableOperand(1), true)->shallowReduce(context, angleUnit);
+  return replaceWith(childAtIndex(1), true)->shallowReduce(context, angleUnit);
 }
 
 LayoutRef Store::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

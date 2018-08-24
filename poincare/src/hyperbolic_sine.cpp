@@ -27,7 +27,7 @@ Expression HyperbolicSine::shallowReduce(Context& context, Preferences::AngleUni
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
+  Expression * op = childAtIndex(0);
   if (op->type() == Type::Matrix) {
     return SimplificationHelper::Map(this, context, angleUnit);
   }

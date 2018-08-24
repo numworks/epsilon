@@ -22,7 +22,7 @@ Expression MatrixDimension::shallowReduce(Context& context, Preferences::AngleUn
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  Expression * op = editableOperand(0);
+  Expression * op = childAtIndex(0);
   if (op->type() == Type::Matrix) {
     Matrix * m = static_cast<Matrix *>(op);
     const Expression * newOperands[2] = {new Rational(m->numberOfRows()), new Rational(m->numberOfColumns())};

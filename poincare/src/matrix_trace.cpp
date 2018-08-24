@@ -23,7 +23,7 @@ Expression MatrixTrace::shallowReduce(Context& context, Preferences::AngleUnit a
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op = editableOperand(0);
+  Expression * op = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
   if (op->type() == Type::Matrix) {
     Matrix * m = static_cast<Matrix *>(op);
@@ -33,7 +33,7 @@ Expression MatrixTrace::shallowReduce(Context& context, Preferences::AngleUnit a
     int n = m->numberOfRows();
     Addition * a = new Addition();
     for (int i = 0; i < n; i++) {
-      Expression * diagEntry = m->editableOperand(i+n*i);
+      Expression * diagEntry = m->childAtIndex(i+n*i);
       m->detachOperand(diagEntry);
       a->addOperand(diagEntry);
     }

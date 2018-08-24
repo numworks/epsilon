@@ -233,7 +233,7 @@ void print_expression(const Expression * e, int indentationLevel) {
   }
   std::cout << " at " << (void *)e << " with parent " << (void *)(e->parent()) << std::endl;
   for (int i=0; i<e->numberOfChildren(); i++) {
-    print_expression(e->operand(i), indentationLevel+1);
+    print_expression(e->childAtIndex(i), indentationLevel+1);
   }
 }
 

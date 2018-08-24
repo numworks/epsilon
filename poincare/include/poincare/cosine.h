@@ -9,7 +9,6 @@
 namespace Poincare {
 
 class CosineNode : public ExpressionNode  {
-  //friend class Tangent;
 public:
   // Allocation Failure
   static CosineNode * FailedAllocationStaticNode();

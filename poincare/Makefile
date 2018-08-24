@@ -36,6 +36,7 @@ objs += $(addprefix poincare/src/,\
 objs += $(addprefix poincare/src/,\
   addition.o\
   approximation_helper.o\
+  arc_cosine.o\
   arithmetic.o\
   complex.o\
   cosine.o\
@@ -202,6 +203,7 @@ tests += $(addprefix poincare/test/,\
   tree/pair_node.cpp\
   tree/tree_by_value.cpp\
   tree/tree_by_reference.cpp\
+  expression.cpp\
   addition.cpp\
   helper.cpp\
   integer.cpp\

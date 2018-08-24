@@ -341,7 +341,6 @@ QUIZ_CASE(poincare_trigo_evaluate) {
 }
 
 QUIZ_CASE(poincare_trigo_simplify) {
-#if 0
   // -- sin/cos -> tan
   assert_parsed_expression_simplify_to("sin(x)/cos(x)", "tan(x)");
   assert_parsed_expression_simplify_to("cos(x)/sin(x)", "1/tan(x)");
@@ -357,7 +356,6 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("-cos(P/62)ln(3)/(sin(P/62)P)", "-ln(3)/(tan(P/62)*P)");
   assert_parsed_expression_simplify_to("-2cos(P/62)ln(3)/(sin(P/62)P)", "-(2*ln(3))/(tan(P/62)*P)");
 
-#endif
   // -- cos
   assert_parsed_expression_simplify_to("cos(0)", "1");
   assert_parsed_expression_simplify_to("cos(P)", "-1");

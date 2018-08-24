@@ -18,11 +18,9 @@ QUIZ_CASE(poincare_parse_trigo) {
   assert_parsed_expression_type("acos(0)", ExpressionNode::Type::ArcCosine);
   assert_parsed_expression_type("asin(0)", ExpressionNode::Type::ArcSine);
   assert_parsed_expression_type("atan(0)", ExpressionNode::Type::ArcTangent);
-#if 0
   assert_parsed_expression_type("acosh(0)", ExpressionNode::Type::HyperbolicArcCosine);
   assert_parsed_expression_type("asinh(0)", ExpressionNode::Type::HyperbolicArcSine);
   assert_parsed_expression_type("atanh(0)", ExpressionNode::Type::HyperbolicArcTangent);
-#endif
 }
 
 QUIZ_CASE(poincare_trigo_evaluate) {
@@ -243,6 +241,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   // On C
   assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.00061*I", Radian);
   assert_parsed_expression_evaluates_to<float>("tanh(I-4)", "(-1.000279)+0.00061*I", Degree);
+#endif
 
   /* acosh: [-1,1]       ->  R*i
    *        ]-inf,-1[    -> Pi*i+R (even on real)
@@ -273,7 +272,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("acosh(1)", "0", Radian);
   assert_parsed_expression_evaluates_to<float>("acosh(0)", "1.570796*I", Radian);
 
-  /* acosh: R            -> R (odd)
+  /* asinh: R            -> R (odd)
    *        [-i,i]       ->  R*i (odd)
    *        ]-inf*i,-i[    -> -Pi/2*i+R (odd)
    *        ]i, inf*I[     -> Pi/2*I+R (odd)
@@ -300,7 +299,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "(-2.123)+0.2383*I", Radian, Cartesian, 4);
   assert_parsed_expression_evaluates_to<float>("asinh(I-4)", "(-2.123)+0.2383*I", Degree, Cartesian, 4);
 
-  /* acosh: [-1,1]       -> R (odd)
+  /* atanh: [-1,1]       -> R (odd)
    *        ]-inf,-1[    -> Pi/2*i+R (odd)
    *        ]1, inf[     -> -Pi/2*i+R (odd)
    *        R*i          -> R*i (odd)
@@ -327,6 +326,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Radian, Cartesian, 6);
   assert_parsed_expression_evaluates_to<float>("atanh(I-4)", "(-0.238878)+1.50862*I", Degree, Cartesian, 6);
 
+#if 0
   // WARNING: evaluate on branch cut can be multivalued
   assert_parsed_expression_evaluates_to<double>("acos(2)", "1.3169578969248*I", Radian);
   assert_parsed_expression_evaluates_to<double>("acos(2)", "75.456129290217*I", Degree);

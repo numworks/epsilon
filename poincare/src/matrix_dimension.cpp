@@ -41,7 +41,7 @@ Expression MatrixDimension::shallowReduce(Context& context, Preferences::AngleUn
 
 template<typename T>
 Evaluation<T> MatrixDimension::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * input = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
   std::complex<T> operands[2];
   if (input->type() == Evaluation<T>::Type::MatrixComplex) {
     operands[0] = std::complex<T>(static_cast<MatrixComplex<T> *>(input)->numberOfRows());

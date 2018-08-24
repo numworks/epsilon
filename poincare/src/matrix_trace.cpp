@@ -50,7 +50,7 @@ Expression MatrixTrace::shallowReduce(Context& context, Preferences::AngleUnit a
 
 template<typename T>
 Complex<T> * MatrixTrace::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * input = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
   Complex<T> * result = new Complex<T>(input->createTrace());
   delete input;
   return result;

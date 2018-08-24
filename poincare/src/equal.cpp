@@ -33,7 +33,7 @@ int Equal::polynomialDegree(char symbolName) const {
 }
 
 Expression * Equal::standardEquation(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression * sub = new Subtraction(operand(0), operand(1), true);
+  Expression * sub = new Subtraction(childAtIndex(0), childAtIndex(1), true);
   Reduce(&sub, context, angleUnit);
   return sub;
 }
@@ -43,7 +43,7 @@ Expression Equal::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  if (operand(0)->isIdenticalTo(operand(1))) {
+  if (childAtIndex(0)->isIdenticalTo(childAtIndex(1))) {
     return replaceWith(RationalReference(1), true);
   }
   return this;
@@ -51,9 +51,9 @@ Expression Equal::shallowReduce(Context& context, Preferences::AngleUnit angleUn
 
 LayoutRef Equal::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result;
-  result.addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(CharLayoutRef('='), result.numberOfChildren(), result.numberOfChildren(), nullptr);
-  result.addOrMergeChildAtIndex(operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
+  result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }
 

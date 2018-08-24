@@ -12,7 +12,7 @@ public:
   }
   ~SimplificationRoot() {
     if (m_operands[0] != nullptr) {
-      detachOperand(operand(0));
+      detachOperand(childAtIndex(0));
     }
     /* We don't want to clone the expression provided at construction.
      * So we don't want it to be deleted when we're destroyed (parent destructor). */

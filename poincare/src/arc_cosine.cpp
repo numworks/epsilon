@@ -1,37 +1,27 @@
 #include <poincare/arc_cosine.h>
-#include <poincare/trigonometry.h>
+#include <poincare/complex.h>
+#include <poincare/layout_helper.h>
 #include <poincare/simplification_helper.h>
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-ExpressionNode::Type ArcCosine::type() const {
-  return Type::ArcCosine;
+ArcCosineNode * ArcCosineNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<ArcCosineNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * ArcCosine::clone() const {
-  ArcCosine * a = new ArcCosine(m_operands, true);
-  return a;
+LayoutReference ArcCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(ArcCosine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression ArcCosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e != this) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0)->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
-  }
-#endif
-  return Trigonometry::shallowReduceInverseFunction(this, context, angleUnit);
+Expression ArcCosineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return ArcCosine(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>
-std::complex<T> ArcCosine::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::acos(c);
   /* acos has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued on
    * this cut. We followed the convention chosen by the lib c++ of llvm on
@@ -42,7 +32,20 @@ std::complex<T> ArcCosine::computeOnComplex(const std::complex<T> c, Preferences
     result.imag(-result.imag()); // other side of the cut
   }
   result = Trigonometry::RoundToMeaningfulDigits(result);
-  return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
+  return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
+}
+
+Expression ArcCosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  if (childAtIndex(0).type() == Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
+  }
+#endif
+  return Trigonometry::shallowReduceInverseFunction(*this, context, angleUnit);
 }
 
 }

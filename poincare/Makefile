@@ -37,6 +37,7 @@ objs += $(addprefix poincare/src/,\
   addition.o\
   approximation_helper.o\
   arc_cosine.o\
+  arc_sine.o\
   arithmetic.o\
   complex.o\
   cosine.o\

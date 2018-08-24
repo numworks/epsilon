@@ -1,5 +1,8 @@
 #include <ion/led.h>
 
+namespace Ion {
+namespace LED {
+
 KDColor getColor() {
   return KDColorBlack;
 }
@@ -7,3 +10,6 @@ KDColor getColor() {
 void setColor(KDColor c) {}
 
 void setBlinking(float period, float dutyCycle) {}
+
+}
+}

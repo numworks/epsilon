@@ -105,13 +105,13 @@ Number Number::FloatNumber(double d) {
 Number Number::BinaryOperation(const Number & i, const Number & j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
   if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
   // Integer + Integer
-    Integer k = integerOp(static_cast<Integer>(i), static_cast<Integer>(j));
+    Integer k = integerOp(static_cast<const Integer&>(i), static_cast<const Integer&>(j));
     if (!k.isInfinity()) {
       return k;
     }
   } else if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Rational) {
   // Integer + Rational
-    Rational r = rationalOp(Rational(static_cast<Integer>(i)), static_cast<Rational>(j));
+    Rational r = rationalOp(Rational(static_cast<const Integer&>(i)), static_cast<const Rational&>(j));
     if (!r.numeratorOrDenominatorIsInfinity()) {
       return r;
     }
@@ -120,7 +120,7 @@ Number Number::BinaryOperation(const Number & i, const Number & j, IntegerBinary
     return Number::BinaryOperation(j, i, integerOp, rationalOp, doubleOp);
   } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
   // Rational + Rational
-    Rational a = rationalOp(Rational(static_cast<Rational>(i)), Rational(static_cast<Rational>(j)));
+    Rational a = rationalOp(Rational(static_cast<const Rational&>(i)), Rational(static_cast<const Rational&>(j)));
     if (!a.numeratorOrDenominatorIsInfinity()) {
       return a;
     }
@@ -157,16 +157,16 @@ Number Number::Power(const Number & i, const Number & j) {
 int Number::NaturalOrder(const Number & i, const Number & j) {
   if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
   // Integer + Integer
-    return Integer::NaturalOrder(static_cast<Integer>(i), static_cast<Integer>(j));
+    return Integer::NaturalOrder(static_cast<const Integer&>(i), static_cast<const Integer&>(j));
   } else if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Rational) {
   // Integer + Rational
-    return Rational::NaturalOrder(Rational(static_cast<Integer>(i)), static_cast<Rational>(j));
+    return Rational::NaturalOrder(Rational(static_cast<const Integer&>(i)), static_cast<const Rational&>(j));
   } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Integer) {
   // Rational + Integer
     return -Number::NaturalOrder(j, i);
   } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
   // Rational + Rational
-    return Rational::NaturalOrder(static_cast<Rational>(i), static_cast<Rational>(j));
+    return Rational::NaturalOrder(static_cast<const Rational&>(i), static_cast<const Rational&>(j));
   }
   // one of the operand is Undefined/Infinity/Float or the Integer/Rational addition overflowed
   if (i.node()->doubleApproximation() < j.node()->doubleApproximation()) {

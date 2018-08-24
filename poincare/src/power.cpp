@@ -296,8 +296,8 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
 
   Evaluation<float> c0Approximated = childAtIndex(0).node()->approximate(1.0f, context, angleUnit);
   Evaluation<float> c1Approximated = childAtIndex(1).node()->approximate(1.0f, context, angleUnit);
-  Complex<float> c0 = static_cast<Complex<float> >(c0Approximated);
-  Complex<float> c1 = static_cast<Complex<float> >(c1Approximated);
+  Complex<float> c0 = static_cast<Complex<float>&>(c0Approximated);
+  Complex<float> c1 = static_cast<Complex<float>&>(c1Approximated);
   bool bothChildrenComplexes = c0.imag() != 0 && c1.imag() != 0;
   bool nonComplexNegativeChild0 = c0.imag() == 0 && c0.real() < 0;
   if (bothChildrenComplexes) {

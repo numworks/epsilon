@@ -154,12 +154,12 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
     } else {
       thisCopy.replaceChildAtIndexInPlace(0, childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit));
     }
-    return Opposite(static_cast<Multiplication>(thisCopy).squashUnaryHierarchy());
+    return Opposite(static_cast<Multiplication&>(thisCopy).squashUnaryHierarchy());
   }
 
   /* Step 2: Merge negative powers: a*b^(-1)*c^(-pi)*d = a*(b*c^pi)^(-1)
    * This also turns 2/3*a into 2*a*3^(-1) */
-  thisCopy = static_cast<Multiplication>(thisCopy).mergeNegativePower(context, angleUnit);
+  thisCopy = static_cast<Multiplication&>(thisCopy).mergeNegativePower(context, angleUnit);
   if (thisCopy.type() == ExpressionNode::Type::Power) {
     return thisCopy.shallowBeautify(context, angleUnit);
   }
@@ -411,14 +411,14 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
   i = 1;
   while (i < thisCopy.numberOfChildren()) {
     Expression o = thisCopy.childAtIndex(i);
-    if (o.type() == ExpressionNode::Type::Rational && static_cast<Rational>(o).isOne()) {
+    if (o.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(o).isOne()) {
       thisCopy.removeChildAtIndexInPlace(i);
       continue;
     }
     if (o.isNumber()) {
       if (thisCopy.childAtIndex(0).isNumber()) {
         Number o0 = static_cast<Rational>(thisCopy.childAtIndex(0));
-        Number m = Number::Multiplication(o0, static_cast<Number>(o));
+        Number m = Number::Multiplication(o0, static_cast<Number&>(o));
         thisCopy.replaceChildAtIndexInPlace(0, m);
         thisCopy.removeChildAtIndexInPlace(i);
       } else {
@@ -546,9 +546,9 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
    * child, we replace it by its LCM with factor ; otherwise, we simply add
    * factor as an child. */
   if (numberOfChildren() > 0 && childAtIndex(0).type() == ExpressionNode::Type::Rational && factor.type() == ExpressionNode::Type::Rational) {
-    assert(static_cast<Rational>(factor).integerDenominator().isOne());
+    assert(static_cast<Rational&>(factor).integerDenominator().isOne());
     assert(static_cast<Rational>(childAtIndex(0)).integerDenominator().isOne());
-    replaceChildAtIndexInPlace(0, Rational(Arithmetic::LCM(static_cast<Rational>(factor).unsignedIntegerNumerator(), static_cast<Rational>(childAtIndex(0)).unsignedIntegerNumerator())));
+    replaceChildAtIndexInPlace(0, Rational(Arithmetic::LCM(static_cast<Rational&>(factor).unsignedIntegerNumerator(), static_cast<Rational>(childAtIndex(0)).unsignedIntegerNumerator())));
     return;
   }
   if (factor.type() != ExpressionNode::Type::Rational) {
@@ -663,7 +663,7 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::An
   Multiplication thisCopy = *this;
   Multiplication m;
   // Special case for rational p/q: if q != 1, q should be at denominator
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !static_cast<const Rational>(childAtIndex(0)).integerDenominator().isOne()) {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !static_cast<const Rational&>(childAtIndex(0)).integerDenominator().isOne()) {
     Rational r = static_cast<Rational>(childAtIndex(0));
     m.addChildAtIndexInPlace(Rational(r.integerDenominator()), 0, m.numberOfChildren());
     if (r.signedIntegerNumerator().isOne()) {

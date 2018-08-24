@@ -17,8 +17,8 @@ QUIZ_CASE(poincare_parse_trigo) {
 #endif
   assert_parsed_expression_type("acos(0)", ExpressionNode::Type::ArcCosine);
   assert_parsed_expression_type("asin(0)", ExpressionNode::Type::ArcSine);
-#if 0
   assert_parsed_expression_type("atan(0)", ExpressionNode::Type::ArcTangent);
+#if 0
   assert_parsed_expression_type("acosh(0)", ExpressionNode::Type::HyperbolicArcCosine);
   assert_parsed_expression_type("asinh(0)", ExpressionNode::Type::HyperbolicArcSine);
   assert_parsed_expression_type("atanh(0)", ExpressionNode::Type::HyperbolicArcTangent);
@@ -153,7 +153,6 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   //assert_parsed_expression_evaluates_to<float>("asin(-1)", "-90", Degree);
   //assert_parsed_expression_evaluates_to<double>("asin(1)", "90", Degree);
 
-#if 0
   /* atan: R         ->  R (odd)
    *       [-i,i]    ->  R*i (odd)
    *       ]-inf*i,-i[ -> -Pi/2+R*i (odd)
@@ -182,9 +181,10 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("atan(I-4)", "(-76.7175)+3.1963*I", Degree, Cartesian, 6);
   // Key values
   assert_parsed_expression_evaluates_to<float>("atan(0)", "0", Degree);
-  assert_parsed_expression_evaluates_to<double>("atan(-I)", "undef", Radian);
-  assert_parsed_expression_evaluates_to<double>("atan(I)", "undef", Radian);
+  assert_parsed_expression_evaluates_to<double>("atan(-I)", "-inf*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("atan(I)", "inf*I", Radian);
 
+#if 0
   /* cosh: R         -> R (even)
    *       R*i       -> R (oscillator)
    */
@@ -355,7 +355,6 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("sin(62P/21)/(P*3cos(62P/21))", "-tan(P/21)/(3*P)");
   assert_parsed_expression_simplify_to("-cos(P/62)ln(3)/(sin(P/62)P)", "-ln(3)/(tan(P/62)*P)");
   assert_parsed_expression_simplify_to("-2cos(P/62)ln(3)/(sin(P/62)P)", "-(2*ln(3))/(tan(P/62)*P)");
-
   // -- cos
   assert_parsed_expression_simplify_to("cos(0)", "1");
   assert_parsed_expression_simplify_to("cos(P)", "-1");
@@ -374,7 +373,7 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("cos(-P/3)", "1/2");
   assert_parsed_expression_simplify_to("cos(41P/5)", "(1+R(5))/4");
   assert_parsed_expression_simplify_to("cos(7P/10)", "-(R(2)*R(5-R(5)))/4");
-    assert_parsed_expression_simplify_to("cos(0)", "1", Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("cos(0)", "1", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(180)", "-1", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(720/7)", "-cos(540/7)", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("cos(6300/29)", "-cos(1080/29)", Preferences::AngleUnit::Degree);
@@ -497,7 +496,6 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("asin(sin(32))", "32", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("asin(sin(400))", "40", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("asin(sin(-180/7))", "-180/7", Preferences::AngleUnit::Degree);
-#if 0
   // -- atan
   assert_parsed_expression_simplify_to("atan(-1)", "-P/4");
   assert_parsed_expression_simplify_to("atan(-1.2)", "-atan(6/5)");
@@ -518,5 +516,4 @@ QUIZ_CASE(poincare_trigo_simplify) {
   assert_parsed_expression_simplify_to("atan(tan(1808))", "8", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("atan(tan(-180/7))", "-180/7", Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("atan(R(3))", "60", Preferences::AngleUnit::Degree);
-#endif
 }

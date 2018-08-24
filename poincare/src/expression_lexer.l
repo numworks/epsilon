@@ -123,8 +123,9 @@ arg { poincare_expression_yylval.expression = new ComplexArgument(); return FUNC
 asin { poincare_expression_yylval.expression = ArcSine(); return FUNCTION; }
  /*
 asinh { poincare_expression_yylval.expression = new HyperbolicArcSine(); return FUNCTION; }
-atan { poincare_expression_yylval.expression = new ArcTangent(); return FUNCTION; }
-atanh { poincare_expression_yylval.expression = new HyperbolicArcTangent(); return FUNCTION; }
+*/
+atan { poincare_expression_yylval.expression = ArcTangent(); return FUNCTION; }
+ /*atanh { poincare_expression_yylval.expression = new HyperbolicArcTangent(); return FUNCTION; }
 binomial { poincare_expression_yylval.expression = new BinomialCoefficient(); return FUNCTION; }
 ceil { poincare_expression_yylval.expression = new Ceiling(); return FUNCTION; }
 confidence { poincare_expression_yylval.expression = new ConfidenceInterval(); return FUNCTION; }

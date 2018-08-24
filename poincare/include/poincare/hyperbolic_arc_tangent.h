@@ -2,11 +2,11 @@
 #define POINCARE_HYPERBOLIC_ARC_TANGENT_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/hyperbolic_arc_trigonometric_function.h>
+#include <poincare/hyperbolic_trigonometric_function.h>
 
 namespace Poincare {
 
-class HyperbolicArcTangentNode : public HyperbolicArcTrigonometricFunctionNode {
+class HyperbolicArcTangentNode : public HyperbolicTrigonometricFunctionNode {
 public:
   // Allocation Failure
   static HyperbolicArcTangentNode * FailedAllocationStaticNode();
@@ -34,10 +34,10 @@ private:
   }
 };
 
-class HyperbolicArcTangent : public HyperbolicArcTrigonometricFunction {
+class HyperbolicArcTangent : public HyperbolicTrigonometricFunction {
 public:
-  HyperbolicArcTangent() : HyperbolicArcTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcTangentNode>()) {}
-  HyperbolicArcTangent(const HyperbolicArcTangentNode * n) : HyperbolicArcTrigonometricFunction(n) {}
+  HyperbolicArcTangent() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcTangentNode>()) {}
+  HyperbolicArcTangent(const HyperbolicArcTangentNode * n) : HyperbolicTrigonometricFunction(n) {}
   HyperbolicArcTangent(Expression operand) : HyperbolicArcTangent() {
     replaceChildAtIndexInPlace(0, operand);
   }

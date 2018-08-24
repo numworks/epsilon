@@ -56,7 +56,10 @@ objs += $(addprefix poincare/src/,\
   hyperbolic_arc_cosine.o\
   hyperbolic_arc_sine.o\
   hyperbolic_arc_tangent.o\
-  hyperbolic_arc_trigonometric_function.o\
+  hyperbolic_cosine.o\
+  hyperbolic_sine.o\
+  hyperbolic_tangent.o\
+  hyperbolic_trigonometric_function.o\
   infinity.o\
   integer.o\
   layout_helper.o\

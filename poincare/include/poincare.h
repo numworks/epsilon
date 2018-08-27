@@ -113,6 +113,7 @@
 #include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare/complex_argument.h>
+#include <poincare/confidence_interval.h>
 #include <poincare/cosine.h>
 #include <poincare/ceiling.h>
 #include <poincare/sine.h>

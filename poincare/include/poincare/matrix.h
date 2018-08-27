@@ -71,9 +71,9 @@ public:
   static Matrix EmptyMatrix() {
     return Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>());
   }
-  Matrix() : Expression() {}
+  Matrix() : Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {}
   Matrix(const MatrixNode * node) : Expression(node) {}
-  Matrix(Expression e) : Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {
+  Matrix(Expression e) : Matrix() {
     addChildAtIndexInPlace(e, 0, 0);
   }
 

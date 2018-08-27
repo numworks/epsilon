@@ -67,6 +67,7 @@ class MatrixComplex : public Evaluation<T> {
 public:
   MatrixComplex(MatrixComplexNode<T> * node) : Evaluation<T>(node) {}
   MatrixComplex() : Evaluation<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >()) {}
+  MatrixComplex(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
   static MatrixComplex<T> Undefined() {
     std::complex<T> undef = std::complex<T>(NAN, NAN);
     return MatrixComplex<T>((std::complex<T> *)&undef, 1, 1);
@@ -90,7 +91,6 @@ private:
     assert(columns >= 0);
     node()->setNumberOfColumns(columns);
   }
-  MatrixComplex(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
   MatrixComplexNode<T> * node() const { return static_cast<MatrixComplexNode<T> *>(Evaluation<T>::node()); }
 };
 

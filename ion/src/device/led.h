@@ -14,23 +14,20 @@ namespace Device {
  *  PC7 | LED red           | Alternate Function 2  | TIM3_CH2
  */
 
-enum Mode {
+enum class Mode {
   PWM,
-  BLINK
+  Blink
 };
 
-enum Color {
-  RED,
-  GREEN,
-  BLUE
+enum class Color {
+  Red,
+  Green,
+  Blue
 };
 
 void init();
 void shutdown();
-void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen, float dutyCycleBlue, float period = 0.0f);
-void setColorStatus(Color color, bool enable);
-/* This call bypasses the timer, and immediately enforces a given LED state. */
-//void enforceState(bool red, bool green, bool blue);
+void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen, float dutyCycleBlue, uint16_t period = 0);
 
 void initGPIO();
 void shutdownGPIO();

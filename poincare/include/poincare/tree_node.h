@@ -74,6 +74,7 @@ public:
   // AddChild collateral effect
   virtual void didAddChildAtIndex(int newNumberOfChildren) {}
 
+  // FIXME: do we need the Template? Do we need the iterator?
   template <typename T>
   class Iterator {
     public:

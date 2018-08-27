@@ -61,6 +61,7 @@ objs += $(addprefix poincare/src/,\
   expression_lexer.o\
   expression_node.o\
   expression_parser.o\
+  factorial.o\
   float.o\
   ghost_node.o\
   global_context.o\
@@ -226,6 +227,7 @@ tests += $(addprefix poincare/test/,\
   expression.cpp\
   addition.cpp\
   division.cpp\
+  factorial.cpp\
   function.cpp\
   helper.cpp\
   integer.cpp\

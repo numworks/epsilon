@@ -150,6 +150,7 @@ public:
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
@@ -183,7 +184,6 @@ private:
   /* Simplification */
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const { return node()->shallowReduce(context, angleUnit); }
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 

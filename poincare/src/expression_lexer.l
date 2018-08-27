@@ -146,12 +146,13 @@ prediction95 { poincare_expression_yylval.expression = new PredictionInterval();
 */
 prediction { poincare_expression_yylval.expression = SimplePredictionInterval(); return FUNCTION; }
  /*product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
-quo { poincare_expression_yylval.expression = new DivisionQuotient(); return FUNCTION; }
-random { poincare_expression_yylval.expression = new Random(); return FUNCTION; }
+*/
+quo { poincare_expression_yylval.expression = DivisionQuotient(); return FUNCTION; }
+ /*random { poincare_expression_yylval.expression = new Random(); return FUNCTION; }
 randint { poincare_expression_yylval.expression = new Randint(); return FUNCTION; }
 re { poincare_expression_yylval.expression = new RealPart(); return FUNCTION; }
-rem { poincare_expression_yylval.expression = new DivisionRemainder(); return FUNCTION; }
 */
+rem { poincare_expression_yylval.expression = DivisionRemainder(); return FUNCTION; }
 root { poincare_expression_yylval.expression = NthRoot(); return FUNCTION; }
  /*round { poincare_expression_yylval.expression = new Round(); return FUNCTION; }
 */

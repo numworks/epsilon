@@ -48,13 +48,17 @@ QUIZ_CASE(poincare_parse_function) {
 #if 0
   assert_parsed_expression_type("prediction95(0.1, 100)", ExpressionNode::Type::PredictionInterval);
   assert_parsed_expression_type("product(n, 4, 10)", ExpressionNode::Type::Product);
+#endif
   assert_parsed_expression_type("quo(29, 10)", ExpressionNode::Type::DivisionQuotient);
+#if 0
   assert_parsed_expression_type("random()", ExpressionNode::Type::Random);
   assert_parsed_expression_type("randint(1, 2)", ExpressionNode::Type::Randint);
   assert_parsed_expression_type("re(2+I)", ExpressionNode::Type::RealPart);
+#endif
   assert_parsed_expression_type("rem(29, 10)", ExpressionNode::Type::DivisionRemainder);
   assert_parsed_expression_type("root(2,3)", ExpressionNode::Type::NthRoot);
   assert_parsed_expression_type("R(2)", ExpressionNode::Type::SquareRoot);
+#if 0
   assert_parsed_expression_type("round(2,3)", ExpressionNode::Type::Round);
   assert_parsed_expression_type("sum(n, 4, 10)", ExpressionNode::Type::Sum);
 #if MATRICES_ARE_DEFINED
@@ -126,12 +130,18 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("product(n, 4, 10)", "604800");
   assert_parsed_expression_evaluates_to<double>("product(n, 4, 10)", "604800");
 
+#endif
+  assert_parsed_expression_evaluates_to<float>("quo(29, 10)", "2");
+  assert_parsed_expression_evaluates_to<double>("quo(29, 10)", "2");
+
+#if 0
   assert_parsed_expression_evaluates_to<float>("re(2+I)", "2");
   assert_parsed_expression_evaluates_to<double>("re(2+I)", "2");
 
+#endif
   assert_parsed_expression_evaluates_to<float>("rem(29, 10)", "9");
   assert_parsed_expression_evaluates_to<double>("rem(29, 10)", "9");
-
+#if 0
   assert_parsed_expression_evaluates_to<float>("root(2,3)", "1.259921");
   assert_parsed_expression_evaluates_to<double>("root(2,3)", "1.2599210498949");
 
@@ -245,13 +255,13 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
   assert_parsed_expression_simplify_to("conj(1/2)", "1/2");
-#if 0
- assert_parsed_expression_simplify_to("quo(19,3)", "6");
-  assert_parsed_expression_simplify_to("quo(19,0)", "undef");
+  assert_parsed_expression_simplify_to("quo(19,3)", "6");
+  assert_parsed_expression_simplify_to("quo(19,0)", "inf");
   assert_parsed_expression_simplify_to("quo(-19,3)", "-7");
   assert_parsed_expression_simplify_to("rem(19,3)", "1");
   assert_parsed_expression_simplify_to("rem(-19,3)", "2");
-  assert_parsed_expression_simplify_to("rem(19,0)", "undef");
+  assert_parsed_expression_simplify_to("rem(19,0)", "inf");
+#if 0
   assert_parsed_expression_simplify_to("99!", "933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000");
   assert_parsed_expression_simplify_to("factor(-10008/6895)", "-(2^3*3^2*139)/(5*7*197)");
   assert_parsed_expression_simplify_to("factor(1008/6895)", "(2^4*3^2)/(5*197)");

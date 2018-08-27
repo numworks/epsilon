@@ -29,9 +29,7 @@ QUIZ_CASE(poincare_parse_function) {
 #endif
   assert_parsed_expression_type("confidence(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
   assert_parsed_expression_type("conj(2)", ExpressionNode::Type::Conjugate);
-#if 0
   assert_parsed_expression_type("factor(23/42)", ExpressionNode::Type::Factor);
-#endif
   assert_parsed_expression_type("floor(2.3)", ExpressionNode::Type::Floor);
   assert_parsed_expression_type("frac(2.3)", ExpressionNode::Type::FracPart);
   assert_parsed_expression_type("gcd(2,3)", ExpressionNode::Type::GreatCommonDivisor);
@@ -173,6 +171,9 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("conj(3+2*I)", "3-2*I");
   assert_parsed_expression_evaluates_to<double>("conj(3+2*I)", "3-2*I");
+
+  assert_parsed_expression_evaluates_to<float>("factor(-23/4)", "-5.75");
+  assert_parsed_expression_evaluates_to<double>("factor(-123/24)", "-5.125");
 #if 0
 
 #if MATRICES_ARE_DEFINED
@@ -230,9 +231,6 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("root(-1,3)", "0.5+0.8660254*I");
   assert_parsed_expression_evaluates_to<double>("root(-1,3)", "0.5+8.6602540378444E-1*I");
 
-  assert_parsed_expression_evaluates_to<float>("factor(-23/4)", "-5.75");
-  assert_parsed_expression_evaluates_to<double>("factor(-123/24)", "-5.125");
-
   assert_parsed_expression_evaluates_to<float>("int(int(x*x,0,x),0,4)", "21.33333");
   assert_parsed_expression_evaluates_to<double>("int(int(x*x,0,x),0,4)", "21.333333333333");
 
@@ -258,6 +256,10 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
   assert_parsed_expression_simplify_to("conj(1/2)", "1/2");
+  assert_parsed_expression_simplify_to("factor(-10008/6895)", "-(2^3*3^2*139)/(5*7*197)");
+  assert_parsed_expression_simplify_to("factor(1008/6895)", "(2^4*3^2)/(5*197)");
+  assert_parsed_expression_simplify_to("factor(10007)", "10007");
+  assert_parsed_expression_simplify_to("factor(10007^2)", "undef");
   assert_parsed_expression_simplify_to("quo(19,3)", "6");
   assert_parsed_expression_simplify_to("quo(19,0)", "inf");
   assert_parsed_expression_simplify_to("quo(-19,3)", "-7");
@@ -265,12 +267,10 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("rem(-19,3)", "2");
   assert_parsed_expression_simplify_to("rem(19,0)", "inf");
   assert_parsed_expression_simplify_to("99!", "933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000");
-#if 0
   assert_parsed_expression_simplify_to("factor(-10008/6895)", "-(2^3*3^2*139)/(5*7*197)");
   assert_parsed_expression_simplify_to("factor(1008/6895)", "(2^4*3^2)/(5*197)");
   assert_parsed_expression_simplify_to("factor(10007)", "10007");
   assert_parsed_expression_simplify_to("factor(10007^2)", "undef");
-#endif
   assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");

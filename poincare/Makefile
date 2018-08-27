@@ -61,6 +61,7 @@ objs += $(addprefix poincare/src/,\
   expression_lexer.o\
   expression_node.o\
   expression_parser.o\
+  factor.o\
   factorial.o\
   float.o\
   floor.o\

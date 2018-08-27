@@ -130,8 +130,7 @@ conj { poincare_expression_yylval.expression = Conjugate(); return FUNCTION; }
 det { poincare_expression_yylval.expression = Determinant(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = Cosine(); return FUNCTION; }
 cosh { poincare_expression_yylval.expression = HyperbolicCosine(); return FUNCTION; }
- /*factor { poincare_expression_yylval.expression = new Factor(); return FUNCTION; }
-*/
+factor { poincare_expression_yylval.expression = new Factor(); return FUNCTION; }
 floor { poincare_expression_yylval.expression = Floor(); return FUNCTION; }
 frac { poincare_expression_yylval.expression = FracPart(); return FUNCTION; }
 gcd { poincare_expression_yylval.expression = GreatCommonDivisor(); return FUNCTION; }

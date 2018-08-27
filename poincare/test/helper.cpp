@@ -66,7 +66,7 @@ void assert_parsed_expression_is(const char * expression, Poincare::Expression r
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, char symbolName) {
   GlobalContext globalContext;
   Expression e = parse_expression(expression);
-  e.simplify(globalContext, Radian);
+  e = e.simplify(globalContext, Radian);
   assert(e.polynomialDegree(symbolName) == degree);
 }
 

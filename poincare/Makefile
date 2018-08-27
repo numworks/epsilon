@@ -227,6 +227,7 @@ tests += $(addprefix poincare/test/,\
   multiplication.cpp\
   parser.cpp\
   power.cpp\
+  properties.cpp\
   rational.cpp\
   number.cpp\
   trigo.cpp\

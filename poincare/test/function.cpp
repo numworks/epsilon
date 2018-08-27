@@ -65,8 +65,8 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("trace([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTrace);
   assert_parsed_expression_type("transpose([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTranspose);
 #endif
-  assert_parsed_expression_type("6!", ExpressionNode::Type::Factorial);
 #endif
+  assert_parsed_expression_type("6!", ExpressionNode::Type::Factorial);
 }
 
 
@@ -218,8 +218,10 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("round(2.3246,3)", "2.325");
   assert_parsed_expression_evaluates_to<double>("round(2.3245,3)", "2.325");
 
+#endif
   assert_parsed_expression_evaluates_to<float>("6!", "720");
   assert_parsed_expression_evaluates_to<double>("6!", "720");
+#if 0
 
   assert_parsed_expression_evaluates_to<float>("R(-1)", "I");
   assert_parsed_expression_evaluates_to<double>("R(-1)", "I");
@@ -261,8 +263,8 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("rem(19,3)", "1");
   assert_parsed_expression_simplify_to("rem(-19,3)", "2");
   assert_parsed_expression_simplify_to("rem(19,0)", "inf");
-#if 0
   assert_parsed_expression_simplify_to("99!", "933262154439441526816992388562667004907159682643816214685929638952175999932299156089414639761565182862536979208272237582511852109168640000000000000000000000");
+#if 0
   assert_parsed_expression_simplify_to("factor(-10008/6895)", "-(2^3*3^2*139)/(5*7*197)");
   assert_parsed_expression_simplify_to("factor(1008/6895)", "(2^4*3^2)/(5*197)");
   assert_parsed_expression_simplify_to("factor(10007)", "10007");

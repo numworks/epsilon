@@ -224,7 +224,7 @@ term   : EMPTY          { $$ = $1; }
        ;
 
 bang   : term               { $$ = $1; }
-      /* | term BANG          { $$ = Poincare::Factorial($1); }*/
+       | term BANG          { $$ = Poincare::Factorial($1); }
        ;
 
 factor : bang               { $$ = $1; }

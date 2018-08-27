@@ -104,7 +104,7 @@ QUIZ_CASE(poincare_get_variables) {
   assert_parsed_expression_has_variables("abcdef", "abcdef");
   assert_parsed_expression_has_variables("abcdefg", nullptr);
   assert_parsed_expression_has_variables("abcde", "abcde");
-  // TODO assert_parsed_expression_has_variables("x^2+2*y+k!*A+w", "xykw");
+  assert_parsed_expression_has_variables("x^2+2*y+k!*A+w", "xykw");
 }
 
 void assert_parsed_expression_has_polynomial_coefficient(const char * expression, char symbolName, const char ** coefficients, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {

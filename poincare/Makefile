@@ -40,6 +40,7 @@ objs += $(addprefix poincare/src/,\
   arc_sine.o\
   arc_tangent.o\
   arithmetic.o\
+  binomial_coefficient.o\
   complex.o\
   cosine.o\
   decimal.o\
@@ -214,6 +215,7 @@ tests += $(addprefix poincare/test/,\
   tree/tree_by_reference.cpp\
   expression.cpp\
   addition.cpp\
+  function.cpp\
   helper.cpp\
   integer.cpp\
   logarithm.cpp\

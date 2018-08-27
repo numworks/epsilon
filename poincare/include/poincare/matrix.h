@@ -4,7 +4,6 @@
 #include <poincare/expression.h>
 #include <poincare/multiplication.h>
 #include <poincare/allocation_failure_expression_node.h>
-#include <poincare/matrix_data.h>
 
 namespace Poincare {
 

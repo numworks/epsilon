@@ -1,39 +1,75 @@
 #ifndef POINCARE_CONFIDENCE_INTERVAL_H
 #define POINCARE_CONFIDENCE_INTERVAL_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class ConfidenceInterval : public StaticHierarchy<2> {
-  using StaticHierarchy<2>::StaticHierarchy;
+class ConfidenceIntervalNode : public ExpressionNode {
 public:
-  Type type() const override;
-  int polynomialDegree(char symbolName) const override;
+  static ConfidenceIntervalNode * FailedAllocationStaticNode();
+  ConfidenceIntervalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(ConfidenceIntervalNode); }
+  int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "ConfidenceInterval";
+  }
+#endif
+
+  // ExpressionNode
+
+  // Properties
+  Type type() const override { return Type::ConfidenceInterval; }
+  int polynomialDegree(char symbolName) const override { return -1; }
 private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
+  // Layout
+  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   virtual const char * name() const { return "confidence"; }
-  /* Simplification */
+  // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Evaluation */
-  Evaluation<float> approximate(Expression::SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(Expression::DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  // Evaluation
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
-class SimplePredictionInterval : public ConfidenceInterval {
+class SimplePredictionIntervalNode : public ConfidenceIntervalNode {
+public:
+  static SimplePredictionIntervalNode * FailedAllocationStaticNode();
+  SimplePredictionIntervalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 private:
-  const char * name() const { return "prediction"; }
+  const char * name() const override { return "prediction"; }
+};
+
+class ConfidenceInterval : public Expression {
+public:
+  ConfidenceInterval() : Expression(TreePool::sharedPool()->createTreeNode<ConfidenceIntervalNode>()) {}
+  ConfidenceInterval(const ConfidenceIntervalNode * n) : Expression(n) {}
+  ConfidenceInterval(Expression child1, Expression child2) : ConfidenceInterval() {
+    replaceChildAtIndexInPlace(0, child1);
+    replaceChildAtIndexInPlace(1, child2);
+  }
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
+private:
+  constexpr static int k_maxNValue = 300;
+};
+
+class SimplePredictionInterval : public ConfidenceInterval {
+public:
+  SimplePredictionInterval() : ConfidenceInterval(static_cast<SimplePredictionIntervalNode *>(TreePool::sharedPool()->createTreeNode<SimplePredictionIntervalNode>())) {}
+  SimplePredictionInterval(const SimplePredictionIntervalNode * n) : ConfidenceInterval(n) {}
+  SimplePredictionInterval(Expression child1, Expression child2) : SimplePredictionInterval() {
+    replaceChildAtIndexInPlace(0, child1);
+    replaceChildAtIndexInPlace(1, child2);
+  }
 };
 
 }
 
 #endif
-

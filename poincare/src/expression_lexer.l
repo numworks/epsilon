@@ -122,8 +122,8 @@ atan { poincare_expression_yylval.expression = ArcTangent(); return FUNCTION; }
 atanh { poincare_expression_yylval.expression = HyperbolicArcTangent(); return FUNCTION; }
 binomial { poincare_expression_yylval.expression = BinomialCoefficient(); return FUNCTION; }
 ceil { poincare_expression_yylval.expression = Ceiling(); return FUNCTION; }
- /*confidence { poincare_expression_yylval.expression = new ConfidenceInterval(); return FUNCTION; }
-diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
+confidence { poincare_expression_yylval.expression = ConfidenceInterval(); return FUNCTION; }
+ /*diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 dim { poincare_expression_yylval.expression = new MatrixDimension(); return FUNCTION; }
 det { poincare_expression_yylval.expression = new Determinant(); return FUNCTION; }
 conj { poincare_expression_yylval.expression = new Conjugate(); return FUNCTION; }
@@ -143,8 +143,9 @@ ln { poincare_expression_yylval.expression = NaperianLogarithm(); return FUNCTIO
 log { return LOGFUNCTION; }
  /*permute { poincare_expression_yylval.expression = new PermuteCoefficient(); return FUNCTION; }
 prediction95 { poincare_expression_yylval.expression = new PredictionInterval(); return FUNCTION; }
-prediction { poincare_expression_yylval.expression = new SimplePredictionInterval(); return FUNCTION; }
-product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
+*/
+prediction { poincare_expression_yylval.expression = SimplePredictionInterval(); return FUNCTION; }
+ /*product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
 quo { poincare_expression_yylval.expression = new DivisionQuotient(); return FUNCTION; }
 random { poincare_expression_yylval.expression = new Random(); return FUNCTION; }
 randint { poincare_expression_yylval.expression = new Randint(); return FUNCTION; }

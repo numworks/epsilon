@@ -112,6 +112,7 @@
 #include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare/cosine.h>
+#include <poincare/ceiling.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>
 #include <poincare/hyperbolic_arc_cosine.h>

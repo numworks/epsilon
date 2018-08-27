@@ -1,31 +1,50 @@
 #ifndef POINCARE_GREAT_COMMON_DIVISOR_H
 #define POINCARE_GREAT_COMMON_DIVISOR_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/evaluation.h>
-#include <poincare/static_hierarchy.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class GreatCommonDivisor : public StaticHierarchy<2> {
-  using StaticHierarchy<2>::StaticHierarchy;
+class GreatCommonDivisorNode : public ExpressionNode {
 public:
-  Type type() const override;
+  static GreatCommonDivisorNode * FailedAllocationStaticNode();
+  GreatCommonDivisorNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(GreatCommonDivisorNode); }
+  int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "GreatCommonDivisor";
+  }
+#endif
+
+  // ExpressionNode
+  Type type() const override { return Type::GreatCommonDivisor; }
 private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
+  // Layout
+  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   const char * name() const { return "gcd"; }
-  /* Simplification */
+  // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Evaluation */
+  // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+};
+
+class GreatCommonDivisor : public Expression {
+public:
+  GreatCommonDivisor() : Expression(TreePool::sharedPool()->createTreeNode<GreatCommonDivisorNode>()) {}
+  GreatCommonDivisor(const GreatCommonDivisorNode * n) : Expression(n) {}
+  GreatCommonDivisor(Expression child1, Expression child2) : GreatCommonDivisor() {
+    replaceChildAtIndexInPlace(0, child1);
+    replaceChildAtIndexInPlace(1, child2);
+  }
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

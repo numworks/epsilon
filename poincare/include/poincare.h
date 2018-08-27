@@ -123,6 +123,7 @@
 #include <poincare/empty_expression.h>
 #include <poincare/equal.h>
 #include <poincare/factorial.h>
+#include <poincare/floor.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>
 #include <poincare/hyperbolic_arc_cosine.h>

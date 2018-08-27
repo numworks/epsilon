@@ -1,27 +1,37 @@
 #ifndef POINCARE_FLOOR_H
 #define POINCARE_FLOOR_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
 #include <poincare/approximation_helper.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class Floor : public StaticHierarchy<1>  {
-  using StaticHierarchy<1>::StaticHierarchy;
+class FloorNode : public ExpressionNode  {
 public:
-  Type type() const override;
-private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+  // Allocation Failure
+  static FloorNode * FailedAllocationStaticNode();
+  FloorNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(FloorNode); }
+  int numberOfChildren() const override { return 1; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Floor";
   }
+#endif
+
+  // Properties
+  Type type() const override { return Type::Floor; }
+private:
+  // Layout
+  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   const char * name() const { return "floor"; }
-  /* Simplification */
+  // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Evaluation */
-  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
+  // Evaluation
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, angleUnit, computeOnComplex<float>);
   }
@@ -30,8 +40,17 @@ private:
   }
 };
 
+class Floor : public Expression {
+public:
+  Floor() : Expression(TreePool::sharedPool()->createTreeNode<FloorNode>()) {}
+  Floor(const FloorNode * n) : Expression(n) {}
+  Floor(Expression operand) : Floor() {
+    replaceChildAtIndexInPlace(0, operand);
+  }
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+};
+
 }
 
 #endif
-
-

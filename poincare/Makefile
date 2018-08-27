@@ -63,6 +63,7 @@ objs += $(addprefix poincare/src/,\
   expression_parser.o\
   factorial.o\
   float.o\
+  floor.o\
   ghost_node.o\
   global_context.o\
   hyperbolic_arc_cosine.o\

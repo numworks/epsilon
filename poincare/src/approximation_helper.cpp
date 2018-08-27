@@ -37,7 +37,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
     assert(input.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
     MatrixComplex<T> m = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(input.node()));
     MatrixComplex<T> result;
-    for (int i = 0; i < result.numberOfChildren(); i++) {
+    for (int i = 0; i < m.numberOfChildren(); i++) {
       result.addChildAtIndexInPlace(compute(m.complexAtIndex(i), angleUnit), i, i);
     }
     result.setDimensions(m.numberOfRows(), m.numberOfColumns());

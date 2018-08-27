@@ -54,6 +54,7 @@ objs += $(addprefix poincare/src/,\
   division.o\
   division_quotient.o\
   division_remainder.o\
+  empty_expression.o\
   evaluation.o\
   expression.o\
   expression_lexer.o\

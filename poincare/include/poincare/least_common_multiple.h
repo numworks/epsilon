@@ -1,21 +1,29 @@
 #ifndef POINCARE_LEAST_COMMON_MULTIPLE_H
 #define POINCARE_LEAST_COMMON_MULTIPLE_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
-#include <poincare/evaluation.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class LeastCommonMultiple : public StaticHierarchy<2>  {
-  using StaticHierarchy<2>::StaticHierarchy;
+class LeastCommonMultipleNode : public ExpressionNode  {
 public:
-  Type type() const override;
+  static LeastCommonMultipleNode * FailedAllocationStaticNode();
+  LeastCommonMultipleNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(LeastCommonMultipleNode); }
+  int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "LeastCommonMultiple";
+  }
+#endif
+  // ExpressionNode
+  Type type() const override { return Type::LeastCommonMultiple; }
 private:
   /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
@@ -26,6 +34,19 @@ private:
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+};
+
+class LeastCommonMultiple : public Expression {
+public:
+  LeastCommonMultiple() : Expression(TreePool::sharedPool()->createTreeNode<LeastCommonMultipleNode>()) {}
+  LeastCommonMultiple(const LeastCommonMultipleNode * n) : Expression(n) {}
+  LeastCommonMultiple(Expression child1, Expression child2) : LeastCommonMultiple() {
+    replaceChildAtIndexInPlace(0, child1);
+    replaceChildAtIndexInPlace(1, child2);
+  }
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

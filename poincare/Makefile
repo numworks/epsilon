@@ -80,6 +80,7 @@ objs += $(addprefix poincare/src/,\
   infinity.o\
   integer.o\
   layout_helper.o\
+  least_common_multiple.o\
   logarithm.o\
   opposite.o\
   matrix.o\

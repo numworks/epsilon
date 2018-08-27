@@ -10,8 +10,12 @@ static inline int pool_size() {
 }
 #if POINCARE_TREE_LOG
 static inline void log_pool() {
-  Poincare::TreePool::sharedPool()->flatLog(std::cout);
+  Poincare::TreePool::sharedPool()->treeLog(std::cout);
 }
+static void log_pool_tree() {
+  Poincare::TreePool::sharedPool()->treeLog(std::cout);
+}
+
 #endif
 
 static void assert_pool_size(int i) {

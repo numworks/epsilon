@@ -25,7 +25,6 @@
 #include <poincare/context.h>
 #include <poincare/cosine.h>
 #include <poincare/decimal.h>
-#include <poincare/derivative.h>
 #include <poincare/determinant.h>
 #include <poincare/division.h>
 #include <poincare/division_quotient.h>
@@ -117,6 +116,7 @@
 #include <poincare/conjugate.h>
 #include <poincare/cosine.h>
 #include <poincare/ceiling.h>
+#include <poincare/derivative.h>
 #include <poincare/determinant.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>

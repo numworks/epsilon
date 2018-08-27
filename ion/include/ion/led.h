@@ -8,7 +8,7 @@ namespace LED {
 
 KDColor getColor();
 void setColor(KDColor c);
-void setBlinking(float period, float dutyCycle);
+void setBlinking(uint16_t periodInMilliseconds, float dutyCycle);
 
 }
 }

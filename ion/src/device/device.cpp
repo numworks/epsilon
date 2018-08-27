@@ -285,29 +285,17 @@ void shutdownClocks(bool keepLEDAwake) {
   // APB2 bus
   RCC.APB2ENR()->set(0x00008000); // Reset value
 
+  // APB1
+  class RCC::APB1ENR apb1enr(0x00000400); // Reset value
+  // AHB1 bus
+  class RCC::AHB1ENR ahb1enr(0); // Reset value
   if (keepLEDAwake) {
-    /* TODO: enter sleep mode even if the LED is used and enable LED in low
-     * power mode. */
-    // Keep the LED going: peripheral clock enable in low power mode register
-    /*RCC.APB1LPENR()->setTIM3LPEN(true);
-    RCC.AHB1LPENR()->setGPIOBLPEN(true);
-    RCC.AHB1LPENR()->setGPIOCLPEN(true);*/
-
-    // APB1
-    class RCC::APB1ENR apb1enr(0x00000400);
     apb1enr.setTIM3EN(true);
-    RCC.APB1ENR()->set(apb1enr);
-    // AHB1 bus
-    class RCC::AHB1ENR ahb1enr(0); // Reset value
     ahb1enr.setGPIOBEN(true);
     ahb1enr.setGPIOCEN(true);
-    RCC.AHB1ENR()->set(ahb1enr);
-  } else {
-    // APB1
-    RCC.APB1ENR()->set(0x00000400);
-    // AHB1 bus
-    RCC.AHB1ENR()->set(0); // Reset value
   }
+  RCC.APB1ENR()->set(apb1enr);
+  RCC.AHB1ENR()->set(ahb1enr);
 
   RCC.AHB3ENR()->setFSMCEN(false);
 }

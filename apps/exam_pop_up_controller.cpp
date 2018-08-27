@@ -59,7 +59,7 @@ ExamPopUpController::ContentView::ContentView(Responder * parentResponder) :
     if (controller->isActivatingExamMode()) {
       container->reset();
       Ion::LED::setColor(KDColorRed);
-      Ion::LED::setBlinking(1.0f, 0.1f);
+      Ion::LED::setBlinking(1000, 0.1f);
     } else {
       Ion::LED::setColor(KDColorBlack);
     }

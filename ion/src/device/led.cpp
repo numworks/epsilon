@@ -15,40 +15,27 @@ KDColor Ion::LED::getColor() {
 void Ion::LED::setColor(KDColor c) {
   sLedColor = c;
 
-  /* Active RGB colors */
-  Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::RED, true);
-  Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::GREEN, true);
-  Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::BLUE, true);
+  /* Active all RGB colors */
+  TIM3.CCMR()->setOC2M(TIM<Register16>::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOC4M(TIM<Register16>::CCMR::OCM::PWM1);
+  TIM3.CCMR()->setOC3M(TIM<Register16>::CCMR::OCM::PWM1);
 
   /* Set the PWM duty cycles to display the right color */
   constexpr float maxColorValue = (float)((1 << 8) -1);
   Device::setPeriodAndDutyCycles(Device::Mode::PWM, c.red()/maxColorValue, c.green()/maxColorValue, c.blue()/maxColorValue);
 }
 
-void Ion::LED::setBlinking(float period, float dutyCycle) {
+void Ion::LED::setBlinking(uint16_t period, float dutyCycle) {
   /* We want to use the PWM at a slow rate to display a seeable blink.
-   * Consequently, we do not use PWM to display the right color anymore.
-   * Instead we 'project the color on 3 bits' : RED LED is active or not etc. */
-  Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::RED, sLedColor.red() > 0);
-  Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::GREEN, sLedColor.green() > 0);
-  Ion::LED::Device::setColorStatus(Ion::LED::Device::Color::BLUE, sLedColor.blue() > 0);
+   * Consequently, we do not use PWM to display the right color anymore but to
+   * blink. We cannot use the PWM to display the exact color so we 'project the
+   * color on 3 bits' : all colors have 2 states - active or not. */
+  TIM3.CCMR()->setOC2M(sLedColor.red() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC4M(sLedColor.green() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC3M(sLedColor.blue() > 0 ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
 
-  Device::setPeriodAndDutyCycles(Device::Mode::BLINK, dutyCycle, dutyCycle, dutyCycle, period);
+  Device::setPeriodAndDutyCycles(Device::Mode::Blink, dutyCycle, dutyCycle, dutyCycle, period);
 }
-
-/*void Ion::LED::setCharging(bool isPluggedIn, bool isCharging) {
-  if (!isPluggedIn) {
-    Ion::LED::setColor(KDColorBlack);
-  }
-  else {
-    if (isCharging)  {
-      Ion::LED::setColor(KDColorRed);
-    }
-    else {
-      Ion::LED::setColor(KDColorGreen);
-    }
-  }
-}*/
 
 // Private Ion::Device::LED methods
 
@@ -103,30 +90,36 @@ void initTimer() {
 }
 
 void shutdownTimer() {
-  setColorStatus(Ion::LED::Device::Color::RED, false);
-  setColorStatus(Ion::LED::Device::Color::GREEN, false);
-  setColorStatus(Ion::LED::Device::Color::BLUE, false);
+  TIM3.CCMR()->setOC2M(TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC4M(TIM<Register16>::CCMR::OCM::ForceInactive);
+  TIM3.CCMR()->setOC3M(TIM<Register16>::CCMR::OCM::ForceInactive);
 }
 
 /* Pulse width modulation mode allows you to generate a signal with a
  * frequency determined by the value of the TIMx_ARR register and a duty cycle
  * determined by the value of the TIMx_CCRx register. */
 
-void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen, float dutyCycleBlue, float period) {
-  constexpr int TIM3_FREQ = 4*1000;
+void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen, float dutyCycleBlue, uint16_t period) {
   switch (mode) {
     case Mode::PWM:
-      /* Let's set the prescaler to 1. Increasing the prescaler would slow down the
-       * modulation, which can be useful when debugging. */
+      /* Let's set the prescaler to 1. Increasing the prescaler would slow down
+       * the modulation, which can be useful when debugging or when we want an
+       * actual blinking. */
       TIM3.PSC()->set(1);
       TIM3.ARR()->set(PWMPeriod);
       period = PWMPeriod;
       break;
-    case Mode::BLINK:
-      /* We still want to do PWM, but at a rate slow enough to blink. */
-      TIM3.PSC()->set(Ion::Device::SYSBUS_FREQ / TIM3_FREQ);
-      TIM3.ARR()->set(period * TIM3_FREQ);
-      period *= TIM3_FREQ; // as we pre-scaled, we update the period
+    case Mode::Blink:
+      int systemClockFreq = 96;
+      /* We still want to do PWM, but at a rate slow enough to blink. Ideally,
+       * we want to pre-scale the period to be able to set it in milliseconds;
+       * however, as the prescaler is cap by 2^16-1, we divide it by a factor
+       * and correct the period consequently. */
+      int factor = 2;
+      // TODO: explain the 2 ?
+      TIM3.PSC()->set(systemClockFreq*1000/factor);
+      period *= factor;
+      TIM3.ARR()->set(period);
       break;
   }
 
@@ -134,34 +127,6 @@ void setPeriodAndDutyCycles(Mode mode, float dutyCycleRed, float dutyCycleGreen,
   TIM3.CCR3()->set(dutyCycleBlue*period);
   TIM3.CCR4()->set(dutyCycleGreen*period);
 }
-
-void setColorStatus(Color color, bool enable) {
-  switch (color) {
-    case Ion::LED::Device::Color::RED:
-      TIM3.CCMR()->setOC2M(enable ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
-      break;
-    case Ion::LED::Device::Color::GREEN:
-      TIM3.CCMR()->setOC4M(enable ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
-      break;
-    case Ion::LED::Device::Color::BLUE:
-      TIM3.CCMR()->setOC3M(enable ? TIM<Register16>::CCMR::OCM::PWM1 : TIM<Register16>::CCMR::OCM::ForceInactive);
-      break;
-  }
-}
-
-/*void enforceState(bool red, bool green, bool blue) {
-  bool states[3] = {red, green, blue};
-  for (int i=0; i<3; i++) {
-    GPIOPin p = RGBPins[i];
-    if (states[i]) {
-      p.group().MODER()->setMode(p.pin(), GPIO::MODER::Mode::Output);
-      p.group().ODR()->set(p.pin(), true);
-    } else {
-      p.group().MODER()->setMode(p.pin(), GPIO::MODER::Mode::Analog);
-      p.group().PUPDR()->setPull(p.pin(), GPIO::PUPDR::Pull::None);
-    }
-  }
-}*/
 
 }
 }

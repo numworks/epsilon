@@ -169,7 +169,7 @@ private:
   private:
     TreeNode * m_node;
   };
-  Nodes allNodes() { return Nodes(*(begin())); }
+  Nodes allNodes() { return Nodes(first()); }
 
   class RootNodes {
   public:
@@ -187,10 +187,7 @@ private:
   private:
     TreeNode * m_node;
   };
-  RootNodes roots() { return RootNodes(*(begin())); }
-
-  TreeNode::DepthFirst<TreeNode>::Iterator begin() const { return TreeNode::DepthFirst<TreeNode>::Iterator(first()); }
-  TreeNode::DepthFirst<TreeNode>::Iterator end() const { return TreeNode::DepthFirst<TreeNode>::Iterator(last()); }
+  RootNodes roots() { return RootNodes(first()); }
 
   TreePool() : m_cursor(m_buffer) { }
 

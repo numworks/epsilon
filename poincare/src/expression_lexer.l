@@ -125,9 +125,9 @@ ceil { poincare_expression_yylval.expression = Ceiling(); return FUNCTION; }
 confidence { poincare_expression_yylval.expression = ConfidenceInterval(); return FUNCTION; }
  /*diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 dim { poincare_expression_yylval.expression = new MatrixDimension(); return FUNCTION; }
-det { poincare_expression_yylval.expression = new Determinant(); return FUNCTION; }
 */
 conj { poincare_expression_yylval.expression = Conjugate(); return FUNCTION; }
+det { poincare_expression_yylval.expression = Determinant(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = Cosine(); return FUNCTION; }
 cosh { poincare_expression_yylval.expression = HyperbolicCosine(); return FUNCTION; }
  /*factor { poincare_expression_yylval.expression = new Factor(); return FUNCTION; }

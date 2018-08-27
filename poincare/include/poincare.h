@@ -117,6 +117,7 @@
 #include <poincare/conjugate.h>
 #include <poincare/cosine.h>
 #include <poincare/ceiling.h>
+#include <poincare/determinant.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>
 #include <poincare/hyperbolic_arc_cosine.h>

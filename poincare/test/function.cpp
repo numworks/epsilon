@@ -26,7 +26,9 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("dim([[2]])", ExpressionNode::Type::MatrixDimension);
   assert_parsed_expression_type("det([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::Determinant);
 #endif
+#endif
   assert_parsed_expression_type("confidence(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
+#if 0
   assert_parsed_expression_type("conj(2)", ExpressionNode::Type::Conjugate);
   assert_parsed_expression_type("factor(23/42)", ExpressionNode::Type::Factor);
   assert_parsed_expression_type("floor(2.3)", ExpressionNode::Type::Floor);
@@ -41,7 +43,9 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("ln(2)", ExpressionNode::Type::NaperianLogarithm);
   assert_parsed_expression_type("log(2)", ExpressionNode::Type::Logarithm);
   assert_parsed_expression_type("permute(10, 4)", ExpressionNode::Type::PermuteCoefficient);
+#endif
   assert_parsed_expression_type("prediction(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
+#if 0
   assert_parsed_expression_type("prediction95(0.1, 100)", ExpressionNode::Type::PredictionInterval);
   assert_parsed_expression_type("product(n, 4, 10)", ExpressionNode::Type::Product);
   assert_parsed_expression_type("quo(29, 10)", ExpressionNode::Type::DivisionQuotient);
@@ -144,9 +148,11 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
   assert_parsed_expression_evaluates_to<double>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
 #endif
+#endif
 
   assert_parsed_expression_evaluates_to<float>("confidence(0.1, 100)", "[[0,0.2]]");
   assert_parsed_expression_evaluates_to<double>("confidence(0.1, 100)", "[[0,0.2]]");
+#if 0
 
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
@@ -164,9 +170,10 @@ QUIZ_CASE(poincare_function_evaluate) {
 
 #endif
 
+#endif
   assert_parsed_expression_evaluates_to<float>("prediction(0.1, 100)", "[[0,0.2]]");
   assert_parsed_expression_evaluates_to<double>("prediction(0.1, 100)", "[[0,0.2]]");
-
+#if 0
   assert_parsed_expression_evaluates_to<float>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
   assert_parsed_expression_evaluates_to<double>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
 

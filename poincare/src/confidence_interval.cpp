@@ -1,27 +1,53 @@
 #include <poincare/confidence_interval.h>
-#include <poincare/matrix.h>
 #include <poincare/addition.h>
+#include <poincare/layout_helper.h>
+#include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
+#include <assert.h>
 
 namespace Poincare {
 
-ExpressionNode::Type ConfidenceInterval::type() const {
-  return Type::ConfidenceInterval;
+ConfidenceIntervalNode * ConfidenceIntervalNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<ConfidenceIntervalNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * ConfidenceInterval::clone() const {
-  ConfidenceInterval * a = new ConfidenceInterval(m_operands, true);
-  return a;
+LayoutReference ConfidenceIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-int ConfidenceInterval::polynomialDegree(char symbolName) const {
-  return -1;
+int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+Expression ConfidenceIntervalNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return ConfidenceInterval(this).shallowReduce(context, angleUnit);
+}
+
+template<typename T>
+Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> fInput = childAtIndex(0)->approximate(T(), context, angleUnit);
+  Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+  T f = static_cast<Complex<T> >(fInput).toScalar();
+  T n = static_cast<Complex<T> >(nInput).toScalar();
+  if (std::isnan(f) || std::isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
+    return Complex<T>::Undefined();
+  }
+  std::complex<T> operands[2];
+  operands[0] = std::complex<T>(f - 1/std::sqrt(n));
+  operands[1] = std::complex<T>(f + 1/std::sqrt(n));
+  return MatrixComplex<T>(operands, 1, 2);
+}
+
+SimplePredictionIntervalNode * SimplePredictionIntervalNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<SimplePredictionIntervalNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
 Expression ConfidenceInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
@@ -29,53 +55,37 @@ Expression ConfidenceInterval::shallowReduce(Context& context, Preferences::Angl
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op0 = childAtIndex(0);
-  Expression * op1 = childAtIndex(1);
+  Expression c0 = childAtIndex(0);
+  Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
-  if (op0->type() == Type::Matrix || op1->type() == Type::Matrix) {
-    return replaceWith(new Undefined(), true);
+  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+    return Undefined();
   }
 #endif
-  if (op0->type() == Type::Rational) {
-    Rational * r0 = static_cast<Rational *>(op0);
-    if (r0->numerator().isNegative() || Integer::NaturalOrder(r0->numerator(), r0->denominator()) > 0) {
-      return replaceWith(new Undefined(), true);
+  if (c0.type() == ExpressionNode::Type::Rational) {
+    Rational r0 = static_cast<Rational>(c0);
+    if (r0.signedIntegerNumerator().isNegative() || Integer::NaturalOrder(r0.signedIntegerNumerator(), r0.integerDenominator()) > 0) {
+      return Undefined();
     }
   }
-  if (op1->type() == Type::Rational) {
-    Rational * r1 = static_cast<Rational *>(op1);
-    if (!r1->denominator().isOne() || r1->numerator().isNegative()) {
-      return replaceWith(new Undefined(), true);
+  if (c1.type() == ExpressionNode::Type::Rational) {
+    Rational r1 = static_cast<Rational>(c1);
+    if (!r1.integerDenominator().isOne() || r1.signedIntegerNumerator().isNegative()) {
+      return Undefined();
     }
   }
-  if (op0->type() != Type::Rational || op1->type() != Type::Rational) {
-    return this;
+  if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
+    return *this;
   }
-  Rational * r0 = static_cast<Rational *>(op0);
-  Rational * r1 = static_cast<Rational *>(op1);
-  detachOperands();
+  Rational r0 = static_cast<Rational>(c0);
+  Rational r1 = static_cast<Rational>(c1);
   // Compute [r0-1/sqr(r1), r0+1/sqr(r1)]
-  Expression * sqr = new Power(r1, new Rational(-1, 2), false);
-  const Expression * newOperands[2] = {new Addition(r0, new Multiplication(new Rational(-1), sqr, false), false), new Addition(r0, sqr, true)};
-  Expression * matrix = replaceWith(new Matrix(newOperands, 1, 2, false), true);
-  return matrix->deepReduce(context, angleUnit);
-}
-
-template<typename T>
-Evaluation<T> ConfidenceInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * fInput = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * nInput = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
-  T f = static_cast<Complex<T> *>(fInput)->toScalar();
-  T n = static_cast<Complex<T> *>(nInput)->toScalar();
-  delete fInput;
-  delete nInput;
-  if (std::isnan(f) || std::isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
-    return new Complex<T>(Complex<T>::Undefined());
-  }
-  std::complex<T> operands[2];
-  operands[0] = std::complex<T>(f - 1/std::sqrt(n));
-  operands[1] = std::complex<T>(f + 1/std::sqrt(n));
-  return new MatrixComplex<T>(operands, 1, 2);
+  Expression sqr = Power(r1, Rational(-1, 2));
+  Matrix matrix;
+  matrix.addChildAtIndexInPlace(Addition(r0, Multiplication(Rational(-1), sqr)), 0, 0);
+  matrix.addChildAtIndexInPlace(Addition(r0, sqr), 1, 1);
+  matrix.setDimensions(1, 2);
+  return matrix.deepReduce(context, angleUnit);
 }
 
 }

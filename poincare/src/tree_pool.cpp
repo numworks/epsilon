@@ -90,23 +90,7 @@ void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveS
   char * destinationAddress = reinterpret_cast<char *>(destination);
   char * sourceAddress = reinterpret_cast<char *>(source);
   if (insert(destinationAddress, sourceAddress, moveSize)) {
-    // Update the nodeForIdentifier array
-    for (int i = 0; i < MaxNumberOfNodes; i++) {
-      char * nodeAddress = reinterpret_cast<char *>(m_nodeForIdentifier[i]);
-      if (nodeAddress == nullptr) {
-        continue;
-      } else if (nodeAddress >= sourceAddress && nodeAddress < sourceAddress + moveSize) {
-        if (destinationAddress < sourceAddress) {
-          m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress - (sourceAddress - destinationAddress));
-        } else {
-          m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress + (destinationAddress - (sourceAddress + moveSize)));
-        }
-      } else if (nodeAddress > sourceAddress && nodeAddress < destinationAddress) {
-        m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress - moveSize);
-      } else if (nodeAddress < sourceAddress && nodeAddress >= destinationAddress) {
-        m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(nodeAddress + moveSize);
-      }
-    }
+    updateNodeForIdentifierFromNode(destinationAddress < sourceAddress ? destination : source);
   }
 }
 
@@ -152,12 +136,8 @@ void TreePool::dealloc(TreeNode * node, size_t size) {
   );
   m_cursor -= size;
 
-  // Step 2 - Update m_nodeForIdentifier
-  for (int i = 0; i < MaxNumberOfNodes; i++) {
-    if (m_nodeForIdentifier[i] != nullptr && m_nodeForIdentifier[i] > node) {
-      m_nodeForIdentifier[i] = reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(m_nodeForIdentifier[i]) - size);
-    }
-  }
+  // Step 2: Update m_nodeForIdentifier for all nodes downstream
+  updateNodeForIdentifierFromNode(node);
 }
 
 bool TreePool::insert(char * destination, char * source, size_t length) {
@@ -183,6 +163,12 @@ bool TreePool::insert(char * destination, char * source, size_t length) {
     memmove32(dst - len, tmp, len);
   }
   return true;
+}
+
+void TreePool::updateNodeForIdentifierFromNode(TreeNode * node) {
+  for (TreeNode * n : Nodes(node)) {
+    m_nodeForIdentifier[n->identifier()] = n;
+  }
 }
 
 }

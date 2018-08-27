@@ -142,6 +142,8 @@ private:
     freeIdentifier(node->identifier());
   }
 
+  void updateNodeForIdentifierFromNode(TreeNode * node);
+
   void renameNode(TreeNode * node, bool unregisterPreviousIdentifier = true) {
     node->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }

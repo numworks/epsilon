@@ -106,6 +106,7 @@
 
 #else
 
+#include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/arc_cosine.h>
 #include <poincare/arc_sine.h>

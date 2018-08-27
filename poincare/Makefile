@@ -64,6 +64,7 @@ objs += $(addprefix poincare/src/,\
   factorial.o\
   float.o\
   floor.o\
+  frac_part.o\
   ghost_node.o\
   global_context.o\
   hyperbolic_arc_cosine.o\

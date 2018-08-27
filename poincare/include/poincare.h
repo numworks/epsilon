@@ -124,6 +124,7 @@
 #include <poincare/equal.h>
 #include <poincare/factorial.h>
 #include <poincare/floor.h>
+#include <poincare/frac_part.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>
 #include <poincare/hyperbolic_arc_cosine.h>

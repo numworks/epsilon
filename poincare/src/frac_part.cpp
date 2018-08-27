@@ -1,20 +1,36 @@
 #include <poincare/frac_part.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/rational.h>
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-ExpressionNode::Type FracPart::type() const {
-  return Type::FracPart;
+FracPartNode * FracPartNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<FracPartNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * FracPart::clone() const {
-  FracPart * c = new FracPart(m_operands, true);
-  return c;
+LayoutRef FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(FracPart(this), floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+Expression FracPartNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return FracPart(this).shallowReduce(context, angleUnit);
+}
+
+template<typename T>
+Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  if (c.imag() != 0) {
+    return Complex<T>::Undefined();
+  }
+  return Complex<T>(c.real()-std::floor(c.real()));
 }
 
 Expression FracPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
@@ -22,26 +38,18 @@ Expression FracPart::shallowReduce(Context& context, Preferences::AngleUnit angl
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op = childAtIndex(0);
+  Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (op->type() != Type::Rational) {
-    return this;
+  if (c.type() != ExpressionNode::Type::Rational) {
+    return *this;
   }
-  Rational * r = static_cast<Rational *>(op);
-  IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
-  return replaceWith(new Rational(div.remainder, r->denominator()), true);
-}
-
-template<typename T>
-std::complex<T> FracPart::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  if (c.imag() != 0) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>(c.real()-std::floor(c.real()));
+  Rational r = static_cast<Rational>(c);
+  IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+  return Rational(div.remainder, r.integerDenominator());
 }
 
 }

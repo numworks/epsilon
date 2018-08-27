@@ -128,6 +128,7 @@
 #include <poincare/frac_part.h>
 #include <poincare/great_common_divisor.h>
 #include <poincare/imaginary_part.h>
+#include <poincare/integral.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>
 #include <poincare/hyperbolic_arc_cosine.h>

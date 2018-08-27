@@ -79,6 +79,7 @@ objs += $(addprefix poincare/src/,\
   imaginary_part.o\
   infinity.o\
   integer.o\
+  integral.o\
   layout_helper.o\
   least_common_multiple.o\
   logarithm.o\

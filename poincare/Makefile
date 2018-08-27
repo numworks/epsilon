@@ -44,6 +44,7 @@ objs += $(addprefix poincare/src/,\
   binomial_coefficient.o\
   ceiling.o\
   complex.o\
+  complex_argument.o\
   cosine.o\
   decimal.o\
   derivative.o\

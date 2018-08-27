@@ -1,4 +1,6 @@
 #include <poincare/complex_argument.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 extern "C" {
 #include <assert.h>
@@ -7,13 +9,27 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionNode::Type ComplexArgument::type() const {
-  return Type::ComplexArgument;
+ComplexArgumentNode * ComplexArgumentNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<ComplexArgumentNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * ComplexArgument::clone() const {
-  ComplexArgument * a = new ComplexArgument(m_operands, true);
-  return a;
+LayoutReference ComplexArgumentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+    return LayoutHelper::Prefix(ComplexArgument(this), floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+Expression ComplexArgumentNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return ComplexArgument(this).shallowReduce(context, angleUnit);
+}
+
+template<typename T>
+Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  return Complex<T>(std::arg(c));
 }
 
 Expression ComplexArgument::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
@@ -22,18 +38,15 @@ Expression ComplexArgument::shallowReduce(Context& context, Preferences::AngleUn
     return e;
   }
 #if MATRIX_EXACT_REDUCING
-  Expression * op = childAtIndex(0);
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
+  Expression c = childAtIndex(0);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  return this;
+  return *this;
 }
 
-template<typename T>
-std::complex<T> ComplexArgument::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  return Complex<T>(std::arg(c));
-}
+
 
 }
 

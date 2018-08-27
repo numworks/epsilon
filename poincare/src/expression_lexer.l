@@ -115,9 +115,7 @@ acos { poincare_expression_yylval.expression = ArcCosine(); return FUNCTION; }
 acosh { poincare_expression_yylval.expression = HyperbolicArcCosine(); return FUNCTION; }
 abs { poincare_expression_yylval.expression = AbsoluteValue(); return FUNCTION; }
 ans { poincare_expression_yylval.character = Symbol::SpecialSymbols::Ans; return SYMBOL; }
- /*
-arg { poincare_expression_yylval.expression = new ComplexArgument(); return FUNCTION; }
-*/
+arg { poincare_expression_yylval.expression = ComplexArgument(); return FUNCTION; }
 asin { poincare_expression_yylval.expression = ArcSine(); return FUNCTION; }
 asinh { poincare_expression_yylval.expression = HyperbolicArcSine(); return FUNCTION; }
 atan { poincare_expression_yylval.expression = ArcTangent(); return FUNCTION; }

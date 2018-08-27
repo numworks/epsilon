@@ -19,8 +19,8 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("abs(-1)", ExpressionNode::Type::AbsoluteValue);
   assert_parsed_expression_type("binomial(10, 4)", ExpressionNode::Type::BinomialCoefficient);
   assert_parsed_expression_type("ceil(0.2)", ExpressionNode::Type::Ceiling);
-#if 0
   assert_parsed_expression_type("arg(2+I)", ExpressionNode::Type::ComplexArgument);
+#if 0
   assert_parsed_expression_type("diff(2*x, 2)", ExpressionNode::Type::Derivative);
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("dim([[2]])", ExpressionNode::Type::MatrixDimension);

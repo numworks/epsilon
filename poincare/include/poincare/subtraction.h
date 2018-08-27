@@ -24,7 +24,7 @@ public:
   // ExpressionNode
 
   // Properties
-  Type type() const override{ return Type::Subtraction; }
+  Type type() const override { return Type::Subtraction; }
   int polynomialDegree(char symbolName) const override;
 
   // Approximation

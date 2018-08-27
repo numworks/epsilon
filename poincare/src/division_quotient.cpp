@@ -1,21 +1,40 @@
 #include <poincare/division_quotient.h>
+#include <poincare/infinity.h>
+#include <poincare/layout_helper.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
-
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-ExpressionNode::Type DivisionQuotient::type() const {
-  return Type::DivisionQuotient;
+DivisionQuotientNode * DivisionQuotientNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<DivisionQuotientNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * DivisionQuotient::clone() const {
-  DivisionQuotient * a = new DivisionQuotient(m_operands, true);
-  return a;
+Expression DivisionQuotientNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return DivisionQuotient(this).shallowReduce(context, angleUnit);
+}
+
+LayoutReference DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(DivisionQuotient(this), floatDisplayMode, numberOfSignificantDigits, name());
+}
+int DivisionQuotientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+template<typename T>
+Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, angleUnit);
+  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, angleUnit);
+  T f1 = f1Input.toScalar();
+  T f2 = f2Input.toScalar();
+  if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
+    return Complex<T>::Undefined();
+  }
+  return Complex<T>(std::floor(f1/f2));
 }
 
 Expression DivisionQuotient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
@@ -23,53 +42,38 @@ Expression DivisionQuotient::shallowReduce(Context& context, Preferences::AngleU
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op0 = childAtIndex(0);
-  Expression * op1 = childAtIndex(1);
+  Expression c0 = childAtIndex(0);
+  Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
-  if (op0->type() == Type::Matrix || op1->type() == Type::Matrix) {
-    return replaceWith(new Undefined(), true);
+  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+    return Undefined();
   }
 #endif
-  if (op0->type() == Type::Rational) {
-    Rational * r0 = static_cast<Rational *>(op0);
-    if (!r0->denominator().isOne()) {
-      return replaceWith(new Undefined(), true);
+  if (c0.type() == ExpressionNode::Type::Rational) {
+    Rational r0 = static_cast<Rational>(c0);
+    if (!r0.integerDenominator().isOne()) {
+      return Undefined();
     }
   }
-  if (op1->type() == Type::Rational) {
-    Rational * r1 = static_cast<Rational *>(op1);
-    if (!r1->denominator().isOne()) {
-      return replaceWith(new Undefined(), true);
+  if (c1.type() == ExpressionNode::Type::Rational) {
+    Rational r1 = static_cast<Rational>(c1);
+    if (!r1.integerDenominator().isOne()) {
+      return Undefined();
     }
   }
-  if (op0->type() != Type::Rational || op1->type() != Type::Rational) {
-    return this;
+  if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
+    return *this;
   }
-  Rational * r0 = static_cast<Rational *>(op0);
-  Rational * r1 = static_cast<Rational *>(op1);
+  Rational r0 = static_cast<Rational>(c0);
+  Rational r1 = static_cast<Rational>(c1);
 
-  Integer a = r0->numerator();
-  Integer b = r1->numerator();
+  Integer a = r0.signedIntegerNumerator();
+  Integer b = r1.signedIntegerNumerator();
   if (b.isZero()) {
-    return replaceWith(new Undefined(), true); // TODO: new Infinite(a.isNegative())
+    return Infinity(a.isNegative());
   }
   Integer result = Integer::Division(a, b).quotient;
-  return replaceWith(new Rational(result), true);
-}
-
-template<typename T>
-Complex<T> * DivisionQuotient::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * f1Input = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * f2Input = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
-  T f1 = f1Input->toScalar();
-  T f2 = f2Input->toScalar();
-  delete f1Input;
-  delete f2Input;
-  if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
-    return new Complex<T>(Complex<T>::Undefined());
-  }
-  return new Complex<T>(std::floor(f1/f2));
+  return Rational(result);
 }
 
 }
-

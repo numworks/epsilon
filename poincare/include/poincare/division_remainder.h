@@ -1,31 +1,51 @@
 #ifndef POINCARE_DIVISION_REMAINDER_H
 #define POINCARE_DIVISION_REMAINDER_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
-#include <poincare/evaluation.h>
+#include <poincare/approximation_helper.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class DivisionRemainder : public StaticHierarchy<2> {
-  using StaticHierarchy<2>::StaticHierarchy;
+class DivisionRemainderNode : public ExpressionNode {
 public:
-  Type type() const override;
+  static DivisionRemainderNode * FailedAllocationStaticNode();
+  DivisionRemainderNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(DivisionRemainderNode); }
+  int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "DivisionRemainder";
+  }
+#endif
+
+  // ExpressionNode
+  Type type() const override { return Type::DivisionRemainder; }
 private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
+  // Layout
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   const char * name() const { return "rem"; }
-  /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
-  /* Evaluation */
+  // Simplification
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const override;
+  // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+};
+
+class DivisionRemainder : public Expression {
+public:
+  DivisionRemainder() : Expression(TreePool::sharedPool()->createTreeNode<DivisionRemainderNode>()) {}
+  DivisionRemainder(const DivisionRemainderNode * n) : Expression(n) {}
+  DivisionRemainder(Expression child1, Expression child2) : DivisionRemainder() {
+    replaceChildAtIndexInPlace(0, child1);
+    replaceChildAtIndexInPlace(1, child2);
+  }
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

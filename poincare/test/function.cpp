@@ -34,12 +34,12 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("frac(2.3)", ExpressionNode::Type::FracPart);
   assert_parsed_expression_type("gcd(2,3)", ExpressionNode::Type::GreatCommonDivisor);
   assert_parsed_expression_type("im(2+I)", ExpressionNode::Type::ImaginaryPart);
+  assert_parsed_expression_type("lcm(2,3)", ExpressionNode::Type::LeastCommonMultiple);
 #if 0
   assert_parsed_expression_type("int(x, 2, 3)", ExpressionNode::Type::Integral);
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("inverse([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixInverse);
 #endif
-  assert_parsed_expression_type("lcm(2,3)", ExpressionNode::Type::LeastCommonMultiple);
   assert_parsed_expression_type("ln(2)", ExpressionNode::Type::NaperianLogarithm);
   assert_parsed_expression_type("log(2)", ExpressionNode::Type::Logarithm);
   assert_parsed_expression_type("permute(10, 4)", ExpressionNode::Type::PermuteCoefficient);
@@ -109,13 +109,13 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("im(2+3I)", "3");
   assert_parsed_expression_evaluates_to<double>("im(2+3I)", "3");
+
+  assert_parsed_expression_evaluates_to<float>("lcm(234,394)", "46098");
+  assert_parsed_expression_evaluates_to<double>("lcm(234,394)", "46098");
 #if 0
 
   assert_parsed_expression_evaluates_to<float>("int(x, 1, 2)", "1.5");
   assert_parsed_expression_evaluates_to<double>("int(x, 1, 2)", "1.5");
-
-  assert_parsed_expression_evaluates_to<float>("lcm(234,394)", "46098");
-  assert_parsed_expression_evaluates_to<double>("lcm(234,394)", "46098");
 
   assert_parsed_expression_evaluates_to<float>("ln(2)", "0.6931472");
   assert_parsed_expression_evaluates_to<double>("ln(2)", "6.9314718055995E-1");
@@ -275,9 +275,9 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");
   assert_parsed_expression_simplify_to("gcd(11,121)", "11");
-#if 0
   assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
   assert_parsed_expression_simplify_to("lcm(11,121)", "121");
+#if 0
   assert_parsed_expression_simplify_to("R(4)", "2");
   assert_parsed_expression_simplify_to("root(4,3)", "root(4,3)");
   assert_parsed_expression_simplify_to("root(4,P)", "4^(1/P)");

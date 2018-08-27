@@ -124,9 +124,8 @@ asinh { poincare_expression_yylval.expression = HyperbolicArcSine(); return FUNC
 atan { poincare_expression_yylval.expression = ArcTangent(); return FUNCTION; }
 atanh { poincare_expression_yylval.expression = HyperbolicArcTangent(); return FUNCTION; }
 binomial { poincare_expression_yylval.expression = BinomialCoefficient(); return FUNCTION; }
- /*
-ceil { poincare_expression_yylval.expression = new Ceiling(); return FUNCTION; }
-confidence { poincare_expression_yylval.expression = new ConfidenceInterval(); return FUNCTION; }
+ceil { poincare_expression_yylval.expression = Ceiling(); return FUNCTION; }
+ /*confidence { poincare_expression_yylval.expression = new ConfidenceInterval(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
 dim { poincare_expression_yylval.expression = new MatrixDimension(); return FUNCTION; }
 det { poincare_expression_yylval.expression = new Determinant(); return FUNCTION; }

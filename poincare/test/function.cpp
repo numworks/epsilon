@@ -21,8 +21,8 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("arg(2+I)", ExpressionNode::Type::ComplexArgument);
 #endif
   assert_parsed_expression_type("binomial(10, 4)", ExpressionNode::Type::BinomialCoefficient);
-#if 0
   assert_parsed_expression_type("ceil(0.2)", ExpressionNode::Type::Ceiling);
+#if 0
   assert_parsed_expression_type("diff(2*x, 2)", ExpressionNode::Type::Derivative);
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("dim([[2]])", ExpressionNode::Type::MatrixDimension);
@@ -81,10 +81,10 @@ QUIZ_CASE(poincare_function_evaluate) {
 #endif
   assert_parsed_expression_evaluates_to<float>("binomial(10, 4)", "210");
   assert_parsed_expression_evaluates_to<double>("binomial(10, 4)", "210");
-#if 0
 
   assert_parsed_expression_evaluates_to<float>("ceil(0.2)", "1");
   assert_parsed_expression_evaluates_to<double>("ceil(0.2)", "1");
+#if 0
 
   assert_parsed_expression_evaluates_to<float>("diff(2*x, 2)", "2");
   assert_parsed_expression_evaluates_to<double>("diff(2*x, 2)", "2");
@@ -240,8 +240,8 @@ QUIZ_CASE(poincare_function_simplify) {
 #endif
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
-#if 0
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
+#if 0
   assert_parsed_expression_simplify_to("conj(1/2)", "1/2");
   assert_parsed_expression_simplify_to("quo(19,3)", "6");
   assert_parsed_expression_simplify_to("quo(19,0)", "undef");

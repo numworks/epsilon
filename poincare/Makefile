@@ -50,6 +50,7 @@ objs += $(addprefix poincare/src/,\
   cosine.o\
   decimal.o\
   derivative.o\
+  determinant.o\
   division.o\
   evaluation.o\
   expression.o\

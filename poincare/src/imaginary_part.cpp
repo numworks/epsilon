@@ -1,43 +1,50 @@
 #include <poincare/imaginary_part.h>
+#include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/rational.h>
 #include <cmath>
-extern "C" {
-#include <assert.h>
-}
 
 namespace Poincare {
 
-ExpressionNode::Type ImaginaryPart::type() const {
-  return Type::ImaginaryPart;
+ImaginaryPartNode * ImaginaryPartNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<ImaginaryPartNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * ImaginaryPart::clone() const {
-  ImaginaryPart * a = new ImaginaryPart(m_operands, true);
-  return a;
+LayoutReference ImaginaryPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(ImaginaryPart(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
+int ImaginaryPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+template<typename T>
+Complex<T> ImaginaryPartNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  return Complex<T>(std::imag(c));
+}
+
+Expression ImaginaryPartNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return ImaginaryPart(this).shallowReduce(context, angleUnit);
+}
 
 Expression ImaginaryPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op = childAtIndex(0);
+  Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (op->type() == Type::Rational) {
-    return replaceWith(RationalReference(0), true);
+  if (c.type() == ExpressionNode::Type::Rational) {
+    return Rational(0);
   }
-  return this;
-}
-
-template<typename T>
-std::complex<T> ImaginaryPart::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  return std::imag(c);
+  return *this;
 }
 
 }

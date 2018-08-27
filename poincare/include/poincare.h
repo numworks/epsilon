@@ -121,6 +121,7 @@
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
 #include <poincare/empty_expression.h>
+#include <poincare/equal.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>
 #include <poincare/hyperbolic_arc_cosine.h>

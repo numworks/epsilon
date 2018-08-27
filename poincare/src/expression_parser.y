@@ -255,10 +255,9 @@ exp    : pow                { $$ = $1; }
 
 final_exp : exp             { $$ = $1; }
 /*
-          | exp STO symb   { if ($3->name() == Poincare::Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Store(terms, false); }
-          | exp EQUAL exp   { Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Equal(terms, false); }
+          | exp STO symb   { if ($3->name() == Poincare::Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Store(terms, false); }*/
+          | exp EQUAL exp   { $$ = Poincare::Equal($1, $3); }
           ;
-*/
 %%
 
 void poincare_expression_yyerror(Poincare::Expression * expressionOutput, const char * msg) {

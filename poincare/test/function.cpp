@@ -28,8 +28,8 @@ QUIZ_CASE(poincare_parse_function) {
 #endif
 #endif
   assert_parsed_expression_type("confidence(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
-#if 0
   assert_parsed_expression_type("conj(2)", ExpressionNode::Type::Conjugate);
+#if 0
   assert_parsed_expression_type("factor(23/42)", ExpressionNode::Type::Factor);
   assert_parsed_expression_type("floor(2.3)", ExpressionNode::Type::Floor);
   assert_parsed_expression_type("frac(2.3)", ExpressionNode::Type::FracPart);
@@ -152,15 +152,17 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("confidence(0.1, 100)", "[[0,0.2]]");
   assert_parsed_expression_evaluates_to<double>("confidence(0.1, 100)", "[[0,0.2]]");
-#if 0
 
+#if 0
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
   assert_parsed_expression_evaluates_to<double>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
 #endif
+#endif
 
   assert_parsed_expression_evaluates_to<float>("conj(3+2*I)", "3-2*I");
   assert_parsed_expression_evaluates_to<double>("conj(3+2*I)", "3-2*I");
+#if 0
 
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0.041667]]", Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
@@ -242,9 +244,9 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("binomial(20,3)", "1140");
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
-#if 0
   assert_parsed_expression_simplify_to("conj(1/2)", "1/2");
-  assert_parsed_expression_simplify_to("quo(19,3)", "6");
+#if 0
+ assert_parsed_expression_simplify_to("quo(19,3)", "6");
   assert_parsed_expression_simplify_to("quo(19,0)", "undef");
   assert_parsed_expression_simplify_to("quo(-19,3)", "-7");
   assert_parsed_expression_simplify_to("rem(19,3)", "1");

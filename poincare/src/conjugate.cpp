@@ -1,22 +1,33 @@
 #include <poincare/conjugate.h>
-#include <poincare/simplification_helper.h>
 #include <poincare/conjugate_layout_node.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <assert.h>
 #include <cmath>
 
 namespace Poincare {
 
-ExpressionNode::Type Conjugate::type() const {
-  return Type::Conjugate;
+ConjugateNode * ConjugateNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<ConjugateNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * Conjugate::clone() const {
-  Conjugate * a = new Conjugate(m_operands, true);
-  return a;
-}
-
-LayoutRef Conjugate::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return ConjugateLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
+
+int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "conj");
+}
+
+Expression ConjugateNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Conjugate(this).shallowReduce(context, angleUnit);
+}
+
+template<typename T>
+Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  return Complex<T>(std::conj(c));
 }
 
 Expression Conjugate::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
@@ -24,21 +35,16 @@ Expression Conjugate::shallowReduce(Context& context, Preferences::AngleUnit ang
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op = childAtIndex(0);
+  Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (op->type() == Type::Rational) {
-    return replaceWith(op, true);
+  if (c.type() == ExpressionNode::Type::Rational) {
+    return c;
   }
-  return this;
-}
-
-template<typename T>
-std::complex<T> Conjugate::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  return std::conj(c);
+  return *this;
 }
 
 }

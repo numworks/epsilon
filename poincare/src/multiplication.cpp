@@ -663,7 +663,7 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::An
   Multiplication thisCopy = *this;
   Multiplication m;
   // Special case for rational p/q: if q != 1, q should be at denominator
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !static_cast<const Rational&>(childAtIndex(0)).integerDenominator().isOne()) {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !static_cast<const Rational>(childAtIndex(0)).integerDenominator().isOne()) {
     Rational r = static_cast<Rational>(childAtIndex(0));
     m.addChildAtIndexInPlace(Rational(r.integerDenominator()), 0, m.numberOfChildren());
     if (r.signedIntegerNumerator().isOne()) {

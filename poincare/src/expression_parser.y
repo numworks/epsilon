@@ -211,22 +211,13 @@ term   : EMPTY          { $$ = $1; }
        | symb           { $$ = $1; }
        | UNDEFINED      { $$ = $1; }
        | number         { $$ = $1; }
-/*
-       | FUNCTION UNDERSCORE LEFT_BRACE lstData RIGHT_BRACE LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; int totalNumberOfArguments = $4->numberOfChildren()+$7->numberOfChildren();
-if (!$1->hasValidNumberOfOperands(totalNumberOfArguments)) { delete $1; delete $4; delete $7; YYERROR; };
-Poincare::ListData * arguments = new Poincare::ListData();
-for (int i = 0; i < $7->numberOfChildren(); i++) { arguments->pushExpression($7->operands()[i]); }
-for (int i = 0; i < $4->numberOfChildren(); i++) { arguments->pushExpression($4->operands()[i]); }
-$1->setArgument(arguments, totalNumberOfArguments, false);
-$4->detachOperands(); delete $4; $7->detachOperands(); delete $7; arguments->detachOperands(); delete arguments;}
-*/
+       | LOGFUNCTION UNDERSCORE LEFT_BRACE exp RIGHT_BRACE LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Poincare::Logarithm($7, $4); }
        | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; $$.setChildrenInPlace($3); }
 /* Special case for logarithm, as we do not now at first if it needs 1 or 2
  * children */
        | LOGFUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($3.numberOfChildren() == 1) { $$ = Poincare::Logarithm($3.childAtIndex(0)); } else if ($3.numberOfChildren() == 2) { $$ = Poincare::Logarithm($3.childAtIndex(0), $3.childAtIndex(1));} else { YYERROR; } ; }
-/*       | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { $$ = $1; if (!$1->hasValidNumberOfOperands(0)) { delete $1; YYERROR; } ; }
-*/
-       | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS     { $$ = Poincare::Parenthesis($2); }
+       | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { if ($1.numberOfChildren() != 0) { YYERROR; } $$ = $1; }
+       | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Poincare::Parenthesis($2); }
 /* MATRICES_ARE_DEFINED */
 
        | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = $2; }

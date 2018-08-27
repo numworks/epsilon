@@ -1,35 +1,54 @@
 #ifndef POINCARE_FRAC_PART_H
 #define POINCARE_FRAC_PART_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
 #include <poincare/approximation_helper.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class FracPart : public StaticHierarchy<1>  {
-  using StaticHierarchy<1>::StaticHierarchy;
+class FracPartNode : public ExpressionNode  {
 public:
-  Type type() const override;
+  // Allocation Failure
+  static FracPartNode * FailedAllocationStaticNode();
+  FracPartNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(FracPartNode); }
+  int numberOfChildren() const override { return 1; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "FracPart";
+  }
+#endif
+
+  // Properties
+  Type type() const override { return Type::FracPart; }
 private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
+  // Layout
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   const char * name() const { return "frac"; }
-  /* Simplification */
+  // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Evaluation */
-  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
+  // Evaluation
+  template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<float>(this, context, angleUnit, computeOnComplex<float>);
   }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::Map<double>(this, context, angleUnit, computeOnComplex<double>);
   }
+};
+
+class FracPart : public Expression {
+public:
+  FracPart() : Expression(TreePool::sharedPool()->createTreeNode<FracPartNode>()) {}
+  FracPart(const FracPartNode * n) : Expression(n) {}
+  FracPart(Expression operand) : FracPart() {
+    replaceChildAtIndexInPlace(0, operand);
+  }
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

@@ -201,19 +201,13 @@ private:
 
   // Identifiers
   int generateIdentifier() {
-    int newIdentifier = -1;
-    for (int i = 0; i < MaxNumberOfNodes; i++) {
-      if (m_nodeForIdentifier[i] == nullptr) {
-        newIdentifier = i;
-        break;
-      }
-    }
-    return newIdentifier;
+    return m_identifiers.pop();
   }
 
   void freeIdentifier(int identifier) {
     if (identifier >= 0 && identifier < MaxNumberOfNodes) {
       m_nodeForIdentifier[identifier] = nullptr;
+      m_identifiers.push(identifier);
     }
   }
 
@@ -222,6 +216,29 @@ private:
 
   char * m_cursor;
   char m_buffer[BufferSize];
+  class IdentifierStack {
+  public:
+    IdentifierStack() : m_currentIndex(0) {
+      for (int i = 0; i < MaxNumberOfNodes; i++) {
+        push(i);
+      }
+    }
+    void push(int i) {
+      assert(m_currentIndex >= 0 && m_currentIndex < MaxNumberOfNodes);
+      m_availableIdentifiers[m_currentIndex++] = i;
+    }
+    int pop() {
+      if (m_currentIndex == 0) {
+        return -1;
+      }
+      assert(m_currentIndex > 0 && m_currentIndex <= MaxNumberOfNodes);
+      return m_availableIdentifiers[--m_currentIndex];
+    }
+  private:
+    int m_currentIndex;
+    int m_availableIdentifiers[MaxNumberOfNodes];
+  };
+  IdentifierStack m_identifiers;
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
   TreeNode * m_staticNodes[MaxNumberOfStaticNodes];
 };

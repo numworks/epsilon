@@ -137,8 +137,8 @@ gcd { poincare_expression_yylval.expression = GreatCommonDivisor(); return FUNCT
 im { poincare_expression_yylval.expression = ImaginaryPart(); return FUNCTION; }
  /*int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
 inverse { poincare_expression_yylval.expression = new MatrixInverse(); return FUNCTION; }
-lcm { poincare_expression_yylval.expression = new LeastCommonMultiple(); return FUNCTION; }
 */
+lcm { poincare_expression_yylval.expression = LeastCommonMultiple(); return FUNCTION; }
 ln { poincare_expression_yylval.expression = NaperianLogarithm(); return FUNCTION; }
 log { return LOGFUNCTION; }
  /*permute { poincare_expression_yylval.expression = new PermuteCoefficient(); return FUNCTION; }

@@ -144,6 +144,7 @@
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/global_context.h>
+#include <poincare/least_common_multiple.h>
 #include <poincare/logarithm.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/number.h>

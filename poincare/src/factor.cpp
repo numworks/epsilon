@@ -13,74 +13,69 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionNode::Type Factor::type() const {
-  return Type::Factor;
+FactorNode * FactorNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<FactorNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * Factor::clone() const {
-  Factor * b = new Factor(m_operands, true);
-  return b;
+LayoutRef FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression Factor::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
-  Expression * op = childAtIndex(0);
-  if (op->type() != Type::Rational) {
-    return new Undefined();
+Expression FactorNode::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Factor(this).shallowBeautify(context, angleUnit);
+}
+
+Expression Factor::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression op = childAtIndex(0);
+  if (op.type() != ExpressionNode::Type::Rational) {
+    return Undefined();
   }
-  Rational * r = static_cast<Rational *>(op);
-  if (r->isZero()) {
-    return replaceWith(r, true);
+  Rational r = static_cast<Rational &>(op);
+  if (r.isZero()) {
+    return r;
   }
-  Expression * numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r->numerator(), context, angleUnit);
-  Expression * result = numeratorDecomp;
-  if (result->type() == Type::Undefined) {
-    return replaceWith(result, true);
+  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, angleUnit);
+  if (numeratorDecomp.numberOfChildren() == 0) {
+    return Undefined();
   }
-  assert(numeratorDecomp->type() == Type::Multiplication);
-  if (!r->denominator().isOne()) {
-    Expression * denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r->denominator(), context, angleUnit);
-    if (denominatorDecomp->type() == Type::Undefined) {
-      delete result;
-      return replaceWith(denominatorDecomp, true);
+  Expression result = numeratorDecomp.squashUnaryHierarchy();
+  if (!r.integerDenominator().isOne()) {
+    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, angleUnit);
+    if (denominatorDecomp.numberOfChildren() == 0) {
+      return Undefined();
     }
-    assert(denominatorDecomp->type() == Type::Multiplication);
-    result = new Division(numeratorDecomp, denominatorDecomp, false);
-    static_cast<Multiplication *>(denominatorDecomp)->squashUnaryHierarchy();
+    result = Division(numeratorDecomp, denominatorDecomp.squashUnaryHierarchy());
   }
-  if (r->sign() == Sign::Negative) {
-    result = new Opposite(result, false);
+  if (r.sign() == ExpressionNode::Sign::Negative) {
+    result = Opposite(result);
   }
-  replaceWith(result, true);
-  if (result == numeratorDecomp) {
-    return static_cast<Multiplication *>(numeratorDecomp)->squashUnaryHierarchy();
-  }
-  static_cast<Multiplication *>(numeratorDecomp)->squashUnaryHierarchy();
   return result;
 }
 
-Expression * Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) {
+Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const {
   assert(!i.isZero());
-  i.setNegative(false);
-  Multiplication * m = new Multiplication();
+  assert(!i.isNegative());
+  Multiplication m;
   if (i.isOne()) {
-    m->addOperand(new Rational(i));
+    m.addChildAtIndexInPlace(Rational(i), 0, 0);
     return m;
   }
   Integer factors[Arithmetic::k_maxNumberOfPrimeFactors];
   Integer coefficients[Arithmetic::k_maxNumberOfPrimeFactors];
-  Arithmetic::PrimeFactorization(&i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
+  Arithmetic::PrimeFactorization(i, factors, coefficients, Arithmetic::k_maxNumberOfPrimeFactors);
   int index = 0;
   if (coefficients[0].isMinusOne()) {
-    delete m;
-    return new Undefined();
+    // Exception: the decomposition failed
+    return m;
   }
   while (!coefficients[index].isZero() && index < Arithmetic::k_maxNumberOfPrimeFactors) {
-    Expression * factor = new Rational(factors[index]);
+    Expression factor = Rational(factors[index]);
     if (!coefficients[index].isOne()) {
-      Expression * exponent = new Rational(coefficients[index]);
-      factor = new Power(factor, exponent, false);
+      factor = Power(factor, Rational(coefficients[index]));
     }
-    m->addOperand(factor);
+    m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
     index++;
   }
   return m;

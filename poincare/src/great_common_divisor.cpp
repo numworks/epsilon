@@ -1,70 +1,39 @@
 #include <poincare/great_common_divisor.h>
-#include <poincare/undefined.h>
-#include <poincare/rational.h>
 #include <poincare/arithmetic.h>
-
-extern "C" {
-#include <assert.h>
-}
+#include <poincare/layout_helper.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/undefined.h>
 #include <cmath>
 
 namespace Poincare {
 
-ExpressionNode::Type GreatCommonDivisor::type() const {
-  return Type::GreatCommonDivisor;
+GreatCommonDivisorNode * GreatCommonDivisorNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<GreatCommonDivisorNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * GreatCommonDivisor::clone() const {
-  GreatCommonDivisor * a = new GreatCommonDivisor(m_operands, true);
-  return a;
+LayoutReference GreatCommonDivisorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(GreatCommonDivisor(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression GreatCommonDivisor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
-  }
-  Expression * op0 = childAtIndex(0);
-  Expression * op1 = childAtIndex(1);
-#if MATRIX_EXACT_REDUCING
-  if (op0->type() == Type::Matrix || op1->type() == Type::Matrix) {
-    return replaceWith(new Undefined(), true);
-  }
-#endif
-  if (op0->type() == Type::Rational) {
-    Rational * r0 = static_cast<Rational *>(op0);
-    if (!r0->denominator().isOne()) {
-      return replaceWith(new Undefined(), true);
-    }
-  }
-  if (op1->type() == Type::Rational) {
-    Rational * r1 = static_cast<Rational *>(op1);
-    if (!r1->denominator().isOne()) {
-      return replaceWith(new Undefined(), true);
-    }
-  }
-  if (op0->type() != Type::Rational || op1->type() != Type::Rational) {
-    return this;
-  }
-  Rational * r0 = static_cast<Rational *>(op0);
-  Rational * r1 = static_cast<Rational *>(op1);
+int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+}
 
-  Integer a = r0->numerator();
-  Integer b = r1->numerator();
-  Integer gcd = Arithmetic::GCD(&a, &b);
-  return replaceWith(new Rational(gcd), true);
+Expression GreatCommonDivisorNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return GreatCommonDivisor(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>
-Complex<T> * GreatCommonDivisor::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * f1Input = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * f2Input = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
-  T f1 = f1Input->toScalar();
-  T f2 = f2Input->toScalar();
-  delete f1Input;
-  delete f2Input;
+Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> f1Input = childAtIndex(0)->approximate(T(), context, angleUnit);
+  Evaluation<T> f2Input = childAtIndex(1)->approximate(T(), context, angleUnit);
+  T f1 = f1Input.toScalar();
+  T f2 = f2Input.toScalar();
   if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 || f2 != (int)f2) {
-    return new Complex<T>(Complex<T>::Undefined());
+    return Complex<T>::Undefined();
   }
   int a = (int)f2;
   int b = (int)f1;
@@ -78,8 +47,43 @@ Complex<T> * GreatCommonDivisor::templatedApproximate(Context& context, Preferen
     a = b;
     b = r;
   }
-  return new Complex<T>(std::round((T)a));
+  return Complex<T>(std::round((T)a));
+}
+
+Expression GreatCommonDivisor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
+    return e;
+  }
+  Expression c0 = childAtIndex(0);
+  Expression c1 = childAtIndex(1);
+#if MATRIX_EXACT_REDUCING
+  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
+    return Undefined();
+  }
+#endif
+  if (c0.type() == ExpressionNode::Type::Rational) {
+    Rational r0 = static_cast<Rational>(c0);
+    if (!r0.integerDenominator().isOne()) {
+      return Undefined();
+    }
+  }
+  if (c1.type() == ExpressionNode::Type::Rational) {
+    Rational r1 = static_cast<Rational>(c1);
+    if (!r1.integerDenominator().isOne()) {
+      return Undefined();
+    }
+  }
+  if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
+    return *this;
+  }
+  Rational r0 = static_cast<Rational>(c0);
+  Rational r1 = static_cast<Rational>(c1);
+
+  Integer a = r0.signedIntegerNumerator();
+  Integer b = r1.signedIntegerNumerator();
+  Integer gcd = Arithmetic::GCD(a, b);
+  return Rational(gcd);
 }
 
 }
-

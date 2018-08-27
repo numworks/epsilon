@@ -1,9 +1,7 @@
 #ifndef POINCARE_DIVISION_QUOTIENT_H
 #define POINCARE_DIVISION_QUOTIENT_H
 
-#include <poincare/approximation_helper.h>
 #include <poincare/expression.h>
-#include <poincare/layout_helper.h>
 
 namespace Poincare {
 

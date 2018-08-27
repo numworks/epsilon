@@ -189,10 +189,7 @@ inf { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 \] { return RIGHT_BRACKET; }
 \, { return COMMA; }
 \_ { return UNDERSCORE; }
- /*
-\x97 { poincare_expression_yylval.expression = new EmptyExpression(); return EMPTY; }
- */
-
+\x97 { poincare_expression_yylval.expression = EmptyExpression(); return EMPTY; }
 [ ]+ /* Ignore whitespaces */
 . { return UNDEFINED_SYMBOL; }
 

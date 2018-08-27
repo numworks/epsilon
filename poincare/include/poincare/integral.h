@@ -1,26 +1,34 @@
 #ifndef POINCARE_INTEGRAL_H
 #define POINCARE_INTEGRAL_H
 
-#include <poincare/static_hierarchy.h>
-#include <poincare/variable_context.h>
-#include <poincare/layout_helper.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class Integral : public StaticHierarchy<3> {
-  using StaticHierarchy<3>::StaticHierarchy;
+class IntegralNode : public ExpressionNode {
 public:
-  Type type() const override;
+  static IntegralNode * FailedAllocationStaticNode();
+  IntegralNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(IntegralNode); }
+  int numberOfChildren() const override { return 3; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Integral";
+  }
+#endif
+
+  // ExpressionNode
+  Type type() const override { return Type::Integral; }
   int polynomialDegree(char symbolName) const override;
 private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "int");
-  }
-  /* Simplification */
+  // Layout
+  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Evaluation */
+  // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
@@ -38,6 +46,20 @@ private:
   template<typename T> T adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Context & context, Preferences::AngleUnit angleUnit) const;
 #endif
   template<typename T> T functionValueAtAbscissa(T x, Context & xcontext, Preferences::AngleUnit angleUnit) const;
+};
+
+class Integral : public Expression {
+public:
+  Integral() : Expression(TreePool::sharedPool()->createTreeNode<IntegralNode>()) {}
+  Integral(const IntegralNode * n) : Expression(n) {}
+  Integral(Expression child1, Expression child2, Expression child3) : Integral() {
+    replaceChildAtIndexInPlace(0, child1);
+    replaceChildAtIndexInPlace(1, child2);
+    replaceChildAtIndexInPlace(2, child3);
+  }
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

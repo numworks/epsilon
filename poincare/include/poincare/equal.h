@@ -2,30 +2,50 @@
 #define POINCARE_EQUAL_H
 
 #include <poincare/expression.h>
-#include <poincare/static_hierarchy.h>
-#include <poincare/layout_helper.h>
 
 namespace Poincare {
 
-class Equal : public StaticHierarchy<2> {
+class EqualNode : public ExpressionNode {
 public:
-  using StaticHierarchy<2>::StaticHierarchy;
-  Type type() const override;
-  int polynomialDegree(char symbolName) const override;
-  // For the equation A = B, create the reduced expression A-B
-  Expression * standardEquation(Context & context, Preferences::AngleUnit angleUnit) const;
-private:
-  /* Simplification */
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "=");
+  static EqualNode * FailedAllocationStaticNode();
+  EqualNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(EqualNode); }
+  int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Equal";
   }
-  /* Evalutation */
+#endif
+
+  // ExpressionNode
+  Type type() const override { return Type::Equal; }
+  int polynomialDegree(char symbolName) const override { return -1; }
+  // For the equation A = B, create the reduced expression A-B
+  Expression standardEquation(Context & context, Preferences::AngleUnit angleUnit) const;
+private:
+  // Simplification
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  // Layout
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  // Evalutation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+};
+
+class Equal : public Expression {
+public:
+  Equal(const EqualNode * n) : Expression(n) {}
+  Equal(Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<EqualNode>()) {
+    replaceChildAtIndexInPlace(0, child1);
+    replaceChildAtIndexInPlace(1, child2);
+  }
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

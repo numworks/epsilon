@@ -16,6 +16,7 @@ class Expression : public TreeByValue {
   friend class CosineNode;
   friend class SineNode;
   friend class ExpressionNode;
+  friend class EqualNode;
   friend class ConfidenceInterval;
   friend class Multiplication;
   friend class Subtraction;

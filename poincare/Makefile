@@ -34,6 +34,7 @@ objs += $(addprefix poincare/src/,\
 )
 
 objs += $(addprefix poincare/src/,\
+  absolute_value.o\
   addition.o\
   approximation_helper.o\
   arc_cosine.o\

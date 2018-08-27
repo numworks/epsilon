@@ -1,23 +1,40 @@
 #include <poincare/floor.h>
 #include <poincare/floor_layout_node.h>
-#include <poincare/symbol.h>
-#include <poincare/simplification_helper.h>
 #include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
+#include <poincare/symbol.h>
 #include <ion.h>
-extern "C" {
 #include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-ExpressionNode::Type Floor::type() const {
-  return Type::Floor;
+FloorNode * FloorNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<FloorNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * Floor::clone() const {
-  Floor * c = new Floor(m_operands, true);
-  return c;
+
+LayoutRef FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return FloorLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+}
+
+int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+template<typename T>
+Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+  if (c.imag() != 0) {
+    return Complex<T>::Undefined();
+  }
+  return Complex<T>(std::floor(c.real()));
+}
+
+Expression FloorNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Floor(this).shallowReduce(context, angleUnit);
 }
 
 Expression Floor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
@@ -25,39 +42,27 @@ Expression Floor::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op = childAtIndex(0);
+  Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (op->type() == Type::Symbol) {
-    Symbol * s = static_cast<Symbol *>(op);
-    if (s->name() == Ion::Charset::SmallPi) {
-      return replaceWith(new Rational(3), true);
+  if (c.type() == ExpressionNode::Type::Symbol) {
+    Symbol s = static_cast<Symbol>(c);
+    if (s.name() == Ion::Charset::SmallPi) {
+      return Rational(3);
     }
-    if (s->name() == Ion::Charset::Exponential) {
-      return replaceWith(new Rational(2), true);
+    if (s.name() == Ion::Charset::Exponential) {
+      return Rational(2);
     }
   }
-  if (op->type() != Type::Rational) {
-    return this;
+  if (c.type() != ExpressionNode::Type::Rational) {
+    return *this;
   }
-  Rational * r = static_cast<Rational *>(op);
-  IntegerDivision div = Integer::Division(r->numerator(), r->denominator());
-  return replaceWith(new Rational(div.quotient), true);
-}
-
-template<typename T>
-std::complex<T> Floor::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  if (c.imag() != 0) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>(std::floor(c.real()));
-}
-
-LayoutRef Floor::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return FloorLayoutRef(m_operands[0]->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  Rational r = static_cast<Rational>(c);
+  IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+  return Rational(div.quotient);
 }
 
 }

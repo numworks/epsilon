@@ -31,7 +31,9 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("conj(2)", ExpressionNode::Type::Conjugate);
 #if 0
   assert_parsed_expression_type("factor(23/42)", ExpressionNode::Type::Factor);
+#endif
   assert_parsed_expression_type("floor(2.3)", ExpressionNode::Type::Floor);
+#if 0
   assert_parsed_expression_type("frac(2.3)", ExpressionNode::Type::FracPart);
   assert_parsed_expression_type("gcd(2,3)", ExpressionNode::Type::GreatCommonDivisor);
   assert_parsed_expression_type("im(2+I)", ExpressionNode::Type::ImaginaryPart);
@@ -97,12 +99,11 @@ QUIZ_CASE(poincare_function_evaluate) {
 #endif
   assert_parsed_expression_evaluates_to<float>("diff(2*x, 2)", "2");
   assert_parsed_expression_evaluates_to<double>("diff(2*x, 2)", "2");
-#if 0
-
 
   assert_parsed_expression_evaluates_to<float>("floor(2.3)", "2");
   assert_parsed_expression_evaluates_to<double>("floor(2.3)", "2");
 
+#if 0
   assert_parsed_expression_evaluates_to<float>("frac(2.3)", "0.3");
   assert_parsed_expression_evaluates_to<double>("frac(2.3)", "0.3");
 
@@ -269,7 +270,9 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("factor(1008/6895)", "(2^4*3^2)/(5*197)");
   assert_parsed_expression_simplify_to("factor(10007)", "10007");
   assert_parsed_expression_simplify_to("factor(10007^2)", "undef");
+#endif
   assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
+#if 0
   assert_parsed_expression_simplify_to("frac(-1.3)", "7/10");
   assert_parsed_expression_simplify_to("gcd(123,278)", "1");
   assert_parsed_expression_simplify_to("gcd(11,121)", "11");

@@ -122,6 +122,7 @@
 #include <poincare/division_remainder.h>
 #include <poincare/empty_expression.h>
 #include <poincare/equal.h>
+#include <poincare/factor.h>
 #include <poincare/factorial.h>
 #include <poincare/floor.h>
 #include <poincare/frac_part.h>

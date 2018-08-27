@@ -220,6 +220,7 @@ tests += $(addprefix poincare/test/,\
   tree/tree_by_reference.cpp\
   expression.cpp\
   addition.cpp\
+  division.cpp\
   function.cpp\
   helper.cpp\
   integer.cpp\

@@ -1,17 +1,13 @@
-extern "C" {
+#include <poincare/division.h>
+#include <poincare/fraction_layout_node.h>
+#include <poincare/multiplication.h>
+#include <poincare/opposite.h>
+#include <poincare/power.h>
+#include <poincare/rational.h>
+#include <cmath>
 #include <assert.h>
 #include <string.h>
 #include <float.h>
-}
-
-#include <poincare/division.h>
-#include <poincare/power.h>
-#include <poincare/rational.h>
-//#include <poincare/tangent.h>
-#include <poincare/multiplication.h>
-#include <poincare/opposite.h>
-#include <cmath>
-#include <poincare/fraction_layout_node.h>
 
 namespace Poincare {
 

@@ -7,77 +7,34 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/parenthesis.h>
 #include <ion.h>
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
 
-Factorial::Factorial(const Expression * argument, bool clone) :
-  StaticHierarchy<1>(&argument, clone)
-{
+FactorialNode * FactorialNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<FactorialNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-ExpressionNode::Type Factorial::type() const {
-  return Type::Factorial;
+// Layout
+
+bool FactorialNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
+  return static_cast<const ExpressionNode *>(e)->type() == Type::Factorial;
 }
 
-Expression * Factorial::clone() const {
-  Factorial * a = new Factorial(m_operands[0], true);
-  return a;
+// Simplification
+
+Expression FactorialNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Factorial(this).shallowReduce(context, angleUnit);
 }
 
-/* Layout */
-
-bool Factorial::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
-  return e->type() == Type::Factorial;
-}
-
-/* Simplification */
-
-Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
-  }
-#if MATRIX_EXACT_REDUCING
-  if (childAtIndex(0)->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
-  }
-#endif
-  if (childAtIndex(0)->type() == Type::Rational) {
-    Rational * r = static_cast<Rational *>(childAtIndex(0));
-    if (!r->denominator().isOne() || r->sign() == Sign::Negative) {
-      return replaceWith(new Undefined(), true);
-    }
-    if (Integer(k_maxOperandValue).isLowerThan(r->numerator())) {
-      return this;
-    }
-    Rational * fact = new Rational(Integer::Factorial(r->numerator()));
-    return replaceWith(fact, true);
-  }
-  if (childAtIndex(0)->type() == Type::Symbol) {
-    Symbol * s = static_cast<Symbol *>(childAtIndex(0));
-    if (s->name() == Ion::Charset::SmallPi || s->name() == Ion::Charset::Exponential) {
-      return replaceWith(new Undefined(), true);
-    }
-  }
-  return this;
-}
-
-Expression Factorial::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) {
-  // +(a,b)! ->(+(a,b))!
-  if (childAtIndex(0)->type() == Type::Addition || childAtIndex(0)->type() == Type::Multiplication || childAtIndex(0)->type() == Type::Power) {
-    const Expression * o[1] = {childAtIndex(0)};
-    Parenthesis * p = new Parenthesis(o, true);
-    replaceOperand(childAtIndex(0), p, true);
-  }
-  return this;
+Expression FactorialNode::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Factorial(this).shallowBeautify(context, angleUnit);
 }
 
 template<typename T>
-std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
+Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   T n = c.real();
   if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
     return Complex<T>::Undefined();
@@ -92,7 +49,7 @@ std::complex<T> Factorial::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>(std::round(result));
 }
 
-LayoutRef Factorial::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result;
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   int childrenCount = result.numberOfChildren();
@@ -100,7 +57,7 @@ LayoutRef Factorial::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   return result;
 }
 
-int Factorial::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -121,6 +78,47 @@ int Factorial::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
   buffer[numberOfChar++] = '!';
   buffer[numberOfChar] = 0;
   return numberOfChar;
+}
+
+Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  Expression e = Expression::defaultShallowReduce(context, angleUnit);
+  if (e.isUndefinedOrAllocationFailure()) {
+    return e;
+  }
+#if MATRIX_EXACT_REDUCING
+  if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
+    return SimplificationHelper::Map(*this, context, angleUnit);
+  }
+#endif
+  if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
+    Rational r = static_cast<Rational>(childAtIndex(0));
+    if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
+      return Undefined();
+    }
+    if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {
+      return *this;
+    }
+    Rational fact = Rational(Integer::Factorial(r.unsignedIntegerNumerator()));
+    return fact;
+  }
+  if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
+    Symbol s = static_cast<Symbol>(childAtIndex(0));
+    if (s.name() == Ion::Charset::SmallPi || s.name() == Ion::Charset::Exponential) {
+      return Undefined();
+    }
+  }
+  return *this;
+}
+
+Expression Factorial::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+  // +(a,b)! ->(+(a,b))!
+  if (childAtIndex(0).type() == ExpressionNode::Type::Addition
+      || childAtIndex(0).type() == ExpressionNode::Type::Multiplication
+      || childAtIndex(0).type() == ExpressionNode::Type::Power)
+  {
+    return Factorial(Parenthesis(childAtIndex(0)));
+  }
+  return *this;
 }
 
 #if 0

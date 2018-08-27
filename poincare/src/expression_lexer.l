@@ -135,8 +135,8 @@ cosh { poincare_expression_yylval.expression = HyperbolicCosine(); return FUNCTI
 floor { poincare_expression_yylval.expression = Floor(); return FUNCTION; }
 frac { poincare_expression_yylval.expression = FracPart(); return FUNCTION; }
 gcd { poincare_expression_yylval.expression = GreatCommonDivisor(); return FUNCTION; }
- /*im { poincare_expression_yylval.expression = new ImaginaryPart(); return FUNCTION; }
-int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
+im { poincare_expression_yylval.expression = ImaginaryPart(); return FUNCTION; }
+ /*int { poincare_expression_yylval.expression = new Integral(); return FUNCTION; }
 inverse { poincare_expression_yylval.expression = new MatrixInverse(); return FUNCTION; }
 lcm { poincare_expression_yylval.expression = new LeastCommonMultiple(); return FUNCTION; }
 */

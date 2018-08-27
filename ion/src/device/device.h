@@ -4,8 +4,6 @@
 namespace Ion {
 namespace Device {
 
-constexpr int SYSBUS_FREQ = 96*1000*1000;
-
 void init();
 void shutdown();
 

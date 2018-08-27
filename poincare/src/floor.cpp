@@ -16,7 +16,6 @@ FloorNode * FloorNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-
 LayoutRef FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return FloorLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }

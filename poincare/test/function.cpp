@@ -21,8 +21,8 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("ceil(0.2)", ExpressionNode::Type::Ceiling);
   assert_parsed_expression_type("arg(2+I)", ExpressionNode::Type::ComplexArgument);
   assert_parsed_expression_type("det([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::Determinant);
-#if 0
   assert_parsed_expression_type("diff(2*x, 2)", ExpressionNode::Type::Derivative);
+#if 0
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("dim([[2]])", ExpressionNode::Type::MatrixDimension);
 #endif
@@ -91,11 +91,10 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("det([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "126-231*I", Degree, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
   assert_parsed_expression_evaluates_to<double>("det([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "126-231*I");
 #endif
-
-#if 0
-
   assert_parsed_expression_evaluates_to<float>("diff(2*x, 2)", "2");
   assert_parsed_expression_evaluates_to<double>("diff(2*x, 2)", "2");
+#if 0
+
 
   assert_parsed_expression_evaluates_to<float>("floor(2.3)", "2");
   assert_parsed_expression_evaluates_to<double>("floor(2.3)", "2");

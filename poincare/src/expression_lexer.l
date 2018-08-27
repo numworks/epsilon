@@ -123,8 +123,8 @@ atanh { poincare_expression_yylval.expression = HyperbolicArcTangent(); return F
 binomial { poincare_expression_yylval.expression = BinomialCoefficient(); return FUNCTION; }
 ceil { poincare_expression_yylval.expression = Ceiling(); return FUNCTION; }
 confidence { poincare_expression_yylval.expression = ConfidenceInterval(); return FUNCTION; }
- /*diff { poincare_expression_yylval.expression = new Derivative(); return FUNCTION; }
-dim { poincare_expression_yylval.expression = new MatrixDimension(); return FUNCTION; }
+diff { poincare_expression_yylval.expression = Derivative(); return FUNCTION; }
+ /*dim { poincare_expression_yylval.expression = new MatrixDimension(); return FUNCTION; }
 */
 conj { poincare_expression_yylval.expression = Conjugate(); return FUNCTION; }
 det { poincare_expression_yylval.expression = Determinant(); return FUNCTION; }

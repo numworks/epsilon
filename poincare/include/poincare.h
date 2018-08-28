@@ -133,6 +133,7 @@
 #include <poincare/matrix_inverse.h>
 #include <poincare/matrix_trace.h>
 #include <poincare/matrix_transpose.h>
+#include <poincare/product.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>
 #include <poincare/hyperbolic_arc_cosine.h>
@@ -156,6 +157,7 @@
 #include <poincare/opposite.h>
 #include <poincare/decimal.h>
 #include <poincare/rational.h>
+#include <poincare/sum.h>
 #include <poincare/symbol.h>
 #include <poincare/float.h>
 #include <poincare/parenthesis.h>

@@ -99,12 +99,15 @@ objs += $(addprefix poincare/src/,\
   power.o\
   print_float.o\
   preferences.o\
+  product.o\
   rational.o\
+  sequence.o\
   serialization_helper.o\
   simplification_helper.o\
   sine.o\
   square_root.o\
   subtraction.o\
+  sum.o\
   symbol.o\
   tangent.o\
   tree_node.o\

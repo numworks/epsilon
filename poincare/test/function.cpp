@@ -39,9 +39,7 @@ QUIZ_CASE(poincare_parse_function) {
 #endif
   assert_parsed_expression_type("ln(2)", ExpressionNode::Type::NaperianLogarithm);
   assert_parsed_expression_type("log(2)", ExpressionNode::Type::Logarithm);
-#if 0
   assert_parsed_expression_type("permute(10, 4)", ExpressionNode::Type::PermuteCoefficient);
-#endif
   assert_parsed_expression_type("prediction(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
   assert_parsed_expression_type("prediction95(0.1, 100)", ExpressionNode::Type::PredictionInterval);
   assert_parsed_expression_type("product(n, 4, 10)", ExpressionNode::Type::Product);
@@ -115,12 +113,10 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("log(2)", "0.30103");
   assert_parsed_expression_evaluates_to<double>("log(2)", "3.0102999566398E-1");
-#if 0
 
   assert_parsed_expression_evaluates_to<float>("permute(10, 4)", "5040");
   assert_parsed_expression_evaluates_to<double>("permute(10, 4)", "5040");
 
-#endif
   assert_parsed_expression_evaluates_to<float>("product(n, 4, 10)", "604800");
   assert_parsed_expression_evaluates_to<double>("product(n, 4, 10)", "604800");
 
@@ -267,9 +263,7 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("round(4.9,0)", "5");
   assert_parsed_expression_simplify_to("round(12.9,-1)", "10");
   assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
-#if 0
   assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
   assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
-#endif
   assert_parsed_expression_simplify_to("re(1/2)", "1/2");
 }

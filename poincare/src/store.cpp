@@ -45,7 +45,7 @@ template<typename T>
 Evaluation<T> Store::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   context.setExpressionForSymbolName(value(), symbol(), context);
   if (context.expressionForSymbol(symbol()) != nullptr) {
-    return context.expressionForSymbol(symbol())->privateApproximate(T(), context, angleUnit);
+    return context.expressionForSymbol(symbol())->approximate(T(), context, angleUnit);
   }
   return new Complex<T>(Complex<T>::Undefined());
 }

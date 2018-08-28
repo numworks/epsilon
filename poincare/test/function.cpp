@@ -50,9 +50,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("quo(29, 10)", ExpressionNode::Type::DivisionQuotient);
 
   assert_parsed_expression_type("random()", ExpressionNode::Type::Random);
-#if 0
   assert_parsed_expression_type("randint(1, 2)", ExpressionNode::Type::Randint);
-#endif
 
   assert_parsed_expression_type("re(2+I)", ExpressionNode::Type::RealPart);
   assert_parsed_expression_type("rem(29, 10)", ExpressionNode::Type::DivisionRemainder);
@@ -230,12 +228,9 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_exp_is_bounded(exp, 0.0f, 1.0f);
   assert_exp_is_bounded(exp, 0.0, 1.0);
 
-#if 0
   exp = parse_expression("randint(4,45)");
   assert_exp_is_bounded(exp, 4.0f, 45.0f, true);
   assert_exp_is_bounded(exp, 4.0, 45.0, true);
-  delete exp;
-#endif
 }
 
 QUIZ_CASE(poincare_function_simplify) {

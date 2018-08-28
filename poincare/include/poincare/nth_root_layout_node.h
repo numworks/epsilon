@@ -64,7 +64,7 @@ private:
   KDSize adjustedIndexSize();
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   LayoutNode * radicandLayout() { return childAtIndex(0); }
-  LayoutNode * indexLayout() { return m_hasIndex ? childAtIndex(1) : nullptr; }
+  LayoutNode * indexLayout() { return m_hasIndex ? childAtIndex(1) : static_cast<LayoutNode *>(uninitializedStaticNode()); }
   bool m_hasIndex;
 };
 

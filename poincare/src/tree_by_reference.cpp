@@ -74,7 +74,7 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
   }
 
   // Move the new child
-  assert(newChild.parent().isUninitialized());
+  assert(newChild.isGhost() || newChild.parent().isUninitialized());
   TreePool::sharedPool()->move(oldChild.node(), newChild.node(), newChild.numberOfChildren());
   /* We could have moved the new node to oldChild.node()->nextSibling(), but
    * nextSibling is not computed correctly if we inserted an

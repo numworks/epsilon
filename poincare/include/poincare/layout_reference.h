@@ -31,7 +31,7 @@ public:
   }
 
   LayoutNode * node() const override {
-    assert(TreeByReference::node() == nullptr || !TreeByReference::node()->isGhost());
+    assert(!TreeByReference::node()->isGhost());
     return static_cast<LayoutNode *>(TreeByReference::node());
   }
 

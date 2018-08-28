@@ -17,7 +17,7 @@ void CharLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
     return;
   }
   LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
@@ -28,7 +28,7 @@ void CharLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
     return;
   }
   LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }

@@ -14,7 +14,7 @@ ConjugateLayoutNode * ConjugateLayoutNode::FailedAllocationStaticNode() {
 }
 
 void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (childLayout()
+  if (!childLayout()->isUninitialized()
       && cursor->layoutNode() == childLayout()
       && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -25,21 +25,21 @@ void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Go to the operand.
-    assert(childLayout() != nullptr);
+    assert(!childLayout()->isUninitialized());
     cursor->setLayoutNode(childLayout());
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
   LayoutNode * parentNode = parent();
-  if (parentNode) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
 
 void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the operand. Move Right.
-  if (childLayout()
+  if (!childLayout()->isUninitialized()
       && cursor->layoutNode() == childLayout()
       && cursor->position() == LayoutCursor::Position::Right)
   {
@@ -49,14 +49,14 @@ void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
   assert(cursor->layoutNode() == this);
   // Case: Left. Go to the operand.
   if (cursor->position() == LayoutCursor::Position::Left) {
-    assert(childLayout() != nullptr);
+    assert(!childLayout()->isUninitialized());
     cursor->setLayoutNode(childLayout());
     return;
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
   LayoutNode * parentNode = parent();
-  if (parentNode) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }

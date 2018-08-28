@@ -38,7 +38,7 @@ void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
   // Case: Left. Ask the parent.
   assert(cursor->layoutNode() == this);
   LayoutNode * parentNode = parent();
-  if (parentNode) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
@@ -66,7 +66,7 @@ void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
   // Case: Right. Ask the parent.
   assert(cursor->layoutNode() == this);
   LayoutNode * parentNode = parent();
-  if (parentNode) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }

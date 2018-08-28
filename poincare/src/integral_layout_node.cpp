@@ -32,19 +32,19 @@ IntegralLayoutNode * IntegralLayoutNode::FailedAllocationStaticNode() {
 
 void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Left
-      && ((upperBoundLayout() && cursor->layoutNode() == upperBoundLayout())
-        || (lowerBoundLayout() && cursor->layoutNode() == lowerBoundLayout())))
+      && ((!upperBoundLayout()->isUninitialized() && cursor->layoutNode() == upperBoundLayout())
+        || (!lowerBoundLayout()->isUninitialized() && cursor->layoutNode() == lowerBoundLayout())))
   {
     // Case: Left the upper or lower bound. Go Left of the integral.
     cursor->setLayoutNode(this);
     return;
   }
- if (integrandLayout()
+ if (integrandLayout()->isUninitialized()
      && cursor->layoutNode() == integrandLayout()
      && cursor->position() == LayoutCursor::Position::Left)
   {
     // Case: Left the integrand. Go Right of the lower bound.
-    assert(lowerBoundLayout() != nullptr);
+    assert(!lowerBoundLayout()->isUninitialized());
     cursor->setLayoutNode(lowerBoundLayout());
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
@@ -52,7 +52,7 @@ void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right of the integral. Go to the integrand.
-    assert(integrandLayout() != nullptr);
+    assert(!integrandLayout()->isUninitialized());
     cursor->setLayoutNode(integrandLayout());
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
@@ -60,23 +60,23 @@ void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   // Case: Left of the brackets. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Left);
   LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
 
 void IntegralLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Right &&
-      ((upperBoundLayout() && cursor->layoutNode() == upperBoundLayout())
-       || (lowerBoundLayout() && cursor->layoutNode() == lowerBoundLayout())))
+      ((!upperBoundLayout()->isUninitialized() && cursor->layoutNode() == upperBoundLayout())
+       || (!lowerBoundLayout()->isUninitialized() && cursor->layoutNode() == lowerBoundLayout())))
   {
     // Case: Right the upper or lower bound. Go Left of the integrand.
-    assert(integrandLayout() != nullptr);
+    assert(!integrandLayout()->isUninitialized());
     cursor->setLayoutNode(integrandLayout());
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
   }
-  if (integrandLayout()
+  if (!integrandLayout()->isUninitialized()
      && cursor->layoutNode() == integrandLayout()
      && cursor->position() == LayoutCursor::Position::Right)
   {
@@ -88,7 +88,7 @@ void IntegralLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left of the integral. Go to the upper bound.
-    assert(upperBoundLayout() != nullptr);
+    assert(!upperBoundLayout()->isUninitialized());
     cursor->setLayoutNode(upperBoundLayout());
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
@@ -96,23 +96,23 @@ void IntegralLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
   LayoutNode * parentNode = parent();
-  if (parentNode) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }
 
 void IntegralLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (lowerBoundLayout() && cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true)) {
+  if (!lowerBoundLayout()->isUninitialized() && cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true)) {
     // If the cursor is inside the lower bound, move it to the upper bound.
-    assert(upperBoundLayout() != nullptr);
+    assert(!upperBoundLayout()->isUninitialized());
     upperBoundLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
-  if (integrandLayout()
+  if (!integrandLayout()->isUninitialized()
       && cursor->isEquivalentTo(LayoutCursor(integrandLayout(), LayoutCursor::Position::Left)))
   {
     // If the cursor is Left of the integrand, move it to the upper bound.
-    assert(upperBoundLayout() != nullptr);
+    assert(!upperBoundLayout()->isUninitialized());
     upperBoundLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
@@ -120,17 +120,17 @@ void IntegralLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomp
 }
 
 void IntegralLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (upperBoundLayout() && cursor->layoutNode()->hasAncestor(upperBoundLayout(), true)) {
+  if (!upperBoundLayout()->isUninitialized() && cursor->layoutNode()->hasAncestor(upperBoundLayout(), true)) {
     // If the cursor is inside the upper bound, move it to the lower bound.
-    assert(lowerBoundLayout() != nullptr);
+    assert(!lowerBoundLayout()->isUninitialized());
     lowerBoundLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
   // If the cursor is Left of the integrand, move it to the lower bound.
-  if (integrandLayout()
+  if (!integrandLayout()->isUninitialized()
       && cursor->isEquivalentTo(LayoutCursor(integrandLayout(), LayoutCursor::Position::Left)))
   {
-    assert(lowerBoundLayout() != nullptr);
+    assert(!lowerBoundLayout()->isUninitialized());
     lowerBoundLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
   }

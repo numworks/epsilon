@@ -23,7 +23,7 @@ void BracketPairLayoutNode::RenderWithChildSize(KDSize childSize, KDContext * ct
 }
 
 void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (childLayout()
+  if (!childLayout()->isUninitialized()
     && cursor->layoutNode() == childLayout()
     && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -34,20 +34,20 @@ void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldR
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right of the brackets. Go Right of the operand.
-    assert(childLayout() != nullptr);
+    assert(!childLayout()->isUninitialized());
     cursor->setLayoutNode(childLayout());
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left of the brackets. Ask the parent.
   LayoutNode * parentNode = parent();
-  if (parentNode) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
 
 void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (childLayout()
+  if (!childLayout()->isUninitialized()
     && cursor->layoutNode() == childLayout()
     && cursor->position() == LayoutCursor::Position::Right)
   {
@@ -58,14 +58,14 @@ void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * should
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left of the brackets. Go Left of the operand.
-    assert(childLayout() != nullptr);
+    assert(!childLayout()->isUninitialized());
     cursor->setLayoutNode(childLayout());
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right of the brackets. Ask the parent.
   LayoutNode * parentNode = parent();
-  if (parentNode) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }

@@ -118,7 +118,7 @@ public:
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual char XNTChar() const {
     LayoutNode * p = parent();
-    return p == nullptr ? Ion::Charset::Empty : p->XNTChar();
+    return p->isUninitialized() ? Ion::Charset::Empty : p->XNTChar();
   }
 
   // TODO: put private

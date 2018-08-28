@@ -10,45 +10,35 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionNode::Type Sum::type() const {
-  return Type::Sum;
+SumNode * SumNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<SumNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * Sum::clone() const {
-  Sum * a = new Sum(m_operands, true);
-  return a;
-}
 
-const char * Sum::name() const {
-  return "sum";
-}
-
-int Sum::emptySequenceValue() const {
-  return 0;
-}
-
-LayoutRef Sum::createSequenceLayout(LayoutRef argumentLayout, LayoutRef subscriptLayout, LayoutRef superscriptLayout) const {
+LayoutRef SumNode::createSequenceLayout(LayoutRef argumentLayout, LayoutRef subscriptLayout, LayoutRef superscriptLayout) const {
   return SumLayoutRef(argumentLayout, subscriptLayout, superscriptLayout);
 }
 
 template<typename T>
-Evaluation<T> * Sum::templatedApproximateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const {
-  if (a->type() == Evaluation<T>::Type::Complex && b->type() == Evaluation<T>::Type::Complex) {
-    Complex<T> * c = static_cast<Complex<T> *>(a);
-    Complex<T> * d = static_cast<Complex<T> *>(b);
-    return new Complex<T>((*c)+(*d));
+Evaluation<T> SumNode::templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b) const {
+  if (a.type() == EvaluationNode<T>::Type::Complex && b.type() == EvaluationNode<T>::Type::Complex) {
+    Complex<T> c = static_cast<Complex<T>&>(a);
+    Complex<T> d = static_cast<Complex<T>&>(b);
+    return Complex<T>(c.stdComplex()+d.stdComplex());
   }
-  if (a->type() == Evaluation<T>::Type::Complex) {
-    Complex<T> * c = static_cast<Complex<T> *>(a);
-    assert(b->type() == Evaluation<T>::Type::MatrixComplex);
-    MatrixComplex<T> * m = static_cast<MatrixComplex<T> *>(b);
-    return new MatrixComplex<T>(Addition::computeOnComplexAndMatrix(*c, *m));
+  if (a.type() == EvaluationNode<T>::Type::Complex) {
+    Complex<T> c = static_cast<Complex<T> &>(a);
+    assert(b.type() == EvaluationNode<T>::Type::MatrixComplex);
+    MatrixComplex<T> m = static_cast<MatrixComplex<T> &>(b);
+    return AdditionNode::computeOnComplexAndMatrix(c.stdComplex(), m);
   }
-  assert(a->type() == Evaluation<T>::Type::MatrixComplex);
-  assert(b->type() == Evaluation<T>::Type::MatrixComplex);
-  MatrixComplex<T> * m = static_cast<MatrixComplex<T> *>(a);
-  MatrixComplex<T> * n = static_cast<MatrixComplex<T> *>(b);
-  return new MatrixComplex<T>(Addition::computeOnMatrices<T>(*m, *n));
+  assert(a.type() == EvaluationNode<T>::Type::MatrixComplex);
+  assert(b.type() == EvaluationNode<T>::Type::MatrixComplex);
+  MatrixComplex<T> m = static_cast<MatrixComplex<T>&>(a);
+  MatrixComplex<T> n = static_cast<MatrixComplex<T>&>(b);
+  return AdditionNode::computeOnMatrices<T>(m, n);
 }
 
 }

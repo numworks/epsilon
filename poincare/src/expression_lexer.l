@@ -143,8 +143,7 @@ log { return LOGFUNCTION; }
 prediction95 { poincare_expression_yylval.expression = new PredictionInterval(); return FUNCTION; }
 */
 prediction { poincare_expression_yylval.expression = SimplePredictionInterval(); return FUNCTION; }
- /*product { poincare_expression_yylval.expression = new Product(); return FUNCTION; }
-*/
+product { poincare_expression_yylval.expression = Product(); return FUNCTION; }
 quo { poincare_expression_yylval.expression = DivisionQuotient(); return FUNCTION; }
  /*random { poincare_expression_yylval.expression = new Random(); return FUNCTION; }
 randint { poincare_expression_yylval.expression = new Randint(); return FUNCTION; }
@@ -156,8 +155,7 @@ root { poincare_expression_yylval.expression = NthRoot(); return FUNCTION; }
 */
 sin { poincare_expression_yylval.expression = Sine(); return FUNCTION; }
 sinh { poincare_expression_yylval.expression = HyperbolicSine(); return FUNCTION; }
- /*sum { poincare_expression_yylval.expression = new Sum(); return FUNCTION; }
-*/
+sum { poincare_expression_yylval.expression = Sum(); return FUNCTION; }
 tan { poincare_expression_yylval.expression = Tangent(); return FUNCTION; }
 tanh { poincare_expression_yylval.expression = HyperbolicTangent(); return FUNCTION; }
 trace { poincare_expression_yylval.expression = MatrixTrace(); return FUNCTION; }

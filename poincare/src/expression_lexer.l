@@ -151,8 +151,7 @@ randint { poincare_expression_yylval.expression = new Randint(); return FUNCTION
 re { poincare_expression_yylval.expression = RealPart(); return FUNCTION; }
 rem { poincare_expression_yylval.expression = DivisionRemainder(); return FUNCTION; }
 root { poincare_expression_yylval.expression = NthRoot(); return FUNCTION; }
- /*round { poincare_expression_yylval.expression = new Round(); return FUNCTION; }
-*/
+round { poincare_expression_yylval.expression = Round(); return FUNCTION; }
 sin { poincare_expression_yylval.expression = Sine(); return FUNCTION; }
 sinh { poincare_expression_yylval.expression = HyperbolicSine(); return FUNCTION; }
 sum { poincare_expression_yylval.expression = Sum(); return FUNCTION; }

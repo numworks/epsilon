@@ -51,8 +51,8 @@ QUIZ_CASE(poincare_parse_function) {
 #if 0
   assert_parsed_expression_type("random()", ExpressionNode::Type::Random);
   assert_parsed_expression_type("randint(1, 2)", ExpressionNode::Type::Randint);
-  assert_parsed_expression_type("re(2+I)", ExpressionNode::Type::RealPart);
 #endif
+  assert_parsed_expression_type("re(2+I)", ExpressionNode::Type::RealPart);
   assert_parsed_expression_type("rem(29, 10)", ExpressionNode::Type::DivisionRemainder);
   assert_parsed_expression_type("root(2,3)", ExpressionNode::Type::NthRoot);
   assert_parsed_expression_type("R(2)", ExpressionNode::Type::SquareRoot);
@@ -131,11 +131,9 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("quo(29, 10)", "2");
   assert_parsed_expression_evaluates_to<double>("quo(29, 10)", "2");
 
-#if 0
   assert_parsed_expression_evaluates_to<float>("re(2+I)", "2");
   assert_parsed_expression_evaluates_to<double>("re(2+I)", "2");
 
-#endif
   assert_parsed_expression_evaluates_to<float>("rem(29, 10)", "9");
   assert_parsed_expression_evaluates_to<double>("rem(29, 10)", "9");
   assert_parsed_expression_evaluates_to<float>("root(2,3)", "1.259921");
@@ -283,6 +281,6 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
   assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
   assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
-  assert_parsed_expression_simplify_to("re(1/2)", "1/2");
 #endif
+  assert_parsed_expression_simplify_to("re(1/2)", "1/2");
 }

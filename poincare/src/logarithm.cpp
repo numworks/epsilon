@@ -248,6 +248,10 @@ Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit 
 
 template LogarithmNode<1> * LogarithmNode<1>::FailedAllocationStaticNode();
 template LogarithmNode<2> * LogarithmNode<2>::FailedAllocationStaticNode();
+template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
+template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
+template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
+template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Expression LogarithmNode<1>::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 template Expression LogarithmNode<2>::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 template Expression LogarithmNode<1>::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;

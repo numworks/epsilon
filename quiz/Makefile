@@ -10,7 +10,7 @@ $(symbols_file): $(tests)
 	@echo "AWK     $@"
 	$(Q) awk -f quiz/src/symbols.awk $(tests) > $@
 
-runner_objs += $(addprefix quiz/src/, runner.o symbols.o i18n.o)
+runner_objs += $(addprefix quiz/src/, runner.o assertions.o symbols.o i18n.o)
 test_objs += $(subst .c,.o, $(subst .cpp,.o,$(tests)))
 
 test.$(EXE): $(runner_objs) $(test_objs)

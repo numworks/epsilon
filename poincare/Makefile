@@ -250,6 +250,7 @@ tests += $(addprefix poincare/test/,\
   function.cpp\
   helper.cpp\
   integer.cpp\
+  layouts.cpp\
   logarithm.cpp\
   matrix.cpp\
   multiplication.cpp\

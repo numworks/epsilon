@@ -17,7 +17,7 @@ QUIZ_CASE(poincare_fraction_layout_create) {
   ExpressionLayoutCursor cursor(layout->editableChild(2), ExpressionLayoutCursor::Position::Left);
   cursor.addFractionLayoutAndCollapseSiblings();
   assert_expression_layout_serialize_to(layout, "(12)/(34)+5");
-  assert(cursor.isEquivalentTo(ExpressionLayoutCursor(layout->editableChild(0)->editableChild(1), ExpressionLayoutCursor::Position::Left)));
+  quiz_assert(cursor.isEquivalentTo(ExpressionLayoutCursor(layout->editableChild(0)->editableChild(1), ExpressionLayoutCursor::Position::Left)));
   delete layout;
 }
 
@@ -36,7 +36,7 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
   ExpressionLayoutCursor cursor1(layout1->editableChild(0)->editableChild(1), ExpressionLayoutCursor::Position::Left);
   cursor1.performBackspace();
   assert_expression_layout_serialize_to(layout1, "1234");
-  assert(cursor1.isEquivalentTo(ExpressionLayoutCursor(layout1->editableChild(1), ExpressionLayoutCursor::Position::Right)));
+  quiz_assert(cursor1.isEquivalentTo(ExpressionLayoutCursor(layout1->editableChild(1), ExpressionLayoutCursor::Position::Right)));
   delete layout1;
 
   /*      ø
@@ -54,7 +54,7 @@ QUIZ_CASE(poincare_fraction_layout_delete) {
   ExpressionLayoutCursor cursor2(layout2->editableChild(2)->editableChild(1), ExpressionLayoutCursor::Position::Left);
   cursor2.performBackspace();
   assert_expression_layout_serialize_to(layout2, "1+3");
-  assert(cursor2.isEquivalentTo(ExpressionLayoutCursor(layout2->editableChild(1), ExpressionLayoutCursor::Position::Right)));
+  quiz_assert(cursor2.isEquivalentTo(ExpressionLayoutCursor(layout2->editableChild(1), ExpressionLayoutCursor::Position::Right)));
   delete layout2;
 }
 

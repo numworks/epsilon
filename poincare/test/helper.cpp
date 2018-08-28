@@ -49,25 +49,25 @@ Expression parse_expression(const char * expression) {
   strlcpy(buffer, expression, sizeof(buffer));
   translate_in_special_chars(buffer);
   Expression result = Expression::parse(buffer);
-  assert(!result.isUninitialized());
+  quiz_assert(!result.isUninitialized());
   return result;
 }
 
 void assert_parsed_expression_type(const char * expression, Poincare::ExpressionNode::Type type) {
   Expression e = parse_expression(expression);
-  assert(e.type() == type);
+  quiz_assert(e.type() == type);
 }
 
 void assert_parsed_expression_is(const char * expression, Poincare::Expression r) {
   Expression e = parse_expression(expression);
-  assert(e.isIdenticalTo(r));
+  quiz_assert(e.isIdenticalTo(r));
 }
 
 void assert_parsed_expression_polynomial_degree(const char * expression, int degree, char symbolName) {
   GlobalContext globalContext;
   Expression e = parse_expression(expression);
   e = e.simplify(globalContext, Radian);
-  assert(e.polynomialDegree(symbolName) == degree);
+  quiz_assert(e.polynomialDegree(symbolName) == degree);
 }
 
 typedef Expression (*ProcessExpression)(Expression, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat);
@@ -87,7 +87,7 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   cout << "---- serialize to: " << buffer << " ----"  << endl;
   cout << "----- compared to: " << result << " ----\n"  << endl;
 #endif
-  assert(strcmp(buffer, result) == 0);
+  quiz_assert(strcmp(buffer, result) == 0);
 }
 
 template<typename T>
@@ -115,7 +115,7 @@ void assert_parsed_expression_serialize_to(Expression expression, const char * s
 #endif
   char buffer[500];
   expression.serialize(buffer, sizeof(buffer), mode, numberOfSignifiantDigits);
-  assert(strcmp(buffer, serializedExpression) == 0);
+  quiz_assert(strcmp(buffer, serializedExpression) == 0);
 }
 
 #if 0
@@ -131,7 +131,7 @@ void assert_parsed_expression_layout_serialize_to_self(const char * expressionLa
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- serialized to: " << buffer << " ----\n"  << endl;
 #endif
-  assert(strcmp(expressionLayout, buffer) == 0);
+  quiz_assert(strcmp(expressionLayout, buffer) == 0);
   delete e;
   delete el;
 }
@@ -145,7 +145,7 @@ void assert_expression_layout_serialize_to(Poincare::ExpressionLayout * layout, 
   cout << "---- serialized to: " << buffer << " ----"  << endl;
   cout << "----- compared to: " << serialization << " ----\n"  << endl;
 #endif
-  assert(strcmp(serialization, buffer) == 0);
+  quiz_assert(strcmp(serialization, buffer) == 0);
 }
 
 #endif

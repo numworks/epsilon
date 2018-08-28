@@ -22,27 +22,27 @@ void assert_equation_system_exact_solve_to(const char * equations[], EquationSto
     e->setContent(buffer);
   }
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
-  assert(err == error);
+  quiz_assert(err == error);
   if (err != EquationStore::Error::NoError) {
     return;
   }
-  assert(equationStore.type() == type);
-  assert(equationStore.numberOfSolutions() == numberOfSolutions);
+  quiz_assert(equationStore.type() == type);
+  quiz_assert(equationStore.numberOfSolutions() == numberOfSolutions);
   if (numberOfSolutions == INT_MAX) {
     return;
   }
   if (type == EquationStore::Type::LinearSystem) {
     for (int i = 0; i < numberOfSolutions; i++) {
-      assert(equationStore.variableAtIndex(i) == variables[i]);
+      quiz_assert(equationStore.variableAtIndex(i) == variables[i]);
     }
   } else {
-    assert(equationStore.variableAtIndex(0) == variables[0]);
+    quiz_assert(equationStore.variableAtIndex(0) == variables[0]);
   }
   int n = type == EquationStore::Type::PolynomialMonovariable ? numberOfSolutions+1 : numberOfSolutions; // Check Delta for PolynomialMonovariable
   for (int i = 0; i < n; i++) {
     equationStore.exactSolutionLayoutAtIndex(i, true)->serialize(buffer, 200);
     translate_in_ASCII_chars(buffer);
-    assert(strcmp(buffer, solutions[i]) == 0);
+    quiz_assert(strcmp(buffer, solutions[i]) == 0);
   }
 }
 
@@ -55,16 +55,16 @@ void assert_equation_approximate_solve_to(const char * equations, double xMin, d
   translate_in_special_chars(buffer);
   e->setContent(buffer);
   EquationStore::Error err = equationStore.exactSolve(&globalContext);
-  assert(err == EquationStore::Error::RequireApproximateSolution);
+  quiz_assert(err == EquationStore::Error::RequireApproximateSolution);
   equationStore.setIntervalBound(0, xMin);
   equationStore.setIntervalBound(1, xMax);
   equationStore.approximateSolve(&globalContext);
-  assert(equationStore.numberOfSolutions() == numberOfSolutions);
-  assert(equationStore.variableAtIndex(0) == variable);
+  quiz_assert(equationStore.numberOfSolutions() == numberOfSolutions);
+  quiz_assert(equationStore.variableAtIndex(0) == variable);
   for (int i = 0; i < numberOfSolutions; i++) {
-    assert(std::fabs(equationStore.approximateSolutionAtIndex(i) - solutions[i]) < 1E-5);
+    quiz_assert(std::fabs(equationStore.approximateSolutionAtIndex(i) - solutions[i]) < 1E-5);
   }
-  assert(equationStore.haveMoreApproximationSolutions(&globalContext) == hasMoreSolutions);
+  quiz_assert(equationStore.haveMoreApproximationSolutions(&globalContext) == hasMoreSolutions);
 }
 
 QUIZ_CASE(equation_solve) {

@@ -18,18 +18,18 @@ QUIZ_CASE(poincare_rational_constructor) {
 }
 
 static inline void assert_equal(const Rational i, const Rational j) {
-  assert(Rational::NaturalOrder(i, j) == 0);
+  quiz_assert(Rational::NaturalOrder(i, j) == 0);
 }
 static inline void assert_not_equal(const Rational i, const Rational j) {
-  assert(Rational::NaturalOrder(i, j) != 0);
+  quiz_assert(Rational::NaturalOrder(i, j) != 0);
 }
 
 static inline void assert_lower(const Rational i, const Rational j) {
-  assert(Rational::NaturalOrder(i, j) < 0);
+  quiz_assert(Rational::NaturalOrder(i, j) < 0);
 }
 
 static inline void assert_greater(const Rational i, const Rational j) {
-  assert(Rational::NaturalOrder(i, j) > 0);
+  quiz_assert(Rational::NaturalOrder(i, j) > 0);
 }
 
 QUIZ_CASE(poincare_rational_compare) {
@@ -42,25 +42,25 @@ QUIZ_CASE(poincare_rational_compare) {
 }
 
 QUIZ_CASE(poincare_rational_properties) {
-  assert(Rational(-2).sign() == ExpressionNode::Sign::Negative);
-  assert(Rational(-2, 3).sign() == ExpressionNode::Sign::Negative);
-  assert(Rational(2, 3).sign() == ExpressionNode::Sign::Positive);
-  assert(Rational(0).isZero());
-  assert(!Rational(231).isZero());
-  assert(Rational(1).isOne());
-  assert(!Rational(-1).isOne());
-  assert(!Rational(1).isMinusOne());
-  assert(Rational(-1).isMinusOne());
-  assert(Rational(1,2).isHalf());
-  assert(!Rational(-1).isHalf());
-  assert(Rational(-1,2).isMinusHalf());
-  assert(!Rational(3,2).isMinusHalf());
-  assert(Rational(10).isTen());
-  assert(!Rational(-1).isTen());
+  quiz_assert(Rational(-2).sign() == ExpressionNode::Sign::Negative);
+  quiz_assert(Rational(-2, 3).sign() == ExpressionNode::Sign::Negative);
+  quiz_assert(Rational(2, 3).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Rational(0).isZero());
+  quiz_assert(!Rational(231).isZero());
+  quiz_assert(Rational(1).isOne());
+  quiz_assert(!Rational(-1).isOne());
+  quiz_assert(!Rational(1).isMinusOne());
+  quiz_assert(Rational(-1).isMinusOne());
+  quiz_assert(Rational(1,2).isHalf());
+  quiz_assert(!Rational(-1).isHalf());
+  quiz_assert(Rational(-1,2).isMinusHalf());
+  quiz_assert(!Rational(3,2).isMinusHalf());
+  quiz_assert(Rational(10).isTen());
+  quiz_assert(!Rational(-1).isTen());
 }
 
 static inline void assert_add_to(const Rational i, const Rational j, const Rational k) {
-  assert(Rational::NaturalOrder(Rational::Addition(i, j), k) == 0);
+  quiz_assert(Rational::NaturalOrder(Rational::Addition(i, j), k) == 0);
 }
 
 QUIZ_CASE(poincare_rational_addition) {
@@ -70,7 +70,7 @@ QUIZ_CASE(poincare_rational_addition) {
 }
 
 static inline void assert_pow_to(const Rational i,const Integer j, const Rational k) {
-  assert(Rational::NaturalOrder(Rational::IntegerPower(i, j), k) == 0);
+  quiz_assert(Rational::NaturalOrder(Rational::IntegerPower(i, j), k) == 0);
 }
 
 QUIZ_CASE(poincare_rational_power) {

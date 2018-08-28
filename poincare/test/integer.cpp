@@ -26,18 +26,18 @@ QUIZ_CASE(poincare_integer_constructor) {
 }
 
 static inline void assert_equal(const Integer i, const Integer j) {
-  assert(Integer::NaturalOrder(i, j) == 0);
+  quiz_assert(Integer::NaturalOrder(i, j) == 0);
 }
 static inline void assert_not_equal(const Integer i, const Integer j) {
-  assert(Integer::NaturalOrder(i, j) != 0);
+  quiz_assert(Integer::NaturalOrder(i, j) != 0);
 }
 
 static inline void assert_lower(const Integer i, const Integer j) {
-  assert(Integer::NaturalOrder(i, j) < 0);
+  quiz_assert(Integer::NaturalOrder(i, j) < 0);
 }
 
 static inline void assert_greater(const Integer i, const Integer j) {
-  assert(Integer::NaturalOrder(i, j) > 0);
+  quiz_assert(Integer::NaturalOrder(i, j) > 0);
 }
 
 QUIZ_CASE(poincare_integer_compare) {
@@ -59,31 +59,31 @@ QUIZ_CASE(poincare_integer_compare) {
   assert_lower(Integer("-1234567891234567892109209109"), Integer("123456789123456789"));
   assert_greater(Integer("123456789123456789"), Integer("123456789123456788"));
   assert_greater(Integer::Overflow(), Integer("123456789123456788"));
-  //FIXME: assert(Integer("0x2BABE") == Integer(178878));
-  //FIXME: assert(Integer("0b1011") == Integer(11));
+  //FIXME: quiz_assert(Integer("0x2BABE") == Integer(178878));
+  //FIXME: quiz_assert(Integer("0b1011") == Integer(11));
 }
 
 QUIZ_CASE(poincare_integer_properties) {
-  assert(Integer(0).isZero());
-  assert(!Integer(-1).isZero());
-  assert(!Integer(1).isZero());
-  assert(Integer(1).isOne());
-  assert(!Integer(-1).isOne());
-  assert(!Integer(0).isOne());
-  assert(OverflowedInteger().isInfinity()); // 2^32^k_maxNumberOfDigits
-  assert(!MaxInteger().isInfinity()); // 2^32^k_maxNumberOfDigits-1
-  assert(!Integer(0).isInfinity());
-  assert(Integer(8).isEven());
-  assert(!Integer(7).isEven());
-  assert(Integer(-8).isEven());
-  assert(!Integer(-7).isEven());
-  assert(!Integer(2).isNegative());
-  assert(Integer(-2).isNegative());
-  assert(Integer::NumberOfBase10Digits(MaxInteger()) == 309);
+  quiz_assert(Integer(0).isZero());
+  quiz_assert(!Integer(-1).isZero());
+  quiz_assert(!Integer(1).isZero());
+  quiz_assert(Integer(1).isOne());
+  quiz_assert(!Integer(-1).isOne());
+  quiz_assert(!Integer(0).isOne());
+  quiz_assert(OverflowedInteger().isInfinity()); // 2^32^k_maxNumberOfDigits
+  quiz_assert(!MaxInteger().isInfinity()); // 2^32^k_maxNumberOfDigits-1
+  quiz_assert(!Integer(0).isInfinity());
+  quiz_assert(Integer(8).isEven());
+  quiz_assert(!Integer(7).isEven());
+  quiz_assert(Integer(-8).isEven());
+  quiz_assert(!Integer(-7).isEven());
+  quiz_assert(!Integer(2).isNegative());
+  quiz_assert(Integer(-2).isNegative());
+  quiz_assert(Integer::NumberOfBase10Digits(MaxInteger()) == 309);
 }
 
 static inline void assert_add_to(const Integer i, const Integer j, const Integer k) {
-  assert(Integer::NaturalOrder(Integer::Addition(i, j), k) == 0);
+  quiz_assert(Integer::NaturalOrder(Integer::Addition(i, j), k) == 0);
 }
 
 QUIZ_CASE(poincare_integer_addition) {
@@ -111,7 +111,7 @@ QUIZ_CASE(poincare_integer_addition) {
 }
 
 static inline void assert_sub_to(const Integer i, const Integer j, const Integer k) {
-  assert(Integer::NaturalOrder(Integer::Subtraction(i, j), k) == 0);
+  quiz_assert(Integer::NaturalOrder(Integer::Subtraction(i, j), k) == 0);
 }
 
 QUIZ_CASE(poincare_integer_subtraction) {
@@ -145,7 +145,7 @@ QUIZ_CASE(poincare_integer_subtraction) {
 }
 
 static inline void assert_mult_to(const Integer i, const Integer j, const Integer k) {
-  assert(Integer::NaturalOrder(Integer::Multiplication(i, j), k) == 0);
+  quiz_assert(Integer::NaturalOrder(Integer::Multiplication(i, j), k) == 0);
 }
 
 QUIZ_CASE(poincare_integer_multiplication) {
@@ -162,8 +162,8 @@ QUIZ_CASE(poincare_integer_multiplication) {
 }
 
 static inline void assert_div_to(const Integer i, const Integer j, const Integer q, const Integer r) {
-  assert(Integer::NaturalOrder(Integer::Division(i, j).quotient, q) == 0);
-  assert(Integer::NaturalOrder(Integer::Division(i, j).remainder, r) == 0);
+  quiz_assert(Integer::NaturalOrder(Integer::Division(i, j).quotient, q) == 0);
+  quiz_assert(Integer::NaturalOrder(Integer::Division(i, j).remainder, r) == 0);
 }
 
 QUIZ_CASE(poincare_integer_divide) {
@@ -193,7 +193,7 @@ QUIZ_CASE(poincare_integer_divide) {
 }
 
 static inline void assert_pow_to(const Integer i, const Integer j, const Integer k) {
-  assert(Integer::NaturalOrder(Integer::Power(i, j), k) == 0);
+  quiz_assert(Integer::NaturalOrder(Integer::Power(i, j), k) == 0);
 }
 
 QUIZ_CASE(poincare_integer_pow) {
@@ -202,7 +202,7 @@ QUIZ_CASE(poincare_integer_pow) {
 }
 
 static inline void assert_factorial_to(const Integer i, const Integer j) {
-  assert(Integer::NaturalOrder(Integer::Factorial(i), j) == 0);
+  quiz_assert(Integer::NaturalOrder(Integer::Factorial(i), j) == 0);
 }
 
 QUIZ_CASE(poincare_integer_factorial) {
@@ -223,7 +223,7 @@ QUIZ_CASE(poincare_integer_simplify) {
 template<typename T>
 void assert_integer_evals_to(const char * i, T result) {
   GlobalContext c;
-  assert(Integer(i).approximateToScalar<T>(c, Preferences::AngleUnit::Radian) == result);
+  quiz_assert(Integer(i).approximateToScalar<T>(c, Preferences::AngleUnit::Radian) == result);
 }
 
 QUIZ_CASE(poincare_integer_evaluate) {

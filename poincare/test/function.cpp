@@ -11,8 +11,8 @@ template<typename T>
 void assert_exp_is_bounded(Expression exp, T lowBound, T upBound, bool upBoundIncluded = false) {
   GlobalContext globalContext;
   T result = exp.approximateToScalar<T>(globalContext, Radian);
-  assert(result >= lowBound);
-  assert(result < upBound || (result == upBound && upBoundIncluded));
+  quiz_assert(result >= lowBound);
+  quiz_assert(result < upBound || (result == upBound && upBoundIncluded));
 }
 
 QUIZ_CASE(poincare_parse_function) {

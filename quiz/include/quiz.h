@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-void quiz_assert_true(bool condition);
+void quiz_assert(bool condition);
 void quiz_print(const char * message);
 
 #ifdef __cplusplus

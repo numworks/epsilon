@@ -13,4 +13,7 @@ Complex<T> HyperbolicCosineNode::computeOnComplex(const std::complex<T> c, Prefe
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(std::cosh(c)));
 }
 
+template Complex<float> Poincare::HyperbolicCosineNode::computeOnComplex<float>(std::complex<float>, Preferences::AngleUnit);
+template Complex<double> Poincare::HyperbolicCosineNode::computeOnComplex<double>(std::complex<double>, Preferences::AngleUnit);
+
 }

@@ -39,7 +39,7 @@ Expression MatrixTranspose::shallowReduce(Context& context, Preferences::AngleUn
 
 template<typename T>
 Evaluation<T> MatrixTranspose::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * input = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * input = childAtIndex(0)->approximate(T(), context, angleUnit);
   Evaluation<T> * transpose = input->createTranspose();
   assert(transpose != nullptr);
   delete input;

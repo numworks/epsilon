@@ -17,8 +17,8 @@ LayoutRef Sequence::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
 
 template<typename T>
 Evaluation<T> Sequence::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * aInput = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * bInput = childAtIndex(2)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * aInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+  Evaluation<T> * bInput = childAtIndex(2)->approximate(T(), context, angleUnit);
   T start = aInput->toScalar();
   T end = bInput->toScalar();
   delete aInput;
@@ -34,7 +34,7 @@ Evaluation<T> Sequence::templatedApproximate(Context& context, Preferences::Angl
       return new Complex<T>(Complex<T>::Undefined());
     }
     nContext.setApproximationForVariable((T)i);
-    Evaluation<T> * expression = childAtIndex(0)->privateApproximate(T(), nContext, angleUnit);
+    Evaluation<T> * expression = childAtIndex(0)->approximate(T(), nContext, angleUnit);
     Evaluation<T> * newResult = evaluateWithNextTerm(T(), result, expression);
     delete result;
     delete expression;

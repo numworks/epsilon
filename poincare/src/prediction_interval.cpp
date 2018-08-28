@@ -72,8 +72,8 @@ Expression PredictionInterval::shallowReduce(Context& context, Preferences::Angl
 
 template<typename T>
 Evaluation<T> PredictionInterval::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * pInput = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * nInput = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * pInput = childAtIndex(0)->approximate(T(), context, angleUnit);
+  Evaluation<T> * nInput = childAtIndex(1)->approximate(T(), context, angleUnit);
   T p = static_cast<Complex<T> *>(pInput)->toScalar();
   T n = static_cast<Complex<T> *>(nInput)->toScalar();
   delete pInput;

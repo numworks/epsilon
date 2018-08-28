@@ -19,8 +19,8 @@ Expression * Randint::clone() const {
 }
 
 template <typename T> Evaluation<T> * Randint::templateApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * aInput = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * bInput = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * aInput = childAtIndex(0)->approximate(T(), context, angleUnit);
+  Evaluation<T> * bInput = childAtIndex(1)->approximate(T(), context, angleUnit);
   T a = aInput->toScalar();
   T b = bInput->toScalar();
   delete aInput;

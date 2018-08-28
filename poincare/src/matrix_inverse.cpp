@@ -46,7 +46,7 @@ Expression MatrixInverse::shallowReduce(Context& context, Preferences::AngleUnit
 // TODO: handle this exactly in shallowReduce for small dimensions.
 template<typename T>
 Evaluation<T> MatrixInverse::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * input = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
+  Evaluation<T> * input = childAtIndex(0)->approximate(T(), context, angleUnit);
   Evaluation<T> * inverse = input->createInverse();
   if (inverse == nullptr) {
     inverse = new Complex<T>(Complex<T>::Undefined());

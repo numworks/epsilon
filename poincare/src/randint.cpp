@@ -1,5 +1,6 @@
 #include <poincare/randint.h>
 #include <poincare/random.h>
+#include <poincare/allocation_failure_expression_node.h>
 #include <ion.h>
 
 extern "C" {
@@ -9,28 +10,27 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionNode::Type Randint::type() const {
-  return Type::Randint;
+RandintNode * RandintNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<RandintNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * Randint::clone() const {
-  Randint * a = new Randint(m_operands, true);
-  return a;
+LayoutReference RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-template <typename T> Evaluation<T> * Randint::templateApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * aInput = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> * bInput = childAtIndex(1)->approximate(T(), context, angleUnit);
-  T a = aInput->toScalar();
-  T b = bInput->toScalar();
-  delete aInput;
-  delete bInput;
+template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & context, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> aInput = childAtIndex(0)->approximate(T(), context, angleUnit);
+  Evaluation<T> bInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+  T a = aInput.toScalar();
+  T b = bInput.toScalar();
   if (std::isnan(a) || std::isnan(b) || a != std::round(a) || b != std::round(b) || a > b) {
-    return new Complex<T>(Complex<T>::Undefined());
+    return Complex<T>::Undefined();
 
   }
   T result = std::floor(Random::random<T>()*(b+1.0-a)+a);
-  return new Complex<T>(result);
+  return Complex<T>(result);
 }
 
 }

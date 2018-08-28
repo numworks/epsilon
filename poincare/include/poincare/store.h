@@ -3,30 +3,60 @@
 
 #include <poincare/expression.h>
 #include <poincare/symbol.h>
-#include <poincare/static_hierarchy.h>
 #include <poincare/layout_helper.h>
 #include <poincare/evaluation.h>
 
 namespace Poincare {
 
-class Store : public StaticHierarchy<2> {
+class StoreNode : public ExpressionNode {
 public:
-  using StaticHierarchy<2>::StaticHierarchy;
-  Type type() const override;
-  int polynomialDegree(char symbolName) const override;
+  static StoreNode * FailedAllocationStaticNode();
+  StoreNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(StoreNode); }
+  int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Store";
+  }
+#endif
+
+  // ExpressionNode
+  Type type() const override { return Type::Store; }
+  int polynomialDegree(char symbolName) const override { return -1; }
+
 private:
-  /* Simplification */
+  // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Layout */
+  // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  /* Evalutation */
+  // Evalutation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+};
 
-  const Symbol * symbol() const { return static_cast<const Symbol *>(childAtIndex(1)); }
-  const Expression * value() const { return childAtIndex(0); }
+class Store : public Expression {
+public:
+  Store(const StoreNode * n) : Expression(n) {}
+  Store(Expression value, Symbol symbol) : Expression(TreePool::sharedPool()->createTreeNode<StoreNode>()) {
+    replaceChildAtIndexInPlace(0, value);
+    replaceChildAtIndexInPlace(1, symbol);
+  }
+
+  // Store
+  const Symbol symbol() const {
+    assert(childAtIndex(1).type() == ExpressionNode::Type::Symbol);
+    return static_cast<const Symbol>(childAtIndex(1));
+  }
+  const Expression value() const {
+    return childAtIndex(0);
+  }
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

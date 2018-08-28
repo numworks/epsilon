@@ -6,48 +6,50 @@ extern "C" {
 #include <poincare/store.h>
 #include <ion.h>
 #include <poincare/context.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/complex.h>
+#include <poincare/allocation_failure_expression_node.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 
 
 namespace Poincare {
 
-ExpressionNode::Type Store::type() const {
-  return Type::Store;
+StoreNode * StoreNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<StoreNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * Store::clone() const {
-  return new Store(operands(), true);
+Expression StoreNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return Store(this).shallowReduce(context, angleUnit);
 }
 
-int Store::polynomialDegree(char symbolName) const {
-  return -1;
-}
-
-int Store::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "\x90");
 }
 
-Expression Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  context.setExpressionForSymbolName(value(), symbol(), context);
-  return replaceWith(childAtIndex(1), true)->shallowReduce(context, angleUnit);
-}
-
-LayoutRef Store::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef StoreNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   HorizontalLayoutRef result = HorizontalLayoutRef();
-  result.addOrMergeChildAtIndex(value()->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
   result.addChildAtIndex(CharLayoutRef(Ion::Charset::Sto), result.numberOfChildren(), result.numberOfChildren(), nullptr);
-  result.addOrMergeChildAtIndex(symbol()->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
+  result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
   return result;
 }
 
 template<typename T>
-Evaluation<T> Store::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  context.setExpressionForSymbolName(value(), symbol(), context);
-  if (context.expressionForSymbol(symbol()) != nullptr) {
-    return context.expressionForSymbol(symbol())->approximate(T(), context, angleUnit);
+Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  Store s(this);
+  context.setExpressionForSymbolName(s.value(), s.symbol(), context);
+  if (context.expressionForSymbol(s.symbol()).isUninitialized()) {
+    return Complex<T>::Undefined();
   }
-  return new Complex<T>(Complex<T>::Undefined());
+  return context.expressionForSymbol(s.symbol()).node()->approximate(T(), context, angleUnit);
+}
+
+Expression Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  context.setExpressionForSymbolName(value(), symbol(), context);
+  return symbol().shallowReduce(context, angleUnit);
 }
 
 }

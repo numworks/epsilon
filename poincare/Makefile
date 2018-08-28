@@ -106,6 +106,7 @@ objs += $(addprefix poincare/src/,\
   simplification_helper.o\
   sine.o\
   square_root.o\
+  store.o\
   subtraction.o\
   sum.o\
   symbol.o\
@@ -253,6 +254,7 @@ tests += $(addprefix poincare/test/,\
   properties.cpp\
   rational.cpp\
   number.cpp\
+  store.cpp\
   trigo.cpp\
 )
 

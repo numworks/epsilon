@@ -157,6 +157,7 @@
 #include <poincare/opposite.h>
 #include <poincare/decimal.h>
 #include <poincare/rational.h>
+#include <poincare/store.h>
 #include <poincare/sum.h>
 #include <poincare/symbol.h>
 #include <poincare/float.h>

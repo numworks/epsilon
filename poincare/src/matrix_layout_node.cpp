@@ -64,7 +64,7 @@ void MatrixLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomp
       return;
     }
     LayoutNode * lastChild = childAtIndex((m_numberOfColumns-1)*(m_numberOfRows-1));
-    assert(lastChild != nullptr);
+    assert(!lastChild->isUninitialized());
     cursor->setLayoutNode(lastChild);
     return;
   }
@@ -86,7 +86,7 @@ void MatrixLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecom
       return;
     }
     assert(m_numberOfColumns*m_numberOfRows >= 1);
-    assert(childAtIndex(0) != nullptr);
+    assert(!childAtIndex(0)->isUninitialized());
     cursor->setLayoutNode(childAtIndex(0));
     return;
   }

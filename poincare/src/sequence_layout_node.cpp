@@ -13,19 +13,19 @@ constexpr char SequenceLayoutNode::k_nEquals[];
 
 void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Left
-      && ((lowerBoundLayout() && cursor->layoutNode() == lowerBoundLayout())
-        || (upperBoundLayout() && cursor->layoutNode() == upperBoundLayout())))
+      && ((!lowerBoundLayout()->isUninitialized() && cursor->layoutNode() == lowerBoundLayout())
+        || (!upperBoundLayout()->isUninitialized() && cursor->layoutNode() == upperBoundLayout())))
   {
     // Case: Left of the bounds. Go Left of the sequence.
     cursor->setLayoutNode(this);
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Left
-      && argumentLayout()
+      && !argumentLayout()->isUninitialized()
       && cursor->layoutNode() == argumentLayout())
   {
     // Case: Left of the argument. Go Right of the lower bound.
-    assert(lowerBoundLayout() != nullptr);
+    assert(!lowerBoundLayout()->isUninitialized());
     cursor->setLayoutNode(lowerBoundLayout());
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
@@ -33,7 +33,7 @@ void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Go to the argument and move Left.
-    assert(argumentLayout() != nullptr);
+    assert(!argumentLayout()->isUninitialized());
     cursor->setLayoutNode(argumentLayout());
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
@@ -41,24 +41,24 @@ void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
   LayoutNode * parentLayout = parent();
-  if (parentLayout) {
+  if (!parentLayout->isUninitialized()) {
     parentLayout->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
 
 void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Right
-      && ((lowerBoundLayout() && cursor->layoutNode() == lowerBoundLayout())
-        || (upperBoundLayout() && cursor->layoutNode() == upperBoundLayout())))
+      && ((!lowerBoundLayout()->isUninitialized() && cursor->layoutNode() == lowerBoundLayout())
+        || (!upperBoundLayout()->isUninitialized() && cursor->layoutNode() == upperBoundLayout())))
   {
     // Case: Right of the bounds. Go Left of the argument.
-    assert(argumentLayout() != nullptr);
+    assert(!argumentLayout()->isUninitialized());
     cursor->setLayoutNode(argumentLayout());
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Right
-      && argumentLayout()
+      && !argumentLayout()->isUninitialized()
       && cursor->layoutNode() == argumentLayout())
   {
     // Case: Right of the argument. Go Right.
@@ -68,30 +68,30 @@ void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Go to the upper bound
-    assert(upperBoundLayout() != nullptr);
+    assert(!upperBoundLayout()->isUninitialized());
     cursor->setLayoutNode(upperBoundLayout());
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right. Ask the parent
   LayoutNode * parentLayout = parent();
-  if (parentLayout) {
-    return parentLayout->moveCursorRight(cursor, shouldRecomputeLayout);
+  if (!parentLayout->isUninitialized()) {
+    parentLayout->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }
 
 void SequenceLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (lowerBoundLayout() && cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true)) {
+  if (!lowerBoundLayout()->isUninitialized() && cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true)) {
   // If the cursor is inside the lower bound, move it to the upper bound
-    assert(upperBoundLayout() != nullptr);
+    assert(!upperBoundLayout()->isUninitialized());
     upperBoundLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
-  if (argumentLayout()
+  if (!argumentLayout()->isUninitialized()
       && cursor->isEquivalentTo(LayoutCursor(argumentLayout(), LayoutCursor::Position::Left)))
   {
     // If the cursor is Left of the argument, move it to the upper bound
-    assert(upperBoundLayout() != nullptr);
+    assert(!upperBoundLayout()->isUninitialized());
     upperBoundLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
@@ -99,17 +99,17 @@ void SequenceLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomp
 }
 
 void SequenceLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (upperBoundLayout() && cursor->layoutNode()->hasAncestor(upperBoundLayout(), true)) {
+  if (!upperBoundLayout()->isUninitialized() && cursor->layoutNode()->hasAncestor(upperBoundLayout(), true)) {
     // If the cursor is inside the upper bound, move it to the lower bound
-    assert(lowerBoundLayout() != nullptr);
+    assert(!lowerBoundLayout()->isUninitialized());
     lowerBoundLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
   // If the cursor is Left of the argument, move it to the lower bound
-  if (argumentLayout()
+  if (!argumentLayout()->isUninitialized()
       && cursor->isEquivalentTo(LayoutCursor(argumentLayout(), LayoutCursor::Position::Left)))
   {
-    assert(lowerBoundLayout() != nullptr);
+    assert(!lowerBoundLayout()->isUninitialized());
     lowerBoundLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
   }

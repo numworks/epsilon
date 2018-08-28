@@ -19,7 +19,7 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDColor expressionColor, KDCol
 
 KDPoint LayoutNode::origin() {
   LayoutNode * p = parent();
-  if (p == nullptr) {
+  if (p->isUninitialized()) {
     return absoluteOrigin();
   } else {
     return KDPoint(absoluteOrigin().x() - p->absoluteOrigin().x(),
@@ -30,7 +30,7 @@ KDPoint LayoutNode::origin() {
 KDPoint LayoutNode::absoluteOrigin() {
   LayoutNode * p = parent();
   if (!m_positioned) {
-    if (p != nullptr) {
+    if (!p->isUninitialized()) {
       m_frame.setOrigin(p->absoluteOrigin().translatedBy(p->positionOfChild(this)));
     } else {
       m_frame.setOrigin(KDPointZero);
@@ -85,7 +85,7 @@ void LayoutNode::moveCursorDownInDescendants(LayoutCursor * cursor, bool * shoul
 LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
   /* Only HorizontalLayout or AllocationFailedLayout may have no parent, and
    * they overload this method */
-  assert(parent());
+  assert(!parent()->isUninitialized());
   return (cursor->layoutReference().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
 }
 
@@ -103,7 +103,7 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   assert(cursor->layoutNode() == this);
   LayoutNode * p = parent();
   // Case: this is the pointed layout.
-  if (p == nullptr) {
+  if (p->isUninitialized()) {
     // Case: No parent. Return.
     return;
   }
@@ -167,7 +167,7 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
     }
   }
   LayoutNode * p = parent();
-  if (p == nullptr) {
+  if (p->isUninitialized()) {
     cursor->setLayoutReference(LayoutReference());
     return;
   }
@@ -179,7 +179,7 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
 }
 
 void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  LayoutNode * childResult = nullptr;
+  LayoutNode * childResult = static_cast<LayoutNode *>(uninitializedStaticNode());
   LayoutNode ** childResultPtr = &childResult;
   LayoutCursor::Position resultPosition = LayoutCursor::Position::Left;
   /* The distance between the cursor and its next position cannot be greater
@@ -191,7 +191,7 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
   // If there is a valid result
   LayoutRef resultRef(childResult);
   LayoutRef rootRef = LayoutRef(root());
-  if (*childResultPtr != nullptr) {
+  if (!(*childResultPtr)->isUninitialized()) {
     *shouldRecomputeLayout = childResult->addGreySquaresToAllMatrixAncestors();
     // WARNING: Do not use "this" afterwards
   }

@@ -14,7 +14,7 @@ EmptyLayoutNode * EmptyLayoutNode::FailedAllocationStaticNode() {
 void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   cursor->setPosition(LayoutCursor::Position::Left);
   LayoutNode * p = parent();
-  if (p != nullptr) {
+  if (!p->isUninitialized()) {
     return p->deleteBeforeCursor(cursor);
   }
 }
@@ -23,7 +23,7 @@ void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecompu
   assert(cursor->layoutNode() == this);
   // Ask the parent.
   LayoutNode * p = parent();
-  if (p != nullptr) {
+  if (!p->isUninitialized()) {
     cursor->setPosition(LayoutCursor::Position::Left);
     p->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
@@ -33,7 +33,7 @@ void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomp
   assert(cursor->layoutNode() == this);
   // Ask the parent.
   LayoutNode * p = parent();
-  if (p != nullptr) {
+  if (!p->isUninitialized()) {
     cursor->setPosition(LayoutCursor::Position::Right);
     p->moveCursorRight(cursor, shouldRecomputeLayout);
   }
@@ -79,7 +79,7 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
      * being filled in, so add a new empty row or column. */
     LayoutRef rootRef = LayoutRef(root());
     LayoutNode * parentNode = parent();
-    assert(parentNode != nullptr);
+    assert(!parentNode->isUninitialized());
     parentNode->willAddSiblingToEmptyChildAtIndex(parentNode->indexOfChild(this));
     // WARNING: Do not use previous node pointers afterwards.
     if (rootRef.isAllocationFailure()) {

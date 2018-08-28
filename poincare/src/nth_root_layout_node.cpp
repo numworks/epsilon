@@ -27,12 +27,12 @@ NthRootLayoutNode * NthRootLayoutNode::FailedAllocationStaticNode() {
 }
 
 void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (radicandLayout()
+  if (!radicandLayout()->isUninitialized()
     && cursor->layoutNode() == radicandLayout()
     && cursor->position() == LayoutCursor::Position::Left)
   {
     // Case: Left of the radicand. Go the index if any, ir go Left of the root.
-    if (indexLayout()) {
+    if (!indexLayout()->isUninitialized()) {
       cursor->setLayoutNode(indexLayout());
       cursor->setPosition(LayoutCursor::Position::Right);
     } else {
@@ -40,7 +40,7 @@ void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecom
     }
     return;
   }
-  if (indexLayout()
+  if (!indexLayout()->isUninitialized()
     && cursor->layoutNode() == indexLayout()
     && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -51,20 +51,20 @@ void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecom
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Go Right of the radicand.
-    assert(radicandLayout() != nullptr);
+    assert(!radicandLayout()->isUninitialized());
     cursor->setLayoutNode(radicandLayout());
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
   LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
 
 void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (radicandLayout()
+  if (!radicandLayout()->isUninitialized()
     && cursor->layoutNode() == radicandLayout()
     && cursor->position() == LayoutCursor::Position::Right)
   {
@@ -72,12 +72,12 @@ void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldReco
     cursor->setLayoutNode(this);
     return;
   }
-  if (indexLayout()
+  if (!indexLayout()->isUninitialized()
     && cursor->layoutNode() == indexLayout()
     && cursor->position() == LayoutCursor::Position::Right)
   {
     // Case: Right of the index. Go Left of the integrand.
-    assert(radicandLayout() != nullptr);
+    assert(!radicandLayout()->isUninitialized());
     cursor->setLayoutNode(radicandLayout());
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
@@ -85,10 +85,10 @@ void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldReco
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Go to the index if there is one, else go to the radicand.
-    if (indexLayout()) {
+    if (!indexLayout()->isUninitialized()) {
       cursor->setLayoutNode(indexLayout());
     } else {
-      assert(radicandLayout() != nullptr);
+      assert(!radicandLayout()->isUninitialized());
       cursor->setLayoutNode(radicandLayout());
     }
     return;
@@ -96,14 +96,14 @@ void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldReco
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right. Ask the parent.
   LayoutNode * parentNode = parent();
-  if (parentNode) {
+  if (!parentNode->isUninitialized()) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }
 
 void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (indexLayout()
-      && radicandLayout()
+  if (!indexLayout()->isUninitialized()
+      && !radicandLayout()->isUninitialized()
       && cursor->isEquivalentTo(LayoutCursor(radicandLayout(), LayoutCursor::Position::Left)))
   {
     // If the cursor is Left of the radicand, move it to the index.
@@ -111,7 +111,7 @@ void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecompu
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
   }
-  if (indexLayout()
+  if (!indexLayout()->isUninitialized()
       && cursor->layoutNode() == this
       && cursor->position() == LayoutCursor::Position::Left)
   {
@@ -124,10 +124,12 @@ void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecompu
 }
 
 void NthRootLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (indexLayout() && cursor->layoutNode()->hasAncestor(indexLayout(), true)) {
+  if (!indexLayout()->isUninitialized()
+      && cursor->layoutNode()->hasAncestor(indexLayout(), true))
+  {
     if (cursor->isEquivalentTo(LayoutCursor(indexLayout(), LayoutCursor::Position::Right))) {
       // If the cursor is Right of the index, move it to the radicand.
-      assert(radicandLayout() != nullptr);
+      assert(!radicandLayout()->isUninitialized());
       cursor->setLayoutNode(radicandLayout());
       cursor->setPosition(LayoutCursor::Position::Left);
       return;
@@ -214,7 +216,7 @@ KDSize NthRootLayoutNode::computeSize() {
 }
 
 KDCoordinate NthRootLayoutNode::computeBaseline() {
-  if (indexLayout() != nullptr) {
+  if (!indexLayout()->isUninitialized()) {
     return max(
         radicandLayout()->baseline() + k_radixLineThickness + k_heightMargin,
         indexLayout()->layoutSize().height() + k_indexHeight);
@@ -230,7 +232,7 @@ KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child) {
   if (child == radicandLayout()) {
     x = indexSize.width() + 2*k_widthMargin + k_radixLineThickness;
     y = baseline() - radicandLayout()->baseline();
-  } else if (indexLayout() && child == indexLayout()) {
+  } else if (!indexLayout()->isUninitialized() && child == indexLayout()) {
     x = 0;
     y = baseline() - indexSize.height() -  k_indexHeight;
   } else {
@@ -240,9 +242,9 @@ KDPoint NthRootLayoutNode::positionOfChild(LayoutNode * child) {
 }
 
 KDSize NthRootLayoutNode::adjustedIndexSize() {
-  return indexLayout() != nullptr ?
-    KDSize(max(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height()) :
-    KDSize(k_leftRadixWidth, 0);
+  return indexLayout()->isUninitialized() ?
+    KDSize(k_leftRadixWidth, 0) :
+    KDSize(max(k_leftRadixWidth, indexLayout()->layoutSize().width()), indexLayout()->layoutSize().height());
 }
 
 void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

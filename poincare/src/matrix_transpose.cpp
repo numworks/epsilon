@@ -1,20 +1,41 @@
 #include <poincare/matrix_transpose.h>
-#include <poincare/matrix.h>
 #include <poincare/division.h>
-extern "C" {
-#include <assert.h>
-}
+#include <poincare/layout_helper.h>
+#include <poincare/matrix.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <cmath>
 
 namespace Poincare {
-
-ExpressionNode::Type MatrixTranspose::type() const {
-  return Type::MatrixTranspose;
+MatrixTransposeNode * MatrixTransposeNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<MatrixTransposeNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * MatrixTranspose::clone() const {
-  MatrixTranspose * a = new MatrixTranspose(m_operands, true);
-  return a;
+Expression MatrixTransposeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+  return MatrixTranspose(this).shallowReduce(context, angleUnit);
+}
+
+LayoutRef MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(MatrixTranspose(this), floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+int MatrixTransposeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+template<typename T>
+Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> input = childAtIndex(0)->approximate(T(), context, angleUnit);
+  Evaluation<T> transpose;
+  if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
+    transpose = static_cast<MatrixComplex<T>&>(input).transpose();
+  } else {
+    transpose = input;
+  }
+  assert(!transpose.isUninitialized());
+  return transpose;
 }
 
 Expression MatrixTranspose::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
@@ -22,28 +43,22 @@ Expression MatrixTranspose::shallowReduce(Context& context, Preferences::AngleUn
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression * op = childAtIndex(0);
+  Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    Matrix * transpose = static_cast<Matrix *>(op)->createTranspose();
-    return replaceWith(transpose, true);
+  if (c.type() == ExpressionNode::Type::Matrix) {
+    Matrix transpose = static_cast<Matrix&>(c).createTranspose();
+    return transpose;
   }
-  if (!op->recursivelyMatches(Expression::IsMatrix)) {
-    return replaceWith(op, true);
+  if (!c.recursivelyMatches(Expression::IsMatrix)) {
+    return c;
   }
-  return this;
+  return *this;
 #else
-  return replaceWith(op, true);
+  if (c.type() != ExpressionNode::Type::Matrix) {
+    return c;
+  }
+  return *this;
 #endif
-}
-
-template<typename T>
-Evaluation<T> MatrixTranspose::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * input = childAtIndex(0)->approximate(T(), context, angleUnit);
-  Evaluation<T> * transpose = input->createTranspose();
-  assert(transpose != nullptr);
-  delete input;
-  return transpose;
 }
 
 }

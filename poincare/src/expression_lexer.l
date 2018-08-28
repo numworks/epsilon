@@ -124,8 +124,7 @@ binomial { poincare_expression_yylval.expression = BinomialCoefficient(); return
 ceil { poincare_expression_yylval.expression = Ceiling(); return FUNCTION; }
 confidence { poincare_expression_yylval.expression = ConfidenceInterval(); return FUNCTION; }
 diff { poincare_expression_yylval.expression = Derivative(); return FUNCTION; }
- /*dim { poincare_expression_yylval.expression = new MatrixDimension(); return FUNCTION; }
-*/
+dim { poincare_expression_yylval.expression = MatrixDimension(); return FUNCTION; }
 conj { poincare_expression_yylval.expression = Conjugate(); return FUNCTION; }
 det { poincare_expression_yylval.expression = Determinant(); return FUNCTION; }
 cos { poincare_expression_yylval.expression = Cosine(); return FUNCTION; }
@@ -136,8 +135,7 @@ frac { poincare_expression_yylval.expression = FracPart(); return FUNCTION; }
 gcd { poincare_expression_yylval.expression = GreatCommonDivisor(); return FUNCTION; }
 im { poincare_expression_yylval.expression = ImaginaryPart(); return FUNCTION; }
 int { poincare_expression_yylval.expression = Integral(); return FUNCTION; }
- /*inverse { poincare_expression_yylval.expression = new MatrixInverse(); return FUNCTION; }
-*/
+inverse { poincare_expression_yylval.expression = MatrixInverse(); return FUNCTION; }
 lcm { poincare_expression_yylval.expression = LeastCommonMultiple(); return FUNCTION; }
 ln { poincare_expression_yylval.expression = NaperianLogarithm(); return FUNCTION; }
 log { return LOGFUNCTION; }
@@ -162,9 +160,8 @@ sinh { poincare_expression_yylval.expression = HyperbolicSine(); return FUNCTION
 */
 tan { poincare_expression_yylval.expression = Tangent(); return FUNCTION; }
 tanh { poincare_expression_yylval.expression = HyperbolicTangent(); return FUNCTION; }
- /*trace { poincare_expression_yylval.expression = new MatrixTrace(); return FUNCTION; }
-transpose { poincare_expression_yylval.expression = new MatrixTranspose(); return FUNCTION; }
- */
+trace { poincare_expression_yylval.expression = MatrixTrace(); return FUNCTION; }
+transpose { poincare_expression_yylval.expression = MatrixTranspose(); return FUNCTION; }
 undef { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 inf { poincare_expression_yylval.expression = Undefined(); return UNDEFINED; }
 \x8a { poincare_expression_yylval.character = yytext[0]; return SYMBOL; }

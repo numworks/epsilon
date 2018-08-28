@@ -74,6 +74,7 @@ public:
   }
   static MatrixComplex<T> createIdentity(int dim);
   MatrixComplex<T> inverse() const { return node()->inverse(); }
+  MatrixComplex<T> transpose() const { return node()->transpose(); }
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);
   }

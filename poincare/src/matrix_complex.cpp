@@ -114,9 +114,9 @@ template<typename T>
 MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
   // Intentionally swapping dimensions for transpose
   MatrixComplex<T> result;
-  for (int i = 0; i < numberOfRows(); i++) {
-    for (int j = 0; j < numberOfColumns(); j++) {
-      result.addChildAtIndexInPlace(Complex<T>(complexAtIndex(i*numberOfColumns()+i)), j*numberOfRows()+i, j*numberOfRows()+i);
+  for (int j = 0; j < numberOfColumns(); j++) {
+    for (int i = 0; i < numberOfRows(); i++) {
+      result.addChildAtIndexInPlace(Complex<T>(complexAtIndex(i*numberOfColumns()+j)), result.numberOfChildren(), result.numberOfChildren());
     }
   }
   result.setDimensions(numberOfColumns(), numberOfRows());

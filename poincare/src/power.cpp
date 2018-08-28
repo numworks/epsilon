@@ -393,7 +393,7 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
     m.removeChildAtIndexInPlace(m.numberOfChildren()-1);
     if (angleUnit == Preferences::AngleUnit::Degree) {
       const Expression pi = m.childAtIndex(m.numberOfChildren()-1);
-      m.replaceChildAtIndexInPlace(numberOfChildren()-1, Rational(180));
+      m.replaceChildAtIndexInPlace(m.numberOfChildren()-1, Rational(180));
     }
     Expression reducedM = m.shallowReduce(context, angleUnit);
     Expression cos = Cosine(reducedM).shallowReduce(context, angleUnit);

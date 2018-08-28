@@ -2,8 +2,8 @@
 
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
-//#include <poincare/binomial_coefficient.h>
-//#include <poincare/cosine.h>
+#include <poincare/binomial_coefficient.h>
+#include <poincare/cosine.h>
 #include <poincare/division.h>
 #include <poincare/global_context.h>
 //#include <poincare/matrix.h>
@@ -12,7 +12,7 @@
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 //#include <poincare/simplification_root.h>
-//#include <poincare/sine.h>
+#include <poincare/sine.h>
 #include <poincare/square_root.h>
 #include <poincare/symbol.h>
 #include <poincare/subtraction.h>
@@ -395,16 +395,11 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
       const Expression pi = m.childAtIndex(m.numberOfChildren()-1);
       m.replaceChildAtIndexInPlace(numberOfChildren()-1, Rational(180));
     }
-#if 0
     Expression reducedM = m.shallowReduce(context, angleUnit);
-    Cosine cos = Cosine(reducedM).shallowReduce(context, angleUnit);
+    Expression cos = Cosine(reducedM).shallowReduce(context, angleUnit);
     Expression sinPart = Sine(reducedM).shallowReduce(context, angleUnit);
     sinPart = Multiplication(sinPart, i).shallowReduce(context, angleUnit);
     return Addition(cos, sinPart).shallowReduce(context, angleUnit);
-#else
-    // TODO remove if 0 once we have cos
-    return Rational(1);
-#endif
   }
   // x^log(y,x)->y if y > 0
   if (childAtIndex(1).type() == ExpressionNode::Type::Logarithm) {
@@ -514,10 +509,9 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
     /* The multinome (a0+a2+...+a(m-1))^n has BinomialCoefficient(n+m-1,n) terms;
      * we expand the multinome only when the number of terms in the resulting
      * sum has less than k_maxNumberOfTermsInExpandedMultinome terms. */
-    //TODO Decomment when BinomialCoefficient available
-    /*if (k_maxNumberOfTermsInExpandedMultinome < BinomialCoefficient::compute(static_cast<double>(clippedN), static_cast<double>(clippedN+m-1))) {
+    if (k_maxNumberOfTermsInExpandedMultinome < BinomialCoefficientNode::compute(static_cast<double>(clippedN), static_cast<double>(clippedN+m-1))) {
       return *this;
-    }*/
+    }
 
     Expression result = childAtIndex(0);
     Expression a = result;

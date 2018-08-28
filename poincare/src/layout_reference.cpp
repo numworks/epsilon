@@ -176,7 +176,7 @@ void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force
   }
   assert(hasChild(l));
   int index = indexOfChild(l);
-  removeChildInPlace(l, numberOfChildren());
+  removeChildInPlace(l, l.numberOfChildren());
   if (cursor) {
     if (index < numberOfChildren()) {
       LayoutRef newCursorRef = childAtIndex(index);

@@ -4,8 +4,10 @@
 #include <poincare/fraction_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_reference.h>
+#include <poincare/left_parenthesis_layout_node.h>
 #include <poincare/matrix_layout_node.h>
 #include <poincare/nth_root_layout_node.h>
+#include <poincare/right_parenthesis_layout_node.h>
 #include <poincare/vertical_offset_layout_node.h>
 #include <ion/charset.h>
 #include <stdio.h>
@@ -172,12 +174,12 @@ void LayoutCursor::insertText(const char * text) {
     if (text[i] == Ion::Charset::MultiplicationSign) {
       newChild = CharLayoutRef(Ion::Charset::MiddleDot);
     } else if (text[i] == '(') {
-      newChild = CharLayoutRef('('); //TODO
+      newChild = LeftParenthesisLayoutRef();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
     } else if (text[i] == ')') {
-      newChild = CharLayoutRef(')'); //TODO
+      newChild = RightParenthesisLayoutRef();
     } else if (text[i] == '_') {
       specialUnderScore = (i < textLength) && (text[i+1] == '{');
       if (!specialUnderScore) {

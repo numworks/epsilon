@@ -48,10 +48,12 @@ QUIZ_CASE(poincare_parse_function) {
 #endif
   assert_parsed_expression_type("product(n, 4, 10)", ExpressionNode::Type::Product);
   assert_parsed_expression_type("quo(29, 10)", ExpressionNode::Type::DivisionQuotient);
-#if 0
+
   assert_parsed_expression_type("random()", ExpressionNode::Type::Random);
+#if 0
   assert_parsed_expression_type("randint(1, 2)", ExpressionNode::Type::Randint);
 #endif
+
   assert_parsed_expression_type("re(2+I)", ExpressionNode::Type::RealPart);
   assert_parsed_expression_type("rem(29, 10)", ExpressionNode::Type::DivisionRemainder);
   assert_parsed_expression_type("root(2,3)", ExpressionNode::Type::NthRoot);
@@ -224,12 +226,11 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("int(1+cos(x), 0, 180)", "180");
   assert_parsed_expression_evaluates_to<double>("int(1+cos(x), 0, 180)", "180");
 
-#if 0
-  Expression * exp = parse_expression("random()");
+  Expression exp = parse_expression("random()");
   assert_exp_is_bounded(exp, 0.0f, 1.0f);
   assert_exp_is_bounded(exp, 0.0, 1.0);
-  delete exp;
 
+#if 0
   exp = parse_expression("randint(4,45)");
   assert_exp_is_bounded(exp, 4.0f, 45.0f, true);
   assert_exp_is_bounded(exp, 4.0, 45.0, true);

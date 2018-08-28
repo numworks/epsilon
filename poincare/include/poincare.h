@@ -105,6 +105,28 @@
 
 #else
 
+#include <poincare/absolute_value_layout_node.h>
+#include <poincare/binomial_coefficient_layout_node.h>
+#include <poincare/bracket_pair_layout_node.h>
+#include <poincare/char_layout_node.h>
+#include <poincare/ceiling_layout_node.h>
+#include <poincare/condensed_sum_layout_node.h>
+#include <poincare/conjugate_layout_node.h>
+#include <poincare/empty_layout_node.h>
+#include <poincare/floor_layout_node.h>
+#include <poincare/fraction_layout_node.h>
+#include <poincare/horizontal_layout_node.h>
+#include <poincare/integral_layout_node.h>
+#include <poincare/left_parenthesis_layout_node.h>
+#include <poincare/left_square_bracket_layout_node.h>
+#include <poincare/matrix_layout_node.h>
+#include <poincare/nth_root_layout_node.h>
+#include <poincare/product_layout_node.h>
+#include <poincare/right_parenthesis_layout_node.h>
+#include <poincare/right_square_bracket_layout_node.h>
+#include <poincare/sum_layout_node.h>
+#include <poincare/vertical_offset_layout_node.h>
+
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
 #include <poincare/arc_cosine.h>

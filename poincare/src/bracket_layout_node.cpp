@@ -84,7 +84,7 @@ KDCoordinate BracketLayoutNode::computeBaseline() {
     {
       currentNumberOfOpenBrackets++;
     }
-    result = max(m_baseline, sibling->baseline());
+    result = max(result, sibling->baseline());
   }
   return result + (layoutSize().height() - childHeight()) / 2;
 }

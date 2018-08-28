@@ -1,4 +1,5 @@
 #include <poincare/random.h>
+#include <poincare/allocation_failure_expression_node.h>
 #include <ion.h>
 
 extern "C" {
@@ -8,18 +9,27 @@ extern "C" {
 
 namespace Poincare {
 
-ExpressionNode::Type Random::type() const {
-  return Type::Random;
+RandomNode * RandomNode::FailedAllocationStaticNode() {
+  static AllocationFailureExpressionNode<RandomNode> failure;
+  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
+  return &failure;
 }
 
-Expression * Random::clone() const {
-  Random * a = new Random();
-  return a;
+Expression RandomNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+  return Random(this).setSign(s, context, angleUnit);
 }
 
-Expression * Random::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
-  assert(s == Sign::Positive);
-  return this;
+LayoutReference RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return LayoutHelper::Prefix(Random(this), floatDisplayMode, numberOfSignificantDigits, name());
+}
+
+template <typename T> Evaluation<T> RandomNode::templateApproximate() const {
+  return Complex<T>(Random::random<T>());
+}
+
+Expression Random::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+  assert(s == ExpressionNode::Sign::Positive);
+  return *this;
 }
 
 template<typename T> T Random::random() {

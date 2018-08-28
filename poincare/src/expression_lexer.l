@@ -145,8 +145,8 @@ prediction95 { poincare_expression_yylval.expression = new PredictionInterval();
 prediction { poincare_expression_yylval.expression = SimplePredictionInterval(); return FUNCTION; }
 product { poincare_expression_yylval.expression = Product(); return FUNCTION; }
 quo { poincare_expression_yylval.expression = DivisionQuotient(); return FUNCTION; }
- /*random { poincare_expression_yylval.expression = new Random(); return FUNCTION; }
-randint { poincare_expression_yylval.expression = new Randint(); return FUNCTION; }
+random { poincare_expression_yylval.expression = Random(); return FUNCTION; }
+ /*randint { poincare_expression_yylval.expression = new Randint(); return FUNCTION; }
 */
 re { poincare_expression_yylval.expression = RealPart(); return FUNCTION; }
 rem { poincare_expression_yylval.expression = DivisionRemainder(); return FUNCTION; }

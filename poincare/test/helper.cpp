@@ -98,7 +98,7 @@ void assert_parsed_expression_evaluates_to(const char * expression, const char *
   int numberOfDigits = sizeof(T) == sizeof(double) ? PrintFloat::k_numberOfStoredSignificantDigits : PrintFloat::k_numberOfPrintedSignificantDigits;
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
   assert_parsed_expression_process_to(expression, approximation, angleUnit, complexFormat, [](Expression e, Context & context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) {
-        return e.approximate<T>(context, angleUnit, complexFormat);
+        return e.simplify(context, angleUnit).approximate<T>(context, angleUnit, complexFormat);
       }, numberOfDigits);
 }
 

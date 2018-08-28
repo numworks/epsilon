@@ -22,10 +22,8 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("arg(2+I)", ExpressionNode::Type::ComplexArgument);
   assert_parsed_expression_type("det([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::Determinant);
   assert_parsed_expression_type("diff(2*x, 2)", ExpressionNode::Type::Derivative);
-#if 0
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("dim([[2]])", ExpressionNode::Type::MatrixDimension);
-#endif
 #endif
   assert_parsed_expression_type("confidence(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
   assert_parsed_expression_type("conj(2)", ExpressionNode::Type::Conjugate);
@@ -35,13 +33,13 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("gcd(2,3)", ExpressionNode::Type::GreatCommonDivisor);
   assert_parsed_expression_type("im(2+I)", ExpressionNode::Type::ImaginaryPart);
   assert_parsed_expression_type("lcm(2,3)", ExpressionNode::Type::LeastCommonMultiple);
-#if 0
   assert_parsed_expression_type("int(x, 2, 3)", ExpressionNode::Type::Integral);
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("inverse([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixInverse);
 #endif
   assert_parsed_expression_type("ln(2)", ExpressionNode::Type::NaperianLogarithm);
   assert_parsed_expression_type("log(2)", ExpressionNode::Type::Logarithm);
+#if 0
   assert_parsed_expression_type("permute(10, 4)", ExpressionNode::Type::PermuteCoefficient);
 #endif
   assert_parsed_expression_type("prediction(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
@@ -61,10 +59,10 @@ QUIZ_CASE(poincare_parse_function) {
 #if 0
   assert_parsed_expression_type("round(2,3)", ExpressionNode::Type::Round);
   assert_parsed_expression_type("sum(n, 4, 10)", ExpressionNode::Type::Sum);
+#endif
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("trace([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTrace);
   assert_parsed_expression_type("transpose([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTranspose);
-#endif
 #endif
   assert_parsed_expression_type("6!", ExpressionNode::Type::Factorial);
 }
@@ -112,7 +110,6 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("lcm(234,394)", "46098");
   assert_parsed_expression_evaluates_to<double>("lcm(234,394)", "46098");
-#if 0
 
   assert_parsed_expression_evaluates_to<float>("int(x, 1, 2)", "1.5");
   assert_parsed_expression_evaluates_to<double>("int(x, 1, 2)", "1.5");
@@ -122,6 +119,7 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("log(2)", "0.30103");
   assert_parsed_expression_evaluates_to<double>("log(2)", "3.0102999566398E-1");
+#if 0
 
   assert_parsed_expression_evaluates_to<float>("permute(10, 4)", "5040");
   assert_parsed_expression_evaluates_to<double>("permute(10, 4)", "5040");
@@ -140,7 +138,6 @@ QUIZ_CASE(poincare_function_evaluate) {
 #endif
   assert_parsed_expression_evaluates_to<float>("rem(29, 10)", "9");
   assert_parsed_expression_evaluates_to<double>("rem(29, 10)", "9");
-#if 0
   assert_parsed_expression_evaluates_to<float>("root(2,3)", "1.259921");
   assert_parsed_expression_evaluates_to<double>("root(2,3)", "1.2599210498949");
 
@@ -149,24 +146,23 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("R(-1)", "I");
   assert_parsed_expression_evaluates_to<double>("R(-1)", "I");
+#if 0
 
   assert_parsed_expression_evaluates_to<float>("sum(n, 4, 10)", "49");
   assert_parsed_expression_evaluates_to<double>("sum(n, 4, 10)", "49");
+#endif
 
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
   assert_parsed_expression_evaluates_to<double>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
 #endif
-#endif
 
   assert_parsed_expression_evaluates_to<float>("confidence(0.1, 100)", "[[0,0.2]]");
   assert_parsed_expression_evaluates_to<double>("confidence(0.1, 100)", "[[0,0.2]]");
 
-#if 0
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
   assert_parsed_expression_evaluates_to<double>("dim([[1,2,3][4,5,-6]])", "[[2,3]]");
-#endif
 #endif
 
   assert_parsed_expression_evaluates_to<float>("conj(3+2*I)", "3-2*I");
@@ -174,17 +170,14 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("factor(-23/4)", "-5.75");
   assert_parsed_expression_evaluates_to<double>("factor(-123/24)", "-5.125");
-#if 0
 
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2917,-0.083333,0.375][1.0833,0.16667,-0.25][0.041667,-0.083333,0.041667]]", Degree, Cartesian, 5); // inverse is not precise enough to display 7 significative digits
   assert_parsed_expression_evaluates_to<double>("inverse([[1,2,3][4,5,-6][7,8,9]])", "[[-1.2916666666667,-8.3333333333333E-2,0.375][1.0833333333333,1.6666666666667E-1,-0.25][4.1666666666667E-2,-8.3333333333333E-2,4.1666666666667E-2]]");
   assert_parsed_expression_evaluates_to<float>("inverse([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "[[(-0.01183)-0.0455*I,(-0.5005)-0.727*I,0.3185+0.4886*I][0.04095+0.00364*I,0.04004-0.02184*I,(-0.02548)+0.0009099*I][0.003336-0.00182*I,0.3609+0.5347*I,(-0.1301)-0.3576*I]]", Degree, Cartesian, 4); // inverse is not precise enough to display 7 significative digits
   assert_parsed_expression_evaluates_to<double>("inverse([[I,23-2I,3*I][4+I,5*I,6][7,8*I+2,9]])", "[[(-0.0118289353958)-0.0454959053685*I,(-0.500454959054)-0.727024567789*I,0.31847133758+0.488626023658*I][0.0409463148317+3.63967242948E-3*I,0.0400363967243-0.0218380345769*I,(-0.0254777070064)+9.0991810737E-4*I][3.33636639369E-3-1.81983621474E-3*I,0.36093418259+0.534728541098*I,(-0.130118289354)-0.357597816197*I]]", Degree, Cartesian, 12); // FIXME: inverse is not precise enough to display 14 significative digits
-
 #endif
 
-#endif
   assert_parsed_expression_evaluates_to<float>("prediction(0.1, 100)", "[[0,0.2]]");
   assert_parsed_expression_evaluates_to<double>("prediction(0.1, 100)", "[[0,0.2]]");
 #if 0
@@ -193,6 +186,7 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("product(2+n*I, 1, 5)", "(-100)-540*I");
   assert_parsed_expression_evaluates_to<double>("product(2+n*I, 1, 5)", "(-100)-540*I");
+#endif
 
   assert_parsed_expression_evaluates_to<float>("root(3+I, 3)", "1.459366+0.1571201*I");
   assert_parsed_expression_evaluates_to<double>("root(3+I, 3)", "1.4593656008684+1.5712012294394E-1*I");
@@ -200,14 +194,16 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("root(3, 3+I)", "1.382007-0.1524428*I");
   assert_parsed_expression_evaluates_to<double>("root(3, 3+I)", "1.3820069623326-0.1524427794159*I");
 
-  assert_parsed_expression_evaluates_to<float>("root(5^(-I)3^9,I)", "3.504", Degree, Cartesian, 4);
+  assert_parsed_expression_evaluates_to<float>("root(5^((-I)3^9),I)", "3.504", Degree, Cartesian, 4);
   assert_parsed_expression_evaluates_to<double>("root(5^(-I)3^9,I)", "3.5039410843", Degree, Cartesian, 11);
 
   assert_parsed_expression_evaluates_to<float>("R(3+I)", "1.755317+0.2848488*I");
   assert_parsed_expression_evaluates_to<double>("R(3+I)", "1.7553173018244+2.8484878459314E-1*I");
+#if 0
 
   assert_parsed_expression_evaluates_to<double>("sum(2+n*I,1,5)", "10+15*I");
   assert_parsed_expression_evaluates_to<double>("sum(2+n*I,1,5)", "10+15*I");
+#endif
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_evaluates_to<float>("transpose([[1,2,3][4,5,-6][7,8,9]])", "[[1,4,7][2,5,8][3,-6,9]]");
   assert_parsed_expression_evaluates_to<float>("transpose([[1,7,5][4,2,8]])", "[[1,4][7,2][5,8]]");
@@ -217,13 +213,13 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<double>("transpose([[1,2][4,5][7,8]])", "[[1,4,7][2,5,8]]");
 #endif
 
+#if 0
   assert_parsed_expression_evaluates_to<float>("round(2.3246,3)", "2.325");
   assert_parsed_expression_evaluates_to<double>("round(2.3245,3)", "2.325");
 
 #endif
   assert_parsed_expression_evaluates_to<float>("6!", "720");
   assert_parsed_expression_evaluates_to<double>("6!", "720");
-#if 0
 
   assert_parsed_expression_evaluates_to<float>("R(-1)", "I");
   assert_parsed_expression_evaluates_to<double>("R(-1)", "I");
@@ -237,6 +233,7 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<float>("int(1+cos(x), 0, 180)", "180");
   assert_parsed_expression_evaluates_to<double>("int(1+cos(x), 0, 180)", "180");
 
+#if 0
   Expression * exp = parse_expression("random()");
   assert_exp_is_bounded(exp, 0.0f, 1.0f);
   assert_exp_is_bounded(exp, 0.0, 1.0);
@@ -277,11 +274,11 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("gcd(11,121)", "11");
   assert_parsed_expression_simplify_to("lcm(123,278)", "34194");
   assert_parsed_expression_simplify_to("lcm(11,121)", "121");
-#if 0
   assert_parsed_expression_simplify_to("R(4)", "2");
   assert_parsed_expression_simplify_to("root(4,3)", "root(4,3)");
   assert_parsed_expression_simplify_to("root(4,P)", "4^(1/P)");
   assert_parsed_expression_simplify_to("root(27,3)", "3");
+#if 0
   assert_parsed_expression_simplify_to("round(4.235,2)", "106/25");
   assert_parsed_expression_simplify_to("round(4.23,0)", "4");
   assert_parsed_expression_simplify_to("round(4.9,0)", "5");

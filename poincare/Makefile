@@ -86,6 +86,10 @@ objs += $(addprefix poincare/src/,\
   opposite.o\
   matrix.o\
   matrix_complex.o\
+  matrix_dimension.o\
+  matrix_inverse.o\
+  matrix_trace.o\
+  matrix_transpose.o\
   multiplication.o\
   n_ary_expression_node.o\
   naperian_logarithm.o\

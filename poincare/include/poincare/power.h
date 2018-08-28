@@ -68,6 +68,7 @@ private:
 
 class Power : public Expression {
   friend class PowerNode;
+  friend class Round;
 public:
   Power(Expression base, Expression exponent) : Expression(TreePool::sharedPool()->createTreeNode<PowerNode>()) {
     replaceChildAtIndexInPlace(0, base);

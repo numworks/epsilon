@@ -2,34 +2,56 @@
 #define POINCARE_ROUND_H
 
 #include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
+#include <poincare/expression.h>
 #include <poincare/evaluation.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-class Round : public StaticHierarchy<2>  {
-  using StaticHierarchy<2>::StaticHierarchy;
+class RoundNode : public ExpressionNode  {
 public:
-  Type type() const override;
-private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
+  // Allocation Failure
+  static RoundNode * FailedAllocationStaticNode();
+  RoundNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(RoundNode); }
+  int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Round";
   }
+#endif
+
+  // Properties
+  Type type() const override { return Type::Round; }
+private:
+  // Layout
+  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   const char * name() const { return "round"; }
-  /* Simplification */
+  // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Complex */
+  // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
+class Round : public Expression {
+public:
+  Round() : Expression(TreePool::sharedPool()->createTreeNode<RoundNode>()) {}
+  Round(const RoundNode * n) : Expression(n) {}
+  Round(Expression operand0, Expression operand1) : Round() {
+    replaceChildAtIndexInPlace(0, operand0);
+    replaceChildAtIndexInPlace(1, operand1);
+  }
+
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+};
+
 }
 
 #endif
-
-

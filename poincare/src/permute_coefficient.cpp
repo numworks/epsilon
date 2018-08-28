@@ -68,8 +68,8 @@ Expression PermuteCoefficient::shallowReduce(Context& context, Preferences::Angl
 }
 
 template<typename T>
-Complex<T> * PermuteCoefficient::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {  Evaluation<T> * nInput = childAtIndex(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * kInput = childAtIndex(1)->privateApproximate(T(), context, angleUnit);
+Complex<T> * PermuteCoefficient::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {  Evaluation<T> * nInput = childAtIndex(0)->approximate(T(), context, angleUnit);
+  Evaluation<T> * kInput = childAtIndex(1)->approximate(T(), context, angleUnit);
   T n = nInput->toScalar();
   T k = kInput->toScalar();
   delete nInput;

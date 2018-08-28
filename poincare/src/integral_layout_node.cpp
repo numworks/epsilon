@@ -39,7 +39,7 @@ void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
     cursor->setLayoutNode(this);
     return;
   }
- if (integrandLayout()->isUninitialized()
+ if (!integrandLayout()->isUninitialized()
      && cursor->layoutNode() == integrandLayout()
      && cursor->position() == LayoutCursor::Position::Left)
   {

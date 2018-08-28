@@ -245,8 +245,7 @@ exp    : pow                { $$ = $1; }
        ;
 
 final_exp : exp             { $$ = $1; }
-/*
-          | exp STO symb   { if ($3->name() == Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Expression * terms[2] = {$1,$3}; $$ = new Store(terms, false); }*/
+          | exp STO symb   { if (static_cast<Symbol&>($3).name() == Symbol::SpecialSymbols::Ans) { YYERROR; } ; $$ = Store($1, static_cast<Symbol &>($3)); }
           | exp EQUAL exp   { $$ = Equal($1, $3); }
           ;
 %%

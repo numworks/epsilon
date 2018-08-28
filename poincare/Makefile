@@ -101,6 +101,7 @@ objs += $(addprefix poincare/src/,\
   preferences.o\
   product.o\
   rational.o\
+  real_part.o\
   sequence.o\
   serialization_helper.o\
   simplification_helper.o\

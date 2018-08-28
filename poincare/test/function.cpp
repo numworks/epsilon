@@ -56,9 +56,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("rem(29, 10)", ExpressionNode::Type::DivisionRemainder);
   assert_parsed_expression_type("root(2,3)", ExpressionNode::Type::NthRoot);
   assert_parsed_expression_type("R(2)", ExpressionNode::Type::SquareRoot);
-#if 0
   assert_parsed_expression_type("round(2,3)", ExpressionNode::Type::Round);
-#endif
   assert_parsed_expression_type("sum(n, 4, 10)", ExpressionNode::Type::Sum);
 #if MATRICES_ARE_DEFINED
   assert_parsed_expression_type("trace([[1,2,3][4,5,6][7,8,9]])", ExpressionNode::Type::MatrixTrace);
@@ -208,11 +206,9 @@ QUIZ_CASE(poincare_function_evaluate) {
   assert_parsed_expression_evaluates_to<double>("transpose([[1,2][4,5][7,8]])", "[[1,4,7][2,5,8]]");
 #endif
 
-#if 0
   assert_parsed_expression_evaluates_to<float>("round(2.3246,3)", "2.325");
   assert_parsed_expression_evaluates_to<double>("round(2.3245,3)", "2.325");
 
-#endif
   assert_parsed_expression_evaluates_to<float>("6!", "720");
   assert_parsed_expression_evaluates_to<double>("6!", "720");
 
@@ -273,12 +269,12 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("root(4,3)", "root(4,3)");
   assert_parsed_expression_simplify_to("root(4,P)", "4^(1/P)");
   assert_parsed_expression_simplify_to("root(27,3)", "3");
-#if 0
   assert_parsed_expression_simplify_to("round(4.235,2)", "106/25");
   assert_parsed_expression_simplify_to("round(4.23,0)", "4");
   assert_parsed_expression_simplify_to("round(4.9,0)", "5");
   assert_parsed_expression_simplify_to("round(12.9,-1)", "10");
   assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
+#if 0
   assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
   assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
 #endif

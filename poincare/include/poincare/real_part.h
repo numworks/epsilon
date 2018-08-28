@@ -8,7 +8,6 @@
 
 namespace Poincare {
 
-
 class RealPartNode : public ExpressionNode  {
 public:
   // Allocation Failure

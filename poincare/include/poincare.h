@@ -180,6 +180,7 @@
 #include <poincare/naperian_logarithm.h>
 #include <poincare/number.h>
 #include <poincare/opposite.h>
+#include <poincare/permute_coefficient.h>
 #include <poincare/decimal.h>
 #include <poincare/rational.h>
 #include <poincare/real_part.h>

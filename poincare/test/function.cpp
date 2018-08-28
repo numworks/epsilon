@@ -43,9 +43,7 @@ QUIZ_CASE(poincare_parse_function) {
   assert_parsed_expression_type("permute(10, 4)", ExpressionNode::Type::PermuteCoefficient);
 #endif
   assert_parsed_expression_type("prediction(0.1, 100)", ExpressionNode::Type::ConfidenceInterval);
-#if 0
   assert_parsed_expression_type("prediction95(0.1, 100)", ExpressionNode::Type::PredictionInterval);
-#endif
   assert_parsed_expression_type("product(n, 4, 10)", ExpressionNode::Type::Product);
   assert_parsed_expression_type("quo(29, 10)", ExpressionNode::Type::DivisionQuotient);
 
@@ -174,11 +172,10 @@ QUIZ_CASE(poincare_function_evaluate) {
 
   assert_parsed_expression_evaluates_to<float>("prediction(0.1, 100)", "[[0,0.2]]");
   assert_parsed_expression_evaluates_to<double>("prediction(0.1, 100)", "[[0,0.2]]");
-#if 0
+
   assert_parsed_expression_evaluates_to<float>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
   assert_parsed_expression_evaluates_to<double>("prediction95(0.1, 100)", "[[0.0412,0.1588]]");
 
-#endif
   assert_parsed_expression_evaluates_to<float>("product(2+n*I, 1, 5)", "(-100)-540*I");
   assert_parsed_expression_evaluates_to<double>("product(2+n*I, 1, 5)", "(-100)-540*I");
 

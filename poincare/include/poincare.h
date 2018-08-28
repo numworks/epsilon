@@ -167,6 +167,7 @@
 #include <poincare/matrix_complex.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
+#include <poincare/prediction_interval.h>
 #include <poincare/randint.h>
 #include <poincare/random.h>
 #include <poincare/subtraction.h>

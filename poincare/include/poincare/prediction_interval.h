@@ -2,30 +2,57 @@
 #define POINCARE_PREDICTION_INTERVAL_H
 
 #include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
+#include <poincare/expression.h>
+#include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-class PredictionInterval : public StaticHierarchy<2>  {
-  using StaticHierarchy<2>::StaticHierarchy;
+class PredictionIntervalNode : public ExpressionNode {
 public:
-  Type type() const override;
-  int polynomialDegree(char symbolName) const override;
-private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
+  static PredictionIntervalNode * FailedAllocationStaticNode();
+  PredictionIntervalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(PredictionIntervalNode); }
+  int numberOfChildren() const override { return 2; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "PredictionInterval";
   }
+#endif
+
+  // ExpressionNode
+
+  // Properties
+  Type type() const override { return Type::PredictionInterval; }
+  int polynomialDegree(char symbolName) const override { return -1; }
+private:
+  // Layout
+  LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
   }
   const char * name() const { return "prediction95"; }
-  /* Simplification */
+  // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
-  /* Evaluation */
-  Evaluation<float> approximate(Expression::SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * approximate(Expression::DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  // Evaluation
+  Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
+};
+
+
+class PredictionInterval : public Expression {
+public:
+  PredictionInterval() : Expression(TreePool::sharedPool()->createTreeNode<PredictionIntervalNode>()) {}
+  PredictionInterval(const PredictionIntervalNode * n) : Expression(n) {}
+  PredictionInterval(Expression child1, Expression child2) : PredictionInterval() {
+    replaceChildAtIndexInPlace(0, child1);
+    replaceChildAtIndexInPlace(1, child2);
+  }
+
+  // Expression
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
 }

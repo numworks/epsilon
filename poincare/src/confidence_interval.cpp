@@ -33,8 +33,8 @@ template<typename T>
 Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   Evaluation<T> fInput = childAtIndex(0)->approximate(T(), context, angleUnit);
   Evaluation<T> nInput = childAtIndex(1)->approximate(T(), context, angleUnit);
-  T f = static_cast<Complex<T> >(fInput).toScalar();
-  T n = static_cast<Complex<T> >(nInput).toScalar();
+  T f = static_cast<Complex<T> &>(fInput).toScalar();
+  T n = static_cast<Complex<T> &>(nInput).toScalar();
   if (std::isnan(f) || std::isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
     return Complex<T>::Undefined();
   }
@@ -63,13 +63,13 @@ Expression ConfidenceInterval::shallowReduce(Context& context, Preferences::Angl
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational>(c0);
+    Rational r0 = static_cast<Rational&>(c0);
     if (r0.signedIntegerNumerator().isNegative() || Integer::NaturalOrder(r0.signedIntegerNumerator(), r0.integerDenominator()) > 0) {
       return Undefined();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational>(c1);
+    Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne() || r1.signedIntegerNumerator().isNegative()) {
       return Undefined();
     }
@@ -77,8 +77,8 @@ Expression ConfidenceInterval::shallowReduce(Context& context, Preferences::Angl
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r0 = static_cast<Rational>(c0);
-  Rational r1 = static_cast<Rational>(c1);
+  Rational r0 = static_cast<Rational&>(c0);
+  Rational r1 = static_cast<Rational&>(c1);
   // Compute [r0-1/sqr(r1), r0+1/sqr(r1)]
   Expression sqr = Power(r1, Rational(-1, 2));
   Matrix matrix;

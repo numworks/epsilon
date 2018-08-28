@@ -98,6 +98,7 @@ objs += $(addprefix poincare/src/,\
   parenthesis.o\
   power.o\
   print_float.o\
+  prediction_interval.o\
   preferences.o\
   product.o\
   randint.o\

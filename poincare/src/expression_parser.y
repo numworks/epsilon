@@ -31,7 +31,7 @@ void poincare_expression_yyerror(Poincare::Expression * expressionOutput, char c
  * instead we do provide regular memcpy. Let's instruct Bison to use it. */
 #define YYCOPY(To, From, Count) memcpy(To, From, (Count)*sizeof(*(From)))
 
-
+using namespace Poincare;
 #if 0
 //TODO move comments
 
@@ -171,13 +171,13 @@ Root:
   }
   ;
 
-lstData: exp { $$ = Poincare::Matrix($1); }
+lstData: exp { $$ = Matrix($1); }
        | lstData COMMA exp { $$ = $1; $$.addChildAtIndexInPlace($3, $$.numberOfChildren(), $$.numberOfChildren()); }
        ;
 
 /* MATRICES_ARE_DEFINED */
 
-mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Poincare::Matrix::EmptyMatrix(); $$.addChildrenAsRowInPlace($2, 0); }
+mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Matrix::EmptyMatrix(); $$.addChildrenAsRowInPlace($2, 0); }
        | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3.numberOfChildren() != $1.numberOfColumns()) { YYERROR; } ; $$ = $1; $$.addChildrenAsRowInPlace($3, $$.numberOfChildren()); }
        ;
 
@@ -193,65 +193,65 @@ mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Poincare::Matrix::EmptyMatrix
 number : DIGITS { $$ = $1; }
 
 /*
-       | DOT DIGITS { $$ = Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, nullptr, 0, false)); }
-       | DIGITS DOT DIGITS { $$ = Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, nullptr, 0, false)); }
-       | DOT DIGITS EE DIGITS { if ($4.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $4.address, $4.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
-       | DIGITS DOT DIGITS EE DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $5.address, $5.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
-       | DIGITS EE DIGITS { if ($3.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $3.address, $3.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
-       | DOT DIGITS EE MINUS DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent(nullptr, 0, $2.address, $2.length, $5.address, $5.length, true);  if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Poincare::Decimal(Poincare::Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
-       | DIGITS DOT DIGITS EE MINUS DIGITS { if ($6.length > 4) { YYERROR; }; int exponent = Poincare::Decimal::exponent($1.address, $1.length, $3.address, $3.length, $6.address, $6.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
-       | DIGITS EE MINUS DIGITS { if ($4.length > 4) { YYERROR; }; int exponent =  Poincare::Decimal::exponent($1.address, $1.length, nullptr, 0, $4.address, $4.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Poincare::Decimal(Poincare::Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
+       | DOT DIGITS { $$ = Decimal(Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), Decimal::exponent(nullptr, 0, $2.address, $2.length, nullptr, 0, false)); }
+       | DIGITS DOT DIGITS { $$ = Decimal(Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), Decimal::exponent($1.address, $1.length, $3.address, $3.length, nullptr, 0, false)); }
+       | DOT DIGITS EE DIGITS { if ($4.length > 4) { YYERROR; }; int exponent = Decimal::exponent(nullptr, 0, $2.address, $2.length, $4.address, $4.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Decimal(Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
+       | DIGITS DOT DIGITS EE DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Decimal::exponent($1.address, $1.length, $3.address, $3.length, $5.address, $5.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Decimal(Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
+       | DIGITS EE DIGITS { if ($3.length > 4) { YYERROR; }; int exponent = Decimal::exponent($1.address, $1.length, nullptr, 0, $3.address, $3.length, false); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Decimal(Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
+       | DOT DIGITS EE MINUS DIGITS { if ($5.length > 4) { YYERROR; }; int exponent = Decimal::exponent(nullptr, 0, $2.address, $2.length, $5.address, $5.length, true);  if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = Decimal(Decimal::mantissa(nullptr, 0, $2.address, $2.length, false), exponent); }
+       | DIGITS DOT DIGITS EE MINUS DIGITS { if ($6.length > 4) { YYERROR; }; int exponent = Decimal::exponent($1.address, $1.length, $3.address, $3.length, $6.address, $6.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Decimal(Decimal::mantissa($1.address, $1.length, $3.address, $3.length, false), exponent); }
+       | DIGITS EE MINUS DIGITS { if ($4.length > 4) { YYERROR; }; int exponent =  Decimal::exponent($1.address, $1.length, nullptr, 0, $4.address, $4.length, true); if (exponent > 1000 || exponent < -1000 ) { YYERROR; }; $$ = new Decimal(Decimal::mantissa($1.address, $1.length, nullptr, 0, false), exponent); }
        ;
 */
 
-symb   : SYMBOL         { $$ = Poincare::Symbol($1); }
+symb   : SYMBOL         { $$ = Symbol($1); }
        ;
 
 term   : EMPTY          { $$ = $1; }
        | symb           { $$ = $1; }
        | UNDEFINED      { $$ = $1; }
        | number         { $$ = $1; }
-       | LOGFUNCTION UNDERSCORE LEFT_BRACE exp RIGHT_BRACE LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Poincare::Logarithm($7, $4); }
+       | LOGFUNCTION UNDERSCORE LEFT_BRACE exp RIGHT_BRACE LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Logarithm($7, $4); }
        | FUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { $$ = $1; if ($$.numberOfChildren() != ($3.numberOfChildren())) { YYERROR; } ; $$.setChildrenInPlace($3); }
 /* Special case for logarithm, as we do not now at first if it needs 1 or 2
  * children */
-       | LOGFUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($3.numberOfChildren() == 1) { $$ = Poincare::Logarithm($3.childAtIndex(0)); } else if ($3.numberOfChildren() == 2) { $$ = Poincare::Logarithm($3.childAtIndex(0), $3.childAtIndex(1));} else { YYERROR; } ; }
+       | LOGFUNCTION LEFT_PARENTHESIS lstData RIGHT_PARENTHESIS { if ($3.numberOfChildren() == 1) { $$ = Logarithm($3.childAtIndex(0)); } else if ($3.numberOfChildren() == 2) { $$ = Logarithm($3.childAtIndex(0), $3.childAtIndex(1));} else { YYERROR; } ; }
        | FUNCTION LEFT_PARENTHESIS RIGHT_PARENTHESIS { if ($1.numberOfChildren() != 0) { YYERROR; } $$ = $1; }
-       | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Poincare::Parenthesis($2); }
+       | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = Parenthesis($2); }
 /* MATRICES_ARE_DEFINED */
 
        | LEFT_BRACKET mtxData RIGHT_BRACKET { $$ = $2; }
        ;
 
 bang   : term               { $$ = $1; }
-       | term BANG          { $$ = Poincare::Factorial($1); }
+       | term BANG          { $$ = Factorial($1); }
        ;
 
 factor : bang               { $$ = $1; }
-       | bang pow %prec IMPLICIT_MULTIPLY { $$ = Poincare::Multiplication($1, $2); }
+       | bang pow %prec IMPLICIT_MULTIPLY { $$ = Multiplication($1, $2); }
        ;
 
 pow    : factor             { $$ = $1; }
-       | bang POW pow       { $$ = Poincare::Power($1,$3); }
-       | bang POW MINUS pow { $$ = Poincare::Power($1,Poincare::Opposite($4)); }
+       | bang POW pow       { $$ = Power($1,$3); }
+       | bang POW MINUS pow { $$ = Power($1,Opposite($4)); }
        ;
 
 exp    : pow                { $$ = $1; }
-       | exp DIVIDE exp     { $$ = Poincare::Division($1,$3); }
-       | exp MULTIPLY exp   { $$ = Poincare::Multiplication($1,$3); }
-       | exp MINUS exp      { $$ = Poincare::Subtraction($1,$3); }
-       | MINUS exp %prec UNARY_MINUS { $$ = Poincare::Opposite($2); }
-       | exp PLUS exp     { $$ = Poincare::Addition($1,$3); }
+       | exp DIVIDE exp     { $$ = Division($1,$3); }
+       | exp MULTIPLY exp   { $$ = Multiplication($1,$3); }
+       | exp MINUS exp      { $$ = Subtraction($1,$3); }
+       | MINUS exp %prec UNARY_MINUS { $$ = Opposite($2); }
+       | exp PLUS exp     { $$ = Addition($1,$3); }
        ;
 
 final_exp : exp             { $$ = $1; }
 /*
-          | exp STO symb   { if ($3->name() == Poincare::Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Poincare::Expression * terms[2] = {$1,$3}; $$ = new Poincare::Store(terms, false); }*/
-          | exp EQUAL exp   { $$ = Poincare::Equal($1, $3); }
+          | exp STO symb   { if ($3->name() == Symbol::SpecialSymbols::Ans) { delete $1; delete $3; YYERROR; } ; Expression * terms[2] = {$1,$3}; $$ = new Store(terms, false); }*/
+          | exp EQUAL exp   { $$ = Equal($1, $3); }
           ;
 %%
 
-void poincare_expression_yyerror(Poincare::Expression * expressionOutput, const char * msg) {
+void poincare_expression_yyerror(Expression * expressionOutput, const char * msg) {
   // Handle the error!
   // TODO: handle explicitely different type of errors (division by 0, missing parenthesis). This should call back the container to display a pop up with a message corresponding to the error?
 }

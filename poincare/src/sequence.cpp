@@ -11,36 +11,29 @@ extern "C" {
 
 namespace Poincare {
 
-LayoutRef Sequence::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+LayoutRef SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return createSequenceLayout(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
 template<typename T>
-Evaluation<T> Sequence::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<T> * aInput = childAtIndex(1)->approximate(T(), context, angleUnit);
-  Evaluation<T> * bInput = childAtIndex(2)->approximate(T(), context, angleUnit);
-  T start = aInput->toScalar();
-  T end = bInput->toScalar();
-  delete aInput;
-  delete bInput;
+Evaluation<T> SequenceNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
+  Evaluation<T> aInput = childAtIndex(1)->approximate(T(), context, angleUnit);
+  Evaluation<T> bInput = childAtIndex(2)->approximate(T(), context, angleUnit);
+  T start = aInput.toScalar();
+  T end = bInput.toScalar();
   if (std::isnan(start) || std::isnan(end) || start != (int)start || end != (int)end || end - start > k_maxNumberOfSteps) {
-    return new Complex<T>(Complex<T>::Undefined());
+    return Complex<T>::Undefined();
   }
   VariableContext<T> nContext = VariableContext<T>('n', &context);
-  Evaluation<T> * result = new Complex<T>(emptySequenceValue());
+  Evaluation<T> result = Complex<T>((T)emptySequenceValue());
   for (int i = (int)start; i <= (int)end; i++) {
-    if (shouldStopProcessing()) {
-      delete result;
-      return new Complex<T>(Complex<T>::Undefined());
+    if (Expression::shouldStopProcessing()) {
+      return Complex<T>::Undefined();
     }
     nContext.setApproximationForVariable((T)i);
-    Evaluation<T> * expression = childAtIndex(0)->approximate(T(), nContext, angleUnit);
-    Evaluation<T> * newResult = evaluateWithNextTerm(T(), result, expression);
-    delete result;
-    delete expression;
-    result = newResult;
-    if (result == nullptr) {
-      return new Complex<T>(Complex<T>::Undefined());
+    result = evaluateWithNextTerm(T(), result, childAtIndex(0)->approximate(T(), nContext, angleUnit));
+    if (result.isUndefined()) {
+      return Complex<T>::Undefined();
     }
   }
   return result;

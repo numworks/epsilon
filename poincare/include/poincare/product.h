@@ -5,21 +5,43 @@
 
 namespace Poincare {
 
-class Product : public Sequence {
-  using Sequence::Sequence;
+class ProductNode : public SequenceNode {
 public:
-  Type type() const override;
+  // Allocation Failure
+  static ProductNode * FailedAllocationStaticNode();
+  ProductNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+  // TreeNode
+  size_t size() const override { return sizeof(ProductNode); }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "Product";
+  }
+#endif
+
+  Type type() const override { return Type::Product; }
 private:
-  const char * name() const override;
-  int emptySequenceValue() const override;
+  const char * name() const override { return "product"; }
+  float emptySequenceValue() const override { return 1.0f; }
   LayoutRef createSequenceLayout(LayoutRef argumentLayout, LayoutRef subscriptLayout, LayoutRef superscriptLayout) const override;
-  Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> * a, Evaluation<double> * b) const override {
+  Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b) const override {
     return templatedApproximateWithNextTerm<double>(a, b);
   }
-  Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> * a, Evaluation<float> * b) const override {
+  Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b) const override {
     return templatedApproximateWithNextTerm<float>(a, b);
   }
-  template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> * a, Evaluation<T> * b) const;
+  template<typename T> Evaluation<T> templatedApproximateWithNextTerm(Evaluation<T> a, Evaluation<T> b) const;
+};
+
+class Product : public Expression {
+friend class ProductNode;
+public:
+  Product() : Expression(TreePool::sharedPool()->createTreeNode<ProductNode>()) {}
+  Product(const ProductNode * n) : Expression(n) {}
+  Product(Expression operand0, Expression operand1, Expression operand2) : Product() {
+    replaceChildAtIndexInPlace(0, operand0);
+    replaceChildAtIndexInPlace(1, operand1);
+    replaceChildAtIndexInPlace(2, operand2);
+  }
 };
 
 }

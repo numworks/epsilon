@@ -129,6 +129,10 @@
 #include <poincare/great_common_divisor.h>
 #include <poincare/imaginary_part.h>
 #include <poincare/integral.h>
+#include <poincare/matrix_dimension.h>
+#include <poincare/matrix_inverse.h>
+#include <poincare/matrix_trace.h>
+#include <poincare/matrix_transpose.h>
 #include <poincare/sine.h>
 #include <poincare/tangent.h>
 #include <poincare/hyperbolic_arc_cosine.h>

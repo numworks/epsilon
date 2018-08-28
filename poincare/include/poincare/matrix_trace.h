@@ -1,34 +1,50 @@
 #ifndef POINCARE_MATRIX_TRACE_H
 #define POINCARE_MATRIX_TRACE_H
 
-#include <poincare/layout_helper.h>
-#include <poincare/static_hierarchy.h>
-#include <poincare/evaluation.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
-class MatrixTrace : public StaticHierarchy<1>  {
-  using StaticHierarchy<1>::StaticHierarchy;
+class MatrixTraceNode : public ExpressionNode {
 public:
-  Type type() const override;
+  // Allocation Failure
+  static MatrixTraceNode * FailedAllocationStaticNode();
+  MatrixTraceNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
+
+  // TreeNode
+  size_t size() const override { return sizeof(MatrixTraceNode); }
+  int numberOfChildren() const override { return 1; }
+#if POINCARE_TREE_LOG
+  virtual void logNodeName(std::ostream & stream) const override {
+    stream << "MatrixTrace";
+  }
+#endif
+
+  // Properties
+  Type type() const override { return Type::MatrixTrace; }
 private:
-  /* Layout */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, name());
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
-  }
+  // Layout
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   const char * name() const { return "trace"; }
-  /* Simplification */
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
-  /* Evaluation */
+  // Simplification
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const override;
+  // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
  template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 
+class MatrixTrace : public Expression {
+public:
+  MatrixTrace() : Expression(TreePool::sharedPool()->createTreeNode<MatrixTraceNode>()) {}
+  MatrixTrace(const MatrixTraceNode * n) : Expression(n) {}
+  MatrixTrace(Expression operand) : MatrixTrace() {
+    replaceChildAtIndexInPlace(0, operand);
+  }
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+};
+
 }
 
 #endif
-

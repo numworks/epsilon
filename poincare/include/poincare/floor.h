@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class FloorNode : public ExpressionNode  {
+class FloorNode : public ExpressionNode {
 public:
   // Allocation Failure
   static FloorNode * FailedAllocationStaticNode();

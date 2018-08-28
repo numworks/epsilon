@@ -10,5 +10,5 @@ QUIZ_CASE(set_jmp_long_jmp) {
   }
   int newres = (0 == res) ? res : res + 1;
   longjmp(env, newres);
-  assert(false);
+  quiz_assert(false);
 }

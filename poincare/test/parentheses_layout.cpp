@@ -27,6 +27,6 @@ QUIZ_CASE(poincare_parenthesis_layout_size) {
   layout->addChildAtIndexInPlace(new CharLayout('6'), 5);
   layout->addChildAtIndexInPlace(rightPar, 7);
   layout->addChildAtIndexInPlace(new CharLayout('1'), 8);
-  assert(leftPar->size().height() == rightPar->size().height());
+  quiz_assert(leftPar->size().height() == rightPar->size().height());
   delete layout;
 }

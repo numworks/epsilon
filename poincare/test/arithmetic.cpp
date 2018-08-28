@@ -22,7 +22,7 @@ void assert_gcd_equals_to(Integer a, Integer b, Integer c) {
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << gcd.approximate<float>() << endl;
 #endif
-  assert(gcd.isEqualTo(c));
+  quiz_assert(gcd.isEqualTo(c));
 }
 
 void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
@@ -35,7 +35,7 @@ void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << lcm.approximate<float>() << endl;
 #endif
-  assert(lcm.isEqualTo(c));
+  quiz_assert(lcm.isEqualTo(c));
 }
 
 void assert_prime_factorization_equals_to(Integer a, int * factors, int * coefficients, int length) {
@@ -57,8 +57,8 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
      * (the relation between integers and their approximation is a surjection,
      * however different integers are really likely to have different
      * approximations... */
-    assert(outputFactors[index].approximate<float>() == Integer(factors[index]).approximate<float>());
-    assert(outputCoefficients[index].approximate<float>() == Integer(coefficients[index]).approximate<float>());
+    quiz_assert(outputFactors[index].approximate<float>() == Integer(factors[index]).approximate<float>());
+    quiz_assert(outputCoefficients[index].approximate<float>() == Integer(coefficients[index]).approximate<float>());
   }
 }
 

@@ -13,9 +13,9 @@ constexpr Poincare::ExpressionNode::Sign Unknown = Poincare::ExpressionNode::Sig
 void assert_parsed_expression_sign(const char * expression, Poincare::ExpressionNode::Sign sign) {
   GlobalContext globalContext;
   Expression e = parse_expression(expression);
-  assert(!e.isUninitialized());
+  quiz_assert(!e.isUninitialized());
   e = e.simplify(globalContext, Degree);
-  assert(e.sign() == sign);
+  quiz_assert(e.sign() == sign);
 }
 
 QUIZ_CASE(poincare_sign) {
@@ -59,12 +59,12 @@ QUIZ_CASE(poincare_polynomial_degree) {
 void assert_parsed_expression_has_characteristic_range(const char * expression, float range, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
   GlobalContext globalContext;
   Expression e = parse_expression(expression);
-  assert(!e.isUninitialized());
+  quiz_assert(!e.isUninitialized());
   e = e.simplify(globalContext, angleUnit);
   if (std::isnan(range)) {
-    assert(std::isnan(e.characteristicXRange(globalContext, angleUnit)));
+    quiz_assert(std::isnan(e.characteristicXRange(globalContext, angleUnit)));
   } else {
-    assert(std::fabs(e.characteristicXRange(globalContext, angleUnit) - range) < 0.0000001f);
+    quiz_assert(std::fabs(e.characteristicXRange(globalContext, angleUnit) - range) < 0.0000001f);
   }
 }
 
@@ -84,16 +84,16 @@ QUIZ_CASE(poincare_characteristic_range) {
 
 void assert_parsed_expression_has_variables(const char * expression, const char * variables) {
   Expression e = parse_expression(expression);
-  assert(!e.isUninitialized());
+  quiz_assert(!e.isUninitialized());
   char variableBuffer[Expression::k_maxNumberOfVariables+1] = {0};
   int numberOfVariables = e.getVariables(Poincare::Symbol::isVariableSymbol, variableBuffer);
   if (variables == nullptr) {
-    assert(numberOfVariables == -1);
+    quiz_assert(numberOfVariables == -1);
   } else {
-    assert(numberOfVariables == strlen(variables));
+    quiz_assert(numberOfVariables == strlen(variables));
     char * currentChar = variableBuffer;
     while (*variables != 0) {
-      assert(*currentChar++ == *variables++);
+      quiz_assert(*currentChar++ == *variables++);
     }
   }
 }
@@ -110,18 +110,18 @@ QUIZ_CASE(poincare_get_variables) {
 void assert_parsed_expression_has_polynomial_coefficient(const char * expression, char symbolName, const char ** coefficients, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Degree) {
   GlobalContext globalContext;
   Expression e = parse_expression(expression);
-  assert(!e.isUninitialized());
+  quiz_assert(!e.isUninitialized());
   e = e.deepReduce(globalContext, angleUnit);
   Expression coefficientBuffer[Poincare::Expression::k_maxNumberOfPolynomialCoefficients];
   int d = e.getPolynomialReducedCoefficients(symbolName, coefficientBuffer, globalContext, Radian);
   for (int i = 0; i <= d; i++) {
     Expression f = parse_expression(coefficients[i]);
-    assert(!f.isUninitialized());
+    quiz_assert(!f.isUninitialized());
     coefficientBuffer[i] = coefficientBuffer[i].deepReduce(globalContext, angleUnit);
     f = f.deepReduce(globalContext, angleUnit);
-    assert(coefficientBuffer[i].isIdenticalTo(f));
+    quiz_assert(coefficientBuffer[i].isIdenticalTo(f));
   }
-  assert(coefficients[d+1] == 0);
+  quiz_assert(coefficients[d+1] == 0);
 }
 
 QUIZ_CASE(poincare_get_polynomial_coefficients) {

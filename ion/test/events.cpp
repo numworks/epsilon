@@ -8,15 +8,15 @@ using namespace Ion::Events;
 QUIZ_CASE(ion_events_from_keyboard) {
   /* Ensure all events generated from the keyboard are properly defined */
   for (Key k : ValidKeys) {
-    assert(Event(k, false, false).isDefined());
-    assert(Event(k, true, false).isDefined());
-    assert(Event(k, false, true).isDefined());
-    assert(Event(k, true, true).isDefined());
+    quiz_assert(Event(k, false, false).isDefined());
+    quiz_assert(Event(k, true, false).isDefined());
+    quiz_assert(Event(k, false, true).isDefined());
+    quiz_assert(Event(k, true, true).isDefined());
   }
 
   // Test some fallbacks
-  assert(Event(Key::I5, false, false) == EXE);
-  assert(Event(Key::I5, true, false) == EXE);
-  assert(Event(Key::I5, false, true) == EXE);
-  assert(Event(Key::I5, true, true) == EXE);
+  quiz_assert(Event(Key::I5, false, false) == EXE);
+  quiz_assert(Event(Key::I5, true, false) == EXE);
+  quiz_assert(Event(Key::I5, false, true) == EXE);
+  quiz_assert(Event(Key::I5, true, true) == EXE);
 }

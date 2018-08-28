@@ -9,13 +9,13 @@ using namespace Poincare;
 
 static inline void assert_approximation_equals(const Expression i, float f) {
   Poincare::GlobalContext c;
-  assert(i.approximateToScalar<float>(c, Preferences::AngleUnit::Degree) == f);
+  quiz_assert(i.approximateToScalar<float>(c, Preferences::AngleUnit::Degree) == f);
 }
 
 static inline void assert_parsed_expression_is_equal_to(const char * exp, Expression e) {
   Expression result = Expression::parse(exp);
-  assert(!result.isUninitialized());
-  assert(result.isIdenticalTo(e));
+  quiz_assert(!result.isUninitialized());
+  quiz_assert(result.isIdenticalTo(e));
 }
 
 QUIZ_CASE(poincare_addition_cast_does_not_copy) {
@@ -23,9 +23,9 @@ QUIZ_CASE(poincare_addition_cast_does_not_copy) {
   Integer i2(2);
   Addition j(i1, i2);
   Expression k = j;
-  assert(k.identifier() == (static_cast<Addition&>(k)).identifier());
-  assert(i1.identifier() == (static_cast<Expression&>(i1)).identifier());
-  assert(k.identifier() == (static_cast<Expression&>(k)).identifier());
+  quiz_assert(k.identifier() == (static_cast<Addition&>(k)).identifier());
+  quiz_assert(i1.identifier() == (static_cast<Expression&>(i1)).identifier());
+  quiz_assert(k.identifier() == (static_cast<Expression&>(k)).identifier());
 }
 
 QUIZ_CASE(poincare_addition_without_parsing) {

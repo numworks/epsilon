@@ -18,7 +18,7 @@ void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, cons
   Sequence * v = nullptr;
   if (definitionU) {
     u = static_cast<Sequence *>(store.addEmptyModel());
-    assert(u->name()[0] == 'u');
+    quiz_assert(u->name()[0] == 'u');
     u->setType(typeU);
     u->setContent(definitionU);
     if (conditionU1) {
@@ -35,7 +35,7 @@ void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, cons
       store.removeModel(tempU);
       v = store.modelAtIndex(0);
     } else {
-      assert(store.numberOfModels() == 1);
+      quiz_assert(store.numberOfModels() == 1);
       v = static_cast<Sequence *>(store.addEmptyModel());
     }
     v->setType(typeV);
@@ -50,11 +50,11 @@ void check_sequences_defined_by(double result[2][10], Sequence::Type typeU, cons
   for (int j = 0; j < 10; j++) {
     if (u && u->isDefined()) {
       double un = u->evaluateAtAbscissa((double)j, &sequenceContext);
-      assert((std::isnan(un) && std::isnan(result[0][j])) || (un == result[0][j]));
+      quiz_assert((std::isnan(un) && std::isnan(result[0][j])) || (un == result[0][j]));
     }
     if (v && v->isDefined()) {
       double vn = v->evaluateAtAbscissa((double)j, &sequenceContext);
-      assert((std::isnan(vn) && std::isnan(result[1][j])) || (vn == result[1][j]));
+      quiz_assert((std::isnan(vn) && std::isnan(result[1][j])) || (vn == result[1][j]));
     }
   }
 }

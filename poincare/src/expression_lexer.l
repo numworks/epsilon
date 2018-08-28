@@ -140,8 +140,8 @@ lcm { poincare_expression_yylval.expression = LeastCommonMultiple(); return FUNC
 ln { poincare_expression_yylval.expression = NaperianLogarithm(); return FUNCTION; }
 log { return LOGFUNCTION; }
  /*permute { poincare_expression_yylval.expression = new PermuteCoefficient(); return FUNCTION; }
-prediction95 { poincare_expression_yylval.expression = new PredictionInterval(); return FUNCTION; }
 */
+prediction95 { poincare_expression_yylval.expression = PredictionInterval(); return FUNCTION; }
 prediction { poincare_expression_yylval.expression = SimplePredictionInterval(); return FUNCTION; }
 product { poincare_expression_yylval.expression = Product(); return FUNCTION; }
 quo { poincare_expression_yylval.expression = DivisionQuotient(); return FUNCTION; }

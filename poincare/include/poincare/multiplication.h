@@ -83,7 +83,7 @@ public:
     addChildAtIndexInPlace(e1, 0, numberOfChildren());
   }
   Multiplication(Expression e1, Expression e2, Expression e3) : Multiplication(e2, e3) {
-    addChildAtIndexInPlace(e3, 0, numberOfChildren());
+    addChildAtIndexInPlace(e1, 0, numberOfChildren());
   }
 
   // Expression

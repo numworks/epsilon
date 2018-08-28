@@ -41,9 +41,9 @@ int primeFactors[Arithmetic::k_numberOfPrimeFactors] = {2, 3, 5, 7, 11, 13, 17, 
 
 // we can go to 7907*7907 = 62 520 649
 void Arithmetic::PrimeFactorization(const Integer n, Integer outputFactors[], Integer outputCoefficients[], int outputLength) {
+  outputCoefficients[0] = -1;
   if (n.isAllocationFailure()) {
     /* Special case 0: Allocation failure. */
-    outputCoefficients[0] = -1;
     return;
   }
 
@@ -63,7 +63,6 @@ void Arithmetic::PrimeFactorization(const Integer n, Integer outputFactors[], In
     /* Special case 1: We do not want to break i in prime factor because it
      * might take too many factors... More than k_maxNumberOfPrimeFactors.
      * outputCoefficients[0] is set to -1 to indicate a special case. */
-    outputCoefficients[0] = -1;
     return;
   }
   for (int index = 0; index < outputLength; index++) {

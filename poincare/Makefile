@@ -100,6 +100,7 @@ objs += $(addprefix poincare/src/,\
   print_float.o\
   preferences.o\
   product.o\
+  randint.o\
   random.o\
   rational.o\
   real_part.o\

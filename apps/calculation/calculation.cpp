@@ -1,11 +1,8 @@
 #include "calculation.h"
 #include "calculation_store.h"
-#include "../shared/poincare_helpers.h"
 #include <string.h>
 #include <cmath>
-
 using namespace Poincare;
-using namespace Shared;
 
 namespace Calculation {
 
@@ -109,7 +106,7 @@ Expression * Calculation::input() {
 
 ExpressionLayout * Calculation::createInputLayout() {
   if (input() != nullptr) {
-    return input()->createLayout(PrintFloat::Mode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
+    return input()->createLayout(PrintFloat::Mode::Decimal, Expression::ComplexFormat::Cartesian);
   }
   return nullptr;
 }
@@ -161,7 +158,7 @@ Expression * Calculation::exactOutput(Context * context) {
 
 ExpressionLayout * Calculation::createExactOutputLayout(Context * context) {
   if (exactOutput(context) != nullptr) {
-    return PoincareHelpers::CreateLayout(exactOutput(context));
+    return exactOutput(context)->createLayout();
   }
   return nullptr;
 }
@@ -183,7 +180,7 @@ Expression * Calculation::approximateOutput(Context * context) {
 
 ExpressionLayout * Calculation::createApproximateOutputLayout(Context * context) {
   if (approximateOutput(context) != nullptr) {
-    return PoincareHelpers::CreateLayout(approximateOutput(context));
+    return approximateOutput(context)->createLayout();
   }
   return nullptr;
 }

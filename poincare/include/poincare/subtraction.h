@@ -17,8 +17,8 @@ public:
 private:
   /* Layout */
   bool needParenthesisWithParent(const Expression * e) const override;
-  ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return LayoutEngine::createInfixLayout(this, floatDisplayMode, numberOfSignificantDigits, name());
+  ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override {
+    return LayoutEngine::createInfixLayout(this, floatDisplayMode, complexFormat, name());
   }
   int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override {
     return LayoutEngine::writeInfixExpressionTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, name());

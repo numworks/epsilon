@@ -66,11 +66,13 @@ Complex<T> * Integral::templatedApproximate(Context & context, AngleUnit angleUn
   return new Complex<T>(result);
 }
 
-ExpressionLayout * Integral::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+ExpressionLayout * Integral::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   return new IntegralLayout(
-      operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      operand(2)->createLayout(floatDisplayMode, numberOfSignificantDigits),
+      operand(0)->createLayout(floatDisplayMode, complexFormat),
+      operand(1)->createLayout(floatDisplayMode, complexFormat),
+      operand(2)->createLayout(floatDisplayMode, complexFormat),
       false);
 }
 

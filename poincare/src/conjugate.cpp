@@ -18,8 +18,10 @@ Expression * Conjugate::clone() const {
   return a;
 }
 
-ExpressionLayout * Conjugate::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  return new ConjugateLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
+ExpressionLayout * Conjugate::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(complexFormat != ComplexFormat::Default);
+  return new ConjugateLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
 }
 
 Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {

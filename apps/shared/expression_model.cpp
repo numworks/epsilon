@@ -1,5 +1,4 @@
 #include "function.h"
-#include "poincare_helpers.h"
 #include <string.h>
 #include <cmath>
 #include <assert.h>
@@ -49,7 +48,7 @@ Poincare::ExpressionLayout * ExpressionModel::layout() {
   if (m_layout == nullptr) {
     Expression * nonSimplifiedExpression = Expression::parse(m_text);
     if (nonSimplifiedExpression != nullptr) {
-      m_layout = PoincareHelpers::CreateLayout(nonSimplifiedExpression);
+      m_layout = nonSimplifiedExpression->createLayout(PrintFloat::Mode::Decimal);
       delete nonSimplifiedExpression;
     }
   }

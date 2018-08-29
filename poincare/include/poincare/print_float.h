@@ -15,6 +15,7 @@ namespace PrintFloat {
   enum class Mode {
     Decimal = 0,
     Scientific = 1,
+    Default = 2
   };
   constexpr static int bufferSizeForFloatsWithPrecision(int numberOfSignificantDigits) {
     // The wors case is -1.234E-38
@@ -52,7 +53,7 @@ namespace PrintFloat {
    * ConvertFloatToText return the number of characters that have been written
    * in buffer (excluding the last \O character) */
   template <class T>
-  int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Mode mode);
+  int convertFloatToText(T d, char * buffer, int bufferSize, int numberOfSignificantDigits, Mode mode = Mode::Default);
   template <class T>
   static int convertFloatToTextPrivate(T f, char * buffer, int numberOfSignificantDigits, Mode mode);
 }

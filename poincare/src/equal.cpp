@@ -49,11 +49,13 @@ Expression * Equal::shallowReduce(Context& context, AngleUnit angleUnit) {
   return this;
 }
 
-ExpressionLayout * Equal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+ExpressionLayout * Equal::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(complexFormat != ComplexFormat::Default);
   HorizontalLayout * result = new HorizontalLayout();
-  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result->addOrMergeChildAtIndex(operand(0)->createLayout(floatDisplayMode, complexFormat), 0, false);
   result->addChildAtIndex(new CharLayout('='), result->numberOfChildren());
-  result->addOrMergeChildAtIndex(operand(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result->numberOfChildren(), false);
+  result->addOrMergeChildAtIndex(operand(1)->createLayout(floatDisplayMode, complexFormat), result->numberOfChildren(), false);
   return result;
 }
 

@@ -78,11 +78,11 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   return m_expressions[index];
 }
 
-ExpressionLayout * GlobalContext::expressionLayoutForSymbol(const Symbol * symbol, int numberOfSignificantDigits) {
+ExpressionLayout * GlobalContext::expressionLayoutForSymbol(const Symbol * symbol) {
   if (symbol->isMatrixSymbol()) {
     int index = symbolIndex(symbol);
     if (m_matrixLayout[index] == nullptr && m_matrixExpressions[index] != nullptr) {
-      m_matrixLayout[index] = m_matrixExpressions[index]->createLayout(PrintFloat::Mode::Decimal, numberOfSignificantDigits);
+      m_matrixLayout[index] = m_matrixExpressions[index]->createLayout();
     }
     return m_matrixLayout[index];
   }

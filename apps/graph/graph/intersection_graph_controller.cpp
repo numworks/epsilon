@@ -1,6 +1,5 @@
 #include "intersection_graph_controller.h"
 #include "../app.h"
-#include "../../shared/poincare_helpers.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -31,7 +30,7 @@ void IntersectionGraphController::reloadBannerView() {
   numberOfChar += legendLength;
   buffer[0] = m_function->name()[0];
   buffer[5] = m_intersectedFunction->name()[0];
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
+  numberOfChar += PrintFloat::convertFloatToText<double>(m_cursor->y(), buffer+numberOfChar, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits);
   strlcpy(buffer+numberOfChar, space, spaceLength+1);
   buffer[FunctionBannerDelegate::k_maxDigitLegendLength+legendLength] = 0;
   bannerView()->setLegendAtIndex(buffer, 1);

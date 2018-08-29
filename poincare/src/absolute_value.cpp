@@ -23,8 +23,10 @@ Expression * AbsoluteValue::setSign(Sign s, Context & context, AngleUnit angleUn
   return this;
 }
 
-ExpressionLayout * AbsoluteValue::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
-  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false);
+ExpressionLayout * AbsoluteValue::privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const {
+  assert(floatDisplayMode != PrintFloat::Mode::Default);
+  assert(complexFormat != ComplexFormat::Default);
+  return new AbsoluteValueLayout(operand(0)->createLayout(floatDisplayMode, complexFormat), false);
 }
 
 Expression * AbsoluteValue::shallowReduce(Context& context, AngleUnit angleUnit) {

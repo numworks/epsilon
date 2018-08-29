@@ -366,6 +366,7 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
     Rational a = static_cast<Rational>(childAtIndex(0));
     // p^q with p, q rationals
+    // TODO: maybe reduce Number^Rational?
     if (!letPowerAtRoot && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
       Rational exp = static_cast<Rational>(childAtIndex(1));
       if (RationalExponentShouldNotBeReduced(a, exp)) {
@@ -642,7 +643,11 @@ Expression Power::simplifyPowerMultiplication(const Multiplication & m, Expressi
 Expression Power::simplifyRationalRationalPower(Rational a, Rational b, Context& context, Preferences::AngleUnit angleUnit) const {
   // this is a^b with a, b rationals
   if (b.integerDenominator().isOne()) {
-    return Rational::IntegerPower(a, b.signedIntegerNumerator());
+    Rational r = Rational::IntegerPower(a, b.signedIntegerNumerator());
+    if (r.numeratorOrDenominatorIsInfinity()) {
+      return Power(a, b);
+    }
+    return r;
   }
   Multiplication m;
   if (b.sign() == ExpressionNode::Sign::Negative) {

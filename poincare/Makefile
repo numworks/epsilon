@@ -303,6 +303,10 @@ objs += poincare/src/expression_debug.o
 SFLAGS += -DPOINCARE_TESTS_PRINT_EXPRESSIONS=1
 endif
 
+ifdef POINCARE_TREE_LOG
+SFLAGS += -DPOINCARE_TREE_LOG=1
+endif
+
 # Even though flex and bison will generate both implementation and headers at
 # once, we don't declare it in the Makefile. If we did, "make -jN" with N>1 may
 # call bison or flex twice.

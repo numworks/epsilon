@@ -15,7 +15,9 @@ class Sine : public StaticHierarchy<1> {
 public:
   Type type() const override;
   Expression * clone() const override;
-  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, AngleUnit angleUnit = AngleUnit::Radian);
+  template<typename T> static std::complex<T> computeOnComplex(const std::complex<T> c, AngleUnit angleUnit = AngleUnit::Radian) {
+    return Trigonometry::computeDirectOnComplex(c, angleUnit, Complex<T>::sin);
+  }
 private:
   /* Layout */
   ExpressionLayout * createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override {

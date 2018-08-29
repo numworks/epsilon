@@ -3,7 +3,6 @@
 #include <poincare/hyperbolic_sine.h>
 #include <poincare/division.h>
 #include <poincare/simplification_engine.h>
-#include <poincare/trigonometry.h>
 extern "C" {
 #include <assert.h>
 }
@@ -36,7 +35,7 @@ Expression * HyperbolicTangent::shallowReduce(Context& context, AngleUnit angleU
 
 template<typename T>
 std::complex<T> HyperbolicTangent::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  return Trigonometry::RoundToMeaningfulDigits(std::tanh(c));
+  return std::tanh(c);
 }
 
 }

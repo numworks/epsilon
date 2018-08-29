@@ -109,6 +109,7 @@ Expression * Complex<T>::complexToExpression(Expression::ComplexFormat complexFo
   }
 }
 
+
 template<typename T>
 Complex<T> * Complex<T>::createInverse() const {
   return new Complex<T>(Division::compute(std::complex<T>(1.0), *this));

@@ -60,7 +60,6 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_erf.o \
   s_expm1f.o\
   s_fabsf.o \
-  s_fmaxf.o \
   s_floorf.o \
   s_frexpf.o \
   s_frexp.o \
@@ -108,7 +107,6 @@ objs += $(addprefix liba/src/external/openbsd/, \
   s_cos.o \
   s_expm1.o \
   s_fabs.o \
-  s_fmax.o \
   s_floor.o \
   s_log1p.o \
   s_round.o \

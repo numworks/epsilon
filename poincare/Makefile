@@ -249,6 +249,7 @@ tests += $(addprefix poincare/test/,\
   arithmetic.cpp\
   binomial_coefficient_layout.cpp\
   complex_to_expression.cpp\
+  convert_expression_to_text.cpp\
   division.cpp\
   expression.cpp\
   factorial.cpp\

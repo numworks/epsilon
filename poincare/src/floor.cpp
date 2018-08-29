@@ -61,6 +61,7 @@ Expression Floor::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   }
   Rational r = static_cast<Rational>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+  assert(!div.quotient.isInfinity());
   return Rational(div.quotient);
 }
 

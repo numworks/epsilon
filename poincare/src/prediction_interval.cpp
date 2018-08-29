@@ -76,6 +76,9 @@ Expression PredictionInterval::shallowReduce(Context& context, Preferences::Angl
   /* [r0-1.96*sqrt(r0*(1-r0)/r1), r0+1.96*sqrt(r0*(1-r0)/r1)]*/
   // Compute numerator = r0*(1-r0)
   Rational numerator = Rational::Multiplication(r0, Rational(Integer::Subtraction(r0.integerDenominator(), r0.unsignedIntegerNumerator()), r0.integerDenominator()));
+  if (numerator.numeratorOrDenominatorIsInfinity()) {
+    return *this;
+  }
   // Compute sqr = sqrt(r0*(1-r0)/r1)
   Expression sqr = Power(Division(numerator, r1), Rational(1, 2));
   Expression m = Multiplication(Rational(196, 100), sqr);

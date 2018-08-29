@@ -83,6 +83,7 @@ Expression GreatCommonDivisor::shallowReduce(Context& context, Preferences::Angl
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   Integer gcd = Arithmetic::GCD(a, b);
+  assert(!gcd.isInfinity());
   return Rational(gcd);
 }
 

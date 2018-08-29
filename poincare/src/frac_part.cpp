@@ -49,6 +49,7 @@ Expression FracPart::shallowReduce(Context& context, Preferences::AngleUnit angl
   }
   Rational r = static_cast<Rational>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+  assert(!div.remainder.isInfinity());
   return Rational(div.remainder, r.integerDenominator());
 }
 

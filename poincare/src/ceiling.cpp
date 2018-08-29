@@ -61,10 +61,15 @@ Expression Ceiling::shallowReduce(Context& context, Preferences::AngleUnit angle
   }
   Rational r = static_cast<Rational>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+  assert(!div.remainder.isInfinity());
   if (div.remainder.isZero()) {
     return Rational(div.quotient);
   }
-  return Rational(Integer::Addition(div.quotient, Integer(1)));
+  Integer result = Integer::Addition(div.quotient, Integer(1));
+  if (result.isInfinity()) {
+    return *this;
+  }
+  return Rational(result);
 }
 
 }

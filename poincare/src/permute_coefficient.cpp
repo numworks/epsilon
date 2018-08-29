@@ -91,6 +91,7 @@ Expression PermuteCoefficient::shallowReduce(Context& context, Preferences::Angl
     Integer factor = Integer::Subtraction(n, Integer(i));
     result = Integer::Multiplication(result, factor);
   }
+  assert(!result.isInfinity()); // < permute(k_maxNValue, k_maxNValue-1)~10^158
   return Rational(result);
 }
 

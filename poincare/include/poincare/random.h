@@ -2,7 +2,6 @@
 #define POINCARE_RANDOM_H
 
 #include <poincare/static_hierarchy.h>
-#include <poincare/evaluation.h>
 #include <poincare/layout_engine.h>
 
 namespace Poincare {

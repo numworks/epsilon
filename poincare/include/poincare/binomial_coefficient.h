@@ -1,7 +1,6 @@
 #ifndef POINCARE_BINOMIAL_COEFFICIENT_H
 #define POINCARE_BINOMIAL_COEFFICIENT_H
 
-#include <poincare/evaluation.h>
 #include <poincare/layout_engine.h>
 #include <poincare/static_hierarchy.h>
 

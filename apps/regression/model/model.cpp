@@ -1,5 +1,6 @@
 #include "model.h"
 #include "../store.h"
+#include <poincare/complex.h>
 #include <poincare/decimal.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>

@@ -1,5 +1,6 @@
 #include <poincare/matrix_transpose.h>
 #include <poincare/matrix.h>
+#include <poincare/complex.h>
 #include <poincare/division.h>
 extern "C" {
 #include <assert.h>
@@ -38,12 +39,17 @@ Expression * MatrixTranspose::shallowReduce(Context& context, AngleUnit angleUni
 }
 
 template<typename T>
-Evaluation<T> * MatrixTranspose::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * input = operand(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * transpose = input->createTranspose();
-  assert(transpose != nullptr);
+Expression * MatrixTranspose::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * input = operand(0)->approximate<T>(context, angleUnit);
+  Expression * result = nullptr;
+  if (input->type() == Type::Complex) {
+    result = input->clone();
+  } else {
+    assert(input->type() == Type::Matrix);
+    result = static_cast<Matrix *>(input)->createTranspose();
+  }
   delete input;
-  return transpose;
+  return result;
 }
 
 }

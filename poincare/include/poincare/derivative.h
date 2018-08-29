@@ -25,9 +25,9 @@ private:
   /* Simplification */
   Expression * shallowReduce(Context& context, AngleUnit angleUnit) override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
-  template<typename T> Complex<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+  template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
   template<typename T> T growthRateAroundAbscissa(T x, T h, Context & context, AngleUnit angleUnit) const;
   template<typename T> T riddersApproximation(Context & context, AngleUnit angleUnit, T x, T h, T * error) const;
   // TODO: Change coefficients?

@@ -20,11 +20,8 @@ const Expression * RegressionContext::expressionForSymbol(const Symbol * symbol)
 
     assert(m_seriesPairIndex >= 0);
     assert(m_seriesPairIndex < m_store->numberOfPairsOfSeries(series));
-    //m_value = Complex<double>::Float(m_store->get(series, storeI, m_seriesPairIndex));
-    // FIXME
-    //m_value = Complex<double>::Undefined();
-    //return &m_value;
-    return nullptr;
+    m_value = Complex<double>::Float(m_store->get(series, storeI, m_seriesPairIndex));
+    return &m_value;
   } else {
     return m_parentContext->expressionForSymbol(symbol);
   }

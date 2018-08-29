@@ -31,13 +31,16 @@ Expression * ArcSine::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> ArcSine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
+Complex<T> ArcSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
   assert(angleUnit != AngleUnit::Default);
-  std::complex<T> result = std::asin(c);
-  if (angleUnit == AngleUnit::Degree && result.imag() == 0.0) {
-    result *= 180/M_PI;
+  if (c.b() != 0) {
+    return Complex<T>::Float(NAN);
   }
-  return result;
+  T result = std::asin(c.a());
+  if (angleUnit == AngleUnit::Degree) {
+    return Complex<T>::Float(result*180/M_PI);
+  }
+  return Complex<T>::Float(result);
 }
 
 }

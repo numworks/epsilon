@@ -31,8 +31,11 @@ Expression * HyperbolicArcSine::shallowReduce(Context& context, AngleUnit angleU
 }
 
 template<typename T>
-std::complex<T> HyperbolicArcSine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  return std::asinh(c);
+Complex<T> HyperbolicArcSine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+  if (c.b() != 0) {
+    return Complex<T>::Float(NAN);
+  }
+  return Complex<T>::Float(std::asinh(c.a()));
 }
 
 }

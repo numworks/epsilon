@@ -1,4 +1,5 @@
 #include <poincare/preferences.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 

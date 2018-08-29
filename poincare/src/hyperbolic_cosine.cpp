@@ -1,4 +1,5 @@
 #include <poincare/hyperbolic_cosine.h>
+#include <poincare/complex.h>
 #include <poincare/addition.h>
 #include <poincare/power.h>
 #include <poincare/division.h>
@@ -35,8 +36,15 @@ Expression * HyperbolicCosine::shallowReduce(Context& context, AngleUnit angleUn
 }
 
 template<typename T>
-std::complex<T> HyperbolicCosine::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  return std::cosh(c);
+Complex<T> HyperbolicCosine::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+  if (c.b() == 0) {
+    return Complex<T>::Float(std::cosh(c.a()));
+  }
+  Complex<T> e = Complex<T>::Float(M_E);
+  Complex<T> exp1 = Power::compute(e, c);
+  Complex<T> exp2 = Power::compute(e, Complex<T>::Cartesian(-c.a(), -c.b()));
+  Complex<T> sum = Addition::compute(exp1, exp2);
+  return Division::compute(sum, Complex<T>::Float(2));
 }
 
 }

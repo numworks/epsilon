@@ -3,7 +3,7 @@
 
 #include <poincare/context.h>
 #include <poincare/matrix.h>
-#include <poincare/decimal.h>
+#include <poincare/complex.h>
 
 namespace Poincare {
 
@@ -28,14 +28,15 @@ public:
   static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
 private:
-  static Decimal * defaultExpression();
+  static Complex<double> * defaultExpression();
   int symbolIndex(const Symbol * symbol) const;
-  Expression * m_expressions[k_maxNumberOfScalarExpressions];
+  Complex<double> * m_expressions[k_maxNumberOfScalarExpressions];
   Matrix * m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   /* Matrix layout memoization */
   ExpressionLayout * m_matrixLayout[k_maxNumberOfMatrixExpressions];
-  Decimal m_pi;
-  Decimal m_e;
+  Complex<double> m_pi;
+  Complex<double> m_e;
+  Complex<double> m_i;
 };
 
 }

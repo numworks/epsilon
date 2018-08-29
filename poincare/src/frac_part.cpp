@@ -37,11 +37,11 @@ Expression * FracPart::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> FracPart::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  if (c.imag() != 0) {
-    return Complex<T>::Undefined();
+Complex<T> FracPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+  if (c.b() != 0) {
+    return Complex<T>::Float(NAN);
   }
-  return Complex<T>(c.real()-std::floor(c.real()));
+  return Complex<T>::Float(c.a()-std::floor(c.a()));
 }
 
 }

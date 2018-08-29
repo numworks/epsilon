@@ -1,4 +1,5 @@
 #include <poincare/conjugate.h>
+#include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
 #include "layout/conjugate_layout.h"
 
@@ -42,8 +43,8 @@ Expression * Conjugate::shallowReduce(Context& context, AngleUnit angleUnit) {
 }
 
 template<typename T>
-std::complex<T> Conjugate::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  return std::conj(c);
+Complex<T> Conjugate::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+  return c.conjugate();
 }
 
 }

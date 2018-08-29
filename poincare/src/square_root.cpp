@@ -1,4 +1,5 @@
 #include <poincare/square_root.h>
+#include <poincare/complex.h>
 #include <poincare/power.h>
 #include <poincare/simplification_engine.h>
 #include "layout/nth_root_layout.h"
@@ -25,8 +26,11 @@ int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSig
 }
 
 template<typename T>
-std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  return std::sqrt(c);
+Complex<T> SquareRoot::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+  if (c.b() == 0 && c.a() >= 0) {
+    return Complex<T>::Float(std::sqrt(c.a()));
+  }
+  return Power::compute(c, Complex<T>::Float(0.5));
 }
 
 Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {

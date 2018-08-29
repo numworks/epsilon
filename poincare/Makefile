@@ -14,6 +14,7 @@ objs += $(addprefix poincare/src/,\
   binomial_coefficient.o\
   bounded_static_hierarchy.o\
   ceiling.o\
+  complex.o\
   complex_argument.o\
   confidence_interval.o\
   conjugate.o\
@@ -28,7 +29,6 @@ objs += $(addprefix poincare/src/,\
   empty_expression.o\
   equal.o\
   expression_layout_cursor.o\
-  evaluation.o\
   expression_lexer.o\
   expression_parser.o\
   expression.o\

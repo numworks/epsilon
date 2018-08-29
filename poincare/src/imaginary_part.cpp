@@ -1,4 +1,5 @@
 #include <poincare/imaginary_part.h>
+#include <poincare/complex.h>
 #include <poincare/simplification_engine.h>
 #include <poincare/rational.h>
 #include <cmath>
@@ -36,8 +37,8 @@ Expression * ImaginaryPart::shallowReduce(Context& context, AngleUnit angleUnit)
 }
 
 template<typename T>
-std::complex<T> ImaginaryPart::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  return std::imag(c);
+Complex<T> ImaginaryPart::computeOnComplex(const Complex<T> c, AngleUnit angleUnit) {
+  return Complex<T>::Float(c.b());
 }
 
 }

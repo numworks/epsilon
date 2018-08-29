@@ -1,6 +1,6 @@
 #include <poincare/global_context.h>
 #include <poincare/matrix.h>
-#include <poincare/undefined.h>
+#include <poincare/matrix.h>
 #include <assert.h>
 #include <cmath>
 #include <ion.h>
@@ -8,8 +8,9 @@
 namespace Poincare {
 
 GlobalContext::GlobalContext() :
-  m_pi(M_PI),
-  m_e(M_E)
+  m_pi(Complex<double>::Float(M_PI)),
+  m_e(Complex<double>::Float(M_E)),
+  m_i(Complex<double>::Cartesian(0.0, 1.0))
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
@@ -39,8 +40,8 @@ GlobalContext::~GlobalContext() {
   }
 }
 
-Decimal * GlobalContext::defaultExpression() {
-  static Decimal defaultExpression(0.0f);
+Complex<double> * GlobalContext::defaultExpression() {
+  static Complex<double> defaultExpression(Complex<double>::Float(0.0));
   return &defaultExpression;
 }
 
@@ -60,6 +61,9 @@ const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
   }
   if (symbol->name() == Ion::Charset::Exponential) {
     return &m_e;
+  }
+  if (symbol->name() == Ion::Charset::IComplex) {
+    return &m_i;
   }
   int index = symbolIndex(symbol);
   if (symbol->isMatrixSymbol()) {
@@ -100,7 +104,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
       m_matrixLayout[indexMatrix] = nullptr;
     }
     if (evaluation != nullptr) {
-      if (evaluation->type() != Expression::Type::Matrix) {
+      if (evaluation->type() == Expression::Type::Complex) {
         m_matrixExpressions[indexMatrix] = new Matrix(&evaluation, 1, 1, false);
       } else {
         m_matrixExpressions[indexMatrix] = static_cast<Matrix *>(evaluation);
@@ -119,11 +123,11 @@ void GlobalContext::setExpressionForSymbolName(const Expression * expression, co
   if (evaluation == nullptr) {
     return;
   }
-  if (evaluation->type() == Expression::Type::Matrix) {
-    m_expressions[index] = new Undefined();
-    delete evaluation;
+  if (evaluation->type() == Expression::Type::Complex) {
+    m_expressions[index] = static_cast<Complex<double> *>(evaluation);
   } else {
-    m_expressions[index] = evaluation;
+    m_expressions[index] = new Complex<double>(Complex<double>::Float(NAN));
+    delete evaluation;
   }
 }
 

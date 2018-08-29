@@ -1,5 +1,6 @@
 #include <poincare/confidence_interval.h>
 #include <poincare/matrix.h>
+#include <poincare/complex.h>
 #include <poincare/addition.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
@@ -62,20 +63,23 @@ Expression * ConfidenceInterval::shallowReduce(Context& context, AngleUnit angle
 }
 
 template<typename T>
-Evaluation<T> * ConfidenceInterval::templatedApproximate(Context& context, AngleUnit angleUnit) const {
-  Evaluation<T> * fInput = operand(0)->privateApproximate(T(), context, angleUnit);
-  Evaluation<T> * nInput = operand(1)->privateApproximate(T(), context, angleUnit);
+Expression * ConfidenceInterval::templatedApproximate(Context& context, AngleUnit angleUnit) const {
+  Expression * fInput = operand(0)->approximate<T>(context, angleUnit);
+  Expression * nInput = operand(1)->approximate<T>(context, angleUnit);
+  if (fInput->type() != Type::Complex || nInput->type() != Type::Complex) {
+    return new Complex<T>(Complex<T>::Float(NAN));
+  }
   T f = static_cast<Complex<T> *>(fInput)->toScalar();
   T n = static_cast<Complex<T> *>(nInput)->toScalar();
   delete fInput;
   delete nInput;
   if (std::isnan(f) || std::isnan(n) || n != (int)n || n < 0 || f < 0 || f > 1) {
-    return new Complex<T>(Complex<T>::Undefined());
+    return new Complex<T>(Complex<T>::Float(NAN));
   }
-  std::complex<T> operands[2];
-  operands[0] = std::complex<T>(f - 1/std::sqrt(n));
-  operands[1] = std::complex<T>(f + 1/std::sqrt(n));
-  return new MatrixComplex<T>(operands, 1, 2);
+  Expression * operands[2];
+  operands[0] = new Complex<T>(Complex<T>::Float(f - 1/std::sqrt(n)));
+  operands[1] = new Complex<T>(Complex<T>::Float(f + 1/std::sqrt(n)));
+  return new Matrix(operands, 1, 2, false);
 }
 
 }

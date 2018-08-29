@@ -9,7 +9,6 @@ namespace Poincare {
 class Multiplication;
 
 class Matrix : public DynamicHierarchy {
-  template<typename T> friend class MatrixComplex;
 public:
   Matrix(MatrixData * matrixData); // pilfer the operands of matrixData
   Matrix(const Expression * const * operands, int numberOfRows, int numberOfColumns, bool cloneOperands = true);
@@ -25,27 +24,32 @@ public:
 
   /* Operation on matrix */
   int rank(Context & context, AngleUnit angleUnit, bool inPlace);
-  // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
-  template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
-#if MATRIX_EXACT_REDUCING
-  //template<typename T> Expression * createTrace() const;
-  //template<typename T> Expression * createDeterminant() const;
-  Matrix * createTranspose() const;
-  static Matrix * createIdentity(int dim);
   /* createInverse can be called on any matrix reduce or not, approximate or not. */
   Expression * createInverse(Context & context, AngleUnit angleUnit) const;
-#endif
+  /* createDeterminant and createTrace can only be called on a matrix of complex
+   * expressions. createDeterminant and createTrace return a complex
+   * expression. */
+  template<typename T> Complex<T> * createTrace() const;
+  template<typename T> Complex<T> * createDeterminant(Context & context, AngleUnit angleUnit) const;
+  /* createApproximateInverse has to be called on a matrix of complex and will
+   * return a matrix of complex if possible and nullptr otherwise. */
+  // TODO: createApproximateInverse should rather use ArrayInverse with T=complex<T>
+  template<typename T> Matrix * createApproximateInverse() const;
+  // Inverse the array in-place. Array has to be given in the form array[row_index][column_index]
+  template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
+  Matrix * createTranspose() const;
+  static Matrix * createIdentity(int dim);
+  template<typename T> static Matrix * createApproximateIdentity(int dim);
 private:
   /* rowCanonize turns a matrix in its reduced row echelon form. */
   void rowCanonize(Context & context, AngleUnit angleUnit, Multiplication * m = nullptr);
-  // Row canonize the array in place
-  template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr);
+  template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns);
   /* Layout */
   ExpressionLayout * privateCreateLayout(PrintFloat::Mode floatDisplayMode, ComplexFormat complexFormat) const override;
   /* Evaluation */
-  Evaluation<float> * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
-  Evaluation<double> * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
- template<typename T> Evaluation<T> * templatedApproximate(Context& context, AngleUnit angleUnit) const;
+  Expression * privateApproximate(SinglePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
+  Expression * privateApproximate(DoublePrecision p, Context& context, AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
+ template<typename T> Expression * templatedApproximate(Context& context, AngleUnit angleUnit) const;
   int m_numberOfRows;
 };
 

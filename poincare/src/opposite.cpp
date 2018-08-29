@@ -2,6 +2,7 @@
 #include "layout/char_layout.h"
 #include "layout/horizontal_layout.h"
 #include <cmath>
+#include <poincare/complex.h>
 #include <poincare/layout_engine.h>
 #include <poincare/multiplication.h>
 #include <poincare/rational.h>
@@ -44,8 +45,8 @@ bool Opposite::needParenthesisWithParent(const Expression * e) const {
 }
 
 template<typename T>
-std::complex<T> Opposite::compute(const std::complex<T> c, AngleUnit angleUnit) {
-  return -c;
+Complex<T> Opposite::compute(const Complex<T> c, AngleUnit angleUnit) {
+  return Complex<T>::Cartesian(-c.a(), -c.b());
 }
 
 Expression * Opposite::shallowReduce(Context& context, AngleUnit angleUnit) {
@@ -93,5 +94,5 @@ int Opposite::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSigni
 
 }
 
-template std::complex<float> Poincare::Opposite::compute<float>(const std::complex<float>, AngleUnit angleUnit);
-template std::complex<double> Poincare::Opposite::compute<double>(const std::complex<double>, AngleUnit angleUnit);
+template Poincare::Complex<float> Poincare::Opposite::compute<float>(Poincare::Complex<float>, AngleUnit angleUnit);
+template Poincare::Complex<double> Poincare::Opposite::compute<double>(Poincare::Complex<double>, AngleUnit angleUnit);

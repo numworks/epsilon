@@ -172,7 +172,7 @@ Expression * Calculation::approximateOutput(Context * context) {
       m_approximateOutput = exp->approximate<double>(*context);
       delete exp;
     } else {
-      m_approximateOutput = new Undefined();
+      m_approximateOutput = new Complex<double>(Complex<double>::Float(NAN));
     }
   }
   return m_approximateOutput;

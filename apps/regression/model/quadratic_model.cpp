@@ -38,7 +38,7 @@ Expression * QuadraticModel::simplifiedExpression(double * modelCoefficients, Po
       new Decimal(a),
       new Power(
         new Symbol('x'),
-        new Decimal(2.0),
+        new Decimal(2),
         false),
       false);
   Expression * bxExpression = new Multiplication(

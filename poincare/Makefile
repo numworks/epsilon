@@ -247,6 +247,7 @@ tests += $(addprefix poincare/test/,\
   tree/tree_by_reference.cpp\
   addition.cpp\
   arithmetic.cpp\
+  binomial_coefficient_layout.cpp\
   division.cpp\
   expression.cpp\
   factorial.cpp\

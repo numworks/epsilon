@@ -23,9 +23,6 @@ void print_expression(const Expression * e, int indentationLevel) {
     case Expression::Type::Addition:
       std::cout << "Addition";
       break;
-    case Expression::Type::Approximation:
-      std::cout << "Approximation";
-      break;
     case Expression::Type::ArcCosine:
       std::cout << "ArcCosine";
       break;

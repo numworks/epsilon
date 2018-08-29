@@ -34,7 +34,7 @@ int InfinityNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 template<typename T> Evaluation<T> InfinityNode::templatedApproximate() const {
-  return Complex<T>(INFINITY);
+  return Complex<T>(m_negative ? -INFINITY : INFINITY);
 }
 
 }

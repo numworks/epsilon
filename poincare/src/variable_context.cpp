@@ -20,7 +20,7 @@ void VariableContext<T>::setApproximationForVariable(T value) {
 }
 
 template<typename T>
-void VariableContext<T>::setExpressionForSymbolName(const Expression expression, const Symbol symbol, Context & context) {
+void VariableContext<T>::setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) {
   if (symbol.name() == m_name) {
     if (expression.isUninitialized()) {
       return;
@@ -32,7 +32,7 @@ void VariableContext<T>::setExpressionForSymbolName(const Expression expression,
 }
 
 template<typename T>
-const Expression VariableContext<T>::expressionForSymbol(const Symbol symbol) {
+const Expression VariableContext<T>::expressionForSymbol(const Symbol & symbol) {
   if (symbol.name() == m_name) {
     return m_value;
   } else {

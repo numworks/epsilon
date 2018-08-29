@@ -9,8 +9,8 @@ namespace Poincare {
 
 namespace LayoutHelper {
   /* Expression to Layout */
-  LayoutRef Infix(const Expression expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
-  LayoutRef Prefix(const Expression expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  LayoutRef Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
+  LayoutRef Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName);
 
   /* Create special layouts */
   LayoutRef Parentheses(LayoutRef layout, bool cloneLayout);

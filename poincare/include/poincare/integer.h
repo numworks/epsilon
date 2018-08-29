@@ -207,7 +207,7 @@ public:
   bool isEqualTo(const Integer & other) const {
     return (NaturalOrder(*this, other) == 0);
   }
-  bool isLowerThan(const Integer other) const {
+  bool isLowerThan(const Integer & other) const {
     return (NaturalOrder(*this, other) < 0);
   }
   // Properties

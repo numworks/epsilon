@@ -84,8 +84,8 @@ public:
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 private:
-  static const Number NumeralFactor(Expression e);
-  static bool TermsHaveIdenticalNonNumeralFactors(const Expression e1, const Expression e2);
+  static const Number NumeralFactor(const Expression & e);
+  static bool TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2);
   Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
   void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }

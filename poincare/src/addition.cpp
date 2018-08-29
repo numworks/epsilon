@@ -53,7 +53,7 @@ Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUn
   return Addition(this).shallowBeautify(context, angleUnit);
 }
 
-const Number Addition::NumeralFactor(Expression e) {
+const Number Addition::NumeralFactor(const Expression & e) {
   if (e.type() == ExpressionNode::Type::Multiplication && e.childAtIndex(0).isNumber()) {
     Number result = static_cast<Number>(e.childAtIndex(0));
     return result;
@@ -265,7 +265,7 @@ static inline int NumberOfNonNumeralFactors(const Expression & e) {
   return result;
 }
 
-static inline const Expression FirstNonNumeralFactor(const Expression e) {
+static inline const Expression FirstNonNumeralFactor(const Expression & e) {
   if (e.type() != ExpressionNode::Type::Multiplication) {
     return e;
   }
@@ -275,7 +275,7 @@ static inline const Expression FirstNonNumeralFactor(const Expression e) {
   return e.childAtIndex(0);
 }
 
-bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression e1, const Expression e2) {
+bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2) {
   /* Return true if two expressions differ only by a rational factor. For
    * example, 2*pi and pi do, 2*pi and 2*ln(2) don't. */
 

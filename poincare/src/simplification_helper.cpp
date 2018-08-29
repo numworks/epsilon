@@ -3,7 +3,7 @@
 #if MATRIX_EXACT_REDUCING
 namespace Poincare {
 
-Expression SimplificationHelper::Map(Expression e, Context & context, Preferences::AngleUnit angleUnit) {
+Expression SimplificationHelper::Map(const Expression & e, Context & context, Preferences::AngleUnit angleUnit) {
   assert(e->numberOfChildren() == 1 && e->childAtIndex(0)->type() == ExpressionNode::Type::Matrix);
   Expression c = e.childAtIndex(0);
   Matrix matrix;

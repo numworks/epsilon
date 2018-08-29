@@ -19,7 +19,7 @@ Decimal GlobalContext::defaultExpression() {
   return defaultExpression;
 }
 
-int GlobalContext::symbolIndex(const Symbol symbol) const {
+int GlobalContext::symbolIndex(const Symbol & symbol) const {
   if (Symbol::isMatrixSymbol(symbol.name())) {
     return symbol.name() - (char)Symbol::SpecialSymbols::M0;
   }
@@ -29,7 +29,7 @@ int GlobalContext::symbolIndex(const Symbol symbol) const {
   return -1;
 }
 
-const Expression GlobalContext::expressionForSymbol(const Symbol symbol) {
+const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
   if (symbol.name() == Ion::Charset::SmallPi) {
     return m_pi;
   }
@@ -49,7 +49,7 @@ const Expression GlobalContext::expressionForSymbol(const Symbol symbol) {
   return defaultExpression();
 }
 
-LayoutRef GlobalContext::layoutForSymbol(const Symbol symbol, int numberOfSignificantDigits) {
+LayoutRef GlobalContext::layoutForSymbol(const Symbol & symbol, int numberOfSignificantDigits) {
   if (Symbol::isMatrixSymbol(symbol.name())) {
     int index = symbolIndex(symbol);
     if (m_matrixLayouts[index].isUninitialized()) {
@@ -60,7 +60,7 @@ LayoutRef GlobalContext::layoutForSymbol(const Symbol symbol, int numberOfSignif
   return LayoutRef();
 }
 
-void GlobalContext::setExpressionForSymbolName(const Expression expression, const Symbol symbol, Context & context) {
+void GlobalContext::setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) {
   int index = symbolIndex(symbol);
  if (Symbol::isMatrixSymbol(symbol.name())) {
     int indexMatrix = symbol.name() - (char)Symbol::SpecialSymbols::M0;

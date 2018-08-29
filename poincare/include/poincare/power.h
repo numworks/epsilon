@@ -87,19 +87,19 @@ private:
   // Simplification
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 
-  Expression simplifyPowerPower(Power p, Expression r, Context & context, Preferences::AngleUnit angleUnit) const;
-  Expression simplifyPowerMultiplication(Multiplication m, Expression r, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression simplifyPowerPower(const Power & p, Expression r, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression simplifyPowerMultiplication(const Multiplication & m, Expression r, Context & context, Preferences::AngleUnit angleUnit) const;
   Expression simplifyRationalRationalPower(Rational a, Rational b, Context & context, Preferences::AngleUnit angleUnit) const;
 
-  static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
+  static Expression CreateSimplifiedIntegerRationalPower(Integer i, const Rational & r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
   Expression removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
   bool parentIsALogarithmOfSameBase() const;
   bool isNthRootOfUnity() const;
-  static Expression CreateComplexExponent(const Expression r); // Returns e^(i*pi*r)
-  static bool TermIsARationalSquareRootOrRational(const Expression e);
-  static const Rational RadicandInExpression(const Expression e);
-  static const Rational RationalFactorInExpression(const Expression e);
-  static bool RationalExponentShouldNotBeReduced(const Rational b, const Rational r);
+  static Expression CreateComplexExponent(const Expression & r); // Returns e^(i*pi*r)
+  static bool TermIsARationalSquareRootOrRational(const Expression& e);
+  static const Rational RadicandInExpression(const Expression & e);
+  static const Rational RationalFactorInExpression(const Expression & e);
+  static bool RationalExponentShouldNotBeReduced(const Rational & b, const Rational & r);
 };
 
 }

@@ -302,7 +302,7 @@ Decimal::Decimal(Integer m, int e) :
   Decimal(sizeof(DecimalNode)+m.numberOfDigits()*sizeof(native_uint_t), m, e) {}
 
 
-Decimal::Decimal(size_t size, Integer m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {
+Decimal::Decimal(size_t size, const Integer & m, int e) : Number(TreePool::sharedPool()->createTreeNode<DecimalNode>(size)) {
   node()->setValue(m.node()->digits(), m.node()->numberOfDigits(), e, m.isNegative());
 }
 

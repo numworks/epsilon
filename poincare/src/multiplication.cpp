@@ -612,7 +612,7 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
   }
 }
 
-bool Multiplication::HaveSameNonNumeralFactors(const Expression e1, const Expression e2) {
+bool Multiplication::HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2) {
   assert(e1.numberOfChildren() > 0);
   assert(e2.numberOfChildren() > 0);
   int numberOfNonNumeralFactors1 = e1.childAtIndex(0).isNumber() ? e1.numberOfChildren()-1 : e1.numberOfChildren();
@@ -635,21 +635,21 @@ const Expression Multiplication::CreateExponent(Expression e) {
   return result;
 }
 
-bool Multiplication::TermsHaveIdenticalBase(const Expression e1, const Expression e2) {
+bool Multiplication::TermsHaveIdenticalBase(const Expression & e1, const Expression & e2) {
   return Base(e1).isIdenticalTo(Base(e2));
 }
 
-bool Multiplication::TermsHaveIdenticalExponent(const Expression e1, const Expression e2) {
+bool Multiplication::TermsHaveIdenticalExponent(const Expression & e1, const Expression & e2) {
   /* Note: We will return false for e1=2 and e2=Pi, even though one could argue
    * that these have the same exponent whose value is 1. */
   return e1.type() == ExpressionNode::Type::Power && e2.type() == ExpressionNode::Type::Power && (e1.childAtIndex(1).isIdenticalTo(e2.childAtIndex(1)));
 }
 
-bool Multiplication::TermHasNumeralBase(const Expression e) {
+bool Multiplication::TermHasNumeralBase(const Expression & e) {
   return Base(e).isNumber();
 }
 
-bool Multiplication::TermHasNumeralExponent(const Expression e) {
+bool Multiplication::TermHasNumeralExponent(const Expression & e) {
   if (e.type() != ExpressionNode::Type::Power) {
     return true;
   }

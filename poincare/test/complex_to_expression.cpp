@@ -78,8 +78,8 @@ QUIZ_CASE(poincare_complex_to_expression) {
 
   assert_parsed_expression_evaluates_to<float>("-2E100+2E100*I", "undef");
   assert_parsed_expression_evaluates_to<double>("-2E360+2E360*I", "undef");
-  assert_parsed_expression_evaluates_to<float>("-2E100+2E10*I", "undef");
-  assert_parsed_expression_evaluates_to<double>("-2E360+2*I", "undef");
+  assert_parsed_expression_evaluates_to<float>("-2E100+2E10*I", "-inf+2E10*I");
+  assert_parsed_expression_evaluates_to<double>("-2E360+2*I", "-inf+2*I");
   assert_parsed_expression_evaluates_to<float>("undef+2E100*I", "undef");
   assert_parsed_expression_evaluates_to<double>("-2E360+undef*I", "undef");
 

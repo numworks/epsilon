@@ -34,5 +34,4 @@ QUIZ_CASE(poincare_create_all_layouts) {
   EmptyLayoutRef e24;
   SumLayoutRef e25(e22, e23, e24);
   VerticalOffsetLayoutRef e26(e25, VerticalOffsetLayoutNode::Type::Superscript);
-  assert(false);
 }

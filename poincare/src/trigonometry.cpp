@@ -15,7 +15,7 @@
 
 namespace Poincare {
 
-float Trigonometry::characteristicXRange(const Expression e, Context & context, Preferences::AngleUnit angleUnit) {
+float Trigonometry::characteristicXRange(const Expression & e, Context & context, Preferences::AngleUnit angleUnit) {
   assert(e.numberOfChildren() == 1);
   int d = e.childAtIndex(0).polynomialDegree('x');
   if (d < 0 || d > 1) {
@@ -36,7 +36,7 @@ float Trigonometry::characteristicXRange(const Expression e, Context & context, 
   return 2.0f*pi/std::fabs(a);
 }
 
-Expression Trigonometry::shallowReduceDirectFunction(Expression e, Context& context, Preferences::AngleUnit angleUnit) {
+Expression Trigonometry::shallowReduceDirectFunction(const Expression & e, Context& context, Preferences::AngleUnit angleUnit) {
   assert(e.type() == ExpressionNode::Type::Sine
       || e.type() == ExpressionNode::Type::Cosine
       || e.type() == ExpressionNode::Type::Tangent);
@@ -132,7 +132,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression e, Context& cont
   return e;
 }
 
-bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression e) {
+bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
   // We look for (cos^-1 * sin)
   assert(ExpressionNode::Type::Power < ExpressionNode::Type::Sine);
   if (e.type() == ExpressionNode::Type::Multiplication
@@ -146,7 +146,7 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression e) {
   return false;
 }
 
-Expression Trigonometry::shallowReduceInverseFunction(Expression e, Context& context, Preferences::AngleUnit angleUnit) {
+Expression Trigonometry::shallowReduceInverseFunction(const Expression & e, Context& context, Preferences::AngleUnit angleUnit) {
   assert(e.type() == ExpressionNode::Type::ArcCosine || e.type() == ExpressionNode::Type::ArcSine || e.type() == ExpressionNode::Type::ArcTangent);
   ExpressionNode::Type correspondingType = e.type() == ExpressionNode::Type::ArcCosine ? ExpressionNode::Type::Cosine : (e.type() == ExpressionNode::Type::ArcSine ? ExpressionNode::Type::Sine : ExpressionNode::Type::Tangent);
   float pi = angleUnit == Preferences::AngleUnit::Radian ? M_PI : 180;

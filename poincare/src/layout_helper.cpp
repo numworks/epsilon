@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-LayoutRef LayoutHelper::Infix(const Expression expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
+LayoutRef LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
   int numberOfChildren = expression.numberOfChildren();
   assert(numberOfChildren > 1);
   HorizontalLayoutRef result;
@@ -23,7 +23,7 @@ LayoutRef LayoutHelper::Infix(const Expression expression, Preferences::PrintFlo
   return result;
 }
 
-LayoutRef LayoutHelper::Prefix(const Expression expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
+LayoutRef LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
   HorizontalLayoutRef result;
   // Add the operator name.
   result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), 0, true);

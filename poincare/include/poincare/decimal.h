@@ -101,7 +101,7 @@ private:
   constexpr static int k_maxMantissaLength = 20;
   DecimalNode * node() const override { return static_cast<DecimalNode *>(Number::node()); }
   template <typename T> Decimal(T f);
-  Decimal(size_t size, Integer m, int e);
+  Decimal(size_t size, const Integer & m, int e);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;

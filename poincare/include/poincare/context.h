@@ -8,8 +8,8 @@ class Symbol;
 
 class Context {
 public:
-  virtual const Expression expressionForSymbol(const Symbol symbol) = 0;
-  virtual void setExpressionForSymbolName(const Expression expression, const Symbol symbol, Context & context) = 0;
+  virtual const Expression expressionForSymbol(const Symbol & symbol) = 0;
+  virtual void setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) = 0;
 };
 
 }

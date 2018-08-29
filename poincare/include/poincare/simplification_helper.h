@@ -8,7 +8,7 @@
 namespace Poincare {
 
 namespace SimplificationHelper {
-  Expression Map(Expression e, Context & context, Preferences::AngleUnit angleUnit);
+  Expression Map(const Expression & e, Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

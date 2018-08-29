@@ -616,7 +616,7 @@ Expression Power::denominator(Context & context, Preferences::AngleUnit angleUni
   return Expression();
 }
 
-Expression Power::simplifyPowerPower(Power p, Expression e, Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Power::simplifyPowerPower(const Power & p, Expression e, Context& context, Preferences::AngleUnit angleUnit) const {
   // this is p^e = (a^b)^e, we want a^(b*e)
   Expression p0 = p.childAtIndex(0);
   Expression p1 = p.childAtIndex(1);
@@ -626,7 +626,7 @@ Expression Power::simplifyPowerPower(Power p, Expression e, Context& context, Pr
   return result.shallowReduce(context, angleUnit);
 }
 
-Expression Power::simplifyPowerMultiplication(Multiplication m, Expression r, Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Power::simplifyPowerMultiplication(const Multiplication & m, Expression r, Context& context, Preferences::AngleUnit angleUnit) const {
   // this is m^r= (a*b*c*...)^r, we want a^r * b^r *c^r * ...
   Multiplication result;
   for (int index = 0; index < m.numberOfChildren(); index++) {
@@ -659,7 +659,7 @@ Expression Power::simplifyRationalRationalPower(Rational a, Rational b, Context&
   return m.shallowReduce(context, angleUnit);
 }
 
-Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
+Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, const Rational & r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
   assert(!i.isZero());
   assert(r.sign() == ExpressionNode::Sign::Positive);
   if (i.isOne()) {
@@ -854,7 +854,7 @@ bool Power::isNthRootOfUnity() const {
   return false;
 }
 
-Expression Power::CreateComplexExponent(const Expression r) {
+Expression Power::CreateComplexExponent(const Expression & r) {
   // Returns e^(i*pi*r)
   const Symbol exp = Symbol(Ion::Charset::Exponential);
   const Symbol iComplex = Symbol(Ion::Charset::IComplex);
@@ -874,7 +874,7 @@ Expression Power::CreateComplexExponent(const Expression r) {
 #endif
 }
 
-bool Power::TermIsARationalSquareRootOrRational(const Expression e) {
+bool Power::TermIsARationalSquareRootOrRational(const Expression & e) {
   if (e.type() == ExpressionNode::Type::Rational) {
     return true;
   }
@@ -898,7 +898,7 @@ bool Power::TermIsARationalSquareRootOrRational(const Expression e) {
   return false;
 }
 
-const Rational Power::RadicandInExpression(const Expression e) {
+const Rational Power::RadicandInExpression(const Expression & e) {
   if (e.type() == ExpressionNode::Type::Rational) {
     return Rational(1);
   } else if (e.type() == ExpressionNode::Type::Power) {
@@ -913,7 +913,7 @@ const Rational Power::RadicandInExpression(const Expression e) {
   }
 }
 
-const Rational Power::RationalFactorInExpression(const Expression e) {
+const Rational Power::RationalFactorInExpression(const Expression & e) {
   if (e.type() == ExpressionNode::Type::Rational) {
     return static_cast<Rational>(e);
   } else if (e.type() == ExpressionNode::Type::Power) {
@@ -925,7 +925,7 @@ const Rational Power::RationalFactorInExpression(const Expression e) {
   }
 }
 
-bool Power::RationalExponentShouldNotBeReduced(const Rational b, const Rational r) {
+bool Power::RationalExponentShouldNotBeReduced(const Rational & b, const Rational & r) {
   if (r.isMinusOne()) {
     return false;
   }

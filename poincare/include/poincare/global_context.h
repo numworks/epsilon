@@ -18,15 +18,15 @@ public:
   GlobalContext();
   /* The expression recorded in global context is already a expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
-  const Expression expressionForSymbol(const Symbol symbol) override;
-  LayoutRef layoutForSymbol(const Symbol symbol, int numberOfSignificantDigits);
-  void setExpressionForSymbolName(const Expression expression, const Symbol symbol, Context & context) override;
+  const Expression expressionForSymbol(const Symbol & symbol) override;
+  LayoutRef layoutForSymbol(const Symbol & symbol, int numberOfSignificantDigits);
+  void setExpressionForSymbolName(const Expression & expression, const Symbol & symbol, Context & context) override;
   static constexpr uint16_t k_maxNumberOfScalarExpressions = 26;
   static constexpr uint16_t k_maxNumberOfListExpressions = 10;
   static constexpr uint16_t k_maxNumberOfMatrixExpressions = 10;
 private:
   static Decimal defaultExpression();
-  int symbolIndex(const Symbol symbol) const;
+  int symbolIndex(const Symbol & symbol) const;
   Expression m_expressions[k_maxNumberOfScalarExpressions];
   Matrix m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   /* Matrix layout memoization */

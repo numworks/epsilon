@@ -26,7 +26,7 @@ int SquareRoot::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mod
 
 template<typename T>
 std::complex<T> SquareRoot::computeOnComplex(const std::complex<T> c, AngleUnit angleUnit) {
-  return Complex<T>::sqrt(c);
+  return std::sqrt(c);
 }
 
 Expression * SquareRoot::shallowReduce(Context& context, AngleUnit angleUnit) {

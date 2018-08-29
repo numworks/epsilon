@@ -6,7 +6,6 @@ extern "C" {
 #include <poincare/evaluation.h>
 #include <poincare/division.h>
 #include <poincare/matrix.h>
-#include <poincare/expression.h>
 #include <cmath>
 
 namespace Poincare {
@@ -121,4 +120,5 @@ template class Complex<float>;
 template class Complex<double>;
 template class MatrixComplex<float>;
 template class MatrixComplex<double>;
+
 }

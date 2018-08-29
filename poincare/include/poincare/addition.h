@@ -58,9 +58,6 @@ private:
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
-  Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
-  virtual void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit);
-  static const Number NumeralFactor(Expression e);
 
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
@@ -72,10 +69,6 @@ private:
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
     return ApproximationHelper::MapReduce<double>(this, context, angleUnit, compute<double>, computeOnComplexAndMatrix<double>, computeOnMatrixAndComplex<double>, computeOnMatrices<double>);
    }
-};
-
-class AllocationFailureAdditionNode : public AllocationFailureExpressionNode<AdditionNode> {
-  void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) override {}
 };
 
 class Addition : public NAryExpression {
@@ -91,13 +84,10 @@ public:
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 private:
+  static const Number NumeralFactor(Expression e);
   static bool TermsHaveIdenticalNonNumeralFactors(const Expression e1, const Expression e2);
-  Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) {
-    return node()->factorizeOnCommonDenominator(context, angleUnit);
-  }
-  void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) {
-    return node()->factorizeChildrenAtIndexesInPlace(index1, index2, context, angleUnit);
-  }
+  Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }
 };
 

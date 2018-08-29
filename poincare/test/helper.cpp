@@ -118,28 +118,25 @@ void assert_parsed_expression_serialize_to(Expression expression, const char * s
   quiz_assert(strcmp(buffer, serializedExpression) == 0);
 }
 
-#if 0
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {
-  Expression * e = parse_expression(expressionLayout);
+  Expression e = parse_expression(expressionLayout);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Serialize: " << expressionLayout << "----"  << endl;
 #endif
-  ExpressionLayout * el = e->createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
+  LayoutRef el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
   int bufferSize = 255;
   char buffer[bufferSize];
-  el->serialize(buffer, bufferSize);
+  el.serialize(buffer, bufferSize);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- serialized to: " << buffer << " ----\n"  << endl;
 #endif
   quiz_assert(strcmp(expressionLayout, buffer) == 0);
-  delete e;
-  delete el;
 }
 
-void assert_expression_layout_serialize_to(Poincare::ExpressionLayout * layout, const char * serialization) {
+void assert_expression_layout_serialize_to(Poincare::LayoutRef layout, const char * serialization) {
   int bufferSize = 255;
   char buffer[bufferSize];
-  layout->serialize(buffer, bufferSize);
+  layout.serialize(buffer, bufferSize);
 #if POINCARE_TESTS_PRINT_EXPRESSIONS
   cout << "---- Serialize: " << serialization << "----"  << endl;
   cout << "---- serialized to: " << buffer << " ----"  << endl;
@@ -148,6 +145,5 @@ void assert_expression_layout_serialize_to(Poincare::ExpressionLayout * layout, 
   quiz_assert(strcmp(serialization, buffer) == 0);
 }
 
-#endif
 template void assert_parsed_expression_evaluates_to<float>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);
 template void assert_parsed_expression_evaluates_to<double>(char const*, char const *, Poincare::Preferences::AngleUnit, Poincare::Preferences::ComplexFormat, int);

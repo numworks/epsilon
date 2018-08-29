@@ -221,7 +221,7 @@ bool Decimal::needParenthesisWithParent(const Expression * e) const {
 
 ExpressionLayout * Decimal::createLayout(PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
   char buffer[k_maxBufferSize];
-  int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
+  int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, PrintFloat::k_numberOfStoredSignificantDigits);
   return LayoutEngine::createStringLayout(buffer, numberOfChars);
 }
 

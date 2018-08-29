@@ -95,12 +95,12 @@ public:
   Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent);
   Decimal(const DecimalNode * node) : Number(node) {}
   Decimal(Integer m, int e);
+  template <typename T> Decimal(T f);
   constexpr static int k_maxExponentLength = 4;
   constexpr static int k_maxExponent = 1000;
 private:
   constexpr static int k_maxMantissaLength = 20;
   DecimalNode * node() const override { return static_cast<DecimalNode *>(Number::node()); }
-  template <typename T> Decimal(T f);
   Decimal(size_t size, const Integer & m, int e);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   // Simplification

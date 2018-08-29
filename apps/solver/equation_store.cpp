@@ -166,12 +166,12 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       /* Check for identity between exact and approximate layouts */
       char exactBuffer[Shared::ExpressionModel::k_expressionBufferSize];
       char approximateBuffer[Shared::ExpressionModel::k_expressionBufferSize];
-      m_exactSolutionExactLayouts[i]->writeTextInBuffer(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
-      m_exactSolutionApproximateLayouts[i]->writeTextInBuffer(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      m_exactSolutionExactLayouts[i]->writeTextInBuffer(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
+      m_exactSolutionApproximateLayouts[i]->writeTextInBuffer(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->numberOfSignificantDigits());
       m_exactSolutionIdentity[i] = strcmp(exactBuffer, approximateBuffer) == 0;
       /* Check for equality between exact and approximate layouts */
       if (!m_exactSolutionIdentity[i]) {
-        m_exactSolutionEquality[i] = exactSolutions[i]->isEqualToItsApproximationLayout(approximate, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
+        m_exactSolutionEquality[i] = exactSolutions[i]->isEqualToItsApproximationLayout(approximate, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
       }
       delete approximate;
       delete exactSolutions[i];

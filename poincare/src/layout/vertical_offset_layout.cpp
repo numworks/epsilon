@@ -160,7 +160,7 @@ ExpressionLayoutCursor VerticalOffsetLayout::cursorUnder(ExpressionLayoutCursor 
   return ExpressionLayout::cursorUnder(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-int VerticalOffsetLayout::writeTextInBuffer(char * buffer, int bufferSize) const {
+int VerticalOffsetLayout::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (m_type == Type::Subscript) {
     if (bufferSize == 0) {
       return -1;
@@ -176,7 +176,7 @@ int VerticalOffsetLayout::writeTextInBuffer(char * buffer, int bufferSize) const
     numberOfChar += LayoutEngine::writeOneCharInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, '{');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    numberOfChar += const_cast<VerticalOffsetLayout *>(this)->indiceLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar);
+    numberOfChar += const_cast<VerticalOffsetLayout *>(this)->indiceLayout()->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     numberOfChar += LayoutEngine::writeOneCharInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, '}');
@@ -186,7 +186,7 @@ int VerticalOffsetLayout::writeTextInBuffer(char * buffer, int bufferSize) const
   }
   assert(m_type == Type::Superscript);
   // If the layout is a superscript, write "^(indice)"
-  int numberOfChar = LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, "^");
+  int numberOfChar = LayoutEngine::writePrefixExpressionLayoutTextInBuffer(this, buffer, bufferSize, numberOfSignificantDigits, "^");
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
   // Add a multiplication if omitted.

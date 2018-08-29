@@ -22,14 +22,12 @@ public:
       const Expression * expression,
       char * buffer,
       int bufferSize,
-      PrintFloat::Mode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName);
   static int writePrefixExpressionTextInBuffer(
       const Expression * expression,
       char * buffer,
       int bufferSize,
-      PrintFloat::Mode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName);
 
@@ -39,6 +37,7 @@ public:
       const ExpressionLayout * expressionLayout,
       char * buffer,
       int bufferSize,
+      int numberOfDigits,
       const char * operatorName,
       int firstChildIndex = 0,
       int lastChildIndex = -1,
@@ -48,6 +47,7 @@ public:
       const ExpressionLayout * expressionLayout,
       char * buffer,
       int bufferSize,
+      int numberOfDigits,
       const char * operatorName,
       bool writeFirstChild = true);
 
@@ -57,8 +57,8 @@ public:
 private:
   static constexpr char divideChar = '/';
   // These two functions return the index of the null-terminating char.
-  static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis);
-  static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
+  static int writeInfixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, int firstChildIndex, int lastChildIndex, ChildNeedsParenthesis childNeedsParenthesis);
+  static int writePrefixExpressionOrExpressionLayoutTextInBuffer(const Expression * expression, const ExpressionLayout * expressionLayout, char * buffer, int bufferSize, int numberOfDigits, const char * operatorName, bool writeFirstChild = true);
 };
 
 }

@@ -21,7 +21,7 @@ public:
   /* Expression */
   Type type() const override;
   Expression * clone() const override;
-  int writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const override;
   int polynomialDegree(char symbolName) const override;
 
   /* Operation on matrix */

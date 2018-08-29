@@ -99,7 +99,7 @@ ExpressionLayout * Factorial::createLayout(PrintFloat::Mode floatDisplayMode, in
   return result;
 }
 
-int Factorial::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits) const {
+int Factorial::writeTextInBuffer(char * buffer, int bufferSize, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
     return -1;
   }
@@ -109,7 +109,7 @@ int Factorial::writeTextInBuffer(char * buffer, int bufferSize, PrintFloat::Mode
     buffer[numberOfChar++] = '(';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
   }
-  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  numberOfChar += operand(0)->writeTextInBuffer(buffer+numberOfChar, bufferSize-numberOfChar, numberOfSignificantDigits);
   if (operand(0)->needParenthesisWithParent(this)) {
     buffer[numberOfChar++] = ')';
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }

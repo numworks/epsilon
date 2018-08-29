@@ -335,9 +335,9 @@ int Expression::SimplificationOrder(const Expression * e1, const Expression * e2
   }
 }
 
-bool Expression::isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, PrintFloat::Mode floatDisplayMode, int numberOfSignificantDigits, Context & context) {
+bool Expression::isEqualToItsApproximationLayout(Expression * approximation, int bufferSize, int numberOfSignificantDigits, Context & context) {
   char buffer[bufferSize];
-  approximation->writeTextInBuffer(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  approximation->writeTextInBuffer(buffer, bufferSize, numberOfSignificantDigits);
   /* Warning: we cannot use directly the the approximate expression but we have
    * to re-serialize it because the number of stored significative
    * numbers and the number of displayed significative numbers might not be

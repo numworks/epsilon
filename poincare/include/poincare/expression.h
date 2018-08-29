@@ -43,7 +43,7 @@ public:
   /* Constructor & Destructor */
   Expression();
   virtual ~Expression() = default;
-  Expression clone() { return *this; }
+  Expression clone() const { return *this; }
   static Expression parse(char const * string);
 
   template<class T> explicit operator T() const {

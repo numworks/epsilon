@@ -3,7 +3,6 @@
 
 #include <poincare/context.h>
 #include <poincare/matrix.h>
-#include <poincare/approximation.h>
 #include <poincare/decimal.h>
 
 namespace Poincare {
@@ -35,9 +34,8 @@ private:
   Matrix * m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   /* Matrix layout memoization */
   ExpressionLayout * m_matrixLayout[k_maxNumberOfMatrixExpressions];
-  Approximation<double> m_pi;
-  Approximation<double> m_e;
-  Approximation<double> m_i;
+  Decimal m_pi;
+  Decimal m_e;
 };
 
 }

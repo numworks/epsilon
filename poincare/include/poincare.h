@@ -5,7 +5,6 @@
 
 #include <poincare/absolute_value.h>
 #include <poincare/addition.h>
-#include <poincare/approximation.h>
 #include <poincare/arc_cosine.h>
 #include <poincare/arc_sine.h>
 #include <poincare/arc_tangent.h>

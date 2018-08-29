@@ -9,8 +9,7 @@ namespace Poincare {
 
 GlobalContext::GlobalContext() :
   m_pi(M_PI),
-  m_e(M_E),
-  m_i(0.0, 1.0)
+  m_e(M_E)
 {
   for (int i = 0; i < k_maxNumberOfScalarExpressions; i++) {
     m_expressions[i] = nullptr;
@@ -41,7 +40,7 @@ GlobalContext::~GlobalContext() {
 }
 
 Decimal * GlobalContext::defaultExpression() {
-  static Decimal defaultExpression(Integer(0), 0);
+  static Decimal defaultExpression(0.0f);
   return &defaultExpression;
 }
 
@@ -56,9 +55,6 @@ int GlobalContext::symbolIndex(const Symbol * symbol) const {
 }
 
 const Expression * GlobalContext::expressionForSymbol(const Symbol * symbol) {
-  if (symbol->name() == Ion::Charset::IComplex) {
-    return &m_i;
-  }
   if (symbol->name() == Ion::Charset::SmallPi) {
     return &m_pi;
   }

@@ -548,7 +548,12 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
   if (numberOfChildren() > 0 && childAtIndex(0).type() == ExpressionNode::Type::Rational && factor.type() == ExpressionNode::Type::Rational) {
     assert(static_cast<Rational&>(factor).integerDenominator().isOne());
     assert(static_cast<Rational>(childAtIndex(0)).integerDenominator().isOne());
-    replaceChildAtIndexInPlace(0, Rational(Arithmetic::LCM(static_cast<Rational&>(factor).unsignedIntegerNumerator(), static_cast<Rational>(childAtIndex(0)).unsignedIntegerNumerator())));
+    Integer lcm = Arithmetic::LCM(static_cast<Rational&>(factor).unsignedIntegerNumerator(), static_cast<Rational>(childAtIndex(0)).unsignedIntegerNumerator());
+    if (lcm.isInfinity()) {
+      addChildAtIndexInPlace(static_cast<Rational&>(factor).unsignedIntegerNumerator(), 1, numberOfChildren());
+      return;
+    }
+    replaceChildAtIndexInPlace(0, Rational(lcm));
     return;
   }
   if (factor.type() != ExpressionNode::Type::Rational) {

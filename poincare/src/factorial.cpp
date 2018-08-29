@@ -99,6 +99,7 @@ Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit ang
       return *this;
     }
     Rational fact = Rational(Integer::Factorial(r.unsignedIntegerNumerator()));
+    assert(!fact.numeratorOrDenominatorIsInfinity()); // because fact < k_maxOperandValue!
     return fact;
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {

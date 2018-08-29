@@ -108,6 +108,9 @@ Expression Trigonometry::shallowReduceDirectFunction(const Expression & e, Conte
           unaryCoefficient *= -1;
         }
       }
+      if (div.remainder.isInfinity()) {
+        return e;
+      }
       // Step 4.5. Build the new result.
       Expression result = e;
       Expression newR = Rational(div.remainder, r.integerDenominator()).shallowReduce(context, angleUnit);

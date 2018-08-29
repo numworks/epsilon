@@ -73,6 +73,7 @@ Expression DivisionQuotient::shallowReduce(Context& context, Preferences::AngleU
     return Infinity(a.isNegative());
   }
   Integer result = Integer::Division(a, b).quotient;
+  assert(!result.isInfinity());
   return Rational(result);
 }
 

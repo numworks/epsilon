@@ -57,7 +57,7 @@ public:
   static bool isSeriesSymbol(char c);
   static bool isRegressionSymbol(char c);
   bool isApproximate(Context & context) const;
-  float characteristicXRange(Context & context, AngleUnit angleUnit) const override;
+  float characteristicXRange(Context & context, AngleUnit angleUnit = AngleUnit::Default) const override;
   bool hasAnExactRepresentation(Context & context) const;
   static const char * textForSpecialSymbols(char name);
   int getVariables(isVariableTest isVariable, char * variables) const override;

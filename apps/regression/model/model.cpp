@@ -1,6 +1,5 @@
 #include "model.h"
 #include "../store.h"
-#include "../../shared/poincare_helpers.h"
 #include <poincare/decimal.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
@@ -13,9 +12,9 @@ namespace Regression {
 
 double Model::levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) {
   Expression * yExpression = static_cast<Expression *>(new Decimal(y));
-  PoincareHelpers::Simplify(&yExpression, *context);
+  Expression::Simplify(&yExpression, *context);
   Expression * modelExpression = simplifiedExpression(modelCoefficients, context);
-  double result = modelExpression->nextIntersection('x', xMin, step, xMax, *context, Preferences::sharedPreferences()->angleUnit(), yExpression).abscissa;
+  double result = modelExpression->nextIntersection('x', xMin, step, xMax, *context, yExpression).abscissa;
   delete modelExpression;
   delete yExpression;
   return result;

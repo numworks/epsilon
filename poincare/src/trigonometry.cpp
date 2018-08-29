@@ -19,6 +19,9 @@ namespace Poincare {
 
 float Trigonometry::characteristicXRange(const Expression * e, Context & context, Expression::AngleUnit angleUnit) {
   assert(e->numberOfOperands() == 1);
+  if (angleUnit == Expression::AngleUnit::Default) {
+    angleUnit = Preferences::sharedPreferences()->angleUnit();
+  }
   const Expression * op = e->operand(0);
   int d = op->polynomialDegree('x');
   // op is not linear so we cannot not easily find an interesting range
@@ -36,7 +39,7 @@ float Trigonometry::characteristicXRange(const Expression * e, Context & context
   Poincare::Approximation<float> x(1.0f);
   const Poincare::Expression * args[2] = {op, &x};
   Poincare::Derivative derivative(args, true);
-  float a = derivative.approximateToScalar<float>(context, angleUnit);
+  float a = derivative.approximateToScalar<float>(context);
   float pi = angleUnit == Expression::AngleUnit::Radian ? M_PI : 180.0f;
   return 2.0f*pi/std::fabs(a);
 }
@@ -240,6 +243,7 @@ Expression * Trigonometry::table(const Expression * e, Expression::Type type, Co
 
 template <typename T>
 std::complex<T> Trigonometry::computeOnComplex(const std::complex<T> c, Expression::AngleUnit angleUnit, Approximation<T> approximate) {
+  assert(angleUnit != Expression::AngleUnit::Default);
   std::complex<T> input(c);
   if (angleUnit == Expression::AngleUnit::Degree && input.imag() == 0.0) {
     input = input*std::complex<T>(M_PI/180.0);

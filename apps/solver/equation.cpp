@@ -37,7 +37,7 @@ Expression * Equation::standardForm(Context * context) const {
   if (m_standardForm == nullptr) {
     Expression * e = expression(context);
     if (e->type() == Expression::Type::Equal) {
-      m_standardForm = static_cast<const Equal *>(e)->standardEquation(*context, Preferences::sharedPreferences()->angleUnit());
+      m_standardForm = static_cast<const Equal *>(e)->standardEquation(*context);
     } else if (e->type() == Expression::Type::Rational && static_cast<Rational *>(e)->isOne()) {
       // The equality was reduced which means the equality was always true.
       m_standardForm = new Rational(0);

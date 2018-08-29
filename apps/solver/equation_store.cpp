@@ -69,7 +69,7 @@ bool EquationStore::haveMoreApproximationSolutions(Context * context) {
     return false;
   }
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  return !std::isnan(definedModelAtIndex(0)->standardForm(context)->nextRoot(m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context, Preferences::sharedPreferences()->angleUnit()));
+  return !std::isnan(definedModelAtIndex(0)->standardForm(context)->nextRoot(m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context));
 }
 
 void EquationStore::approximateSolve(Poincare::Context * context) {
@@ -79,7 +79,7 @@ void EquationStore::approximateSolve(Poincare::Context * context) {
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
   for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateSolutions[i] = definedModelAtIndex(0)->standardForm(context)->nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context, Preferences::sharedPreferences()->angleUnit());
+    m_approximateSolutions[i] = definedModelAtIndex(0)->standardForm(context)->nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context);
     if (std::isnan(m_approximateSolutions[i])) {
       break;
     } else {
@@ -112,7 +112,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   Expression * constants[k_maxNumberOfEquations];
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context)->getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context, Preferences::sharedPreferences()->angleUnit());
+    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context)->getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context);
     // Clean allocated memory if the system is not linear
     if (!isLinear) {
       for (int j = 0; j < i; j++) {
@@ -144,7 +144,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     char x = m_variables[0];
     Expression * polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = definedModelAtIndex(0)->standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients, *context, Preferences::sharedPreferences()->angleUnit());
+    int degree = definedModelAtIndex(0)->standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients, *context);
     if (degree == 2) {
       /* Polynomial degree <= 2*/
       m_type = Type::PolynomialMonovariable;
@@ -161,7 +161,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
     if (exactSolutions[i]) {
       m_exactSolutionExactLayouts[i] = PoincareHelpers::CreateLayout(exactSolutions[i]);
-      Expression * approximate = PoincareHelpers::Approximate<double>(exactSolutions[i], *context);
+      Expression * approximate = exactSolutions[i]->approximate<double>(*context);
       m_exactSolutionApproximateLayouts[i] = PoincareHelpers::CreateLayout(approximate);
       /* Check for identity between exact and approximate layouts */
       char exactBuffer[Shared::ExpressionModel::k_expressionBufferSize];
@@ -171,7 +171,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
       m_exactSolutionIdentity[i] = strcmp(exactBuffer, approximateBuffer) == 0;
       /* Check for equality between exact and approximate layouts */
       if (!m_exactSolutionIdentity[i]) {
-        m_exactSolutionEquality[i] = exactSolutions[i]->isEqualToItsApproximationLayout(approximate, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
+        m_exactSolutionEquality[i] = exactSolutions[i]->isEqualToItsApproximationLayout(approximate, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
       }
       delete approximate;
       delete exactSolutions[i];
@@ -222,7 +222,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSoluti
         Expression * sol = Ab->matrixOperand(i,n);
         exactSolutions[i] = sol;
         Ab->detachOperand(sol);
-        PoincareHelpers::Simplify(&exactSolutions[i], *context);
+        Expression::Simplify(&exactSolutions[i], *context);
       }
     }
   }
@@ -237,7 +237,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * exa
   Expression * deltaSubOperand[3] = {new Rational(4), coefficients[0]->clone(), coefficients[2]->clone()};
   // Compute delta = b*b-4ac
   Expression * delta = new Subtraction(new Power(coefficients[1]->clone(), new Rational(2), false), new Multiplication(deltaSubOperand, 3, false), false);
-  PoincareHelpers::Simplify(&delta, *context);
+  Expression::Simplify(&delta, *context);
   if (delta->isRationalZero()) {
     // if delta = 0, x0=x1= -b/(2a)
     exactSolutions[0] = new Division(new Opposite(coefficients[1], false), new Multiplication(new Rational(2), coefficients[2], false), false);
@@ -252,7 +252,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * exa
   exactSolutions[m_numberOfSolutions] = delta;
   delete coefficients[0];
   for (int i = 0; i < m_numberOfSolutions; i++) {
-    PoincareHelpers::Simplify(&exactSolutions[i], *context);
+    Expression::Simplify(&exactSolutions[i], *context);
   }
   return Error::NoError;
 #if 0
@@ -269,7 +269,7 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * exa
     Expression * mult4Operands[3] = {new Rational(-4), d->clone(), new Power(b->clone(), new Rational(3), false)};
     Expression * add0Operands[5] = {new Multiplication(mult0Operands, 2, false), new Multiplication(mult1Operands, 5, false), new Multiplication(mult2Operands, 3, false), new Multiplication(mult3Operands, 3, false), new Multiplication(mult4Operands, 3, false)};
     Expression * delta = new Addition(add0Operands, 5, false);
-    PoincareHelpers::Simplify(&delta, *context);
+    Simplify(&delta, *context);
     // Delta0 = b^2-3ac
     Expression * mult5Operands[3] = {new Rational(3), a->clone(), c->clone()};
     Expression * delta0 = new Subtraction(new Power(b->clone(), new Rational(2), false), new Multiplication(mult5Operands, 3, false), false);

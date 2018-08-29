@@ -1,7 +1,6 @@
 #include "float_parameter_controller.h"
 #include "../constant.h"
 #include "../apps_container.h"
-#include "../shared/poincare_helpers.h"
 #include "text_field_delegate_app.h"
 #include <assert.h>
 #include <cmath>
@@ -120,7 +119,7 @@ bool FloatParameterController::textFieldShouldFinishEditing(TextField * textFiel
 bool FloatParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   AppsContainer * appsContainer = ((TextFieldDelegateApp *)app())->container();
   Context * globalContext = appsContainer->globalContext();
-  double floatBody = PoincareHelpers::ApproximateToScalar<double>(text, *globalContext);
+  double floatBody = Expression::approximateToScalar<double>(text, *globalContext);
   if (std::isnan(floatBody) || std::isinf(floatBody)) {
     app()->displayWarning(I18n::Message::UndefinedValue);
     return false;

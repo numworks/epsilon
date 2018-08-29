@@ -50,7 +50,7 @@ Complex<T> * Derivative::templatedApproximate(Context& context, AngleUnit angleU
   Evaluation<T> * xInput = operand(1)->privateApproximate(T(), context, angleUnit);
   T x = xInput->toScalar();
   delete xInput;
-  T functionValue = operand(0)->approximateWithValueForSymbol('x', x, context, angleUnit);
+  T functionValue = operand(0)->approximateWithValueForSymbol('x', x, context);
   // No complex/matrix version of Derivative
   if (std::isnan(x) || std::isnan(functionValue)) {
     return new Complex<T>(Complex<T>::Undefined());
@@ -76,8 +76,8 @@ Complex<T> * Derivative::templatedApproximate(Context& context, AngleUnit angleU
 
 template<typename T>
 T Derivative::growthRateAroundAbscissa(T x, T h, Context & context, AngleUnit angleUnit) const {
-  T expressionPlus = operand(0)->approximateWithValueForSymbol('x', x+h, context, angleUnit);
-  T expressionMinus = operand(0)->approximateWithValueForSymbol('x', x-h, context, angleUnit);
+  T expressionPlus = operand(0)->approximateWithValueForSymbol('x', x+h, context);
+  T expressionMinus = operand(0)->approximateWithValueForSymbol('x', x-h, context);
   return (expressionPlus - expressionMinus)/(2*h);
 }
 

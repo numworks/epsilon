@@ -21,10 +21,11 @@ void VariableContext<T>::setApproximationForVariable(T value) {
 template<typename T>
 void VariableContext<T>::setExpressionForSymbolName(const Expression * expression, const Symbol * symbol, Context & context) {
   if (symbol->name() == m_name) {
+    assert(false);
     if (expression == nullptr) {
       return;
     }
-    m_value = Approximation<T>(expression->approximateToScalar<T>(context, Preferences::sharedPreferences()->angleUnit()));
+    m_value = Approximation<T>(expression->approximateToScalar<T>(context));
   } else {
     m_parentContext->setExpressionForSymbolName(expression, symbol, context);
   }

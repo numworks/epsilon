@@ -1,10 +1,8 @@
 #include "cartesian_function.h"
-#include "../shared/poincare_helpers.h"
 #include <float.h>
 #include <cmath>
 
 using namespace Poincare;
-using namespace Shared;
 
 namespace Graph {
 
@@ -29,7 +27,7 @@ double CartesianFunction::approximateDerivative(double x, Poincare::Context * co
   /* TODO: when we will simplify derivative, we might want to simplify the
    * derivative here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
-  return PoincareHelpers::ApproximateToScalar<double>(&derivative, *context);
+  return derivative.approximateToScalar<double>(*context);
 }
 
 double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::Context * context) const {
@@ -40,23 +38,23 @@ double CartesianFunction::sumBetweenBounds(double start, double end, Poincare::C
   /* TODO: when we will simplify integral, we might want to simplify the
    * integral here. However, we might want to do it once for all x (to avoid
    * lagging in the derivative table. */
-  return PoincareHelpers::ApproximateToScalar<double>(&integral, *context);
+  return integral.approximateToScalar<double>(*context);
 }
 
 Expression::Coordinate2D CartesianFunction::nextMinimumFrom(double start, double step, double max, Context * context) const {
-  return expression(context)->nextMinimum(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  return expression(context)->nextMinimum(symbol(), start, step, max, *context);
 }
 
 Expression::Coordinate2D CartesianFunction::nextMaximumFrom(double start, double step, double max, Context * context) const {
-  return expression(context)->nextMaximum(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  return expression(context)->nextMaximum(symbol(), start, step, max, *context);
 }
 
 double CartesianFunction::nextRootFrom(double start, double step, double max, Context * context) const {
-  return expression(context)->nextRoot(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit());
+  return expression(context)->nextRoot(symbol(), start, step, max, *context);
 }
 
 Expression::Coordinate2D CartesianFunction::nextIntersectionFrom(double start, double step, double max, Poincare::Context * context, const Shared::Function * function) const {
-  return expression(context)->nextIntersection(symbol(), start, step, max, *context, Preferences::sharedPreferences()->angleUnit(), function->expression(context));
+  return expression(context)->nextIntersection(symbol(), start, step, max, *context, function->expression(context));
 }
 
 char CartesianFunction::symbol() const {

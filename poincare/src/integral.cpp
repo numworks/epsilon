@@ -76,7 +76,7 @@ ExpressionLayout * Integral::createLayout(PrintFloat::Mode floatDisplayMode, int
 
 template<typename T>
 T Integral::functionValueAtAbscissa(T x, Context & context, AngleUnit angleUnit) const {
-  return operand(0)->approximateWithValueForSymbol('x', x, context, angleUnit);
+  return operand(0)->approximateWithValueForSymbol('x', x, context);
 }
 
 #ifdef LAGRANGE_METHOD

@@ -152,14 +152,14 @@ void Sequence::setInitialRank(int rank) {
 
 Poincare::Expression * Sequence::firstInitialConditionExpression(Context * context) const {
   if (m_firstInitialConditionExpression == nullptr) {
-    m_firstInitialConditionExpression = PoincareHelpers::ParseAndSimplify(m_firstInitialConditionText, *context);
+    m_firstInitialConditionExpression = Poincare::Expression::ParseAndSimplify(m_firstInitialConditionText, *context);
   }
   return m_firstInitialConditionExpression;
 }
 
 Poincare::Expression * Sequence::secondInitialConditionExpression(Context * context) const {
   if (m_secondInitialConditionExpression == nullptr) {
-    m_secondInitialConditionExpression = PoincareHelpers::ParseAndSimplify(m_secondInitialConditionText, *context);
+    m_secondInitialConditionExpression = Poincare::Expression::ParseAndSimplify(m_secondInitialConditionText, *context);
   }
   return m_secondInitialConditionExpression;
 }
@@ -336,32 +336,32 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx) const {
     {
       ctx.setValueForSymbol(un, &unSymbol);
       ctx.setValueForSymbol(vn, &vnSymbol);
-      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)n, ctx, Poincare::Preferences::sharedPreferences()->angleUnit());
+      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)n, ctx);
     }
     case Type::SingleRecurrence:
     {
       if (n == m_initialRank) {
-        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpression(sqctx), *sqctx);
+        return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
       ctx.setValueForSymbol(un, &un1Symbol);
       ctx.setValueForSymbol(unm1, &unSymbol);
       ctx.setValueForSymbol(vn, &vn1Symbol);
       ctx.setValueForSymbol(vnm1, &vnSymbol);
-      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)(n-1), ctx, Poincare::Preferences::sharedPreferences()->angleUnit());
+      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)(n-1), ctx);
     }
     default:
     {
       if (n == m_initialRank) {
-        return PoincareHelpers::ApproximateToScalar<T>(firstInitialConditionExpression(sqctx), *sqctx);
+        return firstInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
       if (n == m_initialRank+1) {
-        return PoincareHelpers::ApproximateToScalar<T>(secondInitialConditionExpression(sqctx), *sqctx);
+        return secondInitialConditionExpression(sqctx)->template approximateToScalar<T>(*sqctx);
       }
       ctx.setValueForSymbol(unm1, &un1Symbol);
       ctx.setValueForSymbol(unm2, &unSymbol);
       ctx.setValueForSymbol(vnm1, &vn1Symbol);
       ctx.setValueForSymbol(vnm2, &vnSymbol);
-      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)(n-2), ctx, Poincare::Preferences::sharedPreferences()->angleUnit());
+      return expression(sqctx)->approximateWithValueForSymbol(symbol(), (T)(n-2), ctx);
     }
   }
 }

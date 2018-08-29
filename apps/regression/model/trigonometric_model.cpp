@@ -1,12 +1,10 @@
 #include "trigonometric_model.h"
-#include "../../shared/poincare_helpers.h"
 #include "../../poincare/include/poincare_layouts.h"
 #include <math.h>
 #include <poincare/preferences.h>
 #include <assert.h>
 
 using namespace Poincare;
-using namespace Shared;
 
 namespace Regression {
 
@@ -52,7 +50,7 @@ Expression * TrigonometricModel::simplifiedExpression(double * modelCoefficients
   Expression * asinExpression = new Multiplication(aExpression, sinExpression, false);
   Expression * dExpression = new Decimal(d);
   Expression * result = new Addition(asinExpression, dExpression, false);
-  PoincareHelpers::Simplify(&result, *context);
+  Expression::Simplify(&result, *context);
   return result;
 }
 

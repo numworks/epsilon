@@ -40,7 +40,7 @@ const char * ExpressionModel::text() const {
 
 Poincare::Expression * ExpressionModel::expression(Poincare::Context * context) const {
   if (m_expression == nullptr) {
-    m_expression = PoincareHelpers::ParseAndSimplify(m_text, *context);
+    m_expression = Expression::ParseAndSimplify(m_text, *context);
   }
   return m_expression;
 }

@@ -245,9 +245,10 @@ tests += $(addprefix poincare/test/,\
   tree/pair_node.cpp\
   tree/tree_by_value.cpp\
   tree/tree_by_reference.cpp\
-  expression.cpp\
   addition.cpp\
+  arithmetic.cpp\
   division.cpp\
+  expression.cpp\
   factorial.cpp\
   function.cpp\
   helper.cpp\

@@ -7,8 +7,6 @@
 
 struct OurNodeValue{
     Poincare::Expression expression;
-    //Poincare::Symbol symbol;
-    Poincare::Matrix matrix;
     char character;
 };
 #define YYSTYPE OurNodeValue

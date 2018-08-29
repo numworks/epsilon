@@ -142,9 +142,9 @@ using namespace Poincare;
 %type <expression> exp;
 %type <expression> number;
 %type <expression> symb;
-%type <matrix> lstData;
+%type <expression> lstData;
 /* MATRICES_ARE_DEFINED */
-%type <matrix> mtxData;
+%type <expression> mtxData;
 
 /* FIXME: no destructors, Expressions are GCed */
 /* During error recovery, some symbols need to be discarded. We need to tell
@@ -172,14 +172,13 @@ Root:
   ;
 
 lstData: exp { $$ = Matrix($1); }
-       | lstData COMMA exp { $$ = $1; $$.addChildAtIndexInPlace($3, $$.numberOfChildren(), $$.numberOfChildren()); }
+       | lstData COMMA exp { $$ = $1; static_cast<Matrix &>($$).addChildAtIndexInPlace($3, $$.numberOfChildren(), $$.numberOfChildren()); }
        ;
 
 /* MATRICES_ARE_DEFINED */
 
-mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Matrix::EmptyMatrix(); $$.addChildrenAsRowInPlace($2, 0); }
-       | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3.numberOfChildren() != $1.numberOfColumns()) { YYERROR; } ; $$ = $1; $$.addChildrenAsRowInPlace($3, $$.numberOfChildren()); }
-       ;
+mtxData: LEFT_BRACKET lstData RIGHT_BRACKET { $$ = Matrix::EmptyMatrix(); static_cast<Matrix &>($$).addChildrenAsRowInPlace($2, 0); }
+       | mtxData LEFT_BRACKET lstData RIGHT_BRACKET  { if ($3.numberOfChildren() != static_cast<Matrix &>($1).numberOfColumns()) { YYERROR; } ; $$ = $1; static_cast<Matrix &>($$).addChildrenAsRowInPlace($3, $$.numberOfChildren()); }
 
 /* When approximating expressions to double, results are bounded by 1E308 (and
  * 1E-308 for small numbers). We thus accept decimals whose exponents are in

@@ -86,6 +86,9 @@ Expression LeastCommonMultiple::shallowReduce(Context& context, Preferences::Ang
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   Integer lcm = Arithmetic::LCM(a, b);
+  if (lcm.isInfinity()) {
+    return *this;
+  }
   return Rational(lcm);
 }
 

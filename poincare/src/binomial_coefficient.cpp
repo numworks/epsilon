@@ -102,6 +102,8 @@ Expression BinomialCoefficient::shallowReduce(Context& context, Preferences::Ang
     Rational factor = Rational(Integer::Subtraction(n, Integer(i)), Integer::Subtraction(k, Integer(i)));
     result = Rational::Multiplication(result, factor);
   }
+  // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~2^89
+  assert(!result.numeratorOrDenominatorIsInfinity());
   return Rational(result);
 }
 

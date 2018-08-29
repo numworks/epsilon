@@ -50,6 +50,7 @@ ExpressionNode::Sign PowerNode::sign() const {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
     if (r->denominator().isOne()) {
       NaturalIntegerPointer nip = r->numerator();
+      assert(!Integer::Division(Integer(&nip), Integer(2)).remainder.isInfinity());
       if (Integer::Division(Integer(&nip), Integer(2)).remainder.isZero()) {
         return Sign::Positive;
       } else {
@@ -686,6 +687,10 @@ Expression Power::CreateSimplifiedIntegerRationalPower(Integer i, const Rational
     r2 = Integer::Multiplication(r2, Integer::Power(factors[index], div.remainder));
     index++;
   }
+  if (r2.isInfinity() || r1.isInfinity()) {
+    // we overflow Integer at one point: we abort
+    return Power(Rational(i), r);
+  }
   Rational p1 = Rational(r2);
   Integer one = isDenominator ? Integer(-1) : Integer(1);
   Rational p2 = Rational(one, r.integerDenominator());
@@ -723,7 +728,11 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
     Integer q = castedChild0.integerDenominator();
     // We do nothing for terms of the form sqrt(p)
     if (!q.isOne() || castedChild1.isMinusHalf()) {
-      Power sqrt = Power(Rational(Integer::Multiplication(p, q)), Rational(1, 2));
+      Integer pq = Integer::Multiplication(p, q);
+      if (pq.isInfinity()) {
+        return result;
+      }
+      Power sqrt = Power(Rational(pq), Rational(1, 2));
       Expression reducedSqrt = sqrt.shallowReduce(context, angleUnit);
       if (castedChild1.isHalf()) {
         result = Multiplication(Rational(Integer(1), q), reducedSqrt);
@@ -775,8 +784,10 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
           Integer::Multiplication(p2, q1)));
 
     // Compute the numerator
-    Power sqrt1 = Power(Rational(Integer::Multiplication(p1, q1)), Rational(1, 2));
-    Power sqrt2 = Power(Rational(Integer::Multiplication(p2, q2)), Rational(1, 2));
+    Integer pq1 = Integer::Multiplication(p1, q1);
+    Integer pq2 = Integer::Multiplication(p2, q2);
+    Power sqrt1 = Power(Rational(pq1), Rational(1, 2));
+    Power sqrt2 = Power(Rational(pq2), Rational(1, 2));
     Integer factor1 = Integer::Multiplication(
         Integer::Multiplication(n1, d1),
         Integer::Multiplication(Integer::Power(d2, Integer(2)), q2));
@@ -785,16 +796,18 @@ Expression Power::removeSquareRootsFromDenominator(Context & context, Preference
         Integer::Multiplication(n2, d2),
         Integer::Multiplication(Integer::Power(d1, Integer(2)), q1));
     Multiplication m2 = Multiplication(Rational(factor2), sqrt2);
-    Subtraction numerator;
+    Expression numerator;
     if (denominator.isNegative()) {
       numerator = Subtraction(m2, m1);
       denominator.setNegative(false);
     } else {
       numerator = Subtraction(m1, m2);
     }
-
-    Expression reducedNumerator = numerator.deepReduce(context, angleUnit);
-    result = Multiplication(reducedNumerator, Rational(Integer(1), denominator));
+    if (denominator.isInfinity() || factor1.isInfinity() || factor2.isInfinity() || pq1.isInfinity() || pq2.isInfinity()) {
+      return result; // Escape
+    }
+    numerator = numerator.deepReduce(context, angleUnit);
+    result = Multiplication(numerator, Rational(Integer(1), denominator));
   }
 
   if (!result.isUninitialized()) {

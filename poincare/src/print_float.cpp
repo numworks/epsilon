@@ -171,6 +171,7 @@ int PrintFloat::convertFloatToTextPrivate(T f, char * buffer, int numberOfSignif
   }
 
   // Print mantissa
+  assert(!Integer((int64_t)mantissa).isInfinity());
   assert(availableCharsForMantissaWithSign < PrintFloat::k_maxFloatBufferLength);
   PrintFloat::printBase10IntegerWithDecimalMarker(buffer, availableCharsForMantissaWithSign, Integer((int64_t)mantissa), decimalMarkerPosition);
   if (displayMode == Preferences::PrintFloatMode::Decimal || exponentInBase10 == 0) {

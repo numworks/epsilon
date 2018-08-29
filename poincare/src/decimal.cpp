@@ -21,6 +21,7 @@ void removeZeroAtTheEnd(Integer * i) {
     *i = d.quotient;
     d = Integer::Division(*i, base);
   }
+  assert(!i->isInfinity());
 }
 
 void DecimalNode::setValue(native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative) {

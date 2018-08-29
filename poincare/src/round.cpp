@@ -47,6 +47,8 @@ Expression Round::shallowReduce(Context& context, Preferences::AngleUnit angleUn
     return Undefined();
   }
 #endif
+  /* We reduce only round(Rational, Rational). We do not reduce
+   * round(Float, Float) which is equivalent to what is done in approximate. */
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational>(childAtIndex(0));
     Rational r2 = static_cast<Rational>(childAtIndex(1));
@@ -64,7 +66,11 @@ Expression Round::shallowReduce(Context& context, Preferences::AngleUnit angleUn
     if (Rational::NaturalOrder(Rational(d.remainder, mult.integerDenominator()), Rational(1,2)) >= 0) {
       rounding = Integer::Addition(rounding, Integer(1));
     }
-    return Rational::Multiplication(rounding, Rational::IntegerPower(Rational(1,10), r2.signedIntegerNumerator()));
+    Rational result = Rational::Multiplication(rounding, Rational::IntegerPower(Rational(1,10), r2.signedIntegerNumerator()));
+    if (result.numeratorOrDenominatorIsInfinity()) {
+      return *this;
+    }
+    return result;
   }
   return *this;
 }

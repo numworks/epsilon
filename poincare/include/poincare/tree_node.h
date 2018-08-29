@@ -1,8 +1,6 @@
 #ifndef POINCARE_TREE_NODE_H
 #define POINCARE_TREE_NODE_H
 
-#define POINCARE_TREE_LOG 1
-
 #include <assert.h>
 #include <stddef.h>
 #include <strings.h>

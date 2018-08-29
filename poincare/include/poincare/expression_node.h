@@ -101,7 +101,7 @@ public:
   };
   virtual Sign sign() const { return Sign::Unknown; }
   virtual bool isNumber() const { return false; }
-  /*!*/ virtual Expression replaceSymbolWithExpression(char symbol, Expression expression) const;
+  /*!*/ virtual Expression replaceSymbolWithExpression(char symbol, Expression & expression) const;
   /*!*/ virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   virtual int polynomialDegree(char symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;

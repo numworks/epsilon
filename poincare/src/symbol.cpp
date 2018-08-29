@@ -33,7 +33,7 @@ ExpressionNode::Sign SymbolNode::sign() const {
   return Sign::Unknown;
 }
 
-Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression expression) const {
+Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression & expression) const {
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
@@ -315,7 +315,7 @@ Expression Symbol::shallowReduce(Context& context, Preferences::AngleUnit angleU
   return *this;
 }
 
-Expression Symbol::replaceSymbolWithExpression(char symbol, Expression expression) const {
+Expression Symbol::replaceSymbolWithExpression(char symbol, Expression & expression) const {
   if (name() == symbol) {
     Expression value = expression;
     Expression p = parent();

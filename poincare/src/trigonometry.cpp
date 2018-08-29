@@ -51,7 +51,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression e, Context& cont
   ExpressionNode::Type correspondingType = e.type() == ExpressionNode::Type::Cosine ? ExpressionNode::Type::ArcCosine :
     (e.type() == ExpressionNode::Type::Sine ? ExpressionNode::Type::ArcSine : ExpressionNode::Type::ArcTangent);
   if (e.childAtIndex(0).type() == correspondingType) {
-    return e.childAtIndex(0).childAtIndex(0).clone();
+    return e.childAtIndex(0).childAtIndex(0);
   }
 
   // Step 3. Look for an expression of type "cos(-a)", return "+/-cos(a)"
@@ -129,7 +129,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression e, Context& cont
     }
     assert(r.sign() == ExpressionNode::Sign::Positive);
   }
-  return e.clone();
+  return e;
 }
 
 bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression e) {
@@ -157,7 +157,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression e, Context& con
     if ((e.type() == ExpressionNode::Type::ArcCosine && trigoOp >= 0.0f && trigoOp <= pi) ||
         (e.type() == ExpressionNode::Type::ArcSine && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) ||
         (e.type() == ExpressionNode::Type::ArcTangent && trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f)) {
-      return e.childAtIndex(0).childAtIndex(0).clone();
+      return e.childAtIndex(0).childAtIndex(0);
     }
   }
 
@@ -165,7 +165,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression e, Context& con
   if (e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToTangent(e.childAtIndex(0))) {
     float trigoOp = e.childAtIndex(0).childAtIndex(1).childAtIndex(0).approximateToScalar<float>(context, angleUnit);
     if (trigoOp >= -pi/2.0f && trigoOp <= pi/2.0f) {
-      return e.childAtIndex(0).childAtIndex(1).childAtIndex(0).clone();
+      return e.childAtIndex(0).childAtIndex(1).childAtIndex(0);
     }
   }
 
@@ -190,7 +190,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression e, Context& con
       static_cast<Multiplication&>(newArgument).removeChildAtIndexInPlace(0);
     }
     newArgument = newArgument.shallowReduce(context, angleUnit);
-    Expression result = e.clone();
+    Expression result = e;
     result.replaceChildAtIndexInPlace(0, newArgument);
     if (result.type() == ExpressionNode::Type::ArcCosine) {
       // Do the reduction after the if case, or it might change the result!
@@ -205,7 +205,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression e, Context& con
     }
   }
 
-  return e.clone();
+  return e;
 }
 
 static_assert('\x8A' == Ion::Charset::SmallPi, "Unicode error");

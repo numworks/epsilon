@@ -260,12 +260,16 @@ tests += $(addprefix poincare/test/,\
   logarithm.cpp\
   matrix.cpp\
   multiplication.cpp\
+  nth_root_layout.cpp\
+  number.cpp\
   parser.cpp\
   power.cpp\
   properties.cpp\
   rational.cpp\
-  number.cpp\
+  simplify_mix.cpp\
   store.cpp\
+  subtraction.cpp\
+  symbol.cpp\
   trigo.cpp\
 )
 

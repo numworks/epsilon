@@ -1,7 +1,0 @@
-#ifndef LIBAXX_COMPLEX
-#define LIBAXX_COMPLEX
-
-#define THINNER_HEADER
-#include "external/libcxx/complex"
-
-#endif

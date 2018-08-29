@@ -31,7 +31,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Symbol; }
   Sign sign() const override;
-  Expression replaceSymbolWithExpression(char symbol, Expression expression) const override;
+  Expression replaceSymbolWithExpression(char symbol, Expression & expression) const override;
   int polynomialDegree(char symbolName) const override;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
   int getVariables(isVariableTest isVariable, char * variables) const override;
@@ -110,7 +110,7 @@ public:
 
   // Expression
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
-  Expression replaceSymbolWithExpression(char symbol, Expression expression) const;
+  Expression replaceSymbolWithExpression(char symbol, Expression & expression) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 
   // Symbol

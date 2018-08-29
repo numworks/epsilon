@@ -337,4 +337,6 @@ Expression Rational::setSign(ExpressionNode::Sign s) const {
   return result;
 }
 
+template double RationalNode::templatedApproximate() const;
+
 }

@@ -21,6 +21,9 @@ public:
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "Infinity";
   }
+  virtual void logAttributes(std::ostream & stream) const override {
+    stream << " negative=\"" << m_negative << "\"";
+  }
 #endif
 
   // Properties

@@ -10,7 +10,7 @@
 namespace Poincare {
 
 AdditionNode * AdditionNode::FailedAllocationStaticNode() {
-  static AllocationFailureAdditionNode failure;
+  static AllocationFailureExpressionNode<AdditionNode> failure;
   TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
   return &failure;
 }
@@ -53,92 +53,8 @@ Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUn
   return Addition(this).shallowBeautify(context, angleUnit);
 }
 
-Expression AdditionNode::factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
-  // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
-
-  // Step 1: We want to compute the common denominator, b*d
-  Multiplication commonDenominator = Multiplication();
-  for (int i = 0; i < numberOfChildren(); i++) {
-    Expression denominator = childAtIndex(i)->denominator(context, angleUnit);
-    if (!denominator.isUninitialized()) {
-      // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
-      commonDenominator.addMissingFactors(denominator, context, angleUnit);
-    }
-  }
-  if (commonDenominator.numberOfChildren() == 0) {
-    // If commonDenominator is empty this means that no child was a fraction.
-    Expression result = Expression(this);
-    return result;
-  }
-
-  // Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
-  // want to create numerator = a/b*b*d + c/d*b*b + e/b*b*d
-  Addition numerator = Addition();
-  for (int i = 0; i < numberOfChildren(); i++) {
-    Multiplication m = Multiplication(childAtIndex(i), commonDenominator);
-    Expression reducedM = m.privateShallowReduce(context, angleUnit, true, false);
-    numerator.addChildAtIndexInPlace(reducedM, numerator.numberOfChildren(), numerator.numberOfChildren());
-  }
-
-  // Step 3: Simplify the numerator to a*d + c*b + e*d
-  Expression reducedNumerator = numerator.shallowReduce(context, angleUnit);
-
-  // Step 4: Simplify the denominator (in case it's a rational number)
-  Expression reducedCommonDenominator = commonDenominator.deepReduce(context, angleUnit);
-  Power inverseDenominator = Power(reducedCommonDenominator, Rational(-1));
-  Expression reducedInverseDenominator = inverseDenominator.shallowReduce(context, angleUnit);
-
-  // Step 5: Create the multiplication
-  Multiplication result = Multiplication(reducedNumerator, reducedInverseDenominator);
-
-  /* Step 6: Simplify the resulting multiplication, forbidding any distribution
-   * of multiplication on additions (to avoid an infinite loop). */
-  return result.privateShallowReduce(context, angleUnit, false, true);
-}
-
-void AdditionNode::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) {
-  /* This function factorizes two children which only differ by a rational
-   * factor. For example, if this is AdditionNode(2*pi, 3*pi), then 2*pi and 3*pi
-   * could be merged, and this turned into AdditionNode(5*pi). */
-  assert(index1 >= 0 && index1 < numberOfChildren());
-  assert(index2 >= 0 && index2 < numberOfChildren());
-
-  Expression e1 = childAtIndex(index1);
-  Expression e2 = childAtIndex(index2);
-
-  // Step 1: Compute the new numeral factor
-  Number r = Number::Addition(NumeralFactor(e1), NumeralFactor(e2));
-
-  // Step 2: Get rid of one of the children
-  Expression(this).removeChildAtIndexInPlace(index2);
-
-  // Step 3: Create a multiplication
-  Multiplication m;
-  if (e1.type() == ExpressionNode::Type::Multiplication) {
-    m = static_cast<Multiplication&>(e1);
-  } else {
-    m.addChildAtIndexInPlace(e1, 0, m.numberOfChildren());
-  }
-
-  // Step 4: Use the new rational factor
-  assert(m.numberOfChildren() > 0);
-  if (m.childAtIndex(0).isNumber()) {
-    /* The children were ordered before, so ant rational child of m would be on
-     * the first position */
-    m.replaceChildAtIndexInPlace(0, r);
-  } else {
-    m.addChildAtIndexInPlace(r, 0, m.numberOfChildren());
-  }
-
-  // Step 5: Reduce the multiplication (in case the new rational factor is zero)
-  Expression reducedM = m.shallowReduce(context, angleUnit);
-
-  // Step 6: replace the remaining child with the new multiplication
-  Expression(this).replaceChildAtIndexInPlace(index1, reducedM);
-}
-
-const Number AdditionNode::NumeralFactor(Expression e) {
-  if (e.type() == Type::Multiplication && e.childAtIndex(0).isNumber()) {
+const Number Addition::NumeralFactor(Expression e) {
+  if (e.type() == ExpressionNode::Type::Multiplication && e.childAtIndex(0).isNumber()) {
     Number result = static_cast<Number>(e.childAtIndex(0));
     return result;
   }
@@ -338,7 +254,7 @@ Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angl
   return result;
 }
 
-static inline int NumberOfNonNumeralFactors(const Expression e) {
+static inline int NumberOfNonNumeralFactors(const Expression & e) {
   if (e.type() != ExpressionNode::Type::Multiplication) {
     return 1; // Or (e->type() != Type::Rational);
   }
@@ -377,6 +293,89 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression e1, const Ex
     assert(numberOfNonNumeralFactors > 1);
     return Multiplication::HaveSameNonNumeralFactors(e1, e2);
   }
+}
+
+Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
+  // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
+
+  // Step 1: We want to compute the common denominator, b*d
+  Multiplication commonDenominator = Multiplication();
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression denominator = childAtIndex(i).denominator(context, angleUnit);
+    if (!denominator.isUninitialized()) {
+      // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
+      commonDenominator.addMissingFactors(denominator, context, angleUnit);
+    }
+  }
+  if (commonDenominator.numberOfChildren() == 0) {
+    // If commonDenominator is empty this means that no child was a fraction.
+    return *this;
+  }
+
+  // Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
+  // want to create numerator = a/b*b*d + c/d*b*b + e/b*b*d
+  Addition numerator = Addition();
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Multiplication m = Multiplication(childAtIndex(i), commonDenominator);
+    Expression reducedM = m.privateShallowReduce(context, angleUnit, true, false);
+    numerator.addChildAtIndexInPlace(reducedM, numerator.numberOfChildren(), numerator.numberOfChildren());
+  }
+
+  // Step 3: Simplify the numerator to a*d + c*b + e*d
+  Expression reducedNumerator = numerator.shallowReduce(context, angleUnit);
+
+  // Step 4: Simplify the denominator (in case it's a rational number)
+  Expression reducedCommonDenominator = commonDenominator.deepReduce(context, angleUnit);
+  Power inverseDenominator = Power(reducedCommonDenominator, Rational(-1));
+  Expression reducedInverseDenominator = inverseDenominator.shallowReduce(context, angleUnit);
+
+  // Step 5: Create the multiplication
+  Multiplication result = Multiplication(reducedNumerator, reducedInverseDenominator);
+
+  /* Step 6: Simplify the resulting multiplication, forbidding any distribution
+   * of multiplication on additions (to avoid an infinite loop). */
+  return result.privateShallowReduce(context, angleUnit, false, true);
+}
+
+void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) {
+  /* This function factorizes two children which only differ by a rational
+   * factor. For example, if this is AdditionNode(2*pi, 3*pi), then 2*pi and 3*pi
+   * could be merged, and this turned into AdditionNode(5*pi). */
+  assert(index1 >= 0 && index1 < numberOfChildren());
+  assert(index2 >= 0 && index2 < numberOfChildren());
+
+  Expression e1 = childAtIndex(index1);
+  Expression e2 = childAtIndex(index2);
+
+  // Step 1: Compute the new numeral factor
+  Number r = Number::Addition(NumeralFactor(e1), NumeralFactor(e2));
+
+  // Step 2: Get rid of one of the children
+  removeChildAtIndexInPlace(index2);
+
+  // Step 3: Create a multiplication
+  Multiplication m;
+  if (e1.type() == ExpressionNode::Type::Multiplication) {
+    m = static_cast<Multiplication&>(e1);
+  } else {
+    m.addChildAtIndexInPlace(e1, 0, m.numberOfChildren());
+  }
+
+  // Step 4: Use the new rational factor
+  assert(m.numberOfChildren() > 0);
+  if (m.childAtIndex(0).isNumber()) {
+    /* The children were ordered before, so ant rational child of m would be on
+     * the first position */
+    m.replaceChildAtIndexInPlace(0, r);
+  } else {
+    m.addChildAtIndexInPlace(r, 0, m.numberOfChildren());
+  }
+
+  // Step 5: Reduce the multiplication (in case the new rational factor is zero)
+  Expression reducedM = m.shallowReduce(context, angleUnit);
+
+  // Step 6: replace the remaining child with the new multiplication
+  replaceChildAtIndexInPlace(index1, reducedM);
 }
 
 template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>);

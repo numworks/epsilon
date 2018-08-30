@@ -58,16 +58,6 @@ public:
   }
 };
 
-
-class PairByValue : public TreeByValue {
-public:
-  PairByValue(TreeByValue t1, TreeByValue t2) : TreeByValue(TreePool::sharedPool()->createTreeNode<PairNode>()) {
-    replaceChildAtIndexInPlace(0, t1);
-    replaceChildAtIndexInPlace(1, t2);
-  }
-};
-
-
 }
 
 #endif

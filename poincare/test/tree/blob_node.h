@@ -3,7 +3,6 @@
 
 #include <poincare/tree_node.h>
 #include <poincare/tree_by_reference.h>
-#include <poincare/tree_by_value.h>
 
 namespace Poincare {
 
@@ -63,18 +62,6 @@ public:
 private:
   BlobNode * node() const { return static_cast<BlobNode *>(TreeByReference::node()); }
 };
-
-
-class BlobByValue : public TreeByValue {
-public:
-  BlobByValue(int data = 0) : TreeByValue(TreePool::sharedPool()->createTreeNode<BlobNode>()) {
-    node()->setData(data);
-  }
-  int data() { return node()->data(); }
-private:
-  BlobNode * node() const { return static_cast<BlobNode *>(TreeByValue::node()); }
-};
-
 
 }
 

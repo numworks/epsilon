@@ -17,7 +17,11 @@ public:
   TreeByReference(TreeByReference&& tr) : m_identifier(TreePool::NoNodeIdentifier) {
     setIdentifierAndRetain(tr.identifier());
   }
-  ~TreeByReference();
+  ~TreeByReference() {
+    assert(node()->identifier() == m_identifier);
+    TreeNode * n = node();
+    n->release(n->numberOfChildren()); //TODO No malformed nodes ?
+  }
 
   /* Operators */
   TreeByReference& operator=(const TreeByReference& tr) {

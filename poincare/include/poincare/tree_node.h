@@ -19,10 +19,14 @@ namespace Poincare {
 class TreeNode {
   friend class TreePool;
 public:
+  static constexpr int FirstStaticNodeIdentifier = -2;
+
   virtual ~TreeNode() {}
 
   // Attributes
-  bool isStatic() const;
+  bool isStatic() const {
+    return m_identifier <= FirstStaticNodeIdentifier;
+  }
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }

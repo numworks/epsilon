@@ -5,10 +5,6 @@
 
 namespace Poincare {
 
-bool TreeNode::isStatic() const {
-  return m_identifier <= TreePool::FirstStaticNodeIdentifier;
-}
-
 // Node operations
 
 void TreeNode::release(int currentNumberOfChildren) {

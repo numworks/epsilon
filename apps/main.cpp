@@ -1,7 +1,11 @@
 #include "apps_container_storage.h"
 #include "global_preferences.h"
+#include <poincare/init.h>
 
 void ion_main(int argc, char * argv[]) {
+  // Initialize Poincare::TreePool::sharedPool
+  Poincare::init();
+
 #if EPSILON_GETOPT
   for (int i=1; i<argc; i++) {
     if (argv[i][0] != '-' || argv[i][1] != '-') {

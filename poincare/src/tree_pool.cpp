@@ -5,11 +5,6 @@
 
 namespace Poincare {
 
-TreePool * TreePool::sharedPool() {
-  static TreePool pool;
-  return &pool;
-}
-
 static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
   if (src < dst && dst < src + len) {
     /* Copy backwards to avoid overwrites */

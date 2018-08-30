@@ -47,11 +47,7 @@ public:
   int allocationFailureNodeIdentifier() { return failedAllocationStaticNode()->identifier(); }
 
   // Node operations
-  void retain() {
-    if (!isStatic()) {
-      m_referenceCounter++;
-    }
-  }
+  void retain() { m_referenceCounter++; } // It doesn't matter if the node is static
   void release(int currentNumberOfChildren);
   void rename(int identifier, bool unregisterPreviousIdentifier);
 

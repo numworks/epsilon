@@ -10,16 +10,6 @@ TreePool * TreePool::sharedPool() {
   return &pool;
 }
 
-TreeNode * TreePool::node(int identifier) const {
-  if (identifier <= FirstStaticNodeIdentifier) {
-    int index = indexOfStaticNode(identifier);
-    assert(index >= 0 && index < MaxNumberOfStaticNodes);
-    return m_staticNodes[index];
-  }
-  assert(identifier >= 0 && identifier <= MaxNumberOfNodes);
-  return m_nodeForIdentifier[identifier];
-}
-
 static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
   if (src < dst && dst < src + len) {
     /* Copy backwards to avoid overwrites */

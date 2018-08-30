@@ -100,7 +100,7 @@ public:
   constexpr static int k_maxExponent = 1000;
 private:
   constexpr static int k_maxMantissaLength = 20;
-  DecimalNode * node() const override { return static_cast<DecimalNode *>(Number::node()); }
+  DecimalNode * node() const { return static_cast<DecimalNode *>(Number::node()); }
   Decimal(size_t size, const Integer & m, int e);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
   // Simplification

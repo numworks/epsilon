@@ -22,7 +22,7 @@ public:
   bool isUninitialized() const { return TreeByReference::isUninitialized(); }
   bool isAllocationFailure() const { return TreeByReference::isAllocationFailure(); }
 
-  TreeNode * node() const override { return TreeByReference::node(); }
+  TreeNode * node() const { return TreeByReference::node(); }
 
   /* Hierarchy */
   int numberOfChildren() const { return TreeByReference::numberOfChildren(); }

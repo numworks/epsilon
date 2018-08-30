@@ -86,7 +86,7 @@ public:
   Rational(native_int_t i, native_int_t j) : Rational(Integer(i), Integer(j)) {}
 
   // TreeNode
-  RationalNode * node() const override { return static_cast<RationalNode *>(Number::node()); }
+  RationalNode * node() const { return static_cast<RationalNode *>(Number::node()); }
 
   // Properties
   Integer signedIntegerNumerator() const;

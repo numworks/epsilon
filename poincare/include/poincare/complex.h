@@ -55,7 +55,7 @@ public:
   T real() { return node()->real(); }
   T imag() { return node()->imag(); }
 private:
-  ComplexNode<T> * node() const override { return static_cast<ComplexNode<T> *>(Evaluation<T>::node()); }
+  ComplexNode<T> * node() const { return static_cast<ComplexNode<T> *>(Evaluation<T>::node()); }
 };
 
 

@@ -8,11 +8,6 @@ namespace Poincare {
 
 /* Constructors */
 
-TreeByReference::~TreeByReference() {
-  assert(node()->identifier() == m_identifier);
-  node()->release(numberOfChildren()); //TODO No malformed nodes ?
-}
-
 /* Clone */
 
 TreeByReference TreeByReference::clone() const {

@@ -24,7 +24,7 @@ public:
     assert(false);
     return ExceptionExpressionNode<ExpressionNode>::serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
   }
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { assert(false); ExceptionExpressionNode<ExpressionNode>::createLayout(floatDisplayMode, numberOfSignificantDigits); }
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::createLayout(floatDisplayMode, numberOfSignificantDigits); }
 
   // TreeNode
   bool isUninitialized() const override { return true; }

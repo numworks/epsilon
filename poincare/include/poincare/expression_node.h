@@ -101,8 +101,8 @@ public:
   };
   virtual Sign sign() const { return Sign::Unknown; }
   virtual bool isNumber() const { return false; }
-  /*!*/ virtual Expression replaceSymbolWithExpression(char symbol, Expression & expression) const;
-  /*!*/ virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression replaceSymbolWithExpression(char symbol, Expression & expression);
+  /*!*/ virtual Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit);
   virtual int polynomialDegree(char symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
   typedef bool (*isVariableTest)(char c);
@@ -147,8 +147,9 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
-  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Hierarchy */

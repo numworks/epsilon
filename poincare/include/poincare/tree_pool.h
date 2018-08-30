@@ -19,7 +19,6 @@ class TreePool {
   friend class TreeByReference;
 public:
   static constexpr int NoNodeIdentifier = -1;
-  static constexpr int FirstStaticNodeIdentifier = -2;
 
   static TreePool * sharedPool();
 
@@ -156,8 +155,8 @@ private:
     node->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
 
-  int identifierOfStaticNodeAtIndex(int index) const { return FirstStaticNodeIdentifier-index;} // We do not want positive indexes that are reserved for pool nodes, and -1 is reserved for node initialisation.
-  int indexOfStaticNode(int id) const { return -(id - FirstStaticNodeIdentifier);}
+  int identifierOfStaticNodeAtIndex(int index) const { return TreeNode::FirstStaticNodeIdentifier-index;} // We do not want positive indexes that are reserved for pool nodes, and -1 is reserved for node initialisation.
+  int indexOfStaticNode(int id) const { return -(id - TreeNode::FirstStaticNodeIdentifier);}
 
   // Iterators
 

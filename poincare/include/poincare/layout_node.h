@@ -54,10 +54,6 @@ public:
   SerializationHelperInterface * serializableChildAtIndex(int i) const override { return childAtIndex(i); }
   int numberOfSerializableChildren() const override { return numberOfChildren(); }
 
-  // TreeNode
-  LayoutNode * next() const override { return static_cast<LayoutNode *>(TreeNode::next()); }
-  LayoutNode * nextSibling() const override { return static_cast<LayoutNode *>(TreeNode::nextSibling()); }
-
   // Tree
   LayoutNode * parent() const override { return static_cast<LayoutNode *>(TreeNode::parent()); }
   LayoutNode * childAtIndex(int i) const override { return static_cast<LayoutNode *>(TreeNode::childAtIndex(i)); }

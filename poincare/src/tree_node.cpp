@@ -181,6 +181,28 @@ bool TreeNode::hasSibling(const TreeNode * e) const {
   return false;
 }
 
+TreeNode * TreeNode::nextSibling() const {
+  int remainingNodesToVisit = numberOfChildren();
+  TreeNode * node = const_cast<TreeNode *>(this)->next();
+  while (remainingNodesToVisit > 0) {
+    remainingNodesToVisit += node->numberOfChildren();
+    node = node->next();
+    remainingNodesToVisit--;
+  }
+  return node;
+}
+
+TreeNode * TreeNode::lastDescendant() const {
+  TreeNode * node = const_cast<TreeNode *>(this);
+  int remainingNodesToVisit = node->numberOfChildren();
+  while (remainingNodesToVisit > 0) {
+    node = node->next();
+    remainingNodesToVisit--;
+    remainingNodesToVisit += node->numberOfChildren();
+  }
+  return node;
+}
+
 TreeNode::TreeNode() :
   m_identifier(TreePool::NoNodeIdentifier),
   m_referenceCounter(0)

@@ -91,12 +91,12 @@ public:
     public:
       using TreeNode::Iterator<T>::Iterator;
       Iterator & operator++() {
-        this->m_node = this->m_node->nextSibling();
+        this->m_node = static_cast<T*>(this->m_node->nextSibling());
         return *this;
       }
     };
-    Iterator begin() const { return Iterator(m_node->next()); }
-    Iterator end() const { return Iterator(m_node->nextSibling()); }
+    Iterator begin() const { return Iterator(static_cast<T *>(m_node->next())); }
+    Iterator end() const { return Iterator(static_cast<T *>(m_node->nextSibling())); }
   private:
     T * m_node;
   };
@@ -122,33 +122,14 @@ public:
   Direct<TreeNode> directChildren() const { return Direct<TreeNode>(this); }
   DepthFirst<TreeNode> depthFirstChildren() const { return DepthFirst<TreeNode>(this); }
 
-  virtual TreeNode * next() const {
+  TreeNode * next() const {
     // Simple version would be "return this + 1;", with pointer arithmetics taken care of by the compiler.
     // Unfortunately, we want TreeNode to have a VARIABLE size
     return reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(const_cast<TreeNode *>(this)) + size());
   }
 
-  virtual TreeNode * nextSibling() const {
-    int remainingNodesToVisit = numberOfChildren();
-    TreeNode * node = const_cast<TreeNode *>(this)->next();
-    while (remainingNodesToVisit > 0) {
-      remainingNodesToVisit += node->numberOfChildren();
-      node = node->next();
-      remainingNodesToVisit--;
-    }
-    return node;
-  }
-
-  TreeNode * lastDescendant() const {
-    TreeNode * node = const_cast<TreeNode *>(this);
-    int remainingNodesToVisit = node->numberOfChildren();
-    while (remainingNodesToVisit > 0) {
-      node = node->next();
-      remainingNodesToVisit--;
-      remainingNodesToVisit += node->numberOfChildren();
-    }
-    return node;
-  }
+  TreeNode * nextSibling() const;
+  TreeNode * lastDescendant() const;
 
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const = 0;

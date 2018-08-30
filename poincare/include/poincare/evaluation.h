@@ -6,8 +6,8 @@ extern "C" {
 #include <stdint.h>
 }
 #include <poincare/preferences.h>
+#include <poincare/tree_by_reference.h>
 #include <poincare/tree_node.h>
-#include <poincare/tree_by_value.h>
 
 namespace Poincare {
 
@@ -38,7 +38,7 @@ public:
 };
 
 template<typename T>
-class Evaluation : public TreeByValue {
+class Evaluation : public TreeByReference {
 public:
   Evaluation();
   template<class U> explicit operator U() const {
@@ -48,13 +48,13 @@ public:
     return *reinterpret_cast<U *>(const_cast<Evaluation<T> *>(this));
   }
   EvaluationNode<T> * node() const {
-    assert(TreeByValue::node() == nullptr || !TreeByValue::node()->isGhost());
-    return static_cast<EvaluationNode<T> *>(TreeByValue::node());
+    assert(TreeByReference::node() == nullptr || !TreeByReference::node()->isGhost());
+    return static_cast<EvaluationNode<T> *>(TreeByReference::node());
   }
 
   /* Hierarchy */
   Evaluation<T> childAtIndex(int i) const {
-    return Evaluation<T>(static_cast<EvaluationNode<T> *>(TreeByValue::childAtIndex(i).node()));
+    return Evaluation<T>(static_cast<EvaluationNode<T> *>(TreeByReference::childAtIndex(i).node()));
   }
   typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }
   bool isUndefined() const { return node()->isUndefined(); }
@@ -63,7 +63,7 @@ public:
   std::complex<T> trace() const { return node()->trace(); }
   std::complex<T> determinant() const { return node()->determinant(); }
 protected:
-  Evaluation(EvaluationNode<T> * n) : TreeByValue(n) {}
+  Evaluation(EvaluationNode<T> * n) : TreeByReference(n) {}
 };
 
 }

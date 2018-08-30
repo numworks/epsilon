@@ -100,16 +100,7 @@ public:
   }
 
   void registerStaticNodeIfRequired(TreeNode * node);
-
-  int registerStaticNode(TreeNode * node) {
-    int nodeID = 0;
-    while (m_staticNodes[nodeID] != nullptr && nodeID < MaxNumberOfStaticNodes) {
-      nodeID++;
-    }
-    assert(nodeID < MaxNumberOfStaticNodes);
-    m_staticNodes[nodeID] = node;
-    return identifierOfStaticNodeAtIndex(nodeID);
-  }
+  void registerStaticNode(TreeNode * node, int nodeID = 0);
 
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream & stream);

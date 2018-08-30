@@ -36,10 +36,27 @@ void TreePool::logNodeForIdentifierArray() {
 
 void TreePool::registerStaticNodeIfRequired(TreeNode * node) {
   if (node->identifier() == -1) {
-    int newIdentifier = registerStaticNode(node);
-    node->rename(newIdentifier, false);
+    registerStaticNode(node);
   }
 }
+
+void TreePool::registerStaticNode(TreeNode * node, int nodeID) {
+  if (nodeID < 0) {
+    int nodeIndex = indexOfStaticNode(nodeID);
+    assert(m_staticNodes[nodeIndex] == nullptr && nodeIndex < MaxNumberOfStaticNodes);
+    m_staticNodes[nodeIndex] = node;
+    node->rename(nodeID, false);
+    return;
+  }
+  int generatedNodeIndex = 0;
+  while (m_staticNodes[generatedNodeIndex] != nullptr && generatedNodeIndex < MaxNumberOfStaticNodes) {
+    generatedNodeIndex++;
+  }
+  assert(generatedNodeIndex < MaxNumberOfStaticNodes);
+  m_staticNodes[generatedNodeIndex] = node;
+  node->rename(identifierOfStaticNodeAtIndex(generatedNodeIndex), false);
+}
+
 
 void TreePool::move(TreeNode * destination, TreeNode * source, int realNumberOfSourceChildren) {
   size_t moveSize = source->deepSize(realNumberOfSourceChildren);

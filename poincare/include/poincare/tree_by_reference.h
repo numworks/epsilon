@@ -107,7 +107,7 @@ protected:
     assert(node != nullptr);
     setIdentifierAndRetain(node->identifier());
   }
-  TreeByReference() : m_identifier(-1) {}
+  TreeByReference(int nodeIndentifier = -1) : m_identifier(nodeIndentifier) {}
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;
     node()->retain();

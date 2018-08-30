@@ -24,6 +24,7 @@ class Expression : public TreeByReference {
   friend class AdditionNode;
   friend class IntegralNode;
   friend class Opposite;
+  friend class Number;
   friend class Symbol;
   friend class Decimal;
   friend class DerivativeNode;
@@ -43,47 +44,8 @@ public:
   /* Constructor & Destructor */
   Expression();
   virtual ~Expression() = default;
-  Expression clone() const { return *this; }
+  Expression clone() const { TreeByReference c = TreeByReference::clone(); return static_cast<Expression&>(c); }
   static Expression parse(char const * string);
-
-  template<class T> explicit operator T() const {
-
-    /* This operator allows static_casts from Expression to derived Expressions.
-     * The asserts ensure that the Expression can only be casted to another
-     * Expression, but this does not prevent Expression types mismatches (cast
-     * Float to Symbol for instance).
-     *
-     * The explicit keyword prevents implicit casts. This solves the following
-     * problem:
-     * Expression e;
-     * Symbol s = static_cast<Symbol>(e);
-     * e could be casted in const char * to use the Symbol(const char *)
-     * constructor, or e could be casted directly to S: it is ambiguous.
-     *
-     * static_cast operator copy the Expression. To avoid copy, we call
-     * static_cast<Symbol &>(e) instead of static_cast<Symbol>(e). */
-
-    assert(T::isExpression());
-    static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");
-    return *reinterpret_cast<T *>(const_cast<Expression *>(this));
-  }
-
-  Expression replaceSymbolWithExpression(char symbol, Expression expression) const { return node()->replaceSymbolWithExpression(symbol, expression); }
-
-  /* Reference */
-  ExpressionNode * node() const {
-    assert(TreeByReference::node() == nullptr || !TreeByReference::node()->isGhost());
-    return static_cast<ExpressionNode *>(TreeByReference::node());
-  }
-
-  /* Hierarchy */
-  Expression parent() const {
-    return Expression(static_cast<ExpressionNode *>(TreeByReference::parent().node()));
-  }
-  Expression childAtIndex(int i) const {
-    return Expression(static_cast<ExpressionNode *>(TreeByReference::childAtIndex(i).node()));
-  }
-  void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }
 
   /* Circuit breaker */
   typedef bool (*CircuitBreaker)();
@@ -93,7 +55,6 @@ public:
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
   ExpressionNode::Sign sign() const { return node()->sign(); }
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const { return node()->setSign(s, context, angleUnit); }
   bool isUndefinedOrAllocationFailure() const { return node()->type() == ExpressionNode::Type::Undefined || node()->type() == ExpressionNode::Type::AllocationFailure; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
@@ -152,7 +113,6 @@ public:
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit) const;
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
@@ -172,23 +132,64 @@ public:
 
 protected:
   Expression(const ExpressionNode * n) : TreeByReference(n) {}
-  Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
-  Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
-private:
+  template<class T> explicit operator T() const {
+
+    /* This operator allows static_casts from Expression to derived Expressions.
+     * The asserts ensure that the Expression can only be casted to another
+     * Expression, but this does not prevent Expression types mismatches (cast
+     * Float to Symbol for instance).
+     *
+     * The explicit keyword prevents implicit casts. This solves the following
+     * problem:
+     * Expression e;
+     * Symbol s = static_cast<Symbol>(e);
+     * e could be casted in const char * to use the Symbol(const char *)
+     * constructor, or e could be casted directly to S: it is ambiguous.
+     *
+     * static_cast operator copy the Expression. To avoid copy, we call
+     * static_cast<Symbol &>(e) instead of static_cast<Symbol>(e). */
+
+    assert(T::isExpression());
+    static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");
+    return *reinterpret_cast<T *>(const_cast<Expression *>(this));
+  }
+
+  /* Reference */
+  ExpressionNode * node() const {
+    assert(TreeByReference::node() == nullptr || !TreeByReference::node()->isGhost());
+    return static_cast<ExpressionNode *>(TreeByReference::node());
+  }
+
+  /* Hierarchy */
+  Expression parent() const {
+    return Expression(static_cast<ExpressionNode *>(TreeByReference::parent().node()));
+  }
+  Expression childAtIndex(int i) const {
+    return Expression(static_cast<ExpressionNode *>(TreeByReference::childAtIndex(i).node()));
+  }
+  void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }
   Expression(int nodeIdentifier) : TreeByReference(nodeIdentifier) {}
-  /* Hierarchy*/
   void defaultSetChildrenInPlace(Expression other);
+
   /* Properties */
-  Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression) const;
-  int defaultGetPolynomialCoefficients(char symbol, Expression expression[]) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(symbolName, coefficients); }
 
   /* Simplification */
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const { return node()->shallowReduce(context, angleUnit); }
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const { return node()->shallowBeautify(context, angleUnit); }
-  Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, const Expression futureParent) { return node()->shallowReduce(context, angleUnit, futureParent); }
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
+  Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, const Expression futureParent = Expression());
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const { return node()->setSign(s, context, angleUnit); }
+private:
+  /* Simplification */
+  Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+
+  /* Properties */
+  Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression) const;
+  int defaultGetPolynomialCoefficients(char symbol, Expression expression[]) const;
 
   /* Expression roots/extrema solver*/
   constexpr static double k_solverPrecision = 1.0E-5;

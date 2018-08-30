@@ -1,7 +1,5 @@
 #include <poincare/expression.h>
 #include <poincare/expression_node.h>
-//#include <poincare/list_data.h>
-//#include <poincare/matrix_data.h>
 #include <poincare/rational.h>
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
@@ -66,7 +64,7 @@ bool Expression::shouldStopProcessing() {
 /* Properties */
 
 bool Expression::isRationalZero() const {
-  return this->node()->type() == ExpressionNode::Type::Rational && static_cast<const RationalNode *>(this->node())->isZero();
+  return this->type() == ExpressionNode::Type::Rational && static_cast<const Rational &>(*this).isZero();
 }
 
 bool Expression::recursivelyMatches(ExpressionTest test, Context & context) const {
@@ -83,16 +81,16 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context) cons
 
 bool Expression::isApproximate(Context & context) const {
   return recursivelyMatches([](const Expression e, Context & context) {
-        return e.node()->type() == ExpressionNode::Type::Decimal || e.node()->type() == ExpressionNode::Type::Float || Expression::IsMatrix(e, context) || (e.node()->type() == ExpressionNode::Type::Symbol && Symbol::isApproximate(static_cast<SymbolNode *>(e.node())->name(), context));
+        return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || Expression::IsMatrix(e, context) || (e.type() == ExpressionNode::Type::Symbol && Symbol::isApproximate(static_cast<const Symbol &>(e).name(), context));
     }, context);
 }
 
 bool Expression::IsMatrix(const Expression e, Context & context) {
-  return e.node()->type() == ExpressionNode::Type::Matrix || e.node()->type() == ExpressionNode::Type::ConfidenceInterval || e.node()->type() == ExpressionNode::Type::MatrixDimension || e.node()->type() == ExpressionNode::Type::PredictionInterval || e.node()->type() == ExpressionNode::Type::MatrixInverse || e.node()->type() == ExpressionNode::Type::MatrixTranspose || (e.node()->type() == ExpressionNode::Type::Symbol && Symbol::isMatrixSymbol(static_cast<SymbolNode *>(e.node())->name()));
+  return e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::ConfidenceInterval || e.type() == ExpressionNode::Type::MatrixDimension || e.type() == ExpressionNode::Type::PredictionInterval || e.type() == ExpressionNode::Type::MatrixInverse || e.type() == ExpressionNode::Type::MatrixTranspose || (e.type() == ExpressionNode::Type::Symbol && Symbol::isMatrixSymbol(static_cast<const Symbol &>(e).name()));
 }
 
 bool dependsOnVariables(const Expression e, Context & context) {
-  return e.node()->type() == ExpressionNode::Type::Symbol && Symbol::isVariableSymbol(static_cast<SymbolNode *>(e.node())->name());
+  return e.type() == ExpressionNode::Type::Symbol && Symbol::isVariableSymbol(static_cast<const Symbol&>(e)->name());
 }
 
 bool Expression::getLinearCoefficients(char * variables, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {
@@ -141,6 +139,8 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
   return true;
 }
 
+// Private
+
 Expression Expression::defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
   for (int i = 0; i < numberOfChildren(); i++) {
     Expression childI = childAtIndex(i);
@@ -165,21 +165,19 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
-// Private
 
 Expression Expression::defaultReplaceSymbolWithExpression(char symbol, Expression expression) const {
-  Expression e = *this;
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    e.replaceChildAtIndexInPlace(i, childAtIndex(i).replaceSymbolWithExpression(symbol, expression));
+    replaceChildAtIndexInPlace(i, childAtIndex(i).replaceSymbolWithExpression(symbol, expression));
   }
-  return e;
+  return *this;
 }
 
 int Expression::defaultGetPolynomialCoefficients(char symbol, Expression coefficients[]) const {
   int deg = polynomialDegree(symbol);
   if (deg == 0) {
-    coefficients[0] = *this;
+    coefficients[0] = clone();
     return 0;
   }
   return -1;
@@ -216,13 +214,13 @@ Expression Expression::ParseAndSimplify(const char * text, Context & context, Pr
   if (exp.isUninitialized()) {
     return Undefined();
   }
-  Expression reduced = exp.simplify(context, angleUnit);
+  exp = exp.simplify(context, angleUnit);
   /* simplify might have been interrupted, in which case the resulting
    * expression is uninitialized, so we need to check that. */
-  if (reduced.isUninitialized()) {
-    return exp;
+  if (exp.isUninitialized()) {
+    return parse(text);
   }
-  return reduced;
+  return exp;
 }
 
 Expression Expression::simplify(Context & context, Preferences::AngleUnit angleUnit) const {
@@ -241,13 +239,11 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
   return e;
 }
 
-Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression e = *this;
-  for (int i = 0; i < e.numberOfChildren(); i++) {
-    e.replaceChildAtIndexInPlace(i, e.childAtIndex(i).deepReduce(context, angleUnit));
+Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, const Expression futureParent) const {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    replaceChildAtIndexInPlace(i, childAtIndex(i).deepReduce(context, angleUnit, *this));
   }
-  e = e.shallowReduce(context, angleUnit);
-  return e;
+  return shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit angleUnit) const {

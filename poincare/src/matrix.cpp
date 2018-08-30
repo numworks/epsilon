@@ -101,7 +101,7 @@ void Matrix::setDimensions(int rows, int columns) {
   setNumberOfColumns(columns);
 }
 
-void Matrix::addChildrenAsRowInPlace(TreeByValue t, int i) {
+void Matrix::addChildrenAsRowInPlace(TreeByReference t, int i) {
   if (t.isAllocationFailure()) {
     replaceWithAllocationFailureInPlace(numberOfChildren());
     return;

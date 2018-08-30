@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_REFERENCE_H
 #define POINCARE_EXPRESSION_REFERENCE_H
 
-#include <poincare/tree_by_value.h>
+#include <poincare/tree_by_reference.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/expression_node.h>
@@ -12,7 +12,7 @@ namespace Poincare {
 
 class Context;
 
-class Expression : public TreeByValue {
+class Expression : public TreeByReference {
   friend class CosineNode;
   friend class SineNode;
   friend class ExpressionNode;
@@ -72,8 +72,8 @@ public:
 
   /* Reference */
   ExpressionNode * node() const {
-    assert(TreeByValue::node() == nullptr || !TreeByValue::node()->isGhost());
-    return static_cast<ExpressionNode *>(TreeByValue::node());
+    assert(TreeByReference::node() == nullptr || !TreeByReference::node()->isGhost());
+    return static_cast<ExpressionNode *>(TreeByReference::node());
   }
 
   /* Hierarchy */
@@ -81,7 +81,7 @@ public:
     return Expression(static_cast<ExpressionNode *>(TreeByReference::parent().node()));
   }
   Expression childAtIndex(int i) const {
-    return Expression(static_cast<ExpressionNode *>(TreeByValue::childAtIndex(i).node()));
+    return Expression(static_cast<ExpressionNode *>(TreeByReference::childAtIndex(i).node()));
   }
   void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }
 
@@ -171,12 +171,12 @@ public:
   Coordinate2D nextIntersection(char symbol, double start, double step, double max, Context & context, Preferences::AngleUnit angleUnit, const Expression expression) const;
 
 protected:
-  Expression(const ExpressionNode * n) : TreeByValue(n) {}
+  Expression(const ExpressionNode * n) : TreeByReference(n) {}
   Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
 private:
-  Expression(int nodeIdentifier) : TreeByValue(nodeIdentifier) {}
+  Expression(int nodeIdentifier) : TreeByReference(nodeIdentifier) {}
   /* Hierarchy*/
   void defaultSetChildrenInPlace(Expression other);
   /* Properties */

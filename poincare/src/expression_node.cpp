@@ -4,11 +4,11 @@
 
 namespace Poincare {
 
-Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression & expression) const {
+Expression ExpressionNode::replaceSymbolWithExpression(char symbol, Expression & expression) {
   return Expression(this).defaultReplaceSymbolWithExpression(symbol, expression);
 }
 
-Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression ExpressionNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(false);
   return Expression();
 }
@@ -88,11 +88,11 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool c
   return 0;
 }
 
-Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Expression(this).defaultShallowReduce(context, angleUnit);
 }
 
-Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Expression(this).defaultShallowBeautify(context, angleUnit);
 }
 

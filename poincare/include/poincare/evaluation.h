@@ -47,7 +47,7 @@ public:
     // Does not work :static_assert(sizeof(U) == sizeof(Evaluation<T>), "Size mismatch");
     return *reinterpret_cast<U *>(const_cast<Evaluation<T> *>(this));
   }
-  EvaluationNode<T> * node() const override {
+  EvaluationNode<T> * node() const {
     assert(TreeByValue::node() == nullptr || !TreeByValue::node()->isGhost());
     return static_cast<EvaluationNode<T> *>(TreeByValue::node());
   }

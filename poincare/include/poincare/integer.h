@@ -230,7 +230,7 @@ public:
   static Integer Factorial(const Integer & i);
 private:
   // TreeNode
-  IntegerNode * node() const override { return static_cast<IntegerNode *>(Number::node()); }
+  IntegerNode * node() const { return static_cast<IntegerNode *>(Number::node()); }
 
   Integer(const native_uint_t * digits, size_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(size_t size, const native_uint_t * digits, size_t numberOfDigits, bool negative);

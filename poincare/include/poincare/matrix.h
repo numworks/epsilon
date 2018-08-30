@@ -101,7 +101,7 @@ private:
   // TODO: find another solution for inverse and determinant (avoid capping the matrix)
   static constexpr int k_maxNumberOfCoefficients = 100;
 
-  MatrixNode * node() const override { return static_cast<MatrixNode *>(Expression::node()); }
+  MatrixNode * node() const { return static_cast<MatrixNode *>(Expression::node()); }
   void setNumberOfRows(int rows) { assert(rows >= 0); node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { assert(columns >= 0); node()->setNumberOfColumns(columns); }
   /* rowCanonize turns a matrix in its reduced row echelon form. */

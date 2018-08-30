@@ -61,7 +61,7 @@ public:
   }
   int data() { return node()->data(); }
 private:
-  BlobNode * node() const override { return static_cast<BlobNode *>(TreeByReference::node()); }
+  BlobNode * node() const { return static_cast<BlobNode *>(TreeByReference::node()); }
 };
 
 
@@ -72,7 +72,7 @@ public:
   }
   int data() { return node()->data(); }
 private:
-  BlobNode * node() const override { return static_cast<BlobNode *>(TreeByValue::node()); }
+  BlobNode * node() const { return static_cast<BlobNode *>(TreeByValue::node()); }
 };
 
 

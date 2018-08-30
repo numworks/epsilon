@@ -47,7 +47,7 @@ public:
   Number setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const { return static_cast<Number>(Expression::setSign(s, context, angleUnit)); }
 protected:
   Number() : Expression() {}
-  NumberNode * node() const override { return static_cast<NumberNode *>(Expression::node()); }
+  NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }
 private:
   typedef Integer (*IntegerBinaryOperation)(const Integer & i, const Integer & j);
   typedef Rational (*RationalBinaryOperation)(const Rational & i, const Rational & j);

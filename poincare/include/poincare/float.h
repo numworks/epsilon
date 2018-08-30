@@ -72,7 +72,7 @@ public:
     node()->setFloat(value);
   }
 private:
-  FloatNode<T> * node() const override { return static_cast<FloatNode<T> *>(Number::node()); }
+  FloatNode<T> * node() const { return static_cast<FloatNode<T> *>(Number::node()); }
 };
 
 }

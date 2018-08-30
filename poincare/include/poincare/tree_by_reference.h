@@ -115,11 +115,11 @@ protected:
   void setTo(const TreeByReference & tr);
   /* Hierarchy operations */
   // Add
-  virtual void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren);
+  void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren);
   // Remove puts a child at the end of the pool
-  virtual void removeChildAtIndexInPlace(int i);
-  virtual void removeChildInPlace(TreeByReference t, int childNumberOfChildren);
-  virtual void removeChildrenInPlace(int currentNumberOfChildren);
+  void removeChildAtIndexInPlace(int i);
+  void removeChildInPlace(TreeByReference t, int childNumberOfChildren);
+  void removeChildrenInPlace(int currentNumberOfChildren);
 
   int m_identifier;
 

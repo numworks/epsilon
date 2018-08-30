@@ -147,7 +147,7 @@ public:
   virtual Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const = 0;
 
   /* Simplification */
-  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+  /*!*/ virtual Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit, const Expression futureParent = Expression());
   /*!*/ virtual Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   /* Return a clone of the denominator part of the expression */
   /*!*/ virtual Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;

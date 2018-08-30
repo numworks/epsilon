@@ -88,8 +88,8 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool c
   return 0;
 }
 
-Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Expression(this).defaultShallowReduce(context, angleUnit);
+Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+  return Expression(this).defaultShallowReduce(context, angleUnit, futureParent);
 }
 
 Expression ExpressionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {

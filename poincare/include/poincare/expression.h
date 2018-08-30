@@ -176,6 +176,7 @@ protected:
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 
 private:
+  Expression(int nodeIdentifier) : TreeByValue(nodeIdentifier) {}
   /* Hierarchy*/
   void defaultSetChildrenInPlace(Expression other);
   /* Properties */

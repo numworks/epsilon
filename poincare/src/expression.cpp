@@ -23,7 +23,7 @@ namespace Poincare {
 #include <stdio.h>
 
 /* Constructor & Destructor */
-Expression::Expression() : Expression(UninitializedExpressionNode::UninitializedExpressionStaticNode()) {}
+Expression::Expression() : Expression(UninitializedExpressionNode::UninitializedExpressionStaticNodeIdentifier()) {}
 
 Expression Expression::parse(char const * string) {
   if (string[0] == 0) {

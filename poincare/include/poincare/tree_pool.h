@@ -20,7 +20,8 @@ class TreePool {
 public:
   static constexpr int NoNodeIdentifier = -1;
 
-  static TreePool * sharedPool();
+  static TreePool * sharedPool() { assert(SharedPool != nullptr); return SharedPool; }
+  void registerPool(TreePool * pool) {  assert(SharedPool == nullptr); SharedPool = pool; }
 
   // Node
   TreeNode * node(int identifier) const {
@@ -128,6 +129,7 @@ private:
   constexpr static int BufferSize = 32768;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
   constexpr static int MaxNumberOfStaticNodes = 200; // TODO: count how may are needed
+  static TreePool * SharedPool = nullptr;
 
   // TreeNode
   void discardTreeNode(TreeNode * node) {

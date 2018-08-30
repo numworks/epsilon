@@ -34,6 +34,10 @@ objs += $(addprefix poincare/src/,\
 )
 
 objs += $(addprefix poincare/src/,\
+  init.o\
+)
+
+objs += $(addprefix poincare/src/,\
   absolute_value.o\
   addition.o\
   approximation_helper.o\

@@ -116,7 +116,7 @@ public:
   // Symbol
   char name() const { return node()->name(); }
 private:
-  SymbolNode * node() const override { return static_cast<SymbolNode *>(Expression::node()); }
+  SymbolNode * node() const { return static_cast<SymbolNode *>(Expression::node()); }
 };
 
 }

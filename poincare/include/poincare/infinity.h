@@ -52,7 +52,7 @@ public:
     node()->setNegative(negative);
   }
 private:
-  InfinityNode * node() const override { return static_cast<InfinityNode *>(Number::node()); }
+  InfinityNode * node() const { return static_cast<InfinityNode *>(Number::node()); }
 };
 
 }

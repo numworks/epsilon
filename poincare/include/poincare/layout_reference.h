@@ -30,7 +30,7 @@ public:
     return cast;
   }
 
-  LayoutNode * node() const override {
+  LayoutNode * node() const {
     assert(!TreeByReference::node()->isGhost());
     return static_cast<LayoutNode *>(TreeByReference::node());
   }

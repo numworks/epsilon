@@ -71,7 +71,7 @@ public:
   Expression replaceSymbolWithExpression(char symbol, Expression expression) const { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Reference */
-  ExpressionNode * node() const override {
+  ExpressionNode * node() const {
     assert(TreeByValue::node() == nullptr || !TreeByValue::node()->isGhost());
     return static_cast<ExpressionNode *>(TreeByValue::node());
   }

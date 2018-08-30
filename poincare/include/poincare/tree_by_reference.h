@@ -37,7 +37,7 @@ public:
   TreeByReference clone() const;
 
   int identifier() const { return m_identifier; }
-  virtual TreeNode * node() const { return TreePool::sharedPool()->node(m_identifier); }
+  TreeNode * node() const { return TreePool::sharedPool()->node(m_identifier); }
 
   bool isGhost() const { return node()->isGhost(); }
   bool isUninitialized() const { return node()->isUninitialized(); }

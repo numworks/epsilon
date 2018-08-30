@@ -94,7 +94,7 @@ public:
     node()->setColor(color);
   }
 private:
-  virtual EmptyLayoutNode * node() const override { return static_cast<EmptyLayoutNode *>(LayoutReference::node()); }
+  EmptyLayoutNode * node() const { return static_cast<EmptyLayoutNode *>(LayoutReference::node()); }
 };
 
 }

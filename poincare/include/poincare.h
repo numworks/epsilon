@@ -103,4 +103,3 @@
 #include <poincare/variable_context.h>
 
 #endif
-#endif

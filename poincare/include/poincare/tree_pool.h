@@ -24,7 +24,15 @@ public:
   static TreePool * sharedPool();
 
   // Node
-  TreeNode * node(int identifier) const;
+  TreeNode * node(int identifier) const {
+    if (identifier <= TreeNode::FirstStaticNodeIdentifier) {
+      int index = indexOfStaticNode(identifier);
+      assert(index >= 0 && index < MaxNumberOfStaticNodes);
+      return m_staticNodes[index];
+    }
+    assert(identifier >= 0 && identifier <= MaxNumberOfNodes);
+    return m_nodeForIdentifier[identifier];
+  }
   TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
   template <typename T>

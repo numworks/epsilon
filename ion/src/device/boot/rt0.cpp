@@ -55,7 +55,7 @@ void start() {
    * between _init_array_start and _init_array_end. So to initialize all C++
    * static objects we just have to iterate between theses two addresses and
    * call the pointed function. */
-#define SUPPORT_CPP_GLOBAL_CONSTRUCTORS 0
+#define SUPPORT_CPP_GLOBAL_CONSTRUCTORS 1
 #if SUPPORT_CPP_GLOBAL_CONSTRUCTORS
   for (cxx_constructor * c = &_init_array_start; c<&_init_array_end; c++) {
     (*c)();

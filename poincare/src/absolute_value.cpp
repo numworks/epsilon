@@ -43,19 +43,22 @@ Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUni
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
   }
-  Expression op = childAtIndex(0);
+  Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
 #if 0
-  if (op->type() == Type::Matrix) {
+  if (c->type() == Type::Matrix) {
     return SimplificationHelper::Map(this, context, angleUnit);
   }
 #endif
 #endif
-  if (op.sign() == ExpressionNode::Sign::Positive) {
-    return op;
+  if (c.sign() == ExpressionNode::Sign::Positive) {
+    replaceWithInPlace(c);
+    return c;
   }
-  if (op.sign() == ExpressionNode::Sign::Negative) {
-    return op.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+  if (c.sign() == ExpressionNode::Sign::Negative) {
+    Expression result = c.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 }

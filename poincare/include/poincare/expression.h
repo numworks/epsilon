@@ -38,6 +38,9 @@ class Expression : public TreeByReference {
   friend class GreatCommonDivisor;
   friend class HyperbolicTrigonometricFunction;
   friend class ImaginaryPart;
+  friend class Integral;
+  friend class LeastCommonMultiple;
+  friend class Logarithm;
 
   friend class Sine;
   friend class Store;

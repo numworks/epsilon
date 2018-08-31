@@ -3,11 +3,8 @@
 #include <poincare/undefined.h>
 #include <poincare/arithmetic.h>
 #include <poincare/layout_helper.h>
-
-extern "C" {
-#include <assert.h>
-}
 #include <cmath>
+#include <assert.h>
 
 namespace Poincare {
 
@@ -54,34 +51,40 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
 }
 
 Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
-  Expression op0 = childAtIndex(0);
-  Expression op1 = childAtIndex(1);
+  Expression c0 = childAtIndex(0);
+  Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
-  if (op0.type() == Type::Matrix || op1.type() == Type::Matrix) {
+  if (c0.type() == Type::Matrix || c1.type() == Type::Matrix) {
     return Undefined();
   }
 #endif
-  if (op0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational&>(op0);
+  if (c0.type() == ExpressionNode::Type::Rational) {
+    Rational r0 = static_cast<Rational>(c0);
     if (!r0.integerDenominator().isOne()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
-  if (op1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational&>(op1);
+  if (c1.type() == ExpressionNode::Type::Rational) {
+    Rational r1 = static_cast<Rational>(c1);
     if (!r1.integerDenominator().isOne()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
-  if (op0.type() != ExpressionNode::Type::Rational || op1.type() != ExpressionNode::Type::Rational) {
+  if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r0 = static_cast<Rational&>(op0);
-  Rational r1 = static_cast<Rational&>(op1);
+  Rational r0 = static_cast<Rational>(c0);
+  Rational r1 = static_cast<Rational>(c1);
 
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
@@ -89,8 +92,9 @@ Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::An
   if (lcm.isInfinity()) {
     return *this;
   }
-  return Rational(lcm);
+  Expression result = Rational(lcm);
+  replaceWithInPlace(result);
+  return result;
 }
 
 }
-

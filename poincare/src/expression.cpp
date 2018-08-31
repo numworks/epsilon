@@ -239,18 +239,18 @@ Expression Expression::simplify(Context & context, Preferences::AngleUnit angleU
   return e;
 }
 
-Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit, const Expression futureParent) const {
+Expression Expression::deepReduce(Context & context, Preferences::AngleUnit angleUnit) const {
   for (int i = 0; i < numberOfChildren(); i++) {
-    replaceChildAtIndexInPlace(i, childAtIndex(i).deepReduce(context, angleUnit, *this));
+    childAtIndex(i).deepReduce(context, angleUnit);
   }
-  return shallowReduce(context, angleUnit, futureParent);
+  return shallowReduce(context, angleUnit);
 }
 
 Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression e = shallowBeautify(context, angleUnit);
   int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    e.replaceChildAtIndexInPlace(i, e.childAtIndex(i).deepBeautify(context, angleUnit));
+    e.childAtIndex(i).deepBeautify(context, angleUnit);
   }
   return e;
 }

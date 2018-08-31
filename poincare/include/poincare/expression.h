@@ -13,6 +13,7 @@ namespace Poincare {
 class Context;
 
 class Expression : public TreeByReference {
+  friend class AbsoluteValue;
   friend class CosineNode;
   friend class SineNode;
   friend class ExpressionNode;

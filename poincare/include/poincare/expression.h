@@ -30,6 +30,8 @@ class Expression : public TreeByReference {
   friend class Division;
   friend class DivisionQuotient;
   friend class DivisionRemainder;
+  friend class Equal;
+
   friend class Sine;
   friend class Tangent;
 

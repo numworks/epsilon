@@ -27,7 +27,7 @@ EqualNode * EqualNode::FailedAllocationStaticNode() {
 }
 
 Expression EqualNode::standardEquation(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression sub = Subtraction(Expression(childAtIndex(0)), Expression(childAtIndex(1)));
+  Expression sub = Subtraction(Expression(childAtIndex(0)).clone(), Expression(childAtIndex(1)).clone());
   return sub.deepReduce(context, angleUnit);
 }
 
@@ -53,12 +53,16 @@ Evaluation<T> EqualNode::templatedApproximate(Context& context, Preferences::Ang
 }
 
 Expression Equal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   if (childAtIndex(0).isIdenticalTo(childAtIndex(1))) {
-    return Rational(1);
+    Expression result = Rational(1);
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 }

@@ -1,7 +1,3 @@
-extern "C" {
-#include <assert.h>
-#include <stdlib.h>
-}
 #include <poincare/matrix.h>
 #include <poincare/rational.h>
 #include <poincare/division.h>
@@ -11,6 +7,8 @@ extern "C" {
 #include <cmath>
 #include <float.h>
 #include <string.h>
+#include <assert.h>
+#include <stdlib.h>
 
 namespace Poincare {
 
@@ -178,7 +176,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
   if (reduced.type() != ExpressionNode::Type::Matrix) {
     return Matrix();
   }
-  Matrix matrix = Matrix(static_cast<MatrixNode *>(reduced.node()));
+  Matrix matrix = static_cast<Matrix>(reduced);
 
   int m = matrix.numberOfRows();
   int n = matrix.numberOfColumns();
@@ -209,14 +207,14 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
       /* Set to 1 M[h][k] by linear combination */
       Expression divisor = matrixChild(h, k);
       // Update determinant: det *= divisor
-      if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(divisor, 0, determinant.numberOfChildren()); }
+      if (!determinant.isUninitialized()) { determinant.addChildAtIndexInPlace(divisor.clone(), 0, determinant.numberOfChildren()); }
       for (int j = k+1; j < n; j++) {
         Expression opHJ = matrixChild(h, j);
-        Expression newOpHJ = Division(opHJ, divisor);
-        newOpHJ = newOpHJ.shallowReduce(context, angleUnit);
+        Expression newOpHJ = Division(opHJ, divisor.clone());
         matrix.replaceChildAtIndexInPlace(h*n+j, newOpHJ);
+        newOpHJ = newOpHJ.shallowReduce(context, angleUnit);
       }
-      matrix.replaceChildAtIndexInPlace(h*n+k, Rational(1));
+      matrix.replaceChildInPlace(divisor, Rational(1));
 
       /* Set to 0 all M[i][j] i != h, j > k by linear combination */
       for (int i = 0; i < m; i++) {
@@ -224,8 +222,10 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
         Expression factor = matrixChild(i, k);
         for (int j = k+1; j < n; j++) {
           Expression opIJ = matrixChild(i, j);
-          Expression newOpIJ = Subtraction(opIJ, Multiplication(matrixChild(h, j), factor).shallowReduce(context, angleUnit)).shallowReduce(context, angleUnit);
+          Expression newOpIJ = Subtraction(opIJ, Multiplication(matrixChild(h, j).clone(), factor.clone()));
           matrix.replaceChildAtIndexInPlace(i*n+j, newOpIJ);
+          newOpIJ.childAtIndex(1).shallowReduce(context, angleUnit);
+          newOpIJ = newOpIJ.shallowReduce(context, angleUnit);
         }
         matrix.replaceChildAtIndexInPlace(i*n+k, Rational(0));
       }
@@ -288,6 +288,7 @@ void Matrix::ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, 
   }
 }
 
+#if 0
 #if MATRIX_EXACT_REDUCING
 Matrix Matrix::transpose() const {
   Matrix matrix();
@@ -345,6 +346,7 @@ Expression Matrix::inverse(Context & context, Preferences::AngleUnit angleUnit) 
   return inverse;
 }
 
+#endif
 #endif
 
 template int Matrix::ArrayInverse<float>(float *, int, int);

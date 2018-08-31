@@ -28,7 +28,7 @@ public:
   // Properties
   Type type() const override { return Type::Power; }
   Sign sign() const override;
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   int polynomialDegree(char symbolName) const override;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
@@ -75,7 +75,7 @@ public:
     replaceChildAtIndexInPlace(1, exponent);
   }
   Power(const PowerNode * n) : Expression(n) {}
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;

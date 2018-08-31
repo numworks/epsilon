@@ -17,7 +17,7 @@ public:
   // ExpressionNode
   void setChildrenInPlace(Expression other) override { assert(false); return ExceptionExpressionNode<ExpressionNode>::setChildrenInPlace(other); }
   ExpressionNode::Sign sign() const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::sign(); }
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::setSign(s, context, angleUnit); }
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override { assert(false); return ExceptionExpressionNode<ExpressionNode>::setSign(s, context, angleUnit); }
 
   ExpressionNode::Type type() const override { assert(false); return ExpressionNode::Type::Uninitialized; }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override {

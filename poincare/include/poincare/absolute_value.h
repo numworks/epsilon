@@ -25,7 +25,7 @@ public:
   // Properties
   Type type() const override { return Type::AbsoluteValue; }
   Sign sign() const override { return Sign::Positive; }
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Approximation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
@@ -56,7 +56,7 @@ public:
   }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
 private:
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

@@ -47,7 +47,7 @@ public:
   // Properties
   Type type() const override { return Type::Decimal; }
   Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {
@@ -102,7 +102,7 @@ private:
   constexpr static int k_maxMantissaLength = 20;
   DecimalNode * node() const { return static_cast<DecimalNode *>(Number::node()); }
   Decimal(size_t size, const Integer & m, int e);
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;

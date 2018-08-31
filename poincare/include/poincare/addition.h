@@ -12,12 +12,6 @@ namespace Poincare {
 
 class AdditionNode : public NAryExpressionNode {
   friend class Addition;
-/* TODO friend class Logarithm;
-  friend class Multiplication;
-  friend class Subtraction;
-  friend class Power;
-  friend class Complex<float>;
-  friend class Complex<double>;*/
 public:
   using NAryExpressionNode::NAryExpressionNode;
 
@@ -85,8 +79,11 @@ public:
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 private:
   static const Number NumeralFactor(const Expression & e);
+  static inline int NumberOfNonNumeralFactors(const Expression & e);
+  static inline const Expression FirstNonNumeralFactor(const Expression & e);
+
   static bool TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const Expression & e2);
-  Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit);
   void factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }
 };

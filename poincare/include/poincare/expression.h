@@ -22,6 +22,7 @@ class Expression : public TreeByReference {
   friend class Arithmetic;
   friend class BinomialCoefficient;
   friend class Ceiling;
+  friend class ComplexArgument;
   friend class CosineNode;
   friend class SineNode;
   friend class ExpressionNode;

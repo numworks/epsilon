@@ -15,7 +15,7 @@ RandomNode * RandomNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-Expression RandomNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression RandomNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Random(this).setSign(s, context, angleUnit);
 }
 
@@ -27,7 +27,7 @@ template <typename T> Evaluation<T> RandomNode::templateApproximate() const {
   return Complex<T>(Random::random<T>());
 }
 
-Expression Random::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Random::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   return *this;
 }

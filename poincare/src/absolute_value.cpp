@@ -16,7 +16,7 @@ AbsoluteValueNode * AbsoluteValueNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-Expression AbsoluteValueNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression AbsoluteValueNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return AbsoluteValue(this).setSign(s, context, angleUnit);
 }
 
@@ -33,7 +33,7 @@ Expression AbsoluteValueNode::shallowReduce(Context& context, Preferences::Angle
   return AbsoluteValue(this).shallowReduce(context, angleUnit, futureParent);
 }
 
-Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   return *this;
 }

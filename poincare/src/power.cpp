@@ -61,7 +61,7 @@ ExpressionNode::Sign PowerNode::sign() const {
   return Sign::Unknown;
 }
 
-Expression PowerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression PowerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Power(this).setSign(s, context, angleUnit);
 }
 
@@ -206,7 +206,7 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixC
 
 // Power
 
-Expression Power::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Power::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   assert(childAtIndex(0).sign() == ExpressionNode::Sign::Negative);
   return Power(childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit), childAtIndex(1));

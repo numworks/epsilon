@@ -16,7 +16,7 @@ InfinityNode * InfinityNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-Expression InfinityNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression InfinityNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Infinity(s == Sign::Negative);
 }
 

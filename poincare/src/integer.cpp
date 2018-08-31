@@ -423,7 +423,7 @@ size_t IntegerNode::size() const {
   return m_numberOfDigits*sizeof(native_uint_t)+sizeof(IntegerNode);
 }
 
-Expression IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression IntegerNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Integer(this).setSign(s, context, angleUnit);
 }
 
@@ -597,7 +597,7 @@ Expression Integer::shallowReduce(Context& context, Preferences::AngleUnit angle
   return Rational(*this, Integer(1));
 }
 
-Expression Integer::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Integer::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   Integer signedInteger = *this;
   signedInteger.setNegative(s == ExpressionNode::Sign::Negative);
   return signedInteger;

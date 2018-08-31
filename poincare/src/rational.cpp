@@ -107,7 +107,7 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Expression subclassing
 
-Expression RationalNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression RationalNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Rational(this).setSign(s);
 }
 

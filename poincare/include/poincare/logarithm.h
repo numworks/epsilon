@@ -10,7 +10,6 @@ namespace Poincare {
 
 template<int I>
 class LogarithmNode : public ExpressionNode {
-  /* TODO friend class NaperianLogarithm; */
 public:
   // Allocation Failure
   static LogarithmNode<I> * FailedAllocationStaticNode();
@@ -64,9 +63,9 @@ public:
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
 private:
-  Expression simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression splitInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
-  //bool parentIsAPowerOfSameBase() const;
+  bool parentIsAPowerOfSameBase() const;
 };
 
 }

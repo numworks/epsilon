@@ -65,9 +65,11 @@ template<typename T> Evaluation<T> LogarithmNode<2>::templatedApproximate(Contex
 }
 
 Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit){
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
@@ -86,113 +88,117 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
     return f;
   }
 
-  //TODO EMILIE DEEP REDUCE
   /* We do not apply some rules if the parent node is a power of b. In this
    * case there is a simplication of form e^ln(3^(1/2))->3^(1/2) */
-#if 0
   bool letLogAtRoot = parentIsAPowerOfSameBase();
   // log(x^y, b)->y*log(x, b) if x>0
-  if (!letLogAtRoot && op->type() == Type::Power && op->childAtIndex(0)->sign() == Sign::Positive) {
-    Power * p = static_cast<Power *>(op);
-    Expression * x = p->childAtIndex(0);
-    Expression * y = p->childAtIndex(1);
-    p->detachOperands();
-    replaceOperand(p, x, true);
-    Expression * newLog = shallowReduce(context, angleUnit);
-    newLog = newLog->replaceWith(new Multiplication(y, newLog->clone(), false), true);
-    return newLog->shallowReduce(context, angleUnit);
+  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign() == ExpressionNode::Sign::Positive) {
+    Power p = static_cast<Power>(c);
+    Expression x = p.childAtIndex(0);
+    Expression y = p.childAtIndex(1);
+    replaceChildInPlace(p, x);
+    Expression newLog = shallowReduce(context, angleUnit);
+    Expression mult = Multiplication(y, newLog.clone());
+    newLog.replaceWithInPlace(mult);
+    return mult.shallowReduce(context, angleUnit);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
-  if (!letLogAtRoot && op->type() == Type::Multiplication) {
-    Addition * a = new Addition();
-    for (int i = 0; i<op->numberOfChildren()-1; i++) {
-      Expression * factor = op->childAtIndex(i);
-      if (factor->sign() == Sign::Positive) {
-        Expression * newLog = clone();
-        static_cast<Multiplication *>(op)->removeOperand(factor, false);
-        newLog->replaceOperand(newLog->childAtIndex(0), factor, true);
-        a->addOperand(newLog);
-        newLog->shallowReduce(context, angleUnit);
+  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Multiplication) {
+    Addition a = Addition();
+    for (int i = 0; i < c.numberOfChildren()-1; i++) {
+      Expression factor = c.childAtIndex(i);
+      if (factor.sign() == ExpressionNode::Sign::Positive) {
+        Expression newLog = clone();
+        static_cast<Multiplication>(c).removeChildInPlace(factor, factor.numberOfChildren());
+        newLog.replaceChildAtIndexInPlace(0, factor);
+        a.addChildAtIndexInPlace(newLog, a.numberOfChildren(), a.numberOfChildren());
+        newLog.shallowReduce(context, angleUnit);
       }
     }
-    if (a->numberOfChildren() > 0) {
-      op->shallowReduce(context, angleUnit);
-      Expression * reducedLastLog = shallowReduce(context, angleUnit);
-      reducedLastLog->replaceWith(a, false);
-      a->addOperand(reducedLastLog);
-      return a->shallowReduce(context, angleUnit);
-    } else {
-      delete a;
+    if (a.numberOfChildren() > 0) {
+      c.shallowReduce(context, angleUnit);
+      Expression reducedLastLog = shallowReduce(context, angleUnit);
+      reducedLastLog.replaceWithInPlace(a);
+      a.addChildAtIndexInPlace(reducedLastLog, a.numberOfChildren(), a.numberOfChildren());
+      return a.shallowReduce(context, angleUnit);
     }
   }
   // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
-  if (!letLogAtRoot && op->type() == Type::Rational) {
-    const Rational * r = static_cast<const Rational *>(childAtIndex(0));
-    Expression * n = splitInteger(r->numerator(), false, context, angleUnit);
-    Expression * d = splitInteger(r->denominator(), true, context, angleUnit);
-    Addition * a = new Addition(n, d, false);
-    replaceWith(a, true);
-    return a->shallowReduce(context, angleUnit);
+  if (!letLogAtRoot && c.type() == ExpressionNode::Type::Rational) {
+    const Rational r = static_cast<Rational>(c);
+    Expression n = splitInteger(r.signedIntegerNumerator(), false, context, angleUnit);
+    Expression d = splitInteger(r.integerDenominator(), true, context, angleUnit);
+    Addition a = Addition(n, d);
+    replaceWithInPlace(a);
+    return a.shallowReduce(context, angleUnit);
   }
-#endif
   return *this;
 }
 
-Expression Logarithm::simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Logarithm::simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression c = childAtIndex(0);
   // log(x,x)->1
   if (numberOfChildren() == 2 && c.isIdenticalTo(childAtIndex(1))) {
-    return Rational(1);
+    Expression result = Rational(1);
+    replaceWithInPlace(result);
+    return result;
   }
   if (c.type() == ExpressionNode::Type::Rational) {
-    const Rational r = static_cast<Rational>(childAtIndex(0));
+    const Rational r = static_cast<Rational>(c);
     // log(0) = undef
     if (r.isZero()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
     // log(1) = 0;
     if (r.isOne()) {
-      return Rational(0);
+      Expression result = Rational(0);
+      replaceWithInPlace(result);
+      return result;
     }
     // log(10) ->1
     if (numberOfChildren() == 1 && r.isTen()) {
-      return Rational(1);
+      Expression result = Rational(1);
+      replaceWithInPlace(result);
+      return result;
     }
   }
   return *this;
 }
 
-//TODO EMILIE
-#if 0
 bool Logarithm::parentIsAPowerOfSameBase() const {
   // We look for expressions of types e^ln(x) or e^(ln(x)) where ln is this
-  const Expression * parentExpression = parent();
-  bool thisIsPowerExponent = parentExpression->type() == Type::Power ? parentExpression->childAtIndex(1) == this : false;
-  if (parentExpression->type() == Type::Parenthesis) {
-    const Expression * parentParentExpression = parentExpression->parent();
-    if (parentExpression == nullptr) {
+  Expression parentExpression = parent();
+  if (parentExpression.isUninitialized()) {
+    return false;
+  }
+  bool thisIsPowerExponent = parentExpression.type() == ExpressionNode::Type::Power ? parentExpression.childAtIndex(1) == *this : false;
+  if (parentExpression.type() == ExpressionNode::Type::Parenthesis) {
+    Expression parentParentExpression = parentExpression.parent();
+    if (parentExpression.isUninitialized()) {
       return false;
     }
-    thisIsPowerExponent = parentParentExpression->type() == Type::Power ? parentParentExpression->childAtIndex(1) == parentExpression : false;
+    thisIsPowerExponent = parentParentExpression.type() == ExpressionNode::Type::Power ? parentParentExpression.childAtIndex(1) == parentExpression : false;
     parentExpression = parentParentExpression;
   }
   if (thisIsPowerExponent) {
-    const Expression * powerOperand0 = parentExpression->childAtIndex(0);
+    Expression powerOperand0 = parentExpression.childAtIndex(0);
     if (numberOfChildren() == 1) {
-      if (powerOperand0->type() == Type::Rational && static_cast<const Rational *>(powerOperand0)->isTen()) {
+      if (powerOperand0.type() == ExpressionNode::Type::Rational && static_cast< Rational>(powerOperand0).isTen()) {
         return true;
       }
     }
     if (numberOfChildren() == 2) {
-      if (powerOperand0->isIdenticalTo(childAtIndex(1))){
+      if (powerOperand0.isIdenticalTo(childAtIndex(1))) {
         return true;
       }
     }
   }
   return false;
 }
-#endif
 
+//TODO TODO TODO clone, do in place... ?
 Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
   assert(!i.isZero());
   assert(!i.isNegative());

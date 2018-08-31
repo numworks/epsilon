@@ -81,9 +81,11 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
@@ -93,19 +95,24 @@ Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit an
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
     Rational r = static_cast<Rational>(childAtIndex(0));
     if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
     if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {
       return *this;
     }
     Rational fact = Rational(Integer::Factorial(r.unsignedIntegerNumerator()));
     assert(!fact.numeratorOrDenominatorIsInfinity()); // because fact < k_maxOperandValue!
+    replaceWithInPlace(fact);
     return fact;
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
     Symbol s = static_cast<Symbol>(childAtIndex(0));
     if (s.name() == Ion::Charset::SmallPi || s.name() == Ion::Charset::Exponential) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
   return *this;
@@ -117,7 +124,9 @@ Expression Factorial::shallowBeautify(Context & context, Preferences::AngleUnit 
       || childAtIndex(0).type() == ExpressionNode::Type::Multiplication
       || childAtIndex(0).type() == ExpressionNode::Type::Power)
   {
-    return Factorial(Parenthesis(childAtIndex(0)));
+    Expression result = Factorial(Parenthesis(childAtIndex(0)));
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 }

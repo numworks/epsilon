@@ -9,7 +9,6 @@
 namespace Poincare {
 
 class SineNode : public ExpressionNode {
-  //friend class Tangent;
 public:
   // Allocation Failure
   static SineNode * FailedAllocationStaticNode();

@@ -68,6 +68,9 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
     return;
   }
 
+  // If the new child has a parent, detach from it
+  newChild.detachFromParent();
+
   // Move the new child
   assert(newChild.isGhost() || newChild.parent().isUninitialized());
   TreePool::sharedPool()->move(oldChild.node(), newChild.node(), newChild.numberOfChildren());
@@ -144,6 +147,10 @@ void TreeByReference::replaceChildWithGhostInPlace(TreeByReference t) {
 }
 
 void TreeByReference::mergeChildrenAtIndexInPlace(TreeByReference t, int i) {
+  /* mergeChildrenAtIndexInPlace should only be called with a tree thant can
+   * have any number of children, so there is no need to replace the stolen
+   * children with ghosts. */
+  // TODO assert this and t are "dynamic" trees
   assert(i >= 0 && i <= numberOfChildren());
   // Steal operands
   int numberOfNewChildren = t.numberOfChildren();
@@ -196,8 +203,8 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
     replaceWithAllocationFailureInPlace(currentNumberOfChildren);
     return;
   }
+
   assert(index >= 0 && index <= currentNumberOfChildren);
-  assert(t.parent().isUninitialized());
 
   // If the new node is static, copy it in the pool and add the copy
   if (t.isStatic()) {
@@ -209,6 +216,10 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
     addChildAtIndexInPlace(newT, index, currentNumberOfChildren);
     return;
   }
+
+  // If t has a parent, detach t from it.
+  t.detachFromParent();
+  assert(t.parent().isUninitialized());
 
   // Move t
   TreeNode * newChildPosition = node()->next();
@@ -250,6 +261,15 @@ void TreeByReference::removeChildrenInPlace(int currentNumberOfChildren) {
 }
 
 /* Private */
+
+void TreeByReference::detachFromParent() {
+  TreeByReference myParent = parent();
+  if (!myParent.isUninitialized()) {
+    int idxInParent = myParent.indexOfChild(*this);
+    myParent.childAtIndexWillBeStolen(idxInParent);
+  }
+  assert(parent().isUninitialized());
+}
 
 void TreeByReference::setTo(const TreeByReference & tr) {
   /* We cannot use (*this)==tr because tr would need to be casted to

@@ -36,6 +36,10 @@ Expression NAryExpressionNode::squashUnaryHierarchy() {
   return copy;
 }
 
+void NAryExpressionNode::childAtIndexWillBeStolen(int index) {
+  NAryExpression(this).removeChildAtIndexInPlace(index);
+}
+
 // Private
 
 int NAryExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const {

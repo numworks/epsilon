@@ -17,6 +17,7 @@ public:
     m_numberOfChildren-= decrement;
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
+  void childAtIndexWillBeStolen(int index) override;
 
   // Comparison
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);

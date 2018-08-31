@@ -17,7 +17,7 @@ MatrixInverseNode * MatrixInverseNode::FailedAllocationStaticNode() {
 }
 
 Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return MatrixInverse(this).shallowReduce(context, angleUnit, futureParent);
+  return MatrixInverse(this).shallowReduce(context, angleUnit);
 }
 
 LayoutReference MatrixInverseNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

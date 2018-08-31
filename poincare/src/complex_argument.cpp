@@ -24,7 +24,7 @@ int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::P
 }
 
 Expression ComplexArgumentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return ComplexArgument(this).shallowReduce(context, angleUnit, futureParent);
+  return ComplexArgument(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

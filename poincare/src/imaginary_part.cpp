@@ -27,7 +27,7 @@ Complex<T> ImaginaryPartNode::computeOnComplex(const std::complex<T> c, Preferen
 }
 
 Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return ImaginaryPart(this).shallowReduce(context, angleUnit, futureParent);
+  return ImaginaryPart(this).shallowReduce(context, angleUnit);
 }
 
 Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {

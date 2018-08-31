@@ -21,7 +21,7 @@ LayoutReference RoundNode::createLayout(Preferences::PrintFloatMode floatDisplay
 }
 
 Expression RoundNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Round(this).shallowReduce(context, angleUnit, futureParent);
+  return Round(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

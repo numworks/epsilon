@@ -33,7 +33,7 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::A
 }
 
 Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Ceiling(this).shallowReduce(context, angleUnit, futureParent);
+  return Ceiling(this).shallowReduce(context, angleUnit);
 }
 
 Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {

@@ -26,7 +26,7 @@ int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return ConfidenceInterval(this).shallowReduce(context, angleUnit, futureParent);
+  return ConfidenceInterval(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

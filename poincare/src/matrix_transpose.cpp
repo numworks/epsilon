@@ -14,7 +14,7 @@ MatrixTransposeNode * MatrixTransposeNode::FailedAllocationStaticNode() {
 }
 
 Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return MatrixTranspose(this).shallowReduce(context, angleUnit, futureParent);
+  return MatrixTranspose(this).shallowReduce(context, angleUnit);
 }
 
 LayoutRef MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

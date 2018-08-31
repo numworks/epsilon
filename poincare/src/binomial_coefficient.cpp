@@ -16,7 +16,7 @@ BinomialCoefficientNode * BinomialCoefficientNode::FailedAllocationStaticNode() 
 }
 
 Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return BinomialCoefficient(this).shallowReduce(context, angleUnit, futureParent);
+  return BinomialCoefficient(this).shallowReduce(context, angleUnit);
 }
 
 LayoutReference BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

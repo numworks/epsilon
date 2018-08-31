@@ -26,7 +26,7 @@ bool FactorialNode::needsParenthesesWithParent(const SerializationHelperInterfac
 // Simplification
 
 Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Factorial(this).shallowReduce(context, angleUnit, futureParent);
+  return Factorial(this).shallowReduce(context, angleUnit);
 }
 
 Expression FactorialNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {

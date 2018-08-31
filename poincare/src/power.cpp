@@ -140,7 +140,7 @@ Expression PowerNode::shallowReduce(Context& context, Preferences::AngleUnit ang
   return Power(this).shallowReduce(context, angleUnit);
 }
 
-Expression PowerNode::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression PowerNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Power(this).shallowBeautify(context, angleUnit);
 }
 
@@ -578,7 +578,7 @@ Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUn
   return *this;
 }
 
-Expression Power::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Power::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   // X^-y -> 1/(X->shallowBeautify)^y
   if (childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
     Expression p = denominator(context, angleUnit);

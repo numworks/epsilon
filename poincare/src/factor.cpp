@@ -23,11 +23,11 @@ LayoutRef FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression FactorNode::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression FactorNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Factor(this).shallowBeautify(context, angleUnit);
 }
 
-Expression Factor::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   Expression op = childAtIndex(0);
   if (op.type() != ExpressionNode::Type::Rational) {
     return Undefined();

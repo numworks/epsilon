@@ -56,7 +56,7 @@ private:
 
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
 
   /* Approximation */
@@ -89,7 +89,7 @@ public:
   // Expression
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
-  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 private:

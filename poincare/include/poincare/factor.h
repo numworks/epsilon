@@ -33,7 +33,7 @@ private:
   }
   const char * name() const { return "factor"; }
   /* Simplification */
-  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   /* Evaluation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -50,7 +50,7 @@ public:
     replaceChildAtIndexInPlace(0, operand);
   }
 
-  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const;
 };
 

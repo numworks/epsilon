@@ -57,7 +57,7 @@ private:
 
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
 
   /* Evaluation */
   template<typename T> static MatrixComplex<T> computeOnMatrixAndComplex(const MatrixComplex<T> m, const std::complex<T> c) {
@@ -81,7 +81,7 @@ public:
   }
   // Expression
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
-  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 private:
   static const Number NumeralFactor(const Expression & e);

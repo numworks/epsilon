@@ -114,7 +114,7 @@ Expression MultiplicationNode::shallowReduce(Context& context, Preferences::Angl
   return Multiplication(this).shallowReduce(context, angleUnit);
 }
 
-Expression MultiplicationNode::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression MultiplicationNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Multiplication(this).shallowBeautify(context, angleUnit);
 }
 
@@ -139,7 +139,7 @@ Expression Multiplication::shallowReduce(Context& context, Preferences::AngleUni
   return privateShallowReduce(context, angleUnit, true, true);
 }
 
-Expression Multiplication::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Multiplication::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Adding parenthesis if needed (a*(b+c) is not a*b+c)

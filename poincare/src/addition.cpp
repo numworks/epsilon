@@ -49,7 +49,7 @@ Expression AdditionNode::shallowReduce(Context& context, Preferences::AngleUnit 
   return Addition(this).shallowReduce(context, angleUnit);
 }
 
-Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Addition(this).shallowBeautify(context, angleUnit);
 }
 
@@ -80,7 +80,7 @@ int Addition::getPolynomialCoefficients(char symbolName, Expression coefficients
   return deg;
 }
 
-Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   /* Beautifying AdditionNode essentially consists in adding Subtractions if
    * needed.
    * In practice, we want to turn "a+(-1)*b" into "a-b". Or, more precisely, any

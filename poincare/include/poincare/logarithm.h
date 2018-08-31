@@ -35,7 +35,7 @@ public:
   }
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
     /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut. We
@@ -61,7 +61,7 @@ public:
   }
 
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
 private:
   Expression simpleShallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;

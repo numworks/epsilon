@@ -11,7 +11,7 @@ FloatNode<T> * FloatNode<T>::FailedAllocationStaticNode() {
 }
 
 template<typename T>
-Expression FloatNode<T>::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression FloatNode<T>::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Float<T>(-m_value);
 }
 

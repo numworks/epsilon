@@ -45,7 +45,7 @@ size_t DecimalNode::size() const {
   return sizeof(DecimalNode)+ sizeof(native_uint_t)*m_numberOfDigitsInMantissa;
 }
 
-Expression DecimalNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression DecimalNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Decimal(this).setSign(s, context, angleUnit);
 }
 
@@ -307,7 +307,7 @@ Decimal::Decimal(size_t size, const Integer & m, int e) : Number(TreePool::share
   node()->setValue(m.node()->digits(), m.node()->numberOfDigits(), e, m.isNegative());
 }
 
-Expression Decimal::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Decimal::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   Decimal result = *this;
   result.node()->setNegative(s == ExpressionNode::Sign::Negative);
   return result;

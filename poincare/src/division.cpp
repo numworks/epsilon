@@ -61,15 +61,17 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 // Division
 
 Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression result = Expression::defaultShallowReduce(context, angleUnit);
-  if (result.isUndefinedOrAllocationFailure()) {
-    return result;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
-  Multiplication m = Multiplication(childAtIndex(0));
   Expression p = Power(childAtIndex(1), Rational(-1));
-  p = p.shallowReduce(context, angleUnit, m); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
-  m.addChildAtIndexInPlace(p, m.numberOfChildren(), m.numberOfChildren());
-  return m.shallowReduce(context, angleUnit, futureParent);
+  Multiplication m = Multiplication(childAtIndex(0), p);
+  p.shallowReduce(context, angleUnit); // Imagine Division(2,1). p would be 1^(-1) which can be simplified
+  replaceWithInPlace(m);
+  return m.shallowReduce(context, angleUnit);
 }
 
 }

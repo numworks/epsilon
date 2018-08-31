@@ -25,6 +25,9 @@ class Expression : public TreeByReference {
   friend class ComplexArgument;
   friend class Conjugate;
   friend class Cosine;
+  friend class Derivative;
+  friend class Determinant;
+  friend class Division;
   friend class Sine;
   friend class Tangent;
 
@@ -42,7 +45,6 @@ class Expression : public TreeByReference {
   friend class Symbol;
   friend class Decimal;
   friend class DerivativeNode;
-  friend class Division;
   friend class NAryExpressionNode;
   friend class Parenthesis;
   friend class Power;

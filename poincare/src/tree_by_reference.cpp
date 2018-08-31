@@ -103,8 +103,8 @@ void TreeByReference::replaceWithAllocationFailureInPlace(int currentNumberOfChi
   assert(!isUninitialized());
   TreeByReference p = parent();
   bool hasParent = !p.isUninitialized();
-  int indexInParentNode = hasParent ? node()->indexInParent() : -1;
-  int currentRetainCount = node()->retainCount();
+  int indexInParentNode = hasParent ? p.indexOfChild(*this) : -1;
+  int currentRetainCount = nodeRetainCount();
   TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode();
 
   // Release all children and delete the node in the pool

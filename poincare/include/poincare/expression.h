@@ -181,7 +181,7 @@ protected:
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit, const Expression futureParent = Expression());
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const { return node()->setSign(s, context, angleUnit); }
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) { return node()->setSign(s, context, angleUnit); }
 private:
   /* Simplification */
   Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit);

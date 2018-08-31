@@ -91,9 +91,8 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
    * Last but not least, special care must be taken when iterating over children
    * since we may remove some during the process. */
 
-  Addition thisCopy = *this;
-  for (int i = 0; i < thisCopy.numberOfChildren(); i++) {
-    Expression childI = thisCopy.childAtIndex(i);
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression childI = childAtIndex(i);
     if (childI.type() != ExpressionNode::Type::Multiplication
         || !childI.childAtIndex(0).isNumber()
         || childI.childAtIndex(0).sign() != ExpressionNode::Sign::Negative)
@@ -102,30 +101,33 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
       continue;
     }
 
-    Multiplication m = static_cast<Multiplication&>(childI);
+    Multiplication m = static_cast<Multiplication>(childI);
 
     if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(m.childAtIndex(0)).isMinusOne()) {
       m.removeChildAtIndexInPlace(0);
     } else {
-      m.replaceChildAtIndexInPlace(0, m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit));
+      m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
     }
     Expression subtractant = m.squashUnaryHierarchy();
 
     if (i == 0) {
       Opposite o = Opposite(subtractant);
-      thisCopy.replaceChildAtIndexInPlace(i, o);
+      replaceChildInPlace(subtractant, o);
     } else {
-      Expression leftSibling = thisCopy.childAtIndex(i-1);
-      thisCopy.removeChildAtIndexInPlace(i-1);
+      Expression leftSibling = childAtIndex(i-1);
+      removeChildAtIndexInPlace(i-1);
       /* CAUTION: we removed a child. So we need to decrement i to make sure
        * the next iteration is actually on the next child. */
       i--;
       Subtraction s = Subtraction(leftSibling, subtractant);
-      thisCopy.replaceChildAtIndexInPlace(i, s);
+      /* We stole subtractant from this, we thus need to put the subtraction at
+       * the previous index of subtractant, which is still i because we updated
+       * i after removing a child. */
+      addChildAtIndexInPlace(s, i, numberOfChildren());
     }
   }
 
-  return thisCopy.squashUnaryHierarchy();
+  return squashUnaryHierarchy();
 }
 
 Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
@@ -136,21 +138,19 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
     }
   }
 
-  Addition thisCopy = *this;
-
   /* Step 1: AdditionNode is associative, so let's start by merging children
    * which are additions. */
   int i = 0;
-  while (i < thisCopy.numberOfChildren()) {
-    if (thisCopy.childAtIndex(i).type() == ExpressionNode::Type::Addition) {
-      thisCopy.mergeChildrenAtIndexInPlace(thisCopy.childAtIndex(i), i); // The tree is passed by reference
+  while (i < numberOfChildren()) {
+    if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
+      mergeChildrenAtIndexInPlace(childAtIndex(i), i);
       continue;
     }
     i++;
   }
 
   // Step 2: Sort the children
-  thisCopy.sortChildrenInPlace(ExpressionNode::SimplificationOrder, true);
+  sortChildrenInPlace(ExpressionNode::SimplificationOrder, true);
 
 #if MATRIX_EXACT_REDUCING
 #if 0
@@ -208,19 +208,19 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
   /* Step 3: Factorize like terms. Thanks to the simplification order, those are
    * next to each other at this point. */
   i = 0;
-  while (i < thisCopy.numberOfChildren()-1) {
-    Expression e1 = thisCopy.childAtIndex(i);
-    Expression e2 = thisCopy.childAtIndex(i+1);
+  while (i < numberOfChildren()-1) {
+    Expression e1 = childAtIndex(i);
+    Expression e2 = childAtIndex(i+1);
     if (e1.isNumber() && e2.isNumber()) {
-      Number r1 = static_cast<Number&>(e1);
-      Number r2 = static_cast<Number&>(e2);
+      Number r1 = static_cast<Number>(e1);
+      Number r2 = static_cast<Number>(e2);
       Number a = Number::Addition(r1, r2);
-      thisCopy.replaceChildAtIndexInPlace(i, a);
-      thisCopy.removeChildAtIndexInPlace(i+1);
+      replaceChildAtIndexInPlace(i, a);
+      removeChildAtIndexInPlace(i+1);
       continue;
     }
     if (TermsHaveIdenticalNonNumeralFactors(e1, e2)) {
-      thisCopy.factorizeChildrenAtIndexesInPlace(i, i+1, context, angleUnit);
+      factorizeChildrenAtIndexesInPlace(i, i+1, context, angleUnit);
       continue;
     }
     i++;
@@ -231,30 +231,27 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
    * pi+(-1)*pi. We don't remove the last zero if it's the only child left
    * though. */
   i = 0;
-  while (i < thisCopy.numberOfChildren()) {
-    Expression e = thisCopy.childAtIndex(i);
-    if (e.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(e).isZero() && thisCopy.numberOfChildren() > 1) {
-      thisCopy.removeChildAtIndexInPlace(i);
+  while (i < numberOfChildren()) {
+    Expression e = childAtIndex(i);
+    if (e.type() == ExpressionNode::Type::Rational && static_cast<Rational>(e).isZero() && numberOfChildren() > 1) {
+      removeChildAtIndexInPlace(i);
       continue;
     }
     i++;
   }
 
   // Step 5: Let's remove the addition altogether if it has a single child
-  Expression result = thisCopy.squashUnaryHierarchy();
+  Expression result = squashUnaryHierarchy();
 
   // Step 6: Last but not least, let's put everything under a common denominator
-  //TODO Emily Before: if (result == this && parent()->type() != Type::AdditionNode) {
-  if (result.type() == ExpressionNode::Type::Addition) {
+  if (result == *this && parent().type() != ExpressionNode::Type::Addition) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
-    Addition a = static_cast<Addition&>(result);
-    result = a.factorizeOnCommonDenominator(context, angleUnit);
+     result = factorizeOnCommonDenominator(context, angleUnit);
   }
-
   return result;
 }
 
-static inline int NumberOfNonNumeralFactors(const Expression & e) {
+int Addition::NumberOfNonNumeralFactors(const Expression & e) {
   if (e.type() != ExpressionNode::Type::Multiplication) {
     return 1; // Or (e->type() != Type::Rational);
   }
@@ -265,7 +262,7 @@ static inline int NumberOfNonNumeralFactors(const Expression & e) {
   return result;
 }
 
-static inline const Expression FirstNonNumeralFactor(const Expression & e) {
+const Expression Addition::FirstNonNumeralFactor(const Expression & e) {
   if (e.type() != ExpressionNode::Type::Multiplication) {
     return e;
   }
@@ -295,7 +292,7 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
   }
 }
 
-Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences::AngleUnit angleUnit) {
   // We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d)
 
   // Step 1: We want to compute the common denominator, b*d
@@ -317,24 +314,26 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   Addition numerator = Addition();
   for (int i = 0; i < numberOfChildren(); i++) {
     Multiplication m = Multiplication(childAtIndex(i), commonDenominator);
-    Expression reducedM = m.privateShallowReduce(context, angleUnit, true, false);
-    numerator.addChildAtIndexInPlace(reducedM, numerator.numberOfChildren(), numerator.numberOfChildren());
+    numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
+    m.privateShallowReduce(context, angleUnit, true, false);
   }
 
-  // Step 3: Simplify the numerator to a*d + c*b + e*d
-  Expression reducedNumerator = numerator.shallowReduce(context, angleUnit);
+  // Step 3: Add the denominator
+  Power inverseDenominator = Power(commonDenominator, Rational(-1));
+  Multiplication result = Multiplication(numerator, inverseDenominator);
 
-  // Step 4: Simplify the denominator (in case it's a rational number)
-  Expression reducedCommonDenominator = commonDenominator.deepReduce(context, angleUnit);
-  Power inverseDenominator = Power(reducedCommonDenominator, Rational(-1));
-  Expression reducedInverseDenominator = inverseDenominator.shallowReduce(context, angleUnit);
+  // Step 4: Simplify the numerator to a*d + c*b + e*d
+  numerator.shallowReduce(context, angleUnit);
 
-  // Step 5: Create the multiplication
-  Multiplication result = Multiplication(reducedNumerator, reducedInverseDenominator);
+  // Step 5: Simplify the denominator (in case it's a rational number)
+  commonDenominator.deepReduce(context, angleUnit);
+  inverseDenominator.shallowReduce(context, angleUnit);
 
-  /* Step 6: Simplify the resulting multiplication, forbidding any distribution
-   * of multiplication on additions (to avoid an infinite loop). */
-  return result.privateShallowReduce(context, angleUnit, false, true);
+  /* Step 6: We simplify the resulting multiplication forbidding any
+   * distribution of multiplication on additions (to avoid an infinite loop). */
+  replaceWithInPlace(result);
+  result.privateShallowReduce(context, angleUnit, false, true);
+  return result;
 }
 
 void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) {
@@ -356,9 +355,10 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context
   // Step 3: Create a multiplication
   Multiplication m;
   if (e1.type() == ExpressionNode::Type::Multiplication) {
-    m = static_cast<Multiplication&>(e1);
+    m = static_cast<Multiplication>(e1);
   } else {
-    m.addChildAtIndexInPlace(e1, 0, m.numberOfChildren());
+    replaceChildAtIndexInPlace(index1, m);
+    m.addChildAtIndexInPlace(e1, 0, 0);
   }
 
   // Step 4: Use the new rational factor
@@ -372,10 +372,7 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context
   }
 
   // Step 5: Reduce the multiplication (in case the new rational factor is zero)
-  Expression reducedM = m.shallowReduce(context, angleUnit);
-
-  // Step 6: replace the remaining child with the new multiplication
-  replaceChildAtIndexInPlace(index1, reducedM);
+  m.shallowReduce(context, angleUnit);
 }
 
 template Complex<float> Poincare::AdditionNode::compute<float>(std::complex<float>, std::complex<float>);

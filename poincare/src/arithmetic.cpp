@@ -7,7 +7,7 @@ Integer Arithmetic::LCM(const Integer & a, const Integer & b) {
   if (a.isZero() || b.isZero()) {
     return Integer(0);
   }
-  Integer signResult = Integer::Division(Integer::Multiplication(a.clone(), b.clone()), GCD(a, b)).quotient;
+  Integer signResult = Integer::Division(Integer::Multiplication(static_cast<Integer>(a.clone()), static_cast<Integer>(b.clone())), GCD(a, b)).quotient;
   //TODO Check if clone required or not
   signResult.setNegative(false);
   return signResult;
@@ -18,8 +18,8 @@ Integer Arithmetic::GCD(const Integer & a, const Integer & b) {
     return Integer::Overflow();
   }
 
-  Integer i = a.clone();
-  Integer j = b.clone();
+  Integer i = static_cast<Integer>(a.clone());
+  Integer j = static_cast<Integer>(b.clone());
   i.setNegative(false);
   j.setNegative(false);
   do {
@@ -50,7 +50,7 @@ void Arithmetic::PrimeFactorization(const Integer & n, Integer outputFactors[], 
   }
 
   // Compute the absolute value of n
-  Integer m = n.clone();
+  Integer m = static_cast<Integer>(n.clone());
   m.setNegative(false);
 
   /* First we look for prime divisors in the table primeFactors (to speed up

@@ -33,7 +33,7 @@ ExpressionNode::Sign SymbolNode::sign() const {
   return Sign::Unknown;
 }
 
-Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression & expression) const {
+Expression SymbolNode::replaceSymbolWithExpression(char symbol, Expression & expression) {
   return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
@@ -141,8 +141,8 @@ int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return 1;
 }
 
-Expression SymbolNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  return Symbol(this).shallowReduce(context, angleUnit);
+Expression SymbolNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+  return Symbol(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 bool SymbolNode::hasAnExactRepresentation(Context & context) const {
@@ -295,29 +295,24 @@ bool Symbol::isApproximate(char c, Context & context) {
   return false;
 }
 
-Expression Symbol::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-// TODO: avoid ExpressionRef comparison ? 2 solutions:
-// - Compare identifiant
-// - virtualize deepReduce to do nothing on the second child of Store?
-#if 0
+Expression Symbol::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   // Do not replace symbols in expression of type: 3->A
   Expression p = parent();
   if (!p.isUninitialized() && p.type() == ExpressionNode::Type::Store && p.childAtIndex(1) == *this) {
     return *this;
   }
-#endif
   const Expression e = context.expressionForSymbol(*this);
   if (!e.isUninitialized() && node()->hasAnExactRepresentation(context)) {
     // TODO: later AZ should be replaced.
-    /* The stored expression had been beautified which forces to call deepReduce. */
-    return e.deepReduce(context, angleUnit);
+    // The stored expression had been beautified, so we need to call deepReduce
+    return e.clone().deepReduce(context, angleUnit, futureParent);
   }
   return *this;
 }
 
-Expression Symbol::replaceSymbolWithExpression(char symbol, Expression & expression) const {
+Expression Symbol::replaceSymbolWithExpression(char symbol, Expression & expression) {
   if (name() == symbol) {
-    Expression value = expression;
+    Expression value = expression.clone();
     Expression p = parent();
     if (!p.isUninitialized() && value.node()->needsParenthesesWithParent(p.node())) {
       value = Parenthesis(value);

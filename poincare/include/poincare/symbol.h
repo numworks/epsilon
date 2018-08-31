@@ -31,7 +31,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Symbol; }
   Sign sign() const override;
-  Expression replaceSymbolWithExpression(char symbol, Expression & expression) const override;
+  Expression replaceSymbolWithExpression(char symbol, Expression & expression) override;
   int polynomialDegree(char symbolName) const override;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const override;
   int getVariables(isVariableTest isVariable, char * variables) const override;
@@ -46,7 +46,7 @@ public:
 
   /* Simplification */
   bool hasAnExactRepresentation(Context & context) const;
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
@@ -109,8 +109,8 @@ public:
   static bool isApproximate(char c, Context & context);
 
   // Expression
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
-  Expression replaceSymbolWithExpression(char symbol, Expression & expression) const;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
+  Expression replaceSymbolWithExpression(char symbol, Expression & expression);
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 
   // Symbol

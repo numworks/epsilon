@@ -24,8 +24,10 @@ class Expression : public TreeByReference {
   friend class Ceiling;
   friend class ComplexArgument;
   friend class Conjugate;
-  friend class CosineNode;
-  friend class SineNode;
+  friend class Cosine;
+  friend class Sine;
+  friend class Tangent;
+
   friend class ExpressionNode;
   friend class EqualNode;
   friend class SymbolNode;

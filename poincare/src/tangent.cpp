@@ -35,9 +35,11 @@ Expression TangentNode::shallowReduce(Context & context, Preferences::AngleUnit 
 }
 
 Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 #if MATRIX_EXACT_REDUCING
   Expression op = childAtIndex(0);
@@ -47,9 +49,10 @@ Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angl
 #endif
   Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, context, angleUnit);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
-    Sine s = Sine(newExpression.childAtIndex(0));
+    Sine s = Sine(newExpression.childAtIndex(0).clone());
     Cosine c = Cosine(newExpression.childAtIndex(0));
     Division d = Division(s, c);
+    newExpression.replaceWithInPlace(d);
     return d.shallowReduce(context, angleUnit);
   }
   return newExpression;

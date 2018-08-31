@@ -14,7 +14,7 @@ DivisionQuotientNode * DivisionQuotientNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-Expression DivisionQuotientNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression DivisionQuotientNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return DivisionQuotient(this).shallowReduce(context, angleUnit);
 }
 
@@ -37,7 +37,7 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Prefe
   return Complex<T>(std::floor(f1/f2));
 }
 
-Expression DivisionQuotient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression DivisionQuotient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

@@ -32,11 +32,11 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Ang
   return Complex<T>(std::floor(c.real()));
 }
 
-Expression FloorNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression FloorNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return Floor(this).shallowReduce(context, angleUnit);
 }
 
-Expression Floor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Floor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

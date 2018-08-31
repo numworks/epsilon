@@ -27,7 +27,7 @@ private:
   LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -59,7 +59,7 @@ public:
   }
 
   // Expression
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
 };
 
 }

@@ -30,7 +30,7 @@ private:
   LayoutReference createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplication
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit);
@@ -55,7 +55,7 @@ public:
     replaceChildAtIndexInPlace(0, operand);
   }
 
-  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
 private:
   constexpr static int k_maxOperandValue = 100;

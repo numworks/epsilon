@@ -26,7 +26,7 @@ public:
   Expression standardEquation(Context & context, Preferences::AngleUnit angleUnit) const;
 private:
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
   // Layout
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -45,7 +45,7 @@ public:
   }
 
   // Expression
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
 };
 
 }

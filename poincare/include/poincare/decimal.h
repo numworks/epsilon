@@ -61,7 +61,7 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
 
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const override;
 
   // Serialization
@@ -104,7 +104,7 @@ private:
   Decimal(size_t size, const Integer & m, int e);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
 };
 

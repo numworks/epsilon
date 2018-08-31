@@ -27,11 +27,11 @@ LayoutReference CosineNode::createLayout(Preferences::PrintFloatMode floatDispla
   return LayoutHelper::Prefix(Cosine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression CosineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression CosineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return Cosine(this).shallowReduce(context, angleUnit);
 }
 
-Expression Cosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Cosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

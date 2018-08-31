@@ -26,11 +26,11 @@ Complex<T> ImaginaryPartNode::computeOnComplex(const std::complex<T> c, Preferen
   return Complex<T>(std::imag(c));
 }
 
-Expression ImaginaryPartNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression ImaginaryPartNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return ImaginaryPart(this).shallowReduce(context, angleUnit);
 }
 
-Expression ImaginaryPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression ImaginaryPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

@@ -71,11 +71,12 @@ template<typename T>
 Complex<T> * PermuteCoefficient::templatedApproximate(Context& context, AngleUnit angleUnit) const {
   Expression * nInput = operand(0)->approximate<T>(context, angleUnit);
   Expression * kInput = operand(1)->approximate<T>(context, angleUnit);
-  if (nInput->type() != Type::Complex || kInput->type() != Type::Complex) {
-    return new Complex<T>(Complex<T>::Float(NAN));
+  T n = NAN;
+  T k = NAN;
+  if (nInput->type() == Type::Complex && kInput->type() == Type::Complex) {
+    n = static_cast<Complex<T> *>(nInput)->toScalar();
+    k = static_cast<Complex<T> *>(kInput)->toScalar();
   }
-  T n = static_cast<Complex<T> *>(nInput)->toScalar();
-  T k = static_cast<Complex<T> *>(kInput)->toScalar();
   delete nInput;
   delete kInput;
   if (std::isnan(n) || std::isnan(k) || n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {

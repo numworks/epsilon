@@ -45,7 +45,7 @@ LayoutRef AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMod
 
 // Simplication
 
-Expression AdditionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression AdditionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Addition(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -128,7 +128,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
   return thisCopy.squashUnaryHierarchy();
 }
 
-Expression Addition::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
     if (e.isUndefinedOrAllocationFailure()) {

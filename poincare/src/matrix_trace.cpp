@@ -15,7 +15,7 @@ MatrixTraceNode * MatrixTraceNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-Expression MatrixTraceNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return MatrixTrace(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -34,7 +34,7 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preference
   return result;
 }
 
-Expression MatrixTrace::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

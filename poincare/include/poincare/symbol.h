@@ -46,7 +46,7 @@ public:
 
   /* Simplification */
   bool hasAnExactRepresentation(Context & context) const;
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 
   /* Approximation */
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
@@ -109,7 +109,7 @@ public:
   static bool isApproximate(char c, Context & context);
 
   // Expression
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression replaceSymbolWithExpression(char symbol, Expression & expression);
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 

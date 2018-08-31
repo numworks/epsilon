@@ -27,11 +27,11 @@ LayoutReference SineNode::createLayout(Preferences::PrintFloatMode floatDisplayM
   return LayoutHelper::Prefix(Sine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression SineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression SineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Sine(this).shallowReduce(context, angleUnit, futureParent);
 }
 
-Expression Sine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Sine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

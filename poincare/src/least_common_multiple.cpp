@@ -21,7 +21,7 @@ LayoutReference LeastCommonMultipleNode::createLayout(Preferences::PrintFloatMod
   return LayoutHelper::Prefix(LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression LeastCommonMultipleNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression LeastCommonMultipleNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return LeastCommonMultiple(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -53,7 +53,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
   return Complex<T>(product/a);
 }
 
-Expression LeastCommonMultiple::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

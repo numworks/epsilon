@@ -15,7 +15,7 @@ BinomialCoefficientNode * BinomialCoefficientNode::FailedAllocationStaticNode() 
   return &failure;
 }
 
-Expression BinomialCoefficientNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return BinomialCoefficient(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -54,7 +54,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
   return std::round(result);
 }
 
-Expression BinomialCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

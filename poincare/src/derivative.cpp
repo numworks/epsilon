@@ -24,7 +24,7 @@ int DerivativeNode::polynomialDegree(char symbolName) const {
   return ExpressionNode::polynomialDegree(symbolName);
 }
 
-Expression DerivativeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression DerivativeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Derivative(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -116,7 +116,7 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
   return ans;
 }
 
-Expression Derivative::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

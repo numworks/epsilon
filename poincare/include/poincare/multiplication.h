@@ -55,7 +55,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
 
@@ -88,7 +88,7 @@ public:
 
   // Expression
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;

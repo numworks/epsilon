@@ -136,7 +136,7 @@ bool PowerNode::needsParenthesesWithParent(const SerializationHelperInterface * 
 
 // Simplify
 
-Expression PowerNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression PowerNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Power(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -243,7 +243,7 @@ int Power::getPolynomialCoefficients(char symbolName, Expression coefficients[])
   return -1;
 }
 
-Expression Power::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
 
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {

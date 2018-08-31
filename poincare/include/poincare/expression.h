@@ -36,6 +36,8 @@ class Expression : public TreeByReference {
   friend class Floor;
   friend class FracPart;
   friend class GreatCommonDivisor;
+  friend class HyperbolicTrigonometricFunction;
+  friend class ImaginaryPart;
 
   friend class Sine;
   friend class Store;

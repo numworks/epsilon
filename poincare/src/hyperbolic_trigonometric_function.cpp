@@ -12,9 +12,11 @@ Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context & context,
 }
 
 Expression HyperbolicTrigonometricFunction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 #if MATRIX_EXACT_REDUCING
   Expression c = childAtIndex(0);

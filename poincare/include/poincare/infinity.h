@@ -48,9 +48,11 @@ private:
 
 class Infinity : public Number {
 public:
+  Infinity(InfinityNode * n) : Number(n) {}
   Infinity(bool negative) : Number(TreePool::sharedPool()->createTreeNode<InfinityNode>()) {
     node()->setNegative(negative);
   }
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 private:
   InfinityNode * node() const { return static_cast<InfinityNode *>(Number::node()); }
 };

@@ -31,9 +31,11 @@ Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::Angl
 }
 
 Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
@@ -42,11 +44,11 @@ Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUni
   }
 #endif
   if (c.type() == ExpressionNode::Type::Rational) {
-    return Rational(0);
+    Expression result = Rational(0);
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 }
 
 }
-
-

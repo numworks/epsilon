@@ -31,6 +31,7 @@ class Expression : public TreeByReference {
   friend class DivisionQuotient;
   friend class DivisionRemainder;
   friend class Equal;
+  friend class Factor;
 
   friend class Sine;
   friend class Store;

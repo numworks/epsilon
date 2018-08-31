@@ -28,32 +28,43 @@ Expression FactorNode::shallowBeautify(Context & context, Preferences::AngleUnit
 }
 
 Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression op = childAtIndex(0);
-  if (op.type() != ExpressionNode::Type::Rational) {
-    return Undefined();
+  Expression c = childAtIndex(0);
+  if (c.type() != ExpressionNode::Type::Rational) {
+    Expression result = Undefined();
+    replaceWithInPlace(result);
+    return result;
   }
-  Rational r = static_cast<Rational &>(op);
+  Rational r = static_cast<Rational>(c);
   if (r.isZero()) {
+    replaceWithInPlace(r);
     return r;
   }
+  // TODO Clone?
   Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, angleUnit);
   if (numeratorDecomp.numberOfChildren() == 0) {
-    return Undefined();
+    Expression result = Undefined();
+    replaceWithInPlace(result);
+    return result;
   }
   Expression result = numeratorDecomp.squashUnaryHierarchy();
   if (!r.integerDenominator().isOne()) {
     Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, angleUnit);
     if (denominatorDecomp.numberOfChildren() == 0) {
-      return Undefined();
+      Expression result = Undefined();
+    replaceWithInPlace(result);
+
+      return result;
     }
     result = Division(numeratorDecomp, denominatorDecomp.squashUnaryHierarchy());
   }
   if (r.sign() == ExpressionNode::Sign::Negative) {
     result = Opposite(result);
   }
+  replaceWithInPlace(result);
   return result;
 }
 
+//TODO Clone?
 Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const {
   assert(!i.isZero());
   assert(!i.isNegative());

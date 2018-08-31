@@ -17,6 +17,7 @@ class Expression : public TreeByReference {
   friend class SineNode;
   friend class ExpressionNode;
   friend class EqualNode;
+  friend class SymbolNode;
   friend class ConfidenceInterval;
   friend class Multiplication;
   friend class Subtraction;

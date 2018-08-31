@@ -19,6 +19,7 @@ class Expression : public TreeByReference {
   friend class ArcSine;
   friend class ArcTangent;
   friend class Arithmetic;
+  friend class BinomialCoefficient;
   friend class CosineNode;
   friend class SineNode;
   friend class ExpressionNode;

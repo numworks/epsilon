@@ -33,6 +33,7 @@ class Expression : public TreeByReference {
   friend class Equal;
 
   friend class Sine;
+  friend class Store;
   friend class Tangent;
 
   friend class ExpressionNode;
@@ -102,6 +103,7 @@ public:
    * variables would overflow the maxNumberOfVariables, getVariables return -1 */
   static constexpr int k_maxNumberOfVariables = 6;
   int getVariables(ExpressionNode::isVariableTest isVariable, char * variables) const { return this->node()->getVariables(isVariable, variables); }
+  static bool DependsOnVariables(const Expression e, Context & context);
   /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same
@@ -132,7 +134,7 @@ public:
 
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
-  Expression simplify(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
@@ -208,7 +210,8 @@ private:
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
   /* Properties */
-  Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression) const;
+  Expression replaceSymbolWithExpression(char symbol, Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
+  Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression);
   int defaultGetPolynomialCoefficients(char symbol, Expression expression[]) const;
 
   /* Expression roots/extrema solver*/

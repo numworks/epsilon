@@ -34,6 +34,8 @@ class Expression : public TreeByReference {
   friend class Factor;
   friend class Factorial;
   friend class Floor;
+  friend class FracPart;
+  friend class GreatCommonDivisor;
 
   friend class Sine;
   friend class Store;

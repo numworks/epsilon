@@ -34,9 +34,11 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
 }
 
 Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
@@ -50,9 +52,9 @@ Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit ang
   Rational r = static_cast<Rational>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.remainder.isInfinity());
-  return Rational(div.remainder, r.integerDenominator());
+  Expression result = Rational(div.remainder, r.integerDenominator());
+  replaceWithInPlace(result);
+  return result;
 }
 
 }
-
-

@@ -41,6 +41,10 @@ class Expression : public TreeByReference {
   friend class Integral;
   friend class LeastCommonMultiple;
   friend class Logarithm;
+  friend class MatrixDimension;
+  friend class MatrixInverse;
+  friend class MatrixTrace;
+  friend class MatrixTranspose;
 
   friend class Sine;
   friend class Store;

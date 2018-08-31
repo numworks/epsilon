@@ -31,9 +31,11 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
 }
 
 Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
@@ -42,10 +44,10 @@ Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit an
   }
 #endif
   if (c.type() == ExpressionNode::Type::Rational) {
+    replaceWithInPlace(c);
     return c;
   }
   return *this;
 }
 
 }
-

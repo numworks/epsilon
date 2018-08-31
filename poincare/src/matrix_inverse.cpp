@@ -45,9 +45,11 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
 }
 
 Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
@@ -63,7 +65,9 @@ Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUni
   return *this;
 #else
   if (c.type() != ExpressionNode::Type::Matrix) {
-    return Power(c, Rational(-1)).shallowReduce(context, angleUnit);
+    Expression result = Power(c, Rational(-1)).shallowReduce(context, angleUnit);
+    replaceWithInPlace(result);
+    return result;
   }
   return *this;
 #endif

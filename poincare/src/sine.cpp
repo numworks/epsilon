@@ -28,7 +28,7 @@ LayoutReference SineNode::createLayout(Preferences::PrintFloatMode floatDisplayM
 }
 
 Expression SineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Sine(this).shallowReduce(context, angleUnit);
+  return Sine(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression Sine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {

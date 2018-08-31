@@ -36,7 +36,7 @@ LayoutRef DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMod
 }
 
 Expression DivisionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Division(this).shallowReduce(context, angleUnit);
+  return Division(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 template<typename T> Complex<T> DivisionNode::compute(const std::complex<T> c, const std::complex<T> d) {

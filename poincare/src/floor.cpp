@@ -33,7 +33,7 @@ Complex<T> FloorNode::computeOnComplex(const std::complex<T> c, Preferences::Ang
 }
 
 Expression FloorNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Floor(this).shallowReduce(context, angleUnit);
+  return Floor(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression Floor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {

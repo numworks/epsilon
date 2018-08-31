@@ -17,7 +17,7 @@ LayoutReference ArcSineNode::createLayout(Preferences::PrintFloatMode floatDispl
 }
 
 Expression ArcSineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return ArcSine(this).shallowReduce(context, angleUnit);
+  return ArcSine(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 template<typename T>

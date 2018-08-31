@@ -22,7 +22,7 @@ LayoutReference LeastCommonMultipleNode::createLayout(Preferences::PrintFloatMod
 }
 
 Expression LeastCommonMultipleNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return LeastCommonMultiple(this).shallowReduce(context, angleUnit);
+  return LeastCommonMultiple(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 template<typename T>

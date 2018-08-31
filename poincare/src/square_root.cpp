@@ -36,7 +36,7 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
 }
 
 Expression SquareRootNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return SquareRoot(this).shallowReduce(context, angleUnit);
+  return SquareRoot(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 

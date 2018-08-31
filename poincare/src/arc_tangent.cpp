@@ -32,7 +32,7 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
 }
 
 Expression ArcTangentNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return ArcTangent(this).shallowReduce(context, angleUnit);
+  return ArcTangent(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression ArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {

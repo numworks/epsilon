@@ -22,7 +22,7 @@ StoreNode * StoreNode::FailedAllocationStaticNode() {
 }
 
 Expression StoreNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Store(this).shallowReduce(context, angleUnit);
+  return Store(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 int StoreNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

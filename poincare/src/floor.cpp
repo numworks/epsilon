@@ -37,9 +37,11 @@ Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit an
 }
 
 Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
@@ -49,12 +51,15 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
 #endif
   if (c.type() == ExpressionNode::Type::Symbol) {
     Symbol s = static_cast<Symbol>(c);
+    Expression result;
     if (s.name() == Ion::Charset::SmallPi) {
-      return Rational(3);
+      result = Rational(3);
     }
     if (s.name() == Ion::Charset::Exponential) {
-      return Rational(2);
+      result = Rational(2);
     }
+    replaceWithInPlace(result);
+    return result;
   }
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;
@@ -62,7 +67,9 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
   Rational r = static_cast<Rational>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.quotient.isInfinity());
-  return Rational(div.quotient);
+  Expression result = Rational(div.quotient);
+  replaceWithInPlace(result);
+  return result;
 }
 
 }

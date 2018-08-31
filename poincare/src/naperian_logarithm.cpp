@@ -12,7 +12,7 @@ NaperianLogarithmNode * NaperianLogarithmNode::FailedAllocationStaticNode() {
 }
 
 Expression NaperianLogarithmNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return NaperianLogarithm(this).shallowReduce(context, angleUnit);
+  return NaperianLogarithm(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression NaperianLogarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {

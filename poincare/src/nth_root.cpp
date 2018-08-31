@@ -21,7 +21,7 @@ LayoutReference NthRootNode::createLayout(Preferences::PrintFloatMode floatDispl
 }
 
 Expression NthRootNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return NthRoot(this).shallowReduce(context, angleUnit);
+  return NthRoot(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 template<typename T>

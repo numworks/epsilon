@@ -14,7 +14,7 @@ MatrixDimensionNode * MatrixDimensionNode::FailedAllocationStaticNode() {
 }
 
 Expression MatrixDimensionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return MatrixDimension(this).shallowReduce(context, angleUnit);
+  return MatrixDimension(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 LayoutReference MatrixDimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

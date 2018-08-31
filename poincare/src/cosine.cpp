@@ -28,7 +28,7 @@ LayoutReference CosineNode::createLayout(Preferences::PrintFloatMode floatDispla
 }
 
 Expression CosineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Cosine(this).shallowReduce(context, angleUnit);
+  return Cosine(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression Cosine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {

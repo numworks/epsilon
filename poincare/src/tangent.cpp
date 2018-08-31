@@ -31,7 +31,7 @@ Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::A
 }
 
 Expression TangentNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Tangent(this).shallowReduce(context, angleUnit);
+  return Tangent(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression Tangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {

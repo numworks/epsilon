@@ -390,7 +390,7 @@ T IntegerNode::templatedApproximate() const {
 }
 
 Expression IntegerNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Integer(this).shallowReduce(context, angleUnit);
+  return Integer(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 // Layout

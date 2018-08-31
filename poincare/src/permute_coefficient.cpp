@@ -20,7 +20,7 @@ LayoutReference PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode
 }
 
 Expression PermuteCoefficientNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return PermuteCoefficient(this).shallowReduce(context, angleUnit);
+  return PermuteCoefficient(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 template<typename T>

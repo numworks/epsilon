@@ -23,7 +23,7 @@ int DivisionRemainderNode::serialize(char * buffer, int bufferSize, Preferences:
 }
 
 Expression DivisionRemainderNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return DivisionRemainder(this).shallowReduce(context, angleUnit);
+  return DivisionRemainder(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 template<typename T>

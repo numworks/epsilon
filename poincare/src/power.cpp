@@ -137,7 +137,7 @@ bool PowerNode::needsParenthesesWithParent(const SerializationHelperInterface * 
 // Simplify
 
 Expression PowerNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Power(this).shallowReduce(context, angleUnit);
+  return Power(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression PowerNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {

@@ -46,7 +46,7 @@ LayoutRef AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMod
 // Simplication
 
 Expression AdditionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Addition(this).shallowReduce(context, angleUnit);
+  return Addition(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {

@@ -23,7 +23,7 @@ int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences
 }
 
 Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return GreatCommonDivisor(this).shallowReduce(context, angleUnit, futureParent);
+  return GreatCommonDivisor(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

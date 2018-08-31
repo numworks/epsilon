@@ -23,7 +23,7 @@ LayoutReference PredictionIntervalNode::createLayout(Preferences::PrintFloatMode
 }
 
 Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return PredictionInterval(this).shallowReduce(context, angleUnit, futureParent);
+  return PredictionInterval(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

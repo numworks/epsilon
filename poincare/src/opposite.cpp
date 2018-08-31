@@ -64,7 +64,7 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression OppositeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Opposite(this).shallowReduce(context, angleUnit, futureParent);
+  return Opposite(this).shallowReduce(context, angleUnit);
 }
 
 /* Simplification */

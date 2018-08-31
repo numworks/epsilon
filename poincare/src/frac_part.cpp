@@ -22,7 +22,7 @@ int FracPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression FracPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return FracPart(this).shallowReduce(context, angleUnit, futureParent);
+  return FracPart(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

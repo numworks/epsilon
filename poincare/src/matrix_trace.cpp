@@ -16,7 +16,7 @@ MatrixTraceNode * MatrixTraceNode::FailedAllocationStaticNode() {
 }
 
 Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return MatrixTrace(this).shallowReduce(context, angleUnit, futureParent);
+  return MatrixTrace(this).shallowReduce(context, angleUnit);
 }
 
 LayoutRef MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

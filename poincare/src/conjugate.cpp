@@ -22,7 +22,7 @@ int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Conjugate(this).shallowReduce(context, angleUnit, futureParent);
+  return Conjugate(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

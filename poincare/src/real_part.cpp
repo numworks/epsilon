@@ -23,7 +23,7 @@ Complex<T> RealPartNode::computeOnComplex(const std::complex<T> c, Preferences::
 }
 
 Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return RealPart(this).shallowReduce(context, angleUnit, futureParent);
+  return RealPart(this).shallowReduce(context, angleUnit);
 }
 
 Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {

@@ -17,7 +17,7 @@ LayoutReference ArcCosineNode::createLayout(Preferences::PrintFloatMode floatDis
 }
 
 Expression ArcCosineNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return ArcCosine(this).shallowReduce(context, angleUnit, futureParent);
+  return ArcCosine(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

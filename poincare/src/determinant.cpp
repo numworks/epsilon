@@ -26,7 +26,7 @@ Evaluation<T> DeterminantNode::templatedApproximate(Context& context, Preference
 }
 
 Expression DeterminantNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Determinant(this).shallowReduce(context, angleUnit, futureParent);
+  return Determinant(this).shallowReduce(context, angleUnit);
 }
 
 Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {

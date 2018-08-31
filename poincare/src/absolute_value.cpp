@@ -30,7 +30,7 @@ LayoutRef AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDispl
 }
 
 Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return AbsoluteValue(this).shallowReduce(context, angleUnit, futureParent);
+  return AbsoluteValue(this).shallowReduce(context, angleUnit);
 }
 
 Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {

@@ -163,7 +163,7 @@ Expression RationalNode::shallowReduce(Context& context, Preferences::AngleUnit 
   return Rational(this).shallowReduce(context, angleUnit);
 }
 
-Expression RationalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression RationalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Rational(this).shallowBeautify(context, angleUnit);
 }
 
@@ -311,7 +311,7 @@ Expression Rational::shallowReduce(Context& context, Preferences::AngleUnit angl
   return *this;
 }
 
-Expression Rational::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Rational::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   if (sign() == ExpressionNode::Sign::Negative) {
     Expression abs = setSign(ExpressionNode::Sign::Positive);
     return Opposite(abs);

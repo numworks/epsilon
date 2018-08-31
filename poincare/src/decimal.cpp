@@ -77,7 +77,7 @@ Expression DecimalNode::shallowReduce(Context& context, Preferences::AngleUnit a
   return Decimal(this).shallowReduce(context, angleUnit);
 }
 
-Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Decimal(this).shallowBeautify(context, angleUnit);
 }
 
@@ -338,7 +338,7 @@ Expression Decimal::shallowReduce(Context& context, Preferences::AngleUnit angle
   return Rational(numerator, denominator);
 }
 
-Expression Decimal::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Decimal::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   if (sign() == ExpressionNode::Sign::Negative) {
     Expression abs = setSign(ExpressionNode::Sign::Positive, context, angleUnit);
     return Opposite(abs);

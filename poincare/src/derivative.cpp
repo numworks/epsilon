@@ -25,7 +25,7 @@ int DerivativeNode::polynomialDegree(char symbolName) const {
 }
 
 Expression DerivativeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Derivative(this).shallowReduce(context, angleUnit);
+  return Derivative(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 template<typename T>

@@ -8,7 +8,7 @@ LayoutReference HyperbolicTrigonometricFunctionNode::createLayout(Preferences::P
 }
 
 Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return HyperbolicTrigonometricFunction(this).shallowReduce(context, angleUnit);
+  return HyperbolicTrigonometricFunction(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression HyperbolicTrigonometricFunction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {

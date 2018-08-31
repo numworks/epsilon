@@ -74,7 +74,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canB
 }
 
 Expression DecimalNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Decimal(this).shallowReduce(context, angleUnit);
+  return Decimal(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression DecimalNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {

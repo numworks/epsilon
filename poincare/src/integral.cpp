@@ -38,7 +38,7 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression IntegralNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Integral(this).shallowReduce(context, angleUnit);
+  return Integral(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 template<typename T>

@@ -38,7 +38,7 @@ LayoutReference LogarithmNode<2>::createLayout(Preferences::PrintFloatMode float
 
 template<int I>
 Expression LogarithmNode<I>::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Logarithm(this).shallowReduce(context, angleUnit);
+  return Logarithm(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 template<int I>

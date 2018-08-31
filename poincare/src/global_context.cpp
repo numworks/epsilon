@@ -8,7 +8,7 @@
 namespace Poincare {
 
 GlobalContext::GlobalContext() :
- m_matrixLayouts{},
+  m_matrixLayouts{},
   m_pi(M_PI),
   m_e(M_E)
 {

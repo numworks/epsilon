@@ -28,6 +28,7 @@ private:
   constexpr static int k_maxLegendLength = 16;
   constexpr static int k_maxNumberOfCharacters = 50;
   constexpr static float k_viewHeight = 174.0f;
+  Poincare::Context * globalContext();
   Shared::CurveView * curveView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   bool handleEnter() override;

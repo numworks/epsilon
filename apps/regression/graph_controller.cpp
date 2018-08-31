@@ -68,6 +68,10 @@ void GraphController::selectRegressionCurve() {
   m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
 }
 
+Poincare::Context * GraphController::globalContext() {
+  return const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+}
+
 CurveView * GraphController::curveView() {
   return &m_view;
 }
@@ -157,8 +161,7 @@ void GraphController::reloadBannerView() {
   m_bannerView.setMessageAtIndex(model->formulaMessage(), 3);
 
   // Get the coefficients
-  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
-  double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globContext);
+  double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
   bool coefficientsAreDefined = true;
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
     if (std::isnan(coefficients[i])) {
@@ -259,8 +262,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
   }
   double x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
   m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
-  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
-  double y = m_store->yValueForXValue(*m_selectedSeriesIndex, x, globContext);
+  double y = m_store->yValueForXValue(*m_selectedSeriesIndex, x, globalContext());
   m_cursor->moveTo(x, y);
   m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);
   return true;
@@ -270,7 +272,7 @@ bool GraphController::moveCursorVertically(int direction) {
   int closestRegressionSeries = -1;
   int closestDotSeries = -1;
   int dotSelected = -1;
-  Poincare::Context * globContext = const_cast<AppsContainer *>(static_cast<const AppsContainer *>(app()->container()))->globalContext();
+  Poincare::Context * globContext = globalContext();
 
   if (*m_selectedDotIndex == -1) {
     // The current cursor is on a regression

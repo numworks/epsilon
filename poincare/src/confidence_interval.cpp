@@ -51,9 +51,11 @@ SimplePredictionIntervalNode * SimplePredictionIntervalNode::FailedAllocationSta
 }
 
 Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
@@ -65,13 +67,17 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational&>(c0);
     if (r0.signedIntegerNumerator().isNegative() || Integer::NaturalOrder(r0.signedIntegerNumerator(), r0.integerDenominator()) > 0) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne() || r1.signedIntegerNumerator().isNegative()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
@@ -82,11 +88,12 @@ Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::Ang
   // Compute [r0-1/sqr(r1), r0+1/sqr(r1)]
   Expression sqr = Power(r1, Rational(-1, 2));
   Matrix matrix;
-  matrix.addChildAtIndexInPlace(Addition(r0, Multiplication(Rational(-1), sqr)), 0, 0);
+  matrix.addChildAtIndexInPlace(Addition(r0.clone(), Multiplication(Rational(-1), sqr.clone())), 0, 0);
   matrix.addChildAtIndexInPlace(Addition(r0, sqr), 1, 1);
   matrix.setDimensions(1, 2);
-  return matrix.deepReduce(context, angleUnit);
+  replaceWithInPlace(matrix);
+  Expression result = matrix.deepReduce(context, angleUnit);
+  return result;
 }
 
 }
-

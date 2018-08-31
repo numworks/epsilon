@@ -25,7 +25,7 @@ int ConfidenceIntervalNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression ConfidenceIntervalNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression ConfidenceIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return ConfidenceInterval(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -50,7 +50,7 @@ SimplePredictionIntervalNode * SimplePredictionIntervalNode::FailedAllocationSta
   return &failure;
 }
 
-Expression ConfidenceInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

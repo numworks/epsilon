@@ -37,7 +37,7 @@ LayoutReference LogarithmNode<2>::createLayout(Preferences::PrintFloatMode float
 }
 
 template<int I>
-Expression LogarithmNode<I>::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression LogarithmNode<I>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Logarithm(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -64,7 +64,7 @@ template<typename T> Evaluation<T> LogarithmNode<2>::templatedApproximate(Contex
   return Complex<T>(result);
 }
 
-Expression Logarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent){
+Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit){
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;
@@ -252,8 +252,8 @@ template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincar
 template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
-template Expression LogarithmNode<1>::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
-template Expression LogarithmNode<2>::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
+template Expression LogarithmNode<1>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
+template Expression LogarithmNode<2>::shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 template Expression LogarithmNode<1>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 template Expression LogarithmNode<2>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 

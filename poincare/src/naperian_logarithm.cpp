@@ -11,11 +11,11 @@ NaperianLogarithmNode * NaperianLogarithmNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-Expression NaperianLogarithmNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return NaperianLogarithm(this).shallowReduce(context, angleUnit, futureParent);
 }
 
-Expression NaperianLogarithm::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

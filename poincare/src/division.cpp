@@ -35,7 +35,7 @@ LayoutRef DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMod
   return FractionLayoutRef(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression DivisionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression DivisionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Division(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -60,7 +60,7 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 // Division
 
-Expression Division::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression result = Expression::defaultShallowReduce(context, angleUnit);
   if (result.isUndefinedOrAllocationFailure()) {
     return result;

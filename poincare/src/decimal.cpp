@@ -73,7 +73,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool canB
   return ((int)sign())*unsignedComparison;
 }
 
-Expression DecimalNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression DecimalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Decimal(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -313,7 +313,7 @@ Expression Decimal::setSign(ExpressionNode::Sign s, Context & context, Preferenc
   return result;
 }
 
-Expression Decimal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Decimal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

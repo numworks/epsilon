@@ -56,7 +56,7 @@ private:
   static const char * name() { return "+"; }
 
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
 
   /* Evaluation */
@@ -80,7 +80,7 @@ public:
     addChildAtIndexInPlace(e1, 0, numberOfChildren());
   }
   // Expression
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;
 private:

@@ -22,7 +22,7 @@ int GreatCommonDivisorNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression GreatCommonDivisorNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression GreatCommonDivisorNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return GreatCommonDivisor(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -50,7 +50,7 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
   return Complex<T>(std::round((T)a));
 }
 
-Expression GreatCommonDivisor::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

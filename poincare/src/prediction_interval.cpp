@@ -22,7 +22,7 @@ LayoutReference PredictionIntervalNode::createLayout(Preferences::PrintFloatMode
   return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression PredictionIntervalNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression PredictionIntervalNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return PredictionInterval(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -41,7 +41,7 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
   return MatrixComplex<T>(operands, 1, 2);
 }
 
-Expression PredictionInterval::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression PredictionInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

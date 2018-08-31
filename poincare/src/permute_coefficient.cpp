@@ -19,7 +19,7 @@ LayoutReference PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode
   return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression PermuteCoefficientNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression PermuteCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return PermuteCoefficient(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -45,7 +45,7 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Pre
   return Complex<T>(std::round(result));
 }
 
-Expression PermuteCoefficient::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

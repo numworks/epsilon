@@ -25,7 +25,7 @@ bool FactorialNode::needsParenthesesWithParent(const SerializationHelperInterfac
 
 // Simplification
 
-Expression FactorialNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression FactorialNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Factorial(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -80,7 +80,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return numberOfChar;
 }
 
-Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

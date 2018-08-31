@@ -91,7 +91,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
   return result;
 }
 
-Expression MultiplicationNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression MultiplicationNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Multiplication(this).setSign(s, context, angleUnit);
 }
 
@@ -124,7 +124,7 @@ Expression MultiplicationNode::denominator(Context & context, Preferences::Angle
 
 /* Multiplication */
 
-Expression Multiplication::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Multiplication::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   Expression result = *this;
   for (int i = 0; i < result.numberOfChildren(); i++) {

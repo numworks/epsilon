@@ -42,7 +42,7 @@ Expression LogarithmNode<I>::shallowReduce(Context& context, Preferences::AngleU
 }
 
 template<int I>
-Expression LogarithmNode<I>::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression LogarithmNode<I>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Logarithm(this).shallowBeautify(context, angleUnit);
 }
 
@@ -230,7 +230,7 @@ Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & cont
 }
 
 
-Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   if (numberOfChildren() == 1) {
     return *this;
   }
@@ -254,7 +254,7 @@ template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincar
 template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Expression LogarithmNode<1>::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
 template Expression LogarithmNode<2>::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
-template Expression LogarithmNode<1>::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
-template Expression LogarithmNode<2>::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
+template Expression LogarithmNode<1>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+template Expression LogarithmNode<2>::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
 }

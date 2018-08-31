@@ -59,7 +59,7 @@ public:
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool canBeInterrupted) const override;
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override;
   bool m_negative;
@@ -121,7 +121,7 @@ private:
   RationalNode * node() { return static_cast<RationalNode *>(Number::node()); }
 
   /* Simplification */
-  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
   Expression setSign(ExpressionNode::Sign s);
 };

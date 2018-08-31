@@ -29,7 +29,7 @@ Expression FactorialNode::shallowReduce(Context& context, Preferences::AngleUnit
   return Factorial(this).shallowReduce(context, angleUnit);
 }
 
-Expression FactorialNode::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression FactorialNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Factorial(this).shallowBeautify(context, angleUnit);
 }
 
@@ -111,7 +111,7 @@ Expression Factorial::shallowReduce(Context& context, Preferences::AngleUnit ang
   return *this;
 }
 
-Expression Factorial::shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Factorial::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   // +(a,b)! ->(+(a,b))!
   if (childAtIndex(0).type() == ExpressionNode::Type::Addition
       || childAtIndex(0).type() == ExpressionNode::Type::Multiplication

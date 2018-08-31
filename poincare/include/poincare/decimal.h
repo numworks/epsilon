@@ -62,7 +62,7 @@ public:
 
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
-  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const override;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Serialization
   bool needsParenthesesWithParent(const SerializationHelperInterface * e) const override;
@@ -105,7 +105,7 @@ private:
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   // Simplification
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
-  Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
+  Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

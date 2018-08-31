@@ -51,9 +51,11 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
 }
 
 Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
@@ -65,13 +67,17 @@ Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::Ang
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational>(c0);
     if (!r0.integerDenominator().isOne()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
@@ -84,7 +90,9 @@ Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::Ang
   Integer b = r1.signedIntegerNumerator();
   Integer gcd = Arithmetic::GCD(a, b);
   assert(!gcd.isInfinity());
-  return Rational(gcd);
+  Expression result = Rational(gcd);
+  replaceWithInPlace(result);
+  return result;
 }
 
 }

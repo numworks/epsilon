@@ -38,9 +38,11 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(Context& context, Pref
   return Complex<T>(std::round(f1-f2*std::floor(f1/f2)));
 }
 Expression DivisionRemainder::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
@@ -52,13 +54,17 @@ Expression DivisionRemainder::shallowReduce(Context & context, Preferences::Angl
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational>(c0);
     if (!r0.integerDenominator().isOne()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational>(c1);
     if (!r1.integerDenominator().isOne()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
@@ -70,11 +76,15 @@ Expression DivisionRemainder::shallowReduce(Context & context, Preferences::Angl
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   if (b.isZero()) {
-    return Infinity(a.isNegative());
+    Expression result = Infinity(a.isNegative());
+    replaceWithInPlace(result);
+    return result;
   }
   Integer result = Integer::Division(a, b).remainder;
   assert(!result.isInfinity());
-  return Rational(result);
+  Expression rationalResult = Rational(result);
+  replaceWithInPlace(rationalResult);
+  return rationalResult;
 }
 
 }

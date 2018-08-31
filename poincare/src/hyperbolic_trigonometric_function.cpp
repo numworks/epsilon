@@ -7,11 +7,11 @@ LayoutReference HyperbolicTrigonometricFunctionNode::createLayout(Preferences::P
   return LayoutHelper::Prefix(HyperbolicTrigonometricFunction(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return HyperbolicTrigonometricFunction(this).shallowReduce(context, angleUnit);
 }
 
-Expression HyperbolicTrigonometricFunction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression HyperbolicTrigonometricFunction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

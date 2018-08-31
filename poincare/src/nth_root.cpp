@@ -20,7 +20,7 @@ LayoutReference NthRootNode::createLayout(Preferences::PrintFloatMode floatDispl
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression NthRootNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression NthRootNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return NthRoot(this).shallowReduce(context, angleUnit);
 }
 
@@ -39,7 +39,7 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::A
   return result;
 }
 
-Expression NthRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression NthRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

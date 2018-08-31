@@ -22,11 +22,11 @@ Complex<T> RealPartNode::computeOnComplex(const std::complex<T> c, Preferences::
   return Complex<T>(std::real(c));
 }
 
-Expression RealPartNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression RealPartNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return RealPart(this).shallowReduce(context, angleUnit);
 }
 
-Expression RealPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression RealPart::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

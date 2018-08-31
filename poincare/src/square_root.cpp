@@ -35,12 +35,12 @@ Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>(ApproximationHelper::TruncateRealOrImaginaryPartAccordingToArgument(result));
 }
 
-Expression SquareRootNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression SquareRootNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return SquareRoot(this).shallowReduce(context, angleUnit);
 }
 
 
-Expression SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression SquareRoot::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

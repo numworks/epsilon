@@ -52,11 +52,11 @@ template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix
   return result;
 }
 
-Expression SubtractionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression SubtractionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return Subtraction(this).shallowReduce(context, angleUnit);
 }
 
-Expression Subtraction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Subtraction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

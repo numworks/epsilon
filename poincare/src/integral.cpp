@@ -37,7 +37,7 @@ int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "int");
 }
 
-Expression IntegralNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression IntegralNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return Integral(this).shallowReduce(context, angleUnit);
 }
 
@@ -190,7 +190,7 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Cont
 #endif
 
 
-Expression Integral::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Integral::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

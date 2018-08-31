@@ -13,7 +13,7 @@ MatrixTransposeNode * MatrixTransposeNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-Expression MatrixTransposeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression MatrixTransposeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return MatrixTranspose(this).shallowReduce(context, angleUnit);
 }
 
@@ -38,7 +38,7 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Prefer
   return transpose;
 }
 
-Expression MatrixTranspose::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression MatrixTranspose::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

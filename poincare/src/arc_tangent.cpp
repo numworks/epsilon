@@ -31,11 +31,11 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-Expression ArcTangentNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression ArcTangentNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return ArcTangent(this).shallowReduce(context, angleUnit);
 }
 
-Expression ArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression ArcTangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

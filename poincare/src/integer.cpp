@@ -389,7 +389,7 @@ T IntegerNode::templatedApproximate() const {
   return m_negative ? -a : a;
 }
 
-Expression IntegerNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression IntegerNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return Integer(this).shallowReduce(context, angleUnit);
 }
 
@@ -593,7 +593,7 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
   return um;
 }
 
-Expression Integer::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Integer::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return Rational(*this, Integer(1));
 }
 

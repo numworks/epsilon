@@ -16,7 +16,7 @@ LayoutReference ArcSineNode::createLayout(Preferences::PrintFloatMode floatDispl
   return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression ArcSineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression ArcSineNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return ArcSine(this).shallowReduce(context, angleUnit);
 }
 
@@ -35,7 +35,7 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::A
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-Expression ArcSine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression ArcSine::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

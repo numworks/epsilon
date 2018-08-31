@@ -15,7 +15,7 @@ DivisionQuotientNode * DivisionQuotientNode::FailedAllocationStaticNode() {
 }
 
 Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return DivisionQuotient(this).shallowReduce(context, angleUnit, futureParent);
+  return DivisionQuotient(this).shallowReduce(context, angleUnit);
 }
 
 LayoutReference DivisionQuotientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

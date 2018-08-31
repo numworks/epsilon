@@ -32,7 +32,7 @@ Expression EqualNode::standardEquation(Context & context, Preferences::AngleUnit
 }
 
 Expression EqualNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Equal(this).shallowReduce(context, angleUnit, futureParent);
+  return Equal(this).shallowReduce(context, angleUnit);
 }
 
 LayoutRef EqualNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

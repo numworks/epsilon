@@ -142,7 +142,7 @@ int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Symbol(this).shallowReduce(context, angleUnit, futureParent);
+  return Symbol(this).shallowReduce(context, angleUnit);
 }
 
 bool SymbolNode::hasAnExactRepresentation(Context & context) const {

@@ -111,7 +111,7 @@ int MultiplicationNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 }
 
 Expression MultiplicationNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Multiplication(this).shallowReduce(context, angleUnit, futureParent);
+  return Multiplication(this).shallowReduce(context, angleUnit);
 }
 
 Expression MultiplicationNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {

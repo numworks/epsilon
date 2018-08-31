@@ -23,7 +23,7 @@ int ParenthesisNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 Expression ParenthesisNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  return Parenthesis(this).shallowReduce(context, angleUnit, futureParent);
+  return Parenthesis(this).shallowReduce(context, angleUnit);
 }
 
 template<typename T>

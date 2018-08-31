@@ -53,7 +53,7 @@ template<typename T> MatrixComplex<T> SubtractionNode::computeOnComplexAndMatrix
 }
 
 Expression SubtractionNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
-  return Subtraction(this).shallowReduce(context, angleUnit);
+  return Subtraction(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 Expression Subtraction::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
@@ -62,9 +62,10 @@ Expression Subtraction::shallowReduce(Context& context, Preferences::AngleUnit a
     return e;
   }
   Expression m = Multiplication(Rational(-1), childAtIndex(1));
-  m = m.shallowReduce(context, angleUnit);
-  Addition a = Addition(childAtIndex(0), m);
-  return a.shallowReduce(context, angleUnit);
+  Addition a = Addition(childAtIndex(0));
+  m = m.shallowReduce(context, angleUnit, a);
+  a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+  return a.shallowReduce(context, angleUnit, futureParent);
 }
 
 }

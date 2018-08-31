@@ -30,11 +30,13 @@ Expression DeterminantNode::shallowReduce(Context & context, Preferences::AngleU
 }
 
 Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
-  Expression op = childAtIndex(0);
+  Expression c0 = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
 #if 0
   if (!op.recursivelyMatches(Expression::IsMatrix)) {
@@ -44,11 +46,11 @@ Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit 
 #endif
 #endif
   // det(A) = A if A is not a matrix
-  if (!op.recursivelyMatches(Expression::IsMatrix, context)) {
-    return op;
+  if (!c0.recursivelyMatches(Expression::IsMatrix, context)) {
+    replaceWithInPlace(c0);
+    return c0;
   }
   return *this;
 }
 
 }
-

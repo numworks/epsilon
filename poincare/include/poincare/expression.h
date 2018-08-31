@@ -28,6 +28,7 @@ class Expression : public TreeByReference {
   friend class Derivative;
   friend class Determinant;
   friend class Division;
+  friend class DivisionQuotient;
   friend class Sine;
   friend class Tangent;
 

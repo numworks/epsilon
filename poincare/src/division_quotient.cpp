@@ -38,27 +38,35 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Prefe
 }
 
 Expression DivisionQuotient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
   if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
-    return Undefined();
+    Expression result = Undefined();
+    replaceWithInPlace(result);
+    return result;
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational>(c0);
     if (!r0.integerDenominator().isOne()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational>(c1);
     if (!r1.integerDenominator().isOne()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
@@ -70,11 +78,15 @@ Expression DivisionQuotient::shallowReduce(Context & context, Preferences::Angle
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();
   if (b.isZero()) {
-    return Infinity(a.isNegative());
+    Expression result = Infinity(a.isNegative());
+    replaceWithInPlace(result);
+    return result;
   }
   Integer result = Integer::Division(a, b).quotient;
   assert(!result.isInfinity());
-  return Rational(result);
+  Expression rationalResult = Rational(result);
+  replaceWithInPlace(rationalResult);
+  return rationalResult;
 }
 
 }

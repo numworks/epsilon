@@ -45,7 +45,7 @@ public:
 
 private:
   // Property
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Layout
   bool needsParenthesesWithParent(const SerializationHelperInterface * parentNode) const override;
@@ -87,7 +87,7 @@ public:
   }
 
   // Expression
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const;
   Expression shallowBeautify(Context& context, Preferences::AngleUnit angleUnit) const;
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const;

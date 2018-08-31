@@ -157,7 +157,7 @@ public:
 
   // ExpressionNode
   Sign sign() const override { return m_negative ? Sign::Negative : Sign::Positive; }
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   void setNegative(bool negative);
 
@@ -243,7 +243,7 @@ private:
 
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) const;
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 };
 
 struct IntegerDivision {

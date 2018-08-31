@@ -22,7 +22,7 @@ public:
   // Properties
   Type type() const override { return Type::Undefined; }
   int polynomialDegree(char symbolName) const override;
-  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) const override;
+  Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override {

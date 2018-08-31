@@ -193,6 +193,10 @@ bool HorizontalLayoutNode::hasText() const {
   return true;
 }
 
+void HorizontalLayoutNode::childAtIndexWillBeStolen(int index) {
+  HorizontalLayoutRef(this).removeChildAtIndex(index, nullptr);
+}
+
 // Protected
 
 KDSize HorizontalLayoutNode::computeSize() {

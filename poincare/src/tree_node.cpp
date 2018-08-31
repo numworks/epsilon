@@ -192,6 +192,10 @@ TreeNode * TreeNode::nextSibling() const {
   return node;
 }
 
+void TreeNode::childAtIndexWillBeStolen(int index) {
+  TreeByReference(this).replaceChildAtIndexWithGhostInPlace(index);
+}
+
 TreeNode * TreeNode::lastDescendant() const {
   TreeNode * node = const_cast<TreeNode *>(this);
   int remainingNodesToVisit = node->numberOfChildren();

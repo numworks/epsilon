@@ -44,6 +44,7 @@ public:
     m_numberOfChildren-= decrement;
   }
   void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
+  void childAtIndexWillBeStolen(int index) override;
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "HorizontalLayout";

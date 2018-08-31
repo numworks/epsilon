@@ -36,9 +36,11 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::A
 }
 
 Expression ArcSine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == Type::Matrix) {

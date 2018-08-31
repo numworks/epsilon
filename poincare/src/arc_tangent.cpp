@@ -36,9 +36,11 @@ Expression ArcTangentNode::shallowReduce(Context & context, Preferences::AngleUn
 }
 
 Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {

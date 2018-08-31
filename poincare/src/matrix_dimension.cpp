@@ -40,9 +40,11 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Prefer
 }
 
 Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
@@ -68,6 +70,7 @@ Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleU
     result.addChildAtIndexInPlace(Rational(1), 0, 0);
     result.addChildAtIndexInPlace(Rational(1), 1, 1);
     result.setDimensions(1, 2);
+    replaceWithInPlace(result);
     return result;
   }
   return *this;

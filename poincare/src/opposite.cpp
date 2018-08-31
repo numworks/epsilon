@@ -63,13 +63,13 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return numberOfChar;
 }
 
-Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
   return Opposite(this).shallowReduce(context, angleUnit);
 }
 
 /* Simplification */
 
-Expression Opposite::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression Opposite::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression result = Expression::defaultShallowReduce(context, angleUnit);
   if (result.isUndefinedOrAllocationFailure()) {
     return result;
@@ -78,24 +78,7 @@ Expression Opposite::shallowReduce(Context& context, Preferences::AngleUnit angl
 #if MATRIX_EXACT_REDUCING
 #endif
   result = Multiplication(Rational(-1), child);
-  return result.shallowReduce(context, angleUnit);
+  return result.shallowReduce(context, angleUnit, futureParent);
 }
-#if 0
-
-Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
-  Expression e = ExpressionNode::shallowReduce(context, angleUnit);
-  if (e.node() != this) {
-    return e;
-  }
-  const Expression child = Expression(childAtIndex(0));
-#if MATRIX_EXACT_REDUCING
-  if (op->type() == Type::Matrix) {
-    return SimplificationHelper::Map(this, context, angleUnit);
-  }
-#endif
-  MultiplicationReference m = MultiplicationReference(RationalReference(-1), child);
-  return m->node()->shallowReduce(context, angleUnit);
-}
-#endif
 
 }

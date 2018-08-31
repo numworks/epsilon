@@ -16,7 +16,7 @@ MatrixInverseNode * MatrixInverseNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-Expression MatrixInverseNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression MatrixInverseNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   return MatrixInverse(this).shallowReduce(context, angleUnit);
 }
 
@@ -44,7 +44,7 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
   return inverse;
 }
 
-Expression MatrixInverse::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) const {
+Expression MatrixInverse::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

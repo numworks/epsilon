@@ -44,7 +44,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
 
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent = Expression()) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
 };
 
 class Opposite : public Expression {

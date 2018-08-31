@@ -63,8 +63,8 @@ int OppositeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return numberOfChar;
 }
 
-Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit) {
-  return Opposite(this).shallowReduce(context, angleUnit);
+Expression OppositeNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+  return Opposite(this).shallowReduce(context, angleUnit, futureParent);
 }
 
 /* Simplification */

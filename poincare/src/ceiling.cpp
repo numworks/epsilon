@@ -37,9 +37,11 @@ Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit 
 }
 
 Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
@@ -49,27 +51,34 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
 #endif
   if (c.type() == ExpressionNode::Type::Symbol) {
     Symbol s = static_cast<Symbol>(c);
+    Expression result;
     if (s.name() == Ion::Charset::SmallPi) {
-      return Rational(4);
+      result = Rational(4);
     }
     if (s.name() == Ion::Charset::Exponential) {
-      return Rational(3);
+      result = Rational(3);
     }
+    replaceWithInPlace(result);
+    return result;
   }
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r = static_cast<Rational>(c);
+  Rational r = static_cast<Rational>(c.clone());
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.remainder.isInfinity());
   if (div.remainder.isZero()) {
-    return Rational(div.quotient);
+    Expression result = Rational(div.quotient);
+    replaceWithInPlace(result);
+    return result;
   }
   Integer result = Integer::Addition(div.quotient, Integer(1));
   if (result.isInfinity()) {
     return *this;
   }
-  return Rational(result);
+  Expression rationalResult = Rational(result);
+  replaceWithInPlace(rationalResult);
+  return rationalResult;
 }
 
 }

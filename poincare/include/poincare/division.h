@@ -52,7 +52,7 @@ public:
   }
 
   // Simplification
-  virtual Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
+  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
 
 private:
   template<typename T> static Complex<T> compute(const std::complex<T> c, const std::complex<T> d);

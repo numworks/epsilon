@@ -83,6 +83,9 @@ public:
   int indexOfChild(TreeByReference t) const {
     return node()->indexOfChild(t.node());
   }
+  void childAtIndexWillBeStolen(int index) {
+    node()->childAtIndexWillBeStolen(index);
+  }
 
   /* Hierarchy operations */
   // Replace
@@ -90,6 +93,10 @@ public:
   void replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild);
   void replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild);
   void replaceWithAllocationFailureInPlace(int currentNumberOfChildren);
+  void replaceChildAtIndexWithGhostInPlace(int index) {
+    assert(index >= 0 && index < numberOfChildren());
+    replaceChildWithGhostInPlace(childAtIndex(index));
+  }
   void replaceChildWithGhostInPlace(TreeByReference t);
   // Merge
   void mergeChildrenAtIndexInPlace(TreeByReference t, int i);
@@ -124,6 +131,7 @@ protected:
   int m_identifier;
 
 private:
+  void detachFromParent();
   // Add ghost children on layout construction
   void buildGhostChildren();
 };

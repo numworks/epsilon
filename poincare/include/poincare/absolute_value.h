@@ -43,7 +43,7 @@ public:
   }
 
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 };
 
 class AbsoluteValue : public Expression {
@@ -54,7 +54,7 @@ public:
   AbsoluteValue(Expression operand) : AbsoluteValue() {
     replaceChildAtIndexInPlace(0, operand);
   }
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 private:
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 };

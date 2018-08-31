@@ -20,7 +20,7 @@ LayoutReference RoundNode::createLayout(Preferences::PrintFloatMode floatDisplay
   return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
-Expression RoundNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression RoundNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Round(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -37,7 +37,7 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Ang
   return Complex<T>(std::round(f1*err)/err);
 }
 
-Expression Round::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

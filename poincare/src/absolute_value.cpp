@@ -29,7 +29,7 @@ LayoutRef AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDispl
   return AbsoluteValueLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
 
-Expression AbsoluteValueNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression AbsoluteValueNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return AbsoluteValue(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -38,7 +38,7 @@ Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Pre
   return *this;
 }
 
-Expression AbsoluteValue::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

@@ -21,7 +21,7 @@ StoreNode * StoreNode::FailedAllocationStaticNode() {
   return &failure;
 }
 
-Expression StoreNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Store(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -47,7 +47,7 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
   return context.expressionForSymbol(s.symbol()).node()->approximate(T(), context, angleUnit);
 }
 
-Expression Store::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   context.setExpressionForSymbolName(value(), symbol(), context);
   return symbol().shallowReduce(context, angleUnit);
 }

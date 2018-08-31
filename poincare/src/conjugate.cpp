@@ -21,7 +21,7 @@ int ConjugateNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "conj");
 }
 
-Expression ConjugateNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression ConjugateNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Conjugate(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -30,7 +30,7 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>(std::conj(c));
 }
 
-Expression Conjugate::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

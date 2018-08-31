@@ -19,13 +19,13 @@ private:
   }
   virtual const char * name() const = 0;
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
 };
 
 class HyperbolicTrigonometricFunction : public Expression {
 public:
   HyperbolicTrigonometricFunction(const HyperbolicTrigonometricFunctionNode * n) : Expression(n) {}
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

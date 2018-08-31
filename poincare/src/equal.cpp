@@ -31,7 +31,7 @@ Expression EqualNode::standardEquation(Context & context, Preferences::AngleUnit
   return sub.deepReduce(context, angleUnit);
 }
 
-Expression EqualNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression EqualNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Equal(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -52,7 +52,7 @@ Evaluation<T> EqualNode::templatedApproximate(Context& context, Preferences::Ang
   return Complex<T>::Undefined();
 }
 
-Expression Equal::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Equal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

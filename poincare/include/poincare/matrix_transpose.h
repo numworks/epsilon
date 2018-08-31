@@ -28,7 +28,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   const char * name() const { return "transpose"; }
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<float>(context, angleUnit); }
   Evaluation<double> approximate(DoublePrecision p, Context& context, Preferences::AngleUnit angleUnit) const override { return templatedApproximate<double>(context, angleUnit); }
@@ -42,7 +42,7 @@ public:
   MatrixTranspose(Expression operand) : MatrixTranspose() {
     replaceChildAtIndexInPlace(0, operand);
   }
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };
 
 }

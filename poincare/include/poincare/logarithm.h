@@ -34,7 +34,7 @@ public:
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, "log");
   }
   // Simplification
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) override;
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) override;
   // Evaluation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
@@ -60,7 +60,7 @@ public:
     replaceChildAtIndexInPlace(1, child2);
   }
 
-  Expression shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent);
+  Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
 private:

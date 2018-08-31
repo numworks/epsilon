@@ -30,11 +30,11 @@ Complex<T> TangentNode::computeOnComplex(const std::complex<T> c, Preferences::A
   return Complex<T>(Trigonometry::RoundToMeaningfulDigits(res));
 }
 
-Expression TangentNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression TangentNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Tangent(this).shallowReduce(context, angleUnit, futureParent);
 }
 
-Expression Tangent::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefinedOrAllocationFailure()) {
     return e;

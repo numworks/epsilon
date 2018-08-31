@@ -141,7 +141,7 @@ int SymbolNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
   return 1;
 }
 
-Expression SymbolNode::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression SymbolNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Symbol(this).shallowReduce(context, angleUnit, futureParent);
 }
 
@@ -295,7 +295,7 @@ bool Symbol::isApproximate(char c, Context & context) {
   return false;
 }
 
-Expression Symbol::shallowReduce(Context& context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   // Do not replace symbols in expression of type: 3->A
   Expression p = parent();
   if (!p.isUninitialized() && p.type() == ExpressionNode::Type::Store && p.childAtIndex(1) == *this) {

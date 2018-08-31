@@ -55,39 +55,47 @@ T BinomialCoefficientNode::compute(T k, T n) {
 }
 
 Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
-  Expression op0 = childAtIndex(0);
-  Expression op1 = childAtIndex(1);
+  Expression c0 = childAtIndex(0);
+  Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
-  if (op0.type() == ExpressionNode::Type::Matrix || op1.type() == ExpressionNode::Type::Matrix) {
+  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
     return Undefined();
   }
 #endif
-  if (op0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational>(op0);
+  if (c0.type() == ExpressionNode::Type::Rational) {
+    Rational r0 = static_cast<Rational>(c0);
     if (!r0.integerDenominator().isOne() || r0.integerDenominator().isNegative()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
-  if (op1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational>(op1);
+  if (c1.type() == ExpressionNode::Type::Rational) {
+    Rational r1 = static_cast<Rational>(c1);
     if (!r1.integerDenominator().isOne() || r1.integerDenominator().isNegative()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
-  if (op0.type() != ExpressionNode::Type::Rational || op1.type() != ExpressionNode::Type::Rational) {
+  if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r0 = static_cast<Rational>(op0);
-  Rational r1 = static_cast<Rational>(op1);
+  Rational r0 = static_cast<Rational>(c0);
+  Rational r1 = static_cast<Rational>(c1);
 
-  Integer n = r0.signedIntegerNumerator();
-  Integer k = r1.signedIntegerNumerator();
+  Integer n = static_cast<Integer>(r0.signedIntegerNumerator().clone());
+  Integer k = static_cast<Integer>(r1.signedIntegerNumerator().clone());
   if (n.isLowerThan(k)) {
-    return Undefined();
+    Expression result = Undefined();
+    replaceWithInPlace(result);
+    return result;
   }
   /* If n is too big, we do not reduce in order to avoid too long computation.
    * The binomial coefficient will be approximatively evaluated later. */
@@ -104,7 +112,9 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   }
   // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~2^89
   assert(!result.numeratorOrDenominatorIsInfinity());
-  return Rational(result);
+  Expression rationalResult = Rational(result);
+  replaceWithInPlace(rationalResult);
+  return rationalResult;
 }
 
 template double BinomialCoefficientNode::compute(double k, double n);

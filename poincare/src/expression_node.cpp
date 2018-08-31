@@ -88,7 +88,7 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool c
   return 0;
 }
 
-Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit, const Expression futureParent) {
+Expression ExpressionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Expression(this).defaultShallowReduce(context, angleUnit);
 }
 

@@ -90,8 +90,8 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   Rational r0 = static_cast<Rational>(c0);
   Rational r1 = static_cast<Rational>(c1);
 
-  Integer n = static_cast<Integer>(r0.signedIntegerNumerator().clone());
-  Integer k = static_cast<Integer>(r1.signedIntegerNumerator().clone());
+  Integer n = r0.signedIntegerNumerator();
+  Integer k = r1.signedIntegerNumerator();
   if (n.isLowerThan(k)) {
     Expression result = Undefined();
     replaceWithInPlace(result);

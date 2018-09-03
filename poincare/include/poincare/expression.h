@@ -53,7 +53,8 @@ class Expression : public TreeByReference {
   friend class PermuteCoefficient;
   friend class Power;
   friend class PredictionInterval;
-
+  friend class RealPart;
+  friend class Round;
   friend class Sine;
   friend class Store;
   friend class Tangent;

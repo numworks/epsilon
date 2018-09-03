@@ -52,7 +52,7 @@ public:
   Integer& operator=(const Integer& other); // C++11 copy assignment operator
 
   // Getters
-  const native_uint_t * digits() const { return m_digits; }
+  const native_uint_t * digits() const { return usesImmediateDigit() ? &m_digit : m_digits; }
   size_t numberOfDigits() const { return m_numberOfDigits; }
 
   // Serialization
@@ -66,7 +66,7 @@ public:
 
   // Sign
   bool isNegative() const { return m_negative; }
-  void setNegative(bool negative) { if (m_numberOfDigits > 0) { m_negative = negative; } }
+  void setNegative(bool negative) { m_negative = m_numberOfDigits > 0 ? negative : false; }
 
   // Properties
   static int NumberOfBase10DigitsWithoutSign(const Integer & i);
@@ -135,17 +135,21 @@ private:
     if (i >= numberOfHalfDigits()) {
       return 0;
     }
-    return ((half_native_uint_t *)m_digits)[i];
+    return (usesImmediateDigit() ? ((half_native_uint_t *)&m_digit)[i] : ((half_native_uint_t *)m_digits)[i]);
   }
 
+  bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
   native_uint_t digit(int i) const {
     assert(i >= 0 && i < m_numberOfDigits);
-    return m_digits[i];
+    return (usesImmediateDigit() ? m_digit : m_digits[i]);
   }
 
   bool m_negative;
   size_t m_numberOfDigits; // In base native_uint_t
-  native_uint_t * m_digits;
+  union {
+    native_uint_t * m_digits; // Little-endian
+    native_uint_t m_digit;
+  };
 };
 
 struct IntegerDivision {

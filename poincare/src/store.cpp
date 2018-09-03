@@ -44,12 +44,14 @@ Evaluation<T> StoreNode::templatedApproximate(Context& context, Preferences::Ang
   if (context.expressionForSymbol(s.symbol()).isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return context.expressionForSymbol(s.symbol()).node()->approximate(T(), context, angleUnit);
+  return context.expressionForSymbol(s.symbol()).approximateToEvaluation<T>(context, angleUnit);
 }
 
 Expression Store::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   context.setExpressionForSymbolName(value(), symbol(), context);
-  return symbol().shallowReduce(context, angleUnit);
+  Expression c1 = childAtIndex(1);
+  replaceWithInPlace(c1);
+  return c1.shallowReduce(context, angleUnit);
 }
 
 }

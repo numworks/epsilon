@@ -41,9 +41,11 @@ Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUn
 
 
 Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
@@ -51,6 +53,7 @@ Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit a
   }
 #endif
   Power p = Power(childAtIndex(0), Rational(1, 2));
+  replaceWithInPlace(p);
   return p.shallowReduce(context, angleUnit);
 }
 

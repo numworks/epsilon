@@ -48,7 +48,11 @@ class Expression : public TreeByReference {
   friend class Multiplication;
   friend class NaperianLogarithm;
   friend class NthRoot;
+  friend class Opposite;
+  friend class Parenthesis;
   friend class PermuteCoefficient;
+  friend class Power;
+  friend class PredictionInterval;
 
   friend class Sine;
   friend class Store;
@@ -63,14 +67,11 @@ class Expression : public TreeByReference {
   friend class Addition;
   friend class AdditionNode;
   friend class IntegralNode;
-  friend class Opposite;
   friend class Number;
   friend class Symbol;
   friend class Decimal;
   friend class DerivativeNode;
   friend class NAryExpressionNode;
-  friend class Parenthesis;
-  friend class Power;
   friend class Matrix;
   friend class Trigonometry;
 template<int T>

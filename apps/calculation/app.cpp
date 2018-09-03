@@ -95,7 +95,8 @@ bool App::textInputIsCorrect(const char * text) {
   if (exp.isUninitialized()) {
     return false;
   }
-  exp = exp.replaceSymbolWithExpression(Symbol::SpecialSymbols::Ans, static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext()));
+  Expression ansExpression = static_cast<Snapshot *>(snapshot())->calculationStore()->ansExpression(localContext());
+  exp = exp.replaceSymbolWithExpression(Symbol::SpecialSymbols::Ans, ansExpression);
   char buffer[Calculation::k_printedExpressionSize];
   int length = PoincareHelpers::Serialize(exp, buffer, sizeof(buffer));
   /* if the buffer is totally full, it is VERY likely that writeTextInBuffer

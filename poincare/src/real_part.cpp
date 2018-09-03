@@ -1,8 +1,6 @@
 #include <poincare/real_part.h>
 #include <poincare/simplification_helper.h>
-extern "C" {
 #include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
@@ -27,18 +25,21 @@ Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit
 }
 
 Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
-  Expression op = childAtIndex(0);
+  Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
-  if (op.type() == ExpressionNode::Type::Matrix) {
+  if (c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(*this, context, angleUnit);
   }
 #endif
-  if (op.type() == ExpressionNode::Type::Rational) {
-    return op;
+  if (c.type() == ExpressionNode::Type::Rational) {
+    replaceWithInPlace(c);
+    return c;
   }
   return *this;
 }

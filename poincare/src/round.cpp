@@ -2,10 +2,7 @@
 #include <poincare/undefined.h>
 #include <poincare/rational.h>
 #include <poincare/power.h>
-
-extern "C" {
 #include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
@@ -38,9 +35,11 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Ang
 }
 
 Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode::Type::Matrix) {
@@ -53,7 +52,9 @@ Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleU
     Rational r1 = static_cast<Rational>(childAtIndex(0));
     Rational r2 = static_cast<Rational>(childAtIndex(1));
     if (!r2.integerDenominator().isOne()) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
     const Rational ten(10);
     if (Power::RationalExponentShouldNotBeReduced(ten, r2)) {
@@ -70,6 +71,7 @@ Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleU
     if (result.numeratorOrDenominatorIsInfinity()) {
       return *this;
     }
+    replaceWithInPlace(result);
     return result;
   }
   return *this;

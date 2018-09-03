@@ -40,7 +40,8 @@ void TreePool::registerStaticNodeIfRequired(TreeNode * node) {
   }
 }
 
-void TreePool::registerStaticNode(TreeNode * node, int nodeID) {
+void TreePool::registerStaticNode(TreeNode * node) {
+#if 0
   if (nodeID < 0) {
     int nodeIndex = indexOfStaticNode(nodeID);
     assert(m_staticNodes[nodeIndex] == nullptr && nodeIndex < MaxNumberOfStaticNodes);
@@ -48,6 +49,7 @@ void TreePool::registerStaticNode(TreeNode * node, int nodeID) {
     node->rename(nodeID, false);
     return;
   }
+#endif
   int generatedNodeIndex = 0;
   while (m_staticNodes[generatedNodeIndex] != nullptr && generatedNodeIndex < MaxNumberOfStaticNodes) {
     generatedNodeIndex++;

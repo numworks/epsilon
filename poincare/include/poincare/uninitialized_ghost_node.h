@@ -10,7 +10,6 @@ namespace Poincare {
 class UninitializedGhostNode : public ExceptionNode<GhostNode> {
 public:
   static UninitializedGhostNode * UninitializedGhostStaticNode();
-  static int UninitializedGhostStaticNodeIdentifier() { return -3; }
 
   // TreeNode
   bool isUninitialized() const override { return true; }

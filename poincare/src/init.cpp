@@ -11,12 +11,8 @@ void init() {
   TreePool::RegisterPool(&pool);
 
   // Register static nodes
-  pool.registerStaticNode(
-      UninitializedExpressionNode::UninitializedExpressionStaticNode(),
-      UninitializedExpressionNode::UninitializedExpressionStaticNodeIdentifier());
-  pool.registerStaticNode(
-      UninitializedGhostNode::UninitializedGhostStaticNode(),
-      UninitializedGhostNode::UninitializedGhostStaticNodeIdentifier());
+  pool.registerStaticNode(UninitializedExpressionNode::UninitializedExpressionStaticNode());
+  pool.registerStaticNode(UninitializedGhostNode::UninitializedGhostStaticNode());
 }
 
 }

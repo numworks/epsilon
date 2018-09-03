@@ -83,9 +83,6 @@ public:
   int indexOfChild(TreeByReference t) const {
     return node()->indexOfChild(t.node());
   }
-  void childAtIndexWillBeStolen(int index) {
-    node()->childAtIndexWillBeStolen(index);
-  }
 
   /* Hierarchy operations */
   // Replace

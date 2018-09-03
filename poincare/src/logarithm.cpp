@@ -73,12 +73,14 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
+#if 0
   if (numberOfChildren() == 1 && c.type() == ExpressionNode::Type::Matrix) {
     return SimplificationHelper::Map(this, context, angleUnit);
   }
   if (numberOfChildren() == 2 && (c.type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode::Type::Matrix)) {
     return Undefined();
   }
+#endif
 #endif
   if (c.sign() == ExpressionNode::Sign::Negative || (numberOfChildren() == 2 && childAtIndex(1).sign() == ExpressionNode::Sign::Negative)) {
     return *this;
@@ -98,8 +100,9 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
     Expression y = p.childAtIndex(1);
     replaceChildInPlace(p, x);
     Expression newLog = shallowReduce(context, angleUnit);
-    Expression mult = Multiplication(y, newLog.clone());
+    Expression mult(y);
     newLog.replaceWithInPlace(mult);
+    mult.addChildAtIndexInPlace(newLog, 1, 1);
     return mult.shallowReduce(context, angleUnit);
   }
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
@@ -170,18 +173,15 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::AngleU
 bool Logarithm::parentIsAPowerOfSameBase() const {
   // We look for expressions of types e^ln(x) or e^(ln(x)) where ln is this
   Expression parentExpression = parent();
+  Expression logGroup = *this;
+  if (parentExpression.type() == ExpressionNode::Type::Parenthesis) {
+    logGroup = parentExpression;
+    parentExpression = parentExpression.parent();
+  }
   if (parentExpression.isUninitialized()) {
     return false;
   }
-  bool thisIsPowerExponent = parentExpression.type() == ExpressionNode::Type::Power ? parentExpression.childAtIndex(1) == *this : false;
-  if (parentExpression.type() == ExpressionNode::Type::Parenthesis) {
-    Expression parentParentExpression = parentExpression.parent();
-    if (parentExpression.isUninitialized()) {
-      return false;
-    }
-    thisIsPowerExponent = parentParentExpression.type() == ExpressionNode::Type::Power ? parentParentExpression.childAtIndex(1) == parentExpression : false;
-    parentExpression = parentParentExpression;
-  }
+  bool thisIsPowerExponent = parentExpression.type() == ExpressionNode::Type::Power ? parentExpression.childAtIndex(1) == logGroup : false;
   if (thisIsPowerExponent) {
     Expression powerOperand0 = parentExpression.childAtIndex(0);
     if (numberOfChildren() == 1) {
@@ -198,7 +198,6 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
   return false;
 }
 
-//TODO TODO TODO clone, do in place... ?
 Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit) {
   assert(!i.isZero());
   assert(!i.isNegative());
@@ -212,7 +211,7 @@ Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & cont
   if (coefficients[0].isMinusOne()) {
     /* We could not break i in prime factor (either it might take too many
      * factors or too much time). */
-    Expression e = *this;
+    Expression e = clone();
     e.replaceChildAtIndexInPlace(0, Rational(i));
     if (!isDenominator) {
       return e;
@@ -226,10 +225,12 @@ Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & cont
     if (isDenominator) {
       coefficients[index].setNegative(true);
     }
-    Logarithm e = *this;
+    Logarithm e = clone();
     e.replaceChildAtIndexInPlace(0, Rational(factors[index]));
-    Multiplication m = Multiplication(Rational(coefficients[index]), e.simpleShallowReduce(context, angleUnit));
-    a.addChildAtIndexInPlace(m.shallowReduce(context, angleUnit), a.numberOfChildren(), a.numberOfChildren());
+    Multiplication m = Multiplication(Rational(coefficients[index]), e);
+    e.simpleShallowReduce(context, angleUnit);
+    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+    m.shallowReduce(context, angleUnit);
     index++;
   }
   return a;
@@ -242,12 +243,16 @@ Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit 
   }
   assert(numberOfChildren() == 2);
   Symbol e = Symbol(Ion::Charset::Exponential);
-  Rational one(1);
   if (childAtIndex(1).isIdenticalTo(e)) {
-    return NaperianLogarithm(childAtIndex(0));
+    NaperianLogarithm np(childAtIndex(0));
+    replaceWithInPlace(np);
+    return np;
   }
+  Rational one(1);
   if (childAtIndex(1).isIdenticalTo(one)) {
-    return Logarithm(childAtIndex(0));
+    Logarithm l(childAtIndex(0));
+    replaceWithInPlace(l);
+    return l;
   }
   return *this;
 }

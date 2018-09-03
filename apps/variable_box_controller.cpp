@@ -151,7 +151,7 @@ void VariableBoxController::ContentViewController::willDisplayCellForIndex(Highl
     /* TODO: implement list contexts */
     // TODO: handle matrix and scalar!
     LayoutRef layoutR = layoutRefForIndex(index);
-    const Matrix matrixEvaluation = Matrix(static_cast<const MatrixNode *>(evaluation.node()));
+    const Matrix matrixEvaluation = static_cast<Matrix>(evaluation);
     myCell->setLayoutRef(layoutR);
     char buffer[2*PrintFloat::bufferSizeForFloatsWithPrecision(2)+1];
     int numberOfChars = PrintFloat::convertFloatToText<float>(matrixEvaluation.numberOfRows(), buffer, PrintFloat::bufferSizeForFloatsWithPrecision(2), 2, Preferences::PrintFloatMode::Decimal);

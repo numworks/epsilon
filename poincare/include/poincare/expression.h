@@ -145,6 +145,7 @@ public:
   static constexpr int k_maxPolynomialDegree = 2;
   static constexpr int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(char symbolName, Expression coefficients[], Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression replaceSymbolWithExpression(char symbol, Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
@@ -164,6 +165,7 @@ public:
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
@@ -231,7 +233,6 @@ protected:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowReduce(context, angleUnit); }
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) { return node()->setSign(s, context, angleUnit); }
 private:
   /* Simplification */
@@ -239,7 +240,6 @@ private:
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
 
   /* Properties */
-  Expression replaceSymbolWithExpression(char symbol, Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
   Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression);
   int defaultGetPolynomialCoefficients(char symbol, Expression expression[]) const;
 

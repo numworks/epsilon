@@ -34,6 +34,7 @@ public:
   /* Constructors & Destructors */
   Integer(native_int_t i);
   Integer(double_native_int_t i);
+  Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(const char * digits, size_t length, bool negative);
   Integer(const char * digits) : Integer(digits, strlen(digits), false) {
   }
@@ -49,6 +50,10 @@ public:
   Integer& operator=(Integer&& other); // C++11 move assignment operator
   Integer(const Integer& other); // C++11 copy constructor
   Integer& operator=(const Integer& other); // C++11 copy assignment operator
+
+  // Getters
+  const native_uint_t * digits() const { return m_digits; }
+  size_t numberOfDigits() const { return m_numberOfDigits; }
 
   // Serialization
   int serialize(char * buffer, int bufferSize) const;
@@ -103,7 +108,6 @@ private:
   static void freeDigits(native_uint_t * digits);
 
   // Constructors
-  Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   void releaseDynamicIvars();
 
   // Arithmetic

@@ -2,6 +2,9 @@
 #define POINCARE_RATIONAL_H
 
 #include <poincare/integer.h>
+#include <poincare/number.h>
+#include <poincare/complex.h>
+#include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
 
@@ -11,14 +14,15 @@ public:
     m_negative(false),
     m_numberOfDigitsNumerator(0),
     m_numberOfDigitsDenominator(0) {}
-  virtual void setDigits(native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative);
+  virtual void setDigits(const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative);
 
   // Allocation Failure
   static RationalNode * FailedAllocationStaticNode();
   RationalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
-  NaturalIntegerPointer numerator() const;
-  NaturalIntegerPointer denominator() const;
+  Integer signedNumerator() const;
+  Integer unsignedNumerator() const;
+  Integer denominator() const;
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative) { m_negative = negative; }
 
@@ -48,12 +52,12 @@ public:
   template<typename T> T templatedApproximate() const;
 
   // Basic test
-  bool isZero() const { return numerator().isZero(); }
-  bool isOne() const { return numerator().isOne() && denominator().isOne() && !m_negative; }
-  bool isMinusOne() const { return numerator().isOne() && denominator().isOne() && m_negative; }
-  bool isHalf() const { return numerator().isOne() && denominator().isTwo() && !m_negative; }
-  bool isMinusHalf() const { return numerator().isOne() && denominator().isTwo() && m_negative; }
-  bool isTen() const { return numerator().isTen() && denominator().isOne() && !m_negative; }
+  bool isZero() const { return unsignedNumerator().isZero(); }
+  bool isOne() const { return signedNumerator().isOne() && denominator().isOne(); }
+  bool isMinusOne() const { return signedNumerator().isMinusOne() && denominator().isOne(); }
+  bool isHalf() const { return signedNumerator().isOne() && denominator().isTwo(); }
+  bool isMinusHalf() const { return signedNumerator().isMinusOne() && denominator().isTwo(); }
+  bool isTen() const { return signedNumerator().isTen() && denominator().isOne(); }
 
   static int NaturalOrder(const RationalNode * i, const RationalNode * j);
 private:
@@ -70,7 +74,7 @@ private:
 
 class AllocationFailureRationalNode : public AllocationFailureExpressionNode<RationalNode> {
 public:
-  void setDigits(native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative) override {};
+  void setDigits(const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative) override {};
 };
 
 class Rational : public Number {
@@ -89,9 +93,9 @@ public:
   RationalNode * node() const { return static_cast<RationalNode *>(Number::node()); }
 
   // Properties
-  Integer signedIntegerNumerator() const;
-  Integer unsignedIntegerNumerator() const;
-  Integer integerDenominator() const;
+  Integer signedIntegerNumerator() const { return node()->signedNumerator(); }
+  Integer unsignedIntegerNumerator() const { return node()->unsignedNumerator(); }
+  Integer integerDenominator() const { return node()->denominator(); }
 
   // BasicTest
   bool isNegative() const { return node()->isNegative(); }
@@ -116,8 +120,7 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 
 private:
-  Rational(size_t size, native_uint_t * i, size_t numeratorSize, native_uint_t * j, size_t denominatorSize, bool negative);
-  Rational(const NaturalIntegerAbstract * numerator, bool negative);
+  Rational(size_t size, const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative);
   RationalNode * node() { return static_cast<RationalNode *>(Number::node()); }
 
   /* Simplification */

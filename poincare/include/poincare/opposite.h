@@ -49,6 +49,7 @@ public:
 
 class Opposite : public Expression {
 public:
+  Opposite() : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {}
   Opposite(const OppositeNode * n) : Expression(n) {}
   Opposite(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {
     replaceChildAtIndexInPlace(0, operand);

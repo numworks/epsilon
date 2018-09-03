@@ -16,9 +16,11 @@ Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::
 }
 
 Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix) {
@@ -26,7 +28,9 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Angl
   }
 #endif
   Logarithm l = Logarithm(childAtIndex(0), Symbol(Ion::Charset::Exponential));
-  return l.shallowReduce(context, angleUnit);
+  Expression result = l.shallowReduce(context, angleUnit);
+  replaceWithInPlace(result);
+  return result;
 }
 
 }

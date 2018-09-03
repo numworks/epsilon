@@ -46,6 +46,7 @@ class Expression : public TreeByReference {
   friend class MatrixTrace;
   friend class MatrixTranspose;
   friend class Multiplication;
+  friend class NaperianLogarithm;
 
   friend class Sine;
   friend class Store;

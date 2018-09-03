@@ -29,8 +29,6 @@ double NumberNode::doubleApproximation() const {
       }
     case Type::Rational:
       return static_cast<const RationalNode *>(this)->templatedApproximate<double>();
-    case Type::Integer:
-      return static_cast<const IntegerNode *>(this)->templatedApproximate<double>();
     default:
       assert(false);
       return 0.0;
@@ -38,6 +36,7 @@ double NumberNode::doubleApproximation() const {
 }
 
 Number Number::ParseDigits(const char * digits, size_t length) {
+  assert(digits[0] != '-');
   const char * integral = digits;
   size_t integralLength = length;
   const char * fractional = strchr(digits, '.');
@@ -59,24 +58,24 @@ Number Number::ParseDigits(const char * digits, size_t length) {
   if (exponentLength == 0 && fractionalLength == 0) {
     Integer i(digits, length, false);
     if (!i.isInfinity()) {
-      return i;
+      return Rational(i);
     }
   }
+  int exp;
   // Avoid overflowing int
-  if (exponentLength > Decimal::k_maxExponentLength) {
+  if (exponentLength < Decimal::k_maxExponentLength) {
+    exp = Decimal::Exponent(integral, integralLength, fractional, fractionalLength, exponent, exponentLength);
+  } else {
     assert(exponent);
-    if (exponent[0] == '-') {
+    exp = exponent[0] == '-' ? -1 : 1;
+  }
+  // Avoid Decimal with exponent > k_maxExponentLength
+  if (exponentLength > Decimal::k_maxExponentLength || exp > Decimal::k_maxExponent || exp < -Decimal::k_maxExponent) {
+    if (exp < 0) {
       return Decimal(0.0);
     } else {
       return Infinity(false);
     }
-  }
-  // Avoid Decimal with exponent > k_maxExponentLength
-  int exp = Decimal::Exponent(integral, integralLength, fractional, fractionalLength, exponent, exponentLength);
-  if (exp > Decimal::k_maxExponent) {
-    return Infinity(false);
-  } else if (exp < -Decimal::k_maxExponent) {
-    return Decimal(0.0);
   }
   return Decimal(integral, integralLength, fractional, fractionalLength, exp);
 }
@@ -102,49 +101,34 @@ Number Number::FloatNumber(double d) {
   }
 }
 
-Number Number::BinaryOperation(const Number & i, const Number & j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
-  if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
-  // Integer + Integer
-    Integer k = integerOp(static_cast<const Integer&>(i), static_cast<const Integer&>(j));
-    if (!k.isInfinity()) {
-      return k;
-    }
-  } else if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Rational) {
-  // Integer + Rational
-    Rational r = rationalOp(Rational(static_cast<const Integer&>(i)), static_cast<const Rational&>(j));
-    if (!r.numeratorOrDenominatorIsInfinity()) {
-      return r;
-    }
-  } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Integer) {
-  // Rational + Integer
-    return Number::BinaryOperation(j, i, integerOp, rationalOp, doubleOp);
-  } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
+Number Number::BinaryOperation(const Number & i, const Number & j, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp) {
+  if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
   // Rational + Rational
     Rational a = rationalOp(Rational(static_cast<const Rational&>(i)), Rational(static_cast<const Rational&>(j)));
     if (!a.numeratorOrDenominatorIsInfinity()) {
       return a;
     }
   }
-  // one of the operand is Undefined/Infinity/Float or the Integer/Rational addition overflowed
+  // one of the operand is Undefined/Infinity/Float or the Rational addition overflowed
   double a = doubleOp(i.node()->doubleApproximation(), j.node()->doubleApproximation());
   return FloatNumber(a);
 }
 
 Number Number::Addition(const Number & i, const Number & j) {
-  return BinaryOperation(i, j, Integer::Addition, Rational::Addition, [](double a, double b) { return a+b; });
+  return BinaryOperation(i, j, Rational::Addition, [](double a, double b) { return a+b; });
 }
 
 Number Number::Multiplication(const Number & i, const Number & j) {
-  return BinaryOperation(i, j, Integer::Multiplication, Rational::Multiplication, [](double a, double b) { return a*b; });
+  return BinaryOperation(i, j, Rational::Multiplication, [](double a, double b) { return a*b; });
 }
 
 Number Number::Power(const Number & i, const Number & j) {
-  return BinaryOperation(i, j, Integer::Power,
+  return BinaryOperation(i, j,
       // Special case for Rational^Rational: we escape to Float if the index is not an Integer
       [](const Rational & i, const Rational & j) {
         if (!j.integerDenominator().isOne()) {
           // We return an overflown result to reach the escape case Float+Float
-          return Rational(Integer::Overflow());
+          return Rational(Integer::Overflow(false));
         }
         return Rational::IntegerPower(i, j.signedIntegerNumerator());
       },
@@ -155,20 +139,11 @@ Number Number::Power(const Number & i, const Number & j) {
 }
 
 int Number::NaturalOrder(const Number & i, const Number & j) {
-  if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Integer) {
-  // Integer + Integer
-    return Integer::NaturalOrder(static_cast<const Integer&>(i), static_cast<const Integer&>(j));
-  } else if (i.node()->type() == ExpressionNode::Type::Integer && j.node()->type() == ExpressionNode::Type::Rational) {
-  // Integer + Rational
-    return Rational::NaturalOrder(Rational(static_cast<const Integer&>(i)), static_cast<const Rational&>(j));
-  } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Integer) {
-  // Rational + Integer
-    return -Number::NaturalOrder(j, i);
-  } else if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
+  if (i.node()->type() == ExpressionNode::Type::Rational && j.node()->type() == ExpressionNode::Type::Rational) {
   // Rational + Rational
     return Rational::NaturalOrder(static_cast<const Rational&>(i), static_cast<const Rational&>(j));
   }
-  // one of the operand is Undefined/Infinity/Float or the Integer/Rational addition overflowed
+  // one of the operand is Undefined/Infinity/Float or the Rational addition overflowed
   if (i.node()->doubleApproximation() < j.node()->doubleApproximation()) {
     return -1;
   } else if (i.node()->doubleApproximation() == j.node()->doubleApproximation()) {

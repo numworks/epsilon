@@ -22,7 +22,7 @@ public:
   static GhostNode * FailedAllocationStaticNode();
   TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   // Uninitialized
-  TreeNode * uninitializedStaticNode() const override { assert(false); return nullptr; }
+  TreeNode * uninitializedStaticNode() const override;
 };
 
 class AllocationFailedGhostNode : public GhostNode {

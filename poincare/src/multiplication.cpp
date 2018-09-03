@@ -268,7 +268,8 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
   for (int i = 0; i < numberOfChildren(); i++) {
     const Expression c = childAtIndex(i);
     if (c.type() == ExpressionNode::Type::Rational && static_cast<Rational>(c).isZero()) {
-      return Rational(0);
+      replaceWithInPlace(c);
+      return c;
     }
   }
 
@@ -454,6 +455,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
   // Step 8: Let's remove the multiplication altogether if it has one child
   Expression result = squashUnaryHierarchy();
 
+  replaceWithInPlace(result);
   return result;
 }
 
@@ -524,7 +526,7 @@ void Multiplication::factorizeExponent(int i, int j, Context & context, Preferen
   }
 }
 
-Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, Preferences::AngleUnit angleUnit) const {
+Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, Preferences::AngleUnit angleUnit) {
   /* This method creates a*...*b*y... + a*...*c*y... + ... from
    * a*...*(b+c+...)*y... */
   assert(i >= 0 && i < numberOfChildren());
@@ -539,6 +541,7 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, 
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     m.shallowReduce(context, angleUnit);
   }
+  replaceWithInPlace(a);
   return a.shallowReduce(context, angleUnit); // Order terms, put under a common denominator if needed
 }
 

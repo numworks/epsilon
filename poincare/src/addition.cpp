@@ -244,7 +244,8 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
   Expression result = squashUnaryHierarchy();
 
   // Step 6: Last but not least, let's put everything under a common denominator
-  if (result == *this && parent().type() != ExpressionNode::Type::Addition) {
+  Expression p = parent();
+  if (result == *this && !p.isUninitialized() && p.type() != ExpressionNode::Type::Addition) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
      result = factorizeOnCommonDenominator(context, angleUnit);
   }

@@ -128,6 +128,7 @@ objs += $(addprefix poincare/src/,\
   undefined.o\
   uninitialized_evaluation_node.o\
   uninitialized_expression_node.o\
+  uninitialized_ghost_node.o\
   uninitialized_layout_node.o\
   variable_context.o\
 )

@@ -35,6 +35,7 @@ class Expression : public TreeByReference {
   friend class Factorial;
   friend class Floor;
   friend class FracPart;
+  friend class GlobalContext;
   friend class GreatCommonDivisor;
   friend class HyperbolicTrigonometricFunction;
   friend class ImaginaryPart;
@@ -93,6 +94,12 @@ public:
   typedef bool (*CircuitBreaker)();
   static void setCircuitBreaker(CircuitBreaker cb);
   static bool shouldStopProcessing();
+
+  /* Hierarchy */
+  Expression childAtIndex(int i) const {
+    return Expression(static_cast<ExpressionNode *>(TreeByReference::childAtIndex(i).node()));
+  }
+  void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }
 
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
@@ -213,10 +220,6 @@ protected:
   Expression parent() const {
     return Expression(static_cast<ExpressionNode *>(TreeByReference::parent().node()));
   }
-  Expression childAtIndex(int i) const {
-    return Expression(static_cast<ExpressionNode *>(TreeByReference::childAtIndex(i).node()));
-  }
-  void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }
   Expression(int nodeIdentifier) : TreeByReference(nodeIdentifier) {}
   void defaultSetChildrenInPlace(Expression other);
 

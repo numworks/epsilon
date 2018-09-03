@@ -63,9 +63,9 @@ Expression Subtraction::shallowReduce(Context & context, Preferences::AngleUnit 
   }
   Expression m = Multiplication(Rational(-1), childAtIndex(1));
   Addition a = Addition(childAtIndex(0));
-  m = m.shallowReduce(context, angleUnit, a);
+  m = m.shallowReduce(context, angleUnit);
   a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
-  return a.shallowReduce(context, angleUnit, futureParent);
+  return a.shallowReduce(context, angleUnit);
 }
 
 }

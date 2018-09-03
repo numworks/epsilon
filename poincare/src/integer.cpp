@@ -256,7 +256,7 @@ int Integer::serialize(char * buffer, int bufferSize) const {
 
   while (!(d.remainder.isZero() &&
         d.quotient.isZero())) {
-    char c = char_from_digit(d.remainder.digit(0));
+    char c = char_from_digit(d.remainder.isZero() ? 0 : d.remainder.digit(0));
     if (size >= bufferSize-1) {
       return strlcpy(buffer, "undef", bufferSize);
     }
@@ -266,7 +266,7 @@ int Integer::serialize(char * buffer, int bufferSize) const {
   buffer[size] = 0;
 
   // Flip the string
-  for (int i=0, j=size-1 ; i < j ; i++, j--) {
+  for (int i = m_negative, j=size-1 ; i < j ; i++, j--) {
     char c = buffer[i];
     buffer[i] = buffer[j];
     buffer[j] = c;

@@ -37,10 +37,10 @@ static inline int8_t sign(bool negative) {
 #if POINCARE_INTEGER_LOG
 
 void Integer::log() const {
-  double d = 0;
+  double d = 0.0;
   double base = 1.0;
   for (int i = 0; i < m_numberOfDigits; i++) {
-    d += m_digits[i]*base;
+    d += digit(i)*base;
     base *= std::pow(2.0,32.0);
   }
   std::cout << "Integer: " << d << std::endl;
@@ -83,10 +83,15 @@ Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative,
   m_numberOfDigits(!enableOverflow && numberOfDigits > Integer::k_maxNumberOfDigits ? k_maxNumberOfDigits+1 : numberOfDigits),
   m_digits(digits)
 {
-  if ((m_numberOfDigits == 0 || (!enableOverflow && m_numberOfDigits > k_maxNumberOfDigitsBase10)) && m_digits) {
+  if ((m_numberOfDigits <= 1|| (!enableOverflow && m_numberOfDigits > k_maxNumberOfDigitsBase10)) && m_digits) {
     freeDigits(m_digits);
-    m_digits = nullptr;
+    if (m_numberOfDigits == 1) {
+      m_digit = digits[0];
+    } else {
+      m_digits = nullptr;
+    }
   }
+  m_negative = m_numberOfDigits == 0 ? false : m_negative;
 }
 
 Integer::Integer(native_int_t i) {
@@ -97,9 +102,7 @@ Integer::Integer(native_int_t i) {
     return;
   }
   m_numberOfDigits = 1;
-  native_uint_t * digits = allocDigits(1);
-  digits[0] = i > 0 ? i : -i;
-  m_digits = digits;
+  m_digit = i > 0 ? i : -i;
   m_negative = i < 0;
 }
 
@@ -115,12 +118,14 @@ Integer::Integer(double_native_int_t i) {
   native_uint_t leastSignificantDigit = *d;
   native_uint_t mostSignificantDigit = *(d+1);
   m_numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
-  native_uint_t * digits = allocDigits(m_numberOfDigits);
-  digits[0] = leastSignificantDigit;
-  if (m_numberOfDigits > 1) {
+  if (m_numberOfDigits == 1) {
+    m_digit = leastSignificantDigit;
+  } else {
+    native_uint_t * digits = allocDigits(m_numberOfDigits);
+    digits[0] = leastSignificantDigit;
     digits[1] = mostSignificantDigit;
+    m_digits = digits;
   }
-  m_digits = digits;
   m_negative = i < 0;
 }
 
@@ -145,7 +150,7 @@ Integer::Integer(const char * digits, size_t length, bool negative) :
 }
 
 void Integer::releaseDynamicIvars() {
-  if (m_digits) {
+  if (!usesImmediateDigit() && m_digits) {
     freeDigits(m_digits);
   }
 }
@@ -156,7 +161,11 @@ Integer::~Integer() {
 
 Integer::Integer(Integer && other) {
   // Pilfer other's data
-  m_digits = other.m_digits;
+  if (other.usesImmediateDigit()) {
+    m_digit = other.m_digit;
+  } else {
+    m_digits = other.m_digits;
+  }
   m_numberOfDigits = other.m_numberOfDigits;
   m_negative = other.m_negative;
 
@@ -168,11 +177,15 @@ Integer::Integer(Integer && other) {
 
 Integer::Integer(const Integer& other) {
   // Copy other's data
-  native_uint_t * digits = allocDigits(other.m_numberOfDigits);
-  for (int i=0; i<other.m_numberOfDigits; i++) {
-    digits[i] = other.m_digits[i];
+  if (other.usesImmediateDigit()) {
+    m_digit = other.m_digit;
+  } else {
+    native_uint_t * digits = allocDigits(other.m_numberOfDigits);
+    for (int i=0; i<other.m_numberOfDigits; i++) {
+      digits[i] = other.m_digits[i];
+    }
+    m_digits = digits;
   }
-  m_digits = digits;
   m_numberOfDigits = other.m_numberOfDigits;
   m_negative = other.m_negative;
 }
@@ -181,7 +194,11 @@ Integer& Integer::operator=(Integer && other) {
   if (this != &other) {
     releaseDynamicIvars();
     // Pilfer other's ivars
-    m_digits = other.m_digits;
+    if (other.usesImmediateDigit()) {
+      m_digit = other.m_digit;
+    } else {
+      m_digits = other.m_digits;
+    }
     m_numberOfDigits = other.m_numberOfDigits;
     m_negative = other.m_negative;
 
@@ -197,11 +214,15 @@ Integer& Integer::operator=(const Integer& other) {
   if (this != &other) {
     releaseDynamicIvars();
     // Copy other's ivars
-    native_uint_t * digits = allocDigits(other.m_numberOfDigits);
-    for (int i=0; i<other.m_numberOfDigits; i++) {
-      digits[i] = other.m_digits[i];
+    if (other.usesImmediateDigit()) {
+      m_digit = other.m_digit;
+    } else {
+      native_uint_t * digits = allocDigits(other.m_numberOfDigits);
+      for (int i=0; i<other.m_numberOfDigits; i++) {
+        digits[i] = other.m_digits[i];
+      }
+      m_digits = digits;
     }
-    m_digits = digits;
     m_numberOfDigits = other.m_numberOfDigits;
     m_negative = other.m_negative;
   }
@@ -522,8 +543,8 @@ Integer Integer::multiplyByPowerOf2(uint8_t pow) const {
   native_uint_t * digits = allocDigits(m_numberOfDigits+1);
   native_uint_t carry = 0;
   for (int i = 0; i < m_numberOfDigits; i++) {
-    digits[i] = m_digits[i] << pow | carry;
-    carry = pow == 0 ? 0 : m_digits[i] >> (32-pow);
+    digits[i] = digit(i) << pow | carry;
+    carry = pow == 0 ? 0 : digit(i) >> (32-pow);
   }
   digits[m_numberOfDigits] = carry;
   return Integer(digits, carry ? m_numberOfDigits + 1 : m_numberOfDigits, false, true);
@@ -534,8 +555,8 @@ Integer Integer::divideByPowerOf2(uint8_t pow) const {
   native_uint_t * digits = allocDigits(m_numberOfDigits);
   native_uint_t carry = 0;
   for (int i = m_numberOfDigits - 1; i >= 0; i--) {
-    digits[i] = m_digits[i] >> pow | carry;
-    carry = pow == 0 ? 0 : m_digits[i] << (32-pow);
+    digits[i] = digit(i) >> pow | carry;
+    carry = pow == 0 ? 0 : digit(i) << (32-pow);
   }
   return Integer(digits, digits[m_numberOfDigits-1] > 0 ? m_numberOfDigits : m_numberOfDigits-1, false, true);
 }

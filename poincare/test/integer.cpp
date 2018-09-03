@@ -21,7 +21,7 @@ QUIZ_CASE(poincare_integer_constructor) {
   Integer nc(-12314);
   Integer d((int64_t)1234567891011121314);
   Integer nd((int64_t)(-1234567891011121314));
-  Integer e = Integer::Overflow();
+  Integer e = Integer::Overflow(false);
   assert_pool_size(initialPoolSize+9);
 }
 
@@ -212,14 +212,6 @@ QUIZ_CASE(poincare_integer_factorial) {
 
 // Simplify
 
-QUIZ_CASE(poincare_integer_simplify) {
-/*  assert_parsed_expression_simplify_to("1234", "1234");
-  assert_parsed_expression_simplify_to("12342345698765345678909876545678907655678900987654", "12342345698765345678909876545678907655678900987654");
-  assert_parsed_expression_simplify_to("12342345698765345678909876545678907655678900987654", "12342345698765345678909876545678907655678900987654");
-  assert_parsed_expression_simplify_to(MaxIntegerString, MaxIntegerString);
-  //assert_parsed_expression_simplify_to(OverflowedIntegerString, "inf"); // parse as a Decimal and then simplify to Rational*/
-}
-
 template<typename T>
 void assert_integer_evals_to(const char * i, T result) {
   quiz_assert(Integer(i).approximate<T>() == result);
@@ -267,10 +259,16 @@ QUIZ_CASE(poincare_integer_evaluate) {
 
 //Serialize
 
+static inline void assert_integer_serializes_to(const Integer i, const char * serialization) {
+  char buffer[500];
+  i.serialize(buffer, 500);
+  quiz_assert(strcmp(buffer, serialization) == 0);
+}
+
 QUIZ_CASE(poincare_integer_serialize) {
-  assert_parsed_expression_serialize_to(Integer(-2), "-2");
-  assert_parsed_expression_serialize_to(Integer("2345678909876"), "2345678909876");
-  assert_parsed_expression_serialize_to(Integer("-2345678909876"), "-2345678909876");
-  assert_parsed_expression_serialize_to(MaxInteger(), MaxIntegerString);
-  assert_parsed_expression_serialize_to(OverflowedInteger(), "inf");
+  assert_integer_serializes_to(Integer(-2), "-2");
+  assert_integer_serializes_to(Integer("2345678909876"), "2345678909876");
+  assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");
+  assert_integer_serializes_to(MaxInteger(), MaxIntegerString);
+  assert_integer_serializes_to(OverflowedInteger(), "inf");
 }

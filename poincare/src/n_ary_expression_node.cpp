@@ -29,11 +29,11 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, bool canBeIn
 }
 
 Expression NAryExpressionNode::squashUnaryHierarchy() {
-  NAryExpression copy = NAryExpression(this);
-  if (copy.numberOfChildren() == 1) {
-    return copy.childAtIndex(0);
+  NAryExpression reference = NAryExpression(this);
+  if (reference.numberOfChildren() == 1) {
+    return reference.childAtIndex(0);
   }
-  return copy;
+  return reference;
 }
 
 // Private

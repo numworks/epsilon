@@ -56,6 +56,7 @@ class Expression : public TreeByReference {
   friend class RealPart;
   friend class Round;
   friend class Sine;
+  friend class SquareRoot;
   friend class Store;
   friend class Tangent;
 
@@ -159,6 +160,10 @@ public:
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
+  template<typename U> Evaluation<U> approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
+    return node()->approximate(U(), context, angleUnit);
+  }
+
   template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const;
   template<typename U> U approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
   template<typename U> static U approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit);

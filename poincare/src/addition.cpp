@@ -120,10 +120,10 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
        * the next iteration is actually on the next child. */
       i--;
       Subtraction s = Subtraction(leftSibling, subtractant);
-      /* We stole subtractant from this, we thus need to put the subtraction at
-       * the previous index of subtractant, which is still i because we updated
-       * i after removing a child. */
-      addChildAtIndexInPlace(s, i, numberOfChildren());
+      /* We stole subtractant from this which replaced it by a ghost. We thus
+       * need to put the subtraction at the previous index of subtractant, which
+       * is still i because we updated i after removing a child. */
+      replaceChildAtIndexInPlace(i, s);
     }
   }
 

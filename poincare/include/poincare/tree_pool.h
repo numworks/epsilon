@@ -100,7 +100,7 @@ public:
   }
 
   void registerStaticNodeIfRequired(TreeNode * node);
-  void registerStaticNode(TreeNode * node, int nodeID = 0);
+  void registerStaticNode(TreeNode * node);
 
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream & stream);

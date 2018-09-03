@@ -12,7 +12,7 @@ namespace Poincare {
 class UninitializedExpressionNode : public ExceptionExpressionNode<ExpressionNode> {
 public:
   static UninitializedExpressionNode * UninitializedExpressionStaticNode();
-  static int UninitializedExpressionStaticNodeIdentifier() { return -2; }
+  static int UninitializedExpressionStaticNodeIdentifier() { return UninitializedExpressionStaticNode()->identifier(); }
 
   // ExpressionNode
   void setChildrenInPlace(Expression other) override { assert(false); return ExceptionExpressionNode<ExpressionNode>::setChildrenInPlace(other); }

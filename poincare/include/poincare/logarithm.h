@@ -3,6 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/integer.h>
+#include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 

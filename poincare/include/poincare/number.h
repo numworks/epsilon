@@ -5,16 +5,14 @@
 
 namespace Poincare {
 
-/* Number class has 3 subclasses:
+/* Number class has 5 subclasses:
  * - Undefined
- * - Integer
  * - Rational
  * - Float
  * - Decimal
  * - Infinity
  */
 
-class Integer;
 class Rational;
 
 class NumberNode : public ExpressionNode {
@@ -28,7 +26,7 @@ public:
 class Number : public Expression {
 public:
   Number(const NumberNode * node) : Expression(node) {}
-  /* Return either a Integer, a Decimal or an Infinity. */
+  /* Return either a Rational, a Decimal or an Infinity. */
   static Number ParseDigits(const char * digits, size_t length);
   /* Return either a Decimal or an Infinity or an Undefined. */
   template <typename T> static Number DecimalNumber(T f);
@@ -49,10 +47,9 @@ protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }
 private:
-  typedef Integer (*IntegerBinaryOperation)(const Integer & i, const Integer & j);
   typedef Rational (*RationalBinaryOperation)(const Rational & i, const Rational & j);
   typedef double (*DoubleBinaryOperation)(double i, double j);
-  static Number BinaryOperation(const Number & i, const Number & j, IntegerBinaryOperation integerOp, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp);
+  static Number BinaryOperation(const Number & i, const Number & j, RationalBinaryOperation rationalOp, DoubleBinaryOperation doubleOp);
 };
 
 }

@@ -266,7 +266,7 @@ void TreeByReference::detachFromParent() {
   TreeByReference myParent = parent();
   if (!myParent.isUninitialized()) {
     int idxInParent = myParent.indexOfChild(*this);
-    myParent.childAtIndexWillBeStolen(idxInParent);
+    myParent.replaceChildAtIndexWithGhostInPlace(idxInParent);
   }
   assert(parent().isUninitialized());
 }

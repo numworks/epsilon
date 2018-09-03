@@ -13,8 +13,8 @@ public:
     Sine = 1,
   };
   static float characteristicXRange(const Expression & e, Context & context, Preferences::AngleUnit angleUnit);
-  static Expression shallowReduceDirectFunction(const Expression & e, Context& context, Preferences::AngleUnit angleUnit);
-  static Expression shallowReduceInverseFunction(const Expression & e, Context& context, Preferences::AngleUnit angleUnit);
+  static Expression shallowReduceDirectFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit);
+  static Expression shallowReduceInverseFunction(Expression & e, Context& context, Preferences::AngleUnit angleUnit);
   static bool ExpressionIsEquivalentToTangent(const Expression & e);
   constexpr static int k_numberOfEntries = 37;
   static Expression table(const Expression e, ExpressionNode::Type type, Context & context, Preferences::AngleUnit angleUnit); // , Function f, bool inverse

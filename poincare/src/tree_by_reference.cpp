@@ -277,9 +277,12 @@ void TreeByReference::setTo(const TreeByReference & tr) {
   if (identifier() == tr.identifier()) {
     return;
   }
-  TreeNode * currentNode = node();
+  int currentId = identifier();
   setIdentifierAndRetain(tr.identifier());
-  currentNode->release(currentNode->numberOfChildren());
+  if (currentId != TreePool::NoNodeIdentifier) {
+    TreeNode * previousNode = TreePool::sharedPool()->node(currentId);
+    previousNode->release(previousNode->numberOfChildren());
+  }
 }
 
 }

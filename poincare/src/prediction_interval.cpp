@@ -42,36 +42,44 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
 }
 
 Expression PredictionInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
-  Expression op0 = childAtIndex(0);
-  Expression op1 = childAtIndex(1);
+  Expression c0 = childAtIndex(0);
+  Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
-  if (op0.type() == ExpressionNode::Type::Matrix || op1.type() == ExpressionNode::Type::Matrix) {
+  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
     return Undefined();
   }
 #endif
-  if (op0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational &>(op0);
+  if (c0.type() == ExpressionNode::Type::Rational) {
+    Rational r0 = static_cast<Rational>(c0);
     if (r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
-  if (op1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational &>(op1);
+  if (c1.type() == ExpressionNode::Type::Rational) {
+    Rational r1 = static_cast<Rational>(c1);
     if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
-  if (op0.type() != ExpressionNode::Type::Rational || op1.type() != ExpressionNode::Type::Rational) {
+  if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r0 = static_cast<Rational &>(op0);
-  Rational r1 = static_cast<Rational &>(op1);
+  Rational r0 = static_cast<Rational>(c0);
+  Rational r1 = static_cast<Rational>(c1);
   if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative || r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
-    return Undefined();
+    Expression result = Undefined();
+    replaceWithInPlace(result);
+    return result;
   }
   /* [r0-1.96*sqrt(r0*(1-r0)/r1), r0+1.96*sqrt(r0*(1-r0)/r1)]*/
   // Compute numerator = r0*(1-r0)
@@ -83,8 +91,8 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
   Expression sqr = Power(Division(numerator, r1), Rational(1, 2));
   Expression m = Multiplication(Rational(196, 100), sqr);
   Matrix matrix;
-  matrix.addChildAtIndexInPlace(Addition(r0, Multiplication(Rational(-1), m)), 0, 0);
-  matrix.addChildAtIndexInPlace(Addition(r0, m), 1, 1);
+  matrix.addChildAtIndexInPlace(Addition(r0.clone(), Multiplication(Rational(-1), m.clone())), 0, 0);
+  matrix.addChildAtIndexInPlace(Addition(r0.clone(), m), 1, 1);
   matrix.setDimensions(1, 2);
   return matrix.deepReduce(context, angleUnit);
 }

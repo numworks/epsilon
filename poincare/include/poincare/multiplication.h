@@ -91,7 +91,7 @@ private:
   void factorizeBase(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
   void mergeInChildByFactorizingBase(int i, Expression e, Context & context, Preferences::AngleUnit angleUnit);
   void factorizeExponent(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
-  Expression distributeOnOperandAtIndex(int index, Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression distributeOnOperandAtIndex(int index, Context & context, Preferences::AngleUnit angleUnit);
   void addMissingFactors(Expression factor, Context & context, Preferences::AngleUnit angleUnit);
   void factorizeSineAndCosine(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
   static bool HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2);

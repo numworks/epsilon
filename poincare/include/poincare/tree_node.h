@@ -69,8 +69,6 @@ public:
   bool hasChild(const TreeNode * child) const;
   bool hasAncestor(const TreeNode * node, bool includeSelf) const;
   bool hasSibling(const TreeNode * e) const;
-  // Prepare a child that will be stolen by another Expression
-  virtual void childAtIndexWillBeStolen(int index);
   // AddChild collateral effect
   virtual void didAddChildAtIndex(int newNumberOfChildren) {}
 

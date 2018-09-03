@@ -40,17 +40,21 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::A
 }
 
 Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
 #if MATRIX_EXACT_REDUCING
   if (childAtIndex(0).type() == ExpressionNode::Type::Matrix || childAtIndex(1).type() == ExpressionNode:Type::Matrix) {
     return Undefined();
   }
 #endif
-  Expression invIndex = Power(childAtIndex(1), Rational(-1)).shallowReduce(context, angleUnit);
+  Expression invIndex = Power(childAtIndex(1), Rational(-1));
   Power p = Power(childAtIndex(0), invIndex);
+  invIndex.shallowReduce(context, angleUnit);
+  replaceWithInPlace(p);
   return p.shallowReduce(context, angleUnit);
 }
 

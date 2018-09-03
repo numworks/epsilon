@@ -59,8 +59,8 @@ void assert_prime_factorization_equals_to(Integer a, int * factors, int * coeffi
      * (the relation between integers and their approximation is a surjection,
      * however different integers are really likely to have different
      * approximations... */
-    quiz_assert(outputFactors[index].approximateToScalar<float>(context, Degree) == Integer(factors[index]).approximateToScalar<float>(context, Degree));
-    quiz_assert(outputCoefficients[index].approximateToScalar<float>(context, Degree) == Integer(coefficients[index]).approximateToScalar<float>(context, Degree));
+    quiz_assert(outputFactors[index].approximate<float>() == Integer(factors[index]).approximate<float>());
+    quiz_assert(outputCoefficients[index].approximate<float>() == Integer(coefficients[index]).approximate<float>());
   }
 }
 

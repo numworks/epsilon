@@ -12,8 +12,8 @@ QUIZ_CASE(poincare_rational_constructor) {
   Rational b(Integer("3456"));
   Rational c(123,324);
   Rational d(3456789);
-  Rational e(Integer::Overflow());
-  Rational f(Integer::Overflow(), Integer::Overflow());
+  Rational e(Integer::Overflow(false));
+  Rational f(Integer::Overflow(false), Integer::Overflow(false));
   assert_pool_size(initialPoolSize+6);
 }
 
@@ -138,6 +138,6 @@ QUIZ_CASE(poincare_rational_serialize) {
   assert_parsed_expression_serialize_to(Rational("2345678909876"), "2345678909876");
   assert_parsed_expression_serialize_to(Rational("-2345678909876", "5"), "-2345678909876/5");
   assert_parsed_expression_serialize_to(Rational(Integer(MaxIntegerString)), MaxIntegerString);
-  assert_parsed_expression_serialize_to(Rational(Integer(1), Integer::Overflow()), "1/inf");
-  assert_parsed_expression_serialize_to(Rational(Integer::Overflow()), "inf");
+  assert_parsed_expression_serialize_to(Rational(Integer(1), Integer::Overflow(false)), "1/inf");
+  assert_parsed_expression_serialize_to(Rational(Integer::Overflow(false)), "inf");
 }

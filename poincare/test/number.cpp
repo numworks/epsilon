@@ -9,8 +9,8 @@ using namespace Poincare;
 
 QUIZ_CASE(poincare_number_parser) {
   // Integer
-  assert_parsed_expression_is("123456789012345678765434567", Integer("123456789012345678765434567"));
-  assert_parsed_expression_is(MaxIntegerString, Integer(MaxIntegerString));
+  assert_parsed_expression_is("123456789012345678765434567", Rational("123456789012345678765434567"));
+  assert_parsed_expression_is(MaxIntegerString, Rational(MaxIntegerString));
 
   // Integer parsed in Decimal because they overflow Integer
   assert_parsed_expression_is(OverflowedIntegerString, Decimal(Integer("17976931348623"), 308));

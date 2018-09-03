@@ -46,39 +46,47 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Pre
 }
 
 Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
-  Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
-    return e;
+  {
+    Expression e = Expression::defaultShallowReduce(context, angleUnit);
+    if (e.isUndefinedOrAllocationFailure()) {
+      return e;
+    }
   }
-  Expression op0 = childAtIndex(0);
-  Expression op1 = childAtIndex(1);
+  Expression c0 = childAtIndex(0);
+  Expression c1 = childAtIndex(1);
 #if MATRIX_EXACT_REDUCING
-  if (op0.type() == ExpressionNode::Type::Matrix || op1.type() == ExpressionNode::Type::Matrix) {
+  if (c0.type() == ExpressionNode::Type::Matrix || c1.type() == ExpressionNode::Type::Matrix) {
     return replaceWith(new Undefined(), true);
   }
 #endif
-  if (op0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational &>(op0);
+  if (c0.type() == ExpressionNode::Type::Rational) {
+    Rational r0 = static_cast<Rational>(c0);
     if (!r0.integerDenominator().isOne() || r0.sign() == ExpressionNode::Sign::Negative) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
-  if (op1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational &>(op1);
+  if (c1.type() == ExpressionNode::Type::Rational) {
+    Rational r1 = static_cast<Rational>(c1);
     if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
-      return Undefined();
+      Expression result = Undefined();
+      replaceWithInPlace(result);
+      return result;
     }
   }
-  if (op0.type() != ExpressionNode::Type::Rational || op1.type() != ExpressionNode::Type::Rational) {
+  if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r0 = static_cast<Rational &>(op0);
-  Rational r1 = static_cast<Rational &>(op1);
+  Rational r0 = static_cast<Rational &>(c0);
+  Rational r1 = static_cast<Rational &>(c1);
 
   Integer n = r0.unsignedIntegerNumerator();
   Integer k = r1.unsignedIntegerNumerator();
   if (n.isLowerThan(k)) {
-    return Rational(0);
+    Expression result = Rational(0);
+    replaceWithInPlace(result);
+    return result;
   }
   /* if n is too big, we do not reduce to avoid too long computation.
    * The permute coefficient will be evaluate approximatively later */
@@ -92,8 +100,10 @@ Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::Ang
     result = Integer::Multiplication(result, factor);
   }
   assert(!result.isInfinity()); // < permute(k_maxNValue, k_maxNValue-1)~10^158
-  return Rational(result);
-}
+  Expression rationalResult = Rational(result);
+  replaceWithInPlace(rationalResult);
+  return rationalResult;
 
 }
 
+}

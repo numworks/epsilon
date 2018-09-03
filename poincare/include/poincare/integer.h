@@ -32,7 +32,7 @@ struct IntegerDivision;
 class Integer {
 public:
   /* Constructors & Destructors */
-  Integer(native_int_t i);
+  Integer(native_int_t i = 0);
   Integer(double_native_int_t i);
   Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(const char * digits, size_t length, bool negative);

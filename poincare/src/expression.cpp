@@ -64,7 +64,11 @@ bool Expression::shouldStopProcessing() {
 /* Properties */
 
 bool Expression::isRationalZero() const {
-  return this->type() == ExpressionNode::Type::Rational && static_cast<const Rational>(*this).isZero();
+  return type() == ExpressionNode::Type::Rational && static_cast<const Rational>(*this).isZero();
+}
+
+bool Expression::isRationalOne() const {
+  return type() == ExpressionNode::Type::Rational && static_cast<const Rational>(*this).isOne();
 }
 
 bool Expression::recursivelyMatches(ExpressionTest test, Context & context) const {

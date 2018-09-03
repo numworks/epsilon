@@ -3,7 +3,6 @@
 
 #include <poincare/tree_node.h>
 #include <poincare/tree_by_reference.h>
-#include <poincare/tree_by_value.h>
 
 namespace Poincare {
 

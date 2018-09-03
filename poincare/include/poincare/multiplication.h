@@ -8,14 +8,6 @@ namespace Poincare {
 
 class MultiplicationNode : public NAryExpressionNode {
   friend class Addition;
-/*  friend class Division;
-  friend class Logarithm;
-  friend class Opposite;
-  friend class Power;
-  friend class Subtraction;
-  friend class Symbol;
-  friend class Complex<float>;
-  friend class Complex<double>;*/
 public:
   using NAryExpressionNode::NAryExpressionNode;
 
@@ -94,7 +86,7 @@ public:
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 private:
   // Simplification
-  Expression privateShallowReduce(Context& context, Preferences::AngleUnit angleUnit, bool expand, bool canBeInterrupted) const;
+  Expression privateShallowReduce(Context& context, Preferences::AngleUnit angleUnit, bool expand, bool canBeInterrupted);
   void mergeMultiplicationChildrenInPlace();
   void factorizeBase(int i, int j, Context & context, Preferences::AngleUnit angleUnit);
   void mergeInChildByFactorizingBase(int i, Expression e, Context & context, Preferences::AngleUnit angleUnit);
@@ -110,7 +102,8 @@ private:
   static const Expression CreateExponent(Expression e);
   /* Warning: mergeNegativePower doesnot always return  a multiplication:
    *      *(b^-1,c^-1) -> (bc)^-1 */
-  Expression mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit) const;
+  Expression mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit);
+  static inline const Expression Base(const Expression e);
 };
 
 }

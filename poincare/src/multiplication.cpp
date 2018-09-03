@@ -3,13 +3,11 @@
 #include <poincare/arithmetic.h>
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
-//#include <poincare/matrix.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
-//#include <poincare/simplification_root.h>
 #include <poincare/subtraction.h>
 #include <poincare/tangent.h>
 #include <poincare/undefined.h>
@@ -18,13 +16,6 @@
 #include <assert.h>
 
 namespace Poincare {
-
-static inline const Expression Base(const Expression e) {
-  if (e.type() == ExpressionNode::Type::Power) {
-    return e.childAtIndex(0);
-  }
-  return e;
-}
 
 MultiplicationNode * MultiplicationNode::FailedAllocationStaticNode() {
   static AllocationFailureExpressionNode<MultiplicationNode> failure;
@@ -126,13 +117,12 @@ Expression MultiplicationNode::denominator(Context & context, Preferences::Angle
 
 Expression Multiplication::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
-  Expression result = *this;
-  for (int i = 0; i < result.numberOfChildren(); i++) {
+  for (int i = 0; i < numberOfChildren(); i++) {
     if (childAtIndex(i).sign() == ExpressionNode::Sign::Negative) {
-      result.replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, context, angleUnit));
+      replaceChildAtIndexInPlace(i, childAtIndex(i).setSign(s, context, angleUnit));
     }
   }
-  return result.shallowReduce(context, angleUnit);
+  return shallowReduce(context, angleUnit);
 }
 
 Expression Multiplication::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
@@ -146,51 +136,62 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
    * - Creating a Division if there's either a term with a power of -1 (a.b^(-1)
    *   shall become a/b) or a non-integer rational term (3/2*a -> (3*a)/2). */
 
-  Expression thisCopy = *this;
   // Step 1: Turn -n*A into -(n*A)
-  if (thisCopy.childAtIndex(0).isNumber() && thisCopy.childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {
-    if (thisCopy.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(thisCopy.childAtIndex(0)).isMinusOne()) {
-      thisCopy.removeChildAtIndexInPlace(0);
+  Expression child0 = childAtIndex(0);
+  if (child0.isNumber() && child0.sign() == ExpressionNode::Sign::Negative) {
+    if (child0.type() == ExpressionNode::Type::Rational && static_cast<Rational>(child0).isMinusOne()) {
+      removeChildAtIndexInPlace(0);
     } else {
-      thisCopy.replaceChildAtIndexInPlace(0, childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit));
+      child0.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
     }
-    return Opposite(static_cast<Multiplication&>(thisCopy).squashUnaryHierarchy());
+    Expression e = squashUnaryHierarchy();
+    Opposite o = Opposite(e.clone());
+    e.replaceWithInPlace(o);
+    o.childAtIndex(0).shallowBeautify(context, angleUnit);
+    return o;
   }
 
   /* Step 2: Merge negative powers: a*b^(-1)*c^(-pi)*d = a*(b*c^pi)^(-1)
    * This also turns 2/3*a into 2*a*3^(-1) */
-  thisCopy = static_cast<Multiplication&>(thisCopy).mergeNegativePower(context, angleUnit);
-  if (thisCopy.type() == ExpressionNode::Type::Power) {
-    return thisCopy.shallowBeautify(context, angleUnit);
+  Expression thisExp = mergeNegativePower(context, angleUnit); //TODO
+  if (thisExp.type() == ExpressionNode::Type::Power) {
+    return thisExp.shallowBeautify(context, angleUnit);
   }
-  assert(thisCopy.type() == ExpressionNode::Type::Multiplication);
+  assert(thisExp.type() == ExpressionNode::Type::Multiplication);
 
   // Step 3: Add Parenthesis if needed
-  for (int i = 0; i < thisCopy.numberOfChildren(); i++) {
-    const Expression o = thisCopy.childAtIndex(i);
-    if (thisCopy.type() == ExpressionNode::Type::Addition ) {
+  for (int i = 0; i < thisExp.numberOfChildren(); i++) {
+    const Expression o = thisExp.childAtIndex(i);
+    if (thisExp.type() == ExpressionNode::Type::Addition) {
       Parenthesis p(o);
-      thisCopy.replaceChildAtIndexInPlace(i, p);
+      thisExp.replaceChildAtIndexInPlace(i, p);
     }
   }
 
   // Step 4: Create a Division if needed
-  for (int i = 0; i < thisCopy.numberOfChildren(); i++) {
-    if (!(thisCopy.childAtIndex(i).type() == ExpressionNode::Type::Power && thisCopy.childAtIndex(i).childAtIndex(1).type() == ExpressionNode::Type::Rational && static_cast<Rational>(thisCopy.childAtIndex(i).childAtIndex(1)).isMinusOne())) {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression childI = thisExp.childAtIndex(1);
+    if (!(childI.type() == ExpressionNode::Type::Power && childI.childAtIndex(1).type() == ExpressionNode::Type::Rational && static_cast<Rational>(childI.childAtIndex(1)).isMinusOne())) {
       continue;
     }
 
     // Let's remove the denominator-to-be from this
-    Expression denominatorOperand = thisCopy.childAtIndex(i).childAtIndex(0);
-    thisCopy.removeChildAtIndexInPlace(i);
-    Expression numeratorOperand = thisCopy.shallowReduce(context, angleUnit);
-    // Delete parenthesis unnecessary on numerator
+    Expression denominatorOperand = childI.childAtIndex(0);
+    removeChildInPlace(childI, childI.numberOfChildren());
+
+    Expression numeratorOperand = shallowReduce(context, angleUnit);
+    // Delete unnecessary parentheses on numerator
     if (numeratorOperand.type() == ExpressionNode::Type::Parenthesis) {
-      numeratorOperand = numeratorOperand.childAtIndex(0);
+      Expression numeratorChild0 = numeratorOperand.childAtIndex(0);
+      numeratorOperand.replaceWithInPlace(numeratorChild0);
+      numeratorOperand = numeratorChild0;
     }
-    return Division(numeratorOperand, denominatorOperand).shallowBeautify(context, angleUnit);
+    Expression originalParent = numeratorOperand.parent();
+    Division d = Division(numeratorOperand.clone(), denominatorOperand);
+    originalParent.replaceChildInPlace(numeratorOperand, d);
+    return d.shallowBeautify(context, angleUnit);
   }
-  return thisCopy;
+  return thisExp;
 }
 
 int Multiplication::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
@@ -216,7 +217,7 @@ int Multiplication::getPolynomialCoefficients(char symbolName, Expression coeffi
       int jbis = j > degI ? degI : j;
       for (int l = 0; l <= jbis ; l++) {
         // Always copy the a and b coefficients are they are used multiple times
-        a.addChildAtIndexInPlace(Multiplication(intermediateCoefficients[l], coefficients[j-l]), a.numberOfChildren(), a.numberOfChildren());
+        a.addChildAtIndexInPlace(Multiplication(intermediateCoefficients[l].clone(), coefficients[j-l].clone()), a.numberOfChildren(), a.numberOfChildren());
       }
       /* a(j) and b(j) are used only to compute coefficient at rank >= j, we
        * can delete them as we compute new coefficient by decreasing ranks. */
@@ -232,14 +233,18 @@ int Multiplication::getPolynomialCoefficients(char symbolName, Expression coeffi
 Expression Multiplication::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
   // Merge negative power: a*b^-1*c^(-Pi)*d = a*(b*c^Pi)^-1
   // WARNING: we do not want to change the expression but to create a new one.
-  Expression e = mergeNegativePower(context, angleUnit);
+  Multiplication thisClone = static_cast<Multiplication>(clone());
+  Expression e = thisClone.mergeNegativePower(context, angleUnit);
   if (e.type() == ExpressionNode::Type::Power) {
     return e.denominator(context, angleUnit);
   } else {
     assert(e.type() == ExpressionNode::Type::Multiplication);
     for (int i = 0; i < e.numberOfChildren(); i++) {
       // a*b^(-1)*... -> a*.../b
-      if (e.childAtIndex(i).type() == ExpressionNode::Type::Power && e.childAtIndex(i).childAtIndex(1).type() == ExpressionNode::Type::Rational && static_cast<Rational>(e.childAtIndex(i).childAtIndex(1)).isMinusOne()) {
+      if (e.childAtIndex(i).type() == ExpressionNode::Type::Power
+          && e.childAtIndex(i).childAtIndex(1).type() == ExpressionNode::Type::Rational
+          && static_cast<Rational>(e.childAtIndex(i).childAtIndex(1)).isMinusOne())
+      {
         return e.childAtIndex(i).childAtIndex(0);
       }
     }
@@ -247,7 +252,7 @@ Expression Multiplication::denominator(Context & context, Preferences::AngleUnit
   return Expression();
 }
 
-Expression Multiplication::privateShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool shouldExpand, bool canBeInterrupted) const {
+Expression Multiplication::privateShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool shouldExpand, bool canBeInterrupted) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);;
     if (e.isUndefinedOrAllocationFailure()) {
@@ -255,22 +260,20 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
     }
   }
 
-  Multiplication thisCopy = *this;
-
   /* Step 1: MultiplicationNode is associative, so let's start by merging children
    * which also are multiplications themselves. */
-  thisCopy.mergeMultiplicationChildrenInPlace();
+  mergeMultiplicationChildrenInPlace();
 
   /* Step 2: If any of the child is zero, the multiplication result is zero */
-  for (int i = 0; i < thisCopy.numberOfChildren(); i++) {
-    const Expression o = thisCopy.childAtIndex(i);
-    if (o.type() == ExpressionNode::Type::Rational && static_cast<Rational>(o).isZero()) {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    const Expression c = childAtIndex(i);
+    if (c.type() == ExpressionNode::Type::Rational && static_cast<Rational>(c).isZero()) {
       return Rational(0);
     }
   }
 
   // Step 3: Sort the children
-  thisCopy.sortChildrenInPlace(ExpressionNode::SimplificationOrder, canBeInterrupted);
+  sortChildrenInPlace(ExpressionNode::SimplificationOrder, canBeInterrupted);
 
 #if MATRIX_EXACT_REDUCING
 #if 0 // OLD CODE
@@ -352,9 +355,9 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
   int i = 0;
-  while (i < thisCopy.numberOfChildren()-1) {
-    Expression oi = thisCopy.childAtIndex(i);
-    Expression oi1 = thisCopy.childAtIndex(i+1);
+  while (i < numberOfChildren()-1) {
+    Expression oi = childAtIndex(i);
+    Expression oi1 = childAtIndex(i+1);
     if (TermsHaveIdenticalBase(oi, oi1)) {
       bool shouldFactorizeBase = true;
       if (TermHasNumeralBase(oi)) {
@@ -365,11 +368,11 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
         shouldFactorizeBase = oi.type() == ExpressionNode::Type::Power && oi1.type() == ExpressionNode::Type::Power;
       }
       if (shouldFactorizeBase) {
-        thisCopy.factorizeBase(i, i+1, context, angleUnit);
+        factorizeBase(i, i+1, context, angleUnit);
         continue;
       }
     } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
-      thisCopy.factorizeExponent(i, i+1, context, angleUnit);
+      factorizeExponent(i, i+1, context, angleUnit);
       continue;
     }
     i++;
@@ -379,16 +382,16 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    *opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
-  for (int i = 0; i < thisCopy.numberOfChildren(); i++) {
-    Expression o1 = thisCopy.childAtIndex(i);
+  for (int i = 0; i < numberOfChildren(); i++) {
+    Expression o1 = childAtIndex(i);
     if (Base(o1).type() == ExpressionNode::Type::Sine && TermHasNumeralExponent(o1)) {
       const Expression x = Base(o1).childAtIndex(0);
       /* Thanks to the SimplificationOrder, Cosine-base factors are after
        * Sine-base factors */
-      for (int j = i+1; j < thisCopy.numberOfChildren(); j++) {
-        Expression o2 = thisCopy.childAtIndex(j);
+      for (int j = i+1; j < numberOfChildren(); j++) {
+        Expression o2 = childAtIndex(j);
         if (Base(o2).type() == ExpressionNode::Type::Cosine && TermHasNumeralExponent(o2) && Base(o2).childAtIndex(0).isIdenticalTo(x)) {
-          thisCopy.factorizeSineAndCosine(i, j, context, angleUnit);
+          factorizeSineAndCosine(i, j, context, angleUnit);
           break;
         }
       }
@@ -397,7 +400,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
   /* Replacing sin/cos by tan factors may have mixed factors and factors are
    * guaranteed to be sorted (according ot SimplificationOrder) at the end of
    * shallowReduce */
-  thisCopy.sortChildrenInPlace(ExpressionNode::SimplificationOrder, canBeInterrupted);
+  sortChildrenInPlace(ExpressionNode::SimplificationOrder, canBeInterrupted);
 
   /* Step 6: We remove rational children that appeared in the middle of sorted
    * children. It's important to do this after having factorized because
@@ -409,29 +412,29 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * Last, we remove the only rational child if it is one and not the only
    * child. */
   i = 1;
-  while (i < thisCopy.numberOfChildren()) {
-    Expression o = thisCopy.childAtIndex(i);
-    if (o.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(o).isOne()) {
-      thisCopy.removeChildAtIndexInPlace(i);
+  while (i < numberOfChildren()) {
+    Expression o = childAtIndex(i);
+    if (o.type() == ExpressionNode::Type::Rational && static_cast<Rational>(o).isOne()) {
+      removeChildAtIndexInPlace(i);
       continue;
     }
     if (o.isNumber()) {
-      if (thisCopy.childAtIndex(0).isNumber()) {
-        Number o0 = static_cast<Rational>(thisCopy.childAtIndex(0));
-        Number m = Number::Multiplication(o0, static_cast<Number&>(o));
-        thisCopy.replaceChildAtIndexInPlace(0, m);
-        thisCopy.removeChildAtIndexInPlace(i);
+      if (childAtIndex(0).isNumber()) {
+        Number o0 = static_cast<Rational>(childAtIndex(0));
+        Number m = Number::Multiplication(o0, static_cast<Number>(o));
+        replaceChildAtIndexInPlace(0, m);
+        removeChildAtIndexInPlace(i);
       } else {
         // Number child has to be first
-        thisCopy.removeChildAtIndexInPlace(i);
-        thisCopy.addChildAtIndexInPlace(o, 0, thisCopy.numberOfChildren());
+        removeChildAtIndexInPlace(i);
+        addChildAtIndexInPlace(o, 0, numberOfChildren());
       }
       continue;
     }
     i++;
   }
-  if (thisCopy.childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(thisCopy.childAtIndex(0)).isOne() && thisCopy.numberOfChildren() > 1) {
-    thisCopy.removeChildAtIndexInPlace(0);
+  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && static_cast<Rational>(childAtIndex(0)).isOne() && numberOfChildren() > 1) {
+    removeChildAtIndexInPlace(0);
   }
 
   /* Step 7: Expand multiplication over addition children if any. For example,
@@ -441,15 +444,15 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * Note: This step must be done after Step 4, otherwise we wouldn't be able to
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b). */
   if (shouldExpand) { // && parent()->type() != ExpressionNode::Type::Multiplication) { // TODO: Handle this top dow in deepReduce?
-    for (int i=0; i<thisCopy.numberOfChildren(); i++) {
-      if (thisCopy.childAtIndex(i).type() == ExpressionNode::Type::Addition) {
-        return thisCopy.distributeOnOperandAtIndex(i, context, angleUnit);
+    for (int i = 0; i < numberOfChildren(); i++) {
+      if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
+        return distributeOnOperandAtIndex(i, context, angleUnit);
       }
     }
   }
 
   // Step 8: Let's remove the multiplication altogether if it has one child
-  Expression result = thisCopy.squashUnaryHierarchy();
+  Expression result = squashUnaryHierarchy();
 
   return result;
 }
@@ -481,15 +484,17 @@ void Multiplication::factorizeBase(int i, int j, Context & context, Preferences:
 }
 
 void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, Context & context, Preferences::AngleUnit angleUnit) {
-  /* This function replace the child at index i by its factorization with e.
-   * e and childAtIndex(i) are supposed to have a command base. */
+  /* This function replace the child at index i by its factorization with e. e
+   * and childAtIndex(i) are supposed to have a common base. */
 
   // Step 1: Find the new exponent
-  Expression s = Addition(CreateExponent(childAtIndex(i)), CreateExponent(e)).shallowReduce(context, angleUnit); // pi^2*pi^3 -> pi^(2+3) -> pi^5
+  Expression s = Addition(CreateExponent(childAtIndex(i)), CreateExponent(e)); // pi^2*pi^3 -> pi^(2+3) -> pi^5
   // Step 2: Create the new Power
-  Expression p = Power(Base(childAtIndex(i)), s).shallowReduce(context, angleUnit); // pi^2*pi^-2 -> pi^0 -> 1
+  Expression p = Power(Base(childAtIndex(i)), s); // pi^2*pi^-2 -> pi^0 -> 1
+  s.shallowReduce(context, angleUnit);
   // Step 3: Replace one of the child
   replaceChildAtIndexInPlace(i, p);
+  p.shallowReduce(context, angleUnit);
   /* Step 4: Reducing the new power might have turned it into a multiplication,
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
@@ -502,15 +507,16 @@ void Multiplication::factorizeExponent(int i, int j, Context & context, Preferen
   /* This function factorizes children which share a common exponent. For
    * example, it turns Multiplication(2^x,3^x) into Multiplication(6^x). */
 
-  // Step 1: find the new base
-  Expression m = Multiplication(Base(childAtIndex(i)), Base(childAtIndex(j))).shallowReduce(context, angleUnit); // 2^x*3^x -> (2*3)^x -> 6^x
-  // Step 2: create the new power
-  Expression p = Power(m, childAtIndex(i).childAtIndex(1)).shallowReduce(context, angleUnit); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
-  // Step 3: Replace one of the child
-  replaceChildAtIndexInPlace(i, p);
-  // Step 4: Get rid of the other child
+  // Step 1: Find the new base
+  Expression m = Multiplication(Base(childAtIndex(i)).clone(), Base(childAtIndex(j))); // 2^x*3^x -> (2*3)^x -> 6^x
+  // Step 2: Get rid of one of the children
   removeChildAtIndexInPlace(j);
-  /* Step 5: reducing the new power might have turned it into a multiplication,
+  // Step 3: Replace the other child
+  childAtIndex(i).replaceChildAtIndexInPlace(0, m);
+  // Step 4: Reduce expressions
+  m.shallowReduce(context, angleUnit);
+  Expression p = childAtIndex(i).shallowReduce(context, angleUnit); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
+  /* Step 5: Reducing the new power might have turned it into a multiplication,
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */
   if (p.type() == ExpressionNode::Type::Multiplication) {
@@ -527,10 +533,11 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, 
   Addition a;
   int numberOfAdditionTerms = childAtIndex(i).numberOfChildren();
   for (int j = 0; j < numberOfAdditionTerms; j++) {
-    Multiplication m = *this;
+    Multiplication m = static_cast<Multiplication>(clone());
     m.replaceChildAtIndexInPlace(i, childAtIndex(i).childAtIndex(j));
     // Reduce m: pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
-    a.addChildAtIndexInPlace(m.shallowReduce(context, angleUnit), a.numberOfChildren(), a.numberOfChildren());
+    a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
+    m.shallowReduce(context, angleUnit);
   }
   return a.shallowReduce(context, angleUnit); // Order terms, put under a common denominator if needed
 }
@@ -544,13 +551,13 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
   }
   /* Special case when factor is a Rational: if 'this' has already a rational
    * child, we replace it by its LCM with factor ; otherwise, we simply add
-   * factor as an child. */
+   * factor as a child. */
   if (numberOfChildren() > 0 && childAtIndex(0).type() == ExpressionNode::Type::Rational && factor.type() == ExpressionNode::Type::Rational) {
-    assert(static_cast<Rational&>(factor).integerDenominator().isOne());
+    assert(static_cast<Rational>(factor).integerDenominator().isOne());
     assert(static_cast<Rational>(childAtIndex(0)).integerDenominator().isOne());
-    Integer lcm = Arithmetic::LCM(static_cast<Rational&>(factor).unsignedIntegerNumerator(), static_cast<Rational>(childAtIndex(0)).unsignedIntegerNumerator());
+    Integer lcm = Arithmetic::LCM(static_cast<Rational>(factor).unsignedIntegerNumerator(), static_cast<Rational>(childAtIndex(0)).unsignedIntegerNumerator());
     if (lcm.isInfinity()) {
-      addChildAtIndexInPlace(static_cast<Rational&>(factor).unsignedIntegerNumerator(), 1, numberOfChildren());
+      addChildAtIndexInPlace(static_cast<Rational>(factor).unsignedIntegerNumerator(), 1, numberOfChildren());
       return;
     }
     replaceChildAtIndexInPlace(0, Rational(lcm));
@@ -561,21 +568,23 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
      * base if any. Otherwise, we add it as an new child. */
     for (int i = 0; i < numberOfChildren(); i++) {
       if (TermsHaveIdenticalBase(childAtIndex(i), factor)) {
-        Expression sub = Subtraction(CreateExponent(childAtIndex(i)), CreateExponent(factor)).deepReduce(context, angleUnit);
+        Expression sub = Subtraction(CreateExponent(childAtIndex(i)), CreateExponent(factor));
+        sub.childAtIndex(1).deepReduce(context, angleUnit);
         if (sub.sign() == ExpressionNode::Sign::Negative) { // index[0] < index[1]
-          sub = Opposite(sub).shallowReduce(context, angleUnit);
+          sub = Opposite(sub);
           if (factor.type() == ExpressionNode::Type::Power) {
             factor.replaceChildAtIndexInPlace(1, sub);
           } else {
             factor = Power(factor, sub);
           }
+          sub.shallowReduce(context, angleUnit);
           factor = factor.shallowReduce(context, angleUnit);
           mergeInChildByFactorizingBase(i, factor, context, angleUnit);
           // TODO: we use to shallowReduce childAtIndex(i) here? Needed ?
         } else if (sub.sign() == ExpressionNode::Sign::Unknown) {
           // TODO: we use to shallowReduce childAtIndex(i) here? Needed ?
           mergeInChildByFactorizingBase(i, factor, context, angleUnit);
-        } else {}
+        }
         /* Reducing the new child i can lead to creating a new multiplication
          * (ie 2^(1+2*3^(1/2)) -> 2*2^(2*3^(1/2)). We thus have to get rid of
          * nested multiplication: */
@@ -584,7 +593,7 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
       }
     }
   }
-  addChildAtIndexInPlace(factor, 0, numberOfChildren());
+  addChildAtIndexInPlace(factor.clone(), 0, numberOfChildren());
   sortChildrenInPlace(ExpressionNode::SimplificationOrder, false);
 }
 
@@ -596,24 +605,34 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
   // We check before that p and q were numbers
   Number p = static_cast<Number>(CreateExponent(childAtIndex(i)));
   Number q = static_cast<Number>(CreateExponent(childAtIndex(j)));
-  /* If p and q have the same sign, we cannot replace them by a tangent */
+  // If p and q have the same sign, we cannot replace them by a tangent
   if ((int)p.sign()*(int)q.sign() > 0) {
     return;
   }
   Number sumPQ = Number::Addition(p, q);
   Number absP = p.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
   Number absQ = q.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
-  Expression tan = Tangent(x);
+  Expression tan = Tangent(x.clone());
   if (Number::NaturalOrder(absP, absQ) < 0) {
-    // replace sin(x)^p by tan(x)^p
-    replaceChildAtIndexInPlace(i, Power(tan, p).shallowReduce(context, angleUnit));
-    // replace cos(x)^q by cos(x)^(p+q)
-    replaceChildAtIndexInPlace(j, Power(Base(childAtIndex(j)), sumPQ).shallowReduce(context, angleUnit));
+    // Replace sin(x) by tan(x) or sin(x)^p by tan(x)^p
+    if (p.isRationalOne()) {
+      replaceChildAtIndexInPlace(i, tan);
+    } else {
+      replaceChildAtIndexInPlace(i, Power(tan, p));
+    }
+    childAtIndex(i).shallowReduce(context, angleUnit);
+    // Replace cos(x)^q by cos(x)^(p+q)
+    replaceChildAtIndexInPlace(j, Power(Base(childAtIndex(j)), sumPQ));
+    childAtIndex(j).shallowReduce(context, angleUnit);
   } else {
-    // replace cos(x)^q by tan(x)^(-q)
-    replaceChildAtIndexInPlace(j, Power(tan, Number::Multiplication(q, Rational(-1)).shallowReduce(context, angleUnit)).shallowReduce(context, angleUnit));
-    // replace sin(x)^p by sin(x)^(p+q)
-    replaceChildAtIndexInPlace(i, Power(Base(childAtIndex(i)), sumPQ).shallowReduce(context, angleUnit));
+    // Replace cos(x)^q by tan(x)^(-q)
+    Expression newPower = Power(tan, Number::Multiplication(q, Rational(-1)));
+    newPower.childAtIndex(1).shallowReduce(context, angleUnit);
+    replaceChildAtIndexInPlace(j, newPower);
+    newPower.shallowReduce(context, angleUnit);
+    // Replace sin(x)^p by sin(x)^(p+q)
+    replaceChildAtIndexInPlace(i, Power(Base(childAtIndex(i)), sumPQ));
+    childAtIndex(i).shallowReduce(context, angleUnit);
   }
 }
 
@@ -636,7 +655,7 @@ bool Multiplication::HaveSameNonNumeralFactors(const Expression & e1, const Expr
 }
 
 const Expression Multiplication::CreateExponent(Expression e) {
-  Expression result = e.type() == ExpressionNode::Type::Power ? e.childAtIndex(1) : Rational(1);
+  Expression result = e.type() == ExpressionNode::Type::Power ? e.childAtIndex(1).clone() : Rational(1);
   return result;
 }
 
@@ -664,38 +683,45 @@ bool Multiplication::TermHasNumeralExponent(const Expression & e) {
   return false;
 }
 
-Expression Multiplication::mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit) const {
-  Multiplication thisCopy = *this;
+Expression Multiplication::mergeNegativePower(Context & context, Preferences::AngleUnit angleUnit) {
   Multiplication m;
   // Special case for rational p/q: if q != 1, q should be at denominator
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational && !static_cast<const Rational>(childAtIndex(0)).integerDenominator().isOne()) {
     Rational r = static_cast<Rational>(childAtIndex(0));
     m.addChildAtIndexInPlace(Rational(r.integerDenominator()), 0, m.numberOfChildren());
     if (r.signedIntegerNumerator().isOne()) {
-      thisCopy.removeChildAtIndexInPlace(0);
+      removeChildAtIndexInPlace(0);
     } else {
-      thisCopy.replaceChildAtIndexInPlace(0, Rational(r.signedIntegerNumerator()));
+      replaceChildAtIndexInPlace(0, Rational(r.signedIntegerNumerator()));
     }
   }
   int i = 0;
-  while (i < thisCopy.numberOfChildren()) {
-    if (thisCopy.childAtIndex(i).type() == ExpressionNode::Type::Power && thisCopy.childAtIndex(i).childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
-     Expression e = thisCopy.childAtIndex(i);
-     e.replaceChildAtIndexInPlace(1, e.childAtIndex(1).setSign(ExpressionNode::Sign::Positive, context, angleUnit));
-     m.addChildAtIndexInPlace(e.shallowReduce(context, angleUnit), m.numberOfChildren(), m.numberOfChildren());
-     thisCopy.removeChildAtIndexInPlace(i);
+  while (i < numberOfChildren()) {
+    if (childAtIndex(i).type() == ExpressionNode::Type::Power && childAtIndex(i).childAtIndex(1).sign() == ExpressionNode::Sign::Negative) {
+     Expression e = childAtIndex(i);
+     e.childAtIndex(1).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+     removeChildAtIndexInPlace(i);
+     m.addChildAtIndexInPlace(e, m.numberOfChildren(), m.numberOfChildren());
+     e.shallowReduce(context, angleUnit);
     } else {
       i++;
     }
   }
   if (m.numberOfChildren() == 0) {
-    return thisCopy;
+    return *this;
   }
   m.sortChildrenInPlace(ExpressionNode::SimplificationOrder, true);
   Power p(m.squashUnaryHierarchy(), Rational(-1));
-  thisCopy.addChildAtIndexInPlace(p, 0, thisCopy.numberOfChildren());
-  thisCopy.sortChildrenInPlace(ExpressionNode::SimplificationOrder, true);
-  return thisCopy.squashUnaryHierarchy();
+  addChildAtIndexInPlace(p, 0, numberOfChildren());
+  sortChildrenInPlace(ExpressionNode::SimplificationOrder, true);
+  return squashUnaryHierarchy();
+}
+
+const Expression Multiplication::Base(const Expression e) {
+  if (e.type() == ExpressionNode::Type::Power) {
+    return e.childAtIndex(0);
+  }
+  return e;
 }
 
 template MatrixComplex<float> MultiplicationNode::computeOnComplexAndMatrix<float>(std::complex<float> const, const MatrixComplex<float>);

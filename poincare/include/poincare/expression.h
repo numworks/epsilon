@@ -45,6 +45,7 @@ class Expression : public TreeByReference {
   friend class MatrixInverse;
   friend class MatrixTrace;
   friend class MatrixTranspose;
+  friend class Multiplication;
 
   friend class Sine;
   friend class Store;
@@ -93,6 +94,7 @@ public:
   bool isUndefinedOrAllocationFailure() const { return node()->type() == ExpressionNode::Type::Undefined || node()->type() == ExpressionNode::Type::AllocationFailure; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
+  bool isRationalOne() const;
   typedef bool (*ExpressionTest)(const Expression e, Context & context);
   bool recursivelyMatches(ExpressionTest test, Context & context) const;
   bool isApproximate(Context & context) const;

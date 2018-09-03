@@ -23,10 +23,10 @@ Integer Arithmetic::GCD(const Integer & a, const Integer & b) {
   i.setNegative(false);
   j.setNegative(false);
   do {
-    if (j.isAllocationFailure() || i.isZero()) {
+    if (i.isZero()) {
       return j;
     }
-    if (i.isAllocationFailure() || j.isZero()) {
+    if (j.isZero()) {
       return i;
     }
     if (Integer::NaturalOrder(i, j) > 0) {
@@ -43,11 +43,6 @@ int primeFactors[Arithmetic::k_numberOfPrimeFactors] = {2, 3, 5, 7, 11, 13, 17, 
 // we can go to 7907*7907 = 62 520 649
 void Arithmetic::PrimeFactorization(const Integer & n, Integer outputFactors[], Integer outputCoefficients[], int outputLength) {
   assert(!n.isInfinity());
-  outputCoefficients[0] = -1;
-  if (n.isAllocationFailure()) {
-    /* Special case 0: Allocation failure. */
-    return;
-  }
 
   // Compute the absolute value of n
   Integer m = static_cast<Integer>(n.clone());
@@ -57,6 +52,7 @@ void Arithmetic::PrimeFactorization(const Integer & n, Integer outputFactors[], 
    * the prime factorization for low numbers). When k_numberOfPrimeFactors is
    * overflow, try every number as divisor. */
   if (Integer::NaturalOrder(m, Integer(1)) == 0) {
+    outputCoefficients[0] = -1;
     return;
   }
   const char * primorial = "525896479052627740771371797072411912900610967452630";
@@ -65,6 +61,7 @@ void Arithmetic::PrimeFactorization(const Integer & n, Integer outputFactors[], 
     /* Special case 1: We do not want to break i in prime factor because it
      * might take too many factors... More than k_maxNumberOfPrimeFactors.
      * outputCoefficients[0] is set to -1 to indicate a special case. */
+    outputCoefficients[0] = -1;
     return;
   }
   for (int index = 0; index < outputLength; index++) {

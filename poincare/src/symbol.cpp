@@ -305,7 +305,9 @@ Expression Symbol::shallowReduce(Context & context, Preferences::AngleUnit angle
   if (!e.isUninitialized() && node()->hasAnExactRepresentation(context)) {
     // TODO: later AZ should be replaced.
     // The stored expression had been beautified, so we need to call deepReduce
-    return e.clone().deepReduce(context, angleUnit, futureParent);
+    Expression result = e.clone();
+    replaceWithInPlace(result);
+    return result.deepReduce(context, angleUnit);
   }
   return *this;
 }

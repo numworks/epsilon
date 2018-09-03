@@ -2,6 +2,7 @@
 #include "symbols.h"
 #include <string.h>
 #include <kandinsky.h>
+#include <poincare/init.h>
 #include <ion.h>
 
 void quiz_print(const char * message) {
@@ -21,6 +22,9 @@ void quiz_print(const char * message) {
 }
 
 void ion_main(int argc, char * argv[]) {
+  // Initialize Poincare::TreePool::sharedPool
+  Poincare::init();
+
   int i = 0;
   while (quiz_cases[i] != NULL) {
     QuizCase c = quiz_cases[i];

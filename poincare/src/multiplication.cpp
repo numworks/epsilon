@@ -557,7 +557,7 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
     assert(static_cast<Rational>(childAtIndex(0)).integerDenominator().isOne());
     Integer lcm = Arithmetic::LCM(static_cast<Rational>(factor).unsignedIntegerNumerator(), static_cast<Rational>(childAtIndex(0)).unsignedIntegerNumerator());
     if (lcm.isInfinity()) {
-      addChildAtIndexInPlace(static_cast<Rational>(factor).unsignedIntegerNumerator(), 1, numberOfChildren());
+      addChildAtIndexInPlace(Rational(static_cast<Rational>(factor).unsignedIntegerNumerator()), 1, numberOfChildren());
       return;
     }
     replaceChildAtIndexInPlace(0, Rational(lcm));

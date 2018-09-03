@@ -11,8 +11,7 @@ static inline Integer MaxInteger() { return Integer(MaxIntegerString); }
 static inline Integer OverflowedInteger() { return Integer(OverflowedIntegerString); }
 
 QUIZ_CASE(poincare_integer_constructor) {
-  int initialPoolSize = pool_size();
-  Integer staticZero;
+  Integer zero;
   Integer a("123");
   Integer na("-123");
   Integer b("12345678910111213141516");
@@ -22,7 +21,6 @@ QUIZ_CASE(poincare_integer_constructor) {
   Integer d((int64_t)1234567891011121314);
   Integer nd((int64_t)(-1234567891011121314));
   Integer e = Integer::Overflow(false);
-  assert_pool_size(initialPoolSize+9);
 }
 
 static inline void assert_equal(const Integer i, const Integer j) {

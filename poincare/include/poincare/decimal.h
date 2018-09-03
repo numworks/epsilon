@@ -2,6 +2,8 @@
 #define POINCARE_DECIMAL_H
 
 #include <poincare/integer.h>
+#include <poincare/number.h>
+#include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
 
@@ -22,13 +24,14 @@ public:
     m_exponent(0),
     m_numberOfDigitsInMantissa(0) {}
 
-  virtual void setValue(native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative);
+  virtual void setValue(const native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative);
 
   // Allocation Failure
   static DecimalNode * FailedAllocationStaticNode();
   DecimalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
-  NaturalIntegerPointer mantissa() const;
+  Integer signedMantissa() const;
+  Integer unsignedMantissa() const;
   int exponent() const { return m_exponent; }
 
   // TreeNode
@@ -84,7 +87,7 @@ private:
 
 class AllocationFailureDecimalNode : public AllocationFailureExpressionNode<DecimalNode> {
 public:
-  void setValue(native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative) override {}
+  void setValue(const native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative) override {}
 };
 
 class Decimal : public Number {
@@ -93,7 +96,7 @@ friend class DecimalNode;
 public:
   static int Exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength);
   Decimal(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, int exponent);
-  Decimal(const DecimalNode * node) : Number(node) {}
+  Decimal(DecimalNode * node) : Number(node) {}
   Decimal(Integer m, int e);
   template <typename T> Decimal(T f);
   constexpr static int k_maxExponentLength = 4;

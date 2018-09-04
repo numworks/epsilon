@@ -7,6 +7,9 @@
 
 using namespace Poincare;
 
+static inline int min(int x, int y) { return (x<y ? x : y); }
+static inline int max(int x, int y) { return (x>y ? x : y); }
+
 namespace Shared {
 
 StoreController::ContentView::ContentView(DoublePairStore * store, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, TextFieldDelegate * textFieldDelegate) :

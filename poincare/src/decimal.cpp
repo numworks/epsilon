@@ -11,6 +11,8 @@ extern "C" {
 
 namespace Poincare {
 
+static inline int max(int x, int y) { return (x>y ? x : y); }
+
 int Decimal::exponent(const char * integralPart, int integralPartLength, const char * fractionalPart, int fractionalPartLength, const char * exponent, int exponentLength, bool exponentNegative) {
   int base = 10;
   int exp = 0;
@@ -171,7 +173,7 @@ int Decimal::convertToText(char * buffer, int bufferSize, PrintFloat::Mode mode,
   }
   /* Case 1: Decimal mode */
   int deltaCharMantissa = exponent < 0 ? -exponent+1 : 0;
-  strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, bufferSize-deltaCharMantissa-currentChar);
+  strlcpy(buffer+currentChar+deltaCharMantissa, tempBuffer, max(0, bufferSize-deltaCharMantissa-currentChar));
   if (exponent < 0) {
     for (int i = 0; i <= -exponent; i++) {
       if (currentChar >= bufferSize-1) { return bufferSize-1; }

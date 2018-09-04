@@ -43,4 +43,6 @@ Expression Infinity::setSign(ExpressionNode::Sign s, Context & context, Preferen
   return result;
 }
 
+template Evaluation<float> InfinityNode::templatedApproximate<float>() const;
+template Evaluation<double> InfinityNode::templatedApproximate() const;
 }

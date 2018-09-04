@@ -46,6 +46,8 @@ template<typename T> T Random::random() {
   }
 }
 
+template Evaluation<float> RandomNode::templateApproximate<float>() const;
+template Evaluation<double> RandomNode::templateApproximate<double>() const;
 template float Random::random();
 template double Random::random();
 

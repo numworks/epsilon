@@ -658,11 +658,11 @@ Expression Power::simplifyPowerPower(Power p, Expression e, Context& context, Pr
   // this is p^e = (a^b)^e, we want a^(b*e)
   Expression p0 = p.childAtIndex(0);
   Expression p1 = p.childAtIndex(1);
-  Multiplication m = Multiplication(p1);
+  Multiplication m(p1);
   replaceChildInPlace(e, m);
   m.addChildAtIndexInPlace(e, 1, 1);
   replaceChildInPlace(p, p0);
-  Expression reducedM = m.shallowReduce(context, angleUnit);
+  m.shallowReduce(context, angleUnit);
   return shallowReduce(context, angleUnit);
 }
 

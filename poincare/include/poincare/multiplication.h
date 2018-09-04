@@ -70,6 +70,9 @@ class Multiplication : public NAryExpression {
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   Multiplication() : NAryExpression(TreePool::sharedPool()->createTreeNode<MultiplicationNode>()) {}
+  Multiplication(Expression e1) : Multiplication() {
+    addChildAtIndexInPlace(e1, 0, 0);
+  }
   Multiplication(Expression e1, Expression e2) : Multiplication() {
     addChildAtIndexInPlace(e2, 0, 0);
     addChildAtIndexInPlace(e1, 0, numberOfChildren());

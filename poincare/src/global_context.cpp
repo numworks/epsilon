@@ -70,7 +70,7 @@ void GlobalContext::setExpressionForSymbolName(const Expression & expression, co
       if (evaluation.type() != ExpressionNode::Type::Matrix) {
         m_matrixExpressions[indexMatrix] = Matrix(evaluation);
       } else {
-        m_matrixExpressions[indexMatrix] = Matrix(static_cast<MatrixNode *>(evaluation.node()));
+        m_matrixExpressions[indexMatrix] = static_cast<Matrix>(evaluation);
       }
     }
     return;

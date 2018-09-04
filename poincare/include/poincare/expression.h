@@ -64,6 +64,7 @@ class Expression : public TreeByReference {
   friend class ExpressionNode;
   friend class EqualNode;
   friend class SymbolNode;
+  friend class StoreNode;
   friend class ConfidenceInterval;
   friend class Multiplication;
   friend class Subtraction;
@@ -219,11 +220,15 @@ protected:
   }
 
   /* Hierarchy */
+  Expression(int nodeIdentifier) : TreeByReference(nodeIdentifier) {}
   Expression parent() const {
     return Expression(static_cast<ExpressionNode *>(TreeByReference::parent().node()));
   }
-  Expression(int nodeIdentifier) : TreeByReference(nodeIdentifier) {}
   void defaultSetChildrenInPlace(Expression other);
+  void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) = delete;
+  void removeChildAtIndexInPlace(int i) = delete;
+  void removeChildInPlace(TreeByReference t, int childNumberOfChildren) = delete;
+  void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
   int getPolynomialCoefficients(char symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(symbolName, coefficients); }

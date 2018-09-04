@@ -147,7 +147,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
     Expression e = squashUnaryHierarchyInPlace();
     Opposite o = Opposite();
     e.replaceWithInPlace(o);
-    o.addChildAtIndexInPlace(e, 0, 0);
+    o.replaceChildAtIndexInPlace(0, e);
     return o;
   }
 

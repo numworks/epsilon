@@ -100,7 +100,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
     Expression y = p.childAtIndex(1);
     replaceChildInPlace(p, x);
     Expression newLog = shallowReduce(context, angleUnit);
-    Expression mult(y);
+    Multiplication mult(y);
     newLog.replaceWithInPlace(mult);
     mult.addChildAtIndexInPlace(newLog, 1, 1);
     return mult.shallowReduce(context, angleUnit);

@@ -137,7 +137,8 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     if (currentChar >= bufferSize-1) { return bufferSize-1; }
   }
   int mantissaLength = m.serialize(tempBuffer, PrintFloat::k_numberOfStoredSignificantDigits+1);
-  if (strcmp(tempBuffer, "inf") == 0) {
+  assert(strcmp(tempBuffer, "inf") != 0 && strcmp(tempBuffer, "-inf") != 0);
+  if (strcmp(tempBuffer, "undef") == 0) {
     currentChar += strlcpy(buffer+currentChar, tempBuffer, bufferSize-currentChar);
     return currentChar;
   }

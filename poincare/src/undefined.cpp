@@ -40,5 +40,7 @@ template<typename T> Evaluation<T> UndefinedNode::templatedApproximate() const {
   return Complex<T>::Undefined();
 }
 
+template Evaluation<float> UndefinedNode::templatedApproximate() const;
+template Evaluation<double> UndefinedNode::templatedApproximate() const;
 }
 

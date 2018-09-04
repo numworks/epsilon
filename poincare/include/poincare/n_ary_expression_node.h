@@ -23,7 +23,7 @@ public:
 
   // Commutative properties
   void sortChildrenInPlace(ExpressionOrder order, bool canBeInterrupted);
-  Expression squashUnaryHierarchy();
+  Expression squashUnaryHierarchyInPlace();
 
 protected:
   int m_numberOfChildren;
@@ -43,8 +43,8 @@ public:
   void sortChildrenInPlace(ExpressionOrder order, bool canBeInterrupted) {
     node()->sortChildrenInPlace(order, canBeInterrupted);
   }
-  Expression squashUnaryHierarchy() {
-    return node()->squashUnaryHierarchy();
+  Expression squashUnaryHierarchyInPlace() {
+    return node()->squashUnaryHierarchyInPlace();
   }
 protected:
   NAryExpressionNode * node() const { return static_cast<NAryExpressionNode *>(Expression::node()); }

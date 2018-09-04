@@ -46,7 +46,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
     replaceWithInPlace(result);
     return result;
   }
-  Expression result = numeratorDecomp.squashUnaryHierarchy();
+  Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
   if (!r.integerDenominator().isOne()) {
     Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, angleUnit);
     if (denominatorDecomp.numberOfChildren() == 0) {
@@ -55,7 +55,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
 
       return result;
     }
-    result = Division(numeratorDecomp, denominatorDecomp.squashUnaryHierarchy());
+    result = Division(result, denominatorDecomp.squashUnaryHierarchyInPlace());
   }
   if (r.sign() == ExpressionNode::Sign::Negative) {
     result = Opposite(result);

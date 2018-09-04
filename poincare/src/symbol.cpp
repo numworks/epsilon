@@ -159,7 +159,7 @@ Evaluation<T> SymbolNode::templatedApproximate(Context& context, Preferences::An
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
-  return e.node()->approximate(T(), context, angleUnit);
+  return e.approximateToEvaluation<T>(context, angleUnit);
 }
 
 const char * Symbol::textForSpecialSymbols(char name) {

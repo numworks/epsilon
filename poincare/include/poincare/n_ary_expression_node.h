@@ -35,10 +35,10 @@ private:
 class NAryExpression : public Expression {
 public:
   NAryExpression(const NAryExpressionNode * n) : Expression(n) {}
-  using Expression::addChildAtIndexInPlace;
-  using Expression::removeChildrenInPlace;
-  using Expression::removeChildAtIndexInPlace;
-  using Expression::removeChildInPlace;
+  using TreeByReference::addChildAtIndexInPlace;
+  using TreeByReference::removeChildrenInPlace;
+  using TreeByReference::removeChildAtIndexInPlace;
+  using TreeByReference::removeChildInPlace;
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2, bool canBeInterrupted);
   void sortChildrenInPlace(ExpressionOrder order, bool canBeInterrupted) {
     node()->sortChildrenInPlace(order, canBeInterrupted);

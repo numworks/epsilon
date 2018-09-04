@@ -205,9 +205,9 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
       // Do the reduction after the if case, or it might change the result!
       Expression pi = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Expression>(Symbol(Ion::Charset::SmallPi)) : static_cast<Expression>(Rational(180));
       Subtraction s;
-      e.replaceWithInPlace(e);
-      s.addChildAtIndexInPlace(pi, 0, 0);
-      s.addChildAtIndexInPlace(e, 0, 0);
+      e.replaceWithInPlace(s);
+      s.replaceChildAtIndexInPlace(0, pi);
+      s.replaceChildAtIndexInPlace(1, e);
       e.shallowReduce(context, angleUnit);
       return s.shallowReduce(context, angleUnit);
     } else {

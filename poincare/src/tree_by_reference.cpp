@@ -24,6 +24,7 @@ TreeByReference TreeByReference::clone() const {
     return TreeByReference(TreePool::sharedPool()->node(allocationFailureNodeId));
   }
   TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(myNode);
+  nodeCopy->deleteParentIdentifier();
   return TreeByReference(nodeCopy);
 }
 

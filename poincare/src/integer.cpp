@@ -237,7 +237,7 @@ int Integer::serialize(char * buffer, int bufferSize) const {
   }
   buffer[bufferSize-1] = 0;
   if (isInfinity()) {
-    return PrintFloat::convertFloatToText<float>(INFINITY, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
+    return PrintFloat::convertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
   }
 
   Integer base(10);
@@ -258,7 +258,7 @@ int Integer::serialize(char * buffer, int bufferSize) const {
         d.quotient.isZero())) {
     char c = char_from_digit(d.remainder.isZero() ? 0 : d.remainder.digit(0));
     if (size >= bufferSize-1) {
-      return strlcpy(buffer, "undef", bufferSize);
+      return PrintFloat::convertFloatToText<float>(NAN, buffer, bufferSize, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal);
     }
     buffer[size++] = c;
     d = udiv(d.quotient, base);

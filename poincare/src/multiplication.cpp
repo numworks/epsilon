@@ -162,7 +162,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
   // Step 3: Add Parenthesis if needed
   for (int i = 0; i < thisExp.numberOfChildren(); i++) {
     const Expression o = thisExp.childAtIndex(i);
-    if (thisExp.type() == ExpressionNode::Type::Addition) {
+    if (o.type() == ExpressionNode::Type::Addition) {
       Parenthesis p(o);
       thisExp.replaceChildAtIndexInPlace(i, p);
     }
@@ -170,7 +170,7 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
 
   // Step 4: Create a Division if needed
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression childI = thisExp.childAtIndex(1);
+    Expression childI = thisExp.childAtIndex(i);
     if (!(childI.type() == ExpressionNode::Type::Power && childI.childAtIndex(1).type() == ExpressionNode::Type::Rational && static_cast<Rational>(childI.childAtIndex(1)).isMinusOne())) {
       continue;
     }
@@ -187,8 +187,10 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
       numeratorOperand = numeratorChild0;
     }
     Expression originalParent = numeratorOperand.parent();
-    Division d = Division(numeratorOperand.clone(), denominatorOperand);
-    originalParent.replaceChildInPlace(numeratorOperand, d);
+    Division d;
+    numeratorOperand.replaceWithInPlace(d);
+    d.replaceChildAtIndexInPlace(0, numeratorOperand);
+    d.replaceChildAtIndexInPlace(1, denominatorOperand);
     return d.shallowBeautify(context, angleUnit);
   }
   return thisExp;

@@ -246,8 +246,8 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
   Expression result = squashUnaryHierarchyInPlace();
 
   // Step 6: Last but not least, let's put everything under a common denominator
-  Expression p = parent();
-  if (result == *this && !p.isUninitialized() && p.type() != ExpressionNode::Type::Addition) {
+  Expression p = result.parent();
+  if (result == *this && (p.isUninitialized() || p.type() != ExpressionNode::Type::Addition)) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
      result = factorizeOnCommonDenominator(context, angleUnit);
   }
@@ -316,7 +316,7 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   // want to create numerator = a/b*b*d + c/d*b*b + e/b*b*d
   Addition numerator = Addition();
   for (int i = 0; i < numberOfChildren(); i++) {
-    Multiplication m = Multiplication(childAtIndex(i), commonDenominator);
+    Multiplication m = Multiplication(childAtIndex(i), commonDenominator.clone());
     numerator.addChildAtIndexInPlace(m, numerator.numberOfChildren(), numerator.numberOfChildren());
     m.privateShallowReduce(context, angleUnit, true, false);
   }
@@ -329,14 +329,12 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   numerator.shallowReduce(context, angleUnit);
 
   // Step 5: Simplify the denominator (in case it's a rational number)
-  commonDenominator.deepReduce(context, angleUnit);
-  inverseDenominator.shallowReduce(context, angleUnit);
+  inverseDenominator.deepReduce(context, angleUnit);
 
   /* Step 6: We simplify the resulting multiplication forbidding any
    * distribution of multiplication on additions (to avoid an infinite loop). */
   replaceWithInPlace(result);
-  result.privateShallowReduce(context, angleUnit, false, true);
-  return result;
+  return result.privateShallowReduce(context, angleUnit, false, true);
 }
 
 void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, Context & context, Preferences::AngleUnit angleUnit) {

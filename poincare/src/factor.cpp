@@ -39,7 +39,6 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
     replaceWithInPlace(r);
     return r;
   }
-  // TODO Clone?
   Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator(), context, angleUnit);
   if (numeratorDecomp.numberOfChildren() == 0) {
     Expression result = Undefined();
@@ -51,8 +50,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
     Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator(), context, angleUnit);
     if (denominatorDecomp.numberOfChildren() == 0) {
       Expression result = Undefined();
-    replaceWithInPlace(result);
-
+      replaceWithInPlace(result);
       return result;
     }
     result = Division(result, denominatorDecomp.squashUnaryHierarchyInPlace());
@@ -64,7 +62,6 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
   return result;
 }
 
-//TODO Clone?
 Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i, Context & context, Preferences::AngleUnit angleUnit) const {
   assert(!i.isZero());
   assert(!i.isNegative());

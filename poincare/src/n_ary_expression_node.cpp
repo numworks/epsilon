@@ -28,10 +28,12 @@ void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, bool canBeIn
   }
 }
 
-Expression NAryExpressionNode::squashUnaryHierarchy() {
+Expression NAryExpressionNode::squashUnaryHierarchyInPlace() {
   NAryExpression reference = NAryExpression(this);
   if (reference.numberOfChildren() == 1) {
-    return reference.childAtIndex(0);
+    Expression child = reference.childAtIndex(0);
+    reference.replaceWithInPlace(child);
+    return child;
   }
   return reference;
 }

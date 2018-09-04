@@ -108,7 +108,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
     } else {
       m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, context, angleUnit);
     }
-    Expression subtractant = m.squashUnaryHierarchy();
+    Expression subtractant = m.squashUnaryHierarchyInPlace();
 
     if (i == 0) {
       Opposite o = Opposite(subtractant);
@@ -127,7 +127,9 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
     }
   }
 
-  return squashUnaryHierarchy();
+  Expression result = squashUnaryHierarchyInPlace();
+
+  return result;
 }
 
 Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
@@ -241,7 +243,7 @@ Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit ang
   }
 
   // Step 5: Let's remove the addition altogether if it has a single child
-  Expression result = squashUnaryHierarchy();
+  Expression result = squashUnaryHierarchyInPlace();
 
   // Step 6: Last but not least, let's put everything under a common denominator
   Expression p = parent();

@@ -78,10 +78,12 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
    * nextSibling is not computed correctly if we inserted an
    * AllocationFailureNode next to newChild. */
   newChild.node()->retain();
+  newChild.setParentIdentifier(identifier());
 
   // Move the old child
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), oldChild.node(), oldChild.numberOfChildren());
   oldChild.node()->release(oldChild.numberOfChildren());
+  oldChild.deleteParentIdentifier();
 }
 
 void TreeByReference::replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild) {
@@ -108,6 +110,7 @@ void TreeByReference::replaceWithAllocationFailureInPlace(int currentNumberOfChi
   TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode();
 
   // Release all children and delete the node in the pool
+  deleteParentIdentifierInChildren();
   TreePool::sharedPool()->removeChildrenAndDestroy(node(), currentNumberOfChildren);
   /* WARNING: If we called "p.decrementNumberOfChildren()" here, the number of
    * children of the parent layout would be:
@@ -147,7 +150,7 @@ void TreeByReference::replaceChildWithGhostInPlace(TreeByReference t) {
 }
 
 void TreeByReference::mergeChildrenAtIndexInPlace(TreeByReference t, int i) {
-  /* mergeChildrenAtIndexInPlace should only be called with a tree thant can
+  /* mergeChildrenAtIndexInPlace should only be called with a tree that can
    * have any number of children, so there is no need to replace the stolen
    * children with ghosts. */
   // TODO assert this and t are "dynamic" trees
@@ -160,6 +163,10 @@ void TreeByReference::mergeChildrenAtIndexInPlace(TreeByReference t, int i) {
     TreePool::sharedPool()->moveChildren(node()->lastDescendant()->next(), t.node());
   }
   node()->incrementNumberOfChildren(numberOfNewChildren);
+  for (int j = 0; j < numberOfNewChildren; j++) {
+    assert(i+j < numberOfChildren());
+    childAtIndex(i+j).setParentIdentifier(identifier());
+  }
   t.node()->eraseNumberOfChildren();
   // If t is a child, remove it
   if (node()->hasChild(t.node())) {
@@ -229,6 +236,7 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
   TreePool::sharedPool()->move(newChildPosition, t.node(), t.numberOfChildren());
   t.node()->retain();
   node()->incrementNumberOfChildren();
+  t.setParentIdentifier(identifier());
 
   node()->didAddChildAtIndex(currentNumberOfChildren+1);
 }
@@ -252,11 +260,13 @@ void TreeByReference::removeChildInPlace(TreeByReference t, int childNumberOfChi
   assert(!isUninitialized());
   TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), childNumberOfChildren);
   t.node()->release(childNumberOfChildren);
+  t.deleteParentIdentifier();
   node()->decrementNumberOfChildren();
 }
 
 void TreeByReference::removeChildrenInPlace(int currentNumberOfChildren) {
   assert(!isUninitialized());
+  deleteParentIdentifierInChildren();
   TreePool::sharedPool()->removeChildren(node(), currentNumberOfChildren);
 }
 

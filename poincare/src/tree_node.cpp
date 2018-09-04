@@ -7,6 +7,10 @@ namespace Poincare {
 
 // Node operations
 
+void TreeNode::deleteParentIdentifier() {
+  m_parentIdentifier = TreePool::NoNodeIdentifier;
+}
+
 void TreeNode::release(int currentNumberOfChildren) {
   if (isStatic()) {
     // Do not release static nodes
@@ -14,6 +18,7 @@ void TreeNode::release(int currentNumberOfChildren) {
   }
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
+    deleteParentIdentifierInChildren();
     TreePool::sharedPool()->removeChildrenAndDestroy(this, currentNumberOfChildren);
   }
 }
@@ -28,71 +33,26 @@ void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
   m_identifier = identifier;
   m_referenceCounter = 0;
   TreePool::sharedPool()->registerNode(this);
+  updateParentIdentifierInChildren();
 }
 
 // Hierarchy
 
 TreeNode * TreeNode::parent() const {
-  if (isStatic()) {
+  if (m_parentIdentifier == TreePool::NoNodeIdentifier) {
     return uninitializedStaticNode();
   }
-  /* Choose between these algorithms: the first has complexity O(numberNodes)
-   * but uses O(3maxNumberNodes) space. The second is much clearer for the
-   * reader and uses no space, but has complexity O(numberNodes^2) */
-#if 0
-  int cursor = -1;
-  TreeNode * parentsHistory[TreePool::MaxNumberOfNodes];
-  int numberOfChildrenHistory[TreePool::MaxNumberOfNodes];
-  int childrenVisitedCountHistory[TreePool::MaxNumberOfNodes];
-  for (TreeNode * node : TreePool::sharedPool()->allNodes()) {
-    if (node->identifier() == m_identifier) {
-      return cursor >= 0 ? parentsHistory[cursor] : nullptr;
-    }
-    if (cursor >= 0) {
-      childrenVisitedCountHistory[cursor] = childrenVisitedCountHistory[cursor]+1;
-    }
-    int nodeChildrenCount = node->numberOfChildren();
-    if (nodeChildrenCount > 0) {
-      cursor++;
-      parentsHistory[cursor] = node;
-      numberOfChildrenHistory[cursor] = nodeChildrenCount;
-      childrenVisitedCountHistory[cursor] = 0;
-    } else {
-      if (cursor >= 0 && (numberOfChildrenHistory[cursor] == childrenVisitedCountHistory[cursor])) {
-        cursor--;
-      }
-    }
-  }
-  assert(false);
-  return nullptr;
-#else
-  for (TreeNode * node : TreePool::sharedPool()->allNodes()) {
-    if (node == this) {
-      return uninitializedStaticNode();
-    }
-    if (node->hasChild(this)) {
-      return node;
-    }
-  }
-  if (isAllocationFailure()) {
-    return uninitializedStaticNode();
-  }
-  assert(false);
-  return uninitializedStaticNode();
-#endif
+  return TreePool::sharedPool()->node(m_parentIdentifier);
 }
 
 TreeNode * TreeNode::root() {
-  if (isStatic()) {
-    return this;
+  TreeNode * result = this;
+  TreeNode * resultParent = result->parent();
+  while(!resultParent->isUninitialized()) {
+    result = resultParent;
+    resultParent = result->parent();
   }
-  for (TreeNode * root : TreePool::sharedPool()->roots()) {
-    if (hasAncestor(root, true)) {
-      return root;
-    }
-  }
-  assert(false);
-  return uninitializedStaticNode();
+  return result;
 }
 
 int TreeNode::numberOfDescendants(bool includeSelf) const {
@@ -119,9 +79,7 @@ TreeNode * TreeNode::childAtIndex(int i) const {
 }
 
 int TreeNode::indexOfChild(const TreeNode * child) const {
-  if (child == nullptr) {
-    return -1;
-  }
+  assert(child != nullptr);
   int childrenCount = numberOfChildren();
   TreeNode * childAtIndexi = next();
   for (int i = 0; i < childrenCount; i++) {
@@ -135,16 +93,13 @@ int TreeNode::indexOfChild(const TreeNode * child) const {
 
 int TreeNode::indexInParent() const {
   TreeNode * p = parent();
-  if (p == nullptr) {
+  if (p->isUninitialized()) {
     return -1;
   }
   return p->indexOfChild(this);
 }
 
 bool TreeNode::hasChild(const TreeNode * child) const {
-  if (child == nullptr) {
-    return false;
-  }
   for (TreeNode * c : directChildren()) {
     if (child == c) {
       return true;
@@ -166,11 +121,8 @@ bool TreeNode::hasAncestor(const TreeNode * node, bool includeSelf) const {
 }
 
 bool TreeNode::hasSibling(const TreeNode * e) const {
-  if (e == nullptr) {
-    return false;
-  }
   TreeNode * p = parent();
-  if (p == nullptr) {
+  if (p->isUninitialized()) {
     return false;
   }
   for (TreeNode * childNode : p->directChildren()) {
@@ -203,12 +155,14 @@ TreeNode * TreeNode::lastDescendant() const {
   return node;
 }
 
+// Protected
+
 TreeNode::TreeNode() :
   m_identifier(TreePool::NoNodeIdentifier),
+  m_parentIdentifier(TreePool::NoNodeIdentifier),
   m_referenceCounter(0)
 {
 }
-
 
 size_t TreeNode::deepSize(int realNumberOfChildren) const {
   if (realNumberOfChildren == -1) {
@@ -228,5 +182,14 @@ size_t TreeNode::deepSize(int realNumberOfChildren) const {
     reinterpret_cast<const char *>(this);
 }
 
+void TreeNode::deleteParentIdentifierInChildren() const {
+  changeParentIdentifierInChildren(TreePool::NoNodeIdentifier);
+}
+
+void TreeNode::changeParentIdentifierInChildren(int id) const {
+  for (TreeNode * c : directChildren()) {
+    c->setParentIdentifier(id);
+  }
+}
 
 }

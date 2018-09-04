@@ -292,7 +292,10 @@ void TreeByReference::setTo(const TreeByReference & tr) {
   setIdentifierAndRetain(tr.identifier());
   if (currentId != TreePool::NoNodeIdentifier) {
     TreeNode * previousNode = TreePool::sharedPool()->node(currentId);
-    previousNode->release(previousNode->numberOfChildren());
+    if (previousNode != nullptr) {
+      // The node might have been deleted during an exception
+      previousNode->release(previousNode->numberOfChildren());
+    }
   }
 }
 

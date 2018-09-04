@@ -95,6 +95,7 @@ protected:
   TreeByReference(int nodeIndentifier = -1) : m_identifier(nodeIndentifier) {}
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;
+    assert(node() != nullptr);
     node()->retain();
   }
   void setTo(const TreeByReference & tr);

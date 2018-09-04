@@ -9,6 +9,7 @@
 #include <ion.h>
 #include <cmath>
 #include <float.h>
+#include <setjmp.h>
 
 #include "expression_lexer_parser.h"
 #include "expression_parser.hpp"
@@ -28,6 +29,17 @@ Expression Expression::parse(char const * string) {
     return Expression();
   }
   YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
+
+  jmp_buf jumpEnvironment;
+  TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
+  int res = setjmp(jumpEnvironment);
+  if (res != 0) {
+    // There has been an exception, return an uninitialized node
+    TreePool::sharedPool()->resetJumpEnvironment();
+    poincare_expression_yylval.expression = Expression();
+    poincare_expression_yy_delete_buffer(buf);
+    return Expression();
+  }
   Expression expression;
   if (poincare_expression_yyparse(&expression) != 0) {
     // Parsing failed because of invalid input or memory exhaustion
@@ -37,7 +49,7 @@ Expression Expression::parse(char const * string) {
    * expression alive if only YYVAL refers to it so we reset YYVAL here. */
   poincare_expression_yylval.expression = Expression();
   poincare_expression_yy_delete_buffer(buf);
-
+  TreePool::sharedPool()->resetJumpEnvironment();
   return expression;
 }
 
@@ -212,6 +224,21 @@ bool Expression::isEqualToItsApproximationLayout(Expression approximation, int b
   Expression approximateOutput = Expression::ParseAndSimplify(buffer, context, angleUnit);
   bool equal = isIdenticalTo(approximateOutput);
   return equal;
+}
+
+LayoutRef Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  jmp_buf jumpEnvironment;
+  TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
+  int res = setjmp(jumpEnvironment);
+  if (res != 0) {
+    assert(false);
+    // There has been an exception, return an uninitialized layout
+    TreePool::sharedPool()->resetJumpEnvironment();
+    return LayoutRef();
+  }
+  LayoutRef result = node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  TreePool::sharedPool()->resetJumpEnvironment();
+  return result;
 }
 
 /* Simplification */

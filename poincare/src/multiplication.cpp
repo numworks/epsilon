@@ -444,7 +444,8 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
    * (x+y)^(-1)*((a+b)*(x+y)).
    * Note: This step must be done after Step 4, otherwise we wouldn't be able to
    * reduce expressions such as (x+y)^(-1)*(x+y)(a+b). */
-  if (shouldExpand) { // && parent()->type() != ExpressionNode::Type::Multiplication) { // TODO: Handle this top dow in deepReduce?
+  Expression p = parent();
+  if (shouldExpand && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)) {
     for (int i = 0; i < numberOfChildren(); i++) {
       if (childAtIndex(i).type() == ExpressionNode::Type::Addition) {
         return distributeOnOperandAtIndex(i, context, angleUnit);

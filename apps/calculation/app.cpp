@@ -75,9 +75,8 @@ bool App::expressionLayoutFieldDidReceiveEvent(::ExpressionLayoutField * express
       return true;
     }
 
-    int bufferLength = Calculation::k_printedExpressionSize;
-    char bufferForParsing[bufferLength];
-    expressionLayoutField->writeTextInBuffer(bufferForParsing, bufferLength);
+    char bufferForParsing[Calculation::k_printedExpressionSize];
+    expressionLayoutField->writeTextInBuffer(bufferForParsing, Calculation::k_printedExpressionSize);
 
     if (!textInputIsCorrect(bufferForParsing)) {
       displayWarning(I18n::Message::SyntaxError);

@@ -144,10 +144,10 @@ Expression Multiplication::shallowBeautify(Context & context, Preferences::Angle
     } else {
       child0.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
     }
-    Expression e = squashUnaryHierarchy();
-    Opposite o = Opposite(e.clone());
+    Expression e = squashUnaryHierarchyInPlace();
+    Opposite o = Opposite();
     e.replaceWithInPlace(o);
-    o.childAtIndex(0).shallowBeautify(context, angleUnit);
+    o.addChildAtIndexInPlace(e, 0, 0);
     return o;
   }
 
@@ -453,9 +453,8 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
   }
 
   // Step 8: Let's remove the multiplication altogether if it has one child
-  Expression result = squashUnaryHierarchy();
+  Expression result = squashUnaryHierarchyInPlace();
 
-  replaceWithInPlace(result);
   return result;
 }
 
@@ -714,10 +713,10 @@ Expression Multiplication::mergeNegativePower(Context & context, Preferences::An
     return *this;
   }
   m.sortChildrenInPlace(ExpressionNode::SimplificationOrder, true);
-  Power p(m.squashUnaryHierarchy(), Rational(-1));
+  Power p(m.squashUnaryHierarchyInPlace(), Rational(-1));
   addChildAtIndexInPlace(p, 0, numberOfChildren());
   sortChildrenInPlace(ExpressionNode::SimplificationOrder, true);
-  return squashUnaryHierarchy();
+  return squashUnaryHierarchyInPlace();
 }
 
 const Expression Multiplication::Base(const Expression e) {

@@ -17,6 +17,8 @@ constexpr KDColor OperatorColor = KDColor::RGB24(0xd73a49);
 constexpr KDColor StringColor = KDColor::RGB24(0x032f62);
 constexpr KDColor BackgroundColor = KDColorWhite;
 
+static inline int min(int x, int y) { return (x<y ? x : y); }
+
 static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   if (tokenKind == MP_TOKEN_STRING) {
     return StringColor;

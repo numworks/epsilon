@@ -11,6 +11,7 @@
 /* What's in a TreeNode, really?
  *  - a vtable pointer
  *  - an identifier
+ *  - a parent identifier
  *  - a reference counter
  */
 
@@ -24,19 +25,12 @@ public:
   virtual ~TreeNode() {}
 
   // Attributes
-  bool isStatic() const {
-    return m_identifier <= FirstStaticNodeIdentifier;
-  }
+  bool isStatic() const { return m_identifier <= FirstStaticNodeIdentifier; }
+  void setParentIdentifier(int parentID) { m_parentIdentifier = parentID; }
+  void deleteParentIdentifier(); //TODO inline
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
-  void setReferenceCounter(int refCount) { //TODO make this method privte with only friends that can access it
-    if (isStatic()) {
-      // Do not retain static nodes
-      return;
-    }
-    m_referenceCounter = refCount;
-  }
 
   // Uninitialized node
   virtual bool isUninitialized() const { return false; }
@@ -51,6 +45,7 @@ public:
   int allocationFailureNodeIdentifier() { return failedAllocationStaticNode()->identifier(); }
 
   // Node operations
+  void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
   void retain() { m_referenceCounter++; } // It doesn't matter if the node is static
   void release(int currentNumberOfChildren);
   void rename(int identifier, bool unregisterPreviousIdentifier);
@@ -69,6 +64,7 @@ public:
   bool hasChild(const TreeNode * child) const;
   bool hasAncestor(const TreeNode * node, bool includeSelf) const;
   bool hasSibling(const TreeNode * e) const;
+  void deleteParentIdentifierInChildren() const; // Inline?
   // AddChild collateral effect
   virtual void didAddChildAtIndex(int newNumberOfChildren) {}
 
@@ -123,11 +119,11 @@ public:
   DepthFirst<TreeNode> depthFirstChildren() const { return DepthFirst<TreeNode>(this); }
 
   TreeNode * next() const {
-    // Simple version would be "return this + 1;", with pointer arithmetics taken care of by the compiler.
-    // Unfortunately, we want TreeNode to have a VARIABLE size
+    /* Simple version would be "return this + 1;", with pointer arithmetics
+     * taken care of by the compiler. Unfortunately, we want TreeNode to have a
+     * VARIABLE size */
     return reinterpret_cast<TreeNode *>(reinterpret_cast<char *>(const_cast<TreeNode *>(this)) + size());
   }
-
   TreeNode * nextSibling() const;
   TreeNode * lastDescendant() const;
 
@@ -157,21 +153,14 @@ public:
 
 protected:
   TreeNode();
-
-  TreeNode * lastChild() const {
-    if (numberOfChildren() == 0) {
-      return const_cast<TreeNode *>(this);
-    }
-    TreeNode * node = next();
-    for (int i = 0; i < numberOfChildren() - 1; i++) {
-      node = node->nextSibling();
-    }
-    return node;
-  }
-
   size_t deepSize(int realNumberOfChildren) const;
 private:
+  void updateParentIdentifierInChildren() const {
+    changeParentIdentifierInChildren(m_identifier);
+  }
+  void changeParentIdentifierInChildren(int id) const;
   int m_identifier;
+  int m_parentIdentifier;
   int m_referenceCounter;
 };
 

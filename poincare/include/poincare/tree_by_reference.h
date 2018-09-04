@@ -20,7 +20,7 @@ public:
   ~TreeByReference() {
     assert(node()->identifier() == m_identifier);
     TreeNode * n = node();
-    n->release(n->numberOfChildren()); //TODO No malformed nodes ?
+    n->release(n->numberOfChildren());
   }
 
   /* Operators */
@@ -42,47 +42,28 @@ public:
 
   int identifier() const { return m_identifier; }
   TreeNode * node() const { return TreePool::sharedPool()->node(m_identifier); }
+  int nodeRetainCount() const { return node()->retainCount(); }
 
   bool isGhost() const { return node()->isGhost(); }
   bool isUninitialized() const { return node()->isUninitialized(); }
   bool isAllocationFailure() const { return node()->isAllocationFailure(); }
   bool isStatic() const { return node()->isStatic(); }
 
-  int nodeRetainCount() const {
-    return node()->retainCount();
-  }
-  void incrementNumberOfChildren(int increment = 1) {
-    node()->incrementNumberOfChildren(increment);
-  }
-  void decrementNumberOfChildren(int decrement = 1) {
-    node()->decrementNumberOfChildren(decrement);
-  }
-  int numberOfDescendants(bool includeSelf) const {
-    return node()->numberOfDescendants(includeSelf);
-  }
 
   /* Hierarchy */
-  bool hasChild(TreeByReference t) const {
-    return node()->hasChild(t.node());
-  }
-  bool hasSibling(TreeByReference t) const {
-    return node()->hasSibling(t.node());
-  }
-  bool hasAncestor(TreeByReference t, bool includeSelf) const {
-    return node()->hasAncestor(t.node(), includeSelf);
-  }
-  int numberOfChildren() const {
-    return node()->numberOfChildren();
-  }
-  TreeByReference parent() const {
-    return TreeByReference(node()->parent());
-  }
-  TreeByReference childAtIndex(int i) const {
-    return TreeByReference(node()->childAtIndex(i));
-  }
-  int indexOfChild(TreeByReference t) const {
-    return node()->indexOfChild(t.node());
-  }
+  bool hasChild(TreeByReference t) const { return node()->hasChild(t.node()); }
+  bool hasSibling(TreeByReference t) const { return node()->hasSibling(t.node()); }
+  bool hasAncestor(TreeByReference t, bool includeSelf) const { return node()->hasAncestor(t.node(), includeSelf); }
+  int numberOfChildren() const { return node()->numberOfChildren(); }
+  int indexOfChild(TreeByReference t) const { return node()->indexOfChild(t.node()); }
+  TreeByReference parent() const { return TreeByReference(node()->parent()); }
+  TreeByReference childAtIndex(int i) const { return TreeByReference(node()->childAtIndex(i)); }
+  void setParentIdentifier(int id) { node()->setParentIdentifier(id); }
+  void deleteParentIdentifier() { node()->deleteParentIdentifier(); }
+  void deleteParentIdentifierInChildren() { node()->deleteParentIdentifierInChildren(); }
+  void incrementNumberOfChildren(int increment = 1) { node()->incrementNumberOfChildren(increment); }
+  void decrementNumberOfChildren(int decrement = 1) { node()->decrementNumberOfChildren(decrement); }
+  int numberOfDescendants(bool includeSelf) const { return node()->numberOfDescendants(includeSelf); }
 
   /* Hierarchy operations */
   // Replace

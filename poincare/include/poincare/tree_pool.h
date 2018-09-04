@@ -50,7 +50,6 @@ public:
       return T::FailedAllocationStaticNode();
     }
     T * node = new(ptr) T();
-    node->rename(nodeIdentifier, false);
 
     // Ensure the pool is syntactially correct by creating ghost children if needed.
     // It's needed for children that have a fixed, non-zero number of children.
@@ -74,6 +73,7 @@ public:
       ghost->retain();
       move(node->next(), ghost, 0);
     }
+    node->rename(nodeIdentifier, false);
     return node;
   }
 

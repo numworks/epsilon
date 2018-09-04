@@ -6,8 +6,10 @@
 #include <stddef.h>
 #include <string.h>
 #include <new>
+#include <setjmp.h>
 #if POINCARE_TREE_LOG
 #include <ostream>
+#include <iostream>
 #endif
 
 namespace Poincare {
@@ -23,7 +25,13 @@ public:
   static TreePool * sharedPool() { assert(SharedStaticPool != nullptr); return SharedStaticPool; }
   static void RegisterPool(TreePool * pool) {  assert(SharedStaticPool == nullptr); SharedStaticPool = pool; }
 
-  TreePool() : m_cursor(m_buffer) { }
+  TreePool() :
+    m_cursor(m_buffer),
+    m_currentJumpEnvironment(nullptr),
+    m_endOfPoolBeforeJump(nullptr)
+  {}
+  void setJumpEnvironment(jmp_buf * env);
+  void resetJumpEnvironment();
 
   // Node
   TreeNode * node(int identifier) const {
@@ -35,7 +43,6 @@ public:
     assert(identifier >= 0 && identifier <= MaxNumberOfNodes);
     return m_nodeForIdentifier[identifier];
   }
-  TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
   template <typename T>
   T * createTreeNode(size_t size = sizeof(T)) {
@@ -105,6 +112,7 @@ public:
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream & stream);
   void treeLog(std::ostream & stream);
+  void log() { treeLog(std::cout); }
 #endif
 
   int numberOfNodes() const {
@@ -154,8 +162,8 @@ private:
   int indexOfStaticNode(int id) const { return -(id - TreeNode::FirstStaticNodeIdentifier);}
 
   // Iterators
-
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
+  TreeNode * last() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_cursor)); }
 
   class Nodes {
   public:
@@ -238,9 +246,12 @@ private:
     int m_currentIndex;
     int m_availableIdentifiers[MaxNumberOfNodes];
   };
+  void freePoolFromNode(TreeNode * firstNodeToDiscard);
   IdentifierStack m_identifiers;
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
   TreeNode * m_staticNodes[MaxNumberOfStaticNodes];
+  jmp_buf * m_currentJumpEnvironment; //TODO make static?
+  TreeNode * m_endOfPoolBeforeJump;
 };
 
 }

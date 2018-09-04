@@ -22,6 +22,20 @@ static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
   }
 }
 
+void TreePool::setJumpEnvironment(jmp_buf * env) {
+  assert(m_currentJumpEnvironment == nullptr);
+  assert(m_endOfPoolBeforeJump == nullptr);
+  m_currentJumpEnvironment = env;
+  m_endOfPoolBeforeJump = last();
+}
+
+void TreePool::resetJumpEnvironment() {
+  assert(m_currentJumpEnvironment != nullptr);
+  assert(m_endOfPoolBeforeJump != nullptr);
+  m_currentJumpEnvironment = nullptr;
+  m_endOfPoolBeforeJump = nullptr;
+}
+
 void TreePool::logNodeForIdentifierArray() {
 #if TREE_LOG
   printf("\n\n");
@@ -122,8 +136,16 @@ void TreePool::treeLog(std::ostream & stream) {
 #endif
 
 void * TreePool::alloc(size_t size) {
+  /* We are going to try to allocate memory in the pool. If it fails, we must be
+   * able to escape. We thus assert that m_currentJumpEnvironment is set, so we
+   * can make a long jump. */
+
   if (m_cursor >= m_buffer + BufferSize || m_cursor + size > m_buffer + BufferSize) {
-    return nullptr;
+    assert(m_currentJumpEnvironment != nullptr);
+    assert(m_endOfPoolBeforeJump != nullptr);
+    // TODO put the asserts outside the if
+    freePoolFromNode(m_endOfPoolBeforeJump);
+    longjmp(*m_currentJumpEnvironment, 1);
   }
   void * result = m_cursor;
   m_cursor += size;
@@ -175,6 +197,27 @@ void TreePool::updateNodeForIdentifierFromNode(TreeNode * node) {
   for (TreeNode * n : Nodes(node)) {
     m_nodeForIdentifier[n->identifier()] = n;
   }
+}
+
+void TreePool::freePoolFromNode(TreeNode * firstNodeToDiscard) {
+  assert(firstNodeToDiscard != nullptr);
+  assert(firstNodeToDiscard > first());
+  assert(firstNodeToDiscard <= last());
+
+  if (firstNodeToDiscard < last()) {
+    // There should be no tree that continues into the pool zone to discard
+    if (!firstNodeToDiscard->parent()->isUninitialized()) {
+      log();
+    }
+    assert(firstNodeToDiscard->parent()->isUninitialized());
+  }
+  TreeNode * currentNode = firstNodeToDiscard;
+  TreeNode * lastNode = last();
+  while (currentNode < lastNode) {
+    freeIdentifier(currentNode->identifier());
+    currentNode = currentNode->next();
+  }
+  m_cursor = reinterpret_cast<char *>(firstNodeToDiscard);
 }
 
 }

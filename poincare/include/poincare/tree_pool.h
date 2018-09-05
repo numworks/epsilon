@@ -31,6 +31,7 @@ public:
     m_endOfPoolBeforeJump(nullptr)
   {}
   void setJumpEnvironment(jmp_buf * env);
+  jmp_buf * jumpEnvironment() { return m_currentJumpEnvironment; }
   void resetJumpEnvironment();
 
   // Node

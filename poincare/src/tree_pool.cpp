@@ -23,8 +23,6 @@ static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
 }
 
 void TreePool::setJumpEnvironment(jmp_buf * env) {
-  assert(m_currentJumpEnvironment == nullptr);
-  assert(m_endOfPoolBeforeJump == nullptr);
   m_currentJumpEnvironment = env;
   m_endOfPoolBeforeJump = last();
 }

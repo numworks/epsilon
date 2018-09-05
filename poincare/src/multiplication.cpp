@@ -573,8 +573,7 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
      * base if any. Otherwise, we add it as an new child. */
     for (int i = 0; i < numberOfChildren(); i++) {
       if (TermsHaveIdenticalBase(childAtIndex(i), factor)) {
-        Expression sub = Subtraction(CreateExponent(childAtIndex(i)), CreateExponent(factor));
-        sub.childAtIndex(1).deepReduce(context, angleUnit);
+        Expression sub = Subtraction(CreateExponent(childAtIndex(i)), CreateExponent(factor)).deepReduce(context, angleUnit);
         if (sub.sign() == ExpressionNode::Sign::Negative) { // index[0] < index[1]
           sub = Opposite(sub);
           if (factor.type() == ExpressionNode::Type::Power) {
@@ -583,7 +582,6 @@ void Multiplication::addMissingFactors(Expression factor, Context & context, Pre
             factor = Power(factor, sub);
           }
           sub.shallowReduce(context, angleUnit);
-          factor = factor.shallowReduce(context, angleUnit);
           mergeInChildByFactorizingBase(i, factor, context, angleUnit);
           // TODO: we use to shallowReduce childAtIndex(i) here? Needed ?
         } else if (sub.sign() == ExpressionNode::Sign::Unknown) {

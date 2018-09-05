@@ -32,10 +32,6 @@ public:
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
 
-  // Uninitialized node
-  virtual bool isUninitialized() const { return false; }
-  virtual TreeNode * uninitializedStaticNode() const = 0;
-
   // Ghost
   virtual bool isGhost() const { return false; }
 

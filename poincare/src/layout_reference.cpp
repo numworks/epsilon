@@ -5,11 +5,8 @@
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/uninitialized_layout_node.h>
 
 namespace Poincare {
-
-LayoutReference::LayoutReference() : LayoutReference(UninitializedLayoutNode::UninitializedLayoutStaticNode()) {}
 
 // Cursor
 LayoutCursor LayoutReference::cursor() const {

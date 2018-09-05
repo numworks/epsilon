@@ -6,15 +6,17 @@ namespace Poincare {
 
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
 
+
+// TODO remove nullptr in the code?
 KDCoordinate CondensedSumLayoutNode::computeBaseline() {
-  KDSize superscriptSize = superscriptLayout()->isUninitialized() ? KDSizeZero : superscriptLayout()->layoutSize();
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->layoutSize();
   return baseLayout()->baseline() + max(0, superscriptSize.height() - baseLayout()->layoutSize().height()/2);
 }
 
 KDSize CondensedSumLayoutNode::computeSize() {
   KDSize baseSize = baseLayout()->layoutSize();
   KDSize subscriptSize = subscriptLayout()->layoutSize();
-  KDSize superscriptSize = superscriptLayout()->isUninitialized() ? KDSizeZero : superscriptLayout()->layoutSize();
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->layoutSize();
   KDCoordinate sizeWidth = baseSize.width() + max(subscriptSize.width(), superscriptSize.width());
   KDCoordinate sizeHeight = max(baseSize.height()/2, subscriptSize.height()) + max(baseSize.height()/2, superscriptSize.height());
   return KDSize(sizeWidth, sizeHeight);
@@ -24,7 +26,7 @@ KDPoint CondensedSumLayoutNode::positionOfChild(LayoutNode * child) {
   KDCoordinate x = 0;
   KDCoordinate y = 0;
   KDSize baseSize = baseLayout()->layoutSize();
-  KDSize superscriptSize = superscriptLayout()->isUninitialized() ? KDSizeZero : superscriptLayout()->layoutSize();
+  KDSize superscriptSize = superscriptLayout() == nullptr ? KDSizeZero : superscriptLayout()->layoutSize();
   if (child == baseLayout()) {
     y = max(0, superscriptSize.height() - baseSize.height()/2);
   }

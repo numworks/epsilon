@@ -21,14 +21,13 @@ void BinomialCoefficientLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool *
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Go to the kLayout.
-    assert(!kLayout()->isUninitialized());
     cursor->setLayoutNode(kLayout());
     return;
   }
   // Case: Left. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Left);
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
@@ -46,14 +45,13 @@ void BinomialCoefficientLayoutNode::moveCursorRight(LayoutCursor * cursor, bool 
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Go Left of the nLayout.
-    assert(!nLayout()->isUninitialized());
     cursor->setLayoutNode(nLayout());
     return;
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }

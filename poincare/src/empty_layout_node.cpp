@@ -8,7 +8,7 @@ namespace Poincare {
 void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   cursor->setPosition(LayoutCursor::Position::Left);
   LayoutNode * p = parent();
-  if (!p->isUninitialized()) {
+  if (p != nullptr) {
     return p->deleteBeforeCursor(cursor);
   }
 }
@@ -17,7 +17,7 @@ void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecompu
   assert(cursor->layoutNode() == this);
   // Ask the parent.
   LayoutNode * p = parent();
-  if (!p->isUninitialized()) {
+  if (p != nullptr) {
     cursor->setPosition(LayoutCursor::Position::Left);
     p->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
@@ -27,7 +27,7 @@ void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomp
   assert(cursor->layoutNode() == this);
   // Ask the parent.
   LayoutNode * p = parent();
-  if (!p->isUninitialized()) {
+  if (p != nullptr) {
     cursor->setPosition(LayoutCursor::Position::Right);
     p->moveCursorRight(cursor, shouldRecomputeLayout);
   }
@@ -72,7 +72,7 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
     /* The parent is a MatrixLayout, and the current empty row or column is
      * being filled in, so add a new empty row or column. */
     LayoutNode * parentNode = parent();
-    assert(!parentNode->isUninitialized());
+    assert(parentNode != nullptr);
     parentNode->willAddSiblingToEmptyChildAtIndex(parentNode->indexOfChild(this));
     // WARNING: Do not use previous node pointers afterwards.
   }

@@ -17,7 +17,7 @@ void BracketLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecom
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
   LayoutNode * parentLayout = parent();
-  if (!parentLayout->isUninitialized()) {
+  if (parentLayout != nullptr) {
     parentLayout->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
@@ -32,7 +32,7 @@ void BracketLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldReco
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right. Ask the parent.
   LayoutNode * parentLayout = parent();
-  if (!parentLayout->isUninitialized()) {
+  if (parentLayout != nullptr) {
     parentLayout->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }
@@ -44,7 +44,7 @@ void BracketLayoutNode::invalidAllSizesPositionsAndBaselines() {
 
 KDCoordinate BracketLayoutNode::computeBaseline() {
   LayoutNode * parentLayout = parent();
-  assert(!parentLayout->isUninitialized());
+  assert(parentLayout != nullptr);
   int idxInParent = parentLayout->indexOfChild(this);
   int numberOfSiblings = parentLayout->numberOfChildren();
   if (((isLeftParenthesis() || isLeftBracket()) && idxInParent == numberOfSiblings - 1)
@@ -99,7 +99,7 @@ KDCoordinate BracketLayoutNode::childHeight() {
 
 KDCoordinate BracketLayoutNode::computeChildHeight() {
   LayoutNode * parentLayout = parent();
-  assert(!parentLayout->isUninitialized());
+  assert(parentLayout != nullptr);
   KDCoordinate result = Metric::MinimalBracketAndParenthesisHeight;
   int idxInParent = parentLayout->indexOfChild(this);
   int numberOfSiblings = parentLayout->numberOfChildren();

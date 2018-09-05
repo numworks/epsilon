@@ -5,12 +5,6 @@
 
 namespace Poincare {
 
-EmptyLayoutNode * EmptyLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<EmptyLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   cursor->setPosition(LayoutCursor::Position::Left);
   LayoutNode * p = parent();
@@ -77,17 +71,10 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
   if (m_color == Color::Grey) {
     /* The parent is a MatrixLayout, and the current empty row or column is
      * being filled in, so add a new empty row or column. */
-    LayoutRef rootRef = LayoutRef(root());
     LayoutNode * parentNode = parent();
     assert(!parentNode->isUninitialized());
     parentNode->willAddSiblingToEmptyChildAtIndex(parentNode->indexOfChild(this));
     // WARNING: Do not use previous node pointers afterwards.
-    if (rootRef.isAllocationFailure()) {
-      if (moveCursor) {
-        cursor->setLayoutReference(rootRef);
-      }
-      return false;
-    }
   }
   if (siblingRef.mustHaveLeftSibling()) {
     thisRef.setColor(Color::Yellow);

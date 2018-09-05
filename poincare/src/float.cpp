@@ -1,14 +1,6 @@
 #include <poincare/float.h>
-#include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
-
-template<typename T>
-FloatNode<T> * FloatNode<T>::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<FloatNode<T>> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 template<typename T>
 Expression FloatNode<T>::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {

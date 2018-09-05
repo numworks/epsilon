@@ -14,10 +14,6 @@ class HorizontalLayoutNode : public LayoutNode {
   friend class LayoutReference;
 public:
 
-  // AllocationFailure
-  static HorizontalLayoutNode * FailedAllocationStaticNode();
-  HorizontalLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-
   HorizontalLayoutNode() :
     LayoutNode(),
     m_numberOfChildren(0)

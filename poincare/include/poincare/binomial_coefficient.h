@@ -9,8 +9,6 @@ namespace Poincare {
 
 class BinomialCoefficientNode : public ExpressionNode {
 public:
-  static BinomialCoefficientNode * FailedAllocationStaticNode();
-  BinomialCoefficientNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(BinomialCoefficientNode); }

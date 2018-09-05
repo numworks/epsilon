@@ -31,12 +31,6 @@ void DecimalNode::setValue(const native_uint_t * mantissaDigits, size_t mantissa
   memcpy(m_mantissa, mantissaDigits, mantissaSize*sizeof(native_uint_t));
 }
 
-DecimalNode * DecimalNode::FailedAllocationStaticNode() {
-  static AllocationFailureDecimalNode failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Integer DecimalNode::signedMantissa() const {
   return Integer((native_uint_t *)m_mantissa, m_numberOfDigitsInMantissa, m_negative);
 }
@@ -318,7 +312,7 @@ Expression Decimal::setSign(ExpressionNode::Sign s, Context & context, Preferenc
 
 Expression Decimal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
+  if (e.isUndefined()) {
     return e;
   }
   // this = e

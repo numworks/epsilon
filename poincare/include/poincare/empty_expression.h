@@ -9,9 +9,6 @@ namespace Poincare {
 
 class EmptyExpressionNode : public ExpressionNode  {
 public:
-  // Allocation Failure
-  static EmptyExpressionNode * FailedAllocationStaticNode();
-  EmptyExpressionNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(EmptyExpressionNode); }

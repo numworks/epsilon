@@ -40,8 +40,6 @@ public:
   }
 
   // TreeNode
-  static GridLayoutNode * FailedAllocationStaticNode();
-  GridLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(GridLayoutNode); }
   void didAddChildAtIndex(int newNumberOfChildren) override;
   int numberOfChildren() const override { return m_numberOfRows * m_numberOfColumns; }

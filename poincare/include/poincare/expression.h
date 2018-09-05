@@ -105,7 +105,7 @@ public:
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
   ExpressionNode::Sign sign() const { return node()->sign(); }
-  bool isUndefinedOrAllocationFailure() const { return node()->type() == ExpressionNode::Type::Undefined || node()->type() == ExpressionNode::Type::AllocationFailure; }
+  bool isUndefined() const { return node()->type() == ExpressionNode::Type::Undefined; }
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalZero() const;
   bool isRationalOne() const;

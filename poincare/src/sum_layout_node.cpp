@@ -1,5 +1,4 @@
 #include <poincare/sum_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 
@@ -25,12 +24,6 @@ const uint8_t symbolPixel[SumLayoutNode::k_symbolHeight][SumLayoutNode::k_symbol
   {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
 };
 
-
-SumLayoutNode * SumLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<SumLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 int SumLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SequenceLayoutNode::writeDerivedClassInBuffer("sum", buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);

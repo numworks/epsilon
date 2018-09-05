@@ -16,8 +16,6 @@ public:
   bool isLeftBracket() const override { return true; }
 
   // TreeNode
-  static LeftSquareBracketLayoutNode * FailedAllocationStaticNode();
-  LeftSquareBracketLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(LeftSquareBracketLayoutNode); }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {

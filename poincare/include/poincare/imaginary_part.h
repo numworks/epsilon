@@ -8,9 +8,6 @@ namespace Poincare {
 
 class ImaginaryPartNode : public ExpressionNode  {
 public:
-  // Allocation Failure
-  static ImaginaryPartNode * FailedAllocationStaticNode();
-  ImaginaryPartNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(ImaginaryPartNode); }

@@ -3,7 +3,6 @@
 
 #include <poincare/integer.h>
 #include <poincare/number.h>
-#include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
 
@@ -25,10 +24,6 @@ public:
     m_numberOfDigitsInMantissa(0) {}
 
   virtual void setValue(const native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative);
-
-  // Allocation Failure
-  static DecimalNode * FailedAllocationStaticNode();
-  DecimalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   Integer signedMantissa() const;
   Integer unsignedMantissa() const;
@@ -83,11 +78,6 @@ private:
   int m_exponent;
   size_t m_numberOfDigitsInMantissa;
   native_uint_t m_mantissa[0];
-};
-
-class AllocationFailureDecimalNode : public AllocationFailureExpressionNode<DecimalNode> {
-public:
-  void setValue(const native_uint_t * mantissaDigits, size_t mantissaSize, int exponent, bool negative) override {}
 };
 
 class Decimal : public Number {

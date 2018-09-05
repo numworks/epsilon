@@ -6,7 +6,6 @@ extern "C" {
 #include <poincare/complex.h>
 #include <poincare/division.h>
 #include <poincare/expression.h>
-#include <poincare/allocation_failure_evaluation_node.h>
 #include <poincare/undefined.h>
 #include <poincare/infinity.h>
 #include <poincare/decimal.h>
@@ -20,18 +19,6 @@ extern "C" {
 #include <cmath>
 
 namespace Poincare {
-
-template<typename T>
-class AllocationFailureComplexNode : public AllocationFailureEvaluationNode<ComplexNode, T > {
-  void setComplex(std::complex<T> c) override {}
-};
-
-template<typename T>
-ComplexNode<T> * ComplexNode<T>::FailedAllocationStaticNode() {
-  static AllocationFailureComplexNode<T> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 template<typename T>
 void ComplexNode<T>::setComplex(std::complex<T> c) {

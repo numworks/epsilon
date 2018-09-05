@@ -1,7 +1,6 @@
 #ifndef POINCARE_ABSOLUTE_VALUE_LAYOUT_NODE_H
 #define POINCARE_ABSOLUTE_VALUE_LAYOUT_NODE_H
 
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/bracket_pair_layout_node.h>
 #include <poincare/serialization_helper.h>
 
@@ -17,8 +16,6 @@ public:
   }
 
   // TreeNode
-  static AbsoluteValueLayoutNode * FailedAllocationStaticNode();
-  AbsoluteValueLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(AbsoluteValueLayoutNode); }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {

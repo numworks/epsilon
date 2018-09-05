@@ -9,12 +9,6 @@
 
 namespace Poincare {
 
-MatrixTraceNode * MatrixTraceNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<MatrixTraceNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Expression MatrixTraceNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return MatrixTrace(this).shallowReduce(context, angleUnit);
 }
@@ -37,7 +31,7 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preference
 Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

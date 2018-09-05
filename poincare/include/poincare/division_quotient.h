@@ -7,8 +7,6 @@ namespace Poincare {
 
 class DivisionQuotientNode : public ExpressionNode {
 public:
-  static DivisionQuotientNode * FailedAllocationStaticNode();
-  DivisionQuotientNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(DivisionQuotientNode); }

@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXCEPTION_EXPRESSION_NODE_H
 #define POINCARE_EXCEPTION_EXPRESSION_NODE_H
 
+#include <poincare/exception_node.h>
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
 #include <poincare/complex.h>
@@ -28,8 +29,7 @@ public:
     return PrintFloat::convertFloatToText<float>(NAN, buffer, bufferSize, numberOfSignificantDigits, floatDisplayMode);
   }
 
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { return LayoutRef(CharLayoutNode::FailedAllocationStaticNode()); } //TODO ?
-  // OLD FIXME: Use EmptyLayoutNode here above, once EmptyLayout has been cleaned up
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override { assert(false); return CharLayoutRef('a'); } //TODO ?
 
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override { return Expression(this).clone(); }
 };

@@ -1,5 +1,4 @@
 #include <poincare/infinity.h>
-#include <poincare/allocation_failure_expression_node.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 
@@ -9,12 +8,6 @@ extern "C" {
 }
 
 namespace Poincare {
-
-InfinityNode * InfinityNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<InfinityNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 Expression InfinityNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Infinity(this).setSign(s, context, angleUnit);

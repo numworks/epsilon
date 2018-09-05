@@ -7,12 +7,6 @@
 #include <cmath>
 
 namespace Poincare {
-MatrixTransposeNode * MatrixTransposeNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<MatrixTransposeNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Expression MatrixTransposeNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return MatrixTranspose(this).shallowReduce(context, angleUnit);
 }
@@ -41,7 +35,7 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Prefer
 Expression MatrixTranspose::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

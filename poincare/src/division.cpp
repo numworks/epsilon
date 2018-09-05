@@ -11,12 +11,6 @@
 
 namespace Poincare {
 
-DivisionNode * DivisionNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<DivisionNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 int DivisionNode::polynomialDegree(char symbolName) const {
   if (childAtIndex(1)->polynomialDegree(symbolName) != 0) {
     return -1;
@@ -63,7 +57,7 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

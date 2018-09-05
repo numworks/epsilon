@@ -9,9 +9,6 @@ namespace Poincare {
 
 class TangentNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static TangentNode * FailedAllocationStaticNode();
-  TangentNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(TangentNode); }

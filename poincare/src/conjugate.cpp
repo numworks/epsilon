@@ -7,12 +7,6 @@
 
 namespace Poincare {
 
-ConjugateNode * ConjugateNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<ConjugateNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutRef ConjugateNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return ConjugateLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
@@ -33,7 +27,7 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
 Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

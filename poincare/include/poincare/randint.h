@@ -9,9 +9,6 @@ namespace Poincare {
 
 class RandintNode : public ExpressionNode  {
 public:
-  // Allocation Failure
-  static RandintNode * FailedAllocationStaticNode();
-  RandintNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(RandintNode); }

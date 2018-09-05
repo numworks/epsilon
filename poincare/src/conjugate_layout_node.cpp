@@ -1,17 +1,10 @@
 #include <poincare/conjugate_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <escher/metric.h>
 #include <assert.h>
 
 namespace Poincare {
-
-ConjugateLayoutNode * ConjugateLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<ConjugateLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (!childLayout()->isUninitialized()

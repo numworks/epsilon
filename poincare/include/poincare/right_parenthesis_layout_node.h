@@ -23,8 +23,6 @@ public:
   }
 
   // TreeNode
-  static RightParenthesisLayoutNode * FailedAllocationStaticNode();
-  RightParenthesisLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(RightParenthesisLayoutNode); }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {

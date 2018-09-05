@@ -1,5 +1,4 @@
 #include <poincare/right_parenthesis_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <assert.h>
 #include <stdlib.h>
 
@@ -46,12 +45,6 @@ void RightParenthesisLayoutNode::RenderWithChildHeight(KDCoordinate childHeight,
         ParenthesisLayoutNode::k_lineThickness,
         parenthesisHeight - 2*(ParenthesisLayoutNode::k_parenthesisCurveHeight+ParenthesisLayoutNode::k_externHeightMargin)),
       expressionColor);
-}
-
-RightParenthesisLayoutNode * RightParenthesisLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<RightParenthesisLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
 }
 
 bool RightParenthesisLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {

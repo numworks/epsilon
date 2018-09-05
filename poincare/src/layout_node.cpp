@@ -1,5 +1,4 @@
 #include <poincare/layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_reference.h>
@@ -83,8 +82,7 @@ void LayoutNode::moveCursorDownInDescendants(LayoutCursor * cursor, bool * shoul
 }
 
 LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
-  /* Only HorizontalLayout or AllocationFailedLayout may have no parent, and
-   * they overload this method */
+  // Only HorizontalLayout may have no parent, and it overloads this method
   assert(!parent()->isUninitialized());
   return (cursor->layoutReference().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
 }
@@ -190,17 +188,12 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
 
   // If there is a valid result
   LayoutRef resultRef(childResult);
-  LayoutRef rootRef = LayoutRef(root());
   if (!(*childResultPtr)->isUninitialized()) {
     *shouldRecomputeLayout = childResult->addGreySquaresToAllMatrixAncestors();
     // WARNING: Do not use "this" afterwards
   }
-  if (rootRef.isAllocationFailure()) {
-    cursor->setLayoutReference(rootRef);
-  } else {
-    cursor->setLayoutReference(resultRef);
-    cursor->setPosition(resultPosition);
-  }
+  cursor->setLayoutReference(resultRef);
+  cursor->setPosition(resultPosition);
 }
 
 void LayoutNode::scoreCursorInDescendantsVertically (

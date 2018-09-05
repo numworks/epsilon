@@ -10,9 +10,6 @@ namespace Poincare {
 
 class RoundNode : public ExpressionNode  {
 public:
-  // Allocation Failure
-  static RoundNode * FailedAllocationStaticNode();
-  RoundNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(RoundNode); }

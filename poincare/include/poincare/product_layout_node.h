@@ -10,8 +10,6 @@ class ProductLayoutNode : public SequenceLayoutNode {
 public:
   using SequenceLayoutNode::SequenceLayoutNode;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  static ProductLayoutNode * FailedAllocationStaticNode();
-  ProductLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(ProductLayoutNode); }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {

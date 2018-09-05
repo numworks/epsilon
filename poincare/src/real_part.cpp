@@ -5,12 +5,6 @@
 
 namespace Poincare {
 
-RealPartNode * RealPartNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<RealPartNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -27,7 +21,7 @@ Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit
 Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

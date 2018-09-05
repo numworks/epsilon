@@ -7,9 +7,6 @@ namespace Poincare {
 
 class MatrixTransposeNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static MatrixTransposeNode * FailedAllocationStaticNode();
-  MatrixTransposeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixTransposeNode); }

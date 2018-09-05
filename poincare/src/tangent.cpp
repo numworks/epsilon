@@ -9,12 +9,6 @@
 
 namespace Poincare {
 
-TangentNode * TangentNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<TangentNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 float TangentNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Tangent(this), context, angleUnit);
 }
@@ -37,7 +31,7 @@ Expression TangentNode::shallowReduce(Context & context, Preferences::AngleUnit 
 Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

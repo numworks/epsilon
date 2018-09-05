@@ -13,8 +13,6 @@ public:
   Type type() const override { return Type::NthRoot; }
 
   // TreeNode
-  static NthRootNode * FailedAllocationStaticNode();
-  NthRootNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(NthRootNode); }
   int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG

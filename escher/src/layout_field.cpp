@@ -43,10 +43,6 @@ void LayoutField::reload() {
 }
 
 bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
-  if (m_contentView.cursor()->layoutReference().isAllocationFailure()) {
-    return false;
-  }
-
   if (text[0] == 0) {
     // The text is empty
     return true;
@@ -59,8 +55,6 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
      * and these events may add at most 6 layouts (e.g *10^•). */
     return true;
   }
-
-  LayoutRef rootRef = m_contentView.expressionView()->layoutRef();
 
   // Handle special cases
   if (strcmp(text, Ion::Events::Division.text()) == 0) {
@@ -108,17 +102,10 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
       insertLayoutAtCursor(resultLayoutRef, pointedLayoutRef, forceCursorRightOfText);
     }
   }
-  if (rootRef.isAllocationFailure()) {
-    m_contentView.cursor()->setLayoutReference(rootRef);
-  }
   return true;
 }
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
-  if (m_contentView.cursor()->layoutReference().isAllocationFailure()) {
-    return false;
-  }
-  LayoutRef rootRef = m_contentView.expressionView()->layoutRef();
   bool didHandleEvent = false;
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();
   bool moveEventChangedLayout = false;
@@ -133,9 +120,6 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
     didHandleEvent = true;
   }
   if (didHandleEvent) {
-    if (rootRef.isAllocationFailure()) {
-      m_contentView.cursor()->setLayoutReference(rootRef);
-    }
     shouldRecomputeLayout = m_contentView.cursor()->hideEmptyLayoutIfNeeded() || shouldRecomputeLayout;
     if (!shouldRecomputeLayout) {
       m_contentView.cursorPositionChanged();
@@ -248,7 +232,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
 }
 
 void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayoutR, bool forceCursorRightOfLayout) {
-  if (layoutR.isUninitialized() || layoutRef().isAllocationFailure()) {
+  if (layoutR.isUninitialized()) {
     return;
   }
 
@@ -262,9 +246,7 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
   m_contentView.cursor()->addLayoutAndMoveCursor(layoutR);
 
   // Move the cursor if needed
-  if (layoutRef().isAllocationFailure()) {
-    m_contentView.cursor()->setLayoutReference(layoutRef());
-  } else if(!forceCursorRightOfLayout) {
+  if(!forceCursorRightOfLayout) {
     if (!pointedLayoutR.isUninitialized() && (!layoutWillBeMerged || pointedLayoutR != layoutR)) {
       // Make sure the layout was inserted (its parent is not uninitialized)
       m_contentView.cursor()->setLayoutReference(pointedLayoutR);
@@ -280,9 +262,6 @@ void LayoutField::insertLayoutAtCursor(LayoutRef layoutR, LayoutRef pointedLayou
 
   // Handle matrices
   m_contentView.cursor()->layoutReference().addGreySquaresToAllMatrixAncestors();
-  if (layoutRef().isAllocationFailure()) {
-    m_contentView.cursor()->setLayoutReference(layoutRef());
-  }
 
   // Handle empty layouts
   m_contentView.cursor()->hideEmptyLayoutIfNeeded();

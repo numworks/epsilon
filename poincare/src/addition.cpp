@@ -9,12 +9,6 @@
 
 namespace Poincare {
 
-AdditionNode * AdditionNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<AdditionNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 int AdditionNode::polynomialDegree(char symbolName) const {
   int degree = 0;
   for (int i = 0; i < numberOfChildren(); i++) {
@@ -135,7 +129,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
 Expression Addition::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

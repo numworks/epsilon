@@ -10,9 +10,6 @@ namespace Poincare {
 
 class RandomNode : public ExpressionNode  {
 public:
-  // Allocation Failure
-  static RandomNode * FailedAllocationStaticNode();
-  RandomNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(RandomNode); }

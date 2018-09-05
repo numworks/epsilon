@@ -8,12 +8,6 @@
 
 namespace Poincare {
 
-GreatCommonDivisorNode * GreatCommonDivisorNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<GreatCommonDivisorNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference GreatCommonDivisorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(GreatCommonDivisor(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -53,7 +47,7 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
 Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

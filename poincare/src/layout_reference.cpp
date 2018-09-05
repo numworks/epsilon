@@ -30,11 +30,7 @@ void LayoutReference::replaceChild(LayoutRef oldChild, LayoutRef newChild, Layou
   }
   replaceChildInPlace(oldChild, newChild);
   if (cursor != nullptr) {
-    if (isAllocationFailure()) {
-      cursor->setLayoutReference(*this);
-    } else {
-      cursor->setLayoutReference(newChild);
-    }
+    cursor->setLayoutReference(newChild);
   }
   node()->didReplaceChildAtIndex(childIndex, cursor, force);
 }
@@ -44,11 +40,6 @@ void LayoutReference::replaceChildWithEmpty(LayoutRef oldChild, LayoutCursor * c
 }
 
 void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle) {
-  LayoutReference rootRef = root();
-  if (rootRef.isAllocationFailure()) {
-    cursor->setLayoutReference(rootRef);
-    return;
-  }
   LayoutReference p = parent();
   assert(!p.isUninitialized());
   if (!p.isHorizontal()) {
@@ -57,10 +48,6 @@ void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef 
     HorizontalLayoutRef horizontalLayoutR;
     p.replaceChild(*this, horizontalLayoutR, cursor);
     horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
-    if (rootRef.isAllocationFailure()) {
-      cursor->setLayoutReference(rootRef);
-      return;
-    }
     if (putCursorInTheMiddle) {
       if (!horizontalLayoutR.isEmpty()) {
         cursor->setLayoutReference(horizontalLayoutR.childAtIndex(horizontalLayoutR.numberOfChildren()-1));
@@ -112,12 +99,8 @@ void LayoutReference::addChildAtIndex(LayoutRef l, int index, int currentNumberO
   addChildAtIndexInPlace(l, newIndex, newCurrentNumberOfChildren);
 
   if (cursor != nullptr) {
-    if (isAllocationFailure()) {
-      cursor->setLayoutReference(*this);
-    } else {
-      cursor->setLayoutReference(nextPointedLayout);
-      cursor->setPosition(nextPosition);
-    }
+    cursor->setLayoutReference(nextPointedLayout);
+    cursor->setPosition(nextPosition);
   }
 }
 
@@ -151,9 +134,6 @@ void LayoutReference::addSibling(LayoutCursor * cursor, LayoutReference sibling,
           cursor->setPosition(cursor->position() == LayoutCursor::Position::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left);
         }
         neighbour.addSibling(cursor, sibling, moveCursor);
-        if (rootLayout.isAllocationFailure() && moveCursor) {
-          cursor->setLayoutReference(rootLayout);
-        }
         return;
       }
     }
@@ -253,18 +233,12 @@ void LayoutReference::collapseSiblings(LayoutCursor * cursor) {
       LayoutRef horRef = HorizontalLayoutRef(absorbingChild.clone());
       replaceChild(absorbingChild, horRef, cursor, true);
     }
-    if (rootLayout.isAllocationFailure()) {
-      return;
-    }
     collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
   }
   if (node()->shouldCollapseSiblingsOnLeft()) {
     LayoutReference absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
     if (!absorbingChild.isHorizontal()) {
       replaceChild(absorbingChild, HorizontalLayoutRef(absorbingChild.clone()), cursor, true);
-    }
-    if (rootLayout.isAllocationFailure()) {
-      return;
     }
     collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
   }

@@ -8,9 +8,6 @@ namespace Poincare {
 
 class HyperbolicCosineNode : public HyperbolicTrigonometricFunctionNode {
 public:
-  // Allocation Failure
-  static HyperbolicCosineNode * FailedAllocationStaticNode();
-  HyperbolicCosineNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(HyperbolicCosineNode); }

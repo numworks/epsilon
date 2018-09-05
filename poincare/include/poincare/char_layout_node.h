@@ -1,7 +1,6 @@
 #ifndef POINCARE_CHAR_LAYOUT_NODE_H
 #define POINCARE_CHAR_LAYOUT_NODE_H
 
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_node.h>
 #include <poincare/layout_reference.h>
@@ -28,10 +27,6 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
 
-  // AllocationFailure
-  static CharLayoutNode * FailedAllocationStaticNode();
-  CharLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-
   // TreeNode
   size_t size() const override { return sizeof(CharLayoutNode); }
   int numberOfChildren() const override { return 0; }
@@ -57,11 +52,6 @@ private:
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   char m_char;
   KDText::FontSize m_fontSize;
-};
-
-class AllocationFailureCharLayoutNode : public AllocationFailureLayoutNode<CharLayoutNode> {
-public:
-  void setChar(char c) override {}
 };
 
 class CharLayoutRef : public LayoutReference {

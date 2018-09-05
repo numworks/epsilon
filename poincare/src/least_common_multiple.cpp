@@ -8,12 +8,6 @@
 
 namespace Poincare {
 
-LeastCommonMultipleNode * LeastCommonMultipleNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<LeastCommonMultipleNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference LeastCommonMultipleNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(LeastCommonMultiple(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -53,7 +47,7 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
 Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

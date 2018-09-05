@@ -4,12 +4,6 @@
 
 namespace Poincare {
 
-HyperbolicArcCosineNode * HyperbolicArcCosineNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<HyperbolicArcCosineNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 template<typename T>
 Complex<T> HyperbolicArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::acosh(c);

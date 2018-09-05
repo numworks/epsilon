@@ -10,8 +10,6 @@ namespace Poincare {
 
 class PermuteCoefficientNode : public ExpressionNode {
 public:
-  static PermuteCoefficientNode * FailedAllocationStaticNode();
-  PermuteCoefficientNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(PermuteCoefficientNode); }

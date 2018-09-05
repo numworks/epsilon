@@ -7,12 +7,6 @@
 
 namespace Poincare {
 
-FracPartNode * FracPartNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<FracPartNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutRef FracPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(FracPart(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -36,7 +30,7 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
 Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

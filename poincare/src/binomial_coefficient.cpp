@@ -9,12 +9,6 @@
 
 namespace Poincare {
 
-BinomialCoefficientNode * BinomialCoefficientNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<BinomialCoefficientNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Expression BinomialCoefficientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return BinomialCoefficient(this).shallowReduce(context, angleUnit);
 }
@@ -57,7 +51,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
 Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

@@ -10,12 +10,6 @@
 
 namespace Poincare {
 
-FloorNode * FloorNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<FloorNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutRef FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return FloorLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
@@ -39,7 +33,7 @@ Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit an
 Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

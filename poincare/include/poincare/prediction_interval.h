@@ -9,8 +9,6 @@ namespace Poincare {
 
 class PredictionIntervalNode : public ExpressionNode {
 public:
-  static PredictionIntervalNode * FailedAllocationStaticNode();
-  PredictionIntervalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(PredictionIntervalNode); }

@@ -4,7 +4,6 @@
 #include <poincare/integer.h>
 #include <poincare/number.h>
 #include <poincare/complex.h>
-#include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
 
@@ -15,10 +14,6 @@ public:
     m_numberOfDigitsNumerator(0),
     m_numberOfDigitsDenominator(0) {}
   virtual void setDigits(const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative);
-
-  // Allocation Failure
-  static RationalNode * FailedAllocationStaticNode();
-  RationalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   Integer signedNumerator() const;
   Integer unsignedNumerator() const;
@@ -70,11 +65,6 @@ private:
   size_t m_numberOfDigitsNumerator;
   size_t m_numberOfDigitsDenominator;
   native_uint_t m_digits[0];
-};
-
-class AllocationFailureRationalNode : public AllocationFailureExpressionNode<RationalNode> {
-public:
-  void setDigits(const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative) override {};
 };
 
 class Rational : public Number {

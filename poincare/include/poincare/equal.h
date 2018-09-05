@@ -7,8 +7,6 @@ namespace Poincare {
 
 class EqualNode : public ExpressionNode {
 public:
-  static EqualNode * FailedAllocationStaticNode();
-  EqualNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(EqualNode); }

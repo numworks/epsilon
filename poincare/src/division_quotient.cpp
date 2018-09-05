@@ -8,12 +8,6 @@
 
 namespace Poincare {
 
-DivisionQuotientNode * DivisionQuotientNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<DivisionQuotientNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Expression DivisionQuotientNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return DivisionQuotient(this).shallowReduce(context, angleUnit);
 }
@@ -40,7 +34,7 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Prefe
 Expression DivisionQuotient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

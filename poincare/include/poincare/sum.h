@@ -7,9 +7,6 @@ namespace Poincare {
 
 class SumNode : public SequenceNode {
 public:
-  // Allocation Failure
-  static SumNode * FailedAllocationStaticNode();
-  SumNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   // TreeNode
   size_t size() const override { return sizeof(SumNode); }
 #if POINCARE_TREE_LOG

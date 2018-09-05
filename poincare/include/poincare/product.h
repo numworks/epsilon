@@ -7,9 +7,6 @@ namespace Poincare {
 
 class ProductNode : public SequenceNode {
 public:
-  // Allocation Failure
-  static ProductNode * FailedAllocationStaticNode();
-  ProductNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   // TreeNode
   size_t size() const override { return sizeof(ProductNode); }
 #if POINCARE_TREE_LOG

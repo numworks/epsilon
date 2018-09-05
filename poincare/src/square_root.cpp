@@ -8,12 +8,6 @@
 
 namespace Poincare {
 
-SquareRootNode * SquareRootNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<SquareRootNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference SquareRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
@@ -43,7 +37,7 @@ Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUn
 Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

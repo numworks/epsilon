@@ -13,12 +13,6 @@ extern "C" {
 
 namespace Poincare {
 
-FactorNode * FactorNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<FactorNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutRef FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, name());
 }

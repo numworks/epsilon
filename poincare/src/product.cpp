@@ -9,12 +9,6 @@ extern "C" {
 
 namespace Poincare {
 
-ProductNode * ProductNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<ProductNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutRef ProductNode::createSequenceLayout(LayoutRef argumentLayout, LayoutRef subscriptLayout, LayoutRef superscriptLayout) const {
   return ProductLayoutRef(argumentLayout, subscriptLayout, superscriptLayout);
 }

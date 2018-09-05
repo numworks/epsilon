@@ -5,12 +5,8 @@
 
 namespace Poincare {
 
-class AllocationFailureInfinityNode;
-
 class InfinityNode : public NumberNode {
 public:
-  static InfinityNode * FailedAllocationStaticNode();
-  InfinityNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   void setNegative(bool negative) { m_negative = negative; }
   Expression setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) override;

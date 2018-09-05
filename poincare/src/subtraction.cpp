@@ -1,5 +1,4 @@
 #include <poincare/subtraction.h>
-#include <poincare/allocation_failure_expression_node.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/addition.h>
 #include <poincare/multiplication.h>
@@ -8,12 +7,6 @@
 #include <assert.h>
 
 namespace Poincare {
-
-SubtractionNode * SubtractionNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<SubtractionNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 int SubtractionNode::polynomialDegree(char symbolName) const {
   int degree = 0;
@@ -58,7 +51,7 @@ Expression SubtractionNode::shallowReduce(Context & context, Preferences::AngleU
 
 Expression Subtraction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
+  if (e.isUndefined()) {
     return e;
   }
   Expression m = Multiplication(Rational(-1), childAtIndex(1));

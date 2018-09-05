@@ -10,9 +10,6 @@ namespace Poincare {
 
 class ArcTangentNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static ArcTangentNode * FailedAllocationStaticNode();
-  ArcTangentNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(ArcTangentNode); }

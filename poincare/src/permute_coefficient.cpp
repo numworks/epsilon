@@ -9,12 +9,6 @@ extern "C" {
 
 namespace Poincare {
 
-PermuteCoefficientNode * PermuteCoefficientNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<PermuteCoefficientNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -48,7 +42,7 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Pre
 Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

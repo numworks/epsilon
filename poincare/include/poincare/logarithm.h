@@ -12,10 +12,6 @@ namespace Poincare {
 template<int I>
 class LogarithmNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static LogarithmNode<I> * FailedAllocationStaticNode();
-  LogarithmNode<I> * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }
   int numberOfChildren() const override { assert(I == 1 || I == 2); return I; }

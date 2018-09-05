@@ -8,18 +8,11 @@ extern "C" {
 #include <poincare/context.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/complex.h>
-#include <poincare/allocation_failure_expression_node.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 
 
 namespace Poincare {
-
-StoreNode * StoreNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<StoreNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 Expression StoreNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Store(this).shallowReduce(context, angleUnit);

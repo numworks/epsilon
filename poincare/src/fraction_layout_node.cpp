@@ -1,5 +1,4 @@
 #include <poincare/fraction_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/layout_helper.h>
@@ -11,12 +10,6 @@
 namespace Poincare {
 
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
-
-FractionLayoutNode * FractionLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<FractionLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
    if (cursor->position() == LayoutCursor::Position::Left

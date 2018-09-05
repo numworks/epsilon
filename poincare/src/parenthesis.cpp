@@ -1,14 +1,7 @@
 #include <poincare/parenthesis.h>
-#include <poincare/allocation_failure_expression_node.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
-
-ParenthesisNode * ParenthesisNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<ParenthesisNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 int ParenthesisNode::polynomialDegree(char symbolName) const {
   return childAtIndex(0)->polynomialDegree(symbolName);
@@ -33,7 +26,7 @@ Evaluation<T> ParenthesisNode::templatedApproximate(Context& context, Preference
 
 Expression Parenthesis::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
+  if (e.isUndefined()) {
     return e;
   }
   Expression c = childAtIndex(0);

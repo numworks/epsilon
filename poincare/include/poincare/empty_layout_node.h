@@ -39,8 +39,6 @@ public:
   bool hasText() const override { return false; }
 
   // TreeNode
-  static EmptyLayoutNode * FailedAllocationStaticNode();
-  EmptyLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(EmptyLayoutNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG

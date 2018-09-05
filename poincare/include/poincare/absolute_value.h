@@ -10,9 +10,6 @@ namespace Poincare {
 
 class AbsoluteValueNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static AbsoluteValueNode * FailedAllocationStaticNode();
-  AbsoluteValueNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   // TreeNode
   size_t size() const override { return sizeof(AbsoluteValueNode); }
   int numberOfChildren() const override { return 1; }

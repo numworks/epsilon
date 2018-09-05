@@ -27,12 +27,6 @@ void RationalNode::setDigits(const native_uint_t * numeratorDigits, size_t numer
   }
 }
 
-RationalNode * RationalNode::FailedAllocationStaticNode() {
-  static AllocationFailureRationalNode failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Integer RationalNode::signedNumerator() const {
   return Integer((native_uint_t *)m_digits, m_numberOfDigitsNumerator, m_negative);
 }

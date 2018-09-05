@@ -1,20 +1,10 @@
 #include <poincare/absolute_value.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/absolute_value_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
-
-extern "C" {
 #include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
-
-AbsoluteValueNode * AbsoluteValueNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<AbsoluteValueNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 Expression AbsoluteValueNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return AbsoluteValue(this).setSign(s, context, angleUnit);
@@ -40,7 +30,7 @@ Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Pre
 
 Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
-  if (e.isUndefinedOrAllocationFailure()) {
+  if (e.isUndefined()) {
     return e;
   }
   Expression c = childAtIndex(0);

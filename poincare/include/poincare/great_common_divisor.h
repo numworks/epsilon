@@ -7,8 +7,6 @@ namespace Poincare {
 
 class GreatCommonDivisorNode : public ExpressionNode {
 public:
-  static GreatCommonDivisorNode * FailedAllocationStaticNode();
-  GreatCommonDivisorNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(GreatCommonDivisorNode); }

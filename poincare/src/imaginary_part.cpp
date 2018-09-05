@@ -7,12 +7,6 @@
 
 namespace Poincare {
 
-ImaginaryPartNode * ImaginaryPartNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<ImaginaryPartNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference ImaginaryPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ImaginaryPart(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -33,7 +27,7 @@ Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::Angl
 Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

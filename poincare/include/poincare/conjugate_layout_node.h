@@ -18,8 +18,6 @@ public:
   bool shouldCollapseSiblingsOnRight() const override { return true; }
 
   // TreeNode
-  static ConjugateLayoutNode * FailedAllocationStaticNode();
-  ConjugateLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(ConjugateLayoutNode); }
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG

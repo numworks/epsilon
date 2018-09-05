@@ -8,12 +8,6 @@
 
 namespace Poincare {
 
-DerivativeNode * DerivativeNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<DerivativeNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 int DerivativeNode::polynomialDegree(char symbolName) const {
   if (symbolName == 'x') {
     if (childAtIndex(1)->polynomialDegree(symbolName) != 0) {
@@ -119,7 +113,7 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
 Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

@@ -10,13 +10,6 @@
 namespace Poincare {
 
 template<typename T>
-MatrixComplexNode<T> * MatrixComplexNode<T>::FailedAllocationStaticNode() {
-  static AllocationFailureMatrixComplexNode<T> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
-template<typename T>
 void MatrixComplexNode<T>::didAddChildAtIndex(int newNumberOfChildren) {
   setNumberOfRows(1);
   setNumberOfColumns(newNumberOfChildren);

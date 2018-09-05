@@ -6,12 +6,6 @@
 
 namespace Poincare {
 
-CosineNode * CosineNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<CosineNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 float CosineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Cosine(this), context, angleUnit);
 }
@@ -34,7 +28,7 @@ Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit a
 Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

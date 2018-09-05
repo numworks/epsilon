@@ -8,9 +8,6 @@ namespace Poincare {
 
 class FloorNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static FloorNode * FailedAllocationStaticNode();
-  FloorNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(FloorNode); }

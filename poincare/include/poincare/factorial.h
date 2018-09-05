@@ -9,9 +9,6 @@ namespace Poincare {
 
 class FactorialNode : public ExpressionNode  {
 public:
-  // Allocation Failure
-  static FactorialNode * FailedAllocationStaticNode();
-  FactorialNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(FactorialNode); }

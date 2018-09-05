@@ -75,13 +75,8 @@ void LayoutCursor::addEmptyExponentialLayout() {
   HorizontalLayoutRef sibling = HorizontalLayoutRef(
       CharLayoutRef(Ion::Charset::Exponential),
       VerticalOffsetLayoutRef(emptyLayout, VerticalOffsetLayoutNode::Type::Superscript));
-  LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, sibling, false);
-  if (!rootRef.isAllocationFailure()) {
-    m_layoutRef = emptyLayout;
-  } else {
-    m_layoutRef = rootRef;
-  }
+  m_layoutRef = emptyLayout;
 }
 
 void LayoutCursor::addEmptyMatrixLayout() {
@@ -90,38 +85,23 @@ void LayoutCursor::addEmptyMatrixLayout() {
       EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
       EmptyLayoutRef(EmptyLayoutNode::Color::Grey),
       EmptyLayoutRef(EmptyLayoutNode::Color::Grey));
-  LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, matrixLayout, false);
-  if (!rootRef.isAllocationFailure()) {
-    m_layoutRef = matrixLayout.childAtIndex(0);
-    m_position = Position::Right;
-  } else {
-    m_layoutRef = rootRef;
-  }
+  m_layoutRef = matrixLayout.childAtIndex(0);
+  m_position = Position::Right;
 }
 
 void LayoutCursor::addEmptySquareRootLayout() {
   HorizontalLayoutRef child1 = HorizontalLayoutRef(EmptyLayoutRef());
   NthRootLayoutRef newChild = NthRootLayoutRef(child1);
-  LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, newChild, false);
-  if (!rootRef.isAllocationFailure()) {
-    m_layoutRef = newChild.childAtIndex(0);
-    ((LayoutRef *)&newChild)->collapseSiblings(this);
-  } else {
-    m_layoutRef = rootRef;
-  }
+  m_layoutRef = newChild.childAtIndex(0);
+  ((LayoutRef *)&newChild)->collapseSiblings(this);
 }
 
 void LayoutCursor::addEmptyPowerLayout() {
   VerticalOffsetLayoutRef offsetLayout = VerticalOffsetLayoutRef(EmptyLayoutRef(), VerticalOffsetLayoutNode::Type::Superscript);
-  LayoutRef rootRef = m_layoutRef.root();
   privateAddEmptyPowerLayout(offsetLayout);
-  if (!rootRef.isAllocationFailure()) {
-    m_layoutRef = offsetLayout.childAtIndex(0);
-  } else {
-    m_layoutRef = rootRef;
-  }
+  m_layoutRef = offsetLayout.childAtIndex(0);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout() {
@@ -138,13 +118,8 @@ void LayoutCursor::addEmptyTenPowerLayout() {
       VerticalOffsetLayoutRef(
         emptyLayout,
         VerticalOffsetLayoutNode::Type::Superscript));
-  LayoutRef rootRef = m_layoutRef.root();
   m_layoutRef.addSibling(this, sibling, false);
-  if (!rootRef.isAllocationFailure()) {
-    m_layoutRef = emptyLayout;
-  } else {
-    m_layoutRef = rootRef;
-  }
+  m_layoutRef = emptyLayout;
 }
 
 void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
@@ -213,10 +188,9 @@ void LayoutCursor::insertText(const char * text) {
 }
 
 void LayoutCursor::addLayoutAndMoveCursor(LayoutRef l) {
-  LayoutRef rootRef = m_layoutRef.root();
   bool layoutWillBeMerged = l.isHorizontal();
   m_layoutRef.addSibling(this, l, true);
-  if (!rootRef.isAllocationFailure() && !layoutWillBeMerged) {
+  if (!layoutWillBeMerged) {
     l.collapseSiblings(this);
   }
 }
@@ -289,9 +263,6 @@ bool LayoutCursor::baseForNewPowerLayout() {
 }
 
 bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
-  if (m_layoutRef.isAllocationFailure()) {
-    return false;
-  }
   /* Find Empty layouts adjacent to the cursor: Check the pointed layout and the
    * equivalent cursor positions */
   LayoutRef adjacentEmptyLayout;

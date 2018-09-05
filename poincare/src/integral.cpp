@@ -1,4 +1,5 @@
 #include <poincare/integral.h>
+#include <poincare/complex.h>
 #include <poincare/integral_layout_node.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/undefined.h>
@@ -7,12 +8,6 @@
 #include <stdlib.h>
 
 namespace Poincare {
-
-IntegralNode * IntegralNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<IntegralNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 int IntegralNode::polynomialDegree(char symbolName) const {
   if (symbolName == 'x') {
@@ -193,7 +188,7 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Cont
 Expression Integral::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

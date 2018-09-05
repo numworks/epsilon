@@ -54,31 +54,13 @@ void Calculation::setContent(const char * c, Context * context, Expression ansEx
 KDCoordinate Calculation::height(Context * context) {
   if (m_height < 0) {
     LayoutRef inputLayout = createInputLayout();
-    if (inputLayout.isAllocationFailure()) {
-      /* If there is not enough tree pool space to create the layout, return a
-       * default height. Do not store it in m_height in case some memory gets
-       * freed afterwards. */
-      return k_heightComputationFailureHeight;
-    }
     KDCoordinate inputHeight = inputLayout.layoutSize().height();
     LayoutRef approximateLayout = createApproximateOutputLayout(context);
-    if (approximateLayout.isAllocationFailure()) {
-      /* If there is not enough tree pool space to create the layout, return a
-       * default height. Do not store it in m_height in case some memory gets
-       * freed afterwards. */
-      return k_heightComputationFailureHeight;
-    }
     KDCoordinate approximateOutputHeight = approximateLayout.layoutSize().height();
     if (shouldOnlyDisplayApproximateOutput(context)) {
       m_height = inputHeight+approximateOutputHeight;
     } else {
       LayoutRef exactLayout = createExactOutputLayout(context);
-      if (exactLayout.isAllocationFailure()) {
-        /* If there is not enough tree pool space to create the layout, return a
-         * default height. Do not store it in m_height in case some memory gets
-         * freed afterwards. */
-        return k_heightComputationFailureHeight;
-      }
       KDCoordinate exactOutputHeight = exactLayout.layoutSize().height();
       KDCoordinate outputHeight = max(exactLayout.baseline(), approximateLayout.baseline()) + max(exactOutputHeight-exactLayout.baseline(), approximateOutputHeight-approximateLayout.baseline());
       m_height = inputHeight + outputHeight;

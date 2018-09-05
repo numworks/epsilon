@@ -18,12 +18,7 @@ TreeByReference TreeByReference::clone() const {
   /* TODO Remove ? if (isUninitialized()) {
     return TreeByReference();
   }*/
-  TreeNode * myNode = node();
-  if (myNode->isAllocationFailure()) {
-    int allocationFailureNodeId = myNode->allocationFailureNodeIdentifier();
-    return TreeByReference(TreePool::sharedPool()->node(allocationFailureNodeId));
-  }
-  TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(myNode);
+  TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(node());
   nodeCopy->deleteParentIdentifier();
   return TreeByReference(nodeCopy);
 }
@@ -32,9 +27,6 @@ TreeByReference TreeByReference::clone() const {
 
 void TreeByReference::replaceWithInPlace(TreeByReference t) {
   assert(!isUninitialized());
-  if (isAllocationFailure()) {
-    return;
-  }
   TreeByReference p = parent();
   if (!p.isUninitialized()) {
     p.replaceChildInPlace(*this, t);
@@ -50,21 +42,10 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
   }
 
   assert(!isUninitialized());
-  if (isAllocationFailure()) {
-    return;
-  }
-  if (newChild.isAllocationFailure()) {
-    replaceWithAllocationFailureInPlace(numberOfChildren());
-    return;
-  }
 
   // If the new node is static, copy it in the pool and add the copy
   if (newChild.isStatic()) {
     TreeByReference newT = TreeByReference(TreePool::sharedPool()->deepCopy(newChild.node()));
-    if (newT.isAllocationFailure()) {
-      replaceWithAllocationFailureInPlace(numberOfChildren());
-      return;
-    }
     replaceChildInPlace(oldChild, newT);
     return;
   }
@@ -75,9 +56,6 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
   // Move the new child
   assert(newChild.isGhost() || newChild.parent().isUninitialized());
   TreePool::sharedPool()->move(oldChild.node(), newChild.node(), newChild.numberOfChildren());
-  /* We could have moved the new node to oldChild.node()->nextSibling(), but
-   * nextSibling is not computed correctly if we inserted an
-   * AllocationFailureNode next to newChild. */
   newChild.node()->retain();
   newChild.setParentIdentifier(identifier());
 
@@ -88,61 +66,9 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
 }
 
 void TreeByReference::replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild) {
-  if (oldChildIndex < 0 || oldChildIndex >= numberOfChildren()) {
-    /* The only case where the index might be out of range is when a tree has
-     * become an allocation failure, in which case we need to escape the invalid
-     * child removal. */
-    assert(isAllocationFailure());
-    return;
-  }
+  assert(oldChildIndex >= 0 && oldChildIndex < numberOfChildren());
   TreeByReference oldChild = childAtIndex(oldChildIndex);
   replaceChildInPlace(oldChild, newChild);
-}
-
-void TreeByReference::replaceWithAllocationFailureInPlace(int currentNumberOfChildren) {
-  if (isAllocationFailure()) {
-    return;
-  }
-  assert(!isUninitialized());
-  TreeByReference p = parent();
-  bool hasParent = !p.isUninitialized();
-  int indexInParentNode = hasParent ? p.indexOfChild(*this) : -1;
-  int currentRetainCount = nodeRetainCount();
-  TreeNode * staticAllocFailNode = node()->failedAllocationStaticNode();
-
-  // Release all children and delete the node in the pool
-  deleteParentIdentifierInChildren();
-  TreePool::sharedPool()->removeChildrenAndDestroy(node(), currentNumberOfChildren);
-  /* WARNING: If we called "p.decrementNumberOfChildren()" here, the number of
-   * children of the parent layout would be:
-   * -> numberOfChildren() for "dynamic trees" that have a m_numberOfChildren
-   * variable (such as HorizontalLayout)
-   * -> numberOfChildren() - 1 for "static trees" that have a fixed number of
-   * children (such as IntegralLayout)
-   *
-   * By not decrementing the parent's number of children here, we now that it
-   * has (numberOfChildren() - 1) children. */
-
-  /* Create an allocation failure node with the previous node id. We know
-   * there is room in the pool as we deleted the previous node and an
-   * AllocationFailure nodes size is smaller or equal to any other node size.*/
-  //TODO static assert that the size is smaller
-  TreeNode * newAllocationFailureNode = TreePool::sharedPool()->deepCopy(staticAllocFailNode);
-  newAllocationFailureNode->rename(m_identifier, true);
-  newAllocationFailureNode->retain();
-  if (hasParent) {
-    assert(indexInParentNode >= 0);
-    /* Set the refCount to previousRefCount-1 because the previous parent is
-     * no longer retaining the node. When we add this node to the parent, it
-     * will retain it and increment the retain count. */
-    newAllocationFailureNode->setReferenceCounter(currentRetainCount - 1);
-    p.addChildAtIndexInPlace(TreeByReference(newAllocationFailureNode), indexInParentNode, p.numberOfChildren() - 1);
-    p.decrementNumberOfChildren();
-    /* We decrement here the parent's number of children, as we did not do it
-     * before, see WARNING. */
-  } else {
-    newAllocationFailureNode->setReferenceCounter(currentRetainCount);
-  }
 }
 
 void TreeByReference::replaceChildWithGhostInPlace(TreeByReference t) {
@@ -203,24 +129,11 @@ void TreeByReference::log() const {
 void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) {
   assert(!isUninitialized());
   assert(!t.isUninitialized());
-
-  if (isAllocationFailure()) {
-    return;
-  }
-  if (t.isAllocationFailure()) {
-    replaceWithAllocationFailureInPlace(currentNumberOfChildren);
-    return;
-  }
-
   assert(index >= 0 && index <= currentNumberOfChildren);
 
   // If the new node is static, copy it in the pool and add the copy
   if (t.isStatic()) {
     TreeByReference newT = TreeByReference(TreePool::sharedPool()->deepCopy(t.node()));
-    if (newT.isAllocationFailure()) {
-      replaceWithAllocationFailureInPlace(currentNumberOfChildren);
-      return;
-    }
     addChildAtIndexInPlace(newT, index, currentNumberOfChildren);
     return;
   }
@@ -246,13 +159,7 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
 
 void TreeByReference::removeChildAtIndexInPlace(int i) {
   assert(!isUninitialized());
-  if (i < 0 || i >= numberOfChildren()) {
-    /* The only case where the index might be out of range is when a tree has
-     * become an allocation failure, in which case we need to escape the invalid
-     * child removal. */
-    assert(isAllocationFailure());
-    return;
-  }
+  assert(i >= 0 && i < numberOfChildren());
   TreeByReference t = childAtIndex(i);
   removeChildInPlace(t, t.numberOfChildren());
 }

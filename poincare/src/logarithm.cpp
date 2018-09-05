@@ -17,13 +17,6 @@
 
 namespace Poincare {
 
-template<int I>
-LogarithmNode<I> * LogarithmNode<I>::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<LogarithmNode<I> > failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 template<>
 LayoutReference LogarithmNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, "log");
@@ -67,7 +60,7 @@ template<typename T> Evaluation<T> LogarithmNode<2>::templatedApproximate(Contex
 Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit){
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }
@@ -86,7 +79,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
     return *this;
   }
   Expression f = simpleShallowReduce(context, angleUnit);
-  if (f.isUndefinedOrAllocationFailure()) {
+  if (f.isUndefined()) {
     return f;
   }
 
@@ -257,8 +250,6 @@ Expression Logarithm::shallowBeautify(Context & context, Preferences::AngleUnit 
   return *this;
 }
 
-template LogarithmNode<1> * LogarithmNode<1>::FailedAllocationStaticNode();
-template LogarithmNode<2> * LogarithmNode<2>::FailedAllocationStaticNode();
 template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;
 template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(Poincare::Context&, Poincare::Preferences::AngleUnit) const;

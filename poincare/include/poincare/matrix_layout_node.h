@@ -1,7 +1,6 @@
 #ifndef POINCARE_MATRIX_LAYOUT_NODE_H
 #define POINCARE_MATRIX_LAYOUT_NODE_H
 
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/grid_layout_node.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_reference.h>
@@ -30,8 +29,6 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // TreeNode
-  static MatrixLayoutNode * FailedAllocationStaticNode();
-  MatrixLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(MatrixLayoutNode); }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
@@ -55,16 +52,6 @@ private:
   // LayoutNode
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) override;
   void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
-};
-
-class AllocationFailureMatrixLayoutNode : public AllocationFailureLayoutNode<MatrixLayoutNode> {
-  void setNumberOfRows(int numberOfRows) override {}
-  void setNumberOfColumns(int numberOfColumns) override {}
-protected:
-  void addEmptyRow(EmptyLayoutNode::Color color) override {}
-  void addEmptyColumn(EmptyLayoutNode::Color color) override {}
-  void deleteRowAtIndex(int index) override {}
-  void deleteColumnAtIndex(int index) override {}
 };
 
 class MatrixLayoutRef : public GridLayoutRef {

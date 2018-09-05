@@ -7,8 +7,6 @@ namespace Poincare {
 
 class ConfidenceIntervalNode : public ExpressionNode {
 public:
-  static ConfidenceIntervalNode * FailedAllocationStaticNode();
-  ConfidenceIntervalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(ConfidenceIntervalNode); }
@@ -39,8 +37,6 @@ private:
 
 class SimplePredictionIntervalNode : public ConfidenceIntervalNode {
 public:
-  static SimplePredictionIntervalNode * FailedAllocationStaticNode();
-  SimplePredictionIntervalNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 private:
   const char * name() const override { return "prediction"; }
 };

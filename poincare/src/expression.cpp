@@ -166,13 +166,7 @@ bool Expression::getLinearCoefficients(char * variables, Expression coefficients
 
 Expression Expression::defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression childI = childAtIndex(i);
-    if (childI.isAllocationFailure()) {
-      Expression result = Expression(UndefinedNode::FailedAllocationStaticNode());
-      replaceWithInPlace(result);
-      return result;
-    }
-    if (childI.type() == ExpressionNode::Type::Undefined) {
+    if (childAtIndex(i).type() == ExpressionNode::Type::Undefined) {
       Expression result = Undefined();
       replaceWithInPlace(result);
       return result;

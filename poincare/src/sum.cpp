@@ -10,12 +10,6 @@ extern "C" {
 
 namespace Poincare {
 
-SumNode * SumNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<SumNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 
 LayoutRef SumNode::createSequenceLayout(LayoutRef argumentLayout, LayoutRef subscriptLayout, LayoutRef superscriptLayout) const {
   return SumLayoutRef(argumentLayout, subscriptLayout, superscriptLayout);

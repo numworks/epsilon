@@ -4,12 +4,6 @@
 
 namespace Poincare {
 
-HyperbolicArcTangentNode * HyperbolicArcTangentNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<HyperbolicArcTangentNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 template<typename T>
 Complex<T> HyperbolicArcTangentNode::computeOnComplex(const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::atanh(c);

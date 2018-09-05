@@ -1,5 +1,4 @@
 #include <poincare/integral_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/char_layout_node.h>
 #include <poincare/horizontal_layout_node.h>
 #include <poincare/serialization_helper.h>
@@ -23,12 +22,6 @@ const uint8_t bottomSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayo
   {0xFF, 0x00, 0xFF, 0xFF},
   {0xFF, 0xFF, 0x00, 0x00},
 };
-
-IntegralLayoutNode * IntegralLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<IntegralLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Left
@@ -140,15 +133,10 @@ void IntegralLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldReco
 void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (cursor->isEquivalentTo(LayoutCursor(integrandLayout(), LayoutCursor::Position::Left))) {
     // Case: Left of the integrand. Delete the layout, keep the integrand.
-    LayoutRef rootRef = LayoutRef(root());
     LayoutRef thisRef = LayoutRef(this);
     LayoutRef integrand = LayoutRef(integrandLayout());
     thisRef.replaceChildWithGhostInPlace(integrand);
     // WARNING: Do not use "this" afterwards
-    if (rootRef.isAllocationFailure()) {
-      cursor->setLayoutReference(rootRef);
-      return;
-    }
     cursor->setLayoutReference(thisRef.childAtIndex(0));
     cursor->setPosition(LayoutCursor::Position::Left);
     thisRef.replaceWith(integrand, cursor);

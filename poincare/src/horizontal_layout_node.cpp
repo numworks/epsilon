@@ -1,5 +1,4 @@
 #include <poincare/horizontal_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
@@ -7,12 +6,6 @@
 namespace Poincare {
 
 static inline KDCoordinate maxCoordinate(KDCoordinate c1, KDCoordinate c2) { return c1 > c2 ? c1 : c2; }
-
-HorizontalLayoutNode * HorizontalLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<HorizontalLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 // LayoutNode
 
@@ -359,9 +352,6 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
 // HorizontalLayoutRef
 
 void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
-  if (isAllocationFailure()) {
-    return;
-  }
   if (l.isHorizontal()) {
     mergeChildrenAtIndex(HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);
   } else {
@@ -370,9 +360,6 @@ void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool re
 }
 
 void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
-  if (isAllocationFailure()) {
-    return;
-  }
   /* Remove any empty child that would be next to the inserted layout.
    * If the layout to insert starts with a vertical offset layout, any empty
    * layout child directly on the left of the inserted layout (if there is one)
@@ -395,19 +382,12 @@ void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index,
   mergeChildrenAtIndexInPlace(h, newIndex);
 
   if (cursor != nullptr) {
-    if (!isAllocationFailure()) {
-      cursor->setLayoutReference(nextPointedLayout);
-      cursor->setPosition(nextPosition);
-    } else {
-      cursor->setLayoutReference(*this);
-    }
+    cursor->setLayoutReference(nextPointedLayout);
+    cursor->setPosition(nextPosition);
   }
 }
 
 void HorizontalLayoutRef::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor) {
-  if (isAllocationFailure()) {
-    return;
-  }
   int childrenCount = currentNumberOfChildren == nullptr ? numberOfChildren() : *currentNumberOfChildren;
   assert(*index >= 0 && *index <= childrenCount);
   /* If empty, remove the child that would be on the right of the inserted

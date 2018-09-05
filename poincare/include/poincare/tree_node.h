@@ -39,11 +39,6 @@ public:
   // Ghost
   virtual bool isGhost() const { return false; }
 
-  // Allocation failure
-  virtual bool isAllocationFailure() const { return false; }
-  virtual TreeNode * failedAllocationStaticNode() = 0;
-  int allocationFailureNodeIdentifier() { return failedAllocationStaticNode()->identifier(); }
-
   // Node operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
   void retain() { m_referenceCounter++; } // It doesn't matter if the node is static

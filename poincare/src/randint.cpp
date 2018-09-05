@@ -1,6 +1,6 @@
 #include <poincare/randint.h>
+#include <poincare/complex.h>
 #include <poincare/random.h>
-#include <poincare/allocation_failure_expression_node.h>
 #include <ion.h>
 
 extern "C" {
@@ -9,12 +9,6 @@ extern "C" {
 #include <cmath>
 
 namespace Poincare {
-
-RandintNode * RandintNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<RandintNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 LayoutReference RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, name());

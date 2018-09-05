@@ -7,22 +7,13 @@
 
 namespace Poincare {
 
-MatrixLayoutNode * MatrixLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureMatrixLayoutNode failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 // MatrixLayoutNode
 
 void MatrixLayoutNode::addGreySquares() {
   if (!hasGreySquares()) {
     LayoutRef thisRef(this);
     addEmptyRow(EmptyLayoutNode::Color::Grey);
-    // WARNING: the layout might have become an AllocationFailure
-    if (!thisRef.isAllocationFailure()) {
-      addEmptyColumn(EmptyLayoutNode::Color::Grey);
-    }
+    addEmptyColumn(EmptyLayoutNode::Color::Grey);
   }
 }
 
@@ -55,14 +46,8 @@ void MatrixLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomp
     /* Case: Right. Add the grey squares to the matrix, then move to the bottom
      * right non empty nor grey child. */
     assert(!hasGreySquares());
-    LayoutRef rootRef(root());
     addGreySquares();
-    // WARNING: the layout might have become an AllocationFailure
     *shouldRecomputeLayout = true;
-    if (rootRef.isAllocationFailure()) {
-      cursor->setLayoutReference(rootRef);
-      return;
-    }
     LayoutNode * lastChild = childAtIndex((m_numberOfColumns-1)*(m_numberOfRows-1));
     assert(!lastChild->isUninitialized());
     cursor->setLayoutNode(lastChild);
@@ -77,14 +62,8 @@ void MatrixLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecom
   {
     // Case: Left. Add grey squares to the matrix, then go to its first entry.
     assert(!hasGreySquares());
-    LayoutRef rootRef(root());
     addGreySquares();
-    // WARNING: the layout might have become an AllocationFailure
     *shouldRecomputeLayout = true;
-    if (rootRef.isAllocationFailure()) {
-      cursor->setLayoutReference(rootRef);
-      return;
-    }
     assert(m_numberOfColumns*m_numberOfRows >= 1);
     assert(!childAtIndex(0)->isUninitialized());
     cursor->setLayoutNode(childAtIndex(0));
@@ -172,7 +151,7 @@ void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutC
     }
   }
   GridLayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, equivalentPositionVisited);
-  if (cursor->isDefined() && shouldRemoveGreySquares && !thisRef.isAllocationFailure()) {
+  if (cursor->isDefined() && shouldRemoveGreySquares) {
     assert(thisRef.hasGreySquares());
     thisRef.removeGreySquares();
     *shouldRecomputeLayout = true;
@@ -183,7 +162,6 @@ void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutC
 
 void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
   assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
-  LayoutRef rootRef = LayoutRef(root());
   bool shouldAddNewRow = childIsBottomOfGrid(index); // We need to compute this boolean before modifying the layout
   int correspondingRow = rowAtChildIndex(index);
   if (childIsRightOfGrid(index)) {
@@ -202,10 +180,6 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
     }
     // Add a column of grey EmptyLayouts on the right.
     addEmptyColumn(EmptyLayoutNode::Color::Grey);
-    // WARNING: the layout might have become an AllocationFailure
-  }
-  if (rootRef.isAllocationFailure()) {
-    return;
   }
   if (shouldAddNewRow) {
     // Color the grey EmptyLayouts of the row in yellow.
@@ -222,7 +196,6 @@ void MatrixLayoutNode::newRowOrColumnAtIndex(int index) {
     }
     // Add a row of grey EmptyLayouts at the bottom.
     addEmptyRow(EmptyLayoutNode::Color::Grey);
-    // WARNING: the layout might have become an AllocationFailure
   }
 }
 

@@ -10,9 +10,6 @@ namespace Poincare {
 
 class SineNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static SineNode * FailedAllocationStaticNode();
-  SineNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(SineNode); }

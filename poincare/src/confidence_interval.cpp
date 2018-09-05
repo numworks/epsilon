@@ -11,12 +11,6 @@
 
 namespace Poincare {
 
-ConfidenceIntervalNode * ConfidenceIntervalNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<ConfidenceIntervalNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference ConfidenceIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ConfidenceInterval(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -44,16 +38,10 @@ Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Pre
   return MatrixComplex<T>(operands, 1, 2);
 }
 
-SimplePredictionIntervalNode * SimplePredictionIntervalNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<SimplePredictionIntervalNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

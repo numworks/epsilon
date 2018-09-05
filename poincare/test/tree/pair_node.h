@@ -8,12 +8,7 @@ namespace Poincare {
 
 class PairNode : public TreeNode {
 public:
-  static PairNode * FailedAllocationStaticNode();
-  virtual PairNode * failedAllocationStaticNode() override {
-    return PairNode::FailedAllocationStaticNode();
-  }
   TreeNode * uninitializedStaticNode() const override;
-
   virtual size_t size() const override { return sizeof(PairNode); }
   virtual int numberOfChildren() const override { return 2; }
 #if POINCARE_TREE_LOG
@@ -29,22 +24,10 @@ public:
 
   size_t size() const override { return sizeof(UninitializedPairNode); }
   bool isUninitialized() const override { return true; }
-  PairNode * failedAllocationStaticNode() override { assert(false); return nullptr; } //TODO ?
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
     stream << "UninitializedPairNode";
-  }
-#endif
-};
-
-class AllocationFailurePairNode : public PairNode {
-  size_t size() const override { return sizeof(AllocationFailurePairNode); }
-  bool isAllocationFailure() const override { return true; }
-  int numberOfChildren() const override { return 0; }
-#if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
-    stream << "AllocationFailurePair";
   }
 #endif
 };

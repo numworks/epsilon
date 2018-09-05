@@ -121,13 +121,8 @@ void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     // Case: Left of the argument. Delete the layout, keep the argument.
     LayoutRef argument = LayoutRef(argumentLayout());
     LayoutRef thisRef = LayoutRef(this);
-    LayoutRef rootRef = LayoutRef(root());
     thisRef.replaceChildWithGhostInPlace(argument);
     // WARNING: Do not call "this" afterwards
-    if (rootRef.isAllocationFailure()) {
-      cursor->setLayoutReference(rootRef);
-      return;
-    }
     cursor->setLayoutReference(thisRef.childAtIndex(0));
     thisRef.replaceWith(argument, cursor);
     return;

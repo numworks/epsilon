@@ -8,8 +8,6 @@ namespace Poincare {
 
 class LeastCommonMultipleNode : public ExpressionNode  {
 public:
-  static LeastCommonMultipleNode * FailedAllocationStaticNode();
-  LeastCommonMultipleNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(LeastCommonMultipleNode); }

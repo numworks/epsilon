@@ -22,13 +22,6 @@
 
 namespace Poincare {
 
-// Allocation Failure
-PowerNode * PowerNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<PowerNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 // Properties
 ExpressionNode::Sign PowerNode::sign() const {
   if (Expression::shouldStopProcessing()) {
@@ -238,7 +231,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
 
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

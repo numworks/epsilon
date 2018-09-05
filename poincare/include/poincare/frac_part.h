@@ -8,9 +8,6 @@ namespace Poincare {
 
 class FracPartNode : public ExpressionNode  {
 public:
-  // Allocation Failure
-  static FracPartNode * FailedAllocationStaticNode();
-  FracPartNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(FracPartNode); }

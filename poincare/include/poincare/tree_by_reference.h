@@ -46,7 +46,6 @@ public:
 
   bool isGhost() const { return node()->isGhost(); }
   bool isUninitialized() const { return node()->isUninitialized(); }
-  bool isAllocationFailure() const { return node()->isAllocationFailure(); }
   bool isStatic() const { return node()->isStatic(); }
 
 
@@ -70,7 +69,6 @@ public:
   void replaceWithInPlace(TreeByReference t);
   void replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild);
   void replaceChildAtIndexInPlace(int oldChildIndex, TreeByReference newChild);
-  void replaceWithAllocationFailureInPlace(int currentNumberOfChildren);
   void replaceChildAtIndexWithGhostInPlace(int index) {
     assert(index >= 0 && index < numberOfChildren());
     replaceChildWithGhostInPlace(childAtIndex(index));

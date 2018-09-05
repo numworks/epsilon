@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/multiplication.h>
-#include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
 
@@ -15,8 +14,6 @@ public:
     m_numberOfRows(0),
     m_numberOfColumns(0) {}
 
-  static MatrixNode * FailedAllocationStaticNode();
-  MatrixNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   int numberOfRows() const { return m_numberOfRows; }
   int numberOfColumns() const { return m_numberOfColumns; }
@@ -56,11 +53,6 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const;
   int m_numberOfRows;
   int m_numberOfColumns;
-};
-
-class AllocationFailureMatrixNode : public AllocationFailureExpressionNode<MatrixNode> {
-  void setNumberOfRows(int rows) override {}
-  void setNumberOfColumns(int columns) override {}
 };
 
 class Matrix : public Expression {

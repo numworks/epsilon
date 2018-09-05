@@ -22,8 +22,6 @@ class FloatNode : public NumberNode {
 public:
   FloatNode() : m_value(0.0) {}
 
-  static FloatNode * FailedAllocationStaticNode();
-  FloatNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   void setFloat(T a) { m_value = a; }
   T value() const { return m_value; }

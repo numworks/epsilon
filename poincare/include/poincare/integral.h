@@ -7,8 +7,6 @@ namespace Poincare {
 
 class IntegralNode : public ExpressionNode {
 public:
-  static IntegralNode * FailedAllocationStaticNode();
-  IntegralNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(IntegralNode); }

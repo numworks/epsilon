@@ -1,4 +1,5 @@
 #include <poincare/approximation_helper.h>
+#include <poincare/expression.h>
 #include <poincare/evaluation.h>
 #include <poincare/matrix_complex.h>
 #include <cmath>
@@ -28,9 +29,7 @@ template <typename T> std::complex<T> ApproximationHelper::TruncateRealOrImagina
 template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexCompute<T> compute) {
   assert(expression->numberOfChildren() == 1);
   Evaluation<T> input = expression->childAtIndex(0)->approximate(T(), context, angleUnit);
-  if (input.node()->type() == EvaluationNode<T>::Type::AllocationFailure) {
-    return Complex<T>::Undefined();
-  } else if (input.node()->type() == EvaluationNode<T>::Type::Complex) {
+  if (input.node()->type() == EvaluationNode<T>::Type::Complex) {
     const ComplexNode<T> * c = static_cast<ComplexNode<T> *>(input.node());
     return compute(*c, angleUnit);
   } else {
@@ -51,9 +50,6 @@ template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const Expressi
   for (int i = 1; i < expression->numberOfChildren(); i++) {
     Evaluation<T> intermediateResult;
     Evaluation<T> nextOperandEvaluation = expression->childAtIndex(i)->approximate(T(), context, angleUnit);
-    if (result.node()->type() == EvaluationNode<T>::Type::AllocationFailure || nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::AllocationFailure) {
-      return Complex<T>::Undefined();
-    }
     if (result.node()->type() == EvaluationNode<T>::Type::Complex && nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::Complex) {
       const ComplexNode<T> * c = static_cast<const ComplexNode<T> *>(result.node());
       const ComplexNode<T> * d = static_cast<const ComplexNode<T> *>(nextOperandEvaluation.node());

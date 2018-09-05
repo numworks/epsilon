@@ -17,12 +17,6 @@
 
 namespace Poincare {
 
-MultiplicationNode * MultiplicationNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<MultiplicationNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 ExpressionNode::Sign MultiplicationNode::sign() const {
   if (numberOfChildren() == 0) {
     return Sign::Unknown;
@@ -257,7 +251,7 @@ Expression Multiplication::denominator(Context & context, Preferences::AngleUnit
 Expression Multiplication::privateShallowReduce(Context & context, Preferences::AngleUnit angleUnit, bool shouldExpand, bool canBeInterrupted) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);;
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

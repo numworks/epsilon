@@ -12,9 +12,6 @@ class Power;
 
 class PowerNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static PowerNode * FailedAllocationStaticNode();
-  PowerNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(PowerNode); }

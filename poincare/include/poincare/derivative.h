@@ -10,9 +10,6 @@ namespace Poincare {
 
 class DerivativeNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static DerivativeNode * FailedAllocationStaticNode();
-  DerivativeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(DerivativeNode); }

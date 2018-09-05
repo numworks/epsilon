@@ -1,5 +1,4 @@
 #include <poincare/equal.h>
-#include <poincare/allocation_failure_expression_node.h>
 #include <poincare/rational.h>
 #include <poincare/addition.h>
 #include <poincare/division.h>
@@ -19,12 +18,6 @@ extern "C" {
 #include <limits.h>
 }
 namespace Poincare {
-
-EqualNode * EqualNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<EqualNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 Expression EqualNode::standardEquation(Context & context, Preferences::AngleUnit angleUnit) const {
   Expression sub = Subtraction(Expression(childAtIndex(0)).clone(), Expression(childAtIndex(1)).clone());
@@ -55,7 +48,7 @@ Evaluation<T> EqualNode::templatedApproximate(Context& context, Preferences::Ang
 Expression Equal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

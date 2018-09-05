@@ -29,8 +29,6 @@ public:
   }
 
   // TreeNode
-  static CondensedSumLayoutNode * FailedAllocationStaticNode();
-  CondensedSumLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(CondensedSumLayoutNode); }
   int numberOfChildren() const override { return 3; }
 #if POINCARE_TREE_LOG

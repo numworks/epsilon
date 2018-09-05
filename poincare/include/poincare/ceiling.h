@@ -8,9 +8,6 @@ namespace Poincare {
 
 class CeilingNode : public ExpressionNode  {
 public:
-  // Allocation Failure
-  static CeilingNode * FailedAllocationStaticNode();
-  CeilingNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(CeilingNode); }

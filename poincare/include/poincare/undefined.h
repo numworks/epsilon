@@ -2,14 +2,11 @@
 #define POINCARE_UNDEFINED_H
 
 #include <poincare/number.h>
-#include <poincare/allocation_failure_expression_node.h>
 
 namespace Poincare {
 
 class UndefinedNode : public NumberNode {
 public:
-  static UndefinedNode * FailedAllocationStaticNode();
-  UndefinedNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(UndefinedNode); }

@@ -284,14 +284,12 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
 
 template<typename U>
 Expression Expression::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const {
-  Evaluation<U> e = node()->approximate(U(), context, angleUnit); //TODO approximateToEval
-  return e.complexToExpression(complexFormat);
+  return approximateToEvaluation<U>(context, angleUnit).complexToExpression(complexFormat);
 }
 
 template<typename U>
 U Expression::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<U> evaluation = node()->approximate(U(), context, angleUnit);//TODO approximateToEval
-  return evaluation.toScalar();
+  return approximateToEvaluation<U>(context, angleUnit).toScalar();
 }
 
 template<typename U>

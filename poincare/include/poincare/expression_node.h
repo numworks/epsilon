@@ -155,8 +155,6 @@ public:
   ExpressionNode * childAtIndex(int i) const override { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }
   virtual void setChildrenInPlace(Expression other);
 
-  // TreeNode
-  TreeNode * uninitializedStaticNode() const override;
 protected:
   /* Hierarchy */
   ExpressionNode * parent() const override { return static_cast<ExpressionNode *>(TreeNode::parent()); }

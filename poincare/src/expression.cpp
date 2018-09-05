@@ -4,7 +4,6 @@
 #include <poincare/opposite.h>
 #include <poincare/undefined.h>
 #include <poincare/symbol.h>
-#include <poincare/uninitialized_expression_node.h>
 #include <poincare/variable_context.h>
 #include <ion.h>
 #include <cmath>
@@ -21,7 +20,6 @@ namespace Poincare {
 #include <stdio.h>
 
 /* Constructor & Destructor */
-Expression::Expression() : Expression(UninitializedExpressionNode::UninitializedExpressionStaticNodeIdentifier()) {}
 
 Expression Expression::parse(char const * string) {
   if (string[0] == 0) {

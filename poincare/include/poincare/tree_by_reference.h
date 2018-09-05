@@ -41,11 +41,11 @@ public:
   TreeByReference clone() const;
 
   int identifier() const { return m_identifier; }
-  TreeNode * node() const { return TreePool::sharedPool()->node(m_identifier); }
+  TreeNode * node() const { assert(m_identifier != TreePool::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
   int nodeRetainCount() const { return node()->retainCount(); }
 
   bool isGhost() const { return node()->isGhost(); }
-  bool isUninitialized() const { return node()->isUninitialized(); }
+  bool isUninitialized() const { return m_identifier == TreePool::NoNodeIdentifier; }
   bool isStatic() const { return node()->isStatic(); }
 
 
@@ -90,7 +90,7 @@ protected:
     assert(node != nullptr);
     setIdentifierAndRetain(node->identifier());
   }
-  TreeByReference(int nodeIndentifier = -1) : m_identifier(nodeIndentifier) {}
+  TreeByReference(int nodeIndentifier = TreePool::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;
     assert(node() != nullptr);

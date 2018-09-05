@@ -20,10 +20,7 @@ public:
   void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
-  LayoutNode * layoutToPointWhenInserting() override {
-    assert(!lowerBoundLayout()->isUninitialized());
-    return lowerBoundLayout();
-  }
+  LayoutNode * layoutToPointWhenInserting() override { return lowerBoundLayout(); }
   char XNTChar() const override { return 'n'; }
 
   // TreeNode

@@ -86,7 +86,7 @@ template<typename T>
 public:
   static bool isExpression() { return true; }
   /* Constructor & Destructor */
-  Expression();
+  Expression() : TreeByReference() {}
   virtual ~Expression() = default;
   Expression clone() const { TreeByReference c = TreeByReference::clone(); return static_cast<Expression&>(c); }
   static Expression parse(char const * string);

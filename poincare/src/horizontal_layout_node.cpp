@@ -14,7 +14,7 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
     if (cursor->position() == LayoutCursor::Position::Left) {
       // Case: Left. Ask the parent.
       LayoutNode * parentNode = parent();
-      if (!parentNode->isUninitialized()) {
+      if (parentNode != nullptr) {
         parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
       }
       return;
@@ -37,7 +37,7 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
   assert(childIndex >= 0);
   if (childIndex == 0) {
     // Case: the child is the leftmost. Ask the parent.
-    if (!parent()->isUninitialized()) {
+    if (parent() != nullptr) {
       cursor->setLayoutNode(this);
       return cursor->moveLeft(shouldRecomputeLayout);
     }
@@ -54,7 +54,7 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
     if (cursor->position() == LayoutCursor::Position::Right) {
       // Case: Right. Ask the parent.
       LayoutNode * parentNode = parent();
-      if (!parentNode->isUninitialized()) {
+      if (parentNode != nullptr) {
         parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
       }
       return;
@@ -66,7 +66,7 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
     if (childrenCount == 0) {
       // If there are no children, go Right and ask the parent
       cursor->setPosition(LayoutCursor::Position::Right);
-      if (!parentNode->isUninitialized()) {
+      if (parentNode != nullptr) {
         parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
       }
       return;
@@ -74,7 +74,6 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
     /* If there is at least one child, set the cursor to the first child and
      * move it Right */
     LayoutNode * firstChild = childAtIndex(0);
-    assert(!firstChild->isUninitialized());
     cursor->setLayoutNode(firstChild);
     return firstChild->moveCursorRight(cursor, shouldRecomputeLayout);
   }
@@ -86,7 +85,7 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
   if (childIndex == numberOfChildren() - 1) {
     // Case: the child is the rightmost. Ask the parent.
     LayoutNode * parentNode = parent();
-    if (!parentNode->isUninitialized()) {
+    if (parentNode != nullptr) {
       cursor->setLayoutNode(this);
       parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
     }
@@ -129,7 +128,7 @@ LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {
 
 void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode * p = parent();
-  if (p->isUninitialized()
+  if (p == nullptr
       && cursor->layoutNode() == this
       && (cursor->position() == LayoutCursor::Position::Left
         || numberOfChildren() == 0))
@@ -242,7 +241,7 @@ bool HorizontalLayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor
   if (!force && numberOfChildren() == 1) {
     assert(childAtIndex(0) == l);
     LayoutNode * p = parent();
-    if (!p->isUninitialized()) {
+    if (p != nullptr) {
       LayoutRef(p).removeChild(HorizontalLayoutRef(this), cursor);
       // WARNING: Do not call "this" afterwards
       return false;
@@ -288,14 +287,14 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
     /* The old layout was the only horizontal layout child, so if this has a
      * a parent, replace this with the new empty layout. */
     LayoutNode * p = parent();
-    if (!p->isUninitialized()) {
+    if (p != nullptr) {
       thisRef.replaceWith(newChild, cursor);
       // WARNING: do not call "this" afterwards
       return false;
     }
     /* This is the main horizontal layout, the old child is its only child and
      * the new child is Empty: remove the old child and delete the new child. */
-    assert(p->isUninitialized());
+    assert(p == nullptr);
     thisRef.removeChild(oldChild, nullptr);
     // WARNING: do not call "this" afterwards
     if (cursor != nullptr) {

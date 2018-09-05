@@ -7,8 +7,7 @@
 namespace Poincare {
 
 void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (!childLayout()->isUninitialized()
-      && cursor->layoutNode() == childLayout()
+  if (cursor->layoutNode() == childLayout()
       && cursor->position() == LayoutCursor::Position::Left)
   {
     // Case: Left of the operand. Move Left.
@@ -18,22 +17,20 @@ void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Go to the operand.
-    assert(!childLayout()->isUninitialized());
     cursor->setLayoutNode(childLayout());
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
 
 void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   // Case: Right of the operand. Move Right.
-  if (!childLayout()->isUninitialized()
-      && cursor->layoutNode() == childLayout()
+  if (cursor->layoutNode() == childLayout()
       && cursor->position() == LayoutCursor::Position::Right)
   {
     cursor->setLayoutNode(this);
@@ -42,14 +39,13 @@ void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
   assert(cursor->layoutNode() == this);
   // Case: Left. Go to the operand.
   if (cursor->position() == LayoutCursor::Position::Left) {
-    assert(!childLayout()->isUninitialized());
     cursor->setLayoutNode(childLayout());
     return;
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }

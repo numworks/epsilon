@@ -22,10 +22,7 @@ public:
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  LayoutNode * layoutToPointWhenInserting() override {
-    assert(!lowerBoundLayout()->isUninitialized());
-    return lowerBoundLayout();
-  }
+  LayoutNode * layoutToPointWhenInserting() override { return lowerBoundLayout(); }
   char XNTChar() const override { return 'x'; }
 
   // TreeNode

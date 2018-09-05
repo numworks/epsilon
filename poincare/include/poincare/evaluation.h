@@ -31,15 +31,12 @@ public:
   virtual Expression complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
   virtual std::complex<T> trace() const = 0;
   virtual std::complex<T> determinant() const = 0;
-
-  // TreeNode
-  TreeNode * uninitializedStaticNode() const override;
 };
 
 template<typename T>
 class Evaluation : public TreeByReference {
 public:
-  Evaluation();
+  Evaluation() : TreeByReference() {}
   template<class U> explicit operator U() const {
     // See Expression::operator T() for explanations on this operator
     // TODO add assertions to ensure that we cast only to evaluation subclasses
@@ -47,7 +44,7 @@ public:
     return *reinterpret_cast<U *>(const_cast<Evaluation<T> *>(this));
   }
   EvaluationNode<T> * node() const {
-    assert(TreeByReference::node() == nullptr || !TreeByReference::node()->isGhost());
+    assert(!TreeByReference::node()->isGhost());
     return static_cast<EvaluationNode<T> *>(TreeByReference::node());
   }
 

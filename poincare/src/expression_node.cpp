@@ -109,10 +109,6 @@ void ExpressionNode::setChildrenInPlace(Expression other) {
   Expression(this).defaultSetChildrenInPlace(other);
 }
 
-TreeNode * ExpressionNode::uninitializedStaticNode() const {
-  return Expression().node();
-}
-
 Expression ExpressionNode::denominator(Context & context, Preferences::AngleUnit angleUnit) const {
   return Expression();
 }

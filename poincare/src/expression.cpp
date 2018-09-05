@@ -9,7 +9,6 @@
 #include <ion.h>
 #include <cmath>
 #include <float.h>
-#include <setjmp.h>
 
 #include "expression_lexer_parser.h"
 #include "expression_parser.hpp"
@@ -28,19 +27,26 @@ Expression Expression::parse(char const * string) {
   if (string[0] == 0) {
     return Expression();
   }
-  YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
 
-  jmp_buf jumpEnvironment;
-  TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
-  int res = setjmp(jumpEnvironment);
-  if (res != 0) {
-    // There has been an exception, return an uninitialized node
-    TreePool::sharedPool()->resetJumpEnvironment();
-    poincare_expression_yylval.expression = Expression();
-    poincare_expression_yy_delete_buffer(buf);
-    return Expression();
-  }
-  Expression expression;
+  /* The lexer/parser mallocs memory that needs to be freed once the parsing
+   * finishes, even if the parsing was interrupted by a memory exhaustion
+   * exception. We thus create another setjmp/lngjmp routine here to catch
+   * exceptions, delete the malloced memory and restore the previous jump
+   * environment */
+   jmp_buf * previousJumpEnvironment = TreePool::sharedPool()->jumpEnvironment();
+   jmp_buf jumpEnvironment;
+   TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
+   int res = setjmp(jumpEnvironment);
+   if (res != 0) {
+     // There has been an exception. Delete malloced memory and jump.
+     poincare_expression_yylval.expression = Expression();
+     poincare_expression_yy_delete_buffer(buf);
+     TreePool::sharedPool()->resetJumpEnvironment();
+     longjmp(*previousJumpEnvironment, 1);
+   }
+   TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
+   int res = setjmp(jumpEnvironment); YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
+   Expression expression;
   if (poincare_expression_yyparse(&expression) != 0) {
     // Parsing failed because of invalid input or memory exhaustion
     expression = Expression();
@@ -49,7 +55,7 @@ Expression Expression::parse(char const * string) {
    * expression alive if only YYVAL refers to it so we reset YYVAL here. */
   poincare_expression_yylval.expression = Expression();
   poincare_expression_yy_delete_buffer(buf);
-  TreePool::sharedPool()->resetJumpEnvironment();
+  TreePool::sharedPool()->setJumpEnvironment(&previousJumpEnvironment);
   return expression;
 }
 
@@ -226,21 +232,6 @@ bool Expression::isEqualToItsApproximationLayout(Expression approximation, int b
   return equal;
 }
 
-LayoutRef Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  jmp_buf jumpEnvironment;
-  TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
-  int res = setjmp(jumpEnvironment);
-  if (res != 0) {
-    assert(false);
-    // There has been an exception, return an uninitialized layout
-    TreePool::sharedPool()->resetJumpEnvironment();
-    return LayoutRef();
-  }
-  LayoutRef result = node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
-  TreePool::sharedPool()->resetJumpEnvironment();
-  return result;
-}
-
 /* Simplification */
 
 Expression Expression::ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit) {
@@ -293,13 +284,13 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
 
 template<typename U>
 Expression Expression::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const {
-  Evaluation<U> e = node()->approximate(U(), context, angleUnit);
+  Evaluation<U> e = node()->approximate(U(), context, angleUnit); //TODO approximateToEval
   return e.complexToExpression(complexFormat);
 }
 
 template<typename U>
 U Expression::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
-  Evaluation<U> evaluation = node()->approximate(U(), context, angleUnit);
+  Evaluation<U> evaluation = node()->approximate(U(), context, angleUnit);//TODO approximateToEval
   return evaluation.toScalar();
 }
 

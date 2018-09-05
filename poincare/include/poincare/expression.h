@@ -160,25 +160,27 @@ public:
   bool isEqualToItsApproximationLayout(Expression approximation, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context);
 
   /* Layout Helper */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+    return node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  }
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const { return this->node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
 
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit); //TODO put private
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
   template<typename U> Evaluation<U> approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
-    return node()->approximate(U(), context, angleUnit);
+    return node()->approximate(U(), context, angleUnit); //TODO put private
   }
 
   template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const;
   template<typename U> U approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
   template<typename U> static U approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit);
   template<typename U> U approximateWithValueForSymbol(char symbol, U x, Context & context, Preferences::AngleUnit angleUnit) const;
-  /* Expression roots/extrema solver*/
+  /* Expression roots/extrema solver */
   struct Coordinate2D {
     double abscissa;
     double value;

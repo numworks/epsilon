@@ -1,6 +1,7 @@
 #include "apps_container.h"
 #include "global_preferences.h"
 #include <ion.h>
+#include <poincare/tree_pool.h>
 
 extern "C" {
 #include <assert.h>
@@ -82,8 +83,18 @@ void AppsContainer::suspend(bool checkIfPowerKeyReleased) {
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
-  bool alphaLockWantsRedraw = updateAlphaLock();
+  jmp_buf jumpEnvironment;
+  Poincare::TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
+  int res = setjmp(jumpEnvironment);
+  if (res != 0) {
+    // There has been an exception, return an uninitialized node
+    Poincare::TreePool::sharedPool()->resetJumpEnvironment();// TODO Needed?
+    switchTo(appSnapshotAtIndex(0));
+    //displayMemoryExhaustionPopUp(); TODO
+    return true;
+  }
 
+  bool alphaLockWantsRedraw = updateAlphaLock();
   bool didProcessEvent = false;
 
   if (event == Ion::Events::USBEnumeration) {
@@ -114,8 +125,10 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   }
   if (!didProcessEvent && alphaLockWantsRedraw) {
     window()->redraw();
+    Poincare::TreePool::sharedPool()->resetJumpEnvironment(); // TODO Needed?
     return true;
   }
+  Poincare::TreePool::sharedPool()->resetJumpEnvironment(); // TODO Needed?
   return didProcessEvent || alphaLockWantsRedraw;
 }
 

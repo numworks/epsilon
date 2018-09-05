@@ -1,5 +1,5 @@
-snapshots += Settings::App::Snapshot
-snapshot_headers += apps/settings/app.h
+apps += Settings::App
+app_headers += apps/settings/app.h
 
 app_objs += $(addprefix apps/settings/,\
   app.o\

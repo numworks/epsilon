@@ -18,7 +18,7 @@ const Image * App::Descriptor::icon() {
 
 void App::Snapshot::pack(App * app) {
   tidy();
-  delete app;
+  app->~App();
 }
 
 void App::Snapshot::reset() {

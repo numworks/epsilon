@@ -1,5 +1,5 @@
-snapshots += Solver::App::Snapshot
-snapshot_headers += apps/solver/app.h
+apps += Solver::App
+app_headers += apps/solver/app.h
 
 app_objs += $(addprefix apps/solver/,\
   app.o\

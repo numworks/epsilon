@@ -1,5 +1,5 @@
-snapshots += Probability::App::Snapshot
-snapshot_headers += apps/probability/app.h
+apps += Probability::App
+app_headers += apps/probability/app.h
 
 app_objs += $(addprefix apps/probability/,\
   app.o\

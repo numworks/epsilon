@@ -1,5 +1,5 @@
-snapshots += Regression::App::Snapshot
-snapshot_headers += apps/regression/app.h
+apps += Regression::App
+app_headers += apps/regression/app.h
 
 app_objs += $(addprefix apps/regression/,\
   app.o\

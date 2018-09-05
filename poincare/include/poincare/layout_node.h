@@ -102,7 +102,7 @@ public:
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual char XNTChar() const {
     LayoutNode * p = parent();
-    return p->isUninitialized() ? Ion::Charset::Empty : p->XNTChar();
+    return p == nullptr ? Ion::Charset::Empty : p->XNTChar();
   }
 
   // TODO: put private
@@ -113,9 +113,6 @@ public:
   virtual void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
   virtual bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force);
   virtual void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
-
-  // TreeNode
-  TreeNode * uninitializedStaticNode() const override;
 
 protected:
   // Tree navigation

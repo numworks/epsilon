@@ -69,7 +69,6 @@ objs += $(addprefix poincare/src/,\
   float.o\
   floor.o\
   frac_part.o\
-  ghost_node.o\
   global_context.o\
   great_common_divisor.o\
   hyperbolic_arc_cosine.o\
@@ -125,10 +124,6 @@ objs += $(addprefix poincare/src/,\
   tree_by_reference.o\
   trigonometry.o\
   undefined.o\
-  uninitialized_evaluation_node.o\
-  uninitialized_expression_node.o\
-  uninitialized_ghost_node.o\
-  uninitialized_layout_node.o\
   variable_context.o\
 )
 

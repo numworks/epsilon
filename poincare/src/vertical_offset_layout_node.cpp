@@ -10,8 +10,7 @@
 namespace Poincare {
 
 void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (!indiceLayout()->isUninitialized()
-      && cursor->layoutNode() == indiceLayout()
+  if (cursor->layoutNode() == indiceLayout()
       && cursor->position() == LayoutCursor::Position::Left)
   {
     // Case: Left of the indice. Go Left.
@@ -21,21 +20,20 @@ void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shou
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right. Go to the indice.
-    assert(!indiceLayout()->isUninitialized());
+    assert(indiceLayout() != nullptr);
     cursor->setLayoutNode(indiceLayout());
     return;
   }
   // Case: Left. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Left);
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
 
 void VerticalOffsetLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (!indiceLayout()->isUninitialized()
-      && cursor->layoutNode() == indiceLayout()
+  if (cursor->layoutNode() == indiceLayout()
       && cursor->position() == LayoutCursor::Position::Right)
   {
     // Case: Right of the indice. Go Right.
@@ -45,14 +43,13 @@ void VerticalOffsetLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * sho
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Go to the indice.
-    assert(!indiceLayout()->isUninitialized());
     cursor->setLayoutNode(indiceLayout());
     return;
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }
@@ -62,14 +59,12 @@ void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * should
     // Case: Superscript.
     if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
       // Case: Right. Move to the indice.
-      assert(!indiceLayout()->isUninitialized());
       cursor->setLayoutNode(indiceLayout());
       cursor->setPosition(LayoutCursor::Position::Right);
       return;
     }
     if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Left))) {
       // Case: Left. Move to the indice.
-      assert(!indiceLayout()->isUninitialized());
       cursor->setLayoutNode(indiceLayout());
       cursor->setPosition(LayoutCursor::Position::Left);
       return;
@@ -78,7 +73,6 @@ void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * should
   /* Case: Subscript, Left or Right of the indice. Put the cursor at the same
    * position, pointing this. */
   if (m_type == Type::Subscript
-    && !indiceLayout()->isUninitialized()
     && (cursor->isEquivalentTo(LayoutCursor(indiceLayout(), LayoutCursor::Position::Left))
       || cursor->isEquivalentTo(LayoutCursor(indiceLayout(), LayoutCursor::Position::Right))))
   {
@@ -93,14 +87,12 @@ void VerticalOffsetLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shou
     // Case: Subscript.
     if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
       // Case: Right. Move to the indice.
-      assert(!indiceLayout()->isUninitialized());
       cursor->setLayoutNode(indiceLayout());
       cursor->setPosition(LayoutCursor::Position::Right);
       return;
    }
     // Case: Left. Move to the indice.
     if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Left))) {
-      assert(!indiceLayout()->isUninitialized());
       cursor->setLayoutNode(indiceLayout());
       cursor->setPosition(LayoutCursor::Position::Left);
       return;
@@ -109,7 +101,6 @@ void VerticalOffsetLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shou
   /* Case: Superscript, Left or Right of the indice. Put the cursor at the same
    * position, pointing this. */
   if (m_type == Type::Superscript
-    && !indiceLayout()->isUninitialized()
     && cursor->layoutNode() == indiceLayout())
   {
     cursor->setLayoutNode(this);
@@ -190,7 +181,7 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
   // Add a multiplication if omitted.
   int indexInParent = -1;
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     indexInParent = parentNode->indexOfChild(this);
   }
   if (indexInParent >= 0 && indexInParent < (parentNode->numberOfChildren() - 1) && parentNode->isHorizontal() && parentNode->childAtIndex(indexInParent + 1)->canBeOmittedMultiplicationRightFactor()) {
@@ -206,7 +197,7 @@ KDSize VerticalOffsetLayoutNode::computeSize() {
   KDCoordinate width = indiceSize.width();
   if (m_type == Type::Superscript) {
     LayoutNode * parentNode = parent();
-    assert(!parentNode->isUninitialized());
+    assert(parentNode != nullptr);
     assert(parentNode->isHorizontal());
     int idxInParent = parentNode->indexOfChild(this);
     if (idxInParent < parentNode->numberOfChildren() - 1 && parentNode->childAtIndex(idxInParent + 1)->hasUpperLeftIndex()) {
@@ -231,7 +222,6 @@ KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child) {
     return KDPointZero;
   }
   assert(m_type == Type::Subscript);
-  assert(!baseLayout()->isUninitialized());
   return KDPoint(0, baseLayout()->layoutSize().height() - k_indiceHeight);
 }
 
@@ -274,7 +264,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
 
 LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   LayoutNode * parentNode = parent();
-  assert(!parentNode->isUninitialized());
+  assert(parentNode != nullptr);
   assert(parentNode->isHorizontal());
   int idxInParent = parentNode->indexOfChild(this);
   assert(idxInParent > 0);

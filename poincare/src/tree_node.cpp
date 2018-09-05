@@ -40,7 +40,7 @@ void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
 
 TreeNode * TreeNode::parent() const {
   if (m_parentIdentifier == TreePool::NoNodeIdentifier) {
-    return uninitializedStaticNode();
+    return nullptr;
   }
   return TreePool::sharedPool()->node(m_parentIdentifier);
 }
@@ -48,7 +48,7 @@ TreeNode * TreeNode::parent() const {
 TreeNode * TreeNode::root() {
   TreeNode * result = this;
   TreeNode * resultParent = result->parent();
-  while(!resultParent->isUninitialized()) {
+  while(resultParent != nullptr) {
     result = resultParent;
     resultParent = result->parent();
   }
@@ -93,7 +93,7 @@ int TreeNode::indexOfChild(const TreeNode * child) const {
 
 int TreeNode::indexInParent() const {
   TreeNode * p = parent();
-  if (p->isUninitialized()) {
+  if (p == nullptr) {
     return -1;
   }
   return p->indexOfChild(this);
@@ -122,7 +122,7 @@ bool TreeNode::hasAncestor(const TreeNode * node, bool includeSelf) const {
 
 bool TreeNode::hasSibling(const TreeNode * e) const {
   TreeNode * p = parent();
-  if (p->isUninitialized()) {
+  if (p == nullptr) {
     return false;
   }
   for (TreeNode * childNode : p->directChildren()) {

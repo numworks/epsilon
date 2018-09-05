@@ -23,8 +23,7 @@ void BracketPairLayoutNode::RenderWithChildSize(KDSize childSize, KDContext * ct
 }
 
 void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (!childLayout()->isUninitialized()
-    && cursor->layoutNode() == childLayout()
+  if (cursor->layoutNode() == childLayout()
     && cursor->position() == LayoutCursor::Position::Left)
   {
     // Case: Left of the operand. Go Left of the brackets.
@@ -34,21 +33,19 @@ void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldR
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Right) {
     // Case: Right of the brackets. Go Right of the operand.
-    assert(!childLayout()->isUninitialized());
     cursor->setLayoutNode(childLayout());
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left of the brackets. Ask the parent.
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
 
 void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  if (!childLayout()->isUninitialized()
-    && cursor->layoutNode() == childLayout()
+  if (cursor->layoutNode() == childLayout()
     && cursor->position() == LayoutCursor::Position::Right)
   {
     // Case: Right of the operand. Go Right of the brackets.
@@ -58,14 +55,13 @@ void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * should
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left of the brackets. Go Left of the operand.
-    assert(!childLayout()->isUninitialized());
     cursor->setLayoutNode(childLayout());
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right of the brackets. Ask the parent.
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }

@@ -13,8 +13,8 @@ static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? 
 
 void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
    if (cursor->position() == LayoutCursor::Position::Left
-       && ((!numeratorLayout()->isUninitialized() && cursor->layoutNode() == numeratorLayout())
-         || (!denominatorLayout()->isUninitialized() && cursor->layoutNode() == denominatorLayout())))
+       && (cursor->layoutNode() == numeratorLayout()
+         || cursor->layoutNode() == denominatorLayout()))
   {
     // Case: Left of the numerator or the denominator. Go Left of the fraction.
     cursor->setLayoutNode(this);
@@ -23,7 +23,6 @@ void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   assert(cursor->layoutNode() == this);
   // Case: Right. Go to the denominator.
   if (cursor->position() == LayoutCursor::Position::Right) {
-    assert(!denominatorLayout()->isUninitialized());
     cursor->setLayoutNode(denominatorLayout());
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
@@ -31,15 +30,15 @@ void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   // Case: Left. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Left);
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
   }
 }
 
 void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
    if (cursor->position() == LayoutCursor::Position::Right
-       && ((!numeratorLayout()->isUninitialized() && cursor->layoutNode() == numeratorLayout())
-         || (!denominatorLayout()->isUninitialized() && cursor->layoutNode() == denominatorLayout())))
+       && (cursor->layoutNode() == numeratorLayout()
+         || cursor->layoutNode() == denominatorLayout()))
   {
     // Case: Right of the numerator or the denominator. Go Right of the fraction.
     cursor->setLayoutNode(this);
@@ -48,28 +47,25 @@ void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   assert(cursor->layoutNode() == this);
   if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Go to the numerator.
-    assert(!numeratorLayout()->isUninitialized());
     cursor->setLayoutNode(numeratorLayout());
     return;
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
   LayoutNode * parentNode = parent();
-  if (!parentNode->isUninitialized()) {
+  if (parentNode != nullptr) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }
 
 void FractionLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (!denominatorLayout()->isUninitialized() && cursor->layoutNode()->hasAncestor(denominatorLayout(), true)) {
+  if (cursor->layoutNode()->hasAncestor(denominatorLayout(), true)) {
     // If the cursor is inside denominator, move it to the numerator.
-    assert(!numeratorLayout()->isUninitialized());
     numeratorLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
   if (cursor->layoutNode() == this) {
     // If the cursor is Left or Right, move it to the numerator.
-    assert(!numeratorLayout()->isUninitialized());
     cursor->setLayoutNode(numeratorLayout());
     return;
   }
@@ -77,15 +73,13 @@ void FractionLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomp
 }
 
 void FractionLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  if (!numeratorLayout()->isUninitialized() && cursor->layoutNode()->hasAncestor(numeratorLayout(), true)) {
+  if (cursor->layoutNode()->hasAncestor(numeratorLayout(), true)) {
     // If the cursor is inside numerator, move it to the denominator.
-    assert(!denominatorLayout()->isUninitialized());
     denominatorLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
   if (cursor->layoutNode() == this){
     // If the cursor is Left or Right, move it to the denominator.
-    assert(!denominatorLayout()->isUninitialized());
     cursor->setLayoutNode(denominatorLayout());
     return;
   }
@@ -135,7 +129,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
   int idxInParent = -1;
   LayoutNode * p = parent();
-  if (!p->isUninitialized()) {
+  if (p != nullptr) {
     idxInParent = p->indexOfChild(this);
   }
 

@@ -18,8 +18,6 @@ public:
 
   // Ghost
   bool isGhost() const override { return true; }
-  // Uninitialized
-  TreeNode * uninitializedStaticNode() const override;
 };
 
 }

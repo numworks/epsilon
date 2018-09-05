@@ -206,9 +206,11 @@ void TreePool::freePoolFromNode(TreeNode * firstNodeToDiscard) {
 
   if (firstNodeToDiscard < last()) {
     // There should be no tree that continues into the pool zone to discard
+#if POINCARE_TREE_LOG
     if (!firstNodeToDiscard->parent()->isUninitialized()) {
       log();
     }
+#endif
     assert(firstNodeToDiscard->parent()->isUninitialized());
   }
   TreeNode * currentNode = firstNodeToDiscard;

@@ -65,7 +65,7 @@ Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::Ang
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational>(c0);
+    Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne()) {
       Expression result = Undefined();
       replaceWithInPlace(result);

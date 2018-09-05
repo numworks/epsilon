@@ -42,7 +42,7 @@ public:
   static Number Power(const Number & i, const Number & j);
   static int NaturalOrder(const Number & i, const Number & j);
 
-  Number setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) { return static_cast<Number>(Expression::setSign(s, context, angleUnit)); }
+  Number setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) { return Expression::setSign(s, context, angleUnit).convert<Number>(); }
 protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }

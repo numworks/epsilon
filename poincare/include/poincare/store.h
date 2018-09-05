@@ -49,7 +49,7 @@ public:
   // Store
   const Symbol symbol() const {
     assert(childAtIndex(1).type() == ExpressionNode::Type::Symbol);
-    return static_cast<const Symbol>(childAtIndex(1));
+    return childAtIndex(1).convert<const Symbol>();
   }
   const Expression value() const {
     return childAtIndex(0);

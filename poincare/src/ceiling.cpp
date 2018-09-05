@@ -50,7 +50,7 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
   }
 #endif
   if (c.type() == ExpressionNode::Type::Symbol) {
-    Symbol s = static_cast<Symbol>(c);
+    Symbol s = static_cast<Symbol&>(c);
     Expression result;
     if (s.name() == Ion::Charset::SmallPi) {
       result = Rational(4);
@@ -64,7 +64,7 @@ Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angl
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r = static_cast<Rational>(c.clone());
+  Rational r = c.clone().convert<Rational>();
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.remainder.isInfinity());
   if (div.remainder.isZero()) {

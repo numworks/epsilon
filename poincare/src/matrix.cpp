@@ -176,7 +176,7 @@ Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, 
   if (reduced.type() != ExpressionNode::Type::Matrix) {
     return Matrix();
   }
-  Matrix matrix = static_cast<Matrix>(reduced);
+  Matrix matrix = static_cast<Matrix &>(reduced);
 
   int m = matrix.numberOfRows();
   int n = matrix.numberOfColumns();

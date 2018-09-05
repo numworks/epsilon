@@ -56,7 +56,7 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational>(c0);
+    Rational r0 = static_cast<Rational &>(c0);
     if (r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
       Expression result = Undefined();
       replaceWithInPlace(result);
@@ -64,7 +64,7 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational>(c1);
+    Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
       Expression result = Undefined();
       replaceWithInPlace(result);
@@ -74,8 +74,8 @@ Expression PredictionInterval::shallowReduce(Context & context, Preferences::Ang
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r0 = static_cast<Rational>(c0);
-  Rational r1 = static_cast<Rational>(c1);
+  Rational r0 = static_cast<Rational &>(c0);
+  Rational r1 = static_cast<Rational &>(c1);
   if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative || r0.sign() == ExpressionNode::Sign::Negative || Integer::NaturalOrder(r0.unsignedIntegerNumerator(), r0.integerDenominator()) > 0) {
     Expression result = Undefined();
     replaceWithInPlace(result);

@@ -49,8 +49,8 @@ Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleU
   /* We reduce only round(Rational, Rational). We do not reduce
    * round(Float, Float) which is equivalent to what is done in approximate. */
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational>(childAtIndex(0));
-    Rational r2 = static_cast<Rational>(childAtIndex(1));
+    Rational r1 = childAtIndex(0).convert<Rational>();
+    Rational r2 = childAtIndex(1).convert<Rational>();
     if (!r2.integerDenominator().isOne()) {
       Expression result = Undefined();
       replaceWithInPlace(result);

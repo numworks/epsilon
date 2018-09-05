@@ -79,12 +79,12 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, Context& co
         && e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
         && e.childAtIndex(0).numberOfChildren() == 2
         && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Symbol
-        && static_cast<Symbol>(e.childAtIndex(0).childAtIndex(1)).name() == Ion::Charset::SmallPi
+        && e.childAtIndex(0).childAtIndex(1).convert<Symbol>().name() == Ion::Charset::SmallPi
         && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational)
       || (angleUnit == Preferences::AngleUnit::Degree
         && e.childAtIndex(0).type() == ExpressionNode::Type::Rational))
   {
-    Rational r = angleUnit == Preferences::AngleUnit::Radian ? static_cast<Rational>(e.childAtIndex(0).childAtIndex(0)) : static_cast<Rational>(e.childAtIndex(0));
+    Rational r = angleUnit == Preferences::AngleUnit::Radian ? e.childAtIndex(0).childAtIndex(0).convert<Rational>() : e.childAtIndex(0).convert<Rational>();
     /* Step 4.1. In radians:
      * We first check if p/q * Pi is already in the right quadrant:
      * p/q * Pi < Pi/2 => p/q < 2 => 2p < q */
@@ -146,7 +146,7 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression & e) {
       && e.childAtIndex(0).type() == ExpressionNode::Type::Power
       && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Cosine
       && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::Rational
-      && static_cast<Rational>(e.childAtIndex(0).childAtIndex(1)).isMinusOne()) {
+      && e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne()) {
     return true;
   }
   return false;
@@ -191,7 +191,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Context& c
   if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative
       || (e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
         && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational
-        && static_cast<Rational>(e.childAtIndex(0).childAtIndex(0)).isMinusOne()))
+        && e.childAtIndex(0).childAtIndex(0).convert<Rational>().isMinusOne()))
   {
     Expression newArgument;
     if (e.childAtIndex(0).sign() == ExpressionNode::Sign::Negative) {

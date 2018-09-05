@@ -49,7 +49,7 @@ Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleU
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
   if (c.type() == ExpressionNode::Type::Matrix) {
-    Matrix m = static_cast<Matrix>(c);
+    Matrix m = static_cast<Matrix &>(c);
     Matrix result;
     result.addChildAtIndexInPlace(Rational(m.numberOfRows()), 0, 0);
     result.addChildAtIndexInPlace(Rational(m.numberOfColumns()), 1, 1);

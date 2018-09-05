@@ -49,7 +49,7 @@ Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit ang
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r = static_cast<Rational>(c);
+  Rational r = static_cast<Rational &>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.remainder.isInfinity());
   Expression result = Rational(div.remainder, r.integerDenominator());

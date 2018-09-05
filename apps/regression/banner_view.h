@@ -10,7 +10,11 @@ class BannerView : public Shared::BannerView {
 public:
   BannerView();
   int numberOfTextviews() const { return k_numberOfTextViews; }
+  KDText::FontSize fontSize() const { return k_fontSize; }
 private:
+  static constexpr KDText::FontSize k_fontSize = KDText::FontSize::Small;
+  static constexpr KDColor k_textColor = KDColorBlack;
+  static constexpr KDColor k_backgroundColor = Palette::GreyMiddle;
   static constexpr int k_numberOfTextViews = 9;
   int numberOfSubviews() const override;
   TextView * textViewAtIndex(int i) const override;

@@ -1,17 +1,10 @@
 #include <poincare/grid_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/layout_helper.h>
 
 namespace Poincare {
 
 static inline KDCoordinate max(KDCoordinate x, KDCoordinate y) { return x > y ? x : y; }
-
-GridLayoutNode * GridLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<GridLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 // LayoutNode
 
@@ -269,11 +262,7 @@ KDCoordinate GridLayoutNode::width() const {
 
 // Grid Layout Reference
 void GridLayoutRef::setDimensions(int rows, int columns) {
-  if (!isAllocationFailure()) {
-    /* If the node is an allocation failure, setNumberOfRows and
-     * setNumberOfColumns will do nothing. */
-    assert(rows * columns == numberOfChildren());
-  }
+  assert(rows * columns == numberOfChildren());
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
 }

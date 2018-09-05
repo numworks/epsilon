@@ -13,12 +13,6 @@ extern "C" {
 
 namespace Poincare {
 
-OppositeNode * OppositeNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<OppositeNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 int OppositeNode::polynomialDegree(char symbolName) const {
   return childAtIndex(0)->polynomialDegree(symbolName);
 }
@@ -71,7 +65,7 @@ Expression OppositeNode::shallowReduce(Context & context, Preferences::AngleUnit
 
 Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression result = Expression::defaultShallowReduce(context, angleUnit);
-  if (result.isUndefinedOrAllocationFailure()) {
+  if (result.isUndefined()) {
     return result;
   }
   Expression child = result.childAtIndex(0);

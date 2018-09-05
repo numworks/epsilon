@@ -5,12 +5,6 @@
 
 namespace Poincare {
 
-NaperianLogarithmNode * NaperianLogarithmNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<NaperianLogarithmNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return NaperianLogarithm(this).shallowReduce(context, angleUnit);
 }
@@ -18,7 +12,7 @@ Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::
 Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

@@ -2,7 +2,6 @@
 #define POINCARE_ADDITION_H
 
 #include <poincare/approximation_helper.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/layout_helper.h>
 #include <poincare/n_ary_expression_node.h>
 #include <poincare/rational.h>
@@ -16,8 +15,6 @@ public:
   using NAryExpressionNode::NAryExpressionNode;
 
   // Tree
-  static AdditionNode * FailedAllocationStaticNode();
-  AdditionNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(AdditionNode); }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {

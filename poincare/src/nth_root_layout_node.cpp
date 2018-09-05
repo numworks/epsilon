@@ -1,5 +1,4 @@
 #include <poincare/nth_root_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <ion/charset.h>
@@ -19,12 +18,6 @@ const uint8_t radixPixel[NthRootLayoutNode::k_leftRadixHeight][NthRootLayoutNode
   {0xFF, 0xFF, 0xFF, 0x00, 0xFF},
   {0xFF, 0xFF, 0xFF, 0xFF, 0x00},
 };
-
-NthRootLayoutNode * NthRootLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<NthRootLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (!radicandLayout()->isUninitialized()
@@ -151,13 +144,8 @@ void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     // Case: Left of the radicand. Delete the layout, keep the radicand.
     LayoutRef radicand = LayoutRef(radicandLayout());
     LayoutRef thisRef = LayoutRef(this);
-    LayoutRef rootRef = LayoutRef(root());
     thisRef.replaceChildWithGhostInPlace(radicand);
     // WARNING: Do not call "this" afterwards
-    if (rootRef.isAllocationFailure()) {
-      cursor->setLayoutReference(rootRef);
-      return;
-    }
     cursor->setLayoutReference(thisRef.childAtIndex(0));
     thisRef.replaceWith(radicand, cursor);
     return;

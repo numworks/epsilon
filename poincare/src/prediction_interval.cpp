@@ -12,12 +12,6 @@ extern "C" {
 
 namespace Poincare {
 
-PredictionIntervalNode * PredictionIntervalNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<PredictionIntervalNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference PredictionIntervalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(PredictionInterval(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -44,7 +38,7 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
 Expression PredictionInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

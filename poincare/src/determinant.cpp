@@ -8,12 +8,6 @@ extern "C" {
 
 namespace Poincare {
 
-DeterminantNode * DeterminantNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<DeterminantNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutRef DeterminantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -32,7 +26,7 @@ Expression DeterminantNode::shallowReduce(Context & context, Preferences::AngleU
 Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

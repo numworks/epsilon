@@ -12,9 +12,6 @@ template<typename T>
 class ComplexNode : public std::complex<T>, public EvaluationNode<T> {
 public:
   ComplexNode() : std::complex<T>(NAN, NAN) {}
-  // AllocationFailure
-  static ComplexNode * FailedAllocationStaticNode();
-  ComplexNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(ComplexNode<T>); }

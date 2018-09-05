@@ -18,23 +18,8 @@ public:
 
   // Ghost
   bool isGhost() const override { return true; }
-  // Allocation Failure
-  static GhostNode * FailedAllocationStaticNode();
-  TreeNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   // Uninitialized
   TreeNode * uninitializedStaticNode() const override;
-};
-
-class AllocationFailedGhostNode : public GhostNode {
-public:
-  // TreeNode
-  size_t size() const override { return sizeof(AllocationFailedGhostNode); }
-#if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
-    stream << "AllocationFailedGhost";
-  }
-#endif
-  bool isAllocationFailure() const override { return true; }
 };
 
 }

@@ -19,10 +19,6 @@ public:
     m_type(type)
   {}
 
-  // AllocationFailure
-  static VerticalOffsetLayoutNode * FailedAllocationStaticNode();
-  VerticalOffsetLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-
   // VerticalOffsetLayoutNode
   Type type() const { return m_type; }
   void setType(Type type) { m_type = type; }

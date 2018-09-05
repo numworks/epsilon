@@ -7,12 +7,6 @@
 
 namespace Poincare {
 
-MatrixDimensionNode * MatrixDimensionNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<MatrixDimensionNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Expression MatrixDimensionNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return MatrixDimension(this).shallowReduce(context, angleUnit);
 }
@@ -42,7 +36,7 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Prefer
 Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

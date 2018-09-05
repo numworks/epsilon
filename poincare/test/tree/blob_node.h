@@ -8,12 +8,7 @@ namespace Poincare {
 
 class BlobNode : public TreeNode {
 public:
-  static BlobNode * FailedAllocationStaticNode();
-  virtual BlobNode * failedAllocationStaticNode() override {
-    return BlobNode::FailedAllocationStaticNode();
-  }
   TreeNode * uninitializedStaticNode() const override;
-
   virtual size_t size() const override { return sizeof(BlobNode); }
   int data() { return m_data; }
   void setData(int data) { m_data = data; }
@@ -33,7 +28,6 @@ public:
 
   size_t size() const override { return sizeof(UninitializedBlobNode); }
   bool isUninitialized() const override { return true; }
-  BlobNode * failedAllocationStaticNode() override { assert(false); return nullptr; } //TODO ?
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const override {
@@ -41,17 +35,6 @@ public:
   }
 #endif
 };
-
-class AllocationFailureBlobNode : public BlobNode {
-  size_t size() const override { return sizeof(AllocationFailureBlobNode); }
-  bool isAllocationFailure() const override { return true; }
-#if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const override {
-    stream << "AllocationFailureBlob";
-  }
-#endif
-};
-
 
 class BlobByReference : public TreeByReference {
 public:

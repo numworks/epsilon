@@ -31,8 +31,6 @@ public:
   bool hasUpperLeftIndex() const override { return m_hasIndex; }
 
   // TreeNode
-  static NthRootLayoutNode * FailedAllocationStaticNode();
-  NthRootLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   size_t size() const override { return sizeof(NthRootLayoutNode); }
   int numberOfChildren() const override { return m_hasIndex ? 2 : 1; }
 #if POINCARE_TREE_LOG

@@ -9,12 +9,6 @@ extern "C" {
 
 namespace Poincare {
 
-ComplexArgumentNode * ComplexArgumentNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<ComplexArgumentNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference ComplexArgumentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ComplexArgument(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -35,7 +29,7 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
 Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

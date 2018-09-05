@@ -6,12 +6,6 @@
 
 namespace Poincare {
 
-ArcCosineNode * ArcCosineNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<ArcCosineNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference ArcCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ArcCosine(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -38,7 +32,7 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
 Expression ArcCosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

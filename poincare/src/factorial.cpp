@@ -11,12 +11,6 @@
 
 namespace Poincare {
 
-FactorialNode * FactorialNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<FactorialNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 // Layout
 
 bool FactorialNode::needsParenthesesWithParent(const SerializationHelperInterface * e) const {
@@ -83,7 +77,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

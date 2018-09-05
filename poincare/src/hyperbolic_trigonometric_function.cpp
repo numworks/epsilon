@@ -14,7 +14,7 @@ Expression HyperbolicTrigonometricFunctionNode::shallowReduce(Context & context,
 Expression HyperbolicTrigonometricFunction::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

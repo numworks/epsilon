@@ -8,12 +8,6 @@
 
 namespace Poincare {
 
-NthRootNode * NthRootNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<NthRootNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return NthRootLayoutRef(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
@@ -42,7 +36,7 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::A
 Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

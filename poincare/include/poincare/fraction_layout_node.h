@@ -11,10 +11,6 @@ class FractionLayoutNode : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
-  // AllocationFailure
-  static FractionLayoutNode * FailedAllocationStaticNode();
-  FractionLayoutNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) override;

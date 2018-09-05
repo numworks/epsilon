@@ -13,9 +13,6 @@ class DivisionNode : public ExpressionNode {
 template<int I>
   friend class LogarithmNode;
 public:
-  // Allocation Failure
-  static DivisionNode * FailedAllocationStaticNode();
-  DivisionNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(DivisionNode); }

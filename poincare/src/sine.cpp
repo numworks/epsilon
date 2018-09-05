@@ -6,12 +6,6 @@
 
 namespace Poincare {
 
-SineNode * SineNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<SineNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 float SineNode::characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const {
   return Trigonometry::characteristicXRange(Sine(this), context, angleUnit);
 }
@@ -34,7 +28,7 @@ Expression SineNode::shallowReduce(Context & context, Preferences::AngleUnit ang
 Expression Sine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

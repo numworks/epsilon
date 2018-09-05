@@ -6,12 +6,6 @@
 
 namespace Poincare {
 
-ArcTangentNode * ArcTangentNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<ArcTangentNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference ArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -38,7 +32,7 @@ Expression ArcTangentNode::shallowReduce(Context & context, Preferences::AngleUn
 Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

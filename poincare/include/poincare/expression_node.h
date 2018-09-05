@@ -21,10 +21,9 @@ class ExpressionNode : public TreeNode, public SerializationHelperInterface {
   friend class SymbolNode;
 public:
    enum class Type : uint8_t {
-    AllocationFailure = 0,
-    Uninitialized = 1,
-    Undefined = 2,
-    Integer = 3,
+    Uninitialized = 0,
+    Undefined = 1,
+    Integer = 2,
     Rational,
     Decimal,
     Float,

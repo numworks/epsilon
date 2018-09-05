@@ -10,8 +10,6 @@ namespace Poincare {
 
 class StoreNode : public ExpressionNode {
 public:
-  static StoreNode * FailedAllocationStaticNode();
-  StoreNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(StoreNode); }

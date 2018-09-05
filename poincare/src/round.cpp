@@ -7,12 +7,6 @@
 
 namespace Poincare {
 
-RoundNode * RoundNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<RoundNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -37,7 +31,7 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Ang
 Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

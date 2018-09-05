@@ -48,36 +48,13 @@ public:
   template <typename T>
   T * createTreeNode(size_t size = sizeof(T)) {
     int nodeIdentifier = generateIdentifier();
-    if (nodeIdentifier == -1) {
-      T::FailedAllocationStaticNode()->retain();
-      return T::FailedAllocationStaticNode();
-    }
     void * ptr = alloc(size);
-    if (ptr == nullptr) {
-      T::FailedAllocationStaticNode()->retain();
-      return T::FailedAllocationStaticNode();
-    }
     T * node = new(ptr) T();
 
     // Ensure the pool is syntactially correct by creating ghost children if needed.
     // It's needed for children that have a fixed, non-zero number of children.
     for (int i = 0; i < node->numberOfChildren(); i++) {
       TreeNode * ghost = createTreeNode<GhostNode>();
-      if (ghost->isAllocationFailure()) {
-        /* There is no room to create the node and all of its children, so
-         * delete the node, the children already built and return an allocation
-         * failure node. */
-        // Discard the node and its first children
-        discardTreeNode(node);
-        for (int j = 0; j < i; j++) {
-          /* The pool has been compacted, so the next child to discard is at the
-           * address "node" */
-          discardTreeNode(node);
-        }
-        // Return an allocation failure node
-        T::FailedAllocationStaticNode()->retain();
-        return T::FailedAllocationStaticNode();
-      }
       ghost->retain();
       move(node->next(), ghost, 0);
     }
@@ -93,10 +70,6 @@ public:
   TreeNode * deepCopy(TreeNode * node) {
     size_t size = node->deepSize(-1);
     void * ptr = alloc(size);
-    if (ptr == nullptr) {
-      node->failedAllocationStaticNode()->retain();
-      return node->failedAllocationStaticNode();
-    }
     memcpy(ptr, static_cast<void *>(node), size);
     TreeNode * copy = reinterpret_cast<TreeNode *>(ptr);
     renameNode(copy, false);
@@ -238,6 +211,7 @@ private:
     }
     int pop() {
       if (m_currentIndex == 0) {
+        assert(false);
         return -1;
       }
       assert(m_currentIndex > 0 && m_currentIndex <= MaxNumberOfNodes);

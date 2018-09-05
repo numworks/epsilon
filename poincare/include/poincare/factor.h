@@ -12,9 +12,6 @@ namespace Poincare {
 
 class FactorNode : public ExpressionNode {
 public:
-  // Allocation Failure
-  static FactorNode * FailedAllocationStaticNode();
-  FactorNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
   // TreeNode
   size_t size() const override { return sizeof(FactorNode); }
   int numberOfChildren() const override { return 1; }

@@ -10,9 +10,6 @@ namespace Poincare {
 
 class RealPartNode : public ExpressionNode  {
 public:
-  // Allocation Failure
-  static RealPartNode * FailedAllocationStaticNode();
-  RealPartNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
 
   // TreeNode
   size_t size() const override { return sizeof(RealPartNode); }

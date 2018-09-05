@@ -10,12 +10,6 @@
 
 namespace Poincare {
 
-CeilingNode * CeilingNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<CeilingNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return CeilingLayoutRef(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits));
 }
@@ -39,7 +33,7 @@ Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit 
 Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

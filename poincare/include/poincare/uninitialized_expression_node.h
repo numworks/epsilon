@@ -28,9 +28,6 @@ public:
 
   // TreeNode
   bool isUninitialized() const override { return true; }
-  /* There is only one static node, that should never be inserted in the pool,
-   * so no need for an allocation failure. */
-  TreeNode * failedAllocationStaticNode() override { assert(false); return nullptr; }
   size_t size() const override { return sizeof(UninitializedExpressionNode); }
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const override { assert(false); return ExceptionExpressionNode<ExpressionNode>::denominator(context, angleUnit); }
 #if POINCARE_TREE_LOG

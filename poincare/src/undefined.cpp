@@ -9,12 +9,6 @@ extern "C" {
 
 namespace Poincare {
 
-UndefinedNode * UndefinedNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<UndefinedNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 int UndefinedNode::polynomialDegree(char symbolName) const {
   return -1;
 }

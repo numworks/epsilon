@@ -10,12 +10,6 @@
 
 namespace Poincare {
 
-MatrixInverseNode * MatrixInverseNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<MatrixInverseNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 Expression MatrixInverseNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return MatrixInverse(this).shallowReduce(context, angleUnit);
 }
@@ -47,7 +41,7 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
 Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

@@ -12,12 +12,6 @@
 
 namespace Poincare {
 
-MatrixNode * MatrixNode::FailedAllocationStaticNode() {
-  static AllocationFailureMatrixNode failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 void MatrixNode::didAddChildAtIndex(int newNumberOfChildren) {
   setNumberOfRows(1);
   setNumberOfColumns(newNumberOfChildren);
@@ -100,10 +94,6 @@ void Matrix::setDimensions(int rows, int columns) {
 }
 
 void Matrix::addChildrenAsRowInPlace(TreeByReference t, int i) {
-  if (t.isAllocationFailure()) {
-    replaceWithAllocationFailureInPlace(numberOfChildren());
-    return;
-  }
   int previousNumberOfColumns = numberOfColumns();
   if (previousNumberOfColumns > 0) {
     assert(t.numberOfChildren() == numberOfColumns());
@@ -169,10 +159,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
 Matrix Matrix::rowCanonize(Context & context, Preferences::AngleUnit angleUnit, Multiplication determinant) {
   // The matrix has to be reduced to be able to spot 0 inside it
   Expression reduced = deepReduce(context, angleUnit);
-  /* The MatrixNode should change only in 2 cases:
-   * - Allocation failure
-   * - One of the child is Undefined
-   */
+  // The MatrixNode should change only if one of the child is Undefined
   if (reduced.type() != ExpressionNode::Type::Matrix) {
     return Matrix();
   }

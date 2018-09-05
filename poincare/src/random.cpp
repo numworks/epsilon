@@ -1,19 +1,10 @@
 #include <poincare/random.h>
-#include <poincare/allocation_failure_expression_node.h>
+#include <poincare/complex.h>
 #include <ion.h>
-
-extern "C" {
 #include <assert.h>
-}
 #include <cmath>
 
 namespace Poincare {
-
-RandomNode * RandomNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<RandomNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 Expression RandomNode::setSign(Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   return Random(this).setSign(s, context, angleUnit);

@@ -1,5 +1,4 @@
 #include <poincare/symbol.h>
-#include <poincare/allocation_failure_expression_node.h>
 #include <poincare/context.h>
 #include <poincare/rational.h>
 #include <poincare/parenthesis.h>
@@ -12,12 +11,6 @@
 #include <assert.h>
 
 namespace Poincare {
-
-SymbolNode * SymbolNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<SymbolNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 ExpressionNode::Sign SymbolNode::sign() const {
   /* TODO: Maybe, we will want to know that from a context given in parameter:

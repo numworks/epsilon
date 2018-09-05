@@ -4,12 +4,6 @@
 
 namespace Poincare {
 
-CharLayoutNode * CharLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureCharLayoutNode failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 // LayoutNode
 void CharLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (cursor->position() == LayoutCursor::Position::Right) {

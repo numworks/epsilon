@@ -8,12 +8,6 @@
 
 namespace Poincare {
 
-DivisionRemainderNode * DivisionRemainderNode::FailedAllocationStaticNode() {
-  static AllocationFailureExpressionNode<DivisionRemainderNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
-
 LayoutReference DivisionRemainderNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(DivisionRemainder(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
@@ -40,7 +34,7 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(Context& context, Pref
 Expression DivisionRemainder::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);
-    if (e.isUndefinedOrAllocationFailure()) {
+    if (e.isUndefined()) {
       return e;
     }
   }

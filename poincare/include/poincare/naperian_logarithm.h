@@ -10,10 +10,6 @@ namespace Poincare {
 
 class NaperianLogarithmNode : public ExpressionNode  {
 public:
-    // Allocation Failure
-  static NaperianLogarithmNode * FailedAllocationStaticNode();
-  NaperianLogarithmNode * failedAllocationStaticNode() override { return FailedAllocationStaticNode(); }
-
   // TreeNode
   size_t size() const override { return sizeof(NaperianLogarithmNode); }
   int numberOfChildren() const override { return 1; }

@@ -1,5 +1,4 @@
 #include <poincare/vertical_offset_layout_node.h>
-#include <poincare/allocation_failure_layout_node.h>
 #include <poincare/empty_layout_node.h>
 #include <poincare/layout_helper.h>
 #include <poincare/left_parenthesis_layout_node.h>
@@ -9,12 +8,6 @@
 #include <assert.h>
 
 namespace Poincare {
-
-VerticalOffsetLayoutNode * VerticalOffsetLayoutNode::FailedAllocationStaticNode() {
-  static AllocationFailureLayoutNode<VerticalOffsetLayoutNode> failure;
-  TreePool::sharedPool()->registerStaticNodeIfRequired(&failure);
-  return &failure;
-}
 
 void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   if (!indiceLayout()->isUninitialized()
@@ -273,12 +266,6 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
       }
       if (!rightParenthesis.parent().isUninitialized()) {
         cursor->setLayoutReference(rightParenthesis);
-      }
-      if (rootLayout.isAllocationFailure()) {
-        if (moveCursor) {
-          cursor->setLayoutReference(rootLayout);
-        }
-        return false;
       }
     }
   }

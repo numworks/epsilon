@@ -9,6 +9,7 @@ using namespace Shared;
 
 static inline float min(float x, float y) { return (x<y ? x : y); }
 static inline float max(float x, float y) { return (x>y ? x : y); }
+static inline int maxInt(int x, int y) { return (x>y ? x : y); }
 
 namespace Regression {
 
@@ -158,7 +159,8 @@ void GraphController::reloadBannerView() {
 
   // Set formula
   Model * model = m_store->modelForSeries(selectedSeriesIndex());
-  m_bannerView.setMessageAtIndex(model->formulaMessage(), 3);
+  I18n::Message formula = model->formulaMessage();
+  m_bannerView.setMessageAtIndex(formula, 3);
 
   // Get the coefficients
   double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
@@ -170,13 +172,22 @@ void GraphController::reloadBannerView() {
     }
   }
   if (!coefficientsAreDefined) {
+    // Force the "Data not suitable" message to be on the next line
+    int numberOfCharToCompleteLine = maxInt(Ion::Display::Width/(KDText::charSize(m_bannerView.fontSize()).width())- strlen(I18n::translate(formula)), 0);
+    numberOfChar = 0;
+    for (int i = 0; i < numberOfCharToCompleteLine-1; i++) {
+      buffer[numberOfChar++] = ' ';
+    }
+    buffer[numberOfChar] = 0;
+    m_bannerView.setLegendAtIndex(buffer, 4);
+
     const char * dataNotSuitableMessage = I18n::translate(I18n::Message::DataNotSuitableForRegression);
-     m_bannerView.setLegendAtIndex(const_cast<char *>(dataNotSuitableMessage), 4);
-     for (int i = 5; i < m_bannerView.numberOfTextviews(); i++) {
-        char empty[] = {0};
-        m_bannerView.setLegendAtIndex(empty, i);
-     }
-     return;
+    m_bannerView.setLegendAtIndex(const_cast<char *>(dataNotSuitableMessage), 5);
+    for (int i = 6; i < m_bannerView.numberOfTextviews(); i++) {
+      char empty[] = {0};
+      m_bannerView.setLegendAtIndex(empty, i);
+    }
+    return;
   }
   char coefficientName = 'a';
   for (int i = 0; i < model->numberOfCoefficients(); i++) {
@@ -261,7 +272,7 @@ bool GraphController::moveCursorHorizontally(int direction) {
     return false;
   }
   double x = direction > 0 ? m_cursor->x() + m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit :
-  m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
+    m_cursor->x() - m_store->xGridUnit()/k_numberOfCursorStepsInGradUnit;
   double y = m_store->yValueForXValue(*m_selectedSeriesIndex, x, globalContext());
   m_cursor->moveTo(x, y);
   m_store->panToMakePointVisible(x, y, cursorTopMarginRatio(), k_cursorRightMarginRatio, cursorBottomMarginRatio(), k_cursorLeftMarginRatio);

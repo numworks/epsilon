@@ -42,6 +42,8 @@ public:
     /* tidy clean all dynamically-allocated data */
     virtual void tidy();
   };
+  /* The destructor has to be virtual. Otherwise calling a destructor on an
+   * App * pointing to a Derived App would have undefined behaviour. */
   virtual ~App() = default;
   constexpr static uint8_t Magic = 0xA8;
   Snapshot * snapshot();

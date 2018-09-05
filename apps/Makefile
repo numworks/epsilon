@@ -3,11 +3,11 @@ include apps/home/Makefile
 include apps/on_boarding/Makefile
 include apps/hardware_test/Makefile
 include apps/usb/Makefile
-snapshots =
+apps =
 
 # All selected apps are included. Each Makefile below is responsible for setting
-# the $snapshots variable (name of the snapshot class) and the $snapshot_headers
-# (path to the snapshot header).
+# the $apps variable (name of the app class) and the $app_headers
+# (path to the apps header).
 $(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
 
 app_objs += $(addprefix apps/,\
@@ -33,14 +33,15 @@ app_objs += $(addprefix apps/,\
   variable_box_leaf_cell.o\
 )
 
-snapshots_declaration = $(foreach i,$(snapshots),$(i) m_snapshot$(subst :,,$(i));)
-snapshots_construction = $(foreach i,$(snapshots),,m_snapshot$(subst :,,$(i))())
-snapshots_list = $(foreach i,$(snapshots),,&m_snapshot$(subst :,,$(i)))
-snapshots_count = $(words $(snapshots))
-snapshot_includes = $(foreach i,$(snapshot_headers),-include $(i) )
+snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)
+apps_declaration = $(foreach i,$(apps),$(i) m_$(subst :,,$(i));)
+snapshots_construction = $(foreach i,$(apps),,m_snapshot$(subst :,,$(i))Snapshot())
+snapshots_list = $(foreach i,$(apps),,&m_snapshot$(subst :,,$(i))Snapshot)
+snapshots_count = $(words $(apps))
+snapshot_includes = $(foreach i,$(app_headers),-include $(i) )
 epsilon_app_names = '$(foreach i,${EPSILON_APPS},"$(i)", )'
 
-apps/apps_container_storage.o apps/main.o: CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
+apps/apps_container_storage.o apps/main.o: CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
 
 
 i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N)))

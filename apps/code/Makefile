@@ -1,5 +1,5 @@
-snapshots += Code::App::Snapshot
-snapshot_headers += apps/code/app.h
+apps += Code::App
+app_headers += apps/code/app.h
 
 app_objs += $(addprefix apps/code/,\
   app.o\

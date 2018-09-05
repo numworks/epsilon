@@ -1,5 +1,5 @@
-snapshots += Calculation::App::Snapshot
-snapshot_headers += apps/calculation/app.h
+apps += Calculation::App
+app_headers += apps/calculation/app.h
 
 app_objs += $(addprefix apps/calculation/,\
   app.o\

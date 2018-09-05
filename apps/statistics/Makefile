@@ -1,5 +1,5 @@
-snapshots += Statistics::App::Snapshot
-snapshot_headers += apps/statistics/app.h
+apps += Statistics::App
+app_headers += apps/statistics/app.h
 
 app_objs += $(addprefix apps/statistics/,\
   app.o\

@@ -181,7 +181,7 @@ Integer::Integer(const Integer& other) {
     m_digit = other.m_digit;
   } else {
     native_uint_t * digits = allocDigits(other.m_numberOfDigits);
-    for (int i=0; i<other.m_numberOfDigits; i++) {
+    for (size_t i = 0; i < other.m_numberOfDigits; i++) {
       digits[i] = other.m_digits[i];
     }
     m_digits = digits;
@@ -218,7 +218,7 @@ Integer& Integer::operator=(const Integer& other) {
       m_digit = other.m_digit;
     } else {
       native_uint_t * digits = allocDigits(other.m_numberOfDigits);
-      for (int i=0; i<other.m_numberOfDigits; i++) {
+      for (size_t i = 0; i < other.m_numberOfDigits; i++) {
         digits[i] = other.m_digits[i];
       }
       m_digits = digits;
@@ -449,17 +449,17 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
   memset(digits, 0, size*sizeof(native_uint_t));
 
   double_native_uint_t carry = 0;
-  for (size_t i=0; i<a.m_numberOfDigits; i++) {
+  for (size_t i = 0; i < a.m_numberOfDigits; i++) {
     double_native_uint_t aDigit = a.digit(i);
     carry = 0;
-    for (size_t j=0; j<b.m_numberOfDigits; j++) {
+    for (size_t j = 0; j < b.m_numberOfDigits; j++) {
       double_native_uint_t bDigit = b.digit(j);
       /* The fact that aDigit and bDigit are double_native is very important,
        * otherwise the product might end up being computed on single_native size
        * and then zero-padded. */
       double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(digits[i+j]); // TODO: Prove it cannot overflow double_native type
       native_uint_t * l = (native_uint_t *)&p;
-      if (i+j < k_maxNumberOfDigits+oneDigitOverflow) {
+      if (i+j < (size_t) k_maxNumberOfDigits+oneDigitOverflow) {
         digits[i+j] = l[0];
       } else {
         if (l[0] != 0) {
@@ -469,7 +469,7 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
         }      }
       carry = l[1];
     }
-    if (i+b.m_numberOfDigits < k_maxNumberOfDigits+oneDigitOverflow) {
+    if (i+b.m_numberOfDigits < (size_t) k_maxNumberOfDigits+oneDigitOverflow) {
       digits[i+b.m_numberOfDigits] += carry;
     } else {
       if (carry != 0) {
@@ -516,7 +516,7 @@ Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool 
     native_uint_t aDigit = (i >= a.m_numberOfDigits ? 0 : a.digit(i));
     native_uint_t bDigit = (i >= b.m_numberOfDigits ? 0 : b.digit(i));
     native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
-    if (i < k_maxNumberOfDigits + oneDigitOverflow) {
+    if (i < (size_t) (k_maxNumberOfDigits + oneDigitOverflow)) {
       digits[i] = result;
     } else {
       if (result != 0) {
@@ -542,7 +542,7 @@ Integer Integer::multiplyByPowerOf2(uint8_t pow) const {
   assert(pow < 32);
   native_uint_t * digits = allocDigits(m_numberOfDigits+1);
   native_uint_t carry = 0;
-  for (int i = 0; i < m_numberOfDigits; i++) {
+  for (size_t i = 0; i < m_numberOfDigits; i++) {
     digits[i] = digit(i) << pow | carry;
     carry = pow == 0 ? 0 : digit(i) >> (32-pow);
   }

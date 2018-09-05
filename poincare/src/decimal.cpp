@@ -258,7 +258,7 @@ Decimal::Decimal(const char * integralPart, int integralPartLength, const char *
   Integer zero(0);
   Integer base(10);
   // Get rid of useless preceeding 0s
-  while (*integralPart == '0' & integralPartLength > 1) {
+  while (*integralPart == '0' && integralPartLength > 1) {
     integralPart++;
     integralPartLength--;
   }

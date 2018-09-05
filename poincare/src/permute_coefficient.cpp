@@ -60,7 +60,7 @@ Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::Ang
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational>(c0);
+    Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne() || r0.sign() == ExpressionNode::Sign::Negative) {
       Expression result = Undefined();
       replaceWithInPlace(result);
@@ -68,7 +68,7 @@ Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::Ang
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational>(c1);
+    Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne() || r1.sign() == ExpressionNode::Sign::Negative) {
       Expression result = Undefined();
       replaceWithInPlace(result);

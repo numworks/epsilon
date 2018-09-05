@@ -76,11 +76,11 @@ bool Expression::shouldStopProcessing() {
 /* Properties */
 
 bool Expression::isRationalZero() const {
-  return type() == ExpressionNode::Type::Rational && static_cast<const Rational>(*this).isZero();
+  return type() == ExpressionNode::Type::Rational && convert<const Rational>().isZero();
 }
 
 bool Expression::isRationalOne() const {
-  return type() == ExpressionNode::Type::Rational && static_cast<const Rational>(*this).isOne();
+  return type() == ExpressionNode::Type::Rational && convert<const Rational>().isOne();
 }
 
 bool Expression::recursivelyMatches(ExpressionTest test, Context & context) const {
@@ -97,16 +97,16 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context & context) cons
 
 bool Expression::isApproximate(Context & context) const {
   return recursivelyMatches([](const Expression e, Context & context) {
-        return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || Expression::IsMatrix(e, context) || (e.type() == ExpressionNode::Type::Symbol && Symbol::isApproximate(static_cast<const Symbol>(e).name(), context));
+        return e.type() == ExpressionNode::Type::Decimal || e.type() == ExpressionNode::Type::Float || Expression::IsMatrix(e, context) || (e.type() == ExpressionNode::Type::Symbol && Symbol::isApproximate(static_cast<const Symbol&>(e).name(), context));
     }, context);
 }
 
 bool Expression::IsMatrix(const Expression e, Context & context) {
-  return e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::ConfidenceInterval || e.type() == ExpressionNode::Type::MatrixDimension || e.type() == ExpressionNode::Type::PredictionInterval || e.type() == ExpressionNode::Type::MatrixInverse || e.type() == ExpressionNode::Type::MatrixTranspose || (e.type() == ExpressionNode::Type::Symbol && Symbol::isMatrixSymbol(static_cast<const Symbol>(e).name()));
+  return e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::ConfidenceInterval || e.type() == ExpressionNode::Type::MatrixDimension || e.type() == ExpressionNode::Type::PredictionInterval || e.type() == ExpressionNode::Type::MatrixInverse || e.type() == ExpressionNode::Type::MatrixTranspose || (e.type() == ExpressionNode::Type::Symbol && Symbol::isMatrixSymbol(static_cast<const Symbol&>(e).name()));
 }
 
 bool Expression::DependsOnVariables(const Expression e, Context & context) {
-  return e.type() == ExpressionNode::Type::Symbol && Symbol::isVariableSymbol(static_cast<const Symbol>(e).name());
+  return e.type() == ExpressionNode::Type::Symbol && Symbol::isVariableSymbol(static_cast<const Symbol&>(e).name());
 }
 
 bool Expression::getLinearCoefficients(char * variables, Expression coefficients[], Expression constant[], Context & context, Preferences::AngleUnit angleUnit) const {

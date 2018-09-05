@@ -95,7 +95,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
   bool letLogAtRoot = parentIsAPowerOfSameBase();
   // log(x^y, b)->y*log(x, b) if x>0
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign() == ExpressionNode::Sign::Positive) {
-    Power p = static_cast<Power>(c);
+    Power p = static_cast<Power &>(c);
     Expression x = p.childAtIndex(0);
     Expression y = p.childAtIndex(1);
     replaceChildInPlace(p, x);
@@ -112,7 +112,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
       Expression factor = c.childAtIndex(i);
       if (factor.sign() == ExpressionNode::Sign::Positive) {
         Expression newLog = clone();
-        static_cast<Multiplication>(c).removeChildInPlace(factor, factor.numberOfChildren());
+        static_cast<Multiplication &>(c).removeChildInPlace(factor, factor.numberOfChildren());
         newLog.replaceChildAtIndexInPlace(0, factor);
         a.addChildAtIndexInPlace(newLog, a.numberOfChildren(), a.numberOfChildren());
         newLog.shallowReduce(context, angleUnit);
@@ -128,7 +128,7 @@ Expression Logarithm::shallowReduce(Context & context, Preferences::AngleUnit an
   }
   // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime decomposition)
   if (!letLogAtRoot && c.type() == ExpressionNode::Type::Rational) {
-    const Rational r = static_cast<Rational>(c);
+    const Rational r = static_cast<Rational &>(c);
     Expression n = splitInteger(r.signedIntegerNumerator(), false, context, angleUnit);
     Expression d = splitInteger(r.integerDenominator(), true, context, angleUnit);
     Addition a = Addition(n, d);
@@ -147,7 +147,7 @@ Expression Logarithm::simpleShallowReduce(Context & context, Preferences::AngleU
     return result;
   }
   if (c.type() == ExpressionNode::Type::Rational) {
-    const Rational r = static_cast<Rational>(c);
+    const Rational r = static_cast<Rational &>(c);
     // log(0) = undef
     if (r.isZero()) {
       Expression result = Undefined();
@@ -185,7 +185,7 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
   if (thisIsPowerExponent) {
     Expression powerOperand0 = parentExpression.childAtIndex(0);
     if (numberOfChildren() == 1) {
-      if (powerOperand0.type() == ExpressionNode::Type::Rational && static_cast< Rational>(powerOperand0).isTen()) {
+      if (powerOperand0.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(powerOperand0).isTen()) {
         return true;
       }
     }

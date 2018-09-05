@@ -50,7 +50,7 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
   }
 #endif
   if (c.type() == ExpressionNode::Type::Symbol) {
-    Symbol s = static_cast<Symbol>(c);
+    Symbol s = static_cast<Symbol &>(c);
     Expression result;
     if (s.name() == Ion::Charset::SmallPi) {
       result = Rational(3);
@@ -64,7 +64,7 @@ Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleU
   if (c.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r = static_cast<Rational>(c);
+  Rational r = static_cast<Rational &>(c);
   IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
   assert(!div.quotient.isInfinity());
   Expression result = Rational(div.quotient);

@@ -65,7 +65,7 @@ Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::An
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational>(c0);
+    Rational r0 = static_cast<Rational &>(c0);
     if (!r0.integerDenominator().isOne()) {
       Expression result = Undefined();
       replaceWithInPlace(result);
@@ -73,7 +73,7 @@ Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::An
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational>(c1);
+    Rational r1 = static_cast<Rational &>(c1);
     if (!r1.integerDenominator().isOne()) {
       Expression result = Undefined();
       replaceWithInPlace(result);
@@ -83,8 +83,8 @@ Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::An
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r0 = static_cast<Rational>(c0);
-  Rational r1 = static_cast<Rational>(c1);
+  Rational r0 = static_cast<Rational &>(c0);
+  Rational r1 = static_cast<Rational &>(c1);
 
   Integer a = r0.signedIntegerNumerator();
   Integer b = r1.signedIntegerNumerator();

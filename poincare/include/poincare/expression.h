@@ -194,21 +194,17 @@ protected:
   /* TODO: WARNING: explicit forbid implicit conversion but not direct
    * initialization. For example, you can do Rational a(2); AbsoluteValue b(a);
    * ...*/
-  template<class T> explicit operator T() const {
-    /* This operator allows static_casts from Expression to derived Expressions.
+  template<class T> T convert() const {
+    /* This function allows to convert Expression to derived Expressions.
      * The asserts ensure that the Expression can only be casted to another
      * Expression, but this does not prevent Expression types mismatches (cast
      * Float to Symbol for instance).
      *
-     * The explicit keyword prevents implicit casts. This solves the following
-     * problem:
-     * Expression e;
-     * Symbol s = static_cast<Symbol>(e);
-     * e could be casted in const char * to use the Symbol(const char *)
-     * constructor, or e could be casted directly to S: it is ambiguous.
-     *
-     * static_cast operator copy the Expression. To avoid copy, we call
-     * static_cast<Symbol &>(e) instead of static_cast<Symbol>(e). */
+     * We could have override the operator T(). However, even with the
+     * 'explicit' keyword (which prevents implicit casts), direct initilization
+     * are enable which can lead to weird code:
+     * ie, you can write: 'Rational a(2); AbsoluteValue b(a);'
+     * */
 
     assert(T::isExpression());
     static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");

@@ -7,7 +7,7 @@ Integer Arithmetic::LCM(const Integer & a, const Integer & b) {
   if (a.isZero() || b.isZero()) {
     return Integer(0);
   }
-  Integer signResult = Integer::Division(Integer::Multiplication(static_cast<Integer>(a), static_cast<Integer>(b)), GCD(a, b)).quotient;
+  Integer signResult = Integer::Division(Integer::Multiplication(a, b), GCD(a, b)).quotient;
   //TODO Check if clone required or not
   signResult.setNegative(false);
   return signResult;

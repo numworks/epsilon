@@ -34,7 +34,7 @@ Expression Factor::shallowBeautify(Context & context, Preferences::AngleUnit ang
     replaceWithInPlace(result);
     return result;
   }
-  Rational r = static_cast<Rational>(c);
+  Rational r = static_cast<Rational &>(c);
   if (r.isZero()) {
     replaceWithInPlace(r);
     return r;

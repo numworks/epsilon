@@ -93,7 +93,7 @@ Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit an
   }
 #endif
   if (childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    Rational r = static_cast<Rational>(childAtIndex(0));
+    Rational r = childAtIndex(0).convert<Rational>();
     if (!r.integerDenominator().isOne() || r.sign() == ExpressionNode::Sign::Negative) {
       Expression result = Undefined();
       replaceWithInPlace(result);
@@ -108,7 +108,7 @@ Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit an
     return fact;
   }
   if (childAtIndex(0).type() == ExpressionNode::Type::Symbol) {
-    Symbol s = static_cast<Symbol>(childAtIndex(0));
+    Symbol s = childAtIndex(0).convert<Symbol>();
     if (s.name() == Ion::Charset::SmallPi || s.name() == Ion::Charset::Exponential) {
       Expression result = Undefined();
       replaceWithInPlace(result);

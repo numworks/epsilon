@@ -69,7 +69,7 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   }
 #endif
   if (c0.type() == ExpressionNode::Type::Rational) {
-    Rational r0 = static_cast<Rational>(c0);
+    Rational r0 = static_cast<Rational&>(c0);
     if (!r0.integerDenominator().isOne() || r0.integerDenominator().isNegative()) {
       Expression result = Undefined();
       replaceWithInPlace(result);
@@ -77,7 +77,7 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
-    Rational r1 = static_cast<Rational>(c1);
+    Rational r1 = static_cast<Rational&>(c1);
     if (!r1.integerDenominator().isOne() || r1.integerDenominator().isNegative()) {
       Expression result = Undefined();
       replaceWithInPlace(result);
@@ -87,8 +87,8 @@ Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::An
   if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
-  Rational r0 = static_cast<Rational>(c0);
-  Rational r1 = static_cast<Rational>(c1);
+  Rational r0 = static_cast<Rational&>(c0);
+  Rational r1 = static_cast<Rational&>(c1);
 
   Integer n = r0.signedIntegerNumerator();
   Integer k = r1.signedIntegerNumerator();

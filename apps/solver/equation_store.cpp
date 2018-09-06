@@ -15,10 +15,6 @@ EquationStore::EquationStore() :
 {
 }
 
-EquationStore::~EquationStore() {
-  tidySolution();
-}
-
 Equation * EquationStore::emptyModel() {
   static Equation e;
   return &e;
@@ -33,7 +29,7 @@ void EquationStore::tidy() {
   tidySolution();
 }
 
-Poincare::ExpressionLayout * EquationStore::exactSolutionLayoutAtIndex(int i, bool exactLayout) {
+Poincare::LayoutReference EquationStore::exactSolutionLayoutAtIndex(int i, bool exactLayout) {
   assert(m_type != Type::Monovariable && i >= 0 && (i < m_numberOfSolutions || (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
   if (exactLayout) {
     return m_exactSolutionExactLayouts[i];
@@ -69,7 +65,7 @@ bool EquationStore::haveMoreApproximationSolutions(Context * context) {
     return false;
   }
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
-  return !std::isnan(definedModelAtIndex(0)->standardForm(context)->nextRoot(m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context, Preferences::sharedPreferences()->angleUnit()));
+  return !std::isnan(definedModelAtIndex(0)->standardForm(context).nextRoot(m_variables[0], m_approximateSolutions[m_numberOfSolutions-1], step, m_intervalApproximateSolutions[1], *context, Preferences::sharedPreferences()->angleUnit()));
 }
 
 void EquationStore::approximateSolve(Poincare::Context * context) {
@@ -79,7 +75,7 @@ void EquationStore::approximateSolve(Poincare::Context * context) {
   double start = m_intervalApproximateSolutions[0];
   double step = (m_intervalApproximateSolutions[1]-m_intervalApproximateSolutions[0])*k_precision;
   for (int i = 0; i < k_maxNumberOfApproximateSolutions; i++) {
-    m_approximateSolutions[i] = definedModelAtIndex(0)->standardForm(context)->nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context, Preferences::sharedPreferences()->angleUnit());
+    m_approximateSolutions[i] = definedModelAtIndex(0)->standardForm(context).nextRoot(m_variables[0], start, step, m_intervalApproximateSolutions[1], *context, Preferences::sharedPreferences()->angleUnit());
     if (std::isnan(m_approximateSolutions[i])) {
       break;
     } else {
@@ -96,10 +92,10 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   m_variables[0] = 0;
   int numberOfVariables = 0;
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    if (definedModelAtIndex(i)->standardForm(context) == nullptr) {
+    if (definedModelAtIndex(i)->standardForm(context).isUninitialized()) {
       return Error::EquationUndefined;
     }
-    numberOfVariables = definedModelAtIndex(i)->standardForm(context)->getVariables(Symbol::isVariableSymbol, m_variables);
+    numberOfVariables = definedModelAtIndex(i)->standardForm(context).getVariables(Symbol::isVariableSymbol, m_variables);
     if (numberOfVariables < 0) {
       return Error::TooManyVariables;
     }
@@ -108,19 +104,21 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   /* 1- Linear System? */
   /* Create matrix coefficients and vector constants as:
    * coefficients*(x y z ...) = constants */
-  Expression * coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables];
-  Expression * constants[k_maxNumberOfEquations];
+  Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables];
+  Expression constants[k_maxNumberOfEquations];
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
   for (int i = 0; i < numberOfDefinedModels(); i++) {
-    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context)->getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context, Preferences::sharedPreferences()->angleUnit());
-    // Clean allocated memory if the system is not linear
+    isLinear = isLinear && definedModelAtIndex(i)->standardForm(context).getLinearCoefficients(m_variables, coefficients[i], &constants[i], *context, Preferences::sharedPreferences()->angleUnit());
     if (!isLinear) {
+    // TODO: should we clean pool allocated memory if the system is not linear
+#if 0
       for (int j = 0; j < i; j++) {
         for (int k = 0; k < numberOfVariables; k++) {
-          delete coefficients[j][k];
+          coefficients[j][k] = Expression();
         }
-        delete constants[j];
+        constants[j] = Expression();
       }
+#endif
       if (numberOfDefinedModels() > 1 || numberOfVariables > 1) {
         return Error::NonLinearSystem;
       } else {
@@ -130,10 +128,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   }
 
   /* Initialize result */
-  Expression * exactSolutions[k_maxNumberOfExactSolutions];
-  for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
-   exactSolutions[i] = nullptr;
-  }
+  Expression exactSolutions[k_maxNumberOfExactSolutions];
   EquationStore::Error error;
 
   if (isLinear) {
@@ -143,8 +138,8 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
     /* 2- Polynomial & Monovariable? */
     assert(numberOfVariables == 1 && numberOfDefinedModels() == 1);
     char x = m_variables[0];
-    Expression * polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-    int degree = definedModelAtIndex(0)->standardForm(context)->getPolynomialCoefficients(x, polynomialCoefficients, *context, Preferences::sharedPreferences()->angleUnit());
+    Expression polynomialCoefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+    int degree = definedModelAtIndex(0)->standardForm(context).getPolynomialReducedCoefficients(x, polynomialCoefficients, *context, Preferences::sharedPreferences()->angleUnit());
     if (degree == 2) {
       /* Polynomial degree <= 2*/
       m_type = Type::PolynomialMonovariable;
@@ -159,43 +154,41 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context) {
   }
   /* Turn the results in layouts */
   for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
-    if (exactSolutions[i]) {
+    if (!exactSolutions[i].isUninitialized()) {
       m_exactSolutionExactLayouts[i] = PoincareHelpers::CreateLayout(exactSolutions[i]);
-      Expression * approximate = PoincareHelpers::Approximate<double>(exactSolutions[i], *context);
+      Expression approximate = PoincareHelpers::Approximate<double>(exactSolutions[i], *context);
       m_exactSolutionApproximateLayouts[i] = PoincareHelpers::CreateLayout(approximate);
       /* Check for identity between exact and approximate layouts */
       char exactBuffer[Shared::ExpressionModel::k_expressionBufferSize];
       char approximateBuffer[Shared::ExpressionModel::k_expressionBufferSize];
-      m_exactSolutionExactLayouts[i]->serialize(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
-      m_exactSolutionApproximateLayouts[i]->serialize(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      m_exactSolutionExactLayouts[i].serialize(exactBuffer, Shared::ExpressionModel::k_expressionBufferSize);
+      m_exactSolutionApproximateLayouts[i].serialize(approximateBuffer, Shared::ExpressionModel::k_expressionBufferSize);
       m_exactSolutionIdentity[i] = strcmp(exactBuffer, approximateBuffer) == 0;
       /* Check for equality between exact and approximate layouts */
       if (!m_exactSolutionIdentity[i]) {
-        m_exactSolutionEquality[i] = exactSolutions[i]->isEqualToItsApproximationLayout(approximate, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
+        m_exactSolutionEquality[i] = exactSolutions[i].isEqualToItsApproximationLayout(approximate, Shared::ExpressionModel::k_expressionBufferSize, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits(), *context);
       }
-      delete approximate;
-      delete exactSolutions[i];
     }
   }
   return error;
 }
 
-EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSolutions[k_maxNumberOfExactSolutions], Expression * coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression * constants[k_maxNumberOfEquations], Context * context) {
+EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression constants[k_maxNumberOfEquations], Context * context) {
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   int n = strlen(m_variables); // n unknown variables
   int m = numberOfDefinedModels(); // m equations
   /* Create the matrix (A | b) for the equation Ax=b */
-  const Expression ** operandsAb = new const Expression * [(n+1)*m];
+  Matrix Ab;
   for (int i = 0; i < m; i++) {
     for (int j = 0; j < n; j++) {
-      operandsAb[i*(n+1)+j] = coefficients[i][j];
+      Ab.addChildAtIndexInPlace(coefficients[i][j], Ab.numberOfChildren(), Ab.numberOfChildren());
     }
-    operandsAb[i*(n+1)+n] = constants[i];
+    Ab.addChildAtIndexInPlace(constants[i], Ab.numberOfChildren(), Ab.numberOfChildren());
   }
-  Matrix * Ab = new Matrix(operandsAb, m, n+1, false);
-  delete [] operandsAb;
+  Ab.setDimensions(m, n+1);
+
   // Compute the rank of (A | b)
-  int rankAb = Ab->rank(*context, angleUnit, true);
+  int rankAb = Ab.rank(*context, angleUnit);
 
   // Initialize the number of solutions
   m_numberOfSolutions = INT_MAX;
@@ -204,12 +197,12 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSoluti
   for (int j = m-1; j >= 0; j--) {
     bool rowWithNullCoefficients = true;
     for (int i = 0; i < n; i++) {
-      if (!Ab->matrixOperand(j, i)->isRationalZero()) {
+      if (!Ab.matrixChild(j, i).isRationalZero()) {
         rowWithNullCoefficients = false;
         break;
       }
     }
-    if (rowWithNullCoefficients && !Ab->matrixOperand(j, n)->isRationalZero()) {
+    if (rowWithNullCoefficients && !Ab.matrixChild(j, n).isRationalZero()) {
       m_numberOfSolutions = 0;
     }
   }
@@ -219,38 +212,32 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression * exactSoluti
       // Otherwise, the system has n solutions which correspond to the last column
       m_numberOfSolutions = n;
       for (int i = 0; i < m_numberOfSolutions; i++) {
-        Expression * sol = Ab->matrixOperand(i,n);
-        exactSolutions[i] = sol;
-        Ab->detachOperand(sol);
+        exactSolutions[i] = Ab.matrixChild(i,n);
         PoincareHelpers::Simplify(&exactSolutions[i], *context);
       }
     }
   }
-  delete Ab;
   return Error::NoError;
 }
 
-EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * exactSolutions[k_maxNumberOfExactSolutions], Expression * coefficients[Expression::k_maxNumberOfPolynomialCoefficients], int degree, Context * context) {
+EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients], int degree, Context * context) {
   /* Equation ax^2+bx+c = 0 */
   assert(degree == 2);
-  // Compute 4ac
-  Expression * deltaSubOperand[3] = {new Rational(4), coefficients[0]->clone(), coefficients[2]->clone()};
   // Compute delta = b*b-4ac
-  Expression * delta = new Subtraction(new Power(coefficients[1]->clone(), new Rational(2), false), new Multiplication(deltaSubOperand, 3, false), false);
+  Expression delta = Subtraction(Power(coefficients[1].clone(), Rational(2)), Multiplication(Rational(4), coefficients[0].clone(), coefficients[2].clone()));
   PoincareHelpers::Simplify(&delta, *context);
-  if (delta->isRationalZero()) {
+  if (delta.isRationalZero()) {
     // if delta = 0, x0=x1= -b/(2a)
-    exactSolutions[0] = new Division(new Opposite(coefficients[1], false), new Multiplication(new Rational(2), coefficients[2], false), false);
+    exactSolutions[0] = Division(Opposite(coefficients[1]), Multiplication(Rational(2), coefficients[2]));
     m_numberOfSolutions = 1;
   } else {
     // x0 = (-b-sqrt(delta))/(2a)
-    exactSolutions[0] = new Division(new Subtraction(new Opposite(coefficients[1]->clone(), false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2]->clone(), false), false);
+    exactSolutions[0] = Division(Subtraction(Opposite(coefficients[1].clone()), SquareRoot(delta.clone())), Multiplication(Rational(2), coefficients[2].clone()));
     // x1 = (-b+sqrt(delta))/(2a)
-    exactSolutions[1] = new Division(new Addition(new Opposite(coefficients[1], false), new SquareRoot(delta->clone(), false), false), new Multiplication(new Rational(2), coefficients[2], false), false);
+    exactSolutions[1] = Division(Addition(Opposite(coefficients[1]), SquareRoot(delta.clone())), Multiplication(Rational(2), coefficients[2]));
     m_numberOfSolutions = 2;
   }
   exactSolutions[m_numberOfSolutions] = delta;
-  delete coefficients[0];
   for (int i = 0; i < m_numberOfSolutions; i++) {
     PoincareHelpers::Simplify(&exactSolutions[i], *context);
   }
@@ -323,14 +310,8 @@ EquationStore::Error EquationStore::oneDimensialPolynomialSolve(Expression * exa
 
 void EquationStore::tidySolution() {
   for (int i = 0; i < k_maxNumberOfExactSolutions; i++) {
-    if (m_exactSolutionExactLayouts[i]) {
-      delete m_exactSolutionExactLayouts[i];
-      m_exactSolutionExactLayouts[i] = nullptr;
-    }
-    if (m_exactSolutionApproximateLayouts[i]) {
-      delete m_exactSolutionApproximateLayouts[i];
-      m_exactSolutionApproximateLayouts[i] = nullptr;
-    }
+    m_exactSolutionExactLayouts[i] = LayoutReference();
+    m_exactSolutionApproximateLayouts[i] = LayoutReference();
   }
 }
 

@@ -54,21 +54,18 @@ KDPoint LayoutCursor::middleLeftPoint() {
 }
 
 /* Move */
-
-void LayoutCursor::moveLeft(bool * shouldRecomputeLayout) {
-  layoutNode()->moveCursorLeft(this, shouldRecomputeLayout);
-}
-
-void LayoutCursor::moveRight(bool * shouldRecomputeLayout) {
-  layoutNode()->moveCursorRight(this, shouldRecomputeLayout);
-}
-
-void LayoutCursor::moveAbove(bool * shouldRecomputeLayout) {
-  layoutNode()->moveCursorUp(this, shouldRecomputeLayout);
-}
-
-void LayoutCursor::moveUnder(bool * shouldRecomputeLayout) {
-  layoutNode()->moveCursorDown(this, shouldRecomputeLayout);
+void LayoutCursor::move(MoveDirection direction, bool * shouldRecomputeLayout) {
+  if (direction == MoveDirection::Left) {
+    moveLeft(shouldRecomputeLayout);
+  } else if (direction == MoveDirection::Right) {
+    moveRight(shouldRecomputeLayout);
+  } else if (direction == MoveDirection::Up) {
+    moveAbove(shouldRecomputeLayout);
+  } else if (direction == MoveDirection::Down) {
+    moveUnder(shouldRecomputeLayout);
+  } else {
+    assert(false);
+  }
 }
 
 /* Layout modification */
@@ -221,7 +218,6 @@ KDCoordinate LayoutCursor::layoutHeight() {
       + max(pointedLayoutHeight - pointedLayoutBaseline, equivalentLayoutHeight - equivalentLayoutBaseline);
   }
   return pointedLayoutHeight;
-
 }
 
 void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayoutRef v) {

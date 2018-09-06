@@ -1,9 +1,8 @@
 #ifndef POINCARE_LAYOUT_CURSOR_H
 #define POINCARE_LAYOUT_CURSOR_H
 
-#include "layout_reference.h"
-#include "layout_node.h"
-#include <stdio.h>
+#include <poincare/layout_reference.h>
+#include <poincare/layout_node.h>
 
 namespace Poincare {
 
@@ -82,23 +81,19 @@ public:
   KDPoint middleLeftPoint();
 
   /* Move */
-  void move(MoveDirection direction, bool * shouldRecomputeLayout) {
-    if (direction == MoveDirection::Left) {
-      moveLeft(shouldRecomputeLayout);
-    } else if (direction == MoveDirection::Right) {
-      moveRight(shouldRecomputeLayout);
-    } else if (direction == MoveDirection::Up) {
-      moveAbove(shouldRecomputeLayout);
-    } else if (direction == MoveDirection::Down) {
-      moveUnder(shouldRecomputeLayout);
-    } else {
-      assert(false);
-    }
+  void move(MoveDirection direction, bool * shouldRecomputeLayout);
+  void moveLeft(bool * shouldRecomputeLayout) {
+    layoutNode()->moveCursorLeft(this, shouldRecomputeLayout);
   }
-  void moveLeft(bool * shouldRecomputeLayout);
-  void moveRight(bool * shouldRecomputeLayout);
-  void moveAbove(bool * shouldRecomputeLayout);
-  void moveUnder(bool * shouldRecomputeLayout);
+  void moveRight(bool * shouldRecomputeLayout) {
+    layoutNode()->moveCursorRight(this, shouldRecomputeLayout);
+  }
+  void moveAbove(bool * shouldRecomputeLayout) {
+    layoutNode()->moveCursorUp(this, shouldRecomputeLayout);
+  }
+  void moveUnder(bool * shouldRecomputeLayout) {
+    layoutNode()->moveCursorDown(this, shouldRecomputeLayout);
+  }
   LayoutCursor cursorAtDirection(MoveDirection direction, bool * shouldRecomputeLayout) {
     LayoutCursor result = clone();
     result.move(direction, shouldRecomputeLayout);

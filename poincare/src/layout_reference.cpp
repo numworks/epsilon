@@ -7,6 +7,15 @@
 #include <poincare/layout_cursor.h>
 
 namespace Poincare {
+LayoutReference LayoutReference::clone() const {
+  if (isUninitialized()) {
+    return LayoutReference();
+  }
+  TreeByReference c = TreeByReference::clone();
+  LayoutReference cast = LayoutReference(static_cast<LayoutNode *>(c.node()));
+  cast.invalidAllSizesPositionsAndBaselines();
+  return cast;
+}
 
 // Cursor
 LayoutCursor LayoutReference::cursor() const {

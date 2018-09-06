@@ -139,7 +139,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (Responder::handleEvent(event)) {
     /* The only event Responder handles is 'Toolbox' displaying. In that case,
-     * the ExpressionLayoutField is forced into editing mode. */
+     * the LayoutField is forced into editing mode. */
     if (!isEditing()) {
       setEditing(true);
     }

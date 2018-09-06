@@ -14,7 +14,7 @@ public:
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing() const;
   /* Warning: this function is VERY dangerous! Indeed: sometimes the
-   * m_expressionLayoutField might overflow the m_textBuffer once serialized
+   * m_layoutField might overflow the m_textBuffer once serialized
    * and still have been accepted before because the model can hold a longer
    * buffer. This is the case in the application 'Calculation' and we do not
    * use text() there... TODO: change text() for fillTextInBuffer?*/

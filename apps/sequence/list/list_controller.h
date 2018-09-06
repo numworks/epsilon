@@ -14,7 +14,7 @@
 
 namespace Sequence {
 
-class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
+class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
   ListController(Responder * parentResponder, SequenceStore * sequenceStore, ButtonRowController * header, ButtonRowController * footer);
   const char * title() override;
@@ -22,7 +22,7 @@ public:
   KDCoordinate expressionRowHeight(int j) override;
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
   Toolbox * toolboxForTextInput(TextInput * textInput) override;
-  Toolbox * toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) override;
+  Toolbox * toolboxForLayoutField(LayoutField * layoutField) override;
   void selectPreviousNewSequenceCell();
   void editExpression(Sequence * sequence, int sequenceDefinitionIndex, Ion::Events::Event event);
 private:

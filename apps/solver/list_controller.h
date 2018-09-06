@@ -12,7 +12,7 @@
 
 namespace Solver {
 
-class ListController : public Shared::ExpressionModelListController, public ButtonRowDelegate, public ListViewDataSource, public Shared::TextFieldDelegate, public Shared::ExpressionLayoutFieldDelegate {
+class ListController : public Shared::ExpressionModelListController, public ButtonRowDelegate, public ListViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
   ListController(Responder * parentResponder, EquationStore * equationStore, ButtonRowController * footer);
   /* ButtonRowDelegate */
@@ -34,13 +34,13 @@ public:
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void editExpression(Shared::ExpressionModel * model, Ion::Events::Event event) override { return Shared::ExpressionModelListController::editExpression(model, event); }
-  /* Text/ExpressionLayout Field Delegate */
+  /* Text/Layout Field Delegate */
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  bool expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) override;
+  bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) override;
   /* Specific to Solver */
   void resolveEquations();
 private:

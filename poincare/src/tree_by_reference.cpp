@@ -11,10 +11,12 @@ namespace Poincare {
 /* Clone */
 
 TreeByReference TreeByReference::clone() const {
+#if POINCARE_ALLOW_STATIC_NODES
   if (isStatic()) {
     // Static nodes are not copied
     return TreeByReference(node());
   }
+#endif
   /* TODO Remove ? if (isUninitialized()) {
     return TreeByReference();
   }*/
@@ -43,12 +45,14 @@ void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByRefere
 
   assert(!isUninitialized());
 
+#if POINCARE_ALLOW_STATIC_NODES
   // If the new node is static, copy it in the pool and add the copy
   if (newChild.isStatic()) {
     TreeByReference newT = TreeByReference(TreePool::sharedPool()->deepCopy(newChild.node()));
     replaceChildInPlace(oldChild, newT);
     return;
   }
+#endif
 
   // If the new child has a parent, detach from it
   newChild.detachFromParent();
@@ -102,7 +106,9 @@ void TreeByReference::mergeChildrenAtIndexInPlace(TreeByReference t, int i) {
 }
 
 void TreeByReference::swapChildrenInPlace(int i, int j) {
+#if POINCARE_ALLOW_STATIC_NODES
   assert(!isStatic());
+#endif
   assert(i >= 0 && i < numberOfChildren());
   assert(j >= 0 && j < numberOfChildren());
   if (i == j) {
@@ -131,13 +137,14 @@ void TreeByReference::addChildAtIndexInPlace(TreeByReference t, int index, int c
   assert(!t.isUninitialized());
   assert(index >= 0 && index <= currentNumberOfChildren);
 
+#if POINCARE_ALLOW_STATIC_NODES
   // If the new node is static, copy it in the pool and add the copy
   if (t.isStatic()) {
     TreeByReference newT = TreeByReference(TreePool::sharedPool()->deepCopy(t.node()));
     addChildAtIndexInPlace(newT, index, currentNumberOfChildren);
     return;
   }
-
+#endif
   // If t has a parent, detach t from it.
   t.detachFromParent();
   assert(t.parent().isUninitialized());
@@ -197,7 +204,7 @@ void TreeByReference::setTo(const TreeByReference & tr) {
   }
   int currentId = identifier();
   setIdentifierAndRetain(tr.identifier());
-  if (currentId != TreePool::NoNodeIdentifier) {
+  if (currentId != TreeNode::NoNodeIdentifier) {
     TreeNode * previousNode = TreePool::sharedPool()->node(currentId);
     if (previousNode != nullptr) {
       // The node might have been deleted during an exception

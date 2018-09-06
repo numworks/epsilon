@@ -240,7 +240,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     m_sumLayoutRef = LayoutHelper::String(sigma, sizeof(sigma));/* TODO new CondensedSumLayout(
         LayoutHelper::String(sigma, sizeof(sigma)),
         LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small),
-        new EmptyLayout(EmptyLayout::Color::Yellow, false, KDText::FontSize::Small, false),
+        EmptyLayoutRef(EmptyLayout::Color::Yellow, false, KDText::FontSize::Small, false),
         false); */
   } else {
     m_sumLayoutRef = LayoutHelper::String(sigma, sizeof(sigma));
@@ -261,7 +261,7 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
     childrenLayouts[2] = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
     childrenLayouts[1] = functionLayout;
     childrenLayouts[0] = m_sumLayoutRef;
-    m_sumLayoutRef = new HorizontalLayout(childrenLayouts, 3, false);*/
+    m_sumLayoutRef = HorizontalLayoutRef(childrenLayouts, 3, false);*/
   }
   m_sum.setLayoutRef(m_sumLayoutRef);
   if (step == Step::Result) {

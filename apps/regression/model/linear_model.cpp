@@ -12,13 +12,13 @@ ExpressionLayout * LinearModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
-      new CharLayout('a', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('X', KDText::FontSize::Small),
-      new CharLayout('+', KDText::FontSize::Small),
-      new CharLayout('b', KDText::FontSize::Small),
+      CharLayoutRef('a', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('X', KDText::FontSize::Small),
+      CharLayoutRef('+', KDText::FontSize::Small),
+      CharLayoutRef('b', KDText::FontSize::Small),
     };
-    layout = new HorizontalLayout(layoutChildren, 5, false);
+    layout = HorizontalLayoutRef(layoutChildren, 5);
   }
   return layout;
 }

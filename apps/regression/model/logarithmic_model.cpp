@@ -12,17 +12,17 @@ ExpressionLayout * LogarithmicModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
-      new CharLayout('a', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('l', KDText::FontSize::Small),
-      new CharLayout('n', KDText::FontSize::Small),
-      new CharLayout('(', KDText::FontSize::Small),
-      new CharLayout('X', KDText::FontSize::Small),
-      new CharLayout(')', KDText::FontSize::Small),
-      new CharLayout('+', KDText::FontSize::Small),
-      new CharLayout('b', KDText::FontSize::Small)
+      CharLayoutRef('a', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('l', KDText::FontSize::Small),
+      CharLayoutRef('n', KDText::FontSize::Small),
+      CharLayoutRef('(', KDText::FontSize::Small),
+      CharLayoutRef('X', KDText::FontSize::Small),
+      CharLayoutRef(')', KDText::FontSize::Small),
+      CharLayoutRef('+', KDText::FontSize::Small),
+      CharLayoutRef('b', KDText::FontSize::Small)
     };
-    layout = new HorizontalLayout(layoutChildren, 9, false);
+    layout = HorizontalLayoutRef(layoutChildren, 9);
   }
   return layout;
 }

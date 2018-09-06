@@ -11,26 +11,26 @@ ExpressionLayout * LogisticModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * exponentLayoutChildren[] = {
-      new CharLayout('-', KDText::FontSize::Small),
-      new CharLayout('b', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('X', KDText::FontSize::Small)
+      CharLayoutRef('-', KDText::FontSize::Small),
+      CharLayoutRef('b', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('X', KDText::FontSize::Small)
     };
     const ExpressionLayout * layoutChildren[] = {
-      new CharLayout('1', KDText::FontSize::Small),
-      new CharLayout('+', KDText::FontSize::Small),
-      new CharLayout('a', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('e', KDText::FontSize::Small),
-      new VerticalOffsetLayout(
-          new HorizontalLayout(exponentLayoutChildren, 4, false),
-          VerticalOffsetLayout::Type::Superscript,
-          false)
+      CharLayoutRef('1', KDText::FontSize::Small),
+      CharLayoutRef('+', KDText::FontSize::Small),
+      CharLayoutRef('a', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('e', KDText::FontSize::Small),
+      VerticalOffsetLayoutRef(
+          HorizontalLayoutRef(exponentLayoutChildren, 4),
+          VerticalOffsetLayoutNode::Type::Superscript
+        )
     };
-    layout = new FractionLayout(
-       new CharLayout('c', KDText::FontSize::Small),
-       new HorizontalLayout(layoutChildren, 6, false),
-       false);
+    layout = FractionLayoutRef(
+       CharLayoutRef('c', KDText::FontSize::Small),
+       HorizontalLayoutRef(layoutChildren, 6),
+      );
   }
   return layout;
 }

@@ -107,19 +107,10 @@ bool Calculation::isEmpty() {
 }
 
 void Calculation::tidy() {
-// TODO: we might want to do something here? To empty the pool?
-/*  if (m_input != nullptr) {
-    delete m_input;
-  }
-  m_input = nullptr;
-  if (m_exactOutput != nullptr) {
-    delete m_exactOutput;
-  }
-  m_exactOutput = nullptr;
-  if (m_approximateOutput != nullptr) {
-    delete m_approximateOutput;
-  }
-  m_approximateOutput = nullptr;*/
+  /* Uninitialized all Expression stored to free the Pool */
+  m_input = Expression();
+  m_exactOutput = Expression();
+  m_approximateOutput = Expression();
   m_height = -1;
   m_equalSign = EqualSign::Unknown;
 }

@@ -88,9 +88,10 @@ public:
 
 protected:
   /* Constructor */
-  TreeByReference(const TreeNode * node) {
-    assert(node != nullptr);
-    setIdentifierAndRetain(node->identifier());
+  TreeByReference(const TreeNode * node) : TreeByReference() {
+    if (node != nullptr) {
+      setIdentifierAndRetain(node->identifier());
+    }
   }
   TreeByReference(int nodeIndentifier = TreePool::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
   void setIdentifierAndRetain(int newId) {

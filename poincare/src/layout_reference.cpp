@@ -19,12 +19,6 @@ LayoutCursor LayoutReference::equivalentCursor(LayoutCursor * cursor) {
   return node()->equivalentCursor(cursor);
 }
 
-LayoutReference LayoutReference::root() const {
-  assert(!isUninitialized());
-  LayoutNode * r = node()->root();
-  return r == nullptr ? LayoutReference() : LayoutReference(r);
-}
-
 // Tree modification
 
 void LayoutReference::replaceChild(LayoutRef oldChild, LayoutRef newChild, LayoutCursor * cursor, bool force) {

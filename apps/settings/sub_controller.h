@@ -11,11 +11,6 @@ namespace Settings {
 class SubController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public Shared::ParameterTextFieldDelegate {
 public:
   SubController(Responder * parentResponder);
-  ~SubController();
-  SubController(const SubController& other) = delete;
-  SubController(SubController&& other) = delete;
-  SubController& operator=(const SubController& other) = delete;
-  SubController& operator=(SubController&& other) = delete;
   View * view() override;
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -43,7 +38,7 @@ private:
   constexpr static int k_totalNumberOfCell = (Ion::Display::Height-2*k_topBottomMargin-Metric::TitleBarHeight-Metric::StackTitleHeight)/Metric::ParameterCellHeight;
   MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   ExpressionTableCell m_complexFormatCells[2];
-  Poincare::ExpressionLayout * m_complexFormatLayout[2];
+  Poincare::LayoutReference m_complexFormatLayout[2];
   MessageTableCellWithEditableText m_editableCell;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
   SelectableTableView m_selectableTableView;

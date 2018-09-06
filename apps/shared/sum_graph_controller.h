@@ -39,7 +39,7 @@ private:
   constexpr static float k_cursorBottomMarginRatio = 0.28f; // (cursorHeight/2+bannerHeigh)/graphViewHeight
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
-  virtual Poincare::ExpressionLayout * createFunctionLayout(const char * functionName) = 0;
+  virtual Poincare::LayoutReference createFunctionLayout(const char * functionName) = 0;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::CurveView * curveView() override { return m_graphView; }
   TextFieldDelegateApp * textFieldDelegateApp() override {
@@ -58,7 +58,7 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void setLegendMessage(I18n::Message message, Step step);
     void setEditableZone(double d);
-    void setSumSymbol(Step step, double start = NAN, double end = NAN, double result = NAN, Poincare::ExpressionLayout * sequenceName = nullptr);
+    void setSumSymbol(Step step, double start = NAN, double end = NAN, double result = NAN, Poincare::LayoutReference sequenceName = Poincare::LayoutReference());
   private:
     constexpr static KDCoordinate k_legendHeight = 35;
     constexpr static KDCoordinate k_editableZoneWidth = 12*KDText::charSize(KDText::FontSize::Small).width();

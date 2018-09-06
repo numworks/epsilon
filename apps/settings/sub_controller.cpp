@@ -27,19 +27,10 @@ SubController::SubController(Responder * parentResponder) :
   m_complexFormatLayout[0] = Helpers::CartesianComplexFormat(KDText::FontSize::Large);
   m_complexFormatLayout[1] = Helpers::PolarComplexFormat(KDText::FontSize::Large);
   for (int i = 0; i < 2; i++) {
-    m_complexFormatCells[i].setExpressionLayout(m_complexFormatLayout[i]);
+    m_complexFormatCells[i].setLayoutRef(m_complexFormatLayout[i]);
   }
   m_editableCell.setMessage(I18n::Message::SignificantFigures);
   m_editableCell.setMessageFontSize(KDText::FontSize::Large);
-}
-
-SubController::~SubController() {
-  for (int i = 0; i < 2; i++) {
-    if (m_complexFormatLayout[i]) {
-      delete m_complexFormatLayout[i];
-      m_complexFormatLayout[i] = nullptr;
-    }
-  }
 }
 
 const char * SubController::title() {

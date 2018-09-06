@@ -17,7 +17,7 @@ void LayoutField::ContentView::layoutCursorSubview() {
   LayoutRef pointedLayoutR = m_cursor.layoutReference();
   LayoutCursor::Position cursorPosition = m_cursor.position();
   LayoutCursor eqCursor = pointedLayoutR.equivalentCursor(&m_cursor);
-  if (pointedLayoutR.hasChild(eqCursor.layoutReference())) {
+  if (eqCursor.isDefined() && pointedLayoutR.hasChild(eqCursor.layoutReference())) {
     pointedLayoutR = eqCursor.layoutReference();
     cursorPosition = eqCursor.position();
   }

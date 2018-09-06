@@ -18,9 +18,11 @@ public:
     setIdentifierAndRetain(tr.identifier());
   }
   ~TreeByReference() {
-    assert(node()->identifier() == m_identifier);
-    TreeNode * n = node();
-    n->release(n->numberOfChildren());
+    if (m_identifier != TreePool::NoNodeIdentifier) {
+      assert(node()->identifier() == m_identifier);
+      TreeNode * n = node();
+      n->release(n->numberOfChildren());
+    }
   }
 
   /* Operators */
@@ -55,7 +57,7 @@ public:
   bool hasAncestor(TreeByReference t, bool includeSelf) const { return node()->hasAncestor(t.node(), includeSelf); }
   int numberOfChildren() const { return node()->numberOfChildren(); }
   int indexOfChild(TreeByReference t) const { return node()->indexOfChild(t.node()); }
-  TreeByReference parent() const { return TreeByReference(node()->parent()); }
+  TreeByReference parent() const { return (isUninitialized() || node()->parent() == nullptr) ? TreeByReference() : TreeByReference(node()->parent()); }
   TreeByReference childAtIndex(int i) const { return TreeByReference(node()->childAtIndex(i)); }
   void setParentIdentifier(int id) { node()->setParentIdentifier(id); }
   void deleteParentIdentifier() { node()->deleteParentIdentifier(); }
@@ -93,8 +95,9 @@ protected:
   TreeByReference(int nodeIndentifier = TreePool::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;
-    assert(node() != nullptr);
-    node()->retain();
+    if (!isUninitialized()) {
+      node()->retain();
+    }
   }
   void setTo(const TreeByReference & tr);
   /* Hierarchy operations */

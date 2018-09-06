@@ -64,7 +64,6 @@ void MatrixLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecom
     addGreySquares();
     *shouldRecomputeLayout = true;
     assert(m_numberOfColumns*m_numberOfRows >= 1);
-    assert(!childAtIndex(0)->isUninitialized());
     cursor->setLayoutNode(childAtIndex(0));
     return;
   }

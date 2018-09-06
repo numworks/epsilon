@@ -20,14 +20,19 @@ namespace Poincare {
 class TreeNode {
   friend class TreePool;
 public:
+  static constexpr int NoNodeIdentifier = -1;
+#if POINCARE_ALLOW_STATIC_NODES
   static constexpr int FirstStaticNodeIdentifier = -2;
+#endif
 
   virtual ~TreeNode() {}
 
   // Attributes
+#if POINCARE_ALLOW_STATIC_NODES
   bool isStatic() const { return m_identifier <= FirstStaticNodeIdentifier; }
+#endif
   void setParentIdentifier(int parentID) { m_parentIdentifier = parentID; }
-  void deleteParentIdentifier(); //TODO inline
+  void deleteParentIdentifier() { m_parentIdentifier = NoNodeIdentifier; }
   virtual size_t size() const = 0;
   int identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
@@ -55,7 +60,9 @@ public:
   bool hasChild(const TreeNode * child) const;
   bool hasAncestor(const TreeNode * node, bool includeSelf) const;
   bool hasSibling(const TreeNode * e) const;
-  void deleteParentIdentifierInChildren() const; // Inline?
+  void deleteParentIdentifierInChildren() const {
+    changeParentIdentifierInChildren(NoNodeIdentifier);
+  }
   // AddChild collateral effect
   virtual void didAddChildAtIndex(int newNumberOfChildren) {}
 
@@ -120,30 +127,16 @@ public:
 
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const = 0;
-  virtual void logAttributes(std::ostream & stream) const {
-  }
-
-  void log(std::ostream & stream, bool recursive = true) {
-    stream << "<";
-    logNodeName(stream);
-    stream << " id=\"" << m_identifier << "\"";
-    stream << " refCount=\"" << m_referenceCounter << "\"";
-    stream << " size=\"" << size() << "\"";
-    logAttributes(stream);
-    stream << ">";
-    if (recursive) {
-      for (TreeNode * child : directChildren()) {
-        child->log(stream, recursive);
-      }
-    }
-    stream << "</";
-    logNodeName(stream);
-    stream << ">";
-  }
+  virtual void logAttributes(std::ostream & stream) const {}
+  void log(std::ostream & stream, bool recursive = true);
 #endif
 
 protected:
-  TreeNode();
+  TreeNode() :
+    m_identifier(NoNodeIdentifier),
+    m_parentIdentifier(NoNodeIdentifier),
+    m_referenceCounter(0)
+  {}
   size_t deepSize(int realNumberOfChildren) const;
 private:
   void updateParentIdentifierInChildren() const {

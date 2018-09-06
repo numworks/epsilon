@@ -7,15 +7,13 @@ namespace Poincare {
 
 // Node operations
 
-void TreeNode::deleteParentIdentifier() {
-  m_parentIdentifier = TreePool::NoNodeIdentifier;
-}
-
 void TreeNode::release(int currentNumberOfChildren) {
+#if POINCARE_ALLOW_STATIC_NODES
   if (isStatic()) {
     // Do not release static nodes
     return;
   }
+#endif
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     deleteParentIdentifierInChildren();
@@ -39,10 +37,7 @@ void TreeNode::rename(int identifier, bool unregisterPreviousIdentifier) {
 // Hierarchy
 
 TreeNode * TreeNode::parent() const {
-  if (m_parentIdentifier == TreePool::NoNodeIdentifier) {
-    return nullptr;
-  }
-  return TreePool::sharedPool()->node(m_parentIdentifier);
+  return m_parentIdentifier == NoNodeIdentifier ? nullptr : TreePool::sharedPool()->node(m_parentIdentifier);
 }
 
 TreeNode * TreeNode::root() {
@@ -157,12 +152,25 @@ TreeNode * TreeNode::lastDescendant() const {
 
 // Protected
 
-TreeNode::TreeNode() :
-  m_identifier(TreePool::NoNodeIdentifier),
-  m_parentIdentifier(TreePool::NoNodeIdentifier),
-  m_referenceCounter(0)
-{
+#if POINCARE_TREE_LOG
+void TreeNode::log(std::ostream & stream, bool recursive = true) {
+  stream << "<";
+  logNodeName(stream);
+  stream << " id=\"" << m_identifier << "\"";
+  stream << " refCount=\"" << m_referenceCounter << "\"";
+  stream << " size=\"" << size() << "\"";
+  logAttributes(stream);
+  stream << ">";
+  if (recursive) {
+    for (TreeNode * child : directChildren()) {
+      child->log(stream, recursive);
+    }
+  }
+  stream << "</";
+  logNodeName(stream);
+  stream << ">";
 }
+#endif
 
 size_t TreeNode::deepSize(int realNumberOfChildren) const {
   if (realNumberOfChildren == -1) {
@@ -180,10 +188,6 @@ size_t TreeNode::deepSize(int realNumberOfChildren) const {
     reinterpret_cast<char *>(realNextSibling)
     -
     reinterpret_cast<const char *>(this);
-}
-
-void TreeNode::deleteParentIdentifierInChildren() const {
-  changeParentIdentifierInChildren(TreePool::NoNodeIdentifier);
 }
 
 void TreeNode::changeParentIdentifierInChildren(int id) const {

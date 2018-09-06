@@ -11,14 +11,14 @@ class TreeByReference {
   friend class TreePool;
 public:
   /* Constructors */
-  TreeByReference(const TreeByReference & tr) : m_identifier(TreePool::NoNodeIdentifier) {
+  TreeByReference(const TreeByReference & tr) : m_identifier(TreeNode::NoNodeIdentifier) {
     setIdentifierAndRetain(tr.identifier());
   }
-  TreeByReference(TreeByReference&& tr) : m_identifier(TreePool::NoNodeIdentifier) {
+  TreeByReference(TreeByReference&& tr) : m_identifier(TreeNode::NoNodeIdentifier) {
     setIdentifierAndRetain(tr.identifier());
   }
   ~TreeByReference() {
-    if (m_identifier != TreePool::NoNodeIdentifier) {
+    if (m_identifier != TreeNode::NoNodeIdentifier) {
       assert(node()->identifier() == m_identifier);
       TreeNode * n = node();
       n->release(n->numberOfChildren());
@@ -43,13 +43,14 @@ public:
   TreeByReference clone() const;
 
   int identifier() const { return m_identifier; }
-  TreeNode * node() const { assert(m_identifier != TreePool::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
+  TreeNode * node() const { assert(m_identifier != TreeNode::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
   int nodeRetainCount() const { return node()->retainCount(); }
 
   bool isGhost() const { return node()->isGhost(); }
-  bool isUninitialized() const { return m_identifier == TreePool::NoNodeIdentifier; }
+  bool isUninitialized() const { return m_identifier == TreeNode::NoNodeIdentifier; }
+#if POINCARE_ALLOW_STATIC_NODES
   bool isStatic() const { return node()->isStatic(); }
-
+#endif
 
   /* Hierarchy */
   bool hasChild(TreeByReference t) const { return node()->hasChild(t.node()); }
@@ -93,7 +94,7 @@ protected:
       setIdentifierAndRetain(node->identifier());
     }
   }
-  TreeByReference(int nodeIndentifier = TreePool::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
+  TreeByReference(int nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
   void setIdentifierAndRetain(int newId) {
     m_identifier = newId;
     if (!isUninitialized()) {

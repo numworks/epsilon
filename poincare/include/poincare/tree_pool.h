@@ -22,8 +22,6 @@ class TreePool {
   friend class TreeNode;
   friend class TreeByReference;
 public:
-  static constexpr int NoNodeIdentifier = -1;
-
   static TreePool * sharedPool() { assert(SharedStaticPool != nullptr); return SharedStaticPool; }
   static void RegisterPool(TreePool * pool) {  assert(SharedStaticPool == nullptr); SharedStaticPool = pool; }
 

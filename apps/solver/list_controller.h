@@ -3,7 +3,7 @@
 
 #include <escher.h>
 #include "../shared/expression_model_list_controller.h"
-#include "../shared/expression_layout_field_delegate.h"
+#include "../shared/layout_field_delegate.h"
 #include "../shared/text_field_delegate.h"
 #include "equation_store.h"
 #include "equation_list_view.h"

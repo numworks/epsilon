@@ -8,9 +8,7 @@
 namespace Poincare {
 
 GlobalContext::GlobalContext() :
-  m_matrixLayouts{},
-  m_pi(M_PI),
-  m_e(M_E)
+  m_matrixLayouts{}
 {
 }
 
@@ -31,10 +29,10 @@ int GlobalContext::symbolIndex(const Symbol & symbol) const {
 
 const Expression GlobalContext::expressionForSymbol(const Symbol & symbol) {
   if (symbol.name() == Ion::Charset::SmallPi) {
-    return m_pi;
+    return Float<double>(M_PI);
   }
   if (symbol.name() == Ion::Charset::Exponential) {
-    return m_e;
+    return Float<double>(M_E);
   }
   int index = symbolIndex(symbol);
   if (Symbol::isMatrixSymbol(symbol.name())) {

@@ -31,8 +31,6 @@ private:
   Matrix m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   /* Matrix layout memoization */
   LayoutRef m_matrixLayouts[k_maxNumberOfMatrixExpressions];
-  Float<double> m_pi;
-  Float<double> m_e;
 };
 
 }

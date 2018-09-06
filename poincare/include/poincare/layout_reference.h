@@ -19,19 +19,8 @@ public:
   using TreeByReference::operator!=;
 
   LayoutReference() : TreeByReference() {}
-  LayoutReference(const LayoutNode * node) :
-    TreeByReference(node) {}
-
-  LayoutReference clone() const {
-    if (isUninitialized()) {
-      return LayoutReference();
-    }
-    TreeByReference c = TreeByReference::clone();
-    LayoutReference cast = LayoutReference(static_cast<LayoutNode *>(c.node()));
-    cast.invalidAllSizesPositionsAndBaselines();
-    return cast;
-  }
-
+  LayoutReference(const LayoutNode * node) : TreeByReference(node) {}
+  LayoutReference clone() const;
   LayoutNode * node() const {
     assert(isUninitialized() || !TreeByReference::node()->isGhost());
     return static_cast<LayoutNode *>(TreeByReference::node());
@@ -46,7 +35,6 @@ public:
   }
   //TODO: check these methods are needed here, not just in Node
   KDSize layoutSize() { return node()->layoutSize(); }
-  //KDPoint layoutOrigin() { return this->node()->origin(); }
   KDPoint absoluteOrigin() { return node()->absoluteOrigin(); }
   KDCoordinate baseline() { return node()->baseline(); }
   void invalidAllSizesPositionsAndBaselines() { return node()->invalidAllSizesPositionsAndBaselines(); }

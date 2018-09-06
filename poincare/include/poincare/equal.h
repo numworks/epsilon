@@ -20,8 +20,6 @@ public:
   // ExpressionNode
   Type type() const override { return Type::Equal; }
   int polynomialDegree(char symbolName) const override { return -1; }
-  // For the equation A = B, create the reduced expression A-B
-  Expression standardEquation(Context & context, Preferences::AngleUnit angleUnit) const;
 private:
   // Simplification
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) override;
@@ -42,6 +40,8 @@ public:
     replaceChildAtIndexInPlace(1, child2);
   }
 
+  // For the equation A = B, create the reduced expression A-B
+  Expression standardEquation(Context & context, Preferences::AngleUnit angleUnit) const;
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 };

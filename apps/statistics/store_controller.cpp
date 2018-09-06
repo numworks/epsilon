@@ -33,7 +33,7 @@ void StoreController::setFormulaLabel() {
   static_cast<ContentView *>(view())->formulaInputView()->setBufferText(text);
 }
 
-bool StoreController::fillColumnWithFormula(Expression * formula) {
+bool StoreController::fillColumnWithFormula(Expression formula) {
   return privateFillColumnWithFormula(formula, Symbol::isSeriesSymbol);
 }
 

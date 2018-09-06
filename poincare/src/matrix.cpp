@@ -105,7 +105,8 @@ void Matrix::addChildrenAsRowInPlace(TreeByReference t, int i) {
   setDimensions(previousNumberOfRows + 1, previousNumberOfColumns == 0 ? t.numberOfChildren() : previousNumberOfColumns);
 }
 
-int Matrix::rank(Context & context, Preferences::AngleUnit angleUnit) {
+int Matrix::rank(Context & context, Preferences::AngleUnit angleUnit, bool inPlace) {
+  Matrix m = inPlace ? *this : clone().convert<Matrix>();
   Matrix m = rowCanonize(context, angleUnit);
   int rank = m.numberOfRows();
   int i = rank-1;

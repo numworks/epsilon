@@ -23,7 +23,6 @@ public:
   };
   /* EquationStore */
   EquationStore();
-  ~EquationStore();
   Equation * modelAtIndex(int i) override {
     assert(i>=0 && i<m_numberOfModels);
     return &m_equations[i];
@@ -46,7 +45,7 @@ public:
    * Layout and an approximate layout. For example, 'sqrt(2)' and '1.414213'.
    * The boolean exactLayout indicates if we want the exact layout or the
    * approximate one. */
-  Poincare::ExpressionLayout * exactSolutionLayoutAtIndex(int i, bool exactLayout);
+  Poincare::LayoutReference exactSolutionLayoutAtIndex(int i, bool exactLayout);
   /* Exact layout and approximate layout of an exact solution can be:
    * - identical: for instance, 5 and 5
    * - equal: for instance 1/2 and 0.5
@@ -79,16 +78,16 @@ private:
     return emptyModel();
   }
   void setModelAtIndex(Shared::ExpressionModel * f, int i) override;
-  Error resolveLinearSystem(Poincare::Expression * solutions[k_maxNumberOfExactSolutions], Poincare::Expression * coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression * constants[k_maxNumberOfEquations], Poincare::Context * context);
-  Error oneDimensialPolynomialSolve(Poincare::Expression * solutions[k_maxNumberOfExactSolutions], Poincare::Expression * polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], int degree, Poincare::Context * context);
+  Error resolveLinearSystem(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression coefficients[k_maxNumberOfEquations][Poincare::Expression::k_maxNumberOfVariables], Poincare::Expression constants[k_maxNumberOfEquations], Poincare::Context * context);
+  Error oneDimensialPolynomialSolve(Poincare::Expression solutions[k_maxNumberOfExactSolutions], Poincare::Expression polynomialCoefficients[Poincare::Expression::k_maxNumberOfPolynomialCoefficients], int degree, Poincare::Context * context);
   void tidySolution();
 
   Equation m_equations[k_maxNumberOfEquations];
   Type m_type;
   char m_variables[Poincare::Expression::k_maxNumberOfVariables+1];
   int m_numberOfSolutions;
-  Poincare::ExpressionLayout * m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
-  Poincare::ExpressionLayout * m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
+  Poincare::LayoutReference m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
+  Poincare::LayoutReference m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
   bool m_exactSolutionIdentity[k_maxNumberOfExactSolutions];
   bool m_exactSolutionEquality[k_maxNumberOfExactSolutions];
   double m_intervalApproximateSolutions[2];

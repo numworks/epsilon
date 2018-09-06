@@ -8,28 +8,28 @@ namespace Sequence {
 template<typename T>
 CacheContext<T>::CacheContext(Context * parentContext) :
   VariableContext<T>('n', parentContext),
-  m_values{{Approximation<T>(NAN), Approximation<T>(NAN)},
-    {Approximation<T>(NAN), Approximation<T>(NAN)}}
+  m_values{{NAN, NAN},
+    {NAN, NAN}}
 {
 }
 
 template<typename T>
-const Expression * CacheContext<T>::expressionForSymbol(const Symbol * symbol) {
-  if (symbol->name() == Symbol::SpecialSymbols::un || symbol->name() == Symbol::SpecialSymbols::un1 ||
-      symbol->name() == Symbol::SpecialSymbols::vn || symbol->name() == Symbol::SpecialSymbols::vn1) {
-    return &m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)];
+const Expression CacheContext<T>::expressionForSymbol(const Symbol & symbol) {
+  if (symbol.name() == Symbol::SpecialSymbols::un || symbol.name() == Symbol::SpecialSymbols::un1 ||
+      symbol.name() == Symbol::SpecialSymbols::vn || symbol.name() == Symbol::SpecialSymbols::vn1) {
+    return Float<T>(m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)]);
   }
   return VariableContext<T>::expressionForSymbol(symbol);
 }
 
 template<typename T>
-void CacheContext<T>::setValueForSymbol(T value, const Poincare::Symbol * symbol) {
-  m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = Approximation<T>(value);
+void CacheContext<T>::setValueForSymbol(T value, const Poincare::Symbol & symbol) {
+  m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = value;
 }
 
 template<typename T>
-int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol * symbol) {
-  switch (symbol->name()) {
+int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol & symbol) {
+  switch (symbol.name()) {
     case Symbol::SpecialSymbols::un:
       return 0;
     case Symbol::SpecialSymbols::un1:
@@ -44,8 +44,8 @@ int CacheContext<T>::nameIndexForSymbol(const Poincare::Symbol * symbol) {
 }
 
 template<typename T>
-int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol * symbol) {
-  switch (symbol->name()) {
+int CacheContext<T>::rankIndexForSymbol(const Poincare::Symbol & symbol) {
+  switch (symbol.name()) {
     case Symbol::SpecialSymbols::un:
       return 0;
     case Symbol::SpecialSymbols::un1:

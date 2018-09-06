@@ -17,11 +17,6 @@ class CalculationController : public Shared::TabTableController, public TableVie
 
 public:
   CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store);
-  ~CalculationController();
-  CalculationController(const CalculationController& other) = delete;
-  CalculationController(CalculationController&& other) = delete;
-  CalculationController& operator=(const CalculationController& other) = delete;
-  CalculationController& operator=(CalculationController&& other) = delete;
 
   // View Controller
   const char * title() override;
@@ -78,7 +73,7 @@ private:
   int maxNumberOfCoefficients() const;
   Shared::MarginEvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
   EvenOddExpressionCell * m_r2TitleCell;
-  Poincare::ExpressionLayout * m_r2Layout;
+  Poincare::LayoutReference m_r2Layout;
   ColumnTitleCell * m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator * m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Shared::SeparatorEvenOddBufferTextCell * m_calculationCells[k_numberOfCalculationCells];

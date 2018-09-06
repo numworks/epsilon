@@ -2,9 +2,7 @@
 #include "../constant.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
-#include "../../poincare/src/layout/char_layout.h"
-#include "../../poincare/src/layout/horizontal_layout.h"
-#include "../../poincare/src/layout/vertical_offset_layout.h"
+
 #include <poincare.h>
 #include <assert.h>
 
@@ -27,13 +25,6 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_store(store)
 {
   m_r2Layout = HorizontalLayoutRef(CharLayoutRef('r', KDText::FontSize::Small), VerticalOffsetLayoutRef(CharLayoutRef('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript));
-}
-
-CalculationController::~CalculationController() {
-  if (m_r2Layout) {
-    delete m_r2Layout;
-    m_r2Layout = nullptr;
-  }
 }
 
 const char * CalculationController::title() {
@@ -118,7 +109,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     int numberRows = numberOfRows();
     if (shouldDisplayRAndR2 && j == numberRows-1) {
       EvenOddExpressionCell * myCell = (EvenOddExpressionCell *)cell;
-      myCell->setExpressionLayout(m_r2Layout);
+      myCell->setLayoutRef(m_r2Layout);
       return;
     }
     MarginEvenOddMessageTextCell * myCell = (MarginEvenOddMessageTextCell *)cell;

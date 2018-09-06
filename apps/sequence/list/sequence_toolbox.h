@@ -8,11 +8,6 @@ namespace Sequence {
 class SequenceToolbox : public MathToolbox {
 public:
   SequenceToolbox();
-  ~SequenceToolbox();
-  SequenceToolbox(const SequenceToolbox& other) = delete;
-  SequenceToolbox(SequenceToolbox&& other) = delete;
-  SequenceToolbox& operator=(const SequenceToolbox& other) = delete;
-  SequenceToolbox& operator=(SequenceToolbox&& other) = delete;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() override;
   HighlightCell * reusableCell(int index, int type) override;
@@ -23,7 +18,7 @@ private:
   bool selectAddedCell(int selectedRow);
   int mathToolboxIndex(int index);
   ExpressionTableCell m_addedCells[k_maxNumberOfDisplayedRows];
-  Poincare::ExpressionLayout * m_addedCellLayout[k_maxNumberOfDisplayedRows];
+  Poincare::LayoutReference m_addedCellLayout[k_maxNumberOfDisplayedRows];
   int m_numberOfAddedCells;
 };
 

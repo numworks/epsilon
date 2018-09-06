@@ -1,8 +1,5 @@
 #include "sequence_toolbox.h"
 #include "../sequence_store.h"
-#include "../../../poincare/src/layout/char_layout.h"
-#include "../../../poincare/src/layout/horizontal_layout.h"
-#include "../../../poincare/src/layout/vertical_offset_layout.h"
 #include <poincare/layout_helper.h>
 #include <assert.h>
 
@@ -15,15 +12,6 @@ SequenceToolbox::SequenceToolbox() :
   m_addedCellLayout{},
   m_numberOfAddedCells(0)
 {
-}
-
-SequenceToolbox::~SequenceToolbox() {
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    if (m_addedCellLayout[i]) {
-      delete m_addedCellLayout[i];
-      m_addedCellLayout[i] = nullptr;
-    }
-  }
 }
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
@@ -55,7 +43,7 @@ HighlightCell * SequenceToolbox::reusableCell(int index, int type) {
 
 void SequenceToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (typeAtLocation(0, index) == 2) {
-    static_cast<ExpressionTableCell *>(cell)->setExpressionLayout(m_addedCellLayout[index]);
+    static_cast<ExpressionTableCell *>(cell)->setLayoutRef(m_addedCellLayout[index]);
     return;
   }
   MathToolbox::willDisplayCellForIndex(cell, mathToolboxIndex(index));
@@ -69,12 +57,6 @@ int SequenceToolbox::typeAtLocation(int i, int j) {
 }
 
 void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recurrenceDepth) {
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    if (m_addedCellLayout[i]) {
-      delete m_addedCellLayout[i];
-      m_addedCellLayout[i] = nullptr;
-    }
-  }
   /* If recurrenceDepth < 0, the user is setting the initial conditions so we
    * do not want to add any cell in the toolbox. */
   if (recurrenceDepth < 0) {
@@ -112,7 +94,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
 bool SequenceToolbox::selectAddedCell(int selectedRow){
   int bufferSize = 10;
   char buffer[bufferSize];
-  m_addedCellLayout[selectedRow]->serialize(buffer, bufferSize);
+  m_addedCellLayout[selectedRow].serialize(buffer, bufferSize);
   sender()->handleEventWithText(buffer);
   app()->dismissModalViewController();
   return true;

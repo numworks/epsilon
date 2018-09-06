@@ -51,18 +51,16 @@ public:
 
   template <typename T>
   T * createTreeNode(size_t size = sizeof(T)) {
-    int nodeIdentifier = generateIdentifier();
-    void * ptr = alloc(size);
-    T * node = new(ptr) T();
+    T * node = new(alloc(size)) T();
 
-    // Ensure the pool is syntactially correct by creating ghost children if needed.
-    // It's needed for children that have a fixed, non-zero number of children.
+    /* Ensure the pool is syntaxically correct by creating ghost children for
+     * nodes that have a fixed, non-zero number of children. */
     for (int i = 0; i < node->numberOfChildren(); i++) {
       TreeNode * ghost = createTreeNode<GhostNode>();
       ghost->retain();
       move(node->next(), ghost, 0);
     }
-    node->rename(nodeIdentifier, false);
+    node->rename(generateIdentifier(), false);
     return node;
   }
 
@@ -71,18 +69,7 @@ public:
   void removeChildren(TreeNode * node, int nodeNumberOfChildren);
   void removeChildrenAndDestroy(TreeNode * nodeToDestroy, int nodeNumberOfChildren);
 
-  TreeNode * deepCopy(TreeNode * node) {
-    size_t size = node->deepSize(-1);
-    void * ptr = alloc(size);
-    memcpy(ptr, static_cast<void *>(node), size);
-    TreeNode * copy = reinterpret_cast<TreeNode *>(ptr);
-    renameNode(copy, false);
-    for (TreeNode * child : copy->depthFirstChildren()) {
-      renameNode(child, false);
-      child->retain();
-    }
-    return copy;
-  }
+  TreeNode * deepCopy(TreeNode * node);
 
 #if POINCARE_ALLOW_STATIC_NODES
   void registerStaticNodeIfRequired(TreeNode * node);
@@ -93,18 +80,8 @@ public:
   void flatLog(std::ostream & stream);
   void treeLog(std::ostream & stream);
   void log() { treeLog(std::cout); }
+  int numberOfNodes() const;
 #endif
-
-  int numberOfNodes() const {
-    int count = 0;
-    TreeNode * firstNode = first();
-    TreeNode * lastNode = last();
-    while (firstNode != lastNode) {
-      count++;
-      firstNode = firstNode->next();
-    }
-    return count;
-  }
 
 private:
   constexpr static int BufferSize = 32768;
@@ -115,27 +92,12 @@ private:
   static TreePool * SharedStaticPool;
 
   // TreeNode
-  void discardTreeNode(TreeNode * node) {
-    int nodeIdentifier = node->identifier();
-    size_t size = node->size();
-    node->~TreeNode();
-    dealloc(node, size);
-    freeIdentifier(nodeIdentifier);
-  }
-
-  void registerNode(TreeNode * node) {
-    int nodeID = node->identifier();
-    if (nodeID >= 0 && nodeID < MaxNumberOfNodes) {
-      m_nodeForIdentifier[nodeID] = node;
-    }
-  }
-
+  void discardTreeNode(TreeNode * node);
+  void registerNode(TreeNode * node);
   void unregisterNode(TreeNode * node) {
     freeIdentifier(node->identifier());
   }
-
   void updateNodeForIdentifierFromNode(TreeNode * node);
-
   void renameNode(TreeNode * node, bool unregisterPreviousIdentifier = true) {
     node->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
@@ -192,22 +154,9 @@ private:
   void moveNodes(TreeNode * destination, TreeNode * source, size_t moveLength);
 
   // Identifiers
-  int generateIdentifier() {
-    return m_identifiers.pop();
-  }
+  int generateIdentifier() { return m_identifiers.pop(); }
+  void freeIdentifier(int identifier);
 
-  void freeIdentifier(int identifier) {
-    if (identifier >= 0 && identifier < MaxNumberOfNodes) {
-      m_nodeForIdentifier[identifier] = nullptr;
-      m_identifiers.push(identifier);
-    }
-  }
-
-  // Debug
-  void logNodeForIdentifierArray();
-
-  char * m_cursor;
-  char m_buffer[BufferSize];
   class IdentifierStack {
   public:
     IdentifierStack() : m_currentIndex(0) {
@@ -231,14 +180,18 @@ private:
     int m_currentIndex;
     int m_availableIdentifiers[MaxNumberOfNodes];
   };
+
   void freePoolFromNode(TreeNode * firstNodeToDiscard);
+
+  char * m_cursor;
+  char m_buffer[BufferSize];
   IdentifierStack m_identifiers;
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
+  jmp_buf * m_currentJumpEnvironment; //TODO make static?
+  TreeNode * m_endOfPoolBeforeJump;
 #if POINCARE_ALLOW_STATIC_NODES
   TreeNode * m_staticNodes[MaxNumberOfStaticNodes];
 #endif
-  jmp_buf * m_currentJumpEnvironment; //TODO make static?
-  TreeNode * m_endOfPoolBeforeJump;
 };
 
 }

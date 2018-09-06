@@ -47,33 +47,13 @@ void ExpressionModel::setContent(const char * c) {
   /* We cannot call tidy here because tidy is a virtual function and does not
    * do the same thing for all children class. And here we want to delete only
    * the m_layout and m_expression. */
-// TODO: the previous expression and layout are going to be destroyed as soon as we call expression(). Should we optimize this?
-#if 0
-  if (!m_layoutRef.isUninitialized()) {
-    m_layoutRef = LayoutRef();
-  }
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
-#endif
+  m_layoutRef = LayoutRef();
+  m_expression = Expression();
 }
 
 void ExpressionModel::tidy() {
-// TODO: what do we want to do? Delete layout and ref?
-#if 0
-  m_layoutRef = LayoutRef(); ?
-  m_expression = Expression(); ?
-
-
-  if (!m_layoutRef.isUninitialized()) {
-    m_layoutRef = LayoutRef();
-  }
-  if (m_expression != nullptr) {
-    delete m_expression;
-    m_expression = nullptr;
-  }
-#endif
+  m_layoutRef = LayoutRef();
+  m_expression = Expression();
 }
 
 }

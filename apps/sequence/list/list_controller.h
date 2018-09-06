@@ -6,7 +6,7 @@
 #include "../sequence_store.h"
 #include "../../shared/function_expression_cell.h"
 #include "../../shared/function_list_controller.h"
-#include "../../shared/expression_layout_field_delegate.h"
+#include "../../shared/layout_field_delegate.h"
 #include "../../shared/text_field_delegate.h"
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"

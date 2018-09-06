@@ -8,11 +8,6 @@ namespace Solver {
 class Equation : public Shared::ExpressionModel {
 public:
   Equation();
-  ~Equation();
-  Equation& operator=(const Equation& other);
-  Equation& operator=(Equation&& other) = delete;
-  Equation(const Equation& other) = delete;
-  Equation(Equation&& other) = delete;
   void setContent(const char * c) override;
   void tidy() override;
   bool shouldBeClearedBeforeRemove() override {

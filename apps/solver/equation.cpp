@@ -10,15 +10,6 @@ Equation::Equation() :
 {
 }
 
-Equation& Equation::operator=(const Equation& other) {
-  Shared::ExpressionModel::operator=(other);
-  return *this;
-}
-
-Equation::~Equation() {
-  tidyStandardForm();
-}
-
 void Equation::setContent(const char * c) {
   /* ExpressionModel::setContent takes care of tidying m_expression and m_layout. */
   tidyStandardForm();

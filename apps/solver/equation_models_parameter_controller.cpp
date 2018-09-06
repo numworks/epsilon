@@ -14,7 +14,7 @@ constexpr const char * EquationModelsParameterController::k_models[k_numberOfMod
 EquationModelsParameterController::EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore, ListController * listController) :
   ViewController(parentResponder),
   m_emptyModelCell(I18n::Message::Empty, KDText::FontSize::Large),
-  m_expressionLayouts{},
+  m_layouts{},
   m_selectableTableView(this),
   m_equationStore(equationStore),
   m_listController(listController)
@@ -22,19 +22,9 @@ EquationModelsParameterController::EquationModelsParameterController(Responder *
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setShowsIndicators(false);
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    Poincare::Expression * e = Expression::parse(k_models[i+1]);
-    m_expressionLayouts[i] = e->createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Constant::ShortNumberOfSignificantDigits);
-    delete e;
-    m_modelCells[i].setExpressionLayout(m_expressionLayouts[i]);
-  }
-}
-
-EquationModelsParameterController::~EquationModelsParameterController() {
-  for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    if (m_expressionLayouts[i]) {
-      delete m_expressionLayouts[i];
-      m_expressionLayouts[i] = nullptr;
-    }
+    Poincare::Expression e = Expression::parse(k_models[i+1]);
+    m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Constant::ShortNumberOfSignificantDigits);
+    m_modelCells[i].setLayoutRef(m_layouts[i]);
   }
 }
 

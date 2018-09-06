@@ -34,16 +34,11 @@ void TreePool::resetJumpEnvironment() {
   m_endOfPoolBeforeJump = nullptr;
 }
 
-void TreePool::logNodeForIdentifierArray() {
-#if TREE_LOG
-  printf("\n\n");
-  for (int i = 0; i < MaxNumberOfNodes; i++) {
-    if (m_nodeForIdentifier[i] != nullptr) {
-      printf("Identifier %d, node %p\n", i, m_nodeForIdentifier[i]);
-    }
+void TreePool::freeIdentifier(int identifier) {
+  if (identifier >= 0 && identifier < MaxNumberOfNodes) {
+    m_nodeForIdentifier[identifier] = nullptr;
+    m_identifiers.push(identifier);
   }
-  printf("\n\n");
-#endif
 }
 
 #if POINCARE_ALLOW_STATIC_NODES
@@ -96,6 +91,19 @@ void TreePool::removeChildren(TreeNode * node, int nodeNumberOfChildren) {
   node->eraseNumberOfChildren();
 }
 
+TreeNode * TreePool::deepCopy(TreeNode * node) {
+  size_t size = node->deepSize(-1);
+  void * ptr = alloc(size);
+  memcpy(ptr, static_cast<void *>(node), size);
+  TreeNode * copy = reinterpret_cast<TreeNode *>(ptr);
+  renameNode(copy, false);
+  for (TreeNode * child : copy->depthFirstChildren()) {
+    renameNode(child, false);
+    child->retain();
+  }
+  return copy;
+}
+
 void TreePool::removeChildrenAndDestroy(TreeNode * nodeToDestroy, int nodeNumberOfChildren) {
   removeChildren(nodeToDestroy, nodeNumberOfChildren);
   discardTreeNode(nodeToDestroy);
@@ -132,6 +140,18 @@ void TreePool::treeLog(std::ostream & stream) {
   stream << "</TreePool>";
   stream << std::endl;
 }
+
+int TreePool::numberOfNodes() const {
+  int count = 0;
+  TreeNode * firstNode = first();
+  TreeNode * lastNode = last();
+  while (firstNode != lastNode) {
+    count++;
+    firstNode = firstNode->next();
+  }
+  return count;
+}
+
 #endif
 
 void * TreePool::alloc(size_t size) {
@@ -192,6 +212,21 @@ bool TreePool::insert(char * destination, char * source, size_t length) {
   return true;
 }
 
+void TreePool::discardTreeNode(TreeNode * node) {
+  int nodeIdentifier = node->identifier();
+  size_t size = node->size();
+  node->~TreeNode();
+  dealloc(node, size);
+  freeIdentifier(nodeIdentifier);
+}
+
+void TreePool::registerNode(TreeNode * node) {
+  int nodeID = node->identifier();
+  if (nodeID >= 0 && nodeID < MaxNumberOfNodes) {
+    m_nodeForIdentifier[nodeID] = node;
+  }
+}
+
 void TreePool::updateNodeForIdentifierFromNode(TreeNode * node) {
   for (TreeNode * n : Nodes(node)) {
     m_nodeForIdentifier[n->identifier()] = n;
@@ -205,11 +240,6 @@ void TreePool::freePoolFromNode(TreeNode * firstNodeToDiscard) {
 
   if (firstNodeToDiscard < last()) {
     // There should be no tree that continues into the pool zone to discard
-#if POINCARE_TREE_LOG
-    if (!firstNodeToDiscard->parent() == nullptr) {
-      log();
-    }
-#endif
     assert(firstNodeToDiscard->parent() == nullptr);
   }
   TreeNode * currentNode = firstNodeToDiscard;

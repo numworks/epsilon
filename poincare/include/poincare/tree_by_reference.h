@@ -17,13 +17,7 @@ public:
   TreeByReference(TreeByReference&& tr) : m_identifier(TreeNode::NoNodeIdentifier) {
     setIdentifierAndRetain(tr.identifier());
   }
-  ~TreeByReference() {
-    if (m_identifier != TreeNode::NoNodeIdentifier) {
-      assert(node()->identifier() == m_identifier);
-      TreeNode * n = node();
-      n->release(n->numberOfChildren());
-    }
-  }
+  ~TreeByReference();
 
   /* Operators */
   TreeByReference& operator=(const TreeByReference& tr) {
@@ -95,13 +89,9 @@ protected:
     }
   }
   TreeByReference(int nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
-  void setIdentifierAndRetain(int newId) {
-    m_identifier = newId;
-    if (!isUninitialized()) {
-      node()->retain();
-    }
-  }
+  void setIdentifierAndRetain(int newId);
   void setTo(const TreeByReference & tr);
+
   /* Hierarchy operations */
   // Add
   void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren);

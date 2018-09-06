@@ -43,10 +43,10 @@ public:
    * context respective methods. Indeed, special chars like n, u(n), u(n+1),
    * v(n), v(n+1) are taken into accound only when evaluating sequences which
    * is done in another context. */
-  const Poincare::Expression * expressionForSymbol(const Poincare::Symbol * symbol) override {
+  const Poincare::Expression expressionForSymbol(const Poincare::Symbol & symbol) override {
     return m_parentContext->expressionForSymbol(symbol);
   }
-  void setExpressionForSymbolName(const Poincare::Expression * expression, const Poincare::Symbol * symbol, Poincare::Context & context) override {
+  void setExpressionForSymbolName(const Poincare::Expression & expression, const Poincare::Symbol & symbol, Poincare::Context & context) override {
     m_parentContext->setExpressionForSymbolName(expression, symbol, context);
   }
   template<typename T> T valueOfSequenceAtPreviousRank(int sequenceIndex, int rank) const {

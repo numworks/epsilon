@@ -12,6 +12,8 @@
 #include <iostream>
 #endif
 
+#define POINCARE_ALLOW_STATIC_NODES 0
+
 namespace Poincare {
 
 class TreeByReference;
@@ -36,11 +38,13 @@ public:
 
   // Node
   TreeNode * node(int identifier) const {
+#if POINCARE_ALLOW_STATIC_NODES
     if (identifier <= TreeNode::FirstStaticNodeIdentifier) {
       int index = indexOfStaticNode(identifier);
       assert(index >= 0 && index < MaxNumberOfStaticNodes);
       return m_staticNodes[index];
     }
+#endif
     assert(identifier >= 0 && identifier <= MaxNumberOfNodes);
     return m_nodeForIdentifier[identifier];
   }
@@ -80,8 +84,10 @@ public:
     return copy;
   }
 
+#if POINCARE_ALLOW_STATIC_NODES
   void registerStaticNodeIfRequired(TreeNode * node);
   void registerStaticNode(TreeNode * node);
+#endif
 
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream & stream);
@@ -103,7 +109,9 @@ public:
 private:
   constexpr static int BufferSize = 32768;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
+#if POINCARE_ALLOW_STATIC_NODES
   constexpr static int MaxNumberOfStaticNodes = 200; // TODO: count how may are needed
+#endif
   static TreePool * SharedStaticPool;
 
   // TreeNode
@@ -132,8 +140,10 @@ private:
     node->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
 
+#if POINCARE_ALLOW_STATIC_NODES
   int identifierOfStaticNodeAtIndex(int index) const { return TreeNode::FirstStaticNodeIdentifier-index;} // We do not want positive indexes that are reserved for pool nodes, and -1 is reserved for node initialisation.
   int indexOfStaticNode(int id) const { return -(id - TreeNode::FirstStaticNodeIdentifier);}
+#endif
 
   // Iterators
   TreeNode * first() const { return reinterpret_cast<TreeNode *>(const_cast<char *>(m_buffer)); }
@@ -224,7 +234,9 @@ private:
   void freePoolFromNode(TreeNode * firstNodeToDiscard);
   IdentifierStack m_identifiers;
   TreeNode * m_nodeForIdentifier[MaxNumberOfNodes];
+#if POINCARE_ALLOW_STATIC_NODES
   TreeNode * m_staticNodes[MaxNumberOfStaticNodes];
+#endif
   jmp_buf * m_currentJumpEnvironment; //TODO make static?
   TreeNode * m_endOfPoolBeforeJump;
 };

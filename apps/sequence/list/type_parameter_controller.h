@@ -13,11 +13,6 @@ public:
   TypeParameterController(Responder * parentResponder, SequenceStore * sequenceStore, ListController * list,
     TableCell::Layout cellLayout, KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0,
     KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
-  ~TypeParameterController();
-  TypeParameterController(const TypeParameterController& other) = delete;
-  TypeParameterController(TypeParameterController&& other) = delete;
-  TypeParameterController& operator=(const TypeParameterController& other) = delete;
-  TypeParameterController& operator=(TypeParameterController&& other) = delete;
   const char * title() override;
   View * view() override;
   void viewWillAppear() override;
@@ -36,7 +31,7 @@ private:
   ExpressionTableCellWithPointer m_expliciteCell;
   ExpressionTableCellWithPointer m_singleRecurrenceCell;
   ExpressionTableCellWithPointer m_doubleRecurenceCell;
-  Poincare::ExpressionLayout * m_expressionLayouts[k_totalNumberOfCell];
+  Poincare::LayoutReference m_layouts[k_totalNumberOfCell];
   SelectableTableView m_selectableTableView;
   SequenceStore * m_sequenceStore;
   Sequence * m_sequence;

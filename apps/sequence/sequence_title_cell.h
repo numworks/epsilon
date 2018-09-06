@@ -12,8 +12,8 @@ public:
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
-  Poincare::ExpressionLayout * expressionLayout() const override {
-    return m_titleTextView.expressionLayout();
+  Poincare::LayoutReference layoutRef() const override {
+    return m_titleTextView.layoutRef();
   }
 private:
   int numberOfSubviews() const override;

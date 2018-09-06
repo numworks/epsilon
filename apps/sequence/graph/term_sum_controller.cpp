@@ -2,10 +2,6 @@
 #include "../../shared/text_field_delegate.h"
 #include "../app.h"
 
-#include "../../../poincare/src/layout/char_layout.h"
-#include "../../../poincare/src/layout/horizontal_layout.h"
-#include "../../../poincare/src/layout/vertical_offset_layout.h"
-
 #include <cmath>
 
 extern "C" {
@@ -50,14 +46,14 @@ double TermSumController::cursorNextStep(double x, int direction) {
   return std::round(m_cursor->x()+delta);
 }
 
-ExpressionLayout * TermSumController::createFunctionLayout(const char * functionName) {
-  return new HorizontalLayout(
-      new CharLayout(functionName[0], KDText::FontSize::Small),
-      new VerticalOffsetLayout(
-        new CharLayout('n', KDText::FontSize::Small),
-        VerticalOffsetLayout::Type::Subscript,
-        false),
-      false);
+LayoutReference TermSumController::createFunctionLayout(const char * functionName) {
+  return HorizontalLayoutRef(
+      CharLayoutRef(functionName[0], KDText::FontSize::Small),
+        VerticalOffsetLayoutRef(
+          CharLayoutRef('n', KDText::FontSize::Small),
+          VerticalOffsetLayoutNode::Type::Subscript
+        )
+      );
 }
 
 }

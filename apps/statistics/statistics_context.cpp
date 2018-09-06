@@ -7,9 +7,9 @@ using namespace Shared;
 
 namespace Statistics {
 
-const Expression * StatisticsContext::expressionForSymbol(const Symbol * symbol) {
-  if (Symbol::isSeriesSymbol(symbol->name())) {
-    const char * seriesName = Symbol::textForSpecialSymbols(symbol->name());
+const Expression StatisticsContext::expressionForSymbol(const Symbol & symbol) {
+  if (Symbol::isSeriesSymbol(symbol.name())) {
+    const char * seriesName = Symbol::textForSpecialSymbols(symbol.name());
     assert(strlen(seriesName) == 2);
 
     int series = (int)(seriesName[1] - '0') - 1;
@@ -20,8 +20,7 @@ const Expression * StatisticsContext::expressionForSymbol(const Symbol * symbol)
 
     assert(m_seriesPairIndex >= 0);
     assert(m_seriesPairIndex < m_store->numberOfPairsOfSeries(series));
-    m_value = Approximation<double>(m_store->get(series, storeI, m_seriesPairIndex));
-    return &m_value;
+    return Float<double>(m_store->get(series, storeI, m_seriesPairIndex));
   } else {
     return m_parentContext->expressionForSymbol(symbol);
   }

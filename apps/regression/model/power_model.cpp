@@ -12,15 +12,15 @@ ExpressionLayout * PowerModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
-      new CharLayout('a', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('X', KDText::FontSize::Small),
-      new VerticalOffsetLayout(
-          new CharLayout('b', KDText::FontSize::Small),
-          VerticalOffsetLayout::Type::Superscript,
-          false),
+      CharLayoutRef('a', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('X', KDText::FontSize::Small),
+      VerticalOffsetLayoutRef(
+          CharLayoutRef('b', KDText::FontSize::Small),
+          VerticalOffsetLayoutNode::Type::Superscript
+        ),
       };
-    layout = new HorizontalLayout(layoutChildren, 4, false);
+    layout = HorizontalLayoutRef(layoutChildren, 4);
   }
   return layout;
 }

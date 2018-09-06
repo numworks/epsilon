@@ -26,7 +26,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
   m_hideableCell(nullptr),
   m_store(store)
 {
-  m_r2Layout = new HorizontalLayout(new CharLayout('r', KDText::FontSize::Small), new VerticalOffsetLayout(new CharLayout('2', KDText::FontSize::Small), VerticalOffsetLayout::Type::Superscript, false), false);
+  m_r2Layout = HorizontalLayoutRef(CharLayoutRef('r', KDText::FontSize::Small), VerticalOffsetLayoutRef(CharLayoutRef('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript));
 }
 
 CalculationController::~CalculationController() {

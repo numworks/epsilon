@@ -129,21 +129,21 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
   return false;
 }
 
-bool ListController::expressionLayoutFieldDidReceiveEvent(ExpressionLayoutField * expressionLayoutField, Ion::Events::Event event) {
-  if (expressionLayoutField->isEditing() && expressionLayoutField->expressionLayoutFieldShouldFinishEditing(event)) {
+bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
+  if (layoutField->isEditing() && layoutField->layoutFieldShouldFinishEditing(event)) {
     char buffer[TextField::maxBufferSize()];
-    expressionLayoutField->serialize(buffer, TextField::maxBufferSize());
+    layoutField->serialize(buffer, TextField::maxBufferSize());
     if (!textRepresentsAnEquality(buffer)) {
-      expressionLayoutField->handleEvent(Ion::Events::ShiftRight);
-      expressionLayoutField->handleEventWithText("=0");
-      expressionLayoutField->serialize(buffer, TextField::maxBufferSize());
+      layoutField->handleEvent(Ion::Events::ShiftRight);
+      layoutField->handleEventWithText("=0");
+      layoutField->serialize(buffer, TextField::maxBufferSize());
       if (!textRepresentsAnEquality(buffer)) {
         app()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }
     }
   }
-  if (Shared::ExpressionLayoutFieldDelegate::expressionLayoutFieldDidReceiveEvent(expressionLayoutField, event)) {
+  if (Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event)) {
     return true;
   }
   return false;
@@ -154,7 +154,7 @@ bool ListController::textFieldDidFinishEditing(TextField * textField, const char
   return true;
 }
 
-bool ListController::expressionLayoutFieldDidFinishEditing(ExpressionLayoutField * expressionLayoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) {
+bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::ExpressionLayout * layout, Ion::Events::Event event) {
   reloadButtonMessage();
   return true;
 }

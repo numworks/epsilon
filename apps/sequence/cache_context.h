@@ -10,12 +10,12 @@ template<typename T>
 class CacheContext : public Poincare::VariableContext<T> {
 public:
   CacheContext(Poincare::Context * parentContext);
-  const Poincare::Expression * expressionForSymbol(const Poincare::Symbol * symbol) override;
-  void setValueForSymbol(T value, const Poincare::Symbol * symbol);
+  const Poincare::Expression expressionForSymbol(const Poincare::Symbol & symbol) override;
+  void setValueForSymbol(T value, const Poincare::Symbol & symbol);
 private:
-  int nameIndexForSymbol(const Poincare::Symbol * symbol);
-  int rankIndexForSymbol(const Poincare::Symbol * symbol);
-  Poincare::Approximation<T> m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
+  int nameIndexForSymbol(const Poincare::Symbol & symbol);
+  int rankIndexForSymbol(const Poincare::Symbol & symbol);
+  T m_values[MaxNumberOfSequences][MaxRecurrenceDepth];
 };
 
 }

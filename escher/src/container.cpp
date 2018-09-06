@@ -10,7 +10,7 @@ Container::Container() :
 
 Container::~Container() {
   if (m_activeApp) {
-    delete m_activeApp;
+    m_activeApp->~App();
   }
 }
 

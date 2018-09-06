@@ -29,8 +29,8 @@ Toolbox * ListController::toolboxForTextInput(TextInput * textInput) {
   return toolboxForSender(textInput);
 }
 
-Toolbox * ListController::toolboxForExpressionLayoutField(ExpressionLayoutField * expressionLayoutField) {
-  return toolboxForSender(expressionLayoutField);
+Toolbox * ListController::toolboxForLayoutField(LayoutField * layoutField) {
+  return toolboxForSender(layoutField);
 }
 
 TextFieldDelegateApp * ListController::textFieldDelegateApp() {

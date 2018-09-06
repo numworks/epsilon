@@ -228,8 +228,12 @@ void LayoutNode::scoreCursorInDescendantsVertically (
 }
 
 bool LayoutNode::changeGreySquaresOfAllMatrixAncestors(bool add) {
+  LayoutNode * p = parent();
+  if (p == nullptr) {
+    return false;
+  }
   bool changedSquares = false;
-  LayoutRef currentAncestor = LayoutRef(parent());
+  LayoutRef currentAncestor = LayoutRef(p);
   while (!currentAncestor.isUninitialized()) {
     if (currentAncestor.isMatrix()) {
       if (add) {

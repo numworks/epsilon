@@ -23,6 +23,9 @@ public:
     TreeByReference(node) {}
 
   LayoutReference clone() const {
+    if (isUninitialized()) {
+      return LayoutReference();
+    }
     TreeByReference c = TreeByReference::clone();
     LayoutReference cast = LayoutReference(static_cast<LayoutNode *>(c.node()));
     cast.invalidAllSizesPositionsAndBaselines();
@@ -30,7 +33,7 @@ public:
   }
 
   LayoutNode * node() const {
-    assert(!TreeByReference::node()->isGhost());
+    assert(isUninitialized() || !TreeByReference::node()->isGhost());
     return static_cast<LayoutNode *>(TreeByReference::node());
   }
 
@@ -80,8 +83,12 @@ public:
     TreeByReference treeRefChild = TreeByReference::childAtIndex(i);
     return LayoutReference(static_cast<LayoutNode *>(treeRefChild.node()));
   }
-  LayoutReference root() { return LayoutReference(this->node()->root()); }
-  LayoutReference parent() { return LayoutReference(this->node()->parent()); }
+  LayoutReference root() {
+    assert(!isUninitialized());
+    LayoutNode * r = node()->root();
+    return r == nullptr||  ? LayoutReference() : LayoutReference(r);
+  }
+  LayoutReference parent() { return isUninitialized() ? LayoutReference() : LayoutReference(node()->parent()); }
 
   // Tree modification
   //Add

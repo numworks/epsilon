@@ -27,6 +27,9 @@ KDCoordinate LayoutCursor::baseline() {
   }
   KDCoordinate layoutBaseline = m_layoutRef.baseline();
   LayoutRef equivalentLayoutRef = m_layoutRef.equivalentCursor(this).layoutReference();
+  if (equivalentLayoutRef.isUninitialized()) {
+    return layoutBaseline;
+  }
   if (m_layoutRef.hasChild(equivalentLayoutRef)) {
     return equivalentLayoutRef.baseline();
   } else if (m_layoutRef.hasSibling(equivalentLayoutRef)) {
@@ -206,11 +209,11 @@ void LayoutCursor::clearLayout() {
 
 KDCoordinate LayoutCursor::layoutHeight() {
   LayoutRef equivalentLayoutRef = m_layoutRef.equivalentCursor(this).layoutReference();
-  if (m_layoutRef.hasChild(equivalentLayoutRef)) {
+  if (!equivalentLayoutRef.isUninitialized() && m_layoutRef.hasChild(equivalentLayoutRef)) {
     return equivalentLayoutRef.layoutSize().height();
   }
   KDCoordinate pointedLayoutHeight = m_layoutRef.layoutSize().height();
-  if (m_layoutRef.hasSibling(equivalentLayoutRef)) {
+  if (!equivalentLayoutRef.isUninitialized() && m_layoutRef.hasSibling(equivalentLayoutRef)) {
     KDCoordinate equivalentLayoutHeight = equivalentLayoutRef.layoutSize().height();
     KDCoordinate pointedLayoutBaseline = m_layoutRef.baseline();
     KDCoordinate equivalentLayoutBaseline = equivalentLayoutRef.baseline();

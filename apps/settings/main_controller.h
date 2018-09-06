@@ -11,11 +11,6 @@ namespace Settings {
 class MainController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   MainController(Responder * parentResponder);
-  ~MainController();
-  MainController(const MainController& other) = delete;
-  MainController(MainController&& other) = delete;
-  MainController& operator=(const MainController& other) = delete;
-  MainController& operator=(MainController&& other) = delete;
   View * view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
@@ -40,7 +35,7 @@ private:
   MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithChevronAndExpression m_complexFormatCell;
   MessageTableCellWithGauge m_brightnessCell;
-  Poincare::ExpressionLayout * m_complexFormatLayout;
+  Poincare::LayoutReference m_complexFormatLayout;
   SelectableTableView m_selectableTableView;
   MessageTree * m_messageTreeModel;
   SubController m_subController;

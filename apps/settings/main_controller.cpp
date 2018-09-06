@@ -44,7 +44,7 @@ MainController::MainController(Responder * parentResponder) :
 #endif
   m_complexFormatCell(I18n::Message::Default, KDText::FontSize::Large),
   m_brightnessCell(I18n::Message::Default, KDText::FontSize::Large),
-  m_complexFormatLayout(nullptr),
+  m_complexFormatLayout(),
   m_selectableTableView(this),
   m_messageTreeModel((MessageTree *)&model),
   m_subController(this),
@@ -52,13 +52,6 @@ MainController::MainController(Responder * parentResponder) :
 {
   for (int i = 0; i < k_numberOfSimpleChevronCells; i++) {
     m_cells[i].setMessageFontSize(KDText::FontSize::Large);
-  }
-}
-
-MainController::~MainController() {
-  if (m_complexFormatLayout) {
-    delete m_complexFormatLayout;
-    m_complexFormatLayout = nullptr;
   }
 }
 
@@ -173,17 +166,13 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   myCell->setMessage(m_messageTreeModel->children(index)->label());
 
   if (index == 3) {
-    if (m_complexFormatLayout) {
-      delete m_complexFormatLayout;
-      m_complexFormatLayout = nullptr;
-    }
     if (Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Cartesian) {
       m_complexFormatLayout = Helpers::CartesianComplexFormat(KDText::FontSize::Small);
     } else {
       m_complexFormatLayout = Helpers::PolarComplexFormat(KDText::FontSize::Small);
     }
     MessageTableCellWithChevronAndExpression * myExpCell = (MessageTableCellWithChevronAndExpression *)cell;
-    myExpCell->setExpressionLayout(m_complexFormatLayout);
+    myExpCell->setLayoutRef(m_complexFormatLayout);
     return;
   }
   if (index == 4) {

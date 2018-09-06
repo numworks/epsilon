@@ -171,8 +171,12 @@ public:
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
-  template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const;
-  template<typename U> U approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
+  template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const {
+    return approximateToEvaluation<U>(context, angleUnit).complexToExpression(complexFormat);
+  }
+  template<typename U> U approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
+    return approximateToEvaluation<U>(context, angleUnit).toScalar();
+  }
   template<typename U> static U approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit);
   template<typename U> U approximateWithValueForSymbol(char symbol, U x, Context & context, Preferences::AngleUnit angleUnit) const;
   /* Expression roots/extrema solver */
@@ -238,7 +242,7 @@ protected:
 private:
   /* Simplification */
   Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
-  Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return *this; }
 
   /* Approximation */
   template<typename U> Evaluation<U> approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {

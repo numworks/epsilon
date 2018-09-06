@@ -50,10 +50,18 @@ public:
   // Tree navigation
   virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
   virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) = 0;
-  virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
-  virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false);
-  void moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout);
-  void moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout);
+  virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {
+    moveCursorVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  }
+  virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false) {
+    moveCursorVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
+  }
+  void moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+    return moveCursorInDescendantsVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout);
+  }
+  void moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+    return moveCursorInDescendantsVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout);
+  }
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
   // Tree modification

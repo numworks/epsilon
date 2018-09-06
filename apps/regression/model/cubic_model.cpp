@@ -13,29 +13,29 @@ ExpressionLayout * CubicModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
-      new CharLayout('a', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('X', KDText::FontSize::Small),
-      new VerticalOffsetLayout(
-          new CharLayout('3', KDText::FontSize::Small),
-          VerticalOffsetLayout::Type::Superscript,
-          false),
-      new CharLayout('+', KDText::FontSize::Small),
-      new CharLayout('b', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('X', KDText::FontSize::Small),
-      new VerticalOffsetLayout(
-          new CharLayout('2', KDText::FontSize::Small),
-          VerticalOffsetLayout::Type::Superscript,
-          false),
-      new CharLayout('+', KDText::FontSize::Small),
-      new CharLayout('c', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('X', KDText::FontSize::Small),
-      new CharLayout('+', KDText::FontSize::Small),
-      new CharLayout('d', KDText::FontSize::Small),
+      CharLayoutRef('a', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('X', KDText::FontSize::Small),
+      VerticalOffsetLayoutRef(
+          CharLayoutRef('3', KDText::FontSize::Small),
+          VerticalOffsetLayoutNode::Type::Superscript
+        ),
+      CharLayoutRef('+', KDText::FontSize::Small),
+      CharLayoutRef('b', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('X', KDText::FontSize::Small),
+      VerticalOffsetLayoutRef(
+          CharLayoutRef('2', KDText::FontSize::Small),
+          VerticalOffsetLayoutNode::Type::Superscript
+        ),
+      CharLayoutRef('+', KDText::FontSize::Small),
+      CharLayoutRef('c', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('X', KDText::FontSize::Small),
+      CharLayoutRef('+', KDText::FontSize::Small),
+      CharLayoutRef('d', KDText::FontSize::Small),
     };
-    layout = new HorizontalLayout(layoutChildren, 15, false);
+    layout = HorizontalLayoutRef(layoutChildren, 15);
   }
   return layout;
 }

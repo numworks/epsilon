@@ -66,9 +66,9 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_delta2Layout(nullptr),
   m_contentView(this)
 {
-  m_delta2Layout = new HorizontalLayout(new VerticalOffsetLayout(new CharLayout('2', KDText::FontSize::Small), VerticalOffsetLayout::Type::Superscript, false), LayoutHelper::String("-4ac", 4, KDText::FontSize::Small), false);
+  m_delta2Layout = HorizontalLayoutRef(VerticalOffsetLayoutRef(CharLayoutRef('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript), LayoutHelper::String("-4ac", 4, KDText::FontSize::Small));
   char deltaB[] = {Ion::Charset::CapitalDelta, '=', 'b'};
-  static_cast<HorizontalLayout *>(m_delta2Layout)->addOrMergeChildAtIndex(LayoutHelper::String(deltaB, 3, KDText::FontSize::Small), 0, false);
+  static_cast<HorizontalLayoutRef>(m_delta2Layout)->addOrMergeChildAtIndex(LayoutHelper::String(deltaB, 3, KDText::FontSize::Small), 0, false);
   for (int i = 0; i < EquationStore::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].setParentResponder(m_contentView.selectableTableView());
   }

@@ -14,22 +14,22 @@ ExpressionLayout * TrigonometricModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
-      new CharLayout('a', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('s', KDText::FontSize::Small),
-      new CharLayout('i', KDText::FontSize::Small),
-      new CharLayout('n', KDText::FontSize::Small),
-      new CharLayout('(', KDText::FontSize::Small),
-      new CharLayout('b', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('X', KDText::FontSize::Small),
-      new CharLayout('+', KDText::FontSize::Small),
-      new CharLayout('c', KDText::FontSize::Small),
-      new CharLayout(')', KDText::FontSize::Small),
-      new CharLayout('+', KDText::FontSize::Small),
-      new CharLayout('d', KDText::FontSize::Small)
+      CharLayoutRef('a', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('s', KDText::FontSize::Small),
+      CharLayoutRef('i', KDText::FontSize::Small),
+      CharLayoutRef('n', KDText::FontSize::Small),
+      CharLayoutRef('(', KDText::FontSize::Small),
+      CharLayoutRef('b', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('X', KDText::FontSize::Small),
+      CharLayoutRef('+', KDText::FontSize::Small),
+      CharLayoutRef('c', KDText::FontSize::Small),
+      CharLayoutRef(')', KDText::FontSize::Small),
+      CharLayoutRef('+', KDText::FontSize::Small),
+      CharLayoutRef('d', KDText::FontSize::Small)
     };
-    layout = new HorizontalLayout(layoutChildren, 14, false);
+    layout = HorizontalLayoutRef(layoutChildren, 14, false);
   }
   return layout;
 }

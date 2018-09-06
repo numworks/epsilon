@@ -220,10 +220,10 @@ int Sequence::numberOfElements() {
 
 Poincare::ExpressionLayout * Sequence::nameLayout() {
   if (m_nameLayout == nullptr) {
-    m_nameLayout = new HorizontalLayout(
-        new CharLayout(name()[0], KDText::FontSize::Small),
-        new VerticalOffsetLayout(new CharLayout('n', KDText::FontSize::Small), VerticalOffsetLayout::Type::Subscript, false),
-        false);
+    m_nameLayout = HorizontalLayoutRef(
+        CharLayoutRef(name()[0], KDText::FontSize::Small),
+        VerticalOffsetLayoutRef(CharLayoutRef('n', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Subscript)
+      );
   }
   return m_nameLayout;
 }
@@ -231,22 +231,22 @@ Poincare::ExpressionLayout * Sequence::nameLayout() {
 Poincare::ExpressionLayout * Sequence::definitionName() {
   if (m_definitionName == nullptr) {
     if (m_type == Type::Explicit) {
-      m_definitionName = new HorizontalLayout(
-        new CharLayout(name()[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutHelper::String("n", 1, KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
-        false);
+      m_definitionName = HorizontalLayoutRef(
+        CharLayoutRef(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutRef(LayoutHelper::String("n", 1, KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+      );
     }
     if (m_type == Type::SingleRecurrence) {
-      m_definitionName = new HorizontalLayout(
-        new CharLayout(name()[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutHelper::String("n+1", 3, KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
-        false);
+      m_definitionName = HorizontalLayoutRef(
+        CharLayoutRef(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutRef(LayoutHelper::String("n+1", 3, KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+      );
     }
     if (m_type == Type::DoubleRecurrence) {
-      m_definitionName = new HorizontalLayout(
-        new CharLayout(name()[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutHelper::String("n+2", 3, KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
-        false);
+      m_definitionName = HorizontalLayoutRef(
+        CharLayoutRef(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutRef(LayoutHelper::String("n+2", 3, KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+      );
     }
   }
   return m_definitionName;
@@ -260,10 +260,10 @@ Poincare::ExpressionLayout * Sequence::firstInitialConditionName() {
        || m_type == Type::DoubleRecurrence))
   {
     ExpressionLayout * indexLayout = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Large);
-    m_firstInitialConditionName = new HorizontalLayout(
-        new CharLayout(name()[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(indexLayout, VerticalOffsetLayout::Type::Subscript, false),
-        false);
+    m_firstInitialConditionName = HorizontalLayoutRef(
+        CharLayoutRef(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutRef(indexLayout, VerticalOffsetLayoutNode::Type::Subscript)
+      );
   }
   return m_firstInitialConditionName;
 }
@@ -274,10 +274,10 @@ Poincare::ExpressionLayout * Sequence::secondInitialConditionName() {
   if (m_secondInitialConditionName == nullptr) {
     if (m_type == Type::DoubleRecurrence) {
       ExpressionLayout * indexLayout = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Large);
-      m_secondInitialConditionName = new HorizontalLayout(
-        new CharLayout(name()[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(indexLayout, VerticalOffsetLayout::Type::Subscript, false),
-        false);
+      m_secondInitialConditionName = HorizontalLayoutRef(
+        CharLayoutRef(name()[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutRef(indexLayout, VerticalOffsetLayoutNode::Type::Subscript)
+      );
     }
   }
   return m_secondInitialConditionName;

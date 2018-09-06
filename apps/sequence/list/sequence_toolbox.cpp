@@ -91,21 +91,21 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
   const char * otherSequenceName = SequenceStore::k_sequenceNames[1-sequenceIndex];
   for (int j = 0; j < recurrenceDepth; j++) {
     const char * indice = j == 0 ? "n" : "n+1";
-    m_addedCellLayout[j] = new HorizontalLayout(
-        new CharLayout(sequenceName[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
-        false);
-    m_addedCellLayout[j+recurrenceDepth] = new HorizontalLayout(
-        new CharLayout(otherSequenceName[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
-        false);
+    m_addedCellLayout[j] = HorizontalLayoutRef(
+        CharLayoutRef(sequenceName[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutRef(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+      );
+    m_addedCellLayout[j+recurrenceDepth] = HorizontalLayoutRef(
+        CharLayoutRef(otherSequenceName[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutRef(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+      );
   }
   if (recurrenceDepth < 2) {
     const char * indice = recurrenceDepth == 0 ? "n" : (recurrenceDepth == 1 ? "n+1" : "n+2");
-    m_addedCellLayout[2*recurrenceDepth] = new HorizontalLayout(
-        new CharLayout(otherSequenceName[0], KDText::FontSize::Large),
-        new VerticalOffsetLayout(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayout::Type::Subscript, false),
-        false);
+    m_addedCellLayout[2*recurrenceDepth] = HorizontalLayoutRef(
+        CharLayoutRef(otherSequenceName[0], KDText::FontSize::Large),
+        VerticalOffsetLayoutRef(LayoutHelper::String(indice, strlen(indice), KDText::FontSize::Large), VerticalOffsetLayoutNode::Type::Subscript)
+      );
   }
 }
 

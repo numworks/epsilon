@@ -11,19 +11,19 @@ ExpressionLayout * ExponentialModel::layout() {
   static ExpressionLayout * layout = nullptr;
   if (layout == nullptr) {
     const ExpressionLayout * layoutChildren[] = {
-      new CharLayout('a', KDText::FontSize::Small),
-      new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-      new CharLayout('e', KDText::FontSize::Small),
-      new VerticalOffsetLayout(
-          new HorizontalLayout(
-            new CharLayout('b', KDText::FontSize::Small),
-            new CharLayout(Ion::Charset::MiddleDot, KDText::FontSize::Small),
-            new CharLayout('X', KDText::FontSize::Small),
-            false),
-          VerticalOffsetLayout::Type::Superscript,
-          false)
+      CharLayoutRef('a', KDText::FontSize::Small),
+      CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+      CharLayoutRef('e', KDText::FontSize::Small),
+      VerticalOffsetLayoutRef(
+          HorizontalLayoutRef(
+            CharLayoutRef('b', KDText::FontSize::Small),
+            CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
+            CharLayoutRef('X', KDText::FontSize::Small)
+          ),
+          VerticalOffsetLayoutNode::Type::Superscript
+        )
     };
-    layout = new HorizontalLayout(layoutChildren, 4, false);
+    layout = HorizontalLayoutRef(layoutChildren, 4);
   }
   return layout;
 }

@@ -11,11 +11,6 @@ class ListController;
 class EquationModelsParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource {
 public:
   EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore, ListController * listController);
-  ~EquationModelsParameterController();
-  EquationModelsParameterController(const EquationModelsParameterController& other) = delete;
-  EquationModelsParameterController(EquationModelsParameterController&& other) = delete;
-  EquationModelsParameterController& operator=(const EquationModelsParameterController& other) = delete;
-  EquationModelsParameterController& operator=(EquationModelsParameterController&& other) = delete;
   const char * title() override;
   View * view() override;
   void viewWillAppear() override;
@@ -37,7 +32,7 @@ private:
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
   MessageTableCell m_emptyModelCell;
   ExpressionTableCell m_modelCells[k_numberOfExpressionCells];
-  Poincare::ExpressionLayout * m_expressionLayouts[k_numberOfExpressionCells];
+  Poincare::LayoutReference m_layouts[k_numberOfExpressionCells];
   SelectableTableView m_selectableTableView;
   EquationStore * m_equationStore;
   ListController * m_listController;

@@ -212,6 +212,17 @@ bool TreePool::insert(char * destination, char * source, size_t length) {
   return true;
 }
 
+void TreePool::addGhostChildrenAndRename(TreeNode * node) {
+  /* Ensure the pool is syntaxically correct by creating ghost children for
+   * nodes that have a fixed, non-zero number of children. */
+  for (int i = 0; i < node->numberOfChildren(); i++) {
+    TreeNode * ghost = createTreeNode<GhostNode>();
+    ghost->retain();
+    move(node->next(), ghost, 0);
+  }
+  node->rename(generateIdentifier(), false);
+}
+
 void TreePool::discardTreeNode(TreeNode * node) {
   int nodeIdentifier = node->identifier();
   size_t size = node->size();

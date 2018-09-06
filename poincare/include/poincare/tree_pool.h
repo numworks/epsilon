@@ -50,15 +50,7 @@ public:
   template <typename T>
   T * createTreeNode(size_t size = sizeof(T)) {
     T * node = new(alloc(size)) T();
-
-    /* Ensure the pool is syntaxically correct by creating ghost children for
-     * nodes that have a fixed, non-zero number of children. */
-    for (int i = 0; i < node->numberOfChildren(); i++) {
-      TreeNode * ghost = createTreeNode<GhostNode>();
-      ghost->retain();
-      move(node->next(), ghost, 0);
-    }
-    node->rename(generateIdentifier(), false);
+    addGhostChildrenAndRename(node);
     return node;
   }
 
@@ -90,6 +82,7 @@ private:
   static TreePool * SharedStaticPool;
 
   // TreeNode
+  void addGhostChildrenAndRename(TreeNode * node);
   void discardTreeNode(TreeNode * node);
   void registerNode(TreeNode * node);
   void unregisterNode(TreeNode * node) {

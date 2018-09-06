@@ -83,12 +83,8 @@ public:
     TreeByReference treeRefChild = TreeByReference::childAtIndex(i);
     return LayoutReference(static_cast<LayoutNode *>(treeRefChild.node()));
   }
-  LayoutReference root() {
-    assert(!isUninitialized());
-    LayoutNode * r = node()->root();
-    return r == nullptr||  ? LayoutReference() : LayoutReference(r);
-  }
-  LayoutReference parent() { return isUninitialized() ? LayoutReference() : LayoutReference(node()->parent()); }
+  LayoutReference root() const;
+  LayoutReference parent() const { return isUninitialized() ? LayoutReference() : LayoutReference(node()->parent()); }
 
   // Tree modification
   //Add

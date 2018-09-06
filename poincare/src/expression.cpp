@@ -173,10 +173,6 @@ Expression Expression::defaultShallowReduce(Context & context, Preferences::Angl
   return *this;
 }
 
-Expression Expression::defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
-  return *this;
-}
-
 void Expression::defaultSetChildrenInPlace(Expression other) {
   assert(numberOfChildren() == other.numberOfChildren());
   for (int i = 0; i < numberOfChildren(); i++) {
@@ -274,16 +270,6 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
 }
 
 /* Evaluation */
-
-template<typename U>
-Expression Expression::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const {
-  return approximateToEvaluation<U>(context, angleUnit).complexToExpression(complexFormat);
-}
-
-template<typename U>
-U Expression::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
-  return approximateToEvaluation<U>(context, angleUnit).toScalar();
-}
 
 template<typename U>
 U Expression::approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit) {
@@ -626,12 +612,6 @@ double Expression::brentRoot(char symbol, double ax, double bx, double precision
 
 template float Expression::epsilon<float>();
 template double Expression::epsilon<double>();
-
-template Expression Expression::approximate<float>(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const;
-template Expression Expression::approximate<double>(Context& context, Preferences::AngleUnit angleUnit, Preferences::Preferences::ComplexFormat complexFormat) const;
-
-template float Expression::approximateToScalar<float>(Context& context, Preferences::AngleUnit angleUnit) const;
-template double Expression::approximateToScalar<double>(Context& context, Preferences::AngleUnit angleUnit) const;
 
 template float Expression::approximateToScalar<float>(const char * text, Context& context, Preferences::AngleUnit angleUnit);
 template double Expression::approximateToScalar<double>(const char * text, Context& context, Preferences::AngleUnit angleUnit);

@@ -65,22 +65,6 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
 }
 
 // Tree navigation
-void LayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  moveCursorVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void LayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited) {
-  moveCursorVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void LayoutNode::moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  return moveCursorInDescendantsVertically(VerticalDirection::Up, cursor, shouldRecomputeLayout);
-}
-
-void LayoutNode::moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  return moveCursorInDescendantsVertically(VerticalDirection::Down, cursor, shouldRecomputeLayout);
-}
-
 LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
   // Only HorizontalLayout may have no parent, and it overloads this method
   assert(parent() != nullptr);

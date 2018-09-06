@@ -15,11 +15,6 @@ public:
     DoubleRecurrence = 2
   };
   Sequence(const char * text = nullptr, KDColor color = KDColorBlack);
-  ~Sequence();
-  Sequence& operator=(const Sequence& other);
-  //Sequence& operator=(Sequence&& other) = delete;
-  Sequence(const Sequence& other) = delete;
-  Sequence(Sequence&& other) = delete;
   uint32_t checksum() override;
   Type type();
   int initialRank() const {
@@ -27,10 +22,10 @@ public:
   }
   const char * firstInitialConditionText();
   const char * secondInitialConditionText();
-  Poincare::Expression * firstInitialConditionExpression(Poincare::Context * context) const;
-  Poincare::Expression * secondInitialConditionExpression(Poincare::Context * context) const;
-  Poincare::ExpressionLayout * firstInitialConditionLayout();
-  Poincare::ExpressionLayout * secondInitialConditionLayout();
+  Poincare::Expression firstInitialConditionExpression(Poincare::Context * context) const;
+  Poincare::Expression secondInitialConditionExpression(Poincare::Context * context) const;
+  Poincare::LayoutReference firstInitialConditionLayout();
+  Poincare::LayoutReference secondInitialConditionLayout();
   /* WARNING: after calling setType, setContent, setFirstInitialConditionContent
    * or setSecondInitialConditionContent, the sequence context needs to
    * invalidate the cache because the sequences evaluations might have changed. */
@@ -39,10 +34,10 @@ public:
   void setFirstInitialConditionContent(const char * c);
   void setSecondInitialConditionContent(const char * c);
   int numberOfElements();
-  Poincare::ExpressionLayout * nameLayout();
-  Poincare::ExpressionLayout * definitionName();
-  Poincare::ExpressionLayout * firstInitialConditionName();
-  Poincare::ExpressionLayout * secondInitialConditionName();
+  Poincare::LayoutReference nameLayout();
+  Poincare::LayoutReference definitionName();
+  Poincare::LayoutReference firstInitialConditionName();
+  Poincare::LayoutReference secondInitialConditionName();
   bool isDefined() override;
   bool isEmpty() override;
   float evaluateAtAbscissa(float x, Poincare::Context * context) const override {
@@ -64,14 +59,14 @@ private:
   Type m_type;
   char m_firstInitialConditionText[TextField::maxBufferSize()];
   char m_secondInitialConditionText[TextField::maxBufferSize()];
-  mutable Poincare::Expression * m_firstInitialConditionExpression;
-  mutable Poincare::Expression * m_secondInitialConditionExpression;
-  Poincare::ExpressionLayout * m_firstInitialConditionLayout;
-  Poincare::ExpressionLayout * m_secondInitialConditionLayout;
-  Poincare::ExpressionLayout * m_nameLayout;
-  Poincare::ExpressionLayout * m_definitionName;
-  Poincare::ExpressionLayout * m_firstInitialConditionName;
-  Poincare::ExpressionLayout * m_secondInitialConditionName;
+  mutable Poincare::Expression m_firstInitialConditionExpression;
+  mutable Poincare::Expression m_secondInitialConditionExpression;
+  Poincare::LayoutReference m_firstInitialConditionLayout;
+  Poincare::LayoutReference m_secondInitialConditionLayout;
+  Poincare::LayoutReference m_nameLayout;
+  Poincare::LayoutReference m_definitionName;
+  Poincare::LayoutReference m_firstInitialConditionName;
+  Poincare::LayoutReference m_secondInitialConditionName;
   int m_initialRank;
 };
 

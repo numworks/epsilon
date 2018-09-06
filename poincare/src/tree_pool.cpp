@@ -46,6 +46,7 @@ void TreePool::logNodeForIdentifierArray() {
 #endif
 }
 
+#if POINCARE_ALLOW_STATIC_NODES
 void TreePool::registerStaticNodeIfRequired(TreeNode * node) {
   if (node->identifier() == -1) {
     registerStaticNode(node);
@@ -70,7 +71,7 @@ void TreePool::registerStaticNode(TreeNode * node) {
   m_staticNodes[generatedNodeIndex] = node;
   node->rename(identifierOfStaticNodeAtIndex(generatedNodeIndex), false);
 }
-
+#endif
 
 void TreePool::move(TreeNode * destination, TreeNode * source, int realNumberOfSourceChildren) {
   size_t moveSize = source->deepSize(realNumberOfSourceChildren);

@@ -18,10 +18,10 @@ public:
   bool shouldBeClearedBeforeRemove() override {
     return false;
   }
-  Poincare::Expression * standardForm(Poincare::Context * context) const;
+  Poincare::Expression standardForm(Poincare::Context * context) const;
 private:
   void tidyStandardForm();
-  mutable Poincare::Expression * m_standardForm;
+  mutable Poincare::Expression m_standardForm;
 };
 
 }

@@ -19,11 +19,6 @@ extern "C" {
 }
 namespace Poincare {
 
-Expression EqualNode::standardEquation(Context & context, Preferences::AngleUnit angleUnit) const {
-  Expression sub = Subtraction(Expression(childAtIndex(0)).clone(), Expression(childAtIndex(1)).clone());
-  return sub.deepReduce(context, angleUnit);
-}
-
 Expression EqualNode::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   return Equal(this).shallowReduce(context, angleUnit);
 }
@@ -43,6 +38,11 @@ int EqualNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatM
 template<typename T>
 Evaluation<T> EqualNode::templatedApproximate(Context& context, Preferences::AngleUnit angleUnit) const {
   return Complex<T>::Undefined();
+}
+
+Expression Equal::standardEquation(Context & context, Preferences::AngleUnit angleUnit) const {
+  Expression sub = Subtraction(childAtIndex(0).clone(), childAtIndex(1).clone());
+  return sub.deepReduce(context, angleUnit);
 }
 
 Expression Equal::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {

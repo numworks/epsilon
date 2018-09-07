@@ -88,7 +88,6 @@ public:
   static bool isExpression() { return true; }
   /* Constructor & Destructor */
   Expression() : TreeByReference() {}
-  virtual ~Expression() = default;
   Expression clone() const;
   static Expression parse(char const * string);
 

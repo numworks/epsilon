@@ -23,7 +23,15 @@ int FloatNode<T>::simplificationOrderSameType(const ExpressionNode * e, bool can
   return 0;
 }
 
+template<typename T>
+Float<T>::Float(T value) : Number(TreePool::sharedPool()->createTreeNode<FloatNode<T>>()) {
+  node()->setFloat(value);
+}
+
 template class FloatNode<float>;
 template class FloatNode<double>;
+
+template Float<float>::Float(float value);
+template Float<double>::Float(double value);
 
 }

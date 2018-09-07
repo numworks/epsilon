@@ -66,9 +66,7 @@ private:
 template<typename T>
 class Float : public Number {
 public:
-  Float(T value) : Number(TreePool::sharedPool()->createTreeNode<FloatNode<T>>()) {
-    node()->setFloat(value);
-  }
+  Float(T value);
 private:
   FloatNode<T> * node() const { return static_cast<FloatNode<T> *>(Number::node()); }
 };

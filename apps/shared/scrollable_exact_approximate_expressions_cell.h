@@ -9,8 +9,8 @@ namespace Shared {
 class ScrollableExactApproximateExpressionsCell : public ::EvenOddCell, public Responder {
 public:
   ScrollableExactApproximateExpressionsCell(Responder * parentResponder = nullptr);
-  void setExpressions(Poincare::LayoutRef * layoutRefs) {
-    return m_view.setExpressions(layoutRefs); // TODO rename setLayouts
+  void setLayouts(Poincare::LayoutReference approximateLayout, Poincare::LayoutReference exactLayout) {
+    return m_view.setLayouts(approximateLayout, exactLayout);
   }
   void setEqualMessage(I18n::Message equalSignMessage) {
     return m_view.setEqualMessage(equalSignMessage);

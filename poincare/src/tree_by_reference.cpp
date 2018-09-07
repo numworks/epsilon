@@ -7,6 +7,14 @@
 namespace Poincare {
 
 /* Constructors */
+TreeByReference::TreeByReference(const TreeByReference & tr) : m_identifier(TreeNode::NoNodeIdentifier) {
+  setIdentifierAndRetain(tr.identifier());
+}
+
+TreeByReference::TreeByReference(TreeByReference&& tr) : m_identifier(TreeNode::NoNodeIdentifier) {
+  setIdentifierAndRetain(tr.identifier());
+}
+
 TreeByReference::~TreeByReference() {
   if (m_identifier != TreeNode::NoNodeIdentifier) {
     assert(node()->identifier() == m_identifier);
@@ -34,6 +42,7 @@ TreeByReference TreeByReference::clone() const {
 }
 
 /* Hierarchy operations */
+TreeNode * TreeByReference::node() const { assert(m_identifier != TreeNode::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
 
 TreeByReference TreeByReference::childAtIndex(int i) const { return TreeByReference(node()->childAtIndex(i)); }
 

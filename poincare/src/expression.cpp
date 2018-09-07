@@ -21,6 +21,8 @@ namespace Poincare {
 
 /* Constructor & Destructor */
 
+Expression Expression::clone() const { TreeByReference c = TreeByReference::clone(); return static_cast<Expression&>(c); }
+
 Expression Expression::parse(char const * string) {
   if (string[0] == 0) {
     return Expression();
@@ -76,6 +78,13 @@ bool Expression::shouldStopProcessing() {
     return true;
   }
   return false;
+}
+
+/* Hierarchy */
+
+Expression Expression::childAtIndex(int i) const {
+  TreeByReference c = TreeByReference::childAtIndex(i);
+  return static_cast<Expression &>(c);
 }
 
 /* Properties */
@@ -207,6 +216,12 @@ int Expression::getPolynomialReducedCoefficients(char symbolName, Expression coe
 
 /* Comparison */
 
+bool Expression::isIdenticalTo(const Expression e) const {
+  /* We use the simplification order only because it is a already-coded total
+   * order on expresssions. */
+  return ExpressionNode::SimplificationOrder(node(), e.node(), true) == 0;
+}
+
 bool Expression::isEqualToItsApproximationLayout(Expression approximation, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context) {
   char buffer[bufferSize];
   approximation.serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
@@ -220,6 +235,14 @@ bool Expression::isEqualToItsApproximationLayout(Expression approximation, int b
   bool equal = isIdenticalTo(approximateOutput);
   return equal;
 }
+
+/* Layout Helper */
+
+LayoutRef Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return isUninitialized() ? LayoutRef() : node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+}
+
+int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { return isUninitialized() ? 0 : node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
 
 /* Simplification */
 
@@ -270,6 +293,17 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
 }
 
 /* Evaluation */
+
+template<typename U>
+Expression Expression::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const {
+  return approximateToEvaluation<U>(context, angleUnit).complexToExpression(complexFormat);
+}
+
+
+template<typename U>
+U Expression::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
+  return approximateToEvaluation<U>(context, angleUnit).toScalar();
+}
 
 template<typename U>
 U Expression::approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit) {
@@ -612,6 +646,12 @@ double Expression::brentRoot(char symbol, double ax, double bx, double precision
 
 template float Expression::epsilon<float>();
 template double Expression::epsilon<double>();
+
+template Expression Expression::approximate<float>(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const;
+template Expression Expression::approximate<double>(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const;
+
+template float Expression::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
+template double Expression::approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
 
 template float Expression::approximateToScalar<float>(const char * text, Context& context, Preferences::AngleUnit angleUnit);
 template double Expression::approximateToScalar<double>(const char * text, Context& context, Preferences::AngleUnit angleUnit);

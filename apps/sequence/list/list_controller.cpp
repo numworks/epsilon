@@ -19,6 +19,9 @@ ListController::ListController(Responder * parentResponder, SequenceStore * sequ
   m_typeStackController(nullptr, &m_typeParameterController, KDColorWhite, Palette::PurpleDark, Palette::PurpleDark),
   m_sequenceToolbox()
 {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    m_expressionCells[i].setLeftMargin(k_expressionMargin);
+  }
 }
 
 const char * ListController::title() {
@@ -173,14 +176,13 @@ int ListController::maxNumberOfRows() {
 
 HighlightCell * ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return m_sequenceTitleCells[index];
+  return &m_sequenceTitleCells[index];
 }
 
 HighlightCell * ListController::expressionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return m_expressionCells[index];
+  return &m_expressionCells[index];
 }
-
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
@@ -288,25 +290,6 @@ void ListController::reinitExpression(Shared::ExpressionModel * model) {
       break;
   }
   selectableTableView()->reloadData();
-}
-
-View * ListController::loadView() {
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_sequenceTitleCells[i] = new SequenceTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
-    m_expressionCells[i] = new FunctionExpressionCell();
-    m_expressionCells[i]->setLeftMargin(k_expressionMargin);
-  }
-  return Shared::FunctionListController::loadView();
-}
-
-void ListController::unloadView(View * view) {
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    delete m_sequenceTitleCells[i];
-    m_sequenceTitleCells[i] = nullptr;
-    delete m_expressionCells[i];
-    m_expressionCells[i] = nullptr;
-  }
-  Shared::FunctionListController::unloadView(view);
 }
 
 }

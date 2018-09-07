@@ -13,9 +13,10 @@ namespace Calculation {
 class HistoryController;
 
 /* TODO: implement a split view */
-class EditExpressionController : public DynamicViewController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
+class EditExpressionController : public ViewController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
   EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore);
+  View * view() override;
   void didBecomeFirstResponder() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -49,8 +50,6 @@ private:
     char m_textBody[k_bufferLength];
     ExpressionField m_expressionField;
   };
-  View * loadView() override;
-  void unloadView(View * view) override;
   void reloadView();
   bool inputViewDidReceiveEvent(Ion::Events::Event event);
   bool inputViewDidFinishEditing(const char * text, Poincare::LayoutRef layoutR);
@@ -60,6 +59,7 @@ private:
   char m_cacheBuffer[Calculation::k_printedExpressionSize];
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
+  ContentView m_contentView;
   bool m_inputViewHeightIsMaximal;
 };
 

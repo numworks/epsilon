@@ -7,7 +7,8 @@ FunctionListController::FunctionListController(Responder * parentResponder, Func
   ExpressionModelListController(parentResponder, text),
   ButtonRowDelegate(header, footer),
   m_functionStore(functionStore),
-  m_emptyCell(nullptr),
+  m_selectableTableView(this, this, this, this),
+  m_emptyCell(),
   m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {
     FunctionListController * list = (FunctionListController *)context;
     TabViewController * tabController = list->tabController();
@@ -19,6 +20,9 @@ FunctionListController::FunctionListController(Responder * parentResponder, Func
     tabController->setActiveTab(2);
   }, this), KDText::FontSize::Small, Palette::PurpleBright)
 {
+  m_selectableTableView.setMargins(0);
+  m_selectableTableView.setVerticalCellOverlap(0);
+  m_selectableTableView.setShowsIndicators(false);
 }
 
 int FunctionListController::numberOfColumns() {
@@ -79,9 +83,9 @@ HighlightCell * FunctionListController::reusableCell(int index, int type) {
     case 1:
       return expressionCells(index);
     case 2:
-      return m_emptyCell;
+      return &m_emptyCell;
     case 3:
-      return m_addNewModel;
+      return &m_addNewModel;
     default:
       assert(false);
       return nullptr;
@@ -210,23 +214,6 @@ void FunctionListController::configureFunction(Shared::Function * function) {
 
 TabViewController * FunctionListController::tabController() const{
   return (TabViewController *)(parentResponder()->parentResponder()->parentResponder()->parentResponder());
-}
-
-View * FunctionListController::loadView() {
-  loadAddModelCell();
-  m_emptyCell = new EvenOddCell();
-  SelectableTableView * selectableTableView = new SelectableTableView(this, this, this, this);
-  selectableTableView->setMargins(0);
-  selectableTableView->setVerticalCellOverlap(0);
-  selectableTableView->setShowsIndicators(false);
-  return selectableTableView;
-}
-
-void FunctionListController::unloadView(View * view) {
-  unloadAddModelCell();
-  delete m_emptyCell;
-  m_emptyCell = nullptr;
-  delete view;
 }
 
 }

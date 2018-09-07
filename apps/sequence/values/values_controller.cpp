@@ -85,7 +85,8 @@ Shared::ValuesFunctionParameterController * ValuesController::functionParameterC
 
 View * ValuesController::loadView() {
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
-    m_sequenceTitleCells[i] = new SequenceTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator);
+    m_sequenceTitleCells[i] = new SequenceTitleCell();
+    m_sequenceTitleCells[i]->setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
   }
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_floatCells[i] = new EvenOddBufferTextCell();

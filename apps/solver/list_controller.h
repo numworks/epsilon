@@ -34,6 +34,8 @@ public:
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void editExpression(Shared::ExpressionModel * model, Ion::Events::Event event) override { return Shared::ExpressionModelListController::editExpression(model, event); }
+  /* ViewController */
+  View * view() override { return &m_equationListView; }
   /* Text/Layout Field Delegate */
   Shared::TextFieldDelegateApp * textFieldDelegateApp() override;
   Shared::ExpressionFieldDelegateApp * expressionFieldDelegateApp() override;
@@ -50,13 +52,12 @@ private:
   void addEmptyModel() override;
   bool removeModelRow(Shared::ExpressionModel * function) override;
   void reloadBrace();
-  View * loadView() override;
-  void unloadView(View * view) override;
   Shared::ExpressionModelStore * modelStore() override { return m_equationStore; }
   StackViewController * stackController() const;
   InputViewController * inputController() override;
   EquationStore * m_equationStore;
-  EvenOddExpressionCell * m_expressionCells[k_maxNumberOfRows];
+  EquationListView m_equationListView;
+  EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   Button m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
   StackViewController m_modelsStackController;

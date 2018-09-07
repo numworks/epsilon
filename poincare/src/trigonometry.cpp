@@ -30,7 +30,7 @@ float Trigonometry::characteristicXRange(const Expression & e, Context & context
   assert(d == 1);
   /* To compute a, the slope of the expression child(0), we compute the
    * derivative of child(0) for any x value. */
-  Poincare::Derivative derivative(e.childAtIndex(0), Float<float>(1.0f));
+  Poincare::Derivative derivative(e.childAtIndex(0).clone(), Float<float>(1.0f));
   float a = derivative.approximateToScalar<float>(context, angleUnit);
   float pi = angleUnit == Preferences::AngleUnit::Radian ? M_PI : 180.0f;
   return 2.0f*pi/std::fabs(a);

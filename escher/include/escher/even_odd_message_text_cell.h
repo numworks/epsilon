@@ -12,6 +12,7 @@ public:
   void setHighlighted(bool highlight) override;
   void setMessage(I18n::Message textContent, KDColor textColor = KDColorBlack);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
+  void setMessageFontSize(KDText::FontSize size) { m_messageTextView.setFontSize(size); }
 protected:
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;

@@ -27,16 +27,14 @@ private:
   double evaluationOfAbscissaAtColumn(double abscissa, int columnIndex) override;
   constexpr static int k_maxNumberOfCells = 50;
   constexpr static int k_maxNumberOfFunctions = 5;
-  Shared::BufferFunctionTitleCell * m_functionTitleCells[k_maxNumberOfFunctions];
+  Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfFunctions];
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
-  EvenOddBufferTextCell * m_floatCells[k_maxNumberOfCells];
+  EvenOddBufferTextCell m_floatCells[k_maxNumberOfCells];
   EvenOddBufferTextCell * floatCells(int j) override;
   CartesianFunctionStore * m_functionStore;
   CartesianFunctionStore * functionStore() const override;
   FunctionParameterController m_functionParameterController;
   FunctionParameterController * functionParameterController() override;
-  View * loadView() override;
-  void unloadView(View * view) override;
   Shared::IntervalParameterController m_intervalParameterController;
   DerivativeParameterController m_derivativeParameterController;
 };

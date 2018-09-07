@@ -16,6 +16,10 @@ ValuesController::ValuesController(Responder * parentResponder, CartesianFunctio
   m_intervalParameterController(this, m_interval),
   m_derivativeParameterController(this)
 {
+  for (int i = 0; i < k_maxNumberOfFunctions; i++) {
+    m_functionTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
+    m_functionTitleCells[i].setFontSize(KDText::FontSize::Small);
+  }
 }
 
 bool ValuesController::handleEvent(Ion::Events::Event event) {
@@ -124,12 +128,12 @@ int ValuesController::maxNumberOfFunctions() {
 
 Shared::BufferFunctionTitleCell * ValuesController::functionTitleCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfFunctions);
-  return m_functionTitleCells[j];
+  return &m_functionTitleCells[j];
 }
 
 EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfCells);
-  return m_floatCells[j];
+  return &m_floatCells[j];
 }
 
 CartesianFunctionStore * ValuesController::functionStore() const {
@@ -147,28 +151,6 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
     return function->approximateDerivative(abscissa, myApp->localContext());
   }
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
-}
-
-View * ValuesController::loadView() {
-  for (int i = 0; i < k_maxNumberOfFunctions; i++) {
-    m_functionTitleCells[i] = new Shared::BufferFunctionTitleCell(FunctionTitleCell::Orientation::HorizontalIndicator, KDText::FontSize::Small);
-  }
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    m_floatCells[i] = new EvenOddBufferTextCell();
-  }
-  return Shared::ValuesController::loadView();
-}
-
-void ValuesController::unloadView(View * view) {
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    delete m_floatCells[i];
-    m_floatCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_maxNumberOfFunctions; i++) {
-    delete m_functionTitleCells[i];
-    m_functionTitleCells[i] = nullptr;
-  }
-  Shared::ValuesController::unloadView(view);
 }
 
 void ValuesController::updateNumberOfColumns() {

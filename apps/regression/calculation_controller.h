@@ -65,19 +65,18 @@ private:
   static constexpr KDCoordinate k_margin = 8;
   static constexpr KDCoordinate k_r2CellMargin = 2;
   static constexpr KDCoordinate k_scrollBarMargin = Metric::CommonRightMargin;
-
   Responder * tabController() const override;
-  View * loadView() override;
-  void unloadView(View * view) override;
+  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   bool hasLinearRegression() const;
   int maxNumberOfCoefficients() const;
-  Shared::MarginEvenOddMessageTextCell * m_titleCells[k_maxNumberOfDisplayableRows];
-  EvenOddExpressionCell * m_r2TitleCell;
   Poincare::LayoutReference m_r2Layout;
-  ColumnTitleCell * m_columnTitleCells[Store::k_numberOfSeries];
-  EvenOddDoubleBufferTextCellWithSeparator * m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
-  Shared::SeparatorEvenOddBufferTextCell * m_calculationCells[k_numberOfCalculationCells];
-  Shared::HideableEvenOddCell * m_hideableCell;
+  SelectableTableView m_selectableTableView;
+  Shared::MarginEvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
+  EvenOddExpressionCell m_r2TitleCell;
+  ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
+  EvenOddDoubleBufferTextCellWithSeparator m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
+  Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
+  Shared::HideableEvenOddCell m_hideableCell;
   Store * m_store;
 };
 

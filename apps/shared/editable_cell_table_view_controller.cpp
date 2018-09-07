@@ -11,7 +11,7 @@ using namespace Poincare;
 namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
-  TabTableController(parentResponder, this)
+  TabTableController(parentResponder)
 {
 }
 

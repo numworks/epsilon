@@ -53,33 +53,39 @@ StoreController::StoreController(Responder * parentResponder, DoublePairStore * 
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   m_editableCells{},
-  m_store(store)
+  m_store(store),
+  m_contentView(m_store, this, this, this, this)
 {
+  for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
+    m_editableCells[i].setParentResponder(m_contentView.dataView());
+    m_editableCells[i].editableTextCell()->textField()->setDelegate(this);
+    m_editableCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
+  }
 }
 
 void StoreController::displayFormulaInput() {
   setFormulaLabel();
-  contentView()->displayFormulaInput(true);
+  m_contentView.displayFormulaInput(true);
 }
 
 bool StoreController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
-  if (textField == contentView()->formulaInputView()->textField()) {
+  if (textField == m_contentView.formulaInputView()->textField()) {
     return event == Ion::Events::OK || event == Ion::Events::EXE;
   }
   return EditableCellTableViewController::textFieldShouldFinishEditing(textField, event);
 }
 
 bool StoreController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
-  if (textField == contentView()->formulaInputView()->textField()) {
+  if (textField == m_contentView.formulaInputView()->textField()) {
     // Handle formula input
     Expression expression = Expression::parse(textField->text());
     if (expression.isUninitialized()) {
       app()->displayWarning(I18n::Message::SyntaxError);
       return false;
     }
-    contentView()->displayFormulaInput(false);
+    m_contentView.displayFormulaInput(false);
     if (fillColumnWithFormula(expression)) {
-      app()->setFirstResponder(contentView());
+      app()->setFirstResponder(&m_contentView);
     }
     return true;
   }
@@ -105,9 +111,9 @@ bool StoreController::textFieldDidFinishEditing(TextField * textField, const cha
 }
 
 bool StoreController::textFieldDidAbortEditing(TextField * textField) {
-  if (textField == contentView()->formulaInputView()->textField()) {
-    contentView()->displayFormulaInput(false);
-    app()->setFirstResponder(contentView());
+  if (textField == m_contentView.formulaInputView()->textField()) {
+    m_contentView.displayFormulaInput(false);
+    app()->setFirstResponder(&m_contentView);
     return true;
   }
   return EditableCellTableViewController::textFieldDidAbortEditing(textField);
@@ -138,7 +144,7 @@ HighlightCell * StoreController::reusableCell(int index, int type) {
       return titleCells(index);
     case k_editableCellType:
       assert(index < k_maxNumberOfEditableCells);
-      return m_editableCells[index];
+      return &m_editableCells[index];
     default:
       assert(false);
       return nullptr;
@@ -213,7 +219,7 @@ void StoreController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
-  app()->setFirstResponder(contentView());
+  app()->setFirstResponder(&m_contentView);
 }
 
 Responder * StoreController::tabController() const {
@@ -221,7 +227,7 @@ Responder * StoreController::tabController() const {
 }
 
 SelectableTableView * StoreController::selectableTableView() {
-  return contentView()->dataView();
+  return m_contentView.dataView();
 }
 
 bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
@@ -250,22 +256,6 @@ int StoreController::numberOfElements() {
 
 int StoreController::maxNumberOfElements() const {
   return DoublePairStore::k_maxNumberOfPairs;
-}
-
-View * StoreController::loadView() {
-  ContentView * contentView = new ContentView(m_store, this, this, this, this);
-  for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
-    m_editableCells[i] = new StoreCell(contentView->dataView(), this, m_draftTextBuffer);
-  }
-  return contentView;
-}
-
-void StoreController::unloadView(View * view) {
-  for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
-    delete m_editableCells[i];
-    m_editableCells[i] = nullptr;
-  }
-  delete view;
 }
 
 bool StoreController::privateFillColumnWithFormula(Expression formula, ExpressionNode::isVariableTest isVariable) {

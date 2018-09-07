@@ -10,6 +10,7 @@
 class TextInput : public ScrollableView, public ScrollViewDataSource {
 public:
   TextInput(Responder * parentResponder, View * contentView);
+  void setFontSize(KDText::FontSize size) { contentView()->setFontSize(size); }
   Toolbox * toolbox() override;
   const char * text() const { return nonEditableContentView()->text(); }
   bool removeChar();
@@ -20,6 +21,7 @@ protected:
   class ContentView : public View {
   public:
     ContentView(KDText::FontSize size);
+    void setFontSize(KDText::FontSize size);
     size_t cursorLocation() const { return m_cursorIndex; }
     void setCursorLocation(int cursorLocation);
     virtual const char * text() const = 0;

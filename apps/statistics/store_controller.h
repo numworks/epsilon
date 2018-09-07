@@ -19,10 +19,8 @@ public:
 private:
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   HighlightCell * titleCells(int index) override;
-  View * loadView() override;
-  void unloadView(View * view) override;
   Shared::StoreParameterController * storeParameterController() override { return &m_storeParameterController; }
-  Shared::StoreTitleCell * m_titleCells[k_numberOfTitleCells];
+  Shared::StoreTitleCell m_titleCells[k_numberOfTitleCells];
   Store * m_store;
   StatisticsContext m_statisticsContext;
   Shared::StoreParameterController m_storeParameterController;

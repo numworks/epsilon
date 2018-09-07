@@ -2,9 +2,8 @@
 
 namespace Shared {
 
-TabTableController::TabTableController(Responder * parentResponder, TableViewDataSource * dataSource) :
-  DynamicViewController(parentResponder),
-  m_dataSource(dataSource)
+TabTableController::TabTableController(Responder * parentResponder) :
+  ViewController(parentResponder)
 {
 }
 
@@ -13,7 +12,6 @@ void TabTableController::didBecomeFirstResponder() {
 }
 
 void TabTableController::viewWillAppear() {
-  DynamicViewController::viewWillAppear();
   selectableTableView()->reloadData();
 }
 
@@ -28,16 +26,4 @@ SelectableTableView * TabTableController::selectableTableView() {
   return static_cast<SelectableTableView *>(view());
 }
 
-View * TabTableController::loadView() {
-  SelectableTableView * selectableTableView = new SelectableTableView(this, m_dataSource, this);
-  selectableTableView->setBackgroundColor(Palette::WallScreenDark);
-  selectableTableView->setVerticalCellOverlap(0);
-  return selectableTableView;
 }
-
-void TabTableController::unloadView(View * view) {
-  delete view;
-}
-
-}
-

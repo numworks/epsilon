@@ -1,7 +1,7 @@
 #ifndef POINCARE_EVALUATION_H
 #define POINCARE_EVALUATION_H
 
-#include <complex>
+#include <complex.h>
 extern "C" {
 #include <stdint.h>
 }

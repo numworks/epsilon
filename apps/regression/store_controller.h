@@ -19,10 +19,8 @@ public:
   void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
 private:
   HighlightCell * titleCells(int index) override;
-  View * loadView() override;
-  void unloadView(View * view) override;
   Shared::StoreParameterController * storeParameterController() override { return &m_storeParameterController; }
-  Shared::StoreTitleCell * m_titleCells[k_numberOfTitleCells];
+  Shared::StoreTitleCell m_titleCells[k_numberOfTitleCells];
   RegressionContext m_regressionContext;
   StoreParameterController m_storeParameterController;
 };

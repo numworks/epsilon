@@ -59,7 +59,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
 
 HighlightCell * StoreController::titleCells(int index) {
   assert(index >= 0 && index < k_numberOfTitleCells);
-  return m_titleCells[index];
+  return &m_titleCells[index];
 }
 
 bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
@@ -72,21 +72,6 @@ bool StoreController::setDataAtLocation(double floatBody, int columnIndex, int r
     }
   }
   return Shared::StoreController::setDataAtLocation(floatBody, columnIndex, rowIndex);
-}
-
-View * StoreController::loadView() {
-  for (int i = 0; i < k_numberOfTitleCells; i++) {
-    m_titleCells[i] = new Shared::StoreTitleCell();
-  }
-  return Shared::StoreController::loadView();
-}
-
-void StoreController::unloadView(View * view) {
-  for (int i = 0; i < k_numberOfTitleCells; i++) {
-    delete m_titleCells[i];
-    m_titleCells[i] = nullptr;
-  }
-  Shared::StoreController::unloadView(view);
 }
 
 }

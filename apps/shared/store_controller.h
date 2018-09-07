@@ -75,8 +75,6 @@ protected:
 
   Responder * tabController() const override;
   SelectableTableView * selectableTableView() override;
-  View * loadView() override;
-  void unloadView(View * view) override;
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
@@ -87,11 +85,11 @@ protected:
   int seriesAtColumn(int column) const { return column / DoublePairStore::k_numberOfColumnsPerSeries; }
   bool privateFillColumnWithFormula(Poincare::Expression formula, Poincare::ExpressionNode::isVariableTest isVariable);
   virtual StoreParameterController * storeParameterController() = 0;
-  StoreCell * m_editableCells[k_maxNumberOfEditableCells];
+  StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 private:
   bool cellShouldBeTransparent(int i, int j);
-  ContentView * contentView() { return static_cast<ContentView *>(view()); }
+  ContentView m_contentView;
 };
 
 }

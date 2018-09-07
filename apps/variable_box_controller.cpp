@@ -168,7 +168,7 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
   }
   ExpressionLayout * expressionLayout = expressionLayoutForIndex(index);
   if (expressionLayout) {
-    return expressionLayout->size().height()+k_leafMargin;
+    return max(expressionLayout->size().height()+k_leafMargin, Metric::ToolboxRowHeight);
   }
   return Metric::ToolboxRowHeight;
 }

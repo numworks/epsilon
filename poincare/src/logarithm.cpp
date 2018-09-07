@@ -167,7 +167,7 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
   // We look for expressions of types e^ln(x) or e^(ln(x)) where ln is this
   Expression parentExpression = parent();
   Expression logGroup = *this;
-  if (parentExpression.type() == ExpressionNode::Type::Parenthesis) {
+  if (!parentExpression.isUninitialized() && parentExpression.type() == ExpressionNode::Type::Parenthesis) {
     logGroup = parentExpression;
     parentExpression = parentExpression.parent();
   }

@@ -45,19 +45,6 @@ int MultiplicationNode::getPolynomialCoefficients(char symbolName, Expression co
 }
 
 template<typename T>
-void MultiplicationNode::computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns) {
-  for (int i = 0; i < mNumberOfRows; i++) {
-    for (int j = 0; j < nNumberOfColumns; j++) {
-      T res = 0.0f;
-      for (int k = 0; k < mNumberOfColumns; k++) {
-        res+= m[i*mNumberOfColumns+k]*n[k*nNumberOfColumns+j];
-      }
-      result[i*nNumberOfColumns+j] = res;
-    }
-  }
-}
-
-template<typename T>
 MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m, const MatrixComplex<T> n) {
   if (m.numberOfColumns() != n.numberOfRows()) {
     return MatrixComplex<T>::Undefined();
@@ -110,6 +97,19 @@ Expression MultiplicationNode::denominator(Context & context, Preferences::Angle
 /* Multiplication */
 
 Multiplication::Multiplication() : NAryExpression(TreePool::sharedPool()->createTreeNode<MultiplicationNode>()) {}
+
+template<typename T>
+void Multiplication::computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns) {
+  for (int i = 0; i < mNumberOfRows; i++) {
+    for (int j = 0; j < nNumberOfColumns; j++) {
+      T res = 0.0f;
+      for (int k = 0; k < mNumberOfColumns; k++) {
+        res+= m[i*mNumberOfColumns+k]*n[k*nNumberOfColumns+j];
+      }
+      result[i*nNumberOfColumns+j] = res;
+    }
+  }
+}
 
 Expression Multiplication::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
@@ -727,6 +727,6 @@ template MatrixComplex<float> MultiplicationNode::computeOnComplexAndMatrix<floa
 template MatrixComplex<double> MultiplicationNode::computeOnComplexAndMatrix<double>(std::complex<double> const, const MatrixComplex<double>);
 template Complex<float> MultiplicationNode::compute<float>(const std::complex<float>, const std::complex<float>);
 template Complex<double> MultiplicationNode::compute<double>(const std::complex<double>, const std::complex<double>);
-template void MultiplicationNode::computeOnArrays<double>(double * m, double * n, double * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
+template void Multiplication::computeOnArrays<double>(double * m, double * n, double * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
 
 }

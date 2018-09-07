@@ -271,4 +271,11 @@ LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   return parentNode->childAtIndex(idxInParent - 1);
 }
 
+VerticalOffsetLayoutRef::VerticalOffsetLayoutRef(LayoutRef l, VerticalOffsetLayoutNode::Type type) :
+  LayoutReference(TreePool::sharedPool()->createTreeNode<VerticalOffsetLayoutNode>())
+{
+  static_cast<VerticalOffsetLayoutNode *>(node())->setType(type);
+  replaceChildAtIndexInPlace(0,l);
+}
+
 }

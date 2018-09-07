@@ -68,18 +68,10 @@ private:
 
 class NthRootLayoutRef : public LayoutReference {
 public:
-  NthRootLayoutRef(LayoutRef radicand) : NthRootLayoutRef() {
-    replaceChildAtIndexInPlace(0, radicand);
-  }
-
-  NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {
-    replaceChildAtIndexInPlace(0, radicand);
-    addChildAtIndexInPlace(index, 1, 1);
-    static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);
-  }
-
+  NthRootLayoutRef(LayoutRef radicand);
+  NthRootLayoutRef(LayoutRef radicand, LayoutRef index);
 private:
-  NthRootLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>()) {}
+  NthRootLayoutRef();
 };
 
 }

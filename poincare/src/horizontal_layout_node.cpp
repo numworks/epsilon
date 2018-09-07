@@ -350,6 +350,33 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
 
 // HorizontalLayoutRef
 
+HorizontalLayoutRef::HorizontalLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>()) {}
+
+HorizontalLayoutRef::HorizontalLayoutRef(LayoutRef l) : HorizontalLayoutRef() {
+  addChildAtIndexInPlace(l, 0, 0);
+}
+
+HorizontalLayoutRef::HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : HorizontalLayoutRef() {
+  addChildAtIndexInPlace(l1, 0, 0);
+  addChildAtIndexInPlace(l2, 1, 1);
+}
+HorizontalLayoutRef::HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3) : HorizontalLayoutRef() {
+  addChildAtIndexInPlace(l1, 0, 0);
+  addChildAtIndexInPlace(l2, 1, 1);
+  addChildAtIndexInPlace(l3, 2, 2);
+}
+HorizontalLayoutRef::HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) : HorizontalLayoutRef() {
+  addChildAtIndexInPlace(l1, 0, 0);
+  addChildAtIndexInPlace(l2, 1, 1);
+  addChildAtIndexInPlace(l3, 2, 2);
+  addChildAtIndexInPlace(l4, 3, 3);
+}
+HorizontalLayoutRef::HorizontalLayoutRef(const LayoutRef * children, size_t numberOfChildren) : HorizontalLayoutRef() {
+  for (size_t i = 0; i < numberOfChildren; i++) {
+    addChildAtIndexInPlace(children[i], i, i);
+  }
+}
+
 void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
   if (l.isHorizontal()) {
     mergeChildrenAtIndex(HorizontalLayoutRef(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);

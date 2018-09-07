@@ -187,6 +187,10 @@ template<typename T> MatrixComplex<T> PowerNode::computeOnMatrices(const MatrixC
 }
 
 // Power
+Power::Power(Expression base, Expression exponent) : Expression(TreePool::sharedPool()->createTreeNode<PowerNode>()) {
+  replaceChildAtIndexInPlace(0, base);
+  replaceChildAtIndexInPlace(1, exponent);
+}
 
 Expression Power::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);

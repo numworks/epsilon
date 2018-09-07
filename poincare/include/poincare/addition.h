@@ -74,7 +74,7 @@ public:
     addChildAtIndexInPlace(e1, 0, numberOfChildren());
   }
   Addition(Expression * children, size_t numberOfChildren) : Addition() {
-    for (int i = 0; i < numberOfChildren; i++) {
+    for (size_t i = 0; i < numberOfChildren; i++) {
       addChildAtIndexInPlace(children[i], i, i);
     }
   }

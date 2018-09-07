@@ -91,7 +91,8 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
 }
 
 void GridLayoutNode::didAddChildAtIndex(int newNumberOfChildren) {
-  GridLayoutRef(this).setDimensions(1, newNumberOfChildren);
+  setNumberOfRows(1);
+  setNumberOfColumns(newNumberOfChildren);
 }
 
 // Protected
@@ -239,7 +240,7 @@ KDCoordinate GridLayoutNode::height() const {
   for (int i = 0; i < m_numberOfRows; i++) {
     totalHeight += rowHeight(i);
   }
-  totalHeight += (m_numberOfRows-1)*k_gridEntryMargin;
+  totalHeight += max((m_numberOfRows-1)*k_gridEntryMargin, 0);
   return totalHeight;
 }
 
@@ -256,7 +257,7 @@ KDCoordinate GridLayoutNode::width() const {
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j);
   }
-  totalWidth += (m_numberOfColumns-1)*k_gridEntryMargin;
+  totalWidth += max(0, (m_numberOfColumns-1)*k_gridEntryMargin);
   return totalWidth;
 }
 

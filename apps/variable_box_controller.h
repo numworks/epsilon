@@ -48,7 +48,7 @@ private:
 #else
     constexpr static int k_numberOfMenuRows = 2;
 #endif
-    constexpr static KDCoordinate k_leafMargin = 10;
+    constexpr static KDCoordinate k_leafMargin = 20;
     Page pageAtIndex(int index);
     void putLabelAtIndexInBuffer(int index, char * buffer);
     I18n::Message nodeLabelAtIndex(int index);

@@ -67,10 +67,7 @@ public:
   LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
   // Tree
-  LayoutReference childAtIndex(int i) {
-    TreeByReference treeRefChild = TreeByReference::childAtIndex(i);
-    return LayoutReference(static_cast<LayoutNode *>(treeRefChild.node()));
-  }
+  LayoutReference childAtIndex(int i);
   LayoutReference root() const {
     assert(!isUninitialized());
     return LayoutReference(node()->root());
@@ -86,11 +83,7 @@ public:
   // Replace
   void replaceChild(LayoutReference oldChild, LayoutReference newChild, LayoutCursor * cursor = nullptr, bool force = false);
   void replaceChildWithEmpty(LayoutReference oldChild, LayoutCursor * cursor = nullptr);
-  void replaceWith(LayoutReference newChild, LayoutCursor * cursor) {
-    LayoutReference p = parent();
-    assert(!p.isUninitialized());
-    p.replaceChild(*this, newChild, cursor);
-  }
+  void replaceWith(LayoutReference newChild, LayoutCursor * cursor);
   void replaceWithJuxtapositionOf(LayoutReference leftChild, LayoutReference rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle = false);
   // Collapse
   void collapseSiblings(LayoutCursor * cursor);
@@ -99,9 +92,7 @@ protected:
   virtual void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
   // Remove
   virtual void removeChild(LayoutReference l, LayoutCursor * cursor, bool force = false);
-  virtual void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
-    removeChild(childAtIndex(index), cursor, force);
-  }
+  virtual void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
 private:
   // Tree modification
   enum class HorizontalDirection {

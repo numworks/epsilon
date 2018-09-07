@@ -56,13 +56,7 @@ private:
 
 class CharLayoutRef : public LayoutReference {
 public:
-  CharLayoutRef(char c, KDText::FontSize fontSize = KDText::FontSize::Large) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<CharLayoutNode>())
-  {
-    node()->setChar(c);
-    node()->setFontSize(fontSize);
-  }
-
+  CharLayoutRef(char c, KDText::FontSize fontSize = KDText::FontSize::Large);
   KDText::FontSize fontSize() const { return const_cast<CharLayoutRef *>(this)->node()->fontSize(); }
 private:
   using LayoutReference::node;

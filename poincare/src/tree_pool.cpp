@@ -354,6 +354,7 @@ template MatrixComplexNode<float>* TreePool::createTreeNode<MatrixComplexNode<fl
 template MatrixComplexNode<double>* TreePool::createTreeNode<MatrixComplexNode<double> >(size_t size);
 template BinomialCoefficientLayoutNode* TreePool::createTreeNode<BinomialCoefficientLayoutNode>(size_t size);
 template CeilingLayoutNode* TreePool::createTreeNode<CeilingLayoutNode>(size_t size);
+template CondensedSumLayoutNode* TreePool::createTreeNode<CondensedSumLayoutNode>(size_t size);
 template ConjugateLayoutNode* TreePool::createTreeNode<ConjugateLayoutNode>(size_t size);
 template FloorLayoutNode* TreePool::createTreeNode<FloorLayoutNode>(size_t size);
 template IntegralLayoutNode* TreePool::createTreeNode<IntegralLayoutNode>(size_t size);

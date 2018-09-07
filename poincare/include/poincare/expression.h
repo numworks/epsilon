@@ -208,10 +208,7 @@ protected:
 
   /* Hierarchy */
   Expression(int nodeIdentifier) : TreeByReference(nodeIdentifier) {}
-  Expression parent() const {
-    TreeByReference p = TreeByReference::parent();
-    return static_cast<Expression &>(p);
-  }
+  Expression parent() const; // TODO try to inline
   void defaultSetChildrenInPlace(Expression other);
   void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) = delete;
   void removeChildAtIndexInPlace(int i) = delete;

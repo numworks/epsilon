@@ -310,7 +310,7 @@ Expression Expression::setSign(ExpressionNode::Sign s, Context & context, Prefer
 
 template<typename U>
 Expression Expression::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const {
-  return isUninitialized() ? Complex<U>::Undefined() : approximateToEvaluation<U>(context, angleUnit).complexToExpression(complexFormat);
+  return isUninitialized() ? Undefined() : approximateToEvaluation<U>(context, angleUnit).complexToExpression(complexFormat);
 }
 
 

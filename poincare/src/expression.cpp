@@ -182,6 +182,11 @@ Expression Expression::defaultShallowReduce(Context & context, Preferences::Angl
   return *this;
 }
 
+Expression Expression::parent() const {
+  TreeByReference p = TreeByReference::parent();
+  return static_cast<Expression &>(p);
+}
+
 void Expression::defaultSetChildrenInPlace(Expression other) {
   assert(numberOfChildren() == other.numberOfChildren());
   for (int i = 0; i < numberOfChildren(); i++) {

@@ -5,6 +5,7 @@
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/expression_node.h>
+#include <poincare/complex.h>
 
 #include <stdio.h>
 
@@ -162,9 +163,9 @@ public:
 
   /* Layout Helper */
   LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-    return node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+    return isUninitialized() ? LayoutRef() : node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
   }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const { return this->node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const { return isUninitialized() ? 0 : this->node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
 
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
@@ -248,7 +249,7 @@ private:
 
   /* Approximation */
   template<typename U> Evaluation<U> approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
-    return node()->approximate(U(), context, angleUnit);
+    return isUninitialized() ? Complex<U>::Undefined() : node()->approximate(U(), context, angleUnit);
   }
 
   /* Properties */

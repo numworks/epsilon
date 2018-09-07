@@ -153,7 +153,7 @@ TreeNode * TreeNode::lastDescendant() const {
 // Protected
 
 #if POINCARE_TREE_LOG
-void TreeNode::log(std::ostream & stream, bool recursive = true) {
+void TreeNode::log(std::ostream & stream, bool recursive) {
   stream << "<";
   logNodeName(stream);
   stream << " id=\"" << m_identifier << "\"";

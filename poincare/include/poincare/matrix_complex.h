@@ -56,12 +56,9 @@ class MatrixComplex : public Evaluation<T> {
   friend class MatrixComplexNode<T>;
 public:
   MatrixComplex(MatrixComplexNode<T> * node) : Evaluation<T>(node) {}
-  MatrixComplex() : Evaluation<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >()) {}
+  MatrixComplex();
   MatrixComplex(std::complex<T> * operands, int numberOfRows, int numberOfColumns);
-  static MatrixComplex<T> Undefined() {
-    std::complex<T> undef = std::complex<T>(NAN, NAN);
-    return MatrixComplex<T>((std::complex<T> *)&undef, 1, 1);
-  }
+  static MatrixComplex<T> Undefined();
   static MatrixComplex<T> createIdentity(int dim);
   MatrixComplex<T> inverse() const { return node()->inverse(); }
   MatrixComplex<T> transpose() const { return node()->transpose(); }

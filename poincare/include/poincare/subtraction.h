@@ -56,11 +56,9 @@ private:
 
 class Subtraction : public Expression {
 public:
-  Subtraction() : Expression() {}
+  Subtraction();
   Subtraction(const SubtractionNode * n) : Expression(n) {}
-  Subtraction(Expression child1, Expression child2) :
-    Expression(TreePool::sharedPool()->createTreeNode<SubtractionNode>())
-  {
+  Subtraction(Expression child1, Expression child2) : Subtraction() {
     replaceChildAtIndexInPlace(0, child1);
     replaceChildAtIndexInPlace(1, child2);
   }

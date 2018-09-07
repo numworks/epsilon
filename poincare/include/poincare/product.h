@@ -32,7 +32,7 @@ private:
 class Product : public Expression {
 friend class ProductNode;
 public:
-  Product() : Expression(TreePool::sharedPool()->createTreeNode<ProductNode>()) {}
+  Product();
   Product(const ProductNode * n) : Expression(n) {}
   Product(Expression operand0, Expression operand1, Expression operand2) : Product() {
     replaceChildAtIndexInPlace(0, operand0);

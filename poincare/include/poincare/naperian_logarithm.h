@@ -50,7 +50,7 @@ private:
 
 class NaperianLogarithm : public Expression {
 public:
-  NaperianLogarithm() : Expression(TreePool::sharedPool()->createTreeNode<NaperianLogarithmNode>()) {}
+  NaperianLogarithm();
   NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}
   NaperianLogarithm(Expression operand) : NaperianLogarithm() {
     replaceChildAtIndexInPlace(0, operand);

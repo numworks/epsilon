@@ -46,7 +46,7 @@ public:
 class AbsoluteValue : public Expression {
 friend class AbsoluteValueNode;
 public:
-  AbsoluteValue() : Expression(TreePool::sharedPool()->createTreeNode<AbsoluteValueNode>()) {}
+  AbsoluteValue();
   AbsoluteValue(const AbsoluteValueNode * n) : Expression(n) {}
   AbsoluteValue(Expression operand) : AbsoluteValue() {
     replaceChildAtIndexInPlace(0, operand);

@@ -39,7 +39,7 @@ private:
 
 class Floor : public Expression {
 public:
-  Floor() : Expression(TreePool::sharedPool()->createTreeNode<FloorNode>()) {}
+  Floor();
   Floor(const FloorNode * n) : Expression(n) {}
   Floor(Expression operand) : Floor() {
     replaceChildAtIndexInPlace(0, operand);

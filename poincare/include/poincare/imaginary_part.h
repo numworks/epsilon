@@ -38,7 +38,7 @@ private:
 
 class ImaginaryPart : public Expression {
 public:
-  ImaginaryPart() : Expression(TreePool::sharedPool()->createTreeNode<ImaginaryPartNode>()) {}
+  ImaginaryPart();
   ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}
   ImaginaryPart(Expression operand) : ImaginaryPart() {
     replaceChildAtIndexInPlace(0, operand);

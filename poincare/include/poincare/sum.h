@@ -32,7 +32,7 @@ private:
 class Sum : public Expression {
 friend class SumNode;
 public:
-  Sum() : Expression(TreePool::sharedPool()->createTreeNode<SumNode>()) {}
+  Sum();
   Sum(const SumNode * n) : Expression(n) {}
   Sum(Expression operand0, Expression operand1, Expression operand2) : Sum() {
     replaceChildAtIndexInPlace(0, operand0);

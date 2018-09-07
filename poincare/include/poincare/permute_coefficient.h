@@ -41,7 +41,7 @@ private:
 
 class PermuteCoefficient : public Expression {
 public:
-  PermuteCoefficient() : Expression(TreePool::sharedPool()->createTreeNode<PermuteCoefficientNode>()) {}
+  PermuteCoefficient();
   PermuteCoefficient(const PermuteCoefficientNode * n) : Expression(n) {}
   PermuteCoefficient(Expression child1, Expression child2) : PermuteCoefficient() {
     replaceChildAtIndexInPlace(0, child1);

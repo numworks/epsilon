@@ -54,6 +54,8 @@ template<typename T> MatrixComplex<T> DivisionNode::computeOnMatrices(const Matr
 
 // Division
 
+Division::Division() : Expression(TreePool::sharedPool()->createTreeNode<DivisionNode>()) {}
+
 Expression Division::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

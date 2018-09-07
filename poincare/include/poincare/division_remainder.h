@@ -35,7 +35,7 @@ private:
 
 class DivisionRemainder : public Expression {
 public:
-  DivisionRemainder() : Expression(TreePool::sharedPool()->createTreeNode<DivisionRemainderNode>()) {}
+  DivisionRemainder();
   DivisionRemainder(const DivisionRemainderNode * n) : Expression(n) {}
   DivisionRemainder(Expression child1, Expression child2) : DivisionRemainder() {
     replaceChildAtIndexInPlace(0, child1);

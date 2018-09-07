@@ -38,6 +38,8 @@ Evaluation<T> ConfidenceIntervalNode::templatedApproximate(Context& context, Pre
   return MatrixComplex<T>(operands, 1, 2);
 }
 
+ConfidenceInterval::ConfidenceInterval() : Expression(TreePool::sharedPool()->createTreeNode<ConfidenceIntervalNode>()) {}
+
 Expression ConfidenceInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

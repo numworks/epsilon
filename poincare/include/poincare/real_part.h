@@ -43,7 +43,7 @@ private:
 
 class RealPart : public Expression {
 public:
-  RealPart() : Expression(TreePool::sharedPool()->createTreeNode<RealPartNode>()) {}
+  RealPart();
   RealPart(const RealPartNode * n) : Expression(n) {}
   RealPart(Expression operand) : RealPart() {
     replaceChildAtIndexInPlace(0, operand);

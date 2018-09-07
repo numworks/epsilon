@@ -25,6 +25,8 @@ Expression SineNode::shallowReduce(Context & context, Preferences::AngleUnit ang
   return Sine(this).shallowReduce(context, angleUnit);
 }
 
+Sine::Sine() : Expression(TreePool::sharedPool()->createTreeNode<SineNode>()) {}
+
 Expression Sine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

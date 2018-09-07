@@ -74,6 +74,8 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return numberOfChar;
 }
 
+Factorial::Factorial() : Expression(TreePool::sharedPool()->createTreeNode<FactorialNode>()) {}
+
 Expression Factorial::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

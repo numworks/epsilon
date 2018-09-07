@@ -48,7 +48,7 @@ private:
 
 class Sine : public Expression {
 public:
-  Sine() : Expression(TreePool::sharedPool()->createTreeNode<SineNode>()) {}
+  Sine();
   Sine(const SineNode * n) : Expression(n) {}
   Sine(Expression operand) : Sine() {
     replaceChildAtIndexInPlace(0, operand);

@@ -109,6 +109,8 @@ Expression MultiplicationNode::denominator(Context & context, Preferences::Angle
 
 /* Multiplication */
 
+Multiplication::Multiplication() : NAryExpression(TreePool::sharedPool()->createTreeNode<MultiplicationNode>()) {}
+
 Expression Multiplication::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   for (int i = 0; i < numberOfChildren(); i++) {

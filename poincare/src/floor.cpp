@@ -30,6 +30,8 @@ Expression FloorNode::shallowReduce(Context & context, Preferences::AngleUnit an
   return Floor(this).shallowReduce(context, angleUnit);
 }
 
+Floor::Floor() : Expression(TreePool::sharedPool()->createTreeNode<FloorNode>()) {}
+
 Expression Floor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

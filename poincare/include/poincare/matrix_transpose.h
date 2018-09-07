@@ -34,7 +34,7 @@ private:
 
 class MatrixTranspose : public Expression {
 public:
-  MatrixTranspose() : Expression(TreePool::sharedPool()->createTreeNode<MatrixTransposeNode>()) {}
+  MatrixTranspose();
   MatrixTranspose(const MatrixTransposeNode * n) : Expression(n) {}
   MatrixTranspose(Expression operand) : MatrixTranspose() {
     replaceChildAtIndexInPlace(0, operand);

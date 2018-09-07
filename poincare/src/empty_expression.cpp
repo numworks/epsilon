@@ -18,4 +18,6 @@ template<typename T> Evaluation<T> EmptyExpressionNode::templatedApproximate(Con
   return Complex<T>::Undefined();
 }
 
+EmptyExpression::EmptyExpression() : Expression(TreePool::sharedPool()->createTreeNode<EmptyExpressionNode>()) {}
+
 }

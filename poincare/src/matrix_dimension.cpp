@@ -33,6 +33,8 @@ Evaluation<T> MatrixDimensionNode::templatedApproximate(Context& context, Prefer
   return MatrixComplex<T>(operands, 1, 2);
 }
 
+MatrixDimension::MatrixDimension() : Expression(TreePool::sharedPool()->createTreeNode<MatrixDimensionNode>()) {}
+
 Expression MatrixDimension::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

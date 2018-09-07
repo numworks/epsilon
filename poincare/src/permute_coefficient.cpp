@@ -39,6 +39,8 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(Context& context, Pre
   return Complex<T>(std::round(result));
 }
 
+PermuteCoefficient::PermuteCoefficient() : Expression(TreePool::sharedPool()->createTreeNode<PermuteCoefficientNode>()) {}
+
 Expression PermuteCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

@@ -28,6 +28,8 @@ Expression TangentNode::shallowReduce(Context & context, Preferences::AngleUnit 
   return Tangent(this).shallowReduce(context, angleUnit);
 }
 
+Tangent::Tangent() : Expression(TreePool::sharedPool()->createTreeNode<TangentNode>()) {}
+
 Expression Tangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

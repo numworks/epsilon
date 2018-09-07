@@ -63,6 +63,8 @@ Expression OppositeNode::shallowReduce(Context & context, Preferences::AngleUnit
 
 /* Simplification */
 
+Opposite::Opposite() : Expression(TreePool::sharedPool()->createTreeNode<OppositeNode>()) {}
+
 Expression Opposite::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression result = Expression::defaultShallowReduce(context, angleUnit);
   if (result.isUndefined()) {

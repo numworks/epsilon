@@ -23,6 +23,8 @@ Expression DeterminantNode::shallowReduce(Context & context, Preferences::AngleU
   return Determinant(this).shallowReduce(context, angleUnit);
 }
 
+Determinant::Determinant() : Expression(TreePool::sharedPool()->createTreeNode<DeterminantNode>()) {}
+
 Expression Determinant::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

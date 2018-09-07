@@ -1,5 +1,5 @@
-StatsApp = "Statistik"
-StatsAppCapital = "STATISTIK"
+StatsApp = "Statistiken"
+StatsAppCapital = "STATISTIKEN"
 HistogramTab = "Histogramm"
 BoxTab = "Boxplot"
 Values1 = "Werte V1"

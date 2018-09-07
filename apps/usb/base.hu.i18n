@@ -1,0 +1,7 @@
+USBConnected = "A SZÁMOLÓGÉP CSATLAKOZVA"
+ConnectedMessage1 = "Adat átviteléhez csatlakozzon"
+ConnectedMessage2 = "számítógépröl a"
+ConnectedMessage3 = "workshop.numworks.com weboldalra."
+ConnectedMessage4 = "A kapcsolat megszakításához nyomja"
+ConnectedMessage5 = "meg a RETURN-gombot a számológépen"
+ConnectedMessage6 = "vagy húzza ki a csatlakozó kábelt."

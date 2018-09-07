@@ -48,12 +48,7 @@ public:
   }
 
   template <typename T>
-  T * createTreeNode(size_t size = sizeof(T)) {
-    T * node = new(alloc(size)) T();
-    addGhostChildrenAndRename(node);
-    return node;
-  }
-
+  T * createTreeNode(size_t size = sizeof(T));
   void move(TreeNode * destination, TreeNode * source, int realNumberOfSourceChildren);
   void moveChildren(TreeNode * destination, TreeNode * sourceParent);
   void removeChildren(TreeNode * node, int nodeNumberOfChildren);

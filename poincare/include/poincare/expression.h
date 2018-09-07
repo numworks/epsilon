@@ -98,7 +98,8 @@ public:
 
   /* Hierarchy */
   Expression childAtIndex(int i) const {
-    return Expression(static_cast<ExpressionNode *>(TreeByReference::childAtIndex(i).node()));
+    TreeByReference c = TreeByReference::childAtIndex(i);
+    return static_cast<Expression &>(c);
   }
   void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }
 
@@ -221,7 +222,8 @@ protected:
   /* Hierarchy */
   Expression(int nodeIdentifier) : TreeByReference(nodeIdentifier) {}
   Expression parent() const {
-    return Expression(static_cast<ExpressionNode *>(TreeByReference::parent().node()));
+    TreeByReference p = TreeByReference::parent();
+    return static_cast<Expression &>(p);
   }
   void defaultSetChildrenInPlace(Expression other);
   void addChildAtIndexInPlace(TreeByReference t, int index, int currentNumberOfChildren) = delete;

@@ -196,7 +196,7 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
 
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
-  return isUninitialized() ? Complex<U>::Undefined() : node()->approximate(U(), context, angleUnit);
+  return node()->approximate(U(), context, angleUnit);
 }
 
 Expression Expression::defaultReplaceSymbolWithExpression(char symbol, Expression expression) {
@@ -310,7 +310,7 @@ Expression Expression::setSign(ExpressionNode::Sign s, Context & context, Prefer
 
 template<typename U>
 Expression Expression::approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const {
-  return approximateToEvaluation<U>(context, angleUnit).complexToExpression(complexFormat);
+  return isUninitialized() ? Complex<U>::Undefined() : approximateToEvaluation<U>(context, angleUnit).complexToExpression(complexFormat);
 }
 
 

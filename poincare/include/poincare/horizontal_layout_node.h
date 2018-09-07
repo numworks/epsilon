@@ -88,7 +88,7 @@ public:
     addChildAtIndexInPlace(l4, 3, 3);
   }
   HorizontalLayoutRef(const LayoutRef * children, size_t numberOfChildren) : HorizontalLayoutRef() {
-    for (int i = 0; i < numberOfChildren; i++) {
+    for (size_t i = 0; i < numberOfChildren; i++) {
       addChildAtIndexInPlace(children[i], i, i);
     }
   }

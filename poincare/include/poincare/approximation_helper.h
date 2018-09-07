@@ -4,7 +4,7 @@
 #include <poincare/complex.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/expression_node.h>
-#include <complex>
+#include <complex.h>
 
 namespace Poincare {
 

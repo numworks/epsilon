@@ -41,7 +41,7 @@ private:
 class Randint : public Expression {
 friend class RandintNode;
 public:
-  Randint() : Expression(TreePool::sharedPool()->createTreeNode<RandintNode>()) {}
+  Randint();
   Randint(const RandintNode * n) : Expression(n) {}
 
   template<typename T> static T random();

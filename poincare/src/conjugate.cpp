@@ -24,6 +24,8 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>(std::conj(c));
 }
 
+Conjugate::Conjugate() : Expression(TreePool::sharedPool()->createTreeNode<ConjugateNode>()) {}
+
 Expression Conjugate::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

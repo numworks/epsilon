@@ -34,7 +34,7 @@ private:
 
 class MatrixTrace : public Expression {
 public:
-  MatrixTrace() : Expression(TreePool::sharedPool()->createTreeNode<MatrixTraceNode>()) {}
+  MatrixTrace();
   MatrixTrace(const MatrixTraceNode * n) : Expression(n) {}
   MatrixTrace(Expression operand) : MatrixTrace() {
     replaceChildAtIndexInPlace(0, operand);

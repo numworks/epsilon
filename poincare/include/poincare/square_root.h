@@ -40,7 +40,7 @@ private:
 
 class SquareRoot : public Expression {
 public:
-  SquareRoot() : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {}
+  SquareRoot();
   SquareRoot(const SquareRootNode * n) : Expression(n) {}
   SquareRoot(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {
     replaceChildAtIndexInPlace(0, operand);

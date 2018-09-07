@@ -32,6 +32,8 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(Context& context, Prefer
   return transpose;
 }
 
+MatrixTranspose::MatrixTranspose() : Expression(TreePool::sharedPool()->createTreeNode<MatrixTransposeNode>()) {}
+
 Expression MatrixTranspose::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

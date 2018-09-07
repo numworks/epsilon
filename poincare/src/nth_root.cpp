@@ -33,6 +33,8 @@ Evaluation<T> NthRootNode::templatedApproximate(Context& context, Preferences::A
   return result;
 }
 
+NthRoot::NthRoot() : Expression(TreePool::sharedPool()->createTreeNode<NthRootNode>()) {}
+
 Expression NthRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

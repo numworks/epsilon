@@ -34,7 +34,7 @@ private:
 
 class DivisionQuotient : public Expression {
 public:
-  DivisionQuotient() : Expression(TreePool::sharedPool()->createTreeNode<DivisionQuotientNode>()) {}
+  DivisionQuotient();
   DivisionQuotient(const DivisionQuotientNode * n) : Expression(n) {}
   DivisionQuotient(Expression child1, Expression child2) : DivisionQuotient() {
     replaceChildAtIndexInPlace(0, child1);

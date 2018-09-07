@@ -34,7 +34,7 @@ private:
 
 class GreatCommonDivisor : public Expression {
 public:
-  GreatCommonDivisor() : Expression(TreePool::sharedPool()->createTreeNode<GreatCommonDivisorNode>()) {}
+  GreatCommonDivisor();
   GreatCommonDivisor(const GreatCommonDivisorNode * n) : Expression(n) {}
   GreatCommonDivisor(Expression child1, Expression child2) : GreatCommonDivisor() {
     replaceChildAtIndexInPlace(0, child1);

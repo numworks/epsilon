@@ -27,6 +27,8 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
   return Complex<T>(c.real()-std::floor(c.real()));
 }
 
+FracPart::FracPart() : Expression(TreePool::sharedPool()->createTreeNode<FracPartNode>()) {}
+
 Expression FracPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

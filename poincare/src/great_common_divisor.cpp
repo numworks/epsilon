@@ -44,6 +44,8 @@ Evaluation<T> GreatCommonDivisorNode::templatedApproximate(Context& context, Pre
   return Complex<T>(std::round((T)a));
 }
 
+GreatCommonDivisor::GreatCommonDivisor() : Expression(TreePool::sharedPool()->createTreeNode<GreatCommonDivisorNode>()) {}
+
 Expression GreatCommonDivisor::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

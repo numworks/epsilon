@@ -46,7 +46,7 @@ private:
 
 class Tangent : public Expression {
 public:
-  Tangent() : Expression(TreePool::sharedPool()->createTreeNode<TangentNode>()) {}
+  Tangent();
   Tangent(const TangentNode * n) : Expression(n) {}
   Tangent(Expression operand) : Tangent() {
     replaceChildAtIndexInPlace(0, operand);

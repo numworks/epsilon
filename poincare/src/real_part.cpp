@@ -18,6 +18,8 @@ Expression RealPartNode::shallowReduce(Context & context, Preferences::AngleUnit
   return RealPart(this).shallowReduce(context, angleUnit);
 }
 
+RealPart::RealPart() : Expression(TreePool::sharedPool()->createTreeNode<RealPartNode>()) {}
+
 Expression RealPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

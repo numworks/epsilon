@@ -185,6 +185,8 @@ T IntegralNode::adaptiveQuadrature(T a, T b, T eps, int numberOfIterations, Cont
 #endif
 
 
+Integral::Integral() : Expression(TreePool::sharedPool()->createTreeNode<IntegralNode>()) {}
+
 Expression Integral::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

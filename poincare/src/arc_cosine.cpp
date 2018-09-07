@@ -29,6 +29,8 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
+ArcCosine::ArcCosine() : Expression(TreePool::sharedPool()->createTreeNode<ArcCosineNode>()) {}
+
 Expression ArcCosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

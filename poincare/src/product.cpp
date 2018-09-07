@@ -33,4 +33,6 @@ Evaluation<T> ProductNode::templatedApproximateWithNextTerm(Evaluation<T> a, Eva
   return MultiplicationNode::computeOnMatrices<T>(m, n);
 }
 
+Product::Product() : Expression(TreePool::sharedPool()->createTreeNode<ProductNode>()) {}
+
 }

@@ -9,6 +9,8 @@ Expression NaperianLogarithmNode::shallowReduce(Context & context, Preferences::
   return NaperianLogarithm(this).shallowReduce(context, angleUnit);
 }
 
+NaperianLogarithm::NaperianLogarithm() : Expression(TreePool::sharedPool()->createTreeNode<NaperianLogarithmNode>()) {}
+
 Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

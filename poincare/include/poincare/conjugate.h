@@ -38,7 +38,7 @@ private:
 
 class Conjugate : public Expression {
 public:
-  Conjugate() : Expression(TreePool::sharedPool()->createTreeNode<ConjugateNode>()) {}
+  Conjugate();
   Conjugate(const ConjugateNode * n) : Expression(n) {}
   Conjugate(Expression operand) : Conjugate() {
     replaceChildAtIndexInPlace(0, operand);

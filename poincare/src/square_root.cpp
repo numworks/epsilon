@@ -34,6 +34,8 @@ Expression SquareRootNode::shallowReduce(Context & context, Preferences::AngleUn
 }
 
 
+SquareRoot::SquareRoot() : Expression(TreePool::sharedPool()->createTreeNode<SquareRootNode>()) {}
+
 Expression SquareRoot::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

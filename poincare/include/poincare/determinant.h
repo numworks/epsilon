@@ -38,7 +38,7 @@ private:
 
 class Determinant : public Expression {
 public:
-  Determinant() : Expression(TreePool::sharedPool()->createTreeNode<DeterminantNode>()) {}
+  Determinant();
   Determinant(const DeterminantNode * n) : Expression(n) {}
   Determinant(Expression operand) : Determinant() {
     replaceChildAtIndexInPlace(0, operand);

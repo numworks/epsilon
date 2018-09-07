@@ -30,6 +30,8 @@ Expression CeilingNode::shallowReduce(Context & context, Preferences::AngleUnit 
   return Ceiling(this).shallowReduce(context, angleUnit);
 }
 
+Ceiling::Ceiling() : Expression(TreePool::sharedPool()->createTreeNode<CeilingNode>()) {}
+
 Expression Ceiling::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

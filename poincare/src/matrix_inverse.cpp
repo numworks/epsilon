@@ -38,6 +38,8 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(Context& context, Preferen
   return inverse;
 }
 
+MatrixInverse::MatrixInverse() : Expression(TreePool::sharedPool()->createTreeNode<MatrixInverseNode>()) {}
+
 Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

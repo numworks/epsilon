@@ -39,7 +39,7 @@ private:
 
 class Round : public Expression {
 public:
-  Round() : Expression(TreePool::sharedPool()->createTreeNode<RoundNode>()) {}
+  Round();
   Round(const RoundNode * n) : Expression(n) {}
   Round(Expression operand0, Expression operand1) : Round() {
     replaceChildAtIndexInPlace(0, operand0);

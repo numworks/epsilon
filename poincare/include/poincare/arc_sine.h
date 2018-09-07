@@ -43,7 +43,7 @@ private:
 
 class ArcSine : public Expression {
 public:
-  ArcSine() : Expression(TreePool::sharedPool()->createTreeNode<ArcSineNode>()) {}
+  ArcSine();
   ArcSine(const ArcSineNode * n) : Expression(n) {}
   ArcSine(Expression operand) : ArcSine() {
     replaceChildAtIndexInPlace(0, operand);

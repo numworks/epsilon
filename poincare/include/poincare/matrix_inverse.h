@@ -34,7 +34,7 @@ private:
 
 class MatrixInverse : public Expression {
 public:
-  MatrixInverse() : Expression(TreePool::sharedPool()->createTreeNode<MatrixInverseNode>()) {}
+  MatrixInverse();
   MatrixInverse(const MatrixInverseNode * n) : Expression(n) {}
   MatrixInverse(Expression operand) : MatrixInverse() {
     replaceChildAtIndexInPlace(0, operand);

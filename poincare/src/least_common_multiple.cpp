@@ -44,6 +44,8 @@ Evaluation<T> LeastCommonMultipleNode::templatedApproximate(Context& context, Pr
   return Complex<T>(product/a);
 }
 
+LeastCommonMultiple::LeastCommonMultiple() : Expression(TreePool::sharedPool()->createTreeNode<LeastCommonMultipleNode>()) {}
+
 Expression LeastCommonMultiple::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

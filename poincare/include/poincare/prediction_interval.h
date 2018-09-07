@@ -42,7 +42,7 @@ private:
 
 class PredictionInterval : public Expression {
 public:
-  PredictionInterval() : Expression(TreePool::sharedPool()->createTreeNode<PredictionIntervalNode>()) {}
+  PredictionInterval();
   PredictionInterval(const PredictionIntervalNode * n) : Expression(n) {}
   PredictionInterval(Expression child1, Expression child2) : PredictionInterval() {
     replaceChildAtIndexInPlace(0, child1);

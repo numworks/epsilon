@@ -35,4 +35,6 @@ Evaluation<T> SumNode::templatedApproximateWithNextTerm(Evaluation<T> a, Evaluat
   return AdditionNode::computeOnMatrices<T>(m, n);
 }
 
+Sum::Sum() : Expression(TreePool::sharedPool()->createTreeNode<SumNode>()) {}
+
 }

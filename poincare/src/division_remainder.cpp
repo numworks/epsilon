@@ -31,6 +31,8 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(Context& context, Pref
   }
   return Complex<T>(std::round(f1-f2*std::floor(f1/f2)));
 }
+DivisionRemainder::DivisionRemainder() : Expression(TreePool::sharedPool()->createTreeNode<DivisionRemainderNode>()) {}
+
 Expression DivisionRemainder::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

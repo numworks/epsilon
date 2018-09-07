@@ -47,6 +47,9 @@ Expression AdditionNode::shallowBeautify(Context & context, Preferences::AngleUn
   return Addition(this).shallowBeautify(context, angleUnit);
 }
 
+// Addition
+Addition::Addition() : NAryExpression(TreePool::sharedPool()->createTreeNode<AdditionNode>()) {}
+
 const Number Addition::NumeralFactor(const Expression & e) {
   if (e.type() == ExpressionNode::Type::Multiplication && e.childAtIndex(0).isNumber()) {
     Number result = e.childAtIndex(0).convert<Number>();

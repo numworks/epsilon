@@ -35,6 +35,8 @@ Evaluation<T> PredictionIntervalNode::templatedApproximate(Context& context, Pre
   return MatrixComplex<T>(operands, 1, 2);
 }
 
+PredictionInterval::PredictionInterval() : Expression(TreePool::sharedPool()->createTreeNode<PredictionIntervalNode>()) {}
+
 Expression PredictionInterval::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

@@ -31,6 +31,8 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(Context& context, Prefe
   return Complex<T>(std::floor(f1/f2));
 }
 
+DivisionQuotient::DivisionQuotient() : Expression(TreePool::sharedPool()->createTreeNode<DivisionQuotientNode>()) {}
+
 Expression DivisionQuotient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

@@ -110,6 +110,8 @@ T DerivativeNode::riddersApproximation(Context & context, Preferences::AngleUnit
   return ans;
 }
 
+Derivative::Derivative() : Expression(TreePool::sharedPool()->createTreeNode<DerivativeNode>()) {}
+
 Expression Derivative::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

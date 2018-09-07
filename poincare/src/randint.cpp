@@ -27,4 +27,6 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(Context & c
   return Complex<T>(result);
 }
 
+Randint::Randint() : Expression(TreePool::sharedPool()->createTreeNode<RandintNode>()) {}
+
 }

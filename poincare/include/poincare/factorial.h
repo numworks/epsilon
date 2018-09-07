@@ -46,7 +46,7 @@ private:
 
 class Factorial : public Expression {
 public:
-  Factorial() : Expression(TreePool::sharedPool()->createTreeNode<FactorialNode>()) {}
+  Factorial();
   Factorial(const FactorialNode * n) : Expression(n) {}
   Factorial(Expression operand) : Factorial() {
     replaceChildAtIndexInPlace(0, operand);

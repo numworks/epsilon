@@ -24,6 +24,8 @@ Expression ImaginaryPartNode::shallowReduce(Context & context, Preferences::Angl
   return ImaginaryPart(this).shallowReduce(context, angleUnit);
 }
 
+ImaginaryPart::ImaginaryPart() : Expression(TreePool::sharedPool()->createTreeNode<ImaginaryPartNode>()) {}
+
 Expression ImaginaryPart::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

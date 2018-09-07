@@ -51,7 +51,7 @@ private:
 
 class Derivative : public Expression {
 public:
-  Derivative() : Expression(TreePool::sharedPool()->createTreeNode<DerivativeNode>()) {}
+  Derivative();
   Derivative(const DerivativeNode * n) : Expression(n) {}
   Derivative(Expression child1, Expression child2) : Derivative() {
     replaceChildAtIndexInPlace(0, child1);

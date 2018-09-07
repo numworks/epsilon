@@ -38,7 +38,7 @@ private:
 
 class ComplexArgument : public Expression {
 public:
-  ComplexArgument() : Expression(TreePool::sharedPool()->createTreeNode<ComplexArgumentNode>()) {}
+  ComplexArgument();
   ComplexArgument(const ComplexArgumentNode * n) : Expression(n) {}
   ComplexArgument(Expression operand) : ComplexArgument() {
     replaceChildAtIndexInPlace(0, operand);

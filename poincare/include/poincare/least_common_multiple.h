@@ -36,7 +36,7 @@ private:
 
 class LeastCommonMultiple : public Expression {
 public:
-  LeastCommonMultiple() : Expression(TreePool::sharedPool()->createTreeNode<LeastCommonMultipleNode>()) {}
+  LeastCommonMultiple();
   LeastCommonMultiple(const LeastCommonMultipleNode * n) : Expression(n) {}
   LeastCommonMultiple(Expression child1, Expression child2) : LeastCommonMultiple() {
     replaceChildAtIndexInPlace(0, child1);

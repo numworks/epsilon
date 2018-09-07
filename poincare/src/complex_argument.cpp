@@ -26,6 +26,8 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
   return Complex<T>(std::arg(c));
 }
 
+ComplexArgument::ComplexArgument() : Expression(TreePool::sharedPool()->createTreeNode<ComplexArgumentNode>()) {}
+
 Expression ComplexArgument::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

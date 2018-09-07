@@ -67,7 +67,7 @@ class Multiplication : public NAryExpression {
   friend class Power;
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
-  Multiplication() : NAryExpression(TreePool::sharedPool()->createTreeNode<MultiplicationNode>()) {}
+  Multiplication();
   Multiplication(Expression e1) : Multiplication() {
     addChildAtIndexInPlace(e1, 0, 0);
   }

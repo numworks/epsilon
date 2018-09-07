@@ -25,6 +25,8 @@ Expression CosineNode::shallowReduce(Context & context, Preferences::AngleUnit a
   return Cosine(this).shallowReduce(context, angleUnit);
 }
 
+Cosine::Cosine() : Expression(TreePool::sharedPool()->createTreeNode<CosineNode>()) {}
+
 Expression Cosine::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

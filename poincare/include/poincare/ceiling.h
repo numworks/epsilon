@@ -39,7 +39,7 @@ private:
 
 class Ceiling : public Expression {
 public:
-  Ceiling() : Expression(TreePool::sharedPool()->createTreeNode<CeilingNode>()) {}
+  Ceiling();
   Ceiling(const CeilingNode * n) : Expression(n) {}
   Ceiling(Expression operand) : Ceiling() {
     replaceChildAtIndexInPlace(0, operand);

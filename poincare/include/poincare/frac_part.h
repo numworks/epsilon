@@ -39,7 +39,7 @@ private:
 
 class FracPart : public Expression {
 public:
-  FracPart() : Expression(TreePool::sharedPool()->createTreeNode<FracPartNode>()) {}
+  FracPart();
   FracPart(const FracPartNode * n) : Expression(n) {}
   FracPart(Expression operand) : FracPart() {
     replaceChildAtIndexInPlace(0, operand);

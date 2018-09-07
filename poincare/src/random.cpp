@@ -18,6 +18,8 @@ template <typename T> Evaluation<T> RandomNode::templateApproximate() const {
   return Complex<T>(Random::random<T>());
 }
 
+Random::Random() : Expression(TreePool::sharedPool()->createTreeNode<RandomNode>()) {}
+
 Expression Random::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
   assert(s == ExpressionNode::Sign::Positive);
   return *this;

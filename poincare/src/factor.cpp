@@ -17,6 +17,8 @@ LayoutRef FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 
+Factor::Factor() : Expression(TreePool::sharedPool()->createTreeNode<FactorNode>()) {}
+
 Expression FactorNode::shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) {
   return Factor(this).shallowBeautify(context, angleUnit);
 }

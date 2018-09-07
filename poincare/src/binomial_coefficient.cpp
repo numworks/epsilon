@@ -48,6 +48,8 @@ T BinomialCoefficientNode::compute(T k, T n) {
   return std::round(result);
 }
 
+BinomialCoefficient::BinomialCoefficient() : Expression(TreePool::sharedPool()->createTreeNode<BinomialCoefficientNode>()) {}
+
 Expression BinomialCoefficient::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

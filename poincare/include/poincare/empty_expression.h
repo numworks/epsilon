@@ -33,7 +33,7 @@ private:
 
 class EmptyExpression : public Expression {
 public:
-  EmptyExpression() : Expression(TreePool::sharedPool()->createTreeNode<EmptyExpressionNode>()) {}
+  EmptyExpression();
   EmptyExpression(const EmptyExpressionNode * n) : Expression(n) {}
 };
 

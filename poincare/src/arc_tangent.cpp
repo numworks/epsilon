@@ -29,6 +29,8 @@ Expression ArcTangentNode::shallowReduce(Context & context, Preferences::AngleUn
   return ArcTangent(this).shallowReduce(context, angleUnit);
 }
 
+ArcTangent::ArcTangent() : Expression(TreePool::sharedPool()->createTreeNode<ArcTangentNode>()) {}
+
 Expression ArcTangent::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

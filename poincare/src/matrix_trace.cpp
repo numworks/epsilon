@@ -28,6 +28,8 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(Context& context, Preference
   return result;
 }
 
+MatrixTrace::MatrixTrace() : Expression(TreePool::sharedPool()->createTreeNode<MatrixTraceNode>()) {}
+
 Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

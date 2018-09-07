@@ -28,6 +28,8 @@ Expression AbsoluteValue::setSign(ExpressionNode::Sign s, Context & context, Pre
   return *this;
 }
 
+AbsoluteValue::AbsoluteValue() : Expression(TreePool::sharedPool()->createTreeNode<AbsoluteValueNode>()) {}
+
 Expression AbsoluteValue::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   Expression e = Expression::defaultShallowReduce(context, angleUnit);
   if (e.isUndefined()) {

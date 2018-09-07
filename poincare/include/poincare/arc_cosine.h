@@ -46,7 +46,7 @@ private:
 
 class ArcCosine : public Expression {
 public:
-  ArcCosine() : Expression(TreePool::sharedPool()->createTreeNode<ArcCosineNode>()) {}
+  ArcCosine();
   ArcCosine(const ArcCosineNode * n) : Expression(n) {}
   ArcCosine(Expression operand) : ArcCosine() {
     replaceChildAtIndexInPlace(0, operand);

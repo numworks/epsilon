@@ -65,7 +65,7 @@ private:
 class Addition : public NAryExpression {
 public:
   Addition(const AdditionNode * n) : NAryExpression(n) {}
-  Addition() : NAryExpression(TreePool::sharedPool()->createTreeNode<AdditionNode>()) {}
+  Addition();
   Addition(Expression e1) : Addition() {
     addChildAtIndexInPlace(e1, 0, 0);
   }

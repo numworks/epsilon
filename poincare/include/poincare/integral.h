@@ -48,7 +48,7 @@ private:
 
 class Integral : public Expression {
 public:
-  Integral() : Expression(TreePool::sharedPool()->createTreeNode<IntegralNode>()) {}
+  Integral();
   Integral(const IntegralNode * n) : Expression(n) {}
   Integral(Expression child1, Expression child2, Expression child3) : Integral() {
     replaceChildAtIndexInPlace(0, child1);

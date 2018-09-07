@@ -46,7 +46,7 @@ private:
 
 class Cosine : public Expression {
 public:
-  Cosine() : Expression(TreePool::sharedPool()->createTreeNode<CosineNode>()) {}
+  Cosine();
   Cosine(const CosineNode * n) : Expression(n) {}
   Cosine(Expression operand) : Cosine() {
     replaceChildAtIndexInPlace(0, operand);

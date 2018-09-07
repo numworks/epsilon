@@ -28,6 +28,8 @@ Evaluation<T> RoundNode::templatedApproximate(Context& context, Preferences::Ang
   return Complex<T>(std::round(f1*err)/err);
 }
 
+Round::Round() : Expression(TreePool::sharedPool()->createTreeNode<RoundNode>()) {}
+
 Expression Round::shallowReduce(Context & context, Preferences::AngleUnit angleUnit) {
   {
     Expression e = Expression::defaultShallowReduce(context, angleUnit);

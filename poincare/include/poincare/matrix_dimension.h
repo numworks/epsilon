@@ -34,7 +34,7 @@ private:
 
 class MatrixDimension : public Expression {
 public:
-  MatrixDimension() : Expression(TreePool::sharedPool()->createTreeNode<MatrixDimensionNode>()) {}
+  MatrixDimension();
   MatrixDimension(const MatrixDimensionNode * n) : Expression(n) {}
   MatrixDimension(Expression operand) : MatrixDimension() {
     replaceChildAtIndexInPlace(0, operand);

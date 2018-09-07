@@ -43,7 +43,7 @@ private:
 
 class ConfidenceInterval : public Expression {
 public:
-  ConfidenceInterval() : Expression(TreePool::sharedPool()->createTreeNode<ConfidenceIntervalNode>()) {}
+  ConfidenceInterval();
   ConfidenceInterval(const ConfidenceIntervalNode * n) : Expression(n) {}
   ConfidenceInterval(Expression child1, Expression child2) : ConfidenceInterval() {
     replaceChildAtIndexInPlace(0, child1);

@@ -38,7 +38,7 @@ private:
 
 class BinomialCoefficient : public Expression {
 public:
-  BinomialCoefficient() : Expression(TreePool::sharedPool()->createTreeNode<BinomialCoefficientNode>()) {}
+  BinomialCoefficient();
   BinomialCoefficient(const BinomialCoefficientNode * n) : Expression(n) {}
   BinomialCoefficient(Expression child1, Expression child2) : BinomialCoefficient() {
     replaceChildAtIndexInPlace(0, child1);

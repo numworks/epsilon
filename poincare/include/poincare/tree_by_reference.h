@@ -53,7 +53,7 @@ public:
   int numberOfChildren() const { return node()->numberOfChildren(); }
   int indexOfChild(TreeByReference t) const { return node()->indexOfChild(t.node()); }
   TreeByReference parent() const { return (isUninitialized() || node()->parent() == nullptr) ? TreeByReference() : TreeByReference(node()->parent()); }
-  TreeByReference childAtIndex(int i) const { return TreeByReference(node()->childAtIndex(i)); }
+  TreeByReference childAtIndex(int i) const;
   void setParentIdentifier(int id) { node()->setParentIdentifier(id); }
   void deleteParentIdentifier() { node()->deleteParentIdentifier(); }
   void deleteParentIdentifierInChildren() { node()->deleteParentIdentifierInChildren(); }

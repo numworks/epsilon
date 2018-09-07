@@ -66,32 +66,12 @@ class HorizontalLayoutRef : public LayoutReference {
   friend class HorizontalLayoutNode;
 public:
   HorizontalLayoutRef(HorizontalLayoutNode * n) : LayoutReference(n) {}
-  HorizontalLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<HorizontalLayoutNode>()) {}
-
-  HorizontalLayoutRef(LayoutRef l) : HorizontalLayoutRef() {
-    addChildAtIndexInPlace(l, 0, 0);
-  }
-
-  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2) : HorizontalLayoutRef() {
-    addChildAtIndexInPlace(l1, 0, 0);
-    addChildAtIndexInPlace(l2, 1, 1);
-  }
-  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3) : HorizontalLayoutRef() {
-    addChildAtIndexInPlace(l1, 0, 0);
-    addChildAtIndexInPlace(l2, 1, 1);
-    addChildAtIndexInPlace(l3, 2, 2);
-  }
-  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) : HorizontalLayoutRef() {
-    addChildAtIndexInPlace(l1, 0, 0);
-    addChildAtIndexInPlace(l2, 1, 1);
-    addChildAtIndexInPlace(l3, 2, 2);
-    addChildAtIndexInPlace(l4, 3, 3);
-  }
-  HorizontalLayoutRef(const LayoutRef * children, size_t numberOfChildren) : HorizontalLayoutRef() {
-    for (size_t i = 0; i < numberOfChildren; i++) {
-      addChildAtIndexInPlace(children[i], i, i);
-    }
-  }
+  HorizontalLayoutRef();
+  HorizontalLayoutRef(LayoutRef l);
+  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2);
+  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3);
+  HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4);
+  HorizontalLayoutRef(const LayoutRef * children, size_t numberOfChildren);
   void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
     LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }

@@ -1,6 +1,5 @@
 #include "linear_model.h"
 #include "../store.h"
-#include "../../poincare/include/poincare_layouts.h"
 #include <math.h>
 #include <assert.h>
 
@@ -8,10 +7,10 @@ using namespace Poincare;
 
 namespace Regression {
 
-ExpressionLayout * LinearModel::layout() {
-  static ExpressionLayout * layout = nullptr;
-  if (layout == nullptr) {
-    const ExpressionLayout * layoutChildren[] = {
+LayoutReference LinearModel::layout() {
+  static LayoutReference layout;
+  if (layout.isUninitialized()) {
+    const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       CharLayoutRef('X', KDText::FontSize::Small),

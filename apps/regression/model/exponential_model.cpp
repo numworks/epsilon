@@ -1,16 +1,15 @@
 #include "exponential_model.h"
 #include <math.h>
 #include <assert.h>
-#include "../../poincare/include/poincare_layouts.h"
 
 using namespace Poincare;
 
 namespace Regression {
 
-ExpressionLayout * ExponentialModel::layout() {
-  static ExpressionLayout * layout = nullptr;
-  if (layout == nullptr) {
-    const ExpressionLayout * layoutChildren[] = {
+LayoutReference ExponentialModel::layout() {
+  static LayoutReference layout;
+  if (layout.isUninitialized()) {
+    const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       CharLayoutRef('e', KDText::FontSize::Small),
@@ -31,6 +30,7 @@ ExpressionLayout * ExponentialModel::layout() {
 double ExponentialModel::evaluate(double * modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
+  // a*e^(bx)
   return a*exp(b*x);
 }
 

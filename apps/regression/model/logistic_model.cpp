@@ -1,22 +1,21 @@
 #include "logistic_model.h"
 #include <math.h>
 #include <assert.h>
-#include "../../poincare/include/poincare_layouts.h"
 
 using namespace Poincare;
 
 namespace Regression {
 
-ExpressionLayout * LogisticModel::layout() {
-  static ExpressionLayout * layout = nullptr;
-  if (layout == nullptr) {
-    const ExpressionLayout * exponentLayoutChildren[] = {
+LayoutReference LogisticModel::layout() {
+  static LayoutReference layout;
+  if (layout.isUninitialized()) {
+    const LayoutReference exponentLayoutChildren[] = {
       CharLayoutRef('-', KDText::FontSize::Small),
       CharLayoutRef('b', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       CharLayoutRef('X', KDText::FontSize::Small)
     };
-    const ExpressionLayout * layoutChildren[] = {
+    const LayoutReference layoutChildren[] = {
       CharLayoutRef('1', KDText::FontSize::Small),
       CharLayoutRef('+', KDText::FontSize::Small),
       CharLayoutRef('a', KDText::FontSize::Small),
@@ -29,7 +28,7 @@ ExpressionLayout * LogisticModel::layout() {
     };
     layout = FractionLayoutRef(
        CharLayoutRef('c', KDText::FontSize::Small),
-       HorizontalLayoutRef(layoutChildren, 6),
+       HorizontalLayoutRef(layoutChildren, 6)
       );
   }
   return layout;

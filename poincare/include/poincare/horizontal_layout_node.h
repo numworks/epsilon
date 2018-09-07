@@ -87,6 +87,11 @@ public:
     addChildAtIndexInPlace(l3, 2, 2);
     addChildAtIndexInPlace(l4, 3, 3);
   }
+  HorizontalLayoutRef(const LayoutRef * children, size_t numberOfChildren) : HorizontalLayoutRef() {
+    for (int i = 0; i < numberOfChildren; i++) {
+      addChildAtIndexInPlace(children[i], i, i);
+    }
+  }
   void addChildAtIndex(LayoutReference l, int index, int currentNumberOfChildren, LayoutCursor * cursor) override {
     LayoutReference::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }

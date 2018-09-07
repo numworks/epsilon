@@ -1,6 +1,5 @@
 #include "trigonometric_model.h"
 #include "../../shared/poincare_helpers.h"
-#include "../../poincare/include/poincare_layouts.h"
 #include <math.h>
 #include <poincare/preferences.h>
 #include <assert.h>
@@ -10,10 +9,10 @@ using namespace Shared;
 
 namespace Regression {
 
-ExpressionLayout * TrigonometricModel::layout() {
-  static ExpressionLayout * layout = nullptr;
-  if (layout == nullptr) {
-    const ExpressionLayout * layoutChildren[] = {
+LayoutReference TrigonometricModel::layout() {
+  static LayoutReference layout;
+  if (layout.isUninitialized()) {
+    const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       CharLayoutRef('s', KDText::FontSize::Small),
@@ -29,29 +28,28 @@ ExpressionLayout * TrigonometricModel::layout() {
       CharLayoutRef('+', KDText::FontSize::Small),
       CharLayoutRef('d', KDText::FontSize::Small)
     };
-    layout = HorizontalLayoutRef(layoutChildren, 14, false);
+    layout = HorizontalLayoutRef(layoutChildren, 14);
   }
   return layout;
 }
 
-Expression * TrigonometricModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
+Expression TrigonometricModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
-  Expression * aExpression = new Decimal(a);
-  Expression * sinExpression = new Sine(
-      new Addition(
-        new Multiplication(
-          new Decimal(b),
-          new Symbol('x'),
-          false),
-        new Decimal(c),
-        false),
-      false);
-  Expression * asinExpression = new Multiplication(aExpression, sinExpression, false);
-  Expression * dExpression = new Decimal(d);
-  Expression * result = new Addition(asinExpression, dExpression, false);
+  // a*sin(bx+c)+d
+  Expression result =
+    Addition(
+      Multiplication(
+        Decimal(a),
+        Sine(
+          Addition(
+            Multiplication(
+              Decimal(b),
+              Symbol('x')),
+            Decimal(c)))),
+      Decimal(d));
   PoincareHelpers::Simplify(&result, *context);
   return result;
 }

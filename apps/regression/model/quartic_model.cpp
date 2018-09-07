@@ -2,17 +2,16 @@
 #include "../../shared/poincare_helpers.h"
 #include <math.h>
 #include <assert.h>
-#include "../../poincare/include/poincare_layouts.h"
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Regression {
 
-ExpressionLayout * QuarticModel::layout() {
-  static ExpressionLayout * layout = nullptr;
-  if (layout == nullptr) {
-    const ExpressionLayout * layoutChildren[] = {
+LayoutReference QuarticModel::layout() {
+  static LayoutReference layout;
+  if (layout.isUninitialized()) {
+    const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       CharLayoutRef('X', KDText::FontSize::Small),
@@ -48,40 +47,39 @@ ExpressionLayout * QuarticModel::layout() {
   return layout;
 }
 
-Expression * QuarticModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
+Expression QuarticModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
   double e = modelCoefficients[4];
-  Expression * ax4Expression = new Multiplication(
-      new Decimal(a),
-      new Power(
-        new Symbol('x'),
-        new Decimal(4.0),
-        false),
-      false);
-  Expression * bx3Expression = new Multiplication(
-      new Decimal(b),
-      new Power(
-        new Symbol('x'),
-        new Decimal(3.0),
-        false),
-      false);
-  Expression * cx2Expression = new Multiplication(
-    new Decimal(c),
-    new Power(
-      new Symbol('x'),
-      new Decimal(2.0),
-      false),
-    false);
-  Expression * dxExpression = new Multiplication(
-    new Decimal(d),
-    new Symbol('x'),
-    false);
-  Expression * eExpression = new Decimal(e);
-  Expression * const operands[] = {ax4Expression, bx3Expression, cx2Expression, dxExpression, eExpression};
-  Expression * result = new Addition(operands, 5, false);
+  Expression addChildren[] = {
+    // a*x^4
+    Multiplication(
+      Decimal(a),
+      Power(
+        Symbol('x'),
+        Decimal(4.0))),
+    // b*x^3
+    Multiplication(
+      Decimal(b),
+      Power(
+        Symbol('x'),
+        Decimal(3.0))),
+    // c*x^2
+    Multiplication(
+      Decimal(c),
+      Power(
+        Symbol('x'),
+        Decimal(2.0))),
+    // d*x
+    Multiplication(
+      Decimal(d),
+      Symbol('x')),
+    // e
+    Decimal(e)
+  };
+  Expression result = Addition(addChildren, 5);
   PoincareHelpers::Simplify(&result, *context);
   return result;
 }

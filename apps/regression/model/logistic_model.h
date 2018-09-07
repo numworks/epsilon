@@ -2,14 +2,13 @@
 #define REGRESSION_LOGISTIC_MODEL_H
 
 #include "model.h"
-#include <poincare/expression_layout.h>
 
 namespace Regression {
 
 class LogisticModel : public Model {
 public:
   using Model::Model;
-  Poincare::ExpressionLayout * layout() override;
+  Poincare::LayoutReference layout() override;
   I18n::Message formulaMessage() const override { return I18n::Message::LogisticRegressionFormula; }
   double evaluate(double * modelCoefficients, double x) const override;
   double levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context) override;

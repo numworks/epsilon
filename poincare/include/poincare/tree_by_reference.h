@@ -83,11 +83,7 @@ public:
 
 protected:
   /* Constructor */
-  TreeByReference(const TreeNode * node) : TreeByReference() {
-    if (node != nullptr) {
-      setIdentifierAndRetain(node->identifier());
-    }
-  }
+  TreeByReference(const TreeNode * node);
   TreeByReference(int nodeIndentifier = TreeNode::NoNodeIdentifier) : m_identifier(nodeIndentifier) {}
   void setIdentifierAndRetain(int newId);
   void setTo(const TreeByReference & tr);

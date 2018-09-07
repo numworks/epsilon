@@ -204,6 +204,13 @@ void TreeByReference::detachFromParent() {
   assert(parent().isUninitialized());
 }
 
+
+TreeByReference::TreeByReference(const TreeNode * node) : TreeByReference() {
+  if (node != nullptr) {
+    setIdentifierAndRetain(node->identifier());
+  }
+}
+
 void TreeByReference::setIdentifierAndRetain(int newId) {
   m_identifier = newId;
   if (!isUninitialized()) {

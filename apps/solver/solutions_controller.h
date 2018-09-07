@@ -11,7 +11,6 @@ namespace Solver {
 class SolutionsController : public ViewController, public AlternateEmptyViewDelegate, public SelectableTableViewDataSource, public TableViewDataSource {
 public:
   SolutionsController(Responder * parentResponder, EquationStore * equationStore);
-  ~SolutionsController();
   /* ViewController */
   const char * title() override;
   View * view() override;
@@ -59,7 +58,7 @@ private:
   EquationStore * m_equationStore;
   EvenOddBufferTextCell m_symbolCells[EquationStore::k_maxNumberOfSolutions];
   EvenOddExpressionCell m_deltaCell;
-  Poincare::ExpressionLayout * m_delta2Layout;
+  Poincare::LayoutReference m_delta2Layout;
   Shared::ScrollableExactApproximateExpressionsCell m_exactValueCells[EquationStore::k_maxNumberOfExactSolutions];
   EvenOddBufferTextCell m_approximateValueCells[EquationStore::k_maxNumberOfApproximateSolutions];
   ContentView m_contentView;

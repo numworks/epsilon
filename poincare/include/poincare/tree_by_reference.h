@@ -11,12 +11,8 @@ class TreeByReference {
   friend class TreePool;
 public:
   /* Constructors */
-  TreeByReference(const TreeByReference & tr) : m_identifier(TreeNode::NoNodeIdentifier) {
-    setIdentifierAndRetain(tr.identifier());
-  }
-  TreeByReference(TreeByReference&& tr) : m_identifier(TreeNode::NoNodeIdentifier) {
-    setIdentifierAndRetain(tr.identifier());
-  }
+  TreeByReference(const TreeByReference & tr);
+  TreeByReference(TreeByReference&& tr);
   ~TreeByReference();
 
   /* Operators */
@@ -37,7 +33,7 @@ public:
   TreeByReference clone() const;
 
   int identifier() const { return m_identifier; }
-  TreeNode * node() const { assert(m_identifier != TreeNode::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
+  TreeNode * node() const;
   int nodeRetainCount() const { return node()->retainCount(); }
 
   bool isGhost() const { return node()->isGhost(); }

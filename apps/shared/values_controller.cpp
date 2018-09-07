@@ -15,7 +15,8 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_interval(interval),
   m_numberOfColumns(0),
   m_numberOfColumnsNeedUpdate(true),
-  m_abscissaTitleCell(nullptr),
+  m_selectableTableView(this),
+  m_abscissaTitleCell(),
   m_abscissaCells{},
   m_abscissaParameterController(this, intervalParameterController, parameterTitle),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
@@ -24,6 +25,20 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
     stack->push(valuesController->intervalParameterController());
   }, this), KDText::FontSize::Small)
 {
+  m_selectableTableView.setVerticalCellOverlap(0);
+  m_selectableTableView.setTopMargin(k_topMargin);
+  m_selectableTableView.setRightMargin(k_rightMargin);
+  m_selectableTableView.setBottomMargin(k_bottomMargin);
+  m_selectableTableView.setLeftMargin(k_leftMargin);
+  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_selectableTableView.setIndicatorThickness(13);
+  m_abscissaTitleCell.setMessageFontSize(KDText::FontSize::Small);
+  for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
+    m_abscissaCells[i].setParentResponder(&m_selectableTableView);
+    m_abscissaCells[i].editableTextCell()->textField()->setDelegate(this);
+    m_abscissaCells[i].editableTextCell()->textField()->setDraftTextBuffer(m_draftTextBuffer);
+    m_abscissaCells[i].editableTextCell()->textField()->setFontSize(KDText::FontSize::Small);
+  }
 }
 
 const char * ValuesController::title() {
@@ -173,12 +188,12 @@ HighlightCell * ValuesController::reusableCell(int index, int type) {
   switch (type) {
     case 0:
       assert(index == 0);
-      return m_abscissaTitleCell;
+      return &m_abscissaTitleCell;
     case 1:
       return functionTitleCells(index);
     case 2:
       assert(index < k_maxNumberOfAbscissaCells);
-      return m_abscissaCells[index];
+      return &m_abscissaCells[index];
     case 3:
       return floatCells(index);
     default:
@@ -297,33 +312,6 @@ double ValuesController::evaluationOfAbscissaAtColumn(double abscissa, int colum
   Function * function = functionAtColumn(columnIndex);
   TextFieldDelegateApp * myApp = (TextFieldDelegateApp *)app();
   return function->evaluateAtAbscissa(abscissa, myApp->localContext());
-}
-
-View * ValuesController::loadView() {
-  SelectableTableView * tableView = new SelectableTableView(this);
-  tableView->setVerticalCellOverlap(0);
-  tableView->setTopMargin(k_topMargin);
-  tableView->setRightMargin(k_rightMargin);
-  tableView->setBottomMargin(k_bottomMargin);
-  tableView->setLeftMargin(k_leftMargin);
-  tableView->setBackgroundColor(Palette::WallScreenDark);
-  tableView->setIndicatorThickness(13);
-
-  m_abscissaTitleCell = new EvenOddMessageTextCell(KDText::FontSize::Small);
-  for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
-    m_abscissaCells[i] = new EvenOddEditableTextCell(tableView, this, m_draftTextBuffer, KDText::FontSize::Small);
-  }
-  return tableView;
-}
-
-void ValuesController::unloadView(View * view) {
-  delete m_abscissaTitleCell;
-  m_abscissaTitleCell = nullptr;
-  for (int i = 0; i < k_maxNumberOfAbscissaCells; i++) {
-    delete m_abscissaCells[i];
-    m_abscissaCells[i] = nullptr;
-  }
-  EditableCellTableViewController::unloadView(view);
 }
 
 void ValuesController::updateNumberOfColumns() {

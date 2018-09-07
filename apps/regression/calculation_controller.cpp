@@ -14,17 +14,33 @@ namespace Regression {
 static inline int max(int x, int y) { return (x>y ? x : y); }
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
-  TabTableController(parentResponder, this),
+  TabTableController(parentResponder),
   ButtonRowDelegate(header, nullptr),
+  m_selectableTableView(this, this, this, this),
   m_titleCells{},
-  m_r2TitleCell(nullptr),
+  m_r2TitleCell(),
   m_columnTitleCells{},
   m_doubleCalculationCells{},
   m_calculationCells{},
-  m_hideableCell(nullptr),
+  m_hideableCell(),
   m_store(store)
 {
   m_r2Layout = HorizontalLayoutRef(CharLayoutRef('r', KDText::FontSize::Small), VerticalOffsetLayoutRef(CharLayoutRef('2', KDText::FontSize::Small), VerticalOffsetLayoutNode::Type::Superscript));
+  m_selectableTableView.setVerticalCellOverlap(0);
+  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_r2TitleCell.setAlignment(1.0f, 0.5f);
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    m_columnTitleCells[i].setParentResponder(&m_selectableTableView);
+  }
+  for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
+    m_doubleCalculationCells[i].setTextColor(Palette::GreyDark);
+    m_doubleCalculationCells[i].setParentResponder(&m_selectableTableView);
+  }
+  for (int i = 0; i < k_numberOfCalculationCells;i++) {
+    m_calculationCells[i].setTextColor(Palette::GreyDark);
+  }
+  m_hideableCell.setHide(true);
 }
 
 const char * CalculationController::title() {
@@ -250,28 +266,25 @@ int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   if (type == k_standardCalculationTitleCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
-    assert(m_titleCells[index] != nullptr);
-    return m_titleCells[index];
+    return &m_titleCells[index];
   }
   if (type == k_r2CellType) {
     assert(index == 0);
-    return m_r2TitleCell;
+    return &m_r2TitleCell;
   }
   if (type == k_columnTitleCellType) {
     assert(index >= 0 && index < Store::k_numberOfSeries);
-    return m_columnTitleCells[index];
+    return &m_columnTitleCells[index];
   }
   if (type == k_doubleBufferCalculationCellType) {
     assert(index >= 0 && index < k_numberOfDoubleCalculationCells);
-    assert(m_doubleCalculationCells[index] != nullptr);
-    return m_doubleCalculationCells[index];
+    return &m_doubleCalculationCells[index];
   }
   if (type == k_hideableCellType) {
-    return m_hideableCell;
+    return &m_hideableCell;
   }
   assert(index >= 0 && index < k_numberOfCalculationCells);
-  assert(m_calculationCells[index] != nullptr);
-  return m_calculationCells[index];
+  return &m_calculationCells[index];
 }
 
 int CalculationController::reusableCellCount(int type) {
@@ -317,57 +330,6 @@ int CalculationController::typeAtLocation(int i, int j) {
 
 Responder * CalculationController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
-}
-
-View * CalculationController::loadView() {
-  SelectableTableView * tableView = new SelectableTableView(this, this, this, this);
-  tableView->setVerticalCellOverlap(0);
-  tableView->setBackgroundColor(Palette::WallScreenDark);
-  tableView->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  m_r2TitleCell = new EvenOddExpressionCell(1.0f, 0.5f);
-  m_r2TitleCell->setRightMargin(k_r2CellMargin);
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    m_columnTitleCells[i] = new ColumnTitleCell(tableView);
-  }
-  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
-    m_titleCells[i] = new MarginEvenOddMessageTextCell(KDText::FontSize::Small);
-  }
-  for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
-    m_doubleCalculationCells[i] = new EvenOddDoubleBufferTextCellWithSeparator();
-    m_doubleCalculationCells[i]->setTextColor(Palette::GreyDark);
-    m_doubleCalculationCells[i]->setParentResponder(tableView);
-  }
-  for (int i = 0; i < k_numberOfCalculationCells;i++) {
-    m_calculationCells[i] = new SeparatorEvenOddBufferTextCell(KDText::FontSize::Small);
-    m_calculationCells[i]->setTextColor(Palette::GreyDark);
-  }
-  m_hideableCell = new HideableEvenOddCell();
-  m_hideableCell->setHide(true);
-  return tableView;
-}
-
-void CalculationController::unloadView(View * view) {
-  delete m_r2TitleCell;
-  m_r2TitleCell = nullptr;
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    delete m_columnTitleCells[i];
-    m_columnTitleCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
-    delete m_doubleCalculationCells[i];
-    m_doubleCalculationCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_numberOfCalculationCells;i++) {
-    delete m_calculationCells[i];
-    m_calculationCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
-    delete m_titleCells[i];
-    m_titleCells[i] = nullptr;
-  }
-  delete m_hideableCell;
-  m_hideableCell = nullptr;
-  TabTableController::unloadView(view);
 }
 
 bool CalculationController::hasLinearRegression() const {

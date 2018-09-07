@@ -18,6 +18,11 @@ void TextInput::ContentView::setCursorLocation(int location) {
   layoutSubviews();
 }
 
+void TextInput::ContentView::setFontSize(KDText::FontSize size) {
+  m_fontSize = size;
+  markRectAsDirty(bounds());
+}
+
 KDRect TextInput::ContentView::cursorRect() {
   return characterFrameAtIndex(m_cursorIndex);
 }

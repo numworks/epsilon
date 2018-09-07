@@ -12,6 +12,7 @@ public:
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
   void setText(const char * textContent);
+  void setFontSize(KDText::FontSize size) { m_bufferTextView.setFontSize(size); }
   const char * text() const override {
     return m_bufferTextView.text();
   }

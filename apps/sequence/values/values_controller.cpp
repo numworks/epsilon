@@ -16,6 +16,9 @@ ValuesController::ValuesController(Responder * parentResponder, SequenceStore * 
 #endif
   m_intervalParameterController(this, m_interval)
 {
+  for (int i = 0; i < k_maxNumberOfSequences; i++) {
+    m_sequenceTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
+  }
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -63,12 +66,12 @@ int ValuesController::maxNumberOfFunctions() {
 
 SequenceTitleCell * ValuesController::functionTitleCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfSequences);
-  return m_sequenceTitleCells[j];
+  return &m_sequenceTitleCells[j];
 }
 
 EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfCells);
-  return m_floatCells[j];
+  return &m_floatCells[j];
 }
 
 SequenceStore * ValuesController::functionStore() const {
@@ -81,29 +84,6 @@ Shared::ValuesFunctionParameterController * ValuesController::functionParameterC
 #else
   return nullptr;
 #endif
-}
-
-View * ValuesController::loadView() {
-  for (int i = 0; i < k_maxNumberOfSequences; i++) {
-    m_sequenceTitleCells[i] = new SequenceTitleCell();
-    m_sequenceTitleCells[i]->setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
-  }
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    m_floatCells[i] = new EvenOddBufferTextCell();
-  }
-  return Shared::ValuesController::loadView();
-}
-
-void ValuesController::unloadView(View * view) {
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    delete m_floatCells[i];
-    m_floatCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_maxNumberOfSequences; i++) {
-    delete m_sequenceTitleCells[i];
-    m_sequenceTitleCells[i] = nullptr;
-  }
-  Shared::ValuesController::unloadView(view);
 }
 
 }

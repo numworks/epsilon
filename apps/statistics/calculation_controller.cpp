@@ -1,6 +1,4 @@
 #include "calculation_controller.h"
-#include "app.h"
-#include "calculation_selectable_table_view.h"
 #include "../constant.h"
 #include "../apps_container.h"
 #include "../shared/poincare_helpers.h"
@@ -13,14 +11,28 @@ using namespace Poincare;
 namespace Statistics {
 
 CalculationController::CalculationController(Responder * parentResponder, ButtonRowController * header, Store * store) :
-  TabTableController(parentResponder, this),
+  TabTableController(parentResponder),
   ButtonRowDelegate(header, nullptr),
+  m_selectableTableView(this, this, this),
   m_seriesTitleCells{},
   m_calculationTitleCells{},
   m_calculationCells{},
-  m_hideableCell(nullptr),
+  m_hideableCell(),
   m_store(store)
 {
+  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_selectableTableView.setVerticalCellOverlap(0);
+  m_selectableTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
+    m_seriesTitleCells[i].setSeparatorLeft(true);
+  }
+  for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
+    m_calculationTitleCells[i].setAlignment(1.0f, 0.5f);
+  }
+  for (int i = 0; i < k_numberOfCalculationCells; i++) {
+    m_calculationCells[i].setTextColor(Palette::GreyDark);
+  }
+  m_hideableCell.setHide(true);
 }
 
 // AlternateEmptyViewDelegate
@@ -107,16 +119,16 @@ int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
 HighlightCell * CalculationController::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
   if (type == k_hideableCellType) {
-    return m_hideableCell;
+    return &m_hideableCell;
   }
   if (type == k_calculationTitleCellType) {
-    return static_cast<HighlightCell *>(m_calculationTitleCells[index]);
+    return &m_calculationTitleCells[index];
   }
   if (type == k_seriesTitleCellType) {
-    return static_cast<HighlightCell *>(m_seriesTitleCells[index]);
+    return &m_seriesTitleCells[index];
   }
   assert(type == k_calculationCellType);
-  return static_cast<HighlightCell *>(m_calculationCells[index]);
+  return &m_calculationCells[index];
 }
 
 int CalculationController::reusableCellCount(int type) {
@@ -176,48 +188,6 @@ void CalculationController::didBecomeFirstResponder() {
 
 Responder * CalculationController::tabController() const {
   return (parentResponder()->parentResponder()->parentResponder());
-}
-
-View * CalculationController::loadView() {
-  for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
-    m_seriesTitleCells[i] = new StoreTitleCell();
-    m_seriesTitleCells[i]->setSeparatorLeft(true);
-  }
-  for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
-    m_calculationTitleCells[i] = new MarginEvenOddMessageTextCell(KDText::FontSize::Small);
-    m_calculationTitleCells[i]->setAlignment(1.0f, 0.5f);
-  }
-  for (int i = 0; i < k_numberOfCalculationCells; i++) {
-    m_calculationCells[i] = new SeparatorEvenOddBufferTextCell(KDText::FontSize::Small);
-    m_calculationCells[i]->setTextColor(Palette::GreyDark);
-  }
-  m_hideableCell = new HideableEvenOddCell();
-  m_hideableCell->setHide(true);
-
-  CalculationSelectableTableView * selectableTableView = new CalculationSelectableTableView(this, this, this);
-  selectableTableView->setBackgroundColor(Palette::WallScreenDark);
-  selectableTableView->setVerticalCellOverlap(0);
-  selectableTableView->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  return selectableTableView;
-}
-
-
-void CalculationController::unloadView(View * view) {
-  for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
-    delete m_seriesTitleCells[i];
-    m_seriesTitleCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
-    delete m_calculationTitleCells[i];
-    m_calculationTitleCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_numberOfCalculationCells; i++) {
-    delete m_calculationCells[i];
-    m_calculationCells[i] = nullptr;
-  }
-  delete m_hideableCell;
-  m_hideableCell = nullptr;
-  TabTableController::unloadView(view);
 }
 
 }

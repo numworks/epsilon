@@ -269,4 +269,16 @@ void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionCol
   }
 }
 
+NthRootLayoutRef::NthRootLayoutRef(LayoutRef radicand) : NthRootLayoutRef() {
+  replaceChildAtIndexInPlace(0, radicand);
+}
+
+NthRootLayoutRef::NthRootLayoutRef(LayoutRef radicand, LayoutRef index) : NthRootLayoutRef() {
+  replaceChildAtIndexInPlace(0, radicand);
+  addChildAtIndexInPlace(index, 1, 1);
+  static_cast<NthRootLayoutNode *>(node())->setNumberOfChildren(2);
+}
+
+NthRootLayoutRef::NthRootLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<NthRootLayoutNode>()) {}
+
 }

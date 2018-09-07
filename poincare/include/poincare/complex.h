@@ -42,9 +42,7 @@ class Complex : public Evaluation<T> {
 public:
   Complex(ComplexNode<T> * n) : Evaluation<T>(n) {}
   Complex(T a, T b = 0.0) : Complex(std::complex<T>(a, b)) {}
-  Complex(std::complex<T> c) : Evaluation<T>(TreePool::sharedPool()->createTreeNode<ComplexNode<T>>()) {
-    node()->setComplex(c);
-  }
+  Complex(std::complex<T> c);
   static Complex<T> Undefined() {
     return Complex<T>(NAN, NAN);
   }

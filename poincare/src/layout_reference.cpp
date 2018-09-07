@@ -28,6 +28,11 @@ LayoutCursor LayoutReference::equivalentCursor(LayoutCursor * cursor) {
   return node()->equivalentCursor(cursor);
 }
 
+LayoutReference LayoutReference::childAtIndex(int i) {
+  TreeByReference c = TreeByReference::childAtIndex(i);
+  return static_cast<LayoutReference &>(c);
+}
+
 // Tree modification
 
 void LayoutReference::replaceChild(LayoutRef oldChild, LayoutRef newChild, LayoutCursor * cursor, bool force) {
@@ -45,6 +50,12 @@ void LayoutReference::replaceChild(LayoutRef oldChild, LayoutRef newChild, Layou
 
 void LayoutReference::replaceChildWithEmpty(LayoutRef oldChild, LayoutCursor * cursor) {
   replaceChild(oldChild, EmptyLayoutRef(), cursor);
+}
+
+void LayoutReference::replaceWith(LayoutReference newChild, LayoutCursor * cursor) {
+  LayoutReference p = parent();
+  assert(!p.isUninitialized());
+  p.replaceChild(*this, newChild, cursor);
 }
 
 void LayoutReference::replaceWithJuxtapositionOf(LayoutRef leftChild, LayoutRef rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle) {
@@ -182,6 +193,10 @@ void LayoutReference::removeChild(LayoutRef l, LayoutCursor * cursor, bool force
     }
   }
   node()->didRemoveChildAtIndex(index, cursor, force);
+}
+
+void  LayoutReference::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
+  removeChild(childAtIndex(index), cursor, force);
 }
 
 void LayoutReference::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {

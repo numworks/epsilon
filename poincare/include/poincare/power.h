@@ -84,9 +84,9 @@ private:
   // Simplification
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const;
 
-  Expression simplifyPowerPower(Power p, Expression r, Context & context, Preferences::AngleUnit angleUnit);
-  Expression simplifyPowerMultiplication(Multiplication m, Expression r, Context & context, Preferences::AngleUnit angleUnit);
-  Expression simplifyRationalRationalPower(Rational a, Rational b, Context & context, Preferences::AngleUnit angleUnit);
+  Expression simplifyPowerPower(Context & context, Preferences::AngleUnit angleUnit);
+  Expression simplifyPowerMultiplication(Context & context, Preferences::AngleUnit angleUnit);
+  Expression simplifyRationalRationalPower(Context & context, Preferences::AngleUnit angleUnit);
 
   static Expression CreateSimplifiedIntegerRationalPower(Integer i, Rational r, bool isDenominator, Context & context, Preferences::AngleUnit angleUnit);
   Expression removeSquareRootsFromDenominator(Context & context, Preferences::AngleUnit angleUnit);

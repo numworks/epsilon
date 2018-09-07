@@ -372,7 +372,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       if (RationalExponentShouldNotBeReduced(a, exp)) {
         return *this;
       }
-      return simplifyRationalRationalPower(a, exp, context, angleUnit);
+      return simplifyRationalRationalPower(context, angleUnit);
     }
   }
   // (a)^(1/2) with a < 0 --> i*(-a)^(1/2)
@@ -438,7 +438,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
         || (childAtIndex(1).type() == ExpressionNode::Type::Rational
           && childAtIndex(1).convert<Rational>().integerDenominator().isOne()))
     {
-      return simplifyPowerPower(p, childAtIndex(1), context, angleUnit);
+      return simplifyPowerPower(context, angleUnit);
     }
   }
   // (a*b*c*...)^r ?
@@ -446,7 +446,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
     Multiplication m = childAtIndex(0).convert<Multiplication>();
     // (a*b*c*...)^n = a^n*b^n*c^n*... if n integer
     if (childAtIndex(1).type() == ExpressionNode::Type::Rational && childAtIndex(1).convert<Rational>().integerDenominator().isOne()) {
-      return simplifyPowerMultiplication(m, childAtIndex(1), context, angleUnit);
+      return simplifyPowerMultiplication(context, angleUnit);
     }
     // (a*b*...)^r -> |a|^r*(sign(a)*b*...)^r if a not -1
     for (int i = 0; i < m.numberOfChildren(); i++) {
@@ -499,7 +499,7 @@ Expression Power::shallowReduce(Context & context, Preferences::AngleUnit angleU
       Power p2 = clone().convert<Power>();
       p2.childAtIndex(1).convert<Addition>().removeChildAtIndexInPlace(0); // p2 = a^(c+...)
       Multiplication m = Multiplication(p1, p2);
-      p1.simplifyRationalRationalPower(p1.childAtIndex(0).convert<Rational>(), p1.childAtIndex(1).convert<Rational>(), context, angleUnit);
+      p1.simplifyRationalRationalPower(context, angleUnit);
       replaceWithInPlace(m);
       return m.shallowReduce(context, angleUnit);
     }
@@ -647,32 +647,33 @@ Expression Power::denominator(Context & context, Preferences::AngleUnit angleUni
   return Expression();
 }
 
-Expression Power::simplifyPowerPower(Power p, Expression e, Context& context, Preferences::AngleUnit angleUnit) {
+Expression Power::simplifyPowerPower(Context& context, Preferences::AngleUnit angleUnit) {
   // this is p^e = (a^b)^e, we want a^(b*e)
-  Expression p0 = p.childAtIndex(0);
-  Expression p1 = p.childAtIndex(1);
-  Multiplication m(p1);
-  replaceChildInPlace(e, m);
-  m.addChildAtIndexInPlace(e, 1, 1);
-  replaceChildInPlace(p, p0);
+  Expression p = childAtIndex(0);
+  Multiplication m(p.childAtIndex(1), childAtIndex(1));
+  replaceChildAtIndexInPlace(0, p.childAtIndex(0));
+  replaceChildAtIndexInPlace(1, m);
   m.shallowReduce(context, angleUnit);
   return shallowReduce(context, angleUnit);
 }
 
-Expression Power::simplifyPowerMultiplication(Multiplication m, Expression r, Context& context, Preferences::AngleUnit angleUnit) {
+Expression Power::simplifyPowerMultiplication(Context& context, Preferences::AngleUnit angleUnit) {
   // this is m^r= (a*b*c*...)^r, we want a^r * b^r *c^r * ...
+  Expression m = childAtIndex(0);
+  Expression r = childAtIndex(1);
   for (int index = 0; index < m.numberOfChildren(); index++) {
-    Expression factor = m.childAtIndex(index);
-    Power p = Power(factor.clone(), r.clone()); // We copy r and factor to avoid inheritance issues
-    m.replaceChildInPlace(factor, p);
+    Power p = Power(m.childAtIndex(index).clone(), r.clone()); // We copy r and factor to avoid inheritance issues
+    m.replaceChildAtIndexInPlace(index, p);
     p.shallowReduce(context, angleUnit);
   }
   replaceWithInPlace(m);
   return m.shallowReduce(context, angleUnit);
 }
 
-Expression Power::simplifyRationalRationalPower(Rational a, Rational b, Context& context, Preferences::AngleUnit angleUnit) {
+Expression Power::simplifyRationalRationalPower(Context& context, Preferences::AngleUnit angleUnit) {
   // this is a^b with a, b rationals
+  Rational a = childAtIndex(0).convert<Rational>();
+  Rational b = childAtIndex(1).convert<Rational>();
   if (b.integerDenominator().isOne()) {
     Rational r = Rational::IntegerPower(a, b.signedIntegerNumerator());
     if (r.numeratorOrDenominatorIsInfinity()) {

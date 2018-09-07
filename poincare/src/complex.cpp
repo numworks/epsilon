@@ -45,9 +45,7 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
   if (std::isnan(this->real()) || std::isnan(this->imag())) {
     return Undefined();
   }
-  switch (complexFormat) {
-    case Preferences::ComplexFormat::Cartesian:
-    {
+  if (complexFormat == Preferences::ComplexFormat::Cartesian) {
       Expression real;
       Expression imag;
       if (this->real() != 0 || this->imag() == 0) {
@@ -76,38 +74,34 @@ Expression ComplexNode<T>::complexToExpression(Preferences::ComplexFormat comple
       } else {
         return Subtraction(real, imag);
       }
+  }
+  assert(complexFormat == Preferences::ComplexFormat::Polar);
+  Expression norm;
+  Expression exp;
+  T r = std::abs(*this);
+  T th = std::arg(*this);
+  if (r != 1 || th == 0) {
+    norm = Number::DecimalNumber(r);
+  }
+  if (r != 0 && th != 0) {
+    Expression arg;
+    if (th == 1.0) {
+      arg = Symbol(Ion::Charset::IComplex);
+    } else if (th == -1.0) {
+      arg = Opposite(Symbol(Ion::Charset::IComplex));
+    } else if (th > 0) {
+      arg = Multiplication(Number::DecimalNumber(th), Symbol(Ion::Charset::IComplex));
+    } else {
+      arg = Opposite(Multiplication(Number::DecimalNumber(-th), Symbol(Ion::Charset::IComplex)));
     }
-    default:
-    {
-      assert(complexFormat == Preferences::ComplexFormat::Polar);
-      Expression norm;
-      Expression exp;
-      T r = std::abs(*this);
-      T th = std::arg(*this);
-      if (r != 1 || th == 0) {
-        norm = Number::DecimalNumber(r);
-      }
-      if (r != 0 && th != 0) {
-        Expression arg;
-        if (th == 1.0) {
-          arg = Symbol(Ion::Charset::IComplex);
-        } else if (th == -1.0) {
-          arg = Opposite(Symbol(Ion::Charset::IComplex));
-        } else if (th > 0) {
-          arg = Multiplication(Number::DecimalNumber(th), Symbol(Ion::Charset::IComplex));
-        } else {
-          arg = Opposite(Multiplication(Number::DecimalNumber(-th), Symbol(Ion::Charset::IComplex)));
-        }
-        exp = Power(Symbol(Ion::Charset::Exponential), arg);
-      }
-      if (exp.isUninitialized()) {
-        return norm;
-      } else if (norm.isUninitialized()) {
-        return exp;
-      } else {
-        return Multiplication(norm, exp);
-      }
-    }
+    exp = Power(Symbol(Ion::Charset::Exponential), arg);
+  }
+  if (exp.isUninitialized()) {
+    return norm;
+  } else if (norm.isUninitialized()) {
+    return exp;
+  } else {
+    return Multiplication(norm, exp);
   }
 }
 

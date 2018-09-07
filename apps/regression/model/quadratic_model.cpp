@@ -2,17 +2,16 @@
 #include "../../shared/poincare_helpers.h"
 #include <math.h>
 #include <assert.h>
-#include "../../poincare/include/poincare_layouts.h"
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Regression {
 
-ExpressionLayout * QuadraticModel::layout() {
-  static ExpressionLayout * layout = nullptr;
-  if (layout == nullptr) {
-    const ExpressionLayout * layoutChildren[] = {
+LayoutReference QuadraticModel::layout() {
+  static LayoutReference layout;
+  if (layout.isUninitialized()) {
+    const LayoutReference layoutChildren[] = {
       CharLayoutRef('a', KDText::FontSize::Small),
       CharLayoutRef(Ion::Charset::MiddleDot, KDText::FontSize::Small),
       CharLayoutRef('X', KDText::FontSize::Small),
@@ -32,24 +31,22 @@ ExpressionLayout * QuadraticModel::layout() {
   return layout;
 }
 
-Expression * QuadraticModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
+Expression QuadraticModel::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  Expression * ax2Expression = new Multiplication(
-      new Decimal(a),
-      new Power(
-        new Symbol('x'),
-        new Decimal(2.0),
-        false),
-      false);
-  Expression * bxExpression = new Multiplication(
-    new Decimal(b),
-    new Symbol('x'),
-    false);
-  Expression * cExpression = new Decimal(c);
-  Expression * const operands[] = {ax2Expression, bxExpression, cExpression};
-  Expression * result = new Addition(operands, 3, false);
+  // a*x^2+b*x+c
+  Expression result =
+    Addition(
+      Multiplication(
+        Decimal(a),
+        Power(
+          Symbol('x'),
+          Decimal(2.0))),
+      Multiplication(
+        Decimal(b),
+        Symbol('x')),
+      Decimal(c));
   PoincareHelpers::Simplify(&result, *context);
   return result;
 }

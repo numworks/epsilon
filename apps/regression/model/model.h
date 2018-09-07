@@ -3,8 +3,7 @@
 
 #include <stdint.h>
 #include "../../i18n.h"
-#include <poincare/context.h>
-#include <poincare/expression.h>
+#include <poincare.h>
 
 namespace Regression {
 
@@ -26,9 +25,9 @@ public:
   static constexpr int k_numberOfModels = 9;
   static constexpr int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
   virtual ~Model() = default;
-  virtual Poincare::ExpressionLayout * layout() = 0;
+  virtual Poincare::LayoutReference layout() = 0;
   // simplifiedExpression is overrided only by Models that override levelSet
-  virtual Poincare::Expression * simplifiedExpression(double * modelCoefficients, Poincare::Context * context) { return nullptr; }
+  virtual Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context) { return Poincare::Expression(); }
   virtual I18n::Message formulaMessage() const = 0;
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual double levelSet(double * modelCoefficients, double xMin, double step, double xMax, double y, Poincare::Context * context);

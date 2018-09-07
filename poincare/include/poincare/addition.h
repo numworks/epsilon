@@ -73,6 +73,11 @@ public:
     addChildAtIndexInPlace(e2, 0, 0);
     addChildAtIndexInPlace(e1, 0, numberOfChildren());
   }
+  Addition(Expression * children, size_t numberOfChildren) : Addition() {
+    for (int i = 0; i < numberOfChildren; i++) {
+      addChildAtIndexInPlace(children[i], i, i);
+    }
+  }
   // Expression
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit);

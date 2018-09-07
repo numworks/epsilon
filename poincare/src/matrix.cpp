@@ -22,6 +22,7 @@ int MatrixNode::polynomialDegree(char symbolName) const {
 }
 
 LayoutRef MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  assert(numberOfChildren() > 0);
   MatrixLayoutRef layout;
   for (int i = 0; i < numberOfChildren(); i++) {
     layout.addChildAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits), i, i, nullptr);
@@ -89,6 +90,7 @@ Evaluation<T> MatrixNode::templatedApproximate(Context& context, Preferences::An
 // MATRIX
 
 void Matrix::setDimensions(int rows, int columns) {
+  assert(rows * columns == numberOfChildren());
   setNumberOfRows(rows);
   setNumberOfColumns(columns);
 }

@@ -28,7 +28,9 @@ private:
   static Decimal defaultExpression();
   int symbolIndex(const Symbol & symbol) const;
   Expression m_expressions[k_maxNumberOfScalarExpressions];
-  Matrix m_matrixExpressions[k_maxNumberOfMatrixExpressions];
+  /* Matrix has to be uninitialized by default which forces them to be
+   * Expression. */
+  Expression m_matrixExpressions[k_maxNumberOfMatrixExpressions];
   /* Matrix layout memoization */
   LayoutRef m_matrixLayouts[k_maxNumberOfMatrixExpressions];
 };

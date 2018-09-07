@@ -64,11 +64,13 @@ void GlobalContext::setExpressionForSymbolName(const Expression & expression, co
     int indexMatrix = symbol.name() - (char)Symbol::SpecialSymbols::M0;
     assert(indexMatrix >= 0 && indexMatrix < k_maxNumberOfMatrixExpressions);
     Expression evaluation = expression.isUninitialized() ? Expression() : expression.approximate<double>(context, Preferences::sharedPreferences()->angleUnit(), Preferences::sharedPreferences()->complexFormat()); // evaluate before deleting anything (to be able to evaluate M1+2->M1)
+    // Reinitialize the matrix layout
+    m_matrixLayouts[indexMatrix] = LayoutReference();
     if (!evaluation.isUninitialized()) {
       if (evaluation.type() != ExpressionNode::Type::Matrix) {
         m_matrixExpressions[indexMatrix] = Matrix(evaluation);
       } else {
-        m_matrixExpressions[indexMatrix] = static_cast<Matrix>(evaluation);
+        m_matrixExpressions[indexMatrix] = evaluation;
       }
     }
     return;

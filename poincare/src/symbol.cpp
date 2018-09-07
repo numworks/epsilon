@@ -323,7 +323,7 @@ int Symbol::getPolynomialCoefficients(char symbolName, Expression coefficients[]
     coefficients[1] = Rational(1);
     return 1;
   }
-  coefficients[0] = Symbol(name());
+  coefficients[0] = clone();
   return 0;
 }
 

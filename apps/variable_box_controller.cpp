@@ -170,7 +170,7 @@ KDCoordinate VariableBoxController::ContentViewController::rowHeight(int index) 
   }
   LayoutRef layoutR = layoutRefForIndex(index);
   if (!layoutR.isUninitialized()) {
-    return layoutR.layoutSize().height()+k_leafMargin;
+    return max(layoutR.layoutSize().height()+k_leafMargin, Metric::ToolboxRowHeight);
   }
   return Metric::ToolboxRowHeight;
 }

@@ -15,7 +15,7 @@ public:
   ::EvenOddCell * evenOddCell() {
     return &m_contentCell;
   }
-  void setExpressions(Poincare::LayoutRef * layoutRefs);
+  void setLayouts(Poincare::LayoutReference approximatelayout, Poincare::LayoutReference exactLayout);
   void setEqualMessage(I18n::Message equalSignMessage);
   SubviewType selectedSubviewType() {
     return m_contentCell.selectedSubviewType();

@@ -104,9 +104,9 @@ ScrollableExactApproximateExpressionsView::ScrollableExactApproximateExpressions
 {
 }
 
-void ScrollableExactApproximateExpressionsView::setExpressions(Poincare::LayoutRef * layoutRefs) {
-  m_contentCell.approximateExpressionView()->setLayoutRef(layoutRefs[0]);
-  m_contentCell.exactExpressionView()->setLayoutRef(layoutRefs[1]);
+void ScrollableExactApproximateExpressionsView::setLayouts(Poincare::LayoutReference approximateLayout, Poincare::LayoutReference exactLayout) {
+  m_contentCell.approximateExpressionView()->setLayoutRef(approximateLayout);
+  m_contentCell.exactExpressionView()->setLayoutRef(exactLayout);
   m_contentCell.layoutSubviews();
 }
 

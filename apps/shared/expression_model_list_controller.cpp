@@ -4,10 +4,10 @@
 namespace Shared {
 
 ExpressionModelListController::ExpressionModelListController(Responder * parentResponder, I18n::Message text) :
-  DynamicViewController(parentResponder),
-  m_addNewMessage(text),
-  m_addNewModel(nullptr)
+  ViewController(parentResponder),
+  m_addNewModel()
 {
+  m_addNewModel.setMessage(text);
 }
 
 /* Table Data Source */
@@ -114,20 +114,6 @@ int ExpressionModelListController::modelIndexForRow(int j) {
 
 bool ExpressionModelListController::isAddEmptyRow(int j) {
   return j == modelStore()->numberOfModels();
-}
-
-SelectableTableView * ExpressionModelListController::selectableTableView() {
-  return (SelectableTableView *)view();
-}
-
-void ExpressionModelListController::loadAddModelCell() {
-  m_addNewModel = new EvenOddMessageTextCell();
-  m_addNewModel->setMessage(m_addNewMessage);
-}
-
-void ExpressionModelListController::unloadAddModelCell() {
-  delete m_addNewModel;
-  m_addNewModel = nullptr;
 }
 
 }

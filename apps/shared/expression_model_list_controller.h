@@ -7,7 +7,7 @@
 
 namespace Shared {
 
-class ExpressionModelListController : public DynamicViewController, public SelectableTableViewDataSource {
+class ExpressionModelListController : public ViewController, public SelectableTableViewDataSource {
 public:
   ExpressionModelListController(Responder * parentResponder, I18n::Message text);
 protected:
@@ -24,14 +24,11 @@ protected:
   virtual bool removeModelRow(ExpressionModel * function);
   virtual int modelIndexForRow(int j);
   virtual bool isAddEmptyRow(int j);
-  /* Dynamic View Controller */
-  virtual SelectableTableView * selectableTableView();
-  void loadAddModelCell();
-  void unloadAddModelCell();
+  /* View Controller */
+  virtual SelectableTableView * selectableTableView() = 0;
   virtual ExpressionModelStore * modelStore() = 0;
   virtual InputViewController * inputController() = 0;
-  I18n::Message m_addNewMessage;
-  EvenOddMessageTextCell * m_addNewModel;
+  EvenOddMessageTextCell m_addNewModel;
 };
 
 }

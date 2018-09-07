@@ -266,4 +266,16 @@ void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, 
   }
 }
 
+MatrixLayoutRef::MatrixLayoutRef(const MatrixLayoutNode * n) : GridLayoutRef(n) {}
+MatrixLayoutRef::MatrixLayoutRef() : GridLayoutRef(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
+MatrixLayoutRef::MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) :
+  MatrixLayoutRef()
+{
+  addChildAtIndexInPlace(l1, 0, 0);
+  addChildAtIndexInPlace(l2, 1, 1);
+  addChildAtIndexInPlace(l3, 2, 2);
+  addChildAtIndexInPlace(l4, 3, 3);
+  setDimensions(2, 2);
+}
+
 }

@@ -75,15 +75,8 @@ private:
 
 class EmptyLayoutRef : public LayoutReference {
 public:
-  EmptyLayoutRef(const EmptyLayoutNode * n) : LayoutReference(n) {}
-  EmptyLayoutRef(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>())
-  {
-    node()->setColor(color);
-    node()->setVisible(visible);
-    node()->setFontSize(fontSize);
-    node()->setMargins(margins);
-  }
+  EmptyLayoutRef(const EmptyLayoutNode * n);
+  EmptyLayoutRef(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, KDText::FontSize fontSize = KDText::FontSize::Large, bool margins = true);
   void setVisible(bool visible) {
     node()->setVisible(visible);
   }

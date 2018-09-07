@@ -57,12 +57,7 @@ private:
 
 class FractionLayoutRef : public LayoutReference {
 public:
-  FractionLayoutRef(LayoutRef numerator, LayoutRef denominator) :
-    LayoutReference(TreePool::sharedPool()->createTreeNode<FractionLayoutNode>())
-  {
-    replaceChildAtIndexInPlace(0, numerator);
-    replaceChildAtIndexInPlace(1, denominator);
-  }
+  FractionLayoutRef(LayoutRef numerator, LayoutRef denominator);
 };
 
 }

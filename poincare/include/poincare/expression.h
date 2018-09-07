@@ -89,7 +89,7 @@ public:
   /* Constructor & Destructor */
   Expression() : TreeByReference() {}
   virtual ~Expression() = default;
-  Expression clone() const { TreeByReference c = TreeByReference::clone(); return static_cast<Expression&>(c); }
+  Expression clone() const;
   static Expression parse(char const * string);
 
   /* Circuit breaker */
@@ -98,10 +98,7 @@ public:
   static bool shouldStopProcessing();
 
   /* Hierarchy */
-  Expression childAtIndex(int i) const {
-    TreeByReference c = TreeByReference::childAtIndex(i);
-    return static_cast<Expression &>(c);
-  }
+  Expression childAtIndex(int i) const;
   void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }
 
   /* Properties */
@@ -123,7 +120,7 @@ public:
    * the return value is NAN.
    * NB: so far, we consider that the only way of building a periodic function
    * is to use sin/tan/cos(f(x)) with f a linear function. */
-  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const { return this->node()->characteristicXRange(context, angleUnit); }
+  float characteristicXRange(Context & context, Preferences::AngleUnit angleUnit) const { return node()->characteristicXRange(context, angleUnit); }
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynome
    * - the degree of the polynome otherwise */
@@ -134,7 +131,7 @@ public:
    * variables = « xyw »  and would return 3. If the final number of
    * variables would overflow the maxNumberOfVariables, getVariables return -1 */
   static constexpr int k_maxNumberOfVariables = 6;
-  int getVariables(ExpressionNode::isVariableTest isVariable, char * variables) const { return this->node()->getVariables(isVariable, variables); }
+  int getVariables(ExpressionNode::isVariableTest isVariable, char * variables) const { return node()->getVariables(isVariable, variables); }
   static bool DependsOnVariables(const Expression e, Context & context);
   /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
@@ -154,18 +151,12 @@ public:
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
    * same structures and all their nodes have same types and values (ie,
    * sqrt(pi^2) is NOT identical to pi). */
-  bool isIdenticalTo(const Expression e) const {
-    /* We use the simplification order only because it is a already-coded total
-     * order on expresssions. */
-    return ExpressionNode::SimplificationOrder(this->node(), e.node(), true) == 0;
-  }
+  bool isIdenticalTo(const Expression e) const;
   bool isEqualToItsApproximationLayout(Expression approximation, int bufferSize, Preferences::AngleUnit angleUnit, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context & context);
 
   /* Layout Helper */
-  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-    return isUninitialized() ? LayoutRef() : node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
-  }
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const { return isUninitialized() ? 0 : this->node()->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits); }
+  LayoutRef createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
@@ -173,12 +164,8 @@ public:
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
-  template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const {
-    return approximateToEvaluation<U>(context, angleUnit).complexToExpression(complexFormat);
-  }
-  template<typename U> U approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const {
-    return approximateToEvaluation<U>(context, angleUnit).toScalar();
-  }
+  template<typename U> Expression approximate(Context& context, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat) const;
+  template<typename U> U approximateToScalar(Context& context, Preferences::AngleUnit angleUnit) const;
   template<typename U> static U approximateToScalar(const char * text, Context& context, Preferences::AngleUnit angleUnit);
   template<typename U> U approximateWithValueForSymbol(char symbol, U x, Context & context, Preferences::AngleUnit angleUnit) const;
   /* Expression roots/extrema solver */

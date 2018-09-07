@@ -189,6 +189,11 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
+template<typename U>
+Evaluation<U> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
+  return isUninitialized() ? Complex<U>::Undefined() : node()->approximate(U(), context, angleUnit);
+}
+
 Expression Expression::defaultReplaceSymbolWithExpression(char symbol, Expression expression) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
@@ -290,6 +295,10 @@ Expression Expression::deepBeautify(Context & context, Preferences::AngleUnit an
     e.childAtIndex(i).deepBeautify(context, angleUnit);
   }
   return e;
+}
+
+Expression Expression::setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) {
+  return node()->setSign(s, context, angleUnit);
 }
 
 /* Evaluation */
@@ -655,6 +664,9 @@ template double Expression::approximateToScalar(Context& context, Preferences::A
 
 template float Expression::approximateToScalar<float>(const char * text, Context& context, Preferences::AngleUnit angleUnit);
 template double Expression::approximateToScalar<double>(const char * text, Context& context, Preferences::AngleUnit angleUnit);
+
+template Evaluation<float> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const;
+template Evaluation<double> Expression::approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const;
 
 template float Expression::approximateWithValueForSymbol(char symbol, float x, Context & context, Preferences::AngleUnit angleUnit) const;
 template double Expression::approximateWithValueForSymbol(char symbol, double x, Context & context, Preferences::AngleUnit angleUnit) const;

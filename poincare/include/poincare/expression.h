@@ -227,16 +227,14 @@ protected:
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
   Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
-  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit) { return node()->setSign(s, context, angleUnit); }
+  Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 private:
   /* Simplification */
   Expression defaultShallowReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression defaultShallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return *this; }
 
   /* Approximation */
-  template<typename U> Evaluation<U> approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const {
-    return isUninitialized() ? Complex<U>::Undefined() : node()->approximate(U(), context, angleUnit);
-  }
+  template<typename U> Evaluation<U> approximateToEvaluation(Context& context, Preferences::AngleUnit angleUnit) const;
 
   /* Properties */
   Expression defaultReplaceSymbolWithExpression(char symbol, Expression expression);

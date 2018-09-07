@@ -3,9 +3,6 @@
 #include "regression_context.h"
 #include "../apps_container.h"
 #include "../constant.h"
-#include "../../poincare/src/layout/char_layout.h"
-#include "../../poincare/src/layout/horizontal_layout.h"
-#include "../../poincare/src/layout/vertical_offset_layout.h"
 #include <assert.h>
 
 using namespace Poincare;
@@ -33,7 +30,7 @@ void StoreController::setFormulaLabel() {
   static_cast<ContentView *>(view())->formulaInputView()->setBufferText(text);
 }
 
-bool StoreController::fillColumnWithFormula(Expression * formula) {
+bool StoreController::fillColumnWithFormula(Expression formula) {
   return privateFillColumnWithFormula(formula, Symbol::isRegressionSymbol);
 }
 

@@ -94,4 +94,14 @@ void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDColor expressionColor
   }
 }
 
+EmptyLayoutRef::EmptyLayoutRef(const EmptyLayoutNode * n) : LayoutReference(n) {}
+EmptyLayoutRef::EmptyLayoutRef(EmptyLayoutNode::Color color, bool visible, KDText::FontSize fontSize, bool margins) :
+  LayoutReference(TreePool::sharedPool()->createTreeNode<EmptyLayoutNode>())
+{
+  node()->setColor(color);
+  node()->setVisible(visible);
+  node()->setFontSize(fontSize);
+  node()->setMargins(margins);
+}
+
 }

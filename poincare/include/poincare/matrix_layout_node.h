@@ -57,17 +57,8 @@ private:
 class MatrixLayoutRef : public GridLayoutRef {
   friend class MatrixLayoutNode;
 public:
-  MatrixLayoutRef(const MatrixLayoutNode * n) : GridLayoutRef(n) {}
-  MatrixLayoutRef() : GridLayoutRef(TreePool::sharedPool()->createTreeNode<MatrixLayoutNode>()) {}
-  MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4) :
-    MatrixLayoutRef()
-  {
-    addChildAtIndexInPlace(l1, 0, 0);
-    addChildAtIndexInPlace(l2, 1, 1);
-    addChildAtIndexInPlace(l3, 2, 2);
-    addChildAtIndexInPlace(l4, 3, 3);
-    setDimensions(2, 2);
-  }
+  MatrixLayoutRef(const MatrixLayoutNode * n);
+  MatrixLayoutRef();  MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4);
   bool hasGreySquares() const { return node()->hasGreySquares(); }
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }

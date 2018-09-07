@@ -29,7 +29,7 @@ protected:
 
 class LeftSquareBracketLayoutRef : public LayoutReference {
 public:
-  LeftSquareBracketLayoutRef() : LayoutReference(TreePool::sharedPool()->createTreeNode<LeftSquareBracketLayoutNode>()) {}
+  LeftSquareBracketLayoutRef();
 };
 
 }

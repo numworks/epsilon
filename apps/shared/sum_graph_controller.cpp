@@ -237,31 +237,27 @@ void SumGraphController::LegendView::setSumSymbol(Step step, double start, doubl
   } else if (step == Step::SecondParameter) {
     char buffer[PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::MediumNumberOfSignificantDigits), Constant::MediumNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    m_sumLayoutRef = LayoutHelper::String(sigma, sizeof(sigma));/* TODO new CondensedSumLayout(
+    m_sumLayoutRef = CondensedSumLayoutRef(
         LayoutHelper::String(sigma, sizeof(sigma)),
         LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small),
-        EmptyLayoutRef(EmptyLayout::Color::Yellow, false, KDText::FontSize::Small, false),
-        false); */
+        EmptyLayoutRef(EmptyLayoutNode::Color::Yellow, false, KDText::FontSize::Small, false));
   } else {
     m_sumLayoutRef = LayoutHelper::String(sigma, sizeof(sigma));
-/* TODO
     char buffer[2+PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits)];
     PrintFloat::convertFloatToText<double>(start, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    ExpressionLayout * start = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
+    LayoutReference start = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
     PrintFloat::convertFloatToText<double>(end, buffer, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits, Preferences::PrintFloatMode::Decimal);
-    ExpressionLayout * end = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
-    m_sumLayoutRef = new CondensedSumLayout(
+    LayoutReference end = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
+    m_sumLayoutRef = CondensedSumLayoutRef(
         LayoutHelper::String(sigma, sizeof(sigma)),
         start,
-        end,
-        false);
-    ExpressionLayout * childrenLayouts[3];
+        end);
     strlcpy(buffer, "= ", 3);
     PoincareHelpers::ConvertFloatToText<double>(result, buffer+2, PrintFloat::bufferSizeForFloatsWithPrecision(Constant::LargeNumberOfSignificantDigits), Constant::LargeNumberOfSignificantDigits);
-    childrenLayouts[2] = LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small);
-    childrenLayouts[1] = functionLayout;
-    childrenLayouts[0] = m_sumLayoutRef;
-    m_sumLayoutRef = HorizontalLayoutRef(childrenLayouts, 3, false);*/
+    m_sumLayoutRef = HorizontalLayoutRef(
+        m_sumLayoutRef,
+        functionLayout,
+        LayoutHelper::String(buffer, strlen(buffer), KDText::FontSize::Small));
   }
   m_sum.setLayoutRef(m_sumLayoutRef);
   if (step == Step::Result) {

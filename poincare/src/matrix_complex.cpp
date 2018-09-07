@@ -129,6 +129,15 @@ MatrixComplex<T>::MatrixComplex(std::complex<T> * operands, int numberOfRows, in
 }
 
 template<typename T>
+MatrixComplex<T>::MatrixComplex() : Evaluation<T>(TreePool::sharedPool()->createTreeNode<MatrixComplexNode<T> >()) {}
+
+template<typename T>
+MatrixComplex<T> MatrixComplex<T>::Undefined() {
+  std::complex<T> undef = std::complex<T>(NAN, NAN);
+  return MatrixComplex<T>((std::complex<T> *)&undef, 1, 1);
+}
+
+template<typename T>
 MatrixComplex<T> MatrixComplex<T>::createIdentity(int dim) {
   MatrixComplex<T> result;
   for (int i = 0; i < dim; i++) {

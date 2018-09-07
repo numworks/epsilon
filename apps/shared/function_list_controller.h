@@ -37,13 +37,15 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+  /* ViewController */
+  View * view() override { return &m_selectableTableView; }
   /* SelectableTableViewDelegate*/
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY) override;
+  /* ExpressionModelListController */
+  SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 protected:
   StackViewController * stackController() const;
   void configureFunction(Function * function);
-  View * loadView() override;
-  void unloadView(View * view) override;
   FunctionStore * m_functionStore;
 private:
   static constexpr KDCoordinate k_functionNameWidth = 65;
@@ -58,7 +60,8 @@ private:
   virtual HighlightCell * titleCells(int index) = 0;
   virtual HighlightCell * expressionCells(int index) = 0;
   virtual void willDisplayTitleCellAtIndex(HighlightCell * cell, int j) = 0;
-  EvenOddCell * m_emptyCell;
+  SelectableTableView m_selectableTableView;
+  EvenOddCell m_emptyCell;
   Button m_plotButton;
   Button m_valuesButton;
 };

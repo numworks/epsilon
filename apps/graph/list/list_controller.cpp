@@ -14,6 +14,9 @@ ListController::ListController(Responder * parentResponder, CartesianFunctionSto
   m_expressionCells{},
   m_parameterController(this, functionStore, I18n::Message::FunctionColor, I18n::Message::DeleteFunction)
 {
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    m_expressionCells[i].setLeftMargin(k_expressionMargin);
+  }
 }
 
 const char * ListController::title() {
@@ -30,14 +33,13 @@ int ListController::maxNumberOfRows() {
 
 HighlightCell * ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return m_functionTitleCells[index];
+  return &m_functionTitleCells[index];
 }
 
 HighlightCell * ListController::expressionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return m_expressionCells[index];
+  return &m_expressionCells[index];
 }
-
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   Shared::BufferFunctionTitleCell * myFunctionCell = (Shared::BufferFunctionTitleCell *)cell;
@@ -62,25 +64,6 @@ bool ListController::removeModelRow(ExpressionModel * model) {
     return Shared::FunctionListController::removeModelRow(model);
   }
   return false;
-}
-
-View * ListController::loadView() {
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_functionTitleCells[i] = new Shared::BufferFunctionTitleCell(FunctionTitleCell::Orientation::VerticalIndicator);
-    m_expressionCells[i] = new FunctionExpressionCell();
-    m_expressionCells[i]->setLeftMargin(k_expressionMargin);
-  }
-  return Shared::FunctionListController::loadView();
-}
-
-void ListController::unloadView(View * view) {
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    delete m_functionTitleCells[i];
-    m_functionTitleCells[i] = nullptr;
-    delete m_expressionCells[i];
-    m_expressionCells[i] = nullptr;
-  }
-  Shared::FunctionListController::unloadView(view);
 }
 
 }

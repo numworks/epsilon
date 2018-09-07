@@ -7,7 +7,7 @@ namespace Sequence {
 
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:
-  SequenceTitleCell(Orientation orientation);
+  SequenceTitleCell();
   void setLayout(Poincare::LayoutReference layout);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;

@@ -41,12 +41,17 @@ void EditExpressionController::ContentView::reload() {
 }
 
 EditExpressionController::EditExpressionController(Responder * parentResponder, HistoryController * historyController, CalculationStore * calculationStore) :
-  DynamicViewController(parentResponder),
+  ViewController(parentResponder),
   m_historyController(historyController),
   m_calculationStore(calculationStore),
+  m_contentView(this, (TableView *)m_historyController->view(), this, this),
   m_inputViewHeightIsMaximal(false)
 {
   m_cacheBuffer[0] = 0;
+}
+
+View * EditExpressionController::view() {
+  return &m_contentView;
 }
 
 void EditExpressionController::insertTextBody(const char * text) {
@@ -122,14 +127,6 @@ ExpressionFieldDelegateApp * EditExpressionController::expressionFieldDelegateAp
   return (App *)app();
 }
 
-View * EditExpressionController::loadView() {
-  return new ContentView(this, (TableView *)m_historyController->view(), this, this);
-}
-
-void EditExpressionController::unloadView(View * view) {
-  delete view;
-}
-
 void EditExpressionController::reloadView() {
   ((ContentView *)view())->reload();
   m_historyController->reload();
@@ -177,7 +174,6 @@ bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
 }
 
 void EditExpressionController::viewDidDisappear() {
-  DynamicViewController::viewDidDisappear();
   m_historyController->viewDidDisappear();
 }
 

@@ -6,8 +6,8 @@ using namespace Poincare;
 
 namespace Sequence {
 
-SequenceTitleCell::SequenceTitleCell(Orientation orientation) :
-  Shared::FunctionTitleCell(orientation),
+SequenceTitleCell::SequenceTitleCell() :
+  Shared::FunctionTitleCell(),
   m_titleTextView(0.5f, 0.5f)
 {
 }

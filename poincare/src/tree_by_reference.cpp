@@ -35,6 +35,8 @@ TreeByReference TreeByReference::clone() const {
 
 /* Hierarchy operations */
 
+TreeByReference TreeByReference::childAtIndex(int i) const { return TreeByReference(node()->childAtIndex(i)); }
+
 void TreeByReference::replaceWithInPlace(TreeByReference t) {
   assert(!isUninitialized());
   TreeByReference p = parent();

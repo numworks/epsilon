@@ -44,6 +44,12 @@ TreeByReference TreeByReference::clone() const {
 /* Hierarchy operations */
 TreeNode * TreeByReference::node() const { assert(m_identifier != TreeNode::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
 
+TreeByReference TreeByReference::parent() const { return (isUninitialized() || node()->parent() == nullptr) ? TreeByReference() : TreeByReference(node()->parent()); }
+
+int TreeByReference::indexOfChild(TreeByReference t) const { return node()->indexOfChild(t.node()); }
+
+bool TreeByReference::hasChild(TreeByReference t) const { return node()->hasChild(t.node()); }
+
 TreeByReference TreeByReference::childAtIndex(int i) const { return TreeByReference(node()->childAtIndex(i)); }
 
 void TreeByReference::replaceWithInPlace(TreeByReference t) {

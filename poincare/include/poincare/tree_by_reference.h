@@ -43,12 +43,12 @@ public:
 #endif
 
   /* Hierarchy */
-  bool hasChild(TreeByReference t) const { return node()->hasChild(t.node()); }
+  bool hasChild(TreeByReference t) const;
   bool hasSibling(TreeByReference t) const { return node()->hasSibling(t.node()); }
   bool hasAncestor(TreeByReference t, bool includeSelf) const { return node()->hasAncestor(t.node(), includeSelf); }
   int numberOfChildren() const { return node()->numberOfChildren(); }
-  int indexOfChild(TreeByReference t) const { return node()->indexOfChild(t.node()); }
-  TreeByReference parent() const { return (isUninitialized() || node()->parent() == nullptr) ? TreeByReference() : TreeByReference(node()->parent()); }
+  int indexOfChild(TreeByReference t) const;
+  TreeByReference parent() const;
   TreeByReference childAtIndex(int i) const;
   void setParentIdentifier(int id) { node()->setParentIdentifier(id); }
   void deleteParentIdentifier() { node()->deleteParentIdentifier(); }

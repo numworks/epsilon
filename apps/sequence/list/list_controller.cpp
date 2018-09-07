@@ -59,17 +59,17 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   }
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   KDCoordinate defaultHeight = 2*k_expressionCellVerticalMargin + (sequence->type() == Sequence::Type::Explicit ? Metric::StoreRowHeight : k_emptySubRowHeight);
-  ExpressionLayout * layout = sequence->layout();
+  LayoutReference layout = sequence->layoutRef();
   if (sequenceDefinitionForRow(j) == 1) {
     layout = sequence->firstInitialConditionLayout();
   }
   if (sequenceDefinitionForRow(j) == 2) {
     layout = sequence->secondInitialConditionLayout();
   }
-  if (layout == nullptr) {
+  if (layout.isUninitialized()) {
     return defaultHeight;
   }
-  KDCoordinate sequenceHeight = layout->size().height();
+  KDCoordinate sequenceHeight = layout.layoutSize().height();
   return max(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
 }
 
@@ -186,13 +186,13 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   SequenceTitleCell * myCell = (SequenceTitleCell *)cell;
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setExpressionLayout(sequence->definitionName());
+    myCell->setLayout(sequence->definitionName());
   }
   if (sequenceDefinitionForRow(j) == 1) {
-    myCell->setExpressionLayout(sequence->firstInitialConditionName());
+    myCell->setLayout(sequence->firstInitialConditionName());
   }
   if (sequenceDefinitionForRow(j) == 2) {
-    myCell->setExpressionLayout(sequence->secondInitialConditionName());
+    myCell->setLayout(sequence->secondInitialConditionName());
   }
   KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::GreyDark;
   myCell->setColor(nameColor);
@@ -202,13 +202,13 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   FunctionExpressionCell * myCell = (FunctionExpressionCell *)cell;
   Sequence * sequence = m_sequenceStore->modelAtIndex(modelIndexForRow(j));
   if (sequenceDefinitionForRow(j) == 0) {
-    myCell->setExpressionLayout(sequence->layout());
+    myCell->setLayoutRef(sequence->layoutRef());
   }
   if (sequenceDefinitionForRow(j) == 1) {
-    myCell->setExpressionLayout(sequence->firstInitialConditionLayout());
+    myCell->setLayoutRef(sequence->firstInitialConditionLayout());
   }
   if (sequenceDefinitionForRow(j) == 2) {
-    myCell->setExpressionLayout(sequence->secondInitialConditionLayout());
+    myCell->setLayoutRef(sequence->secondInitialConditionLayout());
   }
   bool active = sequence->isActive();
   KDColor textColor = active ? KDColorBlack : Palette::GreyDark;

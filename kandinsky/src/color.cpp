@@ -1,28 +1,44 @@
 #include <kandinsky/color.h>
 
-KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
+KDColor KDColor::blend(const KDColor fg, const KDColor bg, const uint8_t blending) {
   /* This function is a hot path since it's being called for every single pixel
    * whenever we want to display a string. In this context, we're quite often
    * calling it with a value of either 0 or 0xFF, which can be very trivially
    * dealt with. So let's make a special case for them. */
-  if (alpha == 0) {
-    return second;
-  } else if (alpha == 0xFF) {
-    return first;
+
+  // the most common case => return foreground
+  if(blending == 0xFF) {
+    return fg;
   }
 
-  // We want to do first*alpha + second*(1-alpha)
-  // First is RRRRR GGGGGG BBBBB
-  // Second is same
+  // the less common case => return background
+  if(blending == 0x00) {
+    return bg;
+  }
 
-  uint8_t oneMinusAlpha = 0xFF-alpha;
-  uint16_t red = first.red()*alpha + second.red()*oneMinusAlpha;
-  uint16_t green = first.green()*alpha + second.green()*oneMinusAlpha;
-  uint16_t blue = first.blue()*alpha + second.blue()*oneMinusAlpha;
-  return RGB888(red>>8, green>>8, blue>>8);
+  // What we want to do is:
+  //
+  // color = (foreground * blending) + (background * (1 - blending))
+  //
+  // so :
+  //
+  // color = background + ((foreground - background) * blending)
+  //
+  // using 32-bits data because the cortex-m4 registers are 32-bits -> fast
 
+  const uint32_t alpha = blending + 1; // '+ 1' is important for accuracy
 
-  // Blend White + black, ask for white
-  // white.red() = 0x1F << 3 = 0xF8
-//  white.red() * 0xFF = 0xF708, we wanted 0xF800
+  const uint32_t fg_r5 = (fg.m_value & 0xF800); // extract red
+  const uint32_t fg_g6 = (fg.m_value & 0x07E0); // extract green
+  const uint32_t fg_b5 = (fg.m_value & 0x001F); // extract blue
+
+  const uint32_t bg_r5 = (bg.m_value & 0xF800); // extract red
+  const uint32_t bg_g6 = (bg.m_value & 0x07E0); // extract green
+  const uint32_t bg_b5 = (bg.m_value & 0x001F); // extract blue
+
+  const uint32_t color = ((bg_r5 + (((fg_r5 - bg_r5) * alpha) >> 8)) & 0xF800)
+                       | ((bg_g6 + (((fg_g6 - bg_g6) * alpha) >> 8)) & 0x07E0)
+                       | ((bg_b5 + (((fg_b5 - bg_b5) * alpha) >> 8)) & 0x001F);
+
+  return KDColor(color);
 }

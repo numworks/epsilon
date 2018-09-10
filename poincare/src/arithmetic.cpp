@@ -8,7 +8,6 @@ Integer Arithmetic::LCM(const Integer & a, const Integer & b) {
     return Integer(0);
   }
   Integer signResult = Integer::Division(Integer::Multiplication(a, b), GCD(a, b)).quotient;
-  //TODO Check if clone required or not
   signResult.setNegative(false);
   return signResult;
 }

@@ -139,7 +139,7 @@ private:
   }
 
   bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
-  native_uint_t digit(int i) const {
+  native_uint_t digit(size_t i) const {
     assert(i >= 0 && i < m_numberOfDigits);
     return (usesImmediateDigit() ? m_digit : m_digits[i]);
   }

@@ -27,8 +27,8 @@ class View {
 public:
   View();
   virtual ~View();
+  View(View&& other) = default;
   View(const View& other) = delete;
-  View(View&& other) = delete;
   View& operator=(const View& other) = delete;
   View& operator=(View&& other) = delete;
   void resetSuperview();

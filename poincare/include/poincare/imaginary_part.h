@@ -40,7 +40,7 @@ class ImaginaryPart : public Expression {
 public:
   ImaginaryPart();
   ImaginaryPart(const ImaginaryPartNode * n) : Expression(n) {}
-  ImaginaryPart(Expression operand) : ImaginaryPart() {
+  explicit ImaginaryPart(Expression operand) : ImaginaryPart() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

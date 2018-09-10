@@ -52,7 +52,7 @@ class NaperianLogarithm : public Expression {
 public:
   NaperianLogarithm();
   NaperianLogarithm(const NaperianLogarithmNode * n) : Expression(n) {}
-  NaperianLogarithm(Expression operand) : NaperianLogarithm() {
+  explicit NaperianLogarithm(Expression operand) : NaperianLogarithm() {
     replaceChildAtIndexInPlace(0, operand);
   }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);

@@ -40,7 +40,7 @@ class ComplexArgument : public Expression {
 public:
   ComplexArgument();
   ComplexArgument(const ComplexArgumentNode * n) : Expression(n) {}
-  ComplexArgument(Expression operand) : ComplexArgument() {
+  explicit ComplexArgument(Expression operand) : ComplexArgument() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

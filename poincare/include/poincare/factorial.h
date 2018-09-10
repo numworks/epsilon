@@ -48,7 +48,7 @@ class Factorial : public Expression {
 public:
   Factorial();
   Factorial(const FactorialNode * n) : Expression(n) {}
-  Factorial(Expression operand) : Factorial() {
+  explicit Factorial(Expression operand) : Factorial() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

@@ -58,7 +58,8 @@ class MatrixLayoutRef : public GridLayoutRef {
   friend class MatrixLayoutNode;
 public:
   MatrixLayoutRef(const MatrixLayoutNode * n);
-  MatrixLayoutRef();  MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4);
+  MatrixLayoutRef();
+  MatrixLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4);
   bool hasGreySquares() const { return node()->hasGreySquares(); }
   void addGreySquares() { node()->addGreySquares(); }
   void removeGreySquares() { node()->removeGreySquares(); }

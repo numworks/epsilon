@@ -45,7 +45,7 @@ class ArcTangent : public Expression {
 public:
   ArcTangent();
   ArcTangent(const ArcTangentNode * n) : Expression(n) {}
-  ArcTangent(Expression operand) : ArcTangent() {
+  explicit ArcTangent(Expression operand) : ArcTangent() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

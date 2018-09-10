@@ -35,7 +35,7 @@ class HyperbolicSine : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicSine() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicSineNode>()) {}
   HyperbolicSine(const HyperbolicSineNode * n) : HyperbolicTrigonometricFunction(n) {}
-  HyperbolicSine(Expression operand) : HyperbolicSine() {
+  explicit HyperbolicSine(Expression operand) : HyperbolicSine() {
     replaceChildAtIndexInPlace(0, operand);
   }
 };

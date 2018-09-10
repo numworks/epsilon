@@ -48,7 +48,7 @@ class Tangent : public Expression {
 public:
   Tangent();
   Tangent(const TangentNode * n) : Expression(n) {}
-  Tangent(Expression operand) : Tangent() {
+  explicit Tangent(Expression operand) : Tangent() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

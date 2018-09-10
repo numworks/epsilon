@@ -40,7 +40,7 @@ class Conjugate : public Expression {
 public:
   Conjugate();
   Conjugate(const ConjugateNode * n) : Expression(n) {}
-  Conjugate(Expression operand) : Conjugate() {
+  explicit Conjugate(Expression operand) : Conjugate() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

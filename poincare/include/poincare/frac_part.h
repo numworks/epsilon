@@ -41,7 +41,7 @@ class FracPart : public Expression {
 public:
   FracPart();
   FracPart(const FracPartNode * n) : Expression(n) {}
-  FracPart(Expression operand) : FracPart() {
+  explicit FracPart(Expression operand) : FracPart() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

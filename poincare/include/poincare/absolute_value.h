@@ -48,7 +48,7 @@ friend class AbsoluteValueNode;
 public:
   AbsoluteValue();
   AbsoluteValue(const AbsoluteValueNode * n) : Expression(n) {}
-  AbsoluteValue(Expression operand) : AbsoluteValue() {
+  explicit AbsoluteValue(Expression operand) : AbsoluteValue() {
     replaceChildAtIndexInPlace(0, operand);
   }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);

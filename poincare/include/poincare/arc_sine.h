@@ -45,7 +45,7 @@ class ArcSine : public Expression {
 public:
   ArcSine();
   ArcSine(const ArcSineNode * n) : Expression(n) {}
-  ArcSine(Expression operand) : ArcSine() {
+  explicit ArcSine(Expression operand) : ArcSine() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

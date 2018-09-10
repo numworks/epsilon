@@ -67,7 +67,7 @@ class HorizontalLayoutRef : public LayoutReference {
 public:
   HorizontalLayoutRef(HorizontalLayoutNode * n) : LayoutReference(n) {}
   HorizontalLayoutRef();
-  HorizontalLayoutRef(LayoutRef l);
+  explicit HorizontalLayoutRef(LayoutRef l);
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2);
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3);
   HorizontalLayoutRef(LayoutRef l1, LayoutRef l2, LayoutRef l3, LayoutRef l4);

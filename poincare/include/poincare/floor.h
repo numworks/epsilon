@@ -41,7 +41,7 @@ class Floor : public Expression {
 public:
   Floor();
   Floor(const FloorNode * n) : Expression(n) {}
-  Floor(Expression operand) : Floor() {
+  explicit Floor(Expression operand) : Floor() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

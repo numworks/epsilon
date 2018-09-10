@@ -218,7 +218,7 @@ Expression Logarithm::splitInteger(Integer i, bool isDenominator, Context & cont
     if (isDenominator) {
       coefficients[index].setNegative(true);
     }
-    Logarithm e = clone();
+    Logarithm e = clone().convert<Logarithm>();
     e.replaceChildAtIndexInPlace(0, Rational(factors[index]));
     Multiplication m = Multiplication(Rational(coefficients[index]), e);
     e.simpleShallowReduce(context, angleUnit);

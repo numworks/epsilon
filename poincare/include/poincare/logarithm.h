@@ -48,7 +48,7 @@ class Logarithm : public Expression {
 public:
   Logarithm(const LogarithmNode<1> * n) : Expression(n) {}
   Logarithm(const LogarithmNode<2> * n) : Expression(n) {}
-  Logarithm(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<1> >()) {
+  explicit Logarithm(Expression operand) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<1> >()) {
     replaceChildAtIndexInPlace(0, operand);
   }
   Logarithm(Expression child1, Expression child2) : Expression(TreePool::sharedPool()->createTreeNode<LogarithmNode<2> >()) {

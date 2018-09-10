@@ -48,7 +48,7 @@ class ArcCosine : public Expression {
 public:
   ArcCosine();
   ArcCosine(const ArcCosineNode * n) : Expression(n) {}
-  ArcCosine(Expression operand) : ArcCosine() {
+  explicit ArcCosine(Expression operand) : ArcCosine() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

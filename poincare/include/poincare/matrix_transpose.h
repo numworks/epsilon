@@ -36,7 +36,7 @@ class MatrixTranspose : public Expression {
 public:
   MatrixTranspose();
   MatrixTranspose(const MatrixTransposeNode * n) : Expression(n) {}
-  MatrixTranspose(Expression operand) : MatrixTranspose() {
+  explicit MatrixTranspose(Expression operand) : MatrixTranspose() {
     replaceChildAtIndexInPlace(0, operand);
   }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);

@@ -50,7 +50,7 @@ class Sine : public Expression {
 public:
   Sine();
   Sine(const SineNode * n) : Expression(n) {}
-  Sine(Expression operand) : Sine() {
+  explicit Sine(Expression operand) : Sine() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

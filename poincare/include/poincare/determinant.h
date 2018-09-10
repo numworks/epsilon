@@ -40,7 +40,7 @@ class Determinant : public Expression {
 public:
   Determinant();
   Determinant(const DeterminantNode * n) : Expression(n) {}
-  Determinant(Expression operand) : Determinant() {
+  explicit Determinant(Expression operand) : Determinant() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

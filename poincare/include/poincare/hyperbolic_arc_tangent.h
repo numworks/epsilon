@@ -35,7 +35,7 @@ class HyperbolicArcTangent : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicArcTangent() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcTangentNode>()) {}
   HyperbolicArcTangent(const HyperbolicArcTangentNode * n) : HyperbolicTrigonometricFunction(n) {}
-  HyperbolicArcTangent(Expression operand) : HyperbolicArcTangent() {
+  explicit HyperbolicArcTangent(Expression operand) : HyperbolicArcTangent() {
     replaceChildAtIndexInPlace(0, operand);
   }
 };

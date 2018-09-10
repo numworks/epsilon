@@ -64,7 +64,7 @@ public:
   }
   Matrix() : Matrix(TreePool::sharedPool()->createTreeNode<MatrixNode>()) {}
   Matrix(const MatrixNode * node) : Expression(node) {}
-  Matrix(Expression e) : Matrix() {
+  explicit Matrix(Expression e) : Matrix() {
     addChildAtIndexInPlace(e, 0, 0);
   }
 

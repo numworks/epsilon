@@ -68,7 +68,7 @@ private:
 
 class NthRootLayoutRef : public LayoutReference {
 public:
-  NthRootLayoutRef(LayoutRef radicand);
+  explicit NthRootLayoutRef(LayoutRef radicand);
   NthRootLayoutRef(LayoutRef radicand, LayoutRef index);
 private:
   NthRootLayoutRef();

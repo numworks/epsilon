@@ -43,9 +43,7 @@ friend class RandintNode;
 public:
   Randint();
   Randint(const RandintNode * n) : Expression(n) {}
-
   template<typename T> static T random();
-private:
 };
 
 }

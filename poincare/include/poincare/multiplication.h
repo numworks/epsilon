@@ -67,7 +67,7 @@ class Multiplication : public NAryExpression {
 public:
   Multiplication(const MultiplicationNode * n) : NAryExpression(n) {}
   Multiplication();
-  Multiplication(Expression e1) : Multiplication() {
+  explicit Multiplication(Expression e1) : Multiplication() {
     addChildAtIndexInPlace(e1, 0, 0);
   }
   Multiplication(Expression e1, Expression e2) : Multiplication() {

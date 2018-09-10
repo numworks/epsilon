@@ -239,8 +239,6 @@ objsExpected += $(addprefix poincare/src/,\
 )
 
 tests += $(addprefix poincare/test/,\
-  tree/blob_node.cpp\
-  tree/pair_node.cpp\
   tree/tree_by_reference.cpp\
   addition.cpp\
   arithmetic.cpp\

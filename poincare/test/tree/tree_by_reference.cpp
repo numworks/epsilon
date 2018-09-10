@@ -42,7 +42,7 @@ QUIZ_CASE(tree_by_reference_can_be_returned) {
   assert_pool_size(initialPoolSize+1);
 }
 
-//TODO QUIZ_CASE(tree_by_reference_allocation_failures) {
+//TODO(tree_by_reference_allocation_failures) {
 
 QUIZ_CASE(tree_by_reference_does_not_copy) {
   int initialPoolSize = pool_size();

@@ -160,6 +160,7 @@ public:
   /* Simplification */
   static Expression ParseAndSimplify(const char * text, Context & context, Preferences::AngleUnit angleUnit);
   Expression simplify(Context & context, Preferences::AngleUnit angleUnit);
+  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
 
   /* Approximation Helper */
   template<typename U> static U epsilon();
@@ -222,7 +223,6 @@ protected:
   Expression denominator(Context & context, Preferences::AngleUnit angleUnit) const { return node()->denominator(context, angleUnit); }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowReduce(context, angleUnit); }
   Expression shallowBeautify(Context & context, Preferences::AngleUnit angleUnit) { return node()->shallowBeautify(context, angleUnit); }
-  Expression deepReduce(Context & context, Preferences::AngleUnit angleUnit);
   Expression deepBeautify(Context & context, Preferences::AngleUnit angleUnit);
   Expression setSign(ExpressionNode::Sign s, Context & context, Preferences::AngleUnit angleUnit);
 private:

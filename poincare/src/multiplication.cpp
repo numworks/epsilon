@@ -460,8 +460,7 @@ Expression Multiplication::privateShallowReduce(Context & context, Preferences::
 void Multiplication::mergeMultiplicationChildrenInPlace() {
   // Multiplication is associative: a*(b*c)->a*b*c
   int i = 0;
-  int initialNumberOfChildren = numberOfChildren();
-  while (i < initialNumberOfChildren) {
+  while (i < numberOfChildren()) {
     Expression c = childAtIndex(i);
     if (c.type() == ExpressionNode::Type::Multiplication) {
       mergeChildrenAtIndexInPlace(c, numberOfChildren()); // TODO: ensure that matrix children are not swapped to implement MATRIX_EXACT_REDUCING

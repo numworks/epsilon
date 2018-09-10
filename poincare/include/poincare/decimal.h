@@ -89,7 +89,8 @@ public:
   Decimal(DecimalNode * node) : Number(node) {}
   Decimal(Integer m, int e);
   template <typename T> Decimal(T f);
-  constexpr static int k_maxExponentLength = 4;
+  constexpr static int k_maxExponentLength = 8;
+  // TODO Emilie, comment here please
   constexpr static int k_maxExponent = 1000;
 private:
   constexpr static int k_maxMantissaLength = 20;

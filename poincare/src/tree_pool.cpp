@@ -1,5 +1,7 @@
 #include <poincare/tree_pool.h>
 #include <poincare/tree_by_reference.h>
+#include <poincare/test/tree/blob_node.h>
+#include <poincare/test/tree/pair_node.h>
 #include <poincare.h>
 #include <string.h>
 #include <stdint.h>
@@ -345,7 +347,6 @@ template SumNode * Poincare::TreePool::createTreeNode<SumNode>(size_t size);
 template TangentNode * Poincare::TreePool::createTreeNode<TangentNode>(size_t size);
 template GhostNode * Poincare::TreePool::createTreeNode<GhostNode>(size_t size);
 
-
 template MatrixLayoutNode* TreePool::createTreeNode<MatrixLayoutNode>(size_t size);
 template AbsoluteValueLayoutNode* TreePool::createTreeNode<AbsoluteValueLayoutNode>(size_t size);
 template ComplexNode<float>* TreePool::createTreeNode<ComplexNode<float> >(size_t size);
@@ -361,5 +362,11 @@ template IntegralLayoutNode* TreePool::createTreeNode<IntegralLayoutNode>(size_t
 template ProductLayoutNode* TreePool::createTreeNode<ProductLayoutNode>(size_t size);
 template SumLayoutNode* TreePool::createTreeNode<SumLayoutNode>(size_t size);
 template FloatNode<float>* TreePool::createTreeNode<FloatNode<float> >(size_t size);
+
+template LeftSquareBracketLayoutNode* TreePool::createTreeNode<LeftSquareBracketLayoutNode>(size_t size);
+template RightSquareBracketLayoutNode* TreePool::createTreeNode<RightSquareBracketLayoutNode>(size_t size);
+
+template BlobNode* TreePool::createTreeNode<BlobNode>(size_t size);
+template PairNode* TreePool::createTreeNode<PairNode>(size_t size);
 
 }

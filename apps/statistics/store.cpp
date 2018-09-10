@@ -249,7 +249,7 @@ double Store::sortedElementAtCumulatedFrequency(int series, double k, bool creat
   memcpy(bufferValues, m_data[series][0], numberOfPairsOfSeries(series)*sizeof(double));
   int sortedElementIndex = 0;
   double cumulatedFrequency = 0.0;
-  while (cumulatedFrequency < k) {
+  while (cumulatedFrequency < k-DBL_EPSILON) {
     sortedElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
     bufferValues[sortedElementIndex] = DBL_MAX;
     cumulatedFrequency += m_data[series][1][sortedElementIndex] / totalNumberOfElements;

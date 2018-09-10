@@ -89,8 +89,10 @@ public:
   Decimal(DecimalNode * node) : Number(node) {}
   Decimal(Integer m, int e);
   template <typename T> Decimal(T f);
+  /* k_maxExponentLength caps the string length we parse to create the exponent.
+   * It prevents m_exponent (int32_t) from overflowing and giving wrong results. */
   constexpr static int k_maxExponentLength = 8;
-  // TODO Emilie, comment here please
+  /* Decimal numbers have a capped exponent. */
   constexpr static int k_maxExponent = 1000;
 private:
   constexpr static int k_maxMantissaLength = 20;

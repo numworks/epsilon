@@ -103,6 +103,11 @@ private:
   constexpr static int k_maxNumberOfDigitsBase10 = 308; // (2^32)^k_maxNumberOfDigits ~ 1E308
 
   // Dynamic allocation
+  /* In order to guarantee the potential existence of 16 Integers simutaneously,
+   * we keep a table uint32_t that can contain up to 16 Integers with the
+   * maximal numbers of digits. We also give them one extra digit to be able to
+   * perform complex operations (like division) which involve Integers with one
+   *  additional digit. */
   static native_uint_t * allocDigits(int numberOfDigits);
   static void freeDigits(native_uint_t * digits);
 

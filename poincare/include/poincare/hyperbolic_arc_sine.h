@@ -35,7 +35,7 @@ class HyperbolicArcSine : public HyperbolicTrigonometricFunction {
 public:
   HyperbolicArcSine() : HyperbolicTrigonometricFunction(TreePool::sharedPool()->createTreeNode<HyperbolicArcSineNode>()) {}
   HyperbolicArcSine(const HyperbolicArcSineNode * n) : HyperbolicTrigonometricFunction(n) {}
-  HyperbolicArcSine(Expression operand) : HyperbolicArcSine() {
+  explicit HyperbolicArcSine(Expression operand) : HyperbolicArcSine() {
     replaceChildAtIndexInPlace(0, operand);
   }
 };

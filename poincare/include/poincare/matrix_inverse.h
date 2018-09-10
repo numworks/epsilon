@@ -36,7 +36,7 @@ class MatrixInverse : public Expression {
 public:
   MatrixInverse();
   MatrixInverse(const MatrixInverseNode * n) : Expression(n) {}
-  MatrixInverse(Expression operand) : MatrixInverse() {
+  explicit MatrixInverse(Expression operand) : MatrixInverse() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

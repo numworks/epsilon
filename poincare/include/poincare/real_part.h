@@ -45,7 +45,7 @@ class RealPart : public Expression {
 public:
   RealPart();
   RealPart(const RealPartNode * n) : Expression(n) {}
-  RealPart(Expression operand) : RealPart() {
+  explicit RealPart(Expression operand) : RealPart() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

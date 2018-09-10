@@ -36,7 +36,7 @@ class MatrixTrace : public Expression {
 public:
   MatrixTrace();
   MatrixTrace(const MatrixTraceNode * n) : Expression(n) {}
-  MatrixTrace(Expression operand) : MatrixTrace() {
+  explicit MatrixTrace(Expression operand) : MatrixTrace() {
     replaceChildAtIndexInPlace(0, operand);
   }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);

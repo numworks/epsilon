@@ -43,7 +43,7 @@ class Factor : public Expression {
 public:
   Factor();
   Factor(const FactorNode * n) : Expression(n) {}
-  Factor(Expression operand) : Factor() {
+  explicit Factor(Expression operand) : Factor() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

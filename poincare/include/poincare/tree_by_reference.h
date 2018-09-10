@@ -6,6 +6,11 @@
 
 namespace Poincare {
 
+/* TreeByReference constructors that take only one argument and this argument is
+ * a TreeByReference should be marked explicit. This prevents the code from
+ * compiling with, for instance: Logarithm l = clone() (which would be
+ * equivalent to Logarithm l = Logarithm(clone())). */
+
 class TreeByReference {
   friend class TreeNode;
   friend class TreePool;

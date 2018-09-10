@@ -190,7 +190,7 @@ protected:
      * Expression, but this does not prevent Expression types mismatches (cast
      * Float to Symbol for instance).
      *
-     * We could have override the operator T(). However, even with the
+     * We could have overriden the operator T(). However, even with the
      * 'explicit' keyword (which prevents implicit casts), direct initilization
      * are enable which can lead to weird code:
      * ie, you can write: 'Rational a(2); AbsoluteValue b(a);'

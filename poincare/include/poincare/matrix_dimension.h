@@ -36,7 +36,7 @@ class MatrixDimension : public Expression {
 public:
   MatrixDimension();
   MatrixDimension(const MatrixDimensionNode * n) : Expression(n) {}
-  MatrixDimension(Expression operand) : MatrixDimension() {
+  explicit MatrixDimension(Expression operand) : MatrixDimension() {
     replaceChildAtIndexInPlace(0, operand);
   }
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);

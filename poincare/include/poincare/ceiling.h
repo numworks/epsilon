@@ -41,7 +41,7 @@ class Ceiling : public Expression {
 public:
   Ceiling();
   Ceiling(const CeilingNode * n) : Expression(n) {}
-  Ceiling(Expression operand) : Ceiling() {
+  explicit Ceiling(Expression operand) : Ceiling() {
     replaceChildAtIndexInPlace(0, operand);
   }
 

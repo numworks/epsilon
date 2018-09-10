@@ -298,10 +298,10 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   // Step 1: We want to compute the common denominator, b*d
   Multiplication commonDenominator = Multiplication();
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression denominator = childAtIndex(i).denominator(context, angleUnit);
-    if (!denominator.isUninitialized()) {
+    Expression currentDenominator = childAtIndex(i).denominator(context, angleUnit);
+    if (!currentDenominator.isUninitialized()) {
       // Make commonDenominator = LeastCommonMultiple(commonDenominator, denominator);
-      commonDenominator.addMissingFactors(denominator, context, angleUnit);
+      commonDenominator.addMissingFactors(currentDenominator, context, angleUnit);
     }
   }
   if (commonDenominator.numberOfChildren() == 0) {
@@ -309,8 +309,8 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
     return *this;
   }
 
-  // Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
-  // want to create numerator = a/b*b*d + c/d*b*b + e/b*b*d
+  /* Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
+   * want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d = a*d + c*b + e*d */
   Addition numerator = Addition();
   for (int i = 0; i < numberOfChildren(); i++) {
     Multiplication m = Multiplication(childAtIndex(i), commonDenominator.clone());
@@ -322,7 +322,7 @@ Expression Addition::factorizeOnCommonDenominator(Context & context, Preferences
   Power inverseDenominator = Power(commonDenominator, Rational(-1));
   Multiplication result = Multiplication(numerator, inverseDenominator);
 
-  // Step 4: Simplify the numerator to a*d + c*b + e*d
+  // Step 4: Simplify the numerator
   numerator.shallowReduce(context, angleUnit);
 
   // Step 5: Simplify the denominator (in case it's a rational number)

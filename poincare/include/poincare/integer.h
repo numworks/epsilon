@@ -36,8 +36,7 @@ public:
   Integer(double_native_int_t i);
   Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(const char * digits, size_t length, bool negative);
-  Integer(const char * digits) : Integer(digits, strlen(digits), false) {
-  }
+  Integer(const char * digits) : Integer(digits, strlen(digits), false) {}
   static Integer Overflow(bool negative) { return Integer((native_uint_t *)nullptr, k_maxNumberOfDigits+1, negative); }
   ~Integer();
 
@@ -143,6 +142,11 @@ private:
     assert(i >= 0 && i < m_numberOfDigits);
     return (usesImmediateDigit() ? m_digit : m_digits[i]);
   }
+
+  /* An integer can have (k_maxNumberOfDigits + 1) digits: either when it is an
+   * overflow, or when we want to have one more digit than usual to compute a
+   * big division. */
+  bool isOverflow() const { return m_numberOfDigits == k_maxNumberOfDigits + 1 && m_digits == nullptr; }
 
   bool m_negative;
   size_t m_numberOfDigits; // In base native_uint_t

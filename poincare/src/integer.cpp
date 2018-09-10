@@ -630,7 +630,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
     Integer betaJM = B.multiplyByPowerOfBase(j); // betaJM = B*beta^j
     while (A.isNegative()) {
       qDigits[j] = qDigits[j]-1; // q[j] = q[j]-1
-      A = usum(A, betaJM, false, true); // A = A+B*beta^j
+      A = usum(betaJM, A, true, true); // A = B*beta^j-|A|
     }
   }
   int qNumberOfDigits = m+1;

@@ -14,7 +14,7 @@ public:
     Input,
     Output
   };
-  HistoryViewCell(Responder * parentResponder);
+  HistoryViewCell(Responder * parentResponder = nullptr);
   void reloadCell() override;
   void reloadScroll();
   void setEven(bool even) override;

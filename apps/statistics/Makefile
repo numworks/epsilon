@@ -31,4 +31,9 @@ i18n_files += $(addprefix apps/statistics/,\
   base.pt.i18n\
 )
 
+tests += $(addprefix apps/statistics/test/,\
+  store.cpp\
+)
+test_objs += $(addprefix apps/statistics/, store.o)
+
 app_images += apps/statistics/stat_icon.png

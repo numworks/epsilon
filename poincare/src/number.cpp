@@ -70,7 +70,7 @@ Number Number::ParseDigits(const char * digits, size_t length) {
     exp = exponent[0] == '-' ? -1 : 1;
   }
   // Avoid Decimal with exponent > k_maxExponentLength
-  if (exponentLength > Decimal::k_maxExponentLength || exp > Decimal::k_maxExponent || exp < -Decimal::k_maxExponent) {
+  if (exponentLength >= Decimal::k_maxExponentLength || exp > Decimal::k_maxExponent || exp < -Decimal::k_maxExponent) {
     if (exp < 0) {
       return Decimal(0.0);
     } else {

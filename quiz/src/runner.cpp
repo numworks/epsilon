@@ -4,6 +4,8 @@
 #include <kandinsky.h>
 #include <poincare/init.h>
 #include <ion.h>
+#include <poincare/tree_pool.h>
+#include <setjmp.h>
 
 void quiz_print(const char * message) {
 #if QUIZ_USE_CONSOLE
@@ -25,6 +27,20 @@ void ion_main(int argc, char * argv[]) {
   // Initialize Poincare::TreePool::sharedPool
   Poincare::init();
 
+  jmp_buf jumpEnvironment;
+  Poincare::TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
+  int res = setjmp(jumpEnvironment);
+  if (res != 0) {
+    // There has been a memeory allocation problem
+    assert(false);
+#if !QUIZ_USE_CONSOLE
+    while (1) {
+      Ion::msleep(1000);
+    }
+#else
+    return;
+#endif
+  }
   int i = 0;
   while (quiz_cases[i] != NULL) {
     QuizCase c = quiz_cases[i];

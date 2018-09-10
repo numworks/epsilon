@@ -443,6 +443,10 @@ Integer Integer::addition(const Integer & a, const Integer & b, bool inverseBNeg
 }
 
 Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDigitOverflow) {
+  if (a.isOverflow() || b.isOverflow()) {
+    return Integer::Overflow(a.m_negative != b.m_negative);
+  }
+
   size_t size = min(a.m_numberOfDigits + b.m_numberOfDigits, k_maxNumberOfDigits + oneDigitOverflow); // Enable overflowing of 1 digit
 
   native_uint_t * digits = allocDigits(size);
@@ -505,6 +509,10 @@ int8_t Integer::ucmp(const Integer & a, const Integer & b) {
 }
 
 Integer Integer::usum(const Integer & a, const Integer & b, bool subtract, bool oneDigitOverflow) {
+  if (a.isOverflow() || b.isOverflow()) {
+    return Integer::Overflow(a.m_negative != b.m_negative);
+  }
+
   size_t size = max(a.m_numberOfDigits, b.m_numberOfDigits);
   if (!subtract) {
     // Addition can overflow
@@ -573,10 +581,10 @@ Integer Integer::multiplyByPowerOfBase(uint8_t pow) const {
 }
 
 IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denominator) {
-  if (denominator.isInfinity()) {
+  if (denominator.isOverflow()) {
     return {.quotient = Integer(0), .remainder = Integer::Overflow(false)};
   }
-  if(numerator.isInfinity()) {
+  if(numerator.isOverflow()) {
     return {.quotient = Integer::Overflow(false), .remainder = Integer(0)};
   }
   /* Modern Computer Arithmetic, Richard P. Brent and Paul Zimmermann

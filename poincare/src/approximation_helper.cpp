@@ -29,12 +29,11 @@ template <typename T> std::complex<T> ApproximationHelper::TruncateRealOrImagina
 template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, Context& context, Preferences::AngleUnit angleUnit, ComplexCompute<T> compute) {
   assert(expression->numberOfChildren() == 1);
   Evaluation<T> input = expression->childAtIndex(0)->approximate(T(), context, angleUnit);
-  if (input.node()->type() == EvaluationNode<T>::Type::Complex) {
-    const ComplexNode<T> * c = static_cast<ComplexNode<T> *>(input.node());
-    return compute(*c, angleUnit);
+  if (input.type() == EvaluationNode<T>::Type::Complex) {
+    return compute(static_cast<Complex<T> &>(input).stdComplex(), angleUnit);
   } else {
-    assert(input.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-    MatrixComplex<T> m = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(input.node()));
+    assert(input.type() == EvaluationNode<T>::Type::MatrixComplex);
+    MatrixComplex<T> m = static_cast<MatrixComplex<T> &>(input);
     MatrixComplex<T> result;
     for (int i = 0; i < m.numberOfChildren(); i++) {
       result.addChildAtIndexInPlace(compute(m.complexAtIndex(i), angleUnit), i, i);
@@ -50,26 +49,18 @@ template<typename T> Evaluation<T> ApproximationHelper::MapReduce(const Expressi
   for (int i = 1; i < expression->numberOfChildren(); i++) {
     Evaluation<T> intermediateResult;
     Evaluation<T> nextOperandEvaluation = expression->childAtIndex(i)->approximate(T(), context, angleUnit);
-    if (result.node()->type() == EvaluationNode<T>::Type::Complex && nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::Complex) {
-      const ComplexNode<T> * c = static_cast<const ComplexNode<T> *>(result.node());
-      const ComplexNode<T> * d = static_cast<const ComplexNode<T> *>(nextOperandEvaluation.node());
-      intermediateResult = computeOnComplexes(*c, *d);
-    } else if (result.node()->type() == EvaluationNode<T>::Type::Complex) {
-      assert(nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-      const ComplexNode<T> * c = static_cast<const ComplexNode<T> *>(result.node());
-      MatrixComplex<T> n = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(nextOperandEvaluation.node()));
-      intermediateResult = computeOnComplexAndMatrix(*c, n);
-    } else if (nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::Complex) {
-      assert(result.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-      MatrixComplex<T> m = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(result.node()));
-      const ComplexNode<T> * d = static_cast<const ComplexNode<T> *>(nextOperandEvaluation.node());
-      intermediateResult = computeOnMatrixAndComplex(m, *d);
+    if (result.type() == EvaluationNode<T>::Type::Complex && nextOperandEvaluation.type() == EvaluationNode<T>::Type::Complex) {
+      intermediateResult = computeOnComplexes(static_cast<Complex<T> &>(result).stdComplex(), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex());
+    } else if (result.type() == EvaluationNode<T>::Type::Complex) {
+      assert(nextOperandEvaluation.type() == EvaluationNode<T>::Type::MatrixComplex);
+      intermediateResult = computeOnComplexAndMatrix(static_cast<Complex<T> &>(result).stdComplex(), static_cast<MatrixComplex<T> &>(nextOperandEvaluation));
+    } else if (nextOperandEvaluation.type() == EvaluationNode<T>::Type::Complex) {
+      assert(result.type() == EvaluationNode<T>::Type::MatrixComplex);
+      intermediateResult = computeOnMatrixAndComplex(static_cast<MatrixComplex<T> &>(result), static_cast<Complex<T> &>(nextOperandEvaluation).stdComplex());
     } else {
       assert(result.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
       assert(nextOperandEvaluation.node()->type() == EvaluationNode<T>::Type::MatrixComplex);
-      MatrixComplex<T> m = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(result.node()));
-      MatrixComplex<T> n = MatrixComplex<T>(static_cast<MatrixComplexNode<T> *>(nextOperandEvaluation.node()));
-      intermediateResult = computeOnMatrices(m, n);
+      intermediateResult = computeOnMatrices(static_cast<MatrixComplex<T> &>(result), static_cast<MatrixComplex<T> &>(nextOperandEvaluation));
     }
     result = intermediateResult;
     if (result.isUndefined()) {

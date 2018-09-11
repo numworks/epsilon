@@ -1,12 +1,15 @@
 #include <quiz.h>
 #include <assert.h>
 #include <math.h>
+#include <cmath>
 #include "../store.h"
 
 namespace Statistics {
 
 void assert_value_approximately_equal_to(double d1, double d2) {
-  assert(d1 == d2 || fabs(d1-d2) < 0.001);
+  assert((std::isnan(d1) && std::isnan(d2))
+      || (std::isinf(d1) && std::isinf(d2) && d1*d2 > 0 /*same sign*/)
+      || fabs(d1-d2) < 0.001);
 }
 
 void assert_data_statictics_equal_to(double n[], double v[], int numberOfData, double sumOfOccurrences, double maxValue, double minValue, double range, double mean, double variance, double standardDeviation, double sampleStandardDeviation, double firstQuartile, double thirdQuartile, double quartileRange, double median, double sum, double squaredValueSum) {

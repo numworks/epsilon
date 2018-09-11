@@ -16,7 +16,6 @@ public:
   void toggleImportationStatus();
 
   const char * readContent() const;
-  ErrorStatus writeContent(const char * data, size_t size);
 
   constexpr static size_t k_importationStatusSize = 1;
 };

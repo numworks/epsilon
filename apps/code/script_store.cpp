@@ -120,13 +120,9 @@ const char * ScriptStore::contentOfScript(const char * name) {
 }
 
 Script::ErrorStatus ScriptStore::addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
-  size_t scriptSize = strlen(scriptTemplate->content())+1;
-  char * body = new char[scriptSize+Script::k_importationStatusSize];
-  body[0] = 1;
-  strlcpy(body+Script::k_importationStatusSize, scriptTemplate->content(), scriptSize);
-  Script::ErrorStatus err = Ion::Storage::sharedStorage()->createRecord(scriptTemplate->name(), body, scriptSize+Script::k_importationStatusSize);
+  size_t valueSize = strlen(scriptTemplate->content())+1+1;// scriptcontent size + 1 char for the importation status
+  Script::ErrorStatus err = Ion::Storage::sharedStorage()->createRecord(scriptTemplate->name(), scriptTemplate->value(), valueSize);
   assert(err != Script::ErrorStatus::NonCompliantName);
-  delete[] body;
   return err;
 }
 

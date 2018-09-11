@@ -1,13 +1,4 @@
 #include "store.h"
-#include "model/cubic_model.h"
-#include "model/exponential_model.h"
-#include "model/linear_model.h"
-#include "model/logarithmic_model.h"
-#include "model/logistic_model.h"
-#include "model/power_model.h"
-#include "model/quadratic_model.h"
-#include "model/quartic_model.h"
-#include "model/trigonometric_model.h"
 #include "apps/apps_container.h"
 #include <poincare/preferences.h>
 #include <assert.h>
@@ -34,21 +25,6 @@ Store::Store() :
   for (int i = 0; i < k_numberOfSeries; i++) {
     m_regressionTypes[i] = Model::Type::Linear;
     m_regressionChanged[i] = false;
-  }
-  m_regressionModels[0] = new LinearModel();
-  m_regressionModels[1] = new QuadraticModel();
-  m_regressionModels[2] = new CubicModel();
-  m_regressionModels[3] = new QuarticModel();
-  m_regressionModels[4] = new LogarithmicModel();
-  m_regressionModels[5] = new ExponentialModel();
-  m_regressionModels[6] = new PowerModel();
-  m_regressionModels[7] = new TrigonometricModel();
-  m_regressionModels[8] = new LogisticModel();
-}
-
-Store::~Store() {
-  for (int i = 0; i < Model::k_numberOfModels; i++) {
-    delete m_regressionModels[i];
   }
 }
 
@@ -305,13 +281,13 @@ double Store::yIntercept(int series) const {
 }
 
 double Store::yValueForXValue(int series, double x, Poincare::Context * globalContext) {
-  Model * model = m_regressionModels[(int)m_regressionTypes[series]];
+  Model * model = regressionModel((int)m_regressionTypes[series]);
   double * coefficients = coefficientsForSeries(series, globalContext);
   return model->evaluate(coefficients, x);
 }
 
 double Store::xValueForYValue(int series, double y, Poincare::Context * globalContext) {
-  Model * model = m_regressionModels[(int)m_regressionTypes[series]];
+  Model * model = regressionModel((int)m_regressionTypes[series]);
   double * coefficients = coefficientsForSeries(series, globalContext);
   return model->levelSet(coefficients, xMin(), xGridUnit()/10.0, xMax(), y, globalContext);
 }
@@ -327,6 +303,11 @@ double Store::squaredCorrelationCoefficient(int series) const {
   double v0 = varianceOfColumn(series, 0);
   double v1 = varianceOfColumn(series, 1);
   return (v0 == 0.0 || v1 == 0.0) ? 1.0 : cov*cov/(v0*v1);
+}
+
+Model * Store::regressionModel(int index) {
+  Model * models[Model::k_numberOfModels] = {&m_linearModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel};
+  return models[index];
 }
 
 }

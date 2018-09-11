@@ -530,10 +530,11 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, Context & context, 
   assert(childAtIndex(i).type() == ExpressionNode::Type::Addition);
 
   Addition a;
-  int numberOfAdditionTerms = childAtIndex(i).numberOfChildren();
+  Expression childI = childAtIndex(i);
+  int numberOfAdditionTerms = childI.numberOfChildren();
   for (int j = 0; j < numberOfAdditionTerms; j++) {
     Multiplication m = clone().convert<Multiplication>();
-    m.replaceChildAtIndexInPlace(i, childAtIndex(i).childAtIndex(j));
+    m.replaceChildAtIndexInPlace(i, childI.childAtIndex(j));
     // Reduce m: pi^(-1)*(pi + x) -> pi^(-1)*pi + pi^(-1)*x -> 1 + pi^(-1)*x
     a.addChildAtIndexInPlace(m, a.numberOfChildren(), a.numberOfChildren());
     m.shallowReduce(context, angleUnit);

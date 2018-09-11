@@ -11,33 +11,26 @@ namespace Code {
 EditorController::EditorController(MenuController * menuController) :
   ViewController(nullptr),
   m_editorView(this),
-  m_areaBuffer(nullptr),
   m_script(Ion::Storage::Record()),
   m_menuController(menuController)
 {
   m_editorView.setTextAreaDelegate(this);
 }
 
-EditorController::~EditorController() {
-  delete m_areaBuffer;
-  m_areaBuffer = nullptr;
-}
-
 void EditorController::setScript(Script script) {
   m_script = script;
-  const char * scriptBody = m_script.readContent();
-  size_t scriptBodySize = strlen(scriptBody)+1;
-  size_t availableScriptSize = scriptBodySize + Ion::Storage::sharedStorage()->availableSize();
-  assert(m_areaBuffer == nullptr);
-  m_areaBuffer = new char[availableScriptSize];
-  strlcpy(m_areaBuffer, scriptBody, scriptBodySize);
-  m_editorView.setText(m_areaBuffer, availableScriptSize);
+  Script::Data scriptData = m_script.value();
+  size_t availableScriptSize = scriptData.size + Ion::Storage::sharedStorage()->availableSize();
+  assert(sizeof(m_areaBuffer) >= availableScriptSize);
+  strlcpy(m_areaBuffer, (const char *)scriptData.buffer, scriptData.size);
+  m_editorView.setText(m_areaBuffer+1, availableScriptSize-1); // 1 char is taken by the importation status flag
 }
 
 // TODO: this should be done in textAreaDidFinishEditing maybe??
 bool EditorController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home) {
-    Script::ErrorStatus err = m_script.writeContent(m_areaBuffer, strlen(m_areaBuffer)+1);
+    size_t sizeOfValue = strlen(m_areaBuffer+1)+1+1; // size of scriptContent + size of importation status
+    Script::ErrorStatus err = m_script.setValue({.buffer=m_areaBuffer, .size=sizeOfValue});
     if (err == Script::ErrorStatus::NotEnoughSpaceAvailable || err == Script::ErrorStatus::RecordDoesNotExist) {
       assert(false); // This should not happen as we set the text area according to the available space in the Kallax
     } else {
@@ -59,8 +52,6 @@ void EditorController::viewWillAppear() {
 
 void EditorController::viewDidDisappear() {
   m_menuController->scriptContentEditionDidFinish();
-  delete[] m_areaBuffer;
-  m_areaBuffer = nullptr;
   m_editorView.unloadSyntaxHighlighter();
 }
 

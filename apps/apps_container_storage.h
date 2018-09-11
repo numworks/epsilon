@@ -23,6 +23,10 @@ private:
     ~Apps() {};
   private:
     APPS_CONTAINER_APPS_DECLARATION
+    Home::App m_homeApp;
+    OnBoarding::App m_onBoardingApp;
+    HardwareTest::App m_hardwareTestApp;
+    USB::App m_usbApp;
   };
   Apps m_apps;
   APPS_CONTAINER_SNAPSHOT_DECLARATIONS

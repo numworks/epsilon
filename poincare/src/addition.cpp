@@ -109,7 +109,7 @@ Expression Addition::shallowBeautify(Context & context, Preferences::AngleUnit a
 
     if (i == 0) {
       Opposite o = Opposite(subtractant);
-      replaceChildInPlace(subtractant, o);
+      replaceChildAtIndexInPlace(i, o);
     } else {
       Expression leftSibling = childAtIndex(i-1);
       removeChildAtIndexInPlace(i-1);

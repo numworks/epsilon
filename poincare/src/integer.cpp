@@ -50,6 +50,7 @@ void Integer::log() const {
 
 /* new operator */
 
+// This bit buffer indicates which cases of the sIntegerBuffer are already allocated
 static uint16_t sbusyIntegerBuffer = 0;
 static native_uint_t sIntegerBuffer[(Integer::k_maxNumberOfDigits+1)*Integer::k_maxNumberOfIntegerSimutaneously];
 

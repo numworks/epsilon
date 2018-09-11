@@ -12,6 +12,11 @@ HistogramParameterController::HistogramParameterController(Responder * parentRes
   m_cells{},
   m_store(store)
 {
+  for (int i = 0; i < k_numberOfCells; i++) {
+    m_cells[i].setParentResponder(&m_selectableTableView);
+    m_cells[i].textField()->setDelegate(this);
+    m_cells[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
+  }
 }
 
 const char * HistogramParameterController::title() {
@@ -99,23 +104,7 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex, doubl
 
 HighlightCell * HistogramParameterController::reusableParameterCell(int index, int type) {
   assert(index >= 0 && index < k_numberOfCells);
-  return m_cells[index];
-}
-
-View * HistogramParameterController::loadView() {
-  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
-  for (int i = 0; i < k_numberOfCells; i++) {
-    m_cells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
-  }
-  return tableView;
-}
-
-void HistogramParameterController::unloadView(View * view) {
-  for (int i = 0; i < k_numberOfCells; i++) {
-    delete m_cells[i];
-    m_cells[i] = nullptr;
-  }
-  FloatParameterController::unloadView(view);
+  return &m_cells[index];
 }
 
 }

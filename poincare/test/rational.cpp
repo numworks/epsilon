@@ -82,23 +82,23 @@ QUIZ_CASE(poincare_rational_power) {
 
 QUIZ_CASE(poincare_rational_simplify) {
   // 1/MaxIntegerString
-  /*char buffer[400] = "1/";
+  char buffer[400] = "1/";
   strlcpy(buffer+2, MaxIntegerString, 400-2);
   assert_parsed_expression_simplify_to(buffer, buffer);
   // 1/OverflowedIntegerString
-  strlcpy(buffer+2, OverflowedIntegerString, 400-2);
-  assert_parsed_expression_simplify_to(buffer, "0");
+  strlcpy(buffer+2, BigOverflowedIntegerString, 400-2);
+  assert_parsed_expression_simplify_to(buffer, "1/inf");
   // MaxIntegerString
   assert_parsed_expression_simplify_to(MaxIntegerString, MaxIntegerString);
   // OverflowedIntegerString
-  assert_parsed_expression_simplify_to(OverflowedIntegerString, "inf");
-  assert_parsed_expression_simplify_to(OverflowedIntegerString, "inf");
+  assert_parsed_expression_simplify_to(BigOverflowedIntegerString, "inf");
+  assert_parsed_expression_simplify_to(BigOverflowedIntegerString, "inf");
   // -OverflowedIntegerString
   buffer[0] = '-';
-  strlcpy(buffer+1, OverflowedIntegerString, 400-1);
-  assert_parsed_expression_simplify_to(buffer, "-inf");*/
+  strlcpy(buffer+1, BigOverflowedIntegerString, 400-1);
+  assert_parsed_expression_simplify_to(buffer, "-inf");
 
-  /*assert_parsed_expression_simplify_to("-1/3", "-1/3");
+  assert_parsed_expression_simplify_to("-1/3", "-1/3");
   assert_parsed_expression_simplify_to("22355/45325", "4471/9065");
   assert_parsed_expression_simplify_to("0000.000000", "0");
   assert_parsed_expression_simplify_to(".000000", "0");
@@ -122,7 +122,7 @@ QUIZ_CASE(poincare_rational_simplify) {
   assert_parsed_expression_simplify_to("x^0", "1");
   assert_parsed_expression_simplify_to("P^0", "1");
   assert_parsed_expression_simplify_to("A^0", "1");
-  assert_parsed_expression_simplify_to("(-3)^0", "1");*/
+  assert_parsed_expression_simplify_to("(-3)^0", "1");
 }
 
 QUIZ_CASE(poincare_rational_approximate) {

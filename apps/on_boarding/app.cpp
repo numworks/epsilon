@@ -5,7 +5,7 @@
 namespace OnBoarding {
 
 App * App::Snapshot::unpack(Container * container) {
-  return new App(container, this);
+  return new (container->currentAppBuffer()) App(container, this);
 }
 
 App::Descriptor * App::Snapshot::descriptor() {

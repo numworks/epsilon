@@ -41,8 +41,14 @@ Integer RationalNode::denominator() const {
 
 // Tree Node
 
+static inline size_t RationalSize(size_t numeratorNumberOfDigits, size_t denominatorNumberOfDigits) {
+  size_t realNumeratorSize = numeratorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : numeratorNumberOfDigits;
+  size_t realDenominatorSize = denominatorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : denominatorNumberOfDigits;
+  return sizeof(RationalNode) + sizeof(native_uint_t)*(realNumeratorSize + realDenominatorSize);
+}
+
 size_t RationalNode::size() const {
-  return sizeof(RationalNode) + sizeof(native_uint_t)*(m_numberOfDigitsNumerator + m_numberOfDigitsDenominator);
+  return RationalSize(m_numberOfDigitsNumerator, m_numberOfDigitsDenominator);
 }
 
 // Serialization Node
@@ -213,12 +219,6 @@ Rational Rational::IntegerPower(const Rational & i, const Integer & j) {
     return Rational(newDenominator, newNumerator);
   }
   return Rational(newNumerator, newDenominator);
-}
-
-static inline size_t RationalSize(size_t numeratorNumberOfDigits, size_t denominatorNumberOfDigits) {
-  size_t realNumeratorSize = numeratorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : numeratorNumberOfDigits;
-  size_t realDenominatorSize = denominatorNumberOfDigits > Integer::k_maxNumberOfDigits ? 0 : denominatorNumberOfDigits;
-  return sizeof(RationalNode) + sizeof(native_uint_t)*(realNumeratorSize + realDenominatorSize);
 }
 
 Rational::Rational(const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative) :

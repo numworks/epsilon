@@ -188,7 +188,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   Ab.setDimensions(m, n+1);
 
   // Compute the rank of (A | b)
-  int rankAb = Ab.rank(*context, angleUnit);
+  int rankAb = Ab.rank(*context, angleUnit, true);
 
   // Initialize the number of solutions
   m_numberOfSolutions = INT_MAX;

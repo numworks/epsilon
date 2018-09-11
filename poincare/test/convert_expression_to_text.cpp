@@ -13,9 +13,9 @@ template<typename T>
 void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMode mode = ScientificMode, int significantDigits = 7, int bufferSize = 250) {
   quiz_print(result);
 
-  int tagSize = 8;
+  constexpr int tagSize = 8;
   unsigned char tag = 'O';
-  char * taggedBuffer = new char[bufferSize+2*tagSize];
+  char taggedBuffer[250+2*tagSize];
   memset(taggedBuffer, tag, bufferSize+2*tagSize);
   char * buffer = taggedBuffer + tagSize;
 
@@ -30,8 +30,6 @@ void assert_float_prints_to(T a, const char * result, Preferences::PrintFloatMod
   translate_in_ASCII_chars(buffer);
 
   quiz_assert(strcmp(buffer, result) == 0);
-
-  delete[] taggedBuffer;
 }
 
 void assert_expression_prints_to(Expression e, const char * result, Preferences::PrintFloatMode mode = ScientificMode, int numberOfSignificantDigits = 7, int bufferSize = 250) {

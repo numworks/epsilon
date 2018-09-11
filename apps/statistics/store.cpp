@@ -245,16 +245,18 @@ double Store::sortedElementAtCumulatedFrequency(int series, double k, bool creat
   // TODO: use an other algorithm (ex quickselect) to avoid quadratic complexity
   assert(k >= 0.0 && k <= 1.0);
   double totalNumberOfElements = sumOfOccurrences(series);
+  double numberOfElementsAtFrequencyK = totalNumberOfElements * k;
+
   double bufferValues[numberOfPairsOfSeries(series)];
   memcpy(bufferValues, m_data[series][0], numberOfPairsOfSeries(series)*sizeof(double));
   int sortedElementIndex = 0;
-  double cumulatedFrequency = 0.0;
-  while (cumulatedFrequency < k-DBL_EPSILON) {
+  double cumulatedNumberOfElements = 0.0;
+  while (cumulatedNumberOfElements < numberOfElementsAtFrequencyK-DBL_EPSILON) {
     sortedElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
     bufferValues[sortedElementIndex] = DBL_MAX;
-    cumulatedFrequency += m_data[series][1][sortedElementIndex] / totalNumberOfElements;
+    cumulatedNumberOfElements += m_data[series][1][sortedElementIndex];
   }
-  if (createMiddleElement && std::fabs(cumulatedFrequency - k) < DBL_EPSILON) {
+  if (createMiddleElement && std::fabs(cumulatedNumberOfElements - numberOfElementsAtFrequencyK) < DBL_EPSILON) {
     int nextElementIndex = minIndex(bufferValues, numberOfPairsOfSeries(series));
     if (bufferValues[nextElementIndex] != DBL_MAX) {
       return (m_data[series][0][sortedElementIndex] + m_data[series][0][nextElementIndex]) / 2.0;

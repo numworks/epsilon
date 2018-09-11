@@ -13,7 +13,6 @@ class ScriptParameterController;
 class EditorController : public ViewController, public TextAreaDelegate {
 public:
   EditorController(MenuController * menuController);
-  ~EditorController();
   void setScript(Script script);
 
   /* ViewController */
@@ -32,7 +31,10 @@ private:
   static constexpr int k_indentationSpacesNumber = 2;
   StackViewController * stackController();
   EditorView m_editorView;
-  char * m_areaBuffer;
+  /* m_areaBuffer first character is dedicated to the importation status.
+   * Thereby, we avoid wasteful copy while adding the Script to the storage
+   * (in order to add the importation status char before the areaBuffer). */
+  char m_areaBuffer[Ion::Storage::k_storageSize]; // this could be slightly optimize
   Script m_script;
   MenuController * m_menuController;
 };

@@ -63,6 +63,7 @@ void TreeByReference::replaceWithInPlace(TreeByReference t) {
 void TreeByReference::replaceChildInPlace(TreeByReference oldChild, TreeByReference newChild) {
   assert(!oldChild.isUninitialized());
   assert(!newChild.isUninitialized());
+  assert(hasChild(oldChild));
 
   if (oldChild == newChild) {
     return;

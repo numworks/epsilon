@@ -69,12 +69,18 @@ void ParametersController::ContentView::layoutSubviews() {
 
 ParametersController::ParametersController(Responder * parentResponder, Law * law, CalculationController * calculationController) :
   FloatParameterController(parentResponder),
-  m_selectableTableView(nullptr),
+  m_contentView(this, &m_selectableTableView),
   m_menuListCell{},
   m_law(law),
   m_calculationController(calculationController)
 {
   assert(m_law != nullptr);
+  m_okButton.setMessage(I18n::Message::Next);
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    m_menuListCell[i].setParentResponder(&m_selectableTableView);
+    m_menuListCell[i].textField()->setDelegate(this);
+    m_menuListCell[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
+  }
 }
 
 const char * ParametersController::title() {
@@ -99,11 +105,12 @@ void ParametersController::didBecomeFirstResponder() {
 }
 
 void ParametersController::viewWillAppear() {
-  FloatParameterController::viewWillAppear();
+  m_contentView.setNumberOfParameters(m_law->numberOfParameter());
   for (int i = 0; i < m_law->numberOfParameter(); i++) {
-    contentView()->parameterDefinitionAtIndex(i)->setMessage(m_law->parameterDefinitionAtIndex(i));
+    m_contentView.parameterDefinitionAtIndex(i)->setMessage(m_law->parameterDefinitionAtIndex(i));
   }
-  contentView()->layoutSubviews();
+  m_contentView.layoutSubviews();
+  FloatParameterController::viewWillAppear();
 }
 
 int ParametersController::numberOfRows() {
@@ -125,7 +132,7 @@ void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int ind
 HighlightCell * ParametersController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
   assert(index < 2);
-  return m_menuListCell[index];
+  return &m_menuListCell[index];
 }
 
 int ParametersController::reusableParameterCellCount(int type) {
@@ -148,7 +155,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
 
 bool ParametersController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
-    m_selectableTableView->reloadData();
+    m_selectableTableView.reloadData();
     return true;
   }
   return false;
@@ -159,37 +166,4 @@ void ParametersController::buttonAction() {
   stack->push(m_calculationController, KDColorWhite, Palette::SubTab, Palette::SubTab);
 }
 
-I18n::Message ParametersController::okButtonText() {
-  return I18n::Message::Next;
 }
-
-View * ParametersController::loadView() {
-  m_selectableTableView = (SelectableTableView *)FloatParameterController::loadView();
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    m_menuListCell[i] = new MessageTableCellWithEditableText(m_selectableTableView, this, m_draftTextBuffer);
-  }
-  ContentView * contentView = (ContentView *)new ContentView(this, m_selectableTableView);
-  contentView->setNumberOfParameters(m_law->numberOfParameter());
-  return contentView;
-}
-
-void ParametersController::unloadView(View * view) {
-  delete m_selectableTableView;
-  m_selectableTableView = nullptr;
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    delete m_menuListCell[i];
-    m_menuListCell[i] = nullptr;
-  }
-  FloatParameterController::unloadView(view);
-}
-
-SelectableTableView * ParametersController::selectableTableView() {
-  return m_selectableTableView;
-}
-
-ParametersController::ContentView * ParametersController::contentView() {
-  return (ContentView *)view();
-}
-
-}
-

@@ -21,11 +21,8 @@ private:
   void buttonAction() override;
   HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
-  View * loadView() override;
-  void unloadView(View * view) override;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
-  MessageTableCellWithEditableText * m_abscisseCell;
-  I18n::Message m_abscissaSymbol;
+  MessageTableCellWithEditableText m_abscisseCell;
 };
 
 }

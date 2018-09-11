@@ -12,8 +12,19 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
   m_interactiveRange(interactiveRange),
   m_xRangeCells{},
   m_yRangeCells{},
-  m_yAutoCell(nullptr)
+  m_yAutoCell(I18n::Message::YAuto)
 {
+  for (int i = 0; i < k_numberOfEditableTextCell; i++) {
+    m_xRangeCells[i].setParentResponder(&m_selectableTableView);
+    m_xRangeCells[i].textField()->setDelegate(this);
+    m_xRangeCells[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
+  }
+  for (int i = 0; i < k_numberOfConvertibleTextCell; i++) {
+    m_yRangeCells[i].setParentResponder(&m_selectableTableView);
+    m_yRangeCells[i].setInteractiveCurveViewRange(m_interactiveRange);
+    m_yRangeCells[i].textField()->setDelegate(this);
+    m_yRangeCells[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
+  }
 }
 
 const char * RangeParameterController::title() {
@@ -42,7 +53,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
     return;
   }
   if (index == 2) {
-    SwitchView * switchView = (SwitchView *)m_yAutoCell->accessoryView();
+    SwitchView * switchView = (SwitchView *)m_yAutoCell.accessoryView();
     switchView->setState(m_interactiveRange->yAuto());
     return;
   }
@@ -57,7 +68,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
 
 bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
-    selectableTableView()->reloadData();
+    m_selectableTableView.reloadData();
     return true;
   }
   return false;
@@ -66,7 +77,7 @@ bool RangeParameterController::textFieldDidFinishEditing(TextField * textField, 
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (activeCell() == 2 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     m_interactiveRange->setYAuto(!m_interactiveRange->yAuto());
-    selectableTableView()->reloadData();
+    m_selectableTableView.reloadData();
     return true;
   }
   return FloatParameterController::handleEvent(event);
@@ -90,16 +101,16 @@ bool RangeParameterController::setParameterAtIndex(int parameterIndex, double f)
 HighlightCell * RangeParameterController::reusableParameterCell(int index, int type) {
   if (type == 2) {
     assert(index == 0);
-    return m_yAutoCell;
+    return &m_yAutoCell;
   }
   if (type == 1) {
     assert(index >= 0);
     assert(index < k_numberOfEditableTextCell);
-    return m_xRangeCells[index];
+    return &m_xRangeCells[index];
   }
   assert(index >= 0);
   assert(index < k_numberOfConvertibleTextCell);
-  return m_yRangeCells[index];
+  return &m_yRangeCells[index];
 }
 
 int RangeParameterController::reusableParameterCellCount(int type) {
@@ -110,32 +121,6 @@ int RangeParameterController::reusableParameterCellCount(int type) {
     return k_numberOfEditableTextCell;
   }
   return k_numberOfConvertibleTextCell;
-}
-
-View * RangeParameterController::loadView() {
-  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
-  m_yAutoCell = new MessageTableCellWithSwitch(I18n::Message::YAuto);
-  for (int i = 0; i < k_numberOfEditableTextCell; i++) {
-    m_xRangeCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
-  }
-  for (int i = 0; i < k_numberOfConvertibleTextCell; i++) {
-    m_yRangeCells[i] = new MessageTableCellWithConvertibleEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default, m_interactiveRange);
-  }
-  return tableView;
-}
-
-void RangeParameterController::unloadView(View * view) {
-  delete m_yAutoCell;
-  m_yAutoCell = nullptr;
-  for (int i = 0; i < k_numberOfEditableTextCell; i++) {
-    delete m_xRangeCells[i];
-    m_xRangeCells[i] = nullptr;
-  }
-  for (int i = 0; i < k_numberOfConvertibleTextCell; i++) {
-    delete m_yRangeCells[i];
-    m_yRangeCells[i] = nullptr;
-  }
-  FloatParameterController::unloadView(view);
 }
 
 }

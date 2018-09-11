@@ -12,6 +12,7 @@ class ParametersController : public Shared::FloatParameterController {
 public:
   ParametersController(Responder * parentResponder, Law * m_law, CalculationController * calculationController);
   const char * title() override;
+  View * view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override;
   void reinitCalculation();
   void didBecomeFirstResponder() override;
@@ -25,9 +26,6 @@ private:
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  I18n::Message okButtonText() override;
-  View * loadView() override;
-  void unloadView(View * view) override;
   class ContentView : public View {
   public:
     ContentView(Responder * parentResponder, SelectableTableView * selectableTableView);
@@ -46,12 +44,10 @@ private:
     MessageTextView m_secondParameterDefinition;
     SelectableTableView * m_selectableTableView;
   };
-  SelectableTableView * selectableTableView() override;
-  ContentView * contentView();
-  SelectableTableView * m_selectableTableView;
   constexpr static int k_maxNumberOfCells = 2;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
-  MessageTableCellWithEditableText * m_menuListCell[k_maxNumberOfCells];
+  ContentView m_contentView;
+  MessageTableCellWithEditableText m_menuListCell[k_maxNumberOfCells];
   Law * m_law;
   CalculationController * m_calculationController;
 };

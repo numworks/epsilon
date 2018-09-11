@@ -10,9 +10,10 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-class FloatParameterController : public DynamicViewController, public ListViewDataSource, public SelectableTableViewDataSource, public ParameterTextFieldDelegate {
+class FloatParameterController : public ViewController, public ListViewDataSource, public SelectableTableViewDataSource, public ParameterTextFieldDelegate {
 public:
   FloatParameterController(Responder * parentResponder);
+  View * view() override { return &m_selectableTableView; }
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
@@ -31,18 +32,15 @@ protected:
   int activeCell();
   StackViewController * stackController();
   virtual double parameterAtIndex(int index) = 0;
-  virtual SelectableTableView * selectableTableView();
-  View * loadView() override;
-  void unloadView(View * view) override;
+  SelectableTableView m_selectableTableView;
+  ButtonWithSeparator m_okButton;
 private:
   constexpr static int k_buttonMargin = 6;
   virtual void buttonAction();
-  virtual I18n::Message okButtonText();
   virtual int reusableParameterCellCount(int type) = 0;
   virtual HighlightCell * reusableParameterCell(int index, int type) = 0;
   TextFieldDelegateApp * textFieldDelegateApp() override;
   virtual bool setParameterAtIndex(int parameterIndex, double f) = 0;
-  ButtonWithSeparator * m_okButton;
 };
 
 }

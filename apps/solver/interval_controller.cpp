@@ -43,10 +43,17 @@ void IntervalController::ContentView::layoutSubviews() {
 
 IntervalController::IntervalController(Responder * parentResponder, EquationStore * equationStore) :
   FloatParameterController(parentResponder),
-  m_selectableTableView(nullptr),
+  m_contentView(&m_selectableTableView),
   m_intervalCell{},
   m_equationStore(equationStore)
 {
+  m_selectableTableView.setTopMargin(0);
+  m_okButton.setMessage(I18n::Message::ResolveEquation);
+  for (int i = 0; i < k_maxNumberOfCells; i++) {
+    m_intervalCell[i].setParentResponder(&m_selectableTableView);
+    m_intervalCell[i].textField()->setDelegate(this);
+    m_intervalCell[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
+  }
 }
 
 const char * IntervalController::title() {
@@ -70,7 +77,7 @@ void IntervalController::willDisplayCellForIndex(HighlightCell * cell, int index
 HighlightCell * IntervalController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
   assert(index < 2);
-  return m_intervalCell[index];
+  return &m_intervalCell[index];
 }
 
 int IntervalController::reusableParameterCellCount(int type) {
@@ -88,7 +95,7 @@ bool IntervalController::setParameterAtIndex(int parameterIndex, double f) {
 
 bool IntervalController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
-    m_selectableTableView->reloadData();
+    m_selectableTableView.reloadData();
     return true;
   }
   return false;
@@ -101,34 +108,4 @@ void IntervalController::buttonAction() {
   stack->push(solverApp->solutionsControllerStack(), KDColorWhite, Palette::SubTab, Palette::SubTab);
 }
 
-I18n::Message IntervalController::okButtonText() {
-  return I18n::Message::ResolveEquation;
 }
-
-View * IntervalController::loadView() {
-  m_selectableTableView = (SelectableTableView *)FloatParameterController::loadView();
-  m_selectableTableView->setTopMargin(0);
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    m_intervalCell[i] = new MessageTableCellWithEditableText(m_selectableTableView, this, m_draftTextBuffer);
-  }
-  ContentView * contentView = (ContentView *)new ContentView(m_selectableTableView);
-  return contentView;
-}
-
-void IntervalController::unloadView(View * view) {
-  delete m_selectableTableView;
-  m_selectableTableView = nullptr;
-  for (int i = 0; i < k_maxNumberOfCells; i++) {
-    delete m_intervalCell[i];
-    m_intervalCell[i] = nullptr;
-  }
-  FloatParameterController::unloadView(view);
-}
-
-SelectableTableView * IntervalController::selectableTableView() {
-  return m_selectableTableView;
-}
-
-}
-
-

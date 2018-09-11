@@ -8,6 +8,11 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
   m_interval(interval),
   m_intervalCells{}
 {
+  for (int i = 0; i < k_totalNumberOfCell; i++) {
+    m_intervalCells[i].setParentResponder(&m_selectableTableView);
+    m_intervalCells[i].textField()->setDelegate(this);
+    m_intervalCells[i].textField()->setDraftTextBuffer(m_draftTextBuffer);
+  }
 }
 
 const char * IntervalParameterController::title() {
@@ -60,7 +65,7 @@ bool IntervalParameterController::setParameterAtIndex(int parameterIndex, double
 HighlightCell * IntervalParameterController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  return m_intervalCells[index];
+  return &m_intervalCells[index];
 }
 
 bool IntervalParameterController::handleEvent(Ion::Events::Event event) {
@@ -81,22 +86,6 @@ void IntervalParameterController::buttonAction() {
   if (stack->depth() > 1) {
     stack->pop();
   }
-}
-
-View * IntervalParameterController::loadView() {
-  SelectableTableView * tableView = (SelectableTableView *)FloatParameterController::loadView();
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_intervalCells[i] = new MessageTableCellWithEditableText(tableView, this, m_draftTextBuffer, I18n::Message::Default);
-  }
-  return tableView;
-}
-
-void IntervalParameterController::unloadView(View * view) {
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
-    delete m_intervalCells[i];
-    m_intervalCells[i] = nullptr;
-  }
-  FloatParameterController::unloadView(view);
 }
 
 }

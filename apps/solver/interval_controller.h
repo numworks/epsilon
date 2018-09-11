@@ -11,6 +11,7 @@ class IntervalController : public Shared::FloatParameterController {
 public:
   IntervalController(Responder * parentResponder, EquationStore * equationStore);
   const char * title() override;
+  View * view() override { return &m_contentView; }
   int numberOfRows() override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
 private:
@@ -20,9 +21,6 @@ private:
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  I18n::Message okButtonText() override;
-  View * loadView() override;
-  void unloadView(View * view) override;
   class ContentView : public View {
   public:
     ContentView(SelectableTableView * selectableTableView);
@@ -36,11 +34,10 @@ private:
     MessageTextView m_instructions1;
     SelectableTableView * m_selectableTableView;
   };
-  SelectableTableView * selectableTableView() override;
-  SelectableTableView * m_selectableTableView;
+  ContentView m_contentView;
   constexpr static int k_maxNumberOfCells = 2;
   char m_draftTextBuffer[MessageTableCellWithEditableText::k_bufferLength];
-  MessageTableCellWithEditableText * m_intervalCell[k_maxNumberOfCells];
+  MessageTableCellWithEditableText m_intervalCell[k_maxNumberOfCells];
   EquationStore * m_equationStore;
 };
 

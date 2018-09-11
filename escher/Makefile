@@ -10,7 +10,6 @@ objs += $(addprefix escher/src/,\
   chevron_view.o\
   clipboard.o\
   container.o\
-  dynamic_view_controller.o\
   editable_text_cell.o\
   ellipsis_view.o\
   expression_field.o\

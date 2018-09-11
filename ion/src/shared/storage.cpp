@@ -32,14 +32,25 @@ Storage::Record::Record(const char * name) {
     m_nameCRC32 = 0;
     return;
   }
-  size_t lenght = strlen(name);
-  size_t crc32InputSize = lenght*sizeof(char)/sizeof(uint32_t)+1;
-  uint32_t * crc32Input = new uint32_t[crc32InputSize];
-  memset(crc32Input, 0, crc32InputSize*sizeof(uint32_t));
-  strlcpy((char *)crc32Input, name, lenght+1);
-  assert((crc32InputSize*sizeof(uint32_t) & 0x3) == 0); // Assert that dataLengthInBytes is a multiple of 4
-  m_nameCRC32 = Ion::crc32(crc32Input, crc32InputSize);
-  delete[] crc32Input;
+  /* name is a char table. Its length in Bytes is not necessarilly a multiple
+   * of 4. However, crc32 method awaits input in a form of uint32_t table. To
+   * limit the use of additional memory, we compute 2 crc32:
+   * - one corresponding to name with a byte length truncated to be a multiple
+   *   of 4
+   * - the other corresponds to the remaining chars in name padded with 0 to be
+   *   4 bytes length
+   * The name CRC32 is the crc32 of both. */
+  uint32_t crc32Results[2];
+  // CRC32 of the truncated name
+  size_t length = strlen(name);
+  size_t crc32TruncatedInputSize = length*sizeof(char)/sizeof(uint32_t);
+  crc32Results[0] = Ion::crc32((const uint32_t *)name, crc32TruncatedInputSize);
+
+  // CRC32 of the tail of name
+  uint32_t tailName = 0;
+  strlcpy((char *)&tailName, name+crc32TruncatedInputSize*sizeof(uint32_t), 2);
+  crc32Results[1] = Ion::crc32(&tailName, 1);
+  m_nameCRC32 = Ion::crc32(crc32Results, 2);
 }
 
 Storage::Storage() :

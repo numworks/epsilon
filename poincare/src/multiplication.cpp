@@ -609,8 +609,8 @@ void Multiplication::factorizeSineAndCosine(int i, int j, Context & context, Pre
     return;
   }
   Number sumPQ = Number::Addition(p, q);
-  Number absP = p.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
-  Number absQ = q.setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+  Number absP = p.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive, context, angleUnit);
+  Number absQ = q.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive, context, angleUnit);
   Expression tan = Tangent(x.clone());
   if (Number::NaturalOrder(absP, absQ) < 0) {
     // Replace sin(x) by tan(x) or sin(x)^p by tan(x)^p

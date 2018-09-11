@@ -74,7 +74,7 @@ class Rational : public Number {
 public:
   /* The constructor build a irreductible fraction */
   Rational(const RationalNode * node) : Number(node) {}
-  Rational(Integer numerator, Integer denominator);
+  Rational(Integer num, Integer den);
   Rational(const Integer numerator);
   Rational(native_int_t i);
   Rational(native_int_t i, native_int_t j) : Rational(Integer(i), Integer(j)) {}
@@ -110,7 +110,7 @@ public:
   Expression shallowReduce(Context & context, Preferences::AngleUnit angleUnit);
 
 private:
-  Rational(size_t size, const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative);
+  Rational(const native_uint_t * i, size_t numeratorSize, const native_uint_t * j, size_t denominatorSize, bool negative);
   RationalNode * node() { return static_cast<RationalNode *>(Number::node()); }
 
   /* Simplification */

@@ -309,7 +309,7 @@ Expression Symbol::replaceSymbolWithExpression(char symbol, Expression & express
   if (name() == symbol) {
     Expression value = expression.clone();
     Expression p = parent();
-    if (!p.isUninitialized() && value.node()->needsParenthesesWithParent(p.node())) {
+    if (!p.isUninitialized() && p.node()->childNeedsParenthesis(value.node())) {
       value = Parenthesis(value);
     }
     return value;

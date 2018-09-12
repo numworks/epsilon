@@ -29,9 +29,12 @@ ExpressionNode::Sign OppositeNode::sign() const {
 
 /* Layout */
 
-bool OppositeNode::needsParenthesesWithParent(const SerializationHelperInterface * parent) const {
-  Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite, Type::Multiplication, Type::Division, Type::Power, Type::Factorial};
-  return static_cast<const ExpressionNode *>(parent)->isOfType(types, 7);
+bool OppositeNode::childNeedsParenthesis(const SerializationHelperInterface * child) const {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && static_cast<const ExpressionNode *>(child)->sign() == Sign::Negative) {
+    return true;
+  }
+  Type types[] = {Type::Addition, Type::Subtraction, Type::Opposite};
+  return static_cast<const ExpressionNode *>(child)->isOfType(types, 3);
 }
 
 LayoutRef OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

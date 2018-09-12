@@ -31,7 +31,6 @@ public:
 #endif
 
   // SerializationHelperInterface
-  bool needsParenthesesWithParent(const SerializationHelperInterface * e) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   // Expression subclassing

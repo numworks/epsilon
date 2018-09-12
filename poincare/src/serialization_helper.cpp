@@ -6,7 +6,7 @@ namespace Poincare {
 
 static void serializeChild(const SerializationHelperInterface * childInterface, const SerializationHelperInterface * interface, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits, int * numberOfChar) {
   // Write the child with parentheses if needed
-  bool addParentheses = childInterface->needsParenthesesWithParent(interface);
+  bool addParentheses = interface->childNeedsParenthesis(childInterface);
   if (addParentheses) {
     buffer[*numberOfChar] = '(';
     *numberOfChar = *numberOfChar + 1;

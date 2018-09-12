@@ -233,10 +233,6 @@ QUIZ_CASE(poincare_function_simplify) {
   assert_parsed_expression_simplify_to("binomial(20,10)", "184756");
   assert_parsed_expression_simplify_to("ceil(-1.3)", "-1");
   assert_parsed_expression_simplify_to("conj(1/2)", "1/2");
-  assert_parsed_expression_simplify_to("factor(-10008/6895)", "-(2^3*3^2*139)/(5*7*197)");
-  assert_parsed_expression_simplify_to("factor(1008/6895)", "(2^4*3^2)/(5*197)");
-  assert_parsed_expression_simplify_to("factor(10007)", "10007");
-  assert_parsed_expression_simplify_to("factor(10007^2)", "undef");
   assert_parsed_expression_simplify_to("quo(19,3)", "6");
   assert_parsed_expression_simplify_to("quo(19,0)", "inf");
   assert_parsed_expression_simplify_to("quo(-19,3)", "-7");

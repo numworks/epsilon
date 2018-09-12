@@ -268,6 +268,7 @@ tests += $(addprefix poincare/test/,\
   subtraction.cpp\
   symbol.cpp\
   trigo.cpp\
+  vertical_offset_layout.cpp\
 )
 
 testsExpected += $(addprefix poincare/test/,\

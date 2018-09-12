@@ -16,17 +16,30 @@ class TreeByReference {
   friend class TreePool;
 public:
   /* Constructors */
-  TreeByReference(const TreeByReference & tr);
-  TreeByReference(TreeByReference&& tr);
-  ~TreeByReference();
+  TreeByReference(const TreeByReference & tr) : m_identifier(TreeNode::NoNodeIdentifier) {
+    setIdentifierAndRetain(tr.identifier());
+  }
+
+  TreeByReference(TreeByReference && tr) : m_identifier(tr.m_identifier) {
+    tr.m_identifier = TreeNode::NoNodeIdentifier;
+  }
+
+  ~TreeByReference() {
+    release(m_identifier);
+  }
+
+  void reset() { m_identifier = TreeNode::NoNodeIdentifier; }
 
   /* Operators */
-  TreeByReference& operator=(const TreeByReference& tr) {
+  TreeByReference & operator=(const TreeByReference & tr) {
     setTo(tr);
     return *this;
   }
-  TreeByReference& operator=(TreeByReference&& tr) {
-    setTo(tr);
+
+  TreeByReference & operator=(TreeByReference && tr) {
+    release(m_identifier);
+    m_identifier = tr.m_identifier;
+    tr.m_identifier = TreeNode::NoNodeIdentifier;
     return *this;
   }
 
@@ -103,6 +116,7 @@ private:
   void detachFromParent();
   // Add ghost children on layout construction
   void buildGhostChildren();
+  void release(int identifier);
 };
 
 }

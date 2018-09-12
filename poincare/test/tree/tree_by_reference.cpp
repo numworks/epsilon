@@ -59,7 +59,22 @@ QUIZ_CASE(tree_by_reference_can_be_returned) {
   assert_pool_size(initialPoolSize+1);
 }
 
-//TODO(tree_by_reference_allocation_failures) {
+QUIZ_CASE(tree_by_reference_memory_failure) {
+  int memoryFailureHasBeenHandled = false;
+  jmp_buf jumpBuffer;
+  int initialPoolSize = pool_size();
+  TreePool::sharedPool()->setJumpEnvironment(&jumpBuffer);
+  if (setjmp(jumpBuffer) == 0) {
+    TreeByReference tree = BlobByReference(1);
+    while (true) {
+      tree = PairByReference(tree, BlobByReference(1));
+    }
+  } else {
+    memoryFailureHasBeenHandled = true;
+  }
+  assert(memoryFailureHasBeenHandled);
+  assert_pool_size(initialPoolSize);
+}
 
 QUIZ_CASE(tree_by_reference_does_not_copy) {
   int initialPoolSize = pool_size();

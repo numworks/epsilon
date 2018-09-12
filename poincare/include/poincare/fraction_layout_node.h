@@ -43,6 +43,8 @@ public:
 #endif
 
 protected:
+  // SerializationInterface
+  bool childNeedsParenthesis(const SerializationHelperInterface * child) const override { return true; }
   // LayoutNode
   KDSize computeSize() override;
   KDCoordinate computeBaseline() override;

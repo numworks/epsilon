@@ -39,6 +39,7 @@ Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit 
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
+#if 0
   if (c.type() == ExpressionNode::Type::Matrix) {
     Matrix m = static_cast<Matrix&>(c);
     if (m.numberOfRows() != m.numberOfColumns()) {
@@ -55,6 +56,7 @@ Expression MatrixTrace::shallowReduce(Context & context, Preferences::AngleUnit 
     return c;
   }
   return *this;
+#endif
 #else
   if (c.type() != ExpressionNode::Type::Matrix) {
     replaceWithInPlace(c);

@@ -100,10 +100,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<double>("acos(-2)", "3.1415926535898-1.3169578969248*I", Radian);
   assert_parsed_expression_evaluates_to<double>("acos(-2)", "180-75.456129290217*I", Degree);
   // On ]-inf, -1[
-  // TODO we have a precision problem for now, because we do not simplify before evaluation (because of deepReduce), and std::acos(-32) is less precise than std::acos(32)
-  /* assert_parsed_expression_evaluates_to<double>("acos(-32)", "3.1415926535898-4.1586388532792*I", Radian);
+  assert_parsed_expression_evaluates_to<double>("acos(-32)", "3.1415926535898-4.1586388532792*I", Radian);
   assert_parsed_expression_evaluates_to<float>("acos(-32)", "180-238.2725*I", Degree);
-  */
   // On R*i
   //assert_parsed_expression_evaluates_to<float>("acos(3*I)", "1.5707963-1.818446*I", Radian);
   //assert_parsed_expression_evaluates_to<float>("acos(3*I)", "90-104.1892*I", Degree);
@@ -115,8 +113,7 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("acos(I-4)", "165.551-120.126*I", Degree, Cartesian, 6);
   // Key values
   assert_parsed_expression_evaluates_to<double>("acos(0)", "90", Degree);
-  /* TODO we have a precision problem for now
-  assert_parsed_expression_evaluates_to<float>("acos(-1)", "180", Degree); */
+  assert_parsed_expression_evaluates_to<float>("acos(-1)", "180", Degree);
   assert_parsed_expression_evaluates_to<double>("acos(1)", "0", Degree);
 
   /* asin: [-1,1]    ->  R
@@ -145,9 +142,8 @@ QUIZ_CASE(poincare_trigo_evaluate) {
   assert_parsed_expression_evaluates_to<float>("asin(I-4)", "(-75.551)+120.13*I", Degree, Cartesian, 5);
   // Key values
   assert_parsed_expression_evaluates_to<double>("asin(0)", "0", Degree);
-  //TODO Does not work now
-  //assert_parsed_expression_evaluates_to<float>("asin(-1)", "-90", Degree);
-  //assert_parsed_expression_evaluates_to<double>("asin(1)", "90", Degree);
+  assert_parsed_expression_evaluates_to<float>("asin(-1)", "-90", Degree);
+  assert_parsed_expression_evaluates_to<double>("asin(1)", "90", Degree);
 
   /* atan: R         ->  R (odd)
    *       [-i,i]    ->  R*i (odd)

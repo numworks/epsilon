@@ -36,9 +36,12 @@ public:
     stream << "Decimal";
   }
   virtual void logAttributes(std::ostream & stream) const override {
-    char buffer[256];
-    serialize(buffer, sizeof(buffer));
-    stream << " value=\"" << buffer << "\"";
+    stream << " negative=\"" << m_negative << "\"";
+    stream << " mantissa=\"";
+    this->signedMantissa().log(stream);
+    stream << "\"";
+    stream << " exponent=\"" << m_exponent << "\"";
+    stream << "\"";
   }
 #endif
 

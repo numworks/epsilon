@@ -56,23 +56,11 @@ size_t RationalNode::size() const {
 #if POINCARE_TREE_LOG
 void RationalNode::logAttributes(std::ostream & stream) const {
   stream << " negative=\"" << m_negative << "\"";
-  stream << " numberNumDigits=\"" << m_numberOfDigitsNumerator << "\"";
-  stream << " Num=\"";
-  for (int i=0; i<m_numberOfDigitsNumerator; i++) {
-    stream << m_digits[i];
-    if (i != (m_numberOfDigitsNumerator-1)) {
-      stream << ",";
-    }
-  }
+  stream << " numerator=\"";
+  this->signedNumerator().log(stream);
   stream << "\"";
-  stream << " numberDenDigits=\"" << m_numberOfDigitsDenominator << "\"";
-  stream << " Den=\"";
-  for (int i=m_numberOfDigitsNumerator; i<m_numberOfDigitsDenominator+m_numberOfDigitsNumerator; i++) {
-    stream << m_digits[i];
-    if (i != (m_numberOfDigitsDenominator+m_numberOfDigitsNumerator-1)) {
-      stream << ",";
-    }
-  }
+  stream << " denominator=\"";
+  this->denominator().log(stream);
   stream << "\"";
 }
 #endif

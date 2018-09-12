@@ -40,8 +40,8 @@ public:
   static Integer Overflow(bool negative) { return Integer((native_uint_t *)nullptr, k_maxNumberOfDigits+1, negative); }
   ~Integer();
 
-#if POINCARE_INTEGER_LOG
-  void log() const;
+#if POINCARE_TREE_LOG
+  void log(std::ostream & stream = std::cout) const;
 #endif
 
   /* Copy/Move constructors/assignments */

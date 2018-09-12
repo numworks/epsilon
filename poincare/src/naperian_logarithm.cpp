@@ -24,9 +24,8 @@ Expression NaperianLogarithm::shallowReduce(Context & context, Preferences::Angl
   }
 #endif
   Logarithm l = Logarithm(childAtIndex(0), Symbol(Ion::Charset::Exponential));
-  Expression result = l.shallowReduce(context, angleUnit);
-  replaceWithInPlace(result);
-  return result;
+  replaceWithInPlace(l);
+  return l.shallowReduce(context, angleUnit);
 }
 
 }

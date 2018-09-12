@@ -49,6 +49,7 @@ Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUni
   }
   Expression c = childAtIndex(0);
 #if MATRIX_EXACT_REDUCING
+#if 0
   if (!c.recursivelyMatches(Expression::IsMatrix)) {
     return Power(c, Rational(-1).shallowReduce(context, angleUnit);
   }
@@ -59,10 +60,12 @@ Expression MatrixInverse::shallowReduce(Context & context, Preferences::AngleUni
     }
   }
   return *this;
+#endif
 #else
   if (c.type() != ExpressionNode::Type::Matrix) {
-    Expression result = Power(c, Rational(-1)).shallowReduce(context, angleUnit);
+    Expression result = Power(c, Rational(-1));
     replaceWithInPlace(result);
+    result = result.shallowReduce(context, angleUnit);
     return result;
   }
   return *this;

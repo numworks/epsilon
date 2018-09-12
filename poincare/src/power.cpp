@@ -209,7 +209,7 @@ Expression Power::setSign(ExpressionNode::Sign s, Context & context, Preferences
 int Power::getPolynomialCoefficients(char symbolName, Expression coefficients[]) const {
   int deg = polynomialDegree(symbolName);
   if (deg <= 0) {
-    return Expression::getPolynomialCoefficients(symbolName, coefficients);
+    return Expression::defaultGetPolynomialCoefficients(symbolName, coefficients);
   }
   /* Here we only consider the case x^4 as privateGetPolynomialCoefficients is
    * supposed to be called after reducing the expression. */

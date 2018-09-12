@@ -36,7 +36,6 @@ public:
    * or Infinity in case of overflow. Decimal are not taken into
    * account as it is not an internal node - it will always be turned into a
    * Rational/Float beforehand. */
-  // TODO: Use references for Addition / Multiplication / Power
   static Number Addition(const Number & i, const Number & j);
   static Number Multiplication(const Number & i, const Number & j);
   static Number Power(const Number & i, const Number & j);

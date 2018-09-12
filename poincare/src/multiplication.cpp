@@ -496,7 +496,7 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, Context 
   s.shallowReduce(context, angleUnit);
   // Step 3: Replace one of the child
   replaceChildAtIndexInPlace(i, p);
-  p.shallowReduce(context, angleUnit);
+  p = p.shallowReduce(context, angleUnit);
   /* Step 4: Reducing the new power might have turned it into a multiplication,
    * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
    * node with this. */

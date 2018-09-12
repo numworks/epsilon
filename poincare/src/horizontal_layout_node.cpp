@@ -386,14 +386,30 @@ void HorizontalLayoutRef::addOrMergeChildAtIndex(LayoutRef l, int index, bool re
 }
 
 void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
+  int newIndex = index;
+
+  // Remove h if it is a child
+  int indexOfh = indexOfChild(h);
+  if (indexOfh >= 0) {
+    removeChildAtIndexInPlace(indexOfh);
+    if (indexOfh < newIndex) {
+      newIndex--;
+    }
+  }
+
+  if (h.numberOfChildren() == 0) {
+    return;
+  }
+
   /* Remove any empty child that would be next to the inserted layout.
    * If the layout to insert starts with a vertical offset layout, any empty
    * layout child directly on the left of the inserted layout (if there is one)
    * should not be removed: it will be the base for the VerticalOffsetLayout. */
   bool shouldRemoveOnLeft = h.numberOfChildren() == 0 ? true : !(h.childAtIndex(0).mustHaveLeftSibling());
-  int newIndex = index;
   removeEmptyChildBeforeInsertionAtIndex(&newIndex, nullptr, shouldRemoveOnLeft);
+  assert(newIndex >= 0 && newIndex <= numberOfChildren());
 
+  // Prepare the next cursor position
   LayoutRef nextPointedLayout;
   LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
   if (newIndex < numberOfChildren()) {
@@ -405,8 +421,28 @@ void HorizontalLayoutRef::mergeChildrenAtIndex(HorizontalLayoutRef h, int index,
   }
 
   // Merge the horizontal layout
-  mergeChildrenAtIndexInPlace(h, newIndex);
+  for (int i = 0; i < h.numberOfChildren(); i++) {
+    if (i == 0
+        && h.childAtIndex(0).isEmpty()
+        && h.numberOfChildren() > 1
+        && h.childAtIndex(1).mustHaveLeftSibling()
+        && newIndex > 0)
+    {
+      /* If the first added child is Empty because its right sibling needs a
+       * left sibling, remove it if any previous child could be such a left
+       * sibling. */
+      continue;
+    }
+    if (!removeEmptyChildren
+        || !h.childAtIndex(i).isEmpty()
+        || (i < h.numberOfChildren()-1 && h.childAtIndex(i+1).mustHaveLeftSibling()))
+    {
+      addChildAtIndexInPlace(h.childAtIndex(i), newIndex, numberOfChildren());
+      newIndex++;
+    }
+  }
 
+  // Set the cursor
   if (cursor != nullptr) {
     cursor->setLayoutReference(nextPointedLayout);
     cursor->setPosition(nextPosition);

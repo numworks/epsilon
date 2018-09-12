@@ -28,35 +28,18 @@ Expression Expression::parse(char const * string) {
     return Expression();
   }
 
-  YY_BUFFER_STATE buf = poincare_expression_yy_scan_string(string);
-
-  /* The lexer/parser mallocs memory that needs to be freed once the parsing
-   * finishes, even if the parsing was interrupted by a memory exhaustion
-   * exception. We thus create another setjmp/lngjmp routine here to catch
-   * exceptions, delete the malloced memory and restore the previous jump
-   * environment */
-   jmp_buf * previousJumpEnvironment = TreePool::sharedPool()->jumpEnvironment();
-   jmp_buf jumpEnvironment;
-   TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
-   int res = setjmp(jumpEnvironment);
-   if (res != 0) {
-     // There has been an exception. Delete malloced memory and jump.
-     poincare_expression_yylval.expression = Expression();
+  static YY_BUFFER_STATE buf = nullptr;
+  if (buf != nullptr) {
      poincare_expression_yy_delete_buffer(buf);
-     TreePool::sharedPool()->resetJumpEnvironment();
-     longjmp(*previousJumpEnvironment, 1);
-   }
+  }
+  buf = poincare_expression_yy_scan_string(string);
+  poincare_expression_yylval.expression.reset();
 
-   Expression expression;
+  Expression expression;
   if (poincare_expression_yyparse(&expression) != 0) {
     // Parsing failed because of invalid input or memory exhaustion
     expression = Expression();
   }
-  /* YYVAL refers to the parsed Expression. We do not want to keep the
-   * expression alive if only YYVAL refers to it so we reset YYVAL here. */
-  poincare_expression_yylval.expression = Expression();
-  poincare_expression_yy_delete_buffer(buf);
-  TreePool::sharedPool()->setJumpEnvironment(previousJumpEnvironment);
   return expression;
 }
 

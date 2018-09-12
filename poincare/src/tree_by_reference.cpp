@@ -27,6 +27,8 @@ TreeByReference TreeByReference::clone() const {
 /* Hierarchy operations */
 TreeNode * TreeByReference::node() const { assert(m_identifier != TreeNode::NoNodeIdentifier); return TreePool::sharedPool()->node(m_identifier); }
 
+size_t TreeByReference::size() const { return node()->deepSize(node()->numberOfChildren()); }
+
 TreeByReference TreeByReference::parent() const { return (isUninitialized() || node()->parent() == nullptr) ? TreeByReference() : TreeByReference(node()->parent()); }
 
 int TreeByReference::indexOfChild(TreeByReference t) const { return node()->indexOfChild(t.node()); }

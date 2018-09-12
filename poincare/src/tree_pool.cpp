@@ -256,7 +256,7 @@ void TreePool::updateNodeForIdentifierFromNode(TreeNode * node) {
 
 void TreePool::freePoolFromNode(TreeNode * firstNodeToDiscard) {
   assert(firstNodeToDiscard != nullptr);
-  assert(firstNodeToDiscard > first());
+  assert(firstNodeToDiscard >= first());
   assert(firstNodeToDiscard <= last());
 
   if (firstNodeToDiscard < last()) {

@@ -60,7 +60,7 @@ private:
   void resetShiftAlphaStatus();
   bool updateAlphaLock();
   bool dispatchEventInner(Ion::Events::Event event);
- 
+
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
 #if USE_PIC_VIEW_APP

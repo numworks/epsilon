@@ -92,8 +92,12 @@ void TreePool::removeChildren(TreeNode * node, int nodeNumberOfChildren) {
 
 TreeNode * TreePool::deepCopy(TreeNode * node) {
   size_t size = node->deepSize(-1);
+  return copyTreeFromAddress(static_cast<void *>(node), size);
+}
+
+TreeNode * TreePool::copyTreeFromAddress(void * address, size_t size) {
   void * ptr = alloc(size);
-  memcpy(ptr, static_cast<void *>(node), size);
+  memcpy(ptr, address, size);
   TreeNode * copy = reinterpret_cast<TreeNode *>(ptr);
   renameNode(copy, false);
   for (TreeNode * child : copy->depthFirstChildren()) {

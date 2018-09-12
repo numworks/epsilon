@@ -1,5 +1,6 @@
 #include <poincare/tree_pool.h>
 #include <poincare/tree_by_reference.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/test/tree/blob_node.h>
 #include <poincare/test/tree/pair_node.h>
 #include <poincare.h>
@@ -23,18 +24,6 @@ static void memmove32(uint32_t * dst, uint32_t * src, size_t len) {
       *dst++ = *src++;
     }
   }
-}
-
-void TreePool::setJumpEnvironment(jmp_buf * env) {
-  m_currentJumpEnvironment = env;
-  m_endOfPoolBeforeJump = last();
-}
-
-void TreePool::resetJumpEnvironment() {
-  assert(m_currentJumpEnvironment != nullptr);
-  assert(m_endOfPoolBeforeJump != nullptr);
-  m_currentJumpEnvironment = nullptr;
-  m_endOfPoolBeforeJump = nullptr;
 }
 
 void TreePool::freeIdentifier(int identifier) {
@@ -165,16 +154,8 @@ int TreePool::numberOfNodes() const {
 #endif
 
 void * TreePool::alloc(size_t size) {
-  /* We are going to try to allocate memory in the pool. If it fails, we must be
-   * able to escape. We thus assert that m_currentJumpEnvironment is set, so we
-   * can make a long jump. */
-
   if (m_cursor >= m_buffer + BufferSize || m_cursor + size > m_buffer + BufferSize) {
-    assert(m_currentJumpEnvironment != nullptr);
-    assert(m_endOfPoolBeforeJump != nullptr);
-    // TODO put the asserts outside the if
-    freePoolFromNode(m_endOfPoolBeforeJump);
-    longjmp(*m_currentJumpEnvironment, 1);
+    ExceptionCheckpoint::Raise();
   }
   void * result = m_cursor;
   m_cursor += size;

@@ -27,7 +27,7 @@ QUIZ_CASE(poincare_sign) {
   assert_parsed_expression_sign("2^(-abs(3))", Positive);
   assert_parsed_expression_sign("(-2)^4", Positive);
   assert_parsed_expression_sign("(-2)^3", Negative);
-// TODO  assert_parsed_expression_sign("random()", Positive);
+  assert_parsed_expression_sign("random()", Positive);
   assert_parsed_expression_sign("42/3", Positive);
   assert_parsed_expression_sign("-23/32", Negative);
   assert_parsed_expression_sign("P", Positive);
@@ -38,15 +38,11 @@ QUIZ_CASE(poincare_polynomial_degree) {
   assert_parsed_expression_polynomial_degree("x+1", 1);
   assert_parsed_expression_polynomial_degree("cos(2)+1", 0);
   assert_parsed_expression_polynomial_degree("confidence(0.2,10)+1", -1);
-#if 0
   assert_parsed_expression_polynomial_degree("diff(3*x+x,2)", 0);
   assert_parsed_expression_polynomial_degree("diff(3*x+x,x)", -1);
-#endif
   assert_parsed_expression_polynomial_degree("(3*x+2)/3", 1);
   assert_parsed_expression_polynomial_degree("(3*x+2)/x", -1);
-#if 0
   assert_parsed_expression_polynomial_degree("int(2*x, 0, 1)", 0);
-#endif
   assert_parsed_expression_polynomial_degree("[[1,2][3,4]]", -1);
   assert_parsed_expression_polynomial_degree("(x^2+2)*(x+1)", 3);
   assert_parsed_expression_polynomial_degree("-(x+1)", 1);

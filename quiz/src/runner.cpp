@@ -5,7 +5,7 @@
 #include <poincare/init.h>
 #include <ion.h>
 #include <poincare/tree_pool.h>
-#include <setjmp.h>
+#include <poincare/exception_checkpoint.h>
 
 void quiz_print(const char * message) {
 #if QUIZ_USE_CONSOLE
@@ -23,24 +23,7 @@ void quiz_print(const char * message) {
 #endif
 }
 
-void ion_main(int argc, char * argv[]) {
-  // Initialize Poincare::TreePool::sharedPool
-  Poincare::init();
-
-  jmp_buf jumpEnvironment;
-  Poincare::TreePool::sharedPool()->setJumpEnvironment(&jumpEnvironment);
-  int res = setjmp(jumpEnvironment);
-  if (res != 0) {
-    // There has been a memeory allocation problem
-    assert(false);
-#if !QUIZ_USE_CONSOLE
-    while (1) {
-      Ion::msleep(1000);
-    }
-#else
-    return;
-#endif
-  }
+static inline void ion_main_inner() {
   int i = 0;
   while (quiz_cases[i] != NULL) {
     QuizCase c = quiz_cases[i];
@@ -54,4 +37,25 @@ void ion_main(int argc, char * argv[]) {
     Ion::msleep(1000);
   }
 #endif
+}
+
+void ion_main(int argc, char * argv[]) {
+  // Initialize Poincare::TreePool::sharedPool
+  Poincare::init();
+
+  Poincare::ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
+    ion_main_inner();
+  } else {
+    // There has been a memeory allocation problem
+#if POINCARE_TREE_LOG
+    Poincare::TreePool::sharedPool()->log();
+#endif
+    assert(false);
+#if !QUIZ_USE_CONSOLE
+    while (1) {
+      Ion::msleep(1000);
+    }
+#endif
+  }
 }
